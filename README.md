@@ -24,6 +24,13 @@ Pensada para hacerse desde el móvil.
   (tabla por tarea y descarga de CSV resumen y detalle, o de todo).
 - **Probar sin cuenta**: en la pantalla de entrada; hace una tarea de
   demostración con todos los tipos sin guardar nada.
+- **Idioma y notación**: bajo la cabecera hay dos selectores independientes,
+  «Texto: ES | EN» (todos los textos que ve el alumno, incluidos los mensajes de
+  feedback) y «Notación: 2,5 | 2.5» (coma o punto decimal, · o ×, : o ÷ en las
+  fórmulas). Se recuerdan en el navegador. Al crear una tarea el profesor puede
+  fijar cualquiera de los dos («lo elige el alumno», español o inglés); mientras
+  se hace esa tarea el selector correspondiente aparece bloqueado. El panel del
+  profesor y los CSV están solo en español.
 
 ### Tipos de ejercicio (1º ESO)
 
@@ -36,6 +43,8 @@ Pensada para hacerse desde el móvil.
 | `fracciones_equivalentes` | Fracciones equivalentes y simplificar |
 | `suma_fracciones` | Suma y resta de fracciones |
 | `decimales` | Suma, resta, producto y ×/÷ 10, 100, 1000 |
+| `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés |
+| `lenguaje_espanol` | Lo mismo en español |
 
 ## Puesta en marcha de Firebase (una sola vez)
 
@@ -103,20 +112,38 @@ npx firebase-tools deploy --only firestore:rules
   pierde la conexión a mitad de una tarea, avisa y reintenta al contestar el
   siguiente ejercicio.
 
+## Ideas para más adelante
+
+Apuntadas para no olvidarlas; no son para ahora:
+
+- Cuando haya ejercicios de todos los cursos de ESO y Bachillerato: efectos de
+  sonido, pequeños personajes animados, frases graciosas y otros detalles para
+  motivar a los alumnos (idea de Juan Luis, 2026-09-09).
+- Varios profesores (lista de uids en las reglas en vez de uno fijo).
+- Filtro por curso en el formulario de tareas (el campo `curso` ya existe).
+
 ## Cómo añadir un tipo de ejercicio
 
 1. Crea `src/ejercicios/<id>.js` siguiendo cualquiera de los existentes: exporta
-   `{ id, nombre, curso, concepto, generar }`. `generar(rng)` recibe un generador
-   con semilla (`rng.entero`, `rng.elegir`, `rng.barajar`, `rng.moneda`) y debe
-   devolver `{ enunciado, opciones }` pasando por `construirOpciones`, que
-   garantiza una sola correcta y 3 distractores de valor distinto.
-2. Cada distractor lleva `error: { id, concepto, feedback }`. El `concepto` decide
-   qué tipo se añade como refuerzo (ver `CONCEPTOS` en `src/ejercicios/index.js`);
-   si el error no apunta a un concepto, pon `concepto: null` y no habrá refuerzo.
-3. Regístralo en la lista `TIPOS` de `src/ejercicios/index.js` y, si es un
-   concepto nuevo, añádelo a `CONCEPTOS`.
-4. `npm test`: los tests generan 300 ejercicios de cada tipo y comprueban que
-   están bien formados. Aparecerá automáticamente en el formulario de tareas.
+   `{ id, nombre: { es, en }, curso, concepto, preguntas, errores, generar }`.
+   `generar(rng)` recibe un generador con semilla (`rng.entero`, `rng.elegir`,
+   `rng.barajar`, `rng.moneda`) y devuelve `{ texto, enunciado, opciones }`
+   pasando por `construirOpciones`, que garantiza una sola correcta y 3
+   distractores de valor distinto. El contrato completo está comentado al
+   principio de `src/ejercicios/index.js`.
+2. `texto` es la pregunta como `{ clave, params }`; la clave se define en la
+   tabla `preguntas` del tipo con `{ es, en }` (o es una clave global como
+   `calcula`). `enunciado` es TeX neutro: `2{,}5`, `\cdot`, `\div`, que se
+   adaptan a la notación elegida al mostrarse.
+3. Cada distractor lleva `error: E('id')`, y ese id va en la tabla `errores` con
+   `{ concepto, es, en }` (el mensaje de feedback en los dos idiomas). El
+   `concepto` decide qué tipo se añade como refuerzo (ver `CONCEPTOS`); con
+   `concepto: null` no hay refuerzo.
+4. Regístralo en la lista `TIPOS` de `src/ejercicios/index.js` y, si es un
+   concepto nuevo, añádelo a `CONCEPTOS` con nombre bilingüe.
+5. `npm test`: los tests generan 300 ejercicios de cada tipo y comprueban que
+   están bien formados y que las tablas están en los dos idiomas. Aparecerá
+   automáticamente en el formulario de tareas.
 
 ## Estructura
 
@@ -128,6 +155,8 @@ src/config.js              configuración de Firebase (rellenar)
 src/firebase.js            acceso a Auth y Firestore
 src/motor.js               generar tarea, responder, refuerzos, resumen (puro)
 src/altas.js               alta de alumnos por lotes (puro)
+src/i18n/                  idioma y notación: index.js (estado, t(), aplicarNotacion), es.js, en.js
+src/textos.js              pregunta, feedback y nombres de un ejercicio en el idioma en vigor
 src/ejercicios/index.js    registro de tipos, rng, construirOpciones
 src/ejercicios/*.js        un generador por tipo
 src/ui/*.js                pantallas: entrada, alumno, tarea, profesor, csv, fórmulas

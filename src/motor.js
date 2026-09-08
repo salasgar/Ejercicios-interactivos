@@ -4,7 +4,7 @@
 //
 // Un `progreso` es el documento que se guarda por alumno y tarea:
 //   {
-//     tareaId, titulo, semilla,
+//     tareaId, titulo, semilla, idioma, notacion,   // idioma/notación fijados por la tarea (null = libre)
 //     ejercicios: [{ n, tipo, refuerzo, origen, texto, enunciado, opciones }],
 //     indice,                 // siguiente ejercicio por responder
 //     respuestas: [{ n, tipo, refuerzo, elegida, correcta, errorId, concepto, ts }],
@@ -13,6 +13,7 @@
 //   }
 
 import { TIPOS, CONCEPTOS, tipoPorConcepto, crearRng } from './ejercicios/index.js';
+import { bilingue } from './i18n/index.js';
 
 /** Ejercicios de refuerzo que se añaden por cada fallo con concepto. */
 export const REFUERZOS_POR_FALLO = 2;
@@ -22,8 +23,8 @@ export const TOPE_REFUERZOS_POR_CONCEPTO = 6;
 function generarEjercicio(tipoId, rng) {
   const tipo = TIPOS[tipoId];
   if (!tipo) throw new Error(`Tipo de ejercicio desconocido: ${tipoId}`);
-  const { texto, enunciado, opciones } = tipo.generar(rng);
-  return { tipo: tipoId, texto, enunciado, opciones };
+  const { texto, enunciado, opciones, solucion = null } = tipo.generar(rng);
+  return { tipo: tipoId, texto, enunciado, opciones, solucion };
 }
 
 /**
@@ -31,6 +32,7 @@ function generarEjercicio(tipoId, rng) {
  *   tarea: { id, titulo, ejercicios: [{ tipo, cantidad }] }
  */
 export function generarTarea(tarea, semilla = Date.now(), ahora = Date.now()) {
+  if (!tarea.ejercicios?.length) throw new Error('La tarea no tiene ejercicios');
   const rng = crearRng(semilla);
   const lista = [];
   for (const { tipo, cantidad } of tarea.ejercicios) {
@@ -41,6 +43,8 @@ export function generarTarea(tarea, semilla = Date.now(), ahora = Date.now()) {
     tareaId: tarea.id,
     titulo: tarea.titulo,
     semilla,
+    idioma: tarea.idioma ?? null,
+    notacion: tarea.notacion ?? null,
     ejercicios,
     indice: 0,
     respuestas: [],
@@ -130,7 +134,7 @@ export function resumen(progreso) {
   };
 }
 
-/** Nombre legible de un concepto. */
+/** Nombre legible de un concepto (en el idioma en vigor). */
 export function nombreConcepto(concepto) {
-  return CONCEPTOS[concepto]?.nombre ?? concepto;
+  return CONCEPTOS[concepto] ? bilingue(CONCEPTOS[concepto].nombre) : concepto;
 }

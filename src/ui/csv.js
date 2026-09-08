@@ -3,6 +3,9 @@
 
 import { texAPlano } from './formulas.js';
 import { CONCEPTOS } from '../ejercicios/index.js';
+import { preguntaDe } from '../textos.js';
+
+// El CSV es para el profesor: siempre en español y con notación española.
 
 const SEP = ';';
 
@@ -33,7 +36,7 @@ export function aCsv(cabecera, filas) {
 export function csvResumen(filas) {
   const conceptos = Object.keys(CONCEPTOS);
   const cabecera = ['Usuario', 'Nombre', 'Grupo', 'Tarea', 'Ejercicios', 'Hechos', 'Aciertos', 'Porcentaje', 'Refuerzos', 'Terminada',
-    ...conceptos.map(c => `Errores: ${CONCEPTOS[c].nombre}`), 'Empezada', 'Terminada el'];
+    ...conceptos.map(c => `Errores: ${CONCEPTOS[c].nombre.es}`), 'Empezada', 'Terminada el'];
   return aCsv(cabecera, filas.map(f => [
     f.usuario, f.nombre, f.grupo, f.tarea,
     f.resumen.total, f.resumen.hechos, f.resumen.aciertos, f.resumen.porcentaje, f.resumen.refuerzosAnadidos, f.resumen.terminada,
@@ -52,12 +55,13 @@ export function csvDetalle(filas) {
   for (const f of filas) {
     for (const r of f.progreso.respuestas ?? []) {
       const ej = f.progreso.ejercicios[r.n - 1];
-      const solucion = ej?.opciones.find(o => o.correcta)?.tex;
+      const ver = o => (o ? (o.tex != null ? texAPlano(o.tex) : (typeof o.texto === 'string' ? o.texto : o.texto?.es ?? '')) : '');
+      const solucion = ej?.opciones.find(o => o.correcta);
       salida.push([
         f.usuario, f.nombre, f.grupo, f.tarea, r.n, r.tipo, r.refuerzo,
-        ej ? `${ej.texto ?? ''} ${texAPlano(ej.enunciado)}`.trim() : '', ej ? texAPlano(ej.opciones[r.elegida]?.tex ?? '') : '',
-        r.correcta, solucion ? texAPlano(solucion) : '',
-        r.errorId ?? '', r.concepto ? CONCEPTOS[r.concepto]?.nombre ?? r.concepto : '', fecha(r.ts),
+        ej ? `${preguntaDe(ej, 'es')} ${texAPlano(ej.enunciado)}`.trim() : '', ver(ej?.opciones[r.elegida]),
+        r.correcta, ver(solucion),
+        r.errorId ?? '', r.concepto ? CONCEPTOS[r.concepto]?.nombre.es ?? r.concepto : '', fecha(r.ts),
       ]);
     }
   }

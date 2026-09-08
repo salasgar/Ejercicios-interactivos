@@ -1,7 +1,18 @@
 // Renderizado de fórmulas con KaTeX. Si la biblioteca no ha cargado (sin red),
 // se muestra el TeX como texto para no dejar la pantalla vacía.
 
-export function renderTex(el, tex, opciones = {}) {
+import { aplicarNotacion, idioma } from '../i18n/index.js';
+
+// Las pocas palabras que aparecen dentro de las fórmulas (\text{...}) se traducen aquí.
+const PALABRAS_TEX = { resto: 'remainder', mcm: 'lcm', mcd: 'gcd' };
+
+export function traducirTex(tex, idiomaPedido = idioma()) {
+  if (idiomaPedido !== 'en') return tex;
+  return tex.replace(/\\text\{(\s*)(resto|mcm|mcd)(\s*)\}/g, (_, a, palabra, b) => `\\text{${a}${PALABRAS_TEX[palabra]}${b}}`);
+}
+
+export function renderTex(el, texNeutro, opciones = {}) {
+  const tex = traducirTex(aplicarNotacion(texNeutro));
   el.textContent = '';
   if (window.katex) {
     try {
@@ -29,7 +40,7 @@ export function texAPlano(tex) {
     .replace(/\\left\(/g, '(').replace(/\\right\)/g, ')')
     .replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '$1/$2')
     .replace(/\^\{([^}]*)\}/g, '^$1')
-    .replace(/\\cdot/g, '·')
+    .replace(/\\cdot/g, '·').replace(/\\div/g, ':').replace(/\\times/g, '×')
     .replace(/\{,\}/g, ',')
     .replace(/\\,/g, ' ')
     .replace(/[{}]/g, '')

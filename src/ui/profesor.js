@@ -136,10 +136,14 @@ async function pestanaTareas(el, datos) {
         <label>Ejercicios de cada tipo</label>
         ${Object.values(TIPOS).map(t => `
           <div class="fila-tipo">
-            <span>${escapar(t.nombre)}</span>
+            <span>${escapar(t.nombre.es)}</span>
             <input type="number" min="0" max="30" value="0" data-tipo="${t.id}" inputmode="numeric">
           </div>`).join('')}
         <p class="pequeno" style="margin-top:.8rem">Además, por cada fallo se añaden 2 ejercicios de refuerzo del concepto fallado (máximo 6 por concepto).</p>
+        <div class="fila-tipo"><label for="idioma-tarea" style="margin:0">Idioma de los textos</label>
+          <select id="idioma-tarea" style="width:auto;margin:0"><option value="">Lo elige el alumno</option><option value="es">Español</option><option value="en">Inglés</option></select></div>
+        <div class="fila-tipo"><label for="notacion-tarea" style="margin:0">Notación</label>
+          <select id="notacion-tarea" style="width:auto;margin:0"><option value="">La elige el alumno</option><option value="es">Española (2,5 · :)</option><option value="en">Anglosajona (2.5 × ÷)</option></select></div>
         <div id="mensaje-tarea"></div>
         <button type="submit">Crear tarea</button>
       </form>
@@ -147,16 +151,17 @@ async function pestanaTareas(el, datos) {
     <section class="tarjeta">
       <h3>Tareas (${tareas.length})</h3>
       <div class="tabla-envoltorio"><table>
-        <thead><tr><th>Título</th><th>Grupo</th><th>Ejercicios</th><th>Creada</th><th>Estado</th><th></th></tr></thead>
+        <thead><tr><th>Título</th><th>Grupo</th><th>Ejercicios</th><th>Idioma</th><th>Creada</th><th>Estado</th><th></th></tr></thead>
         <tbody>${tareas.map(t => `
           <tr data-id="${t.id}">
             <td>${escapar(t.titulo)}</td><td>${escapar(t.grupo)}</td>
-            <td>${t.ejercicios.map(e => `${TIPOS[e.tipo]?.nombre ?? e.tipo} ×${e.cantidad}`).join(', ')}</td>
+            <td>${t.ejercicios.map(e => `${TIPOS[e.tipo]?.nombre.es ?? e.tipo} ×${e.cantidad}`).join(', ')}</td>
+            <td>${{ es: 'Español', en: 'Inglés' }[t.idioma] ?? 'Libre'} / ${{ es: '2,5', en: '2.5' }[t.notacion] ?? 'libre'}</td>
             <td>${fecha(t.creadaEn)}</td>
             <td>${t.activa === false ? 'Oculta' : '<span class="etiqueta etiqueta--ok">Activa</span>'}</td>
             <td><button type="button" class="discreto" data-accion="alternar">${t.activa === false ? 'Mostrar' : 'Ocultar'}</button>
                 <button type="button" class="discreto" data-accion="borrar">Borrar</button></td>
-          </tr>`).join('') || '<tr><td colspan="6" class="vacio">Ninguna tarea</td></tr>'}
+          </tr>`).join('') || '<tr><td colspan="7" class="vacio">Ninguna tarea</td></tr>'}
         </tbody>
       </table></div>
       <p class="pequeno">Una tarea oculta no aparece a los alumnos, pero sus resultados se conservan. Borrar una tarea no borra los resultados guardados.</p>
@@ -175,7 +180,11 @@ async function pestanaTareas(el, datos) {
     }
     form.querySelector('button[type=submit]').disabled = true;
     try {
-      await datos.crearTarea({ titulo: form.titulo.value.trim(), grupo: form.grupo.value.trim(), ejercicios, activa: true });
+      await datos.crearTarea({
+        titulo: form.titulo.value.trim(), grupo: form.grupo.value.trim(), ejercicios, activa: true,
+        idioma: form.querySelector('#idioma-tarea').value || null,
+        notacion: form.querySelector('#notacion-tarea').value || null,
+      });
       await pestanaTareas(el, datos);
     } catch (e) {
       mensaje.innerHTML = `<div class="aviso aviso--error">${escapar(mensajeDeError(e))}</div>`;

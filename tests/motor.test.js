@@ -16,6 +16,8 @@ function indiceOpcion(ej, filtro) {
 
 test('generarTarea crea la lista con las cantidades pedidas, numerada y reproducible', () => {
   const p = generarTarea(TAREA, 7, 1000);
+  assert.equal(p.idioma, null);
+  assert.equal(generarTarea({ ...TAREA, idioma: 'en', notacion: 'es' }, 7).idioma, 'en');
   assert.equal(p.ejercicios.length, 5);
   assert.equal(p.ejercicios.filter(e => e.tipo === 'jerarquia').length, 3);
   assert.equal(p.ejercicios.filter(e => e.tipo === 'potencias').length, 2);
@@ -54,7 +56,7 @@ test('fallar con concepto añade 2 ejercicios de ese concepto al final', () => {
   assert.equal(p1.respuestas[0].concepto, concepto);
   assert.equal(p1.respuestas[0].correcta, false);
   // Los dos refuerzos no son iguales entre sí.
-  assert.notEqual(extra[0].texto + extra[0].enunciado + extra[0].opciones.map(o => o.tex).join(), extra[1].texto + extra[1].enunciado + extra[1].opciones.map(o => o.tex).join());
+  assert.notEqual(JSON.stringify([extra[0].texto, extra[0].enunciado, extra[0].opciones]), JSON.stringify([extra[1].texto, extra[1].enunciado, extra[1].opciones]));
 });
 
 test('fallar con error genérico no añade refuerzos', () => {
