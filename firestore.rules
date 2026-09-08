@@ -3,6 +3,9 @@ rules_version = '2';
 // Reglas de seguridad de Firestore. Sustituye PROFESOR_UID por el uid de la
 // cuenta del profesor (el mismo que en src/config.js) y pégalas en la consola:
 // Firestore Database → Reglas → Publicar.
+//
+// Los alumnos se identifican por el email de su sesión (el real con Google, o
+// el interno usuario@alumnos.example con contraseña).
 service cloud.firestore {
   match /databases/{db}/documents {
 
@@ -12,23 +15,26 @@ service cloud.firestore {
     function esProfesor() {
       return autenticado() && request.auth.uid == 'PROFESOR_UID';
     }
-    function esElMismo(uid) {
-      return autenticado() && request.auth.uid == uid;
+    function miEmail() {
+      return request.auth.token.email.lower();
+    }
+    function esElMismo(email) {
+      return autenticado() && miEmail() == email;
     }
     function grupoDelAlumno() {
-      return get(/databases/$(db)/documents/alumnos/$(request.auth.uid)).data.grupo;
+      return get(/databases/$(db)/documents/alumnos/$(miEmail())).data.grupo;
     }
 
     // Ficha del alumno: la ve él mismo y el profesor; solo la escribe el profesor.
-    match /alumnos/{uid} {
-      allow read: if esProfesor() || esElMismo(uid);
+    match /alumnos/{email} {
+      allow read: if esProfesor() || esElMismo(email);
       allow write: if esProfesor();
 
       // Progreso de cada tarea: lo escribe el propio alumno.
       match /progreso/{tareaId} {
-        allow read: if esProfesor() || esElMismo(uid);
-        allow write: if esElMismo(uid)
-          && request.resource.data.uid == uid
+        allow read: if esProfesor() || esElMismo(email);
+        allow write: if esElMismo(email)
+          && request.resource.data.alumno == email
           && request.resource.data.tareaId == tareaId;
       }
     }
@@ -38,8 +44,8 @@ service cloud.firestore {
       allow read: if esProfesor();
     }
 
-    // Contraseñas asignadas: solo el profesor.
-    match /credenciales/{uid} {
+    // Contraseñas asignadas a los alumnos sin Google: solo el profesor.
+    match /credenciales/{email} {
       allow read, write: if esProfesor();
     }
 

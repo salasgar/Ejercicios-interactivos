@@ -4,11 +4,11 @@ import { generarTarea, resumen } from '../motor.js';
 import { pantallaTarea, escapar } from './tarea.js';
 import { mensajeDeError } from '../firebase.js';
 
-export async function pantallaAlumno(app, { uid, alumno, datos }) {
+export async function pantallaAlumno(app, { alumnoId, alumno, datos }) {
   app.innerHTML = '<p class="cargando">Cargando tus tareas…</p>';
   let tareas, progresos;
   try {
-    [tareas, progresos] = await Promise.all([datos.listarTareas(alumno.grupo), datos.listarProgresos(uid)]);
+    [tareas, progresos] = await Promise.all([datos.listarTareas(alumno.grupo), datos.listarProgresos(alumnoId)]);
   } catch (e) {
     app.innerHTML = `<div class="aviso aviso--error">No se pudieron cargar las tareas: ${escapar(mensajeDeError(e))}</div>`;
     return;
@@ -45,12 +45,12 @@ export async function pantallaAlumno(app, { uid, alumno, datos }) {
   async function abrir(tarea, progreso) {
     if (!progreso) {
       progreso = generarTarea(tarea);
-      try { await datos.guardarProgreso(uid, progreso); } catch (e) { console.error(e); }
+      try { await datos.guardarProgreso(alumnoId, progreso); } catch (e) { console.error(e); }
     }
     pantallaTarea(app, {
       progreso,
-      guardar: p => datos.guardarProgreso(uid, p),
-      alSalir: () => pantallaAlumno(app, { uid, alumno, datos }),
+      guardar: p => datos.guardarProgreso(alumnoId, p),
+      alSalir: () => pantallaAlumno(app, { alumnoId, alumno, datos }),
     });
   }
 }

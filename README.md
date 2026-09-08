@@ -13,14 +13,15 @@ Pensada para hacerse desde el móvil.
 
 ## Cómo funciona
 
-- **Alumno**: entra con usuario y contraseña, ve las tareas de su grupo y las
-  hace una a una. Cada ejercicio tiene 4 opciones; al contestar ve si ha
-  acertado y, si no, un mensaje que explica el error que ha cometido. Cada
-  fallo con concepto añade **2 ejercicios de refuerzo** de ese concepto al final
-  de la tarea (máximo 6 por concepto). Puede salir y retomar donde lo dejó.
-- **Profesor**: entra con su cuenta y ve el panel con tres pestañas:
-  *Alumnos* (alta por lotes, contraseñas), *Tareas* (crear, ocultar, borrar) y
-  *Resultados* (tabla por tarea y descarga de CSV resumen y detalle, o de todo).
+- **Alumno**: entra con su cuenta de Google del centro (murciaeduca) o, si no
+  la tiene, con un usuario y contraseña que le da el profesor. Ve las tareas de
+  su grupo y las hace una a una. Cada ejercicio tiene 4 opciones; al contestar
+  ve si ha acertado y, si no, un mensaje que explica el error que ha cometido.
+  Cada fallo con concepto añade **2 ejercicios de refuerzo** de ese concepto al
+  final de la tarea (máximo 6 por concepto). Puede salir y retomar donde lo dejó.
+- **Profesor**: entra con su cuenta de Google y ve el panel con tres pestañas:
+  *Alumnos* (alta por lotes), *Tareas* (crear, ocultar, borrar) y *Resultados*
+  (tabla por tarea y descarga de CSV resumen y detalle, o de todo).
 - **Probar sin cuenta**: en la pantalla de entrada; hace una tarea de
   demostración con todos los tipos sin guardar nada.
 
@@ -42,30 +43,39 @@ Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el
 proyecto con tu cuenta de Google; son unos 10 minutos.
 
 1. Entra en https://console.firebase.google.com y **crea un proyecto** (por
-   ejemplo `ejercicios-eso`). Google Analytics no hace falta.
-2. **Authentication → Comenzar → Email/Password → Habilitar** (solo el primer
-   interruptor; el de «vínculo por correo» no). Guardar.
-3. **Authentication → Settings → Dominios autorizados → Añadir dominio**:
+   ejemplo «Ejercicios interactivos»). Google Analytics no hace falta.
+2. **Authentication → Comenzar**. En «Método de acceso» habilita dos
+   proveedores:
+   - **Google** (elige un correo de asistencia del proyecto y guarda).
+   - **Correo electrónico/contraseña** (solo el primer interruptor).
+3. **Authentication → Configuración → Dominios autorizados → Agregar dominio**:
    `salasgar.github.io`.
-4. **Authentication → Users → Añadir usuario**: tu email real y una contraseña
-   buena. Es la cuenta de profesor. Copia su **UID de usuario** (columna de la
-   tabla).
-5. **Firestore Database → Crear base de datos → modo de producción**, región
-   `europe-west` (la que sea de Europa). Cuando esté creada, pestaña
-   **Reglas**: pega el contenido de `firestore.rules` sustituyendo
-   `PROFESOR_UID` por el uid del paso 4, y **Publicar**.
-6. **Configuración del proyecto (rueda dentada) → Tus apps → icono web `</>`**.
-   Nombre cualquiera, sin Hosting. Copia el objeto `firebaseConfig` que muestra.
-7. En este repositorio, edita `src/config.js`:
-   - pega el objeto en `firebaseConfig`;
-   - pon el uid del paso 4 en `PROFESOR_UID`.
-   Haz commit y push: el workflow publica la nueva versión en un par de minutos.
-8. Entra en la aplicación con tu email y contraseña. Verás el panel del
-   profesor. Da de alta un alumno de prueba y una tarea, y pruébala desde el
-   móvil con ese alumno.
+4. **Firestore Database → Crear base de datos → modo de producción**, región
+   de Europa (`eur3` o `europe-west1`).
+5. **Configuración del proyecto (rueda dentada) → Tus apps → icono web `</>`**.
+   Nombre cualquiera, sin Hosting. Copia el objeto `firebaseConfig` que muestra
+   y pégalo en `src/config.js`. Haz commit y push: en un par de minutos la
+   aplicación publicada ya deja entrar.
+6. Entra en la aplicación con **Entrar con Google** usando tu cuenta. Como aún
+   no eres el profesor, la pantalla te muestra tu **uid**: cópialo.
+7. Pon ese uid en `PROFESOR_UID` de `src/config.js`, y en **Firestore Database
+   → Reglas** pega el contenido de `firestore.rules` sustituyendo
+   `PROFESOR_UID` por el mismo uid. **Publicar**. Commit y push.
+8. Vuelve a entrar: verás el panel del profesor. Da de alta un alumno de
+   prueba (tu propio email de murciaeduca sirve) y una tarea, y pruébala desde
+   el móvil.
 
 La `apiKey` es pública por diseño (identifica el proyecto, no da permisos): lo
-que protege los datos son las reglas del paso 5.
+que protege los datos son las reglas del paso 7.
+
+### Si a los alumnos les sale «app bloqueada» al entrar con Google
+
+Google Workspace para Educación bloquea por defecto, para menores, las
+aplicaciones de terceros que el administrador del dominio no haya autorizado.
+Si ocurre, hay dos salidas: pedir al administrador de murciaeduca que autorice
+la aplicación (el identificador OAuth aparece en Google Cloud → APIs y
+servicios → Credenciales del proyecto), o dar de alta a esos alumnos con
+usuario y contraseña (formato «Nombre; Grupo» en la pestaña Alumnos).
 
 ### Alternativa para las reglas: la CLI
 
@@ -79,12 +89,12 @@ npx firebase-tools deploy --only firestore:rules
 
 ## Límites conocidos (y por qué)
 
-- **Contraseñas de los alumnos.** Desde el navegador no se puede cambiar la
-  contraseña de otro usuario: haría falta un servidor (Cloud Functions, que
-  exige plan de pago). Por eso el alumno no puede cambiarla y el profesor guarda
-  la que le asignó en la colección `credenciales`, solo legible por él, para
-  recordársela. Si hiciera falta «resetear» a un alumno, dale de alta con otro
-  usuario (`ana.garcia2`).
+- **Contraseñas de los alumnos sin Google.** Desde el navegador no se puede
+  cambiar la contraseña de otro usuario: haría falta un servidor (Cloud
+  Functions, que exige plan de pago). Por eso el alumno no puede cambiarla y el
+  profesor guarda la que le asignó en la colección `credenciales`, solo legible
+  por él, para recordársela. Si hiciera falta «resetear» a un alumno, dale de
+  alta con otro usuario (`ana.garcia2`).
 - **Un solo profesor.** El uid del profesor está fijo en las reglas y en
   `src/config.js`. Para varios profesores habría que pasar a una lista.
 - **Un solo curso (1º ESO).** El campo `curso` de cada tipo está preparado para
@@ -130,7 +140,10 @@ firestore.rules            reglas de seguridad
 
 | Colección | Contenido | Lee | Escribe |
 |---|---|---|---|
-| `alumnos/{uid}` | usuario, nombre, grupo | el alumno y el profesor | profesor |
-| `credenciales/{uid}` | contraseña asignada | profesor | profesor |
+| `alumnos/{email}` | nombre, grupo, acceso (google/contrasena) | el alumno y el profesor | profesor |
+| `credenciales/{email}` | contraseña asignada (solo alumnos sin Google) | profesor | profesor |
 | `tareas/{id}` | título, grupo, ejercicios, activa | alumnos del grupo y profesor | profesor |
-| `alumnos/{uid}/progreso/{tareaId}` | ejercicios generados, respuestas, refuerzos | el alumno y el profesor | el alumno |
+| `alumnos/{email}/progreso/{tareaId}` | ejercicios generados, respuestas, refuerzos | el alumno y el profesor | el alumno |
+
+El `{email}` es el real si el alumno entra con Google, o `usuario@alumnos.example`
+si entra con contraseña.

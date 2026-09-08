@@ -15,12 +15,19 @@ export const firebaseConfig = null;
 //   appId: '...',
 // };
 
-/** uid de la cuenta del profesor (Authentication → Users en la consola). */
+/**
+ * uid de la cuenta del profesor. Se obtiene entrando una vez en la aplicación
+ * con Google: si el uid no está aquí, la propia aplicación lo muestra en
+ * pantalla para copiarlo (también está en Authentication → Users).
+ */
 export const PROFESOR_UID = '';
 
-/** Dominio ficticio con el que se forman los emails internos de los alumnos. */
+/** Dominio que se sugiere al entrar con Google (cuentas del centro). */
+export const DOMINIO_GOOGLE = 'murciaeduca.es';
+
+/** Dominio ficticio con el que se forman los emails internos de los alumnos con contraseña. */
 export const DOMINIO_ALUMNOS = 'alumnos.example';
 
 export function configurado() {
-  return Boolean(firebaseConfig && firebaseConfig.apiKey && PROFESOR_UID);
+  return Boolean(firebaseConfig && firebaseConfig.apiKey);
 }

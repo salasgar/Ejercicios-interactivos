@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { usuarioDesdeNombre, analizarAltas, generarContrasena, normalizarUsuario } from '../src/altas.js';
+import { usuarioDesdeNombre, analizarAltas, generarContrasena, normalizarUsuario, esEmail } from '../src/altas.js';
 
 test('usuarioDesdeNombre quita tildes y usa nombre.apellido', () => {
   assert.equal(usuarioDesdeNombre('María José Gárcía López'), 'maria.jose');
@@ -23,11 +23,24 @@ Mal
 Pepe; ; abc; 1A`;
   const { alumnos, errores } = analizarAltas(texto, ['luisp'], () => 0);
   assert.equal(alumnos.length, 4);
-  assert.deepEqual(alumnos[0], { nombre: 'Ana García', usuario: 'ana.garcia', contrasena: 'sol-100', grupo: '1A' });
+  assert.deepEqual(alumnos[0], { nombre: 'Ana García', grupo: '1A', usuario: 'ana.garcia', contrasena: 'sol-100' });
   assert.equal(alumnos[1].usuario, 'luisp2');
-  assert.deepEqual(alumnos[2], { nombre: 'Eva Ruiz', usuario: 'evar', contrasena: 'secreta1', grupo: '1B' });
+  assert.deepEqual(alumnos[2], { nombre: 'Eva Ruiz', grupo: '1B', usuario: 'evar', contrasena: 'secreta1' });
   assert.equal(alumnos[3].usuario, 'ana.garcia2');
   assert.equal(errores.length, 2);
   assert.match(errores[0], /Línea 5/);
   assert.match(errores[1], /Línea 6.*6 caracteres/);
+});
+
+test('analizarAltas: con email se da de alta para entrar con Google, sin contraseña', () => {
+  const texto = `Ana García; Ana.Garcia@murciaeduca.es; 1A
+Luis Pérez; luis@murciaeduca.es; abc123; 1A
+Eva Ruiz; eva@murciaeduca.es; 1B`;
+  const { alumnos, errores } = analizarAltas(texto, ['eva@murciaeduca.es']);
+  assert.deepEqual(alumnos, [{ nombre: 'Ana García', grupo: '1A', email: 'ana.garcia@murciaeduca.es' }]);
+  assert.equal(errores.length, 2);
+  assert.match(errores[0], /Línea 2.*Google/);
+  assert.match(errores[1], /Línea 3.*ya está/);
+  assert.ok(esEmail('a.b@c.es'));
+  assert.ok(!esEmail('ana.garcia'));
 });

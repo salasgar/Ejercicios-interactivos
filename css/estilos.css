@@ -181,3 +181,8 @@ td.num, th.num { text-align: right; }
 .mensaje-ok { color: var(--correcto); }
 .pequeno { font-size: .88rem; color: var(--texto-suave); }
 code { background: var(--fondo); padding: .1rem .3rem; border-radius: 4px; }
+
+/* Entrada con Google y desplegable de contraseña */
+.boton-google { display: flex; align-items: center; justify-content: center; gap: .6rem; background: #fff; color: var(--texto); border: 1px solid var(--borde); box-shadow: var(--sombra); }
+.detalles-contrasena summary { cursor: pointer; font-weight: 600; color: var(--primario-oscuro); }
+.detalles-contrasena { padding: .8rem 1.1rem; }

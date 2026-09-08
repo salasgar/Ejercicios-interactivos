@@ -3,7 +3,7 @@
 import { TIPOS } from '../ejercicios/index.js';
 import { resumen } from '../motor.js';
 import { analizarAltas } from '../altas.js';
-import { mensajeDeError } from '../firebase.js';
+import { mensajeDeError, identificadorVisible } from '../firebase.js';
 import { csvResumen, csvDetalle, descargar, fecha } from './csv.js';
 import { escapar } from './tarea.js';
 
@@ -54,10 +54,10 @@ async function pestanaAlumnos(el, datos) {
     <section class="tarjeta">
       <h3>Dar de alta alumnos</h3>
       <p class="pequeno">Una línea por alumno, campos separados por «;»:<br>
-        <code>Nombre Apellidos; Grupo</code> (usuario y contraseña automáticos)<br>
-        <code>Nombre Apellidos; usuario; Grupo</code><br>
-        <code>Nombre Apellidos; usuario; contraseña; Grupo</code></p>
-      <textarea id="altas" placeholder="Ana García López; 1A&#10;Luis Pérez Ruiz; 1A"></textarea>
+        <code>Nombre Apellidos; email@murciaeduca.es; Grupo</code> → entra con Google, sin contraseña<br>
+        <code>Nombre Apellidos; Grupo</code> → usuario y contraseña automáticos<br>
+        <code>Nombre Apellidos; usuario; Grupo</code> o <code>Nombre Apellidos; usuario; contraseña; Grupo</code></p>
+      <textarea id="altas" placeholder="Ana García López; ana.garcia@murciaeduca.es; 1A&#10;Luis Pérez Ruiz; 1A"></textarea>
       <button type="button" id="crear">Crear alumnos</button>
       <div id="resultado-altas"></div>
     </section>
@@ -66,10 +66,10 @@ async function pestanaAlumnos(el, datos) {
       <label for="filtro-grupo">Grupo</label>
       <select id="filtro-grupo"><option value="">Todos</option>${grupos.map(g => `<option>${escapar(g)}</option>`).join('')}</select>
       <div class="tabla-envoltorio"><table>
-        <thead><tr><th>Nombre</th><th>Usuario</th><th>Contraseña</th><th>Grupo</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Acceso</th><th>Contraseña</th><th>Grupo</th><th></th></tr></thead>
         <tbody id="cuerpo-alumnos"></tbody>
       </table></div>
-      <p class="pequeno">Las contraseñas se guardan aquí para que puedas recordárselas a quien la olvide; el alumno no puede cambiarla.</p>
+      <p class="pequeno">Los alumnos con Google entran con su cuenta del centro. A los de usuario y contraseña se les guarda aquí la contraseña para recordársela; no pueden cambiarla.</p>
     </section>`;
 
   const cuerpo = el.querySelector('#cuerpo-alumnos');
@@ -77,8 +77,14 @@ async function pestanaAlumnos(el, datos) {
     const grupo = el.querySelector('#filtro-grupo').value;
     const filas = alumnos.filter(a => !grupo || a.grupo === grupo);
     cuerpo.innerHTML = filas.length
-      ? filas.map(a => `<tr><td>${escapar(a.nombre)}</td><td><code>${escapar(a.usuario)}</code></td><td><code>${escapar(credenciales[a.id] ?? '?')}</code></td><td>${escapar(a.grupo)}</td></tr>`).join('')
-      : '<tr><td colspan="4" class="vacio">Ningún alumno</td></tr>';
+      ? filas.map(a => `<tr data-id="${escapar(a.id)}"><td>${escapar(a.nombre)}</td><td><code>${escapar(identificadorVisible(a.id))}</code></td><td>${a.acceso === 'google' ? '<span class="etiqueta">Google</span>' : `<code>${escapar(credenciales[a.id] ?? '?')}</code>`}</td><td>${escapar(a.grupo)}</td><td><button type="button" class="discreto" data-borrar>Quitar</button></td></tr>`).join('')
+      : '<tr><td colspan="5" class="vacio">Ningún alumno</td></tr>';
+    cuerpo.querySelectorAll('[data-borrar]').forEach(b => b.addEventListener('click', async () => {
+      const id = b.closest('tr').dataset.id;
+      const a = alumnos.find(x => x.id === id);
+      if (!confirm(`¿Quitar a ${a.nombre} de la lista? Sus resultados guardados no se borran.`)) return;
+      try { await datos.borrarAlumno(id); await pestanaAlumnos(el, datos); } catch (e) { alert(mensajeDeError(e)); }
+    }));
   }
   el.querySelector('#filtro-grupo').addEventListener('change', pintarTabla);
   pintarTabla();
@@ -86,7 +92,7 @@ async function pestanaAlumnos(el, datos) {
   el.querySelector('#crear').addEventListener('click', async () => {
     const boton = el.querySelector('#crear');
     const salida = el.querySelector('#resultado-altas');
-    const { alumnos: nuevos, errores } = analizarAltas(el.querySelector('#altas').value, alumnos.map(a => a.usuario));
+    const { alumnos: nuevos, errores } = analizarAltas(el.querySelector('#altas').value, alumnos.map(a => identificadorVisible(a.id)));
     if (errores.length) {
       salida.innerHTML = `<div class="aviso aviso--error">${errores.map(escapar).join('<br>')}</div>`;
       return;
@@ -97,7 +103,9 @@ async function pestanaAlumnos(el, datos) {
     for (const n of nuevos) {
       try {
         await datos.crearAlumno(n);
-        lineas.push(`<li class="mensaje-ok">${escapar(n.nombre)} → usuario <code>${escapar(n.usuario)}</code>, contraseña <code>${escapar(n.contrasena)}</code></li>`);
+        lineas.push(n.email
+          ? `<li class="mensaje-ok">${escapar(n.nombre)} → entra con Google como <code>${escapar(n.email)}</code></li>`
+          : `<li class="mensaje-ok">${escapar(n.nombre)} → usuario <code>${escapar(n.usuario)}</code>, contraseña <code>${escapar(n.contrasena)}</code></li>`);
       } catch (e) {
         lineas.push(`<li style="color:var(--error)">${escapar(n.nombre)}: ${escapar(mensajeDeError(e))}</li>`);
       }
@@ -220,8 +228,8 @@ async function pestanaResultados(el, datos) {
   function filasDe(progresos) {
     // progresos: [{ uid, tareaId, ...progreso }]
     return progresos.map(p => {
-      const a = porUid[p.uid] ?? { usuario: '?', nombre: '?', grupo: '?' };
-      return { usuario: a.usuario, nombre: a.nombre, grupo: a.grupo, tarea: p.titulo ?? porTareaId[p.tareaId]?.titulo ?? p.tareaId, progreso: p, resumen: resumen(p), empezadaEn: p.empezadaEn, terminadaEn: p.terminadaEn };
+      const a = porUid[p.alumno] ?? { id: p.alumno ?? '?', nombre: '?', grupo: '?' };
+      return { usuario: identificadorVisible(a.id), nombre: a.nombre, grupo: a.grupo, tarea: p.titulo ?? porTareaId[p.tareaId]?.titulo ?? p.tareaId, progreso: p, resumen: resumen(p), empezadaEn: p.empezadaEn, terminadaEn: p.terminadaEn };
     });
   }
 
@@ -249,7 +257,7 @@ async function pestanaResultados(el, datos) {
         <button type="button" class="secundario" id="csv-resumen">CSV resumen</button>
         <button type="button" class="secundario" id="csv-detalle">CSV detalle</button>
       </div>`;
-    const conProgreso = filasDe(filas.filter(f => f.progreso).map(f => ({ uid: f.alumno.id, tareaId: id, ...f.progreso })));
+    const conProgreso = filasDe(filas.filter(f => f.progreso).map(f => ({ alumno: f.alumno.id, tareaId: id, ...f.progreso })));
     zona.querySelector('#csv-resumen').addEventListener('click', () => descargar(nombreArchivo(`resumen-${tarea.grupo}-${tarea.titulo}`), csvResumen(conProgreso)));
     zona.querySelector('#csv-detalle').addEventListener('click', () => descargar(nombreArchivo(`detalle-${tarea.grupo}-${tarea.titulo}`), csvDetalle(conProgreso)));
   });

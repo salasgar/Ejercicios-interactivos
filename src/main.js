@@ -1,6 +1,6 @@
 // Arranque: decide qué pantalla mostrar según la configuración y la sesión.
 
-import { configurado } from './config.js';
+import { configurado, PROFESOR_UID } from './config.js';
 import { TIPOS } from './ejercicios/index.js';
 import { generarTarea } from './motor.js';
 import { pantallaEntrada } from './ui/login.js';
@@ -37,29 +37,34 @@ function probarSinCuenta(volver) {
   pantallaTarea(app, { progreso: generarTarea(tarea), guardar: async () => {}, alSalir: volver });
 }
 
-async function arrancar() {
-  if (!configurado()) {
-    const entrada = () => { pintarCabecera(''); pantallaEntrada(app, { sinFirebase: true, probar: () => probarSinCuenta(entrada) }); };
-    entrada();
-    return;
-  }
+function entradaSinFirebase(error = null) {
+  const entrada = () => {
+    pintarCabecera('');
+    pantallaEntrada(app, { sinFirebase: true, error, entrar: async () => {}, entrarConGoogle: async () => {}, probar: () => probarSinCuenta(entrada) });
+  };
+  entrada();
+}
 
-  let fb;
+async function arrancar() {
+  if (!configurado()) return entradaSinFirebase();
+
+  let fb, mensajeDeError, identificadorVisible;
   try {
-    const { iniciarFirebase } = await import('./firebase.js');
-    fb = await iniciarFirebase();
+    const modulo = await import('./firebase.js');
+    ({ mensajeDeError, identificadorVisible } = modulo);
+    fb = await modulo.iniciarFirebase();
   } catch (e) {
     console.error(e);
-    const entrada = () => { pintarCabecera(''); pantallaEntrada(app, { sinFirebase: true, error: `No se pudo iniciar Firebase: ${escapar(e.message)}`, probar: () => probarSinCuenta(entrada) }); };
-    entrada();
-    return;
+    return entradaSinFirebase(`No se pudo iniciar Firebase: ${escapar(e.message)}`);
   }
 
-  const { mensajeDeError } = await import('./firebase.js');
-  const entrar = async (usuario, contrasena) => {
-    try { await fb.entrar(usuario, contrasena); } catch (e) { throw { mensaje: mensajeDeError(e) }; }
+  const traducir = fn => async (...args) => {
+    try { await fn(...args); } catch (e) { throw { mensaje: mensajeDeError(e) }; }
   };
-  const mostrarEntrada = () => { pintarCabecera(''); pantallaEntrada(app, { entrar, probar: () => probarSinCuenta(mostrarEntrada) }); };
+  const mostrarEntrada = () => {
+    pintarCabecera('');
+    pantallaEntrada(app, { entrar: traducir(fb.entrar), entrarConGoogle: traducir(fb.entrarConGoogle), probar: () => probarSinCuenta(mostrarEntrada) });
+  };
 
   fb.observarSesion(async user => {
     if (!user) return mostrarEntrada();
@@ -68,15 +73,20 @@ async function arrancar() {
       pantallaProfesor(app, { datos: fb.datos });
       return;
     }
+    const email = (user.email ?? '').toLowerCase();
     let alumno = null;
-    try { alumno = await fb.datos.leerAlumno(user.uid); } catch (e) { console.error(e); }
+    try { alumno = email ? await fb.datos.leerAlumno(email) : null; } catch (e) { console.error(e); }
     if (!alumno) {
-      pintarCabecera(user.email, fb.salir);
-      app.innerHTML = '<div class="aviso aviso--error">Tu cuenta no está dada de alta como alumno. Díselo a tu profesor.</div>';
+      pintarCabecera(identificadorVisible(email), fb.salir);
+      app.innerHTML = `
+        <div class="tarjeta">
+          <div class="aviso aviso--error">Esta cuenta (<b>${escapar(email)}</b>) no está dada de alta como alumno. Díselo a tu profesor.</div>
+          ${PROFESOR_UID ? '' : `<p class="pequeno">Si eres el profesor: copia este uid en <code>PROFESOR_UID</code> de <code>src/config.js</code> y en <code>firestore.rules</code>:</p><p><code>${escapar(user.uid)}</code></p>`}
+        </div>`;
       return;
     }
     pintarCabecera(alumno.nombre, fb.salir);
-    pantallaAlumno(app, { uid: user.uid, alumno, datos: fb.datos });
+    pantallaAlumno(app, { alumnoId: alumno.id, alumno, datos: fb.datos });
   });
 }
 
