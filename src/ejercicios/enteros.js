@@ -59,7 +59,7 @@ function negativoMenosPositivo(rng) {
   return {
     enunciado: `${neg(a)} - ${b}`,
     correcta: num(-(a + b)),
-    distractores: [num(b - a, E.ambosNegativos), num(a + b, E.signoResultado), num(a - b, E.ambosNegativos)],
+    distractores: [num(b - a, E.ambosNegativos), num(a + b, { ...E.ambosNegativos, id: 'ambos_negativos_signo' }), num(a - b, E.ambosNegativos)],
   };
 }
 

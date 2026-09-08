@@ -50,6 +50,24 @@ for (const [id, tipo] of Object.entries(TIPOS)) {
   });
 }
 
+test('divisibilidad: ningún distractor es también una respuesta válida', () => {
+  const esPrimo = n => n > 1 && [...Array(n).keys()].slice(2).every(d => n % d !== 0);
+  for (let s = 1; s <= 2000; s++) {
+    const ej = TIPOS.divisibilidad.generar(crearRng(s));
+    const valores = ej.opciones.map(o => ({ v: Number(o.tex), ok: o.correcta }));
+    let valido;
+    let m;
+    if ((m = ej.texto.match(/múltiplo de (\d+)/))) valido = v => v % Number(m[1]) === 0;
+    else if ((m = ej.texto.match(/divisor de (\d+)/))) valido = v => Number(m[1]) % v === 0;
+    else if ((m = ej.texto.match(/divisible por (\d+)/))) valido = v => v % Number(m[1]) === 0;
+    else if (/primo/.test(ej.texto)) valido = esPrimo;
+    else assert.fail(`pregunta desconocida: ${ej.texto}`);
+    for (const { v, ok } of valores) {
+      assert.equal(valido(v), ok, `semilla ${s}: «${ej.texto}» opción ${v} ${ok ? 'debería' : 'no debería'} ser válida`);
+    }
+  }
+});
+
 test('construirOpciones descarta repetidos y devuelve null si faltan', () => {
   const rng = crearRng(1);
   const err = { id: 'e', concepto: null, feedback: 'f' };
@@ -71,6 +89,7 @@ test('tex usa coma decimal y texFraccion simplifica el signo', () => {
   assert.equal(texFraccion(-3, 4), '-\\frac{3}{4}');
   assert.equal(texFraccion(3, -4), '-\\frac{3}{4}');
   assert.equal(texFraccion(6, 1), '6');
+  assert.equal(texFraccion(0, 9), '0');
   assert.deepEqual(reducir(6, -8), [-3, 4]);
 });
 

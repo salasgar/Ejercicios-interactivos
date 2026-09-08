@@ -80,7 +80,7 @@ function generarParentesis(rng) {
     distractores: [
       op(a + b * c, E.ignorarParentesis),
       op(a * c + b, E.parentesisParcial),
-      op(a + b + c, { ...E.parentesisParcial, id: 'parentesis_suma' }),
+      op(a + b + c, { ...E.parentesisParcial, id: 'parentesis_suma', feedback: 'Te falta multiplicar: primero se suma lo del paréntesis y después se multiplica el resultado, no se suma todo seguido.' }),
     ],
     genericos: [op((a + b) * c + c)],
   };
@@ -104,7 +104,8 @@ function generarDosProductos(rng) {
 function generarMixta(rng) {
   // a + b·c − d
   const b = rng.entero(2, 9), c = rng.entero(2, 9);
-  const a = rng.entero(1, 15), d = rng.entero(1, Math.min(a + b * c, 20));
+  // d cerca de c para que el distractor a + b·(c − d) sea verosímil y no un negativo enorme.
+  const a = rng.entero(1, 15), d = rng.entero(1, c + 3);
   const correcta = a + b * c - d;
   return {
     enunciado: `${a} + ${b} \\cdot ${c} - ${d}`,

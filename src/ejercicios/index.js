@@ -90,6 +90,7 @@ export function redondear(n, decimales = 8) {
 /** Fracción en TeX, con signo delante y sin denominador cuando es entero. */
 export function texFraccion(num, den) {
   if (den < 0) { num = -num; den = -den; }
+  if (num === 0) return '0';
   if (den === 1) return tex(num);
   const signo = num < 0 ? '-' : '';
   return `${signo}\\frac{${Math.abs(num)}}{${den}}`;

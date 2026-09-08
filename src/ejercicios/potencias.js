@@ -39,6 +39,11 @@ const E = {
     concepto: 'potencias',
     feedback: 'Al dividir potencias de la misma base, los exponentes se restan, no se dividen.',
   },
+  multiplicarExponentesCociente: {
+    id: 'multiplicar_exponentes_cociente',
+    concepto: 'potencias',
+    feedback: 'Al dividir potencias de la misma base, los exponentes se restan, no se multiplican.',
+  },
 };
 
 const num = (v, error) => ({ tex: tex(v), clave: v, error });
@@ -84,7 +89,7 @@ function generarCociente(rng) {
     distractores: [
       pot(base, m + n, E.sumarExponentesCociente),
       pot(1, m - n, { ...E.multiplicarBases, id: 'dividir_bases', feedback: 'Al dividir potencias de la misma base, la base se mantiene: solo cambian los exponentes.' }),
-      m % n === 0 ? pot(base, m / n, E.dividirExponentes) : pot(base, m * n, E.dividirExponentes),
+      m % n === 0 ? pot(base, m / n, E.dividirExponentes) : pot(base, m * n, E.multiplicarExponentesCociente),
     ],
   };
 }

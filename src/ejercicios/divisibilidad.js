@@ -81,17 +81,23 @@ function divisor(rng) {
   const n = rng.elegir([24, 30, 36, 40, 42, 48, 54, 60, 72]);
   const divisores = divisoresPropios(n);
   const correcta = rng.elegir(divisores);
-  let noDivide = rng.entero(2, n - 1);
-  while (n % noDivide === 0) noDivide = rng.entero(2, n - 1);
+  const noDivisor = () => {
+    let x = rng.entero(2, n - 1);
+    while (n % x === 0) x = rng.entero(2, n - 1);
+    return x;
+  };
+  // Vecinos de la correcta solo si de verdad no dividen a n (y nunca el 1, que divide a todo).
+  const vecinos = [correcta + 1, correcta - 1].filter(v => v > 1 && n % v !== 0);
   return {
     texto: `¿Cuál de estos números es divisor de ${n}?`,
     enunciado: '',
     correcta: num(correcta),
     distractores: [
       num(n * rng.entero(2, 3), E.multiploDivisor),
-      num(noDivide, E.noDivide),
-      num(correcta + 1, E.noDivide),
-      num(correcta - 1, E.noDivide),
+      num(noDivisor(), E.noDivide),
+      ...vecinos.map(v => num(v, E.noDivide)),
+      num(noDivisor(), E.noDivide),
+      num(noDivisor(), E.noDivide),
     ],
   };
 }
