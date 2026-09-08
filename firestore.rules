@@ -1,0 +1,52 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore. Sustituye PROFESOR_UID por el uid de la
+// cuenta del profesor (el mismo que en src/config.js) y pégalas en la consola:
+// Firestore Database → Reglas → Publicar.
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function autenticado() {
+      return request.auth != null;
+    }
+    function esProfesor() {
+      return autenticado() && request.auth.uid == 'PROFESOR_UID';
+    }
+    function esElMismo(uid) {
+      return autenticado() && request.auth.uid == uid;
+    }
+    function grupoDelAlumno() {
+      return get(/databases/$(db)/documents/alumnos/$(request.auth.uid)).data.grupo;
+    }
+
+    // Ficha del alumno: la ve él mismo y el profesor; solo la escribe el profesor.
+    match /alumnos/{uid} {
+      allow read: if esProfesor() || esElMismo(uid);
+      allow write: if esProfesor();
+
+      // Progreso de cada tarea: lo escribe el propio alumno.
+      match /progreso/{tareaId} {
+        allow read: if esProfesor() || esElMismo(uid);
+        allow write: if esElMismo(uid)
+          && request.resource.data.uid == uid
+          && request.resource.data.tareaId == tareaId;
+      }
+    }
+
+    // Exportación completa: consulta de grupo de colecciones, solo el profesor.
+    match /{ruta=**}/progreso/{tareaId} {
+      allow read: if esProfesor();
+    }
+
+    // Contraseñas asignadas: solo el profesor.
+    match /credenciales/{uid} {
+      allow read, write: if esProfesor();
+    }
+
+    // Tareas: el profesor las gestiona; el alumno ve las de su grupo.
+    match /tareas/{tareaId} {
+      allow read: if esProfesor() || (autenticado() && resource.data.grupo == grupoDelAlumno());
+      allow write: if esProfesor();
+    }
+  }
+}
