@@ -1,6 +1,6 @@
 # Traspaso — Ejercicios interactivos
 
-Actualizado: 2026-09-09 · Sesiones previas: 1
+Actualizado: 2026-09-09 · Sesiones previas: 2
 
 ## Objetivo
 Aplicación web para que los alumnos de Juan Luis (profesor de Matemáticas de
@@ -12,7 +12,7 @@ las tareas, da de alta a los alumnos y descarga un CSV con el desempeño.
 ## Estado actual
 Hecho y publicado en https://salasgar.github.io/Ejercicios-interactivos/
 (repo público `salasgar/Ejercicios-interactivos`, rama `main`, workflow que
-pasa los tests antes de publicar; último commit `0f0da9c`):
+pasa los tests antes de publicar; último commit `e4af512`):
 
 - Motor, 9 tipos de ejercicio (7 de cálculo de 1º ESO + `lenguaje_ingles` y
   `lenguaje_espanol`), refuerzo (+2 por fallo, tope 6 por concepto), solución
@@ -20,33 +20,27 @@ pasa los tests antes de publicar; último commit `0f0da9c`):
   (texto es/en y notación 2,5/2.5 como ajustes independientes, fijables por
   tarea), preguntas de dos opciones «Correcto / Incorrecto».
 - Panel del profesor (alumnos, tareas, resultados y CSV) y capa Firebase
-  escritos, pero **sin probar de extremo a extremo**: `src/config.js` sigue
-  con `firebaseConfig = null` y `PROFESOR_UID = ''`. Hasta entonces la web
-  solo permite «Probar sin cuenta».
-- 79 tests en verde (`npm test`). Recorrido de 270 ejercicios en Chrome móvil
-  sin errores de consola.
-
-En la consola de Firebase (cuenta de Google de Juan Luis, proyecto «Ejercicios
-interactivos», plan Spark) están hechos: el proyecto, el proveedor
-Correo/contraseña, y el proveedor Google estaba en su último paso (nombre
-público «Math exercises», correo de asistencia) el 2026-09-09.
+  escritos. 79 tests en verde (`npm test`). Recorrido de 270 ejercicios en
+  Chrome móvil sin errores de consola.
+- Firebase completamente configurado: proyecto «ejercicios-interactivos» en
+  la consola (plan Spark), Authentication con Google y correo/contraseña,
+  dominio autorizado `salasgar.github.io`, Firestore creado (edición Standard,
+  región `eur3 europe-west`, base `(default)`). `src/config.js` tiene el
+  `firebaseConfig` real y `PROFESOR_UID` con el uid de Juan Luis
+  (`TaU3nTL3CnU5Uwz0GzmrNDdSbTj2`, obtenido entrando con Google). Las reglas de
+  `firestore.rules` (con ese mismo uid) están pegadas y publicadas en la
+  consola (Firestore → Reglas). **Sin probar todavía de extremo a extremo.**
 
 ## Siguiente paso
-1. Juan Luis completa en la consola de Firebase los pasos 3, 4 y 5 del README
-   (dominio autorizado `salasgar.github.io`, crear Firestore en Europa, crear
-   app web y copiar `firebaseConfig`) y pega aquí el `firebaseConfig`.
-2. La sesión lo pone en `src/config.js`, commit y push; él entra con Google en
-   la web, la pantalla le muestra su uid; la sesión lo pone en `PROFESOR_UID` y
-   en `firestore.rules`; él pega las reglas en la consola (Firestore → Reglas →
-   Publicar); commit y push.
-3. Prueba de extremo a extremo: alta de un alumno con su email de murciaeduca,
-   una tarea, hacerla desde el móvil, descargar los dos CSV. Vigilar si Google
-   Workspace bloquea la app a los menores («app bloqueada»): si pasa, alta con
-   usuario y contraseña o pedir autorización al administrador de murciaeduca.
+Prueba de extremo a extremo: dar de alta un alumno con su email de
+murciaeduca, crear una tarea, hacerla desde el móvil, descargar los dos CSV.
+Vigilar si Google Workspace bloquea la app a los menores («app bloqueada»): si
+pasa, alta con usuario y contraseña o pedir autorización al administrador de
+murciaeduca (ver README, sección «Si a los alumnos les sale "app bloqueada"»).
 
-Banda de modelo para retomar: MEDIO — el trabajo que viene es configuración
-guiada por capturas de pantalla, pegar valores y depurar reglas de Firestore;
-bien acotado, sin decisiones de diseño.
+Banda de modelo para retomar: MEDIO — sigue siendo trabajo guiado paso a paso
+sobre la interfaz (dar de alta, crear tarea, leer capturas de pantalla,
+depurar si algo falla), sin decisiones de diseño.
 
 ## Decisiones tomadas
 | Decisión | Por qué |
