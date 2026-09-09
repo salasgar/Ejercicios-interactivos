@@ -4,16 +4,14 @@
 // identifica el proyecto, no da permisos. Lo que protege los datos son las
 // reglas de `firestore.rules`.
 
-export const firebaseConfig = null;
-// Ejemplo de lo que hay que pegar (lo da la consola de Firebase):
-// export const firebaseConfig = {
-//   apiKey: '...',
-//   authDomain: 'xxx.firebaseapp.com',
-//   projectId: 'xxx',
-//   storageBucket: 'xxx.appspot.com',
-//   messagingSenderId: '...',
-//   appId: '...',
-// };
+export const firebaseConfig = {
+  apiKey: 'AIzaSyC2q-wDyqD4qo1pFtTodyxR1OE8F6Mbajw',
+  authDomain: 'ejercicios-interactivos.firebaseapp.com',
+  projectId: 'ejercicios-interactivos',
+  storageBucket: 'ejercicios-interactivos.firebasestorage.app',
+  messagingSenderId: '596939543738',
+  appId: '1:596939543738:web:b8ca3ace7e49e91c7a5e83',
+};
 
 /**
  * uid de la cuenta del profesor. Se obtiene entrando una vez en la aplicación
