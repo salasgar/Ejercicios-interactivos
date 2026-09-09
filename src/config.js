@@ -18,7 +18,7 @@ export const firebaseConfig = {
  * con Google: si el uid no está aquí, la propia aplicación lo muestra en
  * pantalla para copiarlo (también está en Authentication → Users).
  */
-export const PROFESOR_UID = '';
+export const PROFESOR_UID = 'TaU3nTL3CnU5Uwz0GzmrNDdSbTj2';
 
 /** Dominio que se sugiere al entrar con Google (cuentas del centro). */
 export const DOMINIO_GOOGLE = 'murciaeduca.es';
