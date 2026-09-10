@@ -38,6 +38,8 @@ import fraccionesEquivalentes from './fracciones_equivalentes.js';
 import sumaFracciones from './suma_fracciones.js';
 import productoDivisionFracciones from './producto_division_fracciones.js';
 import decimales from './decimales.js';
+import expresionesAlgebraicas from './expresiones_algebraicas.js';
+import ecuacionesPrimerGrado from './ecuaciones_primer_grado.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
 
@@ -95,6 +97,8 @@ export const CONCEPTOS = {
   suma_fracciones: { nombre: { es: 'Suma y resta de fracciones', en: 'Adding and subtracting fractions' }, tipo: 'suma_fracciones' },
   producto_division_fracciones: { nombre: { es: 'Multiplicación y división de fracciones', en: 'Multiplying and dividing fractions' }, tipo: 'producto_division_fracciones' },
   decimales: { nombre: { es: 'Números decimales', en: 'Decimals' }, tipo: 'decimales' },
+  expresiones_algebraicas: { nombre: { es: 'Expresiones algebraicas', en: 'Algebraic expressions' }, tipo: 'expresiones_algebraicas' },
+  ecuaciones_primer_grado: { nombre: { es: 'Ecuaciones de primer grado', en: 'First-degree equations' }, tipo: 'ecuaciones_primer_grado' },
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
 };
@@ -225,7 +229,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, lenguajeIngles, lenguajeEspanol]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, lenguajeIngles, lenguajeEspanol]
     .map(t => [t.id, t]),
 );
 

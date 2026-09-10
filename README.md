@@ -49,6 +49,8 @@ lo que falta está en `traspaso-ejercicios-interactivos.md`.
 | `suma_fracciones` | Suma y resta de fracciones | UD4 |
 | `producto_division_fracciones` | Multiplicación y división de fracciones | UD4 |
 | `decimales` | Suma, resta, producto, división y ×/÷ 10, 100, 1000 | UD5 Números decimales |
+| `expresiones_algebraicas` | Valor numérico, reducir términos semejantes y traducir enunciados | UD6 Álgebra |
+| `ecuaciones_primer_grado` | Ecuaciones sencillas (con paréntesis) de una incógnita | UD6 |
 | `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés | (programa bilingüe, no es una UD) |
 | `lenguaje_espanol` | Lo mismo en español | (programa bilingüe, no es una UD) |
 

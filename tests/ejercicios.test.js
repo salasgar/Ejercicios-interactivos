@@ -98,7 +98,7 @@ for (const [id, tipo] of Object.entries(TIPOS)) {
 
 // Tipos de cálculo: deben llevar solución paso a paso y, cada distractor con
 // concepto, los pasos que llevan a él. Los pasos acaban en el valor de la opción.
-const CON_PASOS = ['jerarquia', 'potencias', 'raices', 'enteros', 'divisibilidad', 'fracciones_equivalentes', 'suma_fracciones', 'producto_division_fracciones', 'decimales'];
+const CON_PASOS = ['jerarquia', 'potencias', 'raices', 'enteros', 'divisibilidad', 'fracciones_equivalentes', 'suma_fracciones', 'producto_division_fracciones', 'decimales', 'expresiones_algebraicas', 'ecuaciones_primer_grado'];
 const sinEspacios = x => String(x).replace(/\s+/g, '');
 const acabaEn = (tex, valor) => sinEspacios(tex).endsWith('=' + sinEspacios(valor));
 
