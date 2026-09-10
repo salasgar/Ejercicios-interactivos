@@ -40,6 +40,8 @@ import productoDivisionFracciones from './producto_division_fracciones.js';
 import decimales from './decimales.js';
 import expresionesAlgebraicas from './expresiones_algebraicas.js';
 import ecuacionesPrimerGrado from './ecuaciones_primer_grado.js';
+import proporcionalidad from './proporcionalidad.js';
+import porcentajes from './porcentajes.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
 
@@ -99,6 +101,8 @@ export const CONCEPTOS = {
   decimales: { nombre: { es: 'Números decimales', en: 'Decimals' }, tipo: 'decimales' },
   expresiones_algebraicas: { nombre: { es: 'Expresiones algebraicas', en: 'Algebraic expressions' }, tipo: 'expresiones_algebraicas' },
   ecuaciones_primer_grado: { nombre: { es: 'Ecuaciones de primer grado', en: 'First-degree equations' }, tipo: 'ecuaciones_primer_grado' },
+  proporcionalidad: { nombre: { es: 'Proporcionalidad', en: 'Proportionality' }, tipo: 'proporcionalidad' },
+  porcentajes: { nombre: { es: 'Porcentajes', en: 'Percentages' }, tipo: 'porcentajes' },
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
 };
@@ -229,7 +233,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, lenguajeIngles, lenguajeEspanol]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, lenguajeIngles, lenguajeEspanol]
     .map(t => [t.id, t]),
 );
 

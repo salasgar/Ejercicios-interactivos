@@ -112,12 +112,12 @@ function dosOperaciones(rng) {
     ],
     distractores: [
       num(c - b, E('olvida_dividir_al_final'), [
-        mal(`${a}x = ${T(c)} ${signo(-b)} ${abs(b)} = ${T(c - b)}`),
+        paso(`${a}x = ${T(c)} ${signo(-b)} ${abs(b)} = ${T(c - b)}`),
         mal(`x = ${T(c - b)}`),
       ]),
       num(x + 2 * bm, E('no_cambia_signo_al_pasar'), [
         mal(`${a}x = ${T(c)} ${signo(b)} ${abs(b)} = ${T(c + b)}`),
-        mal(`x = ${T(c + b)} \\div ${a} = ${T(x + 2 * bm)}`),
+        paso(`x = ${T(c + b)} \\div ${a} = ${T(x + 2 * bm)}`),
       ]),
       num(-x, E('signo_de_x'), [
         mal(`x = ${T(-x)}`),
@@ -145,11 +145,11 @@ function conParentesis(rng) {
     distractores: [
       num(x + bm * (a - 1), E('no_distribuye'), [
         mal(`${a}x ${signo(b)} ${abs(b)} = ${T(c)}`),
-        mal(`${a}x = ${T(c)} ${signo(-b)} ${abs(b)} = ${T(c - b)}`),
-        mal(`x = ${T(c - b)} \\div ${a} = ${T(x + bm * (a - 1))}`),
+        paso(`${a}x = ${T(c)} ${signo(-b)} ${abs(b)} = ${T(c - b)}`),
+        paso(`x = ${T(c - b)} \\div ${a} = ${T(x + bm * (a - 1))}`),
       ]),
       num(x + b, E('olvida_restar_b'), [
-        mal(`x ${signo(b)} ${abs(b)} = ${T(c / a)}`),
+        paso(`x ${signo(b)} ${abs(b)} = ${T(c / a)}`),
         mal(`x = ${T(c / a)} = ${T(x + b)}`),
       ]),
       num(-x, E('signo_de_x'), [
