@@ -31,10 +31,12 @@
 
 import jerarquia from './jerarquia.js';
 import potencias from './potencias.js';
+import raices from './raices.js';
 import enteros from './enteros.js';
 import divisibilidad from './divisibilidad.js';
 import fraccionesEquivalentes from './fracciones_equivalentes.js';
 import sumaFracciones from './suma_fracciones.js';
+import productoDivisionFracciones from './producto_division_fracciones.js';
 import decimales from './decimales.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
@@ -86,10 +88,12 @@ export function crearRng(semilla = Date.now()) {
 export const CONCEPTOS = {
   jerarquia: { nombre: { es: 'Jerarquía de las operaciones', en: 'Order of operations' }, tipo: 'jerarquia' },
   potencias: { nombre: { es: 'Potencias', en: 'Powers' }, tipo: 'potencias' },
+  raices: { nombre: { es: 'Raíces cuadradas', en: 'Square roots' }, tipo: 'raices' },
   enteros: { nombre: { es: 'Números enteros', en: 'Integers' }, tipo: 'enteros' },
   divisibilidad: { nombre: { es: 'Múltiplos, divisores y primos', en: 'Multiples, divisors and primes' }, tipo: 'divisibilidad' },
   fracciones_equivalentes: { nombre: { es: 'Fracciones equivalentes', en: 'Equivalent fractions' }, tipo: 'fracciones_equivalentes' },
   suma_fracciones: { nombre: { es: 'Suma y resta de fracciones', en: 'Adding and subtracting fractions' }, tipo: 'suma_fracciones' },
+  producto_division_fracciones: { nombre: { es: 'Multiplicación y división de fracciones', en: 'Multiplying and dividing fractions' }, tipo: 'producto_division_fracciones' },
   decimales: { nombre: { es: 'Números decimales', en: 'Decimals' }, tipo: 'decimales' },
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
@@ -221,7 +225,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, decimales, lenguajeIngles, lenguajeEspanol]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, lenguajeIngles, lenguajeEspanol]
     .map(t => [t.id, t]),
 );
 

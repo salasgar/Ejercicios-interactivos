@@ -1,4 +1,5 @@
-// Números decimales: suma, resta, producto y multiplicar o dividir por 10, 100, 1000.
+// Números decimales: suma, resta, producto, división y multiplicar o dividir
+// por 10, 100, 1000.
 
 import { construirOpciones, conReintentos, erroresDe, tex, redondear } from './index.js';
 
@@ -17,6 +18,18 @@ export const errores = {
     es: 'Multiplicar por 10, 100, 1000 mueve la coma a la derecha; dividir, a la izquierda.', en: 'Multiplying by 10, 100 or 1000 moves the decimal point to the right; dividing moves it to the left.' },
   contar_posiciones: { concepto: 'decimales',
     es: 'La coma se mueve tantas posiciones como ceros tiene el 10, 100 o 1000.', en: 'The decimal point moves as many places as there are zeros in 10, 100 or 1000.' },
+  division_sin_coma: { concepto: 'decimales',
+    es: 'Te has olvidado de colocar la coma en el cociente: hay que ponerla justo cuando bajas la primera cifra decimal del dividendo.', en: 'You forgot to place the decimal point in the quotient: it goes right when you bring down the first decimal digit of the dividend.' },
+  division_coma_derecha: { concepto: 'decimales',
+    es: 'Has puesto la coma una posición más a la derecha de la que toca.', en: 'You placed the decimal point one position too far to the right.' },
+  division_coma_izquierda: { concepto: 'decimales',
+    es: 'Has puesto la coma una posición más a la izquierda de la que toca.', en: 'You placed the decimal point one position too far to the left.' },
+  division_escala_solo_divisor: { concepto: 'decimales',
+    es: 'Para quitar la coma del divisor hay que multiplicar también el dividendo por el mismo número, no solo el divisor.', en: 'To clear the decimal point from the divisor, you must also multiply the dividend by the same number, not just the divisor.' },
+  division_escala_solo_dividendo: { concepto: 'decimales',
+    es: 'Has multiplicado por 10 el dividendo pero no el divisor: hay que multiplicar los dos por el mismo número.', en: 'You multiplied the dividend by 10 but not the divisor: you must multiply both by the same number.' },
+  multiplica_en_vez_de_dividir: { concepto: 'decimales',
+    es: 'Es una división, no un producto.', en: 'It is a division, not a product.' },
 };
 const E = erroresDe(errores);
 
@@ -26,6 +39,9 @@ export const notas = {
   decimales_producto: { es: 'Tantas cifras decimales como los dos factores juntos.', en: 'As many decimal places as both factors together.' },
   mover_coma_derecha: { es: 'Multiplica: la coma se mueve a la derecha.', en: 'Multiply: the decimal point moves to the right.' },
   mover_coma_izquierda: { es: 'Divide: la coma se mueve a la izquierda.', en: 'Divide: the decimal point moves to the left.' },
+  coma_en_cociente: { es: 'La coma del cociente se coloca al bajar la primera cifra decimal del dividendo.', en: 'The decimal point in the quotient goes where you bring down the first decimal digit of the dividend.' },
+  quitar_coma_divisor: { es: 'Multiplicamos dividendo y divisor por 10 para que el divisor sea entero: el cociente no cambia.', en: 'We multiply both the dividend and the divisor by 10 so the divisor becomes a whole number: the quotient does not change.' },
+  dividir_enteros: { es: 'Ahora dividimos como si fueran números enteros.', en: 'Now we divide as if they were whole numbers.' },
 };
 
 const num = (v, error, pasos) => ({ tex: tex(v), clave: redondear(v), error, pasos });
@@ -169,7 +185,68 @@ function porPotenciaDeDiez(rng) {
   };
 }
 
-const FORMAS = [suma, resta, producto, porPotenciaDeDiez, porPotenciaDeDiez];
+function divisionDivisorEntero(rng) {
+  const b = rng.entero(2, 9);
+  const da = rng.entero(1, 2);
+  const factor = 10 ** da;
+  const q = r(rng.entero(0, 9) + rng.entero(1, 9) / factor);
+  const a = r(q * b);
+  const digitosDividendo = Math.round(a * factor);
+  const digitosCociente = Math.round(q * factor);
+  const enunciado = `${T(a)} \\div ${b}`;
+  return {
+    enunciado,
+    correcta: num(q),
+    solucion: [
+      paso(`${enunciado} = ${T(q)}`, 'coma_en_cociente', `${digitosDividendo} \\div ${b} = ${digitosCociente}`),
+    ],
+    distractores: [
+      num(digitosCociente, E('division_sin_coma'), [
+        mal(`${digitosDividendo} \\div ${b} = ${digitosCociente}`),
+      ]),
+      num(r(q * 10), E('division_coma_derecha'), [
+        mal(`${enunciado} = ${T(r(q * 10))}`),
+      ]),
+      num(r(q / 10), E('division_coma_izquierda'), [
+        mal(`${enunciado} = ${T(r(q / 10))}`),
+      ]),
+    ],
+  };
+}
+
+function divisionDivisorDecimal(rng) {
+  const b = r(rng.entero(1, 9) / 10);
+  const c = rng.entero(2, 12);
+  const a = r(c * b);
+  const b10 = Math.round(b * 10);
+  const enunciado = `${T(a)} \\div ${T(b)}`;
+  return {
+    enunciado,
+    correcta: num(c),
+    solucion: [
+      paso(`${enunciado} = ${T(r(a * 10))} \\div ${b10}`, 'quitar_coma_divisor'),
+      paso(`${T(r(a * 10))} \\div ${b10} = ${c}`, 'dividir_enteros'),
+    ],
+    distractores: [
+      num(r(c / 10), E('division_escala_solo_divisor'), [
+        mal(`${enunciado} = ${T(a)} \\div ${b10} = ${T(r(c / 10))}`),
+      ]),
+      num(r(c * 10), E('division_escala_solo_dividendo'), [
+        mal(`${enunciado} = ${T(r(a * 10))} \\div ${T(b)} = ${T(r(c * 10))}`),
+      ]),
+      num(r(a * b), E('multiplica_en_vez_de_dividir'), [
+        mal(`${T(a)} \\cdot ${T(b)} = ${T(r(a * b))}`),
+      ]),
+    ],
+    genericos: [num(c + 1), num(Math.max(1, c - 1))],
+  };
+}
+
+function division(rng) {
+  return rng.moneda() ? divisionDivisorEntero(rng) : divisionDivisorDecimal(rng);
+}
+
+const FORMAS = [suma, resta, producto, division, division, porPotenciaDeDiez, porPotenciaDeDiez];
 
 export default {
   id: 'decimales',

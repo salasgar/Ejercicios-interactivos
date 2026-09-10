@@ -3,3 +3,4 @@ node_modules/
 .claude/sesiones/
 .firebase/
 firebase-debug.log
+*.pdf

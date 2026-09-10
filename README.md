@@ -32,19 +32,25 @@ Pensada para hacerse desde el móvil.
   se hace esa tarea el selector correspondiente aparece bloqueado. El panel del
   profesor y los CSV están solo en español.
 
-### Tipos de ejercicio (1º ESO)
+### Tipos de ejercicio
 
-| id | Tipo |
-|---|---|
-| `jerarquia` | Jerarquía de las operaciones |
-| `potencias` | Potencias (cálculo y propiedades) |
-| `enteros` | Números enteros (signos y productos) |
-| `divisibilidad` | Múltiplos, divisores, criterios y primos |
-| `fracciones_equivalentes` | Fracciones equivalentes y simplificar |
-| `suma_fracciones` | Suma y resta de fracciones |
-| `decimales` | Suma, resta, producto y ×/÷ 10, 100, 1000 |
-| `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés |
-| `lenguaje_espanol` | Lo mismo en español |
+Cubren la distribución de unidades didácticas del departamento de Matemáticas
+(campo `curso` de cada tipo: 1 = 1º ESO). Se van ampliando por evaluaciones;
+lo que falta está en `traspaso-ejercicios-interactivos.md`.
+
+| id | Tipo | Unidad didáctica |
+|---|---|---|
+| `jerarquia` | Jerarquía de las operaciones | UD1 Números naturales, potencias y raíces |
+| `potencias` | Potencias (cálculo y propiedades) | UD1 |
+| `raices` | Raíces cuadradas (exactas y aproximación) | UD1 |
+| `enteros` | Números enteros (signos y productos) | UD3 Números enteros |
+| `divisibilidad` | Múltiplos, divisores, criterios y primos | UD2 Divisibilidad |
+| `fracciones_equivalentes` | Fracciones equivalentes y simplificar | UD4 Fracciones |
+| `suma_fracciones` | Suma y resta de fracciones | UD4 |
+| `producto_division_fracciones` | Multiplicación y división de fracciones | UD4 |
+| `decimales` | Suma, resta, producto, división y ×/÷ 10, 100, 1000 | UD5 Números decimales |
+| `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés | (programa bilingüe, no es una UD) |
+| `lenguaje_espanol` | Lo mismo en español | (programa bilingüe, no es una UD) |
 
 ## Puesta en marcha de Firebase (una sola vez)
 
