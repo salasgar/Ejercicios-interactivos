@@ -53,6 +53,10 @@ lo que falta está en `traspaso-ejercicios-interactivos.md`.
 | `ecuaciones_primer_grado` | Ecuaciones sencillas (con paréntesis) de una incógnita | UD6 |
 | `proporcionalidad` | Regla de tres directa e inversa | UD7 Magnitudes, proporcionalidad, porcentajes y matemática financiera |
 | `porcentajes` | Cálculo de porcentajes, aumentos/descuentos e interés simple | UD7 |
+| `angulos` | Ángulos complementarios, suplementarios y clasificación | UD8 Geometría |
+| `poligonos_triangulos` | Clasificar triángulos (lados, ángulos) y polígonos por su número de lados | UD8 |
+| `perimetros_areas` | Perímetros y áreas de cuadrado, rectángulo, triángulo y círculo | UD8 |
+| `teorema_pitagoras` | Hallar la hipotenusa o un cateto de un triángulo rectángulo | UD8 (también en 2º ESO) |
 | `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés | (programa bilingüe, no es una UD) |
 | `lenguaje_espanol` | Lo mismo en español | (programa bilingüe, no es una UD) |
 

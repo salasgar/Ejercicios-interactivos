@@ -16,19 +16,15 @@ Publicado en https://salasgar.github.io/Ejercicios-interactivos/ (repo público
 `salasgar/Ejercicios-interactivos`, rama `main`, workflow que pasa los tests
 antes de publicar).
 
-**Batería de ejercicios — fases 1, 2 y 3 de la ampliación, terminadas, 111
-tests en verde (`npm test`):** 15 tipos de ejercicio (13 de cálculo de 1º
-ESO + `lenguaje_ingles` y `lenguaje_espanol`), motor con refuerzo (+2 por
+**Batería de ejercicios — fases 1-4 de la ampliación, terminadas, 127 tests
+en verde (`npm test`):** 19 tipos de ejercicio (17 de cálculo/geometría de
+1º ESO + `lenguaje_ingles` y `lenguaje_espanol`), motor con refuerzo (+2 por
 fallo, tope 6 por concepto), solución paso a paso y pasos del alumno con el
 error marcado, interfaz bilingüe (texto es/en y notación 2,5/2.5 como
 ajustes independientes, fijables por tarea), preguntas de dos opciones
-«Correcto / Incorrecto». Con las fases 1-3 (`raices`,
-`producto_division_fracciones`, división en `decimales`,
-`expresiones_algebraicas`, `ecuaciones_primer_grado`, `proporcionalidad`,
-`porcentajes`), **1º ESO tiene completas la 1ª evaluación (UD1, UD2, UD3), la
-2ª evaluación (UD4, UD5, UD6) y la UD7 de la 3ª evaluación. Falta solo UD8
-Geometría para cerrar 1º ESO, y toda 2º ESO.** Ver la hoja de ruta completa
-más abajo.
+«Correcto / Incorrecto». **1º ESO está completo: las 8 unidades didácticas
+de la programación real (UD1-UD8, las 3 evaluaciones) tienen ya su tipo de
+ejercicio.** Falta toda 2º ESO. Ver la hoja de ruta completa más abajo.
 
 **Firebase, configurado pero sin probar de extremo a extremo** (sin cambios
 desde la sesión anterior): proyecto «ejercicios-interactivos» en la consola
@@ -41,17 +37,27 @@ mismo uid) están pegadas y publicadas en la consola. Esto es un hilo
 independiente de la ampliación de ejercicios: no se ha tocado en esta sesión.
 
 ## Siguiente paso
-Seguir la hoja de ruta por la **fase 4**: UD8 Geometría de 1º ESO (3ª
-evaluación, 25 sesiones lectivas, la unidad más grande del curso). Antes de
-escribir código, decidir con Juan Luis cuántos tipos hacen falta y qué
-cubre cada uno (candidatos: ángulos y clasificación de polígonos/triángulos;
-perímetros y áreas de figuras planas incluido el círculo) — a diferencia de
-las fases 1-3, aquí no hay una subdivisión obvia de la UD en 1-2 tipos, así
-que conviene preguntar en vez de asumir. Cierra 1º ESO por completo. Seguir
-el mismo patrón que los tipos ya hechos (ver «Archivos»); añadir los ids
-nuevos a `TIPOS`/`CONCEPTOS` en `src/ejercicios/index.js` y, si llevan
-solución paso a paso, a `CON_PASOS` en `tests/ejercicios.test.js`; `npm test`
-debe seguir en verde antes de dar la fase por terminada.
+1º ESO ya está completo: empezar 2º ESO por la **fase 5**, 1ª evaluación
+(`2eso_ud-y-temporalizacion_25-26.pdf`): UD1 Números enteros/divisibilidad/
+potencias y raíces (repaso de 1º ESO — no hace falta nada nuevo, esos tipos
+ya sirven para 2º; si Juan Luis quiere profundizar en exponente negativo o
+cero, ampliar `potencias.js` con formas nuevas, no crear un tipo nuevo); UD2
+Números decimales y fracciones (tipo nuevo `operaciones_racionales`:
+operaciones combinadas con fracciones y decimales, conversión entre ellos);
+UD3 Proporcionalidad y porcentajes más avanzado (ampliar
+`proporcionalidad.js`/`porcentajes.js` con formas de 2º, o un tipo nuevo
+`porcentajes_encadenados` para aumentos/descuentos sucesivos e interés
+compuesto sencillo — decidir con Juan Luis qué prefiere, como se hizo con la
+geometría de la fase 4). `teorema_pitagoras` ya está hecho desde la fase 4 y
+sirve tal cual para la UD1 de 2º ESO (el campo `curso` es solo informativo,
+no filtra nada: ver la decisión sobre `curso` más abajo). Seguir el mismo
+patrón que los tipos ya hechos (ver «Archivos»); añadir los ids nuevos a
+`TIPOS`/`CONCEPTOS` en `src/ejercicios/index.js` y, si llevan solución paso a
+paso con respuesta numérica, a `CON_PASOS` en `tests/ejercicios.test.js`
+(los de respuesta en palabras o Correcto/Incorrecto, como `angulos.js` y
+`poligonos_triangulos.js`, no van en `CON_PASOS`: ver la decisión sobre
+`correcta.tex` más abajo). `npm test` debe seguir en verde antes de dar la
+fase por terminada.
 
 Aparte, sigue pendiente de antes (sin relación con la ampliación): la prueba
 de extremo a extremo de Firebase — dar de alta un alumno con su email de
@@ -80,10 +86,15 @@ checkpoint: se para con los tests en verde antes de seguir con la siguiente.
   inversa, con enunciado de problema, sin fórmula en `enunciado`),
   `porcentajes` (calcular un %, aumento/descuento, interés simple). Hecha el
   2026-09-10.
-- Fase 4 — UD8 Geometría (3ª evaluación, 25 sesiones, la unidad más grande):
-  pendiente decidir con Juan Luis cuántos tipos hacen falta (candidatos:
-  ángulos y clasificación de polígonos/triángulos; perímetros y áreas de
-  figuras planas incluido el círculo). Cierra 1º ESO.
+- ~~Fase 4~~ — UD8 Geometría (3ª evaluación, 25 sesiones, la unidad más
+  grande): preguntado a Juan Luis con AskUserQuestion qué bloques quería (los
+  4 propuestos, los marcó todos) — `angulos` (complementarios, suplementarios,
+  clasificar agudo/recto/obtuso/llano), `poligonos_triangulos` (clasificar
+  triángulos por lados y por ángulos, y polígonos de 3 a 8 lados por su
+  nombre), `perimetros_areas` (cuadrado, rectángulo, triángulo, círculo con
+  π ≈ 3,14), `teorema_pitagoras` (hipotenusa o cateto, con ternas
+  pitagóricas escaladas para que la raíz salga exacta). Hecha el 2026-09-10;
+  cierra 1º ESO por completo (las 8 UD de la programación real).
 
 **2º ESO** (`2eso_ud-y-temporalizacion_25-26.pdf`, mismo departamento):
 - Fase 5 — 1ª evaluación: UD1 Números enteros/divisibilidad/potencias y
@@ -101,10 +112,12 @@ checkpoint: se para con los tests en verde antes de seguir con la siguiente.
   ecuaciones (`sistemas_ecuaciones`); UD6 Estadística (`estadistica`:
   medidas de centralización, quizá dispersión y lectura de tablas/gráficos).
 - Fase 7 — 3ª evaluación: UD7 Funciones (`funciones_lineales`: tablas,
-  pendiente, ordenada, lectura de gráficas); UD8 Geometría plana
-  (`teorema_pitagoras`, más lo que salga de la fase 4 aplicado a 2º); UD9
-  Cuerpos geométricos. Volúmenes (`cuerpos_geometricos`: áreas y volúmenes de
-  prismas y cilindros). Cierra 2º ESO.
+  pendiente, ordenada, lectura de gráficas); UD8 Geometría plana (ya cubierta
+  por `teorema_pitagoras`, hecho en la fase 4 — comprobar con Juan Luis si
+  hace falta algo más de esta UD para 2º, o basta con reutilizar los tipos de
+  geometría de 1º más `teorema_pitagoras`); UD9 Cuerpos geométricos.
+  Volúmenes (`cuerpos_geometricos`: áreas y volúmenes de prismas y
+  cilindros). Cierra 2º ESO.
 
 Ni «estadística/probabilidad» ni «lenguaje matemático» son UD del
 departamento en 1º ESO: `lenguaje_ingles`/`lenguaje_espanol` son un añadido
@@ -122,6 +135,8 @@ aclara en la tabla de tipos).
 | Una expresión algebraica «coef·x + constante» como opción se representa con el helper `expr(coef, constante, ...)` de `expresiones_algebraicas.js` (`tex` vía `texExpr`, `clave` = `"coef\|constante"`) | Necesario porque `construirOpciones` compara opciones por `clave`, y dos expresiones son la misma solo si coinciden coeficiente y término independiente, no por el texto exacto; reutilizar este helper en `polinomios` (fase 6) en vez de inventar otro |
 | En `ecuaciones_primer_grado`, cuando hace falta que una división intermedia salga exacta (fases con paréntesis o dos operaciones), el término independiente se construye como múltiplo del coeficiente (`b = a * bm`) en vez de un número cualquiera | Evita distractores con decimales feos; los mismos tres o cuatro distractores (olvidar el paso, no cambiar el signo, no distribuir) quedan siempre como enteros exactos |
 | En los `pasos` de un distractor con varias líneas, solo la línea donde aparece el error real va con `mal()`; las líneas anteriores y posteriores que son aritmética correcta (aunque partan de una premisa equivocada) van con `paso()` | Es el criterio que ya seguía `jerarquia.js` (confirmado releyendo `generarDosProductos`) y el que espera la interfaz para resaltar el paso erróneo; en la fase 2 marqué por error varias líneas correctas como `mal()` en `ecuaciones_primer_grado.js` y hubo que corregirlo — revisar esto en cada tipo nuevo con más de un paso por distractor |
+| Cuando una clasificación solo tiene 3 categorías posibles (p. ej. triángulo equilátero/isósceles/escaleno), el ejercicio se plantea como afirmación Correcto/Incorrecto (`opcionesCorrectoIncorrecto`, como en `lenguaje_ingles.js`), no como opción múltiple de 4 | `construirOpciones` necesita 3 distractores distintos de la correcta; con solo 3 categorías en total nunca se pueden sacar 3 distractores (como mucho 2), así que esa rama devolvía `null` siempre y, tras reintentar 60 veces, el generador acababa cayendo casi siempre en la única forma que sí funcionaba — lo descubrí con un guion suelto que contaba cuántas veces salía cada `texto.clave` en 300 semillas, no solo con `npm test` |
+| Al añadir un tipo nuevo con varias «formas» de distinta frecuencia, comprobar la variedad real (`node -e` contando `texto.clave` o el valor generado en 300 semillas) si el test de «poca variedad» falla, en vez de solo ampliar rangos al tanteo | El test exige más de 75 ejercicios distintos en 300 semillas; una forma con pocas combinaciones posibles (p. ej. un número de lados de polígono, solo 3-8) puede parecer inocua pero, si se lleva un porcentaje alto de las tiradas, hunde la variedad total — en `teorema_pitagoras.js` bastó con ampliar el rango del factor de escala (de 1-3 a 1-10) |
 | El campo `curso` de un tipo sigue siendo solo metadato informativo, sin tocar `src/ui/profesor.js` | Confirmado que no filtra nada en la UI; el profesor ya ve todos los tipos mezclados y elige cantidad a mano, así que los tipos de 2º funcionan sin cambios en la interfaz |
 | Datos en Firebase (Auth + Firestore, plan gratuito) | GitHub Pages es estático; sin servicio externo no habría CSV con todos los alumnos |
 | Acceso principal con Google, usuario/contraseña como respaldo | Los alumnos tienen cuenta de murciaeduca (Google Workspace) y están acostumbrados; el respaldo cubre a quien no la tenga o si Workspace bloquea la app |
@@ -161,8 +176,10 @@ Todo en `/Users/salasgar/Documents/git/Ejercicios-interactivos/`:
 - `src/ejercicios/expresiones_algebraicas.js`, `src/ejercicios/ecuaciones_primer_grado.js` — los dos tipos nuevos de la fase 2 (incluye el helper `texExpr`/`expr` para representar una expresión «coef·x + constante» como opción, con su `clave` de igualdad `"coef|constante"`; reutilizar en `polinomios`, fase 6).
 - `src/ejercicios/proporcionalidad.js`, `src/ejercicios/porcentajes.js` — los dos tipos nuevos de la fase 3; problemas con enunciado (como `divisibilidad.js`: `enunciado: ''`, todo el texto en `preguntas` con varios parámetros `{a}`, `{b}`, `{c}`...). `porcentajes.js` tiene el helper `cantidadLimpia(rng, p)` que elige una cantidad múltiplo de `100/mcd(100,p)` y par, para que el %, la mitad y el doble salgan siempre enteros; reutilizar en cualquier tipo nuevo que calcule porcentajes.
 - `src/ejercicios/decimales.js` — ampliado en la fase 1 con división (`divisionDivisorEntero`/`divisionDivisorDecimal`); ejemplo de cómo añadir una forma nueva a un tipo ya existente en vez de crear un tipo nuevo.
+- `src/ejercicios/angulos.js`, `src/ejercicios/poligonos_triangulos.js` — los tipos de geometría de la fase 4 con respuesta en palabras o Correcto/Incorrecto; no están en `CON_PASOS` (`correcta` no siempre tiene `.tex`). `poligonos_triangulos.js` es el ejemplo de cómo mezclar formas de 4 opciones y formas Correcto/Incorrecto dentro del mismo tipo (`if (datos.opciones) return datos;` antes de llamar a `construirOpciones`, como en `lenguaje_ingles.js`).
+- `src/ejercicios/perimetros_areas.js`, `src/ejercicios/teorema_pitagoras.js` — los tipos de geometría de la fase 4 con respuesta numérica; sí están en `CON_PASOS`.
 - `src/ejercicios/*.js` — un generador por tipo; `palabras.js` convierte números a palabras (en/es).
-- `tests/ejercicios.test.js` — `CON_PASOS` (tipos con solución paso a paso comprobada), 111 tests (`npm test`).
+- `tests/ejercicios.test.js` — `CON_PASOS` (tipos con solución paso a paso comprobada), 127 tests (`npm test`).
 - `src/config.js` — `firebaseConfig` y `PROFESOR_UID` ya rellenos.
 - `firestore.rules` — reglas ya publicadas en la consola con el uid real.
 - `src/firebase.js` — Auth (Google y contraseña) y Firestore; alumnos por email.

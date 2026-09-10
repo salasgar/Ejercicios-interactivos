@@ -42,6 +42,10 @@ import expresionesAlgebraicas from './expresiones_algebraicas.js';
 import ecuacionesPrimerGrado from './ecuaciones_primer_grado.js';
 import proporcionalidad from './proporcionalidad.js';
 import porcentajes from './porcentajes.js';
+import angulos from './angulos.js';
+import poligonosTriangulos from './poligonos_triangulos.js';
+import perimetrosAreas from './perimetros_areas.js';
+import teoremaPitagoras from './teorema_pitagoras.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
 
@@ -103,6 +107,10 @@ export const CONCEPTOS = {
   ecuaciones_primer_grado: { nombre: { es: 'Ecuaciones de primer grado', en: 'First-degree equations' }, tipo: 'ecuaciones_primer_grado' },
   proporcionalidad: { nombre: { es: 'Proporcionalidad', en: 'Proportionality' }, tipo: 'proporcionalidad' },
   porcentajes: { nombre: { es: 'Porcentajes', en: 'Percentages' }, tipo: 'porcentajes' },
+  angulos: { nombre: { es: 'Ángulos', en: 'Angles' }, tipo: 'angulos' },
+  poligonos_triangulos: { nombre: { es: 'Polígonos y triángulos', en: 'Polygons and triangles' }, tipo: 'poligonos_triangulos' },
+  perimetros_areas: { nombre: { es: 'Perímetros y áreas', en: 'Perimeters and areas' }, tipo: 'perimetros_areas' },
+  teorema_pitagoras: { nombre: { es: 'Teorema de Pitágoras', en: "Pythagoras' theorem" }, tipo: 'teorema_pitagoras' },
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
 };
@@ -233,7 +241,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, lenguajeIngles, lenguajeEspanol]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, angulos, poligonosTriangulos, perimetrosAreas, teoremaPitagoras, lenguajeIngles, lenguajeEspanol]
     .map(t => [t.id, t]),
 );
 
