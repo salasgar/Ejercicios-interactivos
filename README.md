@@ -35,13 +35,14 @@ Pensada para hacerse desde el móvil.
 ### Tipos de ejercicio
 
 Cubren la distribución de unidades didácticas del departamento de Matemáticas
-(campo `curso` de cada tipo: 1 = 1º ESO). Se van ampliando por evaluaciones;
-lo que falta está en `traspaso-ejercicios-interactivos.md`.
+(campo `curso` de cada tipo: 1 = 1º ESO, 2 = 2º ESO; es solo informativo, no
+filtra nada en el formulario de tareas). Se van ampliando por evaluaciones; lo
+que falta está en `traspaso-ejercicios-interactivos.md`.
 
 | id | Tipo | Unidad didáctica |
 |---|---|---|
 | `jerarquia` | Jerarquía de las operaciones | UD1 Números naturales, potencias y raíces |
-| `potencias` | Potencias (cálculo y propiedades) | UD1 |
+| `potencias` | Potencias (cálculo, propiedades, exponente negativo y cero) | UD1 (exponente negativo/cero, también 2º ESO UD1) |
 | `raices` | Raíces cuadradas (exactas y aproximación) | UD1 |
 | `enteros` | Números enteros (signos y productos) | UD3 Números enteros |
 | `divisibilidad` | Múltiplos, divisores, criterios y primos | UD2 Divisibilidad |
@@ -51,14 +52,15 @@ lo que falta está en `traspaso-ejercicios-interactivos.md`.
 | `decimales` | Suma, resta, producto, división y ×/÷ 10, 100, 1000 | UD5 Números decimales |
 | `expresiones_algebraicas` | Valor numérico, reducir términos semejantes y traducir enunciados | UD6 Álgebra |
 | `ecuaciones_primer_grado` | Ecuaciones sencillas (con paréntesis) de una incógnita | UD6 |
-| `proporcionalidad` | Regla de tres directa e inversa | UD7 Magnitudes, proporcionalidad, porcentajes y matemática financiera |
-| `porcentajes` | Cálculo de porcentajes, aumentos/descuentos e interés simple | UD7 |
+| `proporcionalidad` | Regla de tres directa e inversa, y reparto proporcional | UD7 Magnitudes, proporcionalidad, porcentajes y matemática financiera (reparto, también 2º ESO UD3) |
+| `porcentajes` | Cálculo de porcentajes, aumentos/descuentos (también encadenados), interés simple y compuesto | UD7 (encadenados e interés compuesto, también 2º ESO UD3) |
 | `angulos` | Ángulos complementarios, suplementarios y clasificación | UD8 Geometría |
 | `poligonos_triangulos` | Clasificar triángulos (lados, ángulos) y polígonos por su número de lados | UD8 |
 | `perimetros_areas` | Perímetros y áreas de cuadrado, rectángulo, triángulo y círculo | UD8 |
 | `teorema_pitagoras` | Hallar la hipotenusa o un cateto de un triángulo rectángulo | UD8 (también en 2º ESO) |
 | `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés | (programa bilingüe, no es una UD) |
 | `lenguaje_espanol` | Lo mismo en español | (programa bilingüe, no es una UD) |
+| `operaciones_racionales` | Conversión entre fracción y decimal, y operaciones combinando los dos | 2º ESO UD2 Números decimales y fracciones |
 
 ## Puesta en marcha de Firebase (una sola vez)
 
@@ -120,8 +122,9 @@ npx firebase-tools deploy --only firestore:rules
   alta con otro usuario (`ana.garcia2`).
 - **Un solo profesor.** El uid del profesor está fijo en las reglas y en
   `src/config.js`. Para varios profesores habría que pasar a una lista.
-- **Un solo curso (1º ESO).** El campo `curso` de cada tipo está preparado para
-  filtrar por curso cuando haya más.
+- **Sin filtro por curso.** El campo `curso` de cada tipo (1º o 2º ESO) es solo
+  informativo: el profesor ve todos los tipos mezclados en el formulario de
+  tareas y elige a mano. Está preparado para filtrar si hiciera falta.
 - **Sin conexión.** La aplicación necesita red para entrar y guardar. Si se
   pierde la conexión a mitad de una tarea, avisa y reintenta al contestar el
   siguiente ejercicio.

@@ -1,7 +1,7 @@
 // Potencias de exponente natural: cálculo directo y propiedades (producto,
 // cociente y potencia de potencia con la misma base).
 
-import { construirOpciones, conReintentos, erroresDe, tex } from './index.js';
+import { construirOpciones, conReintentos, erroresDe, tex, texFraccion, claveFraccion } from './index.js';
 
 export const errores = {
   potencia_como_producto: { concepto: 'potencias',
@@ -39,6 +39,16 @@ export const errores = {
     en: 'Without brackets, the exponent only applies to the number: −3² = −(3×3) = −9. To raise the sign too you need brackets: (−3)².' },
   multiplicar_exponentes_cociente: { concepto: 'potencias',
     es: 'Al dividir potencias de la misma base, los exponentes se restan, no se multiplican.', en: 'When dividing powers with the same base, the exponents are subtracted, not multiplied.' },
+  ignora_signo_exponente: { concepto: 'potencias',
+    es: 'El signo del exponente no se puede ignorar: un exponente negativo indica que hay que invertir la fracción, no que se calcule como si fuera positivo.', en: 'The sign of the exponent cannot be ignored: a negative exponent means you must take the reciprocal, not calculate as if it were positive.' },
+  niega_resultado_exponente_negativo: { concepto: 'potencias',
+    es: 'Un exponente negativo no hace negativo el resultado: a⁻ⁿ es el inverso de aⁿ, es decir, 1 dividido entre aⁿ.', en: 'A negative exponent does not make the result negative: a⁻ⁿ is the reciprocal of aⁿ, that is, 1 divided by aⁿ.' },
+  olvida_exponente_al_invertir: { concepto: 'potencias',
+    es: 'Al invertir la base también hay que mantener el exponente: a⁻ⁿ = 1 ÷ aⁿ, no 1 ÷ a.', en: 'When taking the reciprocal you must keep the exponent too: a⁻ⁿ = 1 ÷ aⁿ, not 1 ÷ a.' },
+  exponente_cero_como_cero: { concepto: 'potencias',
+    es: 'Cualquier número (menos el 0) elevado a 0 vale 1, no 0.', en: 'Any number (except 0) raised to the power of 0 equals 1, not 0.' },
+  exponente_cero_como_base: { concepto: 'potencias',
+    es: 'El exponente 0 no deja el número igual: a⁰ vale siempre 1, sea cual sea la base.', en: 'An exponent of 0 does not leave the number unchanged: a⁰ is always 1, whatever the base.' },
 };
 const E = erroresDe(errores);
 
@@ -55,6 +65,8 @@ export const notas = {
   potencia_par_negativa: { es: 'Con paréntesis se eleva también el signo: negativo elevado a exponente par da positivo.', en: 'With brackets the sign is raised too: a negative number to an even power is positive.' },
   potencia_sin_parentesis: { es: 'Sin paréntesis, el exponente solo afecta al número, no al signo.', en: 'Without brackets, the exponent only applies to the number, not the sign.' },
   potencia_impar_negativa: { es: 'Con paréntesis se eleva también el signo: negativo elevado a exponente impar da negativo.', en: 'With brackets the sign is raised too: a negative number to an odd power is negative.' },
+  exponente_negativo: { es: 'Un exponente negativo indica el inverso: se invierte la fracción y el exponente pasa a positivo.', en: 'A negative exponent means the reciprocal: flip the fraction and make the exponent positive.' },
+  exponente_cero: { es: 'Cualquier número (menos el 0) elevado a 0 vale 1.', en: 'Any number (except 0) raised to the power of 0 equals 1.' },
 };
 
 const num = (v, error, pasos) => ({ tex: tex(v), clave: v, error, pasos });
@@ -246,7 +258,55 @@ function generarPotenciaNegativa(rng) {
   };
 }
 
-const FORMAS = [generarCalculo, generarCalculo, generarProducto, generarCociente, generarPotenciaDePotencia, generarPotenciaNegativa, generarPotenciaNegativa];
+function generarExponenteNegativo(rng) {
+  const base = rng.entero(2, 9), n = rng.entero(2, 3);
+  const enunciado = `${base}^{-${n}}`;
+  const potencia = base ** n;
+  const fr = (num, den, error, pasos) => ({ tex: texFraccion(num, den), clave: claveFraccion(num, den), error, pasos });
+  return {
+    texto: { clave: 'calcula' },
+    enunciado,
+    correcta: fr(1, potencia),
+    solucion: [
+      paso(`${enunciado} = \\frac{1}{${base}^{${n}}} = \\frac{1}{${potencia}}`, 'exponente_negativo'),
+    ],
+    distractores: [
+      num(potencia, E('ignora_signo_exponente'), [
+        mal(`${enunciado} = ${base}^{${n}} = ${T(potencia)}`),
+      ]),
+      num(-potencia, E('niega_resultado_exponente_negativo'), [
+        mal(`${enunciado} = -${base}^{${n}} = ${T(-potencia)}`),
+      ]),
+      fr(1, base, E('olvida_exponente_al_invertir'), [
+        mal(`${enunciado} = \\frac{1}{${base}} = ${texFraccion(1, base)}`),
+      ]),
+    ],
+  };
+}
+
+function generarExponenteCero(rng) {
+  const base = rng.entero(2, 12);
+  const enunciado = `${base}^{0}`;
+  return {
+    texto: { clave: 'calcula' },
+    enunciado,
+    correcta: num(1),
+    solucion: [
+      paso(`${enunciado} = 1`, 'exponente_cero'),
+    ],
+    distractores: [
+      num(0, E('exponente_cero_como_cero'), [
+        mal(`${enunciado} = 0`),
+      ]),
+      num(base, E('exponente_cero_como_base'), [
+        mal(`${enunciado} = ${base}`),
+      ]),
+    ],
+    genericos: [num(base + 1), num(base - 1), num(base * base)],
+  };
+}
+
+const FORMAS = [generarCalculo, generarCalculo, generarProducto, generarCociente, generarPotenciaDePotencia, generarPotenciaNegativa, generarPotenciaNegativa, generarExponenteNegativo, generarExponenteCero];
 
 export default {
   id: 'potencias',

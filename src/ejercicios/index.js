@@ -48,6 +48,7 @@ import perimetrosAreas from './perimetros_areas.js';
 import teoremaPitagoras from './teorema_pitagoras.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
+import operacionesRacionales from './operaciones_racionales.js';
 
 // ---------------------------------------------------------------------------
 // Generador de números aleatorios con semilla (mulberry32). Hace los tests
@@ -113,6 +114,7 @@ export const CONCEPTOS = {
   teorema_pitagoras: { nombre: { es: 'Teorema de Pitágoras', en: "Pythagoras' theorem" }, tipo: 'teorema_pitagoras' },
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
+  operaciones_racionales: { nombre: { es: 'Fracciones y decimales', en: 'Fractions and decimals' }, tipo: 'operaciones_racionales' },
 };
 
 // ---------------------------------------------------------------------------
@@ -241,7 +243,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, angulos, poligonosTriangulos, perimetrosAreas, teoremaPitagoras, lenguajeIngles, lenguajeEspanol]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, angulos, poligonosTriangulos, perimetrosAreas, teoremaPitagoras, lenguajeIngles, lenguajeEspanol, operacionesRacionales]
     .map(t => [t.id, t]),
 );
 
