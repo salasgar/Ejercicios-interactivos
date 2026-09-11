@@ -1,6 +1,6 @@
 # Traspaso — Ejercicios interactivos
 
-Actualizado: 2026-09-11 · Sesiones previas: 4
+Actualizado: 2026-09-11 · Sesiones previas: 5
 
 ## Objetivo
 Aplicación web para que los alumnos de Juan Luis (profesor de Matemáticas de
@@ -16,15 +16,21 @@ Publicado en https://salasgar.github.io/Ejercicios-interactivos/ (repo público
 `salasgar/Ejercicios-interactivos`, rama `main`, workflow que pasa los tests
 antes de publicar).
 
-**Batería de ejercicios — fases 1-4 de la ampliación, terminadas, 127 tests
-en verde (`npm test`):** 19 tipos de ejercicio (17 de cálculo/geometría de
-1º ESO + `lenguaje_ingles` y `lenguaje_espanol`), motor con refuerzo (+2 por
-fallo, tope 6 por concepto), solución paso a paso y pasos del alumno con el
-error marcado, interfaz bilingüe (texto es/en y notación 2,5/2.5 como
-ajustes independientes, fijables por tarea), preguntas de dos opciones
-«Correcto / Incorrecto». **1º ESO está completo: las 8 unidades didácticas
-de la programación real (UD1-UD8, las 3 evaluaciones) tienen ya su tipo de
-ejercicio.** Falta toda 2º ESO. Ver la hoja de ruta completa más abajo.
+**Batería de ejercicios — fases 1-5 de la ampliación, terminadas, 132 tests
+en verde (`npm test`):** 20 tipos de ejercicio (18 de cálculo/geometría +
+`lenguaje_ingles` y `lenguaje_espanol`), motor con refuerzo (+2 por fallo,
+tope 6 por concepto), solución paso a paso y pasos del alumno con el error
+marcado, interfaz bilingüe (texto es/en y notación 2,5/2.5 como ajustes
+independientes, fijables por tarea), preguntas de dos opciones
+«Correcto / Incorrecto». **1º ESO está completo** (UD1-UD8, las 3
+evaluaciones). **2º ESO, 1ª evaluación (fase 5) también está completa**:
+UD1 (repaso + `potencias` ampliado con exponente negativo y cero), UD2
+(tipo nuevo `operaciones_racionales`: conversión fracción↔decimal y
+operaciones combinadas), UD3 (`proporcionalidad` ampliado con reparto
+proporcional, `porcentajes` ampliado con aumentos/descuentos encadenados e
+interés compuesto sencillo — se ampliaron los tipos existentes en vez de
+crear uno nuevo, decisión de Juan Luis del 2026-09-11). Faltan las fases 6
+y 7 (2ª y 3ª evaluación de 2º ESO). Ver la hoja de ruta completa más abajo.
 
 **Firebase, configurado pero sin probar de extremo a extremo** (sin cambios
 desde la sesión anterior): proyecto «ejercicios-interactivos» en la consola
@@ -37,28 +43,26 @@ mismo uid) están pegadas y publicadas en la consola. Esto es un hilo
 independiente de la ampliación de ejercicios: no se ha tocado en esta sesión.
 
 ## Siguiente paso
-1º ESO ya está completo: empezar 2º ESO por la **fase 5**, 1ª evaluación
-(`2eso_ud-y-temporalizacion_25-26.pdf`): UD1 Números enteros/divisibilidad/
-potencias y raíces (repaso de 1º ESO — no hace falta nada nuevo, esos tipos
-ya sirven para 2º; si Juan Luis quiere profundizar en exponente negativo o
-cero, ampliar `potencias.js` con formas nuevas, no crear un tipo nuevo); UD2
-Números decimales y fracciones (tipo nuevo `operaciones_racionales`:
-operaciones combinadas con fracciones y decimales, conversión entre ellos);
-UD3 Proporcionalidad y porcentajes más avanzado (ampliar
-`proporcionalidad.js`/`porcentajes.js` con formas de 2º, o un tipo nuevo
-`porcentajes_encadenados` para aumentos/descuentos sucesivos e interés
-compuesto sencillo — decidir con Juan Luis qué prefiere, como se hizo con la
-geometría de la fase 4). `teorema_pitagoras` ya está hecho desde la fase 4 y
-sirve tal cual para la UD1 de 2º ESO (el campo `curso` es solo informativo,
-no filtra nada: ver la decisión sobre `curso` más abajo). Seguir el mismo
-patrón que los tipos ya hechos (ver «Archivos»); añadir los ids nuevos a
-`TIPOS`/`CONCEPTOS` en `src/ejercicios/index.js` y, si llevan solución paso a
-paso con respuesta numérica, a `CON_PASOS` en `tests/ejercicios.test.js`
-(los de respuesta en palabras o Correcto/Incorrecto, como `angulos.js` y
-`poligonos_triangulos.js`, no van en `CON_PASOS`: ese test compara
-`correcta.tex`, que no existe cuando la opción correcta es un texto en vez de
-un número — ver la fila correspondiente en «Decisiones tomadas»). `npm test`
-debe seguir en verde antes de dar la fase por terminada.
+Fase 5 (2º ESO, 1ª evaluación) terminada el 2026-09-11. Seguir con la
+**fase 6**, 2ª evaluación (`2eso_ud-y-temporalizacion_25-26.pdf`): UD4
+Polinomios y ecuaciones de primer y segundo grado (tipo nuevo `polinomios`
+— reutilizar el helper `texExpr`/`expr` de `expresiones_algebraicas.js` para
+representar expresiones «coef·x + constante», ver «Decisiones tomadas»—,
+tipo nuevo `ecuaciones_segundo_grado`, y ampliar `ecuaciones_primer_grado.js`
+con formas más difíciles); UD5 Sistemas de ecuaciones (tipo nuevo
+`sistemas_ecuaciones`); UD6 Estadística (tipo nuevo `estadistica`: medidas
+de centralización, quizá dispersión y lectura de tablas/gráficos —
+preguntar a Juan Luis el alcance exacto con AskUserQuestion, como se hizo en
+las fases 4 y 5). Seguir el mismo patrón que los tipos ya hechos (ver
+«Archivos»); añadir los ids nuevos a `TIPOS`/`CONCEPTOS` en
+`src/ejercicios/index.js` y, si llevan solución paso a paso con respuesta
+numérica, a `CON_PASOS` en `tests/ejercicios.test.js` (los de respuesta en
+palabras o Correcto/Incorrecto no van en `CON_PASOS`: ver la fila
+correspondiente en «Decisiones tomadas»). `npm test` debe seguir en verde
+antes de dar la fase por terminada.
+
+Después queda la fase 7 (3ª evaluación: funciones lineales, cuerpos
+geométricos; ver la hoja de ruta completa más abajo).
 
 Aparte, sigue pendiente de antes (sin relación con la ampliación): la prueba
 de extremo a extremo de Firebase — dar de alta un alumno con su email de
@@ -69,6 +73,14 @@ Banda de modelo para retomar cualquiera de los dos: MEDIO — generadores
 nuevos siguiendo un patrón ya muy establecido (fase 2 y siguientes) o trabajo
 guiado paso a paso sobre la interfaz (prueba de Firebase), sin decisiones de
 arquitectura.
+
+Nota sobre trabajo simultáneo: en la sesión del 2026-09-11 hubo dos sesiones
+de Claude Code abiertas a la vez en este mismo repositorio (una acabando la
+fase 4, otra empezando la fase 5). Se coordinaron por mensaje directo antes
+de tocar código, sin pisarse, y el traspaso quedó bloqueado unos minutos por
+la reserva de archivo de la sesión anterior hasta que Juan Luis la cerró. Si
+Juan Luis abre varias sesiones a la vez, avisar de este tipo de bloqueo en
+vez de forzar el desbloqueo; no hizo falta la skill `reparto` para esto.
 
 ## Hoja de ruta de la ampliación (de los dos PDF reales del departamento)
 Programación real del IES «Salvador Sandoval», no un temario genérico (ver
@@ -98,15 +110,15 @@ checkpoint: se para con los tests en verde antes de seguir con la siguiente.
   cierra 1º ESO por completo (las 8 UD de la programación real).
 
 **2º ESO** (`2eso_ud-y-temporalizacion_25-26.pdf`, mismo departamento):
-- Fase 5 — 1ª evaluación: UD1 Números enteros/divisibilidad/potencias y
-  raíces (repaso + exponente negativo o cero: ampliar `potencias.js` con
-  formas nuevas, no hace falta un tipo nuevo, igual que se hizo con
-  `decimales.js` en la fase 1); UD2 Números decimales y fracciones (tipo
-  nuevo `operaciones_racionales`: operaciones combinadas, conversión entre
-  fracción y decimal); UD3 Proporcionalidad y porcentajes más avanzado
-  (ampliar `proporcionalidad`/`porcentajes` de la fase 3, o tipo nuevo
-  `porcentajes_encadenados` para aumentos/descuentos sucesivos e interés
-  compuesto sencillo).
+- ~~Fase 5~~ — 1ª evaluación: UD1 (repaso + `potencias` ampliado con
+  exponente negativo y cero); UD2 Números decimales y fracciones (tipo
+  nuevo `operaciones_racionales`: conversión fracción↔decimal y operaciones
+  combinadas entre las dos formas); UD3 Proporcionalidad y porcentajes más
+  avanzado (Juan Luis eligió ampliar `proporcionalidad`/`porcentajes` en vez
+  de un tipo nuevo `porcentajes_encadenados`: reparto proporcional en
+  `proporcionalidad`, aumentos/descuentos encadenados e interés compuesto
+  sencillo en `porcentajes`). Hecha el 2026-09-11; `teorema_pitagoras`
+  (fase 4) ya cubría la parte de geometría de la UD1.
 - Fase 6 — 2ª evaluación: UD4 Polinomios y ecuaciones de primer y segundo
   grado (`polinomios`, `ecuaciones_segundo_grado`, y ampliar
   `ecuaciones_primer_grado` con formas más difíciles); UD5 Sistemas de
@@ -131,6 +143,8 @@ aclara en la tabla de tipos).
 | La hoja de ruta de la ampliación sigue la programación real del departamento (dos PDF que dio Juan Luis), no un temario LOMLOE genérico | Se lo pidió el 2026-09-10 con AskUserQuestion: «mi programación exacta» en vez de «desglose estándar» |
 | En 2º ESO entran ya sistemas de ecuaciones, ecuaciones de segundo grado sencillas, cuerpos geométricos y funciones lineales | Juan Luis los confirmó explícitamente el 2026-09-10; algunos centros los aplazan a 3º, el suyo no |
 | La ampliación se hace por fases con checkpoint, en varias sesiones | Juan Luis eligió «trocear en varias sesiones» frente a «todo de una vez» el 2026-09-10, ante ~18-20 tipos nuevos |
+| UD3 de 2º ESO (proporcionalidad/porcentajes avanzado) amplía `proporcionalidad.js`/`porcentajes.js` en vez de crear un tipo nuevo `porcentajes_encadenados` | Juan Luis lo eligió con AskUserQuestion el 2026-09-11, igual que decidió los bloques de geometría en la fase 4 |
+| En los pasos (`mal()`/`paso()`) de un distractor con fracciones, formatear siempre con `texFraccion(num, den)` y no con un literal `\frac{a}{b}` escrito a mano | `texFraccion` devuelve un número plano sin `\frac` cuando el denominador, tras simplificar signo, es 1 (p. ej. `texFraccion(10, 1)` → `"10"`); un literal a mano no lo sabe y el test de `CON_PASOS` compara el paso final con `o.tex` carácter a carácter — falló así en `operaciones_racionales.js` (fase 5) hasta corregirlo |
 | Los dos PDF de la programación no se comitean (`.gitignore: *.pdf`) | Son documentos internos del departamento; el repo es público |
 | Aproximaciones (p. ej. raíces no exactas) reutilizan el flag `pasosLibres` que ya existía para `divisibilidad`, en vez de un mecanismo nuevo | Relaja el test de que el último paso «acabe en» el valor exacto; basta con que el valor aparezca (sirve con `\approx`) |
 | Una expresión algebraica «coef·x + constante» como opción se representa con el helper `expr(coef, constante, ...)` de `expresiones_algebraicas.js` (`tex` vía `texExpr`; la `clave` combina coeficiente y término independiente, ver el código) | Necesario porque `construirOpciones` compara opciones por `clave`, y dos expresiones son la misma solo si coinciden coeficiente y término independiente, no por el texto exacto; reutilizar este helper en `polinomios` (fase 6) en vez de inventar otro |
@@ -179,8 +193,11 @@ Todo en `/Users/salasgar/Documents/git/Ejercicios-interactivos/`:
 - `src/ejercicios/decimales.js` — ampliado en la fase 1 con división (`divisionDivisorEntero`/`divisionDivisorDecimal`); ejemplo de cómo añadir una forma nueva a un tipo ya existente en vez de crear un tipo nuevo.
 - `src/ejercicios/angulos.js`, `src/ejercicios/poligonos_triangulos.js` — los tipos de geometría de la fase 4 con respuesta en palabras o Correcto/Incorrecto; no están en `CON_PASOS` (`correcta` no siempre tiene `.tex`). `poligonos_triangulos.js` es el ejemplo de cómo mezclar formas de 4 opciones y formas Correcto/Incorrecto dentro del mismo tipo (`if (datos.opciones) return datos;` antes de llamar a `construirOpciones`, como en `lenguaje_ingles.js`).
 - `src/ejercicios/perimetros_areas.js`, `src/ejercicios/teorema_pitagoras.js` — los tipos de geometría de la fase 4 con respuesta numérica; sí están en `CON_PASOS`.
+- `src/ejercicios/potencias.js` — ampliado en la fase 5 con exponente negativo (`generarExponenteNegativo`, devuelve una fracción `1/base^n` con el helper `fr` local) y exponente cero (`generarExponenteCero`).
+- `src/ejercicios/operaciones_racionales.js` — tipo nuevo de la fase 5 (UD2 de 2º ESO): conversión fracción→decimal, decimal→fracción y operaciones combinadas de las dos formas. Ojo con dos detalles descubiertos al escribirlo: (1) en los `mal()` de los distractores hay que formatear las fracciones con `texFraccion(...)`, no con un literal `\frac{a}{b}` escrito a mano, porque `texFraccion` devuelve un número sin `\frac` cuando el denominador reducido es 1 (ver la fila correspondiente en «Decisiones tomadas»); (2) el distractor «invertir numerador y denominador» al pasar de fracción a decimal rara vez da un decimal exacto, así que se redondea a 2 cifras (`redondear(d / n, 2)`) en vez de a las 8 por defecto, si no salían distractores feos como `1,92307692`.
+- `src/ejercicios/proporcionalidad.js` — ampliado en la fase 5 con reparto proporcional (`repartoProporcional`); `src/ejercicios/porcentajes.js` — ampliado con aumentos/descuentos encadenados (`aumentosSucesivos`, cuatro claves de pregunta según sube/baja en cada paso) e interés compuesto a 2 años (`interesCompuesto`, contrasta con el interés simple ya existente). Las dos funciones nuevas pueden devolver `null` cuando los números no salen exactos, así que el `generar` de `porcentajes.js` tuvo que cambiar para comprobarlo antes de desestructurar (antes daba por hecho que ninguna forma devolvía `null`).
 - `src/ejercicios/*.js` — un generador por tipo; `palabras.js` convierte números a palabras (en/es).
-- `tests/ejercicios.test.js` — `CON_PASOS` (tipos con solución paso a paso comprobada), 127 tests (`npm test`).
+- `tests/ejercicios.test.js` — `CON_PASOS` (tipos con solución paso a paso comprobada), 132 tests (`npm test`).
 - `src/config.js` — `firebaseConfig` y `PROFESOR_UID` ya rellenos.
 - `firestore.rules` — reglas ya publicadas en la consola con el uid real.
 - `src/firebase.js` — Auth (Google y contraseña) y Firestore; alumnos por email.
