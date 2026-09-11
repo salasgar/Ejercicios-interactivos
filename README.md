@@ -51,7 +51,7 @@ que falta está en `traspaso-ejercicios-interactivos.md`.
 | `producto_division_fracciones` | Multiplicación y división de fracciones | UD4 |
 | `decimales` | Suma, resta, producto, división y ×/÷ 10, 100, 1000 | UD5 Números decimales |
 | `expresiones_algebraicas` | Valor numérico, reducir términos semejantes y traducir enunciados | UD6 Álgebra |
-| `ecuaciones_primer_grado` | Ecuaciones sencillas (con paréntesis) de una incógnita | UD6 |
+| `ecuaciones_primer_grado` | Ecuaciones sencillas (con paréntesis, también con x en los dos miembros) | UD6 (x en los dos miembros, también 2º ESO UD4) |
 | `proporcionalidad` | Regla de tres directa e inversa, y reparto proporcional | UD7 Magnitudes, proporcionalidad, porcentajes y matemática financiera (reparto, también 2º ESO UD3) |
 | `porcentajes` | Cálculo de porcentajes, aumentos/descuentos (también encadenados), interés simple y compuesto | UD7 (encadenados e interés compuesto, también 2º ESO UD3) |
 | `angulos` | Ángulos complementarios, suplementarios y clasificación | UD8 Geometría |
@@ -61,6 +61,10 @@ que falta está en `traspaso-ejercicios-interactivos.md`.
 | `lenguaje_ingles` | Cómo se escriben los números y se leen las operaciones en inglés | (programa bilingüe, no es una UD) |
 | `lenguaje_espanol` | Lo mismo en español | (programa bilingüe, no es una UD) |
 | `operaciones_racionales` | Conversión entre fracción y decimal, y operaciones combinando los dos | 2º ESO UD2 Números decimales y fracciones |
+| `polinomios` | Valor numérico, suma/resta y producto de un monomio por un binomio | 2º ESO UD4 Polinomios y ecuaciones |
+| `ecuaciones_segundo_grado` | Incompletas (ax²+c=0, ax²+bx=0) y completas sencillas con raíces enteras | 2º ESO UD4 |
+| `sistemas_ecuaciones` | Sistemas de dos ecuaciones lineales, por sustitución y por reducción | 2º ESO UD5 Sistemas de ecuaciones |
+| `estadistica` | Media, moda, mediana, rango, marca de clase, frecuencia relativa y variables discretas/continuas | 2º ESO UD6 Estadística |
 
 ## Puesta en marcha de Firebase (una sola vez)
 

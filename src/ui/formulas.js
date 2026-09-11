@@ -4,11 +4,11 @@
 import { aplicarNotacion, idioma } from '../i18n/index.js';
 
 // Las pocas palabras que aparecen dentro de las fórmulas (\text{...}) se traducen aquí.
-const PALABRAS_TEX = { resto: 'remainder', mcm: 'lcm', mcd: 'gcd' };
+const PALABRAS_TEX = { resto: 'remainder', mcm: 'lcm', mcd: 'gcd', discreta: 'discrete', continua: 'continuous' };
 
 export function traducirTex(tex, idiomaPedido = idioma()) {
   if (idiomaPedido !== 'en') return tex;
-  return tex.replace(/\\text\{(\s*)(resto|mcm|mcd)(\s*)\}/g, (_, a, palabra, b) => `\\text{${a}${PALABRAS_TEX[palabra]}${b}}`);
+  return tex.replace(/\\text\{(\s*)(resto|mcm|mcd|discreta|continua)(\s*)\}/g, (_, a, palabra, b) => `\\text{${a}${PALABRAS_TEX[palabra]}${b}}`);
 }
 
 export function renderTex(el, texNeutro, opciones = {}) {

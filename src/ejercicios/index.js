@@ -49,6 +49,10 @@ import teoremaPitagoras from './teorema_pitagoras.js';
 import lenguajeIngles from './lenguaje_ingles.js';
 import lenguajeEspanol from './lenguaje_espanol.js';
 import operacionesRacionales from './operaciones_racionales.js';
+import estadistica from './estadistica.js';
+import polinomios from './polinomios.js';
+import ecuacionesSegundoGrado from './ecuaciones_segundo_grado.js';
+import sistemasEcuaciones from './sistemas_ecuaciones.js';
 
 // ---------------------------------------------------------------------------
 // Generador de números aleatorios con semilla (mulberry32). Hace los tests
@@ -115,6 +119,10 @@ export const CONCEPTOS = {
   lenguaje_ingles: { nombre: { es: 'Matemáticas en inglés', en: 'Maths in English' }, tipo: 'lenguaje_ingles' },
   lenguaje_espanol: { nombre: { es: 'Matemáticas en español', en: 'Maths in Spanish' }, tipo: 'lenguaje_espanol' },
   operaciones_racionales: { nombre: { es: 'Fracciones y decimales', en: 'Fractions and decimals' }, tipo: 'operaciones_racionales' },
+  estadistica: { nombre: { es: 'Estadística', en: 'Statistics' }, tipo: 'estadistica' },
+  polinomios: { nombre: { es: 'Polinomios', en: 'Polynomials' }, tipo: 'polinomios' },
+  ecuaciones_segundo_grado: { nombre: { es: 'Ecuaciones de segundo grado', en: 'Second-degree equations' }, tipo: 'ecuaciones_segundo_grado' },
+  sistemas_ecuaciones: { nombre: { es: 'Sistemas de ecuaciones', en: 'Systems of equations' }, tipo: 'sistemas_ecuaciones' },
 };
 
 // ---------------------------------------------------------------------------
@@ -243,7 +251,7 @@ export function conReintentos(generar, intentos = 60) {
 // Registro.
 
 export const TIPOS = Object.fromEntries(
-  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, angulos, poligonosTriangulos, perimetrosAreas, teoremaPitagoras, lenguajeIngles, lenguajeEspanol, operacionesRacionales]
+  [jerarquia, potencias, raices, enteros, divisibilidad, fraccionesEquivalentes, sumaFracciones, productoDivisionFracciones, decimales, expresionesAlgebraicas, ecuacionesPrimerGrado, proporcionalidad, porcentajes, angulos, poligonosTriangulos, perimetrosAreas, teoremaPitagoras, lenguajeIngles, lenguajeEspanol, operacionesRacionales, estadistica, polinomios, ecuacionesSegundoGrado, sistemasEcuaciones]
     .map(t => [t.id, t]),
 );
 

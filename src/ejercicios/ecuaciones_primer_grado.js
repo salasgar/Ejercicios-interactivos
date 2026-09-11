@@ -1,7 +1,7 @@
 // Ecuaciones de primer grado sencillas: x ± a = b, a·x = b, a·x ± b = c y
 // a·(x ± b) = c. La solución es siempre el valor de x.
 
-import { construirOpciones, conReintentos, erroresDe, tex } from './index.js';
+import { construirOpciones, conReintentos, erroresDe, tex, redondear } from './index.js';
 
 export const errores = {
   no_cambia_signo_al_pasar: { concepto: 'ecuaciones_primer_grado',
@@ -16,6 +16,8 @@ export const errores = {
     es: 'El número de fuera del paréntesis multiplica a todo lo de dentro; hay que dividir primero para deshacer esa multiplicación.', en: 'The number outside the brackets multiplies everything inside; you must divide first to undo that multiplication.' },
   olvida_restar_b: { concepto: 'ecuaciones_primer_grado',
     es: 'Después de dividir todavía queda un término independiente dentro del paréntesis por despejar.', en: 'After dividing there is still a constant term inside the brackets left to isolate.' },
+  olvida_pasar_x: { concepto: 'ecuaciones_primer_grado',
+    es: 'Te has dejado el término con x del otro lado sin pasar: hay que juntar todos los términos con x en el mismo lado antes de despejar.', en: 'You left the x term on the other side without moving it: you must bring all the x terms together on the same side before isolating x.' },
 };
 const E = erroresDe(errores);
 
@@ -31,10 +33,11 @@ export const notas = {
   aislar_termino_x: { es: 'Pasamos el término independiente al otro lado, cambiando su signo.', en: 'We move the constant term to the other side, changing its sign.' },
   dividir_ambos_lados: { es: 'Dividimos los dos lados entre el número que multiplica al paréntesis.', en: 'We divide both sides by the number multiplying the brackets.' },
   pasar_termino: { es: 'Pasamos el término independiente al otro lado, cambiando su signo.', en: 'We move the constant term to the other side, changing its sign.' },
+  agrupar_x_un_lado: { es: 'Pasamos los términos con x a un lado, y los términos independientes al otro.', en: 'We move the x terms to one side, and the constant terms to the other.' },
 };
 
 const T = tex;
-const num = (v, error, pasos) => ({ tex: T(v), clave: v, error, pasos });
+const num = (v, error, pasos) => ({ tex: T(v), clave: redondear(v), error, pasos });
 const paso = (tex, nota = null, calculo = null) => ({ tex, nota, calculo });
 const mal = (tex, calculo = null) => ({ tex, mal: true, calculo });
 const signo = n => (n >= 0 ? '+' : '-');
@@ -159,7 +162,40 @@ function conParentesis(rng) {
   };
 }
 
-const FORMAS = [sumaResta, sumaResta, multiplicacion, dosOperaciones, dosOperaciones, conParentesis];
+function xEnAmbosLados(rng) {
+  const a = rng.entero(2, 9);
+  let c = rng.entero(2, 9);
+  while (c === a) c = rng.entero(2, 9);
+  const x = xVal(rng);
+  const b = (rng.moneda() ? 1 : -1) * rng.entero(1, 9);
+  const d = (a - c) * x + b;
+  const enunciado = `${a}x ${signo(b)} ${abs(b)} = ${c}x ${signo(d)} ${abs(d)}`;
+  return {
+    texto: { clave: 'resuelve' },
+    enunciado,
+    correcta: num(x),
+    solucion: [
+      paso(`${a}x - ${c}x = ${T(d)} ${signo(-b)} ${abs(b)}`, 'agrupar_x_un_lado'),
+      paso(`${T(a - c)}x = ${T(d - b)}`, null),
+      paso(`x = ${T(d - b)} \\div ${T(a - c)} = ${T(x)}`, 'despejar_dividiendo'),
+    ],
+    distractores: [
+      num(redondear((d - b) / a, 2), E('olvida_pasar_x'), [
+        mal(`${a}x = ${T(d)} ${signo(-b)} ${abs(b)} = ${T(d - b)}`),
+        paso(`x = ${T(d - b)} \\div ${a} = ${T(redondear((d - b) / a, 2))}`),
+      ]),
+      num(redondear((d - b) / (a + c), 2), E('no_cambia_signo_al_pasar'), [
+        mal(`${a}x + ${c}x = ${T(d)} ${signo(-b)} ${abs(b)} = ${T(d - b)}`),
+        paso(`x = ${T(d - b)} \\div ${T(a + c)} = ${T(redondear((d - b) / (a + c), 2))}`),
+      ]),
+      num(-x, E('signo_de_x'), [
+        mal(`x = ${T(-x)}`),
+      ]),
+    ],
+  };
+}
+
+const FORMAS = [sumaResta, sumaResta, multiplicacion, dosOperaciones, dosOperaciones, conParentesis, xEnAmbosLados, xEnAmbosLados];
 
 export default {
   id: 'ecuaciones_primer_grado',
