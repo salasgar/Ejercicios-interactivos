@@ -1,6 +1,6 @@
 # Traspaso — Ejercicios interactivos
 
-Actualizado: 2026-09-10 · Sesiones previas: 3 (esta sigue siendo la sesión 4, continuada desde el iPhone por control remoto sobre la misma instancia de VS Code)
+Actualizado: 2026-09-11 · Sesiones previas: 4
 
 ## Objetivo
 Aplicación web para que los alumnos de Juan Luis (profesor de Matemáticas de
@@ -55,9 +55,10 @@ patrón que los tipos ya hechos (ver «Archivos»); añadir los ids nuevos a
 `TIPOS`/`CONCEPTOS` en `src/ejercicios/index.js` y, si llevan solución paso a
 paso con respuesta numérica, a `CON_PASOS` en `tests/ejercicios.test.js`
 (los de respuesta en palabras o Correcto/Incorrecto, como `angulos.js` y
-`poligonos_triangulos.js`, no van en `CON_PASOS`: ver la decisión sobre
-`correcta.tex` más abajo). `npm test` debe seguir en verde antes de dar la
-fase por terminada.
+`poligonos_triangulos.js`, no van en `CON_PASOS`: ese test compara
+`correcta.tex`, que no existe cuando la opción correcta es un texto en vez de
+un número — ver la fila correspondiente en «Decisiones tomadas»). `npm test`
+debe seguir en verde antes de dar la fase por terminada.
 
 Aparte, sigue pendiente de antes (sin relación con la ampliación): la prueba
 de extremo a extremo de Firebase — dar de alta un alumno con su email de
@@ -132,10 +133,10 @@ aclara en la tabla de tipos).
 | La ampliación se hace por fases con checkpoint, en varias sesiones | Juan Luis eligió «trocear en varias sesiones» frente a «todo de una vez» el 2026-09-10, ante ~18-20 tipos nuevos |
 | Los dos PDF de la programación no se comitean (`.gitignore: *.pdf`) | Son documentos internos del departamento; el repo es público |
 | Aproximaciones (p. ej. raíces no exactas) reutilizan el flag `pasosLibres` que ya existía para `divisibilidad`, en vez de un mecanismo nuevo | Relaja el test de que el último paso «acabe en» el valor exacto; basta con que el valor aparezca (sirve con `\approx`) |
-| Una expresión algebraica «coef·x + constante» como opción se representa con el helper `expr(coef, constante, ...)` de `expresiones_algebraicas.js` (`tex` vía `texExpr`, `clave` = `"coef\|constante"`) | Necesario porque `construirOpciones` compara opciones por `clave`, y dos expresiones son la misma solo si coinciden coeficiente y término independiente, no por el texto exacto; reutilizar este helper en `polinomios` (fase 6) en vez de inventar otro |
+| Una expresión algebraica «coef·x + constante» como opción se representa con el helper `expr(coef, constante, ...)` de `expresiones_algebraicas.js` (`tex` vía `texExpr`; la `clave` combina coeficiente y término independiente, ver el código) | Necesario porque `construirOpciones` compara opciones por `clave`, y dos expresiones son la misma solo si coinciden coeficiente y término independiente, no por el texto exacto; reutilizar este helper en `polinomios` (fase 6) en vez de inventar otro |
 | En `ecuaciones_primer_grado`, cuando hace falta que una división intermedia salga exacta (fases con paréntesis o dos operaciones), el término independiente se construye como múltiplo del coeficiente (`b = a * bm`) en vez de un número cualquiera | Evita distractores con decimales feos; los mismos tres o cuatro distractores (olvidar el paso, no cambiar el signo, no distribuir) quedan siempre como enteros exactos |
 | En los `pasos` de un distractor con varias líneas, solo la línea donde aparece el error real va con `mal()`; las líneas anteriores y posteriores que son aritmética correcta (aunque partan de una premisa equivocada) van con `paso()` | Es el criterio que ya seguía `jerarquia.js` (confirmado releyendo `generarDosProductos`) y el que espera la interfaz para resaltar el paso erróneo; en la fase 2 marqué por error varias líneas correctas como `mal()` en `ecuaciones_primer_grado.js` y hubo que corregirlo — revisar esto en cada tipo nuevo con más de un paso por distractor |
-| Cuando una clasificación solo tiene 3 categorías posibles (p. ej. triángulo equilátero/isósceles/escaleno), el ejercicio se plantea como afirmación Correcto/Incorrecto (`opcionesCorrectoIncorrecto`, como en `lenguaje_ingles.js`), no como opción múltiple de 4 | `construirOpciones` necesita 3 distractores distintos de la correcta; con solo 3 categorías en total nunca se pueden sacar 3 distractores (como mucho 2), así que esa rama devolvía `null` siempre y, tras reintentar 60 veces, el generador acababa cayendo casi siempre en la única forma que sí funcionaba — lo descubrí con un guion suelto que contaba cuántas veces salía cada `texto.clave` en 300 semillas, no solo con `npm test` |
+| Cuando una clasificación solo tiene 3 categorías posibles (p. ej. triángulo equilátero/isósceles/escaleno), el ejercicio se plantea como afirmación Correcto/Incorrecto (`opcionesCorrectoIncorrecto`, como en `lenguaje_ingles.js`), no como opción múltiple de 4 | `construirOpciones` necesita 3 distractores distintos de la correcta; con solo 3 categorías en total nunca se pueden sacar 3 distractores (como mucho 2), así que esa rama devolvía `null` siempre y, tras reintentar 60 veces, el generador acababa cayendo casi siempre en la única forma que sí funcionaba — lo descubrí con un guion suelto que contaba cuántas veces salía cada `texto.clave` en 300 semillas, no solo con `npm test`. Consecuencia: esos tipos (`angulos`, `poligonos_triangulos`) no llevan `CON_PASOS`, porque su `correcta` es `{texto, clave}` sin `.tex`, y el test de pasos compara `correcta.tex` |
 | Al añadir un tipo nuevo con varias «formas» de distinta frecuencia, comprobar la variedad real (`node -e` contando `texto.clave` o el valor generado en 300 semillas) si el test de «poca variedad» falla, en vez de solo ampliar rangos al tanteo | El test exige más de 75 ejercicios distintos en 300 semillas; una forma con pocas combinaciones posibles (p. ej. un número de lados de polígono, solo 3-8) puede parecer inocua pero, si se lleva un porcentaje alto de las tiradas, hunde la variedad total — en `teorema_pitagoras.js` bastó con ampliar el rango del factor de escala (de 1-3 a 1-10) |
 | El campo `curso` de un tipo sigue siendo solo metadato informativo, sin tocar `src/ui/profesor.js` | Confirmado que no filtra nada en la UI; el profesor ya ve todos los tipos mezclados y elige cantidad a mano, así que los tipos de 2º funcionan sin cambios en la interfaz |
 | Datos en Firebase (Auth + Firestore, plan gratuito) | GitHub Pages es estático; sin servicio externo no habría CSV con todos los alumnos |
