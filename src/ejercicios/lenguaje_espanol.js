@@ -110,6 +110,36 @@ export const errores = {
   operacion_equivocada_suma_div: { concepto: 'lenguaje_espanol',
     es: 'Eso se lee como una suma, pero la expresión es una división: se usa "entre".', en: 'That reads as an addition, but the expression is a division: use "entre".' },
 
+  // --- Ordinales y partitivos ---
+  part_11_onceavo: { concepto: 'lenguaje_espanol',
+    es: '"Onceavo" es la fracción 1/11, no el orden: el que ocupa el lugar 11 es el "undécimo" (o "decimoprimero").', en: '"Onceavo" is the fraction 1/11, not the position: the 11th one is "undécimo" (or "decimoprimero").' },
+  part_12_doceavo: { concepto: 'lenguaje_espanol',
+    es: '"Doceavo" es la fracción 1/12, no el orden: el que ocupa el lugar 12 es el "duodécimo" (o "decimosegundo").', en: '"Doceavo" is the fraction 1/12, not the position: the 12th one is "duodécimo" (or "decimosegundo").' },
+  part_13_treceavo: { concepto: 'lenguaje_espanol',
+    es: '"Treceavo" es la fracción 1/13, no el orden: el que ocupa el lugar 13 es el "decimotercero".', en: '"Treceavo" is the fraction 1/13, not the position: the 13th one is "decimotercero".' },
+  part_20_veinteavo: { concepto: 'lenguaje_espanol',
+    es: '"Veinteavo" es la fracción 1/20, no el orden: el que ocupa el lugar 20 es el "vigésimo".', en: '"Veinteavo" is the fraction 1/20, not the position: the 20th one is "vigésimo".' },
+  part_10_diezavo: { concepto: 'lenguaje_espanol',
+    es: '"Diezavo" no sirve para el orden: el que ocupa el lugar 10 es el "décimo".', en: '"Diezavo" is not used for position: the 10th one is "décimo".' },
+  ordinal_9_nueveno: { concepto: 'lenguaje_espanol',
+    es: '"Nueveno" no existe: el ordinal de 9 es "noveno".', en: 'There is no "nueveno": the ordinal of 9 is "noveno".' },
+
+  // --- Cómo se lee: porcentajes ---
+  por_cientos_plural: { concepto: 'lenguaje_espanol',
+    es: '"Por ciento" no se pone en plural: se dice "veinte por ciento", no "veinte por cientos".', en: '"Por ciento" does not take a plural: it is "veinte por ciento", not "veinte por cientos".' },
+  por_cien: { concepto: 'lenguaje_espanol',
+    es: 'La forma correcta es "por ciento". "Por cien" solo aparece en la expresión hecha "cien por cien".', en: 'The correct form is "por ciento". "Por cien" only appears in the set phrase "cien por cien".' },
+  porcentaje_por_ciento: { concepto: 'lenguaje_espanol',
+    es: '"Porcentaje" es el nombre del concepto, no la unidad: 20% se lee "veinte por ciento".', en: '"Porcentaje" is the name of the concept, not the unit: 20% is read "veinte por ciento".' },
+
+  // --- Cómo se lee: el punto decimal es un anglicismo ---
+  punto_en_vez_de_coma: { concepto: 'lenguaje_espanol',
+    es: 'En español el separador decimal se lee "coma", no "punto": decir "punto" es un anglicismo.', en: 'In Spanish the decimal separator is read "coma", not "punto": saying "punto" is an anglicism.' },
+
+  // --- Concordancia ---
+  concordancia_raiz: { concepto: 'lenguaje_espanol',
+    es: '"Raíz" es una palabra femenina: se dice "raíz cuadrada", no "raíz cuadrado".', en: '"Raíz" is a feminine word in Spanish: it is "raíz cuadrada", not "raíz cuadrado".' },
+
   // --- ¿Correcto o incorrecto? (la afirmación era verdadera) ---
   era_correcta: { concepto: 'lenguaje_espanol',
     es: 'Estaba bien escrito: esa es la forma correcta.', en: 'It was written correctly: that is the correct form.' },
@@ -120,6 +150,7 @@ export const preguntas = {
   numero_en_palabras: { es: '¿Cómo se escribe este número con palabras?', en: 'How do you write this number in words (in Spanish)?' },
   que_numero: { es: '¿Qué número es «{palabras}»?', en: 'Which number is "{palabras}"?' },
   como_se_lee: { es: '¿Cómo se lee esto en español?', en: 'How do you read this (in Spanish)?' },
+  ordinal: { es: '¿Cómo se escribe el ordinal {n}?', en: 'How do you write the ordinal {n} in Spanish?' },
   se_escribe: { es: '{n} se escribe «{palabras}».', en: '{n} is written "{palabras}".' },
 };
 
@@ -335,11 +366,13 @@ function comoSeLeeRaiz(rng) {
   const base = rng.entero(2, 12);
   const cuadrado = base * base;
   const w = numeroAEspanol(cuadrado);
-  return casoTexto(`\\sqrt{${cuadrado}}`, `la raíz cuadrada de ${w}`, [
+  const pool = [
     palabra(`raíz de ${w} cuadrada`, 'orden_raiz'),
     palabra(`el cuadrado de la raíz de ${w}`, 'cuadrado_de_la_raiz'),
     palabra(`${w} raíz cuadrada`, 'orden_invertido_raiz'),
-  ]);
+    palabra(`la raíz cuadrado de ${w}`, 'concordancia_raiz'),
+  ];
+  return casoTexto(`\\sqrt{${cuadrado}}`, `la raíz cuadrada de ${w}`, rng.barajar(pool).slice(0, 3));
 }
 
 function comoSeLeeAlCuadrado(rng) {
@@ -409,11 +442,13 @@ function comoSeLeeDecimal(rng) {
   const decimal = rng.entero(1, 9);
   const wordEntero = numeroAEspanol(entero);
   const wordDecimal = numeroAEspanol(decimal);
-  return casoTexto(`${entero}{,}${decimal}`, `${wordEntero} coma ${wordDecimal}`, [
+  const pool = [
     palabra(`${wordEntero} coma ${numeroAEspanol(decimal * 10)}`, 'decimal_como_decena_es'),
     palabra(`${wordEntero} y ${wordDecimal}`, 'y_en_vez_de_coma'),
     palabra(`${wordEntero} con ${wordDecimal} decimales`, 'con_decimales_mal'),
-  ]);
+    palabra(`${wordEntero} punto ${wordDecimal}`, 'punto_en_vez_de_coma'),
+  ];
+  return casoTexto(`${entero}{,}${decimal}`, `${wordEntero} coma ${wordDecimal}`, rng.barajar(pool).slice(0, 3));
 }
 
 function comoSeLeeResta(rng) {
@@ -448,9 +483,51 @@ function comoSeLeeDivision(rng) {
   ]);
 }
 
+const PORCENTAJES = [10, 15, 20, 25, 30, 40, 50, 75, 80];
+
+function comoSeLeePorcentaje(rng) {
+  const p = rng.elegir(PORCENTAJES);
+  const w = numeroAEspanol(p);
+  return casoTexto(`${p}\\%`, `${w} por ciento`, [
+    palabra(`${w} por cientos`, 'por_cientos_plural'),
+    palabra(`${w} por cien`, 'por_cien'),
+    palabra(`${w} porcentaje`, 'porcentaje_por_ciento'),
+  ]);
+}
+
+// ---------------------------------------------------------------------------
+// Ordinales (y el partitivo que se cuela en su lugar).
+
+const ORDINAL_CASOS = [
+  { n: '9.º', correcta: 'noveno', opciones: [['nueveno', 'ordinal_9_nueveno']] },
+  { n: '10.º', correcta: 'décimo', opciones: [['diezavo', 'part_10_diezavo'], ['decimo', 'sin_tilde']] },
+  { n: '11.º', correcta: 'undécimo', opciones: [['onceavo', 'part_11_onceavo'], ['undecimo', 'sin_tilde']] },
+  { n: '12.º', correcta: 'duodécimo', opciones: [['doceavo', 'part_12_doceavo'], ['duodecimo', 'sin_tilde']] },
+  { n: '13.º', correcta: 'decimotercero', opciones: [['treceavo', 'part_13_treceavo']] },
+  { n: '20.º', correcta: 'vigésimo', opciones: [['veinteavo', 'part_20_veinteavo'], ['vigesimo', 'sin_tilde']] },
+];
+
+function generarOrdinal(rng) {
+  const caso = rng.elegir(ORDINAL_CASOS);
+  const propias = caso.opciones.map(([t, id]) => palabra(t, id));
+  const otras = ORDINAL_CASOS
+    .filter(c => c.n !== caso.n)
+    .flatMap(c => [c.correcta, ...c.opciones.map(([t]) => t)])
+    .filter(t => t !== caso.correcta);
+  const genericos = rng.barajar(otras).slice(0, 3).map(t => ({ texto: t, clave: t }));
+  return {
+    texto: { clave: 'ordinal', params: { n: caso.n } },
+    enunciado: '',
+    correcta: { texto: caso.correcta, clave: 'correcta' },
+    distractores: rng.barajar(propias),
+    genericos,
+  };
+}
+
 const COMO_SE_LEE = [
   comoSeLeeRaiz, comoSeLeeAlCuadrado, comoSeLeeAlCubo, comoSeLeePotenciaCinco, comoSeLeeFraccion,
   comoSeLeeDecimal, comoSeLeeResta, comoSeLeeMultiplicacion, comoSeLeeDivision,
+  comoSeLeePorcentaje,
 ];
 
 function generarComoSeLee(rng) {
@@ -485,7 +562,7 @@ function generarSeEscribe(rng) {
 
 // ---------------------------------------------------------------------------
 
-const FORMAS = [generarNumeroEnPalabras, generarNumeroEnPalabras, generarQueNumero, generarComoSeLee, generarComoSeLee];
+const FORMAS = [generarNumeroEnPalabras, generarNumeroEnPalabras, generarQueNumero, generarComoSeLee, generarComoSeLee, generarOrdinal];
 
 function elegirForma(rng) {
   return rng.moneda(0.25) ? generarSeEscribe(rng) : rng.elegir(FORMAS)(rng);

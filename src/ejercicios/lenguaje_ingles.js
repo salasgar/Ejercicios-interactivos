@@ -70,6 +70,9 @@ export const errores = {
   denominador_cardinal: { concepto: 'lenguaje_ingles',
     es: 'El denominador de una fracción se dice con un ordinal (quarters), no con el número normal (fours).', en: 'A fraction denominator uses an ordinal word (quarters), not the plain number (fours).' },
 
+  mitad_como_second: { concepto: 'lenguaje_ingles',
+    es: 'El denominador 2 es la excepción: 1/2 se dice "a half" (o "one half"), nunca "one second".', en: 'The denominator 2 is the exception: 1/2 is "a half" (or "one half"), never "one second".' },
+
   // --- Cómo se lee: decimales ---
   comma_en_vez_de_point: { concepto: 'lenguaje_ingles',
     es: 'En inglés la coma decimal se dice "point", no "comma".', en: 'In English the decimal separator is read as "point", not "comma".' },
@@ -77,6 +80,16 @@ export const errores = {
     es: 'Después de "point" cada cifra se lee suelta: no se lee como una decena.', en: 'After "point" each digit is read on its own: it is not read as a multiple of ten.' },
   and_en_vez_de_point: { concepto: 'lenguaje_ingles',
     es: 'Un número decimal no se lee con "and": la coma decimal se dice "point".', en: 'A decimal number is not read with "and": the decimal separator is "point".' },
+
+  // --- Cómo se lee: porcentajes ---
+  porcentaje_con_articulo: { concepto: 'lenguaje_ingles',
+    es: 'En inglés el porcentaje no lleva artículo: se dice "twenty per cent", no "the twenty per cent", aunque en español digamos "el 20 por ciento".', en: 'In English a percentage takes no article: it is "twenty per cent", not "the twenty per cent".' },
+  porcentaje_plural: { concepto: 'lenguaje_ingles',
+    es: '"Per cent" no se pone en plural: se dice "twenty per cent", no "twenty per cents".', en: '"Per cent" does not take a plural: it is "twenty per cent", not "twenty per cents".' },
+  porcentaje_for_cent: { concepto: 'lenguaje_ingles',
+    es: '"Por ciento" no se traduce palabra por palabra: es "per cent", no "for cent".', en: '"Por ciento" is not translated word by word: it is "per cent", not "for cent".' },
+  porcentaje_percentage: { concepto: 'lenguaje_ingles',
+    es: '"Percentage" es el nombre del concepto (el porcentaje), no la unidad: para leer 20% se dice "twenty per cent".', en: '"Percentage" is the name of the concept, not the unit: 20% is read "twenty per cent".' },
 
   // --- Cómo se lee: resta ---
   less_en_vez_de_minus: { concepto: 'lenguaje_ingles',
@@ -118,6 +131,8 @@ export const errores = {
   orto_13_thertin: { concepto: 'lenguaje_ingles', es: '"Thertin" no existe: 13 se escribe "thirteen".', en: 'There is no "thertin": 13 is spelt "thirteen".' },
   orto_13_threeten: { concepto: 'lenguaje_ingles', es: '"Threeten" no existe: 13 se escribe "thirteen".', en: 'There is no "threeten": 13 is spelt "thirteen".' },
   orto_13_treeteen: { concepto: 'lenguaje_ingles', es: '"Treeteen" no existe: 13 se escribe "thirteen".', en: 'There is no "treeteen": 13 is spelt "thirteen".' },
+  orto_13_threeteen: { concepto: 'lenguaje_ingles', es: '"Threeteen" no existe: 13 se escribe "thirteen", no "three" + "teen".', en: 'There is no "threeteen": 13 is spelt "thirteen", not "three" + "teen".' },
+  orto_13_threetin: { concepto: 'lenguaje_ingles', es: '"Threetin" no existe: 13 se escribe "thirteen".', en: 'There is no "threetin": 13 is spelt "thirteen".' },
   confusion_13_thirty: { concepto: 'lenguaje_ingles', es: '"Thirty" es 30, no 13: 13 se escribe "thirteen".', en: '"Thirty" is 30, not 13: 13 is spelt "thirteen".' },
   confusion_13_threty: { concepto: 'lenguaje_ingles', es: '"Threty" no existe y además confunde 13 con 30: se escribe "thirteen".', en: '"Threty" is not a word and it also confuses 13 with 30: it is "thirteen".' },
   confusion_13_threety: { concepto: 'lenguaje_ingles', es: '"Threety" no existe y además confunde 13 con 30: se escribe "thirteen".', en: '"Threety" is not a word and it also confuses 13 with 30: it is "thirteen".' },
@@ -149,6 +164,29 @@ export const errores = {
   orto_10000_milion: { concepto: 'lenguaje_ingles', es: '"Milion" se escribe con dos "l" y además es otra cifra: 10000 se escribe "ten thousand".', en: '"Milion" needs a double "l" and it is also the wrong number: 10000 is spelt "ten thousand".' },
   orto_10000_millon: { concepto: 'lenguaje_ingles', es: '"Millon" no existe y además es otra cifra: 10000 se escribe "ten thousand".', en: '"Millon" is not a word and it is also the wrong number: 10000 is spelt "ten thousand".' },
 
+  // --- ¿Cuál está bien escrito? (12, 14: la "u" de four) ---
+  orto_12_twelf: { concepto: 'lenguaje_ingles', es: '"Twelf" no existe: 12 se escribe "twelve", con "ve" al final; la "f" solo aparece en el ordinal, "twelfth".', en: 'There is no "twelf": 12 is spelt "twelve", with "ve" at the end; the "f" only appears in the ordinal, "twelfth".' },
+  orto_14_forteen: { concepto: 'lenguaje_ingles', es: '"Forteen" no existe: 14 conserva la "u" de "four" y se escribe "fourteen". La que pierde la "u" es "forty" (40).', en: 'There is no "forteen": 14 keeps the "u" of "four", so it is "fourteen". The one that drops the "u" is "forty" (40).' },
+  orto_14_fourthteen: { concepto: 'lenguaje_ingles', es: '"Fourthteen" mezcla el ordinal "fourth" con el número: 14 se escribe "fourteen".', en: '"Fourthteen" mixes the ordinal "fourth" with the number: 14 is spelt "fourteen".' },
+
+  // --- ¿Cuál está bien escrito? (16 / 60) ---
+  confusion_16_sixty: { concepto: 'lenguaje_ingles', es: '"Sixty" es 60, no 16: 16 se escribe "sixteen".', en: '"Sixty" is 60, not 16: 16 is spelt "sixteen".' },
+  orto_16_sixtin: { concepto: 'lenguaje_ingles', es: '"Sixtin" no existe: 16 se escribe "sixteen".', en: 'There is no "sixtin": 16 is spelt "sixteen".' },
+  confusion_60_sixteen: { concepto: 'lenguaje_ingles', es: '"Sixteen" es 16, no 60: 60 se escribe "sixty".', en: '"Sixteen" is 16, not 60: 60 is spelt "sixty".' },
+
+  // --- ¿Cuál está bien escrito? (20, 30) ---
+  orto_20_twenti: { concepto: 'lenguaje_ingles', es: '"Twenti" no existe: 20 se escribe "twenty", con "y" final como todas las decenas.', en: 'There is no "twenti": 20 is spelt "twenty", with a final "y" like all the tens.' },
+  orto_20_twoty: { concepto: 'lenguaje_ingles', es: '"Twoty" no existe, aunque venga de "two": 20 se escribe "twenty".', en: 'There is no "twoty", even though it comes from "two": 20 is spelt "twenty".' },
+  orto_30_thirdy: { concepto: 'lenguaje_ingles', es: '"Thirdy" mezcla el ordinal "third" con la decena: 30 se escribe "thirty".', en: '"Thirdy" mixes the ordinal "third" with the ten: 30 is spelt "thirty".' },
+
+  // --- ¿Cuál está bien escrito? (21: el guion de los compuestos) ---
+  orto_21_sin_guion: { concepto: 'lenguaje_ingles', es: 'Los números compuestos del 21 al 99 llevan guion: se escribe "twenty-one", no "twentyone".', en: 'Compound numbers from 21 to 99 take a hyphen: it is "twenty-one", not "twentyone".' },
+  orto_21_separado: { concepto: 'lenguaje_ingles', es: 'Falta el guion: "twenty-one" va con guion, no como dos palabras sueltas.', en: 'The hyphen is missing: "twenty-one" takes a hyphen, not two separate words.' },
+
+  // --- ¿Cuál está bien escrito? (1000000 y el falso amigo "billion") ---
+  orto_1000000_milion: { concepto: 'lenguaje_ingles', es: '"Milion" se escribe con dos "l": 1000000 es "one million".', en: '"Milion" needs a double "l": 1,000,000 is "one million".' },
+  magnitud_1000000_billion: { concepto: 'lenguaje_ingles', es: 'Falso amigo: en inglés "one billion" son 1000000000 (mil millones), ni un millón ni un billón de los nuestros.', en: 'False friend: in English "one billion" is 1,000,000,000, not a million (and not the Spanish "billón" either).' },
+
   // --- Ordinales ---
   ord_1_oneth: { concepto: 'lenguaje_ingles', es: '"Oneth" no existe: el ordinal de 1 es "first".', en: 'There is no "oneth": the ordinal of 1 is "first".' },
   ord_2_twoth: { concepto: 'lenguaje_ingles', es: '"Twoth" no existe: el ordinal de 2 es "second".', en: 'There is no "twoth": the ordinal of 2 is "second".' },
@@ -159,6 +197,14 @@ export const errores = {
   ord_9_nineth: { concepto: 'lenguaje_ingles', es: '"Nineth" no existe: el ordinal de 9 es "ninth", sin la "e".', en: 'There is no "nineth": the ordinal of 9 is "ninth", without the "e".' },
   ord_12_twelveth: { concepto: 'lenguaje_ingles', es: '"Twelveth" no existe: el ordinal de 12 es "twelfth".', en: 'There is no "twelveth": the ordinal of 12 is "twelfth".' },
   ord_20_twentyth: { concepto: 'lenguaje_ingles', es: '"Twentyth" no existe: el ordinal de 20 es "twentieth".', en: 'There is no "twentyth": the ordinal of 20 is "twentieth".' },
+
+  ord_4_forth: { concepto: 'lenguaje_ingles', es: '"Forth" sí es una palabra inglesa, pero significa "hacia delante": el ordinal de 4 es "fourth", con "u".', en: '"Forth" is a real word, but it means "forward": the ordinal of 4 is "fourth", with a "u".' },
+  ord_11_elevent: { concepto: 'lenguaje_ingles', es: 'Falta la "h" final: el ordinal de 11 es "eleventh".', en: 'The final "h" is missing: the ordinal of 11 is "eleventh".' },
+  ord_11_eleven: { concepto: 'lenguaje_ingles', es: 'Falta el "th" final: el ordinal de 11 es "eleventh", no "eleven".', en: 'The final "th" is missing: the ordinal of 11 is "eleventh", not "eleven".' },
+  ord_21_twentyoneth: { concepto: 'lenguaje_ingles', es: 'En los compuestos solo cambia la última palabra: el ordinal de 21 es "twenty-first", no "twenty-oneth".', en: 'In compounds only the last word changes: the ordinal of 21 is "twenty-first", not "twenty-oneth".' },
+  ord_21_sin_guion: { concepto: 'lenguaje_ingles', es: 'Falta el guion: el ordinal de 21 es "twenty-first".', en: 'The hyphen is missing: the ordinal of 21 is "twenty-first".' },
+  ord_40_fourtieth: { concepto: 'lenguaje_ingles', es: '"Fourtieth" no existe: 40 pierde la "u" de "four", así que el ordinal es "fortieth".', en: 'There is no "fourtieth": 40 drops the "u" of "four", so the ordinal is "fortieth".' },
+  ord_40_fortyth: { concepto: 'lenguaje_ingles', es: 'Las decenas cambian la "y" por "ieth": el ordinal de 40 es "fortieth", no "fortyth".', en: 'Tens change the "y" into "ieth": the ordinal of 40 is "fortieth", not "fortyth".' },
 
   // --- ¿Correcto o incorrecto? (la afirmación era verdadera) ---
   era_correcta: { concepto: 'lenguaje_ingles',
@@ -422,6 +468,7 @@ function comoSeLeeFraccion(rng) {
 
   const candidatos = [];
   if (num >= 2) candidatos.push(palabra(`${wordNum} ${ordinal}`, 'singular_en_vez_de_plural'));
+  if (den === 2) candidatos.push(palabra(num === 1 ? 'one second' : `${wordNum} seconds`, 'mitad_como_second'));
   candidatos.push(palabra(`${ORDINAL_CARDINAL[num]} ${plural}`, 'numerador_como_ordinal'));
   candidatos.push(palabra(`${wordNum} ${pluralInglesSimple(numeroAIngles(den))}`, 'denominador_cardinal'));
   const distractores = candidatos.filter(c => c.texto !== correcta);
@@ -501,9 +548,24 @@ function comoSeLeeSuma(rng) {
   return casoTexto(`${a} + ${b} = ${c}`, `${wordA} plus ${wordB} equals ${wordC}`, rng.barajar(pool).slice(0, 3));
 }
 
+const PORCENTAJES = [10, 15, 20, 25, 30, 40, 50, 75, 80];
+
+function comoSeLeePorcentaje(rng) {
+  const p = rng.elegir(PORCENTAJES);
+  const w = numeroAIngles(p);
+  const pool = [
+    palabra(`the ${w} per cent`, 'porcentaje_con_articulo'),
+    palabra(`${w} per cents`, 'porcentaje_plural'),
+    palabra(`${w} for cent`, 'porcentaje_for_cent'),
+    palabra(`${w} percentage`, 'porcentaje_percentage'),
+  ];
+  return casoTexto(`${p}\\%`, `${w} per cent`, rng.barajar(pool).slice(0, 3));
+}
+
 const COMO_SE_LEE = [
   comoSeLeeRaiz, comoSeLeeAlCuadrado, comoSeLeeAlCubo, comoSeLeePotenciaCinco, comoSeLeeFraccion,
   comoSeLeeDecimal, comoSeLeeResta, comoSeLeeMultiplicacion, comoSeLeeDivision, comoSeLeeSuma,
+  comoSeLeePorcentaje,
 ];
 
 function generarComoSeLee(rng) {
@@ -514,15 +576,31 @@ function generarComoSeLee(rng) {
 // ¿Cuál está bien escrito?
 
 const BIEN_ESCRITO = [
+  { n: 12, correcta: 'twelve', opciones: [['twelf', 'orto_12_twelf']] },
   { n: 13, correcta: 'thirteen', opciones: [
     ['thertin', 'orto_13_thertin'], ['threeten', 'orto_13_threeten'], ['treeteen', 'orto_13_treeteen'],
+    ['threeteen', 'orto_13_threeteen'], ['threetin', 'orto_13_threetin'],
     ['thirty', 'confusion_13_thirty'], ['threty', 'confusion_13_threty'], ['threety', 'confusion_13_threety'],
   ] },
   { n: 15, correcta: 'fifteen', opciones: [
     ['fiveteen', 'orto_15_fiveteen'], ['fifty', 'confusion_15_fifty'], ['fifetin', 'orto_15_fifetin'],
   ] },
+  { n: 14, correcta: 'fourteen', opciones: [
+    ['forteen', 'orto_14_forteen'], ['fourthteen', 'orto_14_fourthteen'],
+  ] },
+  { n: 16, correcta: 'sixteen', opciones: [
+    ['sixty', 'confusion_16_sixty'], ['sixtin', 'orto_16_sixtin'],
+  ] },
+  { n: 20, correcta: 'twenty', opciones: [
+    ['twenti', 'orto_20_twenti'], ['twoty', 'orto_20_twoty'],
+  ] },
+  { n: 21, correcta: 'twenty-one', opciones: [
+    ['twentyone', 'orto_21_sin_guion'], ['twenty one', 'orto_21_separado'],
+  ] },
+  { n: 30, correcta: 'thirty', opciones: [['thirdy', 'orto_30_thirdy']] },
   { n: 40, correcta: 'forty', opciones: [['fourty', 'orto_40_fourty']] },
   { n: 50, correcta: 'fifty', opciones: [['fivety', 'orto_50_fivety']] },
+  { n: 60, correcta: 'sixty', opciones: [['sixteen', 'confusion_60_sixteen']] },
   { n: 80, correcta: 'eighty', opciones: [['eichty', 'orto_80_eichty'], ['eigty', 'orto_80_eigty']] },
   { n: 90, correcta: 'ninety', opciones: [['nineteen', 'confusion_90_nineteen']] },
   { n: 19, correcta: 'nineteen', opciones: [['ninety', 'confusion_19_ninety']] },
@@ -536,6 +614,9 @@ const BIEN_ESCRITO = [
   { n: 10000, correcta: 'ten thousand', opciones: [
     ['one thousand', 'magnitud_10000_onethousand'], ['one million', 'magnitud_10000_onemillion'],
     ['one milion', 'orto_10000_milion'], ['one millon', 'orto_10000_millon'],
+  ] },
+  { n: 1000000, correcta: 'one million', opciones: [
+    ['one milion', 'orto_1000000_milion'], ['one billion', 'magnitud_1000000_billion'],
   ] },
 ];
 
@@ -551,7 +632,7 @@ function generarBienEscrito(rng) {
     texto: { clave: 'bien_escrito' },
     enunciado: tex(caso.n),
     correcta: { texto: caso.correcta, clave: 'correcta' },
-    distractores: propias,
+    distractores: rng.barajar(propias),
     genericos,
   };
 }
@@ -563,11 +644,19 @@ const ORDINAL_CASOS = [
   { n: '1st', correcta: 'first', opciones: [['oneth', 'ord_1_oneth']] },
   { n: '2nd', correcta: 'second', opciones: [['twoth', 'ord_2_twoth']] },
   { n: '3rd', correcta: 'third', opciones: [['threeth', 'ord_3_threeth']] },
+  { n: '4th', correcta: 'fourth', opciones: [['forth', 'ord_4_forth']] },
   { n: '5th', correcta: 'fifth', opciones: [['fiveth', 'ord_5_fiveth']] },
   { n: '8th', correcta: 'eighth', opciones: [['eight', 'ord_8_eight'], ['eigth', 'ord_8_eigth']] },
   { n: '9th', correcta: 'ninth', opciones: [['nineth', 'ord_9_nineth']] },
+  { n: '11th', correcta: 'eleventh', opciones: [['elevent', 'ord_11_elevent'], ['eleven', 'ord_11_eleven']] },
   { n: '12th', correcta: 'twelfth', opciones: [['twelveth', 'ord_12_twelveth']] },
   { n: '20th', correcta: 'twentieth', opciones: [['twentyth', 'ord_20_twentyth']] },
+  { n: '21st', correcta: 'twenty-first', opciones: [
+    ['twenty-oneth', 'ord_21_twentyoneth'], ['twentyfirst', 'ord_21_sin_guion'],
+  ] },
+  { n: '40th', correcta: 'fortieth', opciones: [
+    ['fourtieth', 'ord_40_fourtieth'], ['fortyth', 'ord_40_fortyth'],
+  ] },
 ];
 
 function generarOrdinal(rng) {
@@ -582,7 +671,7 @@ function generarOrdinal(rng) {
     texto: { clave: 'ordinal', params: { n: caso.n } },
     enunciado: '',
     correcta: { texto: caso.correcta, clave: 'correcta' },
-    distractores: propias,
+    distractores: rng.barajar(propias),
     genericos,
   };
 }
