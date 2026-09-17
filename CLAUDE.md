@@ -39,3 +39,10 @@ toma los distractores **en orden** y se planta en tres. Si un generador declara
 más de tres, los sobrantes son código muerto que no ve ningún alumno: hay que
 barajar el *pool* antes de pasarlo (`rng.barajar(pool).slice(0, 3)`). El tercer
 test de `distractores.test.js` detecta este caso.
+
+## Coordinación con los cuestionarios y las hojas de ejercicios
+
+La app, los cuestionarios tipo test semanales y las hojas de ejercicios de cada unidad
+se coordinan por un inventario único de destrezas con identificadores. Está explicado en
+[docs/coordinacion-unidad1.md](docs/coordinacion-unidad1.md); léelo antes de añadir o
+cambiar generadores de la unidad 1.
