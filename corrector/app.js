@@ -10,7 +10,7 @@ const ALMACEN = 'corrector-examenes-v1';
 const POR_BLOQUE = 4; // filas por tabla de respuestas, como en la franja del examen
 
 let estado = cargar();
-const ui = { pestana: 'corregir', semana: null, grupo: '', alumno: '', codigo: '', resp: '', obs: '', editando: null, semanaRes: null, grupoRes: '', alumnoRes: '' };
+const ui = { pestana: 'corregir', semana: null, grupo: '', alumno: '', codigo: '', resp: '', obs: '', editando: null, verTodos: false, semanaRes: null, grupoRes: '', alumnoRes: '' };
 
 // ---------------------------------------------------------------------------
 // Almacenamiento
@@ -96,9 +96,15 @@ function renderCorregir(foco = '#sel-alumno') {
   const avisos = [];
   if (!semanas().length) avisos.push('No hay ninguna clave cargada: ve a la pestaña <b>Claves</b> y carga el JSON de la semana.');
   if (!estado.alumnos.length) avisos.push('No hay alumnos: ve a la pestaña <b>Alumnos</b> y pega la lista.');
+  if (estado.alumnos.length && clave && !ui.verTodos && !L.sinRegistrar(alumnosDelGrupo(ui.grupo), registrosSemana(ui.semana), ui.semana).length)
+    avisos.push(`Ya están registrados todos los alumnos${ui.grupo ? ` de ${esc(ui.grupo)}` : ''} en la semana ${ui.semana}. Para corregir o repasar alguno, marca <b>Ver también los ya corregidos</b>.`);
   const regs = clave ? L.resumenSemana(clave, registrosSemana(ui.semana), estado.alumnos) : [];
   const hechos = new Map(regs.map(r => [r.alumno, r]));
-  const listaAlumnos = alumnosDelGrupo(ui.grupo).map(a => {
+  const delGrupo = alumnosDelGrupo(ui.grupo);
+  // Por defecto solo se ofrecen los que faltan; el que se está editando sigue visible.
+  const ofrecidos = ui.verTodos ? delGrupo : delGrupo.filter(a => !hechos.has(a.id) || a.id === ui.alumno);
+  const quedan = L.sinRegistrar(delGrupo, registrosSemana(ui.semana), ui.semana).length;
+  const listaAlumnos = ofrecidos.map(a => {
     const r = hechos.get(a.id);
     return [a.id, `${a.nombre}${ui.grupo ? '' : ' · ' + a.grupo}${r ? ` · ✓ ${num(r.nota)}` : ''}`];
   });
@@ -108,9 +114,10 @@ function renderCorregir(foco = '#sel-alumno') {
       <div class="controles">
         <label>Semana <select id="sel-semana">${opciones(semanas().map(s => [s, `Semana ${s}${estado.claves[s].fecha ? ' · ' + estado.claves[s].fecha : ''}`]), ui.semana)}</select></label>
         <label>Grupo <select id="sel-grupo">${opciones(grupos().map(g => [g, g]), ui.grupo, 'Todos')}</select></label>
-        <label>Alumno <select id="sel-alumno">${opciones(listaAlumnos, ui.alumno, '— elige —')}</select></label>
+        <label>Alumno${quedan ? ` <span class="pequeno suave">(faltan ${quedan})</span>` : ''} <select id="sel-alumno">${opciones(listaAlumnos, ui.alumno, '— elige —')}</select></label>
         <label>Código de la versión <input type="text" id="in-codigo" inputmode="numeric" maxlength="4" autocomplete="off" value="${esc(ui.codigo)}"></label>
         <span id="info-version" class="pequeno suave"></span>
+        <label class="pequeno suave"><input type="checkbox" id="ck-todos" ${ui.verTodos ? 'checked' : ''}> Ver también los ya corregidos</label>
       </div>
       <div class="entrada">
         <input type="text" id="in-resp" autocomplete="off" spellcheck="false" autocapitalize="characters"
@@ -130,8 +137,9 @@ function renderCorregir(foco = '#sel-alumno') {
       <div id="lista-registros"></div>
     </div>`;
 
-  $('#sel-semana').addEventListener('change', e => { ui.semana = Number(e.target.value); limpiarFormulario(); renderCorregir(); });
-  $('#sel-grupo').addEventListener('change', e => { ui.grupo = e.target.value; limpiarFormulario(); renderCorregir(); });
+  $('#sel-semana').addEventListener('change', e => { ui.semana = Number(e.target.value); limpiarFormulario(true, true); renderCorregir(); });
+  $('#sel-grupo').addEventListener('change', e => { ui.grupo = e.target.value; limpiarFormulario(true); renderCorregir(); });
+  $('#ck-todos').addEventListener('change', e => { ui.verTodos = e.target.checked; renderCorregir('#sel-alumno'); });
   $('#sel-alumno').addEventListener('change', e => { elegirAlumno(e.target.value); });
   $('#in-codigo').addEventListener('input', e => {
     ui.codigo = e.target.value.replace(/\D/g, '').slice(0, 4);
@@ -150,7 +158,7 @@ function renderCorregir(foco = '#sel-alumno') {
   }
   $('#in-obs').addEventListener('input', e => { ui.obs = e.target.value; });
   $('#btn-guardar').addEventListener('click', guardarRegistro);
-  $('#btn-limpiar').addEventListener('click', () => { limpiarFormulario(true); renderCorregir('#sel-alumno'); });
+  $('#btn-limpiar').addEventListener('click', () => { limpiarFormulario(true, true); renderCorregir('#sel-alumno'); });
   $('#bloques').addEventListener('click', e => {
     const td = e.target.closest('td.celda');
     if (!td) return;
@@ -184,8 +192,14 @@ function renderCorregir(foco = '#sel-alumno') {
   if (foco) $(foco)?.focus();
 }
 
-function limpiarFormulario(todo = false) {
-  ui.codigo = ''; ui.resp = ''; ui.obs = ''; ui.editando = null;
+/**
+ * `todo` suelta también al alumno; `codigo`, el código de la versión.
+ * El código se conserva salvo que se pida borrarlo: los exámenes se corrigen
+ * ordenados por versión, así que el siguiente alumno suele llevar la misma.
+ */
+function limpiarFormulario(todo = false, codigo = false) {
+  ui.resp = ''; ui.obs = ''; ui.editando = null;
+  if (codigo) ui.codigo = '';
   if (todo) ui.alumno = '';
 }
 
@@ -199,8 +213,10 @@ function elegirAlumno(id) {
     renderCorregir('#in-resp');
     aviso(`<b>${esc(alumnoDe(id)?.nombre)}</b> ya está registrado esta semana (${L.fechaTexto(r.ts)}). Estás editando ese registro: al guardar se sustituye.`, 'aviso--atencion');
   } else {
-    ui.codigo = ''; ui.resp = ''; ui.obs = ''; ui.editando = null;
-    renderCorregir('#in-codigo');
+    // El código se mantiene de un alumno al siguiente; si ya vale, se va directo a las respuestas.
+    ui.resp = ''; ui.obs = ''; ui.editando = null;
+    // El indicador verde de al lado del código dice qué versión sigue puesta.
+    renderCorregir(L.versionDe(claveActual(), ui.codigo) ? '#in-resp' : '#in-codigo');
   }
 }
 

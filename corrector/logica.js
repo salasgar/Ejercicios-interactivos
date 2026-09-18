@@ -53,6 +53,15 @@ export function analizarAlumnos(texto, existentes = []) {
   return { alumnos, errores };
 }
 
+/**
+ * Los que todavía no tienen registro en esa semana, en el mismo orden en que llegan.
+ * Es lo que se ofrece al corregir: los ya tecleados estorban para encontrar al siguiente.
+ */
+export function sinRegistrar(alumnos, registros, semana) {
+  const hechos = new Set(registros.filter(r => r.semana === semana).map(r => r.alumno));
+  return alumnos.filter(a => !hechos.has(a.id));
+}
+
 export function ordenarAlumnos(alumnos) {
   return [...alumnos].sort((a, b) => a.grupo.localeCompare(b.grupo, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
 }

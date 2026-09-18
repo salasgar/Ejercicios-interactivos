@@ -165,6 +165,17 @@ test('CSV: «;», BOM, coma decimal y una fila por alumno o por respuesta', () =
   assert.equal(detalle[3], '1;a;"Álvaro; el de A";1ºA;1111;3;3;1C-03;D;C;fallo;D3;Work out: 3+3');
 });
 
+test('sinRegistrar deja solo a los que faltan por teclear esa semana', () => {
+  const alumnos = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+  const registros = [
+    { semana: 1, alumno: 'b' },
+    { semana: 2, alumno: 'c' },   // otra semana: c sigue faltando en la 1
+  ];
+  assert.deepEqual(L.sinRegistrar(alumnos, registros, 1).map(a => a.id), ['a', 'c']);
+  assert.deepEqual(L.sinRegistrar(alumnos, registros, 2).map(a => a.id), ['a', 'b']);
+  assert.deepEqual(L.sinRegistrar(alumnos, [], 1).map(a => a.id), ['a', 'b', 'c']);
+});
+
 test('aPlano quita el LaTeX de enunciados y opciones', () => {
   assert.equal(L.aPlano('Work out: $\\ 7+4\\times 9$'), 'Work out: 7+4×9');
   assert.equal(L.aPlano('$2\\,574$'), '2 574');
