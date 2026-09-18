@@ -142,6 +142,12 @@ Apuntadas para no olvidarlas; no son para ahora:
   motivar a los alumnos (idea de Juan Luis, 2026-09-09).
 - Varios profesores (lista de uids en las reglas en vez de uno fijo).
 - Filtro por curso en el formulario de tareas (el campo `curso` ya existe).
+- Usar como banco de ejercicios de la app todo el material que se genera para las clases
+  (exámenes semanales, práctica, hojas de ejercicios, banco de preguntas validadas) y
+  personalizar feedback, explicaciones y próximos ejercicios según los aciertos y fallos de
+  cada alumno por destreza. Idea de Juan Luis, 2026-09-18, detallada en
+  `docs/coordinacion-unidad1.md`, apartado «La tercera línea: adaptación al perfil de cada
+  alumno» — sin diseñar todavía.
 
 ## Cómo añadir un tipo de ejercicio
 

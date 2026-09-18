@@ -119,6 +119,12 @@ Decidido por Juan Luis el 2026-09-17. Para cada semana de la unidad hace falta:
 8. **Vocabulario**: glosario completo en PDF y diapositiva 16:9 para la pizarra, solo con
    términos de las 4 versiones del examen.
 
+Calendario: clases los lunes, martes, jueves y viernes, con los dos grupos seguidos (no
+hay tiempo para pasarse las preguntas). El examen tipo test es **el viernes** y el paquete de la
+semana se sube a Classroom **el sábado anterior**. La última semana de cada unidad el examen
+tipo test puede sustituirse por el **examen de preguntas abiertas** de la unidad, que pesa
+bastante más en la nota. La corrección con app (ZipGrade) está pendiente de una prueba.
+
 Puntuación del examen: acierto $+1$, fallo $-1/(N-1)$ ($-1/3$ con 4 opciones), en blanco 0; la
 nota nunca baja de 0. Duración: 55 minutos de clase, unos 50 efectivos. Las pruebas semanales
 pesan poco en la nota: tras el primer examen se revisa el acierto por pregunta y por versión
@@ -150,6 +156,78 @@ apunta en esa dirección (refuerzo automático por concepto fallado, resultados 
 alumno y concepto). Cuando se diseñe, la unidad de adaptación debería ser el
 identificador del inventario: «este alumno falla `1A-03` y `2C-07`» es lo que permite
 elegir qué generar, qué hoja recomendar y qué preguntas del banco poner en su repaso.
+
+**Idea de Juan Luis, 2026-09-18, apuntada para otra sesión (sin diseñar ni implementar):**
+todo el material que se está generando para las unidades (exámenes semanales de 4+1
+versiones, sus 8 versiones de práctica, las hojas de ejercicios L1/L2/L3 con solucionario,
+el banco de 480 preguntas validadas, `casos-A.tsv` y el catálogo de distractores) es, a la
+vez que material de clase, **un banco de ejercicios para la app**: cada pregunta o ejercicio
+ya viene con su identificador del inventario, su explicación por opción o por paso, y (en el
+caso de las preguntas tipo test) su distractor con el error concreto que corrige. Eso es
+justo la materia prima que le falta a un generador de la app para cubrir una destreza nueva
+sin inventar el ejercicio desde cero (ver la tabla «Flujos de retroalimentación» más arriba,
+que ya apunta esto para las hojas; la idea es extenderlo a todo el material, no solo a las
+hojas).
+
+Sobre esa base, la app podría dar un paso más allá del refuerzo actual (que solo repite el
+mismo tipo de ejercicio tras un fallo, hasta 6 veces): a partir del histórico de aciertos y
+fallos de cada alumno por destreza (identificador del inventario), **personalizar** tres
+cosas a la vez:
+- **El feedback**: no solo el mensaje fijo del distractor concreto, sino elegir, entre las
+  explicaciones ya escritas para esa destreza (soluciones de examen, de hojas, «Cómo se
+  hace»), la que mejor corresponda al error que ha cometido esta vez.
+- **La enseñanza**: si un alumno falla una destreza de forma sostenida (no un fallo suelto),
+  ofrecerle la explicación del contenido (el «Cómo se hace» o el recuadro «¡Ojo!» de la hoja
+  o del examen resuelto correspondiente a esa destreza) antes de darle más ejercicios de lo
+  mismo, en vez de limitarse a repetir.
+- **Los ejercicios propuestos**: elegir el siguiente ejercicio (de qué destreza, de qué
+  dificultad) en función de qué está fallando o dominando ese alumno en concreto, tirando del
+  banco de todos los materiales y no solo del generador aleatorio de su tipo.
+
+Nada de esto se ha diseñado: falta decidir, entre otras cosas, cómo pasar preguntas en LaTeX
+(exámenes, hojas) al formato de generador de la app (¿un tipo nuevo por destreza, un `banco`
+de preguntas fijas en vez de generadas al azar, o un generador que parametriza los casos ya
+validados de `casos-A.tsv`?), qué guardar en Firestore para el histórico por destreza y
+alumno (ahora se guarda por concepto, no por destreza fina), y cómo evitar que la
+personalización choque con la regla de que cada alumno hace **una sola versión** del examen
+o de la práctica (los ejercicios de la app no tienen ese problema, al generarse al azar).
+Queda para cuando se retome esta tercera línea; no tocar el motor de refuerzo actual
+(`src/motor.js`) mientras tanto.
+
+**Candidato concreto para alimentar esta línea, apuntado el 2026-09-18:** la lista de «sé
+hacerlo» del paquete semanal (ver más arriba, punto 1 de «El paquete de cada semana») es hoy
+un PDF que el alumno rellena en papel y se queda para sí mismo, sin nota y sin que el
+profesor la vea. Está construida sobre los mismos ids del inventario que todo lo demás, así
+que es una candidata natural a convertirse en **autoevaluación dentro de la app**: el alumno
+marca, destreza a destreza, si cree que sabe hacerla. Ese dato —lo que el alumno **cree** que
+sabe— cotejado con lo que la app mide que **realmente** sabe (aciertos/fallos por destreza) da
+una señal más rica que cualquiera de las dos por separado: un alumno que se marca «sé
+hacerlo» y falla sistemáticamente necesita algo distinto (corregir el exceso de confianza)
+que uno que se marca «no sé» y efectivamente falla (reforzar sabiendo que es consciente).
+Mientras esta digitalización no exista, la lista sigue en PDF, en papel, autoevaluación pura
+del alumno sin recogerla ni puntuarla — no cambia nada de lo que ya está en marcha para la
+semana 2. Depende del mismo trabajo de diseño pendiente de arriba (histórico por destreza
+fina en Firestore, no solo por concepto).
+
+**Para reflexionar, apuntado el 2026-09-18 (sin decidir si merece la pena):** en vez de una
+respuesta dicotómica SÍ/NO por destreza, una escala de dominio más matizada:
+
+| Nivel | Significado |
+|---|---|
+| 0 | No sé hacerlo y no me suena. |
+| 1 | Me suena, pero no sé hacerlo. |
+| 2 | Más o menos sé hacerlo, pero no lo entiendo bien. |
+| 3 | Sé hacerlo, pero no sé explicarlo. |
+| 4 | Sé hacerlo y sé explicarlo. |
+
+Encajaría con la idea de arriba (autoevaluación cotejada con el desempeño real): un 0-1 que
+falla es coherente y solo necesita explicación de cero; un 3-4 que falla es la señal de
+exceso de confianza más clara; y la distinción «sé hacerlo / sé explicarlo» separa la
+destreza mecánica del dominio del porqué, que es justo lo que ya distinguen las soluciones
+explicadas de examen y de hojas («Cómo se hace» frente al resultado). Pendiente de valorar
+si una escala de 5 niveles es manejable para alumnos de 12 años sin que se conviertan en un
+SÍ/NO disfrazado (marcar siempre 4 o siempre 0), y si el cotejo con el desempeño real
+necesita los 5 niveles o le basta una versión más simple (por ejemplo, 3 niveles).
 
 ## Dónde está cada cosa (unidad 1)
 
