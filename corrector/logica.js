@@ -107,14 +107,23 @@ export function versionDe(clave, codigo) {
 // ---------------------------------------------------------------------------
 
 /**
+ * Teclado posicional: las cuatro opciones caen en cuatro teclas seguidas de la fila
+ * de arriba, en el mismo orden en que están impresas en la franja del examen. Se
+ * teclea con los dedos quietos, sin buscar la A, la B, la C y la D por el teclado.
+ */
+export const POSICIONAL = { U: 'A', I: 'B', O: 'C', P: 'D' };
+
+/**
  * Convierte lo tecleado en la cadena de respuestas: letras A-D (en cualquier caja),
  * «-», espacio, «_», «0» o «.» en blanco, «?» o «x» nula. Todo lo demás se ignora.
- * Corta en n símbolos.
+ * Corta en n símbolos. Con `posicional`, además U I O P valen por A B C D (las
+ * letras normales siguen valiendo: no estorban, porque U, I, O y P no son opciones).
  */
-export function limpiarTecleo(texto, n) {
+export function limpiarTecleo(texto, n, posicional = false) {
   let out = '';
-  for (const ch of String(texto ?? '').toUpperCase()) {
+  for (const bruto of String(texto ?? '').toUpperCase()) {
     if (out.length >= n) break;
+    const ch = posicional ? POSICIONAL[bruto] ?? bruto : bruto;
     if (LETRAS.includes(ch)) out += ch;
     else if ('- _0.'.includes(ch)) out += BLANCO;
     else if (ch === '?' || ch === 'X') out += NULA;
