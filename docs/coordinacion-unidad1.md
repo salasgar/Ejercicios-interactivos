@@ -12,7 +12,7 @@ los tres viven en el mismo proyecto porque se retroalimentan:
 | Material | Qué es | Dónde vive |
 |---|---|---|
 | **App web** | Ejercicios de opción múltiple generados al azar, con feedback por error y refuerzo automático. Este repositorio | `src/ejercicios/*.js`, publicada en GitHub Pages |
-| **Exámenes tipo test y práctica** | Por semana: un examen en clase de 4 versiones (más una extra) y 8 versiones de práctica con el mismo formato, en LaTeX (ver abajo) | iCloud: `apuntes-1eso-bilingue/<N>. <Unidad>/examenes-en-clase/semana-<N>/` |
+| **Exámenes tipo test y práctica** | Por semana: un examen en clase de 4 versiones (más una extra) y 4 versiones de práctica (8 en las semanas 1 a 3 de la unidad 1) con el mismo formato, en LaTeX (ver abajo) | iCloud: `apuntes-1eso-bilingue/<N>. <Unidad>/exámenes-semanales/semana-<N>/` |
 | **Hojas de ejercicios** | Una hoja por semana de ejercicios abiertos, en tres niveles (L1, L2, L3), en LaTeX | iCloud: `apuntes-1eso-bilingue/<N>. <Unidad>/hojas-de-ejercicios/` |
 
 **Cambio del 2026-09-17.** Los 20 cuestionarios por semana que se habían planificado
@@ -111,24 +111,62 @@ Decidido por Juan Luis el 2026-09-17. Para cada semana de la unidad hace falta:
    hacen el mismo día): cruces, opción correcta y **explicación de cada opción**.
 4. **Versión extra** del examen, con su resuelto, para quien falte.
 5. **Tabla de claves** de todas las versiones, para corregir.
-6. **Práctica**: 8 versiones con el mismo formato, que entre todas cubren el inventario de la
-   semana (dos bloques de 4 que lo cubren cada uno), también con el orden barajado para que no
-   se aprenda la plantilla. Un PDF con las 8 y otro con sus soluciones explicadas; se suben el
-   lunes avisando de que son los contenidos de la semana.
+6. **Cuestionarios** (hasta el 2026-09-20 se llamaban «práctica»; los ficheros ya hechos
+   conservan el nombre `practica-semanaN.*`, y la carpeta `cuestionarios/` de la unidad 1 es el
+   plan antiguo, que se conserva como banco de ejercicios): **4 versiones** con el mismo formato, que entre las cuatro cubren el inventario
+   de la semana, también con el orden barajado para que no se aprenda la plantilla. Un PDF con
+   las 4 y otro con sus soluciones explicadas; se suben el lunes avisando de que son los
+   contenidos de la semana. (Decisión de Juan Luis del 2026-09-20: las semanas 1 a 3 de la
+   unidad 1 se hicieron con 8, en dos bloques de 4; desde entonces se hacen 4 y, **solo si los
+   alumnos piden más**, se produce un segundo bloque de otras 4.)
 7. **Hoja de ejercicios** abiertos (L1/L2/L3) con **solucionario explicado** para alumnos.
 8. **Vocabulario**: glosario completo en PDF y diapositiva 16:9 para la pizarra, solo con
    términos de las 4 versiones del examen.
 
 Calendario: clases los lunes, martes, jueves y viernes, con los dos grupos seguidos (no
 hay tiempo para pasarse las preguntas). El examen tipo test es **el viernes** y el paquete de la
-semana se sube a Classroom **el sábado anterior**. La última semana de cada unidad el examen
-tipo test puede sustituirse por el **examen de preguntas abiertas** de la unidad, que pesa
-bastante más en la nota. La corrección con app (ZipGrade) está pendiente de una prueba.
+semana se sube a Classroom **el sábado anterior**. **Todas las semanas de todas las unidades tienen su examen tipo test**,
+también la última (decisión de Juan Luis del 2026-09-20): se produce siempre, y es él quien
+decide después si lo usa o si esa semana solo hace el **examen de preguntas abiertas** de la
+unidad, que pesa bastante más en la nota. La corrección con app (ZipGrade) está pendiente de una prueba.
 
 Puntuación del examen: acierto $+1$, fallo $-1/(N-1)$ ($-1/3$ con 4 opciones), en blanco 0; la
 nota nunca baja de 0. Duración: 55 minutos de clase, unos 50 efectivos. Las pruebas semanales
 pesan poco en la nota: tras el primer examen se revisa el acierto por pregunta y por versión
 para mejorar el material, sin exigir equivalencia exacta.
+
+## Añadidos al paquete y a la unidad (decisiones del 2026-09-20)
+
+La lista completa de lo que se produce en una unidad, con las lecciones de la unidad 1, está en
+`…/apuntes-1eso-bilingue/comun/LECCIONES-Y-LISTA-DEL-PAQUETE.md`: **es lo primero que lee una sesión
+que vaya a producir material.** Lo que ese día se añadió a lo de arriba:
+
+- **Refuerzo**: sin regla fija; cada semana se decide, con los resultados de la anterior, qué se
+  refuerza ya (lo que es requisito de lo que viene) y qué espera a un repaso antes del examen
+  final. Por bloques de destreza; cada alumno hace solo los que falló.
+- **Versiones adaptadas a dislexia** del examen semanal y, sobre todo, del examen final. Los
+  alumnos con dislexia **pueden usar calculadora** en los exámenes.
+- **Versión de recuperación** del examen final (los dos modelos ya están comprometidos: examen y
+  ejemplo).
+- **Mini-test de vocabulario el lunes**, 5 minutos con la app: necesita los subtipos de
+  `lenguaje_ingles` etiquetados por semana.
+- **Hoja de la unidad para el alumno**, al empezar: por semanas, solo las destrezas nucleares.
+- **Itinerario mínimo ★** en cada hoja de ejercicios, desde la unidad 2.
+- **Informe de resultados por destreza** al cerrar la unidad, cuando estén corregidas las semanas.
+
+## El inglés de los enunciados
+
+Decisión de Juan Luis del 2026-09-20, a raíz de la pregunta del «smallest **even** number» del
+examen de la semana 1 (12 % de aciertos con *even* en negrita y en el glosario: midió vocabulario
+y no valor posicional). Vale para todas las unidades:
+
+- **En los exámenes, el lenguaje tiene que ser sencillo**: enunciados cortos, que se entiendan
+  sin un vocabulario amplio (el básico y el de la unidad). Es donde hay que estar más atento.
+- **La palabra no matemática de la que depende la respuesta se aclara en el propio enunciado**,
+  entre paréntesis: «(*even number* = número par)». No se aclara lo que la pregunta evalúa.
+- **En los cuestionarios de práctica y en las hojas** también se procura un lenguaje sencillo,
+  pero no pasa nada si algún ejercicio lo tiene algo más complejo: en casa pueden traducirlo.
+- En la app, lo mismo que en los exámenes: el alumno contesta sin ayuda.
 
 ## Cómo llega cada material a los alumnos
 
@@ -138,6 +176,17 @@ Decisiones de Juan Luis del 2026-09-17:
   páginas**; no deben crecer) y además subidas a Classroom.
 - **Soluciones de las hojas**, con las explicaciones paso a paso: **solo en Classroom**, para
   no gastar papel (ocupan 6-7 páginas por semana).
+
+Qué es obligatorio y cómo se usa cada cosa (Juan Luis, 2026-09-20), para que el volumen no
+engañe:
+
+- **Lo único obligatorio es la hoja de ejercicios semanal** (los ejercicios abiertos).
+- **Los cuestionarios de práctica son voluntarios.**
+- **Del examen resuelto explicado, a cada alumno le basta con leer las preguntas que falló.**
+  Por eso puede ser largo (24 páginas) sin ser una carga: es material de consulta, con enlaces
+  por código de versión.
+- **Pendiente**: comprobar cuánto de todo ese material usan de verdad los alumnos, antes de
+  ampliarlo.
 
 ## Lo que se practica pero no se evalúa
 
@@ -231,9 +280,16 @@ necesita los 5 niveles o le basta una versión más simple (por ejemplo, 3 nivel
 
 ## Dónde está cada cosa (unidad 1)
 
+- **Herramientas de todo el curso** (desde el 2026-09-20): `…/apuntes-1eso-bilingue/comun/`, con el
+  generador común de exámenes (`examen.py`), el exportador de claves para el corrector, el
+  original de `clil1eso.sty` (las demás copias las hace `sincronizar_estilos.py`) y la infografía
+  del examen. Cada unidad solo tiene en `exámenes-semanales/comun/` dos lanzadores sin lógica.
+  Explicado en el `LEEME.md` de esa carpeta.
+- **Inventario de la unidad 2**: `…/2. Divisibility/inventario-unidad2.tsv` (80 destrezas, 36
+  nucleares, ids `U2-<semana><parte>-<nn>`; columnas en el `LEEME.md` de la unidad).
 - Secuenciación y resumen para familias:
   `~/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/1. Natural numbers, powers and roots/`
-- Exámenes, práctica y vocabulario: `…/1. Natural numbers, powers and roots/examenes-en-clase/`
+- Exámenes, práctica y vocabulario: `…/1. Natural numbers, powers and roots/exámenes-semanales/`
   (una carpeta por semana; la semana 1 tiene `generar.py`, que produce examen, resuelto,
   versión extra y clave).
 - Fuentes heredadas del plan de cuestionarios, de solo lectura:
