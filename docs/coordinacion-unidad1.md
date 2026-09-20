@@ -140,8 +140,8 @@ haya terminado de impartir la materia. Calendario de la 1.ª evaluación: unidad
 es lectivo; exámenes el 16, 23 y 30 de octubre, final el 6-11) y unidad 3 del 9-11 al 4-12
 (exámenes el 13, 20 y 27 de noviembre, final el 4-12). En la unidad 2, al tener tres clases la
 semana 1, el contenido va una sesión por detrás del viernes y **cada examen evalúa lo dado hasta
-el jueves** (examen 1: sesiones 1 y 2; examen 2: 3, 5 y 6; examen 3: 7, 9 y 10; este reparto está
-pendiente de que Juan Luis lo confirme expresamente): está en la sección «Calendario del curso
+el jueves** (examen 1: sesiones 1 y 2; examen 2: 3, 5 y 6; examen 3: 7, 9 y 10; confirmado por
+Juan Luis ese mismo día, con sus preguntas de repaso aparte): está en la sección «Calendario del curso
 2026-27» de `2. Divisibility/secuenciación-unidad2.tex`.
 
 **Repaso en todos los exámenes** (cifra confirmada por Juan Luis el 2026-09-20): cada examen tipo
