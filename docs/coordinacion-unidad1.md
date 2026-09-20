@@ -144,6 +144,14 @@ el jueves** (examen 1: sesiones 1 y 2; examen 2: 3, 5 y 6; examen 3: 7, 9 y 10; 
 Juan Luis ese mismo día, con sus preguntas de repaso aparte): está en la sección «Calendario del curso
 2026-27» de `2. Divisibility/secuenciación-unidad2.tex`.
 
+**Calendario de todo el curso** (decidido por Juan Luis el 2026-09-20; detalle y recuentos en
+`…/apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md`): las fracciones empiezan en cuanto acaba la
+unidad 3, el jueves 10-12, aunque las parta la Navidad. Fracciones 10-12 a 15-1; decimales 18-1 a
+jueves 28-1 (el viernes 29 es festivo: única excepción a los viernes); álgebra 1-2 a 26-2;
+proporcionalidad y porcentajes 1-3 a 23-4; geometría 26-4 a 4-6. Caben los 32 paquetes semanales y
+sobra una semana, del 7 al 11 de junio, para las **recuperaciones de todas las evaluaciones, que se
+hacen en junio**; del 14 al 25 de junio, repaso del curso con los exámenes tipo test no hechos.
+
 **Repaso en todos los exámenes** (cifra confirmada por Juan Luis el 2026-09-20): cada examen tipo
 test lleva **unas 4 preguntas de 20 de repaso** de todo lo anterior, de esa unidad y de las
 anteriores; el **examen 1 de la unidad 2 lleva 8 de 20** de la unidad 1 (máximo 10), porque solo
