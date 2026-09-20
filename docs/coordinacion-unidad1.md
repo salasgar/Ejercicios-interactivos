@@ -130,6 +130,28 @@ también la última (decisión de Juan Luis del 2026-09-20): se produce siempre,
 decide después si lo usa o si esa semana solo hace el **examen de preguntas abiertas** de la
 unidad, que pesa bastante más en la nota. La corrección con app (ZipGrade) está pendiente de una prueba.
 
+**Todos los exámenes caen en viernes** (decisión de Juan Luis del 2026-09-20, por la tarde): la
+programación pone el **examen final de la unidad el viernes de la última semana**, en el sitio del
+tipo test de esa semana. El tipo test de la última semana y sus cuestionarios **se producen igual**:
+completan el material, sirven de práctica para el final, quedan disponibles si decide usarlos en
+otra sesión, y los exámenes no hechos sirven para **repasar todo el curso en junio**, cuando se
+haya terminado de impartir la materia. Calendario de la 1.ª evaluación: unidad 1 del 14-9 al 9-10
+(final el 9-10), unidad 2 del 13-10 al 6-11 (15 clases: el lunes 12-10 es festivo y el lunes 2-11
+es lectivo; exámenes el 16, 23 y 30 de octubre, final el 6-11) y unidad 3 del 9-11 al 4-12
+(exámenes el 13, 20 y 27 de noviembre, final el 4-12). En la unidad 2, al tener tres clases la
+semana 1, el contenido va una sesión por detrás del viernes y **cada examen evalúa lo dado hasta
+el jueves** (examen 1: sesiones 1 y 2; examen 2: 3, 5 y 6; examen 3: 7, 9 y 10; este reparto está
+pendiente de que Juan Luis lo confirme expresamente): está en la sección «Calendario del curso
+2026-27» de `2. Divisibility/secuenciación-unidad2.tex`.
+
+**Repaso en todos los exámenes** (cifra confirmada por Juan Luis el 2026-09-20): cada examen tipo
+test lleva **unas 4 preguntas de 20 de repaso** de todo lo anterior, de esa unidad y de las
+anteriores; el **examen 1 de la unidad 2 lleva 8 de 20** de la unidad 1 (máximo 10), porque solo
+evalúa dos sesiones nuevas. Qué se repasa, por este orden: lo que la semana siguiente necesita, las
+nucleares más falladas según el corrector, y rotación del resto. Cada pregunta de repaso lleva el
+id de su destreza (los de la unidad 1, con el prefijo `U1-` delante: `U1-1A-01`), para que el
+informe por destreza las cuente. Es la lección 29 de `comun/LECCIONES-Y-LISTA-DEL-PAQUETE.md`.
+
 Puntuación del examen: acierto $+1$, fallo $-1/(N-1)$ ($-1/3$ con 4 opciones), en blanco 0; la
 nota nunca baja de 0. Duración: 55 minutos de clase, unos 50 efectivos. Las pruebas semanales
 pesan poco en la nota: tras el primer examen se revisa el acierto por pregunta y por versión
