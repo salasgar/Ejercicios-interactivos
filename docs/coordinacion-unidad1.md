@@ -111,9 +111,11 @@ Decidido por Juan Luis el 2026-09-17. Para cada semana de la unidad hace falta:
    hacen el mismo día): cruces, opción correcta y **explicación de cada opción**.
 4. **Versión extra** del examen, con su resuelto, para quien falte.
 5. **Tabla de claves** de todas las versiones, para corregir.
-6. **Cuestionarios** (hasta el 2026-09-20 se llamaban «práctica»; los ficheros ya hechos
-   conservan el nombre `practica-semanaN.*`, y la carpeta `cuestionarios/` de la unidad 1 es el
-   plan antiguo, que se conserva como banco de ejercicios): **4 versiones** con el mismo formato, que entre las cuatro cubren el inventario
+6. **Cuestionarios** (hasta el 2026-09-20 se llamaban «práctica»; el 2026-09-21 los ficheros de la
+   unidad 1 se renombraron a `cuestionario-semanaN.*`, `cuestionario_semanaN.py` y
+   `sorteo-cuestionario.json`, con el mismo nombre en local y en Drive; el historial de
+   `reparto-unidad1/` conserva los nombres viejos a propósito. La carpeta `cuestionarios/` de la
+   unidad 1 es el plan antiguo, que se conserva como banco de ejercicios): **4 versiones** con el mismo formato, que entre las cuatro cubren el inventario
    de la semana, también con el orden barajado para que no se aprenda la plantilla. Un PDF con
    las 4 y otro con sus soluciones explicadas; se suben el lunes avisando de que son los
    contenidos de la semana. (Decisión de Juan Luis del 2026-09-20: las semanas 1 a 3 de la
