@@ -270,6 +270,33 @@ export function estadisticasPreguntas(clave, registros) {
 }
 
 /**
+ * Qué ha contestado la clase en cada pregunta, para ver en qué se ha confundido: a partir
+ * de `estadisticasPreguntas`, por posición y versión, las cuatro opciones con su texto,
+ * su explicación (el error del que sale) y cuántos la eligieron, más blancos y nulas.
+ * `masElegido` es el distractor con más votos de la posición entre todas las versiones.
+ * No se suman versiones entre sí: cada una lleva sus números y sus letras barajadas.
+ */
+export function opcionesElegidas(clave, stats) {
+  return stats.map(p => {
+    const versiones = [];
+    for (const v of clave.versiones) {
+      const s = p.versiones[v.codigo];
+      if (!s) continue;
+      const pregunta = v.preguntas[s.numero - 1];
+      const opciones = pregunta.opciones.map(o => ({ letra: o.letra, texto: o.texto, expl: o.expl ?? '', cuenta: s.letras[o.letra] ?? 0, correcta: o.letra === s.correcta }));
+      versiones.push({ codigo: v.codigo, numero: s.numero, enunciado: pregunta.enunciado, n: s.n, opciones, blancos: s.letras[BLANCO], nulas: s.letras[NULA] });
+    }
+    let masElegido = null;
+    for (const v of versiones) {
+      for (const o of v.opciones) {
+        if (!o.correcta && o.cuenta > 0 && (!masElegido || o.cuenta > masElegido.cuenta)) masElegido = { codigo: v.codigo, numero: v.numero, ...o };
+      }
+    }
+    return { pos: p.pos, item: p.item, versiones, masElegido };
+  });
+}
+
+/**
  * Ficha de un alumno: sus registros de todas las semanas, corregidos, y por cada
  * pregunta la opción que eligió con su explicación (para saber qué error cometió).
  */

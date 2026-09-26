@@ -80,7 +80,11 @@ El exportador no escribe nada más que el JSON.
    Al guardar se pasa al siguiente. Un alumno ya registrado aparece con ✓ y su nota; al
    elegirlo se carga su registro para editarlo.
 4. **Resultados**: notas de la semana por grupo, acierto por posición (destreza) con el
-   reparto de letras por versión, y ficha de un alumno con todas sus semanas y, en cada
+   error más elegido y, al desplegar **respuestas**, versión a versión, cuántos alumnos
+   eligieron cada opción, con su texto y la explicación del error del que sale (lo que ya
+   trae la clave). Las versiones no se suman entre sí, porque cada una lleva sus números y
+   sus letras barajadas; para sumar el mismo error entre versiones haría falta que el
+   generador etiquetara cada distractor (pendiente). Y ficha de un alumno con todas sus semanas y, en cada
    fallo, la explicación de la opción que eligió.
 5. **Datos**: CSV resumen (una fila por alumno y semana) y CSV detalle (una fila por
    respuesta), copia de seguridad JSON y restauración.

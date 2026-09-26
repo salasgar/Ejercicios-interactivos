@@ -178,6 +178,27 @@ test('estadisticasPreguntas agrupa por posición (destreza) y por versión', () 
   assert.deepEqual(s[2].versiones['1111'].letras, { A: 0, B: 0, C: 1, D: 1, '-': 0, '?': 0 });
 });
 
+test('opcionesElegidas: por versión, cada opción con su texto, su explicación y cuántos la eligieron', () => {
+  const clave = claveDePrueba();
+  clave.versiones[0].anuladas = [3];
+  const registros = [
+    { semana: 1, alumno: 'a', codigo: '1111', respuestas: 'ABCD' },
+    { semana: 1, alumno: 'b', codigo: '1111', respuestas: 'ABD-' },   // la 3 anulada: su D cuenta igual
+    { semana: 1, alumno: 'c', codigo: '1111', respuestas: 'AB??' },
+    { semana: 1, alumno: 'd', codigo: '2222', respuestas: 'DDAB' },   // pos 1 es su nº 4: B, mal
+  ];
+  const r = L.opcionesElegidas(clave, L.estadisticasPreguntas(clave, registros));
+  const p3 = r[2].versiones.find(v => v.codigo === '1111');
+  assert.deepEqual(p3.opciones.map(o => [o.letra, o.cuenta, o.correcta]), [['A', 0, false], ['B', 0, false], ['C', 1, true], ['D', 1, false]]);
+  assert.deepEqual([p3.numero, p3.n, p3.blancos, p3.nulas, p3.opciones[3].expl, p3.opciones[3].texto], [3, 3, 0, 1, 'error D', '$D3$']);
+  const p4 = r[3].versiones.find(v => v.codigo === '1111');
+  assert.deepEqual([p4.blancos, p4.nulas], [1, 1]);
+  // Solo las versiones con registros, en el orden de la clave.
+  assert.deepEqual(r[0].versiones.map(v => [v.codigo, v.numero]), [['1111', 1], ['2222', 4]]);
+  assert.deepEqual(r[0].masElegido, { codigo: '2222', numero: 4, letra: 'B', texto: '$B1$', expl: 'error B', cuenta: 1, correcta: false });
+  assert.equal(r[1].masElegido, null);                               // todos la acertaron
+});
+
 test('fichaAlumno reúne las semanas del alumno con la opción elegida y su explicación', () => {
   const clave = claveDePrueba();
   const claves = { 1: clave, 2: { ...clave, semana: 2, fecha: '2026-09-25' } };

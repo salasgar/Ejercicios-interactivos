@@ -326,16 +326,25 @@ function renderResultados() {
   const filasAlumnos = regs.map(r => `<tr><td>${esc(r.nombre)}</td><td>${esc(r.grupo)}</td><td class="mono">${esc(r.codigo)}</td>
     <td class="num">${r.aciertos}</td><td class="num">${r.fallos}</td><td class="num">${r.blancos + r.nulas}</td><td class="num">${num(r.puntos)}</td><td class="num"><b>${num(r.nota)}</b></td><td>${esc(r.obs ?? '')}</td></tr>`).join('');
 
-  const filasPreg = stats.map(p => {
-    const versiones = Object.entries(p.versiones).map(([cod, v]) => {
-      const letras = Object.entries(v.letras).map(([l, k]) => `<span class="${l === v.correcta ? 'ok' : ''}">${l} ${k}</span>`).join('');
-      const pregunta = clave.versiones.find(x => x.codigo === cod)?.preguntas[v.numero - 1];
-      return `<div class="letras" title="${esc(L.aPlano(pregunta?.enunciado))}"><span class="mono">${esc(cod)}</span> nº ${v.numero} · ${pct(v.aciertos, v.n)}: ${letras}</div>`;
+  const elegidas = L.opcionesElegidas(clave, stats);
+  const filasPreg = stats.map((p, i) => {
+    const { versiones, masElegido: m } = elegidas[i];
+    const tablas = versiones.map(v => {
+      const max = Math.max(0, ...v.opciones.filter(o => !o.correcta).map(o => o.cuenta));
+      const filas = v.opciones.map(o => `<tr class="${o.correcta ? 'ok' : o.cuenta && o.cuenta === max ? 'fuerte' : ''}">
+        <td class="mono">${o.letra}</td><td>${esc(L.aPlano(o.texto))}</td><td class="num">${o.cuenta}</td>
+        <td><div class="barra"><div style="width:${v.n ? 100 * o.cuenta / v.n : 0}%"></div></div></td>
+        <td class="expl">${esc(L.aPlano(o.expl))}</td></tr>`).join('');
+      const otras = [v.blancos ? `en blanco ${v.blancos}` : '', v.nulas ? `nulas ${v.nulas}` : ''].filter(Boolean).join(' · ');
+      return `<table class="opciones"><caption><span class="mono">${esc(v.codigo)}</span> nº ${v.numero} · ${v.n} alumnos · ${esc(L.aPlano(v.enunciado))}</caption>
+        ${filas}${otras ? `<tr><td></td><td colspan="4" class="suave pequeno">${otras}</td></tr>` : ''}</table>`;
     }).join('');
+    const error = m ? `<span title="${esc(L.aPlano(m.expl))}"><b>${m.cuenta}</b> · <span class="mono">${esc(m.codigo)}</span> ${m.letra} ${esc(L.aPlano(m.texto))}</span>` : '';
     return `<tr><td class="num">${p.pos}</td><td class="mono">${esc(p.item)}</td><td class="num">${p.n}</td>
       <td><div class="barra"><div style="width:${p.n ? 100 * p.aciertos / p.n : 0}%"></div></div></td>
       <td class="num">${pct(p.aciertos, p.n)}</td><td class="num">${pct(p.fallos, p.n)}</td><td class="num">${pct(p.blancos, p.n)}</td>
-      <td><details><summary>por versión</summary>${versiones}</details></td></tr>`;
+      <td class="pequeno">${error}</td>
+      <td><details><summary>respuestas</summary>${tablas}</details></td></tr>`;
   }).join('');
 
   $('#app').innerHTML = `
@@ -348,8 +357,8 @@ function renderResultados() {
       <p class="pequeno suave">${regs.length} registros · media <b>${num(L.media(regs.map(r => r.nota)))}</b>${sinRegistro.length ? ` · sin registro: ${esc(sinRegistro.map(a => a.nombre).join(', '))}` : ''}</p>
       ${regs.length ? `<table class="lista"><tr><th>Alumno</th><th>Grupo</th><th>Código</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Puntos</th><th class="num">Nota</th><th>Obs.</th></tr>${filasAlumnos}</table>` : ''}
       <h3>Por pregunta (destreza)</h3>
-      <p class="pequeno suave">Cada posición es la misma destreza en todas las versiones; el número impreso cambia de una versión a otra. En verde, la letra correcta de cada versión.</p>
-      <table class="lista"><tr><th class="num">Pos.</th><th>Destreza</th><th class="num">N</th><th></th><th class="num">Acierto</th><th class="num">Fallo</th><th class="num">Blanco</th><th></th></tr>${filasPreg}</table>
+      <p class="pequeno suave">Cada posición es la misma destreza en todas las versiones; el número impreso cambia de una versión a otra. <b>Respuestas</b> despliega, versión a versión, cuántos eligieron cada opción y de qué error sale: en verde la correcta, en negrita el distractor más elegido. <b>Error más elegido</b> es el distractor con más votos de una sola versión (pasa el ratón para ver la explicación): las versiones no se suman porque cada una lleva sus números y sus letras.</p>
+      <table class="lista"><tr><th class="num">Pos.</th><th>Destreza</th><th class="num">N</th><th></th><th class="num">Acierto</th><th class="num">Fallo</th><th class="num">Blanco</th><th>Error más elegido</th><th></th></tr>${filasPreg}</table>
     </div>
     <div class="tarjeta">
       <h3 style="margin-top:0">Ficha de un alumno (todas las semanas)</h3>
