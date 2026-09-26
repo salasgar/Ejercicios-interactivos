@@ -52,14 +52,13 @@ test('limpiarTecleo: letras en cualquier caja, blancos y nulas; ignora el resto 
   assert.equal(L.limpiarTecleo(null, 4), '');
 });
 
-test('limpiarTecleo posicional: U I O P valen por A B C D', () => {
-  assert.equal(L.limpiarTecleo('uiop', 20, true), 'ABCD');
-  assert.equal(L.limpiarTecleo('UiOp', 20, true), 'ABCD');
-  assert.equal(L.limpiarTecleo('u i-o?p', 20, true), 'A-B-C?D');   // blancos y nulas, igual
-  assert.equal(L.limpiarTecleo('abcd', 20, true), 'ABCD');          // las letras siguen valiendo
-  assert.equal(L.limpiarTecleo('u0o', 20, true), 'A-C');            // el 0 sigue siendo blanco, la O es C
-  assert.equal(L.limpiarTecleo('uiop', 2, true), 'AB');
-  assert.equal(L.limpiarTecleo('uiop', 20), '');                    // sin el modo, se ignoran
+test('limpiarTecleo: U I O P valen siempre por A B C D', () => {
+  assert.equal(L.limpiarTecleo('uiop', 20), 'ABCD');
+  assert.equal(L.limpiarTecleo('UiOp', 20), 'ABCD');
+  assert.equal(L.limpiarTecleo('u i-o?p', 20), 'A-B-C?D');   // blancos y nulas, igual
+  assert.equal(L.limpiarTecleo('abcd', 20), 'ABCD');          // las letras siguen valiendo
+  assert.equal(L.limpiarTecleo('u0o', 20), 'A-C');            // el 0 sigue siendo blanco, la O es C
+  assert.equal(L.limpiarTecleo('uiop', 2), 'AB');
 });
 
 test('completar rellena con blancos y marcar cambia una casilla (la misma letra la deja en blanco)', () => {

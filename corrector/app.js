@@ -15,13 +15,15 @@ const ui = { pestana: 'corregir', semana: null, grupo: '', alumno: '', codigo: '
 // ---------------------------------------------------------------------------
 // Almacenamiento
 // ---------------------------------------------------------------------------
-function vacio() { return { alumnos: [], claves: {}, registros: {}, ajustes: { posicional: false } }; }
+function vacio() { return { alumnos: [], claves: {}, registros: {} }; }
 
 function cargar() {
   try {
     const dato = JSON.parse(localStorage.getItem(ALMACEN) ?? 'null');
-    // Las copias anteriores no traen `ajustes`: se completan con los valores por defecto.
-    if (dato && Array.isArray(dato.alumnos) && dato.claves && dato.registros) return { ...vacio(), ...dato };
+    if (dato && Array.isArray(dato.alumnos) && dato.claves && dato.registros) {
+      delete dato.ajustes;           // resto del antiguo interruptor «Teclado posicional»
+      return { ...vacio(), ...dato };
+    }
   } catch (e) { console.error(e); }
   return vacio();
 }
@@ -43,7 +45,6 @@ const registros = () => Object.values(estado.registros);
 const registrosSemana = semana => registros().filter(r => r.semana === semana);
 const alumnoDe = id => estado.alumnos.find(a => a.id === id);
 const claveActual = () => (ui.semana === null ? null : estado.claves[ui.semana] ?? null);
-const posicional = () => !!estado.ajustes?.posicional;
 
 function opciones(lista, valor, vacioTexto) {
   const out = vacioTexto !== undefined ? [`<option value="">${esc(vacioTexto)}</option>`] : [];
@@ -120,13 +121,10 @@ function renderCorregir(foco = '#sel-alumno') {
         <label>Código de la versión <input type="text" id="in-codigo" inputmode="numeric" maxlength="4" autocomplete="off" value="${esc(ui.codigo)}"></label>
         <span id="info-version" class="pequeno suave"></span>
         <label class="pequeno suave"><input type="checkbox" id="ck-todos" ${ui.verTodos ? 'checked' : ''}> Ver también los ya corregidos</label>
-        <label class="pequeno suave"><input type="checkbox" id="ck-posicional" ${posicional() ? 'checked' : ''}> Teclado posicional (U I O P = A B C D)</label>
       </div>
       <div class="entrada">
         <input type="text" id="in-resp" autocomplete="off" spellcheck="false" autocapitalize="characters"
-          placeholder="${posicional()
-            ? 'Teclea con U I O P (= A B C D), en orden: UIIOUP…   («-» en blanco, «?» nula)'
-            : 'Teclea las respuestas en orden: ABBCAD…   («-» en blanco, «?» nula)'}" value="${esc(ui.resp)}">
+          placeholder="Teclea las respuestas en orden: ABBCAD… o UIIOUP… (U I O P = A B C D; «-» en blanco, «?» nula)" value="${esc(ui.resp)}">
         <span class="contador" id="contador"></span>
         <button class="boton" id="btn-guardar">Guardar (Intro)</button>
         <button class="boton-2" id="btn-limpiar">Limpiar</button>
@@ -145,11 +143,6 @@ function renderCorregir(foco = '#sel-alumno') {
   $('#sel-semana').addEventListener('change', e => { ui.semana = Number(e.target.value); limpiarFormulario(true, true); renderCorregir(); });
   $('#sel-grupo').addEventListener('change', e => { ui.grupo = e.target.value; limpiarFormulario(true); renderCorregir(); });
   $('#ck-todos').addEventListener('change', e => { ui.verTodos = e.target.checked; renderCorregir('#sel-alumno'); });
-  $('#ck-posicional').addEventListener('change', e => {
-    estado.ajustes = { ...estado.ajustes, posicional: e.target.checked };
-    guardar();                       // el modo se recuerda de una sesión a otra
-    renderCorregir('#in-resp');
-  });
   $('#sel-alumno').addEventListener('change', e => { elegirAlumno(e.target.value); });
   $('#in-codigo').addEventListener('input', e => {
     ui.codigo = e.target.value.replace(/\D/g, '').slice(0, 4);
@@ -158,7 +151,7 @@ function renderCorregir(foco = '#sel-alumno') {
     if (ui.codigo.length === 4 && L.versionDe(clave, ui.codigo)) $('#in-resp').focus();
   });
   $('#in-resp').addEventListener('input', e => {
-    ui.resp = L.limpiarTecleo(e.target.value, clave?.n_preguntas ?? 20, posicional());
+    ui.resp = L.limpiarTecleo(e.target.value, clave?.n_preguntas ?? 20);
     if (e.target.value !== ui.resp) e.target.value = ui.resp;
     pintarBloques();
   });
@@ -248,10 +241,10 @@ function pintarBloques() {
   const resp = ui.resp;
   const filas = [];
   for (let b = 0; b < Math.ceil(n / POR_BLOQUE); b++) {
-    // Con el teclado posicional, la cabecera recuerda qué tecla es cada opción.
+    // La cabecera recuerda qué tecla de U I O P es cada opción.
     const tecla = Object.fromEntries(Object.entries(L.POSICIONAL).map(([k, v]) => [v, k]));
     let t = '<table class="bloque"><tr><th>Q</th>'
-      + [...L.LETRAS].map(l => `<th>${l}${posicional() ? `<span class="pequeno suave"> ${tecla[l]}</span>` : ''}</th>`).join('')
+      + [...L.LETRAS].map(l => `<th>${l}<span class="pequeno suave"> ${tecla[l]}</span></th>`).join('')
       + '</tr>';
     for (let q = b * POR_BLOQUE + 1; q <= Math.min(n, (b + 1) * POR_BLOQUE); q++) {
       const r = resp[q - 1] ?? L.BLANCO;

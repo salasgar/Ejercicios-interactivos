@@ -69,11 +69,10 @@ El exportador no escribe nada más que el JSON.
    respuesta **que vale**: si el alumno tachó una fila y contestó detrás, la de detrás.
    También se puede hacer clic en las casillas. Mientras se teclea, la tabla de pantalla
    reproduce la de la franja y marca en rojo los fallos, y el marcador da la nota.
-   Con **Teclado posicional** marcado, las cuatro opciones caen en cuatro teclas seguidas
-   —`U I O P` valen por `A B C D`—, que es como están impresas en la franja: se teclea sin
-   mover la mano ni buscar las letras. Las letras `A`-`D` siguen valiendo igual, y `-` y `?`
-   no cambian. La cabecera de la tabla recuerda la tecla de cada opción y el modo se guarda
-   de una sesión a otra.
+   Además, `U I O P` valen siempre por `A B C D`: son cuatro teclas seguidas, en el orden
+   en que están impresas en la franja, y se teclea sin mover la mano ni buscar las letras.
+   Las letras `A`-`D` siguen valiendo igual, y `-` y `?` no cambian. La cabecera de la
+   tabla recuerda la tecla de cada opción.
    Los alumnos ya tecleados desaparecen del desplegable (al lado dice cuántos faltan);
    **Ver también los ya corregidos** los devuelve para rectificar alguno. El código de la
    versión **se conserva** al pasar al siguiente alumno, porque los exámenes se corrigen en
