@@ -39,7 +39,7 @@ el escaneo más adelante como otra forma de entrada.
 Se genera en la carpeta de los exámenes:
 
 ```
-cd ".../1. Natural numbers, powers and roots/examenes-en-clase"
+cd ".../1. Natural numbers, powers and roots/exámenes-semanales"
 /usr/bin/python3 comun/exportar_clave.py semana-2
 ```
 
@@ -88,6 +88,18 @@ El exportador no escribe nada más que el JSON.
 
 Puntuación: la impresa en el examen. Acierto +1, fallo −1/(opciones−1) = −1/3, blanco y
 nula 0, nota mínima 0. Puntos sobre 20; nota = puntos / 20 × 10, con dos decimales.
+
+**Preguntas anuladas** (añadido el 2026-09-26, porque la distributiva no se llegó a dar
+antes del examen de la semana 2): en *Claves*, botón **Anular…** de la semana, se teclea
+`código:número` separado por comas (`8930:10, 4816:9`). Se anula solo a quien **no** la
+acertó (fallo, blanco o nula): quien la acertó conserva su punto, porque quitársela
+siempre le bajaría la nota. A los demás la pregunta sale del examen: su fallo deja de
+restar y la nota es puntos / 19 × 10 (equivale a sumar 1/3 a los puntos del que falló y
+multiplicar por 20/19). En la corrección, la fila anulada aparece tachada; el estado de
+la pregunta es `anulada` en la ficha y en el CSV detalle, y el CSV resumen lleva las
+columnas *Anuladas* y *Sobre*. La estadística por destreza sigue contando lo que el
+alumno contestó de verdad. Las anuladas se guardan con la clave en el navegador (y en la
+copia de seguridad) y se conservan si se vuelve a cargar el JSON de la clave.
 
 ## Lo que no hace todavía
 

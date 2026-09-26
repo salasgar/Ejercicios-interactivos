@@ -14,6 +14,12 @@
 //
 // Puntuación (la que va impresa en el examen): acierto +1, fallo −1/(opciones−1),
 // blanco y nula 0, nota mínima 0. La nota sobre 10 es puntos / n × 10.
+//
+// Preguntas anuladas: una versión puede llevar `anuladas`, la lista de números
+// impresos que no cuentan (p. ej. porque su contenido no se llegó a dar en clase).
+// Se anulan solo a quien no la acertó: quien la acertó conserva su punto, porque
+// quitársela siempre le bajaría la nota. Para los demás, la pregunta sale del
+// examen: su fallo deja de restar y la nota se calcula sobre n − 1.
 
 import { usuarioDesdeNombre, normalizarUsuario, esEmail } from '../src/altas.js';
 
@@ -93,8 +99,45 @@ export function comprobarClave(clave) {
       if (clave.destrezas[p.pos - 1] !== p.item) return `Versión ${v.codigo}, pregunta ${p.n}: destreza que no casa`;
     }
     if (v.clave !== v.preguntas.map(p => p.correcta).join('')) return `Versión ${v.codigo}: la clave no casa con las preguntas`;
+    const error = comprobarAnuladas(v.anuladas, n);
+    if (error) return `Versión ${v.codigo}: ${error}`;
   }
   return null;
+}
+
+/** Error si `anuladas` no es una lista de números de pregunta distintos entre 1 y n (puede faltar). */
+export function comprobarAnuladas(anuladas, n) {
+  if (anuladas === undefined) return null;
+  if (!Array.isArray(anuladas) || anuladas.some(q => !Number.isInteger(q) || q < 1 || q > n)) return `preguntas anuladas no válidas (van de 1 a ${n})`;
+  if (new Set(anuladas).size !== anuladas.length) return 'pregunta anulada repetida';
+  if (anuladas.length >= n) return 'no se pueden anular todas las preguntas';
+  return null;
+}
+
+/**
+ * Lee lo que se teclea para anular preguntas de una semana: «8930:10, 4816:9»
+ * (código:número; varias del mismo código, «8930:10:12»). Vacío = ninguna.
+ * Devuelve { anuladas: { codigo: [números] }, error }.
+ */
+export function analizarAnuladas(texto, clave) {
+  const anuladas = {};
+  for (const trozo of String(texto ?? '').split(/[,;\s]+/).filter(Boolean)) {
+    const [codigo, ...nums] = trozo.split(':');
+    const v = versionDe(clave, codigo);
+    if (!v) return { anuladas: null, error: `«${codigo}» no es un código de la semana ${clave.semana}` };
+    if (!nums.length) return { anuladas: null, error: `falta el número de pregunta en «${trozo}» (código:número)` };
+    const lista = anuladas[v.codigo] ??= [];
+    lista.push(...nums.map(Number));
+    const error = comprobarAnuladas(lista, v.preguntas.length);
+    if (error) return { anuladas: null, error: `${v.codigo}: ${error}` };
+  }
+  for (const lista of Object.values(anuladas)) lista.sort((a, b) => a - b);
+  return { anuladas, error: null };
+}
+
+/** Lo contrario de analizarAnuladas: «8930:10, 4816:9». */
+export function textoAnuladas(clave) {
+  return clave.versiones.filter(v => v.anuladas?.length).map(v => [v.codigo, ...v.anuladas].join(':')).join(', ');
 }
 
 export function versionDe(clave, codigo) {
@@ -145,21 +188,26 @@ export function marcar(respuestas, n, q, letra) {
 
 /**
  * Corrige una cadena de respuestas con una versión. Devuelve el detalle por pregunta
- * (en el orden impreso), los recuentos, los puntos (sobre n) y la nota (sobre 10).
+ * (en el orden impreso), los recuentos, los puntos (sobre `sobre`: n menos las
+ * preguntas anuladas a este alumno) y la nota (sobre 10). Una pregunta anulada que
+ * el alumno no acertó queda con estado 'anulada'; `real` guarda lo que habría sido.
  */
 export function corregir(version, respuestas, opciones = 4) {
   const n = version.preguntas.length;
   const resp = completar(respuestas, n);
   const penalizacion = 1 / (opciones - 1);
+  const anuladas = new Set(version.anuladas ?? []);
   const detalle = version.preguntas.map((p, i) => {
     const r = resp[i];
-    const estado = r === BLANCO ? 'blanco' : r === NULA ? 'nula' : r === p.correcta ? 'acierto' : 'fallo';
-    return { n: p.n, pos: p.pos, item: p.item, respuesta: r, correcta: p.correcta, estado };
+    const real = r === BLANCO ? 'blanco' : r === NULA ? 'nula' : r === p.correcta ? 'acierto' : 'fallo';
+    const estado = anuladas.has(p.n) && real !== 'acierto' ? 'anulada' : real;
+    return { n: p.n, pos: p.pos, item: p.item, respuesta: r, correcta: p.correcta, estado, real };
   });
   const cuenta = e => detalle.filter(d => d.estado === e).length;
-  const aciertos = cuenta('acierto'), fallos = cuenta('fallo'), blancos = cuenta('blanco'), nulas = cuenta('nula');
+  const aciertos = cuenta('acierto'), fallos = cuenta('fallo'), blancos = cuenta('blanco'), nulas = cuenta('nula'), anuladasAqui = cuenta('anulada');
+  const sobre = n - anuladasAqui;
   const puntosExactos = Math.max(0, aciertos - fallos * penalizacion);
-  return { respuestas: resp, detalle, aciertos, fallos, blancos, nulas, puntos: redondear(puntosExactos), nota: redondear(puntosExactos / n * 10) };
+  return { respuestas: resp, detalle, aciertos, fallos, blancos, nulas, anuladas: anuladasAqui, sobre, puntos: redondear(puntosExactos), nota: redondear(puntosExactos / sobre * 10) };
 }
 
 export function redondear(x, decimales = 2) {
@@ -208,8 +256,9 @@ export function estadisticasPreguntas(clave, registros) {
     for (const d of corregir(version, r.respuestas, clave.opciones).detalle) {
       const p = posiciones[d.pos - 1];
       p.n += 1;
-      if (d.estado === 'acierto') p.aciertos += 1;
-      else if (d.estado === 'fallo') p.fallos += 1;
+      // Lo que contestó de verdad, aunque se le anulara: esto mide la destreza.
+      if (d.real === 'acierto') p.aciertos += 1;
+      else if (d.real === 'fallo') p.fallos += 1;
       else p.blancos += 1;
       const v = p.versiones[version.codigo] ??= { numero: d.n, correcta: d.correcta, n: 0, aciertos: 0, letras: { A: 0, B: 0, C: 0, D: 0, [BLANCO]: 0, [NULA]: 0 } };
       v.n += 1;
@@ -266,12 +315,12 @@ export function fechaTexto(ms) {
 
 /** Una fila por alumno y semana. */
 export function csvResumen(claves, registros, alumnos) {
-  const cabecera = ['Semana', 'Fecha examen', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Respuestas', 'Aciertos', 'Fallos', 'En blanco', 'Nulas', 'Puntos', 'Nota', 'Observaciones', 'Registrado el'];
+  const cabecera = ['Semana', 'Fecha examen', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Respuestas', 'Aciertos', 'Fallos', 'En blanco', 'Nulas', 'Anuladas', 'Puntos', 'Sobre', 'Nota', 'Observaciones', 'Registrado el'];
   const filas = [];
   for (const semana of Object.keys(claves).map(Number).sort((a, b) => a - b)) {
     const clave = claves[semana];
     for (const f of resumenSemana(clave, registros.filter(r => r.semana === semana), alumnos)) {
-      filas.push([semana, clave.fecha ?? '', f.alumno, f.nombre, f.grupo, f.codigo, f.respuestas, f.aciertos, f.fallos, f.blancos, f.nulas, f.puntos, f.nota, f.obs ?? '', fechaTexto(f.ts)]);
+      filas.push([semana, clave.fecha ?? '', f.alumno, f.nombre, f.grupo, f.codigo, f.respuestas, f.aciertos, f.fallos, f.blancos, f.nulas, f.anuladas, f.puntos, f.sobre, f.nota, f.obs ?? '', fechaTexto(f.ts)]);
     }
   }
   return aCsv(cabecera, filas);

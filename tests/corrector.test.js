@@ -98,6 +98,39 @@ test('corregir respeta el orden impreso de cada versión (posición ≠ número)
   assert.deepEqual(c.detalle.map(d => d.item), ['1C-04', '1C-03', '1B-02', '1A-01']);
 });
 
+test('corregir con preguntas anuladas: solo a quien no la acertó, y la nota sobre n − 1', () => {
+  const v = { ...L.versionDe(claveDePrueba(), '1111'), anuladas: [2] }; // clave ABCD
+  let c = L.corregir(v, 'ABCD'); // la acertó: se le queda como estaba
+  assert.deepEqual([c.aciertos, c.anuladas, c.sobre, c.puntos, c.nota], [4, 0, 4, 4, 10]);
+  c = L.corregir(v, 'A-C-'); // en blanco: 2 sobre 3 (= 2/4 × 4/3)
+  assert.deepEqual([c.aciertos, c.blancos, c.anuladas, c.sobre, c.puntos, c.nota], [2, 1, 1, 3, 2, 6.67]);
+  c = L.corregir(v, 'ADC-'); // fallada: deja de restar su 1/3
+  assert.deepEqual([c.aciertos, c.fallos, c.anuladas, c.sobre, c.puntos, c.nota], [2, 0, 1, 3, 2, 6.67]);
+  assert.deepEqual(c.detalle.map(d => d.estado), ['acierto', 'anulada', 'acierto', 'blanco']);
+  assert.equal(c.detalle[1].real, 'fallo');
+  c = L.corregir(v, 'BDAD'); // un acierto y dos fallos, más la anulada: 1 − 2/3 sobre 3
+  assert.deepEqual([c.puntos, c.nota], [0.33, 1.11]);
+  // Nadie adelanta a quien la acertó con el resto igual.
+  assert.ok(L.corregir(v, 'ABC-').nota > L.corregir(v, 'ADC-').nota);
+});
+
+test('analizarAnuladas y textoAnuladas: «código:número» separados por comas', () => {
+  const clave = claveDePrueba();
+  assert.deepEqual(L.analizarAnuladas('', clave), { anuladas: {}, error: null });
+  assert.deepEqual(L.analizarAnuladas('2222:3, 1111:4:2', clave).anuladas, { 2222: [3], 1111: [2, 4] });
+  assert.match(L.analizarAnuladas('9999:1', clave).error, /no es un código/);
+  assert.match(L.analizarAnuladas('1111', clave).error, /falta el número/);
+  assert.match(L.analizarAnuladas('1111:5', clave).error, /no válidas/);
+  assert.match(L.analizarAnuladas('1111:2:2', clave).error, /repetida/);
+  assert.match(L.analizarAnuladas('1111:1:2:3:4', clave).error, /todas/);
+  clave.versiones[1].anuladas = [3];
+  clave.versiones[0].anuladas = [2, 4];
+  assert.equal(L.textoAnuladas(clave), '1111:2:4, 2222:3');
+  assert.equal(L.comprobarClave(clave), null);
+  clave.versiones[0].anuladas = [7];
+  assert.match(L.comprobarClave(clave), /anuladas no válidas/);
+});
+
 test('analizarAlumnos: 2 o 3 campos, identificadores como en la app y sin repetidos', () => {
   const { alumnos, errores } = L.analizarAlumnos(
     'María García López; 1ºA\nJuan Pérez Ruiz; juan.perez; 1ºC/D\nAna Ruiz; ana.ruiz@murciaeduca.es; 1ºA\nAna Ruiz; 1ºA\nsolo un campo\nMaría García Soto; 1ºA');
@@ -169,7 +202,7 @@ test('CSV: «;», BOM, coma decimal y una fila por alumno o por respuesta', () =
   const resumen = L.csvResumen({ 1: clave }, registros, alumnos);
   const lineas = resumen.split('\r\n');
   assert.ok(resumen.startsWith('﻿Semana;Fecha examen;Usuario'));
-  assert.equal(lineas[1], '1;2026-09-18;a;"Álvaro; el de A";1ºA;1111;ABDD;3;1;0;0;2,67;6,67;;');
+  assert.equal(lineas[1], '1;2026-09-18;a;"Álvaro; el de A";1ºA;1111;ABDD;3;1;0;0;0;2,67;4;6,67;;');
   const detalle = L.csvDetalle({ 1: clave }, registros, alumnos).split('\r\n');
   assert.equal(detalle.length, 1 + 4 + 1);
   assert.equal(detalle[3], '1;a;"Álvaro; el de A";1ºA;1111;3;3;1C-03;D;C;fallo;D3;Work out: 3+3');

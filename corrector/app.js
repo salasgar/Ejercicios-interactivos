@@ -256,7 +256,7 @@ function pintarBloques() {
     for (let q = b * POR_BLOQUE + 1; q <= Math.min(n, (b + 1) * POR_BLOQUE); q++) {
       const r = resp[q - 1] ?? L.BLANCO;
       const correcta = version?.preguntas[q - 1]?.correcta ?? null;
-      const clases = [q - 1 === resp.length ? 'actual' : '', r === L.NULA ? 'nula' : ''].join(' ');
+      const clases = [q - 1 === resp.length ? 'actual' : '', r === L.NULA ? 'nula' : '', version?.anuladas?.includes(q) ? 'anulada' : ''].join(' ');
       t += `<tr class="${clases}"><td class="q">${r === L.NULA ? '?' : q}</td>`;
       for (const l of L.LETRAS) {
         let c = 'celda';
@@ -275,7 +275,8 @@ function pintarBloques() {
   const c = L.corregir(version, resp, clave.opciones);
   m.innerHTML = `<span>Aciertos <b>${c.aciertos}</b></span><span>Fallos <b>${c.fallos}</b></span><span>En blanco <b>${c.blancos}</b></span>`
     + (c.nulas ? `<span>Nulas <b>${c.nulas}</b></span>` : '')
-    + `<span>Puntos <b>${num(c.puntos)}</b> / ${n}</span><span>Nota <b class="nota">${num(c.nota)}</b></span>`;
+    + (c.anuladas ? `<span>Anuladas <b>${c.anuladas}</b></span>` : '')
+    + `<span>Puntos <b>${num(c.puntos)}</b> / ${c.sobre}</span><span>Nota <b class="nota">${num(c.nota)}</b></span>`;
 }
 
 function pintarLista(regs) {
@@ -432,7 +433,9 @@ function renderClaves() {
     const c = estado.claves[s];
     const n = registrosSemana(s).length;
     return `<tr><td>${s}</td><td>${esc(c.fecha ?? '')}</td><td class="mono">${c.versiones.map(v => v.codigo + (v.extra ? ' (extra)' : '')).join(', ')}</td>
-      <td class="num">${c.n_preguntas}</td><td class="num">${n}</td><td><button class="boton-peligro mini" data-semana="${s}">Borrar</button></td></tr>`;
+      <td class="num">${c.n_preguntas}</td><td class="mono">${esc(L.textoAnuladas(c)) || '—'}</td><td class="num">${n}</td>
+      <td class="acciones"><button class="boton-2 mini" data-anular="${s}">Anular…</button>
+        <button class="boton-peligro mini" data-semana="${s}">Borrar</button></td></tr>`;
   }).join('');
   $('#app').innerHTML = `
     <div class="tarjeta">
@@ -443,7 +446,8 @@ function renderClaves() {
     </div>
     <div class="tarjeta" id="zona-claves">
       <h2>Claves cargadas</h2>
-      ${semanas().length ? `<table class="lista"><tr><th>Semana</th><th>Examen</th><th>Versiones</th><th class="num">Preguntas</th><th class="num">Registros</th><th></th></tr>${filas}</table>` : '<p class="suave">Ninguna todavía.</p>'}
+      ${semanas().length ? `<table class="lista"><tr><th>Semana</th><th>Examen</th><th>Versiones</th><th class="num">Preguntas</th><th>Anuladas</th><th class="num">Registros</th><th></th></tr>${filas}</table>
+        <p class="pequeno suave"><b>Anular…</b> quita preguntas de la nota: <code>código:número</code>, separadas por comas (<code>8930:10, 4816:9</code>). Solo se anulan a quien no las acertó: quien acertó conserva su punto; a los demás la pregunta deja de contar y la nota se calcula sobre una pregunta menos.</p>` : '<p class="suave">Ninguna todavía.</p>'}
     </div>`;
   $('#in-claves').addEventListener('change', async e => {
     const mensajes = [];
@@ -452,7 +456,13 @@ function renderClaves() {
         const clave = JSON.parse(await f.text());
         const error = L.comprobarClave(clave);
         if (error) { mensajes.push(`${f.name}: ${error}`); continue; }
-        if (estado.claves[clave.semana] && !confirm(`Ya hay una clave de la semana ${clave.semana}. ¿Sustituirla? (los registros se conservan)`)) continue;
+        const previa = estado.claves[clave.semana];
+        if (previa && !confirm(`Ya hay una clave de la semana ${clave.semana}. ¿Sustituirla? (los registros y las preguntas anuladas se conservan)`)) continue;
+        // Las anuladas se deciden aquí, no en el exportador: que no se pierdan al recargar.
+        for (const v of clave.versiones) {
+          const antes = L.versionDe(previa, v.codigo)?.anuladas;
+          if (antes?.length && v.anuladas === undefined) v.anuladas = antes;
+        }
         estado.claves[clave.semana] = clave;
         mensajes.push(`${f.name}: semana ${clave.semana} cargada (${clave.versiones.length} versiones).`);
       } catch (err) { mensajes.push(`${f.name}: ${err.message}`); }
@@ -462,6 +472,18 @@ function renderClaves() {
     $('#aviso-claves').innerHTML = `<div class="aviso">${mensajes.map(esc).join('<br>')}</div>`;
   });
   $('#zona-claves').addEventListener('click', e => {
+    const an = e.target.closest('button[data-anular]');
+    if (an) {
+      const c = estado.claves[an.dataset.anular];
+      const texto = prompt(`Preguntas anuladas de la semana ${c.semana}, como código:número separadas por comas (vacío = ninguna).\nVersiones: ${c.versiones.map(v => v.codigo).join(', ')}`, L.textoAnuladas(c));
+      if (texto === null) return;
+      const { anuladas, error } = L.analizarAnuladas(texto, c);
+      if (error) { alert(error); return; }
+      for (const v of c.versiones) { if (anuladas[v.codigo]) v.anuladas = anuladas[v.codigo]; else delete v.anuladas; }
+      guardar();
+      renderClaves();
+      return;
+    }
     const b = e.target.closest('button[data-semana]');
     if (!b) return;
     const s = Number(b.dataset.semana);
