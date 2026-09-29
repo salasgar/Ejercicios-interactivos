@@ -201,14 +201,14 @@ test('opcionesElegidas: por versión, cada opción con su texto, su explicación
 
 test('fichaAlumno reúne las semanas del alumno con la opción elegida y su explicación', () => {
   const clave = claveDePrueba();
-  const claves = { 1: clave, 2: { ...clave, semana: 2, fecha: '2026-09-25' } };
+  const claves = { '1|1': clave, '1|2': { ...clave, semana: 2, fecha: '2026-09-25' } };
   const registros = [
-    { semana: 2, alumno: 'a', codigo: '2222', respuestas: 'DDAB' },
-    { semana: 1, alumno: 'a', codigo: '1111', respuestas: 'AB-D' },
-    { semana: 1, alumno: 'b', codigo: '1111', respuestas: 'ABCD' },
+    { unidad: 1, semana: 2, alumno: 'a', codigo: '2222', respuestas: 'DDAB' },
+    { unidad: 1, semana: 1, alumno: 'a', codigo: '1111', respuestas: 'AB-D' },
+    { unidad: 1, semana: 1, alumno: 'b', codigo: '1111', respuestas: 'ABCD' },
   ];
   const ficha = L.fichaAlumno(claves, registros, 'a');
-  assert.deepEqual(ficha.map(s => [s.semana, s.fecha, s.nota]), [[1, '2026-09-18', 7.5], [2, '2026-09-25', 6.67]]);
+  assert.deepEqual(ficha.map(s => [s.unidad, s.semana, s.fecha, s.nota]), [[1, 1, '2026-09-18', 7.5], [1, 2, '2026-09-25', 6.67]]);
   const p3 = ficha[0].preguntas[2];
   assert.deepEqual([p3.estado, p3.elegida, p3.buena.texto], ['blanco', null, '$C3$']);
   const p4 = ficha[1].preguntas[3];
@@ -218,14 +218,35 @@ test('fichaAlumno reúne las semanas del alumno con la opción elegida y su expl
 test('CSV: «;», BOM, coma decimal y una fila por alumno o por respuesta', () => {
   const clave = claveDePrueba();
   const alumnos = [{ id: 'a', nombre: 'Álvaro; el de A', grupo: '1ºA' }];
-  const registros = [{ semana: 1, alumno: 'a', codigo: '1111', respuestas: 'ABDD', obs: '', ts: 0 }];
-  const resumen = L.csvResumen({ 1: clave }, registros, alumnos);
+  const registros = [{ unidad: 1, semana: 1, alumno: 'a', codigo: '1111', respuestas: 'ABDD', obs: '', ts: 0 }];
+  const resumen = L.csvResumen({ '1|1': clave }, registros, alumnos);
   const lineas = resumen.split('\r\n');
-  assert.ok(resumen.startsWith('﻿Semana;Fecha examen;Usuario'));
-  assert.equal(lineas[1], '1;2026-09-18;a;"Álvaro; el de A";1ºA;1111;ABDD;3;1;0;0;0;2,67;4;6,67;;');
-  const detalle = L.csvDetalle({ 1: clave }, registros, alumnos).split('\r\n');
+  assert.ok(resumen.startsWith('﻿Unidad;Semana;Fecha examen;Usuario'));
+  assert.equal(lineas[1], '1;1;2026-09-18;a;"Álvaro; el de A";1ºA;1111;ABDD;3;1;0;0;0;2,67;4;6,67;;');
+  const detalle = L.csvDetalle({ '1|1': clave }, registros, alumnos).split('\r\n');
   assert.equal(detalle.length, 1 + 4 + 1);
-  assert.equal(detalle[3], '1;a;"Álvaro; el de A";1ºA;1111;3;3;1C-03;D;C;fallo;D3;Work out: 3+3');
+  assert.equal(detalle[3], '1;1;a;"Álvaro; el de A";1ºA;1111;3;3;1C-03;D;C;fallo;D3;Work out: 3+3');
+});
+
+test('migrar lleva los datos de antes de haber unidades al formato nuevo, y no toca los ya migrados', () => {
+  const clave = claveDePrueba(); // unidad 1
+  const viejo = {
+    alumnos: [{ id: 'a', nombre: 'Ana', grupo: '1ºA' }],
+    claves: { 1: clave, 2: { ...clave, semana: 2 } },
+    registros: { '1|a': { semana: 1, alumno: 'a', codigo: '1111', respuestas: 'ABCD' } },
+  };
+  const m = L.migrar(viejo);
+  assert.deepEqual(Object.keys(m.claves).sort(), ['1|1', '1|2']);
+  assert.deepEqual(Object.keys(m.registros), ['1|1|a']);
+  assert.equal(m.registros['1|1|a'].unidad, 1);
+  // Idempotente: migrar lo migrado da lo mismo.
+  assert.deepEqual(L.migrar(m), m);
+  // Una clave sin `unidad` (muy vieja) se da por unidad 1 y presta la unidad a sus registros.
+  const sinUnidad = { ...clave };
+  delete sinUnidad.unidad;
+  const m2 = L.migrar({ alumnos: [], claves: { 1: sinUnidad }, registros: { '1|a': { semana: 1, alumno: 'a' } } });
+  assert.equal(m2.claves['1|1'].unidad, 1);
+  assert.equal(m2.registros['1|1|a'].unidad, 1);
 });
 
 test('sinRegistrar deja solo a los que faltan por teclear esa semana', () => {
@@ -246,4 +267,19 @@ test('aPlano quita el LaTeX de enunciados y opciones', () => {
   assert.equal(L.aPlano('Which number is \\emph{five thousand}? \\textbf{bold}\\ldots'), 'Which number is five thousand? bold…');
   // El redondeo de las explicaciones se escribe con flecha: «$47\to 50$ (hay un 7, sube)».
   assert.equal(L.aPlano('$47\\to 50$ y $32\\to 30$'), '47 → 50 y 32 → 30');
+});
+
+test('ordenarAlumnos ordena por apellidos, localizados con el id', () => {
+  const alumnos = [
+    { id: 'sara.vigueras', nombre: 'Sara Vigueras López', grupo: '1ºA' },
+    { id: 'alba.lopez', nombre: 'Alba López Toro', grupo: '1ºA' },
+    { id: 'juan.orozco', nombre: 'Juan Martín Orozco Restrepo', grupo: '1ºA' }, // nombre de pila compuesto
+    { id: 'youssef.elmaanaoui', nombre: 'Youssef El Maanaoui El Hassnaoui', grupo: '1ºA' }, // partícula pegada en el id
+    { id: 'pepe', nombre: 'Pepe', grupo: '1ºA' }, // sin punto: por el nombre entero
+    { id: 'toby.augustine', nombre: 'Toby Chukwunonso Augustine Onwuenwuzor', grupo: '1ºA' },
+  ];
+  assert.deepEqual(L.ordenarAlumnos(alumnos).map(a => a.id),
+    ['toby.augustine', 'youssef.elmaanaoui', 'alba.lopez', 'juan.orozco', 'pepe', 'sara.vigueras']);
+  assert.equal(L.claveApellidos('Alba López Toro', 'alba.lopez'), 'López Toro Alba');
+  assert.equal(L.claveApellidos('Juan Pérez', 'juan.perez@murciaeduca.es'), 'Pérez Juan');
 });

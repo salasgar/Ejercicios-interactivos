@@ -1,5 +1,8 @@
 .DS_Store
 node_modules/
+# Datos reales de alumnos (nombres y registros de exámenes): NUNCA al repo,
+# que es público y se publica entero en GitHub Pages.
+corrector/data/
 .claude/sesiones/
 .firebase/
 firebase-debug.log

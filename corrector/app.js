@@ -7,10 +7,11 @@
 import * as L from './logica.js';
 
 const ALMACEN = 'corrector-examenes-v1';
+const ALMACEN_UI = 'corrector-examenes-ui-v1'; // preferencias: la última unidad elegida
 const POR_BLOQUE = 4; // filas por tabla de respuestas, como en la franja del examen
 
 let estado = cargar();
-const ui = { pestana: 'corregir', semana: null, grupo: '', alumno: '', codigo: '', resp: '', obs: '', editando: null, verTodos: false, semanaRes: null, grupoRes: '', alumnoRes: '' };
+const ui = { pestana: 'corregir', unidad: null, semana: null, grupo: '', alumno: '', codigo: '', resp: '', obs: '', editando: null, verTodos: false, unidadRes: null, semanaRes: null, grupoRes: '', alumnoRes: '' };
 
 // ---------------------------------------------------------------------------
 // Almacenamiento
@@ -20,16 +21,35 @@ function vacio() { return { alumnos: [], claves: {}, registros: {} }; }
 function cargar() {
   try {
     const dato = JSON.parse(localStorage.getItem(ALMACEN) ?? 'null');
-    if (dato && Array.isArray(dato.alumnos) && dato.claves && dato.registros) {
-      delete dato.ajustes;           // resto del antiguo interruptor «Teclado posicional»
-      return { ...vacio(), ...dato };
-    }
+    if (dato && Array.isArray(dato.alumnos) && dato.claves && dato.registros) return L.migrar(dato);
   } catch (e) { console.error(e); }
   return vacio();
 }
 
+function unidadGuardada() {
+  try { return JSON.parse(localStorage.getItem(ALMACEN_UI) ?? '{}').unidad ?? null; } catch { return null; }
+}
+
+function guardarUnidad(unidad) {
+  try { localStorage.setItem(ALMACEN_UI, JSON.stringify({ unidad })); } catch { /* da igual: solo es una preferencia */ }
+}
+
 function guardar() {
   try { localStorage.setItem(ALMACEN, JSON.stringify(estado)); } catch (e) { alert('No se ha podido guardar en el navegador: ' + e.message); }
+}
+
+async function cargarDatosIniciales() {
+  if (estado.alumnos.length > 0 || Object.keys(estado.claves).length > 0) return; // Ya hay datos
+  try {
+    const resp = await fetch('./data/datos-iniciales.json');
+    if (!resp.ok) return;
+    const dato = await resp.json();
+    if (dato && Array.isArray(dato.alumnos) && dato.claves && dato.registros) {
+      estado = L.migrar(dato);
+      guardar();
+      render();
+    }
+  } catch (e) { console.log('No se encontraron datos iniciales para cargar'); }
 }
 
 // ---------------------------------------------------------------------------
@@ -39,12 +59,14 @@ const $ = sel => document.querySelector(sel);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const num = x => (x === null || x === undefined ? '' : x.toLocaleString('es-ES', { maximumFractionDigits: 2 }));
 const pct = (a, n) => (n ? Math.round(100 * a / n) + ' %' : '');
-const semanas = () => Object.keys(estado.claves).map(Number).sort((a, b) => a - b);
+const unidades = () => [...new Set(Object.values(estado.claves).map(c => c.unidad))].sort((a, b) => a - b);
+const semanasDe = unidad => Object.values(estado.claves).filter(c => c.unidad === unidad).map(c => c.semana).sort((a, b) => a - b);
+const claveDe = (unidad, semana) => estado.claves[L.idClave(unidad, semana)] ?? null;
 const grupos = () => [...new Set(estado.alumnos.map(a => a.grupo))].sort((a, b) => a.localeCompare(b, 'es'));
 const registros = () => Object.values(estado.registros);
-const registrosSemana = semana => registros().filter(r => r.semana === semana);
+const registrosSemana = (unidad, semana) => registros().filter(r => r.unidad === unidad && r.semana === semana);
 const alumnoDe = id => estado.alumnos.find(a => a.id === id);
-const claveActual = () => (ui.semana === null ? null : estado.claves[ui.semana] ?? null);
+const claveActual = () => (ui.unidad === null || ui.semana === null ? null : claveDe(ui.unidad, ui.semana));
 
 function opciones(lista, valor, vacioTexto) {
   const out = vacioTexto !== undefined ? [`<option value="">${esc(vacioTexto)}</option>`] : [];
@@ -82,8 +104,12 @@ $('#pestanas').addEventListener('click', e => {
 });
 
 function render() {
-  if (ui.semana === null || !estado.claves[ui.semana]) ui.semana = semanas().at(-1) ?? null;
-  if (ui.semanaRes === null || !estado.claves[ui.semanaRes]) ui.semanaRes = ui.semana;
+  const us = unidades();
+  // La unidad por defecto es la última elegida en la sesión anterior; si ya no existe, la más alta.
+  if (ui.unidad === null || !us.includes(ui.unidad)) ui.unidad = us.includes(unidadGuardada()) ? unidadGuardada() : us.at(-1) ?? null;
+  if (ui.unidad === null || !semanasDe(ui.unidad).includes(ui.semana)) ui.semana = semanasDe(ui.unidad).at(-1) ?? null;
+  if (ui.unidadRes === null || !us.includes(ui.unidadRes)) ui.unidadRes = ui.unidad;
+  if (ui.unidadRes === null || !semanasDe(ui.unidadRes).includes(ui.semanaRes)) ui.semanaRes = semanasDe(ui.unidadRes).at(-1) ?? null;
   ({ corregir: renderCorregir, resultados: renderResultados, alumnos: renderAlumnos, claves: renderClaves, datos: renderDatos })[ui.pestana]();
 }
 
@@ -97,16 +123,16 @@ function alumnosDelGrupo(grupo) {
 function renderCorregir(foco = '#sel-alumno') {
   const clave = claveActual();
   const avisos = [];
-  if (!semanas().length) avisos.push('No hay ninguna clave cargada: ve a la pestaña <b>Claves</b> y carga el JSON de la semana.');
+  if (!unidades().length) avisos.push('No hay ninguna clave cargada: ve a la pestaña <b>Claves</b> y carga el JSON de la semana.');
   if (!estado.alumnos.length) avisos.push('No hay alumnos: ve a la pestaña <b>Alumnos</b> y pega la lista.');
-  if (estado.alumnos.length && clave && !ui.verTodos && !L.sinRegistrar(alumnosDelGrupo(ui.grupo), registrosSemana(ui.semana), ui.semana).length)
-    avisos.push(`Ya están registrados todos los alumnos${ui.grupo ? ` de ${esc(ui.grupo)}` : ''} en la semana ${ui.semana}. Para corregir o repasar alguno, marca <b>Ver también los ya corregidos</b>.`);
-  const regs = clave ? L.resumenSemana(clave, registrosSemana(ui.semana), estado.alumnos) : [];
+  if (estado.alumnos.length && clave && !ui.verTodos && !L.sinRegistrar(alumnosDelGrupo(ui.grupo), registrosSemana(ui.unidad, ui.semana), ui.semana).length)
+    avisos.push(`Ya están registrados todos los alumnos${ui.grupo ? ` de ${esc(ui.grupo)}` : ''} en la semana ${ui.semana} de la unidad ${ui.unidad}. Para corregir o repasar alguno, marca <b>Ver también los ya corregidos</b>.`);
+  const regs = clave ? L.resumenSemana(clave, registrosSemana(ui.unidad, ui.semana), estado.alumnos) : [];
   const hechos = new Map(regs.map(r => [r.alumno, r]));
   const delGrupo = alumnosDelGrupo(ui.grupo);
   // Por defecto solo se ofrecen los que faltan; el que se está editando sigue visible.
   const ofrecidos = ui.verTodos ? delGrupo : delGrupo.filter(a => !hechos.has(a.id) || a.id === ui.alumno);
-  const quedan = L.sinRegistrar(delGrupo, registrosSemana(ui.semana), ui.semana).length;
+  const quedan = L.sinRegistrar(delGrupo, registrosSemana(ui.unidad, ui.semana), ui.semana).length;
   const listaAlumnos = ofrecidos.map(a => {
     const r = hechos.get(a.id);
     return [a.id, `${a.nombre}${ui.grupo ? '' : ' · ' + a.grupo}${r ? ` · ✓ ${num(r.nota)}` : ''}`];
@@ -115,7 +141,8 @@ function renderCorregir(foco = '#sel-alumno') {
     ${avisos.map(t => `<div class="aviso aviso--atencion">${t}</div>`).join('')}
     <div class="tarjeta">
       <div class="controles">
-        <label>Semana <select id="sel-semana">${opciones(semanas().map(s => [s, `Semana ${s}${estado.claves[s].fecha ? ' · ' + estado.claves[s].fecha : ''}`]), ui.semana)}</select></label>
+        <label>Unidad <select id="sel-unidad">${opciones(unidades().map(u => [u, `Unidad ${u}`]), ui.unidad)}</select></label>
+        <label>Semana <select id="sel-semana">${opciones(semanasDe(ui.unidad).map(s => [s, `Semana ${s}${claveDe(ui.unidad, s).fecha ? ' · ' + claveDe(ui.unidad, s).fecha : ''}`]), ui.semana)}</select></label>
         <label>Grupo <select id="sel-grupo">${opciones(grupos().map(g => [g, g]), ui.grupo, 'Todos')}</select></label>
         <label>Alumno${quedan ? ` <span class="pequeno suave">(faltan ${quedan})</span>` : ''} <select id="sel-alumno">${opciones(listaAlumnos, ui.alumno, '— elige —')}</select></label>
         <label>Código de la versión <input type="text" id="in-codigo" inputmode="numeric" maxlength="4" autocomplete="off" value="${esc(ui.codigo)}"></label>
@@ -136,10 +163,17 @@ function renderCorregir(foco = '#sel-alumno') {
       <label class="pequeno suave">Observaciones (opcional) <input type="text" id="in-obs" style="width:100%" value="${esc(ui.obs)}"></label>
     </div>
     <div class="tarjeta">
-      <h3 style="margin-top:0">Registrados en la semana ${ui.semana ?? '—'}${ui.grupo ? ' · ' + esc(ui.grupo) : ''}</h3>
+      <h3 style="margin-top:0">Registrados en la unidad ${ui.unidad ?? '—'} · semana ${ui.semana ?? '—'}${ui.grupo ? ' · ' + esc(ui.grupo) : ''}</h3>
       <div id="lista-registros"></div>
     </div>`;
 
+  $('#sel-unidad').addEventListener('change', e => {
+    ui.unidad = Number(e.target.value);
+    guardarUnidad(ui.unidad);
+    ui.semana = semanasDe(ui.unidad).at(-1) ?? null;
+    limpiarFormulario(true, true);
+    renderCorregir();
+  });
   $('#sel-semana').addEventListener('change', e => { ui.semana = Number(e.target.value); limpiarFormulario(true, true); renderCorregir(); });
   $('#sel-grupo').addEventListener('change', e => { ui.grupo = e.target.value; limpiarFormulario(true); renderCorregir(); });
   $('#ck-todos').addEventListener('change', e => { ui.verTodos = e.target.checked; renderCorregir('#sel-alumno'); });
@@ -180,7 +214,7 @@ function renderCorregir(foco = '#sel-alumno') {
       elegirAlumno(r.alumno);
     } else if (b.dataset.accion === 'borrar') {
       const a = alumnoDe(r.alumno);
-      if (confirm(`¿Borrar el registro de ${a?.nombre ?? r.alumno} en la semana ${r.semana}?`)) {
+      if (confirm(`¿Borrar el registro de ${a?.nombre ?? r.alumno} en la unidad ${r.unidad}, semana ${r.semana}?`)) {
         delete estado.registros[b.dataset.id];
         guardar();
         if (ui.editando === b.dataset.id) limpiarFormulario(true);
@@ -209,7 +243,7 @@ function limpiarFormulario(todo = false, codigo = false) {
 /** Al elegir un alumno: si ya tiene registro esta semana, se carga para editarlo. */
 function elegirAlumno(id) {
   ui.alumno = id;
-  const idReg = L.idRegistro(ui.semana, id);
+  const idReg = L.idRegistro(ui.unidad, ui.semana, id);
   const r = id ? estado.registros[idReg] : null;
   if (r) {
     ui.codigo = r.codigo; ui.resp = r.respuestas.replace(/-+$/, ''); ui.obs = r.obs ?? ''; ui.editando = idReg;
@@ -278,14 +312,14 @@ function pintarLista(regs) {
   const total = alumnosDelGrupo(ui.grupo).length;
   if (!del.length) { zona.innerHTML = `<p class="suave">Todavía no hay registros${total ? ` (${total} alumnos)` : ''}.</p>`; return; }
   const filas = del.map(r => `
-    <tr${ui.editando === L.idRegistro(r.semana, r.alumno) ? ' class="resaltada"' : ''}>
+    <tr${ui.editando === L.idRegistro(r.unidad, r.semana, r.alumno) ? ' class="resaltada"' : ''}>
       <td>${esc(r.nombre)}</td><td>${esc(r.grupo)}</td><td class="mono">${esc(r.codigo)}</td>
       <td class="mono">${esc(r.respuestas)}</td>
       <td class="num">${r.aciertos}</td><td class="num">${r.fallos}</td><td class="num">${r.blancos + r.nulas}</td>
       <td class="num"><b>${num(r.nota)}</b></td>
       <td>${esc(r.obs ?? '')}</td>
-      <td class="acciones"><button class="boton-2 mini" data-accion="editar" data-id="${esc(L.idRegistro(r.semana, r.alumno))}">Editar</button>
-        <button class="boton-peligro mini" data-accion="borrar" data-id="${esc(L.idRegistro(r.semana, r.alumno))}">Borrar</button></td>
+      <td class="acciones"><button class="boton-2 mini" data-accion="editar" data-id="${esc(L.idRegistro(r.unidad, r.semana, r.alumno))}">Editar</button>
+        <button class="boton-peligro mini" data-accion="borrar" data-id="${esc(L.idRegistro(r.unidad, r.semana, r.alumno))}">Borrar</button></td>
     </tr>`).join('');
   zona.innerHTML = `
     <p class="pequeno suave">${del.length} de ${total} · media ${num(L.media(del.map(r => r.nota)))}</p>
@@ -300,12 +334,12 @@ function guardarRegistro() {
   if (!version) { aviso('El código de la versión no es válido.', 'aviso--error'); $('#in-codigo').focus(); return; }
   const n = clave.n_preguntas;
   if (ui.resp.length < n && !confirm(`Solo hay ${ui.resp.length} respuestas de ${n}. ¿Guardar las que faltan como «en blanco»?`)) { $('#in-resp').focus(); return; }
-  const id = L.idRegistro(ui.semana, ui.alumno);
+  const id = L.idRegistro(ui.unidad, ui.semana, ui.alumno);
   const a = alumnoDe(ui.alumno);
   const previo = estado.registros[id];
-  if (previo && ui.editando !== id && !confirm(`${a?.nombre} ya tiene un registro en la semana ${ui.semana} (código ${previo.codigo}, respuestas ${previo.respuestas}). ¿Sustituirlo?`)) return;
+  if (previo && ui.editando !== id && !confirm(`${a?.nombre} ya tiene un registro en la unidad ${ui.unidad}, semana ${ui.semana} (código ${previo.codigo}, respuestas ${previo.respuestas}). ¿Sustituirlo?`)) return;
   const respuestas = L.completar(ui.resp, n);
-  estado.registros[id] = { semana: ui.semana, alumno: ui.alumno, codigo: version.codigo, respuestas, obs: ui.obs.trim(), ts: Date.now() };
+  estado.registros[id] = { unidad: ui.unidad, semana: ui.semana, alumno: ui.alumno, codigo: version.codigo, respuestas, obs: ui.obs.trim(), ts: Date.now() };
   guardar();
   const c = L.corregir(version, respuestas, clave.opciones);
   limpiarFormulario(true);
@@ -317,11 +351,12 @@ function guardarRegistro() {
 // Resultados
 // ---------------------------------------------------------------------------
 function renderResultados() {
-  const clave = ui.semanaRes === null ? null : estado.claves[ui.semanaRes];
+  const clave = ui.unidadRes === null || ui.semanaRes === null ? null : claveDe(ui.unidadRes, ui.semanaRes);
   if (!clave) { $('#app').innerHTML = '<div class="aviso aviso--atencion">No hay ninguna clave cargada.</div>'; return; }
-  const regs = L.resumenSemana(clave, registrosSemana(ui.semanaRes), estado.alumnos).filter(r => !ui.grupoRes || r.grupo === ui.grupoRes);
+  const delExamen = registrosSemana(ui.unidadRes, ui.semanaRes);
+  const regs = L.resumenSemana(clave, delExamen, estado.alumnos).filter(r => !ui.grupoRes || r.grupo === ui.grupoRes);
   const sinRegistro = alumnosDelGrupo(ui.grupoRes).filter(a => !regs.some(r => r.alumno === a.id));
-  const stats = L.estadisticasPreguntas(clave, registrosSemana(ui.semanaRes).filter(r => !ui.grupoRes || alumnoDe(r.alumno)?.grupo === ui.grupoRes));
+  const stats = L.estadisticasPreguntas(clave, delExamen.filter(r => !ui.grupoRes || alumnoDe(r.alumno)?.grupo === ui.grupoRes));
 
   const filasAlumnos = regs.map(r => `<tr><td>${esc(r.nombre)}</td><td>${esc(r.grupo)}</td><td class="mono">${esc(r.codigo)}</td>
     <td class="num">${r.aciertos}</td><td class="num">${r.fallos}</td><td class="num">${r.blancos + r.nulas}</td><td class="num">${num(r.puntos)}</td><td class="num"><b>${num(r.nota)}</b></td><td>${esc(r.obs ?? '')}</td></tr>`).join('');
@@ -350,7 +385,8 @@ function renderResultados() {
   $('#app').innerHTML = `
     <div class="tarjeta">
       <div class="controles">
-        <label>Semana <select id="sel-semana-res">${opciones(semanas().map(s => [s, `Semana ${s}${estado.claves[s].fecha ? ' · ' + estado.claves[s].fecha : ''}`]), ui.semanaRes)}</select></label>
+        <label>Unidad <select id="sel-unidad-res">${opciones(unidades().map(u => [u, `Unidad ${u}`]), ui.unidadRes)}</select></label>
+        <label>Semana <select id="sel-semana-res">${opciones(semanasDe(ui.unidadRes).map(s => [s, `Semana ${s}${claveDe(ui.unidadRes, s).fecha ? ' · ' + claveDe(ui.unidadRes, s).fecha : ''}`]), ui.semanaRes)}</select></label>
         <label>Grupo <select id="sel-grupo-res">${opciones(grupos().map(g => [g, g]), ui.grupoRes, 'Todos')}</select></label>
       </div>
       <h3>Notas</h3>
@@ -365,6 +401,12 @@ function renderResultados() {
       <div class="controles"><label>Alumno <select id="sel-alumno-res">${opciones(L.ordenarAlumnos(estado.alumnos).map(a => [a.id, `${a.nombre} · ${a.grupo}`]), ui.alumnoRes, '— elige —')}</select></label></div>
       <div id="ficha">${ui.alumnoRes ? htmlFicha(ui.alumnoRes) : ''}</div>
     </div>`;
+  $('#sel-unidad-res').addEventListener('change', e => {
+    ui.unidadRes = Number(e.target.value);
+    guardarUnidad(ui.unidadRes);
+    ui.semanaRes = semanasDe(ui.unidadRes).at(-1) ?? null;
+    renderResultados();
+  });
   $('#sel-semana-res').addEventListener('change', e => { ui.semanaRes = Number(e.target.value); renderResultados(); });
   $('#sel-grupo-res').addEventListener('change', e => { ui.grupoRes = e.target.value; renderResultados(); });
   $('#sel-alumno-res').addEventListener('change', e => { ui.alumnoRes = e.target.value; $('#ficha').innerHTML = ui.alumnoRes ? htmlFicha(ui.alumnoRes) : ''; });
@@ -373,10 +415,10 @@ function renderResultados() {
 function htmlFicha(id) {
   const ficha = L.fichaAlumno(estado.claves, registros(), id);
   if (!ficha.length) return '<p class="suave">Sin registros.</p>';
-  const resumen = `<table class="lista"><tr><th>Semana</th><th>Fecha</th><th>Código</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th></tr>
-    ${ficha.map(s => `<tr><td>${s.semana}</td><td>${esc(s.fecha)}</td><td class="mono">${esc(s.codigo)}</td><td class="num">${s.aciertos}</td><td class="num">${s.fallos}</td><td class="num">${s.blancos + s.nulas}</td><td class="num"><b>${num(s.nota)}</b></td><td>${esc(s.obs)}</td></tr>`).join('')}</table>`;
+  const resumen = `<table class="lista"><tr><th>Unidad</th><th>Semana</th><th>Fecha</th><th>Código</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th></tr>
+    ${ficha.map(s => `<tr><td>${s.unidad}</td><td>${s.semana}</td><td>${esc(s.fecha)}</td><td class="mono">${esc(s.codigo)}</td><td class="num">${s.aciertos}</td><td class="num">${s.fallos}</td><td class="num">${s.blancos + s.nulas}</td><td class="num"><b>${num(s.nota)}</b></td><td>${esc(s.obs)}</td></tr>`).join('')}</table>`;
   const detalle = ficha.map(s => `
-    <h3>Semana ${s.semana} · código ${esc(s.codigo)} · nota ${num(s.nota)}</h3>
+    <h3>Unidad ${s.unidad} · semana ${s.semana} · código ${esc(s.codigo)} · nota ${num(s.nota)}</h3>
     <table class="lista"><tr><th class="num">Nº</th><th>Destreza</th><th>Pregunta</th><th>Resp.</th><th>Correcta</th><th>Resultado</th><th>Qué error lleva a esa opción</th></tr>
     ${s.preguntas.map(p => `<tr><td class="num">${p.n}</td><td class="mono">${esc(p.item)}</td><td>${esc(L.aPlano(p.enunciado))}</td>
       <td class="mono">${esc(p.respuesta)}${p.elegida ? ' · ' + esc(L.aPlano(p.elegida.texto)) : ''}</td>
@@ -431,13 +473,14 @@ function renderAlumnos() {
 // Claves
 // ---------------------------------------------------------------------------
 function renderClaves() {
-  const filas = semanas().map(s => {
-    const c = estado.claves[s];
-    const n = registrosSemana(s).length;
-    return `<tr><td>${s}</td><td>${esc(c.fecha ?? '')}</td><td class="mono">${c.versiones.map(v => v.codigo + (v.extra ? ' (extra)' : '')).join(', ')}</td>
+  const lista = Object.values(estado.claves).sort((a, b) => a.unidad - b.unidad || a.semana - b.semana);
+  const filas = lista.map(c => {
+    const k = L.idClave(c.unidad, c.semana);
+    const n = registrosSemana(c.unidad, c.semana).length;
+    return `<tr><td>${c.unidad}</td><td>${c.semana}</td><td>${esc(c.fecha ?? '')}</td><td class="mono">${c.versiones.map(v => v.codigo + (v.extra ? ' (extra)' : '')).join(', ')}</td>
       <td class="num">${c.n_preguntas}</td><td class="mono">${esc(L.textoAnuladas(c)) || '—'}</td><td class="num">${n}</td>
-      <td class="acciones"><button class="boton-2 mini" data-anular="${s}">Anular…</button>
-        <button class="boton-peligro mini" data-semana="${s}">Borrar</button></td></tr>`;
+      <td class="acciones"><button class="boton-2 mini" data-anular="${esc(k)}">Anular…</button>
+        <button class="boton-peligro mini" data-borrar="${esc(k)}">Borrar</button></td></tr>`;
   }).join('');
   $('#app').innerHTML = `
     <div class="tarjeta">
@@ -448,7 +491,7 @@ function renderClaves() {
     </div>
     <div class="tarjeta" id="zona-claves">
       <h2>Claves cargadas</h2>
-      ${semanas().length ? `<table class="lista"><tr><th>Semana</th><th>Examen</th><th>Versiones</th><th class="num">Preguntas</th><th>Anuladas</th><th class="num">Registros</th><th></th></tr>${filas}</table>
+      ${lista.length ? `<table class="lista"><tr><th>Unidad</th><th>Semana</th><th>Examen</th><th>Versiones</th><th class="num">Preguntas</th><th>Anuladas</th><th class="num">Registros</th><th></th></tr>${filas}</table>
         <p class="pequeno suave"><b>Anular…</b> quita preguntas de la nota: <code>código:número</code>, separadas por comas (<code>8930:10, 4816:9</code>). Solo se anulan a quien no las acertó: quien acertó conserva su punto; a los demás la pregunta deja de contar y la nota se calcula sobre una pregunta menos.</p>` : '<p class="suave">Ninguna todavía.</p>'}
     </div>`;
   $('#in-claves').addEventListener('change', async e => {
@@ -458,15 +501,15 @@ function renderClaves() {
         const clave = JSON.parse(await f.text());
         const error = L.comprobarClave(clave);
         if (error) { mensajes.push(`${f.name}: ${error}`); continue; }
-        const previa = estado.claves[clave.semana];
-        if (previa && !confirm(`Ya hay una clave de la semana ${clave.semana}. ¿Sustituirla? (los registros y las preguntas anuladas se conservan)`)) continue;
+        const previa = claveDe(clave.unidad, clave.semana);
+        if (previa && !confirm(`Ya hay una clave de la unidad ${clave.unidad}, semana ${clave.semana}. ¿Sustituirla? (los registros y las preguntas anuladas se conservan)`)) continue;
         // Las anuladas se deciden aquí, no en el exportador: que no se pierdan al recargar.
         for (const v of clave.versiones) {
           const antes = L.versionDe(previa, v.codigo)?.anuladas;
           if (antes?.length && v.anuladas === undefined) v.anuladas = antes;
         }
-        estado.claves[clave.semana] = clave;
-        mensajes.push(`${f.name}: semana ${clave.semana} cargada (${clave.versiones.length} versiones).`);
+        estado.claves[L.idClave(clave.unidad, clave.semana)] = clave;
+        mensajes.push(`${f.name}: unidad ${clave.unidad}, semana ${clave.semana} cargada (${clave.versiones.length} versiones).`);
       } catch (err) { mensajes.push(`${f.name}: ${err.message}`); }
     }
     guardar();
@@ -477,7 +520,7 @@ function renderClaves() {
     const an = e.target.closest('button[data-anular]');
     if (an) {
       const c = estado.claves[an.dataset.anular];
-      const texto = prompt(`Preguntas anuladas de la semana ${c.semana}, como código:número separadas por comas (vacío = ninguna).\nVersiones: ${c.versiones.map(v => v.codigo).join(', ')}`, L.textoAnuladas(c));
+      const texto = prompt(`Preguntas anuladas de la unidad ${c.unidad}, semana ${c.semana}, como código:número separadas por comas (vacío = ninguna).\nVersiones: ${c.versiones.map(v => v.codigo).join(', ')}`, L.textoAnuladas(c));
       if (texto === null) return;
       const { anuladas, error } = L.analizarAnuladas(texto, c);
       if (error) { alert(error); return; }
@@ -486,13 +529,13 @@ function renderClaves() {
       renderClaves();
       return;
     }
-    const b = e.target.closest('button[data-semana]');
+    const b = e.target.closest('button[data-borrar]');
     if (!b) return;
-    const s = Number(b.dataset.semana);
-    const n = registrosSemana(s).length;
-    if (!confirm(`¿Borrar la clave de la semana ${s}${n ? ` y sus ${n} registros` : ''}?`)) return;
-    delete estado.claves[s];
-    for (const [k, r] of Object.entries(estado.registros)) if (r.semana === s) delete estado.registros[k];
+    const c = estado.claves[b.dataset.borrar];
+    const n = registrosSemana(c.unidad, c.semana).length;
+    if (!confirm(`¿Borrar la clave de la unidad ${c.unidad}, semana ${c.semana}${n ? ` y sus ${n} registros` : ''}?`)) return;
+    delete estado.claves[b.dataset.borrar];
+    for (const [k, r] of Object.entries(estado.registros)) if (r.unidad === c.unidad && r.semana === c.semana) delete estado.registros[k];
     guardar();
     renderClaves();
   });
@@ -512,7 +555,7 @@ function renderDatos() {
     </div>
     <div class="tarjeta">
       <h2>Copia de seguridad</h2>
-      <p class="pequeno suave">Los datos están solo en este navegador de este ordenador (${estado.alumnos.length} alumnos, ${semanas().length} claves, ${nReg} registros). Guarda una copia después de cada sesión de corrección; con ella se restaura todo en otro navegador.</p>
+      <p class="pequeno suave">Los datos están solo en este navegador de este ordenador (${estado.alumnos.length} alumnos, ${Object.keys(estado.claves).length} claves, ${nReg} registros). Guarda una copia después de cada sesión de corrección; con ella se restaura todo en otro navegador.</p>
       <div class="acciones"><button class="boton" id="btn-copia">Descargar copia (JSON)</button></div>
       <h3>Restaurar una copia</h3>
       <p class="pequeno suave">Sustituye todo lo que hay ahora por el contenido de la copia.</p>
@@ -530,8 +573,9 @@ function renderDatos() {
     const f = e.target.files[0];
     if (!f) return;
     try {
-      const dato = JSON.parse(await f.text());
-      if (!dato || !Array.isArray(dato.alumnos) || typeof dato.claves !== 'object' || typeof dato.registros !== 'object') throw new Error('no es una copia del corrector');
+      const bruto = JSON.parse(await f.text());
+      if (!bruto || !Array.isArray(bruto.alumnos) || typeof bruto.claves !== 'object' || typeof bruto.registros !== 'object') throw new Error('no es una copia del corrector');
+      const dato = L.migrar(bruto); // admite copias de antes de haber unidades
       for (const c of Object.values(dato.claves)) { const err = L.comprobarClave(c); if (err) throw new Error(err); }
       const n = Object.keys(dato.registros).length;
       if (!confirm(`La copia tiene ${dato.alumnos.length} alumnos, ${Object.keys(dato.claves).length} claves y ${n} registros. ¿Sustituir todo lo actual?`)) return;
@@ -551,3 +595,4 @@ function renderDatos() {
 }
 
 render();
+cargarDatosIniciales();

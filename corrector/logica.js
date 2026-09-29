@@ -8,7 +8,7 @@
 //             las 4 opciones con su explicación.
 //   alumno    { id, nombre, grupo }; el id es el mismo que usa la app
 //             (usuario corto o email), para poder cruzar los datos.
-//   registro  { semana, alumno, codigo, respuestas, obs, ts }; `respuestas`
+//   registro  { unidad, semana, alumno, codigo, respuestas, obs, ts }; `respuestas`
 //             es la cadena de 20 símbolos tal como se tecleó: A-D, «-» en
 //             blanco y «?» nula (ilegible o dos cruces).
 //
@@ -68,8 +68,32 @@ export function sinRegistrar(alumnos, registros, semana) {
   return alumnos.filter(a => !hechos.has(a.id));
 }
 
+/**
+ * Clave para ordenar alfabéticamente por apellidos: «López Toro Alba».
+ * El nombre se guarda como «Nombre(s) Apellidos», sin separador; dónde empiezan
+ * los apellidos lo delata el identificador («alba.lopez», «juan.orozco»), cuya
+ * parte tras el punto es el primer apellido, aunque el nombre de pila sea
+ * compuesto («Juan Martín Orozco Restrepo»). La comparación ignora tildes y
+ * admite apellidos con partículas pegadas en el id («youssef.elmaanaoui» ↔
+ * «El Maanaoui»). Si nada casa (id inventado, sin punto…), se ordena por el
+ * nombre completo tal cual.
+ */
+export function claveApellidos(nombre, id = '') {
+  const norm = s => String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const palabras = String(nombre).trim().split(/\s+/);
+  const apellidoId = norm(String(id).split('@')[0].split('.')[1] ?? '');
+  if (apellidoId) {
+    for (let i = 1; i < palabras.length; i++) {
+      if (norm(palabras.slice(i).join('')).startsWith(apellidoId))
+        return [...palabras.slice(i), ...palabras.slice(0, i)].join(' ');
+    }
+  }
+  return String(nombre);
+}
+
 export function ordenarAlumnos(alumnos) {
-  return [...alumnos].sort((a, b) => a.grupo.localeCompare(b.grupo, 'es') || a.nombre.localeCompare(b.nombre, 'es'));
+  return [...alumnos].sort((a, b) => a.grupo.localeCompare(b.grupo, 'es')
+    || claveApellidos(a.nombre, a.id).localeCompare(claveApellidos(b.nombre, b.id), 'es'));
 }
 
 // ---------------------------------------------------------------------------
@@ -80,6 +104,7 @@ export function ordenarAlumnos(alumnos) {
 export function comprobarClave(clave) {
   if (!clave || typeof clave !== 'object') return 'No es un JSON de clave';
   if (clave.formato !== FORMATO_CLAVE) return `Formato de clave ${clave.formato}, se esperaba ${FORMATO_CLAVE}`;
+  if (!Number.isInteger(clave.unidad)) return 'Falta el número de unidad';
   if (!Number.isInteger(clave.semana)) return 'Falta el número de semana';
   const n = clave.n_preguntas;
   if (!Number.isInteger(n) || n < 1) return 'Falta n_preguntas';
@@ -215,8 +240,35 @@ export function redondear(x, decimales = 2) {
   return Math.round((x + Number.EPSILON) * f) / f;
 }
 
-export function idRegistro(semana, alumno) {
-  return `${semana}|${alumno}`;
+export function idClave(unidad, semana) {
+  return `${unidad}|${semana}`;
+}
+
+export function idRegistro(unidad, semana, alumno) {
+  return `${unidad}|${semana}|${alumno}`;
+}
+
+/**
+ * Normaliza unos datos guardados (localStorage, copia de seguridad o datos
+ * iniciales) al formato actual: claves indexadas por «unidad|semana» y cada
+ * registro con su `unidad`. Los datos de antes de haber unidades (claves
+ * indexadas solo por semana, registros sin unidad) se migran: la unidad la
+ * dice la propia clave exportada, y a cada registro se la presta la clave de
+ * su semana. Es idempotente: los datos ya migrados salen tal cual.
+ */
+export function migrar(dato) {
+  const claves = {}, registros = {};
+  const unidadDeSemana = {};
+  for (const c of Object.values(dato.claves ?? {})) {
+    const clave = { ...c, unidad: c.unidad ?? 1 };
+    claves[idClave(clave.unidad, clave.semana)] = clave;
+    unidadDeSemana[clave.semana] ??= clave.unidad;
+  }
+  for (const r of Object.values(dato.registros ?? {})) {
+    const unidad = r.unidad ?? unidadDeSemana[r.semana] ?? 1;
+    registros[idRegistro(unidad, r.semana, r.alumno)] = { ...r, unidad };
+  }
+  return { alumnos: dato.alumnos ?? [], claves, registros };
 }
 
 // ---------------------------------------------------------------------------
@@ -225,7 +277,7 @@ export function idRegistro(semana, alumno) {
 
 /**
  * Una fila por registro de la semana, corregido y con los datos del alumno,
- * ordenadas por grupo y nombre.
+ * ordenadas por grupo y apellidos.
  */
 export function resumenSemana(clave, registros, alumnos) {
   const porId = new Map(alumnos.map(a => [a.id, a]));
@@ -236,7 +288,8 @@ export function resumenSemana(clave, registros, alumnos) {
     const a = porId.get(r.alumno) ?? { id: r.alumno, nombre: r.alumno, grupo: '' };
     filas.push({ ...r, nombre: a.nombre, grupo: a.grupo, ...corregir(version, r.respuestas, clave.opciones) });
   }
-  return filas.sort((x, y) => x.grupo.localeCompare(y.grupo, 'es') || x.nombre.localeCompare(y.nombre, 'es'));
+  return filas.sort((x, y) => x.grupo.localeCompare(y.grupo, 'es')
+    || claveApellidos(x.nombre, x.alumno).localeCompare(claveApellidos(y.nombre, y.alumno), 'es'));
 }
 
 export function media(valores) {
@@ -301,9 +354,9 @@ export function opcionesElegidas(clave, stats) {
  * pregunta la opción que eligió con su explicación (para saber qué error cometió).
  */
 export function fichaAlumno(claves, registros, alumnoId) {
-  const semanas = [];
+  const filas = [];
   for (const r of registros.filter(r => r.alumno === alumnoId)) {
-    const clave = claves[r.semana];
+    const clave = claves[idClave(r.unidad, r.semana)];
     const version = clave && versionDe(clave, r.codigo);
     if (!version) continue;
     const c = corregir(version, r.respuestas, clave.opciones);
@@ -313,9 +366,9 @@ export function fichaAlumno(claves, registros, alumnoId) {
       const buena = p.opciones.find(o => o.letra === d.correcta) ?? null;
       return { ...d, enunciado: p.enunciado, elegida, buena };
     });
-    semanas.push({ semana: r.semana, fecha: clave.fecha ?? '', codigo: r.codigo, obs: r.obs ?? '', ...c, preguntas });
+    filas.push({ unidad: r.unidad, semana: r.semana, fecha: clave.fecha ?? '', codigo: r.codigo, obs: r.obs ?? '', ...c, preguntas });
   }
-  return semanas.sort((a, b) => a.semana - b.semana);
+  return filas.sort((a, b) => a.unidad - b.unidad || a.semana - b.semana);
 }
 
 // ---------------------------------------------------------------------------
@@ -340,14 +393,18 @@ export function fechaTexto(ms) {
   return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`;
 }
 
-/** Una fila por alumno y semana. */
+/** Las claves ordenadas por unidad y semana, para recorrerlas en los CSV. */
+function clavesOrdenadas(claves) {
+  return Object.values(claves).sort((a, b) => a.unidad - b.unidad || a.semana - b.semana);
+}
+
+/** Una fila por alumno y examen. */
 export function csvResumen(claves, registros, alumnos) {
-  const cabecera = ['Semana', 'Fecha examen', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Respuestas', 'Aciertos', 'Fallos', 'En blanco', 'Nulas', 'Anuladas', 'Puntos', 'Sobre', 'Nota', 'Observaciones', 'Registrado el'];
+  const cabecera = ['Unidad', 'Semana', 'Fecha examen', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Respuestas', 'Aciertos', 'Fallos', 'En blanco', 'Nulas', 'Anuladas', 'Puntos', 'Sobre', 'Nota', 'Observaciones', 'Registrado el'];
   const filas = [];
-  for (const semana of Object.keys(claves).map(Number).sort((a, b) => a - b)) {
-    const clave = claves[semana];
-    for (const f of resumenSemana(clave, registros.filter(r => r.semana === semana), alumnos)) {
-      filas.push([semana, clave.fecha ?? '', f.alumno, f.nombre, f.grupo, f.codigo, f.respuestas, f.aciertos, f.fallos, f.blancos, f.nulas, f.anuladas, f.puntos, f.sobre, f.nota, f.obs ?? '', fechaTexto(f.ts)]);
+  for (const clave of clavesOrdenadas(claves)) {
+    for (const f of resumenSemana(clave, registros.filter(r => r.unidad === clave.unidad && r.semana === clave.semana), alumnos)) {
+      filas.push([clave.unidad, clave.semana, clave.fecha ?? '', f.alumno, f.nombre, f.grupo, f.codigo, f.respuestas, f.aciertos, f.fallos, f.blancos, f.nulas, f.anuladas, f.puntos, f.sobre, f.nota, f.obs ?? '', fechaTexto(f.ts)]);
     }
   }
   return aCsv(cabecera, filas);
@@ -355,19 +412,18 @@ export function csvResumen(claves, registros, alumnos) {
 
 /** Una fila por respuesta. */
 export function csvDetalle(claves, registros, alumnos) {
-  const cabecera = ['Semana', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Nº', 'Posición', 'Destreza', 'Respuesta', 'Correcta', 'Resultado', 'Opción elegida', 'Enunciado'];
+  const cabecera = ['Unidad', 'Semana', 'Usuario', 'Nombre', 'Grupo', 'Código', 'Nº', 'Posición', 'Destreza', 'Respuesta', 'Correcta', 'Resultado', 'Opción elegida', 'Enunciado'];
   const porId = new Map(alumnos.map(a => [a.id, a]));
   const filas = [];
-  for (const semana of Object.keys(claves).map(Number).sort((a, b) => a - b)) {
-    const clave = claves[semana];
-    for (const r of registros.filter(r => r.semana === semana)) {
+  for (const clave of clavesOrdenadas(claves)) {
+    for (const r of registros.filter(r => r.unidad === clave.unidad && r.semana === clave.semana)) {
       const version = versionDe(clave, r.codigo);
       if (!version) continue;
       const a = porId.get(r.alumno) ?? { nombre: r.alumno, grupo: '' };
       for (const d of corregir(version, r.respuestas, clave.opciones).detalle) {
         const p = version.preguntas[d.n - 1];
         const elegida = p.opciones.find(o => o.letra === d.respuesta);
-        filas.push([semana, r.alumno, a.nombre, a.grupo, r.codigo, d.n, d.pos, d.item, d.respuesta, d.correcta, d.estado,
+        filas.push([clave.unidad, clave.semana, r.alumno, a.nombre, a.grupo, r.codigo, d.n, d.pos, d.item, d.respuesta, d.correcta, d.estado,
           elegida ? aPlano(elegida.texto) : '', aPlano(p.enunciado)]);
       }
     }
