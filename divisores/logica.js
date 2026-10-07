@@ -154,18 +154,34 @@ export function claveDe(item) {
 // --- Contador de repeticiones -----------------------------------------------
 
 export const INICIALES = 20;
-export const PENALIZACION = 5;
+export const PENALIZACION = 2;          // fallo después de pensarlo
+export const PENALIZACION_RAPIDO = 5;   // fallo por contestar deprisa, sin pensar
 export const MAXIMO = 40;   // tope de pendientes, para que nadie se hunda
 
 export function ejercicioNuevo() {
-  return { pendientes: INICIALES, aciertos: 0, fallos: 0, terminado: false, dia: 0, repeticiones: 0 };
+  return { pendientes: INICIALES, aciertos: 0, fallos: 0, rapidos: 0, terminado: false, dia: 0, repeticiones: 0 };
 }
 
-/** Anota una respuesta: un acierto quita una pendiente; un fallo añade cinco (hasta el máximo). */
-export function anotar(ej, acierto, dia = 0) {
+/** Milisegundos por debajo de los cuales una respuesta se considera dada sin pensar. */
+const UMBRAL_RAPIDO = { eleccion: 3000, preposicion: 3000, arrastrar: 5000 };
+
+/** ¿Se ha contestado demasiado deprisa para haberlo pensado? */
+export function esRapido(tipo, ms) {
+  return ms < UMBRAL_RAPIDO[tipo];
+}
+
+/**
+ * Anota una respuesta: un acierto quita una pendiente; un fallo añade dos, o
+ * cinco si fue `rapido` (contestado sin pensar), siempre hasta el máximo.
+ */
+export function anotar(ej, acierto, dia = 0, rapido = false) {
   if (ej.terminado) return ej;
   const sig = { ...ej };
-  if (acierto) { sig.aciertos++; sig.pendientes--; } else { sig.fallos++; sig.pendientes = Math.max(sig.pendientes, Math.min(MAXIMO, sig.pendientes + PENALIZACION)); }
+  if (acierto) { sig.aciertos++; sig.pendientes--; } else {
+    sig.fallos++;
+    if (rapido) sig.rapidos++;
+    sig.pendientes = Math.max(sig.pendientes, Math.min(MAXIMO, sig.pendientes + (rapido ? PENALIZACION_RAPIDO : PENALIZACION)));
+  }
   if (sig.pendientes <= 0) { sig.pendientes = 0; sig.terminado = true; sig.dia = dia; }
   return sig;
 }
