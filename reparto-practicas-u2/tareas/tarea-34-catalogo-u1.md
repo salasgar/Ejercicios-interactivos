@@ -2,9 +2,9 @@
 
 Actualizado: 2026-10-07
 Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 20 min (tiempo de sesión, no de persona) · Banda de modelo: BAJO · Encadenable con: —
+Duración esperada: 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/34-catalogo-u1/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo añadir filas)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo añadir filas) y `tests/practicas-comun.test.js` (solo las tres líneas que dependen del catálogo), **en el mismo commit**
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -57,7 +57,10 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 ## Objetivo
 
 Que las tareas 20 a 33 puedan empezar sin tocar un fichero común: esta tarea añade sus
-filas al catálogo de la base y nada más. Es BAJO porque las filas están aquí escritas.
+filas al catálogo de la base y nada más. Las filas están aquí escritas; es MEDIO y no BAJO porque hay que tocar también el test
+común, siguiendo al pie de la letra la nota de la tarea 01:
+`reparto-practicas-u2/hechos/notas/s-20261007T192646-341f1b98-para-la-34.md` (léela entera antes
+de empezar).
 
 ## Siguiente paso
 
@@ -87,8 +90,17 @@ usa ese campo):
 | 29 | errores1 | errores1/ | Caza el error (unidad 1) | Spot the mistake (unit 1) | 3 | 32 |
 | 30 | propiedades | propiedades/ | Propiedades de las potencias (ampliación de la unidad 1) | Laws of indices (unit 1 extension) | 3 | 33 |
 
-Después: `node --test tests/practicas-comun.test.js` en verde (si la 01 testea que los ids
-son únicos y los slugs válidos, mejor), commit solo de `practicas/_comun/catalogo.js`.
+Después, en `tests/practicas-comun.test.js` (detalle en la nota de la 01):
+1. Línea ~36: la lista entera de `[id, slug, nEjercicios]` del test debe incluir las catorce
+   filas nuevas entre `[16, 'parentesis', 4]` y `[31, 'plantilla', 2]`, con los mismos datos.
+2. Línea ~50: `assert.equal(practicaPorId(30), null)` deja de ser verdad; cámbialo por
+   `practicaPorId(32)`.
+3. Línea ~155: la comprobación con `codigoResultado(30, …)` como «práctica que no existe» se
+   **quita** (no se sustituye: con 5 bits y los ids 0-31 ocupados no queda ningún id libre).
+
+`node --test tests/practicas-comun.test.js` en verde y `npm test` entero en verde. **Un solo
+commit** con los dos ficheros: `git add practicas/_comun/catalogo.js tests/practicas-comun.test.js && git commit -m "Catálogo: prácticas de repaso de la unidad 1 (ids 17-30)" -- practicas/_comun/catalogo.js tests/practicas-comun.test.js`.
+Si solo comiteas el catálogo, GitHub Actions deja de publicar.
 
 ## Datos de entrada
 
@@ -97,7 +109,7 @@ son únicos y los slugs válidos, mejor), commit solo de `practicas/_comun/catal
 
 ## Salida esperada
 
-- `practicas/_comun/catalogo.js` con las 14 filas.
+- `practicas/_comun/catalogo.js` con las 14 filas y `tests/practicas-comun.test.js` ajustado.
 - `reparto-practicas-u2/salidas/34-catalogo-u1/ENTREGA.md` + `.ok-<sid>`.
 
 ## Cómo saber que ha terminado
@@ -108,10 +120,13 @@ son únicos y los slugs válidos, mejor), commit solo de `practicas/_comun/catal
 ## Trampas conocidas
 
 - Los ids 0 a 16 y el 31 ya están ocupados; no los toques ni los reordenes.
+- **Con las filas 17-30 el catálogo queda lleno** (ids 0-31: el código de resultado reserva
+  5 bits para la práctica). No cabe ninguna práctica más sin cambiar el formato del código;
+  si alguien lo pide, es decisión de la coordinadora, no de esta tarea.
 
 ## Prohibido (propio de esta tarea)
 
-- Tocar cualquier otro fichero, incluida la portada: la portada se adapta sola si lee el
+- Tocar cualquier otro fichero (salvo las tres líneas del test), incluida la portada: la portada se adapta sola si lee el
   catálogo (tarea 01) o la ajusta la 18.
 
 ## Si la sesión se alarga

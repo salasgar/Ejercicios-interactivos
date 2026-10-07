@@ -114,7 +114,7 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 |---|---|---|
 | **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18) |
 | **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones (incluida la 19), y la migración de `divisores/` (17) |
-| **BAJO** | Haiku 4.5 · Medio | Añadir las filas 17-30 al catálogo (34) |
+| **BAJO** | Haiku 4.5 · Medio | No hay tareas de esta banda (la 34 pasó a MEDIO porque toca el test común) |
 
 En VS Code, «Default (recommended)» y «Opus (1M context)» son el mismo Opus 5. El
 esfuerzo es el deslizador de debajo de la lista de modelos.
@@ -205,7 +205,12 @@ fuente es esta:
 
 - **Tareas 20-34 (2026-10-07, 20:00 UTC):** quince prácticas de repaso de la unidad 1 (fichas
   20-33) y la tarea 34, que añade sus filas al catálogo para que no dependan de otro aviso a
-  la sesión de la 01. Banda ALTO solo la 24 (del enunciado a la expresión); BAJO la 34.
+  la sesión de la 01. Banda ALTO solo la 24 (del enunciado a la expresión). La 34 es MEDIO: además del catálogo
+  toca tres líneas de `tests/practicas-comun.test.js` en el mismo commit (nota de la 01,
+  `hechos/notas/s-20261007T192646-341f1b98-para-la-34.md`).
+- **El catálogo queda lleno con las filas 17-30** (ids 0-31; el código de resultado reserva 5
+  bits para la práctica). Una práctica más exige cambiar el formato del código de resultado
+  (una tarea nueva de banda ALTO que toque `_comun/codigos.js`, el panel y sus tests).
 
 ## Orden de prioridad (Juan Luis, 2026-10-07: «este lunes empiezo la unidad 2; primero lo de la semana 1»)
 

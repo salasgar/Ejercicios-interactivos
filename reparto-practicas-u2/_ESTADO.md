@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 19:55 UTC · por la sesión s-20261007T184632-fa5a1491 (coordinadora: 01 LISTA, alta de 20-34, prioridad)
+Regenerado: 2026-10-07 20:05 UTC · por la sesión s-20261007T184632-fa5a1491 (coordinadora: ficha 34 corregida a petición de la 01)
 
 ## Antes de hacer nada
 
@@ -143,10 +143,10 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | BLOQUEADA | |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | BLOQUEADA | |
 | 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | BLOQUEADA | |
-| 34 | Filas 17-30 del catálogo (repaso U1) | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 20 min | BAJO | — | practicas/_comun/catalogo.js; salidas/34-catalogo-u1/ | PENDIENTE | |
+| 34 | Filas 17-30 del catálogo (repaso U1) y las tres líneas del test común | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 30 min | MEDIO | — | practicas/_comun/catalogo.js + tests/practicas-comun.test.js; salidas/34-catalogo-u1/ | PENDIENTE | |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
-MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (solo la 34).
+MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
 Cuántas sesiones caben a la vez: la 01 ya está LISTA (2026-10-07), así que las tareas
 02-16 y 19 tocan carpetas disjuntas y pueden ir todas en paralelo (en la práctica, 3 o 4
