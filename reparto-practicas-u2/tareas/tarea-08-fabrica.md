@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-07
 Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 07
+Duración esperada: 10 min (tiempo de sesión, no de persona; real el 2026-10-07: 7 min) · Banda de modelo: MEDIO · Encadenable con: 07
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/08-fabrica/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/fabrica/*` (nuevo), `tests/practicas-fabrica.test.js` (nuevo)
 
@@ -121,6 +121,10 @@ Propios de esta tarea:
 
 - Con exponentes hasta 3 y tres primos, n llega a 2³ · 3³ · 5³ = 27 000: limita n ≤ 2000
   para que los valores se lean bien (el test lo comprueba).
+- (08, al cerrar) Dos `<div class="operacion">` consecutivos son `display: inline-block`:
+  sin nada entre medias quedan pegados visualmente. Para el ejercicio 2 (factorización →
+  pantalla del teclado) hace falta un `<div class="flecha">↓</div>` entre los dos, como en
+  la plantilla.
 
 ## Prohibido (propio de esta tarea)
 
