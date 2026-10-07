@@ -1,0 +1,43 @@
+/* ¿Qué se hace primero?: fichas tocables y expresión en dos alturas. */
+
+.jer-historial { color: var(--texto-suave); font-size: 1.1rem; margin: .4rem 0; }
+.jer-hist { padding: .15rem 0; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.jer-linea {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem .35rem;
+  font-size: 1.6rem; font-weight: 700; margin: .6rem 0; font-variant-numeric: tabular-nums;
+}
+.jer-n, .jer-par, .jer-igual { padding: 0 .1rem; }
+.jer-op {
+  min-width: 2.75rem; min-height: 2.75rem; padding: 0 .5rem; font-size: 1.6rem; font-weight: 700; line-height: 1;
+  border: 2px solid var(--primario); border-radius: 10px; background: #fff; color: var(--primario-oscuro); cursor: pointer;
+}
+.jer-op:active { background: var(--primario-claro); }
+.jer-op--exp { min-width: 2.2rem; }
+.jer-op--exp sup { font-size: 1.1rem; }
+.jer-op--quieto { display: inline-flex; align-items: center; justify-content: center; border: 0; background: none; min-width: 0; padding: 0 .1rem; }
+.jer-linea--nueva .jer-n:last-of-type, .jer-linea--nueva > .jer-n { animation: jer-pop .35s ease-out; }
+.jer-linea--fin { color: #14532d; }
+@keyframes jer-pop { from { transform: scale(1.5); color: var(--primario); } to { transform: scale(1); } }
+.jer-aviso { min-height: 3.2em; margin: .2rem 0; color: #7f1d1d; font-weight: 600; text-align: left; }
+.jer-cadena { display: block; margin: .3rem 0; font-weight: 700; overflow-wrap: anywhere; white-space: normal; }
+
+/* Ejercicio 4 */
+.jer-dos-alturas { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem; font-size: 1.6rem; font-weight: 700; margin: .8rem 0; }
+.jer-fuera { white-space: pre; }
+.jer-frac { display: inline-flex; flex-direction: column; align-items: stretch; text-align: center; }
+.jer-raya { display: block; border-top: 3px solid currentColor; margin: .15rem 0; }
+.jer-rad { display: inline-flex; align-items: stretch; }
+.jer-rad__signo { font-size: 2.4rem; line-height: 1; align-self: flex-end; }
+.jer-rad .jer-grupo { border-top: 3px solid currentColor; border-radius: 0 10px 10px 0; }
+.jer-grupo {
+  display: inline-flex; align-items: center; justify-content: center; gap: .1rem; min-height: 2.75rem; padding: .2rem .6rem;
+  font: inherit; color: inherit; background: #fff; border: 2px dashed var(--primario); border-radius: 10px; cursor: pointer;
+}
+.jer-grupo--con { border-style: solid; background: var(--primario-claro); }
+.jer-grupo__par { color: var(--primario-oscuro); }
+.jer-grupo:disabled { cursor: default; }
+.jer-lineal { font-size: 1.15rem; margin: .6rem 0 1rem; overflow-wrap: anywhere; }
+
+@media (min-width: 600px) {
+  .jer-linea, .jer-dos-alturas { font-size: 2rem; }
+}
