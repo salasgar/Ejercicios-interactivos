@@ -1,0 +1,75 @@
+/* Distributiva con rectángulos: rectángulo con cursor de corte, dos rectángulos
+   que se juntan, y el dibujo de la compensación con 99. */
+
+.dist-rect { width: min(100%, calc(var(--columnas) * 2.1rem)); margin: 0 auto 1rem; }
+.dist-etiquetas { display: flex; width: 100%; margin: 0 0 4px; gap: 0; }
+.dist-etiqueta {
+  text-align: center; font-weight: 700; font-size: 1.05rem; min-width: 0;
+  border-bottom: 3px solid var(--borde); padding-bottom: 2px; overflow-wrap: anywhere;
+}
+.dist-etiqueta--izq { border-color: var(--primario); color: var(--primario-oscuro); }
+.dist-etiqueta--der { border-color: #ea580c; color: #7c2d12; }
+.dist-etiqueta--quitada { border-color: var(--error); color: var(--error); }
+
+.dist-cuadricula {
+  position: relative; display: grid; grid-template-columns: repeat(var(--columnas), minmax(0, 1fr));
+  gap: 0; border: 2px solid var(--texto-suave); touch-action: none; user-select: none; -webkit-user-select: none; cursor: ew-resize;
+}
+.dist-celda { aspect-ratio: 1; min-width: 0; background: #fff; border: 1px solid var(--borde); }
+.dist-celda.dist-izq { background: #bfdbfe; }
+.dist-celda.dist-der { background: #fed7aa; }
+.dist-celda.dist-quitada { background: repeating-linear-gradient(45deg, #fecaca, #fecaca 4px, #fff 4px, #fff 8px); }
+
+.dist-cursor {
+  position: absolute; top: -6px; bottom: -6px; width: 0; border-left: 4px solid var(--primario-oscuro);
+  transform: translateX(-2px); pointer-events: none;
+}
+.dist-cursor::before, .dist-cursor::after {
+  content: ''; position: absolute; left: -9px; width: 14px; height: 14px; border-radius: 50%; background: var(--primario-oscuro);
+}
+.dist-cursor::before { top: -8px; }
+.dist-cursor::after { bottom: -8px; }
+
+.dist-mando { display: flex; gap: .6rem; align-items: stretch; margin-bottom: 1rem; }
+.dist-mando[hidden] { display: none; }
+.dist-flecha, .dist-borrar {
+  min-width: 56px; min-height: 48px; background: #fff; color: var(--primario-oscuro); border: 2px solid var(--borde); font-size: 1.2rem;
+}
+.dist-borrar { font-size: 1rem; padding: 0 1rem; }
+.dist-cortar { flex: 1; }
+
+.ejercicio .dist-entero {
+  display: block; box-sizing: border-box; width: 100%; text-align: center; font-size: 1.4rem !important; font-weight: 700;
+  font-variant-numeric: tabular-nums; padding: .6rem; margin-bottom: 1rem;
+  border: 2px solid var(--borde); border-radius: 10px;
+}
+.dist-entero:focus { border-color: var(--primario); outline: none; }
+
+/* Dos rectángulos de la misma altura */
+.dist-dos { display: flex; gap: 22px; width: min(100%, 28rem); margin: 0 auto 4px; transition: gap .5s; }
+.dist-dos--junto { gap: 0; }
+.dist-bloque {
+  display: grid; grid-template-columns: repeat(var(--columnas), minmax(0, 1fr)); flex-basis: 0; min-width: 0;
+  border: 2px solid var(--texto-suave);
+}
+.dist-dos + .dist-etiquetas { width: min(100%, 28rem); margin: 0 auto 1rem; gap: 22px; }
+.dist-dos--junto + .dist-etiquetas { gap: 0; }
+
+.dist-linea {
+  min-height: 3.2rem; display: flex; align-items: center; justify-content: center;
+  background: var(--fondo); border-radius: 12px; font-size: 1.5rem; margin-bottom: .9rem;
+}
+.dist-vacio { color: var(--texto-suave); font-size: 1rem; }
+
+/* Compensación con 99 */
+.dist-comp { margin: 0 auto 1rem; width: min(100%, 26rem); text-align: center; font-size: .95rem; }
+.dist-comp__filas { font-weight: 700; margin-bottom: 2px; }
+.dist-comp__cuerpo { display: flex; height: 7rem; border: 2px solid var(--texto-suave); }
+.dist-comp__grande { flex: 5; background: #bfdbfe; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.dist-comp__falta {
+  flex: 1; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--error);
+  background: repeating-linear-gradient(45deg, #fecaca, #fecaca 5px, #fff 5px, #fff 10px);
+}
+.dist-comp__pie { margin-top: 2px; color: var(--error); font-weight: 600; }
+
+.dist-escrituras { display: grid; gap: .6rem; grid-template-columns: 1fr; }
