@@ -1,7 +1,7 @@
 # Tarea 34 · Añadir al catálogo las filas 17 a 30 (prácticas de repaso de la unidad 1)
 
 Actualizado: 2026-10-07
-Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
+Precondición: 35 LISTA (comparte con ella tests/practicas-comun.test.js) · Disparo: MANUAL (sesión atendida)
 Duración esperada: 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/34-catalogo-u1/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo añadir filas) y `tests/practicas-comun.test.js` (solo las tres líneas que dependen del catálogo), **en el mismo commit**

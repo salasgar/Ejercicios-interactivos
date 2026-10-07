@@ -1,10 +1,10 @@
-# Tarea 17 · Migrar la práctica «divisor, múltiplo, divisible» a la base común, conservando la URL y los códigos
+# Tarea 35 · Base: 10 aciertos en vez de 20, y el idioma de cada ítem al azar sin que el alumno pueda elegirlo
 
 Actualizado: 2026-10-07
-Precondición: 01 y 35 LISTAS; la sesión que editaba divisores/ el 2026-10-07 ha terminado (su trabajo está en main y git status no muestra cambios en divisores/); firma de la tarea 17 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
-Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/17-migrar-divisores/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `divisores/*` (todos), `tests/divisores.test.js`
+Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
+Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/35-base-10-e-idioma-alterno/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/base.js`, `practicas/_comun/contador.js`, `practicas/_comun/textos.js`, `practicas/_comun/estilos.css` (si hace falta), `practicas/plantilla/practica.js` (solo comentarios), `practicas/profesor.js` y `practicas/profesor.html` (opción de idioma en los enlaces), `tests/practicas-comun.test.js`, `README.md` (solo el apartado «Prácticas de la unidad 2»)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -27,13 +27,13 @@ Todas las rutas son relativas a la raíz del repositorio
    ```bash
    R=reparto-practicas-u2; sid="s-$(date -u +%Y%m%dT%H%M%S)-$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
    caduca=$(date -u -d '+MINUTOS minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+MINUTOSM +%Y-%m-%dT%H:%M:%SZ)
-   printf 'sesión: %s\ntarea: 17\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/17--$sid.md; echo $sid
+   printf 'sesión: %s\ntarea: 35\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/35--$sid.md; echo $sid
    ```
    donde MINUTOS = 2 × la duración esperada de arriba en minutos (mínimo 45). A partir
-   de aquí tu sid es el del nombre de ese fichero (`ls $R/hechos/reclamos/17--*`); no lo
+   de aquí tu sid es el del nombre de ese fichero (`ls $R/hechos/reclamos/35--*`); no lo
    guardes en un fichero de nombre fijo.
 4. `sleep 30 && ls $R/hechos/reclamos/` — el comando, no la intención. Si hay otro
-   reclamo vivo de la tarea 17 con `abierto:` más antiguo (o igual y sid menor), añade a tu
+   reclamo vivo de la tarea 35 con `abierto:` más antiguo (o igual y sid menor), añade a tu
    reclamo una línea `CEDIDA a <sid del otro>` y elige otra tarea.
 5. Si el reclamo que encuentras está caducado (RELEVABLE en el tablón), relévalo con la
    línea `releva a: <sid anterior>` **en tu propio reclamo**; el suyo no se toca. Después
@@ -46,7 +46,7 @@ Todas las rutas son relativas a la raíz del repositorio
 7. Idempotencia: comprueba si `practicas/<tu slug>/` o tu test ya existen (de una sesión
    caída) antes de crearlos. Si existen, léelos y continúa desde ahí.
 
-Añade un latido (`printf -- '- %s latido: <qué>\n' "$(date -u +%H:%M:%SZ)" >> $R/hechos/reclamos/17--<sid>.md`)
+Añade un latido (`printf -- '- %s latido: <qué>\n' "$(date -u +%H:%M:%SZ)" >> $R/hechos/reclamos/35--<sid>.md`)
 al terminar cada paso grande. Si vas a tardar más de lo que te queda de caducidad, añade
 antes una línea `caduca:` más allá. A tu reclamo solo se añade (`>>`), nunca se reescribe.
 Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Continúa»,
@@ -56,87 +56,115 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 
 ## Objetivo
 
-Que `divisores/` deje de ser una copia aparte y pase a ser la práctica 0 del catálogo
-sobre `practicas/_comun/base.js`, con la misma URL (`…/divisores/`), los mismos códigos
-de alumno, los mismos cinco ejercicios y el mismo comportamiento que los alumnos ya
-conocen, con los parámetros nuevos de la base (10 aciertos, +2 por fallo con frase de ánimo,
-tope de 20; decisión de Juan Luis del 2026-10-07 tras probarla; la penalización por tiempo está en suspenso y no se reactiva aquí: ver la nota
-de memoria `dilema-penalizacion-por-tiempo`, que es una decisión de Juan Luis). Así el panel único del profesor es el único panel y las mejoras de la base
-llegan también aquí.
+Dos decisiones de Juan Luis del 2026-10-07 tras probar la práctica de divisores en el
+móvil: **veinte repeticiones son demasiadas; se dejan en diez**, y **el idioma no lo elige el
+alumno: cada ítem sale en español o en inglés al azar**, para que aprenda el vocabulario en
+los dos. Se cambia en la base, y así lo heredan las treinta prácticas y la migración de
+`divisores/` (tarea 17, que pasa a depender de esta).
 
 ## Siguiente paso
 
-**Desde el 2026-10-07 (20:50 UTC):** la base ya lleva 10 aciertos, +2, tope 20 e idioma alterno
-por ítem (tarea 35); al migrar, `divisores/` lo hereda sin declarar nada. El progreso que los
-alumnos tengan guardado con 20 se recorta al cargar (lo hace la base). No reactives el
-selector de idioma.
-
-Comprueba la precondición entera antes de reclamar: (1) `01--*` en `hechos/terminadas/`;
-(2) `git status --short divisores/ tests/divisores.test.js` vacío y `ls .claude/sesiones/`
-sin ninguna sesión que tenga reclamados ficheros de `divisores/` (si la hay, no es una
-sesión de este reparto: espera a que termine; no la releves); (3) la línea «Firma y
-fecha:» de la tarea 17 en `reparto-practicas-u2/autorizaciones.md` rellena. Si falta
-cualquiera de las tres, no reclames: dilo y para.
+Lee `practicas/_comun/base.js`, `contador.js`, `textos.js` y `practicas/plantilla/practica.js`,
+y la addenda de la ficha 01 (el contrato real). Comprueba qué tests de
+`tests/practicas-comun.test.js` fijan los valores 20, 5 y 40 (líneas ~192, 226, 384, 425-427)
+y el idioma: son los que vas a cambiar.
 
 ## Qué hay que hacer
 
-1. Lee `divisores/*` y `tests/divisores.test.js` como están en `main` ahora (pueden haber
-   cambiado desde que se montó el reparto: lo que hay es lo que se migra).
-2. Reescribe `divisores/practica.js` (nuevo) con el contrato de la base: `slug: 'divisores'`,
-   los cinco ejercicios en el mismo orden (0 «de» o «entre»; 1 multiplicaciones; 2
-   divisiones; 3 mezcla; 4 arrastrar), cada uno con `generar` y `montar` sacados de
-   `app.js` y `logica.js`. `logica.js` conserva los generadores y **los códigos**
-   (`codigoAlumno`, `leerCodigoAlumno`, `codigoResultado` de 12 caracteres,
-   `leerCodigoResultado`, `extraerCodigosResultado`) porque `practicas/_comun/codigos.js` los
-   importa; puedes quitar de `logica.js` lo que ya esté en `_comun` (rng, contador) si
-   actualizas los imports de `codigos.js`… no: `_comun` es de la tarea 01 y no se toca aquí;
-   deja en `logica.js` todo lo que `_comun/codigos.js` importe.
-3. `divisores/index.html` carga la base como las demás prácticas. `divisores/app.js` queda
-   reducido a `import './practica.js'` o se elimina (y entonces `index.html` apunta a
-   `practica.js`). `divisores/profesor.html` pasa a redirigir a `../practicas/profesor.html`
-   (meta refresh + enlace); `profesor.js` y `resultados.js` se eliminan si el panel único
-   cubre todo lo que hacían (compruébalo: códigos de 12, nube `divisores`, CSV).
-4. Guardado: la base guarda en `practicas/divisores--<código>`; los datos antiguos están
-   en `divisores/<código>`. Al entrar, si no hay progreso en la clave nueva de
-   `localStorage` y sí en la antigua (`divisores.v1.<código>`), se copia. El panel único
-   ya lee las dos colecciones (tarea 01, §7).
-5. Los textos propios (`textos.js`) se quedan; los comunes salen de `_comun/textos.js`.
-6. `tests/divisores.test.js` se adapta a los imports nuevos sin perder ninguna
-   comprobación (mismo número de tests o más).
+### 1. Contador: 10 / +2 / tope 20 por defecto
+
+En `contador.js`: `INICIAL = 10`, `PENALIZACION = 2`, `MAXIMO = 20`. Los tres se eligen a juego
+con lo que `divisores/` tiene publicado hoy (+2 con frase de ánimo y tope de 40 para 20
+aciertos: el tope se reduce en la misma proporción). Las prácticas que declaren `inicial`,
+`penalizacion` o `maximo` propios (la criba, 5 y 1) no cambian. `menu_regla(inicial,
+penalizacion, maximo)` ya está parametrizado: comprueba que el menú muestra «acertar 10
+veces» y «hasta un máximo de 20».
+
+**Progreso guardado con 20:** un alumno que tenga guardado `pendientes: 17` de la versión
+anterior debe seguir sin quedar bloqueado. Al cargar el progreso, si `pendientes > maximo`,
+se recorta a `maximo`; si `aciertos + pendientes > 2 · inicial` sin terminar, se recorta
+igual. Escríbelo en `base.js` al cargar y testéalo.
+
+### 2. Idioma alterno por ítem
+
+- **Modo por defecto «alterno»:** la base sortea el idioma de cada ítem con una baraja
+  equilibrada (bloques de 4: dos `es` y dos `en` barajados), de modo que en 10 ítems salen 5 y
+  5 y nunca más de 4 seguidos del mismo. El idioma del ítem se fija al generarlo y se guarda
+  con él (`actual.idioma`), así un recargado no lo cambia.
+- **Dentro del ejercicio todo va en el idioma del ítem:** instrucción, enunciado, botones
+  comunes (Comprobar, Siguiente) y feedback. `api.idioma`, `api.t` y `api.tt` reflejan el
+  idioma del ítem, no un ajuste global. Las prácticas no cambian nada: ya reciben el idioma
+  por la `api`.
+- **Fuera del ejercicio** (entrada, menú, fin, código de resultado) la interfaz va en
+  español, lengua del centro, salvo que el idioma esté fijado (abajo).
+- **El selector ES/EN de la cabecera desaparece para el alumno.** En su lugar, durante un
+  ítem, una etiqueta no pulsable con el idioma del ítem («ES» / «EN»), que en el modo fijo no
+  aparece.
+- **Traducción después de responder:** cuando el ítem ya está respondido aparece un botón
+  discreto «Ver en español» / «See in English» que vuelve a montar **el mismo ítem** en el
+  otro idioma dentro de una caja plegable de solo lectura (una segunda llamada a `montar`
+  con una `api` cuyo `responder` no hace nada y `respondido()` devuelve `true`), para que el
+  alumno vea el enunciado traducido. El feedback de la práctica no se traduce (lo escribió la
+  práctica en un idioma); se traduce lo común. Antes de responder no hay traducción: si no,
+  nadie leería el inglés.
+- **Idioma fijo** para alumnos concretos (dislexia, recién llegados): el parámetro de URL
+  `?idioma=es` o `?idioma=en`, que se guarda en `localStorage` junto al código
+  (`practicas.idioma_fijo.<código>`) y fija todos los ítems y la interfaz; `?idioma=alterno`
+  lo quita. En el panel del profesor, junto a la tabla de enlaces directos, un selector
+  «Idioma de los enlaces: alterno (por defecto) / español / inglés» que añade el parámetro a
+  **todos** los enlaces generados; para fijarlo a un alumno concreto, el profesor copia su
+  enlace y lo cambia a mano (una línea de ayuda lo dice).
+- El documento de Firestore guarda el idioma de cada respuesta no: basta con guardar en
+  `ej[n]` dos contadores nuevos, `en_aciertos` y `en_fallos`, para saber cuánto se hizo en
+  inglés; el panel los muestra en la vista de detalle si caben («EN: 5/0»). Los códigos de
+  resultado no cambian.
+
+### 3. Lo demás
+
+- `practicas/plantilla/practica.js`: actualiza los comentarios del contrato (idioma por
+  ítem, 10/+2/20, traducción tras responder). El código de la plantilla no necesita cambiar.
+- `README.md`, apartado «Prácticas de la unidad 2»: la regla nueva en dos líneas.
+- Tests: ajusta los que fijaban 20/5/40; añade tests de la baraja equilibrada (en 1000
+  secuencias de 10, cinco y cinco y ninguna racha mayor que 4), del recorte del progreso
+  antiguo, de `?idioma=` (función pura que decide el modo a partir de la URL y lo guardado)
+  y del panel con el selector.
 
 ## Datos de entrada
 
-- `practicas/plantilla/` y `practicas/_comun/` (solo lectura): el contrato.
-- `reparto-practicas-u2/hechos/terminadas/01--*.md`: cambios del contrato, si los hubo.
+- `practicas/_comun/*`, `practicas/plantilla/*`, `tests/practicas-comun.test.js` (la base tal
+  como la dejó la tarea 01, commit 914d5b0, y su addenda en la ficha 01).
+- `divisores/logica.js` (solo lectura): `PENALIZACION = 2`, `MAXIMO = 40` publicados hoy.
+- Las prácticas ya terminadas (`practicas/semaforo/`, etc., solo lectura): pruébalas en el
+  navegador con el modo alterno para comprobar que no se rompe nada.
 
 ## Salida esperada
 
-- `divisores/{index.html,practica.js,logica.js,textos.js,estilos.css,profesor.html}` y los
-  que decidas conservar; `tests/divisores.test.js` adaptado.
-- `reparto-practicas-u2/salidas/17-migrar-divisores/ENTREGA.md` + `.ok-<sid>`.
+- Los ficheros de «Ficheros que toca», con `npm test` en verde (incluidos los tests de las
+  prácticas ya terminadas, que no se tocan).
+- `reparto-practicas-u2/salidas/35-base-10-e-idioma-alterno/ENTREGA.md` + `.ok-<sid>`.
 
 ## Cómo saber que ha terminado
 
-- `npm test` en verde; `tests/divisores.test.js` sigue comprobando que `codigoAlumno(i)` no
-  ha cambiado para los 1024 índices (compara con una tabla de 20 valores fijos copiados
-  del código **antes** de tocarlo) y que los códigos de resultado de 12 caracteres
-  generados antes siguen leyéndose (3 códigos reales generados con el código viejo,
-  pegados como constantes en el test).
-- En el navegador, `…/divisores/?c=<código>` entra, muestra el progreso que ya había en
-  `localStorage` y los cinco ejercicios funcionan igual que antes; `…/divisores/profesor.html`
-  lleva al panel único.
+- `npm test` en verde; en `http://localhost:8080/practicas/plantilla/` el menú dice «acertar
+  10 veces», los ítems alternan idioma sin selector, tras responder aparece la traducción, y
+  con `?idioma=en` todo sale en inglés sin etiqueta. `…/practicas/semaforo/` (ya LISTA)
+  funciona igual con el modo alterno.
+- Un progreso guardado a mano en `localStorage` con `pendientes: 17` se carga recortado a
+  10 sin romper nada.
 
 ## Trampas conocidas
 
-- La ficha se escribió el 2026-10-07 con `divisores/` en su primera versión; si la otra
-  sesión añadió ejercicios o cambió el formato del código, manda lo que haya en `main`.
+- Tres o cuatro sesiones están construyendo prácticas sobre la base mientras haces esto:
+  no toques el contrato de `montar` ni la `api` (solo añades la etiqueta y la traducción,
+  que viven en la base). Si una práctica terminada falla con tu cambio, es tu cambio.
+- `sleep 30` y volver a mirar antes de reclamar: esta tarea comparte `tests/practicas-comun.test.js`
+  con la 34, que por eso pasa a depender de ti.
 
 ## Prohibido (propio de esta tarea)
 
-- Cambiar la sal, el paso o el desfase de los códigos de alumno, o el formato del código
-  de resultado de 12 caracteres: los alumnos ya tienen códigos y el profesor, resultados.
-- Tocar `practicas/_comun/`: si la base necesita algo para esta migración, propuesta en la
-  terminada y la tarea se suelta con `BLOQUEADA por decisión` si no se puede seguir.
+- Cambiar el formato del código de resultado o los códigos de alumno.
+- Tocar `practicas/<slug>/` de ninguna práctica, ni `divisores/`.
+- Mostrar la traducción antes de que el alumno responda.
 
 ## Si la sesión se alarga
 
@@ -144,9 +172,9 @@ Señales: releer un fichero que ya leíste porque no recuerdas lo que decía, re
 claramente más lentas, aviso de límite de sesión. Con una señal, termina esta tarea y no
 encadenes otra (ámbar). Con varias, a mitad de esta tarea (rojo): no apures, deja el
 código en un estado coherente (los tests que tengas, en verde; lo que no funcione, sin
-registrar en `practica.js`), commitea tus rutas con el mensaje «Tarea 17, a medias», escribe
-`$R/hechos/notas/<sid>-traspaso-17.md` con el estado exacto (qué está hecho, qué falta, qué
-has descubierto, en qué orden seguir), `$R/hechos/fallos/17--<sid>.md` con
+registrar en `practica.js`), commitea tus rutas con el mensaje «Tarea 35, a medias», escribe
+`$R/hechos/notas/<sid>-traspaso-35.md` con el estado exacto (qué está hecho, qué falta, qué
+has descubierto, en qué orden seguir), `$R/hechos/fallos/35--<sid>.md` con
 `parada por: sesión agotada` y la ruta de esa nota, y `ABANDONADA` en tu reclamo.
 
 ## Si esta tarea resulta ser más de una
@@ -155,7 +183,7 @@ Si solo es **larga**, no se parte: haz lo que te quepa, commitea coherente y act
 arriba la duración esperada antes de soltarla. Si está **mal cortada** (una parte tiene que
 terminar antes de poder especificar la otra, o dos partes quieren el mismo fichero), tú no
 la recortas: termina el trozo coherente, escribe `$R/hechos/incidencias/<sid>.md` con el
-tamaño real y el corte natural, `$R/hechos/fallos/17--<sid>.md` con `parada por: mal cortada`
+tamaño real y el corte natural, `$R/hechos/fallos/35--<sid>.md` con `parada por: mal cortada`
 y la ruta de la incidencia, `ABANDONADA` en tu reclamo, y díselo al usuario. Si un paso te
 pide **decidir** algo que va a durar (un cambio del contrato de la base, otro número de
 ejercicios que el del catálogo, una colección nueva en Firestore) y esta tarea no es de
@@ -175,10 +203,10 @@ Por este orden (el del repositorio git):
 2. Commit **solo de los ficheros de «Ficheros que toca»**, con rutas explícitas:
    `git add <rutas> && git commit -m "Práctica <slug>: <qué>" -- <rutas>`. Apunta el hash
    (`git rev-parse --short HEAD`).
-3. Escribe `$R/salidas/17-migrar-divisores/ENTREGA.md` (ficheros entregados, hash, URL local, qué
+3. Escribe `$R/salidas/35-base-10-e-idioma-alterno/ENTREGA.md` (ficheros entregados, hash, URL local, qué
    ejercicios tiene y qué destrezas cubre, cómo probarlo en 1 minuto) y su marcador vacío
    `ENTREGA.md.ok-<sid>`.
-4. Escribe `$R/hechos/terminadas/17--<sid>.md`: hash del commit, ficheros (lo que dice
+4. Escribe `$R/hechos/terminadas/35--<sid>.md`: hash del commit, ficheros (lo que dice
    `git show --stat`, no lo que crees), número de tests propios en verde, hora y
    **duración real** (de `abierto:` a ahora), y propuestas pendientes si las hay.
 5. Añade `CERRADA` a tu reclamo (línea propia que empieza por esa palabra).
@@ -203,7 +231,7 @@ Por este orden (el del repositorio git):
     de arranque nombra la cadena, encadenas por defecto) o paras. Si encadenas, «Antes de
     empezar» entero otra vez, con reclamo nuevo, y di el nombre nuevo que te toca.
 
-Si paras sin terminar: `$R/hechos/fallos/17--<sid>.md` con hasta dónde llegaste, la línea
+Si paras sin terminar: `$R/hechos/fallos/35--<sid>.md` con hasta dónde llegaste, la línea
 `parada por: sesión agotada | avería | mal cortada`, y `ABANDONADA` en tu reclamo.
 
 ## Prohibido (común a todo el reparto)
@@ -225,5 +253,3 @@ Si paras sin terminar: `$R/hechos/fallos/17--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
-
-- En «Al terminar», paso 1, el test propio de esta tarea no es `tests/practicas-<slug>.test.js`: en la 17 es `tests/divisores.test.js`; la 18 no tiene test propio y corre `npm test` entero.
