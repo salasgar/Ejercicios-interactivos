@@ -1,10 +1,10 @@
-# Tarea 18 · Revisión final: regla de oro a mano en las dieciséis prácticas, portada, README y lista de comprobación en el móvil
+# Tarea 34 · Añadir al catálogo las filas 17 a 30 (prácticas de repaso de la unidad 1)
 
 Actualizado: 2026-10-07
-Precondición: 02 a 17 y 19 a 33 LISTAS (si la 17 no está LISTA y Juan Luis lo decide, puede cerrarse sin ella y se anota); firma de la tarea 18 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
-Duración esperada: 3 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
-Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/18-revision-final/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo el campo `disponible`), `practicas/index.html`, `practicas/portada.js`, `README.md` (apartado de prácticas), `docs/practicas-unidad2.md` (nuevo)
+Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
+Duración esperada: 20 min (tiempo de sesión, no de persona) · Banda de modelo: BAJO · Encadenable con: —
+Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/34-catalogo-u1/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo añadir filas)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -27,13 +27,13 @@ Todas las rutas son relativas a la raíz del repositorio
    ```bash
    R=reparto-practicas-u2; sid="s-$(date -u +%Y%m%dT%H%M%S)-$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
    caduca=$(date -u -d '+MINUTOS minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+MINUTOSM +%Y-%m-%dT%H:%M:%SZ)
-   printf 'sesión: %s\ntarea: 18\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/18--$sid.md; echo $sid
+   printf 'sesión: %s\ntarea: 34\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/34--$sid.md; echo $sid
    ```
    donde MINUTOS = 2 × la duración esperada de arriba en minutos (mínimo 45). A partir
-   de aquí tu sid es el del nombre de ese fichero (`ls $R/hechos/reclamos/18--*`); no lo
+   de aquí tu sid es el del nombre de ese fichero (`ls $R/hechos/reclamos/34--*`); no lo
    guardes en un fichero de nombre fijo.
 4. `sleep 30 && ls $R/hechos/reclamos/` — el comando, no la intención. Si hay otro
-   reclamo vivo de la tarea 18 con `abierto:` más antiguo (o igual y sid menor), añade a tu
+   reclamo vivo de la tarea 34 con `abierto:` más antiguo (o igual y sid menor), añade a tu
    reclamo una línea `CEDIDA a <sid del otro>` y elige otra tarea.
 5. Si el reclamo que encuentras está caducado (RELEVABLE en el tablón), relévalo con la
    línea `releva a: <sid anterior>` **en tu propio reclamo**; el suyo no se toca. Después
@@ -46,7 +46,7 @@ Todas las rutas son relativas a la raíz del repositorio
 7. Idempotencia: comprueba si `practicas/<tu slug>/` o tu test ya existen (de una sesión
    caída) antes de crearlos. Si existen, léelos y continúa desde ahí.
 
-Añade un latido (`printf -- '- %s latido: <qué>\n' "$(date -u +%H:%M:%SZ)" >> $R/hechos/reclamos/18--<sid>.md`)
+Añade un latido (`printf -- '- %s latido: <qué>\n' "$(date -u +%H:%M:%SZ)" >> $R/hechos/reclamos/34--<sid>.md`)
 al terminar cada paso grande. Si vas a tardar más de lo que te queda de caducidad, añade
 antes una línea `caduca:` más allá. A tu reclamo solo se añade (`>>`), nunca se reescribe.
 Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Continúa»,
@@ -56,89 +56,63 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 
 ## Objetivo
 
-Verificar el conjunto como lo verá un alumno y como lo corregirá el profesor, antes de
-darlo por entregado: que ninguna opción falsa pueda ser verdad (regla de oro, que los
-tests no pueden comprobar en el significado), que el vocabulario cumple las reglas de la
-unidad, que todo cabe en el móvil, y que la portada y el README cuentan lo que hay. Es
-ALTO porque juzga significado y porque es la última mirada antes de que lo usen los
-alumnos.
+Que las tareas 20 a 33 puedan empezar sin tocar un fichero común: esta tarea añade sus
+filas al catálogo de la base y nada más. Es BAJO porque las filas están aquí escritas.
 
 ## Siguiente paso
 
-`ls practicas/` y compáralo con el catálogo; lee las treinta y una `ENTREGA.md` de
-`reparto-practicas-u2/salidas/` y las terminadas: ahí están las propuestas pendientes
-(cambios del contrato, `disponible: true`) que esta tarea resuelve.
+Lee `practicas/_comun/catalogo.js`. Si las filas 17 a 30 ya están (porque la tarea 01 las
+incluyó al leer esta ficha), comprueba que coinciden con la tabla de abajo, escribe la
+terminada diciendo «ya estaban, verificadas» y cierra: la tarea es idempotente.
 
 ## Qué hay que hacer
 
-1. **Regla de oro a mano**, práctica por práctica. Con `npm run servir`, haz al menos 15
-   ítems de cada ejercicio que tenga opciones (elegir, Sí/No, V/F, nombres) y para cada
-   ítem pregúntate si alguna opción dada por falsa podría defenderse. Anota cada hallazgo
-   con práctica, ejercicio y el ítem concreto. Lee además los bancos de plantillas de
-   `clasificador`, `errores`, `imposibles` y `leelo` enteros, en los dos idiomas.
-2. **Reglas de contenido** de `proyecto.md`: `grep -rn` en `practicas/` de `×`, `HCF`
-   (fuera de las equivalencias aceptadas), `factor of` como relación, «primos entre sí»,
-   «coprime», `divisible between` fuera de la plantilla de error, letras como incógnita.
-   Comprueba que todo texto visible existe en `es` y en `en`.
-3. **Móvil**: ventana de 375 × 667 en el navegador, cada práctica, cada ejercicio, español
-   e inglés: nada se sale, todo se toca con el pulgar, el feedback se lee sin hacer zoom.
-   Y una pasada en 1024 px.
-4. **Portada y catálogo**: `disponible: true` en las prácticas que existen (o quitar el
-   campo si la 01 optó por comprobar con `fetch`); orden de la portada por semana de la
-   unidad (semana 1: semaforo, rectangulos, recta; semana 2: criba, arbol, divisiones,
-   fabrica, factorizaciones; semana 3: venn, imposibles; semana 4: clasificador, reloj,
-   baldosas, errores; transversal: leelo, divisores; repaso de la unidad 1, en un bloque aparte y por este orden: jerarquia,
-   parentesis, exponente, raiz, division, expresion, redondeo, constructor, distributiva,
-   potencias10, dictado, mental, especiales, errores1, propiedades), con una línea por práctica que diga
-   qué se practica; enlace al panel del profesor discreto al pie.
-5. **README**: el apartado «Prácticas de la unidad 2» con la tabla de las treinta y una (unidad 2 y repaso de la unidad 1) (slug,
-   nombre, destrezas principales) y el enlace a `docs/practicas-unidad2.md`.
-6. **`docs/practicas-unidad2.md`** (nuevo): el contrato de la base tal como quedó (copiado
-   de `plantilla/practica.js` y de la terminada de la 01), cómo se añade una práctica, cómo
-   lee el profesor los resultados, y qué práctica cubre qué destrezas del inventario (tabla
-   id de destreza → práctica/ejercicio). Es el documento que la coordinación de la unidad
-   (`docs/coordinacion-unidad1.md`, mismo espíritu) necesita.
-7. **Corrige solo lo tuyo**: los hallazgos de 1 a 3 **no se corrigen aquí** (las carpetas
-   de las prácticas son de sus tareas): van al veredicto, y para cada uno escribes
-   `hechos/reabiertas/NN--<sid>.md` con lo exacto que hay que corregir y lo que no hay que
-   rehacer, y la tarea vuelve a ser cogible. Si un hallazgo es menor y de texto (una
-   errata), también va a la reabierta: una palabra puede ser la que decide la respuesta.
+Añade estas entradas, con la misma forma que las existentes (`disponible: false` si la 01
+usa ese campo):
+
+| id | slug | ruta | nombre es | nombre en | nEjercicios | tarea |
+|---|---|---|---|---|---|---|
+| 17 | jerarquia | jerarquia/ | ¿Qué se hace primero? (repaso de la unidad 1) | What comes first? (unit 1 review) | 4 | 20 |
+| 18 | exponente | exponente/ | El exponente y su base (repaso de la unidad 1) | The index and its base (unit 1 review) | 3 | 21 |
+| 19 | raiz | raiz/ | Raíz cuadrada con cuadrados (repaso de la unidad 1) | Square roots with squares (unit 1 review) | 3 | 22 |
+| 20 | division | division/ | División entera: cajas y resto (repaso de la unidad 1) | Division with remainder: boxes (unit 1 review) | 4 | 23 |
+| 21 | expresion | expresion/ | Del enunciado a la expresión (repaso de la unidad 1) | From words to expression (unit 1 review) | 3 | 24 |
+| 22 | redondeo | redondeo/ | Redondeo y estimación (repaso de la unidad 1) | Rounding and estimating (unit 1 review) | 3 | 25 |
+| 23 | constructor | constructor/ | Constructor de números (repaso de la unidad 1) | Number builder (unit 1 review) | 3 | 26 |
+| 24 | distributiva | distributiva/ | Distributiva con rectángulos (repaso de la unidad 1) | Distributive property with rectangles (unit 1 review) | 3 | 27 |
+| 25 | potencias10 | potencias10/ | Potencias de 10 y números grandes (repaso de la unidad 1) | Powers of 10 and big numbers (unit 1 review) | 3 | 28 |
+| 26 | dictado | dictado/ | Dictado de números (repaso de la unidad 1) | Number dictation (unit 1 review) | 3 | 29 |
+| 27 | mental | mental/ | Cálculo mental con estrategia (repaso de la unidad 1) | Mental maths strategies (unit 1 review) | 3 | 30 |
+| 28 | especiales | especiales/ | Potencias especiales: ¿verdadero o falso? (repaso de la unidad 1) | Special powers: true or false? (unit 1 review) | 2 | 31 |
+| 29 | errores1 | errores1/ | Caza el error (unidad 1) | Spot the mistake (unit 1) | 3 | 32 |
+| 30 | propiedades | propiedades/ | Propiedades de las potencias (ampliación de la unidad 1) | Laws of indices (unit 1 extension) | 3 | 33 |
+
+Después: `node --test tests/practicas-comun.test.js` en verde (si la 01 testea que los ids
+son únicos y los slugs válidos, mejor), commit solo de `practicas/_comun/catalogo.js`.
 
 ## Datos de entrada
 
-- Todo `practicas/` y `divisores/` (solo lectura salvo lo declarado arriba).
-- `reparto-practicas-u2/salidas/*/ENTREGA.md` y `hechos/terminadas/*`.
-- `inventario-unidad2.tsv` (carpeta de apuntes, solo lectura) para la tabla de destrezas, y el
-  `inventario-unidad1.tsv` (ruta en la ficha 20) para las prácticas de repaso.
+- `practicas/_comun/catalogo.js` tal como lo dejó la tarea 01.
+- La ficha de la tarea 01, §1, para la forma de cada entrada.
 
 ## Salida esperada
 
-Dos salidas separadas, las dos en `reparto-practicas-u2/salidas/18-revision-final/`:
-
-- `VEREDICTO.md` + `.ok-<sid>`: por práctica, SE ENTREGA / NO SE ENTREGA contra los
-  criterios 1-3, con la lista de hallazgos y la reabierta que los recoge.
-- `HALLAZGOS-FUERA-DE-CRITERIO.md` + `.ok-<sid>`: todo lo que observes y no estaba
-  previsto (dos prácticas que se solapan, un ejercicio demasiado largo, una idea de
-  feedback mejor, algo que «funciona» pero no debería), **dicho también al usuario en el
-  mensaje de cierre como decisiones pendientes**, no enterrado en el fichero.
-- El código: `catalogo.js` (`disponible`), portada, README, `docs/practicas-unidad2.md`.
-- `ENTREGA.md` + `.ok-<sid>`.
+- `practicas/_comun/catalogo.js` con las 14 filas.
+- `reparto-practicas-u2/salidas/34-catalogo-u1/ENTREGA.md` + `.ok-<sid>`.
 
 ## Cómo saber que ha terminado
 
-- Las treinta y una prácticas tienen veredicto; cada NO SE ENTREGA tiene su `reabiertas/`.
-- `npm test` en verde; la portada muestra todas las prácticas existentes y ninguna rota.
-- `git push` hecho (firma de la 18 en `autorizaciones.md` comprobada antes).
+- `grep -c "slug: '" practicas/_comun/catalogo.js` (o el equivalente según la forma del
+  fichero) da 14 más que antes; `npm test` en verde.
 
 ## Trampas conocidas
 
-- Es tentador corregir una errata en `practicas/<slug>/textos.js` de paso: no lo hagas,
-  ese fichero tiene dueña; reabre.
+- Los ids 0 a 16 y el 31 ya están ocupados; no los toques ni los reordenes.
 
 ## Prohibido (propio de esta tarea)
 
-- Editar cualquier fichero de `practicas/<slug>/` o de `divisores/`.
-- Dar SE ENTREGA con un hallazgo de regla de oro sin reabierta.
+- Tocar cualquier otro fichero, incluida la portada: la portada se adapta sola si lee el
+  catálogo (tarea 01) o la ajusta la 18.
 
 ## Si la sesión se alarga
 
@@ -146,9 +120,9 @@ Señales: releer un fichero que ya leíste porque no recuerdas lo que decía, re
 claramente más lentas, aviso de límite de sesión. Con una señal, termina esta tarea y no
 encadenes otra (ámbar). Con varias, a mitad de esta tarea (rojo): no apures, deja el
 código en un estado coherente (los tests que tengas, en verde; lo que no funcione, sin
-registrar en `practica.js`), commitea tus rutas con el mensaje «Tarea 18, a medias», escribe
-`$R/hechos/notas/<sid>-traspaso-18.md` con el estado exacto (qué está hecho, qué falta, qué
-has descubierto, en qué orden seguir), `$R/hechos/fallos/18--<sid>.md` con
+registrar en `practica.js`), commitea tus rutas con el mensaje «Tarea 34, a medias», escribe
+`$R/hechos/notas/<sid>-traspaso-34.md` con el estado exacto (qué está hecho, qué falta, qué
+has descubierto, en qué orden seguir), `$R/hechos/fallos/34--<sid>.md` con
 `parada por: sesión agotada` y la ruta de esa nota, y `ABANDONADA` en tu reclamo.
 
 ## Si esta tarea resulta ser más de una
@@ -157,7 +131,7 @@ Si solo es **larga**, no se parte: haz lo que te quepa, commitea coherente y act
 arriba la duración esperada antes de soltarla. Si está **mal cortada** (una parte tiene que
 terminar antes de poder especificar la otra, o dos partes quieren el mismo fichero), tú no
 la recortas: termina el trozo coherente, escribe `$R/hechos/incidencias/<sid>.md` con el
-tamaño real y el corte natural, `$R/hechos/fallos/18--<sid>.md` con `parada por: mal cortada`
+tamaño real y el corte natural, `$R/hechos/fallos/34--<sid>.md` con `parada por: mal cortada`
 y la ruta de la incidencia, `ABANDONADA` en tu reclamo, y díselo al usuario. Si un paso te
 pide **decidir** algo que va a durar (un cambio del contrato de la base, otro número de
 ejercicios que el del catálogo, una colección nueva en Firestore) y esta tarea no es de
@@ -177,10 +151,10 @@ Por este orden (el del repositorio git):
 2. Commit **solo de los ficheros de «Ficheros que toca»**, con rutas explícitas:
    `git add <rutas> && git commit -m "Práctica <slug>: <qué>" -- <rutas>`. Apunta el hash
    (`git rev-parse --short HEAD`).
-3. Escribe `$R/salidas/18-revision-final/ENTREGA.md` (ficheros entregados, hash, URL local, qué
+3. Escribe `$R/salidas/34-catalogo-u1/ENTREGA.md` (ficheros entregados, hash, URL local, qué
    ejercicios tiene y qué destrezas cubre, cómo probarlo en 1 minuto) y su marcador vacío
    `ENTREGA.md.ok-<sid>`.
-4. Escribe `$R/hechos/terminadas/18--<sid>.md`: hash del commit, ficheros (lo que dice
+4. Escribe `$R/hechos/terminadas/34--<sid>.md`: hash del commit, ficheros (lo que dice
    `git show --stat`, no lo que crees), número de tests propios en verde, hora y
    **duración real** (de `abierto:` a ahora), y propuestas pendientes si las hay.
 5. Añade `CERRADA` a tu reclamo (línea propia que empieza por esa palabra).
@@ -205,7 +179,7 @@ Por este orden (el del repositorio git):
     de arranque nombra la cadena, encadenas por defecto) o paras. Si encadenas, «Antes de
     empezar» entero otra vez, con reclamo nuevo, y di el nombre nuevo que te toca.
 
-Si paras sin terminar: `$R/hechos/fallos/18--<sid>.md` con hasta dónde llegaste, la línea
+Si paras sin terminar: `$R/hechos/fallos/34--<sid>.md` con hasta dónde llegaste, la línea
 `parada por: sesión agotada | avería | mal cortada`, y `ABANDONADA` en tu reclamo.
 
 ## Prohibido (común a todo el reparto)
@@ -228,4 +202,4 @@ Si paras sin terminar: `$R/hechos/fallos/18--<sid>.md` con hasta dónde llegaste
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
 
-- En «Al terminar», paso 1, el test propio de esta tarea no es `tests/practicas-<slug>.test.js`: en la 17 es `tests/divisores.test.js`; la 18 no tiene test propio y corre `npm test` entero.
+- En «Al terminar», paso 1, esta tarea no tiene test propio: basta `npm test` entero.

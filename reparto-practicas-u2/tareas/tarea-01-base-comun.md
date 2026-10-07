@@ -101,6 +101,10 @@ declarar (la base lo comprueba al arrancar y falla con un mensaje claro si no co
 | 16 | parentesis | parentesis/ | Coloca los paréntesis (repaso de la unidad 1) | Place the brackets (unit 1 review) | 4 | 19 |
 | 31 | plantilla | plantilla/ | Práctica de plantilla | Template practice | 2 | 01 |
 
+**Filas 17 a 30 (repaso de la unidad 1, tareas 20-33, dadas de alta el 2026-10-07 a las 20:00 UTC):**
+están escritas en la ficha de la tarea 34 (`tareas/tarea-34-catalogo-u1.md`). Si lees esto antes
+de cerrar, inclúyelas también y dilo en tu terminada; si no, las añade la tarea 34.
+
 Exporta `CATALOGO` (array de `{ id, slug, ruta, nombre: { es, en }, nEjercicios }`),
 `practicaPorSlug(slug)` y `practicaPorId(id)`. La portada no muestra la 31 ni las que
 todavía no existen (ver §6).

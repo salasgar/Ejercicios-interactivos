@@ -7,9 +7,9 @@ cambia el reparto.
 
 ## Qué se construye
 
-Diecisiete mini-aplicaciones web para que los alumnos de 1.º ESO (programa bilingüe)
-practiquen los conceptos y procedimientos de la Unidad 2, Divisibilidad (y una de repaso de
-la unidad 1, «Coloca los paréntesis», tarea 19 dada de alta el 2026-10-07), cada una con
+Treinta y una mini-aplicaciones web para que los alumnos de 1.º ESO (programa bilingüe)
+practiquen los conceptos y procedimientos de la Unidad 2, Divisibilidad (dieciséis, tareas 02-17) y repasen la
+unidad 1 (quince, tareas 19-33, dadas de alta el 2026-10-07 a petición suya), cada una con
 una interacción propia (tocar, arrastrar, construir) y no solo tipo test. Se publican en
 GitHub Pages dentro del repositorio `Ejercicios-interactivos`, bajo `practicas/`, con una
 **base común** (entrada por código de alumno, menú de ejercicios, contador 20/+5, código
@@ -49,10 +49,11 @@ y los apuntes. **Nada de eso se modifica desde este reparto.**
 
 **En código, «una tarea, una carpeta de salida, un dueño» se traduce en «cada ficha
 declara los ficheros que toca, y dos tareas que compartan uno no van en paralelo».** Las
-16 tareas de aplicación (02-16 y 19) tocan carpetas disjuntas; los únicos ficheros comunes
+30 tareas de aplicación (02-16 y 19-33) tocan carpetas disjuntas; los únicos ficheros comunes
 (`practicas/_comun/*`, `practicas/index.html`, `practicas/profesor.*`,
 `firestore.rules`, `src/firebase.js`, `README.md`) los toca una sola tarea cada vez: la 01
-al montar la base, la 17 al migrar `divisores/`, la 18 al cerrar.
+al montar la base, la 34 al añadir las filas de la unidad 1 al catálogo, la 17 al migrar
+`divisores/`, la 18 al cerrar.
 
 La carpeta `salidas/NN-<nombre>/` de cada tarea contiene solo `ENTREGA.md` (qué ficheros
 de código entregó, hash del commit, cómo probarlo) y su marcador `ENTREGA.md.ok-<sid>`.
@@ -113,7 +114,7 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 |---|---|---|
 | **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18) |
 | **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones (incluida la 19), y la migración de `divisores/` (17) |
-| **BAJO** | Haiku 4.5 · Medio | No hay tareas de esta banda en este reparto |
+| **BAJO** | Haiku 4.5 · Medio | Añadir las filas 17-30 al catálogo (34) |
 
 En VS Code, «Default (recommended)» y «Opus (1M context)» son el mismo Opus 5. El
 esfuerzo es el deslizador de debajo de la lista de modelos.
@@ -191,7 +192,7 @@ fuente es esta:
 - **`divisores/` se migra al final (tarea 17)**, cuando la sesión que lo estaba editando
   el 2026-10-07 haya terminado. Mientras tanto se lee como modelo y no se toca.
 - **Sin worktrees.** Ficheros disjuntos por tarea; el hook de sesiones no contiende.
-- **Las tareas 02-16 y 19 dependen todas de la 01.** La 01 define el contrato
+- **Las tareas 02-16 y 19 dependen de la 01; las 20-33, de la 34 (que depende de la 01).** La 01 define el contrato
   (`practicas/_comun/base.js`) y las utilidades aritméticas comunes; hasta que esté
   LISTA solo puede trabajar una sesión en este reparto.
 
@@ -201,3 +202,21 @@ fuente es esta:
   siempre y lo que se mide son las ayudas. La 01 tenía reclamo vivo desde las 19:26 UTC
   (sid s-20261007T192646-341f1b98): se le avisó del cambio por mensaje entre sesiones y la
   terminada de la 01 debe confirmar que la fila 16 y el campo `pistas` están en la base.
+
+- **Tareas 20-34 (2026-10-07, 20:00 UTC):** quince prácticas de repaso de la unidad 1 (fichas
+  20-33) y la tarea 34, que añade sus filas al catálogo para que no dependan de otro aviso a
+  la sesión de la 01. Banda ALTO solo la 24 (del enunciado a la expresión); BAJO la 34.
+
+## Orden de prioridad (Juan Luis, 2026-10-07: «este lunes empiezo la unidad 2; primero lo de la semana 1»)
+
+Cuando haya varias tareas libres de la misma banda, se cogen por este orden, y las frases
+de arranque que dé cada sesión al cerrar nombran primero las de arriba:
+
+1. **Semana 1 de la unidad 2:** 02 semaforo, 04 recta, 03 rectangulos (cadena sugerida
+   02+04), y después 11 clasificador (sus enunciados limpios son la destreza 1A-01), 12
+   reloj (coincidencias con listas, 1A-02), 10 imposibles (nombrar la respuesta, 1A-04), 15
+   leelo (vocabulario 1B). `divisores/` ya está publicada y cubre 1B-01 y 1C-02.
+2. **Semanas 2 y 3 de la unidad 2:** 05, 06, 07, 08, 16, 09.
+3. **Semana 4 de la unidad 2:** 13, 14.
+4. **Repaso de la unidad 1:** 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33.
+5. **Cierre:** 17, 18.
