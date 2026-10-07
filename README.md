@@ -91,6 +91,25 @@ profesor en `divisores/profesor.html`). Español e inglés.
 - Código en `divisores/` (`logica.js` es pura y tiene sus tests en
   `tests/divisores.test.js`).
 
+## Prácticas de la unidad 2 (`practicas/`)
+
+Mini-aplicaciones como la anterior, sin cuentas, sobre una **base común**:
+portada en https://salasgar.github.io/Ejercicios-interactivos/practicas/ y
+**un solo panel del profesor** en `practicas/profesor.html`. Español e inglés.
+
+- El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
+  en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Cada
+  práctica da un **código de resultado de 16 caracteres** que dice además de
+  qué práctica es; el panel lee mezclados los de 16 y los de 12 de `divisores/`.
+- El progreso se copia en Firestore, en `practicas/{práctica}--{código}` (regla
+  en `firestore.rules`; **hay que publicarla** para que funcione la nube).
+- `practicas/_comun/`: la base (`base.js`), el catálogo con los ids (`catalogo.js`,
+  no se renumera), códigos, contador, aritmética de la unidad y estilos.
+- **Añadir una práctica**: copiar `practicas/plantilla/`, registrarla en
+  `catalogo.js` y escribir sus ejercicios. El contrato está comentado en
+  `practicas/plantilla/practica.js` (y en `reparto-practicas-u2/tareas/tarea-01-base-comun.md`).
+- Tests en `tests/practicas-comun.test.js` y uno por práctica (`tests/practicas-<slug>.test.js`).
+
 ## Puesta en marcha de Firebase (una sola vez)
 
 Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el

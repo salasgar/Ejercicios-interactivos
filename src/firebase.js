@@ -196,13 +196,21 @@ export async function iniciarFirebase() {
     return snap.docs.map(datosDe);
   }
 
+  // --- Prácticas de la unidad 2 (practicas/) --------------------------------
+
+  /** Un documento por alumno y práctica, con id `<slug>--<código>`: { id, estado, actualizado }. */
+  async function listarPracticas() {
+    const snap = await Fs.getDocs(col('practicas'));
+    return snap.docs.map(datosDe);
+  }
+
   return {
     entrar, entrarConGoogle, salir, observarSesion, esProfesor, usuario,
     datos: {
       leerAlumno, listarAlumnos, listarCredenciales, crearAlumno, actualizarAlumno, borrarAlumno,
       listarTareas, crearTarea, actualizarTarea, borrarTarea,
       leerProgreso, listarProgresos, guardarProgreso, progresosDeTarea, todosLosProgresos,
-      listarPracticaDivisores,
+      listarPracticaDivisores, listarPracticas,
     },
   };
 }
