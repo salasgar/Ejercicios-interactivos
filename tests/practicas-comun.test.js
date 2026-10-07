@@ -36,7 +36,10 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
   assert.deepEqual(CATALOGO.map(p => [p.id, p.slug, p.nEjercicios]), [
     [0, 'divisores', 5], [1, 'semaforo', 4], [2, 'rectangulos', 3], [3, 'recta', 3], [4, 'criba', 3], [5, 'arbol', 3],
     [6, 'divisiones', 3], [7, 'fabrica', 3], [8, 'venn', 4], [9, 'imposibles', 3], [10, 'clasificador', 3], [11, 'reloj', 3],
-    [12, 'baldosas', 3], [13, 'errores', 3], [14, 'leelo', 3], [15, 'factorizaciones', 3], [16, 'parentesis', 4], [31, 'plantilla', 2],
+    [12, 'baldosas', 3], [13, 'errores', 3], [14, 'leelo', 3], [15, 'factorizaciones', 3], [16, 'parentesis', 4],
+    [17, 'jerarquia', 4], [18, 'exponente', 3], [19, 'raiz', 3], [20, 'division', 4], [21, 'expresion', 3], [22, 'redondeo', 3],
+    [23, 'constructor', 3], [24, 'distributiva', 3], [25, 'potencias10', 3], [26, 'dictado', 3], [27, 'mental', 3],
+    [28, 'especiales', 2], [29, 'errores1', 3], [30, 'propiedades', 3], [31, 'plantilla', 2],
   ]);
   for (const p of CATALOGO) {
     assert.ok(p.id >= 0 && p.id < 32, 'el id cabe en 5 bits');
@@ -47,7 +50,7 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     assert.equal(practicaPorId(p.id), p);
   }
   assert.equal(practicaPorSlug('no-existe'), null);
-  assert.equal(practicaPorId(30), null);
+  assert.equal(practicaPorId(32), null);
   assert.equal(ID_PLANTILLA, 31);
 });
 
@@ -152,7 +155,6 @@ test('código de resultado: no vale el de otro alumno, ni uno al azar, ni de una
   const ej = [{ terminado: true, fallos: 0 }, { terminado: true, fallos: 0 }];
   assert.notEqual(codigoResultado(31, 4, ej, 30), codigoResultado(31, 5, ej, 30), 'el código dice de quién es');
   assert.notEqual(codigoResultado(31, 4, ej, 30), codigoResultado(2, 4, ej, 30), 'y de qué práctica');
-  assert.equal(leerCodigoResultado(codigoResultado(30, 4, ej, 30)), null, 'la práctica 30 no está en el catálogo');
   for (const malo of ['', 'ABCD-EFGH', 'ABCD-EFGH-JKLM-NPQ', 'ABCD-EFGH-JKLM-NPQR-STUV', 'ABCD-EFGH-JKLM-NPQ1']) assert.equal(leerCodigoResultado(malo), null);
 });
 
