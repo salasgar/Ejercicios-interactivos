@@ -142,6 +142,15 @@ Propios de esta tarea:
   grupos» no determina GCD (cualquier divisor común vale): toda plantilla GCD lleva el
   superlativo o «as many groups as possible», y toda plantilla LCM lleva «again», «at the
   same time» o «the smallest amount».
+- (11, al cerrar) Con 36 plantillas generadas por una fábrica de datos (`[...].map(d => ({…}))`),
+  los errores se repiten en todas las filas de la tabla a la vez: hay que imprimir las 36 con
+  varios `numeros(rng)` reales (no solo leer el código) para verlos. Encontrados así: «iguales
+  iguales» duplicado (un dato llevaba «iguales» dentro del nombre Y la plantilla volvía a
+  añadirlo), un doble «y»/«and and» (un dato llevaba la conjunción Y la plantilla también la
+  ponía) y gender («una cable» en vez de «un cable»; «pocas montones» en vez de «pocos»): para
+  evitarlo con materiales de género mixto, mejor «un trozo de `<material>` mide…» (el género de
+  «trozo» manda) que «una `<material>` de… y otra de…» (exige que todos los materiales compartan
+  género).
 
 ## Prohibido (propio de esta tarea)
 
