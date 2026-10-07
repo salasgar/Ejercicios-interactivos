@@ -1,0 +1,69 @@
+/* Coloca los paréntesis: la expresión con sus huecos, la resolución y los chips. */
+
+/* Con cuatro números hace falta todo el ancho de un móvil de 375 px */
+.tarjeta.ejercicio { padding-left: .5rem; padding-right: .5rem; }
+
+/* La expresión: cada número con un hueco «(» a la izquierda y un hueco «)» a la derecha */
+.expr {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center;
+  gap: .2rem 0; margin: 0 0 .8rem; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.expr--fija { display: inline-block; background: var(--primario-claro); color: var(--primario-oscuro); border-radius: 10px; padding: .45rem 1rem; }
+.celda { display: inline-flex; align-items: center; }
+.num { padding: 0 .08em; }
+.signo { padding: 0 .1em; color: var(--texto-suave); }
+.exp { font-size: .75em; align-self: flex-start; margin-top: .2em; padding-left: .05em; }
+
+/* Los huecos de paréntesis: estrechos y altos, fáciles de tocar con el pulgar */
+button.hueco-p {
+  min-width: .8em; width: .8em; min-height: 52px; padding: 0; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1em; font-weight: 700; line-height: 1;
+  background: transparent; color: var(--primario);
+  border: 2px dashed var(--borde);
+  -webkit-tap-highlight-color: transparent;
+}
+button.hueco-p--puesto { width: auto; min-width: .8em; padding: 0 .05em; background: var(--primario-claro); border: 2px solid var(--primario); color: var(--primario-oscuro); }
+button.hueco-p--rojo { background: var(--error-claro); border-color: var(--error); color: var(--error); }
+button.hueco-p--nuevo { box-shadow: 0 0 0 4px var(--aviso-claro); }
+button.hueco-p:disabled { opacity: 1; cursor: default; }
+
+.acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: .4rem 0 .8rem; }
+.acciones button { min-height: 44px; padding: .5rem 1rem; }
+
+/* La resolución línea a línea */
+.resolucion {
+  min-height: 7.2rem; text-align: left; margin: 0 auto; max-width: 28rem;
+  background: var(--fondo); border-radius: 10px; padding: .6rem .9rem;
+  font-size: 1.15rem; font-variant-numeric: tabular-nums;
+}
+.resolucion--fija { min-height: 0; margin-bottom: .6rem; }
+.resolucion .paso { padding: .12rem 0; margin: 0; background: none; border: 0; border-radius: 0; box-shadow: none; overflow-wrap: anywhere; }
+.resolucion .paso--final { font-weight: 700; color: var(--correcto); }
+.resolucion .paso--mal { font-weight: 700; color: var(--error); }
+.resolucion .paso--mal::before { content: '✗ '; }
+
+.mensaje { min-height: 1.5rem; margin: .5rem 0; font-weight: 600; }
+.mensaje--bien { color: var(--correcto); }
+.mensaje--mal { color: var(--error); }
+.mensaje--aviso { color: #92400e; }
+.mensaje--neutro { color: var(--texto-suave); }
+
+/* Los resultados posibles */
+.contador-chips { margin: .6rem 0 .4rem; color: var(--texto-suave); font-size: .95rem; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin-bottom: .6rem; }
+.chip {
+  min-width: 3.4rem; padding: .35rem .8rem; border-radius: 999px;
+  border: 2px dashed var(--borde); color: #9aa5b1; background: #fff;
+  font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.chip--on { border: 2px solid var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+
+.resumen { list-style: none; padding: 0; margin: .5rem 0 0; }
+.resumen li { padding: .15rem 0; }
+
+/* La diana */
+.objetivo {
+  display: inline-block; margin: 0 0 .9rem; padding: .3rem 1.4rem; border-radius: 14px;
+  background: var(--aviso-claro); color: #92400e; font-size: 2.2rem; font-weight: 800;
+}
