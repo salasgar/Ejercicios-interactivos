@@ -136,6 +136,14 @@ Propios de esta tarea:
   positivo o cero.
 - Un número que acaba en 0 es divisible entre 2, 5 y 10 a la vez: no lo trates como tres
   errores separados en el feedback; una línea por divisor basta.
+- (02, al cerrar) `criterio(n, d)` de `aritmetica.js` ya da la razón lista en los dos
+  idiomas para d ∈ {2, 3, 5, 9, 10, 11}: no hace falta reescribir el criterio del 11 ni
+  el de la suma de cifras, ni para el ejercicio 3 (factoriza el divisor compuesto con
+  `factorizar` y aplica `criterio` a cada primo).
+- (02) Para la cifra única del ejercicio 4, generar las cifras al azar y probar las diez
+  (0-9) descartando `x=0` solo cuando el hueco es la primera cifra basta: con 500
+  reintentos (semilla fija) siempre encuentra una solución única; no hizo falta construir
+  el número al revés a partir del divisor.
 
 ## Prohibido (propio de esta tarea)
 

@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 20:05 UTC · por la sesión s-20261007T184632-fa5a1491 (coordinadora: ficha 34 corregida a petición de la 01)
+Regenerado: 2026-10-07 20:42 UTC · por la sesión s-20261007T203003-4ee158cb (cierra la 02; encadena la 04)
 
 ## Antes de hacer nada
 
@@ -111,8 +111,8 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | # | Tarea | Fichero | Precondición | Duración esperada | Banda | Encadenable con | Salida (dueño único) | Estado | Reclamo vivo (sid · caduca) |
 |---|---|---|---|---|---|---|---|---|---|
 | 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | LISTA | terminada 19:45Z · commit 914d5b0 |
-| 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | PENDIENTE | |
-| 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | PENDIENTE | |
+| 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | LISTA | terminada 20:42Z · commit 1b2d1a4 |
+| 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | EN CURSO | s-20261007T203023-29ff0ec2 · 2026-10-08T00:30:23Z |
 | 04 | Múltiplos y divisores en la recta (0 y 1, V/F) | tareas/tarea-04-recta.md | 01 LISTA | 1 h 30 min | MEDIO | 02 | practicas/recta/; salidas/04-recta/ | PENDIENTE | |
 | 05 | Criba de Eratóstenes y flashcards primo/compuesto | tareas/tarea-05-criba.md | 01 LISTA | 2 h | MEDIO | — | practicas/criba/; salidas/05-criba/ | PENDIENTE | |
 | 06 | Árbol de factores libre | tareas/tarea-06-arbol.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/arbol/; salidas/06-arbol/ | PENDIENTE | |
@@ -120,8 +120,8 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | PENDIENTE | |
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | PENDIENTE | |
 | 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | PENDIENTE | |
-| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | PENDIENTE | |
-| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | PENDIENTE | |
+| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | EN CURSO | s-20261007T203059-03e5af6d · 2026-10-07T23:00:59Z |
+| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | EN CURSO | s-20261007T203121-2e2ea2ab · 2026-10-08T00:31:21Z |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | PENDIENTE | |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | PENDIENTE | |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | PENDIENTE | |
@@ -159,11 +159,13 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
 
+LISTA · tarea 02 · 2026-10-07 20:42 · s-20261007T203003-4ee158cb · 1b2d1a4 · 6 ficheros (practicas/semaforo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-semaforo.test.js) · 12 min (estimada: 1 h 30 min)
+
 LISTA · tarea 01 · 2026-10-07 19:45 · s-20261007T192646-341f1b98 · 914d5b0 · 23 ficheros (practicas/_comun/, portada, panel, practicas/plantilla/, tests/practicas-comun.test.js, firestore.rules, src/firebase.js, README.md) · 19 min (estimada: 2 h 30 min)
 
 Recalibración (primera terminada): la 01 ha durado 19 min de reloj frente a 2 h 30 min
 estimados. Las estimaciones de las fichas son holgadas; la caducidad de los reclamos (2 ×)
-da margen de sobra.
+da margen de sobra. La 02 ha durado 12 min frente a 1 h 30 min: confirma lo mismo.
 
 ## Incidencias de coordinación
 
