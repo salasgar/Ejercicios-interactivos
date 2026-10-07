@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 21:41 UTC · por la sesión s-20261007T213810-ffd13ae0 (reclama la
+Regenerado: 2026-10-07 21:43 UTC · por la sesión s-20261007T212934-840982ce (cierra la 16; solo se actualizan su fila y el registro; el resto, como estaba)
 21, encadena la 22; con tanta sesión a la vez, 06, 08, 14 y 35 también estaban LISTA en
 `hechos/` y la tabla no lo reflejaba: corregido. La regeneración de la 06 (21:37Z) dejó
 rota la línea «Formato:» del registro, con la entrada de la 14 pegada encima: corregido
@@ -129,7 +129,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 21:23Z · commit 7f427aa |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 21:36Z · commit f682746 |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 21:27Z · commit 15d353b |
-| 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | EN CURSO | s-20261007T212934-840982ce · 2026-10-08T01:29:34Z |
+| 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | LISTA | terminada 21:43Z · commit d02332e |
 | 17 | Migrar divisores/ a la base común | tareas/tarea-17-migrar-divisores.md | 01 LISTA; la sesión que editaba divisores/ ha terminado; firma 17 | 1 h 30 min | MEDIO | — | divisores/; salidas/17-migrar-divisores/ | LISTA | terminada 21:22Z · commit edfbfa3 |
 | 18 | Revisión final, portada, README y documentación | tareas/tarea-18-revision-final.md | 02-17 y 19-33 LISTAS; firma 18 | 3 h | ALTO | — | catalogo.js (disponible), portada, README, docs/practicas-unidad2.md; salidas/18-revision-final/ | BLOQUEADA | |
 | 19 | Coloca los paréntesis (repaso de la unidad 1) | tareas/tarea-19-parentesis.md | 01 LISTA | 2 h | MEDIO | 16 | practicas/parentesis/; salidas/19-parentesis/ | EN CURSO | s-20261007T212734-78b63f57 · 2026-10-08T01:27:34Z |
@@ -164,6 +164,8 @@ Cuando cierren 02-17 y 19-33, la 18 (firma ya dada) queda libre.
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
+
+LISTA · tarea 16 · 2026-10-07 21:43 · s-20261007T212934-840982ce · d02332e · 6 ficheros (practicas/factorizaciones/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-factorizaciones.test.js) · ~25 min (estimada: 2 h)
 
 LISTA · tarea 06 · 2026-10-07 21:36 · s-20261007T212058-817d27db · 5ad984c · 6 ficheros (practicas/arbol/{estilos.css,index.html,logica.js,practica.js,textos.js}, tests/practicas-arbol.test.js) · 16 min (estimada: 2 h 30 min)
 
