@@ -92,11 +92,6 @@
 .cuenta { font-weight: 700; white-space: nowrap; }
 .penalizacion { margin: .5rem 0 0; font-weight: 700; }
 .animo { margin: .4rem 0 0; color: #14532d; font-weight: 600; }
-.cartel {
-  text-align: left; margin-top: 1rem; padding: .9rem 1rem; border-radius: 10px;
-  background: #fef3c7; color: #78350f; border: 2px solid #f59e0b; font-weight: 600;
-}
-.cartel + .feedback { margin-top: .6rem; }
 
 /* Fin y código de resultado */
 .fin { text-align: center; }
