@@ -138,6 +138,10 @@ Propios de esta tarea:
 - Los steppers con tope: en el ejercicio 1 el tope de cada primo es la suma; no pongas
   tope en el 2 y el 3 o delatas la respuesta.
 
+- Sin letras: los enunciados dicen «¿Es 700 múltiplo de 10?», con los números, no «a» y «b».
+- El hook de sesiones puede bloquear un Edit a la propia sesión («ya está trabajando en…» con tu mismo id): no lo reintentes en bucle; si es cosmético, déjalo y anótalo.
+- `javascript_tool` de Chrome bloquea las salidas que contienen «=» ("Cookie/query string"): en las pruebas, sustituye `=` por otra palabra antes de devolver el texto.
+
 ## Prohibido (propio de esta tarea)
 
 - Letras o fórmulas generales («a^m · a^n = a^(m+n)»): todo con números concretos.
