@@ -124,6 +124,10 @@ Propios de esta tarea:
 - 25 · 100 − 1 y 25 · 100 − 100 son errores típicos distintos; mantén los tres textos como
   opciones fijas de ese ítem, no generadas al azar.
 - Con b = c la igualdad del factor común se puede escribir de dos formas: evita b = c.
+- Aprendido en la tarea 27: con la suma valen `a · (b + c)`, `a · (c + b)` y los dos con el
+  paréntesis delante; con la resta solo el orden `b − c`. Un `<input type="number">` sin
+  `display:block; box-sizing:border-box` sale estrecho dentro de `.ejercicio`. Un rectángulo
+  de pocas columnas se hace enorme: limitar el ancho a `columnas * 2.1rem`.
 
 ## Prohibido (propio de esta tarea)
 
