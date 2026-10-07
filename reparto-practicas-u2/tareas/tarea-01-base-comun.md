@@ -318,6 +318,17 @@ ficha y los comentarios de `plantilla/practica.js`). No toques el resto del READ
 - Dos `import` del mismo módulo con rutas distintas (`../divisores/logica.js` desde
   `_comun/codigos.js` y desde los tests) funcionan, pero el test que compara códigos tiene
   que importar `divisores/logica.js` **y** `practicas/_comun/codigos.js`.
+- (01, al cerrar) `css/estilos.css` ya tiene un `.pasos` (pasos de una solución) y pone
+  `.feedback strong` en bloque: `_comun/estilos.css` los anula; quien añada clases propias,
+  que mire antes si el nombre existe en `css/estilos.css`.
+- (01) La ficha cambió dos veces con el reclamo abierto (fila 16, `pistas`, firma de
+  `anotar`): antes de cerrar, `git log -3 -- <tu ficha>` y releer lo que haya cambiado.
+- (01) Para probar en el navegador sin herramientas: Chrome del sistema con `puppeteer-core`
+  instalado FUERA del repositorio (carpeta temporal), cortando las peticiones a
+  `firestore.googleapis.com` para no escribir datos de prueba en la nube. Sembrar
+  `localStorage` (`practicas.v1.<slug>.<código>` con `pendientes: 2`) evita hacer 20 ítems.
+- (01) Con una tasa de acierto baja y penalización, un contador simulado puede no terminar
+  nunca: en los tests, simular con el 80 % de aciertos o más.
 
 ## Prohibido (propio de esta tarea)
 
