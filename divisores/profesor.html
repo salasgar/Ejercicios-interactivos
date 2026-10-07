@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Divisor, múltiplo, divisible · Profesor</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2720%27 fill=%27%231d4ed8%27/%3E%3Ctext x=%2750%27 y=%2768%27 font-size=%2752%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27 font-weight=%27bold%27%3E%C3%B7%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="estilos.css">
+  <script type="module" src="profesor.js"></script>
+</head>
+<body>
+  <header class="cabecera">
+    <span class="cabecera__titulo">Divisor, múltiplo, divisible · Profesor</span>
+    <a class="cabecera__usuario" href="./" style="color:#fff">Ver la práctica</a>
+  </header>
+  <main class="app profesor">
+    <div class="aviso">Los nombres que escribas aquí <strong>no salen de este navegador</strong>: se guardan solo en este ordenador.</div>
+
+    <section class="tarjeta">
+      <h2>1. Alumnos y sus códigos</h2>
+      <p class="pequeno">Un alumno por línea. El código depende de la <strong>posición en la lista</strong>: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final.</p>
+      <textarea id="lista" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
+      <div class="botonera">
+        <button type="button" class="secundario" id="copiar-codigos">Copiar tabla (para pegarla en una hoja de cálculo)</button>
+        <button type="button" class="secundario" id="csv-codigos">Descargar CSV</button>
+      </div>
+      <div class="tabla" id="tabla-codigos"></div>
+    </section>
+
+    <section class="tarjeta">
+      <h2>2. Resultados</h2>
+      <h3>Códigos de resultado</h3>
+      <p class="pequeno">Pega aquí lo que te envíen los alumnos, tal cual (correos enteros, la lista de Classroom…): se buscan solos los códigos de 12 caracteres.</p>
+      <textarea id="pegados" placeholder="ABCD-EFGH-JKLM" spellcheck="false"></textarea>
+      <h3>Datos guardados en la nube</h3>
+      <p class="pequeno">Con más detalle (aciertos, lo que le queda a quien va a medias) y sin que el alumno tenga que enviar nada. Hay que entrar con tu cuenta de Google de profesor.</p>
+      <div class="botonera">
+        <button type="button" id="nube">Cargar de la nube</button>
+        <button type="button" class="secundario" id="csv-resultados">Descargar resultados (CSV)</button>
+      </div>
+      <p class="pequeno" id="estado-nube"></p>
+      <div id="avisos"></div>
+      <div class="tabla" id="tabla-resultados"></div>
+    </section>
+  </main>
+</body>
+</html>

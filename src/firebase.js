@@ -86,6 +86,11 @@ export async function iniciarFirebase() {
     return Auth.onAuthStateChanged(auth, callback);
   }
 
+  /** Usuario con la sesión abierta, o `null`. */
+  function usuario() {
+    return auth.currentUser;
+  }
+
   function esProfesor(user) {
     return Boolean(user && PROFESOR_UID && user.uid === PROFESOR_UID);
   }
@@ -183,12 +188,21 @@ export async function iniciarFirebase() {
     return snap.docs.map(d => ({ alumno: d.ref.parent.parent.id, tareaId: d.id, ...d.data() }));
   }
 
+  // --- Práctica «divisor, múltiplo, divisible» (divisores/) ----------------
+
+  /** Un documento por alumno, con su código como id: { id, estado, actualizado }. */
+  async function listarPracticaDivisores() {
+    const snap = await Fs.getDocs(col('divisores'));
+    return snap.docs.map(datosDe);
+  }
+
   return {
-    entrar, entrarConGoogle, salir, observarSesion, esProfesor,
+    entrar, entrarConGoogle, salir, observarSesion, esProfesor, usuario,
     datos: {
       leerAlumno, listarAlumnos, listarCredenciales, crearAlumno, actualizarAlumno, borrarAlumno,
       listarTareas, crearTarea, actualizarTarea, borrarTarea,
       leerProgreso, listarProgresos, guardarProgreso, progresosDeTarea, todosLosProgresos,
+      listarPracticaDivisores,
     },
   };
 }
