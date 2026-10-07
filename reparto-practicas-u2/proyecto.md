@@ -217,6 +217,9 @@ fuente es esta:
 Cuando haya varias tareas libres de la misma banda, se cogen por este orden, y las frases
 de arranque que dé cada sesión al cerrar nombran primero las de arriba:
 
+0. **Antes que nada, la 35** (base: 10 aciertos e idioma alterno): es corta y lo que las
+   prácticas ya hechas heredan al instante. Después la 17, para que `divisores/` publicado
+   tenga también 10 aciertos.
 1. **Semana 1 de la unidad 2:** 02 semaforo, 04 recta, 03 rectangulos (cadena sugerida
    02+04), y después 11 clasificador (sus enunciados limpios son la destreza 1A-01), 12
    reloj (coincidencias con listas, 1A-02), 10 imposibles (nombrar la respuesta, 1A-04), 15
@@ -225,3 +228,9 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
 3. **Semana 4 de la unidad 2:** 13, 14.
 4. **Repaso de la unidad 1:** 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33.
 5. **Cierre:** 17, 18.
+
+- **Tarea 35 (2026-10-07, 20:50 UTC), decisión de Juan Luis tras probar `divisores/` en el móvil:**
+  10 aciertos por ejercicio (no 20), +2 por fallo, tope 20; y el idioma de cada ítem al azar,
+  equilibrado, sin selector para el alumno, con traducción del enunciado solo después de
+  responder y un modo fijo por URL (`?idioma=es|en`) para alumnos concretos. Se hace en la
+  base y lo heredan todas las prácticas. La 34 y la 17 pasan a depender de la 35.

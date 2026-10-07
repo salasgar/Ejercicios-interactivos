@@ -1,7 +1,7 @@
 # Tarea 17 · Migrar la práctica «divisor, múltiplo, divisible» a la base común, conservando la URL y los códigos
 
 Actualizado: 2026-10-07
-Precondición: 01 LISTA; la sesión que editaba divisores/ el 2026-10-07 ha terminado (su trabajo está en main y git status no muestra cambios en divisores/); firma de la tarea 17 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
+Precondición: 01 y 35 LISTAS; la sesión que editaba divisores/ el 2026-10-07 ha terminado (su trabajo está en main y git status no muestra cambios en divisores/); firma de la tarea 17 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/17-migrar-divisores/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `divisores/*` (todos), `tests/divisores.test.js`
@@ -59,12 +59,17 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 Que `divisores/` deje de ser una copia aparte y pase a ser la práctica 0 del catálogo
 sobre `practicas/_comun/base.js`, con la misma URL (`…/divisores/`), los mismos códigos
 de alumno, los mismos cinco ejercicios y el mismo comportamiento que los alumnos ya
-conocen (a fecha 2026-10-07: 20 aciertos, +2 por fallo con frase de ánimo, tope de 40
-pendientes; la penalización por tiempo está en suspenso y no se reactiva aquí: ver la nota
+conocen, con los parámetros nuevos de la base (10 aciertos, +2 por fallo con frase de ánimo,
+tope de 20; decisión de Juan Luis del 2026-10-07 tras probarla; la penalización por tiempo está en suspenso y no se reactiva aquí: ver la nota
 de memoria `dilema-penalizacion-por-tiempo`, que es una decisión de Juan Luis). Así el panel único del profesor es el único panel y las mejoras de la base
 llegan también aquí.
 
 ## Siguiente paso
+
+**Desde el 2026-10-07 (20:50 UTC):** la base ya lleva 10 aciertos, +2, tope 20 e idioma alterno
+por ítem (tarea 35); al migrar, `divisores/` lo hereda sin declarar nada. El progreso que los
+alumnos tengan guardado con 20 se recorta al cargar (lo hace la base). No reactives el
+selector de idioma.
 
 Comprueba la precondición entera antes de reclamar: (1) `01--*` en `hechos/terminadas/`;
 (2) `git status --short divisores/ tests/divisores.test.js` vacío y `ls .claude/sesiones/`
