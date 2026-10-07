@@ -268,6 +268,7 @@ function pintarEjercicio() {
 /** Anota la respuesta en el contador y lo guarda. */
 function registrar(acierto) {
   actual.respondido = true;
+  const antes = actual.sesion.pendientes;
   actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()));
   if (actual.practica) {
     if (actual.sesion.terminado) { estado.ej[actual.n].repeticiones++; guardar(); subir(); }
@@ -276,6 +277,7 @@ function registrar(acierto) {
     guardar();
     if (actual.sesion.terminado || ++sinSubir >= 5) subir();
   }
+  actual.sumadas = Math.max(0, actual.sesion.pendientes - antes);
   pintarContador();
 }
 
@@ -288,7 +290,7 @@ function mostrarFeedback(acierto, html, espera = 1300) {
     return;
   }
   caja.innerHTML = `
-    <div class="feedback feedback--mal"><strong>✗ ${t().mal}</strong> ${html}<p class="penalizacion">+${5} · ${t().penalizacion}</p></div>
+    <div class="feedback feedback--mal"><strong>✗ ${t().mal}</strong> ${html}<p class="penalizacion">${t().penalizacion(actual.sumadas)}</p></div>
     <button type="button" id="siguiente" class="ancho">${t().siguiente}</button>`;
   const boton = app.querySelector('#siguiente');
   boton.addEventListener('click', siguiente);

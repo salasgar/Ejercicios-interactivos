@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   crearRng, generar, esCorrecta, solucionArrastrar, cumple, RELACIONES, EJERCICIOS,
-  ejercicioNuevo, anotar, INICIALES, PENALIZACION, diaDe, fechaDeDia,
+  ejercicioNuevo, anotar, INICIALES, PENALIZACION, MAXIMO, diaDe, fechaDeDia,
   codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS, ALFABETO,
 } from '../divisores/logica.js';
 import { juntarResultados } from '../divisores/resultados.js';
@@ -124,6 +124,17 @@ test('contador: 20 aciertos seguidos terminan; cada fallo añade 5', () => {
   for (let i = 0; i < 1 + PENALIZACION; i++) ej = anotar(ej, true, 9);
   assert.deepEqual(ej, { pendientes: 0, aciertos: INICIALES + PENALIZACION, fallos: 1, terminado: true, dia: 9, repeticiones: 0 });
   assert.equal(anotar(ej, false, 10), ej, 'una vez terminado ya no cambia');
+});
+
+test('contador: los pendientes nunca pasan de 40', () => {
+  assert.equal(MAXIMO, 40);
+  let ej = ejercicioNuevo();
+  const vistos = [];
+  for (let i = 0; i < 8; i++) { ej = anotar(ej, false, 1); vistos.push(ej.pendientes); }
+  assert.deepEqual(vistos, [25, 30, 35, 40, 40, 40, 40, 40]);
+  assert.equal(ej.fallos, 8, 'los fallos se siguen contando');
+  ej = anotar(anotar(anotar(ej, true, 1), true, 1), false, 1);
+  assert.equal(ej.pendientes, 40, 'de 38 sube a 40, no a 43');
 });
 
 test('fechas', () => {
