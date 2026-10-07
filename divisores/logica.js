@@ -154,8 +154,10 @@ export function claveDe(item) {
 // --- Contador de repeticiones -----------------------------------------------
 
 export const INICIALES = 20;
-export const PENALIZACION = 2;          // fallo después de pensarlo
-export const PENALIZACION_RAPIDO = 5;   // fallo por contestar deprisa, sin pensar
+export const PENALIZACION = 2;
+// En suspenso: distinguir el fallo «rápido» (contestado sin pensar). La
+// aplicación no lo usa ahora mismo: todos los fallos añaden PENALIZACION.
+export const PENALIZACION_RAPIDO = 5;
 export const MAXIMO = 40;   // tope de pendientes, para que nadie se hunda
 
 export function ejercicioNuevo() {
@@ -171,8 +173,8 @@ export function esRapido(tipo, ms) {
 }
 
 /**
- * Anota una respuesta: un acierto quita una pendiente; un fallo añade dos, o
- * cinco si fue `rapido` (contestado sin pensar), siempre hasta el máximo.
+ * Anota una respuesta: un acierto quita una pendiente; un fallo añade dos
+ * (cinco si se marca como `rapido`, cosa que hoy no se hace), hasta el máximo.
  */
 export function anotar(ej, acierto, dia = 0, rapido = false) {
   if (ej.terminado) return ej;
