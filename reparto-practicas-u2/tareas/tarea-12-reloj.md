@@ -133,6 +133,22 @@ Propios de esta tarea:
   animación cuando el contenedor deja de estar en el DOM (`isConnected`).
 - Hora inicial con minutos 55 + m.c.m. 65: cuida los acarreos; el test con fuerza bruta
   (contar minuto a minuto) lo detecta.
+- (12, al cerrar) No añadas `api.t.mal`/`✓`/`✗` al `html` de `responder`: la base ya
+  antepone «✗ No es correcto.» o «✓ ¡Bien!» ella sola (ver `feedback--mal`/`--bien` en
+  `base.js`). Ponerlo también en el `html` duplica el mensaje («No es correcto. No es
+  correcto. …»); el único sitio donde se vio fue probando en el navegador, los tests no
+  lo detectan porque no miran el HTML final montado por la base.
+- La línea de tiempo se hizo con **dos filas de 31 columnas** (`.rejilla` con
+  `--columnas: 31`, segundos 0-30 y 31-60), no con una fila de 61 con lupa: a 375 px da
+  celdas de ~11 px, legibles y tocables sin zoom.
+- Para los minutos de 5 en 5 con la pieza `pasos` (que solo avanza de 1 en 1): usar el
+  valor como índice 0-11 y multiplicarlo por 5 en `pinta`, en vez de reescribir la pieza.
+- Para probar en el navegador sin herramientas interactivas: `puppeteer-core` instalado
+  en una carpeta temporal fuera del repo (`npm install puppeteer-core` ahí) y
+  `executablePath` apuntando a `/Applications/Google Chrome.app/Contents/MacOS/Google
+  Chrome`, con `setRequestInterception` para abortar `firestore.googleapis.com`. Sirve
+  para comprobar errores de consola, capturas a varios anchos y los dos idiomas sin que
+  el usuario tenga que mirar nada.
 
 ## Prohibido (propio de esta tarea)
 
