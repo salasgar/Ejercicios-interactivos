@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   crearRng, generar, esCorrecta, solucionArrastrar, cumple, RELACIONES, EJERCICIOS,
-  ejercicioNuevo, anotar, INICIALES, PENALIZACION, MAXIMO, diaDe, fechaDeDia,
+  ejercicioNuevo, anotar, esRapido, INICIALES, PENALIZACION, PENALIZACION_RAPIDO, MAXIMO, diaDe, fechaDeDia,
   codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS, ALFABETO,
 } from '../divisores/logica.js';
 import { juntarResultados } from '../divisores/resultados.js';
@@ -114,7 +114,7 @@ test('las frases y las cuentas del feedback', () => {
   assert.deepEqual(Object.keys(T.es).sort(), Object.keys(T.en).sort(), 'los dos idiomas tienen los mismos textos');
 });
 
-test('contador: 20 aciertos seguidos terminan; cada fallo añade 5', () => {
+test('contador: 20 aciertos seguidos terminan; un fallo pensado añade 2', () => {
   let ej = ejercicioNuevo();
   for (let i = 0; i < INICIALES - 1; i++) ej = anotar(ej, true, 7);
   assert.equal(ej.pendientes, 1);
@@ -122,7 +122,7 @@ test('contador: 20 aciertos seguidos terminan; cada fallo añade 5', () => {
   ej = anotar(ej, false, 7);
   assert.equal(ej.pendientes, 1 + PENALIZACION);
   for (let i = 0; i < 1 + PENALIZACION; i++) ej = anotar(ej, true, 9);
-  assert.deepEqual(ej, { pendientes: 0, aciertos: INICIALES + PENALIZACION, fallos: 1, terminado: true, dia: 9, repeticiones: 0 });
+  assert.deepEqual(ej, { pendientes: 0, aciertos: INICIALES + PENALIZACION, fallos: 1, rapidos: 0, terminado: true, dia: 9, repeticiones: 0 });
   assert.equal(anotar(ej, false, 10), ej, 'una vez terminado ya no cambia');
 });
 
@@ -130,11 +130,25 @@ test('contador: los pendientes nunca pasan de 40', () => {
   assert.equal(MAXIMO, 40);
   let ej = ejercicioNuevo();
   const vistos = [];
-  for (let i = 0; i < 8; i++) { ej = anotar(ej, false, 1); vistos.push(ej.pendientes); }
+  for (let i = 0; i < 8; i++) { ej = anotar(ej, false, 1, true); vistos.push(ej.pendientes); }
   assert.deepEqual(vistos, [25, 30, 35, 40, 40, 40, 40, 40]);
   assert.equal(ej.fallos, 8, 'los fallos se siguen contando');
-  ej = anotar(anotar(anotar(ej, true, 1), true, 1), false, 1);
+  ej = anotar(anotar(anotar(ej, true, 1), true, 1), false, 1, true);
   assert.equal(ej.pendientes, 40, 'de 38 sube a 40, no a 43');
+  assert.equal(anotar(anotar(ej, true, 1), false, 1).pendientes, 40, 'de 39 con un fallo pensado sube a 40, no a 41');
+});
+
+test('contador: fallar deprisa añade 5; fallar pensándolo, 2', () => {
+  assert.equal(PENALIZACION, 2);
+  assert.equal(PENALIZACION_RAPIDO, 5);
+  const pensado = anotar(ejercicioNuevo(), false, 1, false);
+  assert.deepEqual([pensado.pendientes, pensado.fallos, pensado.rapidos], [22, 1, 0]);
+  const rapido = anotar(ejercicioNuevo(), false, 1, true);
+  assert.deepEqual([rapido.pendientes, rapido.fallos, rapido.rapidos], [25, 1, 1]);
+  assert.equal(anotar(ejercicioNuevo(), true, 1, true).pendientes, 19, 'acertar deprisa no penaliza');
+  assert.ok(esRapido('eleccion', 2999) && !esRapido('eleccion', 3000));
+  assert.ok(esRapido('preposicion', 1000) && !esRapido('preposicion', 3500));
+  assert.ok(esRapido('arrastrar', 4999) && !esRapido('arrastrar', 5000), 'mover dos fichas lleva más tiempo');
 });
 
 test('fechas', () => {

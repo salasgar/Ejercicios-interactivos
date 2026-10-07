@@ -6,7 +6,7 @@
 
 import { firebaseConfig } from '../src/config.js';
 import {
-  EJERCICIOS, generar, esCorrecta, solucionArrastrar, claveDe, ejercicioNuevo, anotar, diaDe,
+  EJERCICIOS, generar, esCorrecta, esRapido, solucionArrastrar, claveDe, ejercicioNuevo, anotar, diaDe,
   leerCodigoAlumno, codigoAlumno, codigoResultado, crearRng,
 } from './logica.js';
 import { T, textoOperacion, frase, fraseNegada, razon, unir } from './textos.js';
@@ -210,6 +210,7 @@ function siguiente() {
   for (let i = 0; i < 5 && claveDe(item) === anterior; i++) item = generar(actual.n, rng);
   actual.item = item;
   actual.respondido = false;
+  actual.inicio = performance.now();
   actual.colocadas = [null, null];
   pintarEjercicio();
 }
@@ -269,7 +270,8 @@ function pintarEjercicio() {
 function registrar(acierto) {
   actual.respondido = true;
   const antes = actual.sesion.pendientes;
-  actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()));
+  actual.rapido = !acierto && esRapido(actual.item.tipo, performance.now() - actual.inicio);
+  actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()), actual.rapido);
   if (actual.practica) {
     if (actual.sesion.terminado) { estado.ej[actual.n].repeticiones++; guardar(); subir(); }
   } else {
@@ -289,8 +291,12 @@ function mostrarFeedback(acierto, html, espera = 1300) {
     setTimeout(() => { if (miTurno === turno) siguiente(); }, espera);
     return;
   }
+  // Fallo pensado: ánimos. Fallo por contestar deprisa: cartel de aviso.
+  const cartel = actual.rapido ? `<div class="cartel" role="alert"><span aria-hidden="true">⚠️</span> ${t().aviso_rapido}</div>` : '';
+  const animo = actual.rapido ? '' : `<p class="animo">${rng.elegir(t().animos)}</p>`;
   caja.innerHTML = `
-    <div class="feedback feedback--mal"><strong>✗ ${t().mal}</strong> ${html}<p class="penalizacion">${t().penalizacion(actual.sumadas)}</p></div>
+    ${cartel}
+    <div class="feedback feedback--mal"><strong>✗ ${t().mal}</strong> ${html}<p class="penalizacion">${t().penalizacion(actual.sumadas)}</p>${animo}</div>
     <button type="button" id="siguiente" class="ancho">${t().siguiente}</button>`;
   const boton = app.querySelector('#siguiente');
   boton.addEventListener('click', siguiente);
