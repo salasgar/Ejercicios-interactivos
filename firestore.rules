@@ -61,6 +61,17 @@ service cloud.firestore {
         && request.resource.data.actualizado is int;
     }
 
+    // Prácticas de la unidad 2 (practicas/): igual que la anterior, con un
+    // documento por alumno y práctica, de id «<práctica>--<código>».
+    match /practicas/{doc} {
+      allow read: if esProfesor();
+      allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$')
+        && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
+        && request.resource.data.estado is string
+        && request.resource.data.estado.size() < 4000
+        && request.resource.data.actualizado is int;
+    }
+
     // Tareas: el profesor las gestiona; el alumno ve las de su grupo.
     match /tareas/{tareaId} {
       allow read: if esProfesor() || (autenticado() && resource.data.grupo == grupoDelAlumno());
