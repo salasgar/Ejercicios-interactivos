@@ -140,7 +140,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | EN CURSO | s-20261007T213246-c81731a7 · 2026-10-08T02:32:46Z |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | EN CURSO | s-20261007T214109-30fcacbb · 2026-10-08T01:41:09Z |
 | 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | PENDIENTE |  |
-| 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | EN CURSO | s-20261007T214112-0da18c09 · 2026-10-08T01:41:12Z |
+| 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 21:48Z · commit eea70ea |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | EN CURSO | s-20261007T214144-b7a0e172 · 2026-10-08T00:41:44Z |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | PENDIENTE |  |
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | PENDIENTE |  |
@@ -164,6 +164,8 @@ ya dada) queda libre.
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
+
+LISTA · tarea 27 · 2026-10-07 21:48 · s-20261007T214112-0da18c09 · eea70ea · 6 ficheros (practicas/distributiva/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-distributiva.test.js) · ~7 min (estimada: 2 h)
 
 LISTA · tarea 09 · 2026-10-07 21:44 · s-20261007T212116-b15e0069 · f5748e7 · 6 ficheros (practicas/venn/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-venn.test.js) · 24 min (estimada: 2 h 30 min)
 
