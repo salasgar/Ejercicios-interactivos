@@ -22,6 +22,15 @@
       <h2>1. Alumnos y sus códigos</h2>
       <p class="pequeno">Un alumno por línea. El código depende de la <strong>posición en la lista</strong>: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. Cada alumno usa <strong>el mismo código en todas las prácticas</strong> (es el que ya tenía en «Divisor, múltiplo, divisible»).</p>
       <textarea id="lista" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
+      <div class="selector">
+        <label for="idioma-enlaces">Idioma de los enlaces:</label>
+        <select id="idioma-enlaces">
+          <option value="alterno">Alterno (por defecto)</option>
+          <option value="es">Español</option>
+          <option value="en">Inglés</option>
+        </select>
+      </div>
+      <p class="pequeno">Para fijarlo solo a un alumno (dislexia, recién llegado…), copia su enlace y cambia a mano el final por <code>&amp;idioma=es</code> o <code>&amp;idioma=en</code>.</p>
       <div class="botonera">
         <button type="button" class="secundario" id="copiar-codigos">Copiar tabla (para pegarla en una hoja de cálculo)</button>
         <button type="button" class="secundario" id="csv-codigos">Descargar CSV</button>

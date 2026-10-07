@@ -36,16 +36,24 @@ function filasCodigos() {
   return nombres().map((nombre, i) => ({ n: i + 1, nombre, codigo: codigoAlumno(i) })).filter(f => f.nombre);
 }
 
+/** El `&idioma=` que se añade a los enlaces, según el selector («alterno» no añade nada). */
+function sufijoIdioma() {
+  const idioma = $('idioma-enlaces')?.value;
+  return idioma && idioma !== 'alterno' ? `&idioma=${idioma}` : '';
+}
+
+const enlaceDe = codigo => `${URL_PORTADA}?c=${codigo}${sufijoIdioma()}`;
+
 function pintarCodigos() {
   const filas = filasCodigos();
   $('tabla-codigos').innerHTML = filas.length ? `
     <table>
       <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th><th>Enlace directo</th></tr></thead>
-      <tbody>${filas.map(f => `<tr><td class="num">${f.n}</td><td>${esc(f.nombre)}</td><td><code>${f.codigo}</code></td><td>${URL_PORTADA}?c=${f.codigo}</td></tr>`).join('')}</tbody>
+      <tbody>${filas.map(f => `<tr><td class="num">${f.n}</td><td>${esc(f.nombre)}</td><td><code>${f.codigo}</code></td><td>${enlaceDe(f.codigo)}</td></tr>`).join('')}</tbody>
     </table>` : '';
 }
 
-const tablaCodigos = () => [['N.º', 'Alumno', 'Código', 'Enlace'], ...filasCodigos().map(f => [f.n, f.nombre, f.codigo, `${URL_PORTADA}?c=${f.codigo}`])];
+const tablaCodigos = () => [['N.º', 'Alumno', 'Código', 'Enlace'], ...filasCodigos().map(f => [f.n, f.nombre, f.codigo, enlaceDe(f.codigo)])];
 
 // --- 2. Resultados -------------------------------------------------------------
 
@@ -68,9 +76,12 @@ function pintarSelector(practicas) {
   $('vista').value = [...$('vista').options].some(o => o.value === elegida) ? elegida : RESUMEN;
 }
 
+/** Cuánto de un ejercicio se hizo en inglés (solo lo sabe la nube, no el código de resultado). */
+const enInglés = e => (e.en_aciertos || e.en_fallos ? ` <span class="pequeno">EN: ${e.en_aciertos ?? 0}/${e.en_fallos ?? 0}</span>` : '');
+
 function celda(e) {
-  if (e.terminado) return `<td class="num celda--ok">✓ ${e.fallos}${e.tope ? '+' : ''}</td>`;
-  if (e.pendientes !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">quedan ${e.pendientes}</td>`;
+  if (e.terminado) return `<td class="num celda--ok">✓ ${e.fallos}${e.tope ? '+' : ''}${enInglés(e)}</td>`;
+  if (e.pendientes !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">quedan ${e.pendientes}${enInglés(e)}</td>`;
   return '<td class="num celda--no">—</td>';
 }
 
@@ -194,6 +205,7 @@ $('lista').addEventListener('input', () => {
   pintarCodigos();
   pintarResultados();
 });
+$('idioma-enlaces').addEventListener('change', pintarCodigos);
 $('pegados').addEventListener('input', pintarResultados);
 $('vista').addEventListener('change', pintarResultados);
 $('copiar-codigos').addEventListener('click', async ev => {

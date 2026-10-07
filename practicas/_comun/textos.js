@@ -136,6 +136,10 @@ export const T = {
   },
 };
 
+// El botón que, tras responder, traduce el ítem al otro idioma: su texto va
+// siempre en el idioma AL QUE se cambia (no en el del ítem actual).
+export const TRADUCCION = { es: 'Ver en español', en: 'See in English' };
+
 /** Une frases con «y» (o con «o»): «a, b y c». */
 export function unir(frases, idioma, conjuncion = 'y') {
   if (frases.length < 2) return frases.join('');

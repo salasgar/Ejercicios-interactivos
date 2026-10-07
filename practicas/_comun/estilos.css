@@ -19,8 +19,11 @@
 
 .cabecera__titulo { white-space: normal; }
 .idiomas { gap: .3rem; flex-shrink: 0; }
-.idiomas button { min-height: 36px; min-width: 44px; }
-.idiomas button[aria-pressed="true"] { background: #fff; color: var(--primario-oscuro); }
+/* Ya no hay botones de idioma (lo decide la base): solo la etiqueta de un ítem alterno. */
+.etiqueta-idioma {
+  background: rgba(255, 255, 255, .18); color: #fff; font-size: .8rem; font-weight: 700;
+  padding: .3rem .6rem; border-radius: 8px; letter-spacing: .04em;
+}
 
 .centrado { text-align: center; margin-top: .6rem; }
 .entrada .tarjeta { margin-bottom: 1rem; }
@@ -169,6 +172,8 @@ sup { font-size: .7em; line-height: 0; }
 .cuenta { font-weight: 700; white-space: nowrap; }
 .penalizacion { margin: .5rem 0 0; font-weight: 700; }
 .animo { margin: .4rem 0 0; color: #14532d; font-weight: 600; }
+.traducir { display: block; margin-top: .6rem; }
+.traduccion { margin-top: .6rem; padding: .7rem .9rem; border-radius: 10px; border: 1px dashed var(--borde); background: #fff; }
 
 /* Fin y código de resultado */
 .fin { text-align: center; }

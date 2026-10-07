@@ -12,11 +12,14 @@ import {
 } from '../practicas/_comun/codigos.js';
 import { ejercicioNuevo, anotar, diaDe, fechaDeDia, INICIAL, PENALIZACION, MAXIMO } from '../practicas/_comun/contador.js';
 import {
+  validarPractica, parametrosDe, claveProgreso, documentoNube, claveIdiomaFijo,
+  recortarProgreso, modoIdioma, crearSecuenciaIdiomas,
+} from '../practicas/_comun/base.js';
+import {
   PRIMOS, esPrimo, factorizar, valorDe, divisores as divisoresDe, parejasDivisores, raizEntera, mcd, mcm, sumaCifras, cifras,
   criterio, CRITERIOS, multiplicarFact, dividirFact, esMultiploFact, mcdFact, mcmFact, htmlFact, textoFact,
 } from '../practicas/_comun/aritmetica.js';
-import { T, unir, esc } from '../practicas/_comun/textos.js';
-import { validarPractica, parametrosDe, claveProgreso, documentoNube } from '../practicas/_comun/base.js';
+import { T, TRADUCCION, unir, esc } from '../practicas/_comun/textos.js';
 import { juntarResultados, juntarResumen, leerDocumentos } from '../practicas/resultados.js';
 import {
   generarPrimo, clasePrimo, primosAProbar, generarFactorizacion, esFactorizacionDe, factDe, BASES, EXPONENTE_MAXIMO, NUMEROS,
@@ -188,17 +191,17 @@ test('extraerCodigosResultado: encuentra los de 12 y los de 16 en un texto cualq
 
 // --- Contador ---------------------------------------------------------------------
 
-test('contador: por defecto 20 aciertos, +5 por fallo y tope de 40', () => {
-  assert.deepEqual([INICIAL, PENALIZACION, MAXIMO], [20, 5, 40]);
+test('contador: por defecto 10 aciertos, +2 por fallo y tope de 20', () => {
+  assert.deepEqual([INICIAL, PENALIZACION, MAXIMO], [10, 2, 20]);
   assert.deepEqual(Object.keys(ejercicioNuevo()), Object.keys(divisores.ejercicioNuevo()), 'la misma forma que en divisores/ (Firestore)');
   let ej = ejercicioNuevo();
-  for (let i = 0; i < 19; i++) ej = anotar(ej, true, 7);
+  for (let i = 0; i < 9; i++) ej = anotar(ej, true, 7);
   assert.equal(ej.pendientes, 1);
   assert.equal(ej.terminado, false);
   ej = anotar(ej, false, 7);
-  assert.equal(ej.pendientes, 6);
-  for (let i = 0; i < 6; i++) ej = anotar(ej, true, 9);
-  assert.deepEqual(ej, { pendientes: 0, aciertos: 25, fallos: 1, rapidos: 0, terminado: true, dia: 9, repeticiones: 0 });
+  assert.equal(ej.pendientes, 3);
+  for (let i = 0; i < 3; i++) ej = anotar(ej, true, 9);
+  assert.deepEqual(ej, { pendientes: 0, aciertos: 12, fallos: 1, rapidos: 0, terminado: true, dia: 9, repeticiones: 0 });
   assert.equal(anotar(ej, false, 10), ej, 'una vez terminado ya no cambia');
 });
 
@@ -223,10 +226,10 @@ test('contador: inicial, penalización y tope a medida (la criba usa 5 y 1)', ()
   assert.ok(ej.terminado);
   assert.equal(ej.dia, 2);
 
-  let tope = ejercicioNuevo(20);
+  let tope = ejercicioNuevo();
   const vistos = [];
   for (let i = 0; i < 6; i++) { tope = anotar(tope, false, 1); vistos.push(tope.pendientes); }
-  assert.deepEqual(vistos, [25, 30, 35, 40, 40, 40], 'los pendientes nunca pasan del tope');
+  assert.deepEqual(vistos, [12, 14, 16, 18, 20, 20], 'los pendientes nunca pasan del tope');
   assert.equal(tope.fallos, 6, 'los fallos se siguen contando');
   assert.equal(anotar(ejercicioNuevo(10), false, 1, { penalizacion: 5, maximo: 12 }).pendientes, 12);
   assert.equal(anotar({ ...ejercicioNuevo(10), pendientes: 14 }, false, 1, { maximo: 12 }).pendientes, 14, 'el tope no baja lo que ya había');
@@ -422,13 +425,75 @@ test('base: una práctica bien declarada pasa, y se dice qué le falta a la que 
 });
 
 test('base: parámetros del contador y nombres de lo guardado', () => {
-  assert.deepEqual(parametrosDe({}), { inicial: 20, penalizacion: 5, maximo: 40 });
-  assert.deepEqual(parametrosDe({ inicial: 5, penalizacion: 1 }), { inicial: 5, penalizacion: 1, maximo: 40 });
-  assert.deepEqual(parametrosDe({ penalizacion: 0, maximo: 25 }), { inicial: 20, penalizacion: 0, maximo: 25 });
+  assert.deepEqual(parametrosDe({}), { inicial: 10, penalizacion: 2, maximo: 20 });
+  assert.deepEqual(parametrosDe({ inicial: 5, penalizacion: 1 }), { inicial: 5, penalizacion: 1, maximo: 20 });
+  assert.deepEqual(parametrosDe({ penalizacion: 0, maximo: 25 }), { inicial: 10, penalizacion: 0, maximo: 25 });
   assert.equal(claveProgreso('semaforo', 'ABCD'), 'practicas.v1.semaforo.ABCD');
+  assert.equal(claveIdiomaFijo('ABCD'), 'practicas.idioma_fijo.ABCD');
   // El id del documento tiene que cumplir la regla de Firestore.
   const regla = /^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$/;
   for (const p of CATALOGO) for (const i of [0, 77, 1023]) assert.match(documentoNube(p.slug, codigoAlumno(i)), regla);
+});
+
+test('base: recorta un progreso guardado con parámetros antiguos, sin bloquear al alumno', () => {
+  // De una versión con inicial 20 / máximo 40: 23 pendientes no pasa del máximo nuevo (20) por sí solo…
+  assert.deepEqual(recortarProgreso({ pendientes: 17, aciertos: 0, fallos: 0, terminado: false }, { inicial: 10, maximo: 20 }),
+    { pendientes: 17, aciertos: 0, fallos: 0, terminado: false });
+  // … pero si ya llevaba aciertos, la suma puede superar el doble del inicial nuevo, y se recorta.
+  assert.deepEqual(recortarProgreso({ pendientes: 17, aciertos: 8, fallos: 3, terminado: false }, { inicial: 10, maximo: 20 }),
+    { pendientes: 12, aciertos: 8, fallos: 3, terminado: false });
+  // Por encima del máximo nuevo, se recorta a él.
+  assert.deepEqual(recortarProgreso({ pendientes: 35, aciertos: 0, fallos: 5, terminado: false }, { inicial: 10, maximo: 20 }),
+    { pendientes: 20, aciertos: 0, fallos: 5, terminado: false });
+  // Un ejercicio ya terminado no se toca, aunque sus números ya no encajen con los parámetros nuevos.
+  const terminado = { pendientes: 0, aciertos: 23, fallos: 4, terminado: true };
+  assert.equal(recortarProgreso(terminado, { inicial: 10, maximo: 20 }), terminado);
+  // Sin nada que recortar, se devuelve el mismo objeto (no una copia).
+  const sinCambios = { pendientes: 5, aciertos: 3, fallos: 1, terminado: false };
+  assert.equal(recortarProgreso(sinCambios, { inicial: 10, maximo: 20 }), sinCambios);
+});
+
+test('base: el modo de idioma sale del parámetro de la URL o, si no, de lo guardado', () => {
+  assert.equal(modoIdioma('?idioma=es', null), 'es');
+  assert.equal(modoIdioma('?c=ABCD&idioma=en', 'es'), 'en', 'el parámetro manda sobre lo guardado');
+  assert.equal(modoIdioma('?idioma=alterno', 'en'), null, 'alterno quita lo fijado');
+  assert.equal(modoIdioma('?c=ABCD', 'en'), 'en', 'sin parámetro, lo guardado');
+  assert.equal(modoIdioma('?c=ABCD', null), null, 'sin parámetro ni nada guardado: alterno');
+  assert.equal(modoIdioma('?idioma=fr', 'es'), 'es', 'un valor que no es es/en/alterno no cambia nada');
+});
+
+test('base: la secuencia de idiomas alterna de forma equilibrada', () => {
+  // Por bloques de 4 (dos «es» y dos «en»): en cada bloque completo, exactos
+  // 2 y 2; en 10 ítems (dos bloques y medio), cerca de 5 y 5 pero no siempre
+  // exacto (el bloque a medias puede caer del mismo lado). Nunca más de 4
+  // iguales seguidos (como mucho los dos últimos de un bloque y los dos
+  // primeros del siguiente).
+  for (let semilla = 0; semilla < 1000; semilla++) {
+    const secuencia = crearSecuenciaIdiomas(crearRng(semilla));
+    const ocho = Array.from({ length: 8 }, () => secuencia.siguiente());
+    assert.equal(ocho.filter(i => i === 'es').length, 4, `semilla ${semilla}: dos bloques completos`);
+    assert.equal(ocho.filter(i => i === 'en').length, 4, `semilla ${semilla}`);
+  }
+  let es = 0, en = 0, maxRacha = 0;
+  for (let semilla = 0; semilla < 1000; semilla++) {
+    const secuencia = crearSecuenciaIdiomas(crearRng(semilla));
+    const diez = Array.from({ length: 10 }, () => secuencia.siguiente());
+    diez.forEach(i => (i === 'es' ? es++ : en++));
+    let racha = 1;
+    for (let i = 1; i < diez.length; i++) {
+      racha = diez[i] === diez[i - 1] ? racha + 1 : 1;
+      assert.ok(racha <= 4, `semilla ${semilla}: más de 4 seguidos del mismo idioma`);
+      maxRacha = Math.max(maxRacha, racha);
+    }
+  }
+  assert.ok(es > 4500 && es < 5500, `desequilibrado: ${es} es de ${es + en}`);
+  assert.equal(maxRacha, 4, 'el caso de 4 seguidos (fin de un bloque y principio del siguiente) tiene que darse alguna vez en 1000 intentos');
+});
+
+test('textos: el botón de traducción nombra el idioma AL QUE se cambia', () => {
+  assert.deepEqual(Object.keys(TRADUCCION).sort(), ['en', 'es']);
+  assert.match(TRADUCCION.es, /español/i);
+  assert.match(TRADUCCION.en, /english/i);
 });
 
 // --- Panel del profesor -------------------------------------------------------------

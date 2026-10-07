@@ -21,9 +21,9 @@
 //               «Ejercicio 2»… seguidos de su `nombre`. Cada uno:
 //
 //     nombre, detalle     { es, en }, una línea cada uno (salen en el menú).
-//     inicial             aciertos necesarios (por defecto 20).
-//     penalizacion        ejercicios que añade un fallo (por defecto 5).
-//     maximo              tope de pendientes (por defecto 40; nunca menor que `inicial`).
+//     inicial             aciertos necesarios (por defecto 10).
+//     penalizacion        ejercicios que añade un fallo (por defecto 2).
+//     maximo              tope de pendientes (por defecto 20; nunca menor que `inicial`).
 //     introduccion        opcional, { es: html, en: html }: una tarjeta con botón
 //                         «Empezar» que sale cada vez que se abre el ejercicio.
 //     generar(rng, sesion)  devuelve el ítem: DATOS puros (ver logica.js).
@@ -41,9 +41,13 @@
 //
 // ─── api (lo que recibe `montar`) ──────────────────────────────────────────────
 //
-//   api.idioma        'es' | 'en'
-//   api.t             textos comunes del idioma: api.t.comprobar, api.t.siguiente,
-//                     api.t.si, api.t.no, api.t.fijate… (ver ../_comun/textos.js)
+//   api.idioma        'es' | 'en': el idioma de ESTE ítem, no un ajuste global.
+//                     Por defecto la base lo sortea por ítem (modo «alterno»,
+//                     equilibrado); el enlace del profesor puede fijarlo para
+//                     un alumno. El alumno nunca lo elige: no hay selector.
+//   api.t             textos comunes del idioma del ítem: api.t.comprobar,
+//                     api.t.siguiente, api.t.si, api.t.no, api.t.fijate…
+//                     (ver ../_comun/textos.js)
 //   api.tt(obj)       atajo para los textos propios: api.tt({ es, en })
 //   api.esc(texto)    escapa HTML (para textos que no sean tuyos)
 //   api.respondido()  true cuando ya se ha respondido este ítem
@@ -60,6 +64,12 @@
 // La base no toca nada de `contenedor` después de montar: marcar en verde o en
 // rojo lo elegido y bloquear los botones es cosa de `montar`, ANTES de llamar
 // a `api.responder`.
+//
+// Tras responder, la base añade su propio botón «Ver en español» / «See in
+// English», que vuelve a llamar a `montar` con el MISMO ítem en el otro
+// idioma dentro de una caja de solo lectura (su `api.responder` no hace nada
+// y `api.respondido()` ya da `true`): no hay que hacer nada especial para
+// esto, solo que `montar` siga funcionando con un ítem ya respondido.
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
