@@ -1,0 +1,35 @@
+/* Baldosas y cuerdas: el dibujo del suelo (SVG con <pattern>, nunca una
+   celda por <div>), las barras de las cuerdas y la entrada numérica (como
+   ../reloj/estilos.css). Lo demás ya está en ../_comun/estilos.css
+   (.botones-numeros, .comprobar, .instruccion, .frase). */
+
+.baldosas-dibujo {
+  display: block; width: 100%; max-width: 320px; max-height: 320px;
+  margin: 0 auto 1rem; aspect-ratio: auto;
+}
+
+.baldosas-cuerda {
+  position: relative; height: 2.6rem; min-width: 12%; margin-bottom: .6rem;
+  background-color: var(--primario-claro); border: 2px solid var(--primario);
+  border-radius: 6px; display: flex; align-items: center; justify-content: flex-end;
+  padding-right: .5rem; box-sizing: border-box;
+}
+.baldosas-cuerda__etiqueta {
+  background: #fff; padding: 0 .35rem; border-radius: 4px; font-weight: 700;
+  font-variant-numeric: tabular-nums; font-size: .9rem;
+}
+
+.baldosas-entero {
+  width: 100%; text-align: center; font-size: 1.4rem !important; font-weight: 700;
+  font-variant-numeric: tabular-nums; padding: .6rem; margin-bottom: 1rem;
+  border: 2px solid var(--borde); border-radius: 10px; box-sizing: border-box;
+}
+.baldosas-entero:focus { border-color: var(--primario); outline: none; }
+
+#paso-b { margin-top: .6rem; }
+
+/* `.comprobar { display: block }` (../_comun/estilos.css) pisa al atributo
+   `[hidden]` de los botones «Comprobar»/«Esta es la más grande» con la misma
+   especificidad: sin esto, el botón sigue viéndose tras responder. */
+.comprobar[hidden] { display: none; }
+
