@@ -218,8 +218,8 @@ Cuando haya varias tareas libres de la misma banda, se cogen por este orden, y l
 de arranque que dé cada sesión al cerrar nombran primero las de arriba:
 
 0. **Antes que nada, la 35** (base: 10 aciertos e idioma alterno): es corta y lo que las
-   prácticas ya hechas heredan al instante. Después la 17, para que `divisores/` publicado
-   tenga también 10 aciertos.
+   prácticas ya hechas heredan al instante. `divisores/` publicado tendrá 10 aciertos cuando la 17 (ya en curso) y la 35 hayan
+   cerrado las dos.
 1. **Semana 1 de la unidad 2:** 02 semaforo, 04 recta, 03 rectangulos (cadena sugerida
    02+04), y después 11 clasificador (sus enunciados limpios son la destreza 1A-01), 12
    reloj (coincidencias con listas, 1A-02), 10 imposibles (nombrar la respuesta, 1A-04), 15
@@ -233,4 +233,5 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
   10 aciertos por ejercicio (no 20), +2 por fallo, tope 20; y el idioma de cada ítem al azar,
   equilibrado, sin selector para el alumno, con traducción del enunciado solo después de
   responder y un modo fijo por URL (`?idioma=es|en`) para alumnos concretos. Se hace en la
-  base y lo heredan todas las prácticas. La 34 y la 17 pasan a depender de la 35.
+  base y lo heredan todas las prácticas. La 34 cerró antes de que existiera la 35 y la 17 ya estaba en curso cuando se dio de
+  alta, así que ninguna depende de ella: la 17 hereda el cambio al no declarar parámetros.
