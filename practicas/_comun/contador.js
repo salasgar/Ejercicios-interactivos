@@ -2,9 +2,12 @@
 // `divisores/logica.js`, pero con el número inicial, la penalización y el tope
 // como parámetros, porque no todas las prácticas usan los mismos.
 
-export const INICIAL = 20;
-export const PENALIZACION = 5;
-export const MAXIMO = 40;   // tope de pendientes, para que nadie se hunda
+// 10 aciertos, no 20 (decisión de Juan Luis del 2026-10-07 tras probar en el
+// móvil): el tope se reduce en la misma proporción. La penalización pasa a
+// ser la misma que `divisores/` tiene publicada hoy (2, no 5).
+export const INICIAL = 10;
+export const PENALIZACION = 2;
+export const MAXIMO = 20;   // tope de pendientes, para que nadie se hunda
 
 /**
  * El campo `rapidos` no lo usa la base (siempre 0): está para que los
