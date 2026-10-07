@@ -1,0 +1,23 @@
+/* Práctica «¿m.c.d. o m.c.m.?»: el enunciado y los botones GCD/LCM. */
+
+.enunciado {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.clasificador-botones .eleccion[data-i="0"]:enabled {
+  border-color: var(--primario);
+  background: var(--primario-claro);
+  color: var(--primario);
+}
+
+.clasificador-botones .eleccion[data-i="1"]:enabled {
+  border-color: #c2410c;
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.clasificador-justificar {
+  margin-top: .3rem;
+}
