@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-07
 Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h 30 min (tiempo de sesión, no de persona; real: 24 min el 2026-10-07) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/09-venn/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/venn/*` (nuevo), `tests/practicas-venn.test.js` (nuevo)
 
@@ -151,6 +151,25 @@ Propios de esta tarea:
   ejercicio 1; en los 2-4 sí.
 - Las fichas sueltas que quedan sin colocar deben contar como «sin repartir» y bloquear
   «Comprobar», no como colocadas en su lado.
+- (Aprendido al hacerla, 2026-10-07.) `.comprobar { display: block }` de la base anula el
+  atributo `hidden`: `boton.hidden = true` no esconde el botón. Hace falta
+  `.comprobar[hidden] { display: none; }` (aquí, en el CSS propio; propuesto para la base).
+- La base vuelve a llamar a `montar` con el mismo ítem para la traducción, con
+  `api.respondido()` ya en true y **en otro contenedor de la misma página**: nada de `id`
+  (se duplicarían) ni de `document.querySelector`; todo con `contenedor.querySelector` y
+  atributos `data-`. En esa llamada se pinta el ítem resuelto y bloqueado.
+- Seleccionar una ficha no puede rehacer el DOM: si el `pointerup` reconstruye las fichas, el
+  `click` que viene después cae en la zona de debajo y la «coloca» donde ya estaba. Tocar solo
+  cambia clases; rehacer, solo al colocar. Y el clic de una zona ignora los que vienen de una ficha.
+- Al soltar un arrastre, la ficha está debajo del dedo y `elementFromPoint` la devuelve a
+  ella: se pone `visibility: hidden` un instante para ver la zona de detrás.
+- Con círculos de verdad (`border-radius: 50%`), a 375 px las fichas de «solo a» y «solo b» se
+  salen por la curva: son óvalos de esquinas muy redondeadas (`3rem`).
+- Elegir parejas al azar entre todas las válidas da casi siempre números grandes (hay muchas
+  más parejas con números de 200 a 400): seis de cada diez se sacan de las de hasta 150.
+- Hay números de 12 a 400 con exponentes altos (192 = 2⁶ · 3, 384 = 2⁷ · 3): acotado a 4.
+- `th` hereda de `css/estilos.css` un borde inferior y el color gris: en una tabla propia hay
+  que anularlos, y una clase de color puesta en el `th` pierde contra `.tabla th`.
 
 ## Prohibido (propio de esta tarea)
 
