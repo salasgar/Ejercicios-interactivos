@@ -155,16 +155,17 @@ export function claveDe(item) {
 
 export const INICIALES = 20;
 export const PENALIZACION = 5;
+export const MAXIMO = 40;   // tope de pendientes, para que nadie se hunda
 
 export function ejercicioNuevo() {
   return { pendientes: INICIALES, aciertos: 0, fallos: 0, terminado: false, dia: 0, repeticiones: 0 };
 }
 
-/** Anota una respuesta: un acierto quita una pendiente; un fallo añade cinco. */
+/** Anota una respuesta: un acierto quita una pendiente; un fallo añade cinco (hasta el máximo). */
 export function anotar(ej, acierto, dia = 0) {
   if (ej.terminado) return ej;
   const sig = { ...ej };
-  if (acierto) { sig.aciertos++; sig.pendientes--; } else { sig.fallos++; sig.pendientes += PENALIZACION; }
+  if (acierto) { sig.aciertos++; sig.pendientes--; } else { sig.fallos++; sig.pendientes = Math.max(sig.pendientes, Math.min(MAXIMO, sig.pendientes + PENALIZACION)); }
   if (sig.pendientes <= 0) { sig.pendientes = 0; sig.terminado = true; sig.dia = dia; }
   return sig;
 }

@@ -75,7 +75,7 @@ profesor en `divisores/profesor.html`). Español e inglés.
 - **Ejercicios**: 0 («de» o «entre»), 1 (con multiplicaciones), 2 (con
   divisiones), 3 (mezcla) y 4 (arrastrar dos de los tres números a
   «__ es múltiplo de __»). En cada uno hay que acertar 20 veces y cada fallo
-  añade 5. Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan
+  añade 5, hasta un máximo de 40 pendientes. Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan
   las dos (y en «18 es … 18», las tres).
 - **Quién lo ha hecho**: cada alumno entra con un código de 4 caracteres (el
   panel del profesor los reparte a partir de la lista, que no sale de su
