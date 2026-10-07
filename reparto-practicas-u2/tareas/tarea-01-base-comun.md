@@ -431,3 +431,34 @@ Si paras sin terminar: `$R/hechos/fallos/01--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+
+## Addenda de la coordinadora (2026-10-07, 19:55 UTC): el contrato tal como quedó
+
+La tarea 01 está LISTA (commit 914d5b0, terminada `hechos/terminadas/01--s-20261007T192646-341f1b98.md`).
+**Manda `practicas/plantilla/practica.js`**; lo que difiere de esta ficha:
+
+1. Existe `practicas/_comun/piezas.js` (opcional): `elecciones(contenedor, { opciones, alElegir, clase })`
+   con `marcar(correctas, elegida)`, y `pasos(contenedor, { valor, min, max, nombre, pinta, alCambiar })`
+   con `valor()` y `bloquear()`. La plantilla usa las dos: úsalas para botones de opciones y
+   steppers de exponentes en vez de reescribirlos.
+2. En cada fallo **la base añade ella misma la frase de ánimo** (como `divisores/`): el `html`
+   de `responder` no la lleva.
+3. La portada usa el campo `disponible` del catálogo (hoy `true` solo en `divisores` y
+   `plantilla`): cada tarea de aplicación pide en su terminada que la 18 lo ponga a `true`.
+4. `validarPractica`: si el slug no está en el catálogo, el número de ejercicios no coincide o
+   falta `nombre`/`detalle` `{ es, en }`, `generar` o `montar`, la base lo dice en pantalla y no
+   arranca. Si `montar` lanza una excepción, aviso y botón Siguiente sin penalizar.
+5. `aritmetica.js` exporta además `CRITERIOS = [2, 3, 5, 9, 10, 11]`; `mcdFact` y `mcmFact`
+   admiten más de dos factorizaciones; `criterio(n, 11)` resta la suma menor de la mayor.
+6. `textos.js`: `menu_regla(inicial, penalizacion, maximo)`, `unir(frases, idioma, 'y' | 'o')`,
+   y en `api.t`: `si`, `no`, `verdadero`, `falso`, `borrar`, `comprobar`.
+7. `base.js` exporta también `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`,
+   `leer`/`escribir`/`borrar` (localStorage con try) y `URL_PORTADA`.
+8. Estilos añadidos: `.grupo-pasos`, `.comprobar`, `.rejilla` con `--columnas` y estados
+   `__celda--marcada/tachada/fija/bien/mal` (lista en la cabecera de `_comun/estilos.css`). Una
+   rejilla de 10 columnas a 375 px da celdas de unos 29 px: es lo que hay para la criba.
+9. `resultados.js` exporta `juntarResultados`, `juntarResumen` y `leerDocumentos`.
+10. Para la tarea 17: `_comun/codigos.js` importa `leerCodigoResultado` de `divisores/logica.js`
+    (no quitarlo de allí); portada y panel usan la clave `divisores.v1.<código>` y la lista
+    `divisores.profesor.lista`.
+11. Pendiente del usuario: publicar `firestore.rules`.
