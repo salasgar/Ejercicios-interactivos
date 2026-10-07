@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 20:02 UTC · por la sesión s-20261007T184632-fa5a1491 (alta de las tareas 20-34 y orden de prioridad)
+Regenerado: 2026-10-07 19:55 UTC · por la sesión s-20261007T184632-fa5a1491 (coordinadora: 01 LISTA, alta de 20-34, prioridad)
 
 ## Antes de hacer nada
 
@@ -110,7 +110,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 
 | # | Tarea | Fichero | Precondición | Duración esperada | Banda | Encadenable con | Salida (dueño único) | Estado | Reclamo vivo (sid · caduca) |
 |---|---|---|---|---|---|---|---|---|---|
-| 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | LISTA | |
+| 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | LISTA | terminada 19:45Z · commit 914d5b0 |
 | 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | PENDIENTE | |
 | 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | PENDIENTE | |
 | 04 | Múltiplos y divisores en la recta (0 y 1, V/F) | tareas/tarea-04-recta.md | 01 LISTA | 1 h 30 min | MEDIO | 02 | practicas/recta/; salidas/04-recta/ | PENDIENTE | |
@@ -143,7 +143,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | BLOQUEADA | |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | BLOQUEADA | |
 | 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | BLOQUEADA | |
-| 34 | Filas 17-30 del catálogo (repaso U1) | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 20 min | BAJO | — | practicas/_comun/catalogo.js; salidas/34-catalogo-u1/ | BLOQUEADA | |
+| 34 | Filas 17-30 del catálogo (repaso U1) | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 20 min | BAJO | — | practicas/_comun/catalogo.js; salidas/34-catalogo-u1/ | PENDIENTE | |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (solo la 34).
