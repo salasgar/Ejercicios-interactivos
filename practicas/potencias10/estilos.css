@@ -1,0 +1,42 @@
+/* Potencias de 10 y números grandes: lo que no está ya en ../_comun/estilos.css. */
+
+/* Ejercicio 1: el deslizador */
+.deslizador { display: grid; gap: .55rem; justify-items: center; margin-bottom: 1rem; }
+.deslizador__numero { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.deslizador__ceros { color: var(--texto-suave); font-size: .95rem; }
+.deslizador__nombres { font-size: 1.05rem; line-height: 1.5; min-height: 3.2em; }
+.deslizador__nombres .lengua {
+  display: inline-block; min-width: 2em; margin-right: .3rem; text-align: center;
+  font-size: .75rem; font-weight: 700; border-radius: 6px; padding: .05rem .25rem;
+  background: var(--primario-claro); color: var(--primario-oscuro);
+}
+.deslizador__nombres .o { color: var(--texto-suave); }
+.deslizador input[type="range"] { width: 100%; min-height: 44px; accent-color: var(--primario); }
+.deslizador__marcas { display: flex; justify-content: space-between; width: 100%; padding: 0 .35rem; color: var(--texto-suave); font-size: .8rem; }
+
+/* Ejercicio 2: emparejar nombre y número */
+.parejas { display: grid; gap: .8rem; margin-bottom: 1rem; }
+.pareja { border: 2px solid var(--borde); border-radius: 12px; padding: .6rem; background: #fff; }
+.pareja__nombre { font-weight: 700; margin-bottom: .5rem; overflow-wrap: anywhere; }
+.pareja__numeros { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+.pareja__boton {
+  min-height: 48px; background: #fff; color: var(--texto); border: 2px solid var(--borde);
+  font-size: 1.1rem; font-variant-numeric: tabular-nums;
+}
+.pareja__boton[aria-pressed="true"] { background: var(--primario); border-color: var(--primario); color: #fff; }
+.pareja__boton:disabled { opacity: .7; }
+.pareja__boton--correcta, .pareja__boton--correcta[aria-pressed="true"] { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); opacity: 1; }
+.pareja__boton--mal, .pareja__boton--mal[aria-pressed="true"] { background: var(--error-claro); border-color: var(--error); color: var(--error); opacity: 1; }
+
+/* Ejercicio 2: teclado numérico */
+.operacion--teclado { min-width: 60%; min-height: 2.6rem; margin-bottom: 1rem; }
+.operacion--vacia { color: var(--texto-suave); }
+.operacion--bien { background: var(--correcto-claro); color: var(--correcto); }
+.operacion--mal { background: var(--error-claro); color: var(--error); }
+.teclado { max-width: 22rem; margin-left: auto; margin-right: auto; }
+.teclado button { min-width: 56px; min-height: 52px; }
+.teclado__borrar { min-width: 56px; }
+
+/* Ejercicio 3: opciones de cuatro con palabras */
+.elecciones--palabras { grid-template-columns: 1fr 1fr; }
+.elecciones--palabras .eleccion { font-size: 1.05rem; overflow-wrap: anywhere; }
