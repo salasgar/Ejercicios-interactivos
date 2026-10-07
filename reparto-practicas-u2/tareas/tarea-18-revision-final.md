@@ -1,7 +1,7 @@
 # Tarea 18 · Revisión final: regla de oro a mano en las dieciséis prácticas, portada, README y lista de comprobación en el móvil
 
 Actualizado: 2026-10-07
-Precondición: 02 a 17 LISTAS (si la 17 no está LISTA y Juan Luis lo decide, puede cerrarse sin ella y se anota); firma de la tarea 18 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
+Precondición: 02 a 17 y 19 LISTAS (si la 17 no está LISTA y Juan Luis lo decide, puede cerrarse sin ella y se anota); firma de la tarea 18 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/18-revision-final/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo el campo `disponible`), `practicas/index.html`, `practicas/portada.js`, `README.md` (apartado de prácticas), `docs/practicas-unidad2.md` (nuevo)
@@ -65,7 +65,7 @@ alumnos.
 
 ## Siguiente paso
 
-`ls practicas/` y compáralo con el catálogo; lee las dieciséis `ENTREGA.md` de
+`ls practicas/` y compáralo con el catálogo; lee las diecisiete `ENTREGA.md` de
 `reparto-practicas-u2/salidas/` y las terminadas: ahí están las propuestas pendientes
 (cambios del contrato, `disponible: true`) que esta tarea resuelve.
 
@@ -87,9 +87,9 @@ alumnos.
    campo si la 01 optó por comprobar con `fetch`); orden de la portada por semana de la
    unidad (semana 1: semaforo, rectangulos, recta; semana 2: criba, arbol, divisiones,
    fabrica, factorizaciones; semana 3: venn, imposibles; semana 4: clasificador, reloj,
-   baldosas, errores; transversal: leelo, divisores), con una línea por práctica que diga
+   baldosas, errores; transversal: leelo, divisores; repaso de la unidad 1: parentesis), con una línea por práctica que diga
    qué se practica; enlace al panel del profesor discreto al pie.
-5. **README**: el apartado «Prácticas de la unidad 2» con la tabla de las dieciséis (slug,
+5. **README**: el apartado «Prácticas de la unidad 2» con la tabla de las diecisiete (slug,
    nombre, destrezas principales) y el enlace a `docs/practicas-unidad2.md`.
 6. **`docs/practicas-unidad2.md`** (nuevo): el contrato de la base tal como quedó (copiado
    de `plantilla/practica.js` y de la terminada de la 01), cómo se añade una práctica, cómo
@@ -123,7 +123,7 @@ Dos salidas separadas, las dos en `reparto-practicas-u2/salidas/18-revision-fina
 
 ## Cómo saber que ha terminado
 
-- Las dieciséis prácticas tienen veredicto; cada NO SE ENTREGA tiene su `reabiertas/`.
+- Las diecisiete prácticas tienen veredicto; cada NO SE ENTREGA tiene su `reabiertas/`.
 - `npm test` en verde; la portada muestra todas las prácticas existentes y ninguna rota.
 - `git push` hecho (firma de la 18 en `autorizaciones.md` comprobada antes).
 

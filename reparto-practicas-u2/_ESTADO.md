@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 19:09 UTC · por la sesión s-20261007T184632-fa5a1491 (montaje)
+Regenerado: 2026-10-07 19:35 UTC · por la sesión s-20261007T184632-fa5a1491 (alta de la tarea 19)
 
 ## Antes de hacer nada
 
@@ -110,7 +110,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 
 | # | Tarea | Fichero | Precondición | Duración esperada | Banda | Encadenable con | Salida (dueño único) | Estado | Reclamo vivo (sid · caduca) |
 |---|---|---|---|---|---|---|---|---|---|
-| 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | PENDIENTE | |
+| 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | EN CURSO | s-20261007T192646-341f1b98 · 2026-10-08T00:26:46Z |
 | 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | BLOQUEADA | |
 | 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | BLOQUEADA | |
 | 04 | Múltiplos y divisores en la recta (0 y 1, V/F) | tareas/tarea-04-recta.md | 01 LISTA | 1 h 30 min | MEDIO | 02 | practicas/recta/; salidas/04-recta/ | BLOQUEADA | |
@@ -127,15 +127,16 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | BLOQUEADA | |
 | 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | BLOQUEADA | |
 | 17 | Migrar divisores/ a la base común | tareas/tarea-17-migrar-divisores.md | 01 LISTA; la sesión que editaba divisores/ ha terminado; firma 17 | 1 h 30 min | MEDIO | — | divisores/; salidas/17-migrar-divisores/ | BLOQUEADA | |
-| 18 | Revisión final, portada, README y documentación | tareas/tarea-18-revision-final.md | 02-17 LISTAS; firma 18 | 1 h 30 min | ALTO | — | catalogo.js (disponible), portada, README, docs/practicas-unidad2.md; salidas/18-revision-final/ | BLOQUEADA | |
+| 18 | Revisión final, portada, README y documentación | tareas/tarea-18-revision-final.md | 02-17 y 19 LISTAS; firma 18 | 1 h 30 min | ALTO | — | catalogo.js (disponible), portada, README, docs/practicas-unidad2.md; salidas/18-revision-final/ | BLOQUEADA | |
+| 19 | Coloca los paréntesis (repaso de la unidad 1) | tareas/tarea-19-parentesis.md | 01 LISTA | 2 h | MEDIO | 16 | practicas/parentesis/; salidas/19-parentesis/ | BLOQUEADA | |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO aquí).
 
 Cuántas sesiones caben a la vez: hasta que la 01 esté LISTA, **una**. Después, las tareas
-02-16 tocan carpetas disjuntas y pueden ir todas en paralelo (en la práctica, 3 o 4
+02-16 y 19 tocan carpetas disjuntas y pueden ir todas en paralelo (en la práctica, 3 o 4
 sesiones). Cadenas sugeridas (misma banda, cortas, independientes): 02+04, 08+10,
-15+16, 07+08 (si la 08 no se encadenó con la 10).
+15+16, 16+19, 07+08 (si la 08 no se encadenó con la 10).
 
 ## Registro de finalizaciones
 
