@@ -12,11 +12,9 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 21:26 UTC · por la sesión s-20261007T205649-fabde281 (cierra la
-05; al regenerar, 10, 13 y 17 también estaban LISTA en `hechos/` y la tabla no lo
-reflejaba: corregido; nueva EN CURSO: 07). El tablón estaba reservado por el hook de
-sesiones al intentar editarlo con la herramienta de edición: escrito por shell, como
-permite `proyecto.md`.
+Regenerado: 2026-10-07 21:29 UTC · por la sesión s-20261007T205606-bd06959b (cierra la
+15; al regenerar, la 03/06/07/08/09/14/19 ya tenían reclamo vivo en `hechos/` que la
+versión anterior del tablón no reflejaba del todo: corregido).
 
 ## Antes de hacer nada
 
@@ -121,18 +119,18 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 05 | Criba de Eratóstenes y flashcards primo/compuesto | tareas/tarea-05-criba.md | 01 LISTA | 2 h | MEDIO | — | practicas/criba/; salidas/05-criba/ | LISTA | terminada 21:25Z · commit cf1cfa5 |
 | 06 | Árbol de factores libre | tareas/tarea-06-arbol.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/arbol/; salidas/06-arbol/ | EN CURSO | s-20261007T212058-817d27db · 2026-10-08T02:20:58Z |
 | 07 | Divisiones sucesivas guiadas | tareas/tarea-07-divisiones.md | 01 LISTA | 2 h | MEDIO | 08 | practicas/divisiones/; salidas/07-divisiones/ | EN CURSO | s-20261007T212221-4246d6aa · 2026-10-08T01:22:21Z |
-| 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | PENDIENTE | |
+| 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | EN CURSO | s-20261007T212619-e5db1e81 · 2026-10-07T22:56:19Z |
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | EN CURSO | s-20261007T212116-b15e0069 · 2026-10-08T02:21:16Z |
 | 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | LISTA | terminada 21:23Z · commit 7b2a9f3 |
 | 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 20:47Z · commit 47b0494 |
 | 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | LISTA | terminada 20:42Z · commit d6e06ae |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 21:23Z · commit 7f427aa |
-| 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | PENDIENTE | |
-| 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | EN CURSO | s-20261007T205606-bd06959b · 2026-10-07T23:56:06Z |
+| 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | EN CURSO | s-20261007T212631-9f1904c0 · 2026-10-08T01:26:31Z |
+| 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 21:27Z · commit 15d353b |
 | 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | PENDIENTE | |
 | 17 | Migrar divisores/ a la base común | tareas/tarea-17-migrar-divisores.md | 01 LISTA; la sesión que editaba divisores/ ha terminado; firma 17 | 1 h 30 min | MEDIO | — | divisores/; salidas/17-migrar-divisores/ | LISTA | terminada 21:22Z · commit edfbfa3 |
 | 18 | Revisión final, portada, README y documentación | tareas/tarea-18-revision-final.md | 02-17 y 19-33 LISTAS; firma 18 | 3 h | ALTO | — | catalogo.js (disponible), portada, README, docs/practicas-unidad2.md; salidas/18-revision-final/ | BLOQUEADA | |
-| 19 | Coloca los paréntesis (repaso de la unidad 1) | tareas/tarea-19-parentesis.md | 01 LISTA | 2 h | MEDIO | 16 | practicas/parentesis/; salidas/19-parentesis/ | PENDIENTE | |
+| 19 | Coloca los paréntesis (repaso de la unidad 1) | tareas/tarea-19-parentesis.md | 01 LISTA | 2 h | MEDIO | 16 | practicas/parentesis/; salidas/19-parentesis/ | EN CURSO | s-20261007T212734-78b63f57 · 2026-10-08T01:27:34Z |
 | 20 | ¿Qué se hace primero? Jerarquía paso a paso y agrupadores invisibles (U1) | tareas/tarea-20-jerarquia.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/jerarquia/; salidas/20-jerarquia/ | PENDIENTE | |
 | 21 | El exponente y su base (U1) | tareas/tarea-21-exponente.md | 34 LISTA | 2 h | MEDIO | 22 | practicas/exponente/; salidas/21-exponente/ | PENDIENTE | |
 | 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | PENDIENTE | |
@@ -153,18 +151,18 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: 01 y 34 están LISTA, así que todas las PENDIENTE de la
-tabla (08, 14, 16, 19-30, 32, 33) tocan carpetas disjuntas y pueden ir en paralelo entre
-sí y con las que ya están EN CURSO (06, 07, 09, 15, 35). Cadenas sugeridas (misma banda,
-cortas, independientes) entre lo que queda libre: 16+19. La 17 (migrar `divisores/`) y la
-05, 10 y 13 ya están LISTA: cuando cierren 02-17 y 19-33, la 18 (firma ya dada) queda
-libre.
+Cuántas sesiones caben a la vez: 01 y 34 están LISTA, así que las PENDIENTE (16, 20-30,
+32, 33) tocan carpetas disjuntas y pueden ir en paralelo entre sí y con las EN CURSO
+(03, 06, 07, 08, 09, 14, 19, 35). Cadena sugerida entre lo libre: 16 sola (su pareja 15
+ya cerró). Cuando cierren 02-17 y 19-33, la 18 (firma ya dada) queda libre.
 
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
+
+LISTA · tarea 15 · 2026-10-07 21:27 · s-20261007T205606-bd06959b · 15d353b · 6 ficheros (practicas/leelo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-leelo.test.js) · ~32 min (estimada: 1 h 30 min)
 
 LISTA · tarea 05 · 2026-10-07 21:25 · s-20261007T205649-fabde281 · cf1cfa5 · 6 ficheros (practicas/criba/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-criba.test.js) · 28 min (estimada: 2 h)
 
@@ -199,7 +197,10 @@ minutos reales frente a estimaciones de 30 minutos a 2 horas y media.
 
 Derivado de `hechos/incidencias/`.
 
-(vacío todavía; nota: varias terminadas (05, 10, 13, 17) registran que `tests/practicas-comun.test.js` falló un rato por el reclamo vivo de la tarea 35, que cambió los valores por defecto de `contador.js`; no es una incidencia de choque, solo un fichero ajeno en curso)
+(vacío todavía; nota: varias terminadas (05, 10, 13, 15, 17) registran que
+`tests/practicas-comun.test.js` falló un rato por el reclamo vivo de la tarea 35, que
+cambió los valores por defecto de `contador.js`; no es una incidencia de choque, solo un
+fichero ajeno en curso)
 
 Los automatismos y las rutas del proyecto están en `proyecto.md`, no aquí: este fichero
 se regenera entero y se los llevaría por delante.
