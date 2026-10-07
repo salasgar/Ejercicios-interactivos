@@ -59,7 +59,9 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 Que `divisores/` deje de ser una copia aparte y pase a ser la práctica 0 del catálogo
 sobre `practicas/_comun/base.js`, con la misma URL (`…/divisores/`), los mismos códigos
 de alumno, los mismos cinco ejercicios y el mismo comportamiento que los alumnos ya
-conocen. Así el panel único del profesor es el único panel y las mejoras de la base
+conocen (a fecha 2026-10-07: 20 aciertos, +2 por fallo con frase de ánimo, tope de 40
+pendientes; la penalización por tiempo está en suspenso y no se reactiva aquí: ver la nota
+de memoria `dilema-penalizacion-por-tiempo`, que es una decisión de Juan Luis). Así el panel único del profesor es el único panel y las mejoras de la base
 llegan también aquí.
 
 ## Siguiente paso

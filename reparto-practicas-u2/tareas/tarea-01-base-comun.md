@@ -1,6 +1,6 @@
 # Tarea 01 · Base común de las prácticas, panel único del profesor y práctica de plantilla
 
-Actualizado: 2026-10-07 (19:30 UTC: fila 16 del catálogo y campo `pistas` de `responder`, tarea 19 dada de alta)
+Actualizado: 2026-10-07 (19:30 UTC: fila 16 del catálogo y campo `pistas`; 19:50 UTC: contador con `maximo` y `rapidos`, alineado con divisores/ actual)
 Precondición: ninguna · Disparo: MANUAL (sesión atendida)
 Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/01-base-comun/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -124,9 +124,14 @@ Todos sin DOM ni red, probados en `tests/practicas-comun.test.js`:
     delega a `divisores/logica.js` (importado, solo lectura) y se devuelve con
     `practica: 0`.
   - `extraerCodigosResultado(texto)`: encuentra los de 12 y los de 16 caracteres.
-- `contador.js`: `ejercicioNuevo(inicial = 20)`, `anotar(ej, acierto, dia, penalizacion = 5, pistas = 0)`,
-  `diaDe`, `fechaDeDia`, como en `divisores`, con los parámetros nuevos (`pistas` se suma a
-  `fallos` sin tocar `pendientes`).
+- `contador.js`: `ejercicioNuevo(inicial = 20)`, `anotar(ej, acierto, dia, { penalizacion = 5, maximo = 40, pistas = 0 } = {})`,
+  `diaDe`, `fechaDeDia`, como en `divisores/logica.js` **tal como está hoy en `main`** (desde el
+  commit 47a54eb: `PENALIZACION = 2`, `MAXIMO = 40` como tope de pendientes, campo `rapidos`
+  en el ejercicio, parámetro `rapido` de `anotar` en suspenso). La base generaliza: cada
+  ejercicio de una práctica declara `inicial`, `penalizacion` y `maximo` (por defecto 20, 5 y
+  40), `pistas` se suma a `fallos` sin tocar `pendientes`, y el objeto del ejercicio conserva
+  el campo `rapidos` (siempre 0 salvo que una práctica lo use) para que los documentos de
+  Firestore de `divisores` y de `practicas` tengan la misma forma.
 - `aritmetica.js` (lo que las dieciséis prácticas necesitan y no deben reescribir):
   `PRIMOS` (hasta 200), `esPrimo(n)`, `factorizar(n)` → `[[p, e], …]` con bases
   crecientes, `valorDe(f)`, `divisores(n)` (ordenados, con 1 y n), `parejasDivisores(n)`
