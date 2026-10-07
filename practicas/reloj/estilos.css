@@ -1,0 +1,21 @@
+/* Reloj de coincidencias: línea de tiempo tocable (dos filas de 0-30 y 31-60)
+   y entrada numérica para los ejercicios de «cada cuántos días». */
+
+.reloj-linea { margin-bottom: .3rem; }
+.reloj-linea .rejilla { margin-bottom: 4px; }
+
+/* Durante la animación: azul y naranja encendidas, y las dos a la vez. */
+.rejilla__celda--azul { background: #93c5fd; border-color: #2563eb; color: #1e3a8a; }
+.rejilla__celda--naranja { background: #fed7aa; border-color: #ea580c; color: #7c2d12; }
+.rejilla__celda--ambas { background: #86efac; border-color: #16a34a; color: #14532d; }
+
+.reloj-entero {
+  width: 100%; text-align: center; font-size: 1.4rem !important; font-weight: 700;
+  font-variant-numeric: tabular-nums; padding: .6rem; margin-bottom: 1rem;
+  border: 2px solid var(--borde); border-radius: 10px;
+}
+.reloj-entero:focus { border-color: var(--primario); outline: none; }
+
+.reloj-hora { display: flex; align-items: center; justify-content: center; gap: .5rem; margin-bottom: 1rem; }
+.reloj-hora .pasos__valor { min-width: 2.2rem; }
+.reloj-separador { font-size: 1.4rem; font-weight: 700; }
