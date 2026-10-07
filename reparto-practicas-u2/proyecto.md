@@ -7,8 +7,9 @@ cambia el reparto.
 
 ## Qué se construye
 
-Dieciséis mini-aplicaciones web para que los alumnos de 1.º ESO (programa bilingüe)
-practiquen los conceptos y procedimientos de la Unidad 2, Divisibilidad, cada una con
+Diecisiete mini-aplicaciones web para que los alumnos de 1.º ESO (programa bilingüe)
+practiquen los conceptos y procedimientos de la Unidad 2, Divisibilidad (y una de repaso de
+la unidad 1, «Coloca los paréntesis», tarea 19 dada de alta el 2026-10-07), cada una con
 una interacción propia (tocar, arrastrar, construir) y no solo tipo test. Se publican en
 GitHub Pages dentro del repositorio `Ejercicios-interactivos`, bajo `practicas/`, con una
 **base común** (entrada por código de alumno, menú de ejercicios, contador 20/+5, código
@@ -48,7 +49,7 @@ y los apuntes. **Nada de eso se modifica desde este reparto.**
 
 **En código, «una tarea, una carpeta de salida, un dueño» se traduce en «cada ficha
 declara los ficheros que toca, y dos tareas que compartan uno no van en paralelo».** Las
-16 tareas de aplicación tocan carpetas disjuntas; los únicos ficheros comunes
+16 tareas de aplicación (02-16 y 19) tocan carpetas disjuntas; los únicos ficheros comunes
 (`practicas/_comun/*`, `practicas/index.html`, `practicas/profesor.*`,
 `firestore.rules`, `src/firebase.js`, `README.md`) los toca una sola tarea cada vez: la 01
 al montar la base, la 17 al migrar `divisores/`, la 18 al cerrar.
@@ -111,7 +112,7 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 | Banda | Modelo · esfuerzo | Para qué, en este reparto |
 |---|---|---|
 | **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18) |
-| **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones y la migración de `divisores/` (17) |
+| **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones (incluida la 19), y la migración de `divisores/` (17) |
 | **BAJO** | Haiku 4.5 · Medio | No hay tareas de esta banda en este reparto |
 
 En VS Code, «Default (recommended)» y «Opus (1M context)» son el mismo Opus 5. El
@@ -190,6 +191,13 @@ fuente es esta:
 - **`divisores/` se migra al final (tarea 17)**, cuando la sesión que lo estaba editando
   el 2026-10-07 haya terminado. Mientras tanto se lee como modelo y no se toca.
 - **Sin worktrees.** Ficheros disjuntos por tarea; el hook de sesiones no contiende.
-- **Las tareas 02-16 dependen todas de la 01.** La 01 define el contrato
+- **Las tareas 02-16 y 19 dependen todas de la 01.** La 01 define el contrato
   (`practicas/_comun/base.js`) y las utilidades aritméticas comunes; hasta que esté
   LISTA solo puede trabajar una sesión en este reparto.
+
+- **Tarea 19 (2026-10-07, 19:30 UTC):** «Coloca los paréntesis», repaso de la unidad 1 sobre la
+  misma base, id 16 del catálogo. Al darla de alta se añadió al contrato de la base el campo
+  opcional `pistas` de `responder` (ficha 01, §3), porque en esa práctica el ítem se termina
+  siempre y lo que se mide son las ayudas. La 01 tenía reclamo vivo desde las 19:26 UTC
+  (sid s-20261007T192646-341f1b98): se le avisó del cambio por mensaje entre sesiones y la
+  terminada de la 01 debe confirmar que la fila 16 y el campo `pistas` están en la base.

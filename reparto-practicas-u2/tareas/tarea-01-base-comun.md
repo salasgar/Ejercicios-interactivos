@@ -1,6 +1,6 @@
 # Tarea 01 · Base común de las prácticas, panel único del profesor y práctica de plantilla
 
-Actualizado: 2026-10-07
+Actualizado: 2026-10-07 (19:30 UTC: fila 16 del catálogo y campo `pistas` de `responder`, tarea 19 dada de alta)
 Precondición: ninguna · Disparo: MANUAL (sesión atendida)
 Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/01-base-comun/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -98,6 +98,7 @@ declarar (la base lo comprueba al arrancar y falla con un mensaje claro si no co
 | 13 | errores | errores/ | Caza el error | Spot the mistake | 3 | 14 |
 | 14 | leelo | leelo/ | Léelo en inglés | Say it in English | 3 | 15 |
 | 15 | factorizaciones | factorizaciones/ | Operar con factorizaciones | Working with factorisations | 3 | 16 |
+| 16 | parentesis | parentesis/ | Coloca los paréntesis (repaso de la unidad 1) | Place the brackets (unit 1 review) | 4 | 19 |
 | 31 | plantilla | plantilla/ | Práctica de plantilla | Template practice | 2 | 01 |
 
 Exporta `CATALOGO` (array de `{ id, slug, ruta, nombre: { es, en }, nEjercicios }`),
@@ -123,8 +124,9 @@ Todos sin DOM ni red, probados en `tests/practicas-comun.test.js`:
     delega a `divisores/logica.js` (importado, solo lectura) y se devuelve con
     `practica: 0`.
   - `extraerCodigosResultado(texto)`: encuentra los de 12 y los de 16 caracteres.
-- `contador.js`: `ejercicioNuevo(inicial = 20)`, `anotar(ej, acierto, dia, penalizacion = 5)`,
-  `diaDe`, `fechaDeDia`, como en `divisores`, con los dos parámetros nuevos.
+- `contador.js`: `ejercicioNuevo(inicial = 20)`, `anotar(ej, acierto, dia, penalizacion = 5, pistas = 0)`,
+  `diaDe`, `fechaDeDia`, como en `divisores`, con los parámetros nuevos (`pistas` se suma a
+  `fallos` sin tocar `pendientes`).
 - `aritmetica.js` (lo que las dieciséis prácticas necesitan y no deben reescribir):
   `PRIMOS` (hasta 200), `esPrimo(n)`, `factorizar(n)` → `[[p, e], …]` con bases
   crecientes, `valorDe(f)`, `divisores(n)` (ordenados, con 1 y n), `parejasDivisores(n)`
@@ -171,9 +173,12 @@ Exporta `arrancar(practica)`. `practica` es:
   tt: obj => obj[idioma],       // atajo para { es, en }
   esc,                          // escapar HTML
   respondido: () => boolean,    // true cuando ya se llamó a responder para este ítem
-  responder({ acierto, html, espera }),  // UNA vez por ítem. html: la explicación con los números del ítem.
+  responder({ acierto, html, espera, pistas }),  // UNA vez por ítem. html: la explicación con los números del ítem.
                                 // acierto: feedback verde y pasa al siguiente a los `espera` ms (1300 por defecto);
                                 // fallo: feedback rojo con «+penalización» y botón «Siguiente».
+                                // pistas (opcional, entero ≥ 0): ayudas usadas en este ítem; se suman a `fallos`
+                                // del contador sin tocar `pendientes` (lo usa la práctica 16, parentesis, donde
+                                // un ítem se termina siempre y lo que se mide son las pistas).
 }
 ```
 
