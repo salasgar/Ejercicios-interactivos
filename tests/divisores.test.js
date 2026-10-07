@@ -8,7 +8,6 @@ import {
   ejercicioNuevo, anotar, esRapido, INICIALES, PENALIZACION, PENALIZACION_RAPIDO, MAXIMO, diaDe, fechaDeDia,
   codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS, ALFABETO,
 } from '../divisores/logica.js';
-import { juntarResultados } from '../divisores/resultados.js';
 import { T, frase, razon, textoOperacion } from '../divisores/textos.js';
 
 const TIRADAS = 3000;
@@ -202,19 +201,8 @@ test('los fallos se guardan en el código hasta 15', () => {
   assert.deepEqual(leerCodigoResultado(codigoResultado(3, ejercicios, 40)).ejercicios[0], { terminado: true, fallos: 15 });
 });
 
-test('tabla del profesor: lista, códigos y nube', () => {
-  const hecho = { terminado: true, fallos: 2 }, sin = { terminado: false, fallos: 0 };
-  const filas = juntarResultados(
-    ['Ana', 'Luis', '', 'Eva'],
-    [{ indice: 0, ejercicios: [hecho, hecho, sin, sin, sin], dia: 40 }, { indice: 7, ejercicios: [hecho, sin, sin, sin, sin], dia: 41 }],
-    [{ indice: 0, ej: EJERCICIOS.map(() => ({ pendientes: 0, aciertos: 20, fallos: 0, terminado: true, dia: 42 })) },
-      { indice: 3, ej: [{ pendientes: 12, aciertos: 8, fallos: 0, terminado: false, dia: 0 }] }],
-  );
-  assert.deepEqual(filas.map(f => [f.indice, f.nombre, f.hechos, f.fuente, f.dia]), [
-    [0, 'Ana', 5, 'nube', 42],      // la nube tiene más ejercicios terminados que el código
-    [1, 'Luis', 0, '', 0],          // está en la lista y no ha hecho nada
-    [3, 'Eva', 0, 'nube', 0],       // va a medias
-    [7, '', 1, 'código', 41],       // envió código pero no está en la lista
-  ]);
-  assert.equal(filas[2].ejercicios[0].pendientes, 12);
-});
+// La tabla del profesor (juntar lista, códigos y nube) ya no vive en
+// `divisores/`: la tarea 17 la sustituyó por el panel único de
+// `practicas/profesor.js`, que usa `practicas/resultados.js` y se prueba en
+// `tests/practicas-comun.test.js` («panel: …», con la colección `divisores`
+// incluida).
