@@ -1,7 +1,7 @@
 # Tarea 17 · Migrar la práctica «divisor, múltiplo, divisible» a la base común, conservando la URL y los códigos
 
 Actualizado: 2026-10-07
-Precondición: 01 y 35 LISTAS; la sesión que editaba divisores/ el 2026-10-07 ha terminado (su trabajo está en main y git status no muestra cambios en divisores/); firma de la tarea 17 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
+Precondición: 01 LISTA; la sesión que editaba divisores/ el 2026-10-07 ha terminado (su trabajo está en main y git status no muestra cambios en divisores/); firma de la tarea 17 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/17-migrar-divisores/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `divisores/*` (todos), `tests/divisores.test.js`
@@ -66,10 +66,11 @@ llegan también aquí.
 
 ## Siguiente paso
 
-**Desde el 2026-10-07 (20:50 UTC):** la base ya lleva 10 aciertos, +2, tope 20 e idioma alterno
-por ítem (tarea 35); al migrar, `divisores/` lo hereda sin declarar nada. El progreso que los
-alumnos tengan guardado con 20 se recorta al cargar (lo hace la base). No reactives el
-selector de idioma.
+**Aviso de la coordinadora (2026-10-07, 20:55 UTC):** la tarea 35 va a cambiar la base a 10
+aciertos, +2, tope 20 e idioma alterno por ítem. Esta tarea no tiene que esperarla: basta con
+**no declarar** `inicial`, `penalizacion` ni `maximo` en los ejercicios de `divisores/practica.js`
+(que tomen los valores por defecto de la base) y no añadir selector de idioma propio. Así, cuando
+la 35 cierre, `divisores/` lo hereda sin tocar nada más.
 
 Comprueba la precondición entera antes de reclamar: (1) `01--*` en `hechos/terminadas/`;
 (2) `git status --short divisores/ tests/divisores.test.js` vacío y `ls .claude/sesiones/`
