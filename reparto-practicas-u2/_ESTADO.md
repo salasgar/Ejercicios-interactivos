@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 21:29 UTC · por la sesión s-20261007T205606-bd06959b (cierra la
+Regenerado: 2026-10-07 21:37 UTC · por la sesión s-20261007T212631-9f1904c0 (cierra la 14; el resto de filas, tal como estaban al relistar hechos/).
 15; al regenerar, la 03/06/07/08/09/14/19 ya tenían reclamo vivo en `hechos/` que la
 versión anterior del tablón no reflejaba del todo: corregido).
 
@@ -125,7 +125,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 20:47Z · commit 47b0494 |
 | 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | LISTA | terminada 20:42Z · commit d6e06ae |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 21:23Z · commit 7f427aa |
-| 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | EN CURSO | s-20261007T212631-9f1904c0 · 2026-10-08T01:26:31Z |
+| 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 21:37Z · commit f682746 |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 21:27Z · commit 15d353b |
 | 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | PENDIENTE | |
 | 17 | Migrar divisores/ a la base común | tareas/tarea-17-migrar-divisores.md | 01 LISTA; la sesión que editaba divisores/ ha terminado; firma 17 | 1 h 30 min | MEDIO | — | divisores/; salidas/17-migrar-divisores/ | LISTA | terminada 21:22Z · commit edfbfa3 |
@@ -160,7 +160,9 @@ ya cerró). Cuando cierren 02-17 y 19-33, la 18 (firma ya dada) queda libre.
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
-Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
+Formato: `LISTA · tarea 14 · 2026-10-07 21:37 · s-20261007T212631-9f1904c0 · f682746 · 6 ficheros (practicas/errores/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-errores.test.js) · ~10 min (estimada: 2 h)
+
+LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
 
 LISTA · tarea 15 · 2026-10-07 21:27 · s-20261007T205606-bd06959b · 15d353b · 6 ficheros (practicas/leelo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-leelo.test.js) · ~32 min (estimada: 1 h 30 min)
 

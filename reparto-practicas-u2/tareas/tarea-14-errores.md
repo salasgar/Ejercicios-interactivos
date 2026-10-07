@@ -252,3 +252,5 @@ Si paras sin terminar: `$R/hechos/fallos/14--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+
+- 2026-10-07 (tarea 14): `generar(rng, sesion)` no recibe el idioma del ítem, así que una plantilla «solo en inglés» (divisible between) es imposible: no la intentes sin que la base pase el idioma. Los verificadores del test conviene escribirlos por línea («válida frente a las anteriores») y exigir que la única falsa sea la declarada.
