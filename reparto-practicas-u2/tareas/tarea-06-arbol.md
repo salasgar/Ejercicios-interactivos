@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-07
 Precondición: 01 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h 30 min (tiempo de sesión, no de persona; real: 16 min) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/06-arbol/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/arbol/*` (nuevo), `tests/practicas-arbol.test.js` (nuevo)
 
@@ -147,6 +147,19 @@ Propios de esta tarea:
   nodos de ≤ 44 px y gap de 6 px. Prueba con 360 y 384 (= 2⁷ · 3, 8 hojas) antes de dar
   por buena la maqueta; si 384 no cabe, limita n a números con ≤ 7 factores primos
   contando repeticiones y anótalo aquí.
+- **Anotado (sesión s-20261007T212058-817d27db):** n se limita a 6 factores primos contando
+  repeticiones (`MAXIMO_DE_HOJAS`): con nodos de 40 px y 6 px de separación, 6 hojas son 270 px
+  y 7 ya no caben en los ~314 px útiles de la tarjeta. Fuera: 128, 192, 256, 288, 320 y 384.
+- `.comprobar` de la base lleva `display: block`, que gana al atributo `hidden`: un botón
+  «Comprobar» no se esconde con `boton.hidden = true`; hay que quitarlo (`boton.remove()`).
+- La base monta el mismo ítem una segunda vez, de solo lectura, en la caja de traducción
+  (`api.respondido()` ya es `true` al montar): nada de `id` ni `document.querySelector`; todo
+  se busca dentro de `contenedor`, y los controles se pintan desactivados.
+- Las líneas del árbol se trazan midiendo (`getBoundingClientRect`): en una caja `hidden` todo
+  mide 0; por eso se vuelven a trazar con un `ResizeObserver`.
+- `setPointerCapture` lanza una excepción con eventos de puntero sintéticos (pruebas): va en `try`.
+- Si el selector de parejas solo aparece al tocar un compuesto, la interfaz delata qué números
+  son primos: primero se pregunta «¿es primo?» y solo después se enseñan las parejas.
 
 ## Prohibido (propio de esta tarea)
 
