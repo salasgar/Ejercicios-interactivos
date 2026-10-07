@@ -49,6 +49,18 @@ service cloud.firestore {
       allow read, write: if esProfesor();
     }
 
+    // Práctica «divisor, múltiplo, divisible» (divisores/): sin cuentas. Cada
+    // alumno guarda su progreso en el documento cuyo id es su código de 4
+    // caracteres; nadie puede leerlos salvo el profesor.
+    match /divisores/{codigo} {
+      allow read: if esProfesor();
+      allow create, update: if codigo.matches('^[A-HJ-NP-Z2-9]{4}$')
+        && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
+        && request.resource.data.estado is string
+        && request.resource.data.estado.size() < 2000
+        && request.resource.data.actualizado is int;
+    }
+
     // Tareas: el profesor las gestiona; el alumno ve las de su grupo.
     match /tareas/{tareaId} {
       allow read: if esProfesor() || (autenticado() && resource.data.grupo == grupoDelAlumno());

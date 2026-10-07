@@ -66,6 +66,31 @@ que falta está en `traspaso-ejercicios-interactivos.md`.
 | `sistemas_ecuaciones` | Sistemas de dos ecuaciones lineales, por sustitución y por reducción | 2º ESO UD5 Sistemas de ecuaciones |
 | `estadistica` | Media, moda, mediana, rango, marca de clase, frecuencia relativa y variables discretas/continuas | 2º ESO UD6 Estadística |
 
+## Práctica «divisor, múltiplo, divisible» (`divisores/`)
+
+Mini-aplicación aparte, sin cuentas, para la unidad 2 de 1º ESO:
+https://salasgar.github.io/Ejercicios-interactivos/divisores/ (panel del
+profesor en `divisores/profesor.html`). Español e inglés.
+
+- **Ejercicios**: 0 («de» o «entre»), 1 (con multiplicaciones), 2 (con
+  divisiones), 3 (mezcla) y 4 (arrastrar dos de los tres números a
+  «__ es múltiplo de __»). En cada uno hay que acertar 20 veces y cada fallo
+  añade 5. Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan
+  las dos (y en «18 es … 18», las tres).
+- **Quién lo ha hecho**: cada alumno entra con un código de 4 caracteres (el
+  panel del profesor los reparte a partir de la lista, que no sale de su
+  navegador). Al terminar, la aplicación le da un **código de resultado** de 12
+  caracteres que lleva dentro quién es, qué ejercicios ha terminado, con
+  cuántos fallos y qué día; el panel del profesor los lee pegando tal cual los
+  mensajes de los alumnos. Además el progreso se copia en Firestore
+  (`divisores/{código}`, regla en `firestore.rules`), que el panel lee entrando
+  con la cuenta del profesor.
+- El código de resultado no es criptografía (el programa es público): impide
+  inventárselo a ojo o copiar el de un compañero, no a quien lea el código
+  fuente.
+- Código en `divisores/` (`logica.js` es pura y tiene sus tests en
+  `tests/divisores.test.js`).
+
 ## Puesta en marcha de Firebase (una sola vez)
 
 Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el
