@@ -159,6 +159,20 @@ igual. Escríbelo en `base.js` al cargar y testéalo.
   que viven en la base). Si una práctica terminada falla con tu cambio, es tu cambio.
 - `sleep 30` y volver a mirar antes de reclamar: esta tarea comparte `tests/practicas-comun.test.js`
   con la 34, que por eso pasa a depender de ti.
+- **Bloques de 4 y «10 ítems salen 5 y 5» no es exacto**: con `inicial=10` sin
+  fallos hay 10 ítems = dos bloques completos (8, exactos 4/4) + los dos
+  primeros de un tercer bloque al azar, que pueden caer los dos del mismo
+  lado. Es 5/5 en el caso típico, no una garantía matemática; el test lo
+  comprueba sobre 8 (dos bloques completos) y, en 10, solo el equilibrio
+  aproximado y la racha máxima de 4.
+- **El navegador cachea el módulo `base.js` agresivamente**: tras cada cambio,
+  `cmd+shift+r` (hard reload) o el DevTools con «disable cache»; un reload
+  normal (o incluso navegar a otra URL) puede seguir sirviendo la versión
+  anterior del módulo y hacer pensar que un cambio no se ha aplicado.
+- `python3 -m http.server 8080` puede fallar con «Address already in use» aunque
+  `lsof -iTCP:8080` no muestre nada (proceso zombi de otra sesión): mata
+  cualquier `http.server 8080` antes de lanzar el tuyo y compruébalo con
+  `curl` antes de usar el navegador.
 
 ## Prohibido (propio de esta tarea)
 
