@@ -19,24 +19,27 @@ import {
 
 // La cuadrícula no se dibuja celda a celda: un SVG con un <pattern> que se
 // repite, así que una baldosa de lado 2 en un suelo de 90 × 90 no tarda nada.
+let montajes = 0; // id único por dibujo: la base monta el ítem otra vez al traducir
+
 function dibujarCuadricula(contenedor, a, b, lado) {
+  const id = `baldosas-${++montajes}`;
   const wFull = Math.floor(a / lado) * lado;
   const hFull = Math.floor(b / lado) * lado;
   const sobraX = a - wFull, sobraY = b - hFull;
   contenedor.innerHTML = `
     <svg viewBox="0 0 ${a} ${b}" class="baldosas-dibujo" role="img" aria-hidden="true">
       <defs>
-        <pattern id="baldosas-cuadricula" width="${lado}" height="${lado}" patternUnits="userSpaceOnUse">
+        <pattern id="${id}-cuadricula" width="${lado}" height="${lado}" patternUnits="userSpaceOnUse">
           <rect width="${lado}" height="${lado}" fill="var(--primario-claro)" stroke="var(--primario)" stroke-width="0.4"/>
         </pattern>
-        <pattern id="baldosas-rayado" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+        <pattern id="${id}-rayado" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <rect width="5" height="5" fill="var(--error-claro)"/>
           <line x1="0" y1="0" x2="0" y2="5" stroke="var(--error)" stroke-width="2.2"/>
         </pattern>
       </defs>
-      <rect x="0" y="0" width="${wFull}" height="${hFull}" fill="url(#baldosas-cuadricula)"/>
-      ${sobraX > 0 ? `<rect x="${wFull}" y="0" width="${sobraX}" height="${b}" fill="url(#baldosas-rayado)"/>` : ''}
-      ${sobraY > 0 ? `<rect x="0" y="${hFull}" width="${wFull}" height="${sobraY}" fill="url(#baldosas-rayado)"/>` : ''}
+      <rect x="0" y="0" width="${wFull}" height="${hFull}" fill="url(#${id}-cuadricula)"/>
+      ${sobraX > 0 ? `<rect x="${wFull}" y="0" width="${sobraX}" height="${b}" fill="url(#${id}-rayado)"/>` : ''}
+      ${sobraY > 0 ? `<rect x="0" y="${hFull}" width="${wFull}" height="${sobraY}" fill="url(#${id}-rayado)"/>` : ''}
       <rect x="0" y="0" width="${a}" height="${b}" fill="none" stroke="var(--primario-oscuro)" stroke-width="1.2"/>
     </svg>`;
 }
@@ -103,9 +106,9 @@ function montarBaldosa(contenedor, item, api) {
     if (ca.cabe && cb.cabe) {
       mensaje.innerHTML = tt(T.cabe)(a, b, s);
     } else if (!ca.cabe && !cb.cabe) {
-      const fa = tt(T.sobra_una)(a, s, ca.cociente, ca.resto);
-      const fb = tt(T.sobra_una)(b, s, cb.cociente, cb.resto);
-      mensaje.innerHTML = tt(T.sobra_dos)(a, b, s, `${fa} `, `${fb} `);
+      const fa = tt(T.resto_en)(a, s, ca.cociente, ca.resto);
+      const fb = tt(T.resto_en)(b, s, cb.cociente, cb.resto);
+      mensaje.innerHTML = tt(T.sobra_dos)(s, fa, fb);
     } else {
       const [dim, c] = ca.cabe ? [b, cb] : [a, ca];
       mensaje.innerHTML = tt(T.sobra_una)(dim, s, c.cociente, c.resto);
@@ -129,7 +132,8 @@ function montarBaldosa(contenedor, item, api) {
       html = explicarMcd(tt, a, b, g);
     } else {
       const ca = cabeEnLado(a, s), cb = cabeEnLado(b, s);
-      const base = (ca.cabe && cb.cabe) ? tt(T.incorrecto_no_mayor)(s, g) : tt(T.incorrecto_no_cabe)(s);
+      const [dim, c] = ca.cabe ? [b, cb] : [a, ca];
+      const base = (ca.cabe && cb.cabe) ? tt(T.incorrecto_no_mayor)(s, g) : tt(T.incorrecto_no_cabe)(s, tt(T.resto_en)(dim, s, c.cociente, c.resto));
       html = `${base} ${tt(T.y_el_mcd)(a, b, g)}`;
     }
     api.responder({ acierto, html, espera: 2800 });
@@ -222,7 +226,14 @@ function montarCuerdas(contenedor, item, api) {
     const acierto = esCorteDeCuerdas(item, trozoUsuario, totalUsuario);
     const partes = [];
     if (trozoUsuario !== g) partes.push(tt(T.pista_trozo_mal)(g));
-    if (totalUsuario !== trozosTotal) partes.push(tt(T.pista_total_mal)(porCuerda, trozosTotal));
+    if (totalUsuario !== trozosTotal) {
+      // ¿Sumó bien con su propio trozo? Entonces el fallo es solo el trozo.
+      const suyos = longitudes.every(l => trozoUsuario > 0 && l % trozoUsuario === 0) ? longitudes.map(l => l / trozoUsuario) : null;
+      const coherente = suyos && suyos.reduce((s, x) => s + x, 0) === totalUsuario;
+      partes.push(coherente
+        ? tt(T.pista_total_coherente)(trozoUsuario, suyos, totalUsuario)
+        : tt(T.pista_total_mal)(porCuerda, trozosTotal));
+    }
     partes.push(tt(T.cuenta)(longitudes, g, porCuerda, trozosTotal));
     api.responder({ acierto, html: partes.join(' '), espera: 3000 });
   }

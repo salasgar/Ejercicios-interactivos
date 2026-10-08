@@ -25,12 +25,14 @@ export const TX = {
     instruccion: { es: (a, b) => `Suelo de ${a} × ${b} dm. Prueba lados y busca la baldosa más grande que cubra sin cortar.`, en: (a, b) => `${a} × ${b} dm floor. Try side lengths and find the biggest tile that covers it without cutting.` },
     lado: { es: 'Lado de la baldosa', en: 'Tile side' },
     cabe: { es: (a, b, s) => `Lado ${s}: cabe exacta en los dos lados (${a} y ${b}).`, en: (a, b, s) => `Side ${s}: it fits exactly on both sides (${a} and ${b}).` },
+    // La cuenta de un lado que no cabe, sin prefijo ni conclusión: «40 : 7 = 5, sobran 5 dm».
+    resto_en: { es: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, sobran ${sobra} dm`, en: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, ${sobra} dm left over` },
     sobra_una: { es: (dim, s, c, sobra) => `Lado ${s}: ${dim} : ${s} = ${c}, sobran ${sobra} dm: no cabe.`, en: (dim, s, c, sobra) => `Side ${s}: ${dim} : ${s} = ${c}, ${sobra} dm left over: it does not fit.` },
-    sobra_dos: { es: (a, b, s, fa, fb) => `Lado ${s}: ${fa}${fb}no cabe.`, en: (a, b, s, fa, fb) => `Side ${s}: ${fa}${fb}it does not fit.` },
+    sobra_dos: { es: (s, fa, fb) => `Lado ${s}: ${fa}; ${fb}. No cabe en ninguno de los dos.`, en: (s, fa, fb) => `Side ${s}: ${fa}; ${fb}. It fits on neither.` },
     boton_es_esta: { es: 'Esta es la más grande', en: 'This is the biggest one' },
     correcto_simple: { es: (a, b, g) => `Correcto: lado = m.c.d.(${a}, ${b}) = ${g}.`, en: (a, b, g) => `Correct: side = GCD(${a}, ${b}) = ${g}.` },
     correcto_factorizado: { es: (a, b, g, fa, fb) => `Correcto: ${a} = ${fa}; ${b} = ${fb}; m.c.d.(${a}, ${b}) = ${g} (los primos comunes con el menor exponente).`, en: (a, b, g, fa, fb) => `Correct: ${a} = ${fa}; ${b} = ${fb}; GCD(${a}, ${b}) = ${g} (the common primes with the smallest exponent).` },
-    incorrecto_no_cabe: { es: s => `${s} no vale: con ese lado no cabe sin cortar.`, en: s => `${s} does not work: that side does not fit without cutting.` },
+    incorrecto_no_cabe: { es: (s, cuenta) => `${s} no vale: ${cuenta}, así que hay que cortar baldosas.`, en: (s, cuenta) => `${s} does not work: ${cuenta}, so tiles would have to be cut.` },
     incorrecto_no_mayor: { es: (s, g) => `${s} sí cabe, pero ${g} también cabe y es más grande.`, en: (s, g) => `${s} does fit, but ${g} also fits and is bigger.` },
     y_el_mcd: { es: (a, b, g) => `El lado más grande es m.c.d.(${a}, ${b}) = ${g}.`, en: (a, b, g) => `The biggest side is GCD(${a}, ${b}) = ${g}.` },
   },
@@ -39,20 +41,23 @@ export const TX = {
     detalle: { es: 'Con la baldosa más grande ya elegida', en: 'With the biggest tile already chosen' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>El suelo ya está cubierto con la baldosa más grande posible: m.c.d.(a, b) de
-        lado. ¿Cuántas baldosas hacen falta? A lo largo caben <span class="numero">a : lado</span>
-        y a lo ancho <span class="numero">b : lado</span>. Las filas de baldosas <strong>se
-        multiplican</strong>, no se suman: 5 filas de 7 baldosas son 35, no 12.</p>`,
+        <p>El suelo ya está cubierto con la baldosa más grande posible, la del m.c.d. de sus
+        dos lados. ¿Cuántas baldosas hacen falta? Ejemplo: un suelo de 40 dm por 56 dm,
+        con baldosas de lado 8. A lo largo caben <span class="numero">40 : 8 = 5</span>
+        y a lo ancho <span class="numero">56 : 8 = 7</span>. Las filas de baldosas <strong>se
+        multiplican</strong>, no se suman: 7 filas de 5 baldosas son 35, no 12.</p>`,
       en: `<h2>How it works</h2>
-        <p>The floor is already covered with the biggest possible tile: side GCD(a, b).
-        How many tiles are needed? Along the length there are <span class="numero">a : side</span>
-        and along the width <span class="numero">b : side</span>. The rows of tiles
-        <strong>multiply</strong>, they do not add up: 5 rows of 7 tiles is 35, not 12.</p>`,
+        <p>The floor is already covered with the biggest possible tile, the one given by the
+        GCD of its two sides. How many tiles are needed? Example: a floor 40 dm by 56 dm,
+        with tiles of side 8. Along the length there are <span class="numero">40 : 8 = 5</span>
+        and along the width <span class="numero">56 : 8 = 7</span>. The rows of tiles
+        <strong>multiply</strong>, they do not add up: 7 rows of 5 tiles is 35, not 12.</p>`,
     },
-    instruccion: { es: (a, b, g) => `Suelo de ${a} × ${b} dm cubierto con baldosas de lado ${g}. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `${a} × ${b} dm floor covered with side-${g} tiles. How many tiles are needed?` },
+    instruccion: { es: (a, b, g) => `Suelo de ${a} × ${b} dm cubierto con baldosas de lado ${g}. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `${a} × ${b} dm floor covered with tiles of side ${g}. How many tiles are needed?` },
     respuesta_label: { es: 'Número de baldosas', en: 'Number of tiles' },
     cuenta: { es: (a, b, g, p, q, cuantas) => `A lo largo: ${a} : ${g} = ${p}; a lo ancho: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.`, en: (a, b, g, p, q, cuantas) => `Along the length: ${a} : ${g} = ${p}; along the width: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.` },
-    error_suma: { es: (p, q, cuantas) => `Has sumado ${p} + ${q}; las baldosas se multiplican: ${p} filas de ${q} son ${cuantas}.`, en: (p, q, cuantas) => `You added ${p} + ${q}; tiles multiply: ${p} rows of ${q} is ${cuantas}.` },
+    // p = baldosas a lo largo (por fila), q = a lo ancho (filas): el dibujo tiene q filas de p.
+    error_suma: { es: (p, q, cuantas) => `Has sumado ${p} + ${q}; las baldosas se multiplican: ${q} filas de ${p} son ${cuantas}.`, en: (p, q, cuantas) => `You added ${p} + ${q}; tiles multiply: ${q} rows of ${p} is ${cuantas}.` },
     error_lado: { es: g => `${g} es el lado de la baldosa, no cuántas hay.`, en: g => `${g} is the side of the tile, not how many there are.` },
   },
   cuerdas: {
@@ -82,6 +87,7 @@ export const TX = {
     etiqueta_b: { es: 'Trozos en total', en: 'Total pieces' },
     cuenta: { es: (longitudes, g, porCuerda, total) => `Trozo = m.c.d.(${longitudes.join(', ')}) = ${g}. ${longitudes.map((l, i) => `${l} : ${g} = ${porCuerda[i]}`).join('; ')}: ${porCuerda.join(' + ')} = ${total} trozos.`, en: (longitudes, g, porCuerda, total) => `Piece = GCD(${longitudes.join(', ')}) = ${g}. ${longitudes.map((l, i) => `${l} : ${g} = ${porCuerda[i]}`).join('; ')}: ${porCuerda.join(' + ')} = ${total} pieces.` },
     pista_trozo_mal: { es: g => `El trozo mide ${g} dm, lo más largo posible sin que sobre nada en ninguna cuerda.`, en: g => `The piece is ${g} dm long, the longest possible with nothing left over in any rope.` },
+    pista_total_coherente: { es: (t, porCuerda, total) => `Con tu trozo de ${t} dm la suma está bien hecha (${porCuerda.join(' + ')} = ${total}); el fallo está en el trozo, que no es el más largo.`, en: (t, porCuerda, total) => `With your ${t} dm piece the addition is right (${porCuerda.join(' + ')} = ${total}); the mistake is the piece, which is not the longest.` },
     pista_total_mal: { es: (porCuerda, total) => `Aquí sí se suman, porque son cuerdas distintas: ${porCuerda.join(' + ')} = ${total} trozos.`, en: (porCuerda, total) => `Here you do add them up, because they are different ropes: ${porCuerda.join(' + ')} = ${total} pieces.` },
   },
 };
