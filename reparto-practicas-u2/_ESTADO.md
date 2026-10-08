@@ -119,7 +119,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/02--s-20261008T051928-1cba9950.md |
 | 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/03--s-20261008T051928-1cba9950.md |
 | 04 | Múltiplos y divisores en la recta (0 y 1, V/F) | tareas/tarea-04-recta.md | 01 LISTA | 1 h 30 min | MEDIO | 02 | practicas/recta/; salidas/04-recta/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/04--s-20261008T051928-1cba9950.md |
-| 05 | Criba de Eratóstenes y flashcards primo/compuesto | tareas/tarea-05-criba.md | 01 LISTA | 2 h | MEDIO | — | practicas/criba/; salidas/05-criba/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/05--s-20261008T051928-1cba9950.md |
+| 05 | Criba de Eratóstenes y flashcards primo/compuesto | tareas/tarea-05-criba.md | 01 LISTA | 2 h | MEDIO | — | practicas/criba/; salidas/05-criba/ | LISTA | terminada 17:58Z (8-oct) · commit 3817f7e (reabierta corregida) |
 | 06 | Árbol de factores libre | tareas/tarea-06-arbol.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/arbol/; salidas/06-arbol/ | LISTA | terminada 21:36Z · commit 5ad984c |
 | 07 | Divisiones sucesivas guiadas | tareas/tarea-07-divisiones.md | 01 LISTA | 2 h | MEDIO | 08 | practicas/divisiones/; salidas/07-divisiones/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/07--s-20261008T051928-1cba9950.md |
 | 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/08--s-20261008T051928-1cba9950.md |
@@ -184,6 +184,8 @@ Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · fic
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
+
+LISTA · tarea 05 · 2026-10-08 17:58 · s-20261008T175224-7b4cac18 · 3817f7e · 4 ficheros (practicas/criba/{logica.js,practica.js,textos.js}, tests/practicas-criba.test.js) · ~10 min · reabierta corregida (5 puntos de 05--s-20261008T051928-1cba9950)
 
 LISTA · tarea 18 · 2026-10-08 06:01 · s-20261008T051928-1cba9950 · f7df3ba · 5 ficheros (README.md, docs/practicas-unidad2.md, practicas/_comun/catalogo.js, practicas/index.html, practicas/portada.js) · 43 min (estimada: 3 h) · veredicto: 3 SE ENTREGAN, 28 reabiertas
 

@@ -136,6 +136,9 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- (Reabierta 2026-10-08) En «¿qué primos hay que probar?» la pregunta tiene que pedir la lista **más corta**: sin eso, «2, 3, 5, 7, 11» también sirve y deja de ser distractor. Y los textos con un número del ítem no pueden usar la letra n.
+- (Reabierta) Un mensaje de fallo sin número concreto no vale (regla 8): cita siempre una celda con su cuenta.
+
 - En el paso del 2 hay 49 celdas que tocar: ofrece también «tachar arrastrando» (pointer
   events con `pointerenter` sobre celdas mientras se mantiene pulsado) o el paso se hace
   eterno; que el toque simple siga funcionando.
