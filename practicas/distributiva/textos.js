@@ -1,6 +1,8 @@
 // Práctica «Distributiva con rectángulos»: textos propios, { es, en }.
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
+import { fmt } from './logica.js';
+
 export const TX = {
   partir: {
     nombre: { es: 'Parte el rectángulo', en: 'Cut the rectangle' },
@@ -29,6 +31,10 @@ export const TX = {
       en: (b, c, resto) => `The piece taken away has ${c} cells; ${b} − ${c} = ${resto} cells are left on the left.`,
     },
     corte_bien: { es: '¡Bien cortado!', en: 'Well cut!' },
+    otro_orden: {
+      es: (b, c) => `Aquí las dos partes están en el otro orden: ${c} + ${b}. Es la misma suma.`,
+      en: (b, c) => `Here the two parts are in the other order: ${c} + ${b}. It is the same sum.`,
+    },
     total_label: { es: 'Ahora escribe el total:', en: 'Now write the total:' },
     total_mal: {
       es: total => `El total es ${total}. Mira cada trozo por separado.`,
@@ -64,6 +70,14 @@ export const TX = {
       es: (expr, valor) => `Lo que has escrito, ${expr}, vale ${valor}.`,
       en: (expr, valor) => `What you wrote, ${expr}, is ${valor}.`,
     },
+    mismo_valor: {
+      es: (expr, valor) => `Lo que has escrito, ${expr}, también vale ${valor}, pero por casualidad: no junta los rectángulos en un solo producto con paréntesis.`,
+      en: (expr, valor) => `What you wrote, ${expr}, is also ${valor}, but by chance: it does not join the rectangles into one product with brackets.`,
+    },
+    incompleta: {
+      es: expr => `Lo que has escrito, ${expr}, no es una cuenta completa.`,
+      en: expr => `What you wrote, ${expr}, is not a complete sum.`,
+    },
     correcta: { es: 'Lo correcto es', en: 'The right answer is' },
   },
   compensar: {
@@ -83,20 +97,20 @@ export const TX = {
     label: { es: 'Escribe el resultado:', en: 'Write the result:' },
     elige: { es: '¿Cuál es la escritura correcta?', en: 'Which is the correct way to write it?' },
     resultado_mal: {
-      es: (texto, valor) => `${texto} = ${valor}.`,
-      en: (texto, valor) => `${texto} = ${valor}.`,
+      es: (texto, valor) => `${texto} = ${fmt(valor, 'es')}.`,
+      en: (texto, valor) => `${texto} = ${fmt(valor, 'en')}.`,
     },
     explicacion_producto: {
-      es: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${n * 100} − ${falta * n} = ${valor}: a ${n} filas de 100 se les quita ${falta === 1 ? 'una columna' : 'dos columnas'}.`,
-      en: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${n * 100} − ${falta * n} = ${valor}: from ${n} rows of 100 we take away ${falta === 1 ? 'one column' : 'two columns'}.`,
+      es: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${fmt(n * 100, 'es')} − ${falta * n} = ${fmt(valor, 'es')}: a ${n} filas de 100 se les quita ${falta === 1 ? 'una columna' : 'dos columnas'}.`,
+      en: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${fmt(n * 100, 'en')} − ${falta * n} = ${fmt(valor, 'en')}: from ${n} rows of 100 we take away ${falta === 1 ? 'one column' : 'two columns'}.`,
     },
     explicacion_suma: {
       es: (n, k, falta, valor) => `${n} + ${k} = ${n} + 100 − ${falta} = ${n + 100} − ${falta} = ${valor}.`,
       en: (n, k, falta, valor) => `${n} + ${k} = ${n} + 100 − ${falta} = ${n + 100} − ${falta} = ${valor}.`,
     },
     escritura_mal: {
-      es: (expr, valor, buena) => `${expr} vale ${valor}, no ${buena}.`,
-      en: (expr, valor, buena) => `${expr} is ${valor}, not ${buena}.`,
+      es: (expr, valor, buena) => `${expr} vale ${fmt(valor, 'es')}, no ${fmt(buena, 'es')}.`,
+      en: (expr, valor, buena) => `${expr} is ${fmt(valor, 'en')}, not ${fmt(buena, 'en')}.`,
     },
   },
 };
