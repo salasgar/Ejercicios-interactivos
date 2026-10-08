@@ -1,0 +1,40 @@
+/* Redondeo y estimación: la recta con dos marcas, las filas del ejercicio 2 y la entrada
+   numérica. Lo demás está en ../_comun/estilos.css (.operacion, .eleccion, .botones-numeros…). */
+
+/* La recta: se toca en cualquier punto; la pista va con margen a los lados para las etiquetas. */
+.recta { position: relative; height: 96px; margin: .2rem 0 .6rem; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; }
+.recta--cerrada { cursor: default; }
+.recta__pista { position: absolute; left: 16%; right: 16%; top: 0; bottom: 0; }
+.recta__linea { position: absolute; left: -10%; right: -10%; top: 38px; border-top: 4px solid var(--primario); border-radius: 2px; }
+.recta__marca { position: absolute; top: 24px; width: 4px; height: 30px; margin-left: -2px; background: var(--texto); border-radius: 2px; }
+.recta__etiqueta { position: absolute; top: 60px; transform: translateX(-50%); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.recta__punto { position: absolute; top: 40px; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid #fff; box-shadow: 0 0 0 2px var(--primario); background: var(--primario); }
+.recta__punto--mio { background: var(--primario); }
+.recta__punto--bien { background: var(--correcto); box-shadow: 0 0 0 2px var(--correcto); }
+.recta__punto--mal { background: var(--error); box-shadow: 0 0 0 2px var(--error); }
+.recta__punto--real { background: var(--correcto); box-shadow: 0 0 0 2px var(--correcto); width: 14px; height: 14px; margin: -7px 0 0 -7px; top: 40px; }
+.recta__valor { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-weight: 700; font-size: .85rem; color: var(--correcto); white-space: nowrap; }
+
+.redondeo-paso { margin-bottom: .3rem; }
+.redondeo-aviso { min-height: 1.2rem; color: var(--error); font-weight: 600; margin: .3rem 0; }
+
+/* Ejercicio 2: tres filas compactas */
+.tres-filas { display: grid; gap: .6rem; margin: .6rem 0 .2rem; text-align: left; }
+.tres-fila { display: grid; grid-template-columns: 3.9rem 7.4rem 1fr; gap: .4rem; align-items: center; padding: .5rem .5rem; border: 2px solid var(--borde); border-radius: 10px; }
+.tres-fila label { font-weight: 700; margin: 0; font-size: .9rem; }
+.tres-sentido { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; }
+.tres-sentido .eleccion { min-height: 44px; padding: .2rem; font-size: 1.5rem; font-weight: 700; }
+.eleccion[aria-pressed="true"] { border-color: var(--primario); background: var(--primario-claro); }
+.tres-fila--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.tres-fila--mal { border-color: var(--error); background: var(--error-claro); }
+
+/* Entrada numérica (como ../baldosas/estilos.css) */
+.redondeo-entero {
+  width: 100%; max-width: 11rem; display: block; margin-left: auto; margin-right: auto; text-align: center; font-size: 1.3rem !important; font-weight: 700;
+  font-variant-numeric: tabular-nums; padding: .5rem; margin-bottom: .6rem;
+  border: 2px solid var(--borde); border-radius: 10px; box-sizing: border-box;
+}
+.redondeo-entero:focus { border-color: var(--primario); outline: none; }
+.tres-fila .redondeo-entero { margin: 0; max-width: none; }
+
+.redondeo-frase { font-size: 1.05rem; line-height: 1.7; text-align: left; margin-bottom: 1rem; }
