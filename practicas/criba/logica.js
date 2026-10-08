@@ -56,7 +56,7 @@ export const PRIMOS_HASTA_100 = PRIMOS.filter(p => p < 100);
 // --- Ejercicio 2: ¿primo, compuesto o ninguno? (con tramposos) ------------------
 
 /** Compuestos que «parecen primos»: impares que no acaban en 5. */
-export const TRAMPOSOS = [51, 57, 87, 91, 119, 133, 143, 121, 169, 111, 117, 123, 129, 141, 147];
+export const TRAMPOSOS = [51, 57, 87, 91, 119, 133, 143, 121, 111, 117, 123, 129, 141, 147];
 
 const PRIMOS_3_150 = PRIMOS.filter(p => p >= 3 && p <= 150);
 const COMPUESTOS_4_150 = Array.from({ length: 147 }, (_, i) => i + 4).filter(n => !esPrimo(n));
