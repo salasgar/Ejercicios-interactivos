@@ -1,0 +1,26 @@
+/* División entera: cajas de objetos (ejercicios 1 y 3). */
+
+.div-zona { margin: .6rem 0; }
+.div-etiqueta { font-size: .85rem; color: var(--texto-suave); margin: .4rem 0 .2rem; text-align: left; }
+.div-objetos, .div-cajas { display: flex; flex-wrap: wrap; gap: .3rem; justify-content: center; min-height: 1.6rem; }
+.div-cajas { gap: .45rem; }
+.div-bola { width: 1.15rem; height: 1.15rem; border-radius: 50%; background: var(--primario); display: inline-block; }
+.div-bola--suelta { background: var(--aviso, #d97706); }
+.div-caja {
+  display: grid; grid-template-columns: repeat(var(--cols, 3), 1.15rem); gap: .2rem; padding: .3rem;
+  border: 2px solid var(--primario-oscuro); border-radius: 8px; background: var(--primario-claro);
+}
+.div-caja .div-bola { background: var(--primario-oscuro); }
+.div-caja--nueva { animation: div-pop .3s ease-out; }
+@keyframes div-pop { from { transform: scale(.6); } to { transform: scale(1); } }
+.div-botones { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: .6rem 0; }
+.div-botones button { min-height: 48px; }
+.div-entradas { display: flex; flex-wrap: wrap; gap: .8rem 1.2rem; justify-content: center; align-items: flex-end; margin: .8rem 0; }
+.div-entradas label { display: flex; flex-direction: column; align-items: center; gap: .2rem; font-size: .9rem; color: var(--texto-suave); }
+.div-entradas input { width: 5rem; font-size: 1.3rem; }
+.div-entradas input.hueco--bien { color: var(--correcto); border-color: var(--correcto); background: var(--correcto-claro); }
+.div-entradas input.hueco--mal { color: var(--error); border-color: var(--error); background: var(--error-claro); }
+.div-igualdad { font-weight: 700; font-size: 1.15rem; margin: .5rem 0; font-variant-numeric: tabular-nums; }
+.div-pregunta { font-size: 1.1rem; margin: .5rem 0 .9rem; text-align: left; }
+.div-division { font-size: 2rem; font-weight: 700; margin: .4rem 0; }
+.elecciones .eleccion { font-variant-numeric: tabular-nums; }
