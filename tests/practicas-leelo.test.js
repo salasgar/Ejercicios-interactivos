@@ -197,13 +197,11 @@ test('ejercicio 3: "divisible by" nunca "divisible between" (regla U2-1B-02)', (
 
 // --- Reabierta de la tarea 15: símbolos y frases ------------------------------------
 
-test('ejercicio 3: ninguna frase lleva «×» y el 2 se dice «twice»', async () => {
-  const { generar } = await import('../practicas/leelo/logica.js');
-  const { crearRng } = await import('../practicas/_comun/rng.js');
+test('ejercicio 3: ninguna frase lleva «×» y el 2 se dice «twice»', () => {
   const rng = crearRng(15);
   let twice = 0;
   for (let i = 0; i < 3000; i++) {
-    const { frase } = generar(3, rng);
+    const { frase } = generarCompletar(rng);
     assert.ok(!frase.includes('×'), frase);
     assert.ok(!/\btwo times\b/.test(frase), frase);
     if (/\btwice\b/.test(frase)) twice++;
