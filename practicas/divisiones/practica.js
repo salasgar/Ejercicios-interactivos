@@ -62,7 +62,7 @@ function montarEscalera(contenedor, item, api) {
       avanzar(correcto);
     } else if (resultado === 'no_menor') {
       errores++;
-      mensajeEl.innerHTML = razonNoMenor(p, correcto, api.idioma);
+      mensajeEl.innerHTML = razonNoMenor(m, p, correcto, api.idioma);
       avanzar(correcto);
     } else {
       mensajeEl.textContent = '';
@@ -81,14 +81,25 @@ function montarPotencias(contenedor, item, api) {
   contenedor.innerHTML = `
     <p class="instruccion">${tt(TX.potencias.instruccion)}</p>
     <div class="operacion" id="lista">${item.lista.join(' · ')}</div>
+    <div class="operacion" id="expresion"></div>
     <div class="grupo-pasos" id="controles"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
   const cajaControles = contenedor.querySelector('#controles');
-  const controles = item.bases.map(p => pasos(cajaControles, {
+  const expresion = contenedor.querySelector('#expresion');
+  const controles = [];
+  // La expresión que se va formando: las bases con exponente 0 no aparecen; el hueco es «□».
+  function pintarExpresion() {
+    const f = item.bases.map((p, i) => [p, controles[i] ? controles[i].valor() : 0]).filter(([, e]) => e > 0);
+    expresion.innerHTML = `${item.n} = ${f.length ? htmlFact(f) : '□'}`;
+  }
+  item.bases.forEach(p => controles.push(pasos(cajaControles, {
     max: EXPONENTE_MAXIMO,
     nombre: tt(TX.potencias.exponente_de(p)),
-    pinta: e => (e === 0 ? `${p}` : `${p}<sup>${e}</sup>`),
-  }));
+    // Con exponente 0 la base no cuenta: se ve tachada, no como un «3» suelto.
+    pinta: e => (e === 0 ? `<s>${p}</s>` : `${p}<sup>${e}</sup>`),
+    alCambiar: pintarExpresion,
+  })));
+  pintarExpresion();
   contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
     const exponentes = controles.map(c => c.valor());
