@@ -16,14 +16,14 @@
 
 /* Los huecos de paréntesis: estrechos y altos, fáciles de tocar con el pulgar */
 button.hueco-p {
-  min-width: .8em; width: .8em; min-height: 52px; padding: 0; border-radius: 8px;
+  min-width: 32px; width: 32px; min-height: 52px; padding: 0; border-radius: 8px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 1em; font-weight: 700; line-height: 1;
   background: transparent; color: var(--primario);
   border: 2px dashed var(--borde);
   -webkit-tap-highlight-color: transparent;
 }
-button.hueco-p--puesto { width: auto; min-width: .8em; padding: 0 .05em; background: var(--primario-claro); border: 2px solid var(--primario); color: var(--primario-oscuro); }
+button.hueco-p--puesto { width: auto; min-width: 32px; padding: 0 .05em; background: var(--primario-claro); border: 2px solid var(--primario); color: var(--primario-oscuro); }
 button.hueco-p--rojo { background: var(--error-claro); border-color: var(--error); color: var(--error); }
 button.hueco-p--nuevo { box-shadow: 0 0 0 4px var(--aviso-claro); }
 button.hueco-p:disabled { opacity: 1; cursor: default; }

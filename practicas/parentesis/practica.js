@@ -166,7 +166,10 @@ function montarTodos(contenedor, item, api) {
         return;
       }
       if (encontrados.has(ev.valor)) {
-        mostrarMensaje(tt(r.redundantes ? TX.no_agrupan : TX.ya_lo_tenias), 'mensaje--neutro');
+        // «no cambian el resultado» solo si el valor es el de sin paréntesis; si no, ya lo tenías con otros
+        const clave = r.redundantes ? TX.no_agrupan
+          : ev.valor === item.sinParentesis ? TX.ya_lo_tenias : TX.ya_con_otros;
+        mostrarMensaje(tt(clave), 'mensaje--neutro');
         return;
       }
       formas.set(ev.valor, textoColocacion(e, colocada));
