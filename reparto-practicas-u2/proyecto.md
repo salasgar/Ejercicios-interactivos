@@ -131,7 +131,7 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 
 | Banda | Modelo · esfuerzo | Para qué, en este reparto |
 |---|---|---|
-| **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18) |
+| **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18), la segunda revisión (36) |
 | **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones (incluida la 19), y la migración de `divisores/` (17) |
 | **BAJO** | Haiku 4.5 · Medio | No hay tareas de esta banda (la 34 pasó a MEDIO porque toca el test común) |
 
@@ -254,3 +254,11 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
   responder y un modo fijo por URL (`?idioma=es|en`) para alumnos concretos. Se hace en la
   base y lo heredan todas las prácticas. La 34 cerró antes de que existiera la 35 y la 17 ya estaba en curso cuando se dio de
   alta, así que ninguna depende de ella: la 17 hereda el cambio al no declarar parámetros.
+
+- **Tarea 36 (2026-10-08, 19:35 UTC), pedida por Juan Luis:** segunda revisión, limitada a lo
+  que cambiaron las 28 reaperturas de la tarde del 8 de octubre. Verifica y reabre; no corrige.
+  Es de un solo uso: va después de las reaperturas y antes de mandar las prácticas como tarea
+  semanal. Si reabre algo, esas reaperturas son MEDIO y se dan en cadena, como las anteriores.
+- **Publicación de las graves (2026-10-08):** por orden de Juan Luis la coordinadora puso
+  `disponible: true` a 07, 14, 20, 21, 27, 30 y 33 (commit 2128eb6). La 32 (errores1) queda
+  sin publicar hasta que él decida sobre las cuatro plantillas `saltoPaso`.
