@@ -24,7 +24,11 @@ function dibujo(D, d, c, nueva = false) {
 }
 
 const prueba = (D, d, q, r) => `${D} = ${d} · ${q} + ${r}`;
-const leerEntero = input => (input.value.trim() === '' ? null : Math.trunc(Number(input.value)));
+/** Número natural escrito, o null si está vacío o no lo es («6.9», «-2» o «1e1» no valen). */
+const leerEntero = input => {
+  const v = input.value.trim();
+  return /^\d+$/.test(v) ? Number(v) : null;
+};
 
 // ─── Ejercicio 1: reparte en cajas ───────────────────────────────────────────
 
@@ -163,12 +167,12 @@ function montarSignificado(contenedor, item, api) {
     ev.target.hidden = true;
     const acierto = mia === solucionSignificado({ q, r, pide });
     entrada.classList.add(acierto ? 'hueco--bien' : 'hueco--mal');
-    const explicacion = pide === 'llenas' ? tt(TX.significado.ok_llenas)(D, d, q, r)
+    const explicacion = pide === 'llenas' ? tt(TX.significado.ok_llenas)(D, d, q, r, cosa)
       : pide === 'sueltos' ? tt(TX.significado.ok_sueltos)(D, d, q, r)
       : r === 0 ? tt(TX.significado.ok_hacen_exacto)(D, d, q)
-      : tt(TX.significado.ok_hacen)(D, d, q, r);
+      : tt(TX.significado.ok_hacen)(D, d, q, r, cosa);
     // Quien pone «q» donde había que poner «q + 1» se olvidó del resto.
-    const olvido = !acierto && pide === 'hacen' && r > 0 && mia === q ? ` ${tt(TX.significado.olvido)}` : '';
+    const olvido = !acierto && pide === 'hacen' && r > 0 && mia === q ? ` ${tt(TX.significado.olvido)(cosa)}` : '';
     api.responder({ acierto, html: `${explicacion}${olvido}${dibujo(D, d, q)}`, espera: 2600 });
   });
 }
