@@ -7,7 +7,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX, ETIQUETA_ORDEN } from './textos.js';
 import {
-  ORDENES, redondear, fmt, cifraDecisiva, fraccionDe, generarRecta, posicionCorrecta, esAciertoRecta,
+  ORDENES, redondear, fmt, leerEntero, cifraDecisiva, fraccionDe, generarRecta, posicionCorrecta, esAciertoRecta,
   generarTres, esAciertoTres, generarEstimacion, diferenciaCon, esAciertoEstimar,
   esAciertoRazonable, esAciertoContexto,
 } from './logica.js';
@@ -37,7 +37,7 @@ function montarRecta(contenedor, item, api) {
         <span class="recta__etiqueta" style="left:100%">${num(sup, api)}</span>
       </div>
     </div>
-    <p class="instruccion redondeo-paso">${tt(T.paso2)}</p>
+    <p class="instruccion redondeo-paso">${tt(item.medio ? T.paso2_medio : T.paso2)}</p>
     <p class="redondeo-aviso" id="aviso" role="status"></p>`;
 
   const recta = contenedor.querySelector('#recta');
@@ -98,7 +98,7 @@ function montarTres(contenedor, item, api) {
     <div class="tres-filas">${ORDENES.map(o => `
       <div class="tres-fila" data-o="${o}">
         <label for="tres-${o}">${tt(ETIQUETA_ORDEN[o])}</label>
-        <input type="number" inputmode="numeric" id="tres-${o}" class="redondeo-entero" autocomplete="off">
+        <input type="text" inputmode="numeric" id="tres-${o}" class="redondeo-entero" autocomplete="off">
         <div class="tres-sentido">
           <button type="button" class="eleccion" data-s="exceso" aria-pressed="false" aria-label="${api.esc(tt(T.exceso_aria))}">${tt(T.exceso)}</button>
           <button type="button" class="eleccion" data-s="defecto" aria-pressed="false" aria-label="${api.esc(tt(T.defecto_aria))}">${tt(T.defecto)}</button>
@@ -123,9 +123,9 @@ function montarTres(contenedor, item, api) {
     if (api.respondido()) return;
     const respuestas = { redondeados: {}, excesos: {} };
     for (const o of ORDENES) {
-      const v = contenedor.querySelector(`#tres-${o}`).value.trim();
-      if (v === '' || !sentido[o]) { aviso.textContent = tt(T.incompleto); return; }
-      respuestas.redondeados[o] = Number(v);
+      const v = leerEntero(contenedor.querySelector(`#tres-${o}`).value);
+      if (v === null || !sentido[o]) { aviso.textContent = tt(T.incompleto); return; }
+      respuestas.redondeados[o] = v;
       respuestas.excesos[o] = sentido[o] === 'exceso';
     }
     const acierto = esAciertoTres(item, respuestas);
@@ -153,9 +153,9 @@ function montarEstimar(contenedor, item, api) {
     <div class="operacion">${cuentaDe(item.op, item.terminos, api)}</div>
     ${fijo ? '' : '<div class="botones-numeros" id="ordenes"></div>'}
     <label class="instruccion" for="est">${tt(T.est_label)}</label>
-    <input type="number" inputmode="numeric" id="est" class="redondeo-entero" autocomplete="off">
+    <input type="text" inputmode="numeric" id="est" class="redondeo-entero" autocomplete="off">
     <label class="instruccion" for="dif">${tt(T.dif_label)}</label>
-    <input type="number" inputmode="numeric" id="dif" class="redondeo-entero" autocomplete="off">
+    <input type="text" inputmode="numeric" id="dif" class="redondeo-entero" autocomplete="off">
     <p class="redondeo-aviso" id="aviso" role="status"></p>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
 
@@ -174,8 +174,9 @@ function montarEstimar(contenedor, item, api) {
 
   contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
-    if (orden === null || est.value.trim() === '' || dif.value.trim() === '') { aviso.textContent = tt(T.falta); return; }
-    const acierto = esAciertoEstimar(item, orden, Number(est.value), Number(dif.value));
+    const miEst = leerEntero(est.value), miDif = leerEntero(dif.value);
+    if (orden === null || miEst === null || miDif === null) { aviso.textContent = tt(T.falta); return; }
+    const acierto = esAciertoEstimar(item, orden, miEst, miDif);
     ev.target.style.display = 'none';
     aviso.textContent = '';
     est.disabled = dif.disabled = true;

@@ -216,3 +216,11 @@ test('ejercicio 3: sale cada tipo de ítem', () => {
   const items = generarN(generarEstimacion, 13);
   for (const t of ['estimar', 'razonable', 'contexto']) assert.ok(solo(items, i => i.tipo === t) > N * 0.2, t);
 });
+
+test('leerEntero: «4.730», «4,730», «4 730» y «4730» valen lo mismo; los no naturales, no', async () => {
+  const { leerEntero } = await import('../practicas/redondeo/logica.js');
+  for (const t of ['4730', '4.730', '4,730', '4 730', '4 730', ' 4730 ']) assert.equal(leerEntero(t), 4730, t);
+  assert.equal(leerEntero('0'), 0);
+  assert.equal(leerEntero('1.234.567'), 1234567);
+  for (const t of ['', '4.73', '-5', '6.9', '4 73', 'abc', '4.7300', '1e3']) assert.equal(leerEntero(t), null, t);
+});

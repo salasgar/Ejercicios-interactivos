@@ -36,6 +36,17 @@ export function fmt(n, idioma = 'es') {
   return s.replace(/\B(?=(\d{3})+(?!\d))/g, idioma === 'en' ? ',' : ' ');
 }
 
+/**
+ * Lo que escribe el alumno → número natural, o null si no lo es. Vale con o sin separador de
+ * miles: «4730», «4.730», «4,730», «4 730». «4.73» o «-5» no son naturales y dan null.
+ */
+export function leerEntero(texto) {
+  const t = String(texto).trim();
+  if (/^\d+$/.test(t)) return Number(t);
+  if (/^\d{1,3}([.,\s   ]\d{3})+$/.test(t)) return Number(t.replace(/\D/g, ''));
+  return null;
+}
+
 // Genera un entero de `cifras` cifras que no acabe en 0 (así no es múltiplo de ningún orden).
 function sinCero(rng, cifras) {
   const minimo = 10 ** (cifras - 1);
