@@ -73,8 +73,12 @@ export const TX = {
     exponente: { es: 'Exponente', en: 'Exponent' },
     comprobar: { es: 'Comprobar', en: 'Check' },
     potencia_cuenta: {
-      es: (b, m, k, desarrollo, r) => `(${b}<sup>${m}</sup>)<sup>${k}</sup> = ${desarrollo} = ${b}<sup>${r}</sup>: se multiplican los exponentes, ${m} · ${k} = ${r}.`,
-      en: (b, m, k, desarrollo, r) => `(${b}<sup>${m}</sup>)<sup>${k}</sup> = ${desarrollo} = ${b}<sup>${r}</sup>: multiply the exponents, ${m} · ${k} = ${r}.`,
+      es: (b, m, k, desarrollo, r) => `(${b}<sup>${m}</sup>)<sup>${k}</sup> = ${desarrollo} = ${b}<sup>${r}</sup>`,
+      en: (b, m, k, desarrollo, r) => `(${b}<sup>${m}</sup>)<sup>${k}</sup> = ${desarrollo} = ${b}<sup>${r}</sup>`,
+    },
+    potencia_regla: {
+      es: (m, k, r) => `Se multiplican los exponentes: ${m} · ${k} = ${r}.`,
+      en: (m, k, r) => `Multiply the exponents: ${m} · ${k} = ${r}.`,
     },
     sumaste: {
       es: (m, k) => `${m} + ${k} sería para un producto. Aquí hay una potencia de una potencia: se multiplican.`,
@@ -93,10 +97,10 @@ export const TX = {
     introduccion: {
       es: `<h2>Reto: la última cifra</h2>
         <p>¿En qué cifra acaba <strong>7<sup>10</sup></strong>? No hace falta calcularlo entero: las <strong>últimas cifras</strong> de las potencias de una base <strong>se repiten</strong>.</p>
-        <p>Primero rellena la tabla con la última cifra de cada potencia (calculando solo la última cifra de cada multiplicación). Después, di cada cuántas potencias se repite el patrón y la cifra que se pide.</p>`,
+        <p>Primero rellena la tabla con la última cifra de cada potencia (calculando solo la última cifra de cada multiplicación). Después, di cuántas cifras tiene el patrón más corto que se repite y la cifra que se pide.</p>`,
       en: `<h2>Challenge: the last digit</h2>
         <p>What digit does <strong>7<sup>10</sup></strong> end in? You do not need to work it all out: the <strong>last digits</strong> of the powers of a base <strong>repeat</strong>.</p>
-        <p>First fill in the table with the last digit of each power (working out only the last digit of each multiplication). Then say how many powers the pattern takes to repeat and the digit you are asked for.</p>`,
+        <p>First fill in the table with the last digit of each power (working out only the last digit of each multiplication). Then say how many digits the shortest pattern that repeats has, and the digit you are asked for.</p>`,
     },
     pregunta: {
       es: (b, n) => `¿En qué cifra acaba ${b}<sup>${n}</sup>?`,
@@ -112,8 +116,8 @@ export const TX = {
       en: 'Some digits are wrong (in red). Multiply the last digit of the previous power by the base and keep only the last digit.',
     },
     ciclo_pregunta: {
-      es: 'El patrón se repite cada… potencias',
-      en: 'The pattern repeats every… powers',
+      es: 'El patrón más corto que se repite tiene… cifras',
+      en: 'The shortest pattern that repeats has… digits',
     },
     cifra_pregunta: {
       es: (b, n) => `Entonces ${b}<sup>${n}</sup> acaba en la cifra…`,
@@ -133,8 +137,8 @@ export const TX = {
       en: (b, n, L, q, d) => `The pattern repeats every ${L}. ${n} = ${L} · ${q} is a multiple of ${L}, so ${b}<sup>${n}</sup> ends like ${b}<sup>${L}</sup>: in ${d}.`,
     },
     ciclo_mal: {
-      es: L => `El ciclo es ${L}.`,
-      en: L => `The cycle is ${L}.`,
+      es: L => `El patrón más corto tiene ${L} ${L === 1 ? 'cifra' : 'cifras'}.`,
+      en: L => `The shortest pattern has ${L} ${L === 1 ? 'digit' : 'digits'}.`,
     },
     cifra_mal: {
       es: d => `La cifra es ${d}.`,

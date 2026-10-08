@@ -158,3 +158,50 @@ test('ninguna cifra o respuesta domina: la solución del ejercicio 3 no es la mi
   for (let i = 0; i < N; i++) { const s = generarUltima(rng).solucion; cuenta[s] = (cuenta[s] ?? 0) + 1; }
   Math.max(...Object.values(cuenta)) < 0.7 * N || assert.fail(JSON.stringify(cuenta));
 });
+
+// --- Reapertura de la tarea 33 (2026-10-08) ------------------------------------------
+
+import { emparentadas } from '../practicas/propiedades/logica.js';
+import { TX } from '../practicas/propiedades/textos.js';
+
+test('reapertura: la base ajena nunca es pariente (2/4/8, 3/9) de la otra', () => {
+  const pares = [[2, 4], [2, 8], [4, 8], [3, 9]];
+  for (const [a, b] of pares) assert.ok(emparentadas(a, b) && emparentadas(b, a), `${a} y ${b}`);
+  for (const [a, b] of [[2, 3], [4, 9], [8, 9], [5, 10], [6, 7], [4, 6]]) assert.ok(!emparentadas(a, b), `${a} y ${b}`);
+  // Definición independiente: a^m = b^n para algún m, n ≥ 1 hasta 10^6.
+  const potencias = n => { const s = new Set(); for (let p = n; p <= 1e6; p *= n) s.add(p); return s; };
+  for (const a of [2, 3, 4, 5, 6, 7, 8, 9, 10]) for (const b of [2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+    if (a === b) continue;
+    const comun = [...potencias(a)].some(p => potencias(b).has(p));
+    assert.equal(emparentadas(a, b), comun, `${a} y ${b}`);
+  }
+  const rng = crearRng(5);
+  let ajenas = 0;
+  for (let i = 0; i < 3000; i++) {
+    const it = generarJuntar(rng, { aciertos: 6 });
+    const bases = [...new Set(it.terminos.map(t => t.base))];
+    if (bases.length > 1) { ajenas++; assert.equal(bases.length, 2); assert.ok(!emparentadas(bases[0], bases[1]), JSON.stringify(it.terminos)); }
+  }
+  assert.ok(ajenas > 100);
+});
+
+test('reapertura: el patrón se pregunta por el más corto, en los dos idiomas, y solo el menor es verdad', () => {
+  for (const idioma of ['es', 'en']) {
+    assert.match(TX.ultima.ciclo_pregunta[idioma], idioma === 'es' ? /más corto/ : /shortest/);
+    assert.match(TX.ultima.ciclo_mal[idioma](4), idioma === 'es' ? /más corto tiene 4 cifras/ : /shortest pattern has 4 digits/);
+  }
+  // Con el patrón «más corto», cada base tiene un único valor correcto entre 1 y 6.
+  for (const base of BASES_ULTIMA) {
+    const L = ciclo(base);
+    const repiten = [1, 2, 3, 4, 5, 6].filter(m => Array.from({ length: 12 }, (_, i) => ultimaCifra(base, i + 1)).every((d, i, a) => i + m >= a.length || a[i + m] === d));
+    assert.equal(Math.min(...repiten), L, `base ${base}`);
+    const distintas = new Set(Array.from({ length: L }, (_, i) => ultimaCifra(base, i + 1))).size;
+    assert.equal(distintas, L, `en el patrón más corto de ${base} no se repite ninguna cifra`);
+  }
+});
+
+test('reapertura: textos de la potencia de potencia sin la frase dentro de la cuenta', () => {
+  assert.equal(TX.potencia.potencia_cuenta.es(8, 6, 4, '8 · 8', 24), '(8<sup>6</sup>)<sup>4</sup> = 8 · 8 = 8<sup>24</sup>');
+  assert.equal(TX.potencia.potencia_regla.es(6, 4, 24), 'Se multiplican los exponentes: 6 · 4 = 24.');
+  assert.equal(TX.potencia.potencia_regla.en(6, 4, 24), 'Multiply the exponents: 6 · 4 = 24.');
+});

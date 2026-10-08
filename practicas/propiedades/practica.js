@@ -28,6 +28,18 @@ function cuentaDe(terminos, ops, idioma) {
 /** Una potencia desarrollada: 2 · 2 · 2 (solo si es corta). */
 const desarrollo = (base, exp) => Array(exp).fill(base).join(' · ');
 
+/** Una cadena de igualdades que se parte por los «=» (cada tramo no se parte), para que quepa en 375 px. */
+const cadena = linea => linea.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
+
+/** Si es corto, la cuenta de los factores: (2 · 2 · 2) · (2 · 2 · 2 · 2) = 2 · 2 · 2 · 2 · 2 · 2 · 2. Texto que se parte donde haga falta. */
+function desarrolloJunto(base, ea, eb, suma, idioma) {
+  if (ea + eb > 12) return '';
+  const a = desarrollo(base, ea), b = desarrollo(base, eb);
+  return suma
+    ? ` (${a}) · (${b}) = ${desarrollo(base, ea + eb)}.`
+    : ` (${a}) ${simbolo(':', idioma)} (${b}) = ${desarrollo(base, ea - eb)}.`;
+}
+
 // ─── Ejercicio 1: junta las potencias ──────────────────────────────────────────
 
 function montarJuntar(contenedor, item, api) {
@@ -113,16 +125,17 @@ function montarJuntar(contenedor, item, api) {
       const x = TX.juntar;
       const suma = op === '·';
       const ea = efectivo(a), eb = efectivo(b);
+      const desarrolado = desarrolloJunto(a.base, ea, eb, suma, idioma);
       const linea = suma
-        ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}`
-        : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}`;
+        ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}.${desarrolado}`
+        : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}.${desarrolado}`;
       if (mio !== bueno) {
         let sugerencia = '';
         if (suma && mio === ea * eb) sugerencia = ` ${tt(x.no_multiplica)}`;
         if (!suma && eb !== 0 && mio * eb === ea) sugerencia = ` ${tt(x.no_divide)}`;
         pintar(true);
         juntador.querySelector('.juntador__botones').hidden = true;
-        return api.responder({ acierto: false, html: `${tt(x.correcta)} ${linea}.${sugerencia}` });
+        return api.responder({ acierto: false, html: `${tt(x.correcta)} ${linea}${sugerencia}` });
       }
       pasosHechos.push(linea);
       ({ terminos, ops } = juntar(terminos, ops, par, bueno));
@@ -133,7 +146,7 @@ function montarJuntar(contenedor, item, api) {
         const nota = terminos.length > 1 ? ` ${tt(x.ajena_nota)}` : '';
         return api.responder({
           acierto: true,
-          html: `${pasosHechos.join('.<br>')}.<br>${tt(x.en_total)} ${final}.${nota}`,
+          html: `${pasosHechos.join('<br>')}<br>${tt(x.en_total)} ${final}.${nota}`,
           espera: 2600,
         });
       }
@@ -176,7 +189,7 @@ function montarPotencias(contenedor, item, api) {
     if (esPotencia) {
       const m = t0.exp, k = t0.k;
       const des = Array(k).fill(`${base}<sup>${m}</sup>`).join(' · ');
-      html = `<span class="cuenta">${tt(x.potencia_cuenta)(base, m, k, des, bueno)}</span>`;
+      html = `${cadena(tt(x.potencia_cuenta)(base, m, k, des, bueno))}. ${tt(x.potencia_regla)(m, k, bueno)}`;
       if (mio !== bueno && mio === m + k) html += ` ${tt(x.sumaste)(m, k)}`;
     } else {
       // Cuenta de exponentes: 3 · 2 + 4 − 3 (los paréntesis se resuelven antes).
@@ -185,7 +198,7 @@ function montarPotencias(contenedor, item, api) {
         return i ? `${ops[i - 1] === '·' ? '+' : '−'} ${e}` : e;
       }).join(' ');
       const original = terminos.map((t, i) => (i ? `${simbolo(ops[i - 1], idioma)} ${pot(t)}` : pot(t))).join(' ');
-      html = `<span class="cuenta">${tt(x.cadena_cuenta)(original, cuentaExp, bueno, base)}</span>`;
+      html = cadena(tt(x.cadena_cuenta)(original, cuentaExp, bueno, base));
     }
     if (mio !== bueno) html = `${tt(x.tu_respuesta)} ${base}<sup>${mio || '□'}</sup> ${tt(x.no_da)} ${html}`;
     api.responder({ acierto: mio === bueno, html, espera: 2400 });
