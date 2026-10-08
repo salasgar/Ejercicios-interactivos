@@ -24,19 +24,33 @@ export const TX = {
       en: p => `Cross out the remaining multiples of ${p} (not ${p} itself, which is prime).`,
     },
     bien: { es: p => `Esos eran los múltiplos de ${p} que quedaban por tachar.`, en: p => `Those were the remaining multiples of ${p}.` },
+    // `ej` = { n, p }: la primera celda que falta, con su cuenta n = p · (n : p).
     mal_faltan: {
-      es: n => (n === 1 ? 'te falta 1 celda por tachar' : `te faltan ${n} celdas por tachar`),
-      en: n => (n === 1 ? 'you are missing 1 cell' : `you are missing ${n} cells`),
+      es: (k, ej) => {
+        const cuenta = `<span class="cuenta">${ej.n} = ${ej.p} · ${ej.n / ej.p}</span>`;
+        return k === 1 ? `Te falta por tachar el ${cuenta}.` : `Te faltan ${k} celdas por tachar, por ejemplo el ${cuenta}.`;
+      },
+      en: (k, ej) => {
+        const cuenta = `<span class="cuenta">${ej.n} = ${ej.p} · ${ej.n / ej.p}</span>`;
+        return k === 1 ? `You are missing ${cuenta}.` : `You are missing ${k} cells, for example ${cuenta}.`;
+      },
     },
+    // `ej` = { n, primo, p }: la primera celda de más y por qué no se tacha.
     mal_sobran: {
-      es: n => (n === 1 ? 'has tachado 1 celda de más' : `has tachado ${n} celdas de más`),
-      en: n => (n === 1 ? 'you crossed out 1 extra cell' : `you crossed out ${n} extra cells`),
+      es: (k, ej) => {
+        const razon = ej.primo ? 'es primo' : `no es múltiplo de ${ej.p}`;
+        return k === 1 ? `Has tachado 1 celda de más: el ${ej.n} ${razon}.` : `Has tachado ${k} celdas de más; por ejemplo, el ${ej.n} ${razon}.`;
+      },
+      en: (k, ej) => {
+        const razon = ej.primo ? 'is prime' : `is not a multiple of ${ej.p}`;
+        return k === 1 ? `You crossed out 1 extra cell: ${ej.n} ${razon}.` : `You crossed out ${k} extra cells; for example, ${ej.n} ${razon}.`;
+      },
     },
   },
   pregunta11: {
     instruccion: {
       es: 'Después del 7, ¿por qué no hace falta tachar los múltiplos del 11?',
-      en: 'After the 7, why is there no need to cross out the multiples of 11?',
+      en: 'After 7, why is there no need to cross out the multiples of 11?',
     },
     opcion: {
       buena: {
@@ -70,7 +84,11 @@ export const TX = {
     dos: { es: 'El 2 es primo: es el único primo que es par.', en: '2 is prime: it is the only even prime.' },
     es_primo: { es: n => `${n} es primo`, en: n => `${n} is prime` },
     es_compuesto: { es: n => `${n} es compuesto`, en: n => `${n} is composite` },
-    no_divisible: { es: lista => `no es divisible entre ${lista}`, en: lista => `it is not divisible by ${lista}` },
+    // `lista`: array de primos como texto. «entre 2 ni 3» / «by 2 or 3».
+    no_divisible: {
+      es: lista => `no es divisible entre ${lista.length > 1 ? `${lista.slice(0, -1).join(', ')} ni ${lista.at(-1)}` : lista[0]}`,
+      en: lista => `it is not divisible by ${lista.length > 1 ? `${lista.slice(0, -1).join(', ')} or ${lista.at(-1)}` : lista[0]}`,
+    },
     se_pasa: {
       es: (n, p) => `y <span class="cuenta">${p} · ${p} = ${p * p}</span> ya se pasa de ${n}`,
       en: (n, p) => `and <span class="cuenta">${p} · ${p} = ${p * p}</span> is already greater than ${n}`,
@@ -80,8 +98,11 @@ export const TX = {
   raiz: {
     nombre: { es: '¿Hasta qué primo hay que probar?', en: 'Which primes do you need to try?' },
     detalle: { es: 'Para ver si un número es primo no hace falta probarlos todos', en: 'To check if a number is prime you do not need to try them all' },
-    instruccion: { es: n => `Para saber si ${n} es primo, ¿qué primos hay que probar?`, en: n => `To find out if ${n} is prime, which primes do you need to try?` },
-    mitad: { es: 'todos los primos hasta n : 2', en: 'all the primes up to n : 2' },
+    instruccion: {
+      es: n => `Para saber si ${n} es primo, ¿cuál es la lista <strong>más corta</strong> de primos que basta probar?`,
+      en: n => `To find out if ${n} is prime, which is the <strong>shortest</strong> list of primes that is enough to try?`,
+    },
+    mitad: { es: n => `todos los primos hasta la mitad de ${n}`, en: n => `all the primes up to half of ${n}` },
     primo_pregunta: { es: '¿Y es primo?', en: 'And is it prime?' },
     explicacion: {
       es: (n, r, s, ultimo) => `${r} · ${r} = ${r * r} ≤ ${n} < ${s} · ${s} = ${s * s}, así que basta probar hasta el ${ultimo}.`,

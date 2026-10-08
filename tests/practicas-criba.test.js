@@ -11,6 +11,7 @@ import {
   generarFlashcard, claseDe, TRAMPOSOS,
   generarRaiz,
 } from '../practicas/criba/logica.js';
+import { TX } from '../practicas/criba/textos.js';
 
 function esPrimoBruto(n) {
   if (n < 2) return false;
@@ -121,4 +122,42 @@ test('ejercicio 3: en 3000 ítems, aproximadamente un 30 % de los n son compuest
   for (let i = 0; i < 3000; i++) if (generarRaiz(rng).compuesto) compuestos++;
   const proporcion = compuestos / 3000;
   assert.ok(proporcion >= 0.2 && proporcion <= 0.4, `proporción de compuestos: ${proporcion}`);
+});
+
+test('ejercicio 2: todos los tramposos están en el rango 1-150 que anuncia el texto', () => {
+  for (const n of TRAMPOSOS) assert.ok(n >= 1 && n <= 150 && !esPrimoBruto(n), `n=${n}`);
+  const rng = crearRng(7);
+  for (let i = 0; i < 3000; i++) assert.ok(generarFlashcard(rng).n <= 150);
+});
+
+test('textos: mensajes de fallo citan una celda concreta, sin letras y con la forma correcta', () => {
+  const f = TX.criba.mal_faltan, s = TX.criba.mal_sobran;
+  assert.match(f.es(3, { n: 51, p: 3 }), /Te faltan 3 celdas por tachar, por ejemplo el .*51 = 3 · 17/);
+  assert.match(f.es(1, { n: 51, p: 3 }), /^Te falta por tachar el .*51 = 3 · 17/);
+  assert.match(f.en(2, { n: 91, p: 7 }), /^You are missing 2 cells, for example .*91 = 7 · 13/);
+  assert.equal(s.es(1, { n: 53, primo: true, p: 3 }), 'Has tachado 1 celda de más: el 53 es primo.');
+  assert.equal(s.es(2, { n: 35, primo: false, p: 3 }), 'Has tachado 2 celdas de más; por ejemplo, el 35 no es múltiplo de 3.');
+  assert.equal(s.en(1, { n: 35, primo: false, p: 3 }), 'You crossed out 1 extra cell: 35 is not a multiple of 3.');
+  assert.equal(TX.flash.no_divisible.es(['2', '3']), 'no es divisible entre 2 ni 3');
+  assert.equal(TX.flash.no_divisible.es(['2', '3', '5']), 'no es divisible entre 2, 3 ni 5');
+  assert.equal(TX.flash.no_divisible.en(['2', '3']), 'it is not divisible by 2 or 3');
+  assert.equal(TX.flash.no_divisible.es(['2']), 'no es divisible entre 2');
+});
+
+test('ejercicio 3: instrucción pide la lista más corta y la opción «mitad» cita el número del ítem', () => {
+  assert.match(TX.raiz.instruccion.es(113), /más corta/);
+  assert.match(TX.raiz.instruccion.en(113), /shortest/);
+  assert.equal(TX.raiz.mitad.es(113), 'todos los primos hasta la mitad de 113');
+  assert.equal(TX.raiz.mitad.en(113), 'all the primes up to half of 113');
+  for (const idioma of ['es', 'en']) assert.doesNotMatch(TX.raiz.mitad[idioma](113), /\bn\b/);
+  // Con «más corta», cada distractor es falso: o no basta (le falta el último) o no es la más corta (le sobra un primo o es mucho más larga).
+  const rng = crearRng(11);
+  for (let i = 0; i < 500; i++) {
+    const item = generarRaiz(rng);
+    const buena = PRIMOS.filter(p => p * p <= item.n);
+    for (const o of item.opciones.filter(x => !x.correcta)) {
+      if (o.tipo === 'mitad') continue; // siempre más larga que la buena: n/2 ≥ 25 > raíz de 200
+      assert.notDeepEqual(o.lista, buena);
+    }
+  }
 });

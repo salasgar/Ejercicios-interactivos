@@ -3,8 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { factorizar, criterio, CRITERIOS } from '../_comun/aritmetica.js';
-import { unir } from '../_comun/textos.js';
+import { factorizar, criterio, CRITERIOS, esPrimo } from '../_comun/aritmetica.js';
 import { TX } from './textos.js';
 import {
   generarCriba, aciertaTachar, PRIMOS_HASTA_100,
@@ -27,8 +26,7 @@ function explicarClase(n, clase, api) {
   if (n === 2) return tt(TX.flash.dos);
   const { probados, siguiente } = primosAProbar(n);
   if (!probados.length) return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.solo_dos)(n)}.`;
-  const lista = unir(probados.map(String), api.idioma);
-  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(lista)}, ${tt(TX.flash.se_pasa)(n, siguiente)}.`;
+  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(probados.map(String))},${tt(TX.flash.se_pasa)(n, siguiente)}.`;
 }
 
 // ─── Ejercicio 1: la criba, paso a paso ─────────────────────────────────────────
@@ -49,12 +47,15 @@ function explicacionTachar(item, seleccionadas, api) {
   const { tt } = api;
   const objetivo = new Set(item.objetivo);
   if (aciertaTachar(item, [...seleccionadas])) return tt(TX.criba.bien)(item.primo);
-  const faltan = item.objetivo.filter(n => !seleccionadas.has(n)).length;
-  const sobran = [...seleccionadas].filter(n => !objetivo.has(n)).length;
+  const faltan = item.objetivo.filter(n => !seleccionadas.has(n));
+  const sobran = [...seleccionadas].filter(n => !objetivo.has(n)).sort((a, b) => a - b);
   const partes = [];
-  if (faltan) partes.push(tt(TX.criba.mal_faltan)(faltan));
-  if (sobran) partes.push(tt(TX.criba.mal_sobran)(sobran));
-  return `${unir(partes, api.idioma)}.`;
+  if (faltan.length) partes.push(tt(TX.criba.mal_faltan)(faltan.length, { n: faltan[0], p: item.primo }));
+  if (sobran.length) {
+    const n = sobran[0];
+    partes.push(tt(TX.criba.mal_sobran)(sobran.length, { n, primo: esPrimo(n), p: item.primo }));
+  }
+  return partes.join(' ');
 }
 
 function montarTachar(contenedor, item, api) {
@@ -176,7 +177,7 @@ function montarFlashcard(contenedor, item, api) {
 // ─── Ejercicio 3: ¿hasta qué primo hay que probar? ──────────────────────────────
 
 function textoOpcion(o, api) {
-  return o.tipo === 'mitad' ? api.tt(TX.raiz.mitad) : o.lista.join(', ');
+  return o.tipo === 'mitad' ? api.tt(TX.raiz.mitad)(item.n) : o.lista.join(', ');
 }
 
 function htmlExplicacionLista(item, api) {
