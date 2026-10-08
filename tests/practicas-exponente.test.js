@@ -11,8 +11,9 @@ import {
   generarPotencia, aciertaPotencia,
   generarValor, generarMultiplicacion,
   generarAreas, respuestasAreas, aciertaAreas,
-  cuentaParte, cuentaErronea, lecturaIngles,
+  cuentaParte, cuentaErronea, cuentaTocada, valorTocado, valorParte, REGIONES, lecturaIngles,
 } from '../practicas/exponente/logica.js';
+import { TX } from '../practicas/exponente/textos.js';
 
 test('ejercicio 1: las cuentas del feedback terminan en el valor correcto y en el erróneo, y son distintos', () => {
   const rng = crearRng(5);
@@ -30,6 +31,97 @@ test('ejercicio 1: las cuentas del feedback terminan en el valor correcto y en e
       assert.equal(final(c), v);
     }
     assert.notEqual(final(buena), final(mala), `${buena} / ${mala}`);
+  }
+});
+
+test('ejercicio 1: «lo que has tocado daría» corresponde a la región tocada, con su cuenta y su valor, y nunca coincide con el correcto', () => {
+  const rng = crearRng(6);
+  const js = parte => parte.replace(/<sup>(\d)<\/sup>/g, '**$1').replace(/·/g, '*');
+  // Definición independiente: el exponente aplicado solo a la región tocada.
+  const esperado = (p, id) => {
+    const { a, b, c, e } = p;
+    if (p.forma === 'simple') return id === 'a' ? (a ** e) * b : a * b ** e;
+    if (p.forma === 'suma') return id === 'a' ? a ** e + b : a + b ** e;
+    if (p.forma === 'grupo') return id === 'b' ? a * b ** e : (a * b) ** e;
+    if (p.forma === 'sumagrupo') return id === 'b' ? a + b ** e : (a + b) ** e;
+    return { a: a ** e * (b + c), c: a * (b + c ** e), grupo: a * (b + c) ** e }[id];
+  };
+  const vistos = new Set();
+  for (let i = 0; i < 4000; i++) {
+    const p = generarParte(rng);
+    for (const id of REGIONES[p.forma]) {
+      assert.equal(valorTocado(p, id), esperado(p, id), `${p.forma} ${id}`);
+      if (id === idBaseDe(p.forma)) continue;
+      vistos.add(`${p.forma}/${id}`);
+      const cuenta = cuentaTocada(p, id);
+      const v = Function(`"use strict"; return (${js(cuenta.split(' = ')[0])});`)();
+      assert.equal(v, esperado(p, id), `${cuenta}`);
+      assert.equal(Number(cuenta.split(' = ').at(-1)), v);
+      cuenta.split(' = ').forEach(paso => assert.equal(Function(`"use strict"; return (${js(paso)});`)(), v, cuenta));
+      assert.notEqual(v, valorParte(p), `tocar ${id} daría lo mismo: ${cuenta}`);
+    }
+  }
+  assert.equal(vistos.size, 6); // simple/a suma/a grupo/b sumagrupo/b intermedia/a intermedia/c
+});
+
+test('ejercicio 2 (repetida): solo es acierto el producto de «exponente» factores iguales a la base', () => {
+  const rng = crearRng(12);
+  for (let i = 0; i < 300; i++) {
+    const item = generarRepetida(rng);
+    const valores = [...new Set(item.fichas.map(f => f.valor))];
+    // definición independiente: alternancia número · número … con exponente números, todos iguales a la base
+    const vale = seq => seq.length === 2 * item.exponente - 1
+      && seq.every((v, k) => (k % 2 ? v === '·' : v === item.base));
+    for (let t = 0; t < 400; t++) {
+      const largo = rng.entero(1, 2 * item.exponente);
+      const seq = Array.from({ length: largo }, () => rng.elegir(valores));
+      assert.equal(aciertaRepetida(item, seq), vale(seq), JSON.stringify(seq));
+    }
+    // Los señuelos permiten otros productos con el mismo valor (2 · 8 = 16), pero no son «factores iguales a la base»:
+    assert.equal(aciertaRepetida(item, [item.base, '·', item.base ** item.exponente]), false);
+  }
+});
+
+test('ejercicio 2 (potencia): se avisa cuando lo que puso el alumno vale lo mismo (4 · 4 es 2⁴ y 4²)', () => {
+  const casos = [[2, 4, 4, 2], [4, 2, 2, 4], [3, 4, 9, 2], [9, 2, 3, 4], [4, 3, 8, 2], [8, 2, 4, 3]];
+  for (const [b, e, pb, pe] of casos) {
+    assert.equal(b ** e, pb ** pe);
+    const prod = Array(e).fill(b).join(' · ');
+    assert.match(TX.potencia.mal.es(b, e, prod, pb, pe), /vale lo mismo/);
+    assert.match(TX.potencia.mal.en(b, e, prod, pb, pe), /same value/);
+  }
+  const rng = crearRng(31);
+  for (let i = 0; i < 1000; i++) {
+    const item = generarPotencia(rng);
+    const pb = rng.entero(2, 9), pe = rng.entero(2, 4);
+    const prod = Array(item.exponente).fill(item.base).join(' · ');
+    const igual = pb ** pe === item.base ** item.exponente;
+    assert.equal(/vale lo mismo/.test(TX.potencia.mal.es(item.base, item.exponente, prod, pb, pe)), igual);
+    assert.equal(aciertaPotencia(item, pb, pe), pb === item.base && pe === item.exponente);
+  }
+});
+
+test('ejercicio 2 (valor): el feedback dice la cuenta de la opción elegida', () => {
+  const rng = crearRng(41);
+  for (let i = 0; i < 1000; i++) {
+    const it = generarValor(rng);
+    for (const o of it.opciones.filter(x => x !== it.correcta)) {
+      const es = TX.valor.mal.es(it.base, it.exponente, it.correcta, o);
+      const en = TX.valor.mal.en(it.base, it.exponente, it.correcta, o);
+      assert.ok(es.startsWith(String(o)) && en.startsWith(String(o)));
+      if (o === it.base * it.exponente) assert.match(es, new RegExp(`${it.base} · ${it.exponente}`));
+      else if (o === it.exponente ** it.base) assert.match(es, new RegExp(`${it.exponente} elevado a ${it.base}`));
+      else assert.match(es, /no es/);
+    }
+  }
+});
+
+test('textos: ninguna jerga ni «×», y los dos idiomas cubren lo mismo', () => {
+  const todo = JSON.stringify(TX, (k, v) => (typeof v === 'function' ? v.toString() : v));
+  assert.ok(!/stepper/i.test(todo));
+  assert.ok(!todo.includes('×'));
+  for (const [clave, grupo] of Object.entries(TX)) {
+    for (const [k, v] of Object.entries(grupo)) assert.ok(v.es !== undefined && v.en !== undefined, `${clave}.${k}`);
   }
 });
 
