@@ -131,6 +131,29 @@ Propios de esta tarea:
   aparecen cuando hacen falta, delatan la respuesta.
 - Steppers: usa `<button>` −/+ con `aria-label`, no `<input type=number>` (abre el teclado
   en el móvil y desplaza la página).
+- (07, al cerrar) Diseñar los distractores del ejercicio 3 es más delicado de lo que
+  parece: con una factorización de 2 primos [[p1,e1],[p2,e2]], «tratar p^e como p·e en
+  TODOS los factores» y «tratarlo solo en UNO» dan el MISMO valor salvo que los dos
+  exponentes sean distintos (si uno es 1, transformarlo no cambia nada y los dos
+  distractores coinciden). Y p=2,e=2 es un caso especial: 2·2 = 2² = 4, así que ese
+  distractor «de toda la vida» coincide con el valor correcto si el otro factor tiene
+  exponente 1. Solución que funcionó: forzar e1 ≠ e2 al generar, y cambiar el distractor
+  de «solo un factor mal» por «intercambiar los exponentes entre las dos bases»
+  (p1^e2 · p2^e1), que con e1≠e2 nunca coincide con el valor correcto. El test de
+  fuerza bruta («las cuatro opciones son distintas») lo detectó enseguida; sin ese test
+  habría pasado a producción con dos respuestas válidas en bastantes ítems.
+- (07) Probar en el navegador con `puppeteer-core`: la navegación con
+  `waitUntil: 'networkidle0'` se cuelga si hay `setRequestInterception` activo (al menos
+  en esta versión); usar `waitUntil: 'load'` y una espera corta aparte. Y `page.$x` ya no
+  existe en la versión instalada: usar `page.evaluate` con `querySelectorAll` y comparar
+  `textContent`.
+- (07) La duración esperada de 2 h se queda corta para esta tarea en concreto, no por el
+  código (los tests y la interfaz salen en minutos, como en las demás tareas) sino por lo
+  que cuesta diseñar y verificar los distractores del ejercicio 3 y las pruebas
+  exhaustivas en el navegador. Aun así la caducidad (2×, con margen) no hizo falta
+  estirarla porque nadie relevó la tarea; si el reparto tuviera más contención, convendría
+  subir la duración esperada de tareas con un ejercicio de «opciones con distractores
+  matemáticos» a 2 h 30 min - 3 h.
 
 ## Prohibido (propio de esta tarea)
 
