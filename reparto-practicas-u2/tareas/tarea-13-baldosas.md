@@ -130,6 +130,10 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- (Reabierta 2026-10-08) Un texto que envuelve a otro ya completo («Lado 7: …no cabe.») lo duplica: da a cada texto un trozo sin prefijo ni conclusión (`resto_en`) para componerlo.
+- (Reabierta) Los `id` de un SVG han de ser únicos por montaje: la base monta el ítem otra vez al traducir.
+- (Reabierta) Filas y columnas del feedback salen del dibujo: ancho a/g baldosas por fila, b/g filas.
+
 - Dibujar 2025 celdas como `<div>` tarda y se nota en el móvil: `background-image` con
   `linear-gradient` repetido o un `<pattern>` SVG; las baldosas cortadas se dibujan aparte.
 - «Trozos» se suman entre cuerdas pero «baldosas» se multiplican: el feedback debe decirlo

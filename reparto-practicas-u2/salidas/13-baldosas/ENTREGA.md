@@ -55,3 +55,7 @@ Poner `disponible: true` en `practicas/_comun/catalogo.js` para `baldosas`
 ## Propuestas pendientes
 
 Ninguna que cambie el contrato.
+
+## Reabierta (2026-10-08, sesión s-20261008T181518-7bafe7d1) — commit `fa3c9265`
+
+Corregidos los siete puntos de `hechos/reabiertas/13--s-20261008T051928-1cba9950.md`: (1) introducción del ejercicio 2 con el ejemplo 40 dm por 56 dm, lado 8, sin letras; (2) mensaje de «no cabe en ninguno» sin duplicar; (3) «7 filas de 5» coherente con el dibujo; (4) «7 no vale: 40 : 7 = 5, sobran 5 dm…» con los números; (5) si el alumno falla el trozo pero suma bien con el suyo, se le dice que la suma está bien; (6) ids de `<pattern>` únicos por dibujo; (7) «tiles of side 8». No tocada la decisión pendiente de «×» en «Suelo de 40 × 56 dm».

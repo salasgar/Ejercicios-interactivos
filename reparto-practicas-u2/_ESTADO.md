@@ -127,7 +127,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/10--s-20261008T051928-1cba9950.md |
 | 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 17:52Z (8-oct) · commit a8e309d (reabierta corregida, s-20261008T174848-5f71fd85) |
 | 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | EN CURSO | s-20261008T175226-2fefd40a · caduca 2026-10-08T21:52:26Z |
-| 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/13--s-20261008T051928-1cba9950.md |
+| 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 18:25 Z (8-oct) · commit fa3c9265 (reabierta corregida; «×» pendiente de Juan Luis) |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 17:56Z (8-oct) · commit 84d80c5 (reabierta corregida, s-20261008T175029-316f6500) |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 18:01Z (8-oct) · commit a12fb0c (reabierta corregida, s-20261008T175739-b443cac1) |
 | 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | EN CURSO | s-20261008T180351-55d4decb · caduca 2026-10-08T22:03:51Z |
@@ -214,6 +214,8 @@ LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · d
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
+
+LISTA · tarea 13 · 2026-10-08 18:25 · s-20261008T181518-7bafe7d1 · fa3c9265 · 3 ficheros (practicas/baldosas/{practica.js,textos.js}, tests/practicas-baldosas.test.js) · ~20 min · reabierta corregida (7 puntos)
 
 LISTA · tarea 16 · 2026-10-08 18:14 · s-20261008T180351-55d4decb · b5a878e · 3 ficheros (practicas/factorizaciones/{logica.js,practica.js}, tests/practicas-factorizaciones.test.js) · ~8 min · reabierta corregida (4 puntos)
 
