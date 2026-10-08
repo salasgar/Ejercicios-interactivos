@@ -2,10 +2,10 @@
 // 17 del reparto PU2), migrada sobre la base común. Mismos cinco ejercicios,
 // mismos códigos de alumno y mismo comportamiento que los alumnos ya conocen.
 //
-// `inicial`, `penalizacion` y `maximo` no se declaran a propósito: se toman
-// los valores por defecto de `../practicas/_comun/contador.js`, para que esta
-// práctica herede sin tocarla el cambio de la tarea 35 (10 aciertos, +2,
-// tope 20) en cuanto esa tarea cierre.
+// `objetivo`, `penalizacion` y `vidas` no se declaran a propósito: se toman
+// los valores por defecto de `../practicas/_comun/contador.js` (puntos, vidas
+// y racha desde el 2026-10-08), para que esta práctica herede sin tocarla
+// cualquier ajuste de la base.
 
 import { arrancar } from '../practicas/_comun/base.js';
 import { elecciones } from '../practicas/_comun/piezas.js';

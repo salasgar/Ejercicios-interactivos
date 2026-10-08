@@ -280,7 +280,7 @@ const EJERCICIOS = TX.ejercicios.map((x, i) => ({
   detalle: x.detalle,
   introduccion: x.introduccion,
   // En los tres primeros no hay fallos: solo cuentan las pistas (cinco expresiones).
-  ...(i < 3 ? { inicial: 5, penalizacion: 0, maximo: 5 } : {}),
+  ...(i < 3 ? { objetivo: 5, penalizacion: 0 } : {}),
   generar: rng => generar(i + 1, rng),
   montar: i < 3 ? montarTodos : montarDiana,
 }));

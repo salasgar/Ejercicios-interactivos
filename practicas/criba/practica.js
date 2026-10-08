@@ -246,8 +246,7 @@ arrancar({
     {
       nombre: TX.criba.nombre,
       detalle: TX.criba.detalle,
-      inicial: 5,
-      penalizacion: 1,
+      objetivo: 5,
       introduccion: TX.criba.introduccion,
       generar: generarCriba,
       montar: montarCriba,

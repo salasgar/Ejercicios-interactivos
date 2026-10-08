@@ -12,7 +12,7 @@
 import { firebaseConfig } from '../../src/config.js';
 import { practicaPorSlug } from './catalogo.js';
 import { codigoAlumno, leerCodigoAlumno, codigoResultado } from './codigos.js';
-import { ejercicioNuevo, anotar, diaDe, INICIAL, PENALIZACION, MAXIMO } from './contador.js';
+import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
 import { crearRng } from './rng.js';
 import { T, TRADUCCION, esc } from './textos.js';
 
@@ -39,9 +39,12 @@ export function validarPractica(practica) {
     for (const fn of ['generar', 'montar']) {
       if (typeof e[fn] !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: falta la función «${fn}»`);
     }
+    for (const viejo of ['inicial', 'maximo']) {
+      if (e[viejo] !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «${viejo}» ya no existe; el contador es por puntos («objetivo», «penalizacion», «vidas»)`);
+    }
     const p = parametrosDe(e);
-    if (![p.inicial, p.penalizacion, p.maximo].every(Number.isInteger) || p.inicial < 1 || p.penalizacion < 0 || p.maximo < p.inicial) {
-      throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «inicial», «penalizacion» y «maximo» tienen que ser enteros, con 1 ≤ inicial ≤ maximo`);
+    if (![p.objetivo, p.penalizacion, p.vidas].every(Number.isInteger) || p.objetivo < 1 || p.penalizacion < 0 || p.vidas < 1) {
+      throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «objetivo», «penalizacion» y «vidas» tienen que ser enteros, con objetivo ≥ 1, penalizacion ≥ 0 y vidas ≥ 1`);
     }
   });
   return ficha;
@@ -49,13 +52,13 @@ export function validarPractica(practica) {
 
 /**
  * Parámetros del contador de un ejercicio, con sus valores por defecto:
- * 10 aciertos, +2 por fallo y nunca más de 20 pendientes.
+ * llegar a 10 puntos, cada fallo quita 1 punto y una vida, y hay 5 vidas.
  */
 export function parametrosDe(ejercicio) {
   return {
-    inicial: ejercicio.inicial ?? INICIAL,
+    objetivo: ejercicio.objetivo ?? OBJETIVO,
     penalizacion: ejercicio.penalizacion ?? PENALIZACION,
-    maximo: ejercicio.maximo ?? MAXIMO,
+    vidas: ejercicio.vidas ?? VIDAS,
   };
 }
 
@@ -64,20 +67,6 @@ export const claveProgreso = (slug, codigo) => `practicas.v1.${slug}.${codigo}`;
 export const documentoNube = (slug, codigo) => `${slug}--${codigo}`;
 /** Clave del idioma fijado para un alumno (vacía de alumno a alumno). */
 export const claveIdiomaFijo = codigo => `practicas.idioma_fijo.${codigo}`;
-
-/**
- * Encaja un progreso guardado con una versión anterior de los parámetros del
- * contador (por ejemplo, el cambio de 20 a 10 aciertos): sin esto, un alumno
- * con muchas `pendientes` de antes se queda con un ejercicio imposible de
- * terminar o, si ya lo tenía por encima del tope nuevo, nunca llega a 0.
- */
-export function recortarProgreso(ej, { inicial, maximo }) {
-  if (ej.terminado) return ej;
-  let pendientes = Math.min(ej.pendientes, maximo);
-  const tope = 2 * inicial;
-  if (ej.aciertos + pendientes > tope) pendientes = Math.max(0, tope - ej.aciertos);
-  return pendientes === ej.pendientes ? ej : { ...ej, pendientes };
-}
 
 /**
  * El modo de idioma a partir del parámetro `?idioma=` de la URL y de lo
@@ -149,7 +138,7 @@ export function arrancar(practica) {
 
   const defs = practica.ejercicios;
   const params = defs.map(parametrosDe);
-  const nuevos = () => params.map(p => ejercicioNuevo(p.inicial));
+  const nuevos = () => params.map(p => ejercicioNuevo(p.objetivo, p.vidas));
   const rng = crearRng((Date.now() ^ Math.floor(Math.random() * 2 ** 32)) >>> 0);
   const idiomasDe = defs.map(() => crearSecuenciaIdiomas(rng));
 
@@ -181,7 +170,7 @@ export function arrancar(practica) {
     try {
       const guardado = JSON.parse(leer(claveProgreso(ficha.slug, estado.codigo)));
       if (Array.isArray(guardado?.ej)) {
-        estado.ej = estado.ej.map((nuevo, n) => recortarProgreso({ ...nuevo, ...guardado.ej[n] }, params[n]));
+        estado.ej = estado.ej.map((nuevo, n) => migrarProgreso({ ...nuevo, ...guardado.ej[n] }, params[n]));
       }
     } catch { /* guardado ilegible: se empieza de cero */ }
   }
@@ -302,7 +291,7 @@ export function arrancar(practica) {
   function htmlRegla() {
     const p = params[0];
     const iguales = params.every(q => Object.keys(p).every(c => q[c] === p[c]));
-    return iguales ? t().menu_regla(p.inicial, p.penalizacion, p.maximo) : t().menu_regla_varia;
+    return iguales ? t().menu_regla(p.objetivo, p.penalizacion, p.vidas, RACHA, EXTRA) : t().menu_regla_varia(RACHA, EXTRA);
   }
 
   function pintarMenu() {
@@ -310,14 +299,14 @@ export function arrancar(practica) {
     actual = null;
     pintarCabecera();
     const regla = htmlRegla();
-    const varia = regla === t().menu_regla_varia;
+    const varia = regla === t().menu_regla_varia(RACHA, EXTRA);
     const filas = defs.map((def, n) => {
       const e = estado.ej[n];
       const empezado = e.aciertos + e.fallos > 0;
       const etiqueta = e.terminado
         ? `<span class="etiqueta etiqueta--ok">✓ ${t().hecho} · ${t().fallos(e.fallos)}</span>`
-        : empezado ? `<span class="etiqueta">${t().quedan(e.pendientes)}</span>`
-          : varia ? `<span class="etiqueta">${t().regla_fila(params[n].inicial, params[n].penalizacion)}</span>` : '';
+        : empezado ? `<span class="etiqueta">${t().puntos(e.puntos, e.objetivo)}</span>`
+          : varia ? `<span class="etiqueta">${t().regla_fila(params[n].objetivo, params[n].penalizacion, params[n].vidas)}</span>` : '';
       const boton = e.terminado ? t().repetir : empezado ? t().seguir : t().empezar;
       return `
         <li class="lista__item">
@@ -352,21 +341,26 @@ export function arrancar(practica) {
   function abrirEjercicio(n) {
     // Un ejercicio ya terminado se puede repetir para practicar, sin tocar lo guardado.
     const repeticion = estado.ej[n].terminado;
-    actual = { n, practica: repeticion, sesion: repeticion ? ejercicioNuevo(params[n].inicial) : estado.ej[n], item: null, idioma: null, respondido: false };
+    actual = { n, practica: repeticion, sesion: repeticion ? ejercicioNuevo(params[n].objetivo, params[n].vidas) : estado.ej[n], item: null, idioma: null, respondido: false };
     if (defs[n].introduccion) pintarIntroduccion(); else siguiente();
   }
 
   function cabeceraEjercicio() {
     return `
       <button type="button" class="discreto volver" id="salir">${t().salir}</button>
-      <div class="progreso"><span>${t().ejercicio(actual.n + 1)} · ${tt(defs[actual.n].nombre)}</span><strong id="quedan"></strong></div>
+      <div class="progreso"><span>${t().ejercicio(actual.n + 1)} · ${tt(defs[actual.n].nombre)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
       <div class="barra"><div id="barra"></div></div>`;
   }
 
+  /** Puntos sobre el objetivo, la barra y las vidas (♥ llenas y ♡ perdidas). */
   function pintarContador() {
     const s = actual.sesion;
-    app.querySelector('#quedan').textContent = t().quedan(s.pendientes);
-    app.querySelector('#barra').style.width = `${Math.round(100 * s.aciertos / Math.max(1, s.aciertos + s.pendientes))}%`;
+    const total = params[actual.n].vidas;
+    app.querySelector('#puntos').textContent = t().puntos(s.puntos, s.objetivo);
+    app.querySelector('#barra').style.width = `${Math.round(100 * s.puntos / Math.max(1, s.objetivo))}%`;
+    const vidas = app.querySelector('#vidas');
+    vidas.textContent = '♥'.repeat(Math.max(0, Math.min(total, s.vidas))) + '♡'.repeat(Math.max(0, total - s.vidas));
+    vidas.setAttribute('aria-label', t().vidas_quedan(s.vidas));
   }
 
   function pintarIntroduccion() {
@@ -391,7 +385,7 @@ export function arrancar(practica) {
     const def = defs[actual.n];
     const clave = def.clave ?? JSON.stringify;
     const anterior = actual.item;
-    const sesion = { aciertos: actual.sesion.aciertos, fallos: actual.sesion.fallos, pendientes: actual.sesion.pendientes, anterior };
+    const sesion = { aciertos: actual.sesion.aciertos, fallos: actual.sesion.fallos, puntos: actual.sesion.puntos, vidas: actual.sesion.vidas, anterior };
     let item = def.generar(rng, sesion);
     for (let i = 0; i < 5 && anterior !== null && clave(item) === clave(anterior); i++) item = def.generar(rng, sesion);
     actual.item = item;
@@ -445,8 +439,8 @@ export function arrancar(practica) {
   function registrar(acierto, pistas) {
     const p = params[actual.n];
     actual.respondido = true;
-    const antes = actual.sesion.pendientes;
-    actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()), { penalizacion: p.penalizacion, maximo: p.maximo, pistas });
+    const antes = actual.sesion;
+    actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()), { penalizacion: p.penalizacion, vidas: p.vidas, pistas });
     // Para saber cuánto se ha hecho en inglés (no entra en el código de resultado).
     if (actual.idioma === 'en') {
       actual.sesion.en_aciertos = (actual.sesion.en_aciertos ?? 0) + (acierto ? 1 : 0);
@@ -459,7 +453,7 @@ export function arrancar(practica) {
       guardar();
       if (actual.sesion.terminado || ++sinSubir >= 5) subir();
     }
-    actual.sumadas = Math.max(0, actual.sesion.pendientes - antes);
+    actual.cambio = queHaPasado(antes, actual.sesion);
     pintarContador();
   }
 
@@ -492,15 +486,20 @@ export function arrancar(practica) {
   function mostrarFeedback(acierto, html, espera) {
     const idi = actual.idioma;
     const caja = app.querySelector('#feedback');
+    const cambio = actual.cambio;
     if (acierto) {
-      caja.innerHTML = `<div class="feedback feedback--bien"><strong>✓ ${t(idi).bien}</strong> ${html}</div>${botonTraduccion()}`;
+      const racha = cambio.extra ? `<p class="racha">${t(idi).racha_extra(RACHA, cambio.ganados - 1)}</p>` : '';
+      caja.innerHTML = `<div class="feedback feedback--bien"><strong>✓ ${t(idi).bien}</strong> ${html}${racha}</div>${botonTraduccion()}`;
       activarTraduccion();
       const miTurno = turno;
-      setTimeout(() => { if (miTurno === turno) siguiente(); }, espera);
+      setTimeout(() => { if (miTurno === turno) siguiente(); }, espera + (cambio.extra ? 900 : 0));
       return;
     }
+    const vidas = cambio.reinicio
+      ? `<p class="sin-vidas">${t(idi).sin_vidas}</p>`
+      : `<p class="penalizacion">${t(idi).penalizacion(cambio.perdidos)} · ${t(idi).vidas_quedan(cambio.vidas)}</p><p class="animo">${rng.elegir(t(idi).animos)}</p>`;
     caja.innerHTML = `
-      <div class="feedback feedback--mal"><strong>✗ ${t(idi).mal}</strong> ${html}<p class="penalizacion">${t(idi).penalizacion(actual.sumadas)}</p><p class="animo">${rng.elegir(t(idi).animos)}</p></div>
+      <div class="feedback feedback--mal"><strong>✗ ${t(idi).mal}</strong> ${html}${vidas}</div>
       ${botonTraduccion()}
       <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
     activarTraduccion();
@@ -520,7 +519,8 @@ export function arrancar(practica) {
         <div class="tarjeta fin">
           <div class="fin__icono" aria-hidden="true">🎉</div>
           <h2>${t().fin_titulo}</h2>
-          <p>${t().ejercicio(n + 1)} · ${tt(defs[n].nombre)} · ${t().fin_resumen(sesion.aciertos, sesion.fallos)}</p>
+          <p>${t().ejercicio(n + 1)} · ${tt(defs[n].nombre)} · ${t().fin_resumen(sesion.puntos, sesion.fallos)}</p>
+          ${sesion.reinicios ? `<p class="pequeno">${t().fin_reinicios(sesion.reinicios)}</p>` : ''}
           ${repeticion ? `<p class="pequeno">${t().fin_practica}</p>` : ''}
         </div>
         ${cajaResultado()}

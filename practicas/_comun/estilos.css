@@ -50,6 +50,8 @@
 .volver { padding-left: 0; min-height: 40px; }
 .progreso strong { color: var(--texto); font-size: 1.05rem; white-space: nowrap; }
 .progreso { gap: .8rem; }
+.marcador { display: inline-flex; align-items: center; gap: .6rem; white-space: nowrap; }
+.vidas { color: #dc2626; letter-spacing: .08em; font-size: 1.05rem; line-height: 1; }
 .ejercicio { text-align: center; }
 .introduccion { text-align: left; }
 .introduccion button { margin-top: .4rem; }
@@ -171,6 +173,8 @@ sup { font-size: .7em; line-height: 0; }
 .feedback--mal { background: var(--error-claro); color: #7f1d1d; }
 .cuenta { font-weight: 700; white-space: nowrap; }
 .penalizacion { margin: .5rem 0 0; font-weight: 700; }
+.sin-vidas { margin: .5rem 0 0; font-weight: 700; }
+.racha { margin: .5rem 0 0; font-weight: 700; color: #b45309; }
 .animo { margin: .4rem 0 0; color: #14532d; font-weight: 600; }
 .traducir { display: block; margin-top: .6rem; }
 .traduccion { margin-top: .6rem; padding: .7rem .9rem; border-radius: 10px; border: 1px dashed var(--borde); background: #fff; }

@@ -81,7 +81,7 @@ const enInglés = e => (e.en_aciertos || e.en_fallos ? ` <span class="pequeno">E
 
 function celda(e) {
   if (e.terminado) return `<td class="num celda--ok">✓ ${e.fallos}${e.tope ? '+' : ''}${enInglés(e)}</td>`;
-  if (e.pendientes !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">quedan ${e.pendientes}${enInglés(e)}</td>`;
+  if (e.puntos !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">${e.puntos}/${e.objetivo ?? '?'} pt${e.reinicios ? ` · ↺${e.reinicios}` : ''}${enInglés(e)}</td>`;
   return '<td class="num celda--no">—</td>';
 }
 
@@ -100,7 +100,7 @@ function htmlPractica(practica, validos) {
           <td>${f.dia ? fechaDeDia(f.dia) : ''}</td><td>${f.fuente}</td>
         </tr>`).join('')}</tbody>
     </table>
-    <p class="pequeno">En cada ejercicio: ✓ y el número de fallos. Con los códigos de resultado los fallos se cuentan hasta 15 («15+»).</p>`;
+    <p class="pequeno">En cada ejercicio: ✓ y el número de fallos. Con los códigos de resultado los fallos se cuentan hasta 15 («15+»). Sin terminar: puntos sobre el objetivo y, si las ha perdido todas, cuántas veces ha vuelto a empezar (↺).</p>`;
 }
 
 function csvPractica(practica, validos) {

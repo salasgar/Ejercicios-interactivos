@@ -21,17 +21,21 @@
 //               «Ejercicio 2»… seguidos de su `nombre`. Cada uno:
 //
 //     nombre, detalle     { es, en }, una línea cada uno (salen en el menú).
-//     inicial             aciertos necesarios (por defecto 10).
-//     penalizacion        ejercicios que añade un fallo (por defecto 2).
-//     maximo              tope de pendientes (por defecto 20; nunca menor que `inicial`).
+//     objetivo            puntos a los que hay que llegar (por defecto 10). Cada
+//                         acierto da 1; 5 aciertos seguidos dan 1 extra.
+//     penalizacion        puntos que quita un fallo (por defecto 1; nunca por debajo de 0).
+//     vidas               fallos que se admiten (por defecto 5): sin vidas, el ejercicio
+//                         vuelve a empezar desde 0 puntos (los fallos acumulados se conservan).
+//                         Las constantes viven en ../_comun/contador.js.
 //     introduccion        opcional, { es: html, en: html }: una tarjeta con botón
 //                         «Empezar» que sale cada vez que se abre el ejercicio.
 //     generar(rng, sesion)  devuelve el ítem: DATOS puros (ver logica.js).
 //                         `rng` tiene azar(), entero(min, max), elegir(lista) y
-//                         barajar(lista). `sesion` es { aciertos, fallos,
-//                         pendientes, anterior } (anterior = el ítem previo o
-//                         null): sirve para graduar la dificultad o para un
-//                         ejercicio por pasos.
+//                         barajar(lista). `sesion` es { aciertos, fallos, puntos,
+//                         vidas, anterior } (anterior = el ítem previo o null;
+//                         aciertos = los del intento en curso, que vuelven a 0 al
+//                         perder las vidas): sirve para graduar la dificultad o
+//                         para un ejercicio por pasos.
 //     clave(item)         opcional: texto que identifica el ítem (por defecto,
 //                         JSON.stringify). La base no repite la clave anterior
 //                         (lo intenta hasta 5 veces).
@@ -56,10 +60,12 @@
 //                     `html` es la explicación, con los números de ese ítem.
 //                     Acierto: feedback verde y pasa solo al siguiente a los
 //                     `espera` ms (1300 por defecto; sube si hay mucho que leer).
-//                     Fallo: feedback rojo con «+penalización», unas palabras de
-//                     ánimo (las pone la base) y botón «Siguiente».
+//                     Con punto extra por la racha, lo dice y espera un poco más.
+//                     Fallo: feedback rojo con «−penalización», las vidas que
+//                     quedan (o que el ejercicio vuelve a empezar), unas palabras
+//                     de ánimo (las pone la base) y botón «Siguiente».
 //                     `pistas` (opcional, entero ≥ 0): ayudas usadas en el ítem;
-//                     se suman a los fallos sin tocar lo que queda por hacer.
+//                     se suman a los fallos sin tocar los puntos ni las vidas.
 //
 // La base no toca nada de `contenedor` después de montar: marcar en verde o en
 // rojo lo elegido y bloquear los botones es cosa de `montar`, ANTES de llamar
@@ -182,8 +188,9 @@ arrancar({
     {
       nombre: TX.fact.nombre,
       detalle: TX.fact.detalle,
-      inicial: 10,
-      penalizacion: 2,
+      objetivo: 10,
+      penalizacion: 1,
+      vidas: 5,
       introduccion: TX.fact.introduccion,
       generar: generarFactorizacion,
       montar: montarFactorizacion,

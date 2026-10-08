@@ -386,9 +386,7 @@ arrancar({
       nombre: TX.construir.nombre,
       detalle: TX.construir.detalle,
       // Un árbol son entre 8 y 16 decisiones: con 6 árboles bien hechos basta.
-      inicial: 6,
-      penalizacion: 1,
-      maximo: 12,
+      objetivo: 6,
       introduccion: TX.construir.introduccion,
       generar: rng => generar('construir', rng),
       clave: item => String(item.n),
