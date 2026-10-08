@@ -12,11 +12,12 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-08 06:03 UTC · por la sesión s-20261008T051928-1cba9950 (cierra la 18;
-todas las filas recalculadas contra `hechos/` con `git fetch` antes: la 18 pasa a LISTA y
-28 tareas pasan a REABIERTA por su veredicto; 21 y 24 ya eran LISTA en `hechos/` antes de
-reabrirse; hashes de la 01 y la 19 leídos de sus terminadas; el registro gana las líneas
-que faltaban de 07, 19, 21, 24, 28, 29, 30 y 33, y la de la 18).
+Regenerado: 2026-10-08 17:42 UTC · por la sesión s-20261008T174225-f75f5cdb (coordinadora,
+toma el relevo de s-20261007T184632-fa5a1491; todas las filas recalculadas contra `hechos/`
+con `git fetch` antes: ningún hecho nuevo desde las 06:03Z, así que siguen 7 LISTAS y 28
+REABIERTAS, sin reclamo vivo; cambian el párrafo de debajo de la tabla y las incidencias).
+**Quien coja una reabierta lee antes `hechos/notas/s-20261008T174225-f75f5cdb.md`**: la base
+cambió a contador por puntos después de escribirse las reabiertas.
 
 ## Antes de hacer nada
 
@@ -153,20 +154,27 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: hasta 28, una por tarea REABIERTA. Cada una toca solo su
-carpeta `practicas/<slug>/` y su test, así que pueden ir todas en paralelo. Las once graves
-(07, 10, 11, 12, 14, 20, 21, 27, 30, 32, 33) tocan además su fila de
-`practicas/_comun/catalogo.js` al cerrar (solo `disponible`): si el candado lo tiene otra,
-esperan a que lo suelte. **Por orden de prioridad:** primero las graves de la unidad 2 por
-semana (07 divisiones, 10 imposibles, 11 clasificador, 12 reloj, 14 errores), después las
-menores de la semana 1 (02, 04, 03), el resto de la unidad 2 (05, 08, 16, 13, 15) y al final
-el repaso de la unidad 1. Las 14 y 32 comparten código casi idéntico: mejor la misma sesión,
-en cadena. La 32 tiene un punto que espera a Juan Luis (las plantillas «saltoPaso»): se
-puede cerrar sin él y se anota.
+Cuántas sesiones caben a la vez: hasta 28, una por tarea REABIERTA; la coordinadora ha dado
+nueve cadenas (ocho MEDIO y la 24, ALTO), en `hechos/notas/s-20261008T174225-f75f5cdb.md`.
+Cada una toca solo su carpeta `practicas/<slug>/` y su test. Las once graves (07, 10, 11, 12,
+14, 20, 21, 27, 30, 32, 33) tocan además su fila de `practicas/_comun/catalogo.js` al cerrar
+(solo `disponible`): **ese cambio es lo último que se hace y se comitea en el acto**, y antes
+se mira que `git diff -- practicas/_comun/catalogo.js` enseñe solo la fila propia (si no, el
+commit de una grave publica la práctica de otra sin corregir). **Por orden de prioridad:**
+primero las graves de la unidad 2 por semana (11 clasificador, 12 reloj, 10 imposibles, 07
+divisiones, 14 errores), después las menores de la semana 1 (02, 04, 03, 15), el resto de la
+unidad 2 (05, 08, 16, 13) y al final el repaso de la unidad 1. Las 14 y 32 comparten código
+casi idéntico: misma sesión, en cadena. La 32 tiene un punto que espera a Juan Luis (las
+plantillas «saltoPaso»): se puede cerrar sin él y se anota.
+
+Fuera del reparto: el commit 58a9da2 (2026-10-08) cambió la base a contador por puntos (10
+puntos, −1 por fallo, 5 vidas, racha de 5 con extra); `inicial` y `maximo` ya no existen.
+Nota: `hechos/notas/s-20261008T173817-contador-contador-por-puntos.md`. La propuesta de
+«tarea 36 puntos» queda sin objeto.
 
 No es de ninguna tarea todavía: un arreglo corto de la base (`practicas/_comun/`) que pide
 la revisión (`salidas/18-revision-final/HALLAZGOS-FUERA-DE-CRITERIO.md`, apartado 2). Lo da
-de alta la coordinadora si Juan Luis lo quiere.
+de alta la coordinadora, como tarea 36, si Juan Luis lo quiere.
 
 ## Registro de finalizaciones
 
@@ -262,8 +270,9 @@ Derivado de `hechos/incidencias/`.
 
 Sin incidencia, pero conviene saberlo: `hechos/reclamos/23--s-20261007T214947-e0ab035d.md`
 (reclamo caducado de la 23, relevado por s-20261008T050250-c37a11e9) está en disco sin
-seguir por git; es de su sesión y nadie más lo comitea. Y la tarea 18 no pudo regenerar
-este tablón al reclamar (05:28Z): estaba reservado por el candado de otra sesión.
+seguir por git; es de su sesión y nadie más lo comitea. Los reclamos de la 03, la 31, la 34
+y el primero de la 21 no tienen línea de cierre, pero están caducados y hay terminada
+posterior: no son relevables.
 
 Los automatismos y las rutas del proyecto están en `proyecto.md`, no aquí: este fichero
 se regenera entero y se los llevaría por delante.
