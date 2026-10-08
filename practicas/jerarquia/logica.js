@@ -8,9 +8,15 @@
 //   agrupa   '('  ')'
 //
 // Regla de «lo que toca»: se mira el paréntesis que se cierra primero (de dentro
-// hacia fuera); dentro, potencias y raíces, luego · y :, luego + y −; a igualdad
-// de prioridad, el más a la izquierda. Los paréntesis que rodean un solo número
-// se quitan solos.
+// hacia fuera). Dentro, una operación vale como paso siguiente (`validos`) si sus
+// operandos ya son números y ninguna operación pegada a ellos la estorba: ni una
+// de más nivel (potencias y raíces, luego · y :, luego + y −), ni una del mismo
+// nivel a su izquierda con la que comparta operando y cuyo orden importe (cadenas
+// como 20 : 4 · 5 o 10 − 4 + 3, de izquierda a derecha; en 10 · 8 : 4 da igual).
+// Dos operaciones que no se estorban valen las dos.
+// `toca` da la canónica (la de mayor nivel y, a igualdad, la de más a la izquierda)
+// y es la que se hace sola cuando el alumno se equivoca. Los paréntesis que
+// rodean un solo número se quitan solos.
 
 export const NIVEL = { '+': 1, '-': 1, '*': 2, ':': 2, '^2': 3, '^3': 3, '√': 3 };
 const MAXIMO = 999;
@@ -26,7 +32,45 @@ export function ambito(fichas) {
   return [fichas.lastIndexOf('(', cierre) + 1, cierre - 1];
 }
 
-/** Índice de la ficha-operador que toca resolver, o −1 si no queda ninguna. */
+/**
+ * Operadores pegados a `i` que lo estorban: los de más nivel y los del mismo nivel
+ * que están a su izquierda (la cadena se hace de izquierda a derecha). Se miran
+ * las dos fichas de cada lado: así también cuenta un operando que aún no es número.
+ */
+function estorbos(fichas, i, desde, hasta) {
+  const mio = NIVEL[fichas[i]];
+  const salida = [];
+  for (const j of [i - 2, i - 1, i + 1, i + 2]) {
+    if (j < desde || j > hasta) continue;
+    const n = NIVEL[fichas[j]];
+    if (!n) continue;
+    if (n > mio) salida.push({ j, nivel: n });
+    else if (n === mio && j < i && !(j === i - 2 && adelantarNoCambiaNada(fichas, i))) salida.push({ j, nivel: n });
+  }
+  return salida;
+}
+
+/**
+ * En una cadena (10 · 8 : 4, 5 + 3 + 2) hacer antes la segunda operación solo es
+ * fallo si cambia el valor (10 − 4 + 3) o da algo que no es un buen natural: en
+ * 10 · 8 : 4, hacer 8 : 4 primero sale lo mismo y no se penaliza.
+ */
+function adelantarNoCambiaNada(fichas, i) {
+  const p = paso(fichas, i);
+  return !!p && bonito(fichas, i, p.valor) && Math.abs(evaluar(p.fichas) - evaluar(fichas)) < 1e-9;
+}
+
+/** Índices de todas las operaciones que valen como paso siguiente. */
+export function validos(fichas) {
+  const [desde, hasta] = ambito(fichas);
+  const salida = [];
+  for (let i = desde; i <= hasta; i++) {
+    if (NIVEL[fichas[i]] && !estorbos(fichas, i, desde, hasta).length) salida.push(i);
+  }
+  return salida;
+}
+
+/** Índice de la ficha-operador canónica (mayor nivel, más a la izquierda), o −1 si no queda ninguna. */
 export function toca(fichas) {
   const [desde, hasta] = ambito(fichas);
   let mejor = -1, nivel = 0;
@@ -102,15 +146,24 @@ export function cadena(inicial) {
   return estados;
 }
 
-/** Por qué NO toca el operador `tocado` (el que sí toca es `bueno`). */
+/**
+ * Por qué NO vale el operador `tocado`: está fuera del paréntesis que toca, o lo
+ * estorba una operación de más nivel ('prioridad') o una seguida del mismo nivel
+ * a su izquierda ('izquierda'). null si en realidad sí valía.
+ */
 export function motivo(fichas, tocado) {
-  const bueno = toca(fichas);
   const [desde, hasta] = ambito(fichas);
   if (tocado < desde || tocado > hasta) return { clave: 'parentesis' };
-  const nt = NIVEL[fichas[tocado]], nb = NIVEL[fichas[bueno]];
-  if (nt < nb) return { clave: 'prioridad', nivel: nb, malo: fichas[tocado], bueno: fichas[bueno] };
-  return { clave: 'izquierda', nivel: nb };
+  const fuertes = estorbos(fichas, tocado, desde, hasta);
+  if (!fuertes.length) return null;
+  const mio = NIVEL[fichas[tocado]];
+  const mayor = fuertes.reduce((a, b) => (b.nivel > a.nivel ? b : a));
+  if (mayor.nivel > mio) return { clave: 'prioridad', nivel: mayor.nivel, malo: fichas[tocado] };
+  return { clave: 'izquierda', nivel: mio };
 }
+
+/** ¿Es un número natural que se puede escribir sin explicaciones (entero, no negativo)? */
+export const esNatural = v => Number.isInteger(v) && v >= 0;
 
 // ─── Mostrar ───────────────────────────────────────────────────────────────────
 

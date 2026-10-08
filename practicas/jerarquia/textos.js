@@ -20,18 +20,20 @@ export const TX = {
   intro1: {
     es: `<h2>Cómo se hace</h2>
       <p>Verás una cuenta con varias operaciones. <strong>Toca la operación que se hace primero</strong> (el signo). La app la calcula y la cuenta se acorta.</p>
-      <p>Orden: primero <strong>· y :</strong>, después <strong>+ y −</strong>. Si hay dos del mismo tipo, <strong>de izquierda a derecha</strong>.</p>`,
+      <p>Orden: primero <strong>· y :</strong>, después <strong>+ y −</strong>. Si hay dos <strong>seguidas</strong> del mismo tipo (como 20 : 4 · 5 o 10 − 4 + 3), <strong>de izquierda a derecha</strong>.</p>
+      <p>Si dos operaciones no se estorban (como 3² y 5 · 4 en 3² + 5 · 4), puedes empezar por cualquiera de las dos.</p>`,
     en: `<h2>How it works</h2>
       <p>You will see a sum with several operations. <strong>Tap the operation that comes first</strong> (the sign). The app works it out and the sum gets shorter.</p>
-      <p>Order: first <strong>· and ÷</strong>, then <strong>+ and −</strong>. If there are two of the same kind, go <strong>from left to right</strong>.</p>`,
+      <p>Order: first <strong>· and ÷</strong>, then <strong>+ and −</strong>. If there are two of the same kind <strong>in a row</strong> (like 20 ÷ 4 · 5 or 10 − 4 + 3), go <strong>from left to right</strong>.</p>
+      <p>If two operations do not get in each other's way (like 3² and 5 · 4 in 3² + 5 · 4), you can start with either one.</p>`,
   },
   intro2: {
     es: `<h2>Potencias y raíces</h2>
       <p>Ahora toca el exponente (el número pequeño) o el signo de la raíz √.</p>
-      <p>Las <strong>potencias y las raíces</strong> van antes que · y :, y están al mismo nivel entre ellas: se hace la de la izquierda.</p>`,
+      <p>Las <strong>potencias y las raíces</strong> van antes que · : + −. Si hay dos que no se estorban (como 4³ y √324 en 4³ + √324), puedes empezar por cualquiera.</p>`,
     en: `<h2>Powers and roots</h2>
       <p>Now tap the index (the small number) or the root sign √.</p>
-      <p><strong>Powers and roots</strong> come before · and ÷, and they are on the same level: do the one on the left first.</p>`,
+      <p><strong>Powers and roots</strong> come before · ÷ + −. If there are two that do not get in each other's way (like 4³ and √324 in 4³ + √324), you can start with either one.</p>`,
   },
   intro3: {
     es: `<h2>Paréntesis</h2>
@@ -48,7 +50,7 @@ export const TX = {
       <p>Tap a group to add or remove its brackets, then press Check.</p>`,
   },
 
-  instruccion: { es: 'Toca la operación que se hace primero.', en: 'Tap the operation that comes first.' },
+  instruccion: { es: 'Toca una operación que ya se pueda hacer.', en: 'Tap an operation you can already do.' },
   cuenta_dice: { es: 'La cuenta queda así:', en: 'The sum now reads:' },
   has_fallado: { es: 'No era esa. La app hace el paso correcto y sigues.', en: 'That was not it. The app does the right step and you carry on.' },
 
@@ -62,12 +64,8 @@ export const TX = {
       en: (nivel, malo) => `${NIVELES[nivel].en[0].toUpperCase()}${NIVELES[nivel].en.slice(1)} come before ${NIVELES[malo].en}.`,
     },
     izquierda: {
-      es: nivel => (nivel === 3
-        ? 'Las potencias y las raíces tienen la misma prioridad: se hace la de la izquierda.'
-        : `${NIVELES[nivel].es} tienen la misma prioridad: se hace primero el de la izquierda.`),
-      en: nivel => (nivel === 3
-        ? 'Powers and roots have the same priority: do the one on the left first.'
-        : `${NIVELES[nivel].en} have the same priority: do the one on the left first.`),
+      es: nivel => `${NIVELES[nivel].es[0].toUpperCase()}${NIVELES[nivel].es.slice(1)} seguidas se hacen de izquierda a derecha: antes va la de la izquierda.`,
+      en: nivel => `${NIVELES[nivel].en[0].toUpperCase()}${NIVELES[nivel].en.slice(1)} in a row are done from left to right: the one on the left goes first.`,
     },
   },
   final: { es: 'Resultado', en: 'Result' },
@@ -86,10 +84,23 @@ export const TX = {
     es: 'La raíz cubre todo lo que hay debajo del signo.',
     en: 'The root covers everything under the sign.',
   },
-  falta_num: { es: 'Falta el paréntesis del numerador', en: 'The numerator needs brackets' },
-  falta_den: { es: 'Falta el paréntesis del denominador', en: 'The denominator needs brackets' },
-  falta_rad: { es: 'Falta el paréntesis debajo de la raíz', en: 'The root needs brackets' },
+  falta_num: { es: 'Falta el paréntesis del numerador', en: 'The numerator is missing its brackets' },
+  falta_den: { es: 'Falta el paréntesis del denominador', en: 'The denominator is missing its brackets' },
+  falta_rad: { es: 'Falta el paréntesis debajo de la raíz', en: 'The part under the root is missing its brackets' },
+  porque_num: {
+    es: 'Lo de arriba de la raya es una suma o una resta y se hace antes de dividir.',
+    en: 'What is above the line is an addition or a subtraction, and it is done before dividing.',
+  },
+  porque_den: {
+    es: 'La raya divide entre todo lo de abajo, no solo entre su primer número.',
+    en: 'The line divides by everything below it, not only by its first number.',
+  },
+  porque_rad: {
+    es: 'La raíz cubre todo lo que hay debajo del signo.',
+    en: 'The root covers everything under the sign.',
+  },
   saldria: { es: n => `Así escrito sale ${n}, y no`, en: n => `Written like that you get ${n}, not` },
+  no_da: { es: v => `Así escrito no da ${v}`, en: v => `Written like that it does not give ${v}` },
   sobran: {
     es: g => `Los paréntesis alrededor de ${g} no hacían falta, pero no es un error.`,
     en: g => `The brackets around ${g} were not needed, but that is not a mistake.`,
