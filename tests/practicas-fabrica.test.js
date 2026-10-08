@@ -95,3 +95,29 @@ test('ejercicio 3: "sí" y "no" salen entre el 35 % y el 65 % en 3000 ítems', (
   const p = si / 3000;
   assert.ok(p >= 0.35 && p <= 0.65, `proporción de "sí": ${p}`);
 });
+
+test('ejercicio 3: el divisor es siempre menor que n y salen los dos tipos de «no» (exponente de más, primo que falta)', () => {
+  const rng = crearRng(8);
+  let exponenteDeMas = 0, primoQueFalta = 0, maxD = 0;
+  for (let i = 0; i < 3000; i++) {
+    const item = generarDivisible(rng);
+    assert.ok(item.d < item.n && item.d > 1, `n=${item.n} d=${item.d}`);
+    maxD = Math.max(maxD, item.d);
+    if (!item.divisible) {
+      const mapa = new Map(item.fact);
+      if (item.factD.some(([p]) => !mapa.has(p))) primoQueFalta++;
+      else exponenteDeMas++;
+    }
+  }
+  assert.ok(exponenteDeMas > 150, `exponente de más: ${exponenteDeMas}`);
+  assert.ok(primoQueFalta > 150, `primo que falta: ${primoQueFalta}`);
+  assert.ok(maxD < 363);
+});
+
+test('textos: no hay «___» en el enunciado y los fallos del ejercicio 2 y 3 enseñan la cuenta y la factorización del divisor', async () => {
+  const { TX } = await import('../practicas/fabrica/textos.js');
+  for (const idioma of ['es', 'en']) assert.doesNotMatch(TX.divisible.pregunta[idioma](120, 12), /_/);
+  assert.match(TX.contar.feedbackMal.es(7, '(2+1) · (1+1) = 6'), /\(2\+1\) · \(1\+1\) = 6/);
+  assert.match(TX.contar.feedbackOlvido.en(2, '(2+1) · (1+1) = 6'), /\(2\+1\) · \(1\+1\) = 6/);
+  assert.equal(TX.divisible.factorDelDivisor.es(12, '2<sup>2</sup> · 3'), '12 = 2<sup>2</sup> · 3:');
+});

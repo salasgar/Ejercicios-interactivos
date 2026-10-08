@@ -30,18 +30,21 @@ export const TX = {
   contar: {
     pregunta: { es: '¿Cuántos divisores tiene?', en: 'How many divisors does it have?' },
     feedbackBien: { es: cuenta => `✓ ${cuenta}.`, en: cuenta => `✓ ${cuenta}.` },
+    // `cuenta` = «(2+1) · (1+1) = 6», con la cuenta completa.
     feedbackOlvido: {
-      es: (tuyo, correcto) => `${tuyo} no es correcto: has olvidado sumar 1 a cada exponente (el exponente 0 también vale). La cuenta buena: ${correcto}.`,
-      en: (tuyo, correcto) => `${tuyo} is not correct: you forgot to add 1 to each exponent (the exponent 0 counts too). The right count: ${correcto}.`,
+      es: (tuyo, cuenta) => `${tuyo} no es correcto: has olvidado sumar 1 a cada exponente (el exponente 0 también vale). La cuenta buena: ${cuenta}.`,
+      en: (tuyo, cuenta) => `${tuyo} is not correct: you forgot to add 1 to each exponent (the exponent 0 counts too). The right count: ${cuenta}.`,
     },
     feedbackMal: {
-      es: (tuyo, correcto) => `${tuyo} no es correcto. La cuenta buena: ${correcto}.`,
-      en: (tuyo, correcto) => `${tuyo} is not correct. The right count: ${correcto}.`,
+      es: (tuyo, cuenta) => `${tuyo} no es correcto. La cuenta buena: ${cuenta}.`,
+      en: (tuyo, cuenta) => `${tuyo} is not correct. The right count: ${cuenta}.`,
     },
     premio: { es: lista => `Sus divisores son: ${lista.join(', ')}.`, en: lista => `Its divisors are: ${lista.join(', ')}.` },
   },
   divisible: {
-    pregunta: { es: (n, d) => `${n} = ___. ¿Es divisible entre ${d}?`, en: (n, d) => `${n} = ___. Is it divisible by ${d}?` },
+    pregunta: { es: (n, d) => `¿Es ${n} divisible entre ${d}? Míralo en la factorización de ${n}.`, en: (n, d) => `Is ${n} divisible by ${d}? Look at the factorisation of ${n}.` },
+    // La factorización del divisor, antes de comparar exponentes: «12 = 2² · 3:».
+    factorDelDivisor: { es: (d, fact) => `${d} = ${fact}:`, en: (d, fact) => `${d} = ${fact}:` },
     feedbackSiTiene: {
       es: (p, exp, necesita) => `el ${p} está con exponente ${exp} ≥ ${necesita}`,
       en: (p, exp, necesita) => `${p} is there with exponent ${exp} ≥ ${necesita}`,
