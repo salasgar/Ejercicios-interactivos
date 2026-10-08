@@ -203,3 +203,27 @@ test('ejercicio 3 (dictado en español): se lee como n; cuatro o cinco cifras, l
   const p = proporcion(items, it => conCerosInteriores(it.n));
   assert.ok(p > 0.6 && p < 0.8, `con ceros interiores: ${p}`);
 });
+
+// ─── Reabierta de la tarea 29 ───────────────────────────────────────────────────
+
+test('textos: las notas de las fichas son funciones del ítem y la de «mil» usa las palabras del número', async () => {
+  const { TX } = await import('../practicas/dictado/textos.js');
+  for (const clave of Object.keys(NOTAS_FICHAS)) {
+    for (const l of ['es', 'en']) assert.equal(typeof TX.fichas.notas[clave][l]('cuarenta mil nueve', 'cuarenta'), 'string', clave);
+  }
+  assert.match(TX.fichas.notas.miles.es('cuarenta mil nueve', 'cuarenta'), /cuarenta mil, no cuarenta miles/);
+  assert.match(TX.fichas.notas.miles.es('mil nueve', ''), /mil, no miles/);
+});
+
+test('textos: -teen/-ty con las palabras del ítem; instrucciones sin voz sin «oyes»', async () => {
+  const { TX } = await import('../practicas/dictado/textos.js');
+  const t = TX.teen.diferencia.es('16', '60', 'sixteen', 'six<strong>TEEN</strong>', '<strong>SIX</strong>ty');
+  assert.match(t, /six<strong>TEEN<\/strong>/);
+  assert.doesNotMatch(t, /four|FOR/);
+  for (const frase of [TX.dictado.instruccion_sin_voz, TX.teen.instruccion_sin_voz, TX.fichas.dictado_instruccion_sin_voz]) {
+    assert.doesNotMatch(frase.es, /oy[eo]s?\b|oír/i);
+    assert.doesNotMatch(frase.en, /hear|listen/i);
+  }
+  assert.match(TX.teen.nota_decena.es('fourteen', 'forteen, fourteene'), /fourteen, no forteen/);
+  assert.match(TX.teen.nota_plural.es('three hundred', 'three hundreds'), /three hundred, no three hundreds/);
+});

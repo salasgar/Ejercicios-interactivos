@@ -6,7 +6,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
-  agrupar, generarDictado, esRespuestaDictado, gruposConValor, generarTeen, generarEscritura,
+  agrupar, enNum, generarDictado, esRespuestaDictado, gruposConValor, generarTeen, generarEscritura,
   generarFichas, esSecuenciaCorrecta, generarDictadoEs,
 } from './logica.js';
 
@@ -39,9 +39,9 @@ function hablar(texto, lengua) {
 
 /**
  * Pone en `caja` el botón de escuchar (si hay voz) o el texto escrito (modo lectura).
- * `alTexto(texto)` avisa de que se ha caído al modo lectura.
+ * `alSinVoz()` avisa de que se ha caído al modo lectura (para cambiar el «que oyes» de la instrucción).
  */
-function pintarVoz(caja, item, lengua, api, etiquetaBoton) {
+function pintarVoz(caja, item, lengua, api, etiquetaBoton, alSinVoz) {
   detectarVoz().then(hay => {
     if (!caja.isConnected) return;
     if (hay) {
@@ -49,6 +49,7 @@ function pintarVoz(caja, item, lengua, api, etiquetaBoton) {
       caja.querySelector('#escuchar').addEventListener('click', () => hablar(item.texto, lengua));
     } else {
       caja.innerHTML = `<p class="aviso">${api.tt(TX.voz.sin_voz)}</p><p class="operacion operacion--texto">${api.esc(item.texto)}</p>`;
+      if (alSinVoz) alSinVoz();
     }
   });
   return hayVozAhora();
@@ -95,7 +96,7 @@ function teclado(contenedor, api, alComprobar) {
 
 /** Explicación de un dictado: el número en palabras y por grupos (inglés) o solo el número (español). */
 function explicarDictado(item, api) {
-  let html = `<span class="cuenta">${item.texto} = ${agrupar(item.n)}</span>`;
+  let html = `${api.esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
   if (item.tipo === 'dictado') {
     const grupos = gruposConValor(item.n).map(g => `${g.texto} = ${agrupar(g.valor)}`);
     if (grupos.length > 1) html += `<br>${api.tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
@@ -107,10 +108,11 @@ function montarDictado(contenedor, item, api) {
   const { tt } = api;
   const lengua = item.tipo === 'dictado' ? 'en-GB' : 'es-ES';
   const textos = item.tipo === 'dictado'
-    ? { instruccion: TX.dictado.instruccion, boton: TX.voz.escuchar_en }
-    : { instruccion: TX.fichas.dictado_instruccion, boton: TX.voz.escuchar_es };
-  contenedor.innerHTML = `<p class="instruccion">${tt(textos.instruccion)}</p><div id="voz"></div>`;
-  pintarVoz(contenedor.querySelector('#voz'), item, lengua, api, textos.boton);
+    ? { instruccion: TX.dictado.instruccion, sinVoz: TX.dictado.instruccion_sin_voz, boton: TX.voz.escuchar_en }
+    : { instruccion: TX.fichas.dictado_instruccion, sinVoz: TX.fichas.dictado_instruccion_sin_voz, boton: TX.voz.escuchar_es };
+  contenedor.innerHTML = `<p class="instruccion" id="instruccion">${tt(textos.instruccion)}</p><div id="voz"></div>`;
+  const instruccion = contenedor.querySelector('#instruccion');
+  pintarVoz(contenedor.querySelector('#voz'), item, lengua, api, textos.boton, () => { instruccion.innerHTML = tt(textos.sinVoz); });
   teclado(contenedor, api, (escrito, pantalla) => {
     const acierto = esRespuestaDictado(item, escrito);
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
@@ -125,10 +127,18 @@ function montarDictado(contenedor, item, api) {
 
 // ─── Ejercicio 2: -teen o -ty, y cómo se escribe ─────────────────────────────
 
+/** La palabra del ítem con el acento marcado: six<strong>TEEN</strong> (al final) o <strong>SIX</strong>ty (al principio). */
+function acentuada(n, sufijo) {
+  const palabra = enNum(n);
+  const raiz = palabra.slice(0, -sufijo.length);
+  return sufijo === 'teen' ? `${raiz}<strong>TEEN</strong>` : `<strong>${raiz.toUpperCase()}</strong>${sufijo}`;
+}
+
 function montarTeen(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.teen.instruccion)}</p><div id="voz"></div><div id="caja-elecciones"></div>`;
-  pintarVoz(contenedor.querySelector('#voz'), item, 'en-GB', api, TX.voz.escuchar_en);
+  contenedor.innerHTML = `<p class="instruccion" id="instruccion">${tt(TX.teen.instruccion)}</p><div id="voz"></div><div id="caja-elecciones"></div>`;
+  const instruccion = contenedor.querySelector('#instruccion');
+  pintarVoz(contenedor.querySelector('#voz'), item, 'en-GB', api, TX.voz.escuchar_en, () => { instruccion.innerHTML = tt(TX.teen.instruccion_sin_voz); });
   const botones = elecciones(contenedor.querySelector('#caja-elecciones'), {
     clase: 'si-no',
     opciones: item.opciones.map((o, i) => ({ valor: i, html: agrupar(o) })),
@@ -138,7 +148,7 @@ function montarTeen(contenedor, item, api) {
       const otro = item.opciones[1 - item.solucion];
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), api.esc(item.texto)),
+        html: tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), api.esc(item.texto), acentuada(item.base[0], 'teen'), acentuada(item.base[1], 'ty')),
         espera: 3200,
       });
     },
@@ -154,10 +164,16 @@ function montarEscritura(contenedor, item, api) {
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      const nota = { compuesto: TX.teen.nota_compuesto, decena: TX.teen.nota_decena, plural: TX.teen.nota_plural }[item.clase];
+      const buena = item.opciones[item.solucion];
+      const malas = item.opciones.filter((_, i) => i !== item.solucion);
+      const nota = {
+        compuesto: () => tt(TX.teen.nota_compuesto),
+        decena: () => tt(TX.teen.nota_decena)(api.esc(buena), api.esc(malas.join(', '))),
+        plural: () => tt(TX.teen.nota_plural)(api.esc(buena), api.esc(malas.find(o => o.endsWith('s')))),
+      }[item.clase]();
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: `${tt(TX.teen.escritura_ok)(agrupar(item.n), api.esc(item.opciones[item.solucion]))} ${tt(nota)}`,
+        html: `${tt(TX.teen.escritura_ok)(agrupar(item.n), api.esc(buena))} ${nota}`,
         espera: 3200,
       });
     },
@@ -205,11 +221,13 @@ function montarFichas(contenedor, item, api) {
     const acierto = esSecuenciaCorrecta(item, mias);
     linea.classList.add(acierto ? 'linea-fichas--bien' : 'linea-fichas--mal');
     banco.querySelectorAll('button').forEach(b => { b.disabled = true; });
-    const buena = `${tt(TX.fichas.correcta)}: <span class="cuenta">${agrupar(item.n)} = ${api.esc(item.texto)}</span>`;
-    const notas = item.sobran.map(s => tt(TX.fichas.notas[s])).join(' ');
+    const buena = `${tt(TX.fichas.correcta)}: ${api.esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
+    // Solo las notas de las fichas erróneas que el alumno puso, con las palabras de este número
+    const pre = item.texto.startsWith('mil') ? '' : item.texto.split(' mil')[0];
+    const notas = item.sobran.filter(s => mias.includes(s)).map(s => tt(TX.fichas.notas[s])(api.esc(item.texto), api.esc(pre))).join(' ');
     api.responder({
       acierto,
-      html: acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: <span class="cuenta">${api.esc(mias.join(' '))}</span>. ${buena}<br>${notas}`,
+      html: acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: ${api.esc(mias.join(' '))}.<br>${buena}${notas ? `<br>${notas}` : ''}`,
       espera: 3200,
     });
   });
