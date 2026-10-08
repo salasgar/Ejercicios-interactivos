@@ -139,3 +139,31 @@ test('cuerdas: variedad de longitudes', () => {
   for (let i = 0; i < N; i++) vistos.add(generarCuerdas(rng).longitudes.join(','));
   assert.ok(vistos.size >= 30);
 });
+
+test('textos: la introducción del ejercicio 2 no usa letras, y los mensajes citan los números del ítem', async () => {
+  const { TX } = await import('../practicas/baldosas/textos.js');
+  for (const idioma of ['es', 'en']) {
+    const intro = TX.cuantas.introduccion[idioma].replace(/<[^>]*>/g, ' ');
+    assert.doesNotMatch(intro, /\(a, b\)|a : |b : /);
+    assert.match(intro, /40 : 8 = 5/);
+    assert.match(intro, /56 : 8 = 7/);
+  }
+  // Sin «Lado 7:» repetido ni «no cabe» duplicado cuando no cabe en ninguno.
+  const fa = TX.baldosa.resto_en.es(40, 7, 5, 5), fb = TX.baldosa.resto_en.es(30, 7, 4, 2);
+  const dos = TX.baldosa.sobra_dos.es(7, fa, fb);
+  assert.equal(dos, 'Lado 7: 40 : 7 = 5, sobran 5 dm; 30 : 7 = 4, sobran 2 dm. No cabe en ninguno de los dos.');
+  assert.equal((dos.match(/Lado/g) || []).length, 1);
+  assert.match(TX.baldosa.incorrecto_no_cabe.es(7, fa), /^7 no vale: 40 : 7 = 5, sobran 5 dm/);
+  assert.match(TX.cuantas.instruccion.en(40, 56, 8), /tiles of side 8/);
+  // 5 baldosas a lo largo y 7 a lo ancho: el dibujo tiene 7 filas de 5.
+  assert.match(TX.cuantas.error_suma.es(5, 7, 35), /7 filas de 5 son 35/);
+  assert.match(TX.cuantas.error_suma.en(5, 7, 35), /7 rows of 5 is 35/);
+  assert.match(TX.cuerdas.pista_total_coherente.es(6, [5, 7], 12), /bien hecha \(5 \+ 7 = 12\).*no es el más largo/);
+});
+
+test('práctica.js: cada dibujo lleva ids de pattern únicos (no fijos)', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const src = await readFile(new URL('../practicas/baldosas/practica.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(src, /id="baldosas-(cuadricula|rayado)"/);
+  assert.match(src, /id="\$\{id\}-cuadricula"/);
+});
