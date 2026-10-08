@@ -112,3 +112,32 @@ test('evaluar: coincide con la fuerza bruta para las catorce plantillas y varios
     }
   }
 });
+
+// ─── Reabierta de la tarea 31 ───────────────────────────────────────────────────
+
+test('ejercicio 2: nunca dos igualdades pintadas idénticas, y 2⁴ = 4² pesa poco', async () => {
+  const { renderPlantilla } = await import('../practicas/especiales/textos.js');
+  const rng = crearRng(31);
+  let con13 = 0;
+  const M = 4000;
+  for (let i = 0; i < M; i++) {
+    const it = generarFalsa(rng);
+    const textos = it.items.map(x => renderPlantilla(x.id, x.vars));
+    assert.equal(new Set(textos).size, 4, textos.join(' | '));
+    if (it.items.some(x => x.id === 13)) con13++;
+  }
+  console.log('2⁴ = 4² en ejercicio 2:', (con13 / M * 100).toFixed(1), '%');
+  assert.ok(con13 / M < 0.2, `2⁴ = 4² sale en ${con13} de ${M}`);
+});
+
+test('textos: sin × en el feedback inglés, sin «exponente 0 vale 1», y los millares separados', async () => {
+  const { explicarPlantilla, renderPlantilla } = await import('../practicas/especiales/textos.js');
+  for (let id = 1; id <= 14; id++) {
+    for (const vars of [{ a: 3, n: 4 }, { a: 7, n: 6 }]) {
+      const { es, en } = explicarPlantilla(id, vars, 10 ** vars.n, 10 * vars.n);
+      assert.doesNotMatch(en, /×/, `id ${id}`);
+      assert.doesNotMatch(es + en, /sea cual sea la base|whatever the base/, `id ${id}`);
+      for (const t of [renderPlantilla(id, vars), es, en]) assert.doesNotMatch(t, /\d{5,}/, `id ${id} sin separar millares`);
+    }
+  }
+});

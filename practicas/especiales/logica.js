@@ -3,6 +3,8 @@
 // evaluando los dos lados con los números concretos del ítem: nunca se
 // declara a mano si una plantilla es verdadera o falsa.
 
+import { renderPlantilla } from './textos.js';
+
 function rango(a, b) {
   return Array.from({ length: b - a + 1 }, (_, i) => a + i);
 }
@@ -88,11 +90,27 @@ export function generarVF(rng) {
 /** Ítem: { tipo: 'falsa', items: [{ id, vars, verdad }, …] (4), solucion: índice de la falsa }. */
 export function generarFalsa(rng) {
   const idFalsa = rng.elegir(IDS_FALSAS);
-  const idsVerdaderas = rng.barajar(IDS_VERDADERAS).slice(0, 3);
-  const items = [idFalsa, ...idsVerdaderas].map(id => {
+  const items = [];
+  const vistos = new Set();
+  const poner = id => {
     const vars = generarVars(id, rng);
-    return { id, vars, verdad: evaluar(id, vars).verdad };
-  });
+    const texto = renderPlantilla(id, vars);
+    if (vistos.has(texto)) return false;       // dos plantillas distintas pueden pintar la misma igualdad (10¹ = 10)
+    vistos.add(texto);
+    items.push({ id, vars, verdad: evaluar(id, vars).verdad });
+    return true;
+  };
+  while (!poner(idFalsa));
+  // Tres verdaderas distintas, elegidas con el peso de cada plantilla (2⁴ = 4² pesa poco, como en el ejercicio 1)
+  const pool = [...IDS_VERDADERAS];
+  for (let k = 0; k < 3; k++) {
+    for (;;) {
+      let r = rng.azar() * pool.reduce((t, id) => t + PLANTILLAS[id].peso, 0);
+      let i = 0;
+      while (i < pool.length - 1 && r >= PLANTILLAS[pool[i]].peso) { r -= PLANTILLAS[pool[i]].peso; i++; }
+      if (poner(pool[i])) { pool.splice(i, 1); break; }
+    }
+  }
   const orden = rng.barajar([0, 1, 2, 3]);
   const itemsFinal = orden.map(i => items[i]);
   const solucion = itemsFinal.findIndex(it => !it.verdad);
