@@ -118,6 +118,11 @@ Propios de esta tarea:
 
 - 5⁴ · 5² : 5³ con números pequeños cabe en Number, pero las potencias del ejercicio 3 con
   exponente 30 no: usa BigInt en el test.
+- Un elemento con `hidden` sigue viéndose si su clase le da `display` (`.comprobar`, `.juntador`):
+  añade `.ejercicio [hidden] { display: none !important; }` en el `estilos.css` de la práctica.
+- En una cadena con `:` no se puede juntar `b · c` en `a : b · c` (da `a : (b · c)`); el generador
+  recorre todas las fusiones válidas para que ningún exponente intermedio salga de 2..30.
+- Comprobar una práctica con scripts: leer base y exponente de `<sup>` por separado; «524» no es la base 52.
 
 ## Prohibido (propio de esta tarea)
 
