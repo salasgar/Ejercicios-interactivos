@@ -43,3 +43,7 @@ Sin errores de consola.
 
 - Pide a la tarea 18 que ponga `disponible: true` para `fabrica` en el catálogo.
 - Ningún cambio del contrato de la base.
+
+## Reabierta (2026-10-08, sesión s-20261008T175537-2deb69bd) — commit `07b8a60`
+
+Corregidos los cuatro puntos de `hechos/reabiertas/08--s-20261008T051928-1cba9950.md`: (1) el enunciado del ejercicio 3 ya no lleva «= ___»; (2) el fallo del ejercicio 2 enseña la cuenta completa «(2+1) · (1+1) = 6»; (3) el feedback del ejercicio 3 empieza por la factorización del divisor («12 = 2² · 3:»); (4) el divisor es siempre menor que n (el tipo de ítem se elige antes y se reintenta dentro del tipo, así sí/no siguen equilibrados). Generadores de los ejercicios 1 y 2, teclado y estilos intactos.

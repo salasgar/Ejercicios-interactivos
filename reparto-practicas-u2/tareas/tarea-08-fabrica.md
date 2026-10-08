@@ -119,6 +119,9 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- (Reabierta 2026-10-08) Si el generador descarta ítems con un filtro (aquí d < n), elige el **tipo** de ítem antes y reintenta dentro del tipo; si no, los «sí» sobreviven más y se desequilibra sí/no.
+- (Reabierta) Un `git pull --rebase --autostash` de otra sesión puede revertir tus ficheros sin comitear: comitea en cuanto pasen los tests.
+
 - Con exponentes hasta 3 y tres primos, n llega a 2³ · 3³ · 5³ = 27 000: limita n ≤ 2000
   para que los valores se lean bien (el test lo comprueba).
 - (08, al cerrar) Dos `<div class="operacion">` consecutivos son `display: inline-block`:
