@@ -109,18 +109,27 @@ function explicarMultiplos(item, respuesta, idioma) {
   const ultimo = item.correctos.at(-1);
   const siguientes = [ultimo + item.n, ultimo + 2 * item.n, ultimo + 3 * item.n].join(', ');
   const lista = item.correctos.join(', ');
+  const sobran = [...marcados].filter(x => x !== 0 && !item.correctos.includes(x)).sort((x, y) => x - y)
+    .map(x => (idioma === 'es'
+      ? `${x} no es múltiplo de ${item.n}: <span class="cuenta">${x} : ${item.n}</span> no es exacta. `
+      : `${x} is not a multiple of ${item.n}: <span class="cuenta">${x} : ${item.n}</span> is not exact. `)).join('');
   if (idioma === 'es') {
     const cero = faltaCero ? `<span class="cuenta">0 = ${item.n} · 0</span>: el 0 es múltiplo de ${item.n} (y de todos los números). ` : '';
-    return `${cero}Los múltiplos de ${item.n} hasta ${item.hasta} son ${lista}. Y siguen: ${siguientes}… los múltiplos no se acaban.`;
+    return `${sobran}${cero}Los múltiplos de ${item.n} hasta ${item.hasta} son ${lista}. Y siguen: ${siguientes}… los múltiplos no se acaban.`;
   }
   const cero = faltaCero ? `<span class="cuenta">0 = ${item.n} · 0</span>: 0 is a multiple of ${item.n} (and of every number). ` : '';
-  return `${cero}The multiples of ${item.n} up to ${item.hasta} are ${lista}. And they carry on: ${siguientes}… multiples never end.`;
+  return `${sobran}${cero}The multiples of ${item.n} up to ${item.hasta} are ${lista}. And they carry on: ${siguientes}… multiples never end.`;
 }
 
 function explicarDivisores(item, respuesta, idioma) {
   const marcados = new Set(respuesta);
   const lista = item.correctos.join(', ');
   const avisos = [];
+  for (const x of [...marcados].filter(v => v !== 0 && !item.correctos.includes(v)).sort((a, b) => a - b)) {
+    avisos.push(idioma === 'es'
+      ? `${x} no es divisor de ${item.n}: <span class="cuenta">${item.n} : ${x}</span> no es exacta.`
+      : `${x} is not a divisor of ${item.n}: <span class="cuenta">${item.n} : ${x}</span> is not exact.`);
+  }
   if (marcados.has(0)) {
     avisos.push(idioma === 'es' ? '0 no es divisor de nada: no se puede dividir entre 0.' : '0 is not a divisor of anything: you cannot divide by 0.');
   }
@@ -133,14 +142,15 @@ function explicarDivisores(item, respuesta, idioma) {
   const base = idioma === 'es'
     ? `Los divisores de ${item.n} son ${lista}. Después del ${item.n} ya no hay más: los divisores se acaban.`
     : `The divisors of ${item.n} are ${lista}. After ${item.n} there are no more: divisors run out.`;
-  return `${avisos.length ? `${avisos.join(' ')} ` : ''}${base}`;
+  const mayus = a => a.charAt(0).toUpperCase() + a.slice(1);
+  return `${avisos.length ? `${avisos.map(mayus).join(' ')} ` : ''}${base}`;
 }
 
 const EXPLICACION_FIJA = {
   uno_divisor: { es: n => `1 es divisor de todos los números, también de ${n}: ${n} : 1 = ${n} exacta.`, en: n => `1 is a divisor of every number, including ${n}: ${n} : 1 = ${n} exactly.` },
-  uno_multiplo: { es: n => `1 solo es múltiplo de 1, no de ${n}: ${n} · k nunca da 1 si ${n} > 1.`, en: n => `1 is only a multiple of 1, not of ${n}: ${n} · k never gives 1 when ${n} > 1.` },
+  uno_multiplo: { es: n => `1 solo es múltiplo de 1, no de ${n}: los múltiplos de ${n} son 0, ${n}, ${2 * n}…, y el 1 no está.`, en: n => `1 is only a multiple of 1, not of ${n}: the multiples of ${n} are 0, ${n}, ${2 * n}…, and 1 is not there.` },
   cero_multiplo: { es: n => `<span class="cuenta">0 = ${n} · 0</span>: el 0 es múltiplo de ${n} (y de todos los números).`, en: n => `<span class="cuenta">0 = ${n} · 0</span>: 0 is a multiple of ${n} (and of every number).` },
-  cero_divisor: { es: () => 'No se puede dividir entre 0: el 0 no es divisor de ningún número.', en: () => 'You cannot divide by 0: 0 is not a divisor of any number.' },
+  cero_divisor: { es: n => `No se puede dividir ${n} entre 0: el 0 no es divisor de ${n} (ni de ningún número).`, en: n => `You cannot divide ${n} by 0: 0 is not a divisor of ${n} (nor of any number).` },
   mult_si_mismo: { es: n => `<span class="cuenta">${n} = ${n} · 1</span>: todo número es múltiplo de sí mismo.`, en: n => `<span class="cuenta">${n} = ${n} · 1</span>: every number is a multiple of itself.` },
   div_si_mismo: { es: n => `<span class="cuenta">${n} : ${n} = 1</span> exacta: todo número es divisor de sí mismo.`, en: n => `<span class="cuenta">${n} : ${n} = 1</span> exactly: every number is a divisor of itself.` },
   multiplos_se_acaban: { es: n => `Los múltiplos de ${n} no se acaban nunca: siempre hay uno más grande.`, en: n => `The multiples of ${n} never end: there is always a bigger one.` },

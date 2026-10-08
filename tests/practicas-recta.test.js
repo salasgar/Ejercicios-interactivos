@@ -116,3 +116,26 @@ test('explicar: devuelve una explicación no vacía, en los dos idiomas, para lo
     }
   }
 });
+
+// --- Reabierta de la tarea 04: feedback ligado al error -----------------------------
+
+test('explicar (multiplos y divisores): dice cuál de los números marcados sobra y por qué', () => {
+  const m = { tipo: 'multiplos', n: 4, hasta: 20, correctos: [0, 4, 8, 12, 16, 20] };
+  assert.match(explicar(m, [0, 4, 14], 'es'), /14 no es múltiplo de 4: <span class="cuenta">14 : 4<\/span> no es exacta/);
+  assert.match(explicar(m, [0, 4, 14], 'en'), /14 is not a multiple of 4/);
+  const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
+  assert.match(explicar(d, [1, 5, 12], 'es'), /5 no es divisor de 12: <span class="cuenta">12 : 5<\/span> no es exacta/);
+});
+
+test('explicar (divisores): los avisos del español empiezan en mayúscula tras un punto', () => {
+  const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
+  const html = explicar(d, [0, 2], 'es');
+  assert.doesNotMatch(html, /\. [a-záéíóú]/);
+});
+
+test('explicar (vf): sin letras ni «> 1» en 1 múltiplo, y el 0 divisor cita el número', () => {
+  const uno = explicar({ tipo: 'vf', plantilla: 'uno_multiplo', n: 7, verdad: false }, null, 'es');
+  assert.match(uno, /los múltiplos de 7 son 0, 7, 14…/);
+  assert.doesNotMatch(uno, /\bk\b/);
+  assert.match(explicar({ tipo: 'vf', plantilla: 'cero_divisor', n: 9, verdad: false }, null, 'es'), /de 9/);
+});
