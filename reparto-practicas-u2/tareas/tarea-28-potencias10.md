@@ -126,6 +126,8 @@ Propios de esta tarea:
 - En inglés británico moderno «billion» también es 10⁹: no presentes el uso americano
   como «el único correcto»; di «hoy, en inglés, billion es 10⁹».
 
+- (Aprendido en la reabierta de la 28) Un .cuenta no se parte (nowrap): nunca meter dentro un nombre de número largo en inglés; el nombre fuera y solo «= número» dentro.
+
 ## Prohibido (propio de esta tarea)
 
 - Notación científica o exponentes negativos.
