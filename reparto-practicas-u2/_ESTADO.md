@@ -215,6 +215,8 @@ LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · d
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 16 · 2026-10-08 18:14 · s-20261008T180351-55d4decb · b5a878e · 3 ficheros (practicas/factorizaciones/{logica.js,practica.js}, tests/practicas-factorizaciones.test.js) · ~8 min · reabierta corregida (4 puntos)
+
 LISTA · tarea 08 · 2026-10-08 18:03 · s-20261008T175537-2deb69bd · 07b8a60 · 4 ficheros (practicas/fabrica/{logica.js,practica.js,textos.js}, tests/practicas-fabrica.test.js) · ~15 min · reabierta corregida (4 puntos de 08--s-20261008T051928-1cba9950)
 
 LISTA · tarea 05 · 2026-10-08 17:58 · s-20261008T175224-7b4cac18 · 3817f7e · 4 ficheros (practicas/criba/{logica.js,practica.js,textos.js}, tests/practicas-criba.test.js) · ~10 min · reabierta corregida (5 puntos de 05--s-20261008T051928-1cba9950)
