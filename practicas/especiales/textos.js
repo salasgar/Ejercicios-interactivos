@@ -6,6 +6,8 @@
 // ítem) y su explicación (confirmando el cálculo si es verdadera, o
 // contrastando el cálculo real con la afirmación falsa si no lo es).
 
+import { agrupar } from '../potencias10/logica.js';
+
 export const TX = {
   nombre: { es: '¿Verdadero o falso?', en: 'True or false?' },
   detalle: { es: 'Las igualdades con las que todos se confunden', en: 'The equalities everyone gets wrong' },
@@ -29,7 +31,7 @@ export function renderPlantilla(id, vars) {
     case 6: return `1<sup>${n}</sup> = ${n}`;
     case 7: return `${a}<sup>1</sup> = ${a}`;
     case 8: return `${a}<sup>1</sup> = 1`;
-    case 9: return `10<sup>${n}</sup> = ${'1'.concat('0'.repeat(n))}`;
+    case 9: return `10<sup>${n}</sup> = ${agrupar('1'.concat('0'.repeat(n)))}`;
     case 10: return `10<sup>${n}</sup> = 10 · ${n}`;
     case 11: return `${a}<sup>${n}</sup> = ${a} · ${n}`;
     case 12: return `${a}<sup>3</sup> = ${a + 1}<sup>2</sup>`;
@@ -42,10 +44,11 @@ export function renderPlantilla(id, vars) {
 /** La explicación de cada plantilla, { es, en }, con los números del ítem y el resultado real. */
 export function explicarPlantilla(id, vars, lado1, lado2) {
   const { a, n } = vars;
+  lado1 = agrupar(lado1); lado2 = agrupar(lado2);   // 10⁶ = 1 000 000, no 1000000
   const tabla = {
     1: {
-      es: () => `El exponente 0 vale siempre 1, sea cual sea la base: ${a}<sup>0</sup> = 1.`,
-      en: () => `An exponent of 0 is always 1, whatever the base: ${a}<sup>0</sup> = 1.`,
+      es: () => `Cualquier número distinto de 0 elevado a 0 vale 1: ${a}<sup>0</sup> = 1.`,
+      en: () => `Any number other than 0 raised to the power of 0 is 1: ${a}<sup>0</sup> = 1.`,
     },
     2: {
       es: () => `${a}<sup>0</sup> = ${lado1}, no 0: el exponente 0 no deja la potencia en 0.`,
@@ -85,7 +88,7 @@ export function explicarPlantilla(id, vars, lado1, lado2) {
     },
     11: {
       es: () => `${a}<sup>${n}</sup> = ${Array(n).fill(a).join(' · ')} = ${lado1}, no ${a} · ${n} = ${lado2}: la potencia repite la base, no la multiplica por el exponente.`,
-      en: () => `${a}<sup>${n}</sup> = ${Array(n).fill(a).join(' · ')} = ${lado1}, not ${a} × ${n} = ${lado2}: a power repeats the base, it does not multiply it by the exponent.`,
+      en: () => `${a}<sup>${n}</sup> = ${Array(n).fill(a).join(' · ')} = ${lado1}, not ${a} · ${n} = ${lado2}: a power repeats the base, it does not multiply it by the exponent.`,
     },
     12: {
       es: () => `${a}<sup>3</sup> = ${lado1} y ${a + 1}<sup>2</sup> = ${lado2}: son potencias distintas y no coinciden.`,
