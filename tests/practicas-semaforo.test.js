@@ -113,6 +113,19 @@ test('ejercicio 4: la cifra que falta es única, por fuerza bruta, y nunca un 0 
   }
 });
 
+test('ejercicio 4: con el hueco al principio, el 0 nunca cumpliría (no se da por malo sin motivo)', () => {
+  const items = generarN(generarCifra, 2000, 5).filter(i => i.hueco === 0);
+  assert.ok(items.length > 50);
+  for (const item of items) {
+    const n = item.cifras.reduce((acc, c, k) => acc * 10 + (k === 0 ? 0 : c), 0);
+    assert.ok(!item.divisores.every(d => divideA(d, n)), `ítem ${JSON.stringify(item)}`);
+  }
+});
+
+test('ejercicio 4: ningún ítem usa el juego [3] (no tiene cifra única)', () => {
+  for (const item of generarN(generarCifra, 1000, 6)) assert.notDeepEqual(item.divisores, [3]);
+});
+
 test('esCorrecta (cifra): solo la cifra exacta vale', () => {
   const item = { tipo: 'cifra', cifras: [4, 0, 7], hueco: 1, divisores: [9], solucion: 2 };
   assert.ok(esCorrecta(item, 2));
