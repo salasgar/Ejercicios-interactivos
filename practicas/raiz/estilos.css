@@ -1,0 +1,41 @@
+/* Raíz cuadrada con cuadrados: lo que no está ya en ../_comun/estilos.css. */
+
+/* Ejercicio 1: las fichas se colocan en un cuadrado de lado s (transform animado) */
+.zona { position: relative; margin: 0 auto 1rem; transition: height .35s ease; max-width: 100%; }
+.pieza {
+  position: absolute; top: 0; left: 0; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--primario); transition: transform .35s ease, background-color .2s;
+}
+.pieza--roja { background: var(--error); }
+.pieza--fuera { background: #f59e0b; }
+.marco {
+  position: absolute; top: -1px; left: -1px; box-sizing: content-box;
+  border: 2px dashed var(--primario); border-radius: 4px; pointer-events: none;
+  transition: width .35s ease, height .35s ease, border-color .2s;
+}
+.marco--completo { border-color: var(--correcto); }
+.marco--incompleto { border-color: var(--error); }
+.selector-lado { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin-bottom: .4rem; }
+.selector-lado__nombre { color: var(--texto-suave); font-size: .95rem; }
+.estado-cuadrado { font-weight: 700; margin: .3rem 0 1rem; min-height: 1.5em; }
+.estado-cuadrado--si { color: var(--correcto); }
+.estado-cuadrado--no { color: var(--error); }
+
+/* Campos numéricos con teclado propio */
+.campos { display: flex; justify-content: center; gap: .7rem; flex-wrap: wrap; margin-bottom: .8rem; }
+.campo {
+  display: flex; flex-direction: column; align-items: center; gap: .1rem;
+  min-width: 8.5rem; padding: .5rem .8rem; background: #fff; color: var(--texto);
+  border: 2px solid var(--borde); border-radius: 12px;
+}
+.campo__etiqueta { font-size: .85rem; color: var(--texto-suave); font-weight: 600; }
+.campo__valor { font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums; min-height: 1.3em; }
+.campo--vacio .campo__valor { color: var(--texto-suave); font-weight: 400; }
+.campo--activo { border-color: var(--primario); background: var(--primario-claro); }
+.campo--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); opacity: 1 !important; }
+.campo--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); opacity: 1 !important; }
+.campo:disabled { opacity: 1; }
+.teclado { max-width: 22rem; margin-left: auto; margin-right: auto; }
+.teclado button { min-width: 56px; min-height: 52px; }
+.ayuda { color: var(--texto-suave); font-size: .9rem; margin: .6rem 0; }
+.enunciado { font-size: 1.1rem; line-height: 1.5; text-align: left; margin-bottom: 1rem; }
