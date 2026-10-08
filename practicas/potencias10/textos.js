@@ -50,6 +50,16 @@ export const TX = {
       es: texto => `Escribe con cifras: <strong>${texto}</strong>`,
       en: texto => `Write in figures: <strong>${texto}</strong>`,
     },
+    por_que: {
+      despues: {
+        es: (miles, unidades) => `El «and» va después de «thousand», así que lo que sigue son las unidades sueltas. Miles: ${miles} · unidades: ${unidades}.`,
+        en: (miles, unidades) => `The "and" comes after "thousand", so what follows is the loose units. Thousands: ${miles} · units: ${unidades}.`,
+      },
+      dentro: {
+        es: (miles, unidades) => `El «and» va antes de «thousand», dentro de los miles. Miles: ${miles} · unidades: ${unidades}.`,
+        en: (miles, unidades) => `The "and" comes before "thousand", inside the thousands. Thousands: ${miles} · units: ${unidades}.`,
+      },
+    },
     borrar: { es: 'Borrar', en: 'Delete' },
     vacio: { es: 'Pulsa las cifras', en: 'Press the digits' },
     grupos: {
