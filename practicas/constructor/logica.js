@@ -281,7 +281,13 @@ export function generarPalabras(rng) {
 export const esAciertoPalabras = (item, escrito) => Number(String(escrito).replace(/\D/g, '')) === item.n;
 
 /** El texto del número en el idioma del ítem. */
-export const enPalabras = (n, idioma) => (idioma === 'en' ? numeroAIngles(n) : numeroAEspanol(n));
+export const enPalabras = (n, idioma) => (idioma === 'en' ? numeroAIngles(n) : apocoparUno(numeroAEspanol(n)));
+
+/**
+ * `numeroAEspanol` (src/ejercicios/palabras.js, que no es de esta práctica) apocopa «uno» delante de
+ * «mil» solo tras «veinti-» y «… y», no tras «ciento»: «cuatrocientos uno mil». Aquí se corrige al salir.
+ */
+const apocoparUno = s => s.replace(/\buno (mil|millones|millón)\b/g, 'un $1');
 
 /** Ejercicio 3: coma 50 %, palabras 50 %. */
 export function generarComaPalabras(rng) {
