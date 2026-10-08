@@ -84,6 +84,8 @@ export function generarMultiplo(rng) {
     const item = itemDe('multiplo', ea, eb);
     if (item.a < 2 || item.b < 2 || item.a > MAX_NUMERO || item.esMultiplo !== si) continue;
     if (si && item.a === item.b) continue;
+    // En los «no», b < a y b de tamaño razonable: si b fuera mayor se contestaría sin mirar exponentes.
+    if (!si && item.b >= item.a) continue;
     return item;
   }
 }
@@ -179,8 +181,8 @@ export function explicar(item, exponentes, idioma) {
     ? (f => `${expl.tuya[l](htmlFact(f), valorDe(f))} `)(factDe(primosDe(item), exponentes))
     : '';
   if (item.tipo === 'multiplo' && !item.esMultiplo) return explicarNoMultiplo(item, l);
-  const lineas = (item.tipo === 'producto' ? lineasProducto(item, l) : lineasCociente(item, l))
-    .map(t => `${cuenta(t)}`).join('; ');
+  // Las frases van como texto normal (se parten en el móvil); `.cuenta` solo para las cuentas cortas.
+  const lineas = (item.tipo === 'producto' ? lineasProducto(item, l) : lineasCociente(item, l)).join('; ');
   const sol = item.solucion;
   if (item.tipo === 'producto') {
     const partes = sol.map(([p, e]) => p ** e).join(' · ');
@@ -188,7 +190,10 @@ export function explicar(item, exponentes, idioma) {
   }
   const q = valorDe(sol);
   const prefijo = item.tipo === 'multiplo' ? `${expl.es_multiplo[l](item.a, item.b)}. ` : '';
-  return `${tuya}${prefijo}${lineas}. ${cuenta(`${item.a} : ${item.b} = ${htmlFact(sol)} = ${q}`)}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+  // Sin igualdad repetida: si la factorización del cociente es ya un solo número («2», «1»), basta «= q».
+  const f = htmlFact(sol);
+  const resultado = f === String(q) ? `${q}` : `${f} = ${q}`;
+  return `${tuya}${prefijo}${lineas}. ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${resultado}`)} ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
 }
 
 export { multiplicarFact, dividirFact, esMultiploFact, htmlFact, valorDe };

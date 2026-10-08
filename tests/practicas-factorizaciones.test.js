@@ -162,3 +162,31 @@ test('explicar: si el alumno se equivoca, dice cuánto vale lo suyo', () => {
   const txt = explicar(item, mal.map((e, i) => (i === 0 ? e + 3 : e)), 'es');
   assert.match(txt, /Lo que has escrito vale/);
 });
+
+test('ejercicio 2: en los «no», b es menor que a (y por tanto ≤ 10000)', () => {
+  const rng = crearRng(31);
+  let no = 0;
+  for (let i = 0; i < 3000; i++) {
+    const item = generarMultiplo(rng);
+    if (item.esMultiplo) continue;
+    no++;
+    assert.ok(item.b < item.a && item.b <= 10000, `a=${item.a} b=${item.b}`);
+  }
+  assert.ok(no > 1200);
+});
+
+test('ejercicio 3: el feedback no repite igualdades, no mete frases en .cuenta y usa ÷ en inglés', () => {
+  const rng = crearRng(32);
+  for (let i = 0; i < 1500; i++) {
+    const item = generarCociente(rng);
+    for (const idioma of ['es', 'en']) {
+      const html = explicar(item, null, idioma);
+      assert.doesNotMatch(html, /= (\S+) = \1(?![\d<])/, html);
+      assert.doesNotMatch(html, /\d \./, html);
+      for (const [, dentro] of html.matchAll(/<span class="cuenta">(.*?)<\/span>/g)) {
+        assert.ok(dentro.replace(/<[^>]*>/g, "").length < 36, `cuenta demasiado larga: ${dentro}`);
+      }
+      assert.ok(idioma === 'es' ? !html.includes('÷') : !html.includes(' : '), html);
+    }
+  }
+});

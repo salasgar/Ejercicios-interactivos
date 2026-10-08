@@ -32,7 +32,7 @@ function steppers(caja, item, api, tope) {
   const exponentes = () => controles.map(c => c.valor());
   const pintar = () => {
     const f = factDe(primos, exponentes());
-    expresion.innerHTML = f.length ? `${htmlFact(f)} = ${valorDe(f)}` : '□';
+    expresion.innerHTML = f.length ? `${htmlFact(f)} = ${valorDe(f)}` : '1';
   };
   const controles = primos.map(p => pasos(grupo, {
     max: tope(p),
