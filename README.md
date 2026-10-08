@@ -68,34 +68,73 @@ que falta está en `traspaso-ejercicios-interactivos.md`.
 
 ## Práctica «divisor, múltiplo, divisible» (`divisores/`)
 
-Mini-aplicación aparte, sin cuentas, para la unidad 2 de 1º ESO:
-https://salasgar.github.io/Ejercicios-interactivos/divisores/ (panel del
-profesor en `divisores/profesor.html`). Español e inglés.
+La primera de las prácticas de la unidad 2 de 1º ESO, sin cuentas:
+https://salasgar.github.io/Ejercicios-interactivos/divisores/. Español e
+inglés. Conserva su URL, pero desde octubre de 2026 está montada sobre la base
+común de `practicas/` (es la práctica 0 de su catálogo) y comparte su panel
+del profesor: lo que sigue vale también para ella.
 
 - **Ejercicios**: 0 («de» o «entre»), 1 (con multiplicaciones), 2 (con
   divisiones), 3 (mezcla) y 4 (arrastrar dos de los tres números a
-  «__ es múltiplo de __»). En cada uno hay que acertar 20 veces. Cada fallo
-  añade 2, con unas palabras de ánimo. Nunca hay más de 40 pendientes. Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan
-  las dos (y en «18 es … 18», las tres).
-- **Quién lo ha hecho**: cada alumno entra con un código de 4 caracteres (el
-  panel del profesor los reparte a partir de la lista, que no sale de su
-  navegador). Al terminar, la aplicación le da un **código de resultado** de 12
-  caracteres que lleva dentro quién es, qué ejercicios ha terminado, con
-  cuántos fallos y qué día; el panel del profesor los lee pegando tal cual los
-  mensajes de los alumnos. Además el progreso se copia en Firestore
-  (`divisores/{código}`, regla en `firestore.rules`), que el panel lee entrando
-  con la cuenta del profesor.
-- El código de resultado no es criptografía (el programa es público): impide
-  inventárselo a ojo o copiar el de un compañero, no a quien lea el código
-  fuente.
+  «__ es múltiplo de __»). Cuando «múltiplo de» y «divisible entre» valen las
+  dos, se aceptan las dos (y en «18 es … 18», las tres).
+- Los códigos de alumno de 4 caracteres son los mismos de siempre. Quien la
+  hizo con la versión anterior tiene un código de resultado de 12 caracteres:
+  el panel los sigue leyendo, mezclados con los de 16.
 - Código en `divisores/` (`logica.js` es pura y tiene sus tests en
   `tests/divisores.test.js`).
 
 ## Prácticas de la unidad 2 (`practicas/`)
 
-Mini-aplicaciones como la anterior, sin cuentas, sobre una **base común**:
+Treinta y una mini-aplicaciones sin cuentas sobre una **base común** (dieciséis
+de la unidad 2 y quince de repaso de la unidad 1), cada una con una interacción
+propia y con feedback que dice qué ha pasado con los números de ese ítem:
 portada en https://salasgar.github.io/Ejercicios-interactivos/practicas/ y
 **un solo panel del profesor** en `practicas/profesor.html`. Español e inglés.
+
+**Todo lo demás está en [docs/practicas-unidad2.md](docs/practicas-unidad2.md)**:
+el contrato de la base, cómo se añade una práctica, cómo lee el profesor los
+resultados y qué práctica cubre qué destreza del inventario.
+
+| Semana | `slug` | Práctica | Destrezas principales |
+|---|---|---|---|
+| 1 | `semaforo` | Semáforo de divisibilidad | Criterios del 2, 3, 5, 9, 10 y 11, compuestos, cifra que falta (U2-1C-05 a 1C-10) |
+| 1 | `rectangulos` | Divisores por parejas | Todos los divisores por parejas y cuándo parar (U2-1C-13, 1C-14) |
+| 1 | `recta` | Múltiplos y divisores en la recta | Múltiplos, divisores, el 0 y el 1 (U2-1C-02 a 1C-04) |
+| 2 | `criba` | Criba y números primos | Primos menores que 100, primo o compuesto, hasta qué primo probar (U2-2C-01 a 2C-07) |
+| 2 | `arbol` | Árbol de factores | Árbol de factores, factorización sin terminar (U2-2C-08, 2C-09, 2C-13) |
+| 2 | `divisiones` ⏳ | Divisiones sucesivas | Divisiones sucesivas, forma de potencias, comprobar (U2-2C-10 a 2C-12) |
+| 2 | `fabrica` | Fábrica de divisores | Divisores a partir de los factores primos y cuántos son (U2-3C-01, 3C-02, 2C-14) |
+| 2 | `factorizaciones` | Operar con factorizaciones | Producto, cociente y «¿es múltiplo?» con exponentes (U2-2C-14) |
+| 3 | `venn` | m.c.d. y m.c.m. con factores primos | Las dos reglas sin cruzarlas (U2-3C-03 a 3C-06, 3C-08, 3C-10) |
+| 3 | `imposibles` ⏳ | Detector de imposibles | Desigualdades del m.c.d. y el m.c.m., nombrar la respuesta (U2-3C-10, 3C-11, 1A-04) |
+| 4 | `clasificador` ⏳ | ¿m.c.d. o m.c.m.? | Decidir sin calcular, también cuando el enunciado empuja al revés (U2-1A-01, 4A-01) |
+| 4 | `reloj` ⏳ | Reloj de coincidencias | Coincidencias con listas y en hora de reloj (U2-1A-02, 4A-02) |
+| 4 | `baldosas` | Baldosas y cuerdas | Cubrir con cuadrados y cortar en trozos iguales (U2-4A-03, 4A-04, 4A-07) |
+| 4 | `errores` ⏳ | Caza el error | Reconocer y nombrar el error, y lo que no es un error (U2-4C-01, 4C-02) |
+| toda | `leelo` | Léelo en inglés | Leer factorizaciones, m.c.d. y m.c.m.; vocabulario (U2-1B, 2B-03, 3B-03) |
+| toda | `divisores` | Divisor, múltiplo, divisible | No confundir múltiplo, divisor y divisible (U2-1B-01, 1C-02) |
+| U1 | `jerarquia` ⏳ | ¿Qué se hace primero? | Jerarquía paso a paso, con potencias, raíces y paréntesis |
+| U1 | `parentesis` | Coloca los paréntesis | Qué resultados salen según dónde va el paréntesis |
+| U1 | `exponente` ⏳ | El exponente y su base | A qué afecta el exponente, potencia como producto repetido, cuadrado de la suma |
+| U1 | `raiz` | Raíz cuadrada con cuadrados | Raíz exacta, raíz entera y resto |
+| U1 | `division` | División entera: cajas y resto | Cociente, resto, la prueba y qué significa el resto |
+| U1 | `expresion` | Del enunciado a la expresión | Modelar un problema con una expresión, con los paréntesis justos |
+| U1 | `redondeo` | Redondeo y estimación | Redondear, estimar y decidir si un resultado es razonable |
+| U1 | `constructor` | Constructor de números | Valor de las cifras, descomposición, números con cifras y con palabras |
+| U1 | `distributiva` ⏳ | Distributiva con rectángulos | Propiedad distributiva, factor común, compensar con 99 |
+| U1 | `potencias10` | Potencias de 10 y números grandes | Potencias de 10, million, billion y trillion |
+| U1 | `dictado` | Dictado de números | Numerales ingleses de oído y por escrito; ortografía española |
+| U1 | `mental` ⏳ | Cálculo mental con estrategia | Compensar, descomponer y elegir estrategia |
+| U1 | `especiales` | Potencias especiales | Exponentes 0 y 1, potencias de 10, igualdades falsas típicas |
+| U1 | `errores1` ⏳ | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias |
+| U1 | `propiedades` ⏳ | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
+
+⏳ = hecha pero **todavía no enlazada desde la portada** (`disponible: false` en
+el catálogo): la revisión final del 2026-10-08 encontró en ella algo que
+penaliza una respuesta correcta o que no se puede contestar. Lo que hay que
+corregir está en `reparto-practicas-u2/hechos/reabiertas/` y el veredicto
+completo en `reparto-practicas-u2/salidas/18-revision-final/VEREDICTO.md`.
 
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
   en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Cada
