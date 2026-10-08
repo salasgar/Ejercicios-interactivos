@@ -157,6 +157,12 @@ Propios de esta tarea:
   la derecha: `x**2**2` no es `(x²)²`.
 - `display: grid` gana al atributo `hidden`: hace falta `.teclado[hidden] { display: none; }`.
 - El botón de traducir de la base solo existe en modo alterno (no con `?idioma=es|en`).
+- (Reabierta, 2026-10-08.) Que el resultado final sea natural no basta: en `a · b : c · d`
+  el cociente intermedio puede no serlo (90 : 4 · 2 = 45 con 22,5 bolsas). `numerosValidos`
+  mira todos los pasos del modelo.
+- (Reabierta, 2026-10-08.) Tratar cada número como una letra da por mala la suma repetida
+  (`√49 + √49` por `2 · √49`), que es un planteamiento correcto. `sumaRepetida` lo resuelve
+  tomando como constantes solo los números que el alumno no ha usado.
 
 ## Prohibido (propio de esta tarea)
 
