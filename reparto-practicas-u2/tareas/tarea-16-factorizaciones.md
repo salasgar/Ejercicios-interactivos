@@ -132,6 +132,9 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- (Reabierta 2026-10-08) `.cuenta` no se parte (`nowrap`): solo cuentas cortas; las frases del feedback van como texto normal o se salen de 375 px.
+- (Reabierta) Con todos los exponentes a 0 la expresión que se forma es «1», no «□».
+
 - Mostrar el valor del producto (1800) invita a factorizarlo por divisiones sucesivas en
   vez de sumar exponentes: está bien que esté (lo pidió Juan Luis), pero el feedback
   siempre enseña la suma de exponentes, no la escalera.
