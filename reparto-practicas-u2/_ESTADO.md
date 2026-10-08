@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-07 21:44 UTC · por la sesión s-20261007T212116-b15e0069 (cierra la 09; todas las filas recalculadas contra `hechos/`; se añaden al registro la 09 y la 20, que faltaba)
+Regenerado: 2026-10-08 05:07 UTC · por la sesión s-20261007T214806-1c7e320e (cierra la 22; solo se actualizan su fila, el registro y esta cabecera; el resto de filas no se han recalculado: quien regenere después, que lo haga entero). Anterior: 2026-10-07 21:44 UTC · por la sesión s-20261007T212116-b15e0069 (cierra la 09; todas las filas recalculadas contra `hechos/`; se añaden al registro la 09 y la 20, que faltaba)
 21, encadena la 22; con tanta sesión a la vez, 06, 08, 14 y 35 también estaban LISTA en
 `hechos/` y la tabla no lo reflejaba: corregido. La regeneración de la 06 (21:37Z) dejó
 rota la línea «Formato:» del registro, con la entrada de la 14 pegada encima: corregido
@@ -135,10 +135,10 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 19 | Coloca los paréntesis (repaso de la unidad 1) | tareas/tarea-19-parentesis.md | 01 LISTA | 2 h | MEDIO | 16 | practicas/parentesis/; salidas/19-parentesis/ | EN CURSO | s-20261007T212734-78b63f57 · 2026-10-08T01:27:34Z |
 | 20 | ¿Qué se hace primero? Jerarquía paso a paso y agrupadores invisibles (U1) | tareas/tarea-20-jerarquia.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/jerarquia/; salidas/20-jerarquia/ | LISTA | terminada 21:40Z · commit ac95a98 |
 | 21 | El exponente y su base (U1) | tareas/tarea-21-exponente.md | 34 LISTA | 2 h | MEDIO | 22 | practicas/exponente/; salidas/21-exponente/ | EN CURSO | s-20261007T213810-ffd13ae0 · 2026-10-08T01:38:10Z |
-| 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | PENDIENTE |  |
+| 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | LISTA | terminada 05:07Z · commit 18a55a6 |
 | 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | PENDIENTE |  |
 | 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | EN CURSO | s-20261007T213246-c81731a7 · 2026-10-08T02:32:46Z |
-| 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | EN CURSO | s-20261007T214109-30fcacbb · 2026-10-08T01:41:09Z |
+| 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | LISTA | terminada 05:1xZ (8-oct) · commit 1ae08ff |
 | 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | PENDIENTE |  |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 21:48Z · commit eea70ea |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | EN CURSO | s-20261007T214144-b7a0e172 · 2026-10-08T00:41:44Z |
@@ -165,7 +165,11 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
 
+LISTA · tarea 25 · 2026-10-08 05:10 · s-20261007T214109-30fcacbb · 1ae08ff · 6 ficheros (practicas/redondeo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-redondeo.test.js) · ~25 min de trabajo (estimada: 2 h)
+
 LISTA · tarea 27 · 2026-10-07 21:48 · s-20261007T214112-0da18c09 · eea70ea · 6 ficheros (practicas/distributiva/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-distributiva.test.js) · ~7 min (estimada: 2 h)
+
+LISTA · tarea 22 · 2026-10-08 05:07 · s-20261007T214806-1c7e320e · 18a55a6 · 6 ficheros (practicas/raiz/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-raiz.test.js) · ~20 min de trabajo efectivo (estimada: 2 h)
 
 LISTA · tarea 09 · 2026-10-07 21:44 · s-20261007T212116-b15e0069 · f5748e7 · 6 ficheros (practicas/venn/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-venn.test.js) · 24 min (estimada: 2 h 30 min)
 
