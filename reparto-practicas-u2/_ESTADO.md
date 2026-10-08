@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-08 17:55 UTC · por la sesión s-20261008T175256-7d4d2bd8 (cierre de la 26; solo se ha recalculado la fila 26 contra `hechos/`; el resto sigue como lo dejó la coordinadora, relistado con git fetch).
+Regenerado: 2026-10-08 17:58 UTC · por la sesión s-20261008T175617-aa2c36f9 (cierre de la 28; recalculada la fila 28 contra hechos/ tras git fetch).
 toma el relevo de s-20261007T184632-fa5a1491; todas las filas recalculadas contra `hechos/`
 con `git fetch` antes: ningún hecho nuevo desde las 06:03Z, así que siguen 7 LISTAS y 28
 REABIERTAS, sin reclamo vivo; cambian el párrafo de debajo de la tabla y las incidencias).
@@ -142,7 +142,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/25--s-20261008T051928-1cba9950.md |
 | 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | LISTA | terminada de5fe08 · reabierta corregida (s-20261008T175256-7d4d2bd8) |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/27--s-20261008T051928-1cba9950.md |
-| 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/28--s-20261008T051928-1cba9950.md |
+| 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada a6fb8cd · reabierta corregida (s-20261008T175617-aa2c36f9) |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/29--s-20261008T051928-1cba9950.md |
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/30--s-20261008T051928-1cba9950.md |
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/31--s-20261008T051928-1cba9950.md |
