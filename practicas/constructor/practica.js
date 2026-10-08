@@ -75,7 +75,11 @@ function montarConstruir(contenedor, item, api) {
     const porQue = {
       mayor: () => tt(T.por_que.mayor)(),
       menor: () => tt(T.por_que.menor)(item.hayCero),
-      menor_par: () => tt(T.por_que.menor_par)(ultima),
+      menor_par: () => {
+        const resto = [...item.cifras];
+        resto.splice(resto.indexOf(ultima), 1);
+        return tt(T.por_que.menor_par)(ultima, resto.includes(0));
+      },
       mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
       cercano: () => tt(T.por_que.cercano)(num(item.objetivo, api), num(Math.abs(item.solucion - item.objetivo), api)),
     }[item.consigna]();
@@ -126,13 +130,14 @@ function montarANumero(contenedor, item, api) {
   contenedor.innerHTML = `
     <p class="instruccion">${tt(T.a_numero_instr)}</p>
     <div class="operacion">${partes}</div>
-    <input type="number" inputmode="numeric" id="respuesta" class="constructor-entero" autocomplete="off">
+    <input type="text" inputmode="numeric" id="respuesta" class="constructor-entero" autocomplete="off" aria-label="${api.esc(tt(T.a_numero_instr))}">
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
   const campo = contenedor.querySelector('#respuesta');
   const boton = contenedor.querySelector('#comprobar');
   const comprobar = () => {
-    if (api.respondido() || campo.value.trim() === '') return;
-    const escrito = Number(campo.value);
+    // Se quitan los separadores (5.032, 5 032, 5,032): solo cuentan las cifras
+    if (api.respondido() || campo.value.replace(/\D/g, '') === '') return;
+    const escrito = Number(campo.value.replace(/\D/g, ''));
     const acierto = esAciertoANumero(item, escrito);
     campo.disabled = true; boton.style.display = 'none';
     const pegado = errorPegado(item);
@@ -210,7 +215,7 @@ function montarComa(contenedor, item, api) {
       const fb = (item.sub === 'miles' ? T.fb_miles : T.fb_decimal)[item.dir];
       const destino = item.dir === 'en_es' ? 'es' : 'en';
       let html = tt(fb)(item.dado, item.correcto);
-      if (Number.isFinite(item.mal) && item.mal !== item.c) html += tt(T.trampa)(item.dado, escribir(item.mal, destino, item.estilo));
+      if (Number.isFinite(item.mal) && item.mal !== item.c) html += tt(T.trampa)(escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto'), escribir(item.mal, destino, item.estilo));
       api.responder({ acierto: esAciertoComa(item, valor), html, espera: 3600 });
     },
   });

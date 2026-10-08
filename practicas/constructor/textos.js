@@ -9,6 +9,14 @@ export const POSICION = [
   { es: 'millares', en: 'thousands' },
   { es: 'decenas de millar', en: 'ten thousands' },
 ];
+/** Los nombres en singular, para «1 centena = 100» (y no «1 centenas»). */
+export const POSICION_UNO = [
+  { es: 'unidad', en: 'unit' },
+  { es: 'decena', en: 'ten' },
+  { es: 'centena', en: 'hundred' },
+  { es: 'millar', en: 'thousand' },
+  { es: 'decena de millar', en: 'ten thousand' },
+];
 /** Los mismos nombres con «las» en español, para las frases («está en las centenas»). */
 export const EN_POSICION = [
   { es: 'las unidades', en: 'the units' },
@@ -47,8 +55,8 @@ export const TX = {
         en: (cero) => (cero ? ': digits from smallest to greatest, but 0 cannot go first: the smallest digit that is not 0 goes first, then the 0.' : ': digits from smallest to greatest.'),
       },
       menor_par: {
-        es: ult => `: tiene que acabar en cifra par, y la mejor es el ${ult}; el resto, de menor a mayor.`,
-        en: ult => `: it has to end in an even digit, and the best one is ${ult}; the other digits go from smallest to greatest.`,
+        es: (ult, cero) => `: tiene que acabar en cifra par, y la mejor es el ${ult}; el resto, de menor a mayor${cero ? ', pero el 0 no puede ir delante: va en segundo lugar' : ''}.`,
+        en: (ult, cero) => `: it has to end in an even digit, and the best one is ${ult}; the other digits go from smallest to greatest${cero ? ', but 0 cannot go first: it goes second' : ''}.`,
       },
       mayor_impar: {
         es: ult => `: tiene que acabar en cifra impar, y la mejor es el ${ult}; el resto, de mayor a menor.`,
@@ -87,8 +95,8 @@ export const TX = {
     },
     valor_pregunta: { es: (c, n) => `¿Cuánto vale el ${c} en ${n}?`, en: (c, n) => `What is the ${c} worth in ${n}?` },
     valor_fb: {
-      es: (n, c, pos, valor) => `En ${n} el ${c} está en ${EN_POSICION[pos].es}: <span class="cuenta">${c} ${POSICION[pos].es} = ${valor}</span>.`,
-      en: (n, c, pos, valor) => `In ${n} the ${c} is in ${EN_POSICION[pos].en}: <span class="cuenta">${c} ${POSICION[pos].en} = ${valor}</span>.`,
+      es: (n, c, pos, valor) => `En ${n} el ${c} está en ${EN_POSICION[pos].es}: <span class="cuenta">${c} ${(c === 1 ? POSICION_UNO : POSICION)[pos].es} = ${valor}</span>.`,
+      en: (n, c, pos, valor) => `In ${n} the ${c} is in ${EN_POSICION[pos].en}: <span class="cuenta">${c} ${(c === 1 ? POSICION_UNO : POSICION)[pos].en} = ${valor}</span>.`,
     },
     posicion_pregunta: { es: (c, n) => `¿En qué posición está el ${c} de ${n}?`, en: (c, n) => `Which position is the ${c} in ${n} in?` },
     posicion_fb: {

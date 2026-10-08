@@ -275,3 +275,41 @@ test('fmt: separador de miles', () => {
   assert.equal(fmt(2040006, 'en'), '2,040,006');
   assert.equal(fmt(974), '974');
 });
+
+// ─── Reabierta de la tarea 26 ───────────────────────────────────────────────────
+
+test('palabras: ningún texto español lleva «uno mil», «uno millones» ni «uno millón»', () => {
+  for (const n of [101000, 201000, 5401000, 901000, 4101005, 1001000, 21000, 31000, 1000000, 2000000]) {
+    const t = enPalabras(n, 'es');
+    assert.ok(!/\buno (mil|millones|millón)\b/.test(t), `${n}: ${t}`);
+  }
+  assert.equal(enPalabras(5401000, 'es'), 'cinco millones cuatrocientos un mil');
+  for (const it of generarN(generarPalabras, 20)) {
+    const t = enPalabras(it.n, 'es');
+    assert.ok(!/\buno (mil|millones|millón)\b/.test(t), `${it.n}: ${t}`);
+    assert.equal(leerPalabrasEs(t), it.n, t);
+  }
+});
+
+test('construir menor_par: lo que dice el feedback (el resto, de menor a mayor; el 0 no delante, en segundo lugar) es lo que pasa', () => {
+  const items = generarN(generarConstruir, 5).filter(i => i.consigna === 'menor_par');
+  let conCero = 0;
+  for (const it of items) {
+    const ult = it.solucion % 10;
+    const resto = [...it.cifras]; resto.splice(resto.indexOf(ult), 1);
+    const orden = resto.sort((a, b) => a - b);
+    if (orden[0] === 0 && orden.length > 1) { const [cero] = orden.splice(0, 1); orden.splice(1, 0, cero); } // 0 en segundo lugar
+    assert.equal(String(it.solucion), orden.join('') + ult, `${it.cifras}`);
+    if (resto.includes(0)) conCero++;
+  }
+  assert.ok(conCero > 100, 'hay muchos ítems con 0 en el resto');
+});
+
+test('textos: «1 centena» en singular y la frase de menor_par distingue el 0', async () => {
+  const { TX } = await import('../practicas/constructor/textos.js');
+  assert.match(TX.descomposicion.valor_fb.es('1 234', 1, 2, 100), /1 centena = 100/);
+  assert.match(TX.descomposicion.valor_fb.en('1,234', 1, 2, 100), /1 hundred = 100/);
+  assert.match(TX.descomposicion.valor_fb.es('8 274', 2, 2, 200), /2 centenas = 200/);
+  assert.match(TX.construir.por_que.menor_par.es(6, true), /el 0 no puede ir delante: va en segundo lugar/);
+  assert.doesNotMatch(TX.construir.por_que.menor_par.es(6, false), /0/);
+});
