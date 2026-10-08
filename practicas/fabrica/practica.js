@@ -104,15 +104,15 @@ function montarContar(contenedor, item, api) {
     [...teclado.querySelectorAll('button')].forEach(b => { b.disabled = true; });
     contenedor.querySelector('#comprobar').hidden = true;
     const acierto = tuyo === item.solucion;
+    const cuenta = `${item.fact.map(([, e]) => `(${e}+1)`).join(' · ')} = ${item.solucion}`;
     let html;
     if (acierto) {
-      const cuenta = item.fact.map(([, e]) => `(${e}+1)`).join(' · ');
-      html = `${tt(TX.contar.feedbackBien)(`${cuenta} = ${item.solucion}`)}`;
+      html = `${tt(TX.contar.feedbackBien)(cuenta)}`;
       if (item.premio) html += ` ${tt(TX.contar.premio)(divisores(item.n))}`;
     } else if (tuyo === olvidoSumarUno(item)) {
-      html = tt(TX.contar.feedbackOlvido)(tuyo, item.solucion);
+      html = tt(TX.contar.feedbackOlvido)(tuyo, cuenta);
     } else {
-      html = tt(TX.contar.feedbackMal)(tuyo, item.solucion);
+      html = tt(TX.contar.feedbackMal)(tuyo, cuenta);
     }
     api.responder({ acierto, html, espera: 2600 });
   });
@@ -130,7 +130,8 @@ function explicacionDivisible(item, api) {
     return tt(TX.divisible.feedbackSiTiene)(p, eTiene, eNecesita);
   });
   const conclusion = item.divisible ? tt(TX.divisible.conclusionSi) : tt(TX.divisible.conclusionNo);
-  return `${clausulas.join('; ')} ${conclusion}`;
+  const cabecera = tt(TX.divisible.factorDelDivisor)(item.d, htmlFact(item.factD));
+  return `${cabecera} ${clausulas.join('; ')} ${conclusion}`;
 }
 
 function montarDivisible(contenedor, item, api) {
