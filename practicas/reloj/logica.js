@@ -65,6 +65,26 @@ export function comprobarHora(item, h, m) {
   return h === item.horaSolucion.h && m === item.horaSolucion.m;
 }
 
+// Los minutos se marcan con dos contadores (decenas 0-5 y unidades 0-9), así que
+// cualquier minuto de 0 a 59 se puede marcar con unos pocos toques.
+export const MAX_DECENAS = 5;
+export const MAX_UNIDADES = 9;
+
+export function minutosEnContadores(m) {
+  return { decenas: Math.floor(m / 10), unidades: m % 10 };
+}
+
+export function minutosDeContadores(decenas, unidades) {
+  return decenas * 10 + unidades;
+}
+
+/** Múltiplos de `periodo` hasta `limite`: [periodo, 2·periodo, …]. */
+export function multiplosHasta(periodo, limite) {
+  const lista = [];
+  for (let n = periodo; n <= limite; n += periodo) lista.push(n);
+  return lista;
+}
+
 // ─── Ejercicio 3: tres datos pequeños, o uno múltiplo del otro ───────────────
 const TRIOS = [];
 for (let a = 2; a <= 8; a++) {

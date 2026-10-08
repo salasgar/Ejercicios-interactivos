@@ -8,6 +8,7 @@ import { TX, horaTexto } from './textos.js';
 import {
   generarLinea, comprobarLinea,
   generarHora, comprobarHora, sumarMinutos,
+  MAX_DECENAS, MAX_UNIDADES, minutosDeContadores, multiplosHasta,
   generarTresOMultiplo, comprobarTresOMultiplo,
 } from './logica.js';
 
@@ -21,7 +22,7 @@ function filaRejilla(contenedor, desde, hasta) {
     const boton = document.createElement('button');
     boton.type = 'button';
     boton.className = 'rejilla__celda';
-    boton.textContent = s % 5 === 0 ? String(s) : '';
+    boton.textContent = String(s);
     boton.dataset.segundo = String(s);
     boton.setAttribute('aria-label', String(s));
     fila.append(boton);
@@ -37,21 +38,15 @@ function montarLinea(contenedor, item, api) {
   const caja = document.createElement('div');
   caja.className = 'reloj-linea';
   contenedor.append(caja);
-  filaRejilla(caja, 0, 30);
-  filaRejilla(caja, 31, 60);
-  const celdas = [...caja.querySelectorAll('.rejilla__celda')];
-  const celda = s => celdas[s];
+  // Seis filas de 10 (1-60): celdas de unos 30 px en un móvil de 375 px. El 0 es el arranque común.
+  for (let desde = 1; desde <= 60; desde += 10) filaRejilla(caja, desde, desde + 9);
+  const celdas = [...caja.querySelectorAll('.rejilla__celda')]; // celdas[i] es el segundo i + 1
+  const celda = s => celdas[s - 1];
 
   let animando = null;
   function cancelarAnimacion() {
     if (animando) cancelAnimationFrame(animando);
     animando = null;
-  }
-
-  function multiplos(periodo, limite) {
-    const lista = [];
-    for (let n = periodo; n <= limite; n += periodo) lista.push(n);
-    return lista;
   }
 
   function animar() {
@@ -62,9 +57,10 @@ function montarLinea(contenedor, item, api) {
       if (!contenedor.isConnected) { animando = null; return; }
       const t = Math.min(1, (ahora - inicio) / duracion);
       const segundo = Math.round(t * 60);
-      celdas.forEach((c, s) => {
+      celdas.forEach((c, i) => {
+        const s = i + 1;
         c.classList.remove('rejilla__celda--azul', 'rejilla__celda--naranja', 'rejilla__celda--ambas');
-        if (s > segundo || s === 0) return;
+        if (s > segundo) return;
         const esA = s % a === 0, esB = s % b === 0;
         if (esA && esB) c.classList.add('rejilla__celda--ambas');
         else if (esA) c.classList.add('rejilla__celda--azul');
@@ -86,13 +82,13 @@ function montarLinea(contenedor, item, api) {
     if (!acierto) boton.classList.add('rejilla__celda--mal');
     animar();
     const [a, b] = item.periodos;
-    const listaA = multiplos(a, 60), listaB = multiplos(b, 60);
+    const listaA = multiplosHasta(a, 60), listaB = multiplosHasta(b, 60);
     const html = `${tt(x.lista(tt(x.azul), listaA))}; ${tt(x.lista(tt(x.naranja), listaB))}; ${tt(x.primera_vez(item.solucion))}.`;
     api.responder({ acierto, html, espera: 3200 });
   }));
 }
 
-// ─── Ejercicio 2: la hora de reloj (steppers de horas y minutos de 5 en 5) ───
+// ─── Ejercicio 2: la hora de reloj (horas, y minutos en decenas y unidades) ───
 
 function montarHora(contenedor, item, api) {
   const { tt } = api;
@@ -103,12 +99,18 @@ function montarHora(contenedor, item, api) {
   caja.className = 'reloj-hora';
   contenedor.append(caja);
 
-  const horas = pasos(caja, { valor: item.inicio.h, min: 0, max: 23, nombre: tt(x.horas), pinta: v => String(v).padStart(2, '0') });
-  const separador = document.createElement('span');
-  separador.className = 'reloj-separador';
-  separador.textContent = ':';
-  caja.append(separador);
-  const minutos = pasos(caja, { valor: 0, min: 0, max: 11, nombre: tt(x.minutos), pinta: v => String(v * 5).padStart(2, '0') });
+  // Dos filas (horas; minutos en decenas y unidades) para que quepan en 375 px.
+  function fila(rotulo) {
+    const f = document.createElement('div');
+    f.className = 'reloj-hora__fila';
+    f.innerHTML = `<span class="reloj-hora__rotulo">${rotulo}</span>`;
+    caja.append(f);
+    return f;
+  }
+  const horas = pasos(fila(tt(x.horas)), { valor: item.inicio.h, min: 0, max: 23, nombre: tt(x.horas), pinta: v => String(v).padStart(2, '0') });
+  const filaMinutos = fila(tt(x.minutos));
+  const decenas = pasos(filaMinutos, { valor: 0, min: 0, max: MAX_DECENAS, nombre: tt(x.decenas) });
+  const unidades = pasos(filaMinutos, { valor: 0, min: 0, max: MAX_UNIDADES, nombre: tt(x.unidades) });
 
   const boton = document.createElement('button');
   boton.type = 'button';
@@ -118,15 +120,16 @@ function montarHora(contenedor, item, api) {
 
   boton.addEventListener('click', () => {
     if (api.respondido()) return;
-    const h = horas.valor(), m = minutos.valor() * 5;
+    const h = horas.valor(), m = minutosDeContadores(decenas.valor(), unidades.valor());
     const acierto = comprobarHora(item, h, m);
     horas.bloquear();
-    minutos.bloquear();
+    decenas.bloquear();
+    unidades.bloquear();
     boton.hidden = true;
 
     const hExtra = Math.floor(item.solucion / 60), mExtra = item.solucion % 60;
     const intermedia = sumarMinutos(item.inicio.h, item.inicio.m, hExtra * 60);
-    const descomposicion = tt(x.descomposicion(item.solucion, hExtra, mExtra, item.inicio, intermedia, item.horaSolucion));
+    const descomposicion = tt(x.descomposicion(a, b, item.solucion, hExtra, mExtra, item.inicio, intermedia, item.horaSolucion));
     const correcta = `<span class="cuenta">${horaTexto(item.horaSolucion.h, item.horaSolucion.m)}</span>`;
     let html;
     if (acierto) {
@@ -162,6 +165,10 @@ function montarTres(contenedor, item, api) {
     boton.hidden = true;
     const correcta = `<span class="cuenta">${item.solucion}</span>`;
     let html = `${correcta}.`;
+    if (item.tipo === 'tres') {
+      const [p1, p2, p3] = item.periodos;
+      html += ` ${tt(x.cuenta_tres(p1, p2, p3, multiplosHasta(p3, item.solucion), item.solucion))}`;
+    }
     if (item.tipo === 'multiplo') {
       const [p1, p2] = item.periodos;
       const menor = Math.min(p1, p2), mayor = Math.max(p1, p2);
