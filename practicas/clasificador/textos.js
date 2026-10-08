@@ -37,20 +37,21 @@ function tresPequenos(rng) {
 // común; el mayor posible es el m.c.d. --------------------------------------
 
 const LIMPIOS_MCD_PAQUETES = [
-  { oEs: 'lápices', oEn: 'pencils', pEs: 'gomas', pEn: 'erasers', gEs: 'bolsas de regalo', gEn: 'gift bags', sEs: 'cada bolsa', sEn: 'each bag' },
-  { oEs: 'canicas', oEn: 'marbles', pEs: 'cuentas', pEn: 'beads', gEs: 'pulseras', gEn: 'bracelets', sEs: 'cada pulsera', sEn: 'each bracelet' },
-  { oEs: 'manzanas', oEn: 'apples', pEs: 'naranjas', pEn: 'oranges', gEs: 'cestas de fruta', gEn: 'fruit baskets', sEs: 'cada cesta', sEn: 'each basket' },
-  { oEs: 'pegatinas', oEn: 'stickers', pEs: 'cromos', pEn: 'cards', gEs: 'sobres', gEn: 'packs', sEs: 'cada sobre', sEn: 'each pack' },
-  { oEs: 'bombones', oEn: 'chocolates', pEs: 'caramelos', pEn: 'sweets', gEs: 'cajas', gEn: 'boxes', sEs: 'cada caja', sEn: 'each box' },
-  { oEs: 'libros', oEn: 'books', pEs: 'cuadernos', pEn: 'notebooks', gEs: 'cajas', gEn: 'boxes', sEs: 'cada caja', sEn: 'each box' },
+  { oEs: 'lápices', oEn: 'pencils', pEs: 'gomas', pEn: 'erasers', gEs: 'bolsas de regalo', gEn: 'gift bags' },
+  { oEs: 'canicas', oEn: 'marbles', pEs: 'cuentas', pEn: 'beads', gEs: 'pulseras', gEn: 'bracelets' },
+  { oEs: 'manzanas', oEn: 'apples', pEs: 'naranjas', pEn: 'oranges', gEs: 'cestas de fruta', gEn: 'fruit baskets' },
+  { oEs: 'pegatinas', oEn: 'stickers', pEs: 'cromos', pEn: 'cards', gEs: 'sobres', gEn: 'packs' },
+  { oEs: 'bombones', oEn: 'chocolates', pEs: 'caramelos', pEn: 'sweets', gEs: 'cajas', gEn: 'boxes' },
+  { oEs: 'libros', oEn: 'books', pEs: 'cuadernos', pEn: 'notebooks', gEs: 'cajas', gEn: 'boxes' },
 ].map(d => ({
   clase: 'mcd',
   trampa: false,
-  es: (a, b) => `Tienes ${a} ${d.oEs} y ${b} ${d.pEs}. Quieres hacer ${d.gEs} iguales, lo más grandes posible, usando todo sin que sobre nada. ¿Hace falta el m.c.d. o el m.c.m.?`,
-  en: (a, b) => `You have ${a} ${d.oEn} and ${b} ${d.pEn}. You want to make identical ${d.gEn}, as large as possible, using them all with nothing left over. Do you need the GCD or the LCM?`,
+  dice: ['mayor'],
+  es: (a, b) => `Tienes ${a} ${d.oEs} y ${b} ${d.pEs}. Quieres hacer el mayor número posible de ${d.gEs} iguales, usando todo sin que sobre nada. ¿Hace falta el m.c.d. o el m.c.m.?`,
+  en: (a, b) => `You have ${a} ${d.oEn} and ${b} ${d.pEn}. You want to make the largest possible number of identical ${d.gEn}, using them all with nothing left over. Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
-    es: `El número de ${d.oEs.split(' ')[0]} y ${d.pEs.split(' ')[0]} que caben en ${d.sEs} tiene que ser un divisor de ${a} y de ${b}: el mayor posible es su máximo común divisor → m.c.d.`,
-    en: `The number of ${d.oEn.split(' ')[0]} and ${d.pEn.split(' ')[0]} that fit in ${d.sEn} must be a divisor of ${a} and ${b}: the largest one possible is their greatest common divisor → GCD.`,
+    es: `El número de ${d.gEs} tiene que ser un divisor de ${a} y de ${b} (todas llevan lo mismo de cada cosa): el mayor posible es su máximo común divisor → m.c.d.`,
+    en: `The number of ${d.gEn} must be a divisor of ${a} and ${b} (they all get the same amount of each thing): the largest one possible is their greatest common divisor → GCD.`,
   }),
   numeros: dosGrandes,
 }));
@@ -65,6 +66,7 @@ const LIMPIOS_MCD_TROZOS = [
 ].map(d => ({
   clase: 'mcd',
   trampa: false,
+  dice: ['mayor'],
   es: (a, b) => `Un trozo de ${d.oEs} mide ${a} cm y otro mide ${b} cm. Quieres cortar los dos trozos en ${d.tEs} iguales, lo más largos posible, sin que sobre nada. ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b) => `One piece of ${d.oEn} is ${a} cm long and another one is ${b} cm long. You want to cut both pieces into identical ${d.tEn}, as long as possible, with nothing left over. Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
@@ -94,6 +96,7 @@ const LIMPIOS_MCM = [
 ].map(d => ({
   clase: 'mcm',
   trampa: false,
+  dice: [],
   es: (a, b) => `${d.sEs} ${a} ${d.uEs} y ${d.s2Es} ${b} ${d.uEs}: ${d.vEs}. ¿Dentro de cuántos ${d.uEs} volverán a coincidir? ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b) => `${d.sEn} ${a} ${d.uEn} and ${d.s2En} ${b} ${d.uEn}: ${d.vEn}. In how many ${d.uEn} will they coincide again? Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
@@ -106,20 +109,39 @@ const LIMPIOS_MCM = [
 // --- Trampa A (m.c.d.): pregunta por el MENOR número de piezas, cuando en
 // realidad hay que fijarse en el tamaño de cada pieza, no en cuántas hay. ----
 
+// Todas dicen «MENOR número de piezas» y se resuelven por el tamaño de cada
+// pieza (`tamano: true`): en el ejercicio 3 la razón buena es «tamano», no «va»,
+// porque el número de piezas no divide a los datos.
 const TRAMPA_A = [
-  { oEs: 'baldosas cuadradas', oEn: 'square tiles', cEs: 'dos paredes', cEn: 'two walls', genero: 'f' },
-  { oEs: 'cajas', oEn: 'boxes', cEs: 'un lote de juguetes y otro de libros', cEn: 'one batch of toys and one of books', genero: 'f' },
-  { oEs: 'montones', oEn: 'stacks', cEs: 'un paquete de folios y otro de cartulinas', cEn: 'one pack of sheets and one of cards', genero: 'm' },
-  { oEs: 'ramos', oEn: 'bunches', cEs: 'un cubo de flores y otro de hojas', cEn: 'one bucket of flowers and one of leaves', genero: 'm' },
-  { oEs: 'lotes', oEn: 'batches', cEs: 'una bolsa de pelotas y otra de conos', cEn: 'one bag of balls and one of cones', genero: 'm' },
-  { oEs: 'cajones', oEn: 'crates', cEs: 'un palé de botellas y otro de latas', cEn: 'one pallet of bottles and one of cans', genero: 'm' },
+  // Dos cosas que se cortan en trozos iguales.
+  { oEs: 'trozos', oEn: 'pieces', genero: 'm',
+    esF: (a, b) => `Tienes dos cuerdas, una de ${a} cm y otra de ${b} cm. Quieres cortarlas en trozos iguales, sin que sobre nada. ¿Cuál es el MENOR número de trozos que puedes obtener entre las dos?`,
+    enF: (a, b) => `You have two ropes, one ${a} cm long and another ${b} cm long. You want to cut them into equal pieces, with nothing left over. What is the SMALLEST number of pieces you can get from both together?` },
+  { oEs: 'tablones', oEn: 'planks', genero: 'm',
+    esF: (a, b) => `Tienes dos tablas de madera, una de ${a} cm y otra de ${b} cm. Quieres cortarlas en tablones iguales, sin que sobre nada. ¿Cuál es el MENOR número de tablones que puedes obtener entre las dos?`,
+    enF: (a, b) => `You have two wooden boards, one ${a} cm long and another ${b} cm long. You want to cut them into equal planks, with nothing left over. What is the SMALLEST number of planks you can get from both together?` },
+  { oEs: 'retales', oEn: 'strips', genero: 'm',
+    esF: (a, b) => `Tienes dos cintas, una de ${a} cm y otra de ${b} cm. Quieres cortarlas en retales iguales, sin que sobre nada. ¿Cuál es el MENOR número de retales que puedes obtener entre las dos?`,
+    enF: (a, b) => `You have two ribbons, one ${a} cm long and another ${b} cm long. You want to cut them into equal strips, with nothing left over. What is the SMALLEST number of strips you can get from both together?` },
+  // Dos clases de cosas que se reparten en grupos iguales, cada grupo de una sola clase.
+  { oEs: 'ramos', oEn: 'bunches', genero: 'm',
+    esF: (a, b) => `Tienes ${a} flores y ${b} hojas. Quieres hacer ramos iguales: unos solo de flores y otros solo de hojas, todos con el mismo número de unidades y sin que sobre nada. ¿Cuál es el MENOR número de ramos que puedes hacer?`,
+    enF: (a, b) => `You have ${a} flowers and ${b} leaves. You want to make equal bunches: some with only flowers and some with only leaves, all with the same number of items and with nothing left over. What is the SMALLEST number of bunches you can make?` },
+  { oEs: 'cajas', oEn: 'boxes', genero: 'f',
+    esF: (a, b) => `Tienes ${a} juguetes y ${b} libros. Quieres guardarlos en cajas iguales: unas solo de juguetes y otras solo de libros, todas con el mismo número de objetos y sin que sobre nada. ¿Cuál es el MENOR número de cajas que puedes usar?`,
+    enF: (a, b) => `You have ${a} toys and ${b} books. You want to store them in equal boxes: some with only toys and some with only books, all with the same number of objects and with nothing left over. What is the SMALLEST number of boxes you can use?` },
+  { oEs: 'montones', oEn: 'stacks', genero: 'm',
+    esF: (a, b) => `Tienes ${a} cuadernos y ${b} libros. Quieres hacer montones iguales: unos solo de cuadernos y otros solo de libros, todos con el mismo número de unidades y sin que sobre nada. ¿Cuál es el MENOR número de montones que puedes hacer?`,
+    enF: (a, b) => `You have ${a} notebooks and ${b} books. You want to make equal stacks: some with only notebooks and some with only books, all with the same number of items and with nothing left over. What is the SMALLEST number of stacks you can make?` },
 ].map(d => ({
   clase: 'mcd',
   trampa: true,
-  es: (a, b) => `Tienes ${d.cEs}, de ${a} y ${b} unidades. Quieres repartirlo todo en ${d.oEs} iguales, sin que sobre nada. ¿Cuál es el MENOR número de ${d.oEs} que puedes usar? ¿Hace falta el m.c.d. o el m.c.m.?`,
-  en: (a, b) => `You have ${d.cEn}, with ${a} and ${b} units. You want to split it all into identical ${d.oEn}, with nothing left over. What is the SMALLEST number of ${d.oEn} you can use? Do you need the GCD or the LCM?`,
+  tamano: true,
+  dice: ['menor'],
+  es: (a, b) => `${d.esF(a, b)} ¿Hace falta el m.c.d. o el m.c.m.?`,
+  en: (a, b) => `${d.enF(a, b)} Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
-    es: `«menor número de ${d.oEs}» habla de cuántas hay, no de su tamaño: ${d.genero === 'f' ? 'pocas' : 'pocos'} ${d.oEs} = ${d.oEs} grandes = el tamaño más grande que cabe en ${a} y ${b} → m.c.d.`,
+    es: `«menor número de ${d.oEs}» habla de ${d.genero === 'f' ? 'cuántas' : 'cuántos'} hay, no de su tamaño: ${d.genero === 'f' ? 'pocas' : 'pocos'} ${d.oEs} = ${d.oEs} grandes = el tamaño más grande que cabe en ${a} y ${b} → m.c.d.`,
     en: `«the smallest number of ${d.oEn}» talks about how many there are, not about their size: fewer ${d.oEn} = bigger ${d.oEn} = the largest size that fits into ${a} and ${b} → GCD.`,
   }),
   numeros: dosGrandes,
@@ -138,11 +160,12 @@ const TRAMPA_B = [
 ].map(d => ({
   clase: 'mcm',
   trampa: true,
-  es: (a, b, c) => `Quieres repartir ${d.oEs} en grupos de ${a}, de ${b} o de ${c} ${d.gEs}, sin que sobre ninguno en ningún caso. ¿Cuál es el MENOR número de ${d.oEs} que puede ser? ¿Hace falta el m.c.d. o el m.c.m.?`,
-  en: (a, b, c) => `You want to share out ${d.oEn} into groups of ${a}, ${b} or ${c} ${d.gEn}, with none left over in any case. What is the SMALLEST number of ${d.oEn} it can be? Do you need the GCD or the LCM?`,
+  dice: ['menor'],
+  es: (a, b, c) => `Quieres tener ${d.oEs} que se puedan repartir en partes iguales, sin que sobre nada, entre ${a} ${d.gEs}, entre ${b} ${d.gEs} o entre ${c} ${d.gEs}. ¿Cuál es el MENOR número de ${d.oEs} que puedes tener? ¿Hace falta el m.c.d. o el m.c.m.?`,
+  en: (a, b, c) => `You want to have ${d.oEn} that can be shared equally, with nothing left over, among ${a} ${d.gEn}, among ${b} ${d.gEn} or among ${c} ${d.gEn}. What is the SMALLEST number of ${d.oEn} you can have? Do you need the GCD or the LCM?`,
   razon: (a, b, c) => ({
-    es: `«repartir en grupos ... sin que sobre ninguno» pide un número que sea múltiplo de ${a}, de ${b} y de ${c} a la vez: el menor que vale para los tres es su mínimo común múltiplo → m.c.m.`,
-    en: `«share out into groups ... with none left over» asks for a number that is a multiple of ${a}, ${b} and ${c} at the same time: the smallest one that works for all three is their least common multiple → LCM.`,
+    es: `«repartir en partes iguales sin que sobre nada» entre ${a}, entre ${b} y entre ${c} pide un número que sea múltiplo de ${a}, de ${b} y de ${c} a la vez: el menor que vale para los tres es su mínimo común múltiplo → m.c.m.`,
+    en: `«shared equally with nothing left over» among ${a}, ${b} and ${c} asks for a number that is a multiple of ${a}, ${b} and ${c} at the same time: the smallest one that works for all three is their least common multiple → LCM.`,
   }),
   numeros: tresPequenos,
 }));
@@ -170,6 +193,7 @@ export const TX = {
   porque: { es: '¿Por qué?', en: 'Why?' },
   justificacion: {
     va: { es: 'porque el número que buscamos cabe en los datos (los divide)', en: 'because the number we are looking for goes into the data (it divides them)' },
+    tamano: { es: 'porque primero se busca el tamaño de cada parte, y ese tamaño cabe en los datos (los divide)', en: 'because first we look for the size of each part, and that size goes into the data (it divides them)' },
     contiene: { es: 'porque el número que buscamos contiene a los datos (es múltiplo de ellos)', en: 'because the number we are looking for contains the data (it is a multiple of them)' },
     dice_mayor: { es: 'porque el enunciado dice «mayor»', en: 'because the problem says «largest»' },
     dice_menor: { es: 'porque el enunciado dice «menor»', en: 'because the problem says «smallest»' },
