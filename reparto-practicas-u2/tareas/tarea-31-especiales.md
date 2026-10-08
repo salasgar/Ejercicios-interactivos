@@ -113,6 +113,8 @@ Propios de esta tarea:
 - 2⁴ = 4² es verdadera y es la única pareja así con bases distintas pequeñas: úsala, pero
   que no salga más de un 5 % para que no la generalicen.
 
+- (Aprendido en la reabierta de la 31) Dos plantillas pueden pintar la misma igualdad (10¹ = 10): comparar el texto renderizado, no el id. Elegir sin repetición con pesos deja un peso bajo en ~16 %, no en el 2 % del ejercicio 1.
+
 ## Prohibido (propio de esta tarea)
 
 - Exponente 0 con base 0, exponentes negativos o fraccionarios.

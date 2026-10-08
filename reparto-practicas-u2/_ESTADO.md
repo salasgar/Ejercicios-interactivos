@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-08 18:04 UTC · por la sesión s-20261008T175319-8ec41ac6 (cierre de la reabierta de la 24;
+Regenerado: 2026-10-08 18:05 UTC · por la sesión s-20261008T180343-5bede6f2 (cierre de la 31; recalculada la fila 31 contra hechos/ tras git fetch).
 **todas** las filas recalculadas contra `hechos/` tras `git fetch`). EN CURSO: 12 (s-20261008T175226-2fefd40a), 16 (s-20261008T180351-55d4decb), 20 (s-20261008T175053-b5cf65b2), 30 (s-20261008T175110-97bf1924), 31 (s-20261008T180343-5bede6f2), 33 (s-20261008T175832-42994f44).
 REABIERTAS sin reclamo vivo: 10, 13, 21, 27.
 **Quien coja una reabierta lee antes `hechos/notas/s-20261008T174225-f75f5cdb.md`**: la base
