@@ -4,7 +4,7 @@
 export const TX = {
   ej1: {
     nombre: { es: 'Semáforo básico', en: 'Basic traffic light' },
-    detalle: { es: 'Enciende los divisores de 2, 3, 5, 9 y 10', en: 'Switch on the divisors among 2, 3, 5, 9 and 10' },
+    detalle: { es: 'Enciende, entre 2, 3, 5, 9 y 10, los que son divisores del número', en: 'Switch on the divisors among 2, 3, 5, 9 and 10' },
     pregunta: { es: n => `¿Entre qué números es divisible el ${n}?`, en: n => `Which of these is ${n} divisible by?` },
   },
   ej2: {

@@ -101,7 +101,7 @@ export function primosDe(d) {
 // --- Ejercicio 4: la cifra que falta ---------------------------------------------
 
 /** Los juegos de divisores que puede pedir el ejercicio 4. */
-const JUEGOS_DIVISORES = [[3], [9], [11], [2, 9], [5, 3]];
+const JUEGOS_DIVISORES = [[9], [11], [2, 9], [5, 3]];
 
 function digitosAlAzar(rng, longitud) {
   const cifras = [rng.entero(1, 9)];
@@ -138,6 +138,9 @@ export function generarCifra(rng) {
     const cifras = digitosAlAzar(rng, longitud);
     const hueco = rng.entero(0, longitud - 1);
     const buenas = candidatas(cifras, hueco, divisores);
+    // Hueco en la primera cifra: si el 0 también cumpliría, el alumno lo daría por bueno
+    // y se le diría que falla sin motivo visible; ese ítem no se propone.
+    if (hueco === 0 && divisores.every(d => esDivisible(valorDeCifras([0, ...cifras.slice(1)]), d))) continue;
     if (buenas.length === 1) {
       return { tipo: 'cifra', cifras, hueco, divisores, solucion: buenas[0] };
     }
