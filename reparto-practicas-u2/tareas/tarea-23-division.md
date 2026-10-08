@@ -121,6 +121,7 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- (Sesión que cerró la 23) Una sesión caída deja el reclamo sin cierre y el código sin commit: se hereda tras `releva a:` y se verifica en navegador. El servidor `npm run servir` puede estar caído aunque `lsof` lo muestre: comprobar con `curl` antes de abrir Chrome.
 - En el ejercicio 2 inverso, «47 = 6 · 7 + 5» es prueba de 47 : 6 (cociente 7, resto 5) y de
   47 : 7 (cociente 6, resto 5): las dos valen y ninguna puede ser distractor de la otra.
 - El resto 0 es una división exacta: el ítem de cajas lo incluye un 20 % de las veces y el

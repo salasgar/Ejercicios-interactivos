@@ -136,13 +136,13 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 20 | ¿Qué se hace primero? Jerarquía paso a paso y agrupadores invisibles (U1) | tareas/tarea-20-jerarquia.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/jerarquia/; salidas/20-jerarquia/ | LISTA | terminada 21:40Z · commit ac95a98 |
 | 21 | El exponente y su base (U1) | tareas/tarea-21-exponente.md | 34 LISTA | 2 h | MEDIO | 22 | practicas/exponente/; salidas/21-exponente/ | RELEVABLE | s-20261007T213810-ffd13ae0 · caducó 2026-10-08T01:38Z |
 | 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | LISTA | terminada 05:06Z · commit 18a55a6 |
-| 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | EN CURSO | s-20261008T050250-c37a11e9 · 2026-10-08T09:02:50Z |
+| 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | LISTA | terminada 05:08Z · commit b8577a5 |
 | 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | EN CURSO | s-20261007T213246-c81731a7 · 2026-10-08T06:35:48Z |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | LISTA | terminada Z · commit 1ae08ff |
 | 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | EN CURSO | s-20261008T050750-ded5a656 · 2026-10-08T09:07:50Z |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 21:48Z · commit eea70ea |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada 21:52Z · commit 7bfe7c7 |
-| 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | EN CURSO | s-20261007T215326-f363ef2d · 2026-10-08T09:00:41Z |
+| 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | LISTA | terminada ? · commit 15f01d9 |
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | LISTA | terminada 05:06Z · commit 0c0e437 |
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | LISTA | terminada 21:13Z · commit c35b796 |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | LISTA | terminada 05:08Z · commit de3094f |
@@ -166,6 +166,8 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
 
 LISTA · tarea 25 · 2026-10-08 05:10 · s-20261007T214109-30fcacbb · 1ae08ff · 6 ficheros (practicas/redondeo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-redondeo.test.js) · ~25 min de trabajo (estimada: 2 h)
+
+LISTA · tarea 23 · 2026-10-08 05:09 · s-20261008T050250-c37a11e9 · b8577a5 · 6 ficheros (practicas/division/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-division.test.js) · 7 min de esta sesión (relevó a una caída; estimada: 2 h)
 
 LISTA · tarea 27 · 2026-10-07 21:48 · s-20261007T214112-0da18c09 · eea70ea · 6 ficheros (practicas/distributiva/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-distributiva.test.js) · ~7 min (estimada: 2 h)
 
