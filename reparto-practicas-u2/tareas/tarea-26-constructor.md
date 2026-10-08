@@ -128,6 +128,9 @@ Propios de esta tarea:
 - «El más cercano a 5 000» puede tener dos soluciones a la misma distancia: el generador
   comprueba que la solución es única.
 
+- (Aprendido en la 26) `src/ejercicios/palabras.js` solo es fiable para millones de una cifra (con 21 millones sale «veintiuno millones»); el generador de palabras se limita a 1 000 001–9 999 999.
+- (Aprendido en la 26) Al leer «1,000,000» (inglés) con reglas españolas no sale un número (dos comas): no hay señuelo-trampa en ese caso y el test lo salta.
+
 ## Prohibido (propio de esta tarea)
 
 - Decimales salvo la pista de 12,5 en inglés, que solo se lee, no se opera.
