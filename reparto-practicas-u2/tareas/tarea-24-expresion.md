@@ -146,6 +146,17 @@ Propios de esta tarea:
 - La resta y la división no son conmutativas: `equivalentes` no debe aceptar b − a por a − b.
 - «the sum of the squares of 3 and 4» es 3² + 4²; «the square of the sum» es (3 + 4)²: el
   banco tiene que llevar las dos con los mismos números para que se distingan.
+- (Tarea hecha, 2026-10-08.) «Conmutatividad y paréntesis redundantes» se queda corto: daría
+  por malas `50 − 12 − 3` (por `50 − (12 + 3)`), `9 · 3 · 12` (tres factores en otro orden) y
+  `12 · 5 + 3 · 5` (por `(12 + 3) · 5`), que son planteamientos correctos. `equivalentes`
+  trata cada número como una letra y compara cocientes de polinomios: sigue sin mirar el valor.
+- Con números repetidos en un ítem, dos expresiones distintas pasan a ser la misma
+  (`(5 − 3) · 5 : 5` y `5 − 3 · 5 : 5`): el generador exige números distintos.
+- Un test que compare por sustitución numérica necesita tolerancia RELATIVA y valores cerca
+  de 1: con `x²²²` salen números de 10⁻¹⁵ y todo «coincide». Y `**` de JavaScript asocia por
+  la derecha: `x**2**2` no es `(x²)²`.
+- `display: grid` gana al atributo `hidden`: hace falta `.teclado[hidden] { display: none; }`.
+- El botón de traducir de la base solo existe en modo alterno (no con `?idioma=es|en`).
 
 ## Prohibido (propio de esta tarea)
 
