@@ -32,9 +32,12 @@ export function generarTrampa(rng) {
 /** Ítem del ejercicio 3: añade `opciones` (4 claves de justificación, barajadas) y `solucion`. */
 export function generarJustificar(rng) {
   const plantilla = rng.elegir(BANCO);
-  const correcta = plantilla.clase === 'mcd' ? 'va' : 'contiene';
+  // Trampa A: el número de piezas no divide a los datos; la razón buena habla del tamaño.
+  const correcta = plantilla.clase === 'mcm' ? 'contiene' : plantilla.tamano ? 'tamano' : 'va';
+  // La razón contraria: en m.c.d. con tamaño no se ofrece «va» (ambigua con el número de piezas).
   const incorrecta = plantilla.clase === 'mcd' ? 'contiene' : 'va';
-  const distractores = rng.barajar(DISTRACTORES).slice(0, 2);
+  // Un «dice mayor/menor» solo es distractor si el enunciado NO lleva esa palabra.
+  const distractores = rng.barajar(DISTRACTORES.filter(d => !plantilla.dice.includes(d === 'dice_mayor' ? 'mayor' : d === 'dice_menor' ? 'menor' : ''))).slice(0, 2);
   const opciones = rng.barajar([correcta, incorrecta, ...distractores]);
   return {
     tipo: 'justificar',

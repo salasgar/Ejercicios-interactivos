@@ -86,13 +86,14 @@ test('ejercicio 3 (justificar): exactamente una opción es la correcta, y las cl
     assert.equal(new Set(item.opciones).size, 4); // sin repetidos
     assert.ok(item.opciones.includes(item.solucion));
     // Regla independiente: la razón correcta es «va» si la clase es m.c.d., «contiene» si es m.c.m.
-    const correctaEsperada = item.clase === 'mcd' ? 'va' : 'contiene';
+    // (en m.c.d. con trampa A la razón buena habla del tamaño: «tamano»).
+    const correctaEsperada = item.clase === 'mcm' ? 'contiene' : BANCO[item.plantilla].tamano ? 'tamano' : 'va';
     assert.equal(item.solucion, correctaEsperada);
     // Las otras tres opciones, para este ítem, no son la correcta.
     const otras = item.opciones.filter(o => o !== item.solucion);
     assert.equal(otras.length, 3);
     for (const otra of otras) assert.notEqual(otra, correctaEsperada);
-    if (item.solucion === 'va') correctasVa++;
+    if (item.clase === 'mcd') correctasVa++;
     vistos.add(item.plantilla);
   }
   const proporcion = correctasVa / 2000;
@@ -101,11 +102,42 @@ test('ejercicio 3 (justificar): exactamente una opción es la correcta, y las cl
 });
 
 test('las opciones de justificación existen en TX.justificacion y no mencionan "factor"', () => {
-  const claves = ['va', 'contiene', 'dice_mayor', 'dice_menor', 'datos_pequenos', 'dos_datos'];
+  const claves = ['va', 'tamano', 'contiene', 'dice_mayor', 'dice_menor', 'datos_pequenos', 'dos_datos'];
   for (const clave of claves) {
     assert.ok(TX.justificacion[clave].es);
     assert.ok(TX.justificacion[clave].en);
     assert.ok(!TX.justificacion[clave].es.includes('factor'));
     assert.ok(!TX.justificacion[clave].en.includes('factor'));
   }
+});
+
+test('un «dice mayor/menor» nunca es distractor si el enunciado lleva esa palabra, y `dice` refleja el texto', () => {
+  const rng = crearRng(31337);
+  for (const p of BANCO) {
+    const [a, b, c] = p.numeros(rng);
+    for (const texto of [p.es(a, b, c), p.en(a, b, c)]) {
+      if (/mayor|más grande|más larg|largest|as long as possible/i.test(texto)) assert.ok(p.dice.includes('mayor'), texto);
+      if (/menor|smallest/i.test(texto)) assert.ok(p.dice.includes('menor'), texto);
+    }
+  }
+  for (let i = 0; i < 3000; i++) {
+    const item = generarJustificar(rng);
+    const dice = BANCO[item.plantilla].dice;
+    if (dice.includes('mayor')) assert.ok(!item.opciones.includes('dice_mayor'));
+    if (dice.includes('menor')) assert.ok(!item.opciones.includes('dice_menor'));
+    // «va» no se ofrece junto a «tamano» (ambigua).
+    if (item.solucion === 'tamano') assert.ok(!item.opciones.includes('va'));
+  }
+});
+
+test('las seis plantillas de trampa A piden un tamaño: todas llevan `tamano` y nombran piezas de una sola clase o corte', () => {
+  const trampasMcd = BANCO.filter(p => p.trampa && p.clase === 'mcd');
+  assert.equal(trampasMcd.length, 6);
+  const rng = crearRng(5);
+  for (const p of trampasMcd) {
+    assert.equal(p.tamano, true);
+    const [a, b] = p.numeros(rng);
+    assert.ok(/solo de|only|cortar|cut/i.test(p.es(a, b) + p.en(a, b)));
+  }
+  assert.ok(BANCO.filter(p => !(p.trampa && p.clase === 'mcd')).every(p => !p.tamano));
 });

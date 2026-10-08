@@ -21,7 +21,7 @@ export const CATALOGO = [
   { id: 7, slug: 'fabrica', ruta: 'fabrica/', nombre: { es: 'Fábrica de divisores', en: 'Divisor factory' }, nEjercicios: 3, disponible: true },
   { id: 8, slug: 'venn', ruta: 'venn/', nombre: { es: 'm.c.d. y m.c.m. con factores primos', en: 'GCD and LCM with prime factors' }, nEjercicios: 4, disponible: true },
   { id: 9, slug: 'imposibles', ruta: 'imposibles/', nombre: { es: 'Detector de imposibles', en: 'Impossible answers' }, nEjercicios: 3, disponible: false },
-  { id: 10, slug: 'clasificador', ruta: 'clasificador/', nombre: { es: '¿m.c.d. o m.c.m.?', en: 'GCD or LCM?' }, nEjercicios: 3, disponible: false },
+  { id: 10, slug: 'clasificador', ruta: 'clasificador/', nombre: { es: '¿m.c.d. o m.c.m.?', en: 'GCD or LCM?' }, nEjercicios: 3, disponible: true },
   { id: 11, slug: 'reloj', ruta: 'reloj/', nombre: { es: 'Reloj de coincidencias', en: 'Coincidence clock' }, nEjercicios: 3, disponible: false },
   { id: 12, slug: 'baldosas', ruta: 'baldosas/', nombre: { es: 'Baldosas y cuerdas', en: 'Tiles and ropes' }, nEjercicios: 3, disponible: true },
   { id: 13, slug: 'errores', ruta: 'errores/', nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
