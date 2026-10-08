@@ -1,0 +1,22 @@
+/* Práctica «El exponente y su base»: lo que no está ya en ../_comun/estilos.css. */
+
+.exp-expresion { font-size: 1.5rem; line-height: 2; }
+.exp-op { color: var(--texto-suave); margin: 0 .2em; }
+.exp-parte { display: inline; }
+.exp-chip {
+  display: inline-block; padding: .05em .28em; border-radius: 6px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.exp-grupo {
+  display: inline-block; padding: .05em .15em; border-radius: 6px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.exp-click:hover { background: var(--primario-claro); }
+.exp-click--bien { background: var(--correcto-claro); color: var(--correcto); }
+.exp-click--mal { background: var(--error-claro); color: var(--error); }
+.exp-click--correcta { background: var(--correcto-claro); color: var(--correcto); outline: 2px solid var(--correcto); }
+.exp-sup-activa { color: var(--primario); text-decoration: underline; }
+
+.exp-areas-svg { display: block; width: 100%; max-width: 280px; margin: 0 auto 1rem; aspect-ratio: 1 / 1; }
+
+#pasos { display: flex; justify-content: center; margin-bottom: 1rem; }
