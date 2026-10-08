@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-08 17:42 UTC · por la sesión s-20261008T174225-f75f5cdb (coordinadora,
+Regenerado: 2026-10-08 17:55 UTC · por la sesión s-20261008T175256-7d4d2bd8 (cierre de la 26; solo se ha recalculado la fila 26 contra `hechos/`; el resto sigue como lo dejó la coordinadora, relistado con git fetch).
 toma el relevo de s-20261007T184632-fa5a1491; todas las filas recalculadas contra `hechos/`
 con `git fetch` antes: ningún hecho nuevo desde las 06:03Z, así que siguen 7 LISTAS y 28
 REABIERTAS, sin reclamo vivo; cambian el párrafo de debajo de la tabla y las incidencias).
@@ -140,7 +140,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/23--s-20261008T051928-1cba9950.md |
 | 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/24--s-20261008T051928-1cba9950.md |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/25--s-20261008T051928-1cba9950.md |
-| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/26--s-20261008T051928-1cba9950.md |
+| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | LISTA | terminada de5fe08 · reabierta corregida (s-20261008T175256-7d4d2bd8) |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/27--s-20261008T051928-1cba9950.md |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/28--s-20261008T051928-1cba9950.md |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | REABIERTA | menor, sigue publicada · qué corregir: hechos/reabiertas/29--s-20261008T051928-1cba9950.md |

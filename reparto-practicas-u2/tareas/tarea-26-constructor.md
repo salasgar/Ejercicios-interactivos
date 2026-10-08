@@ -131,6 +131,8 @@ Propios de esta tarea:
 - (Aprendido en la 26) `src/ejercicios/palabras.js` solo es fiable para millones de una cifra (con 21 millones sale «veintiuno millones»); el generador de palabras se limita a 1 000 001–9 999 999.
 - (Aprendido en la 26) Al leer «1,000,000» (inglés) con reglas españolas no sale un número (dos comas): no hay señuelo-trampa en ese caso y el test lo salta.
 
+- (Aprendido en la reabierta de la 26) `numeroAEspanol` no apocopa «uno» tras «ciento…»: se corrige al salir en `enPalabras` (logica.js). Los nombres de posición en singular (`POSICION_UNO`) para «1 centena». Un `<input type="number">` convierte «5.032» en 5,032: usar texto y quitar separadores.
+
 ## Prohibido (propio de esta tarea)
 
 - Decimales salvo la pista de 12,5 en inglés, que solo se lee, no se opera.
