@@ -2,16 +2,18 @@
 // «divisor» y no «factor», inglés sencillo, y el feedback habla de LOS
 // NÚMEROS DE ESE ÍTEM.
 
-/** Objetos y recipientes de los problemas del ejercicio 3. */
+const cuantos = g => (g === 'f' ? 'Cuántas' : 'Cuántos');
+
+/** Objetos y recipientes de los problemas del ejercicio 3 (g: género del nombre en español). */
 export const COSAS = {
-  huevos:    { es: 'huevos', en: 'eggs', caja: { es: 'cajas', en: 'boxes' }, unidad: { es: 'caja', en: 'box' } },
-  lapices:   { es: 'lápices', en: 'pencils', caja: { es: 'estuches', en: 'pencil cases' }, unidad: { es: 'estuche', en: 'pencil case' } },
-  manzanas:  { es: 'manzanas', en: 'apples', caja: { es: 'bolsas', en: 'bags' }, unidad: { es: 'bolsa', en: 'bag' } },
-  pegatinas: { es: 'pegatinas', en: 'stickers', caja: { es: 'hojas', en: 'sheets' }, unidad: { es: 'hoja', en: 'sheet' } },
-  alumnos:   { es: 'alumnos', en: 'students', caja: { es: 'coches', en: 'cars' }, unidad: { es: 'coche', en: 'car' } },
-  personas:  { es: 'personas', en: 'people', caja: { es: 'mesas', en: 'tables' }, unidad: { es: 'mesa', en: 'table' } },
-  maletas:   { es: 'maletas', en: 'suitcases', caja: { es: 'furgonetas', en: 'vans' }, unidad: { es: 'furgoneta', en: 'van' } },
-  sillas:    { es: 'sillas', en: 'chairs', caja: { es: 'pilas', en: 'stacks' }, unidad: { es: 'pila', en: 'stack' } },
+  huevos:    { es: 'huevos', en: 'eggs', g: 'm', caja: { es: 'cajas', en: 'boxes', g: 'f' }, unidad: { es: 'caja', en: 'box' } },
+  lapices:   { es: 'lápices', en: 'pencils', g: 'm', caja: { es: 'estuches', en: 'pencil cases', g: 'm' }, unidad: { es: 'estuche', en: 'pencil case' } },
+  manzanas:  { es: 'manzanas', en: 'apples', g: 'f', caja: { es: 'bolsas', en: 'bags', g: 'f' }, unidad: { es: 'bolsa', en: 'bag' } },
+  pegatinas: { es: 'pegatinas', en: 'stickers', g: 'f', caja: { es: 'hojas', en: 'sheets', g: 'f' }, unidad: { es: 'hoja', en: 'sheet' } },
+  alumnos:   { es: 'alumnos', en: 'students', g: 'm', caja: { es: 'coches', en: 'cars', g: 'm' }, unidad: { es: 'coche', en: 'car' } },
+  personas:  { es: 'personas', en: 'people', g: 'f', caja: { es: 'mesas', en: 'tables', g: 'f' }, unidad: { es: 'mesa', en: 'table' } },
+  maletas:   { es: 'maletas', en: 'suitcases', g: 'f', caja: { es: 'furgonetas', en: 'vans', g: 'f' }, unidad: { es: 'furgoneta', en: 'van' } },
+  sillas:    { es: 'sillas', en: 'chairs', g: 'f', caja: { es: 'pilas', en: 'stacks', g: 'f' }, unidad: { es: 'pila', en: 'stack' } },
 };
 
 export const TX = {
@@ -128,22 +130,22 @@ export const TX = {
     },
     preguntas: {
       llenas: {
-        es: c => `¿Cuántos ${c.caja.es} quedan completamente llenos?`,
+        es: c => `¿${cuantos(c.caja.g)} ${c.caja.es} quedan completamente ${c.caja.g === 'f' ? 'llenas' : 'llenos'}?`,
         en: c => `How many ${c.caja.en} are completely full?`,
       },
       sueltos: {
-        es: c => `¿Cuántos ${c.es} sobran, sin ${c.unidad.es}?`,
+        es: c => `¿${cuantos(c.g)} ${c.es} sobran, sin ${c.unidad.es}?`,
         en: c => `How many ${c.en} are left over, with no ${c.unidad.en}?`,
       },
       hacen: {
-        es: c => `¿Cuántos ${c.caja.es} hacen falta para colocarlos a todos?`,
+        es: c => `¿${cuantos(c.caja.g)} ${c.caja.es} hacen falta para colocar${c.g === 'f' ? 'las a todas' : 'los a todos'}?`,
         en: c => `How many ${c.caja.en} do we need for all of them?`,
       },
     },
     respuesta: { es: 'Tu respuesta', en: 'Your answer' },
     ok_llenas: {
-      es: (D, d, q, r) => `${D} = ${d} · ${q} + ${r}: el cociente ${q} son las cajas llenas.`,
-      en: (D, d, q, r) => `${D} = ${d} · ${q} + ${r}: the quotient ${q} is the number of full boxes.`,
+      es: (D, d, q, r, c) => `${D} = ${d} · ${q} + ${r}: el cociente ${q} son ${c.caja.g === 'f' ? 'las' : 'los'} ${c.caja.es} ${c.caja.g === 'f' ? 'llenas' : 'llenos'}.`,
+      en: (D, d, q, r, c) => `${D} = ${d} · ${q} + ${r}: the quotient ${q} is the number of full ${c.caja.en}.`,
     },
     ok_sueltos: {
       es: (D, d, q, r) => `${D} = ${d} · ${q} + ${r}: el resto ${r} es lo que sobra.`,
@@ -154,18 +156,18 @@ export const TX = {
       en: (D, d, q) => `${D} = ${d} · ${q} + 0: nothing is left over, so <span class="cuenta">${q}</span> are enough.`,
     },
     ok_hacen: {
-      es: (D, d, q, r) => `${D} = ${d} · ${q} + ${r}: sobran ${r} y también tienen que ir, así que hace falta una más: ${q} + 1 = <span class="cuenta">${q + 1}</span>.`,
-      en: (D, d, q, r) => `${D} = ${d} · ${q} + ${r}: ${r} are left over and they also have to go, so we need one more: ${q} + 1 = <span class="cuenta">${q + 1}</span>.`,
+      es: (D, d, q, r, c) => `${D} = ${d} · ${q} + ${r}: ${r === 1 ? 'sobra 1, que también tiene' : `sobran ${r}, que también tienen`} que ir, así que hace falta ${c.caja.g === 'f' ? 'una' : 'un'} ${c.unidad.es} más: ${q} + 1 = <span class="cuenta">${q + 1}</span>.`,
+      en: (D, d, q, r, c) => `${D} = ${d} · ${q} + ${r}: ${r} ${r === 1 ? 'is' : 'are'} left over and ${r === 1 ? 'it has' : 'they have'} to go too, so we need one more ${c.unidad.en}: ${q} + 1 = <span class="cuenta">${q + 1}</span>.`,
     },
     olvido: {
-      es: 'Ojo: el resto no se tira; hay que meterlo en una caja más.',
-      en: 'Careful: the remainder cannot be thrown away; it needs one more box.',
+      es: c => `Ojo: el resto no se tira; hace falta ${c.caja.g === 'f' ? 'una' : 'un'} ${c.unidad.es} más para lo que sobra.`,
+      en: c => `Careful: the remainder cannot be thrown away; it needs one more ${c.unidad.en}.`,
     },
     sin_dibujo: { es: 'El dibujo:', en: 'The picture:' },
   },
   // ─── Ejercicio 4 ───
   puede: {
-    nombre: { es: '¿Puede ser?', en: 'Can it be?' },
+    nombre: { es: '¿Puede ser?', en: 'Is that possible?' },
     detalle: { es: 'Detecta restos imposibles', en: 'Spot impossible remainders' },
     introduccion: {
       es: `<h2>El resto es siempre menor que el divisor</h2>
@@ -175,7 +177,7 @@ export const TX = {
     },
     pregunta_resto: {
       es: (d, r) => `Al dividir entre <strong>${d}</strong> ha salido resto <strong>${r}</strong>. ¿Puede ser?`,
-      en: (d, r) => `When we divide by <strong>${d}</strong> the remainder is <strong>${r}</strong>. Can it be?`,
+      en: (d, r) => `When we divide by <strong>${d}</strong> the remainder is <strong>${r}</strong>. Is that possible?`,
     },
     pregunta_division: {
       es: (D, d, q, r) => `Al dividir <strong>${D}</strong> entre <strong>${d}</strong> alguien dice: «cociente ${q}, resto ${r}». ¿Está bien?`,
