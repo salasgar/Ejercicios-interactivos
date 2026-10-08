@@ -11,7 +11,7 @@ import { BANCO_NOMBRAR } from './textos.js';
 
 const CONTEXTOS_PUEDE = { mcd: 2, mcm: 2 }; // número de plantillas de contexto por clase (ver textos.js)
 
-function generarPuedeNumeros(rng, cantidad, rango) {
+function generarPuedeNumeros(rng, cantidad, rango, conContexto) {
   let a = rng.entero(...rango);
   let b = rng.entero(...rango);
   while (b === a) b = rng.entero(...rango);
@@ -19,7 +19,8 @@ function generarPuedeNumeros(rng, cantidad, rango) {
   const puede = rng.azar() < 0.5;
   if (puede) return { a, b, cantidad, verdadero, puede: true, propuesto: verdadero, violacion: null };
   if (cantidad === 'mcd') {
-    if (rng.azar() < 0.3) return { a, b, cantidad, verdadero, puede: false, propuesto: 0, violacion: 'cero' };
+    // Con contexto no se propone 0 (¿«0 bolsas»?): el enunciado no habla de divisores.
+    if (!conContexto && rng.azar() < 0.3) return { a, b, cantidad, verdadero, puede: false, propuesto: 0, violacion: 'cero' };
     const minimo = Math.min(a, b);
     const propuesto = minimo + rng.entero(1, 20);
     return { a, b, cantidad, verdadero, puede: false, propuesto, violacion: 'mayor' };
@@ -33,7 +34,7 @@ export function generarPuede(rng) {
   const cantidad = rng.elegir(['mcd', 'mcm']);
   const contexto = rng.azar() < 0.3 ? rng.entero(0, CONTEXTOS_PUEDE[cantidad] - 1) : null;
   const rango = contexto === null ? [12, 96] : [3, 20];
-  const base = generarPuedeNumeros(rng, cantidad, rango);
+  const base = generarPuedeNumeros(rng, cantidad, rango, contexto !== null);
   return { tipo: 'puede', contexto, ...base };
 }
 

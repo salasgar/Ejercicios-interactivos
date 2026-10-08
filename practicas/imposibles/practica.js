@@ -24,10 +24,11 @@ function enunciadoPuede(item, api) {
 
 function explicacionPuede(item, api) {
   const { tt } = api;
-  if (item.puede) return tt(TX.feedbackPuede.correcto)(item.propuesto);
-  if (item.violacion === 'cero') return tt(TX.feedbackPuede.cero);
-  if (item.violacion === 'mayor') return tt(TX.feedbackPuede.mayor)(item.propuesto, Math.min(item.a, item.b));
-  return tt(TX.feedbackPuede.menor)(item.propuesto, Math.max(item.a, item.b));
+  const previo = item.contexto !== null ? `${tt(TX.feedbackPuede.contexto[item.cantidad])(item.a, item.b)} ` : '';
+  if (item.puede) return previo + tt(TX.feedbackPuede.correcto[item.cantidad])(item.propuesto, item.a, item.b);
+  if (item.violacion === 'cero') return previo + tt(TX.feedbackPuede.cero);
+  if (item.violacion === 'mayor') return previo + tt(TX.feedbackPuede.mayor)(item.propuesto, Math.min(item.a, item.b));
+  return previo + tt(TX.feedbackPuede.menor)(item.propuesto, Math.max(item.a, item.b));
 }
 
 function montarPuede(contenedor, item, api) {
@@ -51,15 +52,16 @@ function montarPuede(contenedor, item, api) {
 // ─── Ejercicio 2: la comprobación del producto ─────────────────────────────
 
 function montarProducto(contenedor, item, api) {
-  const { tt, esc } = api;
+  const { tt, esc, idioma } = api;
   const tres = item.tipo === 'tres';
+  const nombres = idioma === 'es' ? 'm.c.d. · m.c.m.' : 'GCD · LCM';
   const instruccion = tres ? TX.producto.instruccionTres : TX.producto.instruccionDos;
   const base = tres ? `${item.a} · ${item.b} · ${item.c} = ${item.a * item.b * item.c}` : `${item.a} · ${item.b} = ${item.a * item.b}`;
   contenedor.innerHTML = `
     <p class="instruccion">${esc(tt(instruccion))}</p>
     <div class="operacion">${base}</div>
     <div class="flecha" aria-hidden="true">↓</div>
-    <div class="operacion">GCD · LCM = ${item.g} · ${item.m} = ${item.g * item.m}</div>`;
+    <div class="operacion">${nombres} = ${item.g} · ${item.m} = ${item.g * item.m}</div>`;
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [
