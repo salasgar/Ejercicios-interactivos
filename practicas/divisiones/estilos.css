@@ -1,0 +1,4 @@
+/* Práctica «Divisiones sucesivas guiadas»: lo que no esté ya en ../_comun/estilos.css. */
+
+#mensaje:empty { display: none; }
+#mensaje { color: var(--error); font-size: 1rem; }
