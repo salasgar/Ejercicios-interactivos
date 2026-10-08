@@ -13,6 +13,9 @@
 .procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
 .procedimiento--botones .eleccion { text-align: left; font-size: 1.05rem; line-height: 1.45; min-height: 52px; }
 .procedimiento--botones .eleccion .procedimiento__n { margin-right: .5rem; }
+/* La línea mala es una frase entera: se parte (`.cuenta` no lo hace y ensanchaba la página en 375 px). */
+.linea-mala { font-weight: 700; overflow-wrap: anywhere; }
+.feedback { overflow-wrap: anywhere; }
 .si-no { margin-top: .2rem; }
 .nombres { grid-template-columns: 1fr; }
 .nombres .eleccion { text-align: left; }

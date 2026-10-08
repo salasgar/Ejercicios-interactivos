@@ -401,3 +401,35 @@ test('ejercicio 3: de verdad hay tres distractores disponibles para cada plantil
     assert.ok(CLAVES_NOMBRES.filter(c => !fuera.has(c)).length >= 3, p.id);
   }
 });
+
+// ─── Reabierta de la tarea 32 (2026-10-08) ───────────────────────────────────
+
+test('e-resto-mayor-cajas: el enunciado dice que se llenan todas las cajas posibles, en los dos idiomas', () => {
+  const p = PLANTILLA_POR_ID['e-resto-mayor-cajas'];
+  const l0 = p.lineas(p.numeros(crearRng(3)))[0];
+  assert.match(l0.es, /todas las cajas que puedo/);
+  assert.match(l0.en, /as many boxes as I can/);
+});
+
+test('e-suma-antes-3: la corrección va de una operación en una operación (cada «=» cambia una sola cosa)', () => {
+  const p = PLANTILLA_POR_ID['e-suma-antes-3'];
+  const rng = crearRng(4);
+  for (let i = 0; i < 100; i++) {
+    const t = p.corregida(p.numeros(rng)).es;
+    const pasos = t.split(' = ');
+    assert.equal(pasos.length, 4, t); // enunciado, potencia y producto, la suma, el total
+    assert.equal(pasos[2].split(' + ').length, 2, t);
+  }
+});
+
+test('el redondeo no dice «se sube una unidad la cifra» (inexacto con acarreo: 599 → 600)', () => {
+  for (const p of PLANTILLAS) {
+    if (!/redondeo/.test(p.id)) continue;
+    const rng = crearRng(6);
+    for (let i = 0; i < 100; i++) {
+      const params = p.numeros(rng);
+      const textos = [...p.lineas(params), (p.corregida ?? p.porque)(params)].map(l => l.es + ' ' + l.en).join(' ');
+      assert.ok(!/una unidad|goes up by one|add one/.test(textos), `${p.id}: ${textos}`);
+    }
+  }
+});

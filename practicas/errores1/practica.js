@@ -20,9 +20,13 @@ function procedimiento(item, api) {
 function explicacion(item, api) {
   const { tt } = api;
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  if (!item.error) return `${tt(TX.esta_bien)} ${html(tt(plantilla.porque(item.params)))}`;
+  if (!item.error) {
+    // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
+    const porque = tt(plantilla.porque(item.params));
+    return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
+  }
   const n = item.error.linea + 1;
-  const mala = `<span class="cuenta">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
+  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
   return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
 }
 
