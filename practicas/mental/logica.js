@@ -117,7 +117,12 @@ export function descomposicionCorrecta(item, i, tecleado) {
 
 // ─── Ejercicio 3: ¿qué conviene? ───────────────────────────────────────────────
 
-const TERMINOS_COMPENSABLES = [98, 99, 199, 999];
+const TERMINOS_GRANDES = [98, 99, 199, 999];
+
+/** Un término se compensa si está a 1 o 2 unidades de una decena: acaba en 8 o 9 (98, 99, 199, 999 incluidos). */
+export function terminoCompensable(t) { return t >= 8 && (t % 10 === 8 || t % 10 === 9); }
+/** Decena redonda hacia la que se compensa: 39 → 40, 98 → 100, 199 → 200. */
+export function redondeoDe(t) { return Math.ceil(t / 10) * 10; }
 
 export function esCompuesto(n) { return n > 3 && !esPrimo(n); }
 
@@ -129,9 +134,9 @@ export function esCompuesto(n) { return n > 3 && !esPrimo(n); }
  */
 export function factorDescomponible(f) { return esCompuesto(f); }
 
-/** Compensar ⇔ algún término es 98, 99, 199 o 999. */
+/** Compensar ⇔ algún término acaba en 8 o 9 (redondeo a la decena, a la centena o al millar). */
 export function aplicaCompensar(op) {
-  return TERMINOS_COMPENSABLES.includes(op.a) || TERMINOS_COMPENSABLES.includes(op.b);
+  return terminoCompensable(op.a) || terminoCompensable(op.b);
 }
 /** Descomponer (un factor en producto) ⇔ es un producto y algún factor es descomponible. */
 export function aplicaDescomponer(op) {
@@ -147,11 +152,23 @@ export function aplicables(item) {
 }
 export function estrategiaValida(item, estrategia) { return aplicables(item).includes(estrategia); }
 
-/** La estrategia más corta: compensar, si no descomponer, si no papel (o calculadora en las grandes). */
+/**
+ * La estrategia más corta: compensar si hay un 98, 99, 199 o 999; descomponer si lleva a un
+ * producto fácil (por 10, por 100…); compensar si hay otro término acabado en 8 o 9; si no,
+ * papel (o calculadora en las grandes).
+ */
 export function mejorEstrategia(item) {
+  if (TERMINOS_GRANDES.includes(item.op.a) || TERMINOS_GRANDES.includes(item.op.b)) return 'compensar';
+  const d = aplicaDescomponer(item.op) ? descomposicionComoda(item.op) : null;
+  if (d && d.puntos >= 1) return 'descomponer';
   if (aplicaCompensar(item.op)) return 'compensar';
-  if (aplicaDescomponer(item.op)) return 'descomponer';
   return item.calculadora ? 'calculadora' : 'papel';
+}
+
+/** Hay un atajo (compensar o descomponer con ganancia) y el alumno ha ido por lápiz y papel. */
+export function papelHabiendoAtajo(item, estrategia) {
+  const mejor = mejorEstrategia(item);
+  return estrategia === 'papel' && (mejor === 'compensar' || mejor === 'descomponer');
 }
 
 export const BOTONES = ['compensar', 'descomponer', 'papel'];
@@ -174,9 +191,9 @@ export function descomposicionComoda(op) {
 export function lineaEstrategia(item, estrategia) {
   const { a, b, signo } = item.op;
   if (estrategia === 'compensar') {
-    const k = TERMINOS_COMPENSABLES.includes(b) ? b : a;
+    const k = terminoCompensable(b) ? b : a;
     const otro = k === b ? a : b;
-    const R = k + 1 <= 100 ? 100 : k + 1;
+    const R = redondeoDe(k);
     const falta = R - k;
     return signo === '+'
       ? `${a} + ${b} = ${otro} + ${R} ${MENOS} ${falta} = ${otro + R} ${MENOS} ${falta} = ${otro + k}`
@@ -193,11 +210,25 @@ export function razonNoAplica(item, estrategia) {
   return { clave: signo === '+' ? 'descomponer_suma' : 'descomponer_primos', a, b };
 }
 
-// Números para las cuentas que NO se pueden compensar ni descomponer.
-const PRIMOS_PEQUENOS = [11, 13, 17, 19, 23];
-const PRIMOS_GRANDES = Array.from({ length: 800 }, (_, i) => 120 + i).filter(n => esPrimo(n) && n % 100 >= 20 && n % 100 <= 80);
-const NUMEROS_GRANDES = Array.from({ length: 780 }, (_, i) => 120 + i).filter(n => n % 100 >= 20 && n % 100 <= 80);
-const FACTORES_COMODOS = [12, 14, 15, 16, 18, 20, 24, 25, 35, 45, 50];
+// Números para las cuentas que NO se pueden compensar ni descomponer. Ninguno acaba en 8, 9, 0, 1 o 2
+// (a 1 o 2 de una decena, o ya redondo), así que «compenso» no se puede defender. Los primos pequeños
+// son 3, 5, 7 y primos acabados en 3 o 7.
+const acabaEnMedio = n => n % 10 >= 3 && n % 10 <= 7;
+const PRIMOS_PEQUENOS = [3, 5, 7, 13, 17, 23, 37, 43, 47, 53, 67, 73];
+const PRIMOS_GRANDES = Array.from({ length: 800 }, (_, i) => 120 + i).filter(n => esPrimo(n) && acabaEnMedio(n) && n % 100 >= 20 && n % 100 <= 80);
+const NUMEROS_GRANDES = Array.from({ length: 780 }, (_, i) => 120 + i).filter(n => acabaEnMedio(n) && n % 100 >= 20 && n % 100 <= 80);
+const FACTORES_COMODOS = [14, 15, 16, 18, 20, 24, 25, 30, 35, 45, 50];
+// Segundo factor de «descomponer»: sin 11 ni 12 (a 1 o 2 de la decena, donde «compenso» también se podría defender).
+const SEGUNDOS_FACTORES = [3, 4, 5, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18, 19];
+
+/** Dos sumandos sin compensar; su suma no es una decena redonda (24 + 76 tiene otro truco). */
+function sumaSinCompensar(rng, pool) {
+  for (;;) {
+    const a = rng.elegir(pool), b = rng.elegir(pool);
+    if ((a + b) % 10 !== 0) return { a, signo: '+', b };
+  }
+}
+const NUMEROS_PEQUENOS = Array.from({ length: 69 }, (_, i) => 11 + i).filter(acabaEnMedio);
 
 /**
  * Categorías: compensar (suma o producto, 35 %), descomponer (22 %), ninguna
@@ -212,14 +243,16 @@ export function generarEstrategia(rng) {
     if (rng.azar() < 0.65) { op = { a: rng.entero(21, 89), signo: '+', b: rng.elegir([99, 99, 98, 199]) }; problema = 'suma_k'; }
     else { op = { a: rng.entero(3, 40), signo: P, b: rng.elegir([99, 98]) }; problema = 'producto_k'; }
   } else if (categoria === 'descomponer') {
-    op = { a: rng.elegir(FACTORES_COMODOS), signo: P, b: rng.entero(3, 19) };
+    // Solo cuentas donde descomponer lleva de verdad a un producto fácil (por 10 o por 100).
+    do op = { a: rng.elegir(FACTORES_COMODOS), signo: P, b: rng.elegir(SEGUNDOS_FACTORES) };
+    while (descomposicionComoda(op).puntos < 1);
     problema = 'cajas';
   } else if (categoria === 'ninguna') {
-    if (rng.azar() < 0.5) { op = { a: rng.entero(11, 79), signo: '+', b: rng.entero(11, 79) }; problema = 'cromos'; }
+    if (rng.azar() < 0.5) { op = sumaSinCompensar(rng, NUMEROS_PEQUENOS); problema = 'cromos'; }
     else { op = { a: rng.elegir(PRIMOS_PEQUENOS), signo: P, b: rng.elegir(PRIMOS_PEQUENOS) }; problema = 'sillas'; }
   } else {
     calculadora = true;
-    if (rng.azar() < 0.5) { op = { a: rng.elegir(NUMEROS_GRANDES), signo: '+', b: rng.elegir(NUMEROS_GRANDES) }; problema = 'arboles'; }
+    if (rng.azar() < 0.5) { op = sumaSinCompensar(rng, NUMEROS_GRANDES); problema = 'arboles'; }
     else { op = { a: rng.elegir(PRIMOS_GRANDES), signo: P, b: rng.elegir(PRIMOS_GRANDES) }; problema = 'piezas'; }
   }
   const item = { tipo: 'estrategia', categoria, op, calculadora, enunciado: rng.azar() < 0.4 ? problema : null };

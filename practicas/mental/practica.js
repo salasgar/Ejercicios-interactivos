@@ -11,10 +11,13 @@ import { TX } from './textos.js';
 import {
   generarCompensar, generarDescomponer, generarEstrategia, enunciadoCompensar, lineaCompensar,
   redondeoCorrecto, ajusteCorrecto, resultadoCorrecto, valorOpcion, reconstruye, lineaDescomponer,
-  descomposicionCorrecta, estrategiaValida, mejorEstrategia, lineaEstrategia, razonNoAplica, descomposicionComoda,
+  descomposicionCorrecta, estrategiaValida, mejorEstrategia, lineaEstrategia, razonNoAplica, papelHabiendoAtajo,
 } from './logica.js';
 
 const P = '·';
+
+/** Una cadena de igualdades que se parte por los «=» (cada tramo no se parte), para que quepa en 375 px. */
+const cadena = linea => linea.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
 
 function campoNumero(id) {
   return `<input type="number" inputmode="numeric" id="${id}" class="mental-entero" autocomplete="off">`;
@@ -64,7 +67,7 @@ function montarCompensar(contenedor, item, api) {
       if (api.respondido()) return;
       r.marcar([item.redondeos.findIndex(o => o.correcta)], i);
       if (!redondeoCorrecto(item, i)) return fallo(`${tt(x.redondeo_mal)(item.k, item.R)} ${explicacion}`);
-      linea.innerHTML = `<span class="cuenta">${lineaCompensar(item)}</span>`;
+      linea.innerHTML = cadena(lineaCompensar(item));
       paso2();
     },
   });
@@ -83,7 +86,7 @@ function montarCompensar(contenedor, item, api) {
           const mala = item.ajustes[i];
           return fallo(`${tt(x.ajuste_mal)(mala.expr, mala.valor, item.valor)} ${explicacion}`);
         }
-        linea.innerHTML = `<span class="cuenta">${lineaCompensar(item, item.ajustes[bien])}</span>`;
+        linea.innerHTML = cadena(lineaCompensar(item, item.ajustes[bien]));
         paso3();
       },
     });
@@ -120,14 +123,14 @@ function montarDescomponer(contenedor, item, api) {
       if (!reconstruye(item, op)) {
         return api.responder({
           acierto: false,
-          html: `${tt(x.no_reconstruye)(op.texto, valorOpcion(op), item.b)} <span class="cuenta">${lineaDescomponer(item, item.opciones.find(o => o.correcta && o.clase === 'producto'))}</span>`,
+          html: `${tt(x.no_reconstruye)(op.texto, valorOpcion(op), item.b)} ${cadena(lineaDescomponer(item, item.opciones.find(o => o.correcta && o.clase === 'producto')))}`,
           espera: 3600,
         });
       }
-      linea.innerHTML = `<span class="cuenta">${lineaDescomponer(item, op).split(' = ').slice(0, 3).join(' = ')}</span>`;
+      linea.innerHTML = cadena(lineaDescomponer(item, op).split(' = ').slice(0, 3).join(' = '));
       pedirNumero(paso, api, tt(x.resultado), valor => {
         const acierto = descomposicionCorrecta(item, i, valor);
-        const completa = `<span class="cuenta">${lineaDescomponer(item, op)}</span>`;
+        const completa = cadena(lineaDescomponer(item, op));
         const comoda = op.clase === 'producto' ? '' : ` ${tt(x.comoda)(item.a, item.p, item.q, item.b)}`;
         if (acierto) return api.responder({ acierto: true, html: `${completa}.${comoda}`, espera: comoda ? 3600 : 2600 });
         api.responder({ acierto: false, html: `${tt(x.cuenta_mal)(item.valor)} ${completa}`, espera: 3600 });
@@ -155,10 +158,14 @@ function montarEstrategia(contenedor, item, api) {
       botones.marcar(validas, e);
       const mejor = mejorEstrategia(item);
       const consejo = mejor === 'compensar' || mejor === 'descomponer'
-        ? `${tt(x.mejor[mejor])} <span class="cuenta">${lineaEstrategia(item, mejor)}</span>.`
+        ? `${tt(x.mejor[mejor])} ${cadena(lineaEstrategia(item, mejor))}.`
         : tt(x.mejor[mejor]);
-      const cuenta = `<span class="cuenta">${item.texto} = ${item.valor}</span>`;
+      const cuenta = cadena(`${item.texto} = ${item.valor}`);
       if (estrategiaValida(item, e)) {
+        // Lápiz y papel habiendo un atajo: vale, pero cuenta como ayuda (no como fallo).
+        if (papelHabiendoAtajo(item, e)) {
+          return api.responder({ acierto: true, pistas: 1, html: `${tt(x.papel_con_atajo)} ${consejo}`, espera: 3800 });
+        }
         return api.responder({ acierto: true, html: `${tt(x.vale)} ${e === mejor ? '' : `${consejo} `}${cuenta}.`.replace('  ', ' '), espera: 3200 });
       }
       const razon = razonNoAplica(item, e);

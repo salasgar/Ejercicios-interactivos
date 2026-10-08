@@ -30,7 +30,7 @@ export const TX = {
     },
     explicacion_producto: {
       es: (n, k, R, falta, valor) => `${n} · ${k} = ${n} · ${R} − ${falta === 1 ? n : `${falta} · ${n}`} = ${n * R} − ${falta * n} = ${valor}: sobra${falta === 1 ? ' una vez' : 'n dos veces'} el ${n}, no el ${falta}.`,
-      en: (n, k, R, falta, valor) => `${n} · ${k} = ${n} · ${R} − ${falta === 1 ? n : `${falta} · ${n}`} = ${n * R} − ${falta * n} = ${valor}: we have ${falta === 1 ? 'one' : 'two'} ${n} too many, not ${falta}.`,
+      en: (n, k, R, falta, valor) => `${n} · ${k} = ${n} · ${R} − ${falta === 1 ? n : `${falta} · ${n}`} = ${n * R} − ${falta * n} = ${valor}: we have ${falta === 1 ? `one ${n}` : `two ${n}s`} too many, not ${falta}.`,
     },
     resultado_mal: {
       es: valor => `El resultado es ${valor}.`,
@@ -42,7 +42,7 @@ export const TX = {
     detalle: { es: 'Parte un factor para multiplicar fácil', en: 'Split a factor to multiply easily' },
     introduccion: {
       es: '<p>Si un factor se parte en otros números, a veces la cuenta sale en un momento: 25 · 4 = 100.</p>',
-      en: '<p>If a factor is split into other numbers, the sum can become quick: 25 · 4 = 100.</p>',
+      en: '<p>If a factor is split into other numbers, the calculation can become quick: 25 · 4 = 100.</p>',
     },
     pregunta: { es: (a, b) => `Calcula ${a} · ${b}. Primero elige cómo partir el ${b}:`, en: (a, b) => `Work out ${a} · ${b}. First choose how to split ${b}:` },
     resultado: { es: 'Ahora escribe el resultado:', en: 'Now write the result:' },
@@ -52,31 +52,35 @@ export const TX = {
     },
     cuenta_mal: { es: valor => `El resultado es ${valor}.`, en: valor => `The result is ${valor}.` },
     comoda: {
-      es: (a, p, q, b) => `También vale la otra, pero ${p} · ${q} es la más cómoda: ${a} · ${p} = ${a * p}.`,
-      en: (a, p, q, b) => `The other one works too, but ${p} · ${q} is the most comfortable: ${a} · ${p} = ${a * p}.`,
+      es: (a, p, q, b) => `Esa suma también vale, pero ${p} · ${q} es más cómodo: ${a} · ${p} = ${a * p}.`,
+      en: (a, p, q, b) => `That addition works too, but ${p} · ${q} is easier: ${a} · ${p} = ${a * p}.`,
     },
   },
   estrategia: {
     nombre: { es: '¿Qué conviene?', en: 'What is best?' },
-    detalle: { es: 'Elige la estrategia para cada cuenta', en: 'Choose the strategy for each sum' },
+    detalle: { es: 'Elige la estrategia para cada cuenta', en: 'Choose the strategy for each calculation' },
     introduccion: {
       es: '<p>Mira la cuenta y elige una estrategia que se pueda usar. Lápiz y papel siempre se puede, pero a veces hay un camino más corto.</p>',
-      en: '<p>Look at the sum and choose a strategy you can use. Pencil and paper always works, but sometimes there is a shorter way.</p>',
+      en: '<p>Look at the calculation and choose a strategy you can use. Pencil and paper always works, but sometimes there is a shorter way.</p>',
     },
     pregunta: { es: '¿Qué estrategia usas?', en: 'Which strategy do you use?' },
     boton: {
-      compensar: { es: 'Compenso (redondeo a 100 o 1000 y ajusto)', en: 'Compensate (round to 100 or 1000 and adjust)' },
+      compensar: { es: 'Compenso (redondeo a un número redondo y ajusto)', en: 'Compensate (round to a round number and adjust)' },
       descomponer: { es: 'Descompongo un factor en producto', en: 'Split a factor into a product' },
       papel: { es: 'Lápiz y papel', en: 'Pencil and paper' },
       calculadora: { es: 'Calculadora', en: 'Calculator' },
     },
     no_compensar: {
-      es: (a, b) => `En ${a} y ${b} ningún número está cerca de 100 ni de 1000: no hay nada que compensar.`,
-      en: (a, b) => `In ${a} and ${b}, no number is close to 100 or 1000: there is nothing to compensate.`,
+      es: (a, b) => `En ${a} y ${b} ningún número está a una o dos unidades de una decena redonda: no hay nada que compensar.`,
+      en: (a, b) => `In ${a} and ${b}, no number is one or two away from a round ten: there is nothing to compensate.`,
     },
     no_descomponer_suma: {
       es: (a, b) => `${a} + ${b} es una suma: no tiene factores que descomponer.`,
       en: (a, b) => `${a} + ${b} is an addition: it has no factors to split.`,
+    },
+    papel_con_atajo: {
+      es: 'Sirve, pero había un atajo. Cuenta como una ayuda.',
+      en: 'That works, but there was a shortcut. It counts as help.',
     },
     no_descomponer_primos: {
       es: (a, b) => `${a} y ${b} son primos: no se pueden partir en un producto.`,
