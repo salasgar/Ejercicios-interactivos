@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-07
 Precondición: 02 a 17 y 19 a 33 LISTAS (si la 17 no está LISTA y Juan Luis lo decide, puede cerrarse sin ella y se anota); firma de la tarea 18 en autorizaciones.md · Disparo: MANUAL (sesión atendida)
-Duración esperada: 3 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 3 h (tiempo de sesión, no de persona; real el 2026-10-08: 43 min, con seis revisores en paralelo) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/18-revision-final/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo el campo `disponible`), `practicas/index.html`, `practicas/portada.js`, `README.md` (apartado de prácticas), `docs/practicas-unidad2.md` (nuevo)
 
@@ -134,6 +134,29 @@ Dos salidas separadas, las dos en `reparto-practicas-u2/salidas/18-revision-fina
 
 - Es tentador corregir una errata en `practicas/<slug>/textos.js` de paso: no lo hagas,
   ese fichero tiene dueña; reabre.
+- (2026-10-08, sesión s-20261008T051928-1cba9950) **El detector de desbordes en móvil miente
+  si se compara con `window.innerWidth`**: con la emulación de móvil de Chrome, cuando algo
+  no cabe la ventana de maquetación se ensancha y `scrollWidth > innerWidth` da falso. La
+  primera pasada dio «sin desbordes» en las 31; las capturas enseñaban ocho. Hay que medir
+  contra el ancho fijo (375) y mirar las capturas.
+- Un proceso de `puppeteer-core` no termina solo después de `browser.close()`: sin
+  `process.exit(0)` se queda colgado, y un `xargs -P` detrás, también. Y una pasada de las 31
+  en un solo proceso no cabe en los 10 minutos de una orden: un proceso por práctica, en
+  paralelo, cada uno con su fichero de resultados.
+- Leer 20 000 líneas no cabe en una sesión: se repartió en seis revisores de solo lectura
+  bajo este sid (cinco o seis prácticas cada uno, con un encargo común escrito). Sus
+  hallazgos vuelven con el mismo aplomo los buenos y los dudosos: hay que verificarlos en el
+  código uno a uno y reproducir los graves con un script propio antes de reabrir.
+- Los 576 tests en verde no dicen nada del significado: la aritmética de las 31 prácticas
+  es correcta y aun así 28 tienen algo que corregir. Lo que más se repite: una respuesta
+  correcta que el programa no esperaba (otro orden, otra forma del mismo valor, dos fichas
+  con el mismo número), un enunciado que no dice «el mayor» o «por primera vez», y un
+  control que no deja escribir la respuesta buena.
+- El tablón puede estar reservado por el candado de otra sesión al reclamar: el reclamo vale
+  igual; se regenera al cerrar.
+- `disponible: true` no se le puede poner a ciegas a todo lo que existe: se dejó en `false`
+  lo que penaliza una respuesta correcta, y cada reabierta autoriza a su sesión a tocar solo
+  su fila del catálogo.
 
 ## Prohibido (propio de esta tarea)
 
