@@ -23,13 +23,13 @@ export const TX = {
         <p>Finding the divisors of a number is finding rectangles of that area with whole
         sides. Choose a width: if the rectangle closes exactly, you have found a pair of
         divisors.</p>
-        <p>When you think you have found them all, press <strong>«They're all there»</strong>.
-        You do not need to go past the integer square root: after that the pairs repeat
+        <p>When you think you have found them all, press <strong>“They're all there”</strong>.
+        You do not need to go past the square root of the number (forget the decimals): after that the pairs repeat
         the other way round.</p>`,
     },
     instruccion: { es: n => `El área es ${n}. Elige un ancho y mira si el rectángulo se cierra.`, en: n => `The area is ${n}. Choose a width and see if the rectangle closes.` },
     ancho: { es: 'Ancho', en: 'Width' },
-    sobran: { es: (w, sobran, n) => `Con ancho ${w} sobran ${sobran} ${sobran === 1 ? 'celda' : 'celdas'}: ${w} no es divisor de ${n}.`, en: (w, sobran, n) => `With width ${w} there ${sobran === 1 ? 'is' : 'are'} ${sobran} extra ${sobran === 1 ? 'cell' : 'cells'} left over: ${w} is not a divisor of ${n}.` },
+    sobran: { es: (w, faltan, n) => `Con ancho ${w} ${faltan === 1 ? 'falta' : 'faltan'} ${faltan} ${faltan === 1 ? 'celda' : 'celdas'} (las tachadas) para cerrar el rectángulo: ${w} no es divisor de ${n}.`, en: (w, faltan, n) => `With width ${w}, ${faltan} ${faltan === 1 ? 'cell is' : 'cells are'} missing (the crossed-out ${faltan === 1 ? 'one' : 'ones'}) to close the rectangle: ${w} is not a divisor of ${n}.` },
     encontradas: { es: 'Parejas encontradas', en: 'Pairs found' },
     ninguna_todavia: { es: 'Todavía ninguna.', en: 'None yet.' },
     ya_todas: { es: 'Ya están todas', en: "They're all there" },
