@@ -35,12 +35,37 @@ export function generarPartir(rng) {
   return { tipo: 'partir', a, b, c, resta, largo, corte, solucion };
 }
 
-/** El corte (posición entre 1 y largo − 1) y el total tecleado son los buenos. */
+/** Número con separador de miles: «2 475» en español (espacio duro), «2,475» en inglés. */
+export function fmt(n, idioma = 'es') {
+  const s = String(n);
+  if (s.length < 4) return s;
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, idioma === 'en' ? ',' : ' ');
+}
+
+/**
+ * Lo que escribe el alumno → número natural, o null. Vale con o sin separador de miles:
+ * «2475», «2.475», «2,475», «2 475». «2.47» o «-5» no son naturales y dan null.
+ */
+export function leerEntero(texto) {
+  const t = String(texto).trim();
+  if (/^\d+$/.test(t)) return Number(t);
+  if (/^\d{1,3}([.,\s  ]\d{3})+$/.test(t)) return Number(t.replace(/\D/g, ''));
+  return null;
+}
+
+/**
+ * Los cortes buenos (posición entre 1 y largo − 1). Con la suma, el lado se parte en
+ * las mismas dos partes cortando por b o por c (6 + 3 o 3 + 6); con la resta, no: el
+ * trozo de la derecha es el que se quita.
+ */
+export function cortesCorrectos(item) {
+  return item.resta ? [item.corte] : [...new Set([item.corte, item.largo - item.corte])];
+}
 export function corteCorrecto(item, posicion) {
-  return posicion === item.corte;
+  return cortesCorrectos(item).includes(posicion);
 }
 export function totalCorrecto(item, total) {
-  return Number(total) === item.solucion;
+  return leerEntero(total) === item.solucion;
 }
 
 /** «4 · (6 + 3) = 4 · 6 + 4 · 3 = 24 + 12 = 36». */
@@ -128,15 +153,38 @@ export function formasValidas(item) {
   return formas.map(f => f.join(' '));
 }
 
-/** `fichas`: lista de 'a' | 'b' | 'c' | '+' | '−' | '·' | '(' | ')' en el orden que puso el alumno. */
+/**
+ * `fichas`: lista de 'a' | 'b' | 'c' | '+' | '−' | '·' | '(' | ')' en el orden que puso el alumno.
+ * Se comparan los números que se VEN, no las letras: si a coincide con b o con c hay dos
+ * botones con el mismo número y da igual cuál se toque.
+ */
 export function juntarCorrecto(item, fichas) {
-  return formasValidas(item).includes(fichas.join(' '));
+  const visto = textoFichas(item, fichas);
+  return formasValidas(item).some(f => textoFichas(item, f.split(' ')) === visto);
 }
 
 /** La expresión con los números de ese ítem. */
 export function textoFichas(item, fichas) {
   const v = { a: item.a, b: item.b, c: item.c };
   return fichas.map(f => v[f] ?? f).join(' ').replace(/\( /g, '(').replace(/ \)/g, ')');
+}
+
+/** Lo que vale lo que escribió el alumno, o null si no es una cuenta completa. */
+export function valorFichas(item, fichas) {
+  const expr = textoFichas(item, fichas).replaceAll(P, '*').replaceAll(MENOS, '-');
+  if (!/^[\d\s()+*-]+$/.test(expr)) return null;
+  let nivel = 0;
+  for (const ch of expr) {
+    if (ch === '(') nivel++;
+    if (ch === ')' && --nivel < 0) return null;
+  }
+  if (nivel !== 0) return null;
+  try {
+    const v = Function(`"use strict"; return (${expr});`)();
+    return Number.isFinite(v) ? v : null;
+  } catch {
+    return null;
+  }
 }
 
 /** «6 · 7 + 6 · 3» para el enunciado. */
@@ -185,7 +233,7 @@ function intentarCompensar(rng) {
 }
 
 export function compensarCorrecto(item, valorTecleado) {
-  return Number(valorTecleado) === item.valor;
+  return leerEntero(valorTecleado) === item.valor;
 }
 
 /** «25 · 99» o «47 + 99». */

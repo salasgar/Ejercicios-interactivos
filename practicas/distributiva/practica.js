@@ -9,8 +9,8 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
-  generarPartir, generarFactorValido, generarCompensar, corteCorrecto, totalCorrecto, igualdad,
-  juntarCorrecto, textoFichas, sumaDeProductos, compensarCorrecto, enunciadoCompensar,
+  generarPartir, generarFactorValido, generarCompensar, corteCorrecto, cortesCorrectos, totalCorrecto, igualdad,
+  juntarCorrecto, textoFichas, valorFichas, sumaDeProductos, compensarCorrecto, enunciadoCompensar, fmt,
 } from './logica.js';
 
 const MENOS = '−';
@@ -25,8 +25,14 @@ function celdasHtml(filas, columnas, clases = () => '') {
   return html;
 }
 
+// Campo de texto (no `type="number"`): admite «1.188», «1,188» o «1 188» y se lee con leerEntero.
 function campoNumero(id) {
-  return `<input type="number" inputmode="numeric" id="${id}" class="dist-entero" autocomplete="off">`;
+  return `<input type="text" inputmode="numeric" id="${id}" class="dist-entero" autocomplete="off">`;
+}
+
+/** Una igualdad en cadena: cada tramo en su `.cuenta` y el «=» fuera, para que la línea pueda partirse en el móvil. */
+function cadenaHtml(texto) {
+  return texto.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
 }
 
 // ─── Ejercicio 1: parte el rectángulo ──────────────────────────────────────────
@@ -55,7 +61,9 @@ function montarPartir(contenedor, item, api) {
   const mando = contenedor.querySelector('#mando');
   const celdas = [...cuadricula.querySelectorAll('.dist-celda')];
 
-  let pos = corte === 1 ? largo - 1 : 1;
+  // El cursor empieza en un sitio que no es ya el buen corte (si hay donde elegir).
+  const buenos = cortesCorrectos(item);
+  let pos = [1, largo - 1, 2].find(p => !buenos.includes(p)) ?? 1;
   let cortado = false;
   const ponerEtiquetaEntera = () => {
     etiquetas.innerHTML = `<span class="dist-etiqueta" style="flex:1">${resta ? b : `${b} + ${c}`}</span>`;
@@ -100,8 +108,10 @@ function montarPartir(contenedor, item, api) {
     pintarCursor();
     pintarPartes(p);
     mando.hidden = true;
-    const izq = resta ? `${b} ${MENOS} ${c}` : `${b}`;
-    const der = resta ? `${c}` : `${c}`;
+    // Con la suma vale cortar por b o por c: la izquierda es la parte que tiene p celdas.
+    const alReves = !resta && p !== corte;
+    const izq = resta ? `${b} ${MENOS} ${c}` : `${alReves ? c : b}`;
+    const der = resta ? `${c}` : `${alReves ? b : c}`;
     etiquetas.innerHTML = `
       <span class="dist-etiqueta dist-etiqueta--izq" style="flex:${p}">${izq}</span>
       <span class="dist-etiqueta ${resta ? 'dist-etiqueta--quitada' : 'dist-etiqueta--der'}" style="flex:${largo - p}">${der}</span>`;
@@ -112,12 +122,14 @@ function montarPartir(contenedor, item, api) {
     if (!corteCorrecto(item, pos)) {
       mostrarCorte(corte);
       const razon = resta ? tt(x.corte_mal_resta)(b, c, b - c) : tt(x.corte_mal_suma)(b, c);
-      return api.responder({ acierto: false, html: `${razon} <span class="cuenta">${igualdad(item)}</span>`, espera: 3200 });
+      return api.responder({ acierto: false, html: `${razon} ${cadenaHtml(igualdad(item))}`, espera: 3200 });
     }
     mostrarCorte(pos);
     const paso2 = contenedor.querySelector('#paso2');
+    const otroOrden = !resta && pos !== corte ? `<p class="frase">${tt(x.otro_orden)(b, c)}</p>` : '';
     paso2.innerHTML = `
-      <p class="frase"><span class="cuenta">${igualdad(item).split(' = ').slice(0, 3).join(' = ')}</span></p>
+      ${otroOrden}
+      <p class="frase">${cadenaHtml(igualdad(item).split(' = ').slice(0, 3).join(' = '))}</p>
       <label class="instruccion" for="total">${tt(x.total_label)}</label>
       ${campoNumero('total')}
       <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
@@ -129,7 +141,7 @@ function montarPartir(contenedor, item, api) {
       const acierto = totalCorrecto(item, campo.value);
       campo.disabled = true;
       boton.hidden = true;
-      const completa = `<span class="cuenta">${igualdad(item)}</span>`;
+      const completa = cadenaHtml(igualdad(item));
       api.responder({ acierto, html: acierto ? `${completa}.` : `${tt(x.total_mal)(item.solucion)} ${completa}`, espera: 2400 });
     };
     boton.addEventListener('click', comprobar);
@@ -198,11 +210,16 @@ function montarJuntar(contenedor, item, api) {
     contenedor.querySelector('#borrar').disabled = true;
     ev.target.hidden = true;
     if (acierto) contenedor.querySelector('#dos').classList.add('dist-dos--junto');
-    const buena = `<span class="cuenta">${igualdad(item).split(' = ').slice(0, 2).reverse().join(' = ')}</span>`;
-    const completa = `<span class="cuenta">${igualdad(item)}</span>`;
+    const buena = cadenaHtml(igualdad(item).split(' = ').slice(0, 2).reverse().join(' = '));
+    const completa = cadenaHtml(igualdad(item));
+    // Lo que escribió: cuánto vale, o que no es una cuenta completa (regla 8: el fallo habla de sus números).
+    const escrito = textoFichas(item, fichas);
+    const v = valorFichas(item, fichas);
+    const suyo = v === null ? tt(x.incompleta)(escrito)
+      : tt(v === item.valor ? x.mismo_valor : x.tu_valor)(escrito, fmt(v, api.idioma));
     api.responder({
       acierto,
-      html: acierto ? `${completa}.` : `${tt(x.correcta)} ${buena}. ${completa}.`,
+      html: acierto ? `${completa}.` : `${suyo} ${tt(x.correcta)} ${buena}. ${completa}.`,
       espera: 2600,
     });
   });
@@ -222,7 +239,7 @@ function montarElegirFactor(contenedor, item, api) {
       const buena = item.opciones.findIndex(o => o.correcta);
       botones.marcar([buena], i);
       const elegida = item.opciones[i];
-      const completa = `<span class="cuenta">${igualdad(item)}</span>`;
+      const completa = cadenaHtml(igualdad(item));
       if (i === buena) return api.responder({ acierto: true, html: `${completa}.`, espera: 2400 });
       api.responder({
         acierto: false,
@@ -275,7 +292,7 @@ function montarCompensar(contenedor, item, api) {
     campo.disabled = true;
     boton.hidden = true;
     if (!compensarCorrecto(item, campo.value)) {
-      return api.responder({ acierto: false, html: `<span class="cuenta">${texto} = ${item.valor}</span>. ${explicacion}`, espera: 3600 });
+      return api.responder({ acierto: false, html: `<span class="cuenta">${texto} = ${fmt(item.valor, api.idioma)}</span>. ${explicacion}`, espera: 3600 });
     }
     contenedor.querySelector('#paso2').innerHTML = `<p class="instruccion">${tt(x.elige)}</p>`;
     const botones = elecciones(contenedor.querySelector('#paso2'), {
