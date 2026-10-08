@@ -184,7 +184,7 @@ portada.
 | 4 | `baldosas` | 12 | La baldosa más grande · ¿Cuántas baldosas? · Cuerdas |
 | 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error |
 | toda | `leelo` | 14 | Escúchalo · ¿Cómo se lee? · Completa la frase |
-| toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» |
+| toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
 
 `divisores` vive en `divisores/` (su URL de siempre) y desde la tarea 17 está montada sobre
 la base. Las demás, en `practicas/<slug>/`.
