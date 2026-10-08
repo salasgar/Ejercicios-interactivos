@@ -1,0 +1,29 @@
+/* Constructor de números: casillas con nombre, número con una cifra resaltada y entrada
+   numérica. Lo demás está en ../_comun/estilos.css (.operacion, .botones-numeros, .eleccion…). */
+
+.casillas { display: flex; justify-content: center; gap: .4rem; margin: .4rem 0 1rem; }
+.casilla-col { display: flex; flex-direction: column; align-items: center; flex: 1 1 0; max-width: 4.8rem; min-width: 0; }
+.casilla {
+  width: 100%; min-height: 58px; padding: 0; font-size: 1.7rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: #fff; color: var(--texto); border: 2px dashed var(--borde); border-radius: 10px;
+}
+.casilla--llena { border-style: solid; border-color: var(--primario); color: var(--primario-oscuro); }
+.casilla--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.casilla--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); }
+.casilla:disabled { opacity: 1; }
+.casilla-nombre { font-size: .68rem; line-height: 1.1; color: var(--texto-suave); text-align: center; margin-top: .25rem; overflow-wrap: anywhere; }
+
+.operacion--cifras { letter-spacing: .02em; }
+.operacion--texto { font-size: 1.15rem; font-weight: 600; line-height: 1.4; }
+.cifra { display: inline-block; }
+.cifra--grupo { margin-left: .35em; }
+.cifra--marca { background: var(--aviso-claro, #fef3c7); border-bottom: 3px solid var(--primario); border-radius: 4px; padding: 0 .1em; }
+
+.constructor-entero {
+  width: 100%; max-width: 14rem; display: block; margin: .8rem auto .4rem; text-align: center;
+  font-size: 1.4rem !important; font-weight: 700; font-variant-numeric: tabular-nums; padding: .55rem;
+  border: 2px solid var(--borde); border-radius: 10px; box-sizing: border-box;
+}
+.constructor-entero:focus { border-color: var(--primario); outline: none; }
+.constructor-grupos { min-height: 1.6rem; font-size: 1.2rem; font-weight: 700; color: var(--primario-oscuro); font-variant-numeric: tabular-nums; margin: .2rem 0 .4rem; }
+.constructor-aviso { min-height: 1.1rem; color: var(--error); font-weight: 600; margin: .2rem 0; }
