@@ -130,6 +130,8 @@ Propios de esta tarea:
   modo lectura escribe la británica.
 - «ciento» frente a «cien»: «cien mil» pero «ciento dos»; el módulo de la app ya lo resuelve.
 
+- (Aprendido en la reabierta de la 29) Los textos de instrucción «sin voz» existían pero nadie los usaba: si se escribe un texto alternativo, enlazarlo y probarlo. Un .cuenta no se parte: la frase en palabras fuera, solo el número dentro. Las notas de feedback son funciones del ítem, no frases fijas.
+
 ## Prohibido (propio de esta tarea)
 
 - Enfrentar como opciones «one thousand four hundred» y «fourteen hundred» (las dos valen,
