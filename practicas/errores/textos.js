@@ -47,6 +47,8 @@ export const CONFUNDIBLES = [
   ['mcdCero', 'olvida1'],
   ['potencia', 'sinTerminar'],
   ['tres9', 'ultimaCifra3'],
+  // «242 = 2 · 121. Ya no puedo seguir»: 121, 143, 169, 9 y 25 son impares que se dan por primos.
+  ['imparPrimo', 'sinTerminar'],
 ];
 
 // ─── Textos de la interfaz ─────────────────────────────────────────────────────
@@ -59,12 +61,12 @@ export const TX = {
   },
   detalle: {
     hay: { es: 'Un procedimiento de un alumno: ¿está bien o no?', en: 'A student\'s work: is it right or not?' },
-    linea: { es: 'Este procedimiento tiene un error: toca la línea donde está', en: 'This work has a mistake: tap the line where it is' },
+    linea: { es: 'Este procedimiento tiene un error: toca la PRIMERA línea que está mal', en: 'This work has a mistake: tap the FIRST line that is wrong' },
     nombre: { es: 'Este procedimiento tiene un error: ¿cuál es?', en: 'This work has a mistake: which one is it?' },
   },
   instruccion: {
     hay: { es: 'Mira el procedimiento. ¿Está bien o hay un error?', en: 'Look at the work. Is it right or is there a mistake?' },
-    linea: { es: 'Hay un error. Toca la línea donde está.', en: 'There is a mistake. Tap the line where it is.' },
+    linea: { es: 'Hay un error. Toca la PRIMERA línea que está mal.', en: 'There is a mistake. Tap the FIRST line that is wrong.' },
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
   },
   introduccion: {
@@ -140,7 +142,7 @@ export const PLANTILLAS = [
     numeros: rng => { const [a, b] = rng.elegir(PARES_COMUNES); return { a, b }; },
     lineas: ({ a, b }) => [
       L(`${a} = ${F(a)} y ${b} = ${F(b)}`, `${a} = ${F(a)} and ${b} = ${F(b)}`),
-      L(`Cojo los primos comunes con el mayor exponente: ${textoFact(comunesMaxF(a, b))}`, `I take the common primes with the biggest exponent: ${textoFact(comunesMaxF(a, b))}`),
+      L(`Para el m.c.d. cojo los primos comunes con el mayor exponente: ${textoFact(comunesMaxF(a, b))}`, `For the GCD I take the common primes with the biggest exponent: ${textoFact(comunesMaxF(a, b))}`),
       L(`m.c.d.(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`, `GCD(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`),
     ],
     corregida: ({ a, b }) => L(
@@ -252,7 +254,7 @@ export const PLANTILLAS = [
     error: { linea: 1, nombre: 'olvida1' },
     numeros: rng => ({ n: rng.elegir(DIVISORES_DE) }),
     lineas: ({ n }) => [
-      L(`Parejas: ${parejasDivisores(n).slice(1).map(([x, y]) => `${n} = ${x} · ${y}`).join('; ')}`, `Pairs: ${parejasDivisores(n).slice(1).map(([x, y]) => `${n} = ${x} · ${y}`).join('; ')}`),
+      L(`Parejas: ${parejasDivisores(n).map(([x, y]) => `${n} = ${x} · ${y}`).join('; ')}`, `Pairs: ${parejasDivisores(n).map(([x, y]) => `${n} = ${x} · ${y}`).join('; ')}`),
       L(`Divisores de ${n}: ${divisores(n).slice(1, -1).join(', ')}`, `Divisors of ${n}: ${divisores(n).slice(1, -1).join(', ')}`),
     ],
     corregida: ({ n }) => L(
@@ -370,7 +372,7 @@ export const PLANTILLAS = [
       L(`En inglés: GCD(${a}, ${b}) = ${mcd(a, b)} o HCF(${a}, ${b}) = ${mcd(a, b)}.`, `Also: HCF(${a}, ${b}) = ${mcd(a, b)}.`),
     ],
     porque: () => L(
-      'GCD y HCF son el mismo nombre del m.c.d. en inglés: las dos formas están bien.',
+      'GCD y HCF son dos nombres de lo mismo (el m.c.d. en inglés): las dos formas están bien.',
       'GCD and HCF are two names for the same thing: both are right.'),
   },
   {
@@ -388,8 +390,8 @@ export const PLANTILLAS = [
       ];
     },
     porque: () => L(
-      '«Lowest» y «least» common multiple son el mismo nombre del m.c.m.: las dos están bien.',
-      '"Lowest" and "least" common multiple are the same name for the LCM: both are right.'),
+      '«Lowest» y «least» common multiple son dos nombres de lo mismo (el m.c.m. en inglés): las dos están bien.',
+      '"Lowest" and "least" common multiple are two names for the same thing (the LCM): both are right.'),
   },
   {
     id: 'b-divisible-por',
@@ -428,9 +430,13 @@ export const PLANTILLAS = [
         L(`${n} = ${F(n)}`, `${n} = ${F(n)}`),
       ];
     },
-    porque: ({ n }) => L(
-      `Está bien: 11 y 13 son primos, así que ${n} = ${F(n)} ya está terminada.`,
-      `It is right: 11 and 13 are prime, so ${n} = ${F(n)} is finished.`),
+    porque: ({ n }) => {
+      const grandes = factorizar(n).map(([p]) => p).filter(p => p >= 11);
+      const varios = grandes.length > 1;
+      return L(
+        `Está bien: ${grandes.join(' y ')} ${varios ? 'son primos' : 'es primo'}, así que ${n} = ${F(n)} ya está terminada.`,
+        `It is right: ${grandes.join(' and ')} ${varios ? 'are' : 'is'} prime, so ${n} = ${F(n)} is finished.`);
+    },
   },
   {
     id: 'b-mcm-ok',
@@ -492,14 +498,14 @@ export const PLANTILLAS = [
     lineas: ({ n }) => {
       const probados = PRIMOS.filter(p => p * p <= n), q = PRIMOS.find(p => p * p > n);
       return [
-        L(`Pruebo los primos p con p · p ≤ ${n}: ${probados.join(', ')}. Ninguno divide a ${n}.`, `I try the primes p with p · p ≤ ${n}: ${probados.join(', ')}. None of them divides ${n}.`),
+        L(`Pruebo los primos cuyo cuadrado no pasa de ${n}: ${probados.join(', ')}. Ninguno divide a ${n}.`, `I try the primes whose square is not more than ${n}: ${probados.join(', ')}. None of them divides ${n}.`),
         L(`El siguiente es ${q} y ${q} · ${q} = ${q * q}, que ya pasa de ${n}.`, `The next one is ${q} and ${q} · ${q} = ${q * q}, which is already more than ${n}.`),
         L(`Luego ${n} es primo.`, `So ${n} is prime.`),
       ];
     },
     porque: ({ n }) => L(
-      `Está bien: basta probar los primos hasta que p · p pasa de ${n}.`,
-      `It is right: it is enough to try the primes until p · p is more than ${n}.`),
+      `Está bien: basta probar los primos cuyo cuadrado no pasa de ${n}.`,
+      `It is right: it is enough to try the primes whose square is not more than ${n}.`),
   },
   {
     id: 'b-razonable',

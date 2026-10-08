@@ -304,3 +304,56 @@ test('ejercicio 3: de verdad hay tres distractores disponibles para cada plantil
     assert.ok(CLAVES_NOMBRES.filter(c => !fuera.has(c)).length >= 3, p.id);
   }
 });
+
+// ─── Reabierta de la tarea 14 (2026-10-08) ───────────────────────────────────
+
+test('e-sin-terminar: «impar es primo» no sale como distractor (describe lo mismo)', () => {
+  assert.ok(nombresExcluidos(PLANTILLA_POR_ID['e-sin-terminar']).has('imparPrimo'));
+  assert.ok(nombresExcluidos(PLANTILLA_POR_ID['e-impar-primo']).has('sinTerminar'));
+  const rng = crearRng(21);
+  for (let i = 0; i < 2000; i++) {
+    const it = generarNombre(rng);
+    if (it.plantilla === 'e-sin-terminar') assert.ok(!it.opciones.includes('imparPrimo'), JSON.stringify(it));
+  }
+});
+
+test('e-olvida-1-n: la línea 1 lleva todas las parejas (con 1 · n); solo la 2 olvida el 1 y el propio número', () => {
+  const p = PLANTILLA_POR_ID['e-olvida-1-n'];
+  const rng = crearRng(5);
+  for (let i = 0; i < 50; i++) {
+    const params = p.numeros(rng), n = params.n, lineas = p.lineas(params);
+    assert.ok(lineas[0].es.includes(`${n} = 1 · ${n}`), lineas[0].es);
+    const divs = nums(lineas[1].es.split(':')[1]);
+    assert.ok(!divs.includes(1) && !divs.includes(n));
+  }
+});
+
+test('e-cruzado: la línea marcada dice para qué es («Para el m.c.d.»), en los dos idiomas', () => {
+  const p = PLANTILLA_POR_ID['e-cruzado'];
+  const l = p.lineas(p.numeros(crearRng(1)))[1];
+  assert.match(l.es, /^Para el m\.c\.d\./);
+  assert.match(l.en, /^For the GCD/);
+});
+
+test('instrucción del ejercicio 2: pide la PRIMERA línea que está mal, en los dos idiomas', async () => {
+  const { TX } = await import('../practicas/errores/textos.js');
+  for (const t of [TX.instruccion.linea, TX.detalle.linea]) {
+    assert.match(t.es, /PRIMERA/);
+    assert.match(t.en, /FIRST/);
+  }
+});
+
+test('b-primo-ok no usa letras como incógnita; b-factores-11-13 solo nombra los primos que aparecen', () => {
+  const rng = crearRng(9);
+  const ok = PLANTILLA_POR_ID['b-primo-ok'];
+  for (let i = 0; i < 30; i++) {
+    const params = ok.numeros(rng);
+    const texto = [...ok.lineas(params), ok.porque(params)].map(l => l.es + l.en).join(' ');
+    assert.ok(!/\bp\b/.test(texto), texto);
+  }
+  const b = PLANTILLA_POR_ID['b-factores-11-13'];
+  for (const n of [242, 286, 338, 363]) {
+    const es = b.porque({ n }).es;
+    for (const g of [11, 13]) assert.equal(es.includes(String(g)), n % g === 0, `${n}: ${es}`);
+  }
+});
