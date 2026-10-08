@@ -22,7 +22,7 @@ export const TX = {
       },
     },
     {
-      nombre: { es: 'Con un cuadrado', en: 'With a square' },
+      nombre: { es: 'Con una potencia', en: 'With a power' },
       detalle: { es: 'El cuadrado se aplica a lo que tiene delante', en: 'The square applies to what comes before it' },
       introduccion: {
         es: `<h2>Cuidado con el exponente</h2>
@@ -80,6 +80,10 @@ export const TX = {
   ya_lo_tenias: {
     es: 'Ya lo tenías: estos paréntesis no cambian el resultado.',
     en: 'You already had it: these brackets do not change the result.',
+  },
+  ya_con_otros: {
+    es: 'Ese resultado ya lo tenías, con otros paréntesis.',
+    en: 'You already had that result, with other brackets.',
   },
   no_agrupan: {
     es: 'Estos paréntesis no cambian nada: las operaciones ya se hacían en ese orden.',
