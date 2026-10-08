@@ -110,7 +110,7 @@ function numeroDecenas(rng, sube) {
 const aCentenas = n => Math.round(n / 100) * 100;
 const aDecenas = n => Math.round(n / 10) * 10;
 
-// ─── El banco: 33 plantillas (19 con error, 14 sin error) ───────────────────────
+// ─── El banco: 34 plantillas (21 con error, 13 sin error) ───────────────────────
 
 export const PLANTILLAS = [
   // ── Con error ──
@@ -209,7 +209,7 @@ export const PLANTILLAS = [
     error: { linea: 1, nombre: 'restoMayor' },
     numeros: rng => { const d = rng.entero(3, 9); return { d, q: rng.entero(3, 9), r0: rng.entero(1, d - 1) }; },
     lineas: ({ d, q, r0 }) => [
-      L(`Tengo ${d * q + r0} caramelos y los meto en cajas de ${d}.`, `I have ${d * q + r0} sweets and I put them in boxes of ${d}.`),
+      L(`Tengo ${d * q + r0} caramelos y los meto en cajas de ${d}: lleno todas las cajas que puedo.`, `I have ${d * q + r0} sweets and I put them in boxes of ${d}: I fill as many boxes as I can.`),
       L(`Lleno ${q - 1} cajas y sobran ${r0 + d} caramelos, porque ${d} · ${q - 1} + ${r0 + d} = ${d * q + r0}.`, `I fill ${q - 1} boxes and ${r0 + d} sweets are left, because ${d} · ${q - 1} + ${r0 + d} = ${d * q + r0}.`),
     ],
     corregida: ({ d, q, r0 }) => L(
@@ -258,7 +258,7 @@ export const PLANTILLAS = [
     error: { linea: 2, nombre: 'sumaAntes' },
     numeros: rng => { const [b, c] = par(rng, 2, 9); return { a: rng.entero(2, 5), b, c, d: rng.entero(2, 9) }; },
     lineas: ({ a, b, c, d }) => cad([`${a}^2 + ${b} + ${c} · ${d}`, `${a * a} + ${b} + ${c} · ${d}`, `${a * a + b + c} · ${d}`, `${(a * a + b + c) * d}`]),
-    corregida: ({ a, b, c, d }) => ig(`${a}^2 + ${b} + ${c} · ${d} = ${a * a} + ${b} + ${c * d} = ${a * a + b + c * d}`),
+    corregida: ({ a, b, c, d }) => ig(`${a}^2 + ${b} + ${c} · ${d} = ${a * a} + ${b} + ${c * d} = ${a * a + b} + ${c * d} = ${a * a + b + c * d}`),
   },
   {
     id: 'e-potencia-numero',
@@ -277,8 +277,8 @@ export const PLANTILLAS = [
       L(`Dejo las centenas como están: ${Math.floor(n / 100) * 100}.`, `I keep the hundreds as they are: ${Math.floor(n / 100) * 100}.`),
     ],
     corregida: ({ n }) => L(
-      `Con 5 o más se sube una unidad la cifra de las centenas: ${n} ≈ ${aCentenas(n)}.`,
-      `With 5 or more, the hundreds digit goes up by one: ${n} ≈ ${aCentenas(n)}.`),
+      `Con 5 o más se redondea hacia arriba, a la centena siguiente: ${n} ≈ ${aCentenas(n)}.`,
+      `With 5 or more you round up, to the next hundred: ${n} ≈ ${aCentenas(n)}.`),
   },
   {
     id: 'e-redondeo-decenas',
@@ -290,8 +290,8 @@ export const PLANTILLAS = [
       L(`Dejo las decenas como están: ${Math.floor(n / 10) * 10}.`, `I keep the tens as they are: ${Math.floor(n / 10) * 10}.`),
     ],
     corregida: ({ n }) => L(
-      `Con 5 o más se sube una unidad la cifra de las decenas: ${n} ≈ ${aDecenas(n)}.`,
-      `With 5 or more, the tens digit goes up by one: ${n} ≈ ${aDecenas(n)}.`),
+      `Con 5 o más se redondea hacia arriba, a la decena siguiente: ${n} ≈ ${aDecenas(n)}.`,
+      `With 5 or more you round up, to the next ten: ${n} ≈ ${aDecenas(n)}.`),
   },
   {
     id: 'e-olvida-parentesis-suma',
@@ -458,7 +458,7 @@ export const PLANTILLAS = [
           ? (sube ? L(`La cifra de las decenas es ${dig}, que es 5 o más.`, `The tens digit is ${dig}, which is 5 or more.`) : L(`La cifra de las decenas es ${dig}, que es menos de 5.`, `The tens digit is ${dig}, which is less than 5.`))
           : (sube ? L(`La cifra de las unidades es ${dig}, que es 5 o más.`, `The units digit is ${dig}, which is 5 or more.`) : L(`La cifra de las unidades es ${dig}, que es menos de 5.`, `The units digit is ${dig}, which is less than 5.`)),
         sube
-          ? L(`Subo una unidad la cifra de ${centenas ? 'las centenas' : 'las decenas'}: ${r}.`, `I add one to the ${centenas ? 'hundreds' : 'tens'} digit: ${r}.`)
+          ? L(`Redondeo hacia arriba, a ${centenas ? 'la centena' : 'la decena'} siguiente: ${r}.`, `I round up, to the next ${centenas ? 'hundred' : 'ten'}: ${r}.`)
           : L(`Dejo ${centenas ? 'las centenas' : 'las decenas'} como están: ${r}.`, `I keep the ${centenas ? 'hundreds' : 'tens'} as they are: ${r}.`),
       ];
     },
