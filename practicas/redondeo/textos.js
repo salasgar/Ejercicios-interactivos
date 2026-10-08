@@ -21,7 +21,7 @@ export const CIFRA_ORDEN = {
 };
 
 const REGLA_ES = '<p>Para redondear, mira la cifra de la derecha del orden: si es <strong>5 o más</strong>, subes a la marca de arriba; si es <strong>menos de 5</strong>, te quedas en la de abajo. Si el número está justo en medio (4 750 entre 4 700 y 4 800), se sube.</p>';
-const REGLA_EN = '<p>To round, look at the digit just to the right of the order: if it is <strong>5 or more</strong>, go up to the upper mark; if it is <strong>less than 5</strong>, stay on the lower mark. If the number is exactly in the middle (4,750 between 4,700 and 4,800), you go up.</p>';
+const REGLA_EN = '<p>To round, look at the digit just to the right of the place you round to: if it is <strong>5 or more</strong>, go up to the upper mark; if it is <strong>less than 5</strong>, stay on the lower mark. If the number is exactly in the middle (4,750 between 4,700 and 4,800), you go up.</p>';
 
 export const TX = {
   recta: {
@@ -34,6 +34,7 @@ export const TX = {
     pregunta: { es: (n, orden) => `Redondea ${n} ${A_ORDEN[orden].es}.`, en: (n, orden) => `Round ${n} ${A_ORDEN[orden].en}.` },
     paso1: { es: '1. Toca la recta donde está el número', en: '1. Tap the line where the number is' },
     paso2: { es: '2. Toca la marca más cercana', en: '2. Tap the nearest mark' },
+    paso2_medio: { es: '2. Está justo en medio: ¿a qué marca se redondea?', en: '2. It is exactly in the middle: which mark do you round to?' },
     falta_posicion: { es: 'Primero toca la recta donde está el número.', en: 'First tap the line where the number is.' },
     entre: { es: (n, a, b) => `${n} está entre ${a} y ${b}`, en: (n, a, b) => `${n} is between ${a} and ${b}` },
     baja: {
@@ -54,7 +55,7 @@ export const TX = {
     },
   },
   tres: {
-    nombre: { es: 'A tres órdenes', en: 'To three orders' },
+    nombre: { es: 'A tres órdenes', en: 'Ten, hundred and thousand' },
     detalle: { es: 'Decena, centena y millar, y si es por exceso o por defecto', en: 'Ten, hundred and thousand, and rounded up or down' },
     introduccion: {
       es: `<h2>Cómo se hace</h2><p>Redondea el mismo número a la decena, a la centena y al millar. Después di, en cada caso, si el redondeo es <strong>por exceso</strong> (mayor que el número) o <strong>por defecto</strong> (menor).</p>${REGLA_ES}`,
@@ -85,7 +86,7 @@ export const TX = {
     // estimar
     instr_elige: {
       es: 'Estima el resultado. Elige a qué orden redondeas cada número y escribe tu estimación.',
-      en: 'Estimate the result. Choose which order you round each number to, and write your estimate.',
+      en: 'Estimate the result. Choose if you round each number to the nearest ten, hundred or thousand, and write your estimate.',
     },
     instr_fijo: {
       es: 'Estima el resultado: redondea cada número a la decena y escribe tu estimación.',
@@ -94,7 +95,7 @@ export const TX = {
     orden_btn: { es: o => `Redondeo ${A_ORDEN[o].es}`, en: o => `Round ${A_ORDEN[o].en}` },
     est_label: { es: 'Mi estimación', en: 'My estimate' },
     dif_label: { es: 'Diferencia entre el resultado exacto y mi estimación', en: 'Difference between the exact result and my estimate' },
-    falta: { es: 'Elige el orden y rellena los dos números.', en: 'Choose the order and fill in both numbers.' },
+    falta: { es: 'Elige el orden y rellena los dos números.', en: 'Choose how to round and fill in both numbers (whole numbers only).' },
     estimar_fb: {
       es: (o, cuenta, exacto, dif) => `Redondeando ${A_ORDEN[o].es}: <span class="cuenta">${cuenta}</span>. El resultado exacto es ${exacto}; la diferencia es <span class="cuenta">${dif}</span>.`,
       en: (o, cuenta, exacto, dif) => `Rounding ${A_ORDEN[o].en}: <span class="cuenta">${cuenta}</span>. The exact result is ${exacto}; the difference is <span class="cuenta">${dif}</span>.`,
