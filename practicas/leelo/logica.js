@@ -189,7 +189,7 @@ const PLANTILLAS = [
     id: 'goes_into',
     generar(rng) {
       const b = rng.entero(2, 12), k = rng.entero(2, 9), a = b * k;
-      return { frase: `${b} ___ ${a} ${numeroAIngles(k)} times`, correcta: 'goes into', falsas: ['goes between', 'divides for'], datos: { a, b } };
+      return { frase: `${b} ___ ${a} ${k === 2 ? 'twice' : `${numeroAIngles(k)} times`}`, correcta: 'goes into', falsas: ['goes between', 'divides for'], datos: { a, b } };
     },
   },
   {
@@ -214,7 +214,7 @@ const PLANTILLAS = [
     id: 'divisor_pair',
     generar(rng) {
       const x = rng.entero(2, 9), y = rng.entero(2, 9), a = x * y;
-      return { frase: `${x} × ${y} is a ___ pair of ${a}`, correcta: 'divisor', falsas: ['remainder', 'quotient'], datos: { x, y, a } };
+      return { frase: `${x} · ${y} is a ___ pair of ${a}`, correcta: 'divisor', falsas: ['remainder', 'quotient'], datos: { x, y, a } };
     },
   },
   {
