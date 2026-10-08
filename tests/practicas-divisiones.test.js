@@ -76,6 +76,15 @@ test('escalera: cuotas de variedad (al menos 28 % con factor 11 o 13, 13 % con u
   assert.ok(conRepetido >= 0.13, `conRepetido = ${conRepetido}`);
 });
 
+test('escalera: nunca un primo solo; la cuota de 11 o 13 es la de la ficha (~30 %), no el 76 %', () => {
+  const items = generarN(generarEscalera, 3000, 7);
+  const esPrimo = n => factorizarIndep(n).length === 1 && factorizarIndep(n)[0][1] === 1;
+  for (const it of items) assert.ok(!esPrimo(it.n), `n = ${it.n} es primo`);
+  assert.ok(items.every(it => it.pasos.length >= 2));
+  const con11o13 = items.filter(it => it.n % 11 === 0 || it.n % 13 === 0).length / items.length;
+  assert.ok(con11o13 >= 0.27 && con11o13 <= 0.36, `con11o13 = ${con11o13}`);
+});
+
 test('evaluarEleccion: no divide, divide pero no es el menor, y correcto', () => {
   assert.deepEqual(evaluarEleccion(72, 5), { resultado: 'no_divide', correcto: 2 });
   assert.deepEqual(evaluarEleccion(72, 3), { resultado: 'no_menor', correcto: 2 });
@@ -89,7 +98,9 @@ test('razonNoDivide y razonNoMenor: no lanzan, y mencionan los números, en los 
   for (const idioma of ['es', 'en']) {
     assert.ok(razonNoDivide(350, 3, idioma).includes('350'));
     assert.ok(razonNoDivide(143, 7, idioma).includes('143'));
-    assert.ok(razonNoMenor(3, 2, idioma).includes('2'));
+    const r = razonNoMenor(12, 3, 2, idioma);
+    assert.ok(r.includes('12') && r.includes('3') && r.includes('2'), r);
+    assert.match(r, /^[A-Z]/);
   }
 });
 
@@ -192,4 +203,11 @@ test('explicarEj3: no lanza, y menciona el valor correcto, en los dos idiomas', 
     assert.equal(typeof html, 'string');
     assert.ok(html.includes(String(item.solucion)));
   }
+});
+
+test('explicarEj3: con exponente 1 no escribe «3 = 3»', () => {
+  const html = explicarEj3([[2, 3], [3, 1]], 'es');
+  assert.ok(html.includes('2<sup>3</sup> = 8'));
+  assert.ok(!html.includes('3 = 3'), html);
+  assert.ok(html.includes('8 · 3 = 24'));
 });

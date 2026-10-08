@@ -21,14 +21,22 @@ const CON_CRITERIO = [2, 3, 5];
 
 // --- Ejercicio 1: la escalera de divisiones --------------------------------------
 
-/** Construye un n a partir de una lista de factores iniciales, añadiendo más al azar sin pasar de `maxN`. */
-function construirDesde(rng, factoresIniciales, maxN) {
+// Los primos que se añaden "de relleno": sin 11 ni 13, para que la cuota de la
+// ficha (30 % con 11 o 13) la ponga solo `nCon11o13`.
+const PRIMOS_PEQUENOS = [2, 3, 5, 7];
+
+/**
+ * Construye un n a partir de una lista de factores iniciales, añadiendo más al
+ * azar sin pasar de `maxN`. Siempre acaba con al menos dos factores (un primo
+ * solo sería una escalera de un único paso).
+ */
+function construirDesde(rng, factoresIniciales, maxN, pool = PRIMOS_PEQUENOS) {
   const factores = [...factoresIniciales];
   let n = factores.reduce((a, b) => a * b, 1);
   while (true) {
-    const candidatos = PRIMOS_ESCALERA.filter(p => n * p <= maxN);
+    const candidatos = pool.filter(p => n * p <= maxN);
     if (!candidatos.length) break;
-    if (factores.length > 0 && rng.azar() < 0.5) break;
+    if (factores.length >= 2 && rng.azar() < 0.5) break;
     const p = rng.elegir(candidatos);
     factores.push(p);
     n *= p;
@@ -37,12 +45,12 @@ function construirDesde(rng, factoresIniciales, maxN) {
 }
 
 function nAlAzar(rng, maxN) {
-  return construirDesde(rng, [rng.elegir(PRIMOS_ESCALERA)], maxN);
+  return construirDesde(rng, [rng.elegir(PRIMOS_PEQUENOS)], maxN);
 }
 
 /** Un múltiplo de 11 o de 13, construido multiplicando (no por azar puro). */
 function nCon11o13(rng, maxN) {
-  return construirDesde(rng, [rng.elegir([11, 13])], maxN);
+  return construirDesde(rng, [rng.elegir([11, 13])], maxN, PRIMOS_ESCALERA);
 }
 
 /** Un número con un factor (2 o 3) repetido tres veces o más. */
@@ -92,10 +100,10 @@ export function razonNoDivide(numero, primo, idioma) {
 }
 
 /** El primo elegido divide, pero no es el menor: se dice cuál era. */
-export function razonNoMenor(primoElegido, primoCorrecto, idioma) {
+export function razonNoMenor(numero, primoElegido, primoCorrecto, idioma) {
   return idioma === 'es'
-    ? `sí divide, pero ${primoCorrecto} también y es más pequeño; empezamos siempre por el menor`
-    : `it does divide, but ${primoCorrecto} also does and it is smaller; we always start with the smallest`;
+    ? `Sí, ${primoElegido} divide a ${numero}, pero ${primoCorrecto} también y es más pequeño; empezamos siempre por el menor.`
+    : `Yes, ${primoElegido} divides ${numero}, but ${primoCorrecto} also does and it is smaller; we always start with the smallest.`;
 }
 
 /** Qué pasa si el alumno elige `primo` cuando el número actual es `m`. */
@@ -241,7 +249,8 @@ export function generarEjercicio3(rng) {
 
 /** La explicación paso a paso: cada potencia calculada de verdad y el producto final. */
 export function explicarEj3(factorizacion, idioma) {
-  const pasos = factorizacion.map(([p, e]) => `${p}${e === 1 ? '' : `<sup>${e}</sup>`} = ${p ** e}`);
+  // Solo las potencias de verdad: con exponente 1 «3 = 3» no explica nada.
+  const pasos = factorizacion.filter(([, e]) => e > 1).map(([p, e]) => `${p}<sup>${e}</sup> = ${p ** e}`);
   const correcto = valorDe(factorizacion);
   const productoTexto = factorizacion.map(([p, e]) => p ** e).join(' · ');
   const frase = idioma === 'es'
