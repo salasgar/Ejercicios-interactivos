@@ -96,8 +96,13 @@ function montarAnd(contenedor, item, api) {
     ev.target.hidden = true;
     item.solucion.forEach((j, i) => boton(i, j).classList.add('pareja__boton--correcta'));
     if (!acierto) boton(0, asignado[0]).classList.add('pareja__boton--mal'), boton(1, asignado[1]).classList.add('pareja__boton--mal');
-    const lineas = item.nombres.map((nombre, i) => `<span class="cuenta">${nombre} = ${agrupar(item.numeros[item.solucion[i]])}</span>`);
-    api.responder({ acierto, html: lineas.join('<br>'), espera: 2800 });
+    // El nombre en su línea (se puede partir) y el número debajo; y por qué: dónde va el «and»
+    const lineas = item.nombres.map((nombre, i) => {
+      const n = item.numeros[item.solucion[i]], g = gruposDe(n);
+      const razon = tt(/ thousand and /.test(nombre) ? TX.and.por_que.despues : TX.and.por_que.dentro)(g.miles, g.unidades);
+      return `${nombre}<br><span class="cuenta">= ${agrupar(n)}</span><br>${razon}`;
+    });
+    api.responder({ acierto, html: lineas.join('<br><br>'), espera: 4200 });
   });
 }
 
@@ -135,7 +140,7 @@ function montarCifras(contenedor, item, api) {
     ev.target.hidden = true;
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
     const g = gruposDe(item.n);
-    const buena = `<span class="cuenta">${item.texto} = ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
+    const buena = `${item.texto}<br><span class="cuenta">= ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
     api.responder({
       acierto,
       html: acierto ? buena : `${tt(TX.and.tu_respuesta)(agrupar(Number(escrito)))} ${buena}<br>${tt(item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es)}`,
@@ -188,7 +193,7 @@ function montarBillion(contenedor, item, api) {
       const acierto = String(valor) === String(correcta);
       let html;
       if (item.clase === 'mismo') {
-        html = `<span class="cuenta">${item.a.texto} = ${agrupar(item.a.valor)}</span><br><span class="cuenta">${item.b.texto} = ${agrupar(item.b.valor)}</span><br>${tt(item.verdad ? TX.billion.es_igual : TX.billion.es_distinto)}.`;
+        html = `${item.a.texto}<br><span class="cuenta">= ${agrupar(item.a.valor)}</span><br>${item.b.texto}<br><span class="cuenta">= ${agrupar(item.b.valor)}</span><br>${tt(item.verdad ? TX.billion.es_igual : TX.billion.es_distinto)}.`;
         if (item.verdad) html += ` ${tt(TX.billion.nota_billion)}`;
         else if ([item.a, item.b].some(x => /trillion/.test(x.texto))) html += ` ${tt(TX.billion.nota_trillion)}`;
       } else {

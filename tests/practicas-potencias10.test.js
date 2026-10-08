@@ -293,3 +293,18 @@ test('formasDe: todas las formas de c · 10ᵉ valen lo mismo', () => {
   }
   assert.equal(ceros(1e9), 9);
 });
+
+test('reabierta 28: el «and» detrás de thousand deja las unidades sueltas y el de dentro está en los miles', async () => {
+  const { TX } = await import('../practicas/potencias10/textos.js');
+  const rng = crearRng(7);
+  for (let i = 0; i < 500; i++) {
+    const it = generarAnd(rng);
+    it.nombres.forEach((nombre, k) => {
+      const n = it.numeros[it.solucion[k]];
+      const g = gruposDe(n);
+      const despues = / thousand and /.test(nombre);
+      assert.equal(despues, n % 1000 !== 0, `${nombre} = ${n}`);        // «… thousand and 20» tiene unidades
+      assert.ok(TX.and.por_que[despues ? 'despues' : 'dentro'].es(g.miles, g.unidades).includes(g.unidades));
+    });
+  }
+});
