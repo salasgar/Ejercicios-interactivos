@@ -16,7 +16,7 @@ export const TX = {
   },
   detalle: {
     puede: { es: 'Rechaza de golpe un m.c.d. o un m.c.m. imposible', en: 'Spot an impossible GCD or LCM straight away' },
-    producto: { es: 'g · m tiene que ser igual a a · b', en: 'g · m has to equal a · b' },
+    producto: { es: 'm.c.d. · m.c.m. tiene que ser igual al producto de los dos números', en: 'GCD · LCM has to equal the product of the two numbers' },
     nombrar: { es: 'Es el m.c.d. o el m.c.m. de los datos: ¿cuál?', en: 'It is the GCD or the LCM of the data: which one?' },
   },
   etiquetaExpr: {
@@ -27,27 +27,41 @@ export const TX = {
   contextos: {
     mcd: [
       {
-        es: (a, b, n) => `Tienes ${a} lápices y ${b} gomas y quieres hacer grupos iguales, cada uno con el mismo número de lápices y de gomas, sin que sobre nada. ¿Pueden salir ${n} grupos?`,
-        en: (a, b, n) => `You have ${a} pencils and ${b} erasers and want to make identical groups, each with the same number of pencils and erasers, with nothing left over. Can there be ${n} groups?`,
+        es: (a, b, n) => `Tienes ${a} lápices y ${b} gomas y quieres hacer el mayor número posible de grupos iguales, todos con el mismo número de lápices y todos con el mismo número de gomas, sin que sobre nada. ¿Pueden salir ${n} ${n === 1 ? 'grupo' : 'grupos'}?`,
+        en: (a, b, n) => `You have ${a} pencils and ${b} erasers and want to make the largest possible number of identical groups, all with the same number of pencils and all with the same number of erasers, with nothing left over. Can there be ${n} ${n === 1 ? 'group' : 'groups'}?`,
       },
       {
-        es: (a, b, n) => `${a} canicas y ${b} cuentas se reparten en bolsas iguales sin que sobre ninguna. ¿Pueden salir ${n} bolsas?`,
-        en: (a, b, n) => `${a} marbles and ${b} beads are shared into identical bags with none left over. Can there be ${n} bags?`,
+        es: (a, b, n) => `${a} canicas y ${b} cuentas se reparten en el mayor número posible de bolsas iguales, sin que sobre ninguna. ¿Pueden salir ${n} ${n === 1 ? 'bolsa' : 'bolsas'}?`,
+        en: (a, b, n) => `${a} marbles and ${b} beads are shared into the largest possible number of identical bags with none left over. Can there be ${n} ${n === 1 ? 'bag' : 'bags'}?`,
       },
     ],
     mcm: [
       {
-        es: (a, b, n) => `Un autobús pasa cada ${a} minutos y otro cada ${b} minutos. Si ahora acaban de pasar juntos, ¿pueden volver a coincidir dentro de ${n} minutos?`,
-        en: (a, b, n) => `One bus goes by every ${a} minutes and another every ${b} minutes. If they have just gone by together now, can they coincide again in ${n} minutes?`,
+        es: (a, b, n) => `Un autobús pasa cada ${a} minutos y otro cada ${b} minutos. Si ahora acaban de pasar juntos, ¿pueden volver a coincidir por primera vez dentro de ${n} ${n === 1 ? 'minuto' : 'minutos'}?`,
+        en: (a, b, n) => `One bus goes by every ${a} minutes and another every ${b} minutes. If they have just gone by together now, can they coincide again for the first time in ${n} ${n === 1 ? 'minute' : 'minutes'}?`,
       },
       {
-        es: (a, b, n) => `Una luz parpadea cada ${a} segundos y otra cada ${b} segundos. Si ahora parpadean juntas, ¿pueden volver a parpadear juntas dentro de ${n} segundos?`,
-        en: (a, b, n) => `One light blinks every ${a} seconds and another every ${b} seconds. If they blink together now, can they blink together again in ${n} seconds?`,
+        es: (a, b, n) => `Una luz parpadea cada ${a} segundos y otra cada ${b} segundos. Si ahora parpadean juntas, ¿pueden volver a parpadear juntas por primera vez dentro de ${n} ${n === 1 ? 'segundo' : 'segundos'}?`,
+        en: (a, b, n) => `One light blinks every ${a} seconds and another every ${b} seconds. If they blink together now, can they blink together again for the first time in ${n} ${n === 1 ? 'second' : 'seconds'}?`,
       },
     ],
   },
   feedbackPuede: {
-    correcto: { es: n => `Sí: ${n} puede ser el resultado.`, en: n => `Yes: ${n} can be the result.` },
+    // Los enunciados con contexto no nombran el m.c.d. ni el m.c.m.: se dice primero cuál es.
+    contexto: {
+      mcd: { es: (a, b) => `Aquí se busca el m.c.d.(${a}, ${b}), que es el mayor número de grupos.`, en: (a, b) => `Here we look for the GCD(${a}, ${b}), which is the largest number of groups.` },
+      mcm: { es: (a, b) => `Aquí se busca el m.c.m.(${a}, ${b}), que es la primera vez que coinciden.`, en: (a, b) => `Here we look for the LCM(${a}, ${b}), which is the first time they coincide.` },
+    },
+    correcto: {
+      mcd: {
+        es: (n, a, b) => `Sí: ${n} divide a ${a} y a ${b}, y no pasa del menor (${Math.min(a, b)}).`,
+        en: (n, a, b) => `Yes: ${n} divides ${a} and ${b}, and it is not bigger than the smaller one (${Math.min(a, b)}).`,
+      },
+      mcm: {
+        es: (n, a, b) => `Sí: ${n} es múltiplo de ${a} y de ${b}, y no es menor que el mayor (${Math.max(a, b)}).`,
+        en: (n, a, b) => `Yes: ${n} is a multiple of ${a} and ${b}, and it is not smaller than the bigger one (${Math.max(a, b)}).`,
+      },
+    },
     cero: {
       es: 'No: 0 no puede ser, porque el 1 siempre es divisor común, así que el m.c.d. nunca vale 0.',
       en: 'No: it cannot be 0, because 1 is always a common divisor, so the GCD is never 0.',
@@ -147,31 +161,31 @@ export const BANCO_NOMBRAR = [
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `Tienes ${a} lápices y ${b} gomas y haces bolsas iguales, lo más grandes posible, sin que sobre nada: cada bolsa lleva ${r} de cada cosa. El ${r} es…`,
-    en: (a, b, r) => `You have ${a} pencils and ${b} erasers and make identical bags, as large as possible, with nothing left over: each bag holds ${r} of each. The ${r} is…`,
+    es: (a, b, r) => `Tienes ${a} lápices y ${b} gomas y haces el mayor número posible de bolsas iguales, sin que sobre nada: salen ${r} bolsas. El ${r} es…`,
+    en: (a, b, r) => `You have ${a} pencils and ${b} erasers and make the largest possible number of identical bags, with nothing left over: you get ${r} bags. The ${r} is…`,
   },
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `Un panel de ${a} cm de ancho y otro de ${b} cm se cubren con baldosas cuadradas iguales, lo más grandes posible, sin recortar ninguna. El lado de la baldosa mide ${r} cm. El ${r} es…`,
-    en: (a, b, r) => `A panel ${a} cm wide and another ${b} cm wide are covered with identical square tiles, as large as possible, with none cut. The tile side is ${r} cm. The ${r} is…`,
+    es: (a, b, r) => `Dos paneles, uno de ${a} cm de ancho y otro de ${b} cm de ancho, se cubren de lado a lado con la misma baldosa cuadrada en los dos, lo más grande posible, sin recortar ninguna. El lado de la baldosa mide ${r} cm. El ${r} es…`,
+    en: (a, b, r) => `Two panels, one ${a} cm wide and the other ${b} cm wide, are covered from side to side with the same square tile in both, as large as possible, with none cut. The tile side is ${r} cm. The ${r} is…`,
   },
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `${a} manzanas y ${b} naranjas se reparten en cestas iguales, lo más grandes posible, sin que sobre nada: cada cesta lleva ${r} piezas de cada fruta. El ${r} es…`,
-    en: (a, b, r) => `${a} apples and ${b} oranges are shared into identical baskets, as large as possible, with nothing left over: each basket holds ${r} pieces of each fruit. The ${r} is…`,
+    es: (a, b, r) => `${a} manzanas y ${b} naranjas se reparten en el mayor número posible de cestas iguales, sin que sobre nada: salen ${r} cestas. El ${r} es…`,
+    en: (a, b, r) => `${a} apples and ${b} oranges are shared into the largest possible number of identical baskets, with nothing left over: you get ${r} baskets. The ${r} is…`,
   },
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `${a} bombones y ${b} caramelos se reparten en cajas iguales, lo más grandes posible, sin que sobre nada: cada caja lleva ${r} de cada cosa. El ${r} es…`,
-    en: (a, b, r) => `${a} chocolates and ${b} sweets are shared into identical boxes, as large as possible, with nothing left over: each box holds ${r} of each. The ${r} is…`,
+    es: (a, b, r) => `${a} bombones y ${b} caramelos se reparten en el mayor número posible de cajas iguales, sin que sobre nada: salen ${r} cajas. El ${r} es…`,
+    en: (a, b, r) => `${a} chocolates and ${b} sweets are shared into the largest possible number of identical boxes, with nothing left over: you get ${r} boxes. The ${r} is…`,
   },
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `${a} canicas y ${b} cuentas se reparten en pulseras iguales, lo más grandes posible, sin que sobre nada: cada pulsera lleva ${r} de cada cosa. El ${r} es…`,
-    en: (a, b, r) => `${a} marbles and ${b} beads are shared into identical bracelets, as large as possible, with nothing left over: each bracelet holds ${r} of each. The ${r} is…`,
+    es: (a, b, r) => `${a} canicas y ${b} cuentas se reparten en el mayor número posible de pulseras iguales, sin que sobre nada: salen ${r} pulseras. El ${r} es…`,
+    en: (a, b, r) => `${a} marbles and ${b} beads are shared into the largest possible number of identical bracelets, with nothing left over: you get ${r} bracelets. The ${r} is…`,
   },
 ];

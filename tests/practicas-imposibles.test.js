@@ -152,3 +152,56 @@ test('ejercicio 3: la clase correcta (m.c.d./m.c.m.) sale entre el 30 % y el 70 
   const p = mcdCount / 2000;
   assert.ok(p >= 0.3 && p <= 0.7, `proporción m.c.d.: ${p}`);
 });
+
+// ─── Reapertura de la tarea 10 ──────────────────────────────────────────────
+
+import { TX } from '../practicas/imposibles/textos.js';
+
+test('ejercicio 1: con contexto nunca se propone 0, y con 1 el sustantivo va en singular', () => {
+  const rng = crearRng(1212);
+  let unos = 0;
+  for (let i = 0; i < 6000; i++) {
+    const item = generarPuede(rng);
+    if (item.contexto === null) continue;
+    assert.notEqual(item.propuesto, 0, JSON.stringify(item));
+    const p = TX.contextos[item.cantidad][item.contexto];
+    for (const texto of [p.es(item.a, item.b, item.propuesto), p.en(item.a, item.b, item.propuesto)]) {
+      assert.ok(!/\b1 (grupos|bolsas|minutos|segundos|groups|bags|minutes|seconds)\b/.test(texto), texto);
+      assert.ok(!/de cada cosa|of each\b/.test(texto), texto);
+    }
+    if (item.propuesto === 1) unos++;
+  }
+  assert.ok(unos > 0, 'el caso 1 tiene que salir alguna vez para que el test valga');
+});
+
+test('ejercicio 1: el enunciado de m.c.d. dice «todos con el mismo número de…», y el feedback nombra la cantidad', () => {
+  const p = TX.contextos.mcd[0];
+  assert.ok(p.es(24, 36, 12).includes('todos con el mismo número de lápices y todos con el mismo número de gomas'));
+  assert.ok(p.en(24, 36, 12).includes('all with the same number of pencils and all with the same number of erasers'));
+  assert.ok(TX.feedbackPuede.contexto.mcd.es(24, 36).includes('m.c.d.(24, 36)'));
+  assert.ok(TX.feedbackPuede.correcto.mcd.es(12, 24, 36).includes('12 divide a 24 y a 36'));
+  assert.ok(TX.feedbackPuede.correcto.mcm.es(72, 24, 36).includes('múltiplo de 24 y de 36'));
+});
+
+test('ejercicio 3: en los mini-problemas de m.c.d. con bolsas/cestas/cajas/pulseras, r es el NÚMERO de piezas, con «el mayor número posible»', () => {
+  const rng = crearRng(1313);
+  const nombres = /bolsas|cestas|cajas|pulseras/;
+  let revisadas = 0;
+  for (const p of BANCO_NOMBRAR) {
+    const [a, b] = p.numeros(rng);
+    const r = valorExpr(p.clase, a, b);
+    const es = p.es(a, b, r), en = p.en(a, b, r);
+    assert.ok(!/de cada cosa|of each\b|piezas de cada/.test(es + en), es);
+    if (p.clase === 'mcd' && nombres.test(es)) {
+      revisadas++;
+      assert.ok(es.includes('el mayor número posible de'), es);
+      assert.ok(en.includes('the largest possible number of'), en);
+      assert.ok(es.includes(`salen ${r} `) && en.includes(`you get ${r} `), es);
+      // Por fuerza bruta: el mayor número de bolsas iguales sin sobras es r.
+      let mejor = 0;
+      for (let n = 1; n <= Math.min(a, b); n++) if (a % n === 0 && b % n === 0) mejor = n;
+      assert.equal(mejor, r);
+    }
+  }
+  assert.equal(revisadas, 4);
+});
