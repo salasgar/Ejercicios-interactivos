@@ -128,6 +128,9 @@ Propios de esta tarea:
 - Potencias grandes: con base ≤ 6 y exponente ≤ 4 el valor es ≤ 1296; no pases de ahí.
 - En el ejercicio 1, «tocar un paréntesis» en el móvil: haz tocable toda la caja del grupo,
   no solo el carácter «(».
+- Al relevar a una sesión caída, revisa también la aritmética del feedback, no solo que pasen
+  los tests: aquí el «valor erróneo» de a · (b + c)^e elevaba mal (a · b · c^e en vez de
+  a · (b + c^e)) y ningún test lo comprobaba. El test nuevo evalúa cada paso de las cuentas.
 
 ## Prohibido (propio de esta tarea)
 
