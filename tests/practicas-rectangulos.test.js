@@ -144,3 +144,14 @@ test('parte3: mezcla los dos subtipos, y ninguna opción correcta domina más de
   assert.ok(cuenta.cuadrado > N * 0.35 && cuenta.cuadrado < N * 0.65);
   for (const total of correctasPorValor.values()) assert.ok(total < N * 0.7);
 });
+
+// --- Reabierta de la tarea 03: textos --------------------------------------------
+
+test('textos: «falta/faltan» concuerdan y el número es el de celdas tachadas (no el resto)', async () => {
+  const { TX } = await import('../practicas/rectangulos/textos.js');
+  assert.match(TX.rect.sobran.es(5, 1, 24), /falta 1 celda /);
+  assert.match(TX.rect.sobran.es(5, 2, 23), /faltan 2 celdas /);
+  assert.match(TX.rect.sobran.en(5, 1, 24), /1 cell is missing/);
+  assert.match(TX.rect.sobran.en(5, 2, 23), /2 cells are missing/);
+  assert.doesNotMatch(JSON.stringify(TX.rect.como.en), /«|»|integer square root/);
+});

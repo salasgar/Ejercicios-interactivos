@@ -135,10 +135,8 @@ function montarBanco(contenedor, item, api) {
       html = tt(TX.banco.acierto)(n);
     } else {
       const frases = [];
-      faltan.forEach(d => {
-        frases.push(tt(TX.banco.falta)(d));
-        if (d === 1 || d === n) frases.push(tt(TX.banco.el_uno_y_el_propio));
-      });
+      faltan.forEach(d => frases.push(tt(TX.banco.falta)(d)));
+      if (faltan.some(d => d === 1 || d === n)) frases.push(tt(TX.banco.el_uno_y_el_propio));
       sobran.forEach(x => {
         const cociente = Math.floor(n / x), resto = n % x;
         frases.push(tt(TX.banco.division_resto)(n, x, cociente, resto));
