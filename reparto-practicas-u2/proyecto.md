@@ -65,9 +65,15 @@ atendidas y corren en este Mac. **No puede haber dos.**
 Renombrar ficheros aquí: **sí** (comprobado con `mv` el 2026-10-07; `rm` también
 funciona, pero no se usa: lo que sobra va a `_papelera/`).
 
-Sesiones en **un solo dispositivo**. Carpeta **no sincronizada** (Documents del Mac sin
-iCloud Drive para esta carpeta; aunque lo estuviera, con un solo dispositivo da igual). La
-espera del reclamo es `sleep 30`.
+Sesiones en **un solo dispositivo**. Carpeta **sincronizada con iCloud Drive** (corregido el
+2026-10-08: `~/Documents` es la carpeta de iCloud «Escritorio y Documentos»). Con un solo
+dispositivo la espera del reclamo sigue siendo `sleep 30`. **Trampa real, vista la noche del
+7 al 8 de octubre:** con «Optimizar almacenamiento del Mac» activado, iCloud evacuó a la nube
+casi todos los ficheros de `hechos/` y parte de la base, y al caerse la red cualquier lectura
+de esos ficheros se quedaba colgada minutos; las diez sesiones que trabajaban terminaron su
+turno con error y hubo que retomarlas a mano con «Continúa». Remedio: en el Finder, botón
+derecho sobre `Ejercicios-interactivos` → «Mantener descargado». Para saber si un fichero está
+evacuado sin leerlo: `ls -lO` muestra `dataless`.
 
 Dónde corren las operaciones largas: en el propio shell de Claude Code, que sobrevive a
 la llamada. Aquí no hay nada que dure más de un minuto (`npm test` tarda un segundo).
