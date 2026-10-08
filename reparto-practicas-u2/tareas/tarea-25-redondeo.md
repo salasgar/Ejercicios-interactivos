@@ -130,6 +130,10 @@ Propios de esta tarea:
 - «Entre qué dos decenas está 4 732»: 4 730 y 4 740; con el número exactamente en una marca
   (4 730) no hay «entre»: el generador lo evita en el ejercicio 1.
 
+- (Aprendido en la 25) `.comprobar { display:block }` anula el atributo `hidden`: para ocultar el botón tras comprobar, `style.display = 'none'`.
+- (Aprendido en la 25) En «contexto», dos órdenes pueden dar el mismo redondeo (3 996 → 4 000 a centena y a millar): ese valor no puede ser distractor; el pool lleva marcas más lejanas de relleno.
+- (Aprendido en la 25) En «razonable», estimar con factores < 31 se aleja demasiado del exacto (16·17 → 20·20): factores de 31 a 94.
+
 ## Prohibido (propio de esta tarea)
 
 - Decimales: solo naturales.
