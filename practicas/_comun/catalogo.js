@@ -11,7 +11,7 @@
 // `disponible: true` (solo ese campo de su fila).
 
 export const CATALOGO = [
-  { id: 0, slug: 'divisores', ruta: '../divisores/', nombre: { es: 'Divisor, múltiplo, divisible', en: 'Divisor, multiple, divisible' }, nEjercicios: 5, disponible: true },
+  { id: 0, slug: 'divisores', ruta: '../divisores/', nombre: { es: 'Divisor, múltiplo, divisible', en: 'Divisor, multiple, divisible' }, nEjercicios: 6, disponible: true },
   { id: 1, slug: 'semaforo', ruta: 'semaforo/', nombre: { es: 'Semáforo de divisibilidad', en: 'Divisibility traffic light' }, nEjercicios: 4, disponible: true },
   { id: 2, slug: 'rectangulos', ruta: 'rectangulos/', nombre: { es: 'Divisores por parejas', en: 'Divisors in pairs' }, nEjercicios: 3, disponible: true },
   { id: 3, slug: 'recta', ruta: 'recta/', nombre: { es: 'Múltiplos y divisores en la recta', en: 'Multiples and divisors on the number line' }, nEjercicios: 3, disponible: true },

@@ -11,13 +11,15 @@ import { arrancar } from '../practicas/_comun/base.js';
 import { elecciones } from '../practicas/_comun/piezas.js';
 import { unir } from '../practicas/_comun/textos.js';
 import {
-  RELACIONES, generar, esCorrecta, solucionArrastrar,
+  RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, solucionArrastrar, claveDe,
 } from './logica.js';
-import { T as TX, textoOperacion, frase, fraseNegada, razon } from './textos.js';
+import { T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada } from './textos.js';
 
 // No se repite el mismo ítem dos veces seguidas; `numeros` (el ejercicio 4)
 // se excluye a propósito, porque el barajado cambia aunque la operación no.
-const clave = item => JSON.stringify([item.tipo, item.op, item.x, item.y, item.relacion]);
+const clave = claveDe;
+const BICHO_VIVO = new URL('./bicho-vivo.svg', import.meta.url).href;
+const BICHO_MUERTO = new URL('./bicho-muerto.svg', import.meta.url).href;
 
 // ─── Ejercicio 0: patrón ELEGIR («de» / «entre») ───────────────────────────────
 
@@ -185,15 +187,68 @@ function montarArrastrar(contenedor, item, api) {
   pintarFichas();
 }
 
+// ─── Ejercicio 5: ¿QUIÉN MIENTE? (los bichos) ───────────────────────────────────
+//
+// N bichos (sprites de Scratch, el mismo escarabajo con el color girado), cada
+// uno con una frase en su bocadillo. La consigna alterna: «pulsa el que
+// MIENTE» (solo uno miente) o «pulsa el que dice la VERDAD» (solo uno la
+// dice). Al acertar, el mentiroso aparece aplastado y al sincero le salen
+// corazones. Sin cronómetro: lo que cuenta es leer las frases.
+
+function montarBichos(contenedor, item, api) {
+  const { idioma } = api;
+  const tx = TX[idioma];
+  const esMentira = item.modo === 'mentira';
+  contenedor.innerHTML = `
+    <p class="consigna consigna--${item.modo}">${tx.instruccion.bichos[item.modo]}</p>
+    <div class="bichos bichos--${item.frases.length}">
+      ${item.frases.map((f, i) => `
+        <button type="button" class="bicho" data-bicho="${i}" style="--tono: ${item.tonos[i]}deg">
+          <span class="bocadillo">${frase(f.relacion, f.x, f.y, idioma)}</span>
+          <span class="bicho__cuerpo"><img src="${BICHO_VIVO}" alt="" width="84" height="76"></span>
+        </button>`).join('')}
+    </div>`;
+  const botones = [...contenedor.querySelectorAll('.bicho')];
+  botones.forEach(boton => boton.addEventListener('click', () => {
+    if (api.respondido()) return;
+    const i = Number(boton.dataset.bicho);
+    const acierto = esCorrecta(item, i);
+    const pulsada = item.frases[i];
+    const buena = item.frases[item.objetivo];
+    botones.forEach((b, j) => {
+      b.disabled = true;
+      b.querySelector('.bocadillo').classList.add(item.frases[j].verdadera ? 'bocadillo--verdad' : 'bocadillo--mentira');
+    });
+    boton.classList.add(acierto ? 'bicho--bien' : 'bicho--mal');
+    botones[item.objetivo].classList.add('bicho--objetivo');
+    if (acierto && esMentira) {
+      boton.querySelector('img').src = BICHO_MUERTO;
+      boton.classList.add('bicho--aplastado');
+    } else if (acierto) {
+      boton.querySelector('.bicho__cuerpo').insertAdjacentHTML('beforeend', '<span class="corazones" aria-hidden="true"><i>♥</i><i>♥</i><i>♥</i></span>');
+      boton.classList.add('bicho--amor');
+    }
+    if (acierto) {
+      api.responder({ acierto: true, html: `${esMentira ? tx.bichos.aplastado : tx.bichos.acertado} ${fraseRazonada(buena, idioma)}.`, espera: 2200 });
+      return;
+    }
+    api.responder({
+      acierto: false,
+      html: `${pulsada.verdadera ? tx.bichos.este_verdad : tx.bichos.este_mentia} ${fraseRazonada(pulsada, idioma)}.<br>
+        ${tx.bichos.habia_que[item.modo]} ${esMentira ? tx.bichos.el_que_mentia : tx.bichos.el_sincero} ${fraseRazonada(buena, idioma)}.`,
+    });
+  }));
+}
+
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
 arrancar({
   slug: 'divisores',
-  ejercicios: [0, 1, 2, 3, 4].map(n => ({
+  ejercicios: EJERCICIOS_ACTUALES.map(n => ({
     nombre: { es: TX.es.ejercicios[n].nombre, en: TX.en.ejercicios[n].nombre },
     detalle: { es: TX.es.ejercicios[n].detalle, en: TX.en.ejercicios[n].detalle },
-    generar: rng => generar(n, rng),
+    generar: (rng, sesion) => generar(n, rng, sesion),
     clave,
-    montar: n === 0 ? montarPreposicion : n === 4 ? montarArrastrar : montarEleccion,
+    montar: n === 0 ? montarPreposicion : n === 4 ? montarArrastrar : n === 5 ? montarBichos : montarEleccion,
   })),
 });

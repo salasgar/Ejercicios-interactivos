@@ -48,7 +48,11 @@ export function relacionesDe(x, y) {
 
 // --- Generadores ------------------------------------------------------------
 
+// Los cinco de siempre, que son los que caben en el código de resultado antiguo
+// de 12 caracteres (`codigoResultado`): no se tocan. El 5 (los bichos) llegó el
+// 2026-10-08 y solo viaja en el código de 16 de la base común.
 export const EJERCICIOS = [0, 1, 2, 3, 4];
+export const EJERCICIOS_ACTUALES = [0, 1, 2, 3, 4, 5];
 
 // Una operación es { clase, a, b, c }: a · b = c, o bien a : b = c (resto 0).
 // Salen también los casos especiales: un factor 1 y un factor 0.
@@ -117,21 +121,110 @@ function arrastrar(rng) {
   return { tipo: 'arrastrar', op, relacion: rng.elegir(RELACIONES), numeros: rng.barajar([op.a, op.b, op.c]) };
 }
 
-export function generar(ejercicio, rng) {
+// --- Ejercicio 5: ¿quién miente? (los bichos) --------------------------------
+
+/** Tonos (grados de giro del color) con los que se distinguen los bichos de una ronda. */
+export const TONOS = [0, 60, 120, 180, 240, 300];
+
+/** Cuántos bichos salen según los puntos que lleva el alumno: 2, luego 3, luego 4. */
+export function bichosSegun(puntos) {
+  return puntos < 4 ? 2 : puntos < 7 ? 3 : 4;
+}
+
+/**
+ * Una frase «x es <relación> y» con el valor de verdad pedido. Un tercio son
+ * «trampas»: verdades que parecen mentira (1 es divisor de 7, 18 es múltiplo
+ * de 18, 0 es múltiplo de 14) y mentiras que parecen verdad (la relación al
+ * revés: 60 es divisor de 5; 0 es divisor de 8; 7 es divisor de 1). Nunca
+ * «múltiplo de 0» ni «divisible entre 0».
+ */
+export function fraseAzar(rng, verdadera) {
+  const trampa = rng.azar() < 0.34;
+  const relacion = rng.elegir(RELACIONES);
+  const [pequeno, grande] = (() => {
+    const k = rng.entero(2, 12), d = rng.entero(2, 15);
+    return [d, d * k];
+  })();
+  if (verdadera) {
+    if (trampa) {
+      const caso = rng.elegir(['uno', 'mismo', 'cero']);
+      if (caso === 'uno') {
+        const n = rng.entero(2, 60);
+        return relacion === 'divisor' ? { x: 1, relacion, y: n } : { x: n, relacion, y: 1 };
+      }
+      if (caso === 'mismo') { const n = rng.entero(2, 60); return { x: n, relacion, y: n }; }
+      const n = rng.entero(2, 30);
+      return relacion === 'divisor' ? { x: n, relacion, y: 0 } : { x: 0, relacion, y: n };
+    }
+    return relacion === 'divisor' ? { x: pequeno, relacion, y: grande } : { x: grande, relacion, y: pequeno };
+  }
+  if (trampa) {
+    const caso = rng.elegir(['reves', 'reves', 'cero', 'uno']);
+    if (caso === 'reves') return relacion === 'divisor' ? { x: grande, relacion, y: pequeno } : { x: pequeno, relacion, y: grande };
+    if (caso === 'cero') { const n = rng.entero(2, 30); return relacion === 'divisor' ? { x: 0, relacion, y: n } : { x: n, relacion, y: 0 }; }
+    const n = rng.entero(2, 60);
+    return relacion === 'divisor' ? { x: n, relacion, y: 1 } : { x: 1, relacion, y: n };
+  }
+  // Mentira corriente: el pequeño no divide al grande (resto distinto de 0).
+  const d = rng.entero(2, 12);
+  const otro = d * rng.entero(2, 12) + rng.entero(1, d - 1);
+  return relacion === 'divisor' ? { x: d, relacion, y: otro } : { x: otro, relacion, y: d };
+}
+
+/** Garantiza que la frase vale (sin «… de 0» en múltiplo/divisible) y tiene el valor de verdad pedido. */
+function fraseValida(rng, verdadera) {
+  for (let i = 0; i < 50; i++) {
+    const f = fraseAzar(rng, verdadera);
+    if (f.relacion !== 'divisor' && f.y === 0) continue;
+    if (cumple(f.relacion, f.x, f.y) === verdadera) return { ...f, verdadera };
+  }
+  // Nunca debería llegar aquí; por si acaso, una frase segura.
+  return verdadera ? { x: 12, relacion: 'multiplo', y: 4, verdadera: true } : { x: 4, relacion: 'multiplo', y: 12, verdadera: false };
+}
+
+/**
+ * Una ronda: N bichos (según `sesion.puntos`), cada uno con su frase. En el
+ * modo «verdad» exactamente uno dice la verdad; en el modo «mentira»,
+ * exactamente uno miente. `objetivo` es el índice del bicho que hay que pulsar.
+ */
+export function generarBichos(rng, sesion = {}) {
+  const n = bichosSegun(sesion.puntos ?? 0);
+  const modo = rng.azar() < 0.5 ? 'verdad' : 'mentira';
+  const frases = [];
+  const vistas = new Set();
+  const meter = verdadera => {
+    for (let i = 0; i < 20; i++) {
+      const f = fraseValida(rng, verdadera);
+      const clave = `${f.x}|${f.relacion}|${f.y}`;
+      if (!vistas.has(clave)) { vistas.add(clave); frases.push(f); return; }
+    }
+    frases.push(fraseValida(rng, verdadera));
+  };
+  meter(modo === 'verdad');
+  for (let i = 1; i < n; i++) meter(modo !== 'verdad');
+  const orden = rng.barajar(frases.map((_, i) => i));
+  const barajadas = orden.map(i => frases[i]);
+  const objetivo = barajadas.findIndex(f => f.verdadera === (modo === 'verdad'));
+  return { tipo: 'bichos', modo, frases: barajadas, objetivo, tonos: rng.barajar(TONOS).slice(0, n) };
+}
+
+export function generar(ejercicio, rng, sesion) {
   switch (ejercicio) {
     case 0: return preposicion(rng);
     case 1: return eleccion('producto', rng);
     case 2: return eleccion('division', rng);
     case 3: return eleccion(rng.azar() < 0.5 ? 'producto' : 'division', rng);
     case 4: return arrastrar(rng);
+    case 5: return generarBichos(rng, sesion);
     default: throw new Error(`Ejercicio desconocido: ${ejercicio}`);
   }
 }
 
-/** ¿Es correcta la respuesta? En el ejercicio 4 la respuesta es [x, y]. */
+/** ¿Es correcta la respuesta? En el ejercicio 4 la respuesta es [x, y]; en el 5, el índice del bicho. */
 export function esCorrecta(item, respuesta) {
   if (item.tipo === 'eleccion') return item.correctas.includes(respuesta);
   if (item.tipo === 'preposicion') return respuesta === item.correcta;
+  if (item.tipo === 'bichos') return respuesta === item.objetivo;
   return cumple(item.relacion, respuesta[0], respuesta[1]);
 }
 
@@ -148,6 +241,7 @@ export function solucionArrastrar(item) {
 
 /** Identifica un ítem, para no repetir el mismo dos veces seguidas. */
 export function claveDe(item) {
+  if (item.tipo === 'bichos') return JSON.stringify([item.tipo, item.modo, item.frases.map(f => [f.x, f.relacion, f.y])]);
   return JSON.stringify([item.tipo, item.op, item.x, item.y, item.relacion]);
 }
 

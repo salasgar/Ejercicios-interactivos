@@ -37,7 +37,7 @@ const primoBruto = n => n >= 2 && divisoresBrutos(n).length === 2;
 
 test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () => {
   assert.deepEqual(CATALOGO.map(p => [p.id, p.slug, p.nEjercicios]), [
-    [0, 'divisores', 5], [1, 'semaforo', 4], [2, 'rectangulos', 3], [3, 'recta', 3], [4, 'criba', 3], [5, 'arbol', 3],
+    [0, 'divisores', 6], [1, 'semaforo', 4], [2, 'rectangulos', 3], [3, 'recta', 3], [4, 'criba', 3], [5, 'arbol', 3],
     [6, 'divisiones', 3], [7, 'fabrica', 3], [8, 'venn', 4], [9, 'imposibles', 3], [10, 'clasificador', 3], [11, 'reloj', 3],
     [12, 'baldosas', 3], [13, 'errores', 3], [14, 'leelo', 3], [15, 'factorizaciones', 3], [16, 'parentesis', 4],
     [17, 'jerarquia', 4], [18, 'exponente', 3], [19, 'raiz', 3], [20, 'division', 4], [21, 'expresion', 3], [22, 'redondeo', 3],
@@ -164,9 +164,12 @@ test('código de resultado: no vale el de otro alumno, ni uno al azar, ni de una
 test('código de resultado: el de 12 caracteres de divisores/ se lee como práctica 0', () => {
   const ejercicios = divisores.EJERCICIOS.map(n => ({ terminado: n < 3, fallos: n }));
   const viejo = divisores.codigoResultado(17, ejercicios, 36);
+  // El código antiguo solo trae los cinco ejercicios de entonces (el 6, los bichos, llegó después).
   assert.deepEqual(leerCodigoResultado(viejo), { practica: 0, indice: 17, ejercicios, dia: 36 });
-  // Y cuando divisores/ se monte sobre la base dará códigos de 16 con la misma práctica 0.
-  assert.deepEqual(leerCodigoResultado(codigoResultado(0, 17, ejercicios, 36)), { practica: 0, indice: 17, ejercicios, dia: 36 });
+  // Sobre la base, divisores/ da códigos de 16 con la misma práctica 0 y sus 6 ejercicios.
+  const seis = [...ejercicios, { terminado: false, fallos: 0 }];
+  assert.deepEqual(leerCodigoResultado(codigoResultado(0, 17, seis, 36)), { practica: 0, indice: 17, ejercicios: seis, dia: 36 });
+  assert.deepEqual(leerCodigoResultado(codigoResultado(0, 17, ejercicios, 36)).ejercicios, seis, 'con cinco declarados, el sexto sale sin hacer');
   assert.equal(leerCodigoResultado('ABCD-EFGH-JKLM'), null);
 });
 
@@ -570,13 +573,13 @@ test('panel: resumen de alumnos por prácticas', () => {
       { practica: 1, indice: 5, ejercicios: [hecho, hecho, hecho, hecho], dia: 41 },
       { practica: 7, indice: 1, ejercicios: [hecho, hecho, hecho], dia: 41 },   // práctica que no está entre las columnas
     ],
-    [{ practica: 0, indice: 1, ej: [{ pendientes: 15, aciertos: 5, fallos: 0, terminado: false }] }],
+    [{ practica: 0, indice: 1, ej: [{ puntos: 5, objetivo: 10, aciertos: 5, fallos: 0, terminado: false }] }],
     practicas,
   );
   assert.deepEqual(filas.map(f => [f.indice, f.nombre, f.completas, f.practicas.map(p => `${p.hechos}/${p.n}`).join(' ')]), [
-    [0, 'Ana', 1, '0/5 1/4 2/2'],
-    [1, 'Luis', 0, '0/5 0/4 0/2'],
-    [5, '', 1, '0/5 4/4 0/2'],
+    [0, 'Ana', 1, '0/6 1/4 2/2'],
+    [1, 'Luis', 0, '0/6 0/4 0/2'],
+    [5, '', 1, '0/6 4/4 0/2'],
   ]);
   assert.equal(filas[1].practicas[0].empezada, true, 'Luis va a medias en divisores');
   assert.equal(filas[1].practicas[1].empezada, false);
