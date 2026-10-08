@@ -81,7 +81,7 @@ export const TX = {
     },
     puede_pregunta: {
       es: (k, r) => `La raíz entera de un número es ${k} y su resto es ${r}. ¿Puede ser?`,
-      en: (k, r) => `The whole square root of a number is ${k} and its remainder is ${r}. Can it be?`,
+      en: (k, r) => `The whole square root of a number is ${k} and its remainder is ${r}. Is that possible?`,
     },
     puede_si: {
       es: (k, r) => `Sí: <span class="cuenta">${c(k)} + ${r} = ${k * k} + ${r} = ${k * k + r}</span> y ${k * k + r} es menor que <span class="cuenta">${c(k + 1)} = ${(k + 1) * (k + 1)}</span>. El resto más grande posible es 2 · ${k} = ${2 * k}.`,
@@ -108,12 +108,12 @@ export const TX = {
     ],
     sillas: [
       {
-        es: n => `Hay ${n} sillas. Se colocan en un cuadrado: tantas filas como sillas en cada fila, y solo filas completas. ¿Cuántas sillas hay en cada fila? ¿Cuántas sillas sobran?`,
-        en: n => `There are ${n} chairs (sillas). They are put in a square: as many rows (filas) as chairs in each row, and only complete rows. How many chairs are in each row? How many chairs are left over?`,
+        es: n => `Hay ${n} sillas. Se colocan en el cuadrado más grande posible: tantas filas como sillas en cada fila, y solo filas completas. ¿Cuántas sillas hay en cada fila? ¿Cuántas sillas sobran?`,
+        en: n => `There are ${n} chairs (sillas). They are put in the biggest square possible: as many rows (filas) as chairs in each row, and only complete rows. How many chairs are in each row? How many chairs are left over?`,
       },
       {
-        es: n => `Un colegio tiene ${n} sillas para la fiesta. Las coloca en un cuadrado, con el mismo número de filas que de sillas por fila, todas completas. ¿Cuántas filas se forman? ¿Cuántas sillas sobran?`,
-        en: n => `A school has ${n} chairs (sillas) for a party. It puts them in a square, with the same number of rows (filas) as chairs in each row, all complete. How many rows are made? How many chairs are left over?`,
+        es: n => `Un colegio tiene ${n} sillas para la fiesta. Las coloca en el cuadrado más grande posible, con el mismo número de filas que de sillas por fila, todas completas. ¿Cuántas filas se forman? ¿Cuántas sillas sobran?`,
+        en: n => `A school has ${n} chairs (sillas) for a party. It puts them in the biggest square possible, with the same number of rows (filas) as chairs in each row, all complete. How many rows are made? How many chairs are left over?`,
       },
     ],
     fichas: [
@@ -155,7 +155,7 @@ export const TX = {
       en: (n, k, r) => `Left over: <span class="cuenta">${n} − ${k * k} = ${r}</span>.`,
     },
     exacta: {
-      es: (n, k) => `<span class="cuenta">√${n} = ${k}</span>: raíz exacta, no sobra ninguna (<span class="cuenta">${c(k)} = ${n}</span>).`,
+      es: (n, k) => `<span class="cuenta">√${n} = ${k}</span>: raíz exacta, no sobra nada (<span class="cuenta">${c(k)} = ${n}</span>).`,
       en: (n, k) => `<span class="cuenta">√${n} = ${k}</span>: exact root, none left over (<span class="cuenta">${c(k)} = ${n}</span>).`,
     },
     comprobacion: {
