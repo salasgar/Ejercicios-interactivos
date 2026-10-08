@@ -124,9 +124,9 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 07 | Divisiones sucesivas guiadas | tareas/tarea-07-divisiones.md | 01 LISTA | 2 h | MEDIO | 08 | practicas/divisiones/; salidas/07-divisiones/ | LISTA | terminada 17:53Z (8-oct) · commit 3b63f58 (reabierta corregida, s-20261008T175029-316f6500) |
 | 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | LISTA | terminada 18:03Z (8-oct) · commit 07b8a60 (reabierta corregida, s-20261008T175537-2deb69bd) |
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | LISTA | terminada 21:44Z · commit f5748e7 |
-| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | REABIERTA | grave, no publicada · qué corregir: hechos/reabiertas/10--s-20261008T051928-1cba9950.md |
+| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | LISTA | terminada 18:2xZ (8-oct) · commit c7d3f78 (reabierta corregida, s-20261008T181148-b5c3656b) |
 | 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 17:52Z (8-oct) · commit a8e309d (reabierta corregida, s-20261008T174848-5f71fd85) |
-| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | EN CURSO | s-20261008T175226-2fefd40a · caduca 2026-10-08T21:52:26Z |
+| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | LISTA | terminada (8-oct) · commit 3053f48 + df1bdfa (reabierta corregida, s-20261008T175226-2fefd40a) |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 18:25 Z (8-oct) · commit fa3c9265 (reabierta corregida; «×» pendiente de Juan Luis) |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 17:56Z (8-oct) · commit 84d80c5 (reabierta corregida, s-20261008T175029-316f6500) |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 18:01Z (8-oct) · commit a12fb0c (reabierta corregida, s-20261008T175739-b443cac1) |
@@ -222,6 +222,10 @@ LISTA · tarea 16 · 2026-10-08 18:14 · s-20261008T180351-55d4decb · b5a878e �
 LISTA · tarea 08 · 2026-10-08 18:03 · s-20261008T175537-2deb69bd · 07b8a60 · 4 ficheros (practicas/fabrica/{logica.js,practica.js,textos.js}, tests/practicas-fabrica.test.js) · ~15 min · reabierta corregida (4 puntos de 08--s-20261008T051928-1cba9950)
 
 LISTA · tarea 05 · 2026-10-08 17:58 · s-20261008T175224-7b4cac18 · 3817f7e · 4 ficheros (practicas/criba/{logica.js,practica.js,textos.js}, tests/practicas-criba.test.js) · ~10 min · reabierta corregida (5 puntos de 05--s-20261008T051928-1cba9950)
+
+LISTA · tarea 10 · 2026-10-08 · s-20261008T181148-b5c3656b · c7d3f78 · reabierta corregida (4 ficheros + catálogo) · ~15 min
+
+LISTA · tarea 12 · 2026-10-08 · s-20261008T175226-2fefd40a · 3053f48, df1bdfa · reabierta corregida (4 ficheros + test + catálogo) · ~25 min (con un autostash ajeno en medio)
 
 LISTA · tarea 18 · 2026-10-08 06:01 · s-20261008T051928-1cba9950 · f7df3ba · 5 ficheros (README.md, docs/practicas-unidad2.md, practicas/_comun/catalogo.js, practicas/index.html, practicas/portada.js) · 43 min (estimada: 3 h) · veredicto: 3 SE ENTREGAN, 28 reabiertas
 
