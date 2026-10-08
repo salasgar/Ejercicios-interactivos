@@ -47,29 +47,32 @@ export const TX = {
     },
     instruccion: { es: '¿Qué número oyes?', en: 'Which number do you hear?' },
     instruccion_sin_voz: { es: '¿Qué número es?', en: 'Which number is it?' },
+    // pt y pty: las dos palabras del ítem con el acento marcado (six<strong>TEEN</strong>, <strong>SIX</strong>ty)
     diferencia: {
-      es: (a, b, texto) => `<span class="cuenta">${texto} = ${a}</span> (no ${b}). ${'-teen'}: acento al final (four<strong>TEEN</strong>); -ty: acento al principio (<strong>FOR</strong>ty).`,
-      en: (a, b, texto) => `<span class="cuenta">${texto} = ${a}</span> (not ${b}). -teen: stress at the end (four<strong>TEEN</strong>); -ty: stress at the start (<strong>FOR</strong>ty).`,
+      es: (a, b, texto, pt, pty) => `${texto} = <span class="cuenta">${a}</span> (no ${b}).<br>-teen: acento al final (${pt}); -ty: acento al principio (${pty}).`,
+      en: (a, b, texto, pt, pty) => `${texto} = <span class="cuenta">${a}</span> (not ${b}).<br>-teen: stress at the end (${pt}); -ty: stress at the start (${pty}).`,
     },
     escritura: {
       es: n => `¿Cómo se escribe <strong>${n}</strong> en inglés?`,
       en: n => `How do you write <strong>${n}</strong> in English?`,
     },
     escritura_ok: {
-      es: (n, texto) => `<span class="cuenta">${n} = ${texto}</span>`,
-      en: (n, texto) => `<span class="cuenta">${n} = ${texto}</span>`,
+      es: (n, texto) => `${texto} = <span class="cuenta">${n}</span>`,
+      en: (n, texto) => `${texto} = <span class="cuenta">${n}</span>`,
     },
     nota_compuesto: {
       es: 'Del 21 al 99, la decena y la unidad van unidas con un guion.',
       en: 'From 21 to 99, the tens and the units are joined with a hyphen.',
     },
+    // buena: la palabra bien escrita; malas: las escrituras erróneas que salían en este ítem
     nota_decena: {
-      es: 'Ojo con la ortografía: forty (no fourty), fourteen (con la u de four), eighty (no eigthy).',
-      en: 'Watch the spelling: forty (not fourty), fourteen (with the u of four), eighty (not eigthy).',
+      es: (buena, malas) => `Ojo con la ortografía: se escribe ${buena}, no ${malas}.`,
+      en: (buena, malas) => `Watch the spelling: it is ${buena}, not ${malas}.`,
     },
+    // buena: «three hundred»; conS: «three hundreds»
     nota_plural: {
-      es: 'Después de un número, hundred y thousand no llevan -s: three hundred, five thousand.',
-      en: 'After a number, hundred and thousand have no -s: three hundred, five thousand.',
+      es: (buena, conS) => `Después de un número, hundred y thousand no llevan -s: ${buena}, no ${conS}.`,
+      en: (buena, conS) => `After a number, hundred and thousand have no -s: ${buena}, not ${conS}.`,
     },
   },
   fichas: {
@@ -90,13 +93,32 @@ export const TX = {
     linea_vacia: { es: 'Toca las fichas…', en: 'Tap the tiles…' },
     correcta: { es: 'Se escribe', en: 'It is written' },
     tu_respuesta: { es: 'Has puesto', en: 'You put' },
+    // Cada nota recibe (texto, pre): el número del ítem en palabras y lo que va delante de «mil» ('' si es solo «mil»)
     notas: {
-      miles: { es: '«mil» no tiene plural: seis mil, no seis miles.', en: '"mil" has no plural: seis mil, not seis miles.' },
-      un: { es: 'No se dice «un mil»: mil, tres mil…', en: 'We do not say "un mil": mil, tres mil…' },
-      y: { es: 'La «y» solo va entre las decenas y las unidades: treinta y dos.', en: 'The "y" is only between tens and units: treinta y dos.' },
-      sietecientos: { es: 'Es «setecientos», no «sietecientos».', en: 'It is "setecientos", not "sietecientos".' },
-      nuevecientos: { es: 'Es «novecientos», no «nuevecientos».', en: 'It is "novecientos", not "nuevecientos".' },
-      cincocientos: { es: 'Es «quinientos», no «cincocientos».', en: 'It is "quinientos", not "cincocientos".' },
+      miles: {
+        es: (texto, pre) => (pre ? `«mil» no tiene plural: ${pre} mil, no ${pre} miles.` : '«mil» no tiene plural: se dice mil, no miles.'),
+        en: (texto, pre) => (pre ? `"mil" has no plural: ${pre} mil, not ${pre} miles.` : '"mil" has no plural: we say mil, not miles.'),
+      },
+      un: {
+        es: texto => `Aquí no hace falta «un»: ${texto}.`,
+        en: texto => `There is no "un" here: ${texto}.`,
+      },
+      y: {
+        es: texto => `Aquí no va «y»: la «y» solo va entre las decenas y las unidades (treinta y dos); este número es ${texto}.`,
+        en: texto => `There is no "y" here: "y" only goes between tens and units (treinta y dos); this number is ${texto}.`,
+      },
+      sietecientos: {
+        es: () => 'Es «setecientos», no «sietecientos».',
+        en: () => 'It is "setecientos", not "sietecientos".',
+      },
+      nuevecientos: {
+        es: () => 'Es «novecientos», no «nuevecientos».',
+        en: () => 'It is "novecientos", not "nuevecientos".',
+      },
+      cincocientos: {
+        es: () => 'Es «quinientos», no «cincocientos».',
+        en: () => 'It is "quinientos", not "cincocientos".',
+      },
     },
     dictado_instruccion: { es: 'Escucha el número en español y escríbelo con cifras.', en: 'Listen to the number in Spanish and write it in figures.' },
     dictado_instruccion_sin_voz: { es: 'Escribe con cifras este número.', en: 'Write this number in figures.' },
