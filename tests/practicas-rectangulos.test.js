@@ -153,5 +153,5 @@ test('textos: «falta/faltan» concuerdan y el número es el de celdas tachadas 
   assert.match(TX.rect.sobran.es(5, 2, 23), /faltan 2 celdas /);
   assert.match(TX.rect.sobran.en(5, 1, 24), /1 cell is missing/);
   assert.match(TX.rect.sobran.en(5, 2, 23), /2 cells are missing/);
-  assert.doesNotMatch(JSON.stringify(TX.rect.como.en), /«|»|integer square root/);
+  assert.doesNotMatch(JSON.stringify(TX.rect.introduccion.en), /«|»|integer square root/);
 });
