@@ -1,0 +1,35 @@
+/* Dictado de números: lo que no está ya en ../_comun/estilos.css. */
+
+.ancho { width: 100%; margin-bottom: 1rem; }
+.aviso { color: var(--texto-suave); font-size: .95rem; margin-bottom: .5rem; }
+.operacion--texto { font-size: 1.15rem; margin-bottom: 1rem; }
+
+/* Teclado numérico (botones: no abre el teclado del móvil) */
+.operacion--teclado { min-width: 60%; min-height: 2.6rem; margin-bottom: 1rem; }
+.operacion--vacia { color: var(--texto-suave); }
+.operacion--bien { background: var(--correcto-claro); color: var(--correcto); }
+.operacion--mal { background: var(--error-claro); color: var(--error); }
+.teclado { max-width: 22rem; margin-left: auto; margin-right: auto; }
+.teclado button { min-width: 56px; min-height: 52px; }
+
+/* Opciones de palabras */
+.elecciones--palabras { grid-template-columns: 1fr 1fr; }
+.elecciones--palabras .eleccion { font-size: 1.05rem; overflow-wrap: anywhere; }
+
+/* Fichas de palabras */
+.linea-fichas, .banco-fichas { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; }
+.linea-fichas {
+  min-height: 3.6rem; padding: .5rem; margin-bottom: 1rem;
+  border: 2px dashed var(--texto-suave); border-radius: 12px; align-items: center;
+}
+.linea-fichas__vacia { color: var(--texto-suave); }
+.linea-fichas--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.linea-fichas--mal { border-color: var(--error); background: var(--error-claro); }
+.banco-fichas { margin-bottom: 1rem; }
+.ficha-palabra {
+  min-height: 44px; padding: .3rem .8rem; font-size: 1.05rem;
+  background: #fff; color: var(--texto); border: 2px solid var(--borde); border-radius: 10px;
+}
+.ficha-palabra[hidden] { display: none; }
+.ficha-palabra--puesta { background: var(--primario-claro); border-color: var(--primario); color: var(--primario-oscuro); }
+.ficha-palabra:disabled { opacity: .8; }
