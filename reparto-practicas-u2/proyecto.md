@@ -103,6 +103,19 @@ Consecuencias:
   y, antes del commit, `npm test` sin fallos en tus ficheros. La publicación (GitHub
   Actions) corre `npm test` sobre el commit, no sobre el árbol: un fichero ajeno a medias
   no llega al commit si solo comiteas tus rutas.
+- **Nunca `git stash`, `--autostash`, `git checkout -- .` ni `git reset --hard` en este árbol**
+  (incidencia `hechos/incidencias/s-20261008T175319-8ec41ac6.md`, 2026-10-08): un
+  `pull --rebase --autostash` se llevó a un stash el trabajo sin comitear de seis sesiones. Si
+  el push se rechaza y el árbol tiene ficheros ajenos a medias, se espera y se reintenta, o se
+  empuja desde un worktree limpio (`git worktree add <tmp> origin/main`, cherry-pick del commit
+  propio, push desde allí).
+- **Un fichero común con candado no se reparte entre sesiones en paralelo** (2026-10-08): ocho
+  graves terminaron su código y no pudieron poner su `disponible: true` porque el candado de
+  `practicas/_comun/catalogo.js` lo tuvo una sola sesión más de una hora. La próxima vez, ese
+  cambio es una tarea aparte, de una sola sesión, al final.
+- **iCloud deja copias en conflicto dentro de `.git/`** (`refs/heads/main 2`): rompen `git fetch`
+  con «bad object». Se apartan a `.git/conflictos-icloud/` tras comprobar que su commit es
+  antepasado de `HEAD`.
 - Tope de procesos: ninguno.
 - Un reclamo vivo es una sesión viva aunque no aparezca en `.claude/sesiones/`.
 
