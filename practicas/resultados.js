@@ -11,7 +11,7 @@ const hechosDe = ejercicios => ejercicios.filter(e => e.terminado).length;
  *
  * @param nombres     lista de nombres; la posición es el número de alumno
  * @param deCodigos   [{ indice, ejercicios: [{ terminado, fallos }], dia }]
- * @param deNube      [{ indice, ej: [{ pendientes, aciertos, fallos, terminado, dia }] }]
+ * @param deNube      [{ indice, ej: [{ puntos, objetivo, vidas, reinicios, aciertos, fallos, terminado, dia }] }]
  * @param nEjercicios cuántos ejercicios tiene la práctica
  * @returns una fila por alumno de la lista (haya hecho algo o no) y por cada
  *          código que no esté en ella, ordenadas por número de alumno.

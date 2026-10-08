@@ -340,7 +340,7 @@ arrancar({
       nombre: TX.ultima.nombre,
       detalle: TX.ultima.detalle,
       introduccion: TX.ultima.introduccion,
-      inicial: 6,
+      objetivo: 6,
       generar: generarUltima,
       clave: item => `${item.base}^${item.exponente}`,
       montar: montarUltima,

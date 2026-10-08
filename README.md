@@ -148,7 +148,10 @@ completo en `reparto-practicas-u2/salidas/18-revision-final/VEREDICTO.md`.
   `catalogo.js` y escribir sus ejercicios. El contrato está comentado en
   `practicas/plantilla/practica.js` (y en `reparto-practicas-u2/tareas/tarea-01-base-comun.md`).
 - Tests en `tests/practicas-comun.test.js` y uno por práctica (`tests/practicas-<slug>.test.js`).
-- **10 aciertos por ejercicio** (no 20), +2 por fallo, tope 20. El **idioma de
+- **Por puntos, con vidas** (desde el 2026-10-08): en cada ejercicio hay que
+  llegar a 10 puntos; cada acierto da 1 y 5 seguidos dan 1 extra; cada fallo
+  quita 1 punto y una vida, y sin las 5 vidas el ejercicio vuelve a empezar.
+  Las constantes están en `practicas/_comun/contador.js`. El **idioma de
   cada ítem sale al azar** (alterno, por bloques equilibrados de 4): el alumno
   no lo elige; tras responder puede ver el mismo ítem traducido. El enlace del
   profesor puede fijarlo para un alumno (`?idioma=es` o `?idioma=en`), con un

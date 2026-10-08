@@ -10,10 +10,10 @@ import { crearRng } from '../practicas/_comun/rng.js';
 import {
   ALFABETO, MAX_ALUMNOS, codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
-import { ejercicioNuevo, anotar, diaDe, fechaDeDia, INICIAL, PENALIZACION, MAXIMO } from '../practicas/_comun/contador.js';
+import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, fechaDeDia, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from '../practicas/_comun/contador.js';
 import {
   validarPractica, parametrosDe, claveProgreso, documentoNube, claveIdiomaFijo,
-  recortarProgreso, modoIdioma, crearSecuenciaIdiomas,
+  modoIdioma, crearSecuenciaIdiomas,
 } from '../practicas/_comun/base.js';
 import {
   PRIMOS, esPrimo, factorizar, valorDe, divisores as divisoresDe, parejasDivisores, raizEntera, mcd, mcm, sumaCifras, cifras,
@@ -191,58 +191,104 @@ test('extraerCodigosResultado: encuentra los de 12 y los de 16 en un texto cualq
 
 // --- Contador ---------------------------------------------------------------------
 
-test('contador: por defecto 10 aciertos, +2 por fallo y tope de 20', () => {
-  assert.deepEqual([INICIAL, PENALIZACION, MAXIMO], [10, 2, 20]);
-  assert.deepEqual(Object.keys(ejercicioNuevo()), Object.keys(divisores.ejercicioNuevo()), 'la misma forma que en divisores/ (Firestore)');
+test('contador: por defecto 10 puntos, −1 por fallo, 5 vidas y 5 seguidos dan 1 extra', () => {
+  assert.deepEqual([OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA], [10, 1, 5, 5, 1]);
+  assert.deepEqual(ejercicioNuevo(), { puntos: 0, objetivo: 10, vidas: 5, racha: 0, aciertos: 0, fallos: 0, rapidos: 0, reinicios: 0, terminado: false, dia: 0, repeticiones: 0 });
   let ej = ejercicioNuevo();
-  for (let i = 0; i < 9; i++) ej = anotar(ej, true, 7);
-  assert.equal(ej.pendientes, 1);
-  assert.equal(ej.terminado, false);
-  ej = anotar(ej, false, 7);
-  assert.equal(ej.pendientes, 3);
-  for (let i = 0; i < 3; i++) ej = anotar(ej, true, 9);
-  assert.deepEqual(ej, { pendientes: 0, aciertos: 12, fallos: 1, rapidos: 0, terminado: true, dia: 9, repeticiones: 0 });
+  const vistos = [];
+  for (let i = 0; i < 9; i++) { ej = anotar(ej, true, 7); vistos.push(ej.puntos); }
+  assert.deepEqual(vistos, [1, 2, 3, 4, 6, 7, 8, 9, 10], 'el quinto seguido vale doble');
+  assert.deepEqual([ej.terminado, ej.dia, ej.aciertos, ej.racha], [true, 7, 9, 9]);
   assert.equal(anotar(ej, false, 10), ej, 'una vez terminado ya no cambia');
+  // Sin racha: 10 aciertos justos; el fallo quita 1 punto y 1 vida y corta la racha.
+  let b = ejercicioNuevo();
+  for (let i = 0; i < 4; i++) b = anotar(b, true, 1);
+  b = anotar(b, false, 1);
+  assert.deepEqual([b.puntos, b.vidas, b.racha, b.aciertos, b.fallos], [3, 4, 0, 4, 1]);
+  for (let i = 0; i < 4; i++) b = anotar(b, true, 1);
+  assert.deepEqual([b.puntos, b.racha, b.terminado], [7, 4, false], 'la racha empieza de nuevo tras el fallo');
+  b = anotar(b, true, 2);
+  assert.deepEqual([b.puntos, b.terminado], [9, false]);
+  b = anotar(b, true, 3);
+  assert.deepEqual([b.puntos, b.terminado, b.dia], [10, true, 3]);
+  // Los puntos nunca pasan del objetivo ni bajan de 0.
+  let c = ejercicioNuevo(5);
+  for (let i = 0; i < 5; i++) c = anotar(c, true, 1);
+  assert.deepEqual([c.puntos, c.terminado], [5, true], 'el extra del quinto no pasa del objetivo');
+  assert.deepEqual([anotar(ejercicioNuevo(), false, 1).puntos, anotar(ejercicioNuevo(), false, 1).fallos], [0, 1]);
 });
 
-test('contador: con los parámetros de divisores/ hace lo mismo que divisores/', () => {
-  const rng = crearRng(3);
-  let a = ejercicioNuevo(divisores.INICIALES), b = divisores.ejercicioNuevo();
-  for (let i = 0; i < 400 && !b.terminado; i++) {
-    const acierto = rng.azar() < 0.8;
-    a = anotar(a, acierto, i, { penalizacion: divisores.PENALIZACION, maximo: divisores.MAXIMO });
-    b = divisores.anotar(b, acierto, i);
-    assert.deepEqual(a, b);
-  }
-  assert.ok(b.terminado);
+test('contador: sin vidas, el ejercicio vuelve a empezar y los fallos se conservan', () => {
+  let ej = ejercicioNuevo();
+  for (let i = 0; i < 3; i++) ej = anotar(ej, true, 1);
+  const vidas = [];
+  for (let i = 0; i < 4; i++) { ej = anotar(ej, false, 1); vidas.push(ej.vidas); }
+  assert.deepEqual(vidas, [4, 3, 2, 1]);
+  assert.deepEqual([ej.puntos, ej.aciertos, ej.fallos, ej.reinicios], [0, 3, 4, 0]);
+  ej = anotar(ej, false, 1);
+  assert.deepEqual([ej.puntos, ej.vidas, ej.aciertos, ej.fallos, ej.reinicios, ej.racha, ej.terminado], [0, 5, 0, 5, 1, 0, false]);
+  // Con vidas a medida (el juego puede pedir 3), se reponen las declaradas.
+  let g = ejercicioNuevo(10, 3);
+  for (let i = 0; i < 3; i++) g = anotar(g, false, 1, { vidas: 3 });
+  assert.deepEqual([g.vidas, g.reinicios], [3, 1]);
 });
 
-test('contador: inicial, penalización y tope a medida (la criba usa 5 y 1)', () => {
+test('contador: objetivo y penalización a medida (la criba usa 5; los paréntesis, 0 de penalización)', () => {
   let ej = ejercicioNuevo(5);
-  assert.equal(ej.pendientes, 5);
-  ej = anotar(ej, false, 1, { penalizacion: 1 });
-  assert.deepEqual([ej.pendientes, ej.fallos], [6, 1]);
-  for (let i = 0; i < 6; i++) ej = anotar(ej, true, 2, { penalizacion: 1 });
+  assert.deepEqual([ej.puntos, ej.objetivo], [0, 5]);
+  ej = anotar(anotar(ej, true, 1), false, 1, { penalizacion: 0 });
+  assert.deepEqual([ej.puntos, ej.vidas, ej.fallos], [1, 4, 1], 'con penalización 0 se pierde la vida pero no el punto');
+  for (let i = 0; i < 4; i++) ej = anotar(ej, true, 2);
   assert.ok(ej.terminado);
   assert.equal(ej.dia, 2);
-
-  let tope = ejercicioNuevo();
-  const vistos = [];
-  for (let i = 0; i < 6; i++) { tope = anotar(tope, false, 1); vistos.push(tope.pendientes); }
-  assert.deepEqual(vistos, [12, 14, 16, 18, 20, 20], 'los pendientes nunca pasan del tope');
-  assert.equal(tope.fallos, 6, 'los fallos se siguen contando');
-  assert.equal(anotar(ejercicioNuevo(10), false, 1, { penalizacion: 5, maximo: 12 }).pendientes, 12);
-  assert.equal(anotar({ ...ejercicioNuevo(10), pendientes: 14 }, false, 1, { maximo: 12 }).pendientes, 14, 'el tope no baja lo que ya había');
-  assert.equal(anotar(ejercicioNuevo(3), false, 1, { penalizacion: 0 }).pendientes, 3);
+  assert.equal(anotar({ ...ejercicioNuevo(), puntos: 7 }, false, 1, { penalizacion: 3 }).puntos, 4);
+  assert.equal(anotar({ ...ejercicioNuevo(), puntos: 2 }, false, 1, { penalizacion: 3 }).puntos, 0, 'nunca por debajo de 0');
+  assert.equal(anotar(ejercicioNuevo(), true, 1, { racha: 0 }).puntos, 1, 'racha 0 = sin extra');
+  let r = ejercicioNuevo();
+  for (let i = 0; i < 3; i++) r = anotar(r, true, 1, { racha: 3, extra: 2 });
+  assert.equal(r.puntos, 5, 'racha y extra a medida');
 });
 
-test('contador: las pistas se suman a los fallos sin tocar lo pendiente', () => {
+test('contador: las pistas se suman a los fallos sin tocar puntos ni vidas', () => {
   let ej = anotar(ejercicioNuevo(4), true, 1, { pistas: 2 });
-  assert.deepEqual([ej.pendientes, ej.aciertos, ej.fallos], [3, 1, 2]);
-  ej = anotar(ej, false, 1, { penalizacion: 5, pistas: 1 });
-  assert.deepEqual([ej.pendientes, ej.aciertos, ej.fallos], [8, 1, 4], 'un fallo con una pista: dos fallos');
+  assert.deepEqual([ej.puntos, ej.vidas, ej.aciertos, ej.fallos, ej.racha], [1, 5, 1, 2, 1]);
+  ej = anotar(ej, false, 1, { pistas: 1 });
+  assert.deepEqual([ej.puntos, ej.vidas, ej.aciertos, ej.fallos], [0, 4, 1, 4], 'un fallo con una pista: dos fallos');
   ej = anotar(ej, true, 1);
   assert.equal(ej.fallos, 4);
+});
+
+test('contador: queHaPasado resume el cambio para el feedback', () => {
+  const a = { ...ejercicioNuevo(), puntos: 4, aciertos: 4, racha: 4 };
+  assert.deepEqual(queHaPasado(a, anotar(a, true, 1)), { ganados: 2, perdidos: 0, extra: true, reinicio: false, vidas: 5 });
+  const b = { ...ejercicioNuevo(), puntos: 3, aciertos: 3, racha: 1 };
+  assert.deepEqual(queHaPasado(b, anotar(b, true, 1)), { ganados: 1, perdidos: 0, extra: false, reinicio: false, vidas: 5 });
+  assert.deepEqual(queHaPasado(b, anotar(b, false, 1)), { ganados: 0, perdidos: 1, extra: false, reinicio: false, vidas: 4 });
+  const c = { ...b, vidas: 1 };
+  assert.deepEqual(queHaPasado(c, anotar(c, false, 1)), { ganados: 0, perdidos: 3, extra: false, reinicio: true, vidas: 5 });
+  const d = { ...b, puntos: 0 };
+  assert.deepEqual(queHaPasado(d, anotar(d, false, 1)).perdidos, 0);
+});
+
+test('contador: migra lo guardado con el modelo antiguo o con otro objetivo, sin perder lo terminado', () => {
+  // Modelo antiguo (pendientes): si estaba terminado, sigue terminado con sus fallos y su día.
+  const viejoHecho = { pendientes: 0, aciertos: 12, fallos: 3, rapidos: 0, terminado: true, dia: 30, repeticiones: 1 };
+  const m = migrarProgreso(viejoHecho, { objetivo: 10, vidas: 5 });
+  assert.deepEqual([m.terminado, m.fallos, m.dia, m.repeticiones, m.puntos, m.objetivo, m.vidas], [true, 3, 30, 1, 10, 10, 5]);
+  // Sin terminar: se empieza de cero (nadie lo había usado), conservando los fallos.
+  assert.deepEqual(migrarProgreso({ pendientes: 7, aciertos: 5, fallos: 2, terminado: false }, { objetivo: 10, vidas: 5 }),
+    { ...ejercicioNuevo(10, 5), fallos: 2 });
+  // Modelo nuevo con los mismos parámetros: el mismo objeto.
+  const igual = { ...ejercicioNuevo(10, 5), puntos: 4, aciertos: 4 };
+  assert.equal(migrarProgreso(igual, { objetivo: 10, vidas: 5 }), igual);
+  // Si el objetivo baja por debajo de los puntos, no se da por terminado solo: queda a 1 del final.
+  assert.deepEqual(migrarProgreso({ ...igual, puntos: 8, aciertos: 8 }, { objetivo: 6, vidas: 5 }).puntos, 5);
+  assert.deepEqual(migrarProgreso({ ...igual, puntos: 8, aciertos: 8 }, { objetivo: 6, vidas: 5 }).objetivo, 6);
+  // Si las vidas bajan, no se tienen más de las nuevas; si suben, se conservan las que había.
+  assert.equal(migrarProgreso(igual, { objetivo: 10, vidas: 3 }).vidas, 3);
+  assert.equal(migrarProgreso({ ...igual, vidas: 2 }, { objetivo: 10, vidas: 3 }).vidas, 2);
+  const terminado = { ...ejercicioNuevo(10, 5), puntos: 10, terminado: true, dia: 4 };
+  assert.equal(migrarProgreso(terminado, { objetivo: 20, vidas: 3 }), terminado, 'terminado con otras normas sigue terminado');
 });
 
 test('fechas: las mismas que en divisores/', () => {
@@ -384,10 +430,16 @@ test('textos comunes: los dos idiomas tienen lo mismo, con producto de punto', (
   assert.deepEqual(Object.keys(T.es).sort(), Object.keys(T.en).sort());
   for (const clave of Object.keys(T.es)) assert.equal(typeof T.es[clave], typeof T.en[clave], clave);
   assert.equal(T.es.animos.length, T.en.animos.length);
-  assert.match(T.es.menu_regla(20, 5, 40), /acertar 20 veces.*añade 5 más.*máximo de 40/);
-  assert.match(T.en.menu_regla(5, 1, 40), /5 correct answers.*adds 1 more.*maximum of 40/);
-  assert.equal(T.es.penalizacion(1), '+1 · Se añade 1 más.');
-  assert.equal(T.es.penalizacion(0), 'Ya tienes el máximo: no se añaden más.');
+  assert.match(T.es.menu_regla(10, 1, 5), /llegar a 10 puntos.*5 aciertos seguidos dan 1 extra.*quita 1 punto y una vida: tienes 5/);
+  assert.match(T.es.menu_regla(6, 0, 3), /quita una vida: tienes 3/);
+  assert.match(T.en.menu_regla(10, 2, 5), /reach 10 points.*5 correct answers in a row give 1 extra.*takes away 2 points and one life: you have 5/);
+  assert.match(T.es.menu_regla_varia(5, 1), /5 aciertos seguidos/);
+  assert.equal(T.es.penalizacion(1), '−1 punto');
+  assert.equal(T.en.penalizacion(2), '−2 points');
+  assert.equal(T.es.penalizacion(0), 'No pierdes puntos (estás en 0)');
+  assert.equal(T.es.puntos(3, 10), '3/10 puntos');
+  assert.equal(T.es.vidas_quedan(1), 'Te queda 1 vida');
+  assert.equal(T.en.racha_extra(5, 1), '5 in a row! +1 extra point.');
   assert.equal(T.es.ejercicio(1), 'Ejercicio 1');
   assert.match(T.en.resultado_parcial(2, 3), /2 of 3 exercises/);
   assert.doesNotMatch(JSON.stringify([T, TX], (k, v) => (typeof v === 'function' ? v(2, 3, 5) : v)), /×|HCF|\bfactor de\b/);
@@ -417,40 +469,25 @@ test('base: una práctica bien declarada pasa, y se dice qué le falta a la que 
   assert.throws(() => validarPractica(con({ montar: undefined })), /falta la función «montar»/);
   assert.throws(() => validarPractica(con({ generar: 'x' })), /falta la función «generar»/);
   assert.throws(() => validarPractica(con({ introduccion: '<p>hola</p>' })), /«introduccion» tiene que ser \{ es, en \}/);
-  assert.throws(() => validarPractica(con({ inicial: 0 })), /enteros/);
-  assert.throws(() => validarPractica(con({ inicial: 50 })), /inicial ≤ maximo/);
+  assert.throws(() => validarPractica(con({ objetivo: 0 })), /enteros/);
+  assert.throws(() => validarPractica(con({ vidas: 0 })), /vidas ≥ 1/);
   assert.throws(() => validarPractica(con({ penalizacion: 1.5 })), /enteros/);
-  assert.ok(validarPractica(con({ inicial: 5, penalizacion: 1, introduccion: { es: 'a', en: 'b' }, clave: () => 'x' })));
-  assert.ok(validarPractica(con({ inicial: 50, maximo: 80 })));
+  assert.throws(() => validarPractica(con({ penalizacion: -1 })), /penalizacion ≥ 0/);
+  assert.throws(() => validarPractica(con({ inicial: 10 })), /«inicial» ya no existe/);
+  assert.throws(() => validarPractica(con({ maximo: 20 })), /«maximo» ya no existe/);
+  assert.ok(validarPractica(con({ objetivo: 5, penalizacion: 0, introduccion: { es: 'a', en: 'b' }, clave: () => 'x' })));
+  assert.ok(validarPractica(con({ objetivo: 50, vidas: 3 })));
 });
 
 test('base: parámetros del contador y nombres de lo guardado', () => {
-  assert.deepEqual(parametrosDe({}), { inicial: 10, penalizacion: 2, maximo: 20 });
-  assert.deepEqual(parametrosDe({ inicial: 5, penalizacion: 1 }), { inicial: 5, penalizacion: 1, maximo: 20 });
-  assert.deepEqual(parametrosDe({ penalizacion: 0, maximo: 25 }), { inicial: 10, penalizacion: 0, maximo: 25 });
+  assert.deepEqual(parametrosDe({}), { objetivo: 10, penalizacion: 1, vidas: 5 });
+  assert.deepEqual(parametrosDe({ objetivo: 5 }), { objetivo: 5, penalizacion: 1, vidas: 5 });
+  assert.deepEqual(parametrosDe({ penalizacion: 0, vidas: 3 }), { objetivo: 10, penalizacion: 0, vidas: 3 });
   assert.equal(claveProgreso('semaforo', 'ABCD'), 'practicas.v1.semaforo.ABCD');
   assert.equal(claveIdiomaFijo('ABCD'), 'practicas.idioma_fijo.ABCD');
   // El id del documento tiene que cumplir la regla de Firestore.
   const regla = /^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$/;
   for (const p of CATALOGO) for (const i of [0, 77, 1023]) assert.match(documentoNube(p.slug, codigoAlumno(i)), regla);
-});
-
-test('base: recorta un progreso guardado con parámetros antiguos, sin bloquear al alumno', () => {
-  // De una versión con inicial 20 / máximo 40: 23 pendientes no pasa del máximo nuevo (20) por sí solo…
-  assert.deepEqual(recortarProgreso({ pendientes: 17, aciertos: 0, fallos: 0, terminado: false }, { inicial: 10, maximo: 20 }),
-    { pendientes: 17, aciertos: 0, fallos: 0, terminado: false });
-  // … pero si ya llevaba aciertos, la suma puede superar el doble del inicial nuevo, y se recorta.
-  assert.deepEqual(recortarProgreso({ pendientes: 17, aciertos: 8, fallos: 3, terminado: false }, { inicial: 10, maximo: 20 }),
-    { pendientes: 12, aciertos: 8, fallos: 3, terminado: false });
-  // Por encima del máximo nuevo, se recorta a él.
-  assert.deepEqual(recortarProgreso({ pendientes: 35, aciertos: 0, fallos: 5, terminado: false }, { inicial: 10, maximo: 20 }),
-    { pendientes: 20, aciertos: 0, fallos: 5, terminado: false });
-  // Un ejercicio ya terminado no se toca, aunque sus números ya no encajen con los parámetros nuevos.
-  const terminado = { pendientes: 0, aciertos: 23, fallos: 4, terminado: true };
-  assert.equal(recortarProgreso(terminado, { inicial: 10, maximo: 20 }), terminado);
-  // Sin nada que recortar, se devuelve el mismo objeto (no una copia).
-  const sinCambios = { pendientes: 5, aciertos: 3, fallos: 1, terminado: false };
-  assert.equal(recortarProgreso(sinCambios, { inicial: 10, maximo: 20 }), sinCambios);
 });
 
 test('base: el modo de idioma sale del parámetro de la URL o, si no, de lo guardado', () => {
@@ -503,8 +540,8 @@ test('panel: tabla de una práctica con lista, códigos y nube', () => {
   const filas = juntarResultados(
     ['Ana', 'Luis', '', 'Eva'],
     [{ indice: 0, ejercicios: [hecho, sin, sin], dia: 40 }, { indice: 7, ejercicios: [hecho, sin, sin], dia: 41 }, { indice: 3, ejercicios: [{ terminado: true, fallos: 15 }], dia: 39 }],
-    [{ indice: 0, ej: [0, 1, 2].map(() => ({ pendientes: 0, aciertos: 20, fallos: 0, terminado: true, dia: 42 })) },
-      { indice: 3, ej: [{ pendientes: 0, aciertos: 20, fallos: 16, terminado: true, dia: 39 }, { pendientes: 12, aciertos: 8, fallos: 0, terminado: false, dia: 0 }] }],
+    [{ indice: 0, ej: [0, 1, 2].map(() => ({ puntos: 10, objetivo: 10, aciertos: 10, fallos: 0, terminado: true, dia: 42 })) },
+      { indice: 3, ej: [{ puntos: 10, objetivo: 10, aciertos: 12, fallos: 16, terminado: true, dia: 39 }, { puntos: 6, objetivo: 10, vidas: 4, aciertos: 8, fallos: 1, terminado: false, dia: 0 }] }],
     3,
   );
   assert.deepEqual(filas.map(f => [f.indice, f.nombre, f.hechos, f.fuente, f.dia]), [
@@ -514,7 +551,7 @@ test('panel: tabla de una práctica con lista, códigos y nube', () => {
     [7, '', 1, 'código', 41],       // envió código pero no está en la lista
   ]);
   for (const f of filas) assert.equal(f.ejercicios.length, 3);
-  assert.equal(filas[2].ejercicios[1].pendientes, 12);
+  assert.equal(filas[2].ejercicios[1].puntos, 6);
   assert.equal(filas[2].ejercicios[0].fallos, 16);
   assert.equal(filas[3].ejercicios[0].tope, false);
   // Solo con el código, 15 fallos son «15 o más».

@@ -18,9 +18,15 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
 1. Entra con su **código de 4 caracteres** (el mismo en todas, y el que ya tenía en
    `divisores/`). El enlace que reparte el panel es `practicas/?c=ABCD`: la portada guarda el
    código y las prácticas lo encuentran. También puede «probar sin código» (no se guarda nada).
-2. Cada práctica tiene entre 2 y 5 ejercicios. En cada uno hay que **acertar 10 veces**; cada
-   fallo **añade 2**, y nunca hay más de 20 pendientes. Un ejercicio puede declarar otros
-   valores (el árbol de factores, por ejemplo, pide 6 árboles con +1 por fallo).
+2. Cada práctica tiene entre 2 y 5 ejercicios. En cada uno hay que **llegar a 10 puntos**:
+   cada acierto da 1 punto y **5 aciertos seguidos dan 1 extra** (con felicitación). Cada
+   fallo **quita 1 punto** (nunca por debajo de 0) **y una vida**; hay **5 vidas** y, si se
+   pierden todas, el ejercicio vuelve a empezar desde 0 (los fallos acumulados se conservan
+   para el profesor). Un ejercicio puede declarar otro objetivo (el árbol de factores pide 6
+   árboles). Las constantes viven en `practicas/_comun/contador.js`, para ajustarlas cuando se
+   vea cómo reaccionan los alumnos; un ejercicio terminado con unas normas sigue terminado
+   aunque cambien. Este modelo sustituyó el 2026-10-08, antes de que ningún alumno usara las
+   prácticas, al de «10 aciertos, +2 por fallo, tope 20».
 3. El **idioma de cada ítem lo sortea la base** (modo alterno, en bloques equilibrados de
    cuatro: dos en español y dos en inglés). El alumno no lo elige; después de responder puede
    ver el mismo ítem en el otro idioma. El profesor puede fijarlo para un alumno con
@@ -61,7 +67,7 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 | `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore. También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar` y `URL_PORTADA` |
 | `catalogo.js` | Las 32 filas (31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
 | `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`) y de resultado (16) |
-| `contador.js` | `INICIAL = 10`, `PENALIZACION = 2`, `MAXIMO = 20`; `ejercicioNuevo`, `anotar`, fechas |
+| `contador.js` | `OBJETIVO = 10`, `PENALIZACION = 1`, `VIDAS = 5`, `RACHA = 5`, `EXTRA = 1`; `ejercicioNuevo`, `anotar`, `queHaPasado`, `migrarProgreso`, fechas |
 | `aritmetica.js` | `esPrimo`, `factorizar`, `divisores`, `parejasDivisores`, `mcd`, `mcm`, `criterio(n, d)` con `CRITERIOS = [2, 3, 5, 9, 10, 11]`, y las operaciones con factorizaciones (`multiplicarFact`, `dividirFact`, `mcdFact`, `mcmFact`, `htmlFact`…) |
 | `piezas.js` | `elecciones` (botones de elegir, con `marcar`) y `pasos` (contador −/valor/+) |
 | `textos.js` | Textos comunes `T[idioma]`, `unir(frases, idioma, 'y' \| 'o')`, `esc` |
@@ -101,9 +107,9 @@ tests/practicas-<slug>.test.js
 | Campo | |
 |---|---|
 | `nombre`, `detalle` | `{ es, en }`, una línea cada uno (salen en el menú) |
-| `inicial`, `penalizacion`, `maximo` | opcionales; por defecto 10, 2 y 20. Si no se declaran, la práctica hereda cualquier cambio futuro de la base |
+| `objetivo`, `penalizacion`, `vidas` | opcionales; por defecto 10 puntos, −1 por fallo y 5 vidas. Si no se declaran, la práctica hereda cualquier cambio futuro de la base. (`inicial` y `maximo`, del modelo antiguo, hacen que la base no arranque) |
 | `introduccion` | opcional, `{ es: html, en: html }`: una tarjeta con botón «Empezar» cada vez que se abre el ejercicio |
-| `generar(rng, sesion)` | devuelve el ítem, que son **datos puros**. `sesion` es `{ aciertos, fallos, pendientes, anterior }`: sirve para graduar la dificultad o para un ejercicio por pasos. **No recibe el idioma**: el ítem tiene que valer para los dos |
+| `generar(rng, sesion)` | devuelve el ítem, que son **datos puros**. `sesion` es `{ aciertos, fallos, puntos, vidas, anterior }` (`aciertos` son los del intento en curso: vuelven a 0 al perder las vidas, así que valen como número de paso): sirve para graduar la dificultad o para un ejercicio por pasos. **No recibe el idioma**: el ítem tiene que valer para los dos |
 | `clave(item)` | opcional (por defecto `JSON.stringify`): la base no repite la clave anterior (lo intenta hasta 5 veces) |
 | `montar(contenedor, item, api)` | pinta el ítem e instala sus eventos |
 
@@ -115,9 +121,10 @@ Lo que recibe `montar` en `api`:
 - `api.esc(texto)`, `api.respondido()`.
 - `api.responder({ acierto, html, espera, pistas })`: **una vez por ítem**. `html` es la
   explicación con los números de ese ítem. Acierto: feedback verde y pasa solo al siguiente a
-  los `espera` ms (1300 por defecto). Fallo: feedback rojo con la penalización, el ánimo y el
-  botón «Siguiente». `pistas` (entero ≥ 0) son las ayudas usadas: se suman a los fallos sin
-  tocar lo que queda por hacer.
+  los `espera` ms (1300 por defecto; algo más si hay punto extra por la racha, que se anuncia).
+  Fallo: feedback rojo con los puntos perdidos y las vidas que quedan (o el aviso de que el
+  ejercicio vuelve a empezar), el ánimo y el botón «Siguiente». `pistas` (entero ≥ 0) son las
+  ayudas usadas: se suman a los fallos sin tocar los puntos ni las vidas.
 
 Cosas que conviene saber, aprendidas al escribir las 31:
 
@@ -133,7 +140,7 @@ Cosas que conviene saber, aprendidas al escribir las 31:
   `boton.hidden = true` no esconde «Comprobar». Varias prácticas lo resuelven en su CSS
   (`.comprobar[hidden] { display: none }`); está propuesto llevarlo a la base.
 - El fallo se anota al responder: quien sale al menú a mitad de un ítem que se construye en
-  varios pasos no recibe penalización.
+  varios pasos no pierde ni puntos ni vidas.
 
 ## 5. Cómo se añade una práctica
 
