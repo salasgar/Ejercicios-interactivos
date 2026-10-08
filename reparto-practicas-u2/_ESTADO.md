@@ -139,7 +139,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | LISTA | terminada 05:08Z · commit b8577a5 |
 | 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | EN CURSO | s-20261007T213246-c81731a7 · 2026-10-08T06:35:48Z |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | LISTA | terminada 2026-10-08 · commit 1ae08ff |
-| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | EN CURSO | s-20261008T050750-ded5a656 · 2026-10-08T09:07:50Z |
+| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | LISTA | terminada 05:4xZ (8-oct) · commit 510ffe1 |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 21:48Z · commit eea70ea |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada 21:52Z · commit 7bfe7c7 |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | LISTA | terminada 05:08Z · commit 15f01d9 |
@@ -164,6 +164,8 @@ ya dada) queda libre.
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · ficheros · duración real`
+
+LISTA · tarea 26 · 2026-10-08 05:45 · s-20261008T050750-ded5a656 · 510ffe1 · 6 ficheros (practicas/constructor/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-constructor.test.js) · ~25 min (estimada: 2 h)
 
 LISTA · tarea 25 · 2026-10-08 05:10 · s-20261007T214109-30fcacbb · 1ae08ff · 6 ficheros (practicas/redondeo/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-redondeo.test.js) · ~25 min de trabajo (estimada: 2 h)
 
