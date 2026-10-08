@@ -9,13 +9,12 @@
 import { arrancar } from '../_comun/base.js';
 import { TX } from './textos.js';
 import {
-  NIVEL, esNumero, signo, texto, cadena, motivo, exigidos, lineal, esCorrecto, evaluar,
+  NIVEL, esNumero, esNatural, signo, texto, cadena, toca, paso, validos, motivo, exigidos, lineal, esCorrecto, evaluar,
   generarPasos1, generarPasos2, generarPasos3, generarInvisibles,
 } from './logica.js';
 
 const conExponentes = s => s.replace(/\^(\d)/g, '<sup>$1</sup>');
 const htmlTexto = (fichas, idioma) => conExponentes(texto(fichas, idioma));
-const numeroBonito = v => String(Math.round(v * 100) / 100);
 
 // ─── Ejercicios 1-3: tocar el operador que toca ────────────────────────────────
 
@@ -34,9 +33,10 @@ function htmlFichas(fichas, idioma, activo) {
 
 function montarPasos(contenedor, item, api) {
   const { tt, idioma } = api;
-  const estados = cadena(item.fichas);
-  const ultimo = estados.length - 1;
-  let k = api.respondido() ? ultimo : 0;
+  // Los estados se van haciendo con lo que toca el alumno: si hay dos operaciones que
+  // no se estorban, el orden que elija es el que se escribe en el historial.
+  const estados = api.respondido() ? cadena(item.fichas) : [{ fichas: cadena(item.fichas)[0].fichas }];
+  const fin = () => estados.at(-1).fichas.length === 1;
   let fallo = false, primerMotivo = '';
 
   contenedor.innerHTML = `
@@ -49,12 +49,12 @@ function montarPasos(contenedor, item, api) {
   const aviso = contenedor.querySelector('.jer-aviso');
 
   const pintar = nuevo => {
+    const k = estados.length - 1;
     historial.innerHTML = estados.slice(0, k).map((e, j) =>
       `<div class="jer-hist">${j ? '= ' : ''}${htmlTexto(e.fichas, idioma)}</div>`).join('');
-    const fin = k === ultimo;
-    linea.innerHTML = `${k ? '<span class="jer-igual">=</span>' : ''}${htmlFichas(estados[k].fichas, idioma, !fin && !api.respondido())}`;
+    linea.innerHTML = `${k ? '<span class="jer-igual">=</span>' : ''}${htmlFichas(estados[k].fichas, idioma, !fin() && !api.respondido())}`;
     linea.classList.toggle('jer-linea--nueva', !!nuevo);
-    linea.classList.toggle('jer-linea--fin', fin);
+    linea.classList.toggle('jer-linea--fin', fin());
   };
 
   const textoMotivo = (m, fichas, i) => {
@@ -65,20 +65,23 @@ function montarPasos(contenedor, item, api) {
 
   linea.addEventListener('click', ev => {
     const boton = ev.target.closest('button[data-i]');
-    if (!boton || api.respondido() || k === ultimo) return;
+    if (!boton || api.respondido() || fin()) return;
     const i = Number(boton.dataset.i);
-    const fichas = estados[k].fichas;
-    if (i !== estados[k + 1].indice) {
+    const fichas = estados.at(-1).fichas;
+    const m = validos(fichas).includes(i) ? null : motivo(fichas, i);
+    // Si no valía, la app hace por él el paso canónico y el ítem queda fallado.
+    const hecho = m ? toca(fichas) : i;
+    if (m) {
       fallo = true;
-      const por = textoMotivo(motivo(fichas, i), fichas, i);
+      const por = textoMotivo(m, fichas, i);
       if (!primerMotivo) primerMotivo = por;
       aviso.textContent = `${tt(TX.has_fallado)} ${por}`;
     } else {
       aviso.textContent = '';
     }
-    k++;
+    estados.push({ fichas: paso(fichas, hecho).fichas });
     pintar(true);
-    if (k === ultimo) terminar();
+    if (fin()) terminar();
   });
 
   function terminar() {
@@ -141,13 +144,19 @@ function montarInvisibles(contenedor, item, api) {
     if (acierto) {
       return api.responder({ acierto: true, html: `${explicacion} <span class="jer-cadena">${correcta}</span>.${sobran}`, espera: 2600 });
     }
-    const faltas = piden.map((r, i) => (r && !p[i] ? (raya ? (i === 0 ? TX.falta_num : TX.falta_den) : TX.falta_rad) : null))
-      .filter(Boolean).map(tx => tt(tx)).join('; ');
-    const sale = numeroBonito(evaluar(lineal(item, p)));
+    const que = i => (raya ? (i === 0 ? 'num' : 'den') : 'rad');
+    const faltan = piden.map((r, i) => (r && !p[i] ? que(i) : null)).filter(Boolean);
+    const faltas = faltan.map(c => tt(TX[`falta_${c}`])).join('; ');
+    const porque = faltan.map(c => tt(TX[`porque_${c}`])).join(' ');
+    // Solo se escribe lo que sale si es un natural: con decimales o negativos no se ha dado nada.
+    const sale = evaluar(lineal(item, p));
+    const linea = texto(lineal(item, p), idioma);
+    const resultado = esNatural(sale)
+      ? `${tt(TX.saldria)(sale)} ${item.valor}: <span class="cuenta">${linea} = ${sale}</span>.`
+      : `${tt(TX.no_da)(item.valor)}: <span class="cuenta">${linea}</span>.`;
     api.responder({
       acierto: false,
-      html: `${faltas}. ${explicacion} ${tt(TX.saldria)(sale)} ${item.valor}: <span class="cuenta">${texto(lineal(item, p), idioma)} = ${sale}</span>.`
-        + ` ${tt(TX.correcta)}: <span class="jer-cadena">${correcta}</span>.${sobran}`,
+      html: `${faltas}. ${porque} ${resultado} ${tt(TX.correcta)}: <span class="jer-cadena">${correcta}</span>.${sobran}`,
     });
   });
 }
