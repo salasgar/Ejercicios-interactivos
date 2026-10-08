@@ -1,2 +1,83 @@
 /* Práctica «Divisor, múltiplo, divisible»: aquí va solo lo que no esté ya en
-   ../practicas/_comun/estilos.css. Esta práctica no necesita nada propio. */
+   ../practicas/_comun/estilos.css. Todo lo de abajo es del ejercicio 5, «¿Quién
+   miente?» (los bichos). Los sprites bicho-vivo.svg y bicho-muerto.svg son
+   disfraces de Scratch (https://scratch.mit.edu, CC BY-SA 2.0), exportados por
+   Juan Luis; el mismo escarabajo se recolorea con `--tono` (hue-rotate). */
+
+.consigna { font-size: 1.15rem; margin: 0 0 1rem; padding: .55rem .9rem; border-radius: 10px; font-weight: 600; }
+.consigna strong { letter-spacing: .04em; }
+.consigna--mentira { background: #fee2e2; color: #7f1d1d; }
+.consigna--verdad { background: #dcfce7; color: #14532d; }
+
+.bichos { display: grid; gap: 1rem .8rem; grid-template-columns: 1fr 1fr; align-items: end; }
+.bichos--3 .bicho:last-child { grid-column: 1 / -1; justify-self: center; max-width: 60%; }
+@media (max-width: 400px) {
+  .bichos { grid-template-columns: 1fr; }
+  .bichos--3 .bicho:last-child { max-width: none; }
+}
+
+.bicho {
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+  width: 100%; min-height: 0; padding: .4rem .3rem .2rem; margin: 0;
+  background: none; border: 2px solid transparent; border-radius: 14px; box-shadow: none;
+  color: var(--texto); font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.bicho:hover:not(:disabled) { background: var(--primario-claro); border-color: var(--primario-claro); }
+.bicho:disabled { cursor: default; }
+.bicho--bien, .bicho--mal, .bicho--objetivo { opacity: 1; }
+
+.bocadillo {
+  position: relative; display: block; width: 100%; padding: .5rem .6rem;
+  background: #fff; border: 2px solid #cbd5e1; border-radius: 16px;
+  font-size: 1.05rem; line-height: 1.3; font-weight: 600; overflow-wrap: anywhere;
+}
+.bocadillo::after {
+  content: ''; position: absolute; left: 50%; bottom: -11px; margin-left: -8px;
+  border: 8px solid transparent; border-top-color: #cbd5e1; border-bottom: 0;
+}
+.bocadillo--verdad { border-color: var(--correcto); background: var(--correcto-claro); }
+.bocadillo--verdad::after { border-top-color: var(--correcto); }
+.bocadillo--verdad::before { content: '✓ '; color: var(--correcto); }
+.bocadillo--mentira { border-color: var(--error); background: var(--error-claro); }
+.bocadillo--mentira::after { border-top-color: var(--error); }
+.bocadillo--mentira::before { content: '✗ '; color: var(--error); }
+
+.bicho__cuerpo { position: relative; display: block; width: 92px; height: 84px; margin-top: .4rem; }
+.bicho__cuerpo img { width: 92px; height: auto; filter: hue-rotate(var(--tono, 0deg)); transform-origin: 50% 90%; }
+.bicho--bien { border-color: var(--correcto); }
+.bicho--mal { border-color: var(--error); background: var(--error-claro); }
+.bicho--mal .bicho__cuerpo img { animation: bicho-no .5s ease; }
+.bicho--objetivo:not(.bicho--bien) { outline: 3px dashed var(--correcto); outline-offset: -3px; }
+
+/* Aplastado: el sprite muerto cae y se aplana un poco. */
+.bicho--aplastado .bicho__cuerpo img { animation: aplastar .45s ease-out forwards; }
+@keyframes aplastar {
+  0% { transform: scale(1.15, 1.15); }
+  60% { transform: scale(1.2, .55); }
+  100% { transform: scale(1.05, .8); }
+}
+@keyframes bicho-no {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* Corazones que suben desde el bicho sincero. */
+.corazones { position: absolute; left: 0; right: 0; bottom: 55%; pointer-events: none; }
+.corazones i { position: absolute; left: 50%; font-style: normal; font-size: 1.5rem; color: #ec4899; opacity: 0; animation: corazon 1.6s ease-out forwards; }
+.corazones i:nth-child(1) { margin-left: -1.6em; animation-delay: .05s; }
+.corazones i:nth-child(2) { margin-left: -.5em; animation-delay: .25s; font-size: 1.9rem; }
+.corazones i:nth-child(3) { margin-left: .7em; animation-delay: .45s; }
+@keyframes corazon {
+  0% { transform: translateY(0) scale(.6); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+}
+.bicho--amor .bicho__cuerpo img { animation: latido .6s ease-in-out 2; }
+@keyframes latido {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bicho--aplastado .bicho__cuerpo img, .bicho--mal .bicho__cuerpo img, .bicho--amor .bicho__cuerpo img, .corazones i { animation: none; opacity: 1; }
+}

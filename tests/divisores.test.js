@@ -5,11 +5,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  crearRng, generar, esCorrecta, solucionArrastrar, cumple, RELACIONES, EJERCICIOS,
+  crearRng, generar, esCorrecta, solucionArrastrar, cumple, RELACIONES, EJERCICIOS, EJERCICIOS_ACTUALES,
+  generarBichos, bichosSegun, fraseAzar, claveDe, TONOS,
   diaDe, fechaDeDia,
   codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS, ALFABETO,
 } from '../divisores/logica.js';
-import { T, frase, razon, textoOperacion } from '../divisores/textos.js';
+import { T, frase, razon, razonFalsa, fraseRazonada, textoOperacion } from '../divisores/textos.js';
 
 const TIRADAS = 3000;
 
@@ -112,6 +113,107 @@ test('las frases y las cuentas del feedback', () => {
   assert.equal(razon('divisor', 5, 60, 'en'), '60 : 5 = 12, remainder 0');
   assert.equal(textoOperacion({ clase: 'division', a: 75, b: 3, c: 25 }, 'es'), '75 : 3 = 25, resto = 0');
   assert.deepEqual(Object.keys(T.es).sort(), Object.keys(T.en).sort(), 'los dos idiomas tienen los mismos textos');
+});
+
+// --- Ejercicio 5: ¿quién miente? (los bichos) --------------------------------------
+
+/** Verdad de una frase del bicho, con la definición independiente de arriba. */
+const esVerdad = f => verdad[f.relacion](f.x, f.y);
+
+function cadaRonda(fn, puntos = 0) {
+  const rng = crearRng(2026 + puntos);
+  for (let i = 0; i < TIRADAS; i++) fn(generarBichos(rng, { puntos }));
+}
+
+test('bichos: hay exactamente un objetivo y es el único que cumple la consigna', () => {
+  assert.deepEqual(EJERCICIOS_ACTUALES, [...EJERCICIOS, 5]);
+  for (const puntos of [0, 5, 9]) {
+    cadaRonda(item => {
+      assert.equal(item.tipo, 'bichos');
+      assert.equal(item.frases.length, bichosSegun(puntos));
+      const buscada = item.modo === 'verdad';
+      const candidatos = item.frases.map((f, i) => (esVerdad(f) === buscada ? i : -1)).filter(i => i >= 0);
+      assert.deepEqual(candidatos, [item.objetivo], `${item.modo}: ${item.frases.map(f => `${f.x} ${f.relacion} ${f.y}`).join(' / ')}`);
+      for (let i = 0; i < item.frases.length; i++) assert.equal(esCorrecta(item, i), i === item.objetivo);
+      for (const f of item.frases) {
+        assert.equal(f.verdadera, esVerdad(f), 'lo que el ítem dice que es verdad, lo es');
+        assert.ok(f.relacion === 'divisor' || f.y !== 0, 'nunca «múltiplo de 0» ni «divisible entre 0»');
+        assert.ok(Number.isInteger(f.x) && Number.isInteger(f.y) && f.x >= 0 && f.y >= 0 && f.x <= 300 && f.y <= 300);
+      }
+      assert.equal(new Set(item.frases.map(f => `${f.x} ${f.relacion} ${f.y}`)).size, item.frases.length, 'sin frases repetidas');
+      assert.equal(item.tonos.length, item.frases.length);
+      assert.equal(new Set(item.tonos).size, item.tonos.length, 'cada bicho de un color');
+      for (const t of item.tonos) assert.ok(TONOS.includes(t));
+    }, puntos);
+  }
+});
+
+test('bichos: el número de bichos crece con los puntos (2, 3, 4) y los dos modos salen por igual', () => {
+  assert.deepEqual([0, 3, 4, 6, 7, 9].map(bichosSegun), [2, 2, 3, 3, 4, 4]);
+  assert.equal(generarBichos(crearRng(1)).frases.length, 2, 'sin sesión, como al empezar');
+  let verdad = 0;
+  cadaRonda(item => { if (item.modo === 'verdad') verdad++; });
+  assert.ok(verdad > 0.4 * TIRADAS && verdad < 0.6 * TIRADAS, `modo verdad ${verdad} de ${TIRADAS}`);
+  const posiciones = [0, 0, 0, 0];
+  cadaRonda(item => posiciones[item.objetivo]++, 9);
+  for (const p of posiciones) assert.ok(p > 0.15 * TIRADAS, `el objetivo no está siempre en el mismo sitio: ${posiciones}`);
+});
+
+test('bichos: salen las trampas en los dos sentidos', () => {
+  const vistas = { unoDivisor: false, mismo: false, ceroMultiplo: false, alReves: false, ceroDivisor: false, sieteDivisorDeUno: false, restoNoCero: false };
+  const rng = crearRng(77);
+  for (let i = 0; i < TIRADAS; i++) {
+    for (const verdadera of [true, false]) {
+      const f = fraseAzar(rng, verdadera);
+      if (f.relacion !== 'divisor' && f.y === 0) continue;
+      if (verdadera) {
+        if (f.relacion === 'divisor' && f.x === 1) vistas.unoDivisor = true;
+        if (f.x === f.y) vistas.mismo = true;
+        if (f.x === 0 && f.relacion !== 'divisor') vistas.ceroMultiplo = true;
+      } else {
+        if (f.relacion === 'divisor' && f.x > f.y && f.y > 1 && f.x % f.y === 0) vistas.alReves = true;
+        if (f.relacion !== 'divisor' && f.y > f.x && f.x > 1 && f.y % f.x === 0) vistas.alReves = true;
+        if (f.relacion === 'divisor' && f.x === 0) vistas.ceroDivisor = true;
+        if (f.relacion === 'divisor' && f.y === 1 && f.x > 1) vistas.sieteDivisorDeUno = true;
+        if (f.relacion === 'divisor' ? (f.x > 1 && f.y % f.x !== 0) : (f.y > 1 && f.x % f.y !== 0)) vistas.restoNoCero = true;
+      }
+    }
+  }
+  assert.deepEqual(vistas, { unoDivisor: true, mismo: true, ceroMultiplo: true, alReves: true, ceroDivisor: true, sieteDivisorDeUno: true, restoNoCero: true });
+});
+
+test('bichos: las cuentas del feedback son verdad, en los dos idiomas', () => {
+  assert.equal(razonFalsa('divisor', 60, 5, 'es'), '5 : 60 = 0, resto 5');
+  assert.equal(razonFalsa('multiplo', 61, 5, 'en'), '61 : 5 = 12, remainder 1');
+  assert.equal(razonFalsa('divisible', 1, 7, 'es'), '1 : 7 = 0, resto 1');
+  assert.match(razonFalsa('divisor', 0, 8, 'es'), /0 no es divisor de ningún número/);
+  assert.match(fraseRazonada({ x: 1, relacion: 'divisor', y: 7, verdadera: true }, 'es'), /^1 es divisor de 7: <span class="cuenta">7 : 1 = 7, resto 0<\/span>$/);
+  assert.match(fraseRazonada({ x: 16, relacion: 'divisor', y: 2, verdadera: false }, 'en'), /^16 is not a divisor of 2: <span class="cuenta">2 : 16 = 0, remainder 2<\/span>$/);
+  // Por fuerza bruta: la división que se enseña como no exacta no lo es, y los cocientes y restos son los de verdad.
+  const rng = crearRng(3);
+  for (let i = 0; i < TIRADAS; i++) {
+    const f = fraseAzar(rng, false);
+    if (f.relacion !== 'divisor' && f.y === 0) continue;
+    if (esVerdad(f)) continue;
+    const [D, d] = f.relacion === 'divisor' ? [f.y, f.x] : [f.x, f.y];
+    if (d === 0) continue;
+    const m = razonFalsa(f.relacion, f.x, f.y, 'es').match(/^(\d+) : (\d+) = (\d+), resto (\d+)$/);
+    assert.ok(m, razonFalsa(f.relacion, f.x, f.y, 'es'));
+    const [, DD, dd, q, r] = m.map(Number);
+    assert.deepEqual([DD, dd], [D, d]);
+    assert.ok(r > 0 && r < d && q * d + r === D);
+  }
+  assert.deepEqual(Object.keys(T.es.bichos).sort(), Object.keys(T.en.bichos).sort());
+  assert.equal(T.es.ejercicios.length, 6);
+  assert.equal(T.en.ejercicios.length, 6);
+});
+
+test('bichos: la clave distingue rondas distintas y generar(5) pasa la sesión', () => {
+  const rng = crearRng(5);
+  const claves = new Set();
+  for (let i = 0; i < 500; i++) claves.add(claveDe(generar(5, rng, { puntos: 8 })));
+  assert.ok(claves.size > 480, `${claves.size} rondas distintas de 500`);
+  assert.equal(generar(5, crearRng(8), { puntos: 8 }).frases.length, 4);
 });
 
 test('fechas', () => {

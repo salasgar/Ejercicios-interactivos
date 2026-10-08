@@ -75,12 +75,18 @@ común de `practicas/` (es la práctica 0 de su catálogo) y comparte su panel
 del profesor: lo que sigue vale también para ella.
 
 - **Ejercicios**: 0 («de» o «entre»), 1 (con multiplicaciones), 2 (con
-  divisiones), 3 (mezcla) y 4 (arrastrar dos de los tres números a
-  «__ es múltiplo de __»). Cuando «múltiplo de» y «divisible entre» valen las
-  dos, se aceptan las dos (y en «18 es … 18», las tres).
+  divisiones), 3 (mezcla), 4 (arrastrar dos de los tres números a
+  «__ es múltiplo de __») y 5, **«¿Quién miente?»** (desde el 2026-10-08):
+  varios bichos (sprites de Scratch) dicen cada uno una frase y hay que pulsar
+  el que miente o el que dice la verdad, según la consigna de la ronda; salen
+  2, 3 y 4 bichos conforme suben los puntos, con verdades que parecen mentira
+  («1 es divisor de 7») y mentiras que parecen verdad («60 es divisor de 5»).
+  Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan las dos
+  (y en «18 es … 18», las tres).
 - Los códigos de alumno de 4 caracteres son los mismos de siempre. Quien la
   hizo con la versión anterior tiene un código de resultado de 12 caracteres:
-  el panel los sigue leyendo, mezclados con los de 16.
+  el panel los sigue leyendo, mezclados con los de 16 (traen solo los cinco
+  ejercicios de entonces; el 6 sale como no hecho).
 - Código en `divisores/` (`logica.js` es pura y tiene sus tests en
   `tests/divisores.test.js`).
 
