@@ -18,14 +18,38 @@ function numero(rng, min = 2, max = 9) {
   return rng.entero(min, max);
 }
 
-/** Una parte de la expresión: { forma, a, b, c, e }. */
+/** Las regiones tocables de cada forma (ids de los data-id de la práctica). */
+export const REGIONES = {
+  simple: ['a', 'b'],
+  suma: ['a', 'b'],
+  grupo: ['b', 'grupo'],
+  sumagrupo: ['b', 'grupo'],
+  intermedia: ['a', 'c', 'grupo'],
+};
+
+/**
+ * Una parte de la expresión: { forma, a, b, c, e }. Se descartan los números con los
+ * que tocar una región equivocada daría el mismo valor (3 · 3², 5 · (2 + 3)²), porque
+ * entonces «lo que has tocado daría…» no se notaría.
+ */
 export function generarParte(rng) {
-  const forma = rng.elegir(FORMAS);
-  const e = rng.elegir([2, 3]);
-  const a = numero(rng);
-  const b = numero(rng);
-  if (forma === 'intermedia') return { forma, a, b, c: numero(rng), e };
-  return { forma, a, b, e };
+  for (;;) {
+    const forma = rng.elegir(FORMAS);
+    const e = rng.elegir([2, 3]);
+    const a = numero(rng);
+    const b = numero(rng);
+    const p = forma === 'intermedia' ? { forma, a, b, c: numero(rng), e } : { forma, a, b, e };
+    if (REGIONES[forma].every(id => id === idBaseDe(forma) || valorTocado(p, id) !== valorParte(p))) return p;
+  }
+}
+
+/** El valor que saldría si el exponente afectara a la región tocada `id`. */
+export function valorTocado(p, id) {
+  if (id === idBaseDe(p.forma)) return valorParte(p);
+  if (p.forma === 'simple') return p.a ** p.e * p.b;
+  if (p.forma === 'suma') return p.a ** p.e + p.b;
+  if (p.forma === 'intermedia' && id === 'a') return p.a ** p.e * (p.b + p.c);
+  return valorErroneoParte(p); // grupo, sumagrupo e intermedia con la c: elevar solo el último número
 }
 
 /** El valor correcto de una parte (la base del exponente es la que manda). */
@@ -64,6 +88,16 @@ export function cuentaErronea(p) {
   if (p.forma === 'grupo') return `${a} · ${b}<sup>${e}</sup> = ${a} · ${b ** e} = ${valorErroneoParte(p)}`;
   if (p.forma === 'sumagrupo') return `${a} + ${b}<sup>${e}</sup> = ${a} + ${b ** e} = ${valorErroneoParte(p)}`;
   return `${a} · (${b} + ${c}<sup>${e}</sup>) = ${a} · (${b} + ${c ** e}) = ${valorErroneoParte(p)}`;
+}
+
+/** La cuenta de lo que el alumno ha tocado: el exponente afectando solo a esa región. */
+export function cuentaTocada(p, id) {
+  const { a, b, c, e } = p;
+  const v = valorTocado(p, id);
+  if (p.forma === 'simple') return `${a}<sup>${e}</sup> · ${b} = ${a ** e} · ${b} = ${v}`;
+  if (p.forma === 'suma') return `${a}<sup>${e}</sup> + ${b} = ${a ** e} + ${b} = ${v}`;
+  if (p.forma === 'intermedia' && id === 'a') return `${a}<sup>${e}</sup> · (${b} + ${c}) = ${a ** e} · ${b + c} = ${v}`;
+  return cuentaErronea(p); // grupo, sumagrupo e intermedia con la c
 }
 
 /** Lectura en inglés de una potencia: «three to the power of four». */

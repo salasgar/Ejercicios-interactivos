@@ -6,7 +6,7 @@ import { TX } from './textos.js';
 import {
   generarAlcance, aciertaAlcance, idBaseDe, valorParte, valorErroneoParte,
   generarMultiplicacion, secuenciaCorrecta, aciertaRepetida, aciertaPotencia,
-  generarAreas, respuestasAreas, aciertaAreas, cuentaParte, cuentaErronea, lecturaIngles,
+  generarAreas, respuestasAreas, aciertaAreas, cuentaParte, cuentaErronea, cuentaTocada, lecturaIngles,
 } from './logica.js';
 
 // ─── Ejercicio 1: ¿a qué afecta el exponente? ──────────────────────────────────
@@ -49,8 +49,9 @@ function montarAlcance(contenedor, item, api) {
         if (x.dataset.id === id) x.classList.add(acierto ? 'exp-click--bien' : 'exp-click--mal');
         else if (x.dataset.id === correctaId) x.classList.add('exp-click--correcta');
       });
-      const correcta = cuentaParte(parte), erronea = cuentaErronea(parte);
-      const html2 = acierto ? tt(TX.alcance.bien)(correcta, erronea) : tt(TX.alcance.mal)(correcta, erronea);
+      const correcta = cuentaParte(parte);
+      // «Si afectara a otra parte» (acierto) es el error típico; «lo que has tocado daría» (fallo) es la región tocada.
+      const html2 = acierto ? tt(TX.alcance.bien)(correcta, cuentaErronea(parte)) : tt(TX.alcance.mal)(correcta, cuentaTocada(parte, id));
       api.responder({ acierto, html: html2, espera: 1800 });
     });
   });
@@ -61,7 +62,7 @@ function montarAlcance(contenedor, item, api) {
 function montarRepetida(contenedor, item, api) {
   const { tt, t } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.repetida.instruccion_construir)(`${item.base}<sup>${item.exponente}</sup>`)}</p>
+    <p class="instruccion">${tt(TX.repetida.instruccion_construir)(item.base, item.exponente)}</p>
     <p class="pequeno">${item.base}<sup>${item.exponente}</sup> = ${lecturaIngles(item.base, item.exponente)}</p>
     <div class="frase" id="secuencia"></div>
     <div class="banco" id="banco"></div>
@@ -101,7 +102,7 @@ function montarRepetida(contenedor, item, api) {
     const acierto = aciertaRepetida(item, valores);
     contenedor.querySelectorAll('.ficha').forEach(b => { b.disabled = true; });
     const p = secuenciaCorrecta(item).join(' ');
-    const html = acierto ? tt(TX.repetida.bien)(item.base, item.exponente, p) : tt(TX.repetida.mal)(p);
+    const html = acierto ? tt(TX.repetida.bien)(item.base, item.exponente, p) : tt(TX.repetida.mal)(p, item.base, item.exponente);
     api.responder({ acierto, html, espera: 1600 });
   });
 }
@@ -126,7 +127,7 @@ function montarPotencia(contenedor, item, api) {
     basePaso.bloquear();
     expPaso.bloquear();
     const acierto = aciertaPotencia(item, b, e);
-    const html = acierto ? tt(TX.potencia.bien)(item.base, item.exponente, prod) : tt(TX.potencia.mal)(item.base, item.exponente, prod);
+    const html = acierto ? tt(TX.potencia.bien)(item.base, item.exponente, prod) : tt(TX.potencia.mal)(item.base, item.exponente, prod, b, e);
     api.responder({ acierto, html, espera: 1600 });
   });
 }
@@ -141,7 +142,7 @@ function montarValor(contenedor, item, api) {
       if (api.respondido()) return;
       botones.marcar([item.correcta], valor);
       const acierto = valor === item.correcta;
-      const html = acierto ? tt(TX.valor.bien)(item.base, item.exponente, item.correcta) : tt(TX.valor.mal)(item.base, item.exponente, item.correcta);
+      const html = acierto ? tt(TX.valor.bien)(item.base, item.exponente, item.correcta) : tt(TX.valor.mal)(item.base, item.exponente, item.correcta, valor);
       api.responder({ acierto, html, espera: 1600 });
     },
   });
@@ -155,7 +156,7 @@ function montarMultiplicacion(contenedor, item, api) {
 
 // ─── Ejercicio 3: el cuadrado de la suma, con áreas ────────────────────────────
 
-function svgAreas(a, b) {
+function svgAreas(a, b, etiqueta) {
   const lado = a + b;
   const colorA = '#bfdbfe', colorB = '#fde68a', colorAB = '#bbf7d0', trazo = '#1d4ed8';
   const lineas = [];
@@ -165,7 +166,7 @@ function svgAreas(a, b) {
   }
   const txt = (x, y, valor) => `<text x="${x}" y="${y}" font-size="0.4" text-anchor="middle" dominant-baseline="middle" fill="#1e293b" font-weight="700">${valor}</text>`;
   return `
-    <svg viewBox="0 0 ${lado} ${lado}" class="exp-areas-svg" role="img" aria-label="cuadrado de lado ${lado}">
+    <svg viewBox="0 0 ${lado} ${lado}" class="exp-areas-svg" role="img" aria-label="${etiqueta}">
       <rect x="0" y="0" width="${a}" height="${a}" fill="${colorA}" stroke="${trazo}" stroke-width="0.04"/>
       <rect x="${a}" y="0" width="${b}" height="${a}" fill="${colorAB}" stroke="${trazo}" stroke-width="0.04"/>
       <rect x="0" y="${a}" width="${a}" height="${b}" fill="${colorAB}" stroke="${trazo}" stroke-width="0.04"/>
@@ -203,19 +204,22 @@ function crearTeclado(contenedor, { onAceptar }) {
 function montarAreas(contenedor, item, api) {
   const { tt } = api;
   const lado = item.a + item.b;
+  // La variante (a · b)² no tiene que ver con un cuadrado de lado a + b: va sin dibujo.
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.areas.instruccion)(item.a, item.b)}</p>
+    <p class="instruccion">${item.variante ? tt(TX.areas.instruccion_prod)(item.a, item.b) : tt(TX.areas.instruccion)(item.a, item.b)}</p>
     <div id="dibujo"></div>
     <div id="pasos"></div>
     <div id="preguntas"></div>`;
-  const dibujo = contenedor.querySelector('#dibujo');
-  function pintarDibujo(split) { dibujo.innerHTML = svgAreas(split, lado - split); }
-  pintarDibujo(item.a);
-  pasos(contenedor.querySelector('#pasos'), {
-    valor: item.a, min: 1, max: lado - 1, nombre: 'a',
-    pinta: v => `${v} / ${lado - v}`,
-    alCambiar: pintarDibujo,
-  });
+  if (!item.variante) {
+    const dibujo = contenedor.querySelector('#dibujo');
+    const pintarDibujo = split => { dibujo.innerHTML = svgAreas(split, lado - split, tt(TX.areas.aria_cuadrado)(lado)); };
+    pintarDibujo(item.a);
+    pasos(contenedor.querySelector('#pasos'), {
+      valor: item.a, min: 1, max: lado - 1, nombre: 'a',
+      pinta: v => `${v} / ${lado - v}`,
+      alCambiar: pintarDibujo,
+    });
+  }
 
   const preguntasEl = contenedor.querySelector('#preguntas');
   let respuesta1 = null;

@@ -21,32 +21,58 @@ export const TX = {
   },
   repetida: {
     nombre: { es: 'Multiplicación repetida', en: 'Repeated multiplication' },
-    detalle: { es: 'Construye la potencia con fichas y con los steppers', en: 'Build the power with tiles and with the steppers' },
-    instruccion_construir: { es: n => `Escribe ${n} como producto, tocando las fichas en orden.`, en: n => `Write ${n} as a product, tapping the tiles in order.` },
+    detalle: { es: 'Construye la potencia con fichas y con los botones − y +', en: 'Build the power with tiles and with the − and + buttons' },
+    instruccion_construir: {
+      es: (b, e) => `Escribe ${b}<sup>${e}</sup> como un producto de ${e} factores, todos iguales a ${b}. Toca las fichas en orden.`,
+      en: (b, e) => `Write ${b}<sup>${e}</sup> as a product of ${e} factors, all of them equal to ${b}. Tap the tiles in order.`,
+    },
     instruccion_deshacer: { es: 'Toca una ficha de la fila para quitarla.', en: 'Tap a tile in the row to remove it.' },
     bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
-    mal: { es: (p) => `Tiene que quedar: ${p}.`, en: (p) => `It should be: ${p}.` },
+    mal: {
+      es: (p, b, e) => `Tiene que quedar: ${p}. Son ${e} factores y todos son ${b}, sin otras fichas.`,
+      en: (p, b, e) => `It should be: ${p}. That is ${e} factors, all of them ${b}, with no other tiles.`,
+    },
   },
   potencia: {
     nombre: { es: 'Del producto a la potencia', en: 'From the product to the power' },
     detalle: { es: 'Ajusta la base y el exponente', en: 'Adjust the base and the exponent' },
-    instruccion: { es: 'Escribe este producto como una potencia: ajusta la base y el exponente.', en: 'Write this product as a power: adjust the base and the exponent.' },
+    instruccion: {
+      es: 'Escribe este producto como una potencia: la base es el número que se repite. Ajusta la base y el exponente.',
+      en: 'Write this product as a power: the base is the number that repeats. Adjust the base and the exponent.',
+    },
     base: { es: 'Base', en: 'Base' },
     exponente: { es: 'Exponente', en: 'Exponent' },
     bien: { es: (b, e, p) => `${p} es ${b} multiplicado por sí mismo ${e} veces: ${b} elevado a ${e}.`, en: (b, e, p) => `${p} is ${b} multiplied by itself ${e} times: ${b} to the power of ${e}.` },
-    mal: { es: (b, e, p) => `${p} es ${b} elevado a ${e}, no lo que has puesto.`, en: (b, e, p) => `${p} is ${b} to the power of ${e}, not what you entered.` },
+    // (b, e) = la potencia esperada; (pb, pe) = lo que ha puesto el alumno
+    mal: {
+      es: (b, e, p, pb, pe) => `${p} es ${b} elevado a ${e}: la base es el número que se repite.${pb ** pe === b ** e ? ` Lo que has puesto (${pb} elevado a ${pe}) vale lo mismo, pero aquí la base tiene que ser ${b}.` : ''}`,
+      en: (b, e, p, pb, pe) => `${p} is ${b} to the power of ${e}: the base is the number that repeats.${pb ** pe === b ** e ? ` What you entered (${pb} to the power of ${pe}) has the same value, but here the base has to be ${b}.` : ''}`,
+    },
   },
   valor: {
     nombre: { es: '¿Cuánto vale?', en: 'What is its value?' },
     detalle: { es: 'Elige el valor correcto de la potencia', en: 'Choose the correct value of the power' },
     pregunta: { es: (b, e) => `¿Cuánto vale ${b} elevado a ${e}?`, en: (b, e) => `What is ${b} to the power of ${e}?` },
     bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
-    mal: { es: (b, e, p) => `El valor correcto es ${p}: ${b} multiplicado por sí mismo ${e} veces.`, en: (b, e, p) => `The correct value is ${p}: ${b} multiplied by itself ${e} times.` },
+    // `elegido` es la opción que ha tocado el alumno: se dice qué cuenta daría ese número
+    mal: {
+      es: (b, e, p, elegido) => `${elegido === b * e
+        ? `${elegido} es ${b} · ${e}: eso multiplica la base por el exponente.`
+        : elegido === e ** b ? `${elegido} es ${e} elevado a ${b}: has cambiado la base y el exponente.` : `${elegido} no es ${b} elevado a ${e}.`} El valor correcto es ${p}: ${b} multiplicado por sí mismo ${e} veces.`,
+      en: (b, e, p, elegido) => `${elegido === b * e
+        ? `${elegido} is ${b} · ${e}: that multiplies the base by the exponent.`
+        : elegido === e ** b ? `${elegido} is ${e} to the power of ${b}: you swapped the base and the exponent.` : `${elegido} is not ${b} to the power of ${e}.`} The correct value is ${p}: ${b} multiplied by itself ${e} times.`,
+    },
   },
   areas: {
     nombre: { es: 'El cuadrado de la suma, con áreas', en: 'The square of a sum, with areas' },
     detalle: { es: 'Reparte el lado y compara las áreas', en: 'Split the side and compare the areas' },
     instruccion: { es: (a, b) => `El cuadrado tiene lado ${a} + ${b}. Repártelo y responde.`, en: (a, b) => `The square has side ${a} + ${b}. Split it and answer.` },
+    instruccion_prod: {
+      es: (a, b) => `Compara (${a} · ${b}) al cuadrado con ${a} al cuadrado · ${b} al cuadrado.`,
+      en: (a, b) => `Compare (${a} · ${b}) squared with ${a} squared · ${b} squared.`,
+    },
+    aria_cuadrado: { es: lado => `cuadrado de lado ${lado}`, en: lado => `square with side ${lado}` },
     pregunta1_suma: { es: (a, b) => `¿Cuánto vale (${a} + ${b}) elevado a 2?`, en: (a, b) => `What is (${a} + ${b}) to the power of 2?` },
     pregunta2_suma: { es: (a, b) => `¿Y ${a} al cuadrado + ${b} al cuadrado?`, en: (a, b) => `And ${a} squared + ${b} squared?` },
     pregunta1_prod: { es: (a, b) => `¿Cuánto vale (${a} · ${b}) elevado a 2?`, en: (a, b) => `What is (${a} · ${b}) to the power of 2?` },
