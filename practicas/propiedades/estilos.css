@@ -1,0 +1,44 @@
+/* Propiedades de las potencias y última cifra: lo que no está en ../_comun/estilos.css. */
+
+/* Los botones y cajas con `hidden` tienen display propio: sin esto se verían. */
+.ejercicio [hidden] { display: none !important; }
+
+/* La cadena de potencias: se parte en varias líneas, también a 375 px. */
+.cadena { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .35rem; margin-bottom: 1rem; }
+.cadena .termino, .cadena .parte {
+  min-height: 48px; min-width: 48px; padding: 0 .55rem;
+  font-size: clamp(1.1rem, 5.2vw, 1.55rem); font-weight: 700; font-variant-numeric: tabular-nums;
+  background: var(--primario-claro); color: var(--primario-oscuro);
+  border: 2px solid transparent; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+}
+.cadena .termino { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.cadena .termino:disabled { opacity: 1; cursor: default; }
+.cadena .termino--elegida { border-color: var(--primario); background: #fff; box-shadow: 0 0 0 3px var(--primario-claro); }
+.cadena .op { font-size: clamp(1.1rem, 5vw, 1.5rem); font-weight: 700; color: var(--texto-suave); }
+
+.juntador {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem .7rem;
+  background: var(--fondo); border-radius: 12px; padding: .8rem; margin-bottom: 1rem;
+}
+.juntador__cuenta { font-size: 1.25rem; font-weight: 700; }
+.juntador__botones { display: flex; gap: .6rem; justify-content: center; width: 100%; }
+.juntador__botones button { min-width: 7rem; }
+.juntador .pasos { margin: 0; }
+
+.aviso-prop { min-height: 1.4em; color: var(--texto-suave); font-size: .95rem; margin: 0 0 .6rem; }
+.aviso-prop--mal { color: var(--error); font-weight: 600; }
+
+.centro { display: flex; justify-content: center; margin-bottom: 1rem; }
+.cuenta-total { font-size: 1.3rem; font-weight: 700; }
+
+/* La tabla de últimas cifras (ejercicio 3) */
+.ultima__tabla { --columnas: 8; max-width: 26rem; margin: 0 auto .4rem; }
+.ultima__tabla .rejilla__celda { aspect-ratio: auto; min-height: 2.9rem; flex-direction: column; justify-content: center; font-size: 1.15rem; }
+.ultima__tabla .rejilla__celda small { font-size: .62rem; font-weight: 400; color: var(--texto-suave); line-height: 1.1; }
+.ultima__tabla .rejilla__celda--elegida { border-color: var(--primario); box-shadow: 0 0 0 3px var(--primario-claro); }
+.ultima__titulo { color: var(--texto-suave); font-size: .95rem; margin: 0 0 .5rem; }
+.ultima__teclado { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; max-width: 22rem; margin: .6rem auto 1rem; }
+.ultima__teclado .eleccion { min-height: 48px; font-size: 1.25rem; padding: 0; }
+.ultima__teclado--ciclo { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+.eleccion--elegida { border-color: var(--primario); background: var(--primario-claro); color: var(--primario-oscuro); }
+.ultima__preg { margin: .8rem 0 0; font-weight: 600; }
