@@ -10,6 +10,14 @@ const BASES = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 export const MAX_EXP = 30;
 export const MIN_EXP = 2;
 
+/** Raíz de una base: la menor r tal que base = r^i (4 y 8 → 2; 9 → 3; el resto, ella misma). */
+function raizDe(n) {
+  for (let r = 2; r < n; r++) for (let p = r; p <= n; p *= r) if (p === n) return r;
+  return n;
+}
+/** Dos bases son parientes si una es potencia de la otra o de una raíz común: 2/4/8 y 3/9. */
+export const emparentadas = (a, b) => raizDe(a) === raizDe(b);
+
 /** Exponente efectivo de un término: (b^e)^k = b^(e·k). */
 export const efectivo = t => t.exp * (t.k ?? 1);
 
@@ -76,7 +84,8 @@ export function generarJuntar(rng, sesion = {}) {
     const terminos = Array.from({ length: n }, () => ({ base, exp: rng.entero(MIN_EXP, 9), k: 1 }));
     const ops = Array.from({ length: n - 1 }, () => (rng.azar() < 0.55 ? '·' : ':'));
     if (ajena) {
-      const otra = rng.elegir(BASES.filter(b => b !== base));
+      // La base ajena no puede ser pariente: 2³ · 2⁶ · 4⁷ sí se podría juntar (4⁷ = 2¹⁴).
+      const otra = rng.elegir(BASES.filter(b => !emparentadas(b, base)));
       const alFinal = rng.azar() < 0.5;
       const e = rng.entero(MIN_EXP, 9);
       if (alFinal) { terminos[2] = { base: otra, exp: e, k: 1 }; ops[1] = '·'; }
