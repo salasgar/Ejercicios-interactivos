@@ -53,3 +53,7 @@ contador…») porque la tarea 35 cambió los valores por defecto de `contador.j
 (`inicial: 20→?`, `penalizacion: 5→2`, `maximo: 40→20`) mientras esta tarea estaba en
 curso; su reclamo (`s-20261007T205921-9d74da56`) seguía vivo al terminar. No se ha
 tocado ningún fichero de la 35.
+
+## Reabierta (2026-10-08, sesión s-20261008T175224-7b4cac18) — commit `3817f7e`
+
+Corregidos los cinco puntos de `hechos/reabiertas/05--s-20261008T051928-1cba9950.md`: (1) opción «mitad» con el número del ítem, sin la letra n; (2) instrucción «lista MÁS CORTA / SHORTEST»; (3) fallo al tachar cita la primera celda que falta (`51 = 3 · 17`) y la primera de más con su motivo; (4) 169 fuera de TRAMPOSOS; (5) «entre 2 ni 3» / «by 2 or 3» y «After 7». La criba, las fichas y su aritmética no se han tocado.
