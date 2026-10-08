@@ -186,9 +186,12 @@ const pIgual = (p, q) => p.size === q.size && [...p].every(([m, c]) => q.get(m) 
 const letra = nombre => ({ n: new Map([[nombre, 1]]), d: new Map([['', 1]]) });
 const cIgual = (x, y) => pIgual(pProducto(x.n, y.d), pProducto(y.n, x.d));
 
-function cociente(arbol, raices) {
-  if (arbol.op === 'n') return letra(`x${arbol.v}`);
-  const a = cociente(arbol.a, raices);
+function cociente(arbol, raices, constantes) {
+  if (arbol.op === 'n') {
+    // Un número de `constantes` no es una letra: vale lo que vale (ver `sumaRepetida`).
+    return constantes?.has(arbol.v) ? { n: new Map([['', arbol.v]]), d: new Map([['', 1]]) } : letra(`x${arbol.v}`);
+  }
+  const a = cociente(arbol.a, raices, constantes);
   if (!a) return null;
   if (arbol.op === '()') return a;
   if (arbol.op === '²') return { n: pProducto(a.n, a.n), d: pProducto(a.d, a.d) };
@@ -197,7 +200,7 @@ function cociente(arbol, raices) {
     if (k < 0) k = raices.push(a) - 1;
     return letra(`r${k}`);
   }
-  const b = cociente(arbol.b, raices);
+  const b = cociente(arbol.b, raices, constantes);
   if (!b) return null;
   switch (arbol.op) {
     case '+': return { n: pSuma(pProducto(a.n, b.d), pProducto(b.n, a.d)), d: pProducto(a.d, b.d) };
@@ -212,6 +215,22 @@ export function equivalentes(a, b) {
   const raices = [];
   const x = cociente(a, raices), y = cociente(b, raices);
   return Boolean(x && y) && cIgual(x, y);
+}
+
+/**
+ * ¿Es `arbol` el `modelo` con algún producto escrito como suma repetida?
+ * √49 + √49 por 2 · √49, o 12 + 12 + 12 + 5 por 3 · 12 + 5. Devuelve los
+ * números del modelo que hacían de «veces» (los que `arbol` no usa), de menor
+ * a mayor, o `null` si no es el caso. Sigue siendo estructural: solo esos
+ * números cuentan por su valor; los demás siguen siendo letras.
+ */
+export function sumaRepetida(arbol, modelo) {
+  const usados = new Set(numerosDe(arbol));
+  const veces = [...new Set(numerosDe(modelo))].filter(n => !usados.has(n)).sort((x, y) => x - y);
+  if (!veces.length) return null;
+  const raices = [], constantes = new Set(veces);
+  const x = cociente(arbol, raices, constantes), y = cociente(modelo, raices, constantes);
+  return x && y && cIgual(x, y) ? veces : null;
 }
 
 // --- Paréntesis que sobran ----------------------------------------------------------
@@ -324,16 +343,23 @@ export const plantillaPorId = id => PLANTILLAS.find(p => p.id === id) ?? null;
 
 const esNatural = v => Number.isInteger(v) && v > 0;
 
+/** ¿Dan un natural el árbol y todos sus pasos intermedios? (90 : 4 · 2 = 45, pero 90 : 4 no.) */
+function pasosNaturales(arbol) {
+  if (arbol.op === 'n') return true;
+  return esNatural(evaluar(arbol)) && pasosNaturales(arbol.a) && (!arbol.b || pasosNaturales(arbol.b));
+}
+
 /**
  * ¿Valen estos números para la plantilla? Tienen que ser naturales distintos,
- * el modelo tiene que dar un natural y ninguna expresión errónea puede dar lo
- * mismo que el modelo.
+ * el modelo tiene que dar un natural EN CADA PASO (no salen 22,5 bolsas) y
+ * ninguna expresión errónea puede dar lo mismo que el modelo.
  */
 export function numerosValidos(plantilla, numeros) {
   const valores = Object.values(numeros);
   if (!valores.every(esNatural) || new Set(valores).size !== valores.length) return false;
-  const resultado = evaluar(modeloDe(plantilla, numeros));
-  if (!esNatural(resultado)) return false;
+  const modelo = modeloDe(plantilla, numeros);
+  const resultado = evaluar(modelo);
+  if (!pasosNaturales(modelo)) return false;
   return erroresDe(plantilla, numeros).every(e => evaluar(e.arbol) !== resultado);
 }
 
@@ -405,7 +431,11 @@ export const claveItem = item => `${item.tipo}/${item.plantilla}/${Object.values
  * Corrige lo que ha montado el alumno:
  *
  *   { estado: 'malformada', error }                     no cuenta como fallo
- *   { estado: 'bien', valor, quitados, limpia }         `limpia`: sin los paréntesis que sobran
+ *   { estado: 'bien', valor, quitados, limpia, repetida }
+ *                                                       `limpia`: sin los paréntesis que sobran;
+ *                                                       `repetida`: null, o los números que no ha
+ *                                                       usado porque ha escrito el producto como
+ *                                                       suma repetida (también es acierto)
  *   { estado: 'mal', valor, faltan, tipo, casualidad }  `faltan`: números del problema sin usar;
  *                                                       `tipo`: el del error declarado que coincide
  *                                                       (o null); `casualidad`: da lo mismo que el
@@ -415,9 +445,10 @@ export function corregir(item, fichas) {
   const r = analizar(fichas);
   if (!r.ok) return { estado: 'malformada', error: r.error };
   const valor = evaluar(r.arbol);
-  if (equivalentes(r.arbol, item.modelo)) {
+  const repetida = equivalentes(r.arbol, item.modelo) ? null : sumaRepetida(r.arbol, item.modelo);
+  if (repetida || equivalentes(r.arbol, item.modelo)) {
     const { arbol: limpia, quitados } = quitarSobrantes(r.arbol);
-    return { estado: 'bien', valor, quitados, limpia };
+    return { estado: 'bien', valor, quitados, limpia, repetida };
   }
   const usados = new Set(numerosDe(r.arbol));
   const faltan = [...new Set(numerosDe(item.modelo))].filter(n => !usados.has(n)).sort((x, y) => x - y);

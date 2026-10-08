@@ -6,6 +6,9 @@
 // paréntesis; sin letras ni ecuaciones; y el feedback habla de LOS NÚMEROS DE
 // ESE ÍTEM.
 
+/** [3, 4, 5] → «3, 4 y 5» / «3, 4 and 5». */
+const enumerar = (lista, y) => (lista.length > 1 ? `${lista.slice(0, -1).join(', ')} ${y} ${lista.at(-1)}` : String(lista[0]));
+
 export const TX = {
   sin: {
     nombre: { es: 'Dos operaciones', en: 'Two operations' },
@@ -75,8 +78,12 @@ export const TX = {
     en: () => 'You did not need those brackets: without them it is the same,',
   },
   faltan: {
-    es: lista => `No has usado ${lista.length > 1 ? 'los números' : 'el'} ${lista.join(' y ')}.`,
-    en: lista => `You did not use ${lista.join(' and ')}.`,
+    es: lista => `No has usado ${lista.length > 1 ? 'los números' : 'el'} ${enumerar(lista, 'y')}.`,
+    en: lista => `You did not use ${enumerar(lista, 'and')}.`,
+  },
+  repetida: {
+    es: lista => `Está bien: sumar varias veces lo mismo es multiplicar. Con ${lista.length > 1 ? 'los números' : 'el'} ${enumerar(lista, 'y')} se escribe más corto:`,
+    en: lista => `Correct: adding the same thing several times is multiplying. With ${enumerar(lista, 'and')} it is shorter:`,
   },
   casualidad: {
     es: 'Da el mismo resultado solo por casualidad: con otros números no saldría.',

@@ -134,10 +134,13 @@ function montarExpresion(contenedor, item, api) {
     if (r.estado === 'bien') {
       const sobraba = r.quitados
         ? ` ${tt(TX.sobraba)(r.quitados)} <span class="cuenta">${htmlExpresion(aFichas(r.limpia), idioma)}</span>.` : '';
+      // La suma repetida es un planteamiento correcto: se acepta y se enseña la forma corta.
+      const repetida = r.repetida
+        ? ` ${tt(TX.repetida)(r.repetida)} ${cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma)}.` : '';
       return api.responder({
         acierto: true,
-        html: `${cuenta(fichas, r.valor, idioma)}.${sobraba} ${plantillaPorId(item.plantilla).explica[idioma](item.numeros).replace(/:$/, '.')}`,
-        espera: r.quitados ? 4200 : 2600,
+        html: `${cuenta(fichas, r.valor, idioma)}.${sobraba}${repetida} ${plantillaPorId(item.plantilla).explica[idioma](item.numeros).replace(/:$/, '.')}`,
+        espera: r.quitados || r.repetida ? 4200 : 2600,
       });
     }
     const pegas = [

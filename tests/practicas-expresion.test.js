@@ -14,7 +14,7 @@ import { PLANTILLAS, TX } from '../practicas/expresion/textos.js';
 import {
   analizar, aFichas, evaluar, equivalentes, quitarSobrantes, corregir,
   FAMILIAS, instanciar, modeloDe, erroresDe, plantillaPorId, numerosValidos,
-  generarSin, generarCon, generarPotencias, claveItem, P_VARIANTE, MAX_FICHAS,
+  generarSin, generarCon, generarPotencias, claveItem, P_VARIANTE, MAX_FICHAS, sumaRepetida,
 } from '../practicas/expresion/logica.js';
 
 // ─── Definiciones independientes ────────────────────────────────────────────────
@@ -388,6 +388,32 @@ test('banco: cada plantilla da es y en con sus números, y su modelo es el resul
   }
 });
 
+/** Los trozos de una expresión que se calculan por separado (cada subárbol), como fichas. */
+function pasos(nodo) {
+  if (nodo.op === 'n') return [];
+  return [aFichas(nodo), ...pasos(nodo.a), ...(nodo.b ? pasos(nodo.b) : [])];
+}
+
+test('banco: ningún paso intermedio del problema deja de ser natural (no salen 22,5 bolsas)', () => {
+  const bolsas = plantillaPorId('caramelos_bolsas');
+  // 3 cajas de 30 caramelos en bolsas de 4: 90 : 4 = 22,5 bolsas, aunque 22,5 · 2 = 45.
+  assert.equal(RESULTADO.caramelos_bolsas({ a: 3, b: 30, c: 4, d: 2 }), 45);
+  assert.equal(numerosValidos(bolsas, { a: 3, b: 30, c: 4, d: 2 }), false);
+  assert.equal(numerosValidos(bolsas, { a: 5, b: 36, c: 8, d: 2 }), false);
+  assert.equal(numerosValidos(bolsas, { a: 3, b: 40, c: 4, d: 2 }), true);
+  const rng = crearRng(808);
+  for (const p of PLANTILLAS) {
+    for (let i = 0; i < 400; i++) {
+      const numeros = p.numeros(rng);
+      if (!numerosValidos(p, numeros)) continue;
+      for (const paso of pasos(modeloDe(p, numeros))) {
+        const valor = valorJs(paso);
+        assert.ok(Number.isInteger(valor) && valor > 0, `${p.id} ${JSON.stringify(numeros)}: ${paso.join(' ')} = ${valor}`);
+      }
+    }
+  }
+});
+
 // ─── Los tres ejercicios ────────────────────────────────────────────────────────
 
 /** Variantes del modelo que TIENEN que valer: fichas con los sumandos y factores cambiados de sitio. */
@@ -555,6 +581,63 @@ test('corregir: un acierto por otro camino vale, y una coincidencia de valor no'
   const r = corregir(doses, F('2·2·3'));
   assert.equal(r.estado, 'mal');
   assert.equal(r.casualidad, true);
+});
+
+test('corregir: el producto escrito como suma repetida es un acierto, y se dice qué número faltaba', () => {
+  const item = (id, numeros) => ({ tipo: 'montar', plantilla: id, numeros, modelo: modeloDe(plantillaPorId(id), numeros) });
+  const rng = crearRng(4);
+  const valen = [
+    ['lados', { a: 2, b: 49 }, '√49+√49', [2]],
+    ['lados', { a: 3, b: 64 }, '√64+√64+√64', [3]],
+    ['huevos', { a: 3, b: 12, c: 5 }, '12+12+12+5', [3]],
+    ['huevos', { a: 3, b: 12, c: 5 }, '5+12+(12+12)', [3]],
+    ['tienda', { a: 2, b: 12, c: 3 }, '12·3+12·3', [2]],
+    ['menu', { a: 12, b: 3, c: 2 }, '(12+3)+(12+3)', [2]],
+    ['menu', { a: 12, b: 3, c: 2 }, '12+12+3+3', [2]],
+    ['suelo', { a: 6, b: 3 }, '3²+3²+3²+3²+3²+3²', [6]],
+    ['cuadernos', { a: 2, b: 5, c: 3, d: 4 }, '5+5+4+4+4', [2, 3]],
+    ['libros', { a: 50, b: 2, c: 8 }, '50-8-8', [2]],
+  ];
+  for (const [id, numeros, texto, veces] of valen) {
+    const it = item(id, numeros);
+    const r = corregir(it, F(texto));
+    assert.equal(r.estado, 'bien', `${id}: ${texto}`);
+    assert.deepEqual(r.repetida, veces, `${id}: ${texto}`);
+    assert.deepEqual(sumaRepetida(arbol(F(texto)), it.modelo), veces);
+    // Control independiente: vale lo mismo que el modelo cambiando los DEMÁS números por otros.
+    const fijos = new Set(veces), otros = new Map();
+    const sust = n => { if (fijos.has(n)) return n; if (!otros.has(n)) otros.set(n, 0.7 + 0.9 * rng.azar()); return otros.get(n); };
+    assert.ok(casi(valorJs(F(texto), sust), valorJs(aFichas(it.modelo), sust)), `control, ${id}: ${texto}`);
+    for (const idioma of ['es', 'en']) assert.ok(veces.every(v => TX.repetida[idioma](veces).includes(String(v))));
+  }
+  // El modelo de siempre no es «suma repetida».
+  assert.equal(corregir(item('lados', { a: 2, b: 49 }), F('2·√49')).repetida, null);
+  const noValen = [
+    ['lados', { a: 2, b: 49 }, '49+49'],           // falta la raíz
+    ['lados', { a: 2, b: 49 }, '√49·√49'],         // multiplica en vez de sumar
+    ['lados', { a: 3, b: 64 }, '√64+√64'],         // dos veces, y son tres
+    ['lados', { a: 2, b: 49 }, '√49'],
+    ['huevos', { a: 3, b: 12, c: 5 }, '12+12+5'],
+    ['huevos', { a: 3, b: 12, c: 5 }, '12+12+12'],
+    ['menu', { a: 12, b: 3, c: 2 }, '12+12+3'],    // la trampa de siempre: solo se dobla el 12
+    ['libros', { a: 50, b: 2, c: 8 }, '50-8+8'],
+    ['libro_estuche', { a: 40, b: 12, c: 5 }, '40-12'],
+  ];
+  for (const [id, numeros, texto] of noValen) {
+    const r = corregir(item(id, numeros), F(texto));
+    assert.equal(r.estado, 'mal', `${id}: ${texto}`);
+    assert.ok(r.faltan.length > 0, `${id}: ${texto}`);
+  }
+});
+
+test('textos: los números que faltan se enumeran con comas («3, 4 y 5»)', () => {
+  assert.equal(TX.faltan.es([3]), 'No has usado el 3.');
+  assert.equal(TX.faltan.es([3, 4]), 'No has usado los números 3 y 4.');
+  assert.equal(TX.faltan.es([3, 4, 5]), 'No has usado los números 3, 4 y 5.');
+  assert.equal(TX.faltan.en([3]), 'You did not use 3.');
+  assert.equal(TX.faltan.en([3, 4]), 'You did not use 3 and 4.');
+  assert.equal(TX.faltan.en([3, 4, 5]), 'You did not use 3, 4 and 5.');
+  assert.ok(TX.repetida.es([2, 3]).includes('los números 2 y 3') && TX.repetida.es([2]).includes('el 2 '));
 });
 
 test('catálogo: la práctica declara los tres ejercicios que fija el reparto', () => {
