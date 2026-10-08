@@ -120,6 +120,10 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- Aprendido en la tarea 30: con «descomponer ⇔ factor compuesto ≤ 25 o múltiplo de 5»,
+  17 · 99 tenía «descompongo» como opción falsa y 99 = 9 · 11 la defiende. Se usa «factor
+  compuesto» a secas y las falsas son solo sumas y productos de primos. Además, pulsar
+  siempre «lápiz y papel» da 100 %: ver la propuesta de la terminada.
 - «Lápiz y papel» es siempre aplicable: nunca es una opción falsa. Las falsas son
   «compensar» y «descomponer» cuando no se puede.
 
