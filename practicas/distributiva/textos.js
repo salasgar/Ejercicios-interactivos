@@ -3,6 +3,10 @@
 
 import { fmt } from './logica.js';
 
+// «1 celda», «2 celdas» / «1 cell», «2 cells».
+const celdasEs = n => `${n} ${n === 1 ? 'celda' : 'celdas'}`;
+const celdasEn = n => `${n} ${n === 1 ? 'cell' : 'cells'}`;
+
 export const TX = {
   partir: {
     nombre: { es: 'Parte el rectángulo', en: 'Cut the rectangle' },
@@ -23,12 +27,12 @@ export const TX = {
     izquierda: { es: 'Mover el corte a la izquierda', en: 'Move the cut left' },
     derecha: { es: 'Mover el corte a la derecha', en: 'Move the cut right' },
     corte_mal_suma: {
-      es: (b, c) => `El corte va entre ${b} y ${c}: ${b} celdas a la izquierda y ${c} a la derecha.`,
-      en: (b, c) => `The cut goes between ${b} and ${c}: ${b} cells on the left and ${c} on the right.`,
+      es: (b, c) => `El corte va entre ${b} y ${c}: ${celdasEs(b)} a la izquierda y ${celdasEs(c)} a la derecha.`,
+      en: (b, c) => `The cut goes between ${b} and ${c}: ${celdasEn(b)} on the left and ${celdasEn(c)} on the right.`,
     },
     corte_mal_resta: {
-      es: (b, c, resto) => `El trozo que se quita tiene ${c} celdas; quedan ${b} − ${c} = ${resto} celdas a la izquierda.`,
-      en: (b, c, resto) => `The piece taken away has ${c} cells; ${b} − ${c} = ${resto} cells are left on the left.`,
+      es: (b, c, resto) => `El trozo que se quita tiene ${celdasEs(c)}; ${resto === 1 ? 'queda' : 'quedan'} ${b} − ${c} = ${celdasEs(resto)} a la izquierda.`,
+      en: (b, c, resto) => `The piece taken away has ${celdasEn(c)}; ${b} − ${c} = ${celdasEn(resto)} ${resto === 1 ? 'is' : 'are'} left on the left.`,
     },
     corte_bien: { es: '¡Bien cortado!', en: 'Well cut!' },
     otro_orden: {
@@ -73,6 +77,10 @@ export const TX = {
     mismo_valor: {
       es: (expr, valor) => `Lo que has escrito, ${expr}, también vale ${valor}, pero por casualidad: no junta los rectángulos en un solo producto con paréntesis.`,
       en: (expr, valor) => `What you wrote, ${expr}, is also ${valor}, but by chance: it does not join the rectangles into one product with brackets.`,
+    },
+    no_coincide: {
+      es: expr => `Lo que has escrito, ${expr}, no da el mismo resultado: en una resta, el número mayor va delante.`,
+      en: expr => `What you wrote, ${expr}, does not give the same result: in a subtraction, the bigger number comes first.`,
     },
     incompleta: {
       es: expr => `Lo que has escrito, ${expr}, no es una cuenta completa.`,

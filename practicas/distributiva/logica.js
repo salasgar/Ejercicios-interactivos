@@ -173,6 +173,9 @@ export function textoFichas(item, fichas) {
 export function valorFichas(item, fichas) {
   const expr = textoFichas(item, fichas).replaceAll(P, '*').replaceAll(MENOS, '-');
   if (!/^[\d\s()+*-]+$/.test(expr)) return null;
+  // Sin operador al principio ni al final, ni dos seguidos, ni pegado a un paréntesis (7 · + 9, − 5): no es una cuenta.
+  const sinEspacios = expr.replace(/\s+/g, '');
+  if (/^[+*-]|[+*-]$|[+*-]{2}|\([+*-]|[+*-]\)|\)\d|\d\(/.test(sinEspacios)) return null;
   let nivel = 0;
   for (const ch of expr) {
     if (ch === '(') nivel++;
