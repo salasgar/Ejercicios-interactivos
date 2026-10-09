@@ -26,7 +26,7 @@ function explicarClase(n, clase, api) {
   if (n === 2) return tt(TX.flash.dos);
   const { probados, siguiente } = primosAProbar(n);
   if (!probados.length) return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.solo_dos)(n)}.`;
-  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(probados.map(String))},${tt(TX.flash.se_pasa)(n, siguiente)}.`;
+  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(probados.map(String))}, ${tt(TX.flash.se_pasa)(n, siguiente)}.`;
 }
 
 // ─── Ejercicio 1: la criba, paso a paso ─────────────────────────────────────────
@@ -109,6 +109,7 @@ function montarTachar(contenedor, item, api) {
     arrastrando = false;
     document.removeEventListener('pointermove', mover);
     document.removeEventListener('pointerup', soltar);
+    document.removeEventListener('pointercancel', soltar);
   }
   rejilla.addEventListener('pointerdown', ev => {
     const n = celdaEn(ev.clientX, ev.clientY);
@@ -119,6 +120,7 @@ function montarTachar(contenedor, item, api) {
     arrastrando = true;
     document.addEventListener('pointermove', mover);
     document.addEventListener('pointerup', soltar);
+    document.addEventListener('pointercancel', soltar);
   });
 
   contenedor.querySelector('#comprobar').addEventListener('click', () => {
@@ -176,7 +178,7 @@ function montarFlashcard(contenedor, item, api) {
 
 // ─── Ejercicio 3: ¿hasta qué primo hay que probar? ──────────────────────────────
 
-function textoOpcion(o, api) {
+function textoOpcion(o, item, api) {
   return o.tipo === 'mitad' ? api.tt(TX.raiz.mitad)(item.n) : o.lista.join(', ');
 }
 
@@ -197,7 +199,7 @@ function montarRaiz(contenedor, item, api) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'eleccion';
-    b.textContent = textoOpcion(o, api);
+    b.textContent = textoOpcion(o, item, api);
     caja.append(b);
     b.addEventListener('click', () => {
       if (api.respondido() || resuelto) return;
