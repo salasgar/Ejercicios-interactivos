@@ -6,10 +6,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  generarCompensar, generarDescomponer, generarEstrategia, enunciadoCompensar, lineaCompensar,
+  generarCompensar, generarDescomponer, enunciadoCompensar, lineaCompensar,
   redondeoCorrecto, ajusteCorrecto, resultadoCorrecto, valorOpcion, reconstruye, lineaDescomponer,
-  descomposicionCorrecta, aplicables, estrategiaValida, mejorEstrategia, lineaEstrategia,
-  aplicaCompensar, aplicaDescomponer, factorDescomponible, descomposicionComoda,
+  descomposicionCorrecta,
 } from '../practicas/mental/logica.js';
 
 const N = 3000;
@@ -126,133 +125,23 @@ test('ejercicio 2: ninguna posición es la correcta en más del 70 % (dos buenas
   }
 });
 
-// --- Ejercicio 3 ----------------------------------------------------------------
-
-// Definiciones independientes de las estrategias aplicables (la regla de la ficha, con «compuesto» a secas:
-// 99 = 9 · 11 se puede descomponer, y 17 · 99 no puede tener «descompongo» como opción falsa).
-const compensable = t => t >= 8 && [8, 9].includes(t % 10);
-const compuestoBruto = n => n > 1 && !esPrimoBruto(n);
-const aplicaDesc = op => op.signo === '·' && [op.a, op.b].some(f => compuestoBruto(f));
-
-test('ejercicio 3: las estrategias aplicables siguen la regla escrita en la ficha', () => {
-  for (const it of generarN(generarEstrategia)) {
-    const esperadas = ['papel'];
-    if (compensable(it.op.a) || compensable(it.op.b)) esperadas.push('compensar');
-    if (aplicaDesc(it.op)) esperadas.push('descomponer');
-    if (it.calculadora) esperadas.push('calculadora');
-    assert.deepEqual([...aplicables(it)].sort(), esperadas.sort(), it.texto);
-    assert.ok(aplicables(it).includes('papel'), 'el lápiz y papel siempre es aplicable');
-    assert.equal(aplicaCompensar(it.op), compensable(it.op.a) || compensable(it.op.b));
-    assert.equal(aplicaDescomponer(it.op), aplicaDesc(it.op));
-  }
-  assert.ok(factorDescomponible(12) && factorDescomponible(35) && factorDescomponible(99) && !factorDescomponible(13) && !factorDescomponible(2));
-});
-
-test('ejercicio 3: una opción NO aplicable no se puede defender (compensar y descomponer)', () => {
-  for (const it of generarN(generarEstrategia)) {
-    const { a, b, signo } = it.op;
-    if (!estrategiaValida(it, 'compensar')) {
-      // ningún término está a 1 o 2 de una decena (no acaba en 1, 2, 8 ni 9) y 24 + 76 no sale
-      for (const t of [a, b]) assert.ok([0, 3, 4, 5, 6, 7].includes(t % 10), `${t} en ${it.texto}`);
-      if (signo === '+') assert.notEqual((a + b) % 10, 0, it.texto);
-    }
-    if (!estrategiaValida(it, 'descomponer')) {
-      if (signo === '·') {
-        for (const f of [a, b]) assert.ok(esPrimoBruto(f), `${f} en ${it.texto} no es primo`);
-      } else assert.equal(signo, '+', 'una suma no tiene factores que descomponer');
-    }
-  }
-});
-
-test('ejercicio 3: hay de todas las categorías, el 20 % lleva calculadora y la calculadora solo va con cuentas imposibles de acortar', () => {
-  const items = generarN(generarEstrategia);
-  const calc = items.filter(i => i.calculadora).length / N;
-  assert.ok(calc > 0.15 && calc < 0.25, `calculadora: ${calc}`);
-  for (const it of items.filter(i => i.calculadora)) {
-    assert.equal(it.botones.length, 4);
-    assert.ok(!estrategiaValida(it, 'compensar') && !estrategiaValida(it, 'descomponer'));
-  }
-  for (const it of items.filter(i => !i.calculadora)) assert.equal(it.botones.length, 3);
-  for (const cat of ['compensar', 'descomponer', 'ninguna', 'grande']) assert.ok(items.some(i => i.categoria === cat), cat);
-  const prob = items.filter(i => i.enunciado).length / N;
-  assert.ok(prob > 0.3 && prob < 0.5, `problemas: ${prob}`);
-  assert.ok(items.some(i => !estrategiaValida(i, 'compensar')) && items.some(i => estrategiaValida(i, 'compensar')));
-  assert.ok(items.some(i => !estrategiaValida(i, 'descomponer')) && items.some(i => estrategiaValida(i, 'descomponer')));
-});
-
-test('ejercicio 3: compensar y descomponer no son correctas en más del 70 % de los ítems (el papel sí, por diseño)', () => {
-  const items = generarN(generarEstrategia);
-  for (const e of ['compensar', 'descomponer']) {
-    const veces = items.filter(i => estrategiaValida(i, e)).length / N;
-    assert.ok(veces > 0.2 && veces < 0.7, `${e}: ${veces}`);
-  }
-});
-
-test('ejercicio 3: la línea de la mejor estrategia es verdad en todos los tramos', () => {
-  let compensadas = 0, descompuestas = 0;
-  for (const it of generarN(generarEstrategia)) {
-    const mejor = mejorEstrategia(it);
-    assert.ok(estrategiaValida(it, mejor));
-    if (mejor !== 'compensar' && mejor !== 'descomponer') continue;
-    const tramos = lineaEstrategia(it, mejor).split(' = ').map(evaluar);
-    assert.ok(tramos.every(v => v === it.valor), `${lineaEstrategia(it, mejor)} (valor ${it.valor})`);
-    if (mejor === 'compensar') compensadas++; else descompuestas++;
-  }
-  assert.ok(compensadas > 100 && descompuestas > 100);
-  const d = descomposicionComoda({ a: 25, signo: '·', b: 12 });
-  assert.deepEqual([d.f, d.g, d.p, d.q], [12, 25, 2, 6].map((v, i) => (i === 2 ? 4 : i === 3 ? 3 : v)));
-});
-
 // --- Reapertura de la tarea 30 (2026-10-08) ------------------------------------------
 
-import { papelHabiendoAtajo, terminoCompensable, redondeoDe } from '../practicas/mental/logica.js';
 import { TX } from '../practicas/mental/textos.js';
-
-const itemDe = (a, signo, b, calculadora = false) => ({ op: { a, signo, b }, calculadora, texto: `${a} ${signo} ${b}`, valor: signo === '+' ? a + b : a * b });
-
-test('reapertura: compensar es aplicable a lo que acaba en 8 o 9 (redondeo a la decena), no solo a 98, 99, 199', () => {
-  for (const [a, s, b] of [[39, '+', 27], [58, '+', 79], [77, '+', 19], [35, '·', 19], [45, '·', 9], [199, '+', 31]]) {
-    const it = itemDe(a, s, b);
-    assert.ok(estrategiaValida(it, 'compensar'), it.texto);
-    const tramos = lineaEstrategia(it, 'compensar').split(' = ').map(evaluar);
-    assert.ok(tramos.every(v => v === it.valor), lineaEstrategia(it, 'compensar'));
-  }
-  assert.equal(lineaEstrategia(itemDe(39, '+', 27), 'compensar'), '39 + 27 = 27 + 40 − 1 = 67 − 1 = 66');
-  assert.ok(terminoCompensable(8) && terminoCompensable(18) && !terminoCompensable(28 + 3) && !terminoCompensable(5));
-  assert.equal(redondeoDe(39), 40); assert.equal(redondeoDe(98), 100); assert.equal(redondeoDe(199), 200);
-});
-
-test('reapertura: «la más corta es descomponer» solo si la descomposición lleva a un producto fácil', () => {
-  assert.equal(mejorEstrategia(itemDe(45, '·', 7)), 'papel');
-  assert.equal(mejorEstrategia(itemDe(12, '·', 13)), 'papel');
-  assert.equal(mejorEstrategia(itemDe(25, '·', 12)), 'descomponer');
-  assert.equal(mejorEstrategia(itemDe(25, '·', 99)), 'compensar');
-  assert.equal(mejorEstrategia(itemDe(35, '·', 19)), 'compensar');
-  for (const it of generarN(generarEstrategia).filter(i => mejorEstrategia(i) === 'descomponer')) {
-    assert.ok(descomposicionComoda(it.op).puntos >= 1, it.texto);
-    const d = descomposicionComoda(it.op);
-    assert.equal((d.g * d.p) % 10, 0, it.texto);
-  }
-  // Los ítems de la categoría «descomponer» tienen todos un atajo real.
-  for (const it of generarN(generarEstrategia).filter(i => i.categoria === 'descomponer')) assert.equal(mejorEstrategia(it), 'descomponer', it.texto);
-});
-
-test('reapertura: lápiz y papel con atajo cuenta como ayuda; sin atajo, no', () => {
-  assert.ok(papelHabiendoAtajo(itemDe(47, '+', 99), 'papel'));
-  assert.ok(papelHabiendoAtajo(itemDe(25, '·', 12), 'papel'));
-  assert.ok(!papelHabiendoAtajo(itemDe(45, '·', 7), 'papel'));
-  assert.ok(!papelHabiendoAtajo(itemDe(47, '+', 99), 'compensar'));
-  // Quien pulsa siempre «papel» acumula ayudas en más del 40 % de los ítems.
-  const items = generarN(generarEstrategia);
-  const ayudas = items.filter(i => papelHabiendoAtajo(i, 'papel')).length / N;
-  assert.ok(ayudas > 0.4, `ayudas con papel: ${ayudas}`);
-});
+import { readFileSync } from 'node:fs';
 
 test('reapertura: textos en inglés sin «two 25 too many» ni «sum» para una multiplicación', () => {
   assert.equal(TX.compensar.explicacion_producto.en(25, 98, 100, 2, 2450), '25 · 98 = 25 · 100 − 2 · 25 = 2500 − 50 = 2450: we have two 25s too many, not 2.');
   assert.match(TX.compensar.explicacion_producto.en(25, 99, 100, 1, 2475), /one 25 too many/);
-  const todo = JSON.stringify(TX);
-  assert.ok(!/\bsum\b/.test(todo.replace(/[^"]*"es"[^}]*/g, '')) || true);
-  for (const clave of [TX.descomponer.introduccion.en, TX.estrategia.detalle.en, TX.estrategia.introduccion.en]) assert.ok(!/\bsum\b/i.test(clave), clave);
+  assert.ok(!/\bsum\b/i.test(TX.descomponer.introduccion.en), TX.descomponer.introduccion.en);
   assert.ok(!/la otra/.test(TX.descomponer.comoda.es(25, 4, 3, 12)));
+});
+
+test('decisión del 9-10: la práctica tiene dos ejercicios (sin «¿Qué conviene?») y el catálogo lo dice', async () => {
+  const src = readFileSync(new URL('../practicas/mental/practica.js', import.meta.url), 'utf8');
+  assert.equal((src.match(/^\s+generar: /gm) || []).length, 2);
+  assert.equal(TX.estrategia, undefined);
+  assert.doesNotMatch(src, /TX\.estrategia|montarEstrategia|generarEstrategia/);
+  const { CATALOGO } = await import('../practicas/_comun/catalogo.js');
+  assert.equal(CATALOGO.find(p => p.slug === 'mental').nEjercicios, 2);
 });

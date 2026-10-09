@@ -131,7 +131,7 @@ resultados y qué práctica cubre qué destreza del inventario.
 | U1 | `distributiva` ⏳ | Distributiva con rectángulos | Propiedad distributiva, factor común, compensar con 99 |
 | U1 | `potencias10` | Potencias de 10 y números grandes | Potencias de 10, million, billion y trillion |
 | U1 | `dictado` | Dictado de números | Numerales ingleses de oído y por escrito; ortografía española |
-| U1 | `mental` ⏳ | Cálculo mental con estrategia | Compensar, descomponer y elegir estrategia |
+| U1 | `mental` ⏳ | Cálculo mental con estrategia | Compensar y descomponer |
 | U1 | `especiales` | Potencias especiales | Exponentes 0 y 1, potencias de 10, igualdades falsas típicas |
 | U1 | `errores1` ⏳ | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias |
 | U1 | `propiedades` ⏳ | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
