@@ -101,8 +101,9 @@ export function generarFalsa(rng) {
     return true;
   };
   while (!poner(idFalsa));
-  // Tres verdaderas distintas, elegidas con el peso de cada plantilla (2⁴ = 4² pesa poco, como en el ejercicio 1)
-  const pool = [...IDS_VERDADERAS];
+  // Tres verdaderas distintas, elegidas con el peso de cada plantilla. 2⁴ = 4² (13) se queda solo en el
+  // ejercicio 1: es una casualidad (en general aᵇ ≠ bᵃ) y vista a menudo invita a generalizarla.
+  const pool = IDS_VERDADERAS.filter(id => id !== 13);
   for (let k = 0; k < 3; k++) {
     for (;;) {
       let r = rng.azar() * pool.reduce((t, id) => t + PLANTILLAS[id].peso, 0);
