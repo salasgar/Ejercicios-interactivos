@@ -9,8 +9,9 @@
   min-height: 48px; min-width: 48px; padding: 0 .55rem;
   font-size: clamp(1.1rem, 5.2vw, 1.55rem); font-weight: 700; font-variant-numeric: tabular-nums;
   background: var(--primario-claro); color: var(--primario-oscuro);
-  border: 2px solid transparent; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center;
+  border: 2px solid transparent; border-radius: 10px; display: inline-block; line-height: 44px; text-align: center; /* en línea: el <sup> sube (en flex quedaba a la altura de la base) */
 }
+.cadena .termino sup, .cadena .parte sup { line-height: 0; }
 .cadena .termino { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .cadena .termino:disabled { opacity: 1; cursor: default; }
 .cadena .termino--elegida { border-color: var(--primario); background: #fff; box-shadow: 0 0 0 3px var(--primario-claro); }
