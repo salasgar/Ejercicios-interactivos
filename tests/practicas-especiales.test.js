@@ -115,7 +115,7 @@ test('evaluar: coincide con la fuerza bruta para las catorce plantillas y varios
 
 // ─── Reabierta de la tarea 31 ───────────────────────────────────────────────────
 
-test('ejercicio 2: nunca dos igualdades pintadas idénticas, y 2⁴ = 4² pesa poco', async () => {
+test('ejercicio 2: nunca dos igualdades pintadas idénticas, y 2⁴ = 4² no sale nunca (decisión del 9-10)', async () => {
   const { renderPlantilla } = await import('../practicas/especiales/textos.js');
   const rng = crearRng(31);
   let con13 = 0;
@@ -126,8 +126,15 @@ test('ejercicio 2: nunca dos igualdades pintadas idénticas, y 2⁴ = 4² pesa p
     assert.equal(new Set(textos).size, 4, textos.join(' | '));
     if (it.items.some(x => x.id === 13)) con13++;
   }
-  console.log('2⁴ = 4² en ejercicio 2:', (con13 / M * 100).toFixed(1), '%');
-  assert.ok(con13 / M < 0.2, `2⁴ = 4² sale en ${con13} de ${M}`);
+  assert.equal(con13, 0, `2⁴ = 4² sale en ${con13} de ${M} ítems del ejercicio 2`);
+});
+
+test('2⁴ = 4² sigue en el ejercicio 1, con su peso bajo (entre el 1 % y el 4 %)', () => {
+  const rng = crearRng(3113);
+  const M = 6000;
+  let veces = 0;
+  for (let i = 0; i < M; i++) if (generarVF(rng).id === 13) veces++;
+  assert.ok(veces / M >= 0.01 && veces / M <= 0.04, `id 13 salió ${veces} de ${M}`);
 });
 
 test('textos: sin × en el feedback inglés, sin «exponente 0 vale 1», y los millares separados', async () => {
