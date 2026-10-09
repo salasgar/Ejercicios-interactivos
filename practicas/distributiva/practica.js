@@ -215,7 +215,9 @@ function montarJuntar(contenedor, item, api) {
     // Lo que escribió: cuánto vale, o que no es una cuenta completa (regla 8: el fallo habla de sus números).
     const escrito = textoFichas(item, fichas);
     const v = valorFichas(item, fichas);
+    // Nada de negativos (aún no se han dado): si no es un natural, solo se dice que no coincide.
     const suyo = v === null ? tt(x.incompleta)(escrito)
+      : v < 0 ? tt(x.no_coincide)(escrito)
       : tt(v === item.valor ? x.mismo_valor : x.tu_valor)(escrito, fmt(v, api.idioma));
     api.responder({
       acierto,
@@ -243,7 +245,7 @@ function montarElegirFactor(contenedor, item, api) {
       if (i === buena) return api.responder({ acierto: true, html: `${completa}.`, espera: 2400 });
       api.responder({
         acierto: false,
-        html: `${tt(x.no_igual)(elegida.expr, elegida.valor, item.valor)} ${tt(x.correcta)} <span class="cuenta">${item.opciones[buena].expr}</span>. ${completa}.`,
+        html: `${tt(x.no_igual)(elegida.expr, fmt(elegida.valor, api.idioma), fmt(item.valor, api.idioma))} ${tt(x.correcta)} <span class="cuenta">${item.opciones[buena].expr}</span>. ${completa}.`,
         espera: 3200,
       });
     },

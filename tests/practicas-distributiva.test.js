@@ -11,6 +11,8 @@ import {
   leerEntero, fmt, valorFichas,
 } from '../practicas/distributiva/logica.js';
 
+import { TX } from '../practicas/distributiva/textos.js';
+
 const N = 3000;
 const generarN = (fn, n = N, semilla = 1) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => fn(rng)); };
 
@@ -244,4 +246,34 @@ test('ejercicio 3: ninguna posición es la correcta en más del 70 %', () => {
     const veces = items.filter(i => i.opciones[pos].correcta).length / items.length;
     assert.ok(veces < 0.5, `posición ${pos}: ${veces}`);
   }
+});
+
+test('segunda revisión: signo unario no es una cuenta; el orden invertido en una resta da un valor negativo que no se escribe', () => {
+  const it = { a: 5, b: 12, c: 3, resta: true };
+  assert.equal(valorFichas(it, ['a', '·', '+', 'b']), null, '5 · + 12');
+  assert.equal(valorFichas(it, ['−', 'a']), null, '− 5');
+  assert.equal(valorFichas(it, ['+', 'a']), null);
+  assert.equal(valorFichas(it, ['a', '·', '(', '+', 'b', ')']), null);
+  assert.equal(valorFichas(it, ['a', '·', '(', 'b', '+', ')']), null);
+  assert.equal(valorFichas(it, ['a', '·', '·', 'b']), null);
+  assert.equal(valorFichas(it, ['a', '·', '(', 'b', '−', 'c', ')']), 45, 'lo bueno sigue valiendo');
+  // El invertido da negativo: la práctica lo detecta con v < 0 y usa no_coincide (sin escribir el valor).
+  const v = valorFichas(it, ['a', '·', '(', 'c', '−', 'b', ')']);
+  assert.ok(v < 0);
+  for (const idioma of ['es', 'en']) {
+    const frase = TX.factor.no_coincide[idioma]('(3 − 12) · 5');
+    assert.ok(!/-\d|−\s?\d{2}\)?\s*[.,]?$/.test(frase.replace('(3 − 12) · 5', '')), frase);
+    assert.ok(!frase.includes(String(v)));
+  }
+});
+
+test('segunda revisión: «1 celda», no «1 celdas»', () => {
+  for (const [b, c] of [[1, 5], [5, 1], [1, 1], [4, 3]]) {
+    for (const idioma of ['es', 'en']) {
+      const textos = [TX.partir.corte_mal_suma[idioma](b, c), TX.partir.corte_mal_resta[idioma](Math.max(b, c + 1), c, Math.max(b, c + 1) - c)];
+      for (const t of textos) assert.ok(!/\b1 (celdas|cells)\b/.test(t) && !/\bquedan 1\b|\b1 cells are\b/.test(t), t);
+    }
+  }
+  assert.ok(/1 celda a la izquierda/.test(TX.partir.corte_mal_suma.es(1, 5)));
+  assert.ok(/queda 4 − 3 = 1 celda/.test(TX.partir.corte_mal_resta.es(4, 3, 1)));
 });
