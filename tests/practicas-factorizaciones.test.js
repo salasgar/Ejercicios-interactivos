@@ -190,3 +190,15 @@ test('ejercicio 3: el feedback no repite igualdades, no mete frases en .cuenta y
     }
   }
 });
+
+test('explicar: puntuación correcta (punto antes de «Compruébalo», mayúscula tras punto), en los dos idiomas', () => {
+  for (const fn of [generarProducto, generarMultiplo, generarCociente]) {
+    for (const item of generarN(fn, 1500, 21)) {
+      for (const idioma of ['es', 'en']) {
+        const t = explicar(item, null, idioma).replace(/<[^>]+>/g, '');
+        assert.ok(!/\d\s+(Compruébalo|Check)/.test(t), `falta el punto: ${t}`);
+        assert.ok(!/\.\s+[a-zñáéíóú]/.test(t), `minúscula tras punto: ${t}`);
+      }
+    }
+  }
+});
