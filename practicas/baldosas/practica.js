@@ -18,7 +18,7 @@ import {
 } from './logica.js';
 
 // La cuadrícula no se dibuja celda a celda: un SVG con un <pattern> que se
-// repite, así que una baldosa de lado 2 en un suelo de 90 × 90 no tarda nada.
+// repite, así que una baldosa de lado 2 en un suelo de 90 por 90 no tarda nada.
 let montajes = 0; // id único por dibujo: la base monta el ítem otra vez al traducir
 
 function dibujarCuadricula(contenedor, a, b, lado) {

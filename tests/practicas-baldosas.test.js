@@ -161,6 +161,32 @@ test('textos: la introducción del ejercicio 2 no usa letras, y los mensajes cit
   assert.match(TX.cuerdas.pista_total_coherente.es(6, [5, 7], 12), /bien hecha \(5 \+ 7 = 12\).*no es el más largo/);
 });
 
+test('textos: sin «×» en las medidas del suelo («40 dm por 56 dm»), en los dos idiomas', async () => {
+  const { TX } = await import('../practicas/baldosas/textos.js');
+  const { readFile } = await import('node:fs/promises');
+  const textos = [
+    TX.baldosa.instruccion.es(40, 56), TX.baldosa.instruccion.en(40, 56),
+    TX.cuantas.instruccion.es(40, 56, 8), TX.cuantas.instruccion.en(40, 56, 8),
+  ];
+  for (const t of textos) assert.doesNotMatch(t, /×/, t);
+  assert.match(textos[0], /Suelo de 40 dm por 56 dm/);
+  assert.match(textos[1], /A floor of 40 dm by 56 dm/);
+  assert.match(textos[2], /Suelo de 40 dm por 56 dm/);
+  assert.match(textos[3], /A floor of 40 dm by 56 dm/);
+  // Ni en el código de la práctica (equivale a `grep -n '×' practicas/baldosas/`).
+  for (const f of ['textos.js', 'logica.js', 'practica.js', 'index.html', 'estilos.css']) {
+    assert.doesNotMatch(await readFile(new URL(`../practicas/baldosas/${f}`, import.meta.url), 'utf8'), /×/, f);
+  }
+});
+
+test('textos: «sobra 1 dm» con resto 1 y «sobran N dm» con los demás', async () => {
+  const { TX } = await import('../practicas/baldosas/textos.js');
+  assert.equal(TX.baldosa.resto_en.es(66, 5, 13, 1), '66 : 5 = 13, sobra 1 dm');
+  assert.equal(TX.baldosa.resto_en.es(66, 5, 13, 3), '66 : 5 = 13, sobran 3 dm');
+  assert.match(TX.baldosa.sobra_una.es(66, 5, 13, 1), /sobra 1 dm: no cabe/);
+  assert.match(TX.baldosa.sobra_una.es(66, 5, 13, 3), /sobran 3 dm: no cabe/);
+});
+
 test('práctica.js: cada dibujo lleva ids de pattern únicos (no fijos)', async () => {
   const { readFile } = await import('node:fs/promises');
   const src = await readFile(new URL('../practicas/baldosas/practica.js', import.meta.url), 'utf8');

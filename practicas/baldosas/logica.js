@@ -1,7 +1,7 @@
 // Práctica «Baldosas y cuerdas»: lógica, pura (sin DOM ni red).
 //
 // Ejercicio 1: elegir el lado de la baldosa cuadrada más grande que cubre un
-// rectángulo a × b sin cortar ninguna, es decir, el m.c.d.(a, b).
+// rectángulo de a por b sin cortar ninguna, es decir, el m.c.d.(a, b).
 // Ejercicio 2: con esa baldosa ya elegida, cuántas hacen falta: (a/g)·(b/g).
 // Ejercicio 3: cortar dos o tres cuerdas en trozos iguales lo más largos
 // posible (de nuevo el m.c.d.) y decir cuánto mide cada trozo y cuántos salen

@@ -3,7 +3,7 @@
 // llegan a `montar` en `api.t`.
 //
 // Reglas de contenido (reparto-practicas-u2/proyecto.md): «divisor», no
-// «factor»; producto con «·», nunca «×»; división con «:»; inglés sencillo;
+// «factor»; producto con «·», nunca con aspa; división con «:»; inglés sencillo;
 // el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 
 export const TX = {
@@ -22,12 +22,12 @@ export const TX = {
         without cutting any. Find the largest side for which that happens.</p>
         <p>That side is the <strong>GCD</strong> of the two sides of the rectangle.</p>`,
     },
-    instruccion: { es: (a, b) => `Suelo de ${a} × ${b} dm. Prueba lados y busca la baldosa más grande que cubra sin cortar.`, en: (a, b) => `${a} × ${b} dm floor. Try side lengths and find the biggest tile that covers it without cutting.` },
+    instruccion: { es: (a, b) => `Suelo de ${a} dm por ${b} dm. Prueba lados y busca la baldosa más grande que cubra sin cortar.`, en: (a, b) => `A floor of ${a} dm by ${b} dm. Try side lengths and find the biggest tile that covers it without cutting.` },
     lado: { es: 'Lado de la baldosa', en: 'Tile side' },
     cabe: { es: (a, b, s) => `Lado ${s}: cabe exacta en los dos lados (${a} y ${b}).`, en: (a, b, s) => `Side ${s}: it fits exactly on both sides (${a} and ${b}).` },
     // La cuenta de un lado que no cabe, sin prefijo ni conclusión: «40 : 7 = 5, sobran 5 dm».
-    resto_en: { es: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, sobran ${sobra} dm`, en: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, ${sobra} dm left over` },
-    sobra_una: { es: (dim, s, c, sobra) => `Lado ${s}: ${dim} : ${s} = ${c}, sobran ${sobra} dm: no cabe.`, en: (dim, s, c, sobra) => `Side ${s}: ${dim} : ${s} = ${c}, ${sobra} dm left over: it does not fit.` },
+    resto_en: { es: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, ${sobra === 1 ? 'sobra' : 'sobran'} ${sobra} dm`, en: (dim, s, c, sobra) => `${dim} : ${s} = ${c}, ${sobra} dm left over` },
+    sobra_una: { es: (dim, s, c, sobra) => `Lado ${s}: ${dim} : ${s} = ${c}, ${sobra === 1 ? 'sobra' : 'sobran'} ${sobra} dm: no cabe.`, en: (dim, s, c, sobra) => `Side ${s}: ${dim} : ${s} = ${c}, ${sobra} dm left over: it does not fit.` },
     sobra_dos: { es: (s, fa, fb) => `Lado ${s}: ${fa}; ${fb}. No cabe en ninguno de los dos.`, en: (s, fa, fb) => `Side ${s}: ${fa}; ${fb}. It fits on neither.` },
     boton_es_esta: { es: 'Esta es la más grande', en: 'This is the biggest one' },
     correcto_simple: { es: (a, b, g) => `Correcto: lado = m.c.d.(${a}, ${b}) = ${g}.`, en: (a, b, g) => `Correct: side = GCD(${a}, ${b}) = ${g}.` },
@@ -53,7 +53,7 @@ export const TX = {
         and along the width <span class="numero">56 : 8 = 7</span>. The rows of tiles
         <strong>multiply</strong>, they do not add up: 7 rows of 5 tiles is 35, not 12.</p>`,
     },
-    instruccion: { es: (a, b, g) => `Suelo de ${a} × ${b} dm cubierto con baldosas de lado ${g}. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `${a} × ${b} dm floor covered with tiles of side ${g}. How many tiles are needed?` },
+    instruccion: { es: (a, b, g) => `Suelo de ${a} dm por ${b} dm cubierto con baldosas de lado ${g}. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `A floor of ${a} dm by ${b} dm covered with tiles of side ${g}. How many tiles are needed?` },
     respuesta_label: { es: 'Número de baldosas', en: 'Number of tiles' },
     cuenta: { es: (a, b, g, p, q, cuantas) => `A lo largo: ${a} : ${g} = ${p}; a lo ancho: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.`, en: (a, b, g, p, q, cuantas) => `Along the length: ${a} : ${g} = ${p}; along the width: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.` },
     // p = baldosas a lo largo (por fila), q = a lo ancho (filas): el dibujo tiene q filas de p.
