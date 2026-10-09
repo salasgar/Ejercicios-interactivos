@@ -40,7 +40,7 @@ export const CATALOGO = [
   { id: 26, slug: 'dictado', ruta: 'dictado/', nombre: { es: 'Dictado de números (repaso de la unidad 1)', en: 'Number dictation (unit 1 review)' }, nEjercicios: 3, disponible: true },
   { id: 27, slug: 'mental', ruta: 'mental/', nombre: { es: 'Cálculo mental con estrategia (repaso de la unidad 1)', en: 'Mental maths strategies (unit 1 review)' }, nEjercicios: 2, disponible: true },
   { id: 28, slug: 'especiales', ruta: 'especiales/', nombre: { es: 'Potencias especiales: ¿verdadero o falso? (repaso de la unidad 1)', en: 'Special powers: true or false? (unit 1 review)' }, nEjercicios: 2, disponible: true },
-  { id: 29, slug: 'errores1', ruta: 'errores1/', nombre: { es: 'Caza el error (unidad 1)', en: 'Spot the mistake (unit 1)' }, nEjercicios: 3, disponible: false },
+  { id: 29, slug: 'errores1', ruta: 'errores1/', nombre: { es: 'Caza el error (unidad 1)', en: 'Spot the mistake (unit 1)' }, nEjercicios: 4, disponible: true },
   { id: 30, slug: 'propiedades', ruta: 'propiedades/', nombre: { es: 'Propiedades de las potencias (ampliación de la unidad 1)', en: 'Laws of indices (unit 1 extension)' }, nEjercicios: 3, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },

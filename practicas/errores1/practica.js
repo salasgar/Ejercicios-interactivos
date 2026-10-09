@@ -5,7 +5,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { esc } from '../_comun/textos.js';
 import { TX, NOMBRES } from './textos.js';
-import { generarHay, generarLinea, generarNombre, claveItem, PLANTILLA_POR_ID } from './logica.js';
+import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clavePasos, PLANTILLA_POR_ID, PASOS_POR_ID } from './logica.js';
 
 /** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
 const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
@@ -75,6 +75,31 @@ function montarNombre(contenedor, item, api) {
   });
 }
 
+/** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
+function explicacionPasos(item, api) {
+  const { tt } = api;
+  const plantilla = PASOS_POR_ID[item.plantilla];
+  if (item.salta) {
+    const k = plantilla.entre ?? item.lineas.length - 1;
+    return `${tt(TX.falta_paso)(k)} ${html(`= ${plantilla.falta(item.params)}`)}<br>${html(tt(plantilla.porque(item.params)))}`;
+  }
+  return `${tt(TX.paso_a_paso)} ${html(tt(plantilla.porque(item.params)))}`;
+}
+
+function montarPasos(contenedor, item, api) {
+  const { tt } = api;
+  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.pasos)}</p>${procedimiento(item, api)}`;
+  const botones = elecciones(contenedor, {
+    clase: 'si-no',
+    opciones: [{ valor: 'si', html: tt(TX.si) }, { valor: 'no', html: tt(TX.no) }],
+    alElegir(valor) {
+      if (api.respondido()) return;
+      botones.marcar([item.solucion], valor);
+      api.responder({ acierto: valor === item.solucion, html: explicacionPasos(item, api), espera: 3600 });
+    },
+  });
+}
+
 arrancar({
   slug: 'errores1',
   ejercicios: [
@@ -99,6 +124,14 @@ arrancar({
       generar: generarNombre,
       clave: claveItem,
       montar: montarNombre,
+    },
+    {
+      nombre: TX.nombre.pasos,
+      detalle: TX.detalle.pasos,
+      introduccion: TX.introduccion_pasos,
+      generar: generarPasos,
+      clave: clavePasos,
+      montar: montarPasos,
     },
   ],
 });
