@@ -145,7 +145,7 @@ function renderCorregir(foco = '#sel-alumno') {
         <label>Semana <select id="sel-semana">${opciones(semanasDe(ui.unidad).map(s => [s, `Semana ${s}${claveDe(ui.unidad, s).fecha ? ' · ' + claveDe(ui.unidad, s).fecha : ''}`]), ui.semana)}</select></label>
         <label>Grupo <select id="sel-grupo">${opciones(grupos().map(g => [g, g]), ui.grupo, 'Todos')}</select></label>
         <label>Alumno${quedan ? ` <span class="pequeno suave">(faltan ${quedan})</span>` : ''} <select id="sel-alumno">${opciones(listaAlumnos, ui.alumno, '— elige —')}</select></label>
-        <label>Código de la versión <input type="text" id="in-codigo" inputmode="numeric" maxlength="4" autocomplete="off" value="${esc(ui.codigo)}"></label>
+        <label>Examen (número o código) <input type="text" id="in-codigo" inputmode="numeric" maxlength="4" autocomplete="off" value="${esc(ui.codigo)}"></label>
         <span id="info-version" class="pequeno suave"></span>
         <label class="pequeno suave"><input type="checkbox" id="ck-todos" ${ui.verTodos ? 'checked' : ''}> Ver también los ya corregidos</label>
       </div>
@@ -262,8 +262,11 @@ function pintarVersion() {
   const info = $('#info-version');
   if (!clave || !ui.codigo) { info.textContent = ''; info.className = 'pequeno suave'; pintarBloques(); return; }
   const v = L.versionDe(clave, ui.codigo);
-  if (v) { info.textContent = `Versión ${v.codigo}${v.extra ? ' (extra)' : ''}`; info.className = 'pequeno'; info.style.color = 'var(--correcto)'; }
-  else if (ui.codigo.length === 4) { info.textContent = `Ese código no es de la semana ${clave.semana}: ${clave.versiones.map(x => x.codigo).join(', ')}`; info.className = 'pequeno'; info.style.color = 'var(--error)'; }
+  const nombre = clave.rotulo === 'Exam no.' ? 'Examen' : 'Versión';
+  const cuales = clave.versiones.length <= 8 ? `: ${clave.versiones.map(x => x.codigo).join(', ')}`
+    : ` (hay ${clave.versiones.length}: del ${clave.versiones[0].codigo} al ${clave.versiones.at(-1).codigo})`;
+  if (v) { info.textContent = `${nombre} ${v.codigo}${v.extra ? ' (extra)' : ''}${ui.codigo.length < 4 ? ' · Enter para pasar a las respuestas' : ''}`; info.className = 'pequeno'; info.style.color = 'var(--correcto)'; }
+  else if (ui.codigo.length === 4 || !clave.versiones.some(x => String(x.codigo).startsWith(ui.codigo))) { info.textContent = `Ese ${nombre.toLowerCase()} no es de la semana ${clave.semana}${cuales}`; info.className = 'pequeno'; info.style.color = 'var(--error)'; }
   else { info.textContent = ''; }
   pintarBloques();
 }
@@ -298,7 +301,7 @@ function pintarBloques() {
   $('#bloques').innerHTML = filas.join('');
   $('#contador').textContent = `${resp.length} / ${n}`;
   const m = $('#marcador');
-  if (!version) { m.innerHTML = '<span class="suave">Teclea el código de la versión (4 cifras) para corregir.</span>'; return; }
+  if (!version) { m.innerHTML = '<span class="suave">Teclea el número de examen (o el código de la versión) y pulsa Enter para corregir.</span>'; return; }
   const c = L.corregir(version, resp, clave.opciones);
   m.innerHTML = `<span>Aciertos <b>${c.aciertos}</b></span><span>Fallos <b>${c.fallos}</b></span><span>En blanco <b>${c.blancos}</b></span>`
     + (c.nulas ? `<span>Nulas <b>${c.nulas}</b></span>` : '')
@@ -323,7 +326,7 @@ function pintarLista(regs) {
     </tr>`).join('');
   zona.innerHTML = `
     <p class="pequeno suave">${del.length} de ${total} · media ${num(L.media(del.map(r => r.nota)))}</p>
-    <table class="lista"><tr><th>Alumno</th><th>Grupo</th><th>Código</th><th>Respuestas</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th><th></th></tr>${filas}</table>`;
+    <table class="lista"><tr><th>Alumno</th><th>Grupo</th><th>Examen</th><th>Respuestas</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th><th></th></tr>${filas}</table>`;
 }
 
 function guardarRegistro() {
@@ -363,18 +366,20 @@ function renderResultados() {
 
   const elegidas = L.opcionesElegidas(clave, stats);
   const filasPreg = stats.map((p, i) => {
-    const { versiones, masElegido: m } = elegidas[i];
-    const tablas = versiones.map(v => {
+    const { variantes, masElegido: m } = elegidas[i];
+    const tablas = variantes.map(v => {
       const max = Math.max(0, ...v.opciones.filter(o => !o.correcta).map(o => o.cuenta));
       const filas = v.opciones.map(o => `<tr class="${o.correcta ? 'ok' : o.cuenta && o.cuenta === max ? 'fuerte' : ''}">
-        <td class="mono">${o.letra}</td><td>${esc(L.aPlano(o.texto))}</td><td class="num">${o.cuenta}</td>
+        <td>${esc(L.aPlano(o.texto))}</td><td class="num">${o.cuenta}</td>
         <td><div class="barra"><div style="width:${v.n ? 100 * o.cuenta / v.n : 0}%"></div></div></td>
         <td class="expl">${esc(L.aPlano(o.expl))}</td></tr>`).join('');
       const otras = [v.blancos ? `en blanco ${v.blancos}` : '', v.nulas ? `nulas ${v.nulas}` : ''].filter(Boolean).join(' · ');
-      return `<table class="opciones"><caption><span class="mono">${esc(v.codigo)}</span> nº ${v.numero} · ${v.n} alumnos · ${esc(L.aPlano(v.enunciado))}</caption>
-        ${filas}${otras ? `<tr><td></td><td colspan="4" class="suave pequeno">${otras}</td></tr>` : ''}</table>`;
+      const quien = v.codigos.length === 1 && v.codigos[0] === v.nombre ? `versión <span class="mono">${esc(v.nombre)}</span>`
+        : `variante <span class="mono">${esc(v.nombre)}</span> · ${v.codigos.length === 1 ? 'examen' : 'exámenes'} ${esc(v.codigos.join(', '))}`;
+      return `<table class="opciones"><caption>${quien} · ${v.n} alumnos · ${esc(L.aPlano(v.enunciado))}</caption>
+        ${filas}${otras ? `<tr><td colspan="4" class="suave pequeno">${otras}</td></tr>` : ''}</table>`;
     }).join('');
-    const error = m ? `<span title="${esc(L.aPlano(m.expl))}"><b>${m.cuenta}</b> · <span class="mono">${esc(m.codigo)}</span> ${m.letra} ${esc(L.aPlano(m.texto))}</span>` : '';
+    const error = m ? `<span title="${esc(L.aPlano(m.expl))}"><b>${m.cuenta}</b> · <span class="mono">${esc(m.nombre)}</span> ${esc(L.aPlano(m.texto))}</span>` : '';
     return `<tr><td class="num">${p.pos}</td><td class="mono">${esc(p.item)}</td><td class="num">${p.n}</td>
       <td><div class="barra"><div style="width:${p.n ? 100 * p.aciertos / p.n : 0}%"></div></div></td>
       <td class="num">${pct(p.aciertos, p.n)}</td><td class="num">${pct(p.fallos, p.n)}</td><td class="num">${pct(p.blancos, p.n)}</td>
@@ -391,9 +396,9 @@ function renderResultados() {
       </div>
       <h3>Notas</h3>
       <p class="pequeno suave">${regs.length} registros · media <b>${num(L.media(regs.map(r => r.nota)))}</b>${sinRegistro.length ? ` · sin registro: ${esc(sinRegistro.map(a => a.nombre).join(', '))}` : ''}</p>
-      ${regs.length ? `<table class="lista"><tr><th>Alumno</th><th>Grupo</th><th>Código</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Puntos</th><th class="num">Nota</th><th>Obs.</th></tr>${filasAlumnos}</table>` : ''}
+      ${regs.length ? `<table class="lista"><tr><th>Alumno</th><th>Grupo</th><th>Examen</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Puntos</th><th class="num">Nota</th><th>Obs.</th></tr>${filasAlumnos}</table>` : ''}
       <h3>Por pregunta (destreza)</h3>
-      <p class="pequeno suave">Cada posición es la misma destreza en todas las versiones; el número impreso cambia de una versión a otra. <b>Respuestas</b> despliega, versión a versión, cuántos eligieron cada opción y de qué error sale: en verde la correcta, en negrita el distractor más elegido. <b>Error más elegido</b> es el distractor con más votos de una sola versión (pasa el ratón para ver la explicación): las versiones no se suman porque cada una lleva sus números y sus letras.</p>
+      <p class="pequeno suave">Cada posición es la misma destreza en todos los exámenes; el número impreso cambia de un examen a otro. <b>Respuestas</b> despliega, variante a variante (a, b, c, d; e y f son las de los exámenes extra), cuántos eligieron cada opción y de qué error sale: en verde la correcta, en negrita el distractor más elegido. Las opciones se cuentan por su texto, porque la letra cambia de un examen a otro. <b>Error más elegido</b> es el distractor con más votos de una sola variante (pasa el ratón para ver la explicación): las variantes no se suman porque cada una lleva sus números.</p>
       <table class="lista"><tr><th class="num">Pos.</th><th>Destreza</th><th class="num">N</th><th></th><th class="num">Acierto</th><th class="num">Fallo</th><th class="num">Blanco</th><th>Error más elegido</th><th></th></tr>${filasPreg}</table>
     </div>
     <div class="tarjeta">
@@ -415,7 +420,7 @@ function renderResultados() {
 function htmlFicha(id) {
   const ficha = L.fichaAlumno(estado.claves, registros(), id);
   if (!ficha.length) return '<p class="suave">Sin registros.</p>';
-  const resumen = `<table class="lista"><tr><th>Unidad</th><th>Semana</th><th>Fecha</th><th>Código</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th></tr>
+  const resumen = `<table class="lista"><tr><th>Unidad</th><th>Semana</th><th>Fecha</th><th>Examen</th><th class="num">Aciertos</th><th class="num">Fallos</th><th class="num">Blanco</th><th class="num">Nota</th><th>Obs.</th></tr>
     ${ficha.map(s => `<tr><td>${s.unidad}</td><td>${s.semana}</td><td>${esc(s.fecha)}</td><td class="mono">${esc(s.codigo)}</td><td class="num">${s.aciertos}</td><td class="num">${s.fallos}</td><td class="num">${s.blancos + s.nulas}</td><td class="num"><b>${num(s.nota)}</b></td><td>${esc(s.obs)}</td></tr>`).join('')}</table>`;
   const detalle = ficha.map(s => `
     <h3>Unidad ${s.unidad} · semana ${s.semana} · código ${esc(s.codigo)} · nota ${num(s.nota)}</h3>
@@ -477,7 +482,10 @@ function renderClaves() {
   const filas = lista.map(c => {
     const k = L.idClave(c.unidad, c.semana);
     const n = registrosSemana(c.unidad, c.semana).length;
-    return `<tr><td>${c.unidad}</td><td>${c.semana}</td><td>${esc(c.fecha ?? '')}</td><td class="mono">${c.versiones.map(v => v.codigo + (v.extra ? ' (extra)' : '')).join(', ')}</td>
+    const normales = c.versiones.filter(v => !v.extra), extra = c.versiones.filter(v => v.extra);
+    const cuales = c.versiones.length <= 8 ? c.versiones.map(v => v.codigo + (v.extra ? ' (extra)' : '')).join(', ')
+      : `${normales.length} exámenes (${normales[0].codigo}–${normales.at(-1).codigo})${extra.length ? ` + extra ${extra.map(v => v.codigo).join(', ')}` : ''}`;
+    return `<tr><td>${c.unidad}</td><td>${c.semana}</td><td>${esc(c.fecha ?? '')}</td><td class="mono">${cuales}</td>
       <td class="num">${c.n_preguntas}</td><td class="mono">${esc(L.textoAnuladas(c)) || '—'}</td><td class="num">${n}</td>
       <td class="acciones"><button class="boton-2 mini" data-anular="${esc(k)}">Anular…</button>
         <button class="boton-peligro mini" data-borrar="${esc(k)}">Borrar</button></td></tr>`;

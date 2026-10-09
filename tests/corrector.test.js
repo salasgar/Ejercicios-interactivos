@@ -174,8 +174,40 @@ test('estadisticasPreguntas agrupa por posición (destreza) y por versión', () 
   assert.deepEqual(s.map(p => [p.pos, p.item, p.n, p.aciertos, p.fallos, p.blancos]), [
     [1, '1A-01', 3, 2, 1, 0], [2, '1B-02', 3, 3, 0, 0], [3, '1C-03', 3, 2, 1, 0], [4, '1C-04', 3, 2, 0, 1],
   ]);
-  assert.deepEqual(s[0].versiones['2222'], { numero: 4, correcta: 'A', n: 1, aciertos: 0, letras: { A: 0, B: 1, C: 0, D: 0, '-': 0, '?': 0 } });
-  assert.deepEqual(s[2].versiones['1111'].letras, { A: 0, B: 0, C: 1, D: 1, '-': 0, '?': 0 });
+  // Sin `variante` en la clave, la variante es la versión; las opciones se cuentan por su texto.
+  assert.deepEqual(s[0].variantes['2222'], {
+    codigos: ['2222'], enunciado: 'Work out: $\\ 1+1$', n: 1, aciertos: 0, blancos: 0, nulas: 0,
+    opciones: [{ texto: '$A1$', expl: 'bien', correcta: true, cuenta: 0 }, { texto: '$B1$', expl: 'error B', correcta: false, cuenta: 1 },
+      { texto: '$C1$', expl: 'error C', correcta: false, cuenta: 0 }, { texto: '$D1$', expl: 'error D', correcta: false, cuenta: 0 }],
+  });
+  assert.deepEqual(s[2].variantes['1111'].opciones.map(o => o.cuenta), [0, 0, 1, 1]);
+});
+
+test('estadisticasPreguntas: con exámenes individuales agrupa por variante y cuenta por texto, no por letra', () => {
+  // Dos exámenes (números 7 y 23) con la misma variante en la posición 1, pero las letras barajadas.
+  const destrezas = ['1A-01'];
+  const examen = (codigo, letras, variante, correcta) => ({
+    codigo, extra: false, clave: correcta,
+    preguntas: [{ n: 1, pos: 1, item: '1A-01', variante, correcta, enunciado: 'Work out: $\\ 2+2$',
+      opciones: letras.map((texto, i) => ({ letra: 'ABCD'[i], texto, expl: texto === '$4$' ? 'bien' : `error ${texto}` })) }],
+  });
+  const clave = { formato: L.FORMATO_CLAVE, unidad: 2, semana: 1, n_preguntas: 1, opciones: 4, rotulo: 'Exam no.', destrezas,
+    versiones: [examen('7', ['$4$', '$22$', '$0$', '$3$'], 2, 'A'), examen('23', ['$22$', '$3$', '$4$', '$0$'], 2, 'C'), examen('40', ['$5$', '$6$', '$7$', '$8$'], 1, 'A')] };
+  assert.equal(L.comprobarClave(clave), null);
+  assert.match(L.comprobarClave({ ...clave, versiones: [examen('12345', ['a', 'b', 'c', 'd'], 1, 'A')] }), /no válido/);
+  const registros = [
+    { semana: 1, alumno: 'a', codigo: '7', respuestas: 'B' },    // eligió «22»
+    { semana: 1, alumno: 'b', codigo: '23', respuestas: 'A' },   // también «22», con otra letra
+    { semana: 1, alumno: 'c', codigo: '23', respuestas: 'C' },   // acierto
+    { semana: 1, alumno: 'd', codigo: '40', respuestas: '-' },
+  ];
+  const s = L.estadisticasPreguntas(clave, registros);
+  assert.deepEqual([s[0].n, s[0].aciertos, s[0].fallos, s[0].blancos], [4, 1, 2, 1]);
+  assert.deepEqual(s[0].variantes['2'].codigos, ['7', '23']);
+  assert.deepEqual(s[0].variantes['2'].opciones.map(o => [o.texto, o.cuenta, o.correcta]), [['$4$', 1, true], ['$22$', 2, false], ['$0$', 0, false], ['$3$', 0, false]]);
+  const r = L.opcionesElegidas(clave, s);
+  assert.deepEqual(r[0].variantes.map(v => [v.id, v.nombre, v.codigos, v.n]), [['1', 'a', ['40'], 1], ['2', 'b', ['7', '23'], 3]]);
+  assert.deepEqual(r[0].masElegido, { id: '2', nombre: 'b', codigos: ['7', '23'], texto: '$22$', expl: 'error $22$', correcta: false, cuenta: 2 });
 });
 
 test('opcionesElegidas: por versión, cada opción con su texto, su explicación y cuántos la eligieron', () => {
@@ -188,14 +220,14 @@ test('opcionesElegidas: por versión, cada opción con su texto, su explicación
     { semana: 1, alumno: 'd', codigo: '2222', respuestas: 'DDAB' },   // pos 1 es su nº 4: B, mal
   ];
   const r = L.opcionesElegidas(clave, L.estadisticasPreguntas(clave, registros));
-  const p3 = r[2].versiones.find(v => v.codigo === '1111');
-  assert.deepEqual(p3.opciones.map(o => [o.letra, o.cuenta, o.correcta]), [['A', 0, false], ['B', 0, false], ['C', 1, true], ['D', 1, false]]);
-  assert.deepEqual([p3.numero, p3.n, p3.blancos, p3.nulas, p3.opciones[3].expl, p3.opciones[3].texto], [3, 3, 0, 1, 'error D', '$D3$']);
-  const p4 = r[3].versiones.find(v => v.codigo === '1111');
+  const p3 = r[2].variantes.find(v => v.id === '1111');
+  assert.deepEqual(p3.opciones.map(o => [o.texto, o.cuenta, o.correcta]), [['$A3$', 0, false], ['$B3$', 0, false], ['$C3$', 1, true], ['$D3$', 1, false]]);
+  assert.deepEqual([p3.nombre, p3.n, p3.blancos, p3.nulas, p3.opciones[3].expl], ['1111', 3, 0, 1, 'error D']);
+  const p4 = r[3].variantes.find(v => v.id === '1111');
   assert.deepEqual([p4.blancos, p4.nulas], [1, 1]);
   // Solo las versiones con registros, en el orden de la clave.
-  assert.deepEqual(r[0].versiones.map(v => [v.codigo, v.numero]), [['1111', 1], ['2222', 4]]);
-  assert.deepEqual(r[0].masElegido, { codigo: '2222', numero: 4, letra: 'B', texto: '$B1$', expl: 'error B', cuenta: 1, correcta: false });
+  assert.deepEqual(r[0].variantes.map(v => [v.id, v.codigos]), [['1111', ['1111']], ['2222', ['2222']]]);
+  assert.deepEqual(r[0].masElegido, { id: '2222', nombre: '2222', codigos: ['2222'], texto: '$B1$', expl: 'error B', correcta: false, cuenta: 1 });
   assert.equal(r[1].masElegido, null);                               // todos la acertaron
 });
 
