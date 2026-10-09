@@ -351,19 +351,6 @@ export const PLANTILLAS = [
       `Two different trees can reach the same factorisation (${F(n)}): both are right.`),
   },
   {
-    id: 'b-factor-divisor',
-    error: null,
-    numeros: rng => { const d = rng.entero(2, 13), k = rng.entero(2, 9); return { n: d * k, d, k }; },
-    lineas: ({ n, d, k }) => [
-      L(`${n} = ${d} · ${k}`, `${n} = ${d} · ${k}`),
-      L(`${d} es factor de ${n}.`, `${d} is a factor of ${n}.`),
-      L(`También puedo decir que ${d} es divisor de ${n}.`, `I can also say that ${d} is a divisor of ${n}.`),
-    ],
-    porque: ({ n, d }) => L(
-      `Aquí «factor» y «divisor» quieren decir lo mismo: ${d} es factor de ${n} y divisor de ${n}.`,
-      `Here 'factor' and 'divisor' mean the same: ${d} is a factor of ${n} and a divisor of ${n}.`),
-  },
-  {
     id: 'b-mcd-hcf',
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_MIXTOS); return { a, b }; },
@@ -385,7 +372,7 @@ export const PLANTILLAS = [
       return [
         L(`Múltiplos de ${a}: ${lista(a)}`, `Multiples of ${a}: ${lista(a)}`),
         L(`Múltiplos de ${b}: ${lista(b)}`, `Multiples of ${b}: ${lista(b)}`),
-        L(`El menor múltiplo común es ${l}: m.c.m.(${a}, ${b}) = ${l}.`, `The smallest common multiple is ${l}: LCM(${a}, ${b}) = ${l}.`),
+        L(`El menor múltiplo común distinto de cero es ${l}: m.c.m.(${a}, ${b}) = ${l}.`, `The smallest common multiple other than zero is ${l}: LCM(${a}, ${b}) = ${l}.`),
         L(`En inglés se dice «lowest common multiple» o «least common multiple».`, `We say 'lowest common multiple' or 'least common multiple'.`),
       ];
     },

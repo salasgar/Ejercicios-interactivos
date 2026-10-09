@@ -82,7 +82,6 @@ const VERIFICADORES = {
     const [tot, x, y, ...hojas] = t;
     return tot === n && x * y === n && hojas.reduce((p, q) => p * q, 1) === n && hojas.every(primoBF);
   }).concat([valor(tras(l2, ' = ')) === n]),
-  'b-factor-divisor': ({ n, d, k }, [l0, l1, l2]) => [n === d * k, n % d === 0, n % d === 0],
   'b-mcd-hcf': ({ a, b }, [l0, l1]) => [nums(l0).at(-1) === gcdBF(a, b), nums(l1).slice(2).every(x => x === gcdBF(a, b) || x === a || x === b)],
   'b-lcm-nombres': ({ a, b }, [l0, l1, l2]) => {
     const l = lcmBF(a, b), [, ...m1] = nums(l0), [, ...m2] = nums(l1);
@@ -356,4 +355,15 @@ test('b-primo-ok no usa letras como incógnita; b-factores-11-13 solo nombra los
     const es = b.porque({ n }).es;
     for (const g of [11, 13]) assert.equal(es.includes(String(g)), n % g === 0, `${n}: ${es}`);
   }
+});
+
+test('decisión del 9-10: sin la plantilla «factor = divisor»; el m.c.m. se nombra «distinto de cero»', () => {
+  assert.equal(PLANTILLA_POR_ID['b-factor-divisor'], undefined);
+  const p = PLANTILLA_POR_ID['b-lcm-nombres'];
+  const lineas = p.lineas(p.numeros(crearRng(3)));
+  const tercera = lineas[2];
+  assert.match(tercera.es, /distinto de cero/);
+  assert.match(tercera.en, /other than zero/);
+  for (const pl of PLANTILLAS) for (const l of (pl.lineas(pl.numeros(crearRng(4)))))
+    assert.doesNotMatch(l.es, /es factor de|a menor múltiplo común es/);
 });
