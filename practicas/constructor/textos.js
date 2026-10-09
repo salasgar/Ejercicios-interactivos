@@ -139,6 +139,14 @@ export const TX = {
       es: (dado, otro) => ` Si lo leyeras con las reglas del otro idioma, ${dado} sería <span class="cuenta">${otro}</span>: otro número distinto.`,
       en: (dado, otro) => ` If you read it with the rules of the other language, ${dado} would be <span class="cuenta">${otro}</span>: a different number.`,
     },
+    trampa_decimal: {
+      es: (es, en) => ` En español el punto no separa los decimales: los separa la coma (<span class="cuenta">${es}</span>). En inglés es al revés: <span class="cuenta">${en}</span>.`,
+      en: (es, en) => ` In Spanish the decimal separator is a comma (<span class="cuenta">${es}</span>); in English it is a point: <span class="cuenta">${en}</span>.`,
+    },
+    malagrupado: {
+      es: 'Ese número no está bien escrito: los grupos de tres cifras se separan con punto, coma o espacio (4.730), y sin decimales.',
+      en: 'That number is not written correctly: groups of three digits are separated with a point, a comma or a space (4,730), and there are no decimals.',
+    },
     palabras_instr: { es: 'Escribe con cifras este número:', en: 'Write this number with digits:' },
     palabras_fb: {
       es: (n, grupos) => `<span class="cuenta">${n}</span>. Por grupos: ${grupos}. Un grupo del que no se dice nada se escribe 000.`,

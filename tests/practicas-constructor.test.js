@@ -5,11 +5,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
+import { TX } from '../practicas/constructor/textos.js';
 import {
   CONSIGNAS, generarConstruir, esAciertoConstruir, permutaciones, solucionDe,
   generarASuma, esAciertoASuma, generarANumero, esAciertoANumero, errorPegado, componentesDe,
   generarValor, generarPosicion, generarDescomposicion, esAciertoOpcion,
-  generarComa, esAciertoComa, escribir, generarPalabras, esAciertoPalabras, enPalabras, generarComaPalabras, fmt,
+  generarComa, esAciertoComa, escribir, generarPalabras, esAciertoPalabras, enPalabras, generarComaPalabras, fmt, leerComo, leerEntero,
 } from '../practicas/constructor/logica.js';
 
 const N = 3000;
@@ -202,12 +203,48 @@ test('coma: la lectura equivocada (reglas del otro idioma) está siempre entre l
     const origen = it.dir === 'en_es' ? 'en' : 'es', destino = it.dir === 'en_es' ? 'es' : 'en';
     const cadena = escribir(it.c, origen, 'punto');
     const limpio = destino === 'es' ? cadena.replace(/\./g, '').replace(',', '.') : cadena.replace(/,/g, '');
-    const mal = Math.round(Number(limpio) * 100);
-    if (!Number.isFinite(mal)) continue; // «1,000,000» no se puede leer como número español: no hay trampa
-    const escrito = escribir(mal, destino, it.estilo);
-    assert.notEqual(mal, it.c);
+    if (!/^\d+(\.\d+)?$/.test(limpio)) { assert.equal(it.mal, null); continue; } // «1,000,000» no se lee como número español: no hay trampa
+    // Escrita sin redondear: el valor exacto, a la manera del idioma de destino.
+    const [e, f = ''] = limpio.split('.');
+    const grupos = e.replace(/\B(?=(\d{3})+(?!\d))/g, destino === 'en' ? ',' : (it.estilo === 'espacio' ? '\u00a0' : '.'));
+    const f2 = f.replace(/0+$/, '');
+    const escrito = f2 ? `${grupos}${destino === 'en' ? '.' : ','}${f2}` : grupos;
+    assert.equal(it.mal, escrito);
+    assert.notEqual(escrito, it.correcto);
     assert.ok(it.opciones.includes(escrito), `${it.dado}: falta la trampa ${escrito} en ${it.opciones}`);
   }
+});
+
+test('coma (segunda revisión): la frase de la trampa dice lo que de verdad se leería, sin redondear', () => {
+  const rng = crearRng(26);
+  let tresDecimales = 0;
+  for (let k = 0; k < 5000; k++) {
+    const it = generarComa(rng);
+    const origen = it.dir === 'en_es' ? 'en' : 'es', destino = it.dir === 'en_es' ? 'es' : 'en';
+    const leida = leerComo(escribir(it.c, origen, 'punto'), destino, it.estilo);
+    assert.equal(it.mal, leida);
+    if (it.mal && /[.,]\d{3}$/.test(it.mal) && it.sub === 'miles' && destino === 'en') tresDecimales++;
+  }
+  assert.ok(tresDecimales > 100, 'hay ítems como 836.369');
+  assert.equal(leerComo('836.369', 'en'), '836.369');
+  assert.equal(leerComo('437,074', 'en'), '437,074');
+  assert.equal(leerComo('12,500', 'es'), '12,5');
+  assert.equal(leerComo('1,000,000', 'es'), null);
+});
+
+test('coma (decisión del 9-10): en los decimales la trampa explica el separador y no dice «125»', () => {
+  for (const idioma of ['es', 'en']) {
+    const t = TX.coma.trampa_decimal[idioma]('12,5', '12.5');
+    assert.ok(t.includes('12,5') && t.includes('12.5'));
+    assert.ok(!/125/.test(t));
+  }
+});
+
+test('leerEntero: «1.200», «1 200», «1,200» y «1200» valen; lo mal agrupado, no', () => {
+  for (const v of ['1.200', '1 200', '1,200', '1200', ' 1200 ', '1\u00a0200']) assert.equal(leerEntero(v), 1200, v);
+  for (const v of ['12.00', '1.2.0.0', '120,0', '-1200', '1200.5', '1.20', '', 'abc', '1,2,00']) assert.equal(leerEntero(v), null, v);
+  assert.equal(esAciertoPalabras({ n: 1200 }, '12.00'), false);
+  assert.equal(esAciertoPalabras({ n: 1200 }, '1.200'), true);
 });
 
 test('coma: la correcta no está siempre en el mismo sitio', () => {

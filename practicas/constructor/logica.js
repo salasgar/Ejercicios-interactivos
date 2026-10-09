@@ -201,23 +201,33 @@ export function generarDescomposicion(rng) {
 // ─── Ejercicio 3: la coma inglesa y los números en palabras ─────────────────────
 
 // Los valores se guardan en centésimas (enteros) para no pelearse con los decimales.
-const aValor = (str, loc) => {
-  let s = str.replace(/[\s ]/g, '');
-  s = loc === 'es' ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
-  return Math.round(Number(s) * 100);
-};
 
-/** Escribe un valor (en centésimas) a la española («12.500», «12 500», «12,5») o a la inglesa («12,500», «12.5»). */
-export function escribir(c, loc, estilo = 'punto') {
-  const entera = Math.floor(c / 100), frac = c % 100;
-  const fs = frac ? String(frac).padStart(2, '0').replace(/0+$/, '') : '';
-  let e = String(entera);
+/** Parte entera y decimales (sin ceros finales) → texto a la española («12.500», «12 500», «12,5») o a la inglesa («12,500», «12.5»). */
+function formatear(entera, frac, loc, estilo) {
+  let e = entera;
   if (e.length >= 4) {
     const sep = loc === 'en' ? ',' : (estilo === 'espacio' ? NBSP : '.');
     e = e.replace(/\B(?=(\d{3})+(?!\d))/g, sep);
   }
-  if (!fs) return e;
-  return `${e}${loc === 'en' ? '.' : ','}${fs}`;
+  return frac ? `${e}${loc === 'en' ? '.' : ','}${frac}` : e;
+}
+
+/** Escribe un valor (en centésimas) a la española o a la inglesa. */
+export function escribir(c, loc, estilo = 'punto') {
+  const frac = c % 100 ? String(c % 100).padStart(2, '0').replace(/0+$/, '') : '';
+  return formatear(String(Math.floor(c / 100)), frac, loc, estilo);
+}
+
+/**
+ * Lo que sale de leer `cadena` con las reglas del idioma `loc`, ya escrito a la manera de `loc`, SIN
+ * redondear («836.369» leído a la inglesa es 836.369, no 836.37). null si con esas reglas no es un número.
+ */
+export function leerComo(cadena, loc, estilo = 'punto') {
+  const s = cadena.replace(/[\s ]/g, '');
+  const limpio = loc === 'es' ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, '');
+  if (!/^\d+(\.\d+)?$/.test(limpio)) return null;
+  const [entera, frac = ''] = limpio.split('.');
+  return formatear(String(Number(entera)), frac.replace(/0+$/, ''), loc, estilo);
 }
 
 /**
@@ -241,16 +251,19 @@ export function generarComa(rng) {
   const origen = dir === 'en_es' ? 'en' : 'es', destino = dir === 'en_es' ? 'es' : 'en';
   // El señuelo-trampa: leer la cadena de origen (en su forma con punto) con las reglas del otro idioma
   const cadenaOrigen = escribir(c, origen, 'punto');
-  const mal = aValor(cadenaOrigen, destino);
-  const candidatos = [mal, c * 10, c * 100, c % 10 === 0 ? c / 10 : null, c % 100 === 0 ? c / 100 : null];
-  const unicos = [...new Set(candidatos.filter(v => v !== null && v !== c && v > 0))];
-  const extra = rng.barajar(unicos.filter(v => v !== mal));
-  const falsos = (unicos.includes(mal) ? [mal] : []).concat(extra).slice(0, 3);
+  const mal = leerComo(cadenaOrigen, destino, estilo);
+  const correcto = escribir(c, destino, estilo);
+  const candidatos = [c * 10, c * 100, c % 10 === 0 ? c / 10 : null, c % 100 === 0 ? c / 100 : null]
+    .filter(v => v !== null && v > 0).map(v => escribir(v, destino, estilo));
+  const falsos = [];
+  for (const o of [mal, ...rng.barajar([...new Set(candidatos)])]) {
+    if (o !== null && o !== correcto && !falsos.includes(o)) falsos.push(o);
+  }
+  falsos.length = Math.min(falsos.length, 3);
   // Por si faltara alguno, se completan con desplazamientos de dos órdenes (siempre falsos)
   let k = 1;
-  while (falsos.length < 3) { const v = c * 10 ** (k + 1); if (v !== c && !falsos.includes(v)) falsos.push(v); k++; }
-  const correcto = escribir(c, destino, estilo);
-  const opciones = rng.barajar([correcto, ...falsos.map(v => escribir(v, destino, estilo))]);
+  while (falsos.length < 3) { const o = escribir(c * 10 ** (k + 1), destino, estilo); if (o !== correcto && !falsos.includes(o)) falsos.push(o); k++; }
+  const opciones = rng.barajar([correcto, ...falsos]);
   return { tipo: 'coma', sub, dir, c, estilo, dado: escribir(c, origen, estilo), opciones, correcto, mal };
 }
 
@@ -278,7 +291,18 @@ export function generarPalabras(rng) {
   }
 }
 
-export const esAciertoPalabras = (item, escrito) => Number(String(escrito).replace(/\D/g, '')) === item.n;
+/**
+ * Lo que escribe el alumno → número natural, o null si no lo es. Vale con o sin separador de miles:
+ * «4730», «4.730», «4,730», «4 730». «12.00», «1.2.0.0», «120,0» o «-1200» dan null (no se penalizan: se avisa).
+ */
+export function leerEntero(texto) {
+  const t = String(texto).trim();
+  if (/^\d+$/.test(t)) return Number(t);
+  if (/^\d{1,3}([.,\s\u00a0\u202f]\d{3})+$/.test(t)) return Number(t.replace(/\D/g, ''));
+  return null;
+}
+
+export const esAciertoPalabras = (item, escrito) => leerEntero(escrito) === item.n;
 
 /** El texto del número en el idioma del ítem. */
 export const enPalabras = (n, idioma) => (idioma === 'en' ? numeroAIngles(n) : apocoparUno(numeroAEspanol(n)));
