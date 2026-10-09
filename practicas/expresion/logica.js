@@ -228,9 +228,50 @@ export function sumaRepetida(arbol, modelo) {
   const usados = new Set(numerosDe(arbol));
   const veces = [...new Set(numerosDe(modelo))].filter(n => !usados.has(n)).sort((x, y) => x - y);
   if (!veces.length) return null;
+  // Una sola ficha nunca es una suma repetida (es el resultado, no la expresión), ni lo es
+  // una división de algo entre sí mismo (5 : 5 hace de 1 y fabrica identidades).
+  if (arbol.op === 'n' || hayDivisionIdentica(arbol)) return null;
+  // Cada número omitido tiene que ser «las veces» de un producto del modelo.
+  const productos = productosDeVeces(modelo);
+  if (!veces.every(v => productos.some(p => p.v === v))) return null;
   const raices = [], constantes = new Set(veces);
   const x = cociente(arbol, raices, constantes), y = cociente(modelo, raices, constantes);
   return x && y && cIgual(x, y) ? veces : null;
+}
+
+/** ¿Hay en `arbol` una división de una expresión entre ella misma (5 : 5)? */
+function hayDivisionIdentica(arbol) {
+  if (arbol.op === 'n') return false;
+  if (arbol.op === ':' && aFichas(arbol.a).join(' ') === aFichas(arbol.b).join(' ')) return true;
+  return hayDivisionIdentica(arbol.a) || (arbol.b ? hayDivisionIdentica(arbol.b) : false);
+}
+
+/**
+ * Los números del modelo que pueden hacer de «veces»: factor directo de un producto al
+ * que se llega solo por sumas, restas y otros productos (no desde dentro de un paréntesis,
+ * una potencia, una raíz ni una división), y cuyo otro factor no lleva divisiones.
+ * Devuelve `{ v, resta }`; `resta` dice si ese producto es el sustraendo de una resta.
+ */
+function productosDeVeces(modelo) {
+  const res = [];
+  const lleva = (nodo, op) => nodo.op === op || (nodo.a && lleva(nodo.a, op)) || Boolean(nodo.b && lleva(nodo.b, op));
+  const ir = (nodo, resta) => {
+    if (nodo.op === '+') { ir(nodo.a, resta); ir(nodo.b, resta); return; }
+    if (nodo.op === '-') { ir(nodo.a, resta); ir(nodo.b, true); return; }
+    if (nodo.op !== '·') return;
+    for (const [uno, otro] of [[nodo.a, nodo.b], [nodo.b, nodo.a]]) {
+      if (uno.op === 'n' && !lleva(otro, ':')) res.push({ v: uno.v, resta });
+    }
+    ir(nodo.a, resta); ir(nodo.b, resta);
+  };
+  ir(modelo, false);
+  return res;
+}
+
+/** ¿Es la suma repetida en realidad una resta repetida (50 − 8 − 8)? Para elegir el texto. */
+export function esRestaRepetida(modelo, veces) {
+  const productos = productosDeVeces(modelo).filter(p => veces.includes(p.v));
+  return productos.length > 0 && productos.every(p => p.resta);
 }
 
 // --- Paréntesis que sobran ----------------------------------------------------------

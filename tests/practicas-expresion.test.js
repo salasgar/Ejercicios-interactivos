@@ -14,7 +14,7 @@ import { PLANTILLAS, TX } from '../practicas/expresion/textos.js';
 import {
   analizar, aFichas, evaluar, equivalentes, quitarSobrantes, corregir,
   FAMILIAS, instanciar, modeloDe, erroresDe, plantillaPorId, numerosValidos,
-  generarSin, generarCon, generarPotencias, claveItem, P_VARIANTE, MAX_FICHAS, sumaRepetida,
+  generarSin, generarCon, generarPotencias, claveItem, P_VARIANTE, MAX_FICHAS, sumaRepetida, esRestaRepetida,
 } from '../practicas/expresion/logica.js';
 
 // ─── Definiciones independientes ────────────────────────────────────────────────
@@ -628,6 +628,47 @@ test('corregir: el producto escrito como suma repetida es un acierto, y se dice 
     assert.equal(r.estado, 'mal', `${id}: ${texto}`);
     assert.ok(r.faltan.length > 0, `${id}: ${texto}`);
   }
+});
+
+test('suma repetida (segunda revisión): una sola ficha, los omitidos que no son «veces» y x : x no valen', () => {
+  const item = (id, numeros) => ({ tipo: 'montar', plantilla: id, numeros, modelo: modeloDe(plantillaPorId(id), numeros) });
+  // Los casos reproducidos por la revisión: antes se aceptaban.
+  const noValen = [
+    ['caramelos_bolsas', { a: 4, b: 30, c: 8, d: 2 }, '30'],
+    ['caramelos_bolsas', { a: 6, b: 20, c: 4, d: 2 }, '20+20+20'],
+    ['frase_resta_por', { a: 8, b: 7, c: 5 }, '5'],
+    ['frase_mas_por', { a: 2, b: 5, c: 3 }, '5:5+5:5+5·3'],
+  ];
+  for (const [id, numeros, texto] of noValen) {
+    const r = corregir(item(id, numeros), F(texto));
+    assert.equal(r.estado, 'mal', `${id}: ${texto}`);
+  }
+  // Por fuerza bruta: en todas las plantillas, con 150 juegos, ninguna expresión de una sola ficha se acepta.
+  const rng = crearRng(33);
+  for (const p of PLANTILLAS) {
+    let n = 0;
+    for (let k = 0; k < 600 && n < 150; k++) {
+      const numeros = p.numeros(rng);
+      if (!numerosValidos(p, numeros)) continue;
+      n++;
+      const it = item(p.id, numeros);
+      for (const v of Object.values(numeros)) {
+        assert.equal(sumaRepetida(analizar([v]).arbol, it.modelo), null, `${p.id}: ${v}`);
+        assert.notEqual(corregir(it, [v]).estado === 'bien' && corregir(it, [v]).repetida !== null, true, `${p.id}: ${v}`);
+      }
+    }
+  }
+  // Lo legítimo sigue valiendo, y el texto dice «restar» cuando lo repetido se resta.
+  const libros = item('libros', { a: 50, b: 2, c: 8 });
+  assert.equal(esRestaRepetida(libros.modelo, [2]), true);
+  assert.equal(esRestaRepetida(item('huevos', { a: 3, b: 12, c: 5 }).modelo, [3]), false);
+  for (const idioma of ['es', 'en']) assert.ok(TX.repetidaResta[idioma]([2]).length > 0);
+  assert.ok(/restar/.test(TX.repetidaResta.es([2])) && /subtracting/.test(TX.repetidaResta.en([2])));
+});
+
+test('introducción del ejercicio 1: explica que sin «todo» no hay paréntesis, con un ejemplo corto', () => {
+  assert.ok(/no dice «todo», no los hay/.test(TX.sin.introduccion.es) && /20 − 5 · 3/.test(TX.sin.introduccion.es));
+  assert.ok(/does not say “all”, there are none/.test(TX.sin.introduccion.en) && /20 − 5 · 3/.test(TX.sin.introduccion.en));
 });
 
 test('textos: los números que faltan se enumeran con comas («3, 4 y 5»)', () => {

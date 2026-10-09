@@ -12,7 +12,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
   OPERADORES, MAX_FICHAS, aFichas, evaluar, corregir, erroresDe, plantillaPorId,
-  generarSin, generarCon, generarPotencias, claveItem,
+  generarSin, generarCon, generarPotencias, claveItem, esRestaRepetida,
 } from './logica.js';
 
 // ─── Cómo se escribe una expresión ─────────────────────────────────────────────
@@ -136,7 +136,7 @@ function montarExpresion(contenedor, item, api) {
         ? ` ${tt(TX.sobraba)(r.quitados)} <span class="cuenta">${htmlExpresion(aFichas(r.limpia), idioma)}</span>.` : '';
       // La suma repetida es un planteamiento correcto: se acepta y se enseña la forma corta.
       const repetida = r.repetida
-        ? ` ${tt(TX.repetida)(r.repetida)} ${cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma)}.` : '';
+        ? ` ${tt(esRestaRepetida(item.modelo, r.repetida) ? TX.repetidaResta : TX.repetida)(r.repetida)} ${cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma)}.` : '';
       return api.responder({
         acierto: true,
         html: `${cuenta(fichas, r.valor, idioma)}.${sobraba}${repetida} ${plantillaPorId(item.plantilla).explica[idioma](item.numeros).replace(/:$/, '.')}`,
