@@ -60,3 +60,4 @@ Poner `disponible: true` para `reloj` en `practicas/_comun/catalogo.js`.
 Ninguno: el contrato de la base (01) se ha usado tal cual, incluida la pieza `pasos`
 de `piezas.js` para los steppers de minutos (truco: valor = índice 0-11, `pinta` lo
 multiplica por 5).
+Commit: 6d4628d (reabierta del 9-10): rótulo de la hora encima de los contadores; «Marca la hora».

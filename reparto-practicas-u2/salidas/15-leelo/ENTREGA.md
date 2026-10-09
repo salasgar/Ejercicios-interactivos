@@ -68,3 +68,4 @@ Pide poner `disponible: true` en `practicas/_comun/catalogo.js` para el slug
 (`s-20261007T205921-9d74da56`). Al cerrar yo, `npm test` completo ya está en
 verde (51/51 solo con mis ficheros + comun; no he corrido el resto del
 repositorio).
+Commit: 6b365ca (decisión del 9-10): HCF fuera como lectura.

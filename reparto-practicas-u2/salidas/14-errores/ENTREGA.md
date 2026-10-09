@@ -23,3 +23,4 @@ Propuestas:
 - Catálogo: poner disponible: true para errores (tarea 18).
 - NO hay plantilla «divisible between» (ficha, «Trampas»): generar(rng, sesion) no sabe el idioma del ítem (la base lo sortea después y deja ver el otro idioma al responder), así que en español sería «divisible entre», correcto. Propuesta de contrato: pasar el idioma a generar o un campo opcional soloEn en el ítem.
 - La ficha pide «6 es factor de 24» como no-error, en tensión con la regla «divisor, no factor»: se hizo como pide la ficha (plantilla b-factor-divisor), por si Juan Luis prefiere quitarla.
+Commit: aa28e29 (reabiertas del 9-10): fuera b-factor-divisor; m.c.m. distinto de cero; sin «Está bien» repetido.
