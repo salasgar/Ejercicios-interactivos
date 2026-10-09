@@ -29,7 +29,7 @@ export const TX = {
     },
     instruccion: { es: n => `El área es ${n}. Elige un ancho y mira si el rectángulo se cierra.`, en: n => `The area is ${n}. Choose a width and see if the rectangle closes.` },
     ancho: { es: 'Ancho', en: 'Width' },
-    sobran: { es: (w, faltan, n) => `Con ancho ${w} ${faltan === 1 ? 'falta' : 'faltan'} ${faltan} ${faltan === 1 ? 'celda' : 'celdas'} (las tachadas) para cerrar el rectángulo: ${w} no es divisor de ${n}.`, en: (w, faltan, n) => `With width ${w}, ${faltan} ${faltan === 1 ? 'cell is' : 'cells are'} missing (the crossed-out ${faltan === 1 ? 'one' : 'ones'}) to close the rectangle: ${w} is not a divisor of ${n}.` },
+    sobran: { es: (w, faltan, n) => `Con ancho ${w} ${faltan === 1 ? 'falta' : 'faltan'} ${faltan} ${faltan === 1 ? 'celda' : 'celdas'} (${faltan === 1 ? 'la tachada' : 'las tachadas'}) para cerrar el rectángulo: ${w} no es divisor de ${n}.`, en: (w, faltan, n) => `With width ${w}, ${faltan} ${faltan === 1 ? 'cell is' : 'cells are'} missing (the crossed-out ${faltan === 1 ? 'one' : 'ones'}) to close the rectangle: ${w} is not a divisor of ${n}.` },
     encontradas: { es: 'Parejas encontradas', en: 'Pairs found' },
     ninguna_todavia: { es: 'Todavía ninguna.', en: 'None yet.' },
     ya_todas: { es: 'Ya están todas', en: "They're all there" },
