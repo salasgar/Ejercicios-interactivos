@@ -167,6 +167,8 @@ test('ejercicio 1: con contexto nunca se propone 0, y con 1 el sustantivo va en 
     const p = TX.contextos[item.cantidad][item.contexto];
     for (const texto of [p.es(item.a, item.b, item.propuesto), p.en(item.a, item.b, item.propuesto)]) {
       assert.ok(!/\b1 (grupos|bolsas|minutos|segundos|groups|bags|minutes|seconds)\b/.test(texto), texto);
+      assert.ok(!/Pueden salir 1 /.test(texto), texto);
+      if (item.propuesto === 1 && item.cantidad === 'mcd') assert.match(texto, /Puede salir 1 |Can there be 1 /);
       assert.ok(!/de cada cosa|of each\b/.test(texto), texto);
     }
     if (item.propuesto === 1) unos++;
@@ -204,4 +206,12 @@ test('ejercicio 3: en los mini-problemas de m.c.d. con bolsas/cestas/cajas/pulse
     }
   }
   assert.equal(revisadas, 4);
+});
+
+test('ejercicio 1: el prefijo del feedback de m.c.d. nombra lo que dice el enunciado (grupos / bolsas)', () => {
+  const f = TX.feedbackPuede.contexto.mcd;
+  assert.match(f.es(24, 36, 0), /número de grupos/);
+  assert.match(f.es(13, 11, 1), /número de bolsas/);
+  assert.match(f.en(24, 36, 0), /number of groups/);
+  assert.match(f.en(13, 11, 1), /number of bags/);
 });

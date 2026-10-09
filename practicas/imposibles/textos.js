@@ -27,11 +27,11 @@ export const TX = {
   contextos: {
     mcd: [
       {
-        es: (a, b, n) => `Tienes ${a} lápices y ${b} gomas y quieres hacer el mayor número posible de grupos iguales, todos con el mismo número de lápices y todos con el mismo número de gomas, sin que sobre nada. ¿Pueden salir ${n} ${n === 1 ? 'grupo' : 'grupos'}?`,
+        es: (a, b, n) => `Tienes ${a} lápices y ${b} gomas y quieres hacer el mayor número posible de grupos iguales, todos con el mismo número de lápices y todos con el mismo número de gomas, sin que sobre nada. ¿${n === 1 ? 'Puede' : 'Pueden'} salir ${n} ${n === 1 ? 'grupo' : 'grupos'}?`,
         en: (a, b, n) => `You have ${a} pencils and ${b} erasers and want to make the largest possible number of identical groups, all with the same number of pencils and all with the same number of erasers, with nothing left over. Can there be ${n} ${n === 1 ? 'group' : 'groups'}?`,
       },
       {
-        es: (a, b, n) => `${a} canicas y ${b} cuentas se reparten en el mayor número posible de bolsas iguales, sin que sobre ninguna. ¿Pueden salir ${n} ${n === 1 ? 'bolsa' : 'bolsas'}?`,
+        es: (a, b, n) => `${a} canicas y ${b} cuentas se reparten en el mayor número posible de bolsas iguales, sin que sobre ninguna. ¿${n === 1 ? 'Puede' : 'Pueden'} salir ${n} ${n === 1 ? 'bolsa' : 'bolsas'}?`,
         en: (a, b, n) => `${a} marbles and ${b} beads are shared into the largest possible number of identical bags with none left over. Can there be ${n} ${n === 1 ? 'bag' : 'bags'}?`,
       },
     ],
@@ -49,7 +49,11 @@ export const TX = {
   feedbackPuede: {
     // Los enunciados con contexto no nombran el m.c.d. ni el m.c.m.: se dice primero cuál es.
     contexto: {
-      mcd: { es: (a, b) => `Aquí se busca el m.c.d.(${a}, ${b}), que es el mayor número de grupos.`, en: (a, b) => `Here we look for the GCD(${a}, ${b}), which is the largest number of groups.` },
+      // `contexto` es el índice de la plantilla de contextos.mcd: el feedback nombra lo que dice el enunciado.
+      mcd: {
+        es: (a, b, contexto) => `Aquí se busca el m.c.d.(${a}, ${b}), que es el mayor número de ${contexto === 1 ? 'bolsas' : 'grupos'}.`,
+        en: (a, b, contexto) => `Here we look for the GCD(${a}, ${b}), which is the largest number of ${contexto === 1 ? 'bags' : 'groups'}.`,
+      },
       mcm: { es: (a, b) => `Aquí se busca el m.c.m.(${a}, ${b}), que es la primera vez que coinciden.`, en: (a, b) => `Here we look for the LCM(${a}, ${b}), which is the first time they coincide.` },
     },
     correcto: {
