@@ -124,6 +124,8 @@ Propios de esta tarea:
   17 · 99 tenía «descompongo» como opción falsa y 99 = 9 · 11 la defiende. Se usa «factor
   compuesto» a secas y las falsas son solo sumas y productos de primos. Además, pulsar
   siempre «lápiz y papel» da 100 %: ver la propuesta de la terminada.
+- Aprendido en la reapertura: «compensar» no es solo 98/99/199: vale con cualquier término acabado en 8 o 9 (redondeo a la decena). Las cuentas donde tiene que ser falso solo usan términos sin 1, 2, 8 ni 9, y sin sumas que den decena exacta (24 + 76). «La más corta es descomponer» solo si el producto resultante es por 10 o 100.
+- Las frases dentro de `.cuenta` (white-space: nowrap) desbordan a 375 px: partir la cadena por los « = » y poner cada tramo en su `.cuenta`.
 - «Lápiz y papel» es siempre aplicable: nunca es una opción falsa. Las falsas son
   «compensar» y «descomponer» cuando no se puede.
 

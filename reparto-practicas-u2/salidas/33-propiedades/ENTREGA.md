@@ -10,3 +10,7 @@ Ejercicios (destrezas 3C-15 a 3C-19, 3B-06):
 
 Prueba en 1 minuto: entra con «Probar sin código», haz un ítem de cada ejercicio.
 Los exponentes de resultado van de 2 a 30: nunca sale 0 ni 1 (no hace falta explicar a⁰).
+
+## Reapertura (sesión s-20261008T175832-42994f44, commit 99576ba, catálogo publicado en 2128eb6)
+
+Corregido todo lo de hechos/reabiertas/33--s-20261008T051928-1cba9950.md: (1) el patrón se pregunta por el más corto («tiene… cifras»), en los dos idiomas, con test de que solo el menor es verdad; (2) la base ajena no es pariente (2/4/8, 3/9); (3) el producto desarrollado en el feedback cuando es corto; móvil: ejercicio 2 sin frase dentro de .cuenta. Tests propios: 9. Fuera de criterio no tocado: exponente hasta 32.
