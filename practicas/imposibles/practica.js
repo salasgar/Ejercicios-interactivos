@@ -24,7 +24,7 @@ function enunciadoPuede(item, api) {
 
 function explicacionPuede(item, api) {
   const { tt } = api;
-  const previo = item.contexto !== null ? `${tt(TX.feedbackPuede.contexto[item.cantidad])(item.a, item.b)} ` : '';
+  const previo = item.contexto !== null ? `${tt(TX.feedbackPuede.contexto[item.cantidad])(item.a, item.b, item.contexto)} ` : '';
   if (item.puede) return previo + tt(TX.feedbackPuede.correcto[item.cantidad])(item.propuesto, item.a, item.b);
   if (item.violacion === 'cero') return previo + tt(TX.feedbackPuede.cero);
   if (item.violacion === 'mayor') return previo + tt(TX.feedbackPuede.mayor)(item.propuesto, Math.min(item.a, item.b));
