@@ -146,10 +146,10 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | commit 6bd325b · publicada (catálogo: 2128eb6) |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada 17:58Z (8-oct) · commit a6fb8cd (reabierta corregida, s-20261008T175617-aa2c36f9) |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | LISTA | terminada 18:03Z (8-oct) · commit 2b6dc4a (reabierta corregida, s-20261008T180106-eb3c46a4) |
-| 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | EN CURSO | s-20261008T175110-97bf1924 · caduca 2026-10-08T20:51:10Z · código comiteado (dcc3821) y publicada por la coordinadora (2128eb6); falta solo que su sesión escriba la terminada |
+| 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | LISTA | terminada 2026-10-09 06:5xZ · commit dcc3821 · publicada en 2128eb6 (reabierta corregida) |
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | LISTA | terminada 18:05Z (8-oct) · commit 7709ce6 (reabierta corregida, s-20261008T180343-5bede6f2) |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | LISTA | terminada 18:02Z (8-oct) · commit e9dbc4f (reabierta corregida, s-20261008T175029-316f6500) · NO publicada a propósito: espera la decisión «saltoPaso» de Juan Luis |
-| 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | EN CURSO | s-20261008T175832-42994f44 · caduca 2026-10-08T20:58:32Z · código comiteado (99576ba) y publicada por la coordinadora (2128eb6); falta solo que su sesión escriba la terminada |
+| 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | LISTA | terminada 2026-10-09 06:5xZ · commit 99576ba · publicada en 2128eb6 (reabierta corregida) |
 | 34 | Filas 17-30 del catálogo (repaso U1) y las tres líneas del test común | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 30 min | MEDIO | — | practicas/_comun/catalogo.js + tests/practicas-comun.test.js; salidas/34-catalogo-u1/ | LISTA | terminada 20:51Z · commit 9c26890 |
 | 35 | Base: 10 aciertos (+2, tope 20) e idioma alterno por ítem sin selector | tareas/tarea-35-base-10-e-idioma-alterno.md | 01 LISTA | 1 h | MEDIO | — | practicas/_comun/{base,contador,textos}.js, plantilla (comentarios), panel, tests/practicas-comun.test.js, README (apartado); salidas/35-base-10-e-idioma-alterno/ | LISTA | terminada 21:32Z · commit 6cfc713 |
 | 36 | Segunda revisión: comprobar las 28 reaperturas | tareas/tarea-36-segunda-revision.md | las 28 reabiertas con terminada, o con código comiteado (30, 33) | 1 h 30 min | ALTO | — | practicas/_comun/catalogo.js (solo `disponible`, solo para retirar); salidas/36-segunda-revision/ | PENDIENTE | — |
@@ -172,6 +172,10 @@ de alta la coordinadora, como tarea 36, si Juan Luis lo quiere.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 33 · 2026-10-09 06:5x · s-20261008T175832-42994f44 · 99576ba · practicas/propiedades/{logica.js,practica.js,textos.js}, tests/practicas-propiedades.test.js (4 ficheros) · reabierta corregida
+
+LISTA · tarea 30 · 2026-10-09 06:5x · s-20261008T175110-97bf1924 · dcc3821 · practicas/mental/{logica.js,practica.js,textos.js}, tests/practicas-mental.test.js (4 ficheros) · reabierta corregida
 
 Formato: `LISTA · tarea 25 · 2026-10-08 18:04 · s-20261008T180207-0a6e88aa · 964d744 · practicas/redondeo/{logica.js,practica.js,textos.js}, tests/practicas-redondeo.test.js (4 ficheros) · reabierta corregida
 

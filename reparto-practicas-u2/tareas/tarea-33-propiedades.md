@@ -116,6 +116,7 @@ Propios de esta tarea:
 
 ## Trampas conocidas
 
+- Aprendido en la reapertura: «cada cuántas potencias se repite» tiene varias respuestas verdaderas (los múltiplos del periodo): hay que preguntar por el patrón MÁS CORTO. Y las bases ajenas no pueden ser parientes (2/4/8, 3/9), porque 2³ · 4⁷ sí se junta.
 - 5⁴ · 5² : 5³ con números pequeños cabe en Number, pero las potencias del ejercicio 3 con
   exponente 30 no: usa BigInt en el test.
 - Un elemento con `hidden` sigue viéndose si su clase le da `display` (`.comprobar`, `.juntador`):
