@@ -130,6 +130,24 @@ test('un «dice mayor/menor» nunca es distractor si el enunciado lleva esa pala
   }
 });
 
+test('la razón de los paquetes concuerda en género con el sustantivo del enunciado (sobres → todos, el resto → todas)', () => {
+  const rng = crearRng(77);
+  let sobres = 0, otros = 0;
+  for (const p of BANCO.filter(q => !q.trampa && q.clase === 'mcd' && /todas llevan|todos llevan/.test(q.razon(1, 1).es))) {
+    const [a, b] = p.numeros(rng);
+    const razon = p.razon(a, b).es;
+    if (/hacer el mayor número posible de sobres /.test(p.es(a, b))) {
+      sobres++;
+      assert.match(razon, /^El número de sobres .*\(todos llevan lo mismo/);
+    } else {
+      otros++;
+      assert.match(razon, /\(todas llevan lo mismo/);
+    }
+  }
+  assert.equal(sobres, 1);
+  assert.equal(otros, 5);
+});
+
 test('las seis plantillas de trampa A piden un tamaño: todas llevan `tamano` y nombran piezas de una sola clase o corte', () => {
   const trampasMcd = BANCO.filter(p => p.trampa && p.clase === 'mcd');
   assert.equal(trampasMcd.length, 6);
