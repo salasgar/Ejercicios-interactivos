@@ -12,6 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+ACTUALIZADO 2026-10-09 10:41 UTC: las tareas 03, 10, 11, 13 y 31 pasan de REABIERTA a LISTA (cadena T03+T10+T11+T13+T31, sesiones s-20261009T103252-a1a26615, …103535-0cc7c00c, …103641-fc24709c, …103736-8c2b4460, …103848-eda5c3f9; solo se tocaron esas cinco filas y el registro).
 Regenerado: 2026-10-09 10:20 UTC · por la sesión s-20261009T082156-0a34d7a4 (tarea 36, al cerrarla;
 **todas** las filas recalculadas contra `hechos/` tras `git fetch`). 19 LISTAS (la 36 entre
 ellas), 17 REABIERTAS y la 37 BLOQUEADA. Ningún reclamo vivo. Las reabiertas vienen de dos
@@ -124,17 +125,17 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 |---|---|---|---|---|---|---|---|---|---|
 | 01 | Base común, panel único del profesor y práctica de plantilla | tareas/tarea-01-base-comun.md | ninguna | 2 h 30 min | ALTO | — | practicas/_comun/, practicas/plantilla/, portada y panel; salidas/01-base-comun/ | LISTA | terminada 19:45Z · commit 914d5b0 |
 | 02 | Semáforo de divisibilidad (criterios, compuestos, cifra que falta) | tareas/tarea-02-semaforo.md | 01 LISTA | 1 h 30 min | MEDIO | 04 | practicas/semaforo/; salidas/02-semaforo/ | LISTA | terminada 17:52Z (8-oct) · commit 66909b0 (reabierta corregida, s-20261008T175130-24159fac) |
-| 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): «falta 1 celda (las tachadas)»: concordancia del paréntesis |
+| 03 | Divisores por parejas con rectángulos | tareas/tarea-03-rectangulos.md | 01 LISTA | 2 h | MEDIO | — | practicas/rectangulos/; salidas/03-rectangulos/ | LISTA | terminada 10:4xZ (9-oct) · commit 80275f2 (reabiertas del 9-10 corregidas, s-20261009T103252-a1a26615) |
 | 04 | Múltiplos y divisores en la recta (0 y 1, V/F) | tareas/tarea-04-recta.md | 01 LISTA | 1 h 30 min | MEDIO | 02 | practicas/recta/; salidas/04-recta/ | LISTA | terminada 17:54Z (8-oct) · commit 206a833 (reabierta corregida, s-20261008T175300-552e729c) |
 | 05 | Criba de Eratóstenes y flashcards primo/compuesto | tareas/tarea-05-criba.md | 01 LISTA | 2 h | MEDIO | — | practicas/criba/; salidas/05-criba/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): GRAVE, retirada de la portada (17a9e5c): ej. 3 con dos respuestas defendibles en el 28,8 % y opción «undefined»; coma sin espacio; arrastre táctil por confirmar |
 | 06 | Árbol de factores libre | tareas/tarea-06-arbol.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/arbol/; salidas/06-arbol/ | LISTA | terminada 21:36Z · commit 5ad984c |
 | 07 | Divisiones sucesivas guiadas | tareas/tarea-07-divisiones.md | 01 LISTA | 2 h | MEDIO | 08 | practicas/divisiones/; salidas/07-divisiones/ | LISTA | terminada 17:53Z (8-oct) · commit 3b63f58 (reabierta corregida, s-20261008T175029-316f6500) · publicada (catálogo: 2128eb6) |
 | 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 1 h 30 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | LISTA | terminada 18:03Z (8-oct) · commit 07b8a60 (reabierta corregida, s-20261008T175537-2deb69bd) |
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | LISTA | terminada 21:44Z · commit f5748e7 |
-| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): «¿Pueden salir 1 bolsa?» y «grupos» por bolsas en el feedback |
-| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): «(todas llevan…)» con sobres |
+| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | LISTA | terminada 10:4xZ (9-oct) · commit 2113866 (reabiertas del 9-10 corregidas, s-20261009T103535-0cc7c00c) |
+| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 10:4xZ (9-oct) · commit 5b13aa1 (reabiertas del 9-10 corregidas, s-20261009T103641-fc24709c) |
 | 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | LISTA | terminada 10:4xZ (9-oct) · commit 6d4628d (reabiertas del 9-10 corregidas, s-20261009T103451-052b94f3) |
-| 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): quitar el «×» de las medidas · segunda revisión (s-20261009T082156-0a34d7a4): «sobran 1 dm» |
+| 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 10:4xZ (9-oct) · commit d386ae5 (reabiertas del 9-10 corregidas, s-20261009T103736-8c2b4460) |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 10:4xZ (9-oct) · commit aa28e29 (reabiertas del 9-10 corregidas, s-20261009T103549-62e4318b) |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 10:4xZ (9-oct) · commit 6b365ca (reabiertas del 9-10 corregidas, s-20261009T103813-6db0d1f5) |
 | 16 | Operar con factorizaciones | tareas/tarea-16-factorizaciones.md | 01 LISTA | 2 h | MEDIO | 15 | practicas/factorizaciones/; salidas/16-factorizaciones/ | LISTA | terminada 10:4xZ (9-oct) · commit 2dbb223 (reabiertas del 9-10 corregidas, s-20261009T103654-c375ea9e) |
@@ -152,7 +153,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada 17:58Z (8-oct) · commit a6fb8cd (reabierta corregida, s-20261008T175617-aa2c36f9) |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | LISTA | terminada 18:03Z (8-oct) · commit 2b6dc4a (reabierta corregida, s-20261008T180106-eb3c46a4) |
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): eliminar el ejercicio 3 (quedan dos; toca catálogo y test común) · segunda revisión (s-20261009T082156-0a34d7a4): sin objeto al quitar el ejercicio 3 |
-| 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): 2⁴ = 4² fuera del ejercicio 2 |
+| 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | LISTA | terminada 10:4xZ (9-oct) · commit 7c0e041 (reabiertas del 9-10 corregidas, s-20261009T103848-eda5c3f9) |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): `saltoPaso` sale de los ejercicios 1-3 y pasa a un ejercicio 4 «¿Paso a paso?»; al cerrar se publica (toca catálogo y test común) |
 | 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | LISTA | terminada 10:3xZ (9-oct) · commit a40d5b2 (reabierta corregida, s-20261009T103202-64ad4de4) |
 | 34 | Filas 17-30 del catálogo (repaso U1) y las tres líneas del test común | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 30 min | MEDIO | — | practicas/_comun/catalogo.js + tests/practicas-comun.test.js; salidas/34-catalogo-u1/ | LISTA | terminada 20:51Z · commit 9c26890 |
@@ -182,6 +183,16 @@ apartado 2): los decide la coordinadora.
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 LISTA · tarea 33 · 2026-10-09 · s-20261009T103202-64ad4de4 · a40d5b2 · practicas/propiedades/estilos.css (1 fichero) · ~10 min · reabierta corregida (segunda revisión)
+
+LISTA · tarea 31 · 2026-10-09 10:4x · s-20261009T103848-eda5c3f9 · 7c0e041 · practicas/especiales/logica.js, tests/practicas-especiales.test.js (2 ficheros) · reabierta del 9-10 corregida
+
+LISTA · tarea 13 · 2026-10-09 10:3x · s-20261009T103736-8c2b4460 · d386ae5 · practicas/baldosas/{textos.js,logica.js,practica.js}, tests/practicas-baldosas.test.js (4 ficheros) · dos reabiertas corregidas
+
+LISTA · tarea 11 · 2026-10-09 10:3x · s-20261009T103641-fc24709c · 5b13aa1 · practicas/clasificador/textos.js, tests/practicas-clasificador.test.js (2 ficheros) · reabierta corregida
+
+LISTA · tarea 10 · 2026-10-09 10:3x · s-20261009T103535-0cc7c00c · 2113866 · practicas/imposibles/{textos.js,practica.js}, tests/practicas-imposibles.test.js (3 ficheros) · reabierta corregida
+
+LISTA · tarea 03 · 2026-10-09 10:3x · s-20261009T103252-a1a26615 · 80275f2 · practicas/rectangulos/textos.js, tests/practicas-rectangulos.test.js (2 ficheros) · reabierta corregida
 
 LISTA · tarea 36 · 2026-10-09 10:07 · s-20261009T082156-0a34d7a4 · 17a9e5c · practicas/_comun/catalogo.js (1 fichero: disponible: false en criba) · 1 h 55 min (estimada: 1 h 30 min) · veredicto: 14 SE ENTREGAN, 14 reabiertas (1 grave)
 
