@@ -112,7 +112,8 @@ export function comprobarClave(clave) {
   if (!Array.isArray(clave.versiones) || clave.versiones.length === 0) return 'No hay versiones';
   const codigos = new Set();
   for (const v of clave.versiones) {
-    if (!/^\d{4}$/.test(String(v.codigo))) return `Código de versión no válido: ${v.codigo}`;
+    // Código de 4 cifras (unidad 1) o número de examen (exámenes individuales, desde la unidad 2)
+    if (!/^\d{1,4}$/.test(String(v.codigo))) return `Código o número de examen no válido: ${v.codigo}`;
     if (codigos.has(v.codigo)) return `Código repetido: ${v.codigo}`;
     codigos.add(v.codigo);
     if (!Array.isArray(v.preguntas) || v.preguntas.length !== n) return `La versión ${v.codigo} no tiene ${n} preguntas`;
@@ -297,12 +298,27 @@ export function media(valores) {
 }
 
 /**
+ * Identificador de la variante de una pregunta: el campo `variante` de la clave (exámenes
+ * individuales, desde la unidad 2: cada examen lleva una variante de cada destreza) o, si la
+ * clave no lo trae, el código de la versión (unidad 1: una versión = una variante).
+ */
+export function idVariante(pregunta, version) {
+  return String(pregunta.variante ?? version.codigo);
+}
+
+/** Cómo se llama la variante en pantalla: «c» (la variante 3) o el código de la versión. */
+export function nombreVariante(id) {
+  return /^\d{1,2}$/.test(id) ? ('abcdefgh'[Number(id) - 1] ?? id) : id;
+}
+
+/**
  * Por posición (destreza) de la semana: cuántos la han contestado, aciertos, fallos,
- * blancos (nulas incluidas) y, por versión, el número impreso, la letra correcta y
- * cuántos han elegido cada símbolo.
+ * blancos (nulas incluidas) y, por variante de la pregunta, qué exámenes la llevan, cuántos
+ * la han contestado y cuántos eligieron cada opción, contadas por su TEXTO: la letra de una
+ * misma opción cambia de un examen a otro.
  */
 export function estadisticasPreguntas(clave, registros) {
-  const posiciones = clave.destrezas.map((item, i) => ({ pos: i + 1, item, n: 0, aciertos: 0, fallos: 0, blancos: 0, versiones: {} }));
+  const posiciones = clave.destrezas.map((item, i) => ({ pos: i + 1, item, n: 0, aciertos: 0, fallos: 0, blancos: 0, variantes: {} }));
   for (const r of registros) {
     const version = versionDe(clave, r.codigo);
     if (!version) continue;
@@ -313,10 +329,21 @@ export function estadisticasPreguntas(clave, registros) {
       if (d.real === 'acierto') p.aciertos += 1;
       else if (d.real === 'fallo') p.fallos += 1;
       else p.blancos += 1;
-      const v = p.versiones[version.codigo] ??= { numero: d.n, correcta: d.correcta, n: 0, aciertos: 0, letras: { A: 0, B: 0, C: 0, D: 0, [BLANCO]: 0, [NULA]: 0 } };
+      const pregunta = version.preguntas[d.n - 1];
+      const v = p.variantes[idVariante(pregunta, version)] ??= {
+        codigos: [], enunciado: pregunta.enunciado, n: 0, aciertos: 0, blancos: 0, nulas: 0,
+        opciones: pregunta.opciones.map(o => ({ texto: o.texto, expl: o.expl ?? '', correcta: o.letra === pregunta.correcta, cuenta: 0 })),
+      };
+      if (!v.codigos.includes(version.codigo)) v.codigos.push(version.codigo);
       v.n += 1;
       if (d.estado === 'acierto') v.aciertos += 1;
-      v.letras[d.respuesta] += 1;
+      if (d.respuesta === BLANCO) v.blancos += 1;
+      else if (d.respuesta === NULA) v.nulas += 1;
+      else {
+        const elegida = pregunta.opciones.find(o => o.letra === d.respuesta);
+        const o = elegida && v.opciones.find(x => x.texto === elegida.texto);
+        if (o) o.cuenta += 1;
+      }
     }
   }
   return posiciones;
@@ -324,28 +351,29 @@ export function estadisticasPreguntas(clave, registros) {
 
 /**
  * Qué ha contestado la clase en cada pregunta, para ver en qué se ha confundido: a partir
- * de `estadisticasPreguntas`, por posición y versión, las cuatro opciones con su texto,
+ * de `estadisticasPreguntas`, por posición y variante, las cuatro opciones con su texto,
  * su explicación (el error del que sale) y cuántos la eligieron, más blancos y nulas.
- * `masElegido` es el distractor con más votos de la posición entre todas las versiones.
- * No se suman versiones entre sí: cada una lleva sus números y sus letras barajadas.
+ * `masElegido` es el distractor con más votos de la posición entre todas las variantes.
+ * No se suman variantes entre sí: cada una lleva sus números. Van por letra de variante
+ * (a, b, c…) o, en las claves de la unidad 1, en el orden de las versiones de la clave.
  */
 export function opcionesElegidas(clave, stats) {
   return stats.map(p => {
-    const versiones = [];
+    const orden = [];
     for (const v of clave.versiones) {
-      const s = p.versiones[v.codigo];
-      if (!s) continue;
-      const pregunta = v.preguntas[s.numero - 1];
-      const opciones = pregunta.opciones.map(o => ({ letra: o.letra, texto: o.texto, expl: o.expl ?? '', cuenta: s.letras[o.letra] ?? 0, correcta: o.letra === s.correcta }));
-      versiones.push({ codigo: v.codigo, numero: s.numero, enunciado: pregunta.enunciado, n: s.n, opciones, blancos: s.letras[BLANCO], nulas: s.letras[NULA] });
+      const q = v.preguntas.find(x => x.pos === p.pos);
+      const id = q && idVariante(q, v);
+      if (id && !orden.includes(id)) orden.push(id);
     }
+    if (orden.every(id => /^\d{1,2}$/.test(id))) orden.sort((a, b) => a - b);
+    const variantes = orden.filter(id => p.variantes[id]).map(id => ({ id, nombre: nombreVariante(id), ...p.variantes[id] }));
     let masElegido = null;
-    for (const v of versiones) {
+    for (const v of variantes) {
       for (const o of v.opciones) {
-        if (!o.correcta && o.cuenta > 0 && (!masElegido || o.cuenta > masElegido.cuenta)) masElegido = { codigo: v.codigo, numero: v.numero, ...o };
+        if (!o.correcta && o.cuenta > 0 && (!masElegido || o.cuenta > masElegido.cuenta)) masElegido = { id: v.id, nombre: v.nombre, codigos: v.codigos, ...o };
       }
     }
-    return { pos: p.pos, item: p.item, versiones, masElegido };
+    return { pos: p.pos, item: p.item, variantes, masElegido };
   });
 }
 
