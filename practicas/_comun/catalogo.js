@@ -38,7 +38,7 @@ export const CATALOGO = [
   { id: 24, slug: 'distributiva', ruta: 'distributiva/', nombre: { es: 'Distributiva con rectángulos (repaso de la unidad 1)', en: 'Distributive property with rectangles (unit 1 review)' }, nEjercicios: 3, disponible: true },
   { id: 25, slug: 'potencias10', ruta: 'potencias10/', nombre: { es: 'Potencias de 10 y números grandes (repaso de la unidad 1)', en: 'Powers of 10 and big numbers (unit 1 review)' }, nEjercicios: 3, disponible: true },
   { id: 26, slug: 'dictado', ruta: 'dictado/', nombre: { es: 'Dictado de números (repaso de la unidad 1)', en: 'Number dictation (unit 1 review)' }, nEjercicios: 3, disponible: true },
-  { id: 27, slug: 'mental', ruta: 'mental/', nombre: { es: 'Cálculo mental con estrategia (repaso de la unidad 1)', en: 'Mental maths strategies (unit 1 review)' }, nEjercicios: 3, disponible: true },
+  { id: 27, slug: 'mental', ruta: 'mental/', nombre: { es: 'Cálculo mental con estrategia (repaso de la unidad 1)', en: 'Mental maths strategies (unit 1 review)' }, nEjercicios: 2, disponible: true },
   { id: 28, slug: 'especiales', ruta: 'especiales/', nombre: { es: 'Potencias especiales: ¿verdadero o falso? (repaso de la unidad 1)', en: 'Special powers: true or false? (unit 1 review)' }, nEjercicios: 2, disponible: true },
   { id: 29, slug: 'errores1', ruta: 'errores1/', nombre: { es: 'Caza el error (unidad 1)', en: 'Spot the mistake (unit 1)' }, nEjercicios: 3, disponible: false },
   { id: 30, slug: 'propiedades', ruta: 'propiedades/', nombre: { es: 'Propiedades de las potencias (ampliación de la unidad 1)', en: 'Laws of indices (unit 1 extension)' }, nEjercicios: 3, disponible: true },

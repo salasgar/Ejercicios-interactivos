@@ -212,7 +212,7 @@ la cierre pone su `disponible: true`. El detalle, en el veredicto de la tarea 18
 | `distributiva` | 24 | Parte el rectángulo · Saca factor común · Compensa con 99 | 2A-01 a 2A-04, 2C-17 a 2C-21, 2C-30, 4C-18, 2B-12, 2B-20 |
 | `potencias10` | 25 | El deslizador de ceros · El «and» y los ceros · Billion, million y trillion | 3C-10, 3B-13 a 3B-18, 1B-14, 1B-15, 1B-25, 1B-26, 1C-24 |
 | `dictado` | 26 | Dictado en inglés · -teen o -ty, y cómo se escribe · Ortografía española | 1B-01 a 1B-04, 1B-06 a 1B-10, 1B-17 a 1B-23 |
-| `mental` | 27 | Compensar · Descomponer · ¿Qué conviene? | 2C-20 a 2C-24, 2C-30, 2C-31, 2B-21, 2B-22 |
+| `mental` | 27 | Compensar · Descomponer | 2C-20 a 2C-24, 2C-30, 2C-31, 2B-21, 2B-22 |
 | `especiales` | 28 | ¿Verdadero o falso? · ¿Cuál es la falsa? | 3C-01, 3C-05 a 3C-10, 3C-29, 3C-30, 3B-01 a 3B-03 |
 | `errores1` | 29 | ¿Hay un error? · Señala el paso · Nombra el error | 4A-10 a 4A-13, 4B-16, 4C-22, y como repaso 1A-03 a 1A-05, 1A-12, 2C-03, 2C-05, 3A-06, 3C-01, 3C-11 |
 | `propiedades` | 30 | Junta las potencias · Potencia de potencia y cadenas · ★ La última cifra (reto) | 3C-15 a 3C-19, 3B-06 (ampliación) |

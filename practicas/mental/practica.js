@@ -3,15 +3,14 @@
 //
 // 1. Compensar: redondeo, ajuste y resultado, en tres pasos.
 // 2. Descomponer: elegir cómo partir el factor y ejecutarlo.
-// 3. ¿Qué conviene?: elegir la estrategia; solo falla la que no se puede aplicar.
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
-  generarCompensar, generarDescomponer, generarEstrategia, enunciadoCompensar, lineaCompensar,
+  generarCompensar, generarDescomponer, enunciadoCompensar, lineaCompensar,
   redondeoCorrecto, ajusteCorrecto, resultadoCorrecto, valorOpcion, reconstruye, lineaDescomponer,
-  descomposicionCorrecta, estrategiaValida, mejorEstrategia, lineaEstrategia, razonNoAplica, papelHabiendoAtajo,
+  descomposicionCorrecta,
 } from './logica.js';
 
 const P = '·';
@@ -139,42 +138,6 @@ function montarDescomponer(contenedor, item, api) {
   });
 }
 
-// ─── Ejercicio 3: ¿qué conviene? ───────────────────────────────────────────────
-
-function montarEstrategia(contenedor, item, api) {
-  const { tt } = api;
-  const x = TX.estrategia;
-  const { a, b } = item.op;
-  const problema = item.enunciado ? tt(x.problemas[item.enunciado])(a, b) : null;
-  contenedor.innerHTML = `
-    ${problema ? `<p class="frase">${problema}</p>` : `<div class="operacion">${item.texto}</div>`}
-    <p class="instruccion">${tt(x.pregunta)}</p>`;
-  const botones = elecciones(contenedor, {
-    clase: 'mental-estrategias',
-    opciones: item.botones.map(e => ({ valor: e, html: tt(x.boton[e]) })),
-    alElegir(e) {
-      if (api.respondido()) return;
-      const validas = item.botones.filter(v => estrategiaValida(item, v));
-      botones.marcar(validas, e);
-      const mejor = mejorEstrategia(item);
-      const consejo = mejor === 'compensar' || mejor === 'descomponer'
-        ? `${tt(x.mejor[mejor])} ${cadena(lineaEstrategia(item, mejor))}.`
-        : tt(x.mejor[mejor]);
-      const cuenta = cadena(`${item.texto} = ${item.valor}`);
-      if (estrategiaValida(item, e)) {
-        // Lápiz y papel habiendo un atajo: vale, pero cuenta como ayuda (no como fallo).
-        if (papelHabiendoAtajo(item, e)) {
-          return api.responder({ acierto: true, pistas: 1, html: `${tt(x.papel_con_atajo)} ${consejo}`, espera: 3800 });
-        }
-        return api.responder({ acierto: true, html: `${tt(x.vale)} ${e === mejor ? '' : `${consejo} `}${cuenta}.`.replace('  ', ' '), espera: 3200 });
-      }
-      const razon = razonNoAplica(item, e);
-      const porque = tt(x[`no_${razon.clave}`])(razon.a, razon.b);
-      api.responder({ acierto: false, html: `${porque} ${consejo}`, espera: 3800 });
-    },
-  });
-}
-
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
 arrancar({
@@ -195,14 +158,6 @@ arrancar({
       generar: generarDescomponer,
       clave: item => `${item.a}${item.b}`,
       montar: montarDescomponer,
-    },
-    {
-      nombre: TX.estrategia.nombre,
-      detalle: TX.estrategia.detalle,
-      introduccion: TX.estrategia.introduccion,
-      generar: generarEstrategia,
-      clave: item => `${item.texto}${item.enunciado}`,
-      montar: montarEstrategia,
     },
   ],
 });
