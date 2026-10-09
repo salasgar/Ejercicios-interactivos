@@ -40,7 +40,7 @@ const LIMPIOS_MCD_PAQUETES = [
   { oEs: 'lápices', oEn: 'pencils', pEs: 'gomas', pEn: 'erasers', gEs: 'bolsas de regalo', gEn: 'gift bags' },
   { oEs: 'canicas', oEn: 'marbles', pEs: 'cuentas', pEn: 'beads', gEs: 'pulseras', gEn: 'bracelets' },
   { oEs: 'manzanas', oEn: 'apples', pEs: 'naranjas', pEn: 'oranges', gEs: 'cestas de fruta', gEn: 'fruit baskets' },
-  { oEs: 'pegatinas', oEn: 'stickers', pEs: 'cromos', pEn: 'cards', gEs: 'sobres', gEn: 'packs' },
+  { oEs: 'pegatinas', oEn: 'stickers', pEs: 'cromos', pEn: 'cards', gEs: 'sobres', gEn: 'packs', gMasc: true },
   { oEs: 'bombones', oEn: 'chocolates', pEs: 'caramelos', pEn: 'sweets', gEs: 'cajas', gEn: 'boxes' },
   { oEs: 'libros', oEn: 'books', pEs: 'cuadernos', pEn: 'notebooks', gEs: 'cajas', gEn: 'boxes' },
 ].map(d => ({
@@ -50,7 +50,7 @@ const LIMPIOS_MCD_PAQUETES = [
   es: (a, b) => `Tienes ${a} ${d.oEs} y ${b} ${d.pEs}. Quieres hacer el mayor número posible de ${d.gEs} iguales, usando todo sin que sobre nada. ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b) => `You have ${a} ${d.oEn} and ${b} ${d.pEn}. You want to make the largest possible number of identical ${d.gEn}, using them all with nothing left over. Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
-    es: `El número de ${d.gEs} tiene que ser un divisor de ${a} y de ${b} (todas llevan lo mismo de cada cosa): el mayor posible es su máximo común divisor → m.c.d.`,
+    es: `El número de ${d.gEs} tiene que ser un divisor de ${a} y de ${b} (${d.gMasc ? 'todos llevan' : 'todas llevan'} lo mismo de cada cosa): el mayor posible es su máximo común divisor → m.c.d.`,
     en: `The number of ${d.gEn} must be a divisor of ${a} and ${b} (they all get the same amount of each thing): the largest one possible is their greatest common divisor → GCD.`,
   }),
   numeros: dosGrandes,
