@@ -1,2 +1,5 @@
 /* Práctica «Criba de Eratóstenes»: aquí va solo lo que no esté ya en
    ../_comun/estilos.css. Esta práctica no necesita nada propio. */
+
+/* Ejercicio 1: se tacha arrastrando el dedo, así que la rejilla de juego no debe desplazar la página. */
+#rejilla { touch-action: none; }

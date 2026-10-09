@@ -16,7 +16,7 @@ export const TX = {
         <p>En cada paso tachas los múltiplos de un primo (menos él mismo, que no se tacha). Puedes tocar las celdas una a una o arrastrar el dedo por varias seguidas, y después pulsar «Comprobar».</p>`,
       en: `<h2>How it works</h2>
         <p>You are going to build the sieve of Eratosthenes: a 1-to-100 table where composite numbers get crossed out until only the primes are left.</p>
-        <p>In each step you cross out the multiples of one prime (not the prime itself). You can tap the cells one by one or drag your finger across several of them, and then press «Check».</p>`,
+        <p>In each step you cross out the multiples of one prime (not the prime itself). You can tap the cells one by one or drag your finger across several of them, and then press "Check".</p>`,
     },
     ni_primo_ni_compuesto: { es: '1 no es primo ni compuesto', en: '1 is neither prime nor composite' },
     tachar: {

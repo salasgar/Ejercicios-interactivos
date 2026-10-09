@@ -3,6 +3,7 @@
 // de logica.js.
 
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { PRIMOS } from '../practicas/_comun/aritmetica.js';
@@ -160,4 +161,36 @@ test('ejercicio 3: instrucción pide la lista más corta y la opción «mitad» 
       assert.notDeepEqual(o.lista, buena);
     }
   }
+});
+
+test('ejercicio 3: en 5000 ítems, ninguna lista falsa que no sea más larga que la buena contiene un divisor de n', () => {
+  const rng = crearRng(2026);
+  for (let i = 0; i < 5000; i++) {
+    const item = generarRaiz(rng);
+    const buena = item.opciones.find(o => o.correcta).lista;
+    for (const o of item.opciones.filter(x => !x.correcta && x.tipo === 'lista')) {
+      if (o.lista.length > buena.length) continue;
+      assert.ok(!o.lista.some(p => item.n % p === 0),
+        `n=${item.n}: la lista corta ${o.lista} ya basta y es más corta que ${buena}`);
+    }
+  }
+});
+
+test('ejercicio 3: el texto de cada opción pintada nunca contiene «undefined»', () => {
+  const rng = crearRng(7);
+  for (let i = 0; i < 300; i++) {
+    const item = generarRaiz(rng);
+    for (const o of item.opciones.filter(x => x.tipo === 'mitad')) {
+      for (const idioma of ['es', 'en']) assert.doesNotMatch(TX.raiz.mitad[idioma](item.n), /undefined/);
+    }
+  }
+  // textoOpcion recibe el ítem (antes usaba una variable inexistente): lo comprobamos en el código fuente.
+  const src = readFileSync(new URL('../practicas/criba/practica.js', import.meta.url), 'utf8');
+  assert.match(src, /function textoOpcion\(o, item, api\)/);
+  assert.match(src, /textoOpcion\(o, item, api\)/);
+});
+
+test('ejercicio 2: la explicación de un primo lleva espacio tras la coma', () => {
+  const src = readFileSync(new URL('../practicas/criba/practica.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(src, /\)\},\$\{tt\(TX\.flash\.se_pasa/);
 });

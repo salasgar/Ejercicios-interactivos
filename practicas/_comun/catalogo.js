@@ -15,7 +15,7 @@ export const CATALOGO = [
   { id: 1, slug: 'semaforo', ruta: 'semaforo/', nombre: { es: 'Semáforo de divisibilidad', en: 'Divisibility traffic light' }, nEjercicios: 4, disponible: true },
   { id: 2, slug: 'rectangulos', ruta: 'rectangulos/', nombre: { es: 'Divisores por parejas', en: 'Divisors in pairs' }, nEjercicios: 3, disponible: true },
   { id: 3, slug: 'recta', ruta: 'recta/', nombre: { es: 'Múltiplos y divisores en la recta', en: 'Multiples and divisors on the number line' }, nEjercicios: 3, disponible: true },
-  { id: 4, slug: 'criba', ruta: 'criba/', nombre: { es: 'Criba y números primos', en: 'Sieve and prime numbers' }, nEjercicios: 3, disponible: false },
+  { id: 4, slug: 'criba', ruta: 'criba/', nombre: { es: 'Criba y números primos', en: 'Sieve and prime numbers' }, nEjercicios: 3, disponible: true },
   { id: 5, slug: 'arbol', ruta: 'arbol/', nombre: { es: 'Árbol de factores', en: 'Factor tree' }, nEjercicios: 3, disponible: true },
   { id: 6, slug: 'divisiones', ruta: 'divisiones/', nombre: { es: 'Divisiones sucesivas', en: 'Repeated division' }, nEjercicios: 3, disponible: true },
   { id: 7, slug: 'fabrica', ruta: 'fabrica/', nombre: { es: 'Fábrica de divisores', en: 'Divisor factory' }, nEjercicios: 3, disponible: true },

@@ -88,7 +88,11 @@ export function primosAProbar(n) {
 
 const RANGO_RAIZ = Array.from({ length: 151 }, (_, i) => i + 50); // 50..200
 const PRIMOS_RANGO = RANGO_RAIZ.filter(esPrimo);
-const COMPUESTOS_RANGO = RANGO_RAIZ.filter(n => !esPrimo(n));
+// Solo los compuestos cuyo menor divisor primo es el ÚLTIMO primo de la lista buena
+// (77, 91, 119, 121, 143, 169…): así la lista sin su último primo nunca basta, y la
+// buena es la única que cumple lo que pide la pregunta.
+const COMPUESTOS_RANGO = RANGO_RAIZ.filter(n => !esPrimo(n)
+  && PRIMOS.find(p => n % p === 0) === PRIMOS.filter(p => p * p <= n).at(-1));
 
 /** La lista correcta: los primos p con p · p ≤ n (equivalente a p ≤ raíz entera de n). */
 export function listaHastaRaiz(n) {
