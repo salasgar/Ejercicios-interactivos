@@ -208,3 +208,13 @@ test('ejercicio 3: ninguna frase lleva «×» y el 2 se dice «twice»', () => {
   }
   assert.ok(twice > 0);
 });
+
+test('decisión del 9-10: HCF no sale como lectura (ni "highest common factor") en ninguna opción', () => {
+  const rng = crearRng(909);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarLeer(rng);
+    const { correcta, pool } = opcionesLeer(item);
+    for (const texto of [correcta, ...pool]) assert.ok(!/HCF|highest common factor/i.test(texto), texto);
+  }
+  for (const e of ESTILOS) assert.ok(!/HCF|highest common factor/i.test(e.gcd));
+});

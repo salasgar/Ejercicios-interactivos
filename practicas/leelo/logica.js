@@ -33,7 +33,7 @@ export function generarPar(rng) {
 export const ESTILOS = [
   { verboFact: 'equals', veces: 'times', gcd: 'GCD', lcm: 'LCM', verboPred: 'is' },
   { verboFact: 'is equal to', veces: 'multiplied by', gcd: 'greatest common divisor', lcm: 'lowest common multiple', verboPred: 'equals' },
-  { verboFact: 'equals', veces: 'times', gcd: 'HCF', lcm: 'least common multiple', verboPred: 'is equal to' },
+  { verboFact: 'equals', veces: 'times', gcd: 'greatest common divisor', lcm: 'least common multiple', verboPred: 'is equal to' },
 ];
 
 /** 2² → «two squared»; 2³ → «two cubed»; 2⁴ → «two to the power of four»; 2¹ → «two». */
