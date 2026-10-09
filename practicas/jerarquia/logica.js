@@ -52,12 +52,13 @@ function estorbos(fichas, i, desde, hasta) {
 
 /**
  * En una cadena (10 · 8 : 4, 5 + 3 + 2) hacer antes la segunda operación solo es
- * fallo si cambia el valor (10 − 4 + 3) o da algo que no es un buen natural: en
- * 10 · 8 : 4, hacer 8 : 4 primero sale lo mismo y no se penaliza.
+ * fallo si cambia el valor (10 − 4 + 3) o da algo que no es natural: en
+ * 10 · 8 : 4, hacer 8 : 4 primero sale lo mismo y no se penaliza; tampoco en
+ * 9 + 8 − 8, aunque el paso intermedio sea 0.
  */
 function adelantarNoCambiaNada(fichas, i) {
   const p = paso(fichas, i);
-  return !!p && bonito(fichas, i, p.valor) && Math.abs(evaluar(p.fichas) - evaluar(fichas)) < 1e-9;
+  return !!p && Math.abs(evaluar(p.fichas) - evaluar(fichas)) < 1e-9;
 }
 
 /** Índices de todas las operaciones que valen como paso siguiente. */

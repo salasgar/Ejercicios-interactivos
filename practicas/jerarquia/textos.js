@@ -21,11 +21,11 @@ export const TX = {
     es: `<h2>Cómo se hace</h2>
       <p>Verás una cuenta con varias operaciones. <strong>Toca la operación que se hace primero</strong> (el signo). La app la calcula y la cuenta se acorta.</p>
       <p>Orden: primero <strong>· y :</strong>, después <strong>+ y −</strong>. Si hay dos <strong>seguidas</strong> del mismo tipo (como 20 : 4 · 5 o 10 − 4 + 3), <strong>de izquierda a derecha</strong>.</p>
-      <p>Si dos operaciones no se estorban (como 3² y 5 · 4 en 3² + 5 · 4), puedes empezar por cualquiera de las dos.</p>`,
+      <p>Si dos operaciones no se estorban (como el − y el · en 10 − 4 + 6 · 16), puedes empezar por cualquiera de las dos.</p>`,
     en: `<h2>How it works</h2>
       <p>You will see a sum with several operations. <strong>Tap the operation that comes first</strong> (the sign). The app works it out and the sum gets shorter.</p>
       <p>Order: first <strong>· and ÷</strong>, then <strong>+ and −</strong>. If there are two of the same kind <strong>in a row</strong> (like 20 ÷ 4 · 5 or 10 − 4 + 3), go <strong>from left to right</strong>.</p>
-      <p>If two operations do not get in each other's way (like 3² and 5 · 4 in 3² + 5 · 4), you can start with either one.</p>`,
+      <p>If two operations do not get in each other's way (like the − and the · in 10 − 4 + 6 · 16), you can start with either one.</p>`,
   },
   intro2: {
     es: `<h2>Potencias y raíces</h2>
