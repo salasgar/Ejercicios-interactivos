@@ -146,10 +146,10 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 21 | El exponente y su base (U1) | tareas/tarea-21-exponente.md | 34 LISTA | 2 h | MEDIO | 22 | practicas/exponente/; salidas/21-exponente/ | LISTA | commit b3dbb99 · publicada (catálogo: 2128eb6) |
 | 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | LISTA | terminada 17:56Z (8-oct) · commit 13c02b1 (reabierta corregida, s-20261008T175509-17233e62) |
 | 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | LISTA | terminada 18:02Z (8-oct) · commit c375695 (reabierta corregida, s-20261008T175638-31aa7d6c) |
-| 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): la convención «sin todo no hay paréntesis», en la introducción del ejercicio 1 · segunda revisión (s-20261009T082156-0a34d7a4): la suma repetida acepta una ficha suelta en casos raros |
+| 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | LISTA | terminada 10:4xZ (9-oct) · commit 6f76c74 (reabiertas del 9-10 corregidas, s-20261009T103525-6ad8a307) |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | LISTA | terminada 18:04Z (8-oct) · commit 964d744 (reabierta corregida, s-20261008T180207-0a6e88aa) |
-| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): quitar «12.5 sería 125» · segunda revisión (s-20261009T082156-0a34d7a4): «836.369 sería 836.37»; el campo acepta «12.00» |
-| 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): feedback con negativo («vale -45»); signo unario; «1 celdas» |
+| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | LISTA | terminada 10:5xZ (9-oct) · commit 6b6080e (reabiertas del 9-10 corregidas, s-20261009T103749-a75841c0) |
+| 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 11:0xZ (9-oct) · commit d42dfba (reabierta corregida, s-20261009T103957-88910a38) |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | LISTA | terminada 17:58Z (8-oct) · commit a6fb8cd (reabierta corregida, s-20261008T175617-aa2c36f9) |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | LISTA | terminada 18:03Z (8-oct) · commit 2b6dc4a (reabierta corregida, s-20261008T180106-eb3c46a4) |
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): eliminar el ejercicio 3 (quedan dos; toca catálogo y test común) · segunda revisión (s-20261009T082156-0a34d7a4): sin objeto al quitar el ejercicio 3 |
@@ -181,6 +181,12 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 27 · 2026-10-09 · s-20261009T103957-88910a38 · d42dfba · practicas/distributiva/{logica,practica,textos}.js, tests/practicas-distributiva.test.js (4 ficheros) · ~12 min · reabierta corregida (segunda revisión)
+
+LISTA · tarea 26 · 2026-10-09 · s-20261009T103749-a75841c0 · 6b6080e · practicas/constructor/{logica,practica,textos}.js, tests/practicas-constructor.test.js (4 ficheros) · ~15 min · reabiertas del 9-10 corregidas
+
+LISTA · tarea 24 · 2026-10-09 · s-20261009T103525-6ad8a307 · 6f76c74 · practicas/expresion/{logica,textos,practica}.js, tests/practicas-expresion.test.js (4 ficheros) · ~25 min · reabiertas del 9-10 corregidas
 
 LISTA · tarea 33 · 2026-10-09 · s-20261009T103202-64ad4de4 · a40d5b2 · practicas/propiedades/estilos.css (1 fichero) · ~10 min · reabierta corregida (segunda revisión)
 
