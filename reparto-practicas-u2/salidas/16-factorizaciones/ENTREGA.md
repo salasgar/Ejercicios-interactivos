@@ -18,3 +18,4 @@ Petición a la tarea 18: poner `disponible: true` para `factorizaciones` en cata
 ## Reabierta (2026-10-08, sesión s-20261008T180351-55d4decb) — commit `b5a878e`
 
 Corregidos los cuatro puntos de `hechos/reabiertas/16--s-20261008T051928-1cba9950.md`: (1) las frases del feedback ya no van en `.cuenta` (se parten en 375 px; solo las cuentas cortas); (2) sin igualdad repetida («56 ÷ 28 = 2», no «= 2 = 2»), sin espacio antes del punto y con ÷ en inglés; (3) con todos los exponentes a 0 la pantalla enseña «1», no «□»; (4) en los «no» del ejercicio 2, b < a (y ≤ 10000).
+Commit: 2dbb223 (reabierta del 9-10): puntuación del feedback.
