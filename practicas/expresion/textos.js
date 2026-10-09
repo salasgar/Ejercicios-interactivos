@@ -17,10 +17,12 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>Lee el problema y <strong>monta la expresión</strong> que lo resuelve tocando las fichas. No hay que calcular nada.</p>
         <p>Por ejemplo, «3 cajas de 12 botes y 5 cajas de 8 botes» es <strong>3 · 12 + 5 · 8</strong>.</p>
+        <p>Ojo con los paréntesis: si la frase no dice «todo», no los hay. «20 menos 5 multiplicado por 3» es <strong>20 − 5 · 3</strong>, no (20 − 5) · 3.</p>
         <p>Si te equivocas, toca una ficha de la línea para quitarla. Recuerda: la multiplicación y la división se hacen antes que la suma y la resta.</p>`,
       en: `<h2>How it works</h2>
         <p>Read the problem and <strong>build the expression</strong> that solves it. Tap the buttons. You do not need to calculate anything.</p>
         <p>For example, “3 boxes of 12 tins and 5 boxes of 8 tins” is <strong>3 · 12 + 5 · 8</strong>.</p>
+        <p>Watch the brackets: if the sentence does not say “all”, there are none. “20 minus 5 multiplied by 3” is <strong>20 − 5 · 3</strong>, not (20 − 5) · 3.</p>
         <p>If you make a mistake, tap it in the line to remove it. Remember: multiplication and division come before addition and subtraction.</p>`,
     },
   },
@@ -84,6 +86,10 @@ export const TX = {
   repetida: {
     es: lista => `Está bien: sumar varias veces lo mismo es multiplicar. Con ${lista.length > 1 ? 'los números' : 'el'} ${enumerar(lista, 'y')} se escribe más corto:`,
     en: lista => `Correct: adding the same thing several times is multiplying. With ${enumerar(lista, 'and')} it is shorter:`,
+  },
+  repetidaResta: {
+    es: lista => `Está bien: restar varias veces lo mismo es multiplicar y restar. Con ${lista.length > 1 ? 'los números' : 'el'} ${enumerar(lista, 'y')} se escribe más corto:`,
+    en: lista => `Correct: subtracting the same thing several times is multiplying and subtracting. With ${enumerar(lista, 'and')} it is shorter:`,
   },
   casualidad: {
     es: 'Da el mismo resultado solo por casualidad: con otros números no saldría.',
