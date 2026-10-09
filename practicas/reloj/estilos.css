@@ -1,4 +1,4 @@
-/* Reloj de coincidencias: línea de tiempo tocable (dos filas de 0-30 y 31-60)
+/* Reloj de coincidencias: línea de tiempo tocable (celdas de 0 a 60 segundos)
    y entrada numérica para los ejercicios de «cada cuántos días». */
 
 .reloj-linea { margin-bottom: .3rem; }
@@ -17,6 +17,7 @@
 .reloj-entero:focus { border-color: var(--primario); outline: none; }
 
 .reloj-hora { display: flex; flex-direction: column; align-items: center; gap: .5rem; margin-bottom: 1rem; }
-.reloj-hora__fila { display: flex; align-items: center; justify-content: center; gap: .5rem; }
-.reloj-hora__rotulo { min-width: 4.2rem; text-align: right; font-weight: 600; color: var(--texto-suave); }
+.reloj-hora__fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .25rem .5rem; }
+/* El rótulo va encima de los contadores: así la fila cabe en 375 px. */
+.reloj-hora__rotulo { flex: 0 0 100%; text-align: center; font-weight: 600; color: var(--texto-suave); }
 .reloj-hora .pasos__valor { min-width: 1.6rem; }
