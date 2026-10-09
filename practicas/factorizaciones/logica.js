@@ -182,7 +182,8 @@ export function explicar(item, exponentes, idioma) {
     : '';
   if (item.tipo === 'multiplo' && !item.esMultiplo) return explicarNoMultiplo(item, l);
   // Las frases van como texto normal (se parten en el móvil); `.cuenta` solo para las cuentas cortas.
-  const lineas = (item.tipo === 'producto' ? lineasProducto(item, l) : lineasCociente(item, l)).join('; ');
+  const lineas = (item.tipo === 'producto' ? lineasProducto(item, l) : lineasCociente(item, l)).join('; ')
+    .replace(/^[a-zñáéíóú]/, c => c.toUpperCase());   // empieza frase tras un punto
   const sol = item.solucion;
   if (item.tipo === 'producto') {
     const partes = sol.map(([p, e]) => p ** e).join(' · ');
@@ -193,7 +194,7 @@ export function explicar(item, exponentes, idioma) {
   // Sin igualdad repetida: si la factorización del cociente es ya un solo número («2», «1»), basta «= q».
   const f = htmlFact(sol);
   const resultado = f === String(q) ? `${q}` : `${f} = ${q}`;
-  return `${tuya}${prefijo}${lineas}. ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${resultado}`)} ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+  return `${tuya}${prefijo}${lineas}. ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${resultado}`)}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
 }
 
 export { multiplicarFact, dividirFact, esMultiploFact, htmlFact, valorDe };
