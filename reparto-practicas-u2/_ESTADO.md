@@ -154,7 +154,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 30 | Cálculo mental con estrategia (U1) | tareas/tarea-30-mental.md | 34 LISTA | 1 h 30 min | MEDIO | 27 | practicas/mental/; salidas/30-mental/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): eliminar el ejercicio 3 (quedan dos; toca catálogo y test común) · segunda revisión (s-20261009T082156-0a34d7a4): sin objeto al quitar el ejercicio 3 |
 | 31 | Potencias especiales, verdadero o falso (U1) | tareas/tarea-31-especiales.md | 34 LISTA | 1 h | MEDIO | 30 | practicas/especiales/; salidas/31-especiales/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): 2⁴ = 4² fuera del ejercicio 2 |
 | 32 | Caza el error de la unidad 1 | tareas/tarea-32-errores1.md | 34 LISTA | 2 h | MEDIO | — | practicas/errores1/; salidas/32-errores1/ | REABIERTA | decisión de Juan Luis del 9-10 (…f75f5cdb-decisiones): `saltoPaso` sale de los ejercicios 1-3 y pasa a un ejercicio 4 «¿Paso a paso?»; al cerrar se publica (toca catálogo y test común) |
-| 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | REABIERTA | reabierta 2026-10-09 (s-20261009T082156-0a34d7a4): los exponentes del enunciado no suben en los ej. 1 y 2 (CSS) |
+| 33 | Propiedades de las potencias y última cifra (ampliación U1) | tareas/tarea-33-propiedades.md | 34 LISTA | 1 h 30 min | MEDIO | 31 | practicas/propiedades/; salidas/33-propiedades/ | LISTA | terminada 10:3xZ (9-oct) · commit a40d5b2 (reabierta corregida, s-20261009T103202-64ad4de4) |
 | 34 | Filas 17-30 del catálogo (repaso U1) y las tres líneas del test común | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 30 min | MEDIO | — | practicas/_comun/catalogo.js + tests/practicas-comun.test.js; salidas/34-catalogo-u1/ | LISTA | terminada 20:51Z · commit 9c26890 |
 | 35 | Base: 10 aciertos (+2, tope 20) e idioma alterno por ítem sin selector | tareas/tarea-35-base-10-e-idioma-alterno.md | 01 LISTA | 1 h | MEDIO | — | practicas/_comun/{base,contador,textos}.js, plantilla (comentarios), panel, tests/practicas-comun.test.js, README (apartado); salidas/35-base-10-e-idioma-alterno/ | LISTA | terminada 21:32Z · commit 6cfc713 |
 | 36 | Segunda revisión: comprobar las 28 reaperturas | tareas/tarea-36-segunda-revision.md | las 28 reabiertas con terminada, o con código comiteado (30, 33) | 1 h 30 min | ALTO | — | practicas/_comun/catalogo.js (solo `disponible`, solo para retirar); salidas/36-segunda-revision/ | LISTA | terminada 10:07Z (9-oct) · commit 17a9e5c |
@@ -180,6 +180,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 33 · 2026-10-09 · s-20261009T103202-64ad4de4 · a40d5b2 · practicas/propiedades/estilos.css (1 fichero) · ~10 min · reabierta corregida (segunda revisión)
 
 LISTA · tarea 36 · 2026-10-09 10:07 · s-20261009T082156-0a34d7a4 · 17a9e5c · practicas/_comun/catalogo.js (1 fichero: disponible: false en criba) · 1 h 55 min (estimada: 1 h 30 min) · veredicto: 14 SE ENTREGAN, 14 reabiertas (1 grave)
 
