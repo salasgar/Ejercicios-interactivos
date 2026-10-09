@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-08
 Precondición: las 28 reabiertas por la 18 con terminada posterior, o con el código comiteado y el reclamo caducado (30 y 33; ver «Trampas conocidas») · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona; la 18, que leyó las 31 prácticas enteras, tardó 43 min con seis revisores en paralelo) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h (real: 1 h 55 min, 45 de ellos esperando a iCloud; tiempo de sesión, no de persona; la 18, que leyó las 31 prácticas enteras, tardó 43 min con seis revisores en paralelo) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/36-segunda-revision/` (`VEREDICTO.md`, `HALLAZGOS-FUERA-DE-CRITERIO.md`, `ENTREGA.md` y sus marcadores)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (**solo** el campo `disponible`, y solo para retirar de la portada una práctica con hallazgo grave). Ningún otro fichero de código.
 
@@ -160,6 +160,25 @@ Dos salidas separadas, las dos en `reparto-practicas-u2/salidas/36-segunda-revis
 - **Nunca `git stash` ni `--autostash`** (`proyecto.md`, «Repositorio git»).
 - `catalogo.js` con candado ajeno: no esperes editando; termina todo lo demás y deja ese
   cambio para el final, con `git diff -- practicas/_comun/catalogo.js` limpio antes de tocar.
+- (2026-10-09, sesión s-20261009T082156-0a34d7a4) **iCloud evacuó unos 390 ficheros con la
+  sesión abierta** (prácticas, `hechos/` y el paquete de `.git`): un `cat` de varios ficheros se
+  quedó colgado y `brctl download` no los trajo. Lo que funcionó: `git archive HEAD | tar -x -C
+  <scratchpad>/repo` (tardó 12 min) y revisar sobre esa copia, con los revisores leyendo solo
+  de ahí y un `python3 -m http.server` sobre la copia para la pasada de móvil.
+- **Relista `hechos/` y mira `git log` ANTES de escribir el veredicto, no solo al cerrar**: en
+  hora y media otra sesión comiteó tres veces en el mismo árbol, entre ellas ocho reaperturas
+  con decisiones de Juan Luis que cambiaban lo que había que decir de la 30, la 31 y la 32, y
+  el arreglo de `corrector/` que yo daba por perdido. Hubo que rehacer medio veredicto.
+- **Los dos defectos más visibles estaban en `practica.js` y en el CSS**, donde no llega ningún
+  test ni ningún script de lógica: «hasta la mitad de undefined» (criba) y los exponentes que
+  no suben (propiedades). Solo los vio la pasada con navegador y **mirando las capturas**; el
+  detector de desbordes no dice nada de eso. La pasada de pantalla no se puede limitar a las
+  prácticas «con punto de pantalla».
+- Un hallazgo del revisor puede ser una pregunta mal planteada desde la primera revisión: «la
+  lista más corta que basta» (criba) lo pidió la reabierta anterior y era lo que hacía
+  defendible el distractor. Lo que una reabierta manda hacer también se juzga.
+- No des cifras de resumen («113 de 118 puntos») sin contarlas: `grep -cE '^[0-9]+\. '` sobre
+  el apartado «Qué corregir» de cada reabierta da el total (121).
 
 ## Prohibido (propio de esta tarea)
 
