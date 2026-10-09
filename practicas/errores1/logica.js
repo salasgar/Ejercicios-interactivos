@@ -3,12 +3,13 @@
 //
 // Ítem: { tipo: 'hay' | 'linea' | 'nombre', plantilla, params, lineas, error,
 //         opciones, solucion }
+// Ejercicio 4: { tipo: 'pasos', plantilla, params, lineas, salta, opciones: ['si', 'no'], solucion }
 //   lineas   [{ es, en }, …] el procedimiento (2 a 4 líneas)
 //   error    null o { linea (desde 0), nombre (clave de NOMBRES) }
 //   opciones 'hay': ['bien', 'error'] · 'linea': [0, 1, …] · 'nombre': 4 claves
 //   solucion la opción correcta (la misma forma que las opciones)
 
-import { PLANTILLAS, PLANTILLA_POR_ID, CLAVES_NOMBRES, CONFUNDIBLES } from './textos.js';
+import { PLANTILLAS, PLANTILLA_POR_ID, PASOS, PASOS_POR_ID, CLAVES_NOMBRES, CONFUNDIBLES } from './textos.js';
 
 const CON_ERROR = PLANTILLAS.filter(p => p.error);
 const SIN_ERROR = PLANTILLAS.filter(p => !p.error);
@@ -52,7 +53,20 @@ export function generarNombre(rng) {
   return ficha(plantilla, plantilla.numeros(rng), 'nombre', opciones, plantilla.error.nombre);
 }
 
+const SALTA = PASOS.filter(p => p.salta);
+const NO_SALTA = PASOS.filter(p => !p.salta);
+
+/** Ejercicio 4: todas las igualdades son verdaderas; ¿se ha saltado algún paso? Mitad y mitad. */
+export function generarPasos(rng) {
+  const salta = rng.azar() < 0.5;
+  const plantilla = rng.elegir(salta ? SALTA : NO_SALTA);
+  const params = plantilla.numeros(rng);
+  return { tipo: 'pasos', plantilla: plantilla.id, params, lineas: plantilla.lineas(params), salta, opciones: ['si', 'no'], solucion: salta ? 'si' : 'no' };
+}
+
 /** Clave para que la base no repita el ítem anterior. */
 export const claveItem = item => `${item.plantilla}|${JSON.stringify(item.params)}`;
+/** Clave del ejercicio 4: no repite la misma estructura dos veces seguidas. */
+export const clavePasos = item => item.plantilla;
 
-export { PLANTILLA_POR_ID };
+export { PLANTILLA_POR_ID, PASOS_POR_ID };

@@ -182,7 +182,7 @@ portada.
 | 4 | `clasificador` | 10 | Enunciados limpios · Con trampa («mayor» y «menor» no deciden) · Justifícalo |
 | 4 | `reloj` | 11 | Predice la coincidencia · La hora de reloj · Cada cuántos días (tres datos) |
 | 4 | `baldosas` | 12 | La baldosa más grande · ¿Cuántas baldosas? · Cuerdas |
-| 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error |
+| 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error · ¿Paso a paso? |
 | toda | `leelo` | 14 | Escúchalo · ¿Cómo se lee? · Completa la frase |
 | toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
 
@@ -214,7 +214,7 @@ la cierre pone su `disponible: true`. El detalle, en el veredicto de la tarea 18
 | `dictado` | 26 | Dictado en inglés · -teen o -ty, y cómo se escribe · Ortografía española | 1B-01 a 1B-04, 1B-06 a 1B-10, 1B-17 a 1B-23 |
 | `mental` | 27 | Compensar · Descomponer | 2C-20 a 2C-24, 2C-30, 2C-31, 2B-21, 2B-22 |
 | `especiales` | 28 | ¿Verdadero o falso? · ¿Cuál es la falsa? | 3C-01, 3C-05 a 3C-10, 3C-29, 3C-30, 3B-01 a 3B-03 |
-| `errores1` | 29 | ¿Hay un error? · Señala el paso · Nombra el error | 4A-10 a 4A-13, 4B-16, 4C-22, y como repaso 1A-03 a 1A-05, 1A-12, 2C-03, 2C-05, 3A-06, 3C-01, 3C-11 |
+| `errores1` | 29 | ¿Hay un error? · Señala el paso · Nombra el error · ¿Paso a paso? | 4A-10 a 4A-13, 4B-16, 4C-22, y como repaso 1A-03 a 1A-05, 1A-12, 2C-03, 2C-05, 3A-06, 3C-01, 3C-11 |
 | `propiedades` | 30 | Junta las potencias · Potencia de potencia y cadenas · ★ La última cifra (reto) | 3C-15 a 3C-19, 3B-06 (ampliación) |
 
 Los identificadores de la unidad 1 son los de `inventario-unidad1.tsv` (en la carpeta de

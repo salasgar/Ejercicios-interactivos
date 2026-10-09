@@ -13,7 +13,9 @@
 // Los desarrollos en cadena (`cad`) son una expresión por línea, con «= »
 // delante de las siguientes. Cada paso de un desarrollo bien escrito resuelve
 // una o varias operaciones INDEPENDIENTES a la vez, pero nunca dos operaciones
-// que dependen una de otra (eso es «saltarse un resultado intermedio»).
+// que dependen una de otra (eso es «saltarse un resultado intermedio»). Saltarse un
+// paso NO es un error en los ejercicios 1-3 (todas sus igualdades son verdaderas y se
+// ve «Está bien»); solo se pregunta por ello en el ejercicio 4, con el banco PASOS.
 // Un paréntesis redundante, `7 + (3 · 2)`, no es un error.
 
 // ─── Nombres de los errores (lista cerrada) ────────────────────────────────────
@@ -27,7 +29,6 @@ export const NOMBRES = {
   expProducto: { es: 'Ha aplicado el exponente al producto entero.', en: 'Raised the whole product to the power.' },
   raizMitad: { es: 'Ha tomado la raíz como la mitad.', en: 'Took the square root as half.' },
   restoMayor: { es: 'Ha dejado un resto mayor que el divisor.', en: 'Left a remainder bigger than the divisor.' },
-  saltoPaso: { es: 'Se ha saltado un resultado intermedio.', en: 'Skipped an intermediate result.' },
   redondeo: { es: 'Ha redondeado por defecto cuando tocaba por exceso.', en: 'Rounded down when it should have rounded up.' },
   olvidaParentesis: { es: 'Ha olvidado el paréntesis al traducir el enunciado.', en: 'Forgot the brackets when writing the statement as an expression.' },
 };
@@ -38,7 +39,6 @@ export const CLAVES_NOMBRES = Object.keys(NOMBRES);
  * sale como distractor del otro (regla de oro: todo distractor, inequívocamente falso).
  */
 export const CONFUNDIBLES = [
-  ['sumaAntes', 'saltoPaso'],
   ['sumaAntes', 'olvidaParentesis'],
   ['restaAntes', 'olvidaParentesis'],
   ['restaAntes', 'restaDerIzq'],
@@ -53,17 +53,31 @@ export const TX = {
     hay: { es: '¿Hay un error?', en: 'Is there a mistake?' },
     linea: { es: 'Señala el paso', en: 'Point to the step' },
     nombre: { es: 'Nombra el error', en: 'Name the mistake' },
+    pasos: { es: '¿Paso a paso?', en: 'Step by step?' },
   },
   detalle: {
     hay: { es: 'Un procedimiento de un alumno: ¿está bien o no?', en: 'A student\'s work: is it right or not?' },
     linea: { es: 'Este procedimiento tiene un error: toca la línea donde está', en: 'This work has a mistake: tap the line where it is' },
     nombre: { es: 'Este procedimiento tiene un error: ¿cuál es?', en: 'This work has a mistake: which one is it?' },
+    pasos: { es: 'Las cuentas están bien: ¿se ha saltado algún paso?', en: 'The sums are right: is any step missing?' },
   },
   instruccion: {
     hay: { es: 'Mira el procedimiento. ¿Está bien o hay un error?', en: 'Look at the work. Is it right or is there a mistake?' },
     linea: { es: 'Hay un error. Toca la línea donde está.', en: 'There is a mistake. Tap the line where it is.' },
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
+    pasos: { es: 'Mira el procedimiento. ¿Se ha saltado algún paso?', en: 'Look at the work. Is any step missing?' },
   },
+  introduccion_pasos: {
+    es: '<p>Aquí <strong>no hay cuentas mal hechas</strong>: todas las igualdades son verdaderas. Lo que tienes que ver es si el alumno ha ido <strong>paso a paso</strong> o se ha saltado algún paso.</p><p>En un paso caben varias operaciones si son <strong>independientes</strong> (ninguna necesita el resultado de otra). Se salta un paso cuando, en la misma línea, se hace una operación con el resultado de otra operación que todavía no está escrito.</p>',
+    en: '<p>Here <strong>no sum is wrong</strong>: every equality is true. You only have to see if the student worked <strong>step by step</strong> or skipped a step.</p><p>A step can have several operations if they are <strong>independent</strong> (none of them needs the result of another one). A step is skipped when, in one line, an operation uses the result of another operation that is not written yet.</p>',
+  },
+  si: { es: 'Sí, falta un paso', en: 'Yes, a step is missing' },
+  no: { es: 'No, está paso a paso', en: 'No, it is step by step' },
+  falta_paso: {
+    es: k => `Sí se ha saltado un paso, entre las líneas ${k} y ${k + 1}. Faltaría:`,
+    en: k => `Yes, a step is missing, between lines ${k} and ${k + 1}. This line is missing:`,
+  },
+  paso_a_paso: { es: 'No se ha saltado ninguno.', en: 'No step is missing.' },
   introduccion: {
     es: '<p>Cada ejercicio te enseña el trabajo de un alumno, con las líneas numeradas. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, un paréntesis que sobra, o hacer dos productos independientes en el mismo paso).</p>',
     en: '<p>Each exercise shows a student\'s work, with numbered lines. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, brackets that are not needed, or doing two independent multiplications in the same step).</p>',
@@ -215,43 +229,6 @@ export const PLANTILLAS = [
     corregida: ({ d, q, r0 }) => L(
       `Si sobran ${r0 + d}, aún cabe otra caja de ${d}. Bien: ${q} cajas llenas y sobran ${r0}, porque ${d} · ${q} + ${r0} = ${d * q + r0}.`,
       `If ${r0 + d} are left, another box of ${d} still fits. Right: ${q} full boxes and ${r0} left, because ${d} · ${q} + ${r0} = ${d * q + r0}.`),
-  },
-  {
-    id: 'e-salto-resta-producto',
-    error: { linea: 1, nombre: 'saltoPaso' },
-    numeros: rng => {
-      const b = rng.entero(2, 6), c = rng.entero(2, 6);
-      return { a: rng.entero(b * c + 1, 50), b, c, d: rng.entero(2, 9) };
-    },
-    lineas: ({ a, b, c, d }) => cad([`${a} − ${b} · ${c} + ${d}`, `${a - b * c} + ${d}`, `${a - b * c + d}`]),
-    corregida: ({ a, b, c, d }) => ig(`${a} − ${b} · ${c} + ${d} = ${a} − ${b * c} + ${d} = ${a - b * c} + ${d} = ${a - b * c + d}`),
-  },
-  {
-    id: 'e-salto-potencia-producto',
-    error: { linea: 1, nombre: 'saltoPaso' },
-    excluidos: ['expProducto', 'potencia'],
-    numeros: rng => ({ a: rng.entero(2, 9), b: rng.entero(2, 6), c: rng.entero(2, 5) }),
-    lineas: ({ a, b, c }) => cad([`${a} + ${b} · ${c}^2`, `${a} + ${b * c * c}`, `${a + b * c * c}`]),
-    corregida: ({ a, b, c }) => ig(`${a} + ${b} · ${c}^2 = ${a} + ${b} · ${c * c} = ${a} + ${b * c * c} = ${a + b * c * c}`),
-  },
-  {
-    id: 'e-salto-parentesis-producto',
-    error: { linea: 2, nombre: 'saltoPaso' },
-    excluidos: ['restaAntes'],
-    numeros: rng => {
-      const [a, b] = par(rng, 2, 9), c = rng.entero(2, 6);
-      return { a, b, c, d: rng.entero(2, 9) };
-    },
-    lineas: ({ a, b, c, d }) => cad([`(${a} + ${b}) · ${c} − ${d}`, `${a + b} · ${c} − ${d}`, `${(a + b) * c - d}`]),
-    corregida: ({ a, b, c, d }) => ig(`(${a} + ${b}) · ${c} − ${d} = ${a + b} · ${c} − ${d} = ${(a + b) * c} − ${d} = ${(a + b) * c - d}`),
-  },
-  {
-    id: 'e-salto-potencia-suma',
-    error: { linea: 2, nombre: 'saltoPaso' },
-    excluidos: ['expSuma', 'expProducto', 'potencia'],
-    numeros: rng => { const [a, b] = par(rng, 2, 9); return { a, b, c: rng.entero(2, 9) }; },
-    lineas: ({ a, b, c }) => cad([`${a}^2 + ${b} · ${c}`, `${a * a} + ${b} · ${c}`, `${a * a + b * c}`]),
-    corregida: ({ a, b, c }) => ig(`${a}^2 + ${b} · ${c} = ${a * a} + ${b} · ${c} = ${a * a} + ${b * c} = ${a * a + b * c}`),
   },
   {
     id: 'e-suma-antes-3',
@@ -482,3 +459,178 @@ export const PLANTILLAS = [
 ];
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
+
+// ─── Ejercicio 4: ¿paso a paso? ────────────────────────────────────────────────
+//
+// Todas las igualdades son verdaderas. Una plantilla es un desarrollo en cadena:
+//   { id, salta, entre?, numeros(rng) → params, lineas(params) → [{ es, en }],
+//     falta(params) → línea que falta (solo si salta) y `entre`: se escribiría entre la línea
+//     `entre` y la siguiente (contando desde 1; por defecto, entre las dos últimas), porque(params) → { es, en } }
+// `salta` es la etiqueta declarada; el test la comprueba con un evaluador propio
+// (un paso es válido si solo resuelve operaciones cuyos dos operandos ya son números).
+
+export const PASOS = [
+  // ── Se ha saltado un paso ──
+  {
+    id: 's-resta-producto',
+    salta: true,
+    entre: 1,
+    numeros: rng => {
+      const b = rng.entero(2, 6), c = rng.entero(2, 6);
+      return { a: rng.entero(b * c + 1, 50), b, c, d: rng.entero(2, 9) };
+    },
+    lineas: ({ a, b, c, d }) => cad([`${a} − ${b} · ${c} + ${d}`, `${a - b * c} + ${d}`, `${a - b * c + d}`]),
+    falta: ({ a, b, c, d }) => `${a} − ${b * c} + ${d}`,
+    porque: ({ b, c }) => L(
+      `Primero el producto ${b} · ${c}, y después la resta y la suma.`,
+      `First the product ${b} · ${c}, then the subtraction and the addition.`),
+  },
+  {
+    id: 's-potencia-producto',
+    salta: true,
+    entre: 1,
+    numeros: rng => ({ a: rng.entero(2, 9), b: rng.entero(2, 6), c: rng.entero(2, 5) }),
+    lineas: ({ a, b, c }) => cad([`${a} + ${b} · ${c}^2`, `${a} + ${b * c * c}`, `${a + b * c * c}`]),
+    falta: ({ a, b, c }) => `${a} + ${b} · ${c * c}`,
+    porque: ({ b, c }) => L(
+      `Primero la potencia ${c}^2, después el producto por ${b}.`,
+      `First the power ${c}^2, then the product by ${b}.`),
+  },
+  {
+    id: 's-parentesis-producto',
+    salta: true,
+    numeros: rng => {
+      const [a, b] = par(rng, 2, 9), c = rng.entero(2, 6);
+      return { a, b, c, d: rng.entero(2, 9) };
+    },
+    lineas: ({ a, b, c, d }) => cad([`(${a} + ${b}) · ${c} − ${d}`, `${a + b} · ${c} − ${d}`, `${(a + b) * c - d}`]),
+    falta: ({ a, b, c, d }) => `${(a + b) * c} − ${d}`,
+    porque: ({ a, b, c }) => L(
+      `Primero el producto ${a + b} · ${c}, después la resta.`,
+      `First the product ${a + b} · ${c}, then the subtraction.`),
+  },
+  {
+    id: 's-potencia-suma',
+    salta: true,
+    numeros: rng => { const [a, b] = par(rng, 2, 9); return { a, b, c: rng.entero(2, 9) }; },
+    lineas: ({ a, b, c }) => cad([`${a}^2 + ${b} · ${c}`, `${a * a} + ${b} · ${c}`, `${a * a + b * c}`]),
+    falta: ({ a, b, c }) => `${a * a} + ${b * c}`,
+    porque: ({ b, c }) => L(
+      `Primero el producto ${b} · ${c}, después la suma.`,
+      `First the product ${b} · ${c}, then the addition.`),
+  },
+  {
+    id: 's-raiz-producto',
+    salta: true,
+    numeros: rng => {
+      const r = rng.elegir([4, 5, 6, 7, 8, 9]), b = rng.entero(2, 5);
+      return { r, b, d: rng.entero(1, b * r - 1) };
+    },
+    lineas: ({ r, b, d }) => cad([`${b} · √${r * r} − ${d}`, `${b} · ${r} − ${d}`, `${b * r - d}`]),
+    falta: ({ r, b, d }) => `${b * r} − ${d}`,
+    porque: ({ r, b }) => L(
+      `Primero el producto ${b} · ${r}, después la resta.`,
+      `First the product ${b} · ${r}, then the subtraction.`),
+  },
+  {
+    id: 's-parentesis-resta',
+    salta: true,
+    numeros: rng => {
+      const c = rng.entero(5, 12), d = rng.entero(2, 4);
+      return { a: rng.entero(2, 9), b: rng.entero(2, 6), c, d };
+    },
+    lineas: ({ a, b, c, d }) => cad([`${a} + ${b} · (${c} − ${d})`, `${a} + ${b} · ${c - d}`, `${a + b * (c - d)}`]),
+    falta: ({ a, b, c, d }) => `${a} + ${b * (c - d)}`,
+    porque: ({ a, b, c, d }) => L(
+      `Primero el producto ${b} · ${c - d}, después la suma de ${a}.`,
+      `First the product ${b} · ${c - d}, then add ${a}.`),
+  },
+  {
+    id: 's-potencia-producto-2',
+    salta: true,
+    numeros: rng => ({ a: rng.entero(2, 6), b: rng.entero(2, 5), c: rng.entero(2, 5) }),
+    lineas: ({ a, b, c }) => cad([`${a} · ${b}^2 − ${c}`, `${a} · ${b * b} − ${c}`, `${a * b * b - c}`]),
+    falta: ({ a, b, c }) => `${a * b * b} − ${c}`,
+    porque: ({ a, b }) => L(
+      `Primero el producto ${a} · ${b * b}, después la resta.`,
+      `First the product ${a} · ${b * b}, then the subtraction.`),
+  },
+  // ── Paso a paso (una operación por línea, o varias independientes) ──
+  {
+    id: 'p-una-por-linea',
+    salta: false,
+    numeros: rng => {
+      const [a, b] = par(rng, 2, 9), c = rng.entero(2, 9);
+      return { a, b, c, d: rng.entero(1, Math.min(9, a + b * c - 1)) };
+    },
+    lineas: ({ a, b, c, d }) => cad([`${a} + ${b} · ${c} − ${d}`, `${a} + ${b * c} − ${d}`, `${a + b * c} − ${d}`, `${a + b * c - d}`]),
+    porque: () => L('Cada línea resuelve una sola operación.', 'Each line works out one operation only.'),
+  },
+  {
+    id: 'p-dos-independientes',
+    salta: false,
+    numeros: rng => ({ a: rng.entero(2, 9), b: rng.entero(2, 9), c: rng.entero(2, 6) }),
+    lineas: ({ a, b, c }) => cad([`${a} · ${b} + ${c}^2`, `${a * b} + ${c * c}`, `${a * b + c * c}`]),
+    porque: ({ a, b, c }) => L(
+      `${a} · ${b} y ${c}^2 no dependen una de otra: caben en el mismo paso.`,
+      `${a} · ${b} and ${c}^2 do not depend on each other: they fit in the same step.`),
+  },
+  {
+    id: 'p-potencia-producto',
+    salta: false,
+    numeros: rng => ({ a: rng.entero(2, 5), b: rng.entero(2, 9), c: rng.entero(2, 9) }),
+    lineas: ({ a, b, c }) => cad([`${a}^2 + ${b} · ${c}`, `${a * a} + ${b * c}`, `${a * a + b * c}`]),
+    porque: ({ a, b, c }) => L(
+      `${a}^2 y ${b} · ${c} no dependen una de otra: caben en el mismo paso.`,
+      `${a}^2 and ${b} · ${c} do not depend on each other: they fit in the same step.`),
+  },
+  {
+    id: 'p-dos-parentesis',
+    salta: false,
+    numeros: rng => {
+      const [a, b] = par(rng, 2, 8), c = rng.entero(5, 12);
+      return { a, b, c, d: rng.entero(2, c - 1) };
+    },
+    lineas: ({ a, b, c, d }) => cad([`(${a} + ${b}) · (${c} − ${d})`, `${a + b} · ${c - d}`, `${(a + b) * (c - d)}`]),
+    porque: ({ a, b, c, d }) => L(
+      `${a} + ${b} y ${c} − ${d} no dependen una de otra: caben en el mismo paso.`,
+      `${a} + ${b} and ${c} − ${d} do not depend on each other: they fit in the same step.`),
+  },
+  {
+    id: 'p-raiz-producto',
+    salta: false,
+    numeros: rng => ({ r: rng.elegir([4, 5, 6, 7, 8, 9]), b: rng.entero(2, 9), c: rng.entero(2, 9) }),
+    lineas: ({ r, b, c }) => cad([`√${r * r} + ${b} · ${c}`, `${r} + ${b * c}`, `${r + b * c}`]),
+    porque: ({ r, b, c }) => L(
+      `√${r * r} y ${b} · ${c} no dependen una de otra: caben en el mismo paso.`,
+      `√${r * r} and ${b} · ${c} do not depend on each other: they fit in the same step.`),
+  },
+  {
+    id: 'p-dos-productos',
+    salta: false,
+    numeros: rng => {
+      const a = rng.entero(4, 9), b = rng.entero(4, 9), c = rng.entero(2, 3), d = rng.entero(2, 3);
+      return { a, b, c, d };
+    },
+    lineas: ({ a, b, c, d }) => cad([`${a} · ${b} − ${c} · ${d}`, `${a * b} − ${c * d}`, `${a * b - c * d}`]),
+    porque: ({ a, b, c, d }) => L(
+      `${a} · ${b} y ${c} · ${d} no dependen una de otra: caben en el mismo paso.`,
+      `${a} · ${b} and ${c} · ${d} do not depend on each other: they fit in the same step.`),
+  },
+  {
+    id: 'p-potencia-una',
+    salta: false,
+    numeros: rng => ({ a: rng.entero(2, 9), b: rng.entero(2, 5), c: rng.entero(2, 5) }),
+    lineas: ({ a, b, c }) => cad([`${a} + ${b}^2 · ${c}`, `${a} + ${b * b} · ${c}`, `${a} + ${b * b * c}`, `${a + b * b * c}`]),
+    porque: () => L('Cada línea resuelve una sola operación.', 'Each line works out one operation only.'),
+  },
+  {
+    id: 'p-parentesis-resta',
+    salta: false,
+    numeros: rng => { const b = rng.entero(5, 15), c = rng.entero(3, 9); return { a: rng.entero(b + c + 3, 60), b, c }; },
+    lineas: ({ a, b, c }) => cad([`${a} − (${b} + ${c})`, `${a} − ${b + c}`, `${a - b - c}`]),
+    porque: () => L('Cada línea resuelve una sola operación.', 'Each line works out one operation only.'),
+  },
+];
+
+export const PASOS_POR_ID = Object.fromEntries(PASOS.map(p => [p.id, p]));

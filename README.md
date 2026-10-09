@@ -133,7 +133,7 @@ resultados y qué práctica cubre qué destreza del inventario.
 | U1 | `dictado` | Dictado de números | Numerales ingleses de oído y por escrito; ortografía española |
 | U1 | `mental` ⏳ | Cálculo mental con estrategia | Compensar y descomponer |
 | U1 | `especiales` | Potencias especiales | Exponentes 0 y 1, potencias de 10, igualdades falsas típicas |
-| U1 | `errores1` ⏳ | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias |
+| U1 | `errores1` ⏳ | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias; ver si se ha saltado un paso |
 | U1 | `propiedades` ⏳ | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
 
 ⏳ = hecha pero **todavía no enlazada desde la portada** (`disponible: false` en

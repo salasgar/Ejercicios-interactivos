@@ -12,21 +12,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { generarHay, generarLinea, generarNombre, nombresExcluidos } from '../practicas/errores1/logica.js';
-import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores1/textos.js';
+import { generarHay, generarLinea, generarNombre, generarPasos, clavePasos, nombresExcluidos } from '../practicas/errores1/logica.js';
+import { PLANTILLAS, PLANTILLA_POR_ID, PASOS, PASOS_POR_ID, TX, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores1/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 
 // ─── Evaluador de expresiones (independiente del banco) ───────────────────────────
 
 /** «3 + 4 · 5^2» → árbol. Precedencia: ^ (derecha) > · > + y − (izquierda a derecha). */
 function arbol(texto) {
-  const t = texto.replace(/−/g, '-').replace(/·/g, '*').match(/\d+|[-+*^()]/g);
+  const t = texto.replace(/−/g, '-').replace(/·/g, '*').match(/\d+|[-+*^()√]/g);
   let i = 0;
   const hoja = v => ({ hoja: true, v });
   const nodo = (op, a, b) => ({ op, a, b });
   function atomo() {
     const x = t[i++];
     if (x === '(') { const e = suma(); assert.equal(t[i++], ')'); return e; }
+    if (x === '√') return nodo('√', atomo(), hoja(0));
     assert.ok(/^\d+$/.test(x), `token ${x} en «${texto}»`);
     return hoja(Number(x));
   }
@@ -56,6 +57,7 @@ const valorDe = n => {
     case '+': return a + b;
     case '-': return a - b;
     case '*': return a * b;
+    case '√': { assert.equal(Math.round(Math.sqrt(a)) ** 2, a, `√${a} no es exacta`); return Math.round(Math.sqrt(a)); }
     default: { let p = 1; for (let k = 0; k < b; k++) p *= a; return p; }
   }
 };
@@ -92,7 +94,6 @@ const VERIFICADORES = {
   'e-suma-antes-1': (p, ls) => cadena(ls),
   'e-suma-antes-2': (p, ls) => cadena(ls),
   'e-suma-antes-3': (p, ls) => cadena(ls),
-  'e-salto-potencia-suma': (p, ls) => cadena(ls),
   'e-potencia-numero': (p, ls) => cadena(ls),
   'e-resta-antes': (p, ls) => cadena(ls),
   'e-resta-derecha-izquierda': (p, ls) => cadena(ls),
@@ -100,9 +101,6 @@ const VERIFICADORES = {
   'e-potencia-producto': (p, ls) => cadena(ls),
   'e-exponente-suma': (p, ls) => cadena(ls),
   'e-exponente-producto': (p, ls) => cadena(ls),
-  'e-salto-resta-producto': (p, ls) => cadena(ls),
-  'e-salto-potencia-producto': (p, ls) => cadena(ls),
-  'e-salto-parentesis-producto': (p, ls) => cadena(ls),
   'e-raiz-mitad': ({ n, k }, [l0, l1, l2]) => {
     const [x, y, dos, r] = nums(l1);
     const [s, kk, t] = nums(l2);
@@ -193,8 +191,10 @@ test('evaluador: precedencia, paréntesis y pasos válidos', () => {
 
 // ─── El banco ────────────────────────────────────────────────────────────────
 
-test('catálogo: errores1 tiene 3 ejercicios', () => {
-  assert.equal(CATALOGO.find(p => p.slug === 'errores1').nEjercicios, 3);
+test('catálogo: errores1 tiene 4 ejercicios y está publicada', () => {
+  const ficha = CATALOGO.find(p => p.slug === 'errores1');
+  assert.equal(ficha.nEjercicios, 4);
+  assert.equal(ficha.disponible, true);
 });
 
 test('banco: al menos 24 plantillas, 8 sin error, 16 con error, y cada una con su verificador', () => {
@@ -290,9 +290,9 @@ test('plantillas sin error: todas las líneas válidas (cada línea vale lo mism
   }
 });
 
-test('los desarrollos en cadena de las plantillas con error valen lo mismo salvo en la línea mal; el salto sí mantiene el valor', () => {
+test('los desarrollos del ejercicio 4 valen lo mismo en todas las líneas (todas las igualdades son verdaderas)', () => {
   const rng = crearRng(13);
-  for (const p of PLANTILLAS.filter(p => p.id.startsWith('e-salto'))) {
+  for (const p of PASOS) {
     for (let i = 0; i < 300; i++) {
       const ls = p.lineas(p.numeros(rng)).map(l => sinIgual(l.es));
       const vs = ls.map(val);
@@ -432,4 +432,103 @@ test('el redondeo no dice «se sube una unidad la cifra» (inexacto con acarreo:
       assert.ok(!/una unidad|goes up by one|add one/.test(textos), `${p.id}: ${textos}`);
     }
   }
+});
+
+// ─── Decisión del 9-10: saltarse un paso deja de ser un error (ejercicios 1-3) y tiene su ejercicio 4 ───
+
+test('saltoPaso ya no existe: ni como nombre de error, ni como plantilla de los ejercicios 1-3', () => {
+  assert.equal(NOMBRES.saltoPaso, undefined);
+  assert.ok(!CLAVES_NOMBRES.includes('saltoPaso'));
+  assert.ok(!PLANTILLAS.some(p => p.id.startsWith('e-salto') || p.error?.nombre === 'saltoPaso'));
+  assert.ok(!CONFUNDIBLES.flat().includes('saltoPaso'));
+  // y todo desarrollo en cadena que quede en el banco es válido paso a paso salvo en la línea con error
+  const rng = crearRng(31);
+  for (let i = 0; i < 3000; i++) {
+    for (const item of [generarHay(rng), generarLinea(rng), generarNombre(rng)]) {
+      assert.notEqual(item.error?.nombre, 'saltoPaso');
+      assert.ok(!item.opciones.includes('saltoPaso'));
+    }
+  }
+});
+
+/** Definición independiente: ¿algún paso de la cadena hace una operación sobre el resultado de otra no escrita? */
+const saltaAlgunPaso = lineas => cadena(lineas.map(l => l.es)).some(v => !v);
+
+test('ejercicio 4: todas las igualdades son verdaderas y «Sí» ⇔ algún paso depende de un resultado no escrito (evaluador propio)', () => {
+  const rng = crearRng(2026);
+  let si = 0;
+  const N4 = 5000;
+  for (let i = 0; i < N4; i++) {
+    const item = generarPasos(rng);
+    const vs = item.lineas.map(l => val(sinIgual(l.es)));
+    assert.ok(vs.every(v => v === vs[0]), `valores distintos: ${item.lineas.map(l => l.es).join(' | ')}`);
+    assert.deepEqual(item.lineas.map(l => nums(l.es)), item.lineas.map(l => nums(l.en)));
+    const calculado = saltaAlgunPaso(item.lineas);
+    assert.equal(calculado, item.salta, `${item.plantilla}: ${item.lineas.map(l => l.es).join(' | ')}`);
+    assert.equal(item.solucion, calculado ? 'si' : 'no');
+    assert.deepEqual(item.opciones, ['si', 'no']);
+    if (calculado) si++;
+  }
+  const p = si / N4;
+  assert.ok(p > 0.45 && p < 0.55, `«Sí» en ${p}`);
+});
+
+test('ejercicio 4: la línea que «falta» es un paso válido y, puesta en su sitio, la cadena queda paso a paso', () => {
+  const rng = crearRng(5);
+  for (const p of PASOS.filter(p => p.salta)) {
+    for (let i = 0; i < 300; i++) {
+      const params = p.numeros(rng);
+      const ls = p.lineas(params).map(l => l.es);
+      const k = p.entre ?? ls.length - 1;
+      const con = [...ls.slice(0, k), `= ${p.falta(params)}`, ...ls.slice(k)];
+      assert.ok(cadena(con).every(Boolean), `${p.id}: ${con.join(' | ')}`);
+      assert.ok(!cadena(ls).every(Boolean), p.id);
+    }
+  }
+});
+
+test('ejercicio 4: el reparto de los «No» tiene al menos un tercio de desarrollos con dos operaciones independientes en una línea (4A-13)', () => {
+  const rng = crearRng(9);
+  let no = 0, indep = 0;
+  for (let i = 0; i < 4000; i++) {
+    const item = generarPasos(rng);
+    if (item.salta) continue;
+    no++;
+    // dos operaciones evaluables a la vez: un paso cuya siguiente línea tiene dos operaciones menos que la anterior
+    const ops = t => (t.hoja ? 0 : 1 + ops(t.a) + (t.op === '√' ? 0 : ops(t.b)));
+    const ts = item.lineas.map(l => arbol(sinIgual(l.es)));
+    if (ts.some((t, j) => j > 0 && ops(ts[j - 1]) - ops(t) >= 2)) indep++;
+  }
+  assert.ok(indep / no >= 1 / 3, `independientes: ${indep}/${no}`);
+});
+
+test('ejercicio 4: nunca la misma estructura dos veces seguidas (clave = plantilla) y hay variedad suficiente', () => {
+  const rng = crearRng(77);
+  assert.equal(clavePasos({ plantilla: 'x' }), 'x');
+  assert.ok(PASOS.filter(p => p.salta).length >= 6 && PASOS.filter(p => !p.salta).length >= 6);
+  assert.equal(new Set(PASOS.map(p => p.id)).size, PASOS.length);
+  const vistas = new Set();
+  for (let i = 0; i < 500; i++) vistas.add(generarPasos(rng).plantilla);
+  assert.equal(vistas.size, PASOS.length);
+  // ninguna sin raíz o sin paréntesis: hay de ambas con «Sí»
+  const conSalto = PASOS.filter(p => p.salta).map(p => p.lineas(p.numeros(crearRng(1)))[0].es);
+  assert.ok(conSalto.some(l => l.includes('√')) && conSalto.some(l => l.includes('(')));
+});
+
+test('ejercicio 4: textos en los dos idiomas, sin ×, sin letras, producto con «·», y el feedback cita los números del ítem', () => {
+  const rng = crearRng(3);
+  for (const clave of ['si', 'no', 'paso_a_paso']) assert.ok(TX[clave].es && TX[clave].en, clave);
+  assert.ok(TX.nombre.pasos.es === '¿Paso a paso?' && TX.nombre.pasos.en === 'Step by step?');
+  assert.match(TX.introduccion_pasos.es, /no hay cuentas mal hechas/);
+  for (const p of PASOS) {
+    for (let i = 0; i < 100; i++) {
+      const params = p.numeros(rng);
+      const todo = [...p.lineas(params).flatMap(l => [l.es, l.en]), p.porque(params).es, p.porque(params).en, p.falta?.(params) ?? ''].join(' ');
+      assert.ok(!/[×*]/.test(todo), p.id);
+      assert.doesNotMatch(todo, /(?<![A-Za-zÁ-ú])[xn](?![A-Za-zÁ-ú])/, p.id);   // ni x ni n como incógnita
+      assert.deepEqual(nums(p.porque(params).es), nums(p.porque(params).en), p.id);
+    }
+  }
+  assert.match(TX.falta_paso.es(2), /líneas 2 y 3/);
+  assert.match(TX.falta_paso.en(2), /lines 2 and 3/);
 });
