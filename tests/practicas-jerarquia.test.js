@@ -214,7 +214,7 @@ function conservaValor(actual, i) {
     if (f === '*' || f === ':') minimo = Math.min(a, b);
   }
   const despues = [...actual.slice(0, desde), `(${v})`, ...actual.slice(hasta + 1)];
-  return { conserva: Math.abs(valorJs(despues) - valorJs(actual)) < 1e-9, v, bonito: Number.isInteger(v) && v >= 1 && v <= 999 && minimo >= 2 };
+  return { conserva: Math.abs(valorJs(despues) - valorJs(actual)) < 1e-9, v, bonito: Number.isInteger(v) && v >= 0 && v <= 999 };
 }
 
 /** Todos los estados por los que pasa un alumno que elige siempre uno cualquiera de los pasos válidos. */
@@ -359,4 +359,11 @@ test('texto: el producto lleva punto medio, nunca ×, y la división cambia con 
   assert.equal(texto(['18', '-', '12', ':', '6', '*', '2']), '18 − 12 : 6 · 2');
   assert.equal(texto(['18', ':', '6'], 'en'), '18 ÷ 6');
   for (const it of generarN(generarPasos3).slice(0, 200)) assert.ok(!texto(it.fichas).includes('×'));
+});
+
+test('a + b − b: tocar el − antes que el + no cambia el valor y no es fallo', () => {
+  assert.deepEqual(validos(['9', '+', '8', '-', '8']), [1, 3]);
+  assert.equal(motivo(['9', '+', '8', '-', '8'], 3), null);
+  assert.deepEqual(validos(['9', '+', '8', '-', '3']), [1, 3]);
+  assert.deepEqual(validos(['10', '-', '4', '+', '3']), [1]);
 });
