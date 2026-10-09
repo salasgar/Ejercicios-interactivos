@@ -29,7 +29,7 @@ export const TX = {
       en: 'The exact time they coincide again.',
     },
     pregunta: (a, b, h, m) => ({
-      es: `Un tranvía sale cada ${a} minutos y un autobús cada ${b} minutos. Hoy han salido juntos a las ${horaTexto(h, m)}. ¿A qué hora vuelven a salir juntos por primera vez? Escribe la hora en formato de 24 horas (por ejemplo, 13:05).`,
+      es: `Un tranvía sale cada ${a} minutos y un autobús cada ${b} minutos. Hoy han salido juntos a las ${horaTexto(h, m)}. ¿A qué hora vuelven a salir juntos por primera vez? Marca la hora en formato de 24 horas (por ejemplo, 13:05).`,
       en: `A tram leaves every ${a} minutes and a bus every ${b} minutes. Today they left together at ${horaTexto(h, m)}. What time do they leave together again for the first time? Use the 24-hour clock (for example, 13:05).`,
     }),
     horas: { es: 'Horas', en: 'Hours' },
