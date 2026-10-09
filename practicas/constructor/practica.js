@@ -8,7 +8,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { TX, POSICION } from './textos.js';
 import {
   fmt, generarConstruir, esAciertoConstruir, generarDescomposicion, esAciertoASuma, esAciertoANumero,
-  errorPegado, esAciertoOpcion, generarComaPalabras, esAciertoComa, escribir, esAciertoPalabras, enPalabras,
+  errorPegado, esAciertoOpcion, generarComaPalabras, esAciertoComa, escribir, esAciertoPalabras, enPalabras, leerEntero,
 } from './logica.js';
 
 const num = (n, api) => fmt(n, api.idioma);
@@ -131,13 +131,17 @@ function montarANumero(contenedor, item, api) {
     <p class="instruccion">${tt(T.a_numero_instr)}</p>
     <div class="operacion">${partes}</div>
     <input type="text" inputmode="numeric" id="respuesta" class="constructor-entero" autocomplete="off" aria-label="${api.esc(tt(T.a_numero_instr))}">
+    <p class="constructor-aviso" id="aviso" role="status"></p>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
   const campo = contenedor.querySelector('#respuesta');
   const boton = contenedor.querySelector('#comprobar');
+  const aviso = contenedor.querySelector('#aviso');
   const comprobar = () => {
-    // Se quitan los separadores (5.032, 5 032, 5,032): solo cuentan las cifras
-    if (api.respondido() || campo.value.replace(/\D/g, '') === '') return;
-    const escrito = Number(campo.value.replace(/\D/g, ''));
+    // Lectura estricta: «1.200», «1,200», «1 200» y «1200» valen; «12.00» o «120,0» no son un natural.
+    if (api.respondido() || campo.value.trim() === '') return;
+    const escrito = leerEntero(campo.value);
+    if (escrito === null) { aviso.textContent = tt(TX.coma.malagrupado); campo.focus(); return; }
+    aviso.textContent = '';
     const acierto = esAciertoANumero(item, escrito);
     campo.disabled = true; boton.style.display = 'none';
     const pegado = errorPegado(item);
@@ -213,9 +217,9 @@ function montarComa(contenedor, item, api) {
       if (api.respondido()) return;
       botones.marcar([item.correcto], valor);
       const fb = (item.sub === 'miles' ? T.fb_miles : T.fb_decimal)[item.dir];
-      const destino = item.dir === 'en_es' ? 'es' : 'en';
       let html = tt(fb)(item.dado, item.correcto);
-      if (Number.isFinite(item.mal) && item.mal !== item.c) html += tt(T.trampa)(escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto'), escribir(item.mal, destino, item.estilo));
+      if (item.sub === 'decimal') html += tt(T.trampa_decimal)(escribir(item.c, 'es'), escribir(item.c, 'en'));
+      else if (item.mal !== null && item.mal !== item.correcto) html += tt(T.trampa)(escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto'), item.mal);
       api.responder({ acierto: esAciertoComa(item, valor), html, espera: 3600 });
     },
   });
@@ -242,7 +246,8 @@ function montarPalabras(contenedor, item, api) {
   });
   const comprobar = () => {
     if (api.respondido()) return;
-    if (campo.value.replace(/\D/g, '') === '') { aviso.textContent = tt(T.falta); return; }
+    if (campo.value.trim() === '') { aviso.textContent = tt(T.falta); return; }
+    if (leerEntero(campo.value) === null) { aviso.textContent = tt(T.malagrupado); campo.focus(); return; }
     const acierto = esAciertoPalabras(item, campo.value);
     campo.disabled = true; boton.style.display = 'none'; aviso.textContent = '';
     const m = Math.floor(item.n / 1000000), k = Math.floor(item.n / 1000) % 1000, u = item.n % 1000;
