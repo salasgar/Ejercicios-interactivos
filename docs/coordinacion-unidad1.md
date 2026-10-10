@@ -200,6 +200,25 @@ y no valor posicional). Vale para todas las unidades:
   pero no pasa nada si algún ejercicio lo tiene algo más complejo: en casa pueden traducirlo.
 - En la app, lo mismo que en los exámenes: el alumno contesta sin ayuda.
 
+## Nada que el alumno no haya dado, y el signo de multiplicar
+
+Dos decisiones de Juan Luis del 2026-09-21 (lecciones 30 y 31 del documento maestro del curso).
+Valen para hojas, exámenes, cuestionarios y app:
+
+- **Ningún ejercicio usa un contenido que el alumno no haya dado todavía.** El caso que lo
+  originó: ecuaciones con `x` en una hoja de la unidad 1. Hasta la unidad 6 (álgebra) **no hay
+  letras ni ecuaciones**: el número desconocido es un **hueco `□`**, con números pequeños, o se
+  pregunta con palabras. Lo mismo con fracciones, decimales, porcentajes, paréntesis o potencias
+  antes de su sesión.
+- **En la app, un generador de la unidad *n* solo usa contenidos de las unidades 1 a *n*.**
+- **Desde la unidad 2, el producto se escribe `·` y no `×`**; la unidad 1 se queda con `×`, que es
+  como se impartió. A 2026-10-10, `divisibilidad.js` y `enteros.js` no tienen ningún `×`; queda
+  uno en `decimales.js` (el texto en inglés de una pista).
+
+En el material en LaTeX lo vigila un script del curso (`comun/prerrequisitos.py`, que tiene que
+dar 0 alertas antes de entregar una pieza). En la app no hay comprobación automática: se revisa
+a mano al escribir cada generador.
+
 ## Cómo llega cada material a los alumnos
 
 Decisiones de Juan Luis del 2026-09-17:
