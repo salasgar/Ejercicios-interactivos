@@ -71,7 +71,33 @@ test('divisibilidad: ningún distractor es también una respuesta válida', () =
     const texto = preguntaDe(ej, 'es');
     let valido;
     let m;
-    if ((m = texto.match(/múltiplo de (\d+)/))) valido = v => v % Number(m[1]) === 0;
+    const clave = ej.texto.clave;
+    if (clave === 'factorizacion') {
+      // Válida solo la factorización en primos del número, sin bases repetidas.
+      const n = ej.texto.params.n;
+      for (const o of ej.opciones) {
+        const factores = o.tex.split(' \\cdot ').map(f => {
+          const g = f.match(/^(\d+)(?:\^\{(\d+)\})?$/);
+          assert.ok(g, `semilla ${s}: factor raro «${f}»`);
+          return { p: Number(g[1]), e: Number(g[2] ?? 1) };
+        });
+        const todosPrimos = factores.every(({ p }) => esPrimo(p));
+        const sinRepetir = new Set(factores.map(f => f.p)).size === factores.length;
+        const valor = factores.reduce((a, { p, e }) => a * p ** e, 1);
+        assert.equal(todosPrimos && sinRepetir && valor === n, o.correcta, `semilla ${s}: «${o.tex}» frente a ${n}`);
+      }
+      continue;
+    }
+    const mcdTest = (a, b) => (b ? mcdTest(b, a % b) : a);
+    if (clave === 'coincidencia') {
+      const { a, b } = ej.texto.params;
+      valido = v => v === (a * b) / mcdTest(a, b);
+    } else if (clave === 'reparto') {
+      const { a, b } = ej.texto.params;
+      valido = v => v === mcdTest(a, b);
+    } else if (clave === 'divisor_de_todos') valido = v => v === 1;
+    else if (clave === 'multiplo_de_todos') valido = v => v === 0;
+    else if ((m = texto.match(/múltiplo de (\d+)/))) valido = v => v % Number(m[1]) === 0;
     else if ((m = texto.match(/divisor de (\d+)/))) valido = v => Number(m[1]) % v === 0;
     else if ((m = texto.match(/divisible por (\d+)/))) valido = v => v % Number(m[1]) === 0;
     else if (/primo/.test(texto)) valido = esPrimo;
