@@ -10,7 +10,7 @@ import {
   diaDe, fechaDeDia,
   codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS, ALFABETO,
 } from '../divisores/logica.js';
-import { T, frase, razon, razonFalsa, fraseRazonada, textoOperacion } from '../divisores/textos.js';
+import { T, frase, razon, razonFalsa, fraseRazonada, textoOperacion, explicacion, cerrar } from '../divisores/textos.js';
 
 const TIRADAS = 3000;
 
@@ -188,7 +188,9 @@ test('bichos: las cuentas del feedback son verdad, en los dos idiomas', () => {
   assert.equal(razonFalsa('divisible', 1, 7, 'es'), '1 : 7 = 0, resto 1');
   assert.match(razonFalsa('divisor', 0, 8, 'es'), /0 no es divisor de ningún número/);
   assert.match(fraseRazonada({ x: 1, relacion: 'divisor', y: 7, verdadera: true }, 'es'), /^1 es divisor de 7: <span class="cuenta">7 : 1 = 7, resto 0<\/span>$/);
-  assert.match(fraseRazonada({ x: 16, relacion: 'divisor', y: 2, verdadera: false }, 'en'), /^16 is not a divisor of 2: <span class="cuenta">2 : 16 = 0, remainder 2<\/span>$/);
+  assert.equal(fraseRazonada({ x: 16, relacion: 'divisor', y: 2, verdadera: false }, 'en'),
+    '16 is not a divisor of 2; “a divisor of 2” means 2 is in the 16 times table, and it is not: the multiples of 16 are 0, 16, 32, 48… '
+    + 'It is the other way round: 2 is a divisor of 16 (<span class="cuenta">16 : 2 = 8, remainder 0</span>)');
   // Por fuerza bruta: la división que se enseña como no exacta no lo es, y los cocientes y restos son los de verdad.
   const rng = crearRng(3);
   for (let i = 0; i < TIRADAS; i++) {
@@ -272,3 +274,36 @@ test('los fallos se guardan en el código hasta 15', () => {
 // `practicas/profesor.js`, que usa `practicas/resultados.js` y se prueba en
 // `tests/practicas-comun.test.js` («panel: …», con la colección `divisores`
 // incluida).
+
+// Mensajes de fallo con las definiciones de clase (Juan Luis, 2026-10-14): múltiplo = está en la
+// tabla; divisor y divisible = división exacta; y, si la relación va al revés, se dice.
+test('explicación del fallo: la tabla, la división exacta y «al revés»', () => {
+  const sin = s => s.replace(/<[^>]+>/g, '');
+  assert.equal(sin(explicacion('multiplo', 5, 20, 'es')),
+    '«múltiplo de 20» quiere decir que está en la tabla del 20, y el 5 no está: los múltiplos de 20 son 0, 20, 40, 60… '
+    + 'Es al revés: 20 es múltiplo de 5 (20 = 5 · 4)');
+  assert.equal(sin(explicacion('multiplo', 5, 20, 'es', { conAlReves: false })),
+    '«múltiplo de 20» quiere decir que está en la tabla del 20, y el 5 no está: los múltiplos de 20 son 0, 20, 40, 60…');
+  assert.match(sin(explicacion('multiplo', 61, 5, 'es')), /0, 5, 10, 15… \(el 61 queda entre 60 y 65\)$/);
+  assert.equal(sin(explicacion('divisor', 7, 30, 'es')),
+    '«divisor de 30» quiere decir que puedes dividir 30 entre 7 y la división es exacta; aquí no lo es: 30 : 7 = 4, resto 2');
+  assert.match(sin(explicacion('divisor', 60, 5, 'es')), /el 5 está en la tabla del 60, y no está.*Es al revés: 5 es divisor de 60 \(60 : 5 = 12, resto 0\)$/);
+  assert.match(sin(explicacion('divisible', 5, 20, 'en')), /is the same as “a multiple of 20”.*other way round: 20 is divisible by 5 \(20 : 5 = 4, remainder 0\)$/);
+  assert.match(sin(explicacion('divisible', 61, 5, 'es')), /la división es exacta; aquí no lo es: 61 : 5 = 12, resto 1$/);
+  assert.equal(fraseRazonada({ x: 0, relacion: 'divisor', y: 8, verdadera: false }, 'es'), T.es.bichos.cero_divisor);
+  assert.equal(cerrar('0, 20, 40…'), '0, 20, 40…');
+  assert.equal(cerrar('30 : 7 = 4, resto 2'), '30 : 7 = 4, resto 2.');
+  // Ningún separador «·» entre frases (parecería una multiplicación): solo en los productos «a · b».
+  const rng = crearRng(11);
+  for (let i = 0; i < TIRADAS; i++) {
+    const f = fraseAzar(rng, false);
+    if ((f.relacion !== 'divisor' && f.y === 0) || esVerdad(f)) continue;
+    for (const idioma of ['es', 'en']) {
+      const t = sin(fraseRazonada({ ...f, verdadera: false }, idioma));
+      assert.doesNotMatch(t, /undefined|NaN/, t);
+      assert.doesNotMatch(t, /·(?! ?\d)|(?<!\d )·/, t);
+      const m = t.match(/(?:al revés|other way round): (\d+) /);
+      if (m) assert.ok(Number(m[1]) === f.y, t);
+    }
+  }
+});

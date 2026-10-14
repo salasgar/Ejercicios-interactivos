@@ -11,9 +11,9 @@ import { arrancar } from '../practicas/_comun/base.js';
 import { elecciones } from '../practicas/_comun/piezas.js';
 import { unir } from '../practicas/_comun/textos.js';
 import {
-  RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, solucionArrastrar, claveDe,
+  RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, solucionArrastrar, claveDe, cumple,
 } from './logica.js';
-import { T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada } from './textos.js';
+import { T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada, explicacion, cerrar } from './textos.js';
 
 // No se repite el mismo ítem dos veces seguidas; `numeros` (el ejercicio 4)
 // se excluye a propósito, porque el barajado cambia aunque la operación no.
@@ -78,7 +78,7 @@ function montarEleccion(contenedor, item, api) {
       }
       api.responder({
         acierto: false,
-        html: `${fraseNegada(valor, item.x, item.y, idioma)}.<br>
+        html: `${cerrar(`${fraseNegada(valor, item.x, item.y, idioma)}; ${explicacion(valor, item.x, item.y, idioma, { conAlReves: false })}`)}<br>
           ${t.fijate} <span class="cuenta">${razon(item.correctas[0], item.x, item.y, idioma)}</span>.
           ${t.por_eso} ${unir(item.correctas.map(r => frase(r, item.x, item.y, idioma)), idioma)}.`,
       });
@@ -178,10 +178,11 @@ function montarArrastrar(contenedor, item, api) {
       return;
     }
     const [sx, sy] = solucionArrastrar(item);
+    const alReves = cumple(item.relacion, y, x);
     api.responder({
       acierto: false,
-      html: `${fraseNegada(item.relacion, x, y, idioma)}.<br>
-        ${t.por_ejemplo} ${frase(item.relacion, sx, sy, idioma)}, <span class="cuenta">${razon(item.relacion, sx, sy, idioma)}</span>.`,
+      html: `${cerrar(`${fraseNegada(item.relacion, x, y, idioma)}; ${explicacion(item.relacion, x, y, idioma)}`)}${alReves ? '' : `<br>
+        ${t.por_ejemplo} ${frase(item.relacion, sx, sy, idioma)}, <span class="cuenta">${razon(item.relacion, sx, sy, idioma)}</span>.`}`,
     });
   });
   pintarFichas();
@@ -229,13 +230,13 @@ function montarBichos(contenedor, item, api) {
       boton.classList.add('bicho--amor');
     }
     if (acierto) {
-      api.responder({ acierto: true, html: `${esMentira ? tx.bichos.aplastado : tx.bichos.acertado} ${fraseRazonada(buena, idioma)}.`, espera: 2200 });
+      api.responder({ acierto: true, html: `${esMentira ? tx.bichos.aplastado : tx.bichos.acertado} ${cerrar(fraseRazonada(buena, idioma))}`, espera: esMentira ? 3200 : 2200 });
       return;
     }
     api.responder({
       acierto: false,
-      html: `${pulsada.verdadera ? tx.bichos.este_verdad : tx.bichos.este_mentia} ${fraseRazonada(pulsada, idioma)}.<br>
-        ${tx.bichos.habia_que[item.modo]} ${esMentira ? tx.bichos.el_que_mentia : tx.bichos.el_sincero} ${fraseRazonada(buena, idioma)}.`,
+      html: `${pulsada.verdadera ? tx.bichos.este_verdad : tx.bichos.este_mentia} ${cerrar(fraseRazonada(pulsada, idioma))}<br>
+        ${tx.bichos.habia_que[item.modo]} ${esMentira ? tx.bichos.el_que_mentia : tx.bichos.el_sincero} ${cerrar(fraseRazonada(buena, idioma))}`,
     });
   }));
 }
