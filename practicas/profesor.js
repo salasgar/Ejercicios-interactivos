@@ -3,12 +3,13 @@
 // fuentes: los códigos de resultado que envían los alumnos y Firestore.
 // La lista de nombres vive solo en este navegador.
 
-import { CATALOGO, ID_PLANTILLA, practicaPorId } from './_comun/catalogo.js';
+import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun/catalogo.js';
 import { codigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
 import { fechaDeDia } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
 import { TAREAS, tareaPorId } from './_comun/tareas.js';
-import { juntarResultados, juntarResumen, juntarTareas, leerDocumentos } from './resultados.js';
+import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, leerDocumentos } from './resultados.js';
+import { declaracionDe } from './_comun/base.js';
 
 const $ = id => document.getElementById(id);
 // La lista es la misma que la del panel antiguo de `divisores/`: mismos alumnos, mismos códigos.
@@ -16,6 +17,8 @@ const CLAVE_LISTA = 'divisores.profesor.lista';
 const URL_PORTADA = new URL('./', location.href).href;
 const RESUMEN = 'resumen';
 const TAREAS_SEMANA = 'tareas';
+const FALLOS = 'fallos';            // «Qué falla más», todas las prácticas
+const FALLOS_TAREA = 'fallos-t';    // «Qué falla más» de una tarea: 'fallos-t<id>'
 
 let nube = [];   // datos de Firestore ya leídos: [{ practica, indice, ej, actualizado }]
 
@@ -114,6 +117,8 @@ function pintarSelector(practicas) {
   const elegida = $('vista').value || RESUMEN;
   $('vista').innerHTML = `<option value="${RESUMEN}">Resumen de todas las prácticas</option>`
     + `<option value="${TAREAS_SEMANA}">Tareas de la semana</option>`
+    + `<option value="${FALLOS}">Qué falla más · todas las prácticas</option>`
+    + TAREAS.map(t => `<option value="${FALLOS_TAREA}${t.id}">Qué falla más · tarea ${t.id}</option>`).join('')
     + practicas.map(p => `<option value="${p.id}">${esc(p.nombre.es)}</option>`).join('');
   $('vista').value = [...$('vista').options].some(o => o.value === elegida) ? elegida : RESUMEN;
 }
@@ -187,8 +192,8 @@ function csvResumen(practicas, validos) {
 // --- Tareas de la semana -------------------------------------------------------
 
 function celdaTarea(c) {
-  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida</td>`;
-  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir}</td>`;
+  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida · <strong>${c.puntos}</strong> pt</td>`;
+  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir} · <strong>${c.puntos}</strong> pt</td>`;
   return '<td class="num celda--no">sin empezar</td>';
 }
 
@@ -205,15 +210,80 @@ function htmlTareas(validos, deTareas) {
           <td class="num">${f.tareas.filter(c => c.cumplida).length}/${TAREAS.length}</td>
         </tr>`).join('')}</tbody>
     </table>
-    <p class="pequeno">«★ x de 6 · y de 4»: obligatorios terminados y, de los de elegir, cuántos ha terminado. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> lo que se sabe de su práctica (sus códigos o la nube), así que se ve el avance de quien todavía no ha mandado el código de la tarea. El CSV trae también los fallos y el día.</p>`;
+    <p class="pequeno">«★ x de 6 · y de 4 · N pt»: obligatorios terminados, de los de elegir cuántos ha terminado, y los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube); de los de elegir cuentan los mejores. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> lo que se sabe de su práctica (sus códigos o la nube), así que se ve el avance de quien todavía no ha mandado el código de la tarea. El CSV trae también los fallos y el día.</p>`;
 }
 
 function csvTareas(validos, deTareas) {
   const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS);
-  const cab = ['N.º', 'Alumno', 'Código', ...TAREAS.flatMap(t => [`T${t.id} estado`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`])];
+  const cab = ['N.º', 'Alumno', 'Código', ...TAREAS.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`])];
   return [cab, ...filas.map(f => [
     f.indice + 1, f.nombre, codigoAlumno(f.indice),
-    ...f.tareas.flatMap(c => [c.cumplida ? 'cumplida' : c.empezada ? 'a medias' : 'sin empezar', c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, c.dia ? fechaDeDia(c.dia) : '', c.fuente]),
+    ...f.tareas.flatMap(c => [c.cumplida ? 'cumplida' : c.empezada ? 'a medias' : 'sin empezar', c.puntos, c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, c.dia ? fechaDeDia(c.dia) : '', c.fuente]),
+  ])];
+}
+
+// --- Qué falla más -------------------------------------------------------------
+
+// Los nombres de los ejercicios están en el practica.js de cada práctica: se
+// cargan aparte la primera vez (declaracionDe) y se repinta al llegar.
+const nombresEjercicio = new Map();   // 'slug/n' → nombre en español
+const nombresPedidos = new Set();
+
+function pedirNombres(practicas) {
+  const faltan = practicas.filter(p => !nombresPedidos.has(p.slug));
+  if (!faltan.length) return;
+  faltan.forEach(p => nombresPedidos.add(p.slug));
+  Promise.all(faltan.map(async p => {
+    const declaracion = await declaracionDe(p);
+    declaracion?.ejercicios?.forEach((e, i) => nombresEjercicio.set(`${p.slug}/${i + 1}`, e.nombre.es));
+  })).then(() => { if ($('vista').value.startsWith(FALLOS)) pintarResultados(); });
+}
+
+/** Las filas de la vista: de todas las prácticas que salen en el panel, o de una tarea (con ★ o «elegir»). */
+function ejerciciosDeVista(vista, practicas) {
+  if (vista === FALLOS) return practicas.flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ practica: p, n: i + 1, marca: '' })));
+  const tarea = tareaPorId(Number(vista.slice(FALLOS_TAREA.length)));
+  if (!tarea) return [];
+  return [...tarea.estrella.map(par => [par, '★']), ...tarea.elegir.map(par => [par, 'elegir'])]
+    .map(([[slug, n], marca]) => ({ practica: practicaPorSlug(slug), n, marca }));
+}
+
+function filasFallos(vista, practicas, validos) {
+  const ejercicios = ejerciciosDeVista(vista, practicas);
+  pedirNombres([...new Set(ejercicios.map(e => e.practica))]);
+  const marcas = new Map(ejercicios.map(e => [`${e.practica.id}/${e.n}`, e.marca]));
+  return juntarFallos(nombres(), validos, nube, ejercicios).map(f => {
+    const practica = practicaPorId(f.practica);
+    return { ...f, practica, nombre: nombresEjercicio.get(`${practica.slug}/${f.n}`) ?? '', marca: marcas.get(`${f.practica}/${f.n}`) };
+  });
+}
+
+const decimal = x => x.toLocaleString('es', { maximumFractionDigits: 1 });
+
+function htmlFallos(vista, practicas, validos) {
+  const filas = filasFallos(vista, practicas, validos);
+  const conDatos = filas.filter(f => f.empezados);
+  if (!conDatos.length) return '<p class="vacio">Todavía no hay nada: pega códigos o carga la nube.</p>';
+  const deTarea = vista !== FALLOS;
+  return `
+    <table>
+      <thead><tr><th>Práctica</th><th class="num">Ej.</th><th>Ejercicio</th>${deTarea ? '<th></th>' : ''}<th class="num">Lo han empezado</th><th class="num">Lo han terminado</th><th class="num">Fallos</th><th class="num">Fallos por alumno</th><th class="num">Veces sin vidas (↺)</th></tr></thead>
+      <tbody>${filas.map(f => `
+        <tr>
+          <td>${esc(f.practica.nombre.es)}</td><td class="num">${f.n}</td><td>${esc(f.nombre)}</td>${deTarea ? `<td>${f.marca}</td>` : ''}
+          <td class="num">${f.empezados || '—'}</td><td class="num">${f.empezados ? f.terminados : '—'}</td>
+          <td class="num">${f.empezados ? `${f.fallos}${f.tope ? '+' : ''}` : '—'}</td>
+          <td class="num"><strong>${f.empezados ? decimal(f.fallosPorAlumno) : '—'}</strong></td>
+          <td class="num">${f.empezados ? f.reinicios : '—'}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <p class="pequeno">Una fila por ejercicio, de más a menos <strong>fallos por alumno que lo ha empezado</strong>. De cada alumno se toma lo mismo que en la tabla de su práctica (sus códigos o la nube, lo que tenga más terminado). Si hay nombres en la lista, solo cuentan los alumnos de la lista (así no cuenta un código de prueba). Con los códigos de resultado los fallos se cuentan hasta 15 («+») y no se saben las veces sin vidas: carga la nube para verlo todo.</p>`;
+}
+
+function csvFallos(vista, practicas, validos) {
+  const cab = ['Práctica', 'Ej.', 'Ejercicio', 'En la tarea', 'Lo han empezado', 'Lo han terminado', 'Fallos', 'Fallos por alumno', 'Veces sin vidas'];
+  return [cab, ...filasFallos(vista, practicas, validos).map(f => [
+    f.practica.nombre.es, f.n, f.nombre, f.marca, f.empezados, f.terminados, `${f.fallos}${f.tope ? '+' : ''}`, decimal(f.fallosPorAlumno), f.reinicios,
   ])];
 }
 
@@ -226,7 +296,8 @@ function pintarResultados() {
   const vista = $('vista').value;
   $('tabla-resultados').innerHTML = vista === RESUMEN ? htmlResumen(practicas, validos)
     : vista === TAREAS_SEMANA ? htmlTareas(validos, deTareas)
-      : htmlPractica(practicaPorId(Number(vista)), validos);
+      : vista.startsWith(FALLOS) ? htmlFallos(vista, practicas, validos)
+        : htmlPractica(practicaPorId(Number(vista)), validos);
 }
 
 function descargarResultados() {
@@ -234,6 +305,7 @@ function descargarResultados() {
   const vista = $('vista').value;
   if (vista === RESUMEN) return descargar('resultados-practicas-resumen.csv', csvResumen(practicasVisibles(validos), validos));
   if (vista === TAREAS_SEMANA) return descargar('resultados-tareas-de-la-semana.csv', csvTareas(validos, deTareas));
+  if (vista.startsWith(FALLOS)) return descargar(`que-falla-mas${vista === FALLOS ? '' : `-tarea-${vista.slice(FALLOS_TAREA.length)}`}.csv`, csvFallos(vista, practicasVisibles(validos), validos));
   const practica = practicaPorId(Number(vista));
   descargar(`resultados-${practica.slug}.csv`, csvPractica(practica, validos));
 }

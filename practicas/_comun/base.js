@@ -5,14 +5,16 @@
 // Cada práctica llama a `arrancar(practica)` con sus ejercicios. El contrato
 // está explicado, con un ejemplo que funciona, en `../plantilla/practica.js`.
 //
-// El progreso se guarda en el navegador (por código de alumno) y, si las
-// reglas de Firestore lo permiten, también en la nube. Si la nube falla no
-// pasa nada: el código de resultado lleva lo necesario para calificar.
+// El progreso se guarda en el navegador (por código de alumno) y en la nube
+// (Firestore, `practicas/{slug}--{código}`). Al entrar con el código se lee la
+// nube y se fusiona con lo del navegador antes de subir nada (`nube.js`): así
+// se sigue desde cualquier aparato. Si la nube falla no pasa nada: se sigue con
+// lo del navegador, y el código de resultado lleva lo necesario para calificar.
 
-import { firebaseConfig } from '../../src/config.js';
 import { practicaPorSlug } from './catalogo.js';
 import { codigoAlumno, leerCodigoAlumno, codigoResultado } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
+import { leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico } from './nube.js';
 import { crearRng } from './rng.js';
 import { T, TRADUCCION, esc } from './textos.js';
 
@@ -135,6 +137,37 @@ export function progresoGuardado(slug, codigo) {
     .reduce((mejor, e) => (!mejor || (e.terminado && !mejor.terminado) || (!mejor.terminado && (e.fallos ?? 0) > (mejor.fallos ?? 0)) ? e : mejor), null));
 }
 
+// --- Progreso en la nube (ver nube.js) -------------------------------------------------
+
+/**
+ * Si en este navegador no hay nada dicho sobre el idioma del alumno y la nube
+ * dice que lo tiene fijado ('es' o 'en'), se adopta: el alumno de dislexia con
+ * su enlace `&idioma=es` sigue igual en otro aparato. `?idioma=alterno` deja
+ * guardado 'alterno', que no se pisa.
+ */
+export function adoptarIdioma(codigo, idiomaNube) {
+  if ((idiomaNube === 'es' || idiomaNube === 'en') && leer(claveIdiomaFijo(codigo)) === null) escribir(claveIdiomaFijo(codigo), idiomaNube);
+}
+
+/**
+ * Pone de acuerdo el navegador y la nube para un alumno en una práctica, sin
+ * conocer sus ejercicios (lo usa la página de la semana): lee el documento,
+ * fusiona con lo guardado aquí, guarda la fusión en el navegador y la sube si
+ * la nube no la tenía. Sin red o sin permiso, no toca nada. Devuelve el
+ * resultado de `leerNube` (su `estado`).
+ */
+export async function sincronizarGuardado(slug, codigo, opciones = {}) {
+  const lectura = await leerNube(slug, codigo, opciones);
+  if (lectura.estado !== 'ok' && lectura.estado !== 'vacio') return lectura;
+  if (lectura.estado === 'ok') adoptarIdioma(codigo, lectura.idioma);
+  const local = progresoGuardado(slug, codigo);
+  const fusion = fusionarProgreso(local, lectura.ej);
+  if (!fusion.some(Boolean)) return lectura;
+  if (canonico(fusion) !== canonico(local)) escribir(claveProgreso(slug, codigo), JSON.stringify({ ej: fusion }));
+  if (canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, leer(claveIdiomaFijo(codigo)) ?? 'alterno', opciones);
+  return lectura;
+}
+
 // --- Leer lo que declara una práctica sin arrancarla ---------------------------------
 
 // La página de la semana necesita el nombre de cada ejercicio, que solo está en
@@ -233,36 +266,68 @@ export function arrancar(practica) {
   /** Lee `?idioma=` y lo guardado para el alumno; persiste un cambio explícito. */
   function aplicarIdiomaFijo() {
     const param = new URLSearchParams(location.search).get('idioma');
-    if (estado.codigo && (param === 'es' || param === 'en')) escribir(claveIdiomaFijo(estado.codigo), param);
-    else if (estado.codigo && param === 'alterno') borrar(claveIdiomaFijo(estado.codigo));
+    // 'alterno' se guarda (no se borra) para que la nube no vuelva a fijarlo (adoptarIdioma).
+    if (estado.codigo && (param === 'es' || param === 'en' || param === 'alterno')) escribir(claveIdiomaFijo(estado.codigo), param);
     const guardado = estado.codigo ? leer(claveIdiomaFijo(estado.codigo)) : null;
     estado.idiomaFijo = modoIdioma(location.search, guardado);
   }
 
-  function cargarProgreso() {
-    estado.ej = nuevos();
+  /** El progreso guardado en este navegador, fusionado con el de la nube si se pasa (`remoto`). */
+  function cargarProgreso(remoto = null) {
+    let local = [];
     try {
       const guardado = JSON.parse(leer(claveProgreso(ficha.slug, estado.codigo)));
-      if (Array.isArray(guardado?.ej)) {
-        estado.ej = estado.ej.map((nuevo, n) => migrarProgreso({ ...nuevo, ...guardado.ej[n] }, params[n]));
-      }
+      if (Array.isArray(guardado?.ej)) local = guardado.ej;
     } catch { /* guardado ilegible: se empieza de cero */ }
+    const fusion = remoto ? fusionarProgreso(local, remoto) : local;
+    estado.ej = nuevos().map((nuevo, n) => migrarProgreso({ ...nuevo, ...fusion[n] }, params[n]));
   }
 
   function guardar() {
     if (estado.codigo) escribir(claveProgreso(ficha.slug, estado.codigo), JSON.stringify({ ej: estado.ej }));
   }
 
-  /** Copia del progreso en Firestore (documento `practicas/{slug}--{código}`), por REST. */
+  // La nube. Nada se sube antes de haber intentado leerla al entrar (`nubeLeida`):
+  // es lo que hacía que un aparato machacara lo que había subido otro. Las
+  // subidas van en cola, una detrás de otra, y cada una vuelve a leer y fusiona.
+  let nubeLeida = false;
+  let ultimoRemoto = null;   // lo último que se supo de la nube (para subir sin poder leer)
+  let colaSubidas = Promise.resolve();
+  let ultimaLectura = 0;
+
+  /** Copia del progreso en Firestore (documento `practicas/{slug}--{código}`), fusionada con lo que ya haya. */
   function subir() {
     sinSubir = 0;
-    if (!estado.codigo || !firebaseConfig?.apiKey) return;
-    const url = `https://firestore.googleapis.com/v1/projects/${firebaseConfig.projectId}/databases/(default)/documents/practicas/${documentoNube(ficha.slug, estado.codigo)}?key=${firebaseConfig.apiKey}`;
-    const fields = {
-      estado: { stringValue: JSON.stringify({ v: 1, idioma: estado.idiomaFijo ?? 'alterno', ej: estado.ej }) },
-      actualizado: { integerValue: String(Date.now()) },
-    };
-    fetch(url, { method: 'PATCH', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ fields }) }).catch(() => {});
+    if (!estado.codigo || !nubeLeida) return;
+    const [slug, codigo, ej, idioma] = [ficha.slug, estado.codigo, estado.ej.map(e => ({ ...e })), estado.idiomaFijo ?? 'alterno'];
+    colaSubidas = colaSubidas
+      .then(() => subirFusionado(slug, codigo, ej, idioma, { ultimo: ultimoRemoto }))
+      .then(({ ej: enNube }) => { if (codigo === estado.codigo) ultimoRemoto = enNube; }, () => {});
+  }
+
+  /**
+   * Lee la nube y la fusiona con lo del navegador (al entrar, y al volver a la
+   * pestaña en el menú). Sube la fusión si la nube no la tenía. Sin red, sin
+   * documento o sin permiso, se sigue con lo del navegador.
+   */
+  async function leerYFusionar() {
+    const codigo = estado.codigo;
+    const lectura = await leerNube(ficha.slug, codigo);
+    ultimaLectura = Date.now();
+    if (codigo !== estado.codigo) return;   // ha cambiado de código mientras tanto
+    nubeLeida = true;
+    if (lectura.estado === 'ok') {
+      ultimoRemoto = lectura.ej;
+      adoptarIdioma(codigo, lectura.idioma);
+      aplicarIdiomaFijo();
+      cargarProgreso(lectura.ej);
+      guardar();
+    } else {
+      cargarProgreso();
+    }
+    // Se sube si la nube no tiene lo de este navegador (o si aún no hay documento).
+    const empezado = estado.ej.some(e => e.terminado || e.aciertos + e.fallos > 0);
+    if (lectura.estado === 'ok' ? canonico(estado.ej) !== canonico(lectura.ej) : lectura.estado === 'vacio' && empezado) subir();
   }
 
   // --- Cabecera: título y, durante un ítem, su idioma ----------------------------
@@ -296,7 +361,7 @@ export function arrancar(practica) {
       <section class="entrada">
         <form class="tarjeta" id="form-codigo">
           <h2>${t().entrada_titulo}</h2>
-          <p class="pequeno">${t().entrada_ayuda}</p>
+          <p class="pequeno">${t().entrada_ayuda} ${t().entrada_aparatos}</p>
           <input id="codigo" type="text" class="codigo-entrada" maxlength="8" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${t().entrada_titulo}" required>
           ${error ? `<div class="aviso aviso--error">${t().entrada_error}</div>` : ''}
           <button type="submit" class="ancho">${t().entrada_boton}</button>
@@ -319,14 +384,35 @@ export function arrancar(practica) {
     });
   }
 
-  function entrar(indice) {
+  /**
+   * Entra con un código: lo del navegador al momento y, antes de enseñar nada,
+   * lo de la nube fusionado (como mucho ESPERA_LECTURA; sin red, se sigue).
+   */
+  async function entrar(indice) {
     estado.indice = indice;
     estado.codigo = codigoAlumno(indice);
     escribir('practicas.codigo', estado.codigo);
     aplicarIdiomaFijo();
     cargarProgreso();
-    pintarInicio();
+    nubeLeida = false;
+    ultimoRemoto = null;
+    turno++;
+    actual = null;
+    pintarCabecera();
+    app.innerHTML = `<p class="vacio">${t().cargando_progreso}</p>`;
+    const miTurno = turno;
+    await leerYFusionar();
+    if (miTurno === turno) pintarInicio();
   }
+
+  // Al volver a esta pestaña en el menú (quizá después de practicar en otro
+  // aparato), se vuelve a leer la nube; como mucho una vez cada 30 s.
+  addEventListener('visibilitychange', async () => {
+    if (document.visibilityState !== 'visible' || !estado.codigo || !nubeLeida || actual !== null || Date.now() - ultimaLectura < 30000) return;
+    const miTurno = turno;
+    await leerYFusionar();
+    if (miTurno === turno && actual === null && estado.codigo) pintarMenu();
+  });
 
   // --- Menú -----------------------------------------------------------------------
 
@@ -405,6 +491,8 @@ export function arrancar(practica) {
       borrar('practicas.codigo');
       estado.codigo = null;
       estado.indice = null;
+      nubeLeida = false;
+      ultimoRemoto = null;
       pintarEntrada();
     });
     activarCopiar();

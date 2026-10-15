@@ -3,9 +3,11 @@
 // marcador y un único código de resultado de la tarea.
 //
 // La página no guarda nada suyo: el progreso lo lee de donde lo guarda la
-// base, en este navegador (la nube solo la puede leer el profesor). Así no
-// puede contradecir a las prácticas, y un ejercicio terminado antes de que
-// existiera la tarea cuenta igual.
+// base, en este navegador. Así no puede contradecir a las prácticas, y un
+// ejercicio terminado antes de que existiera la tarea cuenta igual. Al entrar
+// con el código, antes de pintar, pone de acuerdo el navegador y la nube en
+// todas las prácticas de la tarea (`sincronizarGuardado`, en paralelo): así se
+// ve lo hecho en otro aparato.
 //
 // El enlace que se pega en Classroom es `semana.html?t=<id>`: cada alumno
 // escribe su código la primera vez (o ya lo tiene recordado de otra práctica).
@@ -13,7 +15,7 @@
 
 import { practicaPorSlug } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno, codigoTarea } from './_comun/codigos.js';
-import { leer, escribir, borrar, claveIdiomaFijo, modoIdioma, progresoGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
+import { leer, escribir, borrar, claveIdiomaFijo, modoIdioma, progresoGuardado, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
 
@@ -29,16 +31,32 @@ const nombres = new Map();       // 'slug/n' → { es, en }: el nombre de cada e
 /** Como en la base: `?idioma=es|en` lo fija para el alumno, `?idioma=alterno` lo quita. */
 function aplicarIdioma() {
   const param = params.get('idioma');
-  if (codigo && (param === 'es' || param === 'en')) escribir(claveIdiomaFijo(codigo), param);
-  else if (codigo && param === 'alterno') borrar(claveIdiomaFijo(codigo));
+  // 'alterno' se guarda (no se borra) para que la nube no vuelva a fijarlo (base.js, adoptarIdioma).
+  if (codigo && (param === 'es' || param === 'en' || param === 'alterno')) escribir(claveIdiomaFijo(codigo), param);
   idioma = modoIdioma(location.search, codigo ? leer(claveIdiomaFijo(codigo)) : null) ?? 'es';
 }
 
-function entrar(i) {
+let ultimaLectura = 0;
+
+/** Navegador y nube de acuerdo en todas las prácticas de la tarea (cada una, como mucho 4 s). */
+async function sincronizar() {
+  const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
+  const suyo = codigo;
+  await Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo)));
+  ultimaLectura = Date.now();
+  return suyo === codigo;
+}
+
+async function entrar(i) {
   indice = i;
   codigo = codigoAlumno(i);
   escribir('practicas.codigo', codigo);
   aplicarIdioma();
+  if (!tarea) return pintar();
+  cabecera(tarea.titulo[idioma]);
+  app.innerHTML = `<p class="vacio">${T[idioma].cargando_progreso}</p>`;
+  if (!(await sincronizar())) return;
+  aplicarIdioma();   // la nube puede haber traído el idioma fijado en otro aparato
   pintar();
 }
 
@@ -73,7 +91,7 @@ function pintarEntrada(error = false) {
       <h2>${esc(tarea.titulo[idioma])}</h2>
       <form class="tarjeta" id="form-codigo">
         <h2>${t.entrada_titulo}</h2>
-        <p class="pequeno">${t.entrada_ayuda}</p>
+        <p class="pequeno">${t.entrada_ayuda} ${t.entrada_aparatos}</p>
         <input id="codigo" type="text" class="codigo-entrada" maxlength="8" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${t.entrada_titulo}" required>
         ${error ? `<div class="aviso aviso--error">${t.entrada_error}</div>` : ''}
         <button type="submit" class="ancho">${t.entrada_boton}</button>
@@ -214,5 +232,10 @@ if (inicial === null) {
 if (tarea) cargarNombres();
 // Al volver atrás desde una práctica (si el navegador guarda la página), se actualiza el progreso.
 addEventListener('pageshow', ev => { if (ev.persisted && codigo) pintar(); });
-// Y al volver a la pestaña después de practicar en otra (sin borrar lo que se esté tecleando en la entrada).
-addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && codigo) pintar(); });
+// Y al volver a la pestaña después de practicar en otra (sin borrar lo que se esté tecleando en la entrada);
+// si hace más de 30 s de la última lectura, también se mira la nube (quizá se ha practicado en otro aparato).
+addEventListener('visibilitychange', async () => {
+  if (document.visibilityState !== 'visible' || !codigo) return;
+  pintar();
+  if (tarea && Date.now() - ultimaLectura > 30000 && await sincronizar()) pintar();
+});
