@@ -29,6 +29,13 @@ body {
   line-height: 1.45;
 }
 
+/* Autoría, igual que en ../css/estilos.css (ver allí por qué los escapes de seis cifras). */
+body::after {
+  content: "\0000A9  2026 Juan Luis Salas Garc\0000EDa. Todos los derechos reservados.";
+  display: block; padding: 1rem 1rem 1.2rem; text-align: center;
+  font-size: .72rem; color: var(--texto-suave); opacity: .75;
+}
+
 .cabecera {
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem;
   padding: .55rem 1.2rem; background: var(--acento); color: #fff;
