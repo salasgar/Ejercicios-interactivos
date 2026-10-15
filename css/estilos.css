@@ -32,6 +32,18 @@ body {
   min-height: 100vh;
 }
 
+/* Autoría: una línea discreta al final de todas las páginas que cargan esta
+   hoja (la app, la portada y las prácticas, la tarea de la semana y el panel).
+   Va con escapes (© = \0000A9, í = \0000ED) para no depender de cómo se sirva
+   el fichero; con las seis cifras, porque la «a» de «García» también es una
+   cifra hexadecimal y se la comería el escape. Texto completo y condiciones en
+   COPYRIGHT, en la raíz del repositorio. */
+body::after {
+  content: "\0000A9  2026 Juan Luis Salas Garc\0000EDa. Todos los derechos reservados.";
+  display: block; padding: 0 1rem 1.2rem; text-align: center;
+  font-size: .72rem; color: var(--texto-suave); opacity: .75;
+}
+
 .cabecera {
   display: flex;
   align-items: center;
