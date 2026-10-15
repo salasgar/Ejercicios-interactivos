@@ -62,9 +62,13 @@ service cloud.firestore {
     }
 
     // Prácticas de la unidad 2 (practicas/): igual que la anterior, con un
-    // documento por alumno y práctica, de id «<práctica>--<código>».
+    // documento por alumno y práctica, de id «<práctica>--<código>». Quien
+    // sabe el código puede leer ESE documento (get, para seguir desde otro
+    // aparato; solo hay números, sin nombres); listar la colección, solo el
+    // profesor.
     match /practicas/{doc} {
       allow read: if esProfesor();
+      allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$');
       allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$')
         && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
         && request.resource.data.estado is string
