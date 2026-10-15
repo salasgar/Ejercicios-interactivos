@@ -15,7 +15,11 @@
      .rejilla > .rejilla__celda       tabla de celdas tocables (criba, recta)
      .hueco  .ficha  .banco  .sitio   huecos y fichas que se arrastran
      .comprobar                       el botón «Comprobar» de un ítem que se construye
-     .cuenta                          una cuenta dentro del feedback (no se parte) */
+                                      (con el atributo `hidden` se esconde)
+     .campo-numero                    campo para escribir un número (piezas.js, campoNumero)
+     .cuenta                          una cuenta dentro del feedback: no se parte si cabe
+                                      en una línea (pasa entera a la siguiente); si no cabe
+                                      en ninguna, se parte antes que ensanchar la página */
 
 .cabecera__titulo { white-space: normal; }
 .idiomas { gap: .3rem; flex-shrink: 0; }
@@ -165,13 +169,25 @@ sup { font-size: .7em; line-height: 0; }
 .hueco--mal .ficha { background: var(--error); box-shadow: none; }
 
 .comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+/* Campo numérico (piezas.js, campoNumero): `style="--cifras: 6"` da el ancho. */
+input.campo-numero {
+  width: calc(var(--cifras, 6) * .8em + 1.6em); max-width: 100%; margin: 0 auto .9rem; display: block;
+  text-align: center; font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro); }
 
 /* Corrección (css/estilos.css pone el <strong> en bloque: aquí va en línea) */
 .ejercicio .feedback { text-align: left; border-radius: 10px; padding: .8rem 1rem; margin: 1rem 0 .8rem; font-size: 1.05rem; overflow-wrap: anywhere; }
 .ejercicio .feedback strong { display: inline; margin: 0; }
 .feedback--bien { background: var(--correcto-claro); color: #14532d; }
 .feedback--mal { background: var(--error-claro); color: #7f1d1d; }
-.cuenta { font-weight: 700; white-space: nowrap; }
+/* Un bloque en línea: si cabe en el renglón, entera; si no, pasa entera al
+   siguiente; y solo si no cabe en ninguno se parte (antes «nowrap», que
+   ensanchaba la página en 375 px cuando una práctica metía una frase entera). */
+.cuenta { font-weight: 700; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
 .penalizacion { margin: .5rem 0 0; font-weight: 700; }
 .sin-vidas { margin: .5rem 0 0; font-weight: 700; }
 .racha { margin: .5rem 0 0; font-weight: 700; color: #b45309; }
@@ -225,6 +241,8 @@ sup { font-size: .7em; line-height: 0; }
 .profesor th.practica { max-width: 7.5rem; white-space: normal; text-align: center; font-size: .82rem; line-height: 1.2; vertical-align: bottom; }
 .profesor .tabla { overflow-x: auto; }
 .profesor code { font-size: 1.05em; font-weight: 700; }
+.profesor td.celda-enlace { white-space: normal; overflow-wrap: anywhere; min-width: 14rem; }
+.profesor code.enlace { font-size: .9em; font-weight: 500; }
 .profesor .selector { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin: 1rem 0 .4rem; }
 .profesor .selector label { margin: 0; }
 .profesor .selector select { width: auto; max-width: 100%; margin: 0; }

@@ -4,16 +4,18 @@
 // La lista de nombres vive solo en este navegador.
 
 import { CATALOGO, ID_PLANTILLA, practicaPorId } from './_comun/catalogo.js';
-import { codigoAlumno, leerCodigoResultado, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
+import { codigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
 import { fechaDeDia } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
-import { juntarResultados, juntarResumen, leerDocumentos } from './resultados.js';
+import { TAREAS, tareaPorId } from './_comun/tareas.js';
+import { juntarResultados, juntarResumen, juntarTareas, leerDocumentos } from './resultados.js';
 
 const $ = id => document.getElementById(id);
 // La lista es la misma que la del panel antiguo de `divisores/`: mismos alumnos, mismos códigos.
 const CLAVE_LISTA = 'divisores.profesor.lista';
 const URL_PORTADA = new URL('./', location.href).href;
 const RESUMEN = 'resumen';
+const TAREAS_SEMANA = 'tareas';
 
 let nube = [];   // datos de Firestore ya leídos: [{ practica, indice, ej, actualizado }]
 
@@ -42,7 +44,38 @@ function sufijoIdioma() {
   return idioma && idioma !== 'alterno' ? `&idioma=${idioma}` : '';
 }
 
-const enlaceDe = codigo => `${URL_PORTADA}?c=${codigo}${sufijoIdioma()}`;
+/** Enlace de un alumno: a la portada o, si se elige en «Enlaces a», a una tarea de la semana. */
+function enlaceDe(codigo) {
+  const destino = $('destino-enlaces')?.value;
+  return destino && destino !== 'portada'
+    ? `${URL_PORTADA}semana.html?t=${destino}&c=${codigo}${sufijoIdioma()}`
+    : `${URL_PORTADA}?c=${codigo}${sufijoIdioma()}`;
+}
+
+/** Enlace común de una tarea (cada alumno escribe su código la primera vez): el que se pega en Classroom. */
+const enlaceComun = tarea => `${URL_PORTADA}semana.html?t=${tarea.id}`;
+
+function pintarTareasEnlaces() {
+  $('destino-enlaces').innerHTML = '<option value="portada">La portada (todas las prácticas)</option>'
+    + TAREAS.map(t => `<option value="${t.id}">Tarea ${t.id} · ${esc(t.titulo.es)}</option>`).join('');
+  $('tabla-tareas').innerHTML = `
+    <table>
+      <thead><tr><th class="num">Tarea</th><th>Título</th><th>Pide</th><th>Enlace común (para Classroom)</th><th></th></tr></thead>
+      <tbody>${TAREAS.map(t => `
+        <tr>
+          <td class="num">${t.id}</td><td>${esc(t.titulo.es)}</td>
+          <td>${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.desde ? ` · en la portada desde el ${t.desde.split('-').reverse().join('/')}` : ''}</td>
+          <td class="celda-enlace"><code class="enlace">${enlaceComun(t)}</code></td>
+          <td><button type="button" class="secundario" data-copiar-tarea="${t.id}">Copiar</button></td>
+        </tr>`).join('')}</tbody>
+    </table>`;
+  $('tabla-tareas').addEventListener('click', async ev => {
+    const id = ev.target.dataset?.copiarTarea;
+    if (!id) return;
+    await navigator.clipboard.writeText(enlaceComun(tareaPorId(Number(id))));
+    ev.target.textContent = '¡Copiado!';
+  });
+}
 
 function pintarCodigos() {
   const filas = filasCodigos();
@@ -57,10 +90,18 @@ const tablaCodigos = () => [['N.º', 'Alumno', 'Código', 'Enlace'], ...filasCod
 
 // --- 2. Resultados -------------------------------------------------------------
 
-/** Los códigos pegados: los válidos (con su práctica) y los que no lo son. */
+/**
+ * Los códigos pegados, de los tres tipos mezclados: los de práctica (16, y los
+ * de 12 de `divisores/`) en `validos`, los de tarea de la semana (20) en
+ * `deTareas`, y los que no son válidos.
+ */
 function pegados() {
-  const leidos = extraerCodigosResultado($('pegados').value).map(texto => ({ texto, dato: leerCodigoResultado(texto) }));
-  return { validos: leidos.filter(l => l.dato).map(l => l.dato), invalidos: leidos.filter(l => !l.dato).map(l => l.texto) };
+  const leidos = extraerCodigosResultado($('pegados').value).map(texto => ({ texto, dato: leerCualquierCodigo(texto) }));
+  return {
+    validos: leidos.filter(l => l.dato?.tipo === 'practica').map(l => l.dato),
+    deTareas: leidos.filter(l => l.dato?.tipo === 'tarea').map(l => l.dato),
+    invalidos: leidos.filter(l => !l.dato).map(l => l.texto),
+  };
 }
 
 /** Las prácticas que salen en el panel: las publicadas y cualquiera de la que haya datos. */
@@ -72,6 +113,7 @@ function practicasVisibles(validos) {
 function pintarSelector(practicas) {
   const elegida = $('vista').value || RESUMEN;
   $('vista').innerHTML = `<option value="${RESUMEN}">Resumen de todas las prácticas</option>`
+    + `<option value="${TAREAS_SEMANA}">Tareas de la semana</option>`
     + practicas.map(p => `<option value="${p.id}">${esc(p.nombre.es)}</option>`).join('');
   $('vista').value = [...$('vista').options].some(o => o.value === elegida) ? elegida : RESUMEN;
 }
@@ -142,20 +184,56 @@ function csvResumen(practicas, validos) {
   return [cab, ...filas.map(f => [f.indice + 1, f.nombre, codigoAlumno(f.indice), ...f.practicas.map(p => p.hechos), f.completas])];
 }
 
+// --- Tareas de la semana -------------------------------------------------------
+
+function celdaTarea(c) {
+  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida</td>`;
+  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir}</td>`;
+  return '<td class="num celda--no">sin empezar</td>';
+}
+
+function htmlTareas(validos, deTareas) {
+  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS);
+  if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
+  return `
+    <table>
+      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${TAREAS.map(t => `<th class="practica">${esc(t.titulo.es)}</th>`).join('')}<th class="num">Cumplidas</th></tr></thead>
+      <tbody>${filas.map(f => `
+        <tr>
+          <td class="num">${f.indice + 1}</td><td>${esc(f.nombre || '(no está en la lista)')}</td><td><code>${codigoAlumno(f.indice)}</code></td>
+          ${f.tareas.map(celdaTarea).join('')}
+          <td class="num">${f.tareas.filter(c => c.cumplida).length}/${TAREAS.length}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <p class="pequeno">«★ x de 6 · y de 4»: obligatorios terminados y, de los de elegir, cuántos ha terminado. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> lo que se sabe de su práctica (sus códigos o la nube), así que se ve el avance de quien todavía no ha mandado el código de la tarea. El CSV trae también los fallos y el día.</p>`;
+}
+
+function csvTareas(validos, deTareas) {
+  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS);
+  const cab = ['N.º', 'Alumno', 'Código', ...TAREAS.flatMap(t => [`T${t.id} estado`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`])];
+  return [cab, ...filas.map(f => [
+    f.indice + 1, f.nombre, codigoAlumno(f.indice),
+    ...f.tareas.flatMap(c => [c.cumplida ? 'cumplida' : c.empezada ? 'a medias' : 'sin empezar', c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, c.dia ? fechaDeDia(c.dia) : '', c.fuente]),
+  ])];
+}
+
 function pintarResultados() {
-  const { validos, invalidos } = pegados();
+  const { validos, deTareas, invalidos } = pegados();
   $('avisos').innerHTML = invalidos.length
     ? `<div class="aviso aviso--error">Códigos que <strong>no son válidos</strong> (mal copiados o inventados): ${invalidos.map(esc).join(', ')}</div>` : '';
   const practicas = practicasVisibles(validos);
   pintarSelector(practicas);
   const vista = $('vista').value;
-  $('tabla-resultados').innerHTML = vista === RESUMEN ? htmlResumen(practicas, validos) : htmlPractica(practicaPorId(Number(vista)), validos);
+  $('tabla-resultados').innerHTML = vista === RESUMEN ? htmlResumen(practicas, validos)
+    : vista === TAREAS_SEMANA ? htmlTareas(validos, deTareas)
+      : htmlPractica(practicaPorId(Number(vista)), validos);
 }
 
 function descargarResultados() {
-  const { validos } = pegados();
+  const { validos, deTareas } = pegados();
   const vista = $('vista').value;
   if (vista === RESUMEN) return descargar('resultados-practicas-resumen.csv', csvResumen(practicasVisibles(validos), validos));
+  if (vista === TAREAS_SEMANA) return descargar('resultados-tareas-de-la-semana.csv', csvTareas(validos, deTareas));
   const practica = practicaPorId(Number(vista));
   descargar(`resultados-${practica.slug}.csv`, csvPractica(practica, validos));
 }
@@ -206,6 +284,8 @@ $('lista').addEventListener('input', () => {
   pintarResultados();
 });
 $('idioma-enlaces').addEventListener('change', pintarCodigos);
+$('destino-enlaces').addEventListener('change', pintarCodigos);
+pintarTareasEnlaces();
 $('pegados').addEventListener('input', pintarResultados);
 $('vista').addEventListener('change', pintarResultados);
 $('copiar-codigos').addEventListener('click', async ev => {

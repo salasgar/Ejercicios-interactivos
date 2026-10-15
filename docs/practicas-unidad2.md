@@ -36,6 +36,19 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
    genérica, y la base añade unas palabras de ánimo.
 5. Al terminar un ejercicio aparece el **código de resultado** (16 caracteres), que el alumno
    copia y envía.
+6. **La tarea de la semana** (desde el 2026-10-15): un enlace, `practicas/semana.html?t=<id>`,
+   abre en una página los ejercicios de esa semana: unos con ★, obligatorios, y una lista de la
+   que elige unos cuantos («Termina los 6 ejercicios con ★ y 4 más de la lista, los que tú
+   elijas. Son 100 puntos.»). Cada ejercicio sale con su práctica, su nombre, su estado (sin
+   empezar, puntos que lleva o terminado) y un botón que abre **ese ejercicio** de la práctica;
+   al salir de él o al terminarlo se vuelve a la tarea. Un marcador dice cuánto lleva («★ 4 de 6
+   · a elegir 2 de 4 · 60 de 100 puntos»: cada ejercicio vale 10, los terminados enteros y los
+   que van a medias en proporción a sus puntos; de los de elegir cuentan los mejores). Al
+   cumplirla da **un único código de resultado de la tarea** (20 caracteres); antes también
+   puede pedirlo («lo que llevo»). La página no guarda nada suyo: lee el progreso que guardan
+   las prácticas en ese navegador, así que un ejercicio terminado antes de que existiera la
+   tarea cuenta, y si el alumno cambia de dispositivo empieza de cero (como en las prácticas).
+   Las tareas que ya han llegado a su día salen también arriba en la portada.
 
 ## 2. Cómo lee el profesor los resultados
 
@@ -56,8 +69,36 @@ En `practicas/profesor.html`:
      falla no se pierde nada: el código de resultado lleva lo necesario para calificar.
 3. La vista «Resumen de todas las prácticas» da una fila por alumno; eligiendo una práctica
    se ve ejercicio a ejercicio. Las dos tablas se descargan en CSV.
+4. **Tareas de la semana.** La sección «Tareas de la semana» da el **enlace común** de cada
+   tarea (`…/practicas/semana.html?t=2`), el que se pega en Classroom: cada alumno escribe su
+   código la primera vez, o ya lo tiene recordado si entró en otra práctica en ese
+   dispositivo. Para el enlace de cada alumno (`…&c=ABCD`), se elige la tarea en «Enlaces a»,
+   en la sección 1. En el cuadro de códigos se pegan mezclados los de las tareas (20
+   caracteres), los de práctica (16) y los de `divisores/` (12), y la vista «Tareas de la
+   semana» da una fila por alumno y una columna por tarea: «✓ cumplida», «★ 4 de 6 · 2 de 4»
+   o «sin empezar». Un ejercicio cuenta como terminado si lo dice el código de la tarea **o**
+   lo que se sabe de su práctica (sus códigos o la nube): así se ve el avance de quien no ha
+   mandado todavía el código de la tarea. El CSV trae además los fallos, el día y de dónde sale
+   cada dato.
 
-El código de resultado **no es criptografía** (el programa es público): impide inventárselo
+### Los tres códigos de resultado
+
+La longitud dice qué es cada uno; el panel los separa solo.
+
+| Largo | De qué | Qué lleva (en bits) |
+|---|---|---|
+| 12 | la `divisores/` antigua (antes de la tarea 17) | su formato de siempre (`divisores/logica.js`) |
+| 16 | una práctica | práctica (5) · alumno (10) · seis ejercicios × (terminado 1 + fallos hasta 15: 4) · día (10) · control (25) |
+| 20 | una tarea de la semana | versión (5, hoy 1) · tarea (10) · alumno (10) · ★ terminados (10, un bit por ★ en el orden de `tareas.js`) · de elegir terminados (15, igual) · fallos de todos los ejercicios de la tarea (10, hasta 1023) · día del último ejercicio terminado (10) · control (30) |
+
+El de la tarea se escribe en cinco grupos de cuatro (`ABCD-EFGH-JKLM-NPQR-STUV`), con el mismo
+alfabeto (sin I, O, 0 ni 1) y el mismo enmascarado que el de práctica, con otra sal. Los 30
+bits de control hacen que cualquier carácter mal copiado lo invalide. El panel lo interpreta
+con `tareas.js`, así que **una tarea ya mandada no se cambia** (el bit «3.er ★» pasaría a
+querer decir otro ejercicio): si hay que cambiarla, se copia con un `id` nuevo. Cabe una tarea
+de hasta 10 ★ y 15 de elegir, y ids hasta 1023.
+
+Ninguno de los tres códigos es **criptografía** (el programa es público): impiden inventárselo
 a ojo o copiar el de un compañero, no a quien lea el código fuente.
 
 ## 3. La base común (`practicas/_comun/`)
@@ -66,10 +107,11 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 |---|---|
 | `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore. También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar` y `URL_PORTADA` |
 | `catalogo.js` | Las 32 filas (31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
-| `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`) y de resultado (16) |
+| `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`), de resultado de una práctica (16) y de una tarea de la semana (20); `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
+| `tareas.js` | Las tareas de la semana (**se cambia a mano**; el formato está en su cabecera): `id`, `titulo`, `desde`, `estrella`, `elegir`, `nElegir`. También `estadoTarea` (marcador y «cumplida») y `erroresTareas`, que comprueba los datos contra el catálogo |
 | `contador.js` | `OBJETIVO = 10`, `PENALIZACION = 1`, `VIDAS = 5`, `RACHA = 5`, `EXTRA = 1`; `ejercicioNuevo`, `anotar`, `queHaPasado`, `migrarProgreso`, fechas |
 | `aritmetica.js` | `esPrimo`, `factorizar`, `divisores`, `parejasDivisores`, `mcd`, `mcm`, `criterio(n, d)` con `CRITERIOS = [2, 3, 5, 9, 10, 11]`, y las operaciones con factorizaciones (`multiplicarFact`, `dividirFact`, `mcdFact`, `mcmFact`, `htmlFact`…) |
-| `piezas.js` | `elecciones` (botones de elegir, con `marcar`) y `pasos` (contador −/valor/+) |
+| `piezas.js` | `elecciones` (botones de elegir, con `marcar`), `pasos` (contador −/valor/+) y `campoNumero` (campo para escribir un número: teclado de cifras en el móvil, acepta «4.730» y «4 730», no deja comprobar vacío; lo lee `leerNumero`) |
 | `textos.js` | Textos comunes `T[idioma]`, `unir(frases, idioma, 'y' \| 'o')`, `esc` |
 | `rng.js` | `crearRng(semilla)`: `azar()`, `entero(min, max)`, `elegir(lista)`, `barajar(lista)` |
 | `estilos.css` | Lo que comparten: `.instruccion`, `.operacion`, `.elecciones`, `.si-no`, `.pasos`, `.rejilla`, `.hueco`, `.ficha`, `.comprobar`, `.cuenta`… (la lista está en su cabecera) |
@@ -109,7 +151,7 @@ tests/practicas-<slug>.test.js
 | `nombre`, `detalle` | `{ es, en }`, una línea cada uno (salen en el menú) |
 | `objetivo`, `penalizacion`, `vidas` | opcionales; por defecto 10 puntos, −1 por fallo y 5 vidas. Si no se declaran, la práctica hereda cualquier cambio futuro de la base. (`inicial` y `maximo`, del modelo antiguo, hacen que la base no arranque) |
 | `introduccion` | opcional, `{ es: html, en: html }`: una tarjeta con botón «Empezar» cada vez que se abre el ejercicio |
-| `generar(rng, sesion)` | devuelve el ítem, que son **datos puros**. `sesion` es `{ aciertos, fallos, puntos, vidas, anterior }` (`aciertos` son los del intento en curso: vuelven a 0 al perder las vidas, así que valen como número de paso): sirve para graduar la dificultad o para un ejercicio por pasos. **No recibe el idioma**: el ítem tiene que valer para los dos |
+| `generar(rng, sesion)` | devuelve el ítem, que son **datos puros**. `sesion` es `{ aciertos, fallos, puntos, vidas, anterior, idioma }` (`aciertos` son los del intento en curso: vuelven a 0 al perder las vidas, así que valen como número de paso): sirve para graduar la dificultad o para un ejercicio por pasos. `idioma` (desde la tarea 37) es el del ítem que se va a generar, para ítems que solo tienen sentido en un idioma (un error que solo lo es en inglés, como «divisible between»); quien no lo use no tiene que cambiar nada. Ojo: tras responder, el alumno puede ver el mismo ítem en el otro idioma |
 | `clave(item)` | opcional (por defecto `JSON.stringify`): la base no repite la clave anterior (lo intenta hasta 5 veces) |
 | `montar(contenedor, item, api)` | pinta el ítem e instala sus eventos |
 
@@ -136,9 +178,23 @@ Cosas que conviene saber, aprendidas al escribir las 31:
   bloquear los botones es cosa de `montar`, **antes** de llamar a `api.responder`.
 - Si `montar` lanza una excepción, la base enseña un aviso y un botón «Siguiente» sin
   penalizar.
-- `.comprobar { display: block }` de la base anula el atributo `hidden`: un
-  `boton.hidden = true` no esconde «Comprobar». Varias prácticas lo resuelven en su CSS
-  (`.comprobar[hidden] { display: none }`); está propuesto llevarlo a la base.
+- `boton.hidden = true` esconde «Comprobar» (desde la tarea 37 la base lleva
+  `.comprobar[hidden] { display: none }`; antes `display: block` lo anulaba y algunas
+  prácticas lo arreglaron en su CSS, que sigue valiendo).
+- `.cuenta` ya no ensancha la página en el móvil: es un bloque en línea que pasa entero al
+  renglón siguiente si no cabe, y solo se parte si no cabe en ninguno (antes `nowrap`).
+- Para escribir un número, `campoNumero` de `piezas.js` en vez de `<input type="number">`
+  (que da por mal «4.730» y cuenta el vacío como 0). Ejemplo en la cabecera de
+  `plantilla/practica.js`. Hoy no lo usa ninguna práctica; lo deberían adoptar `redondeo`,
+  `constructor`, `distributiva`, `division`, `reloj` y `baldosas` (las que tienen
+  `type="number"`), cada una en su tarea.
+- `…/<slug>/?ejercicio=n` abre directamente el ejercicio n; con `&semana=<id>` vuelve a la
+  tarea de la semana al salir o al terminar, y no enseña el código de la práctica. Lo hace la
+  base: la práctica no tiene que hacer nada.
+- La página de la semana lee el nombre de cada ejercicio importando el `practica.js` de su
+  práctica con la base en modo «solo declarar» (`declaracionDe`, en `base.js`): `arrancar` no
+  pinta nada en ese modo. Por eso un `practica.js` **no puede tocar el documento fuera de
+  `arrancar` y de sus `montar`** (el test `practicas-semana` las carga todas en Node).
 - El fallo se anota al responder: quien sale al menú a mitad de un ítem que se construye en
   varios pasos no pierde ni puntos ni vidas.
 

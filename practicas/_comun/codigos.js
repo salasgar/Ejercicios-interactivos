@@ -1,17 +1,26 @@
 // Códigos de las prácticas: el del alumno (4 caracteres, el mismo que en
-// `divisores/`) y el de resultado (16 caracteres, uno por práctica).
+// `divisores/`), el de resultado de una práctica (16 caracteres) y el de
+// resultado de una tarea de la semana (20 caracteres). Los antiguos de
+// `divisores/` tienen 12. La longitud dice qué es cada uno.
 //
-// El código de resultado son 80 bits en 16 símbolos de 5 bits: práctica (5),
-// número de alumno mezclado (10), seis ejercicios × 5 (terminado + fallos hasta
-// 15), día (10) y control (25). Va enmascarado para que no se lea a simple
-// vista.
+// El código de resultado de una práctica son 80 bits en 16 símbolos de 5 bits:
+// práctica (5), número de alumno mezclado (10), seis ejercicios × 5 (terminado
+// + fallos hasta 15), día (10) y control (25).
 //
-// No es criptografía: este archivo es público, así que quien lo lea puede
-// fabricarse un código. Basta para que no se invente a ojo ni se copie el de
-// un compañero (el código de resultado dice de quién es y de qué práctica).
+// El de una tarea de la semana son 100 bits en 20 símbolos: versión (5, hoy 1),
+// tarea (10), número de alumno mezclado (10), qué ★ están terminados (10: un
+// bit por ★, en el orden de `tareas.js`), qué ejercicios de elegir están
+// terminados (15: igual), fallos de todos los ejercicios de la tarea (10, hasta
+// 1023), día (10) y control (30). Ver docs/practicas-unidad2.md, §2.
+//
+// Los dos van enmascarados para que no se lean a simple vista. No es
+// criptografía: este archivo es público, así que quien lo lea puede fabricarse
+// un código. Basta para que no se invente a ojo ni se copie el de un compañero
+// (el código dice de quién es y de qué práctica o tarea).
 
 import { leerCodigoResultado as leerCodigoDivisores } from '../../divisores/logica.js';
 import { MAX_EJERCICIOS, practicaPorId } from './catalogo.js';
+import { tareaPorId, MAX_ESTRELLA, MAX_ELEGIR } from './tareas.js';
 
 /** Sin I, O, 0 ni 1, que se confunden al copiar a mano. */
 export const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -111,22 +120,114 @@ export function leerCodigoResultado(texto) {
   return { practica: practica.id, indice: DESMEZCLADO.get((datos[1] << 5) | datos[2]), ejercicios, dia: (datos[9] << 5) | datos[10] };
 }
 
+// --- Código de resultado de una tarea de la semana --------------------------------
+
+const SAL_TAREA = 'practicas/1eso/2026-27/tarea';
+const VERSION_TAREA = 1;
+const CONTROL_TAREA = 2 ** 30;
+const MAX_FALLOS_TAREA = 1023;
+
+const mascaraTarea = (control, i) => hash(`${SAL_TAREA}|mascara|${control}|${i}`) & 31;
+const controlTarea = datos => hash(`${SAL_TAREA}|resultado|${datos.join(',')}`) % CONTROL_TAREA;
+const bits = lista => lista.reduce((m, hecho, i) => m | (hecho ? 1 << i : 0), 0);
+const trocear = (valor, n) => Array.from({ length: n }, (_, i) => Math.floor(valor / 32 ** (n - 1 - i)) & 31);
+const juntar = simbolos => simbolos.reduce((v, s) => v * 32 + s, 0);
+
 /**
- * Todos los códigos de resultado (de 12 y de 16 caracteres) que aparezcan en
+ * Código de resultado de una tarea de la semana. `estrella` y `elegir` son
+ * listas de booleanos (terminado o no), en el orden de la tarea en `tareas.js`;
+ * `fallos`, los de todos sus ejercicios (se guardan hasta 1023); `dia`, el del
+ * último ejercicio terminado.
+ */
+export function codigoTarea(tareaId, indice, { estrella = [], elegir = [], fallos = 0, dia = 0 }) {
+  if (estrella.length > MAX_ESTRELLA || elegir.length > MAX_ELEGIR) throw new Error('La tarea tiene más ejercicios de los que caben en el código');
+  const s = mezclado(indice);
+  const datos = [
+    VERSION_TAREA,
+    ...trocear(tareaId, 2),
+    ...trocear(s, 2),
+    ...trocear(bits(estrella), 2),
+    ...trocear(bits(elegir), 3),
+    ...trocear(Math.max(0, Math.min(fallos, MAX_FALLOS_TAREA)), 2),
+    ...trocear(dia, 2),
+  ];
+  const control = controlTarea(datos);
+  return agrupar(simbolos([...datos.map((d, i) => d ^ mascaraTarea(control, i)), ...trocear(control, 6)]));
+}
+
+/**
+ * Lo contrario: { tarea, indice, estrella: [bool], elegir: [bool], fallos,
+ * tope, dia } o `null`. Las listas tienen la longitud de la tarea de
+ * `tareas.js`; un código de una tarea que no existe, o con un ejercicio
+ * terminado que la tarea no tiene, no vale.
+ */
+export function leerCodigoTarea(texto) {
+  const t = limpiar(texto);
+  if (t.length !== 20) return null;
+  const v = valores(t);
+  if (v.includes(-1)) return null;
+  const control = juntar(v.slice(14));
+  const datos = v.slice(0, 14).map((d, i) => d ^ mascaraTarea(control, i));
+  if (controlTarea(datos) !== control || datos[0] !== VERSION_TAREA) return null;
+  const tarea = tareaPorId(juntar(datos.slice(1, 3)));
+  if (!tarea) return null;
+  const mEstrella = juntar(datos.slice(5, 7)), mElegir = juntar(datos.slice(7, 10));
+  if (mEstrella >> tarea.estrella.length || mElegir >> tarea.elegir.length) return null;
+  const fallos = juntar(datos.slice(10, 12));
+  return {
+    tarea: tarea.id,
+    indice: DESMEZCLADO.get(juntar(datos.slice(3, 5))),
+    estrella: tarea.estrella.map((_, i) => Boolean(mEstrella & (1 << i))),
+    elegir: tarea.elegir.map((_, i) => Boolean(mElegir & (1 << i))),
+    fallos,
+    tope: fallos >= MAX_FALLOS_TAREA,
+    dia: juntar(datos.slice(12, 14)),
+  };
+}
+
+/**
+ * Cualquier código de resultado: { tipo: 'tarea', …leerCodigoTarea } para los
+ * de 20 caracteres, { tipo: 'practica', …leerCodigoResultado } para los de 16
+ * y los de 12 de `divisores/`, o `null`.
+ */
+export function leerCualquierCodigo(texto) {
+  const t = limpiar(texto);
+  const dato = t.length === 20 ? leerCodigoTarea(t) : leerCodigoResultado(t);
+  return dato ? { tipo: t.length === 20 ? 'tarea' : 'practica', ...dato } : null;
+}
+
+/**
+ * Todos los códigos de resultado (de 12, 16 y 20 caracteres) que aparezcan en
  * un texto cualquiera, escritos en grupos de cuatro con guiones. Salen también
  * los que tienen la forma pero no son válidos, para poder avisar de ellos.
+ *
+ * Se buscan tiras de grupos de cuatro (con guion, espacio o nada entre ellos)
+ * y cada tira se recorre de izquierda a derecha probando primero el código más
+ * largo: así un código seguido (o precedido) de una palabra de cuatro letras
+ * («… ABCD-EFGH-JKLM PARA …») o dos códigos separados por un espacio no se
+ * confunden con uno más largo.
  */
 export function extraerCodigosResultado(texto) {
   const c = '[A-HJ-NP-Z2-9]';
-  const patron = new RegExp(`(?<![A-Z0-9])${c}{4}(?:[- ]?${c}{4}){2,3}(?![A-Z0-9])`, 'g');
-  const encontrados = (String(texto).toUpperCase().match(patron) ?? []).map(limpiar).map(t => {
-    // Cuatro grupos que no son un código de 16 pueden ser uno de 12 seguido
-    // (o precedido) de una palabra de cuatro letras: «… ABCD-EFGH-JKLM PARA …».
-    if (t.length === 16 && !leerCodigoResultado(t)) {
-      if (leerCodigoResultado(t.slice(0, 12))) return t.slice(0, 12);
-      if (leerCodigoResultado(t.slice(4))) return t.slice(4);
+  const patron = new RegExp(`(?<![A-Z0-9])${c}{4}(?:[- ]?${c}{4}){2,}(?![A-Z0-9])`, 'g');
+  const encontrados = [];
+  for (const tira of (String(texto).toUpperCase().match(patron) ?? []).map(limpiar)) {
+    let p = 0, suelto = 0;   // `suelto`: desde dónde no se ha reconocido nada
+    const avisar = hasta => {
+      // Lo no reconocido entre dos códigos, si tiene la forma de uno, se avisa.
+      const resto = tira.slice(suelto, hasta);
+      const largo = [20, 16, 12].find(l => resto.length >= l);
+      if (largo) encontrados.push(resto.slice(0, largo));
+    };
+    while (p + 12 <= tira.length) {
+      const largo = [20, 16, 12].find(l => p + l <= tira.length && leerCualquierCodigo(tira.slice(p, p + l)));
+      if (!largo) { p += 4; continue; }
+      avisar(p);
+      encontrados.push(tira.slice(p, p + largo));
+      p += largo;
+      suelto = p;
     }
-    return t;
-  });
+    avisar(tira.length);
+  }
   return [...new Set(encontrados.map(agrupar))];
 }

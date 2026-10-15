@@ -112,10 +112,58 @@ export function borrar(clave) {
 /** Portada de las prácticas (`practicas/`), esté donde esté la práctica. */
 export const URL_PORTADA = new URL('../', import.meta.url).href;
 
+/** Página de una tarea de la semana, con el código del alumno si se sabe. */
+export const urlSemana = (id, codigo = null) => `${URL_PORTADA}semana.html?t=${id}${codigo ? `&c=${codigo}` : ''}`;
+
+/**
+ * Lo que tiene guardado en este navegador un alumno en una práctica: la lista
+ * de sus ejercicios tal como la guarda la base ({ puntos, objetivo, fallos,
+ * terminado, dia… }), vacía si no ha hecho nada. En `divisores` se mira
+ * también la clave de antes de la tarea 17 y, ejercicio a ejercicio, gana el
+ * terminado (o el que tenga más fallos, si ninguno lo está).
+ */
+export function progresoGuardado(slug, codigo) {
+  const claves = [claveProgreso(slug, codigo), ...(slug === 'divisores' ? [`divisores.v1.${codigo}`] : [])];
+  const listas = claves.map(clave => {
+    try {
+      const ej = JSON.parse(leer(clave))?.ej;
+      return Array.isArray(ej) ? ej : [];
+    } catch { return []; }
+  });
+  const largo = Math.max(...listas.map(l => l.length));
+  return Array.from({ length: largo }, (_, n) => listas.map(l => l[n]).filter(e => e && typeof e === 'object')
+    .reduce((mejor, e) => (!mejor || (e.terminado && !mejor.terminado) || (!mejor.terminado && (e.fallos ?? 0) > (mejor.fallos ?? 0)) ? e : mejor), null));
+}
+
+// --- Leer lo que declara una práctica sin arrancarla ---------------------------------
+
+// La página de la semana necesita el nombre de cada ejercicio, que solo está en
+// el `practica.js` de cada práctica. `declaracionDe` importa ese módulo con la
+// base en modo «solo declarar»: su llamada a `arrancar` guarda la declaración y
+// no pinta nada. Una vez puesto, el modo dura lo que la página.
+let soloDeclarar = false;
+const declaradas = new Map();
+
+/**
+ * La declaración ({ slug, ejercicios }) de una práctica del catálogo, o null si
+ * su módulo no carga. `ficha` es su fila del catálogo.
+ */
+export async function declaracionDe(ficha) {
+  soloDeclarar = true;
+  if (!declaradas.has(ficha.slug)) {
+    try { await import(new URL(`${ficha.ruta}practica.js`, URL_PORTADA).href); } catch { return null; }
+  }
+  return declaradas.get(ficha.slug) ?? null;
+}
+
 // --- La aplicación --------------------------------------------------------------
 
 /** Arranca una práctica. Ver el contrato en `../plantilla/practica.js`. */
 export function arrancar(practica) {
+  if (soloDeclarar) {
+    declaradas.set(practica?.slug, practica);
+    return;
+  }
   let app = document.querySelector('#app');
   if (!app) {
     // Página sin armazón: se pone el mismo que lleva `plantilla/index.html`.
@@ -151,6 +199,32 @@ export function arrancar(practica) {
   let actual = null;    // ejercicio en curso: { n, sesion, practica, item, idioma, respondido }
   let turno = 0;        // invalida los temporizadores y las respuestas al cambiar de pantalla
   let sinSubir = 0;
+
+  // `?ejercicio=n` (empezando en 1) abre ese ejercicio en cuanto se sabe quién
+  // es el alumno, en vez del menú. Con `&semana=<id>` además se viene de una
+  // tarea de la semana: al salir del ejercicio o al terminarlo se vuelve a
+  // ella, y no se enseña el código de resultado de la práctica (la tarea tiene
+  // el suyo). Sin estos parámetros, todo es como siempre.
+  const parametros = new URLSearchParams(location.search);
+  const pedido = Number(parametros.get('ejercicio'));
+  let ejercicioPedido = Number.isInteger(pedido) && pedido >= 1 && pedido <= defs.length ? pedido - 1 : null;
+  const semana = ejercicioPedido !== null && /^\d{1,4}$/.test(parametros.get('semana') ?? '') ? Number(parametros.get('semana')) : null;
+
+  /** Al salir de un ejercicio: a la tarea de la semana si se vino de ella; si no, al menú. */
+  function salirDelEjercicio() {
+    if (semana === null) return pintarMenu();
+    turno++;
+    location.replace(urlSemana(semana, estado.codigo));
+  }
+  const textoSalir = () => (semana === null ? t().salir : t().volver_semana);
+
+  /** Tras entrar (con código o sin él): el ejercicio pedido en la URL, una sola vez, o el menú. */
+  function pintarInicio() {
+    if (ejercicioPedido === null) return pintarMenu();
+    const n = ejercicioPedido;
+    ejercicioPedido = null;
+    abrirEjercicio(n);
+  }
 
   const idiomaInterfaz = () => estado.idiomaFijo ?? 'es';
   const t = (idioma = idiomaInterfaz()) => T[idioma];
@@ -241,7 +315,7 @@ export function arrancar(practica) {
       estado.indice = null;
       estado.ej = nuevos();
       aplicarIdiomaFijo();
-      pintarMenu();
+      pintarInicio();
     });
   }
 
@@ -251,14 +325,14 @@ export function arrancar(practica) {
     escribir('practicas.codigo', estado.codigo);
     aplicarIdiomaFijo();
     cargarProgreso();
-    pintarMenu();
+    pintarInicio();
   }
 
   // --- Menú -----------------------------------------------------------------------
 
   function cajaResultado() {
     const hechos = estado.ej.filter(e => e.terminado);
-    if (estado.indice === null || !hechos.length) return '';
+    if (estado.indice === null || !hechos.length || semana !== null) return '';
     const codigo = codigoResultado(ficha.id, estado.indice, estado.ej, Math.max(...hechos.map(e => e.dia)));
     const completo = hechos.length === defs.length;
     return `
@@ -347,7 +421,7 @@ export function arrancar(practica) {
 
   function cabeceraEjercicio() {
     return `
-      <button type="button" class="discreto volver" id="salir">${t().salir}</button>
+      <button type="button" class="discreto volver" id="salir">${textoSalir()}</button>
       <div class="progreso"><span>${t().ejercicio(actual.n + 1)} · ${tt(defs[actual.n].nombre)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
       <div class="barra"><div id="barra"></div></div>`;
   }
@@ -375,7 +449,7 @@ export function arrancar(practica) {
         </div>
       </section>`;
     pintarContador();
-    app.querySelector('#salir').addEventListener('click', pintarMenu);
+    app.querySelector('#salir').addEventListener('click', salirDelEjercicio);
     app.querySelector('#empezar').addEventListener('click', siguiente);
   }
 
@@ -385,13 +459,14 @@ export function arrancar(practica) {
     const def = defs[actual.n];
     const clave = def.clave ?? JSON.stringify;
     const anterior = actual.item;
-    const sesion = { aciertos: actual.sesion.aciertos, fallos: actual.sesion.fallos, puntos: actual.sesion.puntos, vidas: actual.sesion.vidas, anterior };
+    // El idioma del ítem se fija antes de generarlo (y no al mostrarlo): un
+    // recargado de la pantalla (por ejemplo tras la traducción) no lo cambia,
+    // y `generar` lo recibe en `sesion.idioma` por si tiene ítems de un solo idioma.
+    actual.idioma = estado.idiomaFijo ?? idiomasDe[actual.n].siguiente();
+    const sesion = { aciertos: actual.sesion.aciertos, fallos: actual.sesion.fallos, puntos: actual.sesion.puntos, vidas: actual.sesion.vidas, anterior, idioma: actual.idioma };
     let item = def.generar(rng, sesion);
     for (let i = 0; i < 5 && anterior !== null && clave(item) === clave(anterior); i++) item = def.generar(rng, sesion);
     actual.item = item;
-    // El idioma del ítem se fija al generarlo (no al mostrarlo): un recargado
-    // de la pantalla (por ejemplo tras la traducción) no lo cambia.
-    actual.idioma = estado.idiomaFijo ?? idiomasDe[actual.n].siguiente();
     actual.respondido = false;
     pintarEjercicio();
   }
@@ -407,7 +482,7 @@ export function arrancar(practica) {
         </div>
       </section>`;
     pintarContador();
-    app.querySelector('#salir').addEventListener('click', pintarMenu);
+    app.querySelector('#salir').addEventListener('click', salirDelEjercicio);
 
     const miTurno = turno;
     const idi = actual.idioma;
@@ -524,9 +599,9 @@ export function arrancar(practica) {
           ${repeticion ? `<p class="pequeno">${t().fin_practica}</p>` : ''}
         </div>
         ${cajaResultado()}
-        <button type="button" class="ancho" id="al-menu">${t().salir}</button>
+        <button type="button" class="ancho" id="al-menu">${textoSalir()}</button>
       </section>`;
-    app.querySelector('#al-menu').addEventListener('click', pintarMenu);
+    app.querySelector('#al-menu').addEventListener('click', salirDelEjercicio);
     activarCopiar();
   }
 

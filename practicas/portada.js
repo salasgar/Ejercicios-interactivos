@@ -5,11 +5,15 @@
 //
 // El enlace que reparte el profesor es `practicas/?c=ABCD`: la portada guarda
 // el código y todas las prácticas lo encuentran.
+//
+// Arriba, las tareas de la semana que ya han llegado a su día (`desde` en
+// `_comun/tareas.js`), con lo que lleva el alumno en cada una.
 
 import { CATALOGO, ID_PLANTILLA } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno } from './_comun/codigos.js';
-import { leer, escribir, claveProgreso } from './_comun/base.js';
-import { T } from './_comun/textos.js';
+import { leer, escribir, progresoGuardado } from './_comun/base.js';
+import { T, esc } from './_comun/textos.js';
+import { tareasPublicadas, estadoTarea, fechaISO } from './_comun/tareas.js';
 
 // El orden de la portada no es el del catálogo (que no se puede renumerar):
 // es el de la unidad. Una práctica del catálogo que no esté en ningún bloque
@@ -106,11 +110,29 @@ if (codigo) escribir('practicas.codigo', codigo);
 /** Ejercicios terminados de una práctica, según lo guardado en este navegador. */
 function hechos(practica) {
   if (!codigo) return 0;
-  // Quien hizo `divisores/` antes de que se montara sobre la base lo tiene con la clave antigua.
-  const claves = [claveProgreso(practica.slug, codigo), ...(practica.slug === 'divisores' ? [`divisores.v1.${codigo}`] : [])];
-  return Math.max(0, ...claves.map(clave => {
-    try { return (JSON.parse(leer(clave))?.ej ?? []).filter(e => e?.terminado).length; } catch { return 0; }
-  }));
+  // (`progresoGuardado` mira también la clave antigua de `divisores/`.)
+  return progresoGuardado(practica.slug, codigo).filter(e => e?.terminado).length;
+}
+
+/** Las tareas de la semana publicadas, con lo que lleva el alumno en cada una. */
+function htmlTareas(t) {
+  const tareas = tareasPublicadas(fechaISO(new Date()));
+  if (!tareas.length) return '';
+  const fila = tarea => {
+    const est = codigo ? estadoTarea(tarea, (slug, n) => progresoGuardado(slug, codigo)[n - 1] ?? null) : null;
+    const etiqueta = !est?.empezada ? ''
+      : est.cumplida ? `<span class="etiqueta etiqueta--ok">✓ ${t.semana_cumplida}</span>`
+        : `<span class="etiqueta">${t.semana_marcador_puntos(est.puntos, est.maximo)}</span>`;
+    return `
+      <li class="lista__item">
+        <div><h3>${esc(tarea.titulo[idioma])}</h3>${etiqueta}</div>
+        <a class="boton ${est?.cumplida ? 'secundario' : ''}" href="semana.html?t=${tarea.id}${codigo ? `&c=${codigo}` : ''}">${t.portada_abrir}</a>
+      </li>`;
+  };
+  return `
+      <h2 class="portada__bloque">${t.portada_tareas}</h2>
+      <ul class="lista">${[...tareas].reverse().map(fila).join('')}</ul>
+      <h2 class="portada__bloque portada__bloque--todas">${t.portada_practicas}</h2>`;
 }
 
 function pintar() {
@@ -137,6 +159,7 @@ function pintar() {
   app.innerHTML = `
     <section>
       <p>${t.portada_ayuda}${codigo ? ` <span class="portada__codigo">${t.portada_codigo(codigo)}</span>` : ''}</p>
+      ${htmlTareas(t)}
       ${bloques || `<p class="vacio">${t.portada_vacia}</p>`}
       <p class="portada__pie"><a href="profesor.html">${PANEL[idioma]}</a></p>
     </section>`;
