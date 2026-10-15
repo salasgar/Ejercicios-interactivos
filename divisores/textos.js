@@ -3,6 +3,10 @@
 // en `api.t` (ver `../practicas/_comun/textos.js`) y no se repiten aquí.
 
 import { T as COMUN } from '../practicas/_comun/textos.js';
+import { explicacion, explicacionCompleta, cerrar } from '../practicas/_comun/relaciones.js';
+
+// La explicación de los fallos (tabla, división exacta, «al revés») es común con `recta/`.
+export { explicacion, cerrar };
 
 export const T = {
   es: {
@@ -35,18 +39,6 @@ export const T = {
     palabra: { divisor: 'divisor', multiplo: 'múltiplo', divisible: 'divisible' },
     preposicion: { de: 'de', entre: 'entre' },
     se_dice: 'Se dice «múltiplo de», «divisor de» y «divisible entre».',
-    // Por qué es falsa «x es <relación> y» (ver `explicacion`). Definiciones de
-    // Juan Luis (2026-10-14): múltiplo = está en la tabla; divisor y divisible =
-    // la división es exacta.
-    tabla: {
-      multiplo: (x, y, lista) => `«múltiplo de ${y}» quiere decir que está en la tabla del ${y}, y el ${x} no está: los múltiplos de ${y} son ${lista}`,
-      divisor_division: (x, y, d) => `«divisor de ${y}» quiere decir que puedes dividir ${y} entre ${x} y la división es exacta; aquí no lo es: ${d}`,
-      divisor_tabla: (x, y, lista) => `«divisor de ${y}» quiere decir que el ${y} está en la tabla del ${x}, y no está: los múltiplos de ${x} son ${lista}`,
-      divisible_division: (x, y, d) => `«divisible entre ${y}» quiere decir que al dividirlo entre ${y} la división es exacta; aquí no lo es: ${d}`,
-      divisible_tabla: (x, y, lista) => `«divisible entre ${y}» es lo mismo que «múltiplo de ${y}»: estar en la tabla del ${y}, y el ${x} no está: los múltiplos de ${y} son ${lista}`,
-      al_reves: 'Es al revés:',
-      queda_entre: (x, a, b) => `(el ${x} queda entre ${a} y ${b})`,
-    },
   },
   en: {
     ejercicios: [
@@ -78,15 +70,6 @@ export const T = {
     palabra: { divisor: 'a divisor', multiplo: 'a multiple', divisible: 'divisible' },
     preposicion: { de: 'of', entre: 'by' },
     se_dice: 'We say “a multiple of”, “a divisor of” and “divisible by”.',
-    tabla: {
-      multiplo: (x, y, lista) => `“a multiple of ${y}” means it is in the ${y} times table, and ${x} is not: the multiples of ${y} are ${lista}`,
-      divisor_division: (x, y, d) => `“a divisor of ${y}” means you can divide ${y} by ${x} and the division is exact; here it is not: ${d}`,
-      divisor_tabla: (x, y, lista) => `“a divisor of ${y}” means ${y} is in the ${x} times table, and it is not: the multiples of ${x} are ${lista}`,
-      divisible_division: (x, y, d) => `“divisible by ${y}” means that when you divide it by ${y} the division is exact; here it is not: ${d}`,
-      divisible_tabla: (x, y, lista) => `“divisible by ${y}” is the same as “a multiple of ${y}”: being in the ${y} times table, and ${x} is not: the multiples of ${y} are ${lista}`,
-      al_reves: 'It is the other way round:',
-      queda_entre: (x, a, b) => `(${x} is between ${a} and ${b})`,
-    },
   },
 };
 
@@ -125,60 +108,9 @@ export function razonFalsa(relacion, x, y, idioma) {
   return `${dividendo} : ${divisor} = ${Math.floor(dividendo / divisor)}, ${COMUN[idioma].resto} ${dividendo % divisor}`;
 }
 
-/**
- * Los primeros múltiplos de n, o los que rodean a x si x queda lejos:
- * «0, 20, 40, 60…» o «0, 5, 10, 15… (el 61 queda entre 60 y 65)».
- */
-function listaMultiplos(n, x, idioma) {
-  const lista = `0, ${n}, ${2 * n}, ${3 * n}…`;
-  if (x < 3 * n) return lista;
-  const q = Math.floor(x / n);
-  return `${lista} ${T[idioma].tabla.queda_entre(x, q * n, (q + 1) * n)}`;
-}
-
-/** Pone el punto final, salvo que la frase acabe ya en puntos suspensivos. */
-export function cerrar(texto) {
-  return texto.endsWith('…') ? texto : `${texto}.`;
-}
-
-/** «x es <relación> y» al revés, cuando al revés sí es verdad; si no, null. */
-function alReves(relacion, x, y) {
-  if (relacion === 'divisor') return x !== 0 && y !== 0 && x % y === 0 ? { relacion: 'divisor', x: y, y: x } : null;
-  return x !== 0 && y % x === 0 ? { relacion, x: y, y: x } : null;
-}
-
-/**
- * Por qué es FALSA «x es <relación> y», con las definiciones de clase: un
- * múltiplo está en la tabla; un divisor o un divisible da una división exacta.
- * Si la división sale con cociente 0 (5 : 20), que no le dice nada al alumno,
- * se explica con la tabla. Si la relación es verdad al revés (el alumno sabe
- * que 5 y 20 van juntos pero no en qué sentido), se le dice.
- * Con `conAlReves: false` se omite esa última frase (cuando ya se da la buena).
- */
-export function explicacion(relacion, x, y, idioma, { conAlReves = true } = {}) {
-  const tt = T[idioma].tabla;
-  if (relacion === 'divisor' && x === 0) return T[idioma].bichos.cero_divisor;
-  let texto;
-  if (relacion === 'multiplo') texto = tt.multiplo(x, y, listaMultiplos(y, x, idioma));
-  else if (relacion === 'divisor') {
-    texto = x < y ? tt.divisor_division(x, y, `<span class="cuenta">${razonFalsa(relacion, x, y, idioma)}</span>`)
-      : tt.divisor_tabla(x, y, listaMultiplos(x, y, idioma));
-  } else {
-    texto = x > y ? tt.divisible_division(x, y, `<span class="cuenta">${razonFalsa(relacion, x, y, idioma)}</span>`)
-      : tt.divisible_tabla(x, y, listaMultiplos(y, x, idioma));
-  }
-  const r = conAlReves && alReves(relacion, x, y);
-  if (!r) return texto;
-  // «Divisible» se justifica con la división (20 : 5 = 4, resto 0); «múltiplo», con el producto.
-  const cuenta = r.relacion === 'divisible' ? razon('divisor', r.y, r.x, idioma) : razon(r.relacion, r.x, r.y, idioma);
-  return `${cerrar(texto)} ${tt.al_reves} ${frase(r.relacion, r.x, r.y, idioma)} (<span class="cuenta">${cuenta}</span>)`;
-}
-
 /** «1 es divisor de 7: 7 : 1 = 7, resto 0» o «60 no es divisor de 5: «divisor de 5» quiere decir…». */
 export function fraseRazonada(f, idioma) {
   return f.verdadera
     ? `${frase(f.relacion, f.x, f.y, idioma)}: <span class="cuenta">${razon(f.relacion, f.x, f.y, idioma)}</span>`
-    : f.relacion === 'divisor' && f.x === 0
-      ? T[idioma].bichos.cero_divisor
-      : `${fraseNegada(f.relacion, f.x, f.y, idioma)}; ${explicacion(f.relacion, f.x, f.y, idioma)}`;
+    : explicacionCompleta(f.relacion, f.x, f.y, idioma);
 }

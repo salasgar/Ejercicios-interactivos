@@ -121,10 +121,13 @@ test('explicar: devuelve una explicación no vacía, en los dos idiomas, para lo
 
 test('explicar (multiplos y divisores): dice cuál de los números marcados sobra y por qué', () => {
   const m = { tipo: 'multiplos', n: 4, hasta: 20, correctos: [0, 4, 8, 12, 16, 20] };
-  assert.match(explicar(m, [0, 4, 14], 'es'), /14 no es múltiplo de 4: <span class="cuenta">14 : 4<\/span> no es exacta/);
+  assert.match(explicar(m, [0, 4, 14], 'es'), /14 no es múltiplo de 4: no está en la tabla del 4 \(queda entre 12 y 16\)\./);
+  // El que sabe que 2 y 4 van juntos pero no en qué sentido: se le dice que es al revés.
+  assert.match(explicar(m, [0, 2, 4], 'es'), /2 no es múltiplo de 4: no está en la tabla del 4 \(queda entre 0 y 4\)\. Es al revés: 4 es múltiplo de 2 \(<span class="cuenta">4 = 2 · 2<\/span>\)\./);
   assert.match(explicar(m, [0, 4, 14], 'en'), /14 is not a multiple of 4/);
   const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
-  assert.match(explicar(d, [1, 5, 12], 'es'), /5 no es divisor de 12: <span class="cuenta">12 : 5<\/span> no es exacta/);
+  assert.match(explicar(d, [1, 5, 12], 'es'), /5 no es divisor de 12: <span class="cuenta">12 : 5 = 2, resto 2<\/span>; la división no es exacta\./);
+  assert.match(explicar({ ...d, hasta: 16 }, [1, 12, 13], 'es'), /13 no es divisor de 12: el 12 no está en la tabla del 13\./);
 });
 
 test('explicar (divisores): los avisos del español empiezan en mayúscula tras un punto', () => {
@@ -135,7 +138,29 @@ test('explicar (divisores): los avisos del español empiezan en mayúscula tras 
 
 test('explicar (vf): sin letras ni «> 1» en 1 múltiplo, y el 0 divisor cita el número', () => {
   const uno = explicar({ tipo: 'vf', plantilla: 'uno_multiplo', n: 7, verdad: false }, null, 'es');
-  assert.match(uno, /los múltiplos de 7 son 0, 7, 14…/);
+  assert.match(uno, /los múltiplos de 7 son 0, 7, 14, 21…/);
   assert.doesNotMatch(uno, /\bk\b/);
   assert.match(explicar({ tipo: 'vf', plantilla: 'cero_divisor', n: 9, verdad: false }, null, 'es'), /de 9/);
+});
+
+// Definiciones de clase en el V/F (Juan Luis, 2026-10-14): la tabla, la división exacta y «al revés».
+test('explicar (vf): los falsos con dos números usan la tabla y avisan si es al revés', () => {
+  const sin = s => s.replace(/<[^>]+>/g, '');
+  assert.equal(sin(explicar({ tipo: 'vf', plantilla: 'multiplo', a: 4, b: 12, verdad: false }, null, 'es')),
+    '4 no es múltiplo de 12; «múltiplo de 12» quiere decir que está en la tabla del 12, y el 4 no está: los múltiplos de 12 son 0, 12, 24, 36… '
+    + 'Es al revés: 12 es múltiplo de 4 (12 = 4 · 3).');
+  assert.match(sin(explicar({ tipo: 'vf', plantilla: 'divisor', a: 7, b: 30, verdad: false }, null, 'en')),
+    /^7 is not a divisor of 30; “a divisor of 30” means you can divide 30 by 7 and the division is exact; here it is not: 30 : 7 = 4, remainder 2\.$/);
+  assert.match(sin(explicar({ tipo: 'vf', plantilla: 'divisible', a: 6, b: 18, verdad: false }, null, 'es')),
+    /Es al revés: 18 es divisible entre 6 \(18 : 6 = 3, resto 0\)\.$/);
+  // Por fuerza bruta: nada de «undefined», ni «·» entre frases, ni dos puntos seguidos.
+  const rng = crearRng(5);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarVF(rng);
+    for (const idioma of ['es', 'en']) {
+      const t = sin(explicar(item, null, idioma));
+      assert.doesNotMatch(t, /undefined|NaN|\.\.|…\./, t);
+      assert.doesNotMatch(t, /·(?! ?\d)|(?<!\d )·/, t);
+    }
+  }
 });
