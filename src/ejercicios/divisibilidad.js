@@ -4,6 +4,7 @@
 // distractor son la comprobación que desmonta esa opción.
 
 import { construirOpciones, conReintentos, erroresDe, tex, mcd } from './index.js';
+import { CONTEXTOS, ESQUEMAS } from './contextos_mcd_mcm.js';
 
 export const errores = {
   confundir_multiplo_divisor: { concepto: 'divisibilidad',
@@ -42,18 +43,20 @@ export const errores = {
     es: 'El exponente dice cuántas veces se repite la base: 2³ = 2 · 2 · 2, no 2 · 3.', en: 'The exponent says how many times the base is repeated: 2³ = 2 · 2 · 2, not 2 · 3.' },
   factorizacion_no_multiplica: { concepto: 'divisibilidad',
     es: 'Comprueba multiplicando: el producto de los factores tiene que dar el número de partida.', en: 'Check by multiplying: the product of the factors must give the starting number.' },
+  // Los seis siguientes son los de los problemas: valen para todos los contextos de
+  // contextos_mcd_mcm.js (coincidir, repartir, cortar, cubrir, igualar paquetes).
   mcd_en_vez_de_mcm: { concepto: 'divisibilidad',
-    es: 'Has hallado el m.c.d. (GCD). Cuando algo vuelve a coincidir se busca el menor múltiplo común: es un m.c.m. (LCM).', en: 'You found the GCD. When two things coincide again you look for the smallest common multiple: it is an LCM.' },
+    es: 'Has hallado el m.c.d. (GCD), que es más pequeño que los datos. Aquí la respuesta tiene que ser múltiplo de los dos datos (volver a coincidir, repartirse de las dos formas, igualar paquetes, alturas o pasos): es el m.c.m. (LCM).', en: 'You found the GCD, which is smaller than the numbers given. Here the answer has to be a multiple of both numbers (coinciding again, sharing in both ways, matching packs, heights or steps): it is the LCM.' },
   mcm_en_vez_de_mcd: { concepto: 'divisibilidad',
-    es: 'Has hallado el m.c.m. (LCM). Cuando se reparte en grupos iguales sin que sobre nada se busca el mayor divisor común: es un m.c.d. (GCD).', en: 'You found the LCM. When you share things into equal groups with none left over you look for the greatest common divisor: it is a GCD.' },
+    es: 'Has hallado el m.c.m. (LCM), que es mayor que los datos. Cuando se reparte, se corta o se cubre en partes iguales sin que sobre nada, la respuesta tiene que dividir a los dos datos: es el m.c.d. (GCD).', en: 'You found the LCM, which is bigger than the numbers given. When you share, cut or cover in equal parts with nothing left over, the answer has to divide both numbers: it is the GCD.' },
   producto_en_vez_de_mcm: { concepto: 'divisibilidad',
     es: 'El producto de los dos números es un múltiplo común, pero no el menor: busca el menor múltiplo común.', en: 'The product of the two numbers is a common multiple, but not the smallest one: look for the smallest common multiple.' },
   producto_en_vez_de_mcd: { concepto: 'divisibilidad',
-    es: 'El producto es mayor que los datos: no se pueden hacer tantos grupos. Busca el mayor divisor común.', en: 'The product is bigger than the data: you cannot make that many groups. Look for the greatest common divisor.' },
+    es: 'El producto es mayor que los dos datos, y la respuesta tiene que dividirlos a los dos sin que sobre nada. Busca el mayor divisor común.', en: 'The product is bigger than both numbers, and the answer has to divide both of them with nothing left over. Look for the greatest common divisor.' },
   no_es_comun: { concepto: 'divisibilidad',
-    es: 'Ese número tiene que ser múltiplo de los dos datos: divide y comprueba que el resto es 0 en los dos.', en: 'That number has to be a multiple of both data: divide and check that the remainder is 0 for both.' },
+    es: 'La respuesta tiene que ser múltiplo de los dos datos, y ese número no lo es: divídelo entre el otro dato y verás que el resto no es 0.', en: 'The answer has to be a multiple of both numbers, and that number is not: divide it by the other number and you will see the remainder is not 0.' },
   divisor_no_mayor: { concepto: 'divisibilidad',
-    es: 'Ese reparto se puede hacer, pero se pide el mayor número posible: busca el mayor divisor común.', en: 'That sharing is possible, but you are asked for the greatest possible number: look for the greatest common divisor.' },
+    es: 'Ese número divide a los dos datos, así que se puede hacer, pero no es el mayor posible: busca el mayor divisor común.', en: 'That number divides both numbers, so it works, but it is not the greatest possible: look for the greatest common divisor.' },
   uno_y_cero_al_reves: { concepto: 'divisibilidad',
     es: 'No los des la vuelta: el 1 es divisor de todos los números y el 0 es múltiplo de todos (0 = n · 0).', en: 'Do not swap them: 1 is a divisor of every number and 0 is a multiple of every number (0 = n · 0).' },
 };
@@ -65,6 +68,8 @@ export const preguntas = {
   primo: { es: '¿Cuál de estos números es primo?', en: 'Which of these numbers is prime?' },
   divisible_por: { es: '¿Cuál de estos números es divisible por {n}?', en: 'Which of these numbers is divisible by {n}?' },
   factorizacion: { es: '¿Cuál es la factorización en primos de {n}?', en: 'Which is the prime factorisation of {n}?' },
+  // Los dos enunciados de antes del banco de contextos: no se usan ya, pero los
+  // citan los ejercicios guardados en las tareas de los alumnos.
   coincidencia: {
     es: 'Un autobús sale cada {a} minutos y otro cada {b} minutos, y acaban de salir a la vez. ¿Cuál es el menor número de minutos que tiene que pasar para que vuelvan a salir a la vez?',
     en: 'One bus leaves every {a} minutes and another every {b} minutes, and they have just left at the same time. What is the least number of minutes before they leave at the same time again?',
@@ -73,6 +78,8 @@ export const preguntas = {
     es: 'Hay {a} lápices y {b} gomas. Se quieren hacer grupos iguales, sin que sobre nada y con el mayor número posible de grupos. ¿Cuántos grupos se hacen?',
     en: 'There are {a} pencils and {b} erasers. We want to make equal groups, with nothing left over and with the greatest possible number of groups. How many groups are made?',
   },
+  // Un enunciado por contexto del banco: clave «problema_<id>».
+  ...Object.fromEntries(CONTEXTOS.map(c => [claveDeContexto(c), { es: c.es, en: c.en }])),
   divisor_de_todos: { es: '¿Cuál de estos números es divisor de todos los números?', en: 'Which of these numbers is a divisor of every number?' },
   multiplo_de_todos: { es: '¿Cuál de estos números es múltiplo de todos los números?', en: 'Which of these numbers is a multiple of every number?' },
 };
@@ -435,42 +442,66 @@ function factorizacion(rng) {
   };
 }
 
-/** Dos datos hasta 50 con m.c.d. g entre 2 y 6 y ninguno múltiplo del otro. */
-function parDeDatos(rng) {
-  for (let i = 0; i < 100; i++) {
-    const g = rng.entero(2, 6);
-    const x = rng.entero(2, 9);
-    const y = rng.entero(2, 9);
+// --- Problemas de m.c.d. y m.c.m. ---------------------------------------------
+// El enunciado sale de un banco de contextos (contextos_mcd_mcm.js): cada
+// problema elige uno al azar con el rng del motor y genera los datos dentro de
+// su rango. Los errores son los mismos en todos los contextos de un esquema.
+
+/** Clave del enunciado de un contexto en `preguntas`. */
+export function claveDeContexto(contexto) {
+  return `problema_${contexto.id}`;
+}
+
+const mismaPareja = (a, b, [p, q]) => (a === p && b === q) || (a === q && b === p);
+
+/**
+ * Dos datos a = g · x y b = g · y con x, y distintos y sin divisores comunes (así
+ * g es el m.c.d., ninguno es múltiplo del otro y el m.c.m. no es el producto),
+ * dentro del rango del contexto. null si no lo consigue.
+ */
+export function datosDelRango(rng, rango) {
+  const { g: [gMin, gMax], paso: p = 1, cof: [cMin, cMax], min = 2, max, maxMcm = Infinity, ordenados = false, evitar = [] } = rango;
+  for (let i = 0; i < 200; i++) {
+    const g = p * rng.entero(gMin, gMax);
+    const x = rng.entero(cMin, cMax);
+    const y = rng.entero(cMin, cMax);
     if (x === y || mcd(x, y) !== 1) continue;
-    const a = g * x, b = g * y;
-    if (a <= 50 && b <= 50) return { a, b, g, m: g * x * y };
+    let a = g * x, b = g * y;
+    if (ordenados && a < b) [a, b] = [b, a];
+    const m = g * x * y;
+    if (Math.min(a, b) < min || Math.max(a, b) > max || m > maxMcm) continue;
+    if (evitar.some(par => mismaPareja(a, b, par))) continue;
+    return { a, b, g, m };
   }
-  return { a: 12, b: 18, g: 6, m: 36 };
+  return null;
 }
 
 const pasoDivisorComun = (a, b, d) => `${a} = ${d} \\cdot ${a / d} \\quad ${b} = ${d} \\cdot ${b / d}`;
 const pasoMultiploComun = (a, b, m) => `${m} = ${a} \\cdot ${m / a} = ${b} \\cdot ${m / b}`;
 
-function problemaCoincidencia(rng) {
-  const { a, b, g, m } = parDeDatos(rng);
-  const menor = Math.min(a, b), mayor = Math.max(a, b);
-  return {
-    texto: { clave: 'coincidencia', params: { a, b } },
-    correcta: num(m),
-    solucion: [paso(pasoMultiploComun(a, b, m), 'es_multiplo_comun')],
-    distractores: [
-      num(g, E('mcd_en_vez_de_mcm'), [mal(pasoDivisorComun(a, b, g))]),
-      num(a * b, E('producto_en_vez_de_mcm'), [mal(`${a} \\cdot ${b} = ${a * b}`)]),
-      num(mayor, E('no_es_comun'), [resto(mayor, menor)]),
-    ],
-  };
-}
-
-function problemaReparto(rng) {
-  const { a, b, g, m } = parDeDatos(rng);
+/** El problema de un contexto concreto, o null si no salen los datos. */
+export function problemaDeContexto(rng, contexto) {
+  const datos = datosDelRango(rng, contexto.rango);
+  if (!datos) return null;
+  const { a, b, g, m } = datos;
+  const texto = { clave: claveDeContexto(contexto), params: { a, b } };
+  if (ESQUEMAS[contexto.esquema].pide === 'mcm') {
+    const menor = Math.min(a, b), mayor = Math.max(a, b);
+    return {
+      texto,
+      correcta: num(m),
+      solucion: [paso(pasoMultiploComun(a, b, m), 'es_multiplo_comun')],
+      distractores: [
+        num(g, E('mcd_en_vez_de_mcm'), [mal(pasoDivisorComun(a, b, g))]),
+        num(a * b, E('producto_en_vez_de_mcm'), [mal(`${a} \\cdot ${b} = ${a * b}`)]),
+        num(mayor, E('no_es_comun'), [resto(mayor, menor)]),
+      ],
+    };
+  }
+  // Un divisor común que no es el mayor: el menor primo de g (o el 1 si g es primo).
   const menor = divisoresPropios(g)[0] ?? 1;
   return {
-    texto: { clave: 'reparto', params: { a, b } },
+    texto,
     correcta: num(g),
     solucion: [paso(pasoDivisorComun(a, b, g), 'es_divisor_comun')],
     distractores: [
@@ -480,6 +511,26 @@ function problemaReparto(rng) {
     ],
   };
 }
+
+/** Generador de un esquema: elige al azar uno de sus contextos. */
+function problemaDeEsquema(esquema) {
+  const contextos = CONTEXTOS.filter(c => c.esquema === esquema);
+  return rng => problemaDeContexto(rng, rng.elegir(contextos));
+}
+
+const problemaCoincidencia = problemaDeEsquema('coincidencia');
+const problemaReparto = problemaDeEsquema('grupos');
+const problemaCortar = problemaDeEsquema('cortar');
+const problemaBaldosas = problemaDeEsquema('baldosas');
+const problemaMenorCantidad = problemaDeEsquema('menor_cantidad');
+const problemaPaquetes = problemaDeEsquema('paquetes');
+
+// En la práctica general los problemas pesan lo mismo que antes del banco: un
+// hueco para los de m.c.m. y otro para los de m.c.d., cada uno con sus tres esquemas.
+const PROBLEMAS_MCM = [problemaCoincidencia, problemaMenorCantidad, problemaPaquetes];
+const PROBLEMAS_MCD = [problemaReparto, problemaCortar, problemaBaldosas];
+const problemaMcm = rng => rng.elegir(PROBLEMAS_MCM)(rng);
+const problemaMcd = rng => rng.elegir(PROBLEMAS_MCD)(rng);
 
 function unoYCero(rng) {
   const n = rng.entero(5, 20);
@@ -524,12 +575,18 @@ export const SUBTIPOS = [
   { id: 'factorizacion', items: ['U2-2C-09', 'U2-2C-11', 'U2-2C-12'], generar: factorizacion },
   { id: 'problema_coincidencia', items: ['U2-1A-02', 'U2-1C-16'], generar: problemaCoincidencia },
   { id: 'problema_reparto', items: ['U2-1A-03', 'U2-1C-16'], generar: problemaReparto },
+  { id: 'problema_cortar', items: ['U2-3A-01', 'U2-4A-01', 'U2-4A-03'], generar: problemaCortar },
+  { id: 'problema_baldosas', items: ['U2-3A-01', 'U2-4A-01', 'U2-4A-04'], generar: problemaBaldosas },
+  { id: 'problema_menor_cantidad', items: ['U2-4A-05'], generar: problemaMenorCantidad },
+  { id: 'problema_paquetes', items: ['U2-4A-05'], generar: problemaPaquetes },
   { id: 'uno_y_cero', items: ['U2-1C-04'], generar: unoYCero },
 ];
 
-// El múltiplo y el divisor, que son lo básico, salen el doble.
+// El múltiplo y el divisor, que son lo básico, salen el doble. Los seis
+// subtipos de problemas comparten dos huecos (m.c.m. y m.c.d.).
 const FORMAS = [
-  ...SUBTIPOS.map(s => s.generar),
+  ...SUBTIPOS.filter(s => !s.id.startsWith('problema_')).map(s => s.generar),
+  problemaMcm, problemaMcd,
   multiplo, divisor,
 ];
 

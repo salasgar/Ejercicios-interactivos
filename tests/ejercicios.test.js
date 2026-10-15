@@ -2,6 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { TIPOS, CONCEPTOS, crearRng, construirOpciones, tex, texFraccion, reducir } from '../src/ejercicios/index.js';
 import { preguntaDe, feedbackDe } from '../src/textos.js';
+import { claveDeContexto } from '../src/ejercicios/divisibilidad.js';
+import { CONTEXTOS } from '../src/ejercicios/contextos_mcd_mcm.js';
 import es from '../src/i18n/es.js';
 import en from '../src/i18n/en.js';
 import { aplicarNotacion, t } from '../src/i18n/index.js';
@@ -89,10 +91,13 @@ test('divisibilidad: ningún distractor es también una respuesta válida', () =
       continue;
     }
     const mcdTest = (a, b) => (b ? mcdTest(b, a % b) : a);
-    if (clave === 'coincidencia') {
+    // Los problemas salen del banco de contextos: cada uno dice si pide m.c.d. o m.c.m.
+    const pide = CONTEXTOS.find(c => claveDeContexto(c) === clave)?.pide
+      ?? { coincidencia: 'mcm', reparto: 'mcd' }[clave];
+    if (pide === 'mcm') {
       const { a, b } = ej.texto.params;
       valido = v => v === (a * b) / mcdTest(a, b);
-    } else if (clave === 'reparto') {
+    } else if (pide === 'mcd') {
       const { a, b } = ej.texto.params;
       valido = v => v === mcdTest(a, b);
     } else if (clave === 'divisor_de_todos') valido = v => v === 1;
