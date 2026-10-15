@@ -12,17 +12,13 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-ACTUALIZADO 2026-10-09 10:41 UTC: las tareas 03, 10, 11, 13 y 31 pasan de REABIERTA a LISTA (cadena T03+T10+T11+T13+T31, sesiones s-20261009T103252-a1a26615, …103535-0cc7c00c, …103641-fc24709c, …103736-8c2b4460, …103848-eda5c3f9; solo se tocaron esas cinco filas y el registro).
-Regenerado: 2026-10-09 10:44 UTC · por la sesión s-20261009T103541-6e97ef70 (cadena T05+T30+T32, al cerrar la 32; solo las filas 05, 30, 32 y 37 recalculadas, el resto tal cual). La 05, la 30 y la 32 están LISTAS; la 37 queda LIBRE (ya no espera a nadie). Siguen REABIERTAS 03 10 11 12 13 14 15 16 20 24 26 27 31 33. Ningún reclamo vivo de esta cadena.
-Las reabiertas restantes vienen de dos sitios:
-- **Segunda revisión** (`hechos/reabiertas/NN--s-20261009T082156-0a34d7a4.md`, 14): una grave y retirada de la
-  portada (05 criba, commit 17a9e5c) y trece menores que siguen publicadas (03 10 11 12 13 14
-  16 20 24 26 27 30 33). Veredicto: `salidas/36-segunda-revision/VEREDICTO.md`.
-- **Decisiones de Juan Luis del 9-10** (`hechos/reabiertas/NN--s-20261008T174225-f75f5cdb-decisiones.md`,
-  8): 13 14 15 24 26 30 31 32.
-**Quien coja una reabierta lee TODAS las de su tarea con fecha del 9-10 y las corrige en el
-mismo reclamo**, y antes `hechos/notas/s-20261008T174225-f75f5cdb.md` (contador por puntos).
-**La 05, la 30 y la 32 tocan `practicas/_comun/catalogo.js`: van en la misma sesión, en serie.**
+Regenerado: 2026-10-15 20:18 UTC · por la sesión s-20261015T173031-efad3f35 (T37, al cerrar).
+Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
+únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
+ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
+cierre de 03, 21, 31 y 34 (todos del 7-10) tienen terminada posterior y no cuentan como vivos.
+La 37 deja la página `practicas/semana.html` y `practicas/_comun/tareas.js` (se cambia a mano);
+lo que propone y lo que vio fuera de criterio está en su terminada.
 **NUNCA `--autostash` ni `git stash` en este árbol**: ver la incidencia de las 18:03Z, abajo.
 
 ## Antes de hacer nada
@@ -157,28 +153,29 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 34 | Filas 17-30 del catálogo (repaso U1) y las tres líneas del test común | tareas/tarea-34-catalogo-u1.md | 01 LISTA | 30 min | MEDIO | — | practicas/_comun/catalogo.js + tests/practicas-comun.test.js; salidas/34-catalogo-u1/ | LISTA | terminada 20:51Z · commit 9c26890 |
 | 35 | Base: 10 aciertos (+2, tope 20) e idioma alterno por ítem sin selector | tareas/tarea-35-base-10-e-idioma-alterno.md | 01 LISTA | 1 h | MEDIO | — | practicas/_comun/{base,contador,textos}.js, plantilla (comentarios), panel, tests/practicas-comun.test.js, README (apartado); salidas/35-base-10-e-idioma-alterno/ | LISTA | terminada 21:32Z · commit 6cfc713 |
 | 36 | Segunda revisión: comprobar las 28 reaperturas | tareas/tarea-36-segunda-revision.md | las 28 reabiertas con terminada, o con código comiteado (30, 33) | 1 h 30 min | ALTO | — | practicas/_comun/catalogo.js (solo `disponible`, solo para retirar); salidas/36-segunda-revision/ | LISTA | terminada 10:07Z (9-oct) · commit 17a9e5c |
-| 37 | Tarea de la semana (página, marcador, código único) y arreglos de la base | tareas/tarea-37-tarea-semanal.md | 36 LISTA; reaperturas del 9-10 de la 30 y la 32 LISTAS | 2 h | ALTO | — | practicas/_comun/, practicas/semana.*, panel, portada, tests; salidas/37-tarea-semanal/ | LIBRE | la 36, la 30 y la 32 ya están LISTAS |
+| 37 | Tarea de la semana (página, marcador, código único) y arreglos de la base | tareas/tarea-37-tarea-semanal.md | 36 LISTA; reaperturas del 9-10 de la 30 y la 32 LISTAS | 2 h | ALTO | — | practicas/_comun/, practicas/semana.*, panel, portada, tests; salidas/37-tarea-semanal/ | LISTA | terminada 20:18Z (15-oct) · commits 42bb8cd y dae33d6 |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: cuatro, todas MEDIO (carpetas disjuntas). Cadenas sugeridas:
-T05+T30+T32 (las tres tocan el catálogo: una sola sesión, en serie; la 05 primero, que es la
-grave) · T33+T24+T26+T27 · T20+T12+T14+T16+T15 · T03+T10+T11+T13+T31. La 24 es ALTO en su
-ficha, pero sus dos reaperturas son MEDIO. La 37 (ALTO) espera a la 30 y la 32.
+Cuántas sesiones caben a la vez: ninguna hace falta; no queda tarea LIBRE en el reparto.
+Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
+tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
 Fuera del reparto: el commit 58a9da2 (2026-10-08) cambió la base a contador por puntos (10
 puntos, −1 por fallo, 5 vidas, racha de 5 con extra); `inicial` y `maximo` ya no existen.
 Nota: `hechos/notas/s-20261008T173817-contador-contador-por-puntos.md`. La propuesta de
 «tarea 36 puntos» queda sin objeto.
 
-Los arreglos de la base (`practicas/_comun/`) que pidió la revisión 18 son de la tarea 37. La
+Los cuatro arreglos de la base (`practicas/_comun/`) que pidió la revisión 18 los hizo la tarea 37. La
 segunda revisión añade tres que no están en su ficha (`salidas/36-segunda-revision/HALLAZGOS-FUERA-DE-CRITERIO.md`,
 apartado 2): los decide la coordinadora.
 
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 37 · 2026-10-15 20:18 · s-20261015T173031-efad3f35 · 42bb8cd, dae33d6 · 17 ficheros (practicas/_comun/{base,codigos,piezas,tareas,textos}.js y estilos.css, practicas/semana.{html,js}, portada, panel, resultados, plantilla, tests/practicas-semana.test.js, docs, README) · ≈ 2 h 50 min (estimada: 2 h)
 
 LISTA · tarea 27 · 2026-10-09 · s-20261009T103957-88910a38 · d42dfba · practicas/distributiva/{logica,practica,textos}.js, tests/practicas-distributiva.test.js (4 ficheros) · ~12 min · reabierta corregida (segunda revisión)
 

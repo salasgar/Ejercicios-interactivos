@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-09
 Precondición: 36 LISTA; las reaperturas de la 30 y la 32 del 2026-10-09 (`hechos/reabiertas/30--…-decisiones.md`, `32--…-decisiones.md`) LISTAS, porque tocan `catalogo.js` y `tests/practicas-comun.test.js`; ninguna sesión fuera del reparto con cambios sin comitear en `practicas/_comun/` (`git status`) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h (tiempo de sesión, no de persona; real el 2026-10-15: ≈ 2 h 50 min) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/37-tarea-semanal/` (solo `ENTREGA.md` y su marcador)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/{base.js,estilos.css,piezas.js,textos.js,codigos.js}`, `practicas/_comun/tareas.js` (nuevo), `practicas/semana.html` y `practicas/semana.js` (nuevos), `practicas/index.html`, `practicas/portada.js`, `practicas/profesor.html`, `practicas/profesor.js`, `practicas/resultados.js`, `practicas/plantilla/` (comentarios y ejemplo), `tests/practicas-comun.test.js`, `tests/practicas-semana.test.js` (nuevo), `docs/practicas-unidad2.md`, `README.md` (apartado de prácticas). `firestore.rules` solo si hiciera falta una colección nueva, y entonces NO se toca: se propone (ver «Si esta tarea resulta ser más de una»).
 
@@ -165,6 +165,19 @@ alumno, el formato de los códigos de práctica, `firestore.rules`, y cualquier 
   elegir de la semana 4; si sigue sin corregir al cerrar, sácalo de `tareas.js` y dilo.
 - Las trampas de móvil de la ficha 18 (medir contra 375 fijo; `puppeteer-core` necesita
   `process.exit(0)`) valen aquí.
+- (2026-10-15, s-20261015T173031-efad3f35) **`python3 -m http.server` corta conexiones** con
+  varios Chrome a la vez (su cola es de 5): media pasada salió «menú con 0 ejercicios» y
+  `ERR_CONNECTION_RESET` sin que la app tuviera nada. Para probar en paralelo, un
+  `ThreadingHTTPServer` con `request_queue_size = 256` (o pocas pestañas a la vez).
+- En este Mac el `Bash` es zsh: `F="a b"; git add $F` NO parte la variable (el `add` falla
+  entero con «pathspec … did not match»). Usar una lista `F=(a b)`.
+- `sleep 30` en primer plano lo bloquea el entorno: la espera del reclamo se lanza en segundo
+  plano (`run_in_background`) y se lee al terminar.
+- Ediciones en paralelo (varias `Edit` en el mismo mensaje) fallaron varias veces con «el
+  comprobador no dio veredicto»: de una en una van bien.
+- El calendario puede moverse mientras trabajas (el 15-10 se retrasó una semana y otra sesión
+  avisó por mensaje): los `desde` de `tareas.js` se comprueban contra la última incidencia de
+  calendario de `2. Divisibility/reparto-unidad2/hechos/incidencias/` antes de cerrar.
 
 ## Prohibido (propio de esta tarea)
 
