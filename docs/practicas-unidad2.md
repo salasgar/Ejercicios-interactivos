@@ -238,20 +238,16 @@ portada.
 | 4 | `clasificador` | 10 | Enunciados limpios · Con trampa («mayor» y «menor» no deciden) · Justifícalo |
 | 4 | `reloj` | 11 | Predice la coincidencia · La hora de reloj · Cada cuántos días (tres datos) |
 | 4 | `baldosas` | 12 | La baldosa más grande · ¿Cuántas baldosas? · Cuerdas |
-| 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error · ¿Paso a paso? |
+| 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error |
 | toda | `leelo` | 14 | Escúchalo · ¿Cómo se lee? · Completa la frase |
 | toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
 
 `divisores` vive en `divisores/` (su URL de siempre) y desde la tarea 17 está montada sobre
 la base. Las demás, en `practicas/<slug>/`.
 
-**Publicadas en la portada el 2026-10-08: 20 de las 31.** Las otras once existen y se abren
-por su URL, pero siguen con `disponible: false` en el catálogo porque la revisión final
-encontró en ellas algo que penaliza una respuesta correcta o que no se puede contestar:
-`divisiones`, `imposibles`, `clasificador`, `reloj` y `errores` (unidad 2), y `jerarquia`,
-`exponente`, `distributiva`, `mental`, `errores1` y `propiedades` (repaso). Cada una tiene su
-reapertura en `reparto-practicas-u2/hechos/reabiertas/`, con lo que hay que corregir; quien
-la cierre pone su `disponible: true`. El detalle, en el veredicto de la tarea 18 (apartado 8).
+**Publicadas en la portada: las 31** (desde el 2026-10-09, tras corregir lo que encontraron
+la revisión final, tarea 18, y la segunda revisión, tarea 36; los veredictos están en
+`reparto-practicas-u2/salidas/18-revision-final/` y `36-segunda-revision/`).
 
 ### Repaso de la unidad 1
 
