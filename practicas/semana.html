@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1d4ed8">
+  <title>Tarea de la semana</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2720%27 fill=%27%231d4ed8%27/%3E%3Ctext x=%2750%27 y=%2768%27 font-size=%2752%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27 font-weight=%27bold%27%3E%C3%B7%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../css/estilos.css">
+  <link rel="stylesheet" href="_comun/estilos.css">
+  <style>
+    /* Solo de la tarea de la semana. */
+    .semana__objetivo { font-size: 1.05rem; }
+    .semana__marcador { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .9rem; margin-bottom: .5rem; font-weight: 600; }
+    .semana__marcador strong { font-size: 1.15rem; }
+    .semana__marcador .listo { color: var(--correcto); }
+    .semana__bloque { font-size: 1.05rem; margin: 1.5rem 0 .3rem; }
+    .semana__ayuda { margin: 0 0 .6rem; }
+    .tarea-item__practica { font-size: .85rem; color: var(--texto-suave); margin-bottom: .1rem; }
+    .tarea-item h3 { margin: 0; }
+    .tarea-item--hecho { background: var(--correcto-claro); }
+    .semana .resultado { margin-top: 1.2rem; }
+    .semana .resultado h3 { margin-top: 0; }
+    .semana__pedir { margin-top: .4rem; }
+  </style>
+  <script type="module" src="semana.js"></script>
+</head>
+<body>
+  <header class="cabecera">
+    <span class="cabecera__titulo" id="cabecera-titulo">Tarea de la semana</span>
+  </header>
+  <main id="app" class="app semana">
+    <p class="cargando">Cargando…</p>
+  </main>
+  <noscript><p class="aviso">Esta aplicación necesita JavaScript.</p></noscript>
+</body>
+</html>

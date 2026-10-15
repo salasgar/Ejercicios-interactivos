@@ -109,43 +109,47 @@ resultados y qué práctica cubre qué destreza del inventario.
 | 1 | `recta` | Múltiplos y divisores en la recta | Múltiplos, divisores, el 0 y el 1 (U2-1C-02 a 1C-04) |
 | 2 | `criba` | Criba y números primos | Primos menores que 100, primo o compuesto, hasta qué primo probar (U2-2C-01 a 2C-07) |
 | 2 | `arbol` | Árbol de factores | Árbol de factores, factorización sin terminar (U2-2C-08, 2C-09, 2C-13) |
-| 2 | `divisiones` ⏳ | Divisiones sucesivas | Divisiones sucesivas, forma de potencias, comprobar (U2-2C-10 a 2C-12) |
+| 2 | `divisiones` | Divisiones sucesivas | Divisiones sucesivas, forma de potencias, comprobar (U2-2C-10 a 2C-12) |
 | 2 | `fabrica` | Fábrica de divisores | Divisores a partir de los factores primos y cuántos son (U2-3C-01, 3C-02, 2C-14) |
 | 2 | `factorizaciones` | Operar con factorizaciones | Producto, cociente y «¿es múltiplo?» con exponentes (U2-2C-14) |
 | 3 | `venn` | m.c.d. y m.c.m. con factores primos | Las dos reglas sin cruzarlas (U2-3C-03 a 3C-06, 3C-08, 3C-10) |
-| 3 | `imposibles` ⏳ | Detector de imposibles | Desigualdades del m.c.d. y el m.c.m., nombrar la respuesta (U2-3C-10, 3C-11, 1A-04) |
-| 4 | `clasificador` ⏳ | ¿m.c.d. o m.c.m.? | Decidir sin calcular, también cuando el enunciado empuja al revés (U2-1A-01, 4A-01) |
-| 4 | `reloj` ⏳ | Reloj de coincidencias | Coincidencias con listas y en hora de reloj (U2-1A-02, 4A-02) |
+| 3 | `imposibles` | Detector de imposibles | Desigualdades del m.c.d. y el m.c.m., nombrar la respuesta (U2-3C-10, 3C-11, 1A-04) |
+| 4 | `clasificador` | ¿m.c.d. o m.c.m.? | Decidir sin calcular, también cuando el enunciado empuja al revés (U2-1A-01, 4A-01) |
+| 4 | `reloj` | Reloj de coincidencias | Coincidencias con listas y en hora de reloj (U2-1A-02, 4A-02) |
 | 4 | `baldosas` | Baldosas y cuerdas | Cubrir con cuadrados y cortar en trozos iguales (U2-4A-03, 4A-04, 4A-07) |
-| 4 | `errores` ⏳ | Caza el error | Reconocer y nombrar el error, y lo que no es un error (U2-4C-01, 4C-02) |
+| 4 | `errores` | Caza el error | Reconocer y nombrar el error, y lo que no es un error (U2-4C-01, 4C-02) |
 | toda | `leelo` | Léelo en inglés | Leer factorizaciones, m.c.d. y m.c.m.; vocabulario (U2-1B, 2B-03, 3B-03) |
 | toda | `divisores` | Divisor, múltiplo, divisible | No confundir múltiplo, divisor y divisible (U2-1B-01, 1C-02) |
-| U1 | `jerarquia` ⏳ | ¿Qué se hace primero? | Jerarquía paso a paso, con potencias, raíces y paréntesis |
+| U1 | `jerarquia` | ¿Qué se hace primero? | Jerarquía paso a paso, con potencias, raíces y paréntesis |
 | U1 | `parentesis` | Coloca los paréntesis | Qué resultados salen según dónde va el paréntesis |
-| U1 | `exponente` ⏳ | El exponente y su base | A qué afecta el exponente, potencia como producto repetido, cuadrado de la suma |
+| U1 | `exponente` | El exponente y su base | A qué afecta el exponente, potencia como producto repetido, cuadrado de la suma |
 | U1 | `raiz` | Raíz cuadrada con cuadrados | Raíz exacta, raíz entera y resto |
 | U1 | `division` | División entera: cajas y resto | Cociente, resto, la prueba y qué significa el resto |
 | U1 | `expresion` | Del enunciado a la expresión | Modelar un problema con una expresión, con los paréntesis justos |
 | U1 | `redondeo` | Redondeo y estimación | Redondear, estimar y decidir si un resultado es razonable |
 | U1 | `constructor` | Constructor de números | Valor de las cifras, descomposición, números con cifras y con palabras |
-| U1 | `distributiva` ⏳ | Distributiva con rectángulos | Propiedad distributiva, factor común, compensar con 99 |
+| U1 | `distributiva` | Distributiva con rectángulos | Propiedad distributiva, factor común, compensar con 99 |
 | U1 | `potencias10` | Potencias de 10 y números grandes | Potencias de 10, million, billion y trillion |
 | U1 | `dictado` | Dictado de números | Numerales ingleses de oído y por escrito; ortografía española |
-| U1 | `mental` ⏳ | Cálculo mental con estrategia | Compensar y descomponer |
+| U1 | `mental` | Cálculo mental con estrategia | Compensar y descomponer |
 | U1 | `especiales` | Potencias especiales | Exponentes 0 y 1, potencias de 10, igualdades falsas típicas |
-| U1 | `errores1` ⏳ | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias; ver si se ha saltado un paso |
-| U1 | `propiedades` ⏳ | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
+| U1 | `errores1` | Caza el error (unidad 1) | Reconocer y nombrar errores de jerarquía, división y potencias; ver si se ha saltado un paso |
+| U1 | `propiedades` | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
 
-⏳ = hecha pero **todavía no enlazada desde la portada** (`disponible: false` en
-el catálogo): la revisión final del 2026-10-08 encontró en ella algo que
-penaliza una respuesta correcta o que no se puede contestar. Lo que hay que
-corregir está en `reparto-practicas-u2/hechos/reabiertas/` y el veredicto
-completo en `reparto-practicas-u2/salidas/18-revision-final/VEREDICTO.md`.
+Desde el 2026-10-09 las 31 están publicadas en la portada (`disponible: true`
+en el catálogo), tras corregir lo que encontraron las dos revisiones.
 
+- **Tarea de la semana** (desde el 2026-10-15): `practicas/semana.html?t=<id>`
+  abre los ejercicios de esa semana (unos obligatorios con ★ y otros a elegir),
+  con un marcador («★ 4 de 6 · a elegir 2 de 4 · 60 de 100 puntos») y, al
+  cumplirla, **un único código de resultado de 20 caracteres**. Qué lleva cada
+  semana se cambia a mano en `practicas/_comun/tareas.js`; el panel da el enlace
+  común para Classroom y la vista «Tareas de la semana».
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
   en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Cada
   práctica da un **código de resultado de 16 caracteres** que dice además de
-  qué práctica es; el panel lee mezclados los de 16 y los de 12 de `divisores/`.
+  qué práctica es; el panel lee mezclados los de 20 de las tareas, los de 16 y
+  los de 12 de `divisores/`.
 - El progreso se copia en Firestore, en `practicas/{práctica}--{código}` (regla
   en `firestore.rules`; **hay que publicarla** para que funcione la nube).
 - `practicas/_comun/`: la base (`base.js`), el catálogo con los ids (`catalogo.js`,

@@ -1,0 +1,218 @@
+// Tarea de la semana (`practicas/semana.html?t=<id>`): los ejercicios de esa
+// semana (los ★ y los de elegir, de `_comun/tareas.js`), con su estado, un
+// marcador y un único código de resultado de la tarea.
+//
+// La página no guarda nada suyo: el progreso lo lee de donde lo guarda la
+// base, en este navegador (la nube solo la puede leer el profesor). Así no
+// puede contradecir a las prácticas, y un ejercicio terminado antes de que
+// existiera la tarea cuenta igual.
+//
+// El enlace que se pega en Classroom es `semana.html?t=<id>`: cada alumno
+// escribe su código la primera vez (o ya lo tiene recordado de otra práctica).
+// El panel da también el enlace de cada alumno, con `&c=<código>`.
+
+import { practicaPorSlug } from './_comun/catalogo.js';
+import { leerCodigoAlumno, codigoAlumno, codigoTarea } from './_comun/codigos.js';
+import { leer, escribir, borrar, claveIdiomaFijo, modoIdioma, progresoGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
+import { T, esc } from './_comun/textos.js';
+import { tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
+
+const app = document.querySelector('#app');
+const params = new URLSearchParams(location.search);
+const tarea = tareaPorId(Number(params.get('t')));
+
+let codigo = null, indice = null;
+let idioma = 'es';
+let verCodigo = false;           // el alumno ha pedido el código antes de cumplir la tarea
+const nombres = new Map();       // 'slug/n' → { es, en }: el nombre de cada ejercicio, de su práctica
+
+/** Como en la base: `?idioma=es|en` lo fija para el alumno, `?idioma=alterno` lo quita. */
+function aplicarIdioma() {
+  const param = params.get('idioma');
+  if (codigo && (param === 'es' || param === 'en')) escribir(claveIdiomaFijo(codigo), param);
+  else if (codigo && param === 'alterno') borrar(claveIdiomaFijo(codigo));
+  idioma = modoIdioma(location.search, codigo ? leer(claveIdiomaFijo(codigo)) : null) ?? 'es';
+}
+
+function entrar(i) {
+  indice = i;
+  codigo = codigoAlumno(i);
+  escribir('practicas.codigo', codigo);
+  aplicarIdioma();
+  pintar();
+}
+
+function cabecera(titulo) {
+  document.documentElement.lang = idioma;
+  document.title = titulo;
+  document.querySelector('#cabecera-titulo').textContent = titulo;
+}
+
+// --- Sin tarea o sin código -----------------------------------------------------------
+
+function pintarSinTarea() {
+  const t = T[idioma];
+  cabecera(t.semana_titulo);
+  const lista = tareasPublicadas(fechaISO(new Date()));
+  app.innerHTML = `
+    <section>
+      <div class="aviso">${t.semana_no_existe}</div>
+      ${lista.length ? `<p>${t.semana_elige_tarea}</p>
+      <ul class="lista">${lista.map(x => `
+        <li class="lista__item"><div><h3>${esc(x.titulo[idioma])}</h3></div>
+          <a class="boton" href="semana.html?t=${x.id}${codigo ? `&c=${codigo}` : ''}">${t.portada_abrir}</a></li>`).join('')}</ul>` : ''}
+      <p><a class="enlace-portada" href="${URL_PORTADA}${codigo ? `?c=${codigo}` : ''}">${t.todas}</a></p>
+    </section>`;
+}
+
+function pintarEntrada(error = false) {
+  const t = T[idioma];
+  cabecera(tarea.titulo[idioma]);
+  app.innerHTML = `
+    <section class="entrada">
+      <h2>${esc(tarea.titulo[idioma])}</h2>
+      <form class="tarjeta" id="form-codigo">
+        <h2>${t.entrada_titulo}</h2>
+        <p class="pequeno">${t.entrada_ayuda}</p>
+        <input id="codigo" type="text" class="codigo-entrada" maxlength="8" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${t.entrada_titulo}" required>
+        ${error ? `<div class="aviso aviso--error">${t.entrada_error}</div>` : ''}
+        <button type="submit" class="ancho">${t.entrada_boton}</button>
+      </form>
+    </section>`;
+  app.querySelector('#form-codigo').addEventListener('submit', ev => {
+    ev.preventDefault();
+    const i = leerCodigoAlumno(app.querySelector('#codigo').value);
+    if (i === null) return pintarEntrada(true);
+    entrar(i);
+  });
+}
+
+// --- La tarea -------------------------------------------------------------------------
+
+function filaEjercicio(e, estrella) {
+  const t = T[idioma];
+  const ficha = practicaPorSlug(e.slug);
+  const nombre = nombres.get(`${e.slug}/${e.n}`);
+  const etiqueta = e.terminado ? `<span class="etiqueta etiqueta--ok">${t.semana_terminado(e.ej.fallos ?? 0)}</span>`
+    : e.empezado ? `<span class="etiqueta">${t.puntos(e.ej.puntos ?? 0, e.ej.objetivo ?? 10)}</span>`
+      : `<span class="pequeno">${t.semana_sin_empezar}</span>`;
+  const boton = e.terminado ? t.repetir : e.empezado ? t.seguir : t.empezar;
+  return `
+    <li class="lista__item tarea-item ${e.terminado ? 'tarea-item--hecho' : ''}">
+      <div>
+        <div class="tarea-item__practica">${esc(ficha.nombre[idioma])}</div>
+        <h3>${estrella ? '★ ' : ''}${t.ejercicio(e.n)} · <span data-nombre="${e.slug}/${e.n}">${nombre ? esc(nombre[idioma]) : t.semana_cargando_nombre}</span></h3>
+        ${etiqueta}
+      </div>
+      <a class="boton ${e.terminado ? 'secundario' : ''}" href="${enlaceEjercicio(e.slug, e.n, tarea.id, codigo)}">${boton}</a>
+    </li>`;
+}
+
+function cajaCodigo(est) {
+  const t = T[idioma];
+  if (!est.cumplida && !verCodigo) return `<button type="button" class="secundario ancho semana__pedir" id="pedir">${t.semana_pedir}</button>`;
+  const texto = codigoTarea(tarea.id, indice, {
+    estrella: est.estrella.map(e => e.terminado),
+    elegir: est.elegir.map(e => e.terminado),
+    fallos: est.fallos,
+    dia: est.dia,
+  });
+  return `
+    <div class="tarjeta resultado ${est.cumplida ? 'resultado--completo' : ''}">
+      <h3>${est.cumplida ? t.semana_cumplida : t.resultado_titulo}</h3>
+      <p class="pequeno">${est.cumplida ? t.semana_cumplida_texto : t.semana_parcial(est.estrellaHechos, est.estrella.length, est.elegirHechos, tarea.nElegir)}</p>
+      <div class="resultado__fila">
+        <output class="resultado__codigo" id="codigo-resultado">${texto}</output>
+        <button type="button" class="secundario" id="copiar">${t.copiar}</button>
+      </div>
+    </div>`;
+}
+
+function pintarTarea() {
+  const t = T[idioma];
+  cabecera(tarea.titulo[idioma]);
+  const guardado = new Map();
+  const est = estadoTarea(tarea, (slug, n) => {
+    if (!guardado.has(slug)) guardado.set(slug, progresoGuardado(slug, codigo));
+    return guardado.get(slug)[n - 1] ?? null;
+  });
+  const elegidos = Math.min(est.elegirHechos, tarea.nElegir);
+  const marcador = [
+    est.estrella.length ? `<span class="${est.estrellaHechos === est.estrella.length ? 'listo' : ''}">${t.semana_marcador_estrella(est.estrellaHechos, est.estrella.length)}</span>` : '',
+    tarea.nElegir ? `<span class="${elegidos === tarea.nElegir ? 'listo' : ''}">${t.semana_marcador_elegir(elegidos, tarea.nElegir)}</span>` : '',
+    `<strong>${t.semana_marcador_puntos(est.puntos, est.maximo)}</strong>`,
+  ].join('');
+  app.innerHTML = `
+    <section>
+      <h2>${esc(tarea.titulo[idioma])}</h2>
+      <p class="semana__objetivo">${t.semana_objetivo(est.estrella.length, tarea.nElegir, est.maximo)}</p>
+      <div class="tarjeta">
+        <div class="semana__marcador" aria-live="polite">${marcador}</div>
+        <div class="barra"><div style="width: ${Math.round(100 * est.puntos / Math.max(1, est.maximo))}%"></div></div>
+      </div>
+      ${est.cumplida ? cajaCodigo(est) : ''}
+      ${est.estrella.length ? `
+        <h3 class="semana__bloque">${t.semana_estrella}</h3>
+        <ul class="lista">${est.estrella.map(e => filaEjercicio(e, true)).join('')}</ul>` : ''}
+      ${est.elegir.length ? `
+        <h3 class="semana__bloque">${t.semana_elegir(tarea.nElegir)}</h3>
+        <p class="pequeno semana__ayuda">${t.semana_elegir_ayuda(tarea.nElegir)}</p>
+        <ul class="lista">${est.elegir.map(e => filaEjercicio(e, false)).join('')}</ul>` : ''}
+      ${est.cumplida ? '' : cajaCodigo(est)}
+      <div class="pie-menu">
+        <a class="enlace-portada" href="${URL_PORTADA}?c=${codigo}">${t.todas}</a>
+        <button type="button" class="discreto" id="cambiar">${t.cambiar_codigo} (${codigo})</button>
+      </div>
+    </section>`;
+  app.querySelector('#pedir')?.addEventListener('click', () => { verCodigo = true; pintar(); });
+  app.querySelector('#copiar')?.addEventListener('click', async ev => {
+    const salida = app.querySelector('#codigo-resultado');
+    try {
+      await navigator.clipboard.writeText(salida.textContent);
+      ev.target.textContent = t.copiado;
+    } catch {
+      getSelection().selectAllChildren(salida);
+    }
+  });
+  app.querySelector('#cambiar').addEventListener('click', () => {
+    borrar('practicas.codigo');
+    codigo = null;
+    indice = null;
+    verCodigo = false;
+    pintar();
+  });
+}
+
+/** Los nombres de los ejercicios están en cada práctica: se cargan aparte y se ponen al llegar. */
+async function cargarNombres() {
+  const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
+  await Promise.all(slugs.map(async slug => {
+    const declaracion = await declaracionDe(practicaPorSlug(slug));
+    declaracion?.ejercicios?.forEach((e, i) => nombres.set(`${slug}/${i + 1}`, e.nombre));
+    for (const span of app.querySelectorAll(`[data-nombre^="${slug}/"]`)) {
+      const nombre = nombres.get(span.dataset.nombre);
+      if (nombre) span.textContent = nombre[idioma];
+    }
+  }));
+}
+
+function pintar() {
+  if (!tarea) return pintarSinTarea();
+  if (codigo === null) return pintarEntrada();
+  pintarTarea();
+}
+
+// --- Arranque -------------------------------------------------------------------------
+
+const inicial = leerCodigoAlumno(params.get('c') ?? leer('practicas.codigo') ?? '');
+if (inicial === null) {
+  aplicarIdioma();
+  pintar();
+} else {
+  entrar(inicial);
+}
+if (tarea) cargarNombres();
+// Al volver atrás desde una práctica (si el navegador guarda la página), se actualiza el progreso.
+addEventListener('pageshow', ev => { if (ev.persisted && codigo) pintar(); });
+// Y al volver a la pestaña después de practicar en otra (sin borrar lo que se esté tecleando en la entrada).
+addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && codigo) pintar(); });

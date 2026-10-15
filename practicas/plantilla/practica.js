@@ -32,10 +32,15 @@
 //     generar(rng, sesion)  devuelve el ítem: DATOS puros (ver logica.js).
 //                         `rng` tiene azar(), entero(min, max), elegir(lista) y
 //                         barajar(lista). `sesion` es { aciertos, fallos, puntos,
-//                         vidas, anterior } (anterior = el ítem previo o null;
+//                         vidas, anterior, idioma } (anterior = el ítem previo o null;
 //                         aciertos = los del intento en curso, que vuelven a 0 al
 //                         perder las vidas): sirve para graduar la dificultad o
-//                         para un ejercicio por pasos.
+//                         para un ejercicio por pasos. `idioma` ('es' | 'en') es
+//                         el del ítem que se va a generar: permite ítems que solo
+//                         tienen sentido en un idioma (por ejemplo, un error que
+//                         solo lo es en inglés). Ojo: tras responder, el alumno
+//                         puede ver el MISMO ítem en el otro idioma; `montar` tiene
+//                         que pintarlo bien también ahí.
 //     clave(item)         opcional: texto que identifica el ítem (por defecto,
 //                         JSON.stringify). La base no repite la clave anterior
 //                         (lo intenta hasta 5 veces).
@@ -76,6 +81,28 @@
 // idioma dentro de una caja de solo lectura (su `api.responder` no hace nada
 // y `api.respondido()` ya da `true`): no hay que hacer nada especial para
 // esto, solo que `montar` siga funcionando con un ítem ya respondido.
+//
+// ─── Lo que la práctica no tiene que hacer ─────────────────────────────────────
+//
+// `…/<slug>/?ejercicio=n` abre directamente el ejercicio n (empezando en 1), y
+// con `&semana=<id>` vuelve a la tarea de la semana al salir o al terminar
+// (`../semana.html`, datos en `../_comun/tareas.js`). Lo hace la base: la
+// práctica no tiene que hacer nada.
+//
+// ─── Piezas comunes (../_comun/piezas.js) ──────────────────────────────────────
+//
+//   elecciones(contenedor, { opciones, alElegir, clase })   botones de elegir (ejercicio 1)
+//   pasos(contenedor, { valor, min, max, pinta, … })        contador −/valor/+ (ejercicio 2)
+//   campoNumero(contenedor, { nombre, cifras, idioma, boton, alEnviar })
+//                       para escribir un número: en el móvil saca el teclado de
+//                       cifras, acepta «4.730» y «4 730» y no deja comprobar
+//                       vacío. Úsalo en vez de <input type="number">:
+//
+//     contenedor.innerHTML = `… <div id="campo"></div><button type="button" class="comprobar">${api.t.comprobar}</button>`;
+//     const boton = contenedor.querySelector('.comprobar');
+//     const campo = campoNumero(contenedor.querySelector('#campo'), { nombre: 'Resultado', idioma: api.idioma, boton, alEnviar: comprobar });
+//     boton.addEventListener('click', () => comprobar(campo.valor()));
+//     function comprobar(valor) { if (api.respondido()) return; campo.bloquear(); boton.hidden = true; api.responder({ … }); }
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
