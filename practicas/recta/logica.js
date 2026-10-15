@@ -7,6 +7,7 @@
 //   'vf'         ejercicio 3: { tipo, plantilla, n } o { tipo, plantilla, a, b, verdad }
 
 import { divisores as divisoresDe } from '../_comun/aritmetica.js';
+import { explicacionCompleta, cerrar, noEsMultiploCorto, noEsDivisorCorto } from '../_comun/relaciones.js';
 
 // --- Ejercicio 1: marca los múltiplos --------------------------------------------
 
@@ -110,9 +111,7 @@ function explicarMultiplos(item, respuesta, idioma) {
   const siguientes = [ultimo + item.n, ultimo + 2 * item.n, ultimo + 3 * item.n].join(', ');
   const lista = item.correctos.join(', ');
   const sobran = [...marcados].filter(x => x !== 0 && !item.correctos.includes(x)).sort((x, y) => x - y)
-    .map(x => (idioma === 'es'
-      ? `${x} no es múltiplo de ${item.n}: <span class="cuenta">${x} : ${item.n}</span> no es exacta. `
-      : `${x} is not a multiple of ${item.n}: <span class="cuenta">${x} : ${item.n}</span> is not exact. `)).join('');
+    .map(x => `${noEsMultiploCorto(x, item.n, idioma)} `).join('');
   if (idioma === 'es') {
     const cero = faltaCero ? `<span class="cuenta">0 = ${item.n} · 0</span>: el 0 es múltiplo de ${item.n} (y de todos los números). ` : '';
     return `${sobran}${cero}Los múltiplos de ${item.n} hasta ${item.hasta} son ${lista}. Y siguen: ${siguientes}… los múltiplos no se acaban.`;
@@ -126,9 +125,7 @@ function explicarDivisores(item, respuesta, idioma) {
   const lista = item.correctos.join(', ');
   const avisos = [];
   for (const x of [...marcados].filter(v => v !== 0 && !item.correctos.includes(v)).sort((a, b) => a - b)) {
-    avisos.push(idioma === 'es'
-      ? `${x} no es divisor de ${item.n}: <span class="cuenta">${item.n} : ${x}</span> no es exacta.`
-      : `${x} is not a divisor of ${item.n}: <span class="cuenta">${item.n} : ${x}</span> is not exact.`);
+    avisos.push(noEsDivisorCorto(x, item.n, idioma));
   }
   if (marcados.has(0)) {
     avisos.push(idioma === 'es' ? '0 no es divisor de nada: no se puede dividir entre 0.' : '0 is not a divisor of anything: you cannot divide by 0.');
@@ -148,7 +145,8 @@ function explicarDivisores(item, respuesta, idioma) {
 
 const EXPLICACION_FIJA = {
   uno_divisor: { es: n => `1 es divisor de todos los números, también de ${n}: ${n} : 1 = ${n} exacta.`, en: n => `1 is a divisor of every number, including ${n}: ${n} : 1 = ${n} exactly.` },
-  uno_multiplo: { es: n => `1 solo es múltiplo de 1, no de ${n}: los múltiplos de ${n} son 0, ${n}, ${2 * n}…, y el 1 no está.`, en: n => `1 is only a multiple of 1, not of ${n}: the multiples of ${n} are 0, ${n}, ${2 * n}…, and 1 is not there.` },
+  // Definiciones de clase (tabla, división exacta, «al revés»): `_comun/relaciones.js`.
+  uno_multiplo: { es: n => cerrar(explicacionCompleta('multiplo', 1, n, 'es')), en: n => cerrar(explicacionCompleta('multiplo', 1, n, 'en')) },
   cero_multiplo: { es: n => `<span class="cuenta">0 = ${n} · 0</span>: el 0 es múltiplo de ${n} (y de todos los números).`, en: n => `<span class="cuenta">0 = ${n} · 0</span>: 0 is a multiple of ${n} (and of every number).` },
   cero_divisor: { es: n => `No se puede dividir ${n} entre 0: el 0 no es divisor de ${n} (ni de ningún número).`, en: n => `You cannot divide ${n} by 0: 0 is not a divisor of ${n} (nor of any number).` },
   mult_si_mismo: { es: n => `<span class="cuenta">${n} = ${n} · 1</span>: todo número es múltiplo de sí mismo.`, en: n => `<span class="cuenta">${n} = ${n} · 1</span>: every number is a multiple of itself.` },
@@ -163,12 +161,12 @@ function explicarVF(item, idioma) {
   if (plantilla === 'divisor') {
     return verdad
       ? (idioma === 'es' ? `<span class="cuenta">${b} : ${a} = ${b / a}</span> exacta: ${a} es divisor de ${b}.` : `<span class="cuenta">${b} : ${a} = ${b / a}</span> exactly: ${a} is a divisor of ${b}.`)
-      : (idioma === 'es' ? `<span class="cuenta">${b} : ${a}</span> no es exacta: ${a} no es divisor de ${b}.` : `<span class="cuenta">${b} : ${a}</span> is not exact: ${a} is not a divisor of ${b}.`);
+      : cerrar(explicacionCompleta('divisor', a, b, idioma));
   }
   // 'multiplo' y 'divisible' comparten la misma cuenta: a : b.
   return verdad
     ? (idioma === 'es' ? `<span class="cuenta">${a} : ${b} = ${a / b}</span> exacta: ${a} es múltiplo de ${b} (y divisible entre ${b}).` : `<span class="cuenta">${a} : ${b} = ${a / b}</span> exactly: ${a} is a multiple of ${b} (and divisible by ${b}).`)
-    : (idioma === 'es' ? `<span class="cuenta">${a} : ${b}</span> no es exacta: ${a} no es múltiplo de ${b} (ni divisible entre ${b}).` : `<span class="cuenta">${a} : ${b}</span> is not exact: ${a} is not a multiple of ${b} (nor divisible by ${b}).`);
+    : cerrar(explicacionCompleta(plantilla, a, b, idioma));
 }
 
 /** `explicar(item, respuesta, idioma)`: el HTML de la explicación, con los números del ítem. */
