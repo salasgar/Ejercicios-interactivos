@@ -47,8 +47,37 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
    cumplirla da **un único código de resultado de la tarea** (20 caracteres); antes también
    puede pedirlo («lo que llevo»). La página no guarda nada suyo: lee el progreso que guardan
    las prácticas en ese navegador, así que un ejercicio terminado antes de que existiera la
-   tarea cuenta, y si el alumno cambia de dispositivo empieza de cero (como en las prácticas).
+   tarea cuenta. Al entrar con el código trae antes lo de la nube (ver «Seguir desde cualquier
+   aparato», abajo), así que el alumno ve lo que hizo en otro móvil u ordenador.
    Las tareas que ya han llegado a su día salen también arriba en la portada.
+
+### Seguir desde cualquier aparato (tarea 38)
+
+El progreso de cada alumno en cada práctica está en el navegador y en Firestore, en el
+documento `practicas/{práctica}--{código}`. Desde el 15-10-2026 la regla deja al alumno
+**leer** ese documento (`allow get`, sabiendo el código; **listar** la colección sigue siendo
+solo del profesor; dentro solo hay números, sin nombres). Lo hace `practicas/_comun/nube.js`:
+
+- **Al entrar con el código** (en una práctica o en la página de la semana), antes de enseñar
+  nada y antes de subir nada, se lee el documento (como mucho 4 s), se **fusiona** con lo del
+  navegador, se guarda la fusión en el navegador y, si la nube no la tenía, se sube. Sin red,
+  o si el documento no existe (alumno nuevo), se sigue con lo del navegador sin avisos.
+- **Fusión**, ejercicio a ejercicio: gana entero el más avanzado (terminado gana a sin
+  terminar; entre dos terminados, el que se terminó antes; entre dos sin terminar, más
+  puntos); de `fallos`, `reinicios`, `repeticiones` y lo hecho en inglés se queda el máximo.
+  Es conmutativa e idempotente, nunca deja sin terminar algo terminado y respeta el tope de
+  `objetivo − 1` puntos sin terminar. `aciertos`, `vidas`, `racha` y `dia` van con el que gana
+  (`aciertos` es del intento en curso: la criba lo usa como número de paso).
+- **Cada subida** (al terminar un ejercicio y cada 5 respuestas) vuelve a leer y fusiona
+  antes de escribir, en cola. Al volver a la pestaña en el menú se vuelve a leer la nube (como
+  mucho cada 30 s).
+- El **idioma fijado** (`&idioma=es|en`) viaja también: un aparato que no tiene nada dicho
+  adopta el de la nube; `?idioma=alterno` queda guardado y no se pisa.
+- **Lo que no se resuelve:** dos aparatos abiertos a la vez y respondiendo a la vez pueden
+  pisarse en la nube (no hay transacciones por REST sin cuenta). Lo peor que pasa es que la
+  nube pierda lo último de un aparato hasta que se vuelva a entrar con él (lo tiene en su
+  navegador y lo sube al entrar). La portada (`practicas/`) cuenta los ejercicios hechos con
+  lo que hay en el navegador; se pone al día en cuanto se abre una práctica o la tarea.
 
 ## 2. Cómo lee el profesor los resultados
 
@@ -64,9 +93,10 @@ En `practicas/profesor.html`:
      vale: el panel extrae los códigos). Cada código dice de quién es, de qué práctica, qué
      ejercicios ha terminado, con cuántos fallos (hasta 15 por ejercicio) y qué día. Lee
      mezclados los de 16 caracteres y los antiguos de 12 de `divisores/`;
-   - la **nube**: el progreso se copia en Firestore (`practicas/{práctica}--{código}`, regla
-     en `firestore.rules`) y el panel lo lee entrando con la cuenta del profesor. Si la nube
-     falla no se pierde nada: el código de resultado lleva lo necesario para calificar.
+   - la **nube**: el progreso está en Firestore (`practicas/{práctica}--{código}`, regla
+     en `firestore.rules`), fusionado entre los aparatos del alumno, y el panel lo lee entrando
+     con la cuenta del profesor. Si la nube falla no se pierde nada: el código de resultado
+     lleva lo necesario para calificar.
 3. La vista «Resumen de todas las prácticas» da una fila por alumno; eligiendo una práctica
    se ve ejercicio a ejercicio. Las dos tablas se descargan en CSV.
 4. **Tareas de la semana.** La sección «Tareas de la semana» da el **enlace común** de cada
@@ -75,11 +105,18 @@ En `practicas/profesor.html`:
    dispositivo. Para el enlace de cada alumno (`…&c=ABCD`), se elige la tarea en «Enlaces a»,
    en la sección 1. En el cuadro de códigos se pegan mezclados los de las tareas (20
    caracteres), los de práctica (16) y los de `divisores/` (12), y la vista «Tareas de la
-   semana» da una fila por alumno y una columna por tarea: «✓ cumplida», «★ 4 de 6 · 2 de 4»
-   o «sin empezar». Un ejercicio cuenta como terminado si lo dice el código de la tarea **o**
+   semana» da una fila por alumno y una columna por tarea: «✓ cumplida · 100 pt», «★ 4 de 6 ·
+   2 de 4 · 65 pt» o «sin empezar». Los **puntos** (sobre 100) los calcula `estadoTarea`, la
+   misma función del marcador del alumno; lo que va a medias solo lo sabe la nube. Un ejercicio cuenta como terminado si lo dice el código de la tarea **o**
    lo que se sabe de su práctica (sus códigos o la nube): así se ve el avance de quien no ha
-   mandado todavía el código de la tarea. El CSV trae además los fallos, el día y de dónde sale
-   cada dato.
+   mandado todavía el código de la tarea. El CSV trae además los puntos, los fallos, el día y
+   de dónde sale cada dato.
+5. **Qué falla más.** Las vistas «Qué falla más · todas las prácticas» y «Qué falla más ·
+   tarea N» dan una fila por ejercicio (con su nombre y, en las de tarea, si es ★ o de
+   elegir): cuántos alumnos lo han empezado, cuántos lo han terminado, fallos totales,
+   **fallos por alumno que lo ha empezado** (el orden de la tabla) y veces que se quedaron sin
+   vidas. De cada alumno se toma lo mismo que en la tabla de su práctica; si hay nombres en la
+   lista, solo cuentan los de la lista. Con CSV. Lo calcula `juntarFallos` (`resultados.js`).
 
 ### Los tres códigos de resultado
 
@@ -105,7 +142,8 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 
 | Fichero | Qué pone |
 |---|---|
-| `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore. También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar` y `URL_PORTADA` |
+| `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore (leído y fusionado al entrar). También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar`, `URL_PORTADA`, `progresoGuardado`, `sincronizarGuardado` (navegador y nube de acuerdo, para la página de la semana) y `adoptarIdioma` |
+| `nube.js` | Progreso en la nube entre aparatos: `leerNube` (REST, con tiempo máximo; `ok`, `vacio`, `prohibido` o `error`), `escribirNube`, `subirFusionado` (lee, fusiona y escribe), y la fusión pura `fusionarEjercicio` / `fusionarProgreso` |
 | `catalogo.js` | Las 32 filas (31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
 | `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`), de resultado de una práctica (16) y de una tarea de la semana (20); `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
 | `tareas.js` | Las tareas de la semana (**se cambia a mano**; el formato está en su cabecera): `id`, `titulo`, `desde`, `estrella`, `elegir`, `nElegir`. También `estadoTarea` (marcador y «cumplida») y `erroresTareas`, que comprueba los datos contra el catálogo |

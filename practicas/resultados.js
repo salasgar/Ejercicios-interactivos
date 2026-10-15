@@ -3,6 +3,7 @@
 
 import { practicaPorSlug } from './_comun/catalogo.js';
 import { leerCodigoAlumno } from './_comun/codigos.js';
+import { estadoTarea } from './_comun/tareas.js';
 
 const hechosDe = ejercicios => ejercicios.filter(e => e.terminado).length;
 
@@ -78,23 +79,33 @@ export function juntarResumen(nombres, deCodigos, deNube, practicas) {
  * @param deCodigosTarea  [{ tarea, indice, estrella: [bool], elegir: [bool], fallos, tope, dia }]
  * @param deCodigos       [{ practica, indice, ejercicios: [{ terminado, fallos }], dia }]
  * @param deNube          [{ practica, indice, ej }]
+ * Los puntos de cada tarea (sobre `maximo`, 100 en las de 6 ★ + 4) salen de
+ * `estadoTarea`, la misma función del marcador del alumno: 10 por ejercicio
+ * terminado y, a medias, la parte proporcional (eso solo lo sabe la nube).
+ *
  * @param tareas          las columnas, en orden (de `_comun/tareas.js`)
  * @returns [{ indice, nombre, tareas: [{ id, estrellaHechos, nEstrella, elegirHechos, nElegir,
- *            cumplida, empezada, fallos, tope, dia, fuente }] }]
+ *            cumplida, empezada, puntos, maximo, fallos, tope, dia, fuente }] }]
  */
 export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas) {
-  // Lo que se sabe de cada ejercicio por su práctica: «practica|indice» → [{ terminado, empezado, fallos, dia }].
+  // Lo que se sabe de cada ejercicio por su práctica: «practica|indice» →
+  // [{ terminado, empezado, fallos, dia, puntos, objetivo }] (puntos y objetivo:
+  // los del intento a medias que va mejor, para los puntos de la tarea).
   const porPractica = new Map();
   const anotarEj = (practica, indice, n, e, dia) => {
     const clave = `${practica}|${indice}`;
     if (!porPractica.has(clave)) porPractica.set(clave, []);
     const lista = porPractica.get(clave);
-    const previo = lista[n] ?? { terminado: false, empezado: false, fallos: 0, dia: 0 };
+    const previo = lista[n] ?? { terminado: false, empezado: false, fallos: 0, dia: 0, puntos: 0, objetivo: 0 };
+    const fraccion = x => (x.objetivo > 0 ? x.puntos / x.objetivo : 0);
+    const medias = !e?.terminado && e?.puntos > 0 && e?.objetivo > 0 && fraccion(e) > fraccion(previo) ? e : previo;
     lista[n] = {
       terminado: previo.terminado || Boolean(e?.terminado),
       empezado: previo.empezado || Boolean(e?.terminado) || (e?.aciertos ?? 0) + (e?.fallos ?? 0) > 0,
       fallos: Math.max(previo.fallos, e?.fallos ?? 0),
       dia: Math.max(previo.dia, e?.terminado ? (e.dia ?? dia ?? 0) : 0),
+      puntos: medias.puntos,
+      objetivo: medias.objetivo,
     };
   };
   for (const c of deCodigos) c.ejercicios.forEach((e, n) => anotarEj(c.practica, c.indice, n, e, c.dia));
@@ -116,6 +127,12 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas)
     const estrellaHechos = estrella.filter(Boolean).length;
     const elegirHechos = elegir.filter(Boolean).length;
     const conPracticas = practicas.some(p => p?.empezado);
+    // Los puntos, con la función del marcador: lo que esa función espera de cada ejercicio.
+    const hechoDe = new Map([...tarea.estrella.map(([s, n], i) => [`${s}/${n}`, estrella[i]]), ...tarea.elegir.map(([s, n], i) => [`${s}/${n}`, elegir[i]])]);
+    const marcador = estadoTarea(tarea, (slug, n) => {
+      const p = dePractica([slug, n]);
+      return { terminado: hechoDe.get(`${slug}/${n}`), puntos: p?.puntos ?? 0, objetivo: p?.objetivo ?? 0, fallos: p?.fallos ?? 0, dia: p?.dia ?? 0 };
+    });
     return {
       id: tarea.id,
       estrellaHechos,
@@ -124,6 +141,8 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas)
       nElegir: tarea.nElegir,
       cumplida: estrellaHechos === tarea.estrella.length && elegirHechos >= tarea.nElegir,
       empezada: suyos.length > 0 || conPracticas,
+      puntos: marcador.puntos,
+      maximo: marcador.maximo,
       fallos: Math.max(0, ...suyos.map(c => c.fallos), practicas.reduce((s, p) => s + (p?.fallos ?? 0), 0)),
       tope: suyos.some(c => c.tope),
       dia: Math.max(0, ...suyos.map(c => c.dia), ...practicas.map(p => p?.dia ?? 0)),
@@ -138,7 +157,50 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas)
 }
 
 /**
- * Documentos de Firestore → datos planos para las dos funciones de arriba.
+ * «Qué falla más»: una fila por ejercicio con lo que ha hecho la clase.
+ *
+ * De cada alumno se toma lo mismo que enseña la tabla de su práctica
+ * (`juntarResultados`: entre código y nube, la fuente con más terminados). Si
+ * la lista de nombres tiene alguno, solo cuentan los alumnos de la lista (así
+ * el código de prueba del profesor no ensucia la cuenta); si está vacía, todos.
+ *
+ * @param nombres    lista de nombres
+ * @param deCodigos  [{ practica, indice, ejercicios, dia }]
+ * @param deNube     [{ practica, indice, ej }]
+ * @param ejercicios [{ practica: { id, nEjercicios }, n }]: las filas (n empieza en 1)
+ * @returns [{ practica (id), n, empezados, terminados, fallos, fallosPorAlumno, reinicios, tope }],
+ *          ordenadas de más a menos fallos por alumno que lo empezó (y luego por fallos).
+ *          `tope`: algún código de resultado contaba 15 fallos o más (el código no cuenta más).
+ */
+export function juntarFallos(nombres, deCodigos, deNube, ejercicios) {
+  const conLista = nombres.some(Boolean);
+  const porPractica = new Map();
+  const filasDe = practica => {
+    if (!porPractica.has(practica.id)) {
+      const filas = juntarResultados(nombres, deCodigos.filter(c => c.practica === practica.id), deNube.filter(d => d.practica === practica.id), practica.nEjercicios);
+      porPractica.set(practica.id, conLista ? filas.filter(f => f.nombre) : filas);
+    }
+    return porPractica.get(practica.id);
+  };
+  return ejercicios.map(({ practica, n }) => {
+    const suyos = filasDe(practica).map(f => f.ejercicios[n - 1]).filter(Boolean);
+    const empezados = suyos.filter(e => e.terminado || (e.aciertos ?? 0) + (e.fallos ?? 0) > 0);
+    const fallos = empezados.reduce((s, e) => s + (e.fallos ?? 0), 0);
+    return {
+      practica: practica.id,
+      n,
+      empezados: empezados.length,
+      terminados: empezados.filter(e => e.terminado).length,
+      fallos,
+      fallosPorAlumno: empezados.length ? fallos / empezados.length : 0,
+      reinicios: empezados.reduce((s, e) => s + (e.reinicios ?? 0), 0),
+      tope: empezados.some(e => e.tope),
+    };
+  }).sort((a, b) => b.fallosPorAlumno - a.fallosPorAlumno || b.fallos - a.fallos || a.practica - b.practica || a.n - b.n);
+}
+
+/**
+ * Documentos de Firestore → datos planos para las funciones de arriba.
  * En la colección `practicas` el id es `<slug>--<código>`; en la antigua
  * `divisores`, el código a secas (y es la práctica 0). Lo ilegible se descarta.
  */

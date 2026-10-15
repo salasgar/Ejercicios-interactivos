@@ -150,8 +150,13 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   práctica da un **código de resultado de 16 caracteres** que dice además de
   qué práctica es; el panel lee mezclados los de 20 de las tareas, los de 16 y
   los de 12 de `divisores/`.
-- El progreso se copia en Firestore, en `practicas/{práctica}--{código}` (regla
-  en `firestore.rules`; **hay que publicarla** para que funcione la nube).
+- El progreso se guarda en el navegador y en Firestore, en
+  `practicas/{práctica}--{código}` (regla en `firestore.rules`; **hay que
+  publicarla** para que funcione la nube). Al entrar con su código, el alumno
+  lee su documento y la app lo fusiona con lo del navegador antes de subir
+  nada (`practicas/_comun/nube.js`): se puede **seguir desde cualquier
+  aparato** y un aparato no machaca lo de otro. El panel da los puntos de cada
+  tarea de la semana y una vista «Qué falla más».
 - `practicas/_comun/`: la base (`base.js`), el catálogo con los ids (`catalogo.js`,
   no se renumera), códigos, contador, aritmética de la unidad y estilos.
 - **Añadir una práctica**: copiar `practicas/plantilla/`, registrarla en
