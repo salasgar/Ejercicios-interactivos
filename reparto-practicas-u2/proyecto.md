@@ -131,7 +131,7 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 
 | Banda | Modelo · esfuerzo | Para qué, en este reparto |
 |---|---|---|
-| **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18), la segunda revisión (36), la tarea de la semana y los arreglos de base (37) |
+| **ALTO** | Opus 5 · Alto | La base común (01), el árbol de factores (06), el Venn de factores primos (09), la revisión final (18), la segunda revisión (36), la tarea de la semana y los arreglos de base (37), el progreso en la nube (38) y el registro de fallos (39) |
 | **MEDIO** | Sonnet 5 · Medio | Las demás aplicaciones (incluida la 19), y la migración de `divisores/` (17) |
 | **BAJO** | Haiku 4.5 · Medio | No hay tareas de esta banda (la 34 pasó a MEDIO porque toca el test común) |
 
@@ -277,3 +277,12 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
   con la portada. Qué ejercicios lleva cada semana: `hechos/notas/s-20261008T174225-f75f5cdb-temporizacion.md`
   (borrador de la coordinadora; lo decide Juan Luis). Va después de la 36 y de las
   reaperturas de la 30 y la 32.
+- **Tareas 38 y 39 (2026-10-15, 20:40 UTC), pedidas por Juan Luis** al preparar la primera tarea semanal
+  con la app (correo a cada alumno con su código, lunes 19-10 a las 8:00; semana 1 de la app del 19 al
+  22-10, que cuenta para nota). La **38** hace que el alumno lea su propio documento de `practicas/` en
+  Firestore (`allow get`, nunca `list`) y fusione al entrar, para seguir desde cualquier aparato y que un
+  aparato no machaque lo de otro en la nube; añade al panel los puntos de la tarea y «qué falla más». Tiene
+  **plazo: antes del lunes 19-10 a las 8:00**, porque cambia una frase del correo. La **39** registra cada
+  fallo (ítem, respuesta, feedback, tipo de error opcional en `api.responder`) en una colección nueva que
+  elige Juan Luis, con su vista en el panel. Las dos son ALTO, atendidas (él publica las reglas) y en serie:
+  tocan `base.js`, el panel y `firestore.rules`.

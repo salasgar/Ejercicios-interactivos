@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-15 20:18 UTC · por la sesión s-20261015T173031-efad3f35 (T37, al cerrar).
+Regenerado: 2026-10-15 20:35 UTC · por la sesión s-20261015T204000-coordina (alta de las tareas 38 y 39; el resto de filas, sin cambios desde la regeneración de la T37 a las 20:18 UTC, comprobado contra hechos/).
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -154,11 +154,13 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 35 | Base: 10 aciertos (+2, tope 20) e idioma alterno por ítem sin selector | tareas/tarea-35-base-10-e-idioma-alterno.md | 01 LISTA | 1 h | MEDIO | — | practicas/_comun/{base,contador,textos}.js, plantilla (comentarios), panel, tests/practicas-comun.test.js, README (apartado); salidas/35-base-10-e-idioma-alterno/ | LISTA | terminada 21:32Z · commit 6cfc713 |
 | 36 | Segunda revisión: comprobar las 28 reaperturas | tareas/tarea-36-segunda-revision.md | las 28 reabiertas con terminada, o con código comiteado (30, 33) | 1 h 30 min | ALTO | — | practicas/_comun/catalogo.js (solo `disponible`, solo para retirar); salidas/36-segunda-revision/ | LISTA | terminada 10:07Z (9-oct) · commit 17a9e5c |
 | 37 | Tarea de la semana (página, marcador, código único) y arreglos de la base | tareas/tarea-37-tarea-semanal.md | 36 LISTA; reaperturas del 9-10 de la 30 y la 32 LISTAS | 2 h | ALTO | — | practicas/_comun/, practicas/semana.*, panel, portada, tests; salidas/37-tarea-semanal/ | LISTA | terminada 20:18Z (15-oct) · commits 42bb8cd y dae33d6 |
+| 38 | Progreso en la nube entre aparatos; puntos y «qué falla más» en el panel (plazo: lun 19-10 8:00) | tareas/tarea-38-progreso-nube.md | 37 LISTA | 2 h | ALTO | 39 | practicas/_comun/{base,textos,nube}.js, practicas/semana.js, panel, resultados.js, firestore.rules (bloque practicas), tests; salidas/38-progreso-nube/ | LIBRE | |
+| 39 | Registro de cada fallo (ítem, respuesta, error) y vista «Fallos» en el panel | tareas/tarea-39-registro-fallos.md | 38 LISTA | 2 h 30 min | ALTO | 38 | practicas/_comun/{base,textos,registro}.js, plantilla (comentarios), panel, resultados.js, firestore.rules (bloque nuevo), tests; salidas/39-registro-fallos/ | BLOQUEADA (espera a la 38) | |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: ninguna hace falta; no queda tarea LIBRE en el reparto.
+Cuántas sesiones caben a la vez: una. La 38 está LIBRE (ALTO, atendida, plazo lunes 19-10 a las 8:00); la 39 va después, en la misma sesión o en otra.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
