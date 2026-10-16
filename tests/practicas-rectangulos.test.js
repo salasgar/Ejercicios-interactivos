@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
   generarRectangulos, parPara, clavePar, todasLasClaves, sonTodasLasParejas,
-  generarBanco, generarParar, generarCuadrado, generarParte3,
+  generarBanco, generarParar, generarCuadrado, generarParte3, ladoCelda, huecoCelda,
 } from '../practicas/rectangulos/logica.js';
 
 const N = 1200;
@@ -154,4 +154,31 @@ test('textos: «falta/faltan» concuerdan y el número es el de celdas tachadas 
   assert.match(TX.rect.sobran.en(5, 1, 24), /1 cell is missing/);
   assert.match(TX.rect.sobran.en(5, 2, 23), /2 cells are missing/);
   assert.doesNotMatch(JSON.stringify(TX.rect.introduccion.en), /«|»|integer square root/);
+});
+
+// --- Celda de tamaño fijo (ejercicio 1) -------------------------------------------
+
+test('ladoCelda: valores de la maqueta, tope y mínimo', () => {
+  assert.equal(ladoCelda(343, 60), 5);
+  assert.equal(ladoCelda(528, 60), 8);
+  assert.equal(ladoCelda(343, 12), 20);
+  assert.equal(ladoCelda(100, 60), 3);
+});
+
+test('ladoCelda: el rectángulo 1 × n cabe, salvo en el mínimo', () => {
+  for (let n = 12; n <= 60; n++) {
+    for (let d = 300; d <= 560; d++) {
+      const lado = ladoCelda(d, n);
+      assert.ok(lado * n <= d || lado === 3, `n=${n} d=${d} lado=${lado}`);
+    }
+  }
+});
+
+test('huecoCelda: tres tramos', () => {
+  assert.equal(huecoCelda(3), 0);
+  assert.equal(huecoCelda(4), 0);
+  assert.equal(huecoCelda(5), 1);
+  assert.equal(huecoCelda(7), 1);
+  assert.equal(huecoCelda(8), 2);
+  assert.equal(huecoCelda(20), 2);
 });

@@ -10,7 +10,7 @@ import { elecciones, pasos } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
   generarRectangulos, parPara, clavePar, todasLasClaves, sonTodasLasParejas, raizEntera,
-  generarBanco, generarParte3,
+  generarBanco, generarParte3, ladoCelda, huecoCelda,
 } from './logica.js';
 
 // ─── Ejercicio 1: descubre los rectángulos ─────────────────────────────────────
@@ -37,7 +37,7 @@ function montarRectangulos(contenedor, item, api) {
   contenedor.innerHTML = `
     ${enunciadoRectangulos(item, api)}
     <div id="control"></div>
-    <div id="rejilla" class="rejilla"></div>
+    <div id="rejilla" class="rejilla rejilla--fija"></div>
     <p id="mensaje" class="aviso"></p>
     <p id="lista" class="frase"></p>
     <button type="button" class="comprobar" id="todas">${tt(TX.rect.ya_todas)}</button>`;
@@ -47,6 +47,23 @@ function montarRectangulos(contenedor, item, api) {
   const mensaje = contenedor.querySelector('#mensaje');
   const lista = contenedor.querySelector('#lista');
   const botonTodas = contenedor.querySelector('#todas');
+
+  // Celda de tamaño fijo por ítem: el 1 × n cabe entero; no cambia con el ancho elegido.
+  function ajustarCelda() {
+    const estilo = getComputedStyle(contenedor);
+    const util = contenedor.clientWidth - parseFloat(estilo.paddingLeft) - parseFloat(estilo.paddingRight);
+    const disponible = util > 0 ? util : 343;
+    const lado = ladoCelda(disponible, n);
+    rejillaDiv.style.setProperty('--lado', `${lado}px`);
+    rejillaDiv.style.setProperty('--hueco', `${huecoCelda(lado)}px`);
+    rejillaDiv.classList.toggle('rejilla--fija-pequena', lado < 8);
+  }
+  ajustarCelda();
+  const alRedimensionar = () => {
+    if (!contenedor.isConnected) { window.removeEventListener('resize', alRedimensionar); return; }
+    ajustarCelda();
+  };
+  window.addEventListener('resize', alRedimensionar);
 
   function pintarAncho(w) {
     anchoExplorado = Math.max(anchoExplorado, w);
