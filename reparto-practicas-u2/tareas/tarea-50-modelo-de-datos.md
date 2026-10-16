@@ -137,6 +137,12 @@ las use todavía: por eso no rompe nada publicado. Después, la base (51), la p�
 - `codigoTarea` usa el `dia` de `estadoTarea`: pasarle `diaEntrega` es lo que dice el diseño
   (E, `codigos.js` sin cambio de formato); si lo haces aquí, que el test de códigos siga en verde.
 
+- (Aprendido el 16-10.) `tareas.js` puede estar reservado por una sesión ajena al reparto (la
+  1f09009c, sin reclamo, se quedó con el candado más de una hora): no borres su `.json`; edita
+  antes lo demás y reintenta. Un `tareasPublicadas(hoy)` sin filtrar por unidad ya devuelve las
+  tareas 11-14 (no llevan `desde`): los tests de la portada deben filtrar por unidad 2.
+- Un `catalogo.js` con `unidad` sigue pasando `tests/practicas-comun.test.js` sin tocarlo.
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar `base.js`, `registro.js`, `textos.js`, `semana.js`, `portada.js`, el panel o el informe:
