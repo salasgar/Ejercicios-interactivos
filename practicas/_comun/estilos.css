@@ -6,6 +6,7 @@
    y crece en la tablet y en el ordenador (a partir de 640 px).
 
    Piezas para los ítems (ver ejemplos en ../plantilla/):
+     .instruccion--enunciado          la orden que es todo el problema: grande y en negro
      .instruccion                     la orden, en gris, encima del ítem; lo que decide qué
                                       hacer va en <strong> (negrita y en azul; un <strong class> conserva su color)
      .operacion  .frase  .numero      la cuenta destacada y la frase con huecos
@@ -62,6 +63,8 @@
 .introduccion button { margin-top: .4rem; }
 .instruccion { color: var(--texto-suave); font-size: .95rem; margin-bottom: .9rem; }
 .instruccion strong:not([class]) { color: var(--primario-oscuro); font-weight: 700; }
+/* Cuando la orden es todo el problema (reloj, imposibles…): más grande y en negro. */
+.instruccion--enunciado { color: var(--texto); font-size: 1.15rem; line-height: 1.5; }
 .operacion {
   display: inline-block; font-size: 1.6rem; font-weight: 700;
   background: var(--primario-claro); color: var(--primario-oscuro);
@@ -225,6 +228,7 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
   .grupo-pasos { grid-template-columns: repeat(3, 1fr); max-width: 560px; margin-left: auto; margin-right: auto; }
   .operacion { font-size: 2rem; }
   .frase { font-size: 1.7rem; gap: 0 .45em; }
+  .instruccion--enunciado { font-size: 1.3rem; }
   .hueco { min-width: 9.5em; }
   .hueco--corto { min-width: 4.5em; }
   .hueco--ficha { min-width: 3.4em; min-height: 2.5em; }

@@ -34,7 +34,7 @@ function filaRejilla(contenedor, desde, hasta) {
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
   const x = TX.linea;
-  contenedor.innerHTML = `<p class="instruccion">${tt(x.pregunta(...item.periodos))}</p>`;
+  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(x.pregunta(...item.periodos))}</p>`;
   const caja = document.createElement('div');
   caja.className = 'reloj-linea';
   contenedor.append(caja);
@@ -94,7 +94,7 @@ function montarHora(contenedor, item, api) {
   const { tt } = api;
   const x = TX.hora;
   const [a, b] = item.periodos;
-  contenedor.innerHTML = `<p class="instruccion">${tt(x.pregunta(a, b, item.inicio.h, item.inicio.m))}</p>`;
+  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(x.pregunta(a, b, item.inicio.h, item.inicio.m))}</p>`;
   const caja = document.createElement('div');
   caja.className = 'reloj-hora';
   contenedor.append(caja);
@@ -150,7 +150,7 @@ function montarTres(contenedor, item, api) {
   const x = TX.tres;
   const pregunta = item.tipo === 'tres' ? tt(x.pregunta_tres(...item.periodos)) : tt(x.pregunta_multiplo(...item.periodos));
   contenedor.innerHTML = `
-    <p class="instruccion">${pregunta}</p>
+    <p class="instruccion instruccion--enunciado">${pregunta}</p>
     <label class="instruccion" for="reloj-respuesta">${tt(x.respuesta_label)}</label>
     <input type="number" inputmode="numeric" id="reloj-respuesta" class="reloj-entero" autocomplete="off">
     <button type="button" class="comprobar" id="reloj-comprobar">${api.t.comprobar}</button>`;

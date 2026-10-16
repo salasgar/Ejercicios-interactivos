@@ -118,7 +118,7 @@ function montarPotencias(contenedor, item, api) {
 
 function montarValor(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.ej3.pregunta_valor)(htmlFact(item.factorizacion))}</p>`;
+  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_valor)(htmlFact(item.factorizacion))}</p>`;
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(v => ({ valor: v, html: String(v) })),
     alElegir(valor) {
@@ -131,7 +131,7 @@ function montarValor(contenedor, item, api) {
 
 function montarSino(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.ej3.pregunta_sino)(htmlFact(item.factorizacion), item.valorMostrado)}</p>`;
+  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_sino)(htmlFact(item.factorizacion), item.valorMostrado)}</p>`;
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
