@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-16
 Precondición: ninguna (la 02 está LISTA; para este cambio la dueña de `practicas/semaforo/` es esta tarea) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 41
+Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 41, 42
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/40-semaforo-ninguno/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/semaforo/practica.js`, `practicas/semaforo/textos.js`, `practicas/semaforo/estilos.css`, `practicas/semaforo/logica.js` (solo si hace falta la frase del caso «ninguno» en `explicarSemaforo`), `tests/practicas-semaforo.test.js`
 

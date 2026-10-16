@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-16
 Precondición: ninguna (la 10 y la 11 están LISTAS; para este cambio la dueña de `practicas/clasificador/textos.js` y `practicas/imposibles/textos.js` es esta tarea) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 40
+Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 40, 42
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/41-enunciados-creibles/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/clasificador/textos.js`, `practicas/imposibles/textos.js`, `tests/practicas-clasificador.test.js`, `tests/practicas-imposibles.test.js`
 
