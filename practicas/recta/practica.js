@@ -4,6 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
+import { unir } from '../_comun/textos.js';
 import { generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar } from './logica.js';
 import { TX } from './textos.js';
 
@@ -46,13 +47,37 @@ function montarRecta(contenedor, item, api) {
     const respuesta = [...marcados];
     const acierto = esCorrecta(item, respuesta);
     const buenos = new Set(item.correctos);
+    // Verde relleno: marcado y bueno; borde de puntos: bueno sin marcar; rojo: marcado y malo.
     celdas.forEach((b, valor) => {
       b.disabled = true;
-      if (buenos.has(valor)) b.classList.add('rejilla__celda--bien');
+      if (buenos.has(valor)) b.classList.add(marcados.has(valor) ? 'rejilla__celda--bien' : 'rejilla__celda--falta');
       else if (marcados.has(valor)) b.classList.add('rejilla__celda--mal');
     });
-    api.responder({ acierto, html: explicar(item, respuesta, api.idioma), espera: 2400 });
+    const explicacion = explicar(item, respuesta, api.idioma);
+    const html = acierto ? explicacion : `${recuento(item, marcados, api)}<br>${explicacion}`;
+    api.responder({ acierto, html, espera: 2400 });
   });
+}
+
+/**
+ * «Has encontrado 8 de los 9 múltiplos de 7. Te falta el 0.»: que vea lo que sí ha hecho bien.
+ * PENDIENTE: llevarlo a `explicar` en logica.js, con su test en practicas-recta.test.js
+ * (se hizo aquí el 16-10 porque otra sesión estaba editando logica.js).
+ */
+function recuento(item, marcados, api) {
+  const { tt } = api;
+  const R = TX.recuento;
+  const acertados = item.correctos.filter(v => marcados.has(v)).length;
+  const faltan = item.correctos.filter(v => !marcados.has(v));
+  const sobran = [...marcados].filter(v => !item.correctos.includes(v)).length;
+  const partes = [];
+  if (acertados > 0) {
+    const cosa = item.tipo === 'multiplos' ? R.multiplos : R.divisores;
+    partes.push(tt(R.acertados)(acertados, item.correctos.length, cosa, item.n));
+  }
+  if (faltan.length) partes.push(tt(R.faltan)(unir(faltan.map(String), api.idioma), faltan.length > 1));
+  if (sobran) partes.push(tt(R.sobran)(sobran));
+  return partes.join(' ');
 }
 
 // ─── Ejercicio 3: ¿verdadero o falso? ───────────────────────────────────────────

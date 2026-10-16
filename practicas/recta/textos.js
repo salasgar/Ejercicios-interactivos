@@ -12,6 +12,23 @@ export const TX = {
     detalle: { es: 'Toca los divisores en la recta', en: 'Tap the divisors on the number line' },
     pregunta: { es: n => `Marca los <strong>divisores de ${n}</strong>.`, en: n => `Mark the <strong>divisors of ${n}</strong>.` },
   },
+  // Recuento al fallar en los ejercicios 1 y 2: lo que sí ha hecho bien, y qué color es cada cosa.
+  recuento: {
+    acertados: {
+      es: (a, total, cosa, n) => `Has encontrado <strong>${a} de los ${total}</strong> ${cosa.es} de ${n} (en verde).`,
+      en: (a, total, cosa, n) => `You found <strong>${a} of the ${total}</strong> ${cosa.en} of ${n} (in green).`,
+    },
+    faltan: {
+      es: (lista, varios) => `${varios ? `Te faltan ${lista}` : `Te falta el ${lista}`} (con borde de puntos).`,
+      en: lista => `Missing: ${lista} (dotted border).`,
+    },
+    sobran: {
+      es: k => `${k === 1 ? 'Sobra 1' : `Sobran ${k}`} (en rojo).`,
+      en: k => `${k === 1 ? '1 is' : `${k} are`} wrong (in red).`,
+    },
+    multiplos: { es: 'múltiplos', en: 'multiples' },
+    divisores: { es: 'divisores', en: 'divisors' },
+  },
   ej3: {
     nombre: { es: '¿Verdadero o falso?', en: 'True or false?' },
     detalle: { es: 'Frases sobre múltiplos y divisores', en: 'Statements about multiples and divisors' },

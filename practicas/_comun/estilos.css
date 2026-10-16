@@ -154,6 +154,8 @@ sup { font-size: .7em; line-height: 0; }
 .rejilla__celda--fija { background: var(--aviso-claro); }
 .rejilla__celda--bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
 .rejilla__celda--mal { background: var(--error-claro); border-color: var(--error); color: var(--error); }
+/* Era correcta pero no se marcó: borde de puntos, sin relleno (distinto de las acertadas) */
+.rejilla__celda--falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
 
 /* Fichas que se arrastran (ratón, dedo o lápiz) o se tocan */
 .banco { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-bottom: 1.1rem; }
