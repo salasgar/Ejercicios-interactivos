@@ -2,9 +2,9 @@
 
 Actualizado: 2026-10-16
 Precondición: 47 LISTA (lo está: d06a9af) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 54
+Duración esperada: 1 h 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 54
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/50-modelo-de-datos/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js`, `practicas/_comun/tareas.js`, `practicas/_comun/nube.js`, `tests/practicas-semana.test.js`, `tests/practicas-nube.test.js`, `tests/practicas-comun.test.js`
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js`, `practicas/_comun/tareas.js` (incluidas las cuatro tareas de la U1 de la 46), `practicas/_comun/nube.js`, `tests/practicas-semana.test.js`, `tests/practicas-nube.test.js`, `tests/practicas-comun.test.js`
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -108,7 +108,14 @@ las use todavía: por eso no rompe nada publicado. Después, la base (51), la p�
    `t<id>--<slug>--<código>` y `claveProgresoTarea` para el navegador
    (`practicas.v1.<slug>.<código>.t<id>`); lectura sencilla `leerAsignacion(codigo)` →
    `{ tareas: [...] }` o `null`, con el mismo tiempo máximo que la nube.
-4. **Tests**: `erroresTareas` sin errores con las tareas reales; `estadoPlazo` en los cuatro
+4. **Las cuatro tareas de la unidad 1** (propuesta de la tarea 46, **aprobada por Juan Luis el
+   2026-10-16**): pega en `TAREAS` el bloque de
+   `reparto-practicas-u2/salidas/46-tareas-unidad1/PROPUESTA.md`, apartado «Lo que se pega en
+   `tareas.js`» (ids 11, 12, 13 y 14, `unidad: 1`, **sin `desde` ni `hasta`**: son de repaso, sin
+   plazo, hasta que Juan Luis las active). Lee antes su apartado «Antes de nada: tres cosas que
+   cambian lo que pedía la ficha». Si `erroresTareas` protesta por algo del bloque, corrige lo
+   mínimo y anótalo en la terminada.
+5. **Tests**: `erroresTareas` sin errores con las tareas reales (las ocho: 1-4 y 11-14); `estadoPlazo` en los cuatro
    casos de la tabla y con retraso (entregada 3 días tarde → 3; sin entregar 2 días después del
    plazo → 2 «y subiendo»); `diaEntrega` cuando el alumno siguió haciendo ejercicios después
    de cumplir; `unidadActual` el 15-11 → 2 y el 16-11 → 3; los nombres sin coletilla; en
