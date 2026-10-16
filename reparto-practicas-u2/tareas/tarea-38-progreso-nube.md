@@ -166,6 +166,15 @@ semana), `practicas/_comun/base.js` (sobre todo `cargarProgreso`, `guardar`, `su
   lo de la última sesión del otro aparato hasta que vuelva a entrar. Se acepta y se documenta.
 - iCloud evacúa ficheros de este árbol (`ls -lO` → `dataless`) y deja copias en conflicto
   dentro de `.git/`; nunca `git stash` ni `--autostash` (`proyecto.md`, «Repositorio git»).
+- (Aprendido en la sesión s-20261015T204306-1ed3fc83.) El shell es **zsh**: `echo =====` falla
+  («= not found»), y `F="a b c"; git add $F` pasa UNA ruta con espacios (hay que usar un array
+  `F=(a b c)`). Y un heredoc **sin comillas** (`<<EOF`) ejecuta lo que vaya entre comillas
+  invertidas: para escribir una terminada con `código` dentro, `<<'EOF'`.
+- La sesión que cerró la 37 se quedó con el candado de `profesor.js`, `README.md`, `docs/` y
+  `_ESTADO.md` unos 30 min después de su último commit: se puede adelantar todo lo demás y
+  esperar con un bucle en segundo plano que mire la hora de su `.claude/sesiones/<id>.json`.
+- Para saber si Juan Luis ya publicó las reglas sin preguntarle: GET por REST de un documento
+  que no existe (`practicas/recta--KTFN`) da 403 con las reglas viejas y 404 con las nuevas.
 - Hay un `stash@{0}: autostash` antiguo y un reclamo ajeno sin comitear
   (`hechos/reclamos/23--s-20261007T214947-e0ab035d.md`): no son tuyos, no los toques.
 
