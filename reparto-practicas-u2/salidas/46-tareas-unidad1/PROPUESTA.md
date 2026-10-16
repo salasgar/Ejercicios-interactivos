@@ -1,7 +1,9 @@
 # Propuesta · Las cuatro tareas de la unidad 1 con las 15 prácticas de repaso
 
 Tarea 46 del reparto PU2 · sesión `s-20261016T144913-715ee461` · 2026-10-16.
-**Pendiente del visto bueno de Juan Luis.** No toca `tareas.js` ni nada de `practicas/`:
+**APROBADA por Juan Luis el 2026-10-16** (respuestas a las seis preguntas al final de
+`ENTREGA.md`): repaso visible desde ya, títulos con «U1 · », y las cinco ideas de prácticas
+nuevas y los dos arreglos, todos. No toca `tareas.js` ni nada de `practicas/`:
 el bloque de código de abajo se pega cuando exista el campo `unidad` (implementación
 de la tarea 45).
 
@@ -42,7 +44,7 @@ viene. (Recuento hecho por máquina sobre las tablas de abajo y las claves de lo
   {
     id: 11,
     unidad: 1,
-    titulo: { es: 'Semana 1 · Valor posicional, lectura de números y redondeo', en: 'Week 1 · Place value, reading numbers and rounding' },
+    titulo: { es: 'U1 · Semana 1 · Valor posicional, lectura de números y redondeo', en: 'U1 · Week 1 · Place value, reading numbers and rounding' },
     estrella: [['constructor', 2], ['dictado', 1], ['redondeo', 1], ['redondeo', 3], ['jerarquia', 1], ['parentesis', 1]],
     elegir: [['constructor', 1], ['constructor', 3], ['dictado', 2], ['dictado', 3], ['potencias10', 2], ['redondeo', 2]],
     nElegir: 4,
@@ -50,7 +52,7 @@ viene. (Recuento hecho por máquina sobre las tablas de abajo y las claves de lo
   {
     id: 12,
     unidad: 1,
-    titulo: { es: 'Semana 2 · División entera y propiedades de las operaciones', en: 'Week 2 · Division with remainder and properties of operations' },
+    titulo: { es: 'U1 · Semana 2 · División entera y propiedades de las operaciones', en: 'U1 · Week 2 · Division with remainder and properties of operations' },
     estrella: [['division', 1], ['division', 2], ['division', 3], ['distributiva', 2], ['mental', 1], ['parentesis', 3]],
     elegir: [['division', 4], ['distributiva', 1], ['distributiva', 3], ['mental', 2], ['parentesis', 2], ['jerarquia', 1], ['redondeo', 2]],
     nElegir: 4,
@@ -58,7 +60,7 @@ viene. (Recuento hecho por máquina sobre las tablas de abajo y las claves de lo
   {
     id: 13,
     unidad: 1,
-    titulo: { es: 'Semana 3 · Potencias y raíces cuadradas', en: 'Week 3 · Powers and square roots' },
+    titulo: { es: 'U1 · Semana 3 · Potencias y raíces cuadradas', en: 'U1 · Week 3 · Powers and square roots' },
     estrella: [['exponente', 2], ['exponente', 1], ['potencias10', 1], ['raiz', 2], ['jerarquia', 2], ['jerarquia', 4]],
     elegir: [['especiales', 1], ['especiales', 2], ['potencias10', 3], ['exponente', 3], ['raiz', 1], ['propiedades', 1], ['propiedades', 2], ['propiedades', 3]],
     nElegir: 4,
@@ -66,7 +68,7 @@ viene. (Recuento hecho por máquina sobre las tablas de abajo y las claves de lo
   {
     id: 14,
     unidad: 1,
-    titulo: { es: 'Semana 4 · Jerarquía de las operaciones y problemas', en: 'Week 4 · Order of operations and word problems' },
+    titulo: { es: 'U1 · Semana 4 · Jerarquía de las operaciones y problemas', en: 'U1 · Week 4 · Order of operations and word problems' },
     estrella: [['jerarquia', 3], ['expresion', 1], ['expresion', 2], ['expresion', 3], ['raiz', 3], ['errores1', 1]],
     elegir: [['parentesis', 4], ['errores1', 2], ['errores1', 3], ['errores1', 4], ['jerarquia', 4], ['exponente', 3], ['division', 3], ['redondeo', 3]],
     nElegir: 4,

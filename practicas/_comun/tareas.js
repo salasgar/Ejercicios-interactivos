@@ -38,7 +38,7 @@ import { practicaPorSlug } from './catalogo.js';
 export const TAREAS = [
   {
     id: 1,
-    titulo: { es: 'Semana 1 · Múltiplos, divisores y criterios', en: 'Week 1 · Multiples, divisors and divisibility rules' },
+    titulo: { es: 'U2 · Semana 1 · Múltiplos, divisores y criterios', en: 'U2 · Week 1 · Multiples, divisors and divisibility rules' },
     desde: '2026-10-16',
     estrella: [['divisores', 4], ['recta', 1], ['recta', 2], ['rectangulos', 2], ['semaforo', 1], ['clasificador', 1]],
     elegir: [['semaforo', 2], ['semaforo', 4], ['recta', 3], ['rectangulos', 1], ['reloj', 1], ['leelo', 2], ['jerarquia', 1], ['division', 2]],
@@ -46,7 +46,7 @@ export const TAREAS = [
   },
   {
     id: 2,
-    titulo: { es: 'Semana 2 · Números primos y factorización', en: 'Week 2 · Prime numbers and factorisation' },
+    titulo: { es: 'U2 · Semana 2 · Números primos y factorización', en: 'U2 · Week 2 · Prime numbers and factorisation' },
     desde: '2026-10-26',
     estrella: [['criba', 2], ['semaforo', 3], ['arbol', 1], ['divisiones', 1], ['divisiones', 2], ['fabrica', 1]],
     elegir: [['criba', 1], ['arbol', 2], ['arbol', 3], ['divisiones', 3], ['fabrica', 2], ['factorizaciones', 2], ['exponente', 2], ['especiales', 1]],
@@ -54,7 +54,7 @@ export const TAREAS = [
   },
   {
     id: 3,
-    titulo: { es: 'Semana 3 · m.c.d. y m.c.m. con factores primos', en: 'Week 3 · GCD and LCM with prime factors' },
+    titulo: { es: 'U2 · Semana 3 · m.c.d. y m.c.m. con factores primos', en: 'U2 · Week 3 · GCD and LCM with prime factors' },
     desde: '2026-11-02',
     estrella: [['venn', 1], ['venn', 2], ['venn', 3], ['venn', 4], ['imposibles', 1], ['factorizaciones', 1]],
     elegir: [['imposibles', 2], ['imposibles', 3], ['factorizaciones', 3], ['fabrica', 3], ['leelo', 3], ['divisores', 6], ['parentesis', 1], ['raiz', 2]],
@@ -62,7 +62,7 @@ export const TAREAS = [
   },
   {
     id: 4,
-    titulo: { es: 'Semana 4 · Problemas y errores típicos', en: 'Week 4 · Word problems and common mistakes' },
+    titulo: { es: 'U2 · Semana 4 · Problemas y errores típicos', en: 'U2 · Week 4 · Word problems and common mistakes' },
     desde: '2026-11-09',
     estrella: [['clasificador', 2], ['reloj', 2], ['baldosas', 1], ['baldosas', 2], ['errores', 1], ['errores', 2]],
     elegir: [['clasificador', 3], ['reloj', 3], ['baldosas', 3], ['errores', 3], ['leelo', 1], ['criba', 3], ['expresion', 1], ['errores1', 1]],
