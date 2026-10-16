@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 14:07 UTC · por la sesión s-20261016T140250-59457f0d (cierra la tarea 43; relistado hechos/: la 42 tiene reclamo vivo de s-20261016T140230-ac9047d5 hasta las 15:32Z). **43 tareas LISTAS salvo la 42 (EN CURSO).**
+Regenerado: 2026-10-16 14:21 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta la tarea 44; relistado hechos/ con git fetch: sin reclamos vivos; 40 y 41 LISTAS). **Las 41 primeras tareas están LISTAS; la 42, la 43 y la 44 están PENDIENTES (libres).** La 44 toca la base (`practicas/_comun/base.js`, `textos.js`) y `practicas/semana.js`: no comparte ficheros con la 42 ni la 43, pero cualquier tarea futura que toque la base espera a que cierre.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -160,11 +160,12 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 41 | Enunciados creíbles en clasificador e imposibles: contextos, unidades y cotas (noria, metrónomo, corredor, semáforo, grifo, cuentas, alambre, m.c.d. ≥ 2) | tareas/tarea-41-enunciados-creibles.md | ninguna | 1 h | MEDIO | 40, 42 | practicas/clasificador/textos.js, practicas/imposibles/textos.js, sus dos tests; salidas/41-enunciados-creibles/ | LISTA | terminada 13:5xZ (16-oct) · commit 0ad1821 |
 | 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 43 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | LISTA | terminada 14:04Z (16-oct) · commit ed1383e |
 | 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | LISTA | terminada ~14:1xZ (16-oct) · commit d94b7fc |
+| 44 | Quitar de la vista del alumno los códigos de resultado y la petición de enviarlos (la nube ya lo cuenta); desplegable discreto de respaldo | tareas/tarea-44-sin-codigos-de-resultado.md | ninguna | 1 h | MEDIO | — | practicas/_comun/{base,textos}.js (solo la caja del código), practicas/semana.js, practicas/profesor.html, README.md, docs/practicas-unidad2.md; salidas/44-sin-codigos-de-resultado/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: **dos** (42 y 43, sin ficheros en común), o una con la cadena 42+43 (las dos MEDIO, cortas, sin esperas). Fuera del reparto, otra sesión de Juan Luis arregla el 16-10 el CSS común de los botones encendidos; la 40 copió las reglas en semaforo/estilos.css mientras tanto. La 40 y la 41 se cerraron sin prueba en navegador: conviene que Juan Luis mire semáforo (ej. 1 y 2) y clasificador (ej. 1) antes de darlas por buenas.
+Cuántas sesiones caben a la vez: **tres** (42, 43 y 44, sin ficheros en común), o dos con la cadena 42+43 y la 44 aparte (todas MEDIO). La 40 y la 41 se cerraron sin prueba en navegador: conviene que Juan Luis mire semáforo (ej. 1 y 2) y clasificador (ej. 1).
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
