@@ -1,2 +1,22 @@
-/* Práctica de plantilla: aquí va solo lo que no esté ya en ../_comun/estilos.css.
-   Esta práctica no necesita nada propio. */
+/* Semáforo: lo común está en ../_comun/estilos.css; aquí solo el botón «Ninguno»
+   y el pintado al corregir (en el común, el azul de [aria-pressed] y la opacidad
+   de :disabled pesan lo mismo que .bien/.mal y van antes, así que un botón pulsado
+   se quedaba azul y atenuado, acertara o no). Después y con button:
+   verde relleno = acertado, borde de puntos = faltaba, rojo tachado = sobraba. */
+.botones-numeros button.bien,
+.botones-numeros button.falta,
+.botones-numeros button.mal { opacity: 1; }
+.botones-numeros button.bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.botones-numeros button.falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
+.botones-numeros button.mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; text-decoration-thickness: 2px; }
+
+/* «Ninguno»: más ancho que los números, borde del color primario; encendido se ve
+   como un número encendido (la regla común de [aria-pressed="true"] lo pinta). */
+.botones-numeros button.ninguno {
+  min-width: 96px; font-size: 1rem;
+  border-color: var(--primario); color: var(--primario-oscuro);
+}
+.botones-numeros button.ninguno[aria-pressed="true"] { color: #fff; }
+.botones-numeros button.ninguno.bien { color: var(--correcto); border-color: var(--correcto); }
+.botones-numeros button.ninguno.mal { color: var(--error); border-color: var(--error); }
+.botones-numeros button.ninguno.falta { color: var(--correcto); border: 2px dashed var(--correcto); }

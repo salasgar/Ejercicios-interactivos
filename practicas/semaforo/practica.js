@@ -19,9 +19,18 @@ const enunciadoSemaforo = (item, { tt }) => `
 function montarSemaforo(contenedor, item, api) {
   contenedor.innerHTML = `${enunciadoSemaforo(item, api)}
     <div class="botones-numeros" id="botones" role="group" aria-label="divisores"></div>
-    <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
+    <button type="button" class="comprobar" id="comprobar" disabled>${api.t.comprobar}</button>`;
   const caja = contenedor.querySelector('#botones');
+  const comprobar = contenedor.querySelector('#comprobar');
   const encendidos = new Set();
+  let ninguno = false;
+  // Check solo vale con algo pulsado: un número o «Ninguno».
+  const actualizarComprobar = () => { comprobar.disabled = !ninguno && encendidos.size === 0; };
+  const botonNinguno = document.createElement('button');
+  botonNinguno.type = 'button';
+  botonNinguno.className = 'ninguno';
+  botonNinguno.textContent = api.tt(TX.ninguno);
+  botonNinguno.setAttribute('aria-pressed', 'false');
   const botones = item.divisores.map(d => {
     const b = document.createElement('button');
     b.type = 'button';
@@ -29,21 +38,36 @@ function montarSemaforo(contenedor, item, api) {
     b.setAttribute('aria-pressed', 'false');
     b.addEventListener('click', () => {
       if (api.respondido()) return;
+      ninguno = false;
+      botonNinguno.setAttribute('aria-pressed', 'false');
       if (encendidos.has(d)) { encendidos.delete(d); b.setAttribute('aria-pressed', 'false'); }
       else { encendidos.add(d); b.setAttribute('aria-pressed', 'true'); }
+      actualizarComprobar();
     });
     caja.append(b);
     return [d, b];
   });
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
+  botonNinguno.addEventListener('click', () => {
     if (api.respondido()) return;
+    ninguno = true;
+    encendidos.clear();
+    botones.forEach(([, b]) => b.setAttribute('aria-pressed', 'false'));
+    botonNinguno.setAttribute('aria-pressed', 'true');
+    actualizarComprobar();
+  });
+  caja.append(botonNinguno);
+  comprobar.addEventListener('click', () => {
+    if (api.respondido() || comprobar.disabled) return;
     const respuesta = [...encendidos];
     const acierto = esCorrecta(item, respuesta);
-    botones.forEach(([d, b]) => {
+    // Pulsado y correcto: bien · pulsado y erróneo: mal · sin pulsar pero correcto: falta.
+    const pinta = (b, correcto, pulsado) => {
       b.disabled = true;
-      if (item.correctos.includes(d)) b.classList.add('bien');
-      else if (encendidos.has(d)) b.classList.add('mal');
-    });
+      if (pulsado) b.classList.add(correcto ? 'bien' : 'mal');
+      else if (correcto) b.classList.add('falta');
+    };
+    botones.forEach(([d, b]) => pinta(b, item.correctos.includes(d), encendidos.has(d)));
+    pinta(botonNinguno, item.correctos.length === 0, ninguno);
     api.responder({ acierto, html: ({ idioma }) => explicar(item, respuesta, idioma), espera: 2200 });
   });
 }

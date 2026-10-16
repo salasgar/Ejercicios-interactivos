@@ -2,6 +2,7 @@
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
 export const TX = {
+  ninguno: { es: 'Ninguno', en: 'None' },
   ej1: {
     nombre: { es: 'Semáforo básico', en: 'Basic traffic light' },
     detalle: { es: 'Enciende, entre 2, 3, 5, 9 y 10, los que son divisores del número', en: 'Switch on the divisors among 2, 3, 5, 9 and 10' },
