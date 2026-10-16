@@ -76,6 +76,31 @@ service cloud.firestore {
         && request.resource.data.actualizado is int;
     }
 
+    // Registro de fallos de las prácticas (practicas/_comun/registro.js): un
+    // documento por fallo, de id «<código>-<hora>-<azar>». El alumno solo lo
+    // CREA (ni lo lee, ni lo cambia, ni lo borra); leerlos, solo el profesor.
+    // Topes de los textos con margen: la app ya recorta a 400, 500 y 80
+    // caracteres (LIMITES de registro.js).
+    match /fallos/{id} {
+      allow read: if esProfesor();
+      allow create: if id.matches('^[A-HJ-NP-Z2-9]{4}-[a-z0-9]{6,12}-[a-z0-9]{4}$')
+        && request.resource.data.keys().hasAll(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion'])
+        && request.resource.data.keys().hasOnly(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion', 'respuesta', 'error'])
+        && request.resource.data.v is int
+        && request.resource.data.alumno is string && request.resource.data.alumno.matches('^[A-HJ-NP-Z2-9]{4}$')
+        && id.matches('^' + request.resource.data.alumno + '-.*')
+        && request.resource.data.practica is string && request.resource.data.practica.matches('^[a-z0-9-]{1,30}$')
+        && request.resource.data.ejercicio is int && request.resource.data.ejercicio >= 1 && request.resource.data.ejercicio <= 20
+        && request.resource.data.t is int
+        && request.resource.data.dia is int
+        && request.resource.data.idioma in ['es', 'en']
+        && request.resource.data.item is string && request.resource.data.item.size() <= 1200
+        && request.resource.data.feedback is string && request.resource.data.feedback.size() <= 1500
+        && request.resource.data.repeticion is bool
+        && (!('respuesta' in request.resource.data) || (request.resource.data.respuesta is string && request.resource.data.respuesta.size() <= 240))
+        && (!('error' in request.resource.data) || (request.resource.data.error is string && request.resource.data.error.matches('^[a-z0-9][a-z0-9-]{0,39}$')));
+    }
+
     // Tareas: el profesor las gestiona; el alumno ve las de su grupo.
     match /tareas/{tareaId} {
       allow read: if esProfesor() || (autenticado() && resource.data.grupo == grupoDelAlumno());
