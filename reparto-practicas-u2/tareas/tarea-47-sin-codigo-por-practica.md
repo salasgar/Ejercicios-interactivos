@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-16
 Precondición: 44 LISTA (lo está: 3ad179c) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 48
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/47-sin-codigo-por-practica/` (solo `ENTREGA.md` y su marcador). Toma la titularidad de los ficheros de la 44 para este cambio.
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/codigos.js`, `practicas/_comun/base.js` (solo lo que quede de `cajaResultado`/`activarCopiar`), `practicas/_comun/catalogo.js`, `practicas/_comun/textos.js`, `practicas/profesor.js`, `practicas/profesor.html`, `practicas/resultados.js` (si lee códigos de 16), `practicas/semana.html` (la regla `.semana__pedir` que quedó sin uso), `README.md`, `docs/practicas-unidad2.md`, `tests/practicas-comun.test.js` y el test de códigos
 
