@@ -131,6 +131,8 @@ las «Reglas de contenido comunes» de `proyecto.md`.
 
 ## Trampas conocidas
 
+- (Cerrada) `practicas/semana.html` conserva el CSS `.semana__pedir`, ya sin uso. Un test ajeno de `practicas-semana.test.js` falla desde que la tarea 1 se publicó el 16-10.
+
 - `cajaResultado` devuelve '' cuando se viene de una tarea de la semana (`semana !== null`):
   mantenlo, la tarea tiene su propia caja en `semana.js`.
 - `activarCopiar` busca `#copiar` y `#codigo-resultado`: dentro de un `<details>` siguen
