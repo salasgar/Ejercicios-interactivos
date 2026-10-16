@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 14:04 UTC · tarea 42 cerrada por s-20261016T140230-ac9047d5 (commit ed1383e, sin prueba a 375 px); antes: 13:56 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta la tarea 43, cuarta de la revisión de la app por Juan Luis el 16-10; relistado hechos/ con git fetch: la 40 y la 41 tienen terminada y commit (ad30481, 0ad1821), cerradas en ~20 min cada una, sin prueba en navegador según sus terminadas; sin reclamos vivos). **Las 41 primeras tareas están LISTAS; la 42 y la 43 están PENDIENTES (libres), no comparten ficheros y caben a la vez o en cadena 42+43.** Vendrán más (44, 45…) según siga la revisión.
+Regenerado: 2026-10-16 14:07 UTC · por la sesión s-20261016T140250-59457f0d (cierra la tarea 43; relistado hechos/: la 42 tiene reclamo vivo de s-20261016T140230-ac9047d5 hasta las 15:32Z). **43 tareas LISTAS salvo la 42 (EN CURSO).**
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -159,7 +159,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 40 | Semáforo: botón «Ninguno / None», Check solo con algo pulsado, corrección visible de cada botón | tareas/tarea-40-semaforo-ninguno.md | ninguna | 45 min | MEDIO | 41, 42 | practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js; salidas/40-semaforo-ninguno/ | LISTA | terminada 13:3xZ (16-oct) · commit ad30481 |
 | 41 | Enunciados creíbles en clasificador e imposibles: contextos, unidades y cotas (noria, metrónomo, corredor, semáforo, grifo, cuentas, alambre, m.c.d. ≥ 2) | tareas/tarea-41-enunciados-creibles.md | ninguna | 1 h | MEDIO | 40, 42 | practicas/clasificador/textos.js, practicas/imposibles/textos.js, sus dos tests; salidas/41-enunciados-creibles/ | LISTA | terminada 13:5xZ (16-oct) · commit 0ad1821 |
 | 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 43 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | LISTA | terminada 14:04Z (16-oct) · commit ed1383e |
-| 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | PENDIENTE | — |
+| 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | LISTA | terminada ~14:1xZ (16-oct) · commit d94b7fc |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
@@ -180,6 +180,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 43 · 2026-10-16 14:07 · s-20261016T140250-59457f0d · d94b7fc · 2 ficheros (practicas/leelo/logica.js, tests/practicas-leelo.test.js) · ~15 min (estimada 1 h 15 min) · sin prueba en navegador
 
 LISTA · tarea 42 · 2026-10-16 14:04 · s-20261016T140230-ac9047d5 · ed1383e · 4 ficheros (practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js) · ~10 min (estimada: 45 min) · sin prueba a 375 px
 
