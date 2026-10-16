@@ -182,6 +182,8 @@ apartado 2): los decide la coordinadora.
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
+LISTA · tarea 44 · 2026-10-16 14:28 · s-20261016T142535-baf582e4 · 3ad179c · 7 ficheros (practicas/_comun/{base,textos}.js, practicas/semana.js, practicas/profesor.html, README.md, docs/practicas-unidad2.md, tests/practicas-comun.test.js) · ~15 min (estimada 1 h) · sin prueba en navegador
+
 LISTA · tarea 43 · 2026-10-16 14:07 · s-20261016T140250-59457f0d · d94b7fc · 2 ficheros (practicas/leelo/logica.js, tests/practicas-leelo.test.js) · ~15 min (estimada 1 h 15 min) · sin prueba en navegador
 
 LISTA · tarea 42 · 2026-10-16 14:04 · s-20261016T140230-ac9047d5 · ed1383e · 4 ficheros (practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js) · ~10 min (estimada: 45 min) · sin prueba a 375 px
