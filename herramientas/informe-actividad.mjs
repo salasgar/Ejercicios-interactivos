@@ -5,17 +5,24 @@
 // resultado por correo; también vale a mano.
 //
 // Lee Firestore por REST **sin autenticación**: las reglas dejan leer con `get`
-// cada documento `practicas/<slug>--<código>` (solo números, sin nombres), y los
-// códigos de los alumnos salen de su número de lista (`codigoAlumno` en
-// practicas/_comun/codigos.js). No lee `fallos/` ni lista colecciones: eso exige
-// la cuenta del profesor y una rutina en la nube no la tiene.
+// cada documento (solo números, sin nombres), y los códigos de los alumnos salen
+// de su número de lista (`codigoAlumno` en practicas/_comun/codigos.js). No lee
+// `fallos/` ni lista colecciones: eso exige la cuenta del profesor y una rutina
+// en la nube no la tiene. Los documentos son:
+//   - `practicas/<slug>--<código>` en la tarea 1 (`progresoPorPractica`);
+//   - `practicas-tareas/t<id>--<slug>--<código>` en las demás (modelo v2);
+//   - `practicas-asignaciones/<código>` en las tareas `asignada`: solo cuentan
+//     los alumnos asignados (los demás no entran en ninguna cifra ni alerta).
+// Con plazo (`hasta`) el informe mide la entrega: a tiempo, N días tarde o sin
+// entregar.
 //
 // Uso:
 //   node herramientas/informe-actividad.mjs [--alumnos 51] [--tarea 1] [--horas 24]
 //        [--grupos "1.º A:1-29,E1CB:30-46,E1DB:47-51"] [--json]
 //
 //   --alumnos  cuántas líneas tiene la lista del panel (los códigos 1..N)
-//   --tarea    id de la tarea de la semana (practicas/_comun/tareas.js)
+//   --tarea    id de la tarea (practicas/_comun/tareas.js). Sin él, la tarea
+//              obligatoria vigente por fecha (ver `tareaVigente`).
 //   --horas    ventana de «actividad reciente» (desde hace tantas horas)
 //   --grupos   nombre:desde-hasta por grupo, con los números de lista
 //   --json     además del informe, el resumen completo en JSON (última línea)
@@ -24,8 +31,10 @@
 // están probadas en tests/herramientas-informe.test.js.
 
 import { codigoAlumno } from '../practicas/_comun/codigos.js';
-import { tareaPorId, PUNTOS_POR_EJERCICIO } from '../practicas/_comun/tareas.js';
-import { urlDocumento, leerDocumentoRest } from '../practicas/_comun/nube.js';
+import { TAREAS, tareaPorId, PUNTOS_POR_EJERCICIO, estadoTarea, estadoPlazo, diaDeFecha } from '../practicas/_comun/tareas.js';
+import {
+  urlDocumento, leerDocumentoRest, leerAsignacion, idDocumentoPractica, idDocumentoTarea, COLECCION_TAREAS,
+} from '../practicas/_comun/nube.js';
 import { diaDe, fechaDeDia } from '../practicas/_comun/contador.js';
 
 // --- Umbrales de las alertas (se pueden ajustar) --------------------------------
@@ -66,6 +75,35 @@ export function ejerciciosDe(tarea) {
   ];
 }
 
+/** Clave del Map de documentos de una práctica en una tarea: `slug--código` (tarea 1) o `t<id>--slug--código` (v2). */
+export function claveDocumento(tarea, slug, codigo) {
+  return tarea.progresoPorPractica ? idDocumentoPractica(slug, codigo) : idDocumentoTarea(tarea.id, slug, codigo);
+}
+
+/** 'AAAA-MM-DD' de un instante, en la hora peninsular (la de los alumnos y la de Juan Luis). */
+export function fechaMadrid(ms) {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(ms));
+}
+
+/**
+ * La tarea obligatoria vigente el día `hoy` ('AAAA-MM-DD'), para cuando no se
+ * pasa `--tarea`: entre las publicadas con plazo (`hasta`) y no `asignada`
+ * (obligatorias para todos), la de plazo abierto más próximo; si ninguna está
+ * abierta, la última cuyo plazo venció. Devuelve { tarea, motivo }.
+ */
+export function tareaVigente(hoy, tareas = TAREAS) {
+  const conPlazo = tareas.filter(t => t.hasta && !t.asignada).sort((a, b) => (a.hasta < b.hasta ? -1 : a.hasta > b.hasta ? 1 : a.id - b.id));
+  const publicadas = conPlazo.filter(t => !t.desde || t.desde <= hoy);
+  const abierta = publicadas.find(t => t.hasta >= hoy);
+  if (abierta) return { tarea: abierta, motivo: `la obligatoria con el plazo abierto más próximo (hasta el ${abierta.hasta})` };
+  if (publicadas.length) {
+    const ultima = publicadas[publicadas.length - 1];
+    return { tarea: ultima, motivo: `ninguna tiene el plazo abierto; la última que venció (el ${ultima.hasta})` };
+  }
+  const primera = conPlazo[0] ?? tareas[0];
+  return { tarea: primera, motivo: 'ninguna tarea obligatoria publicada todavía; la primera con plazo' };
+}
+
 function grupoDe(numero, grupos) {
   const g = grupos.find(x => numero >= x.desde && numero <= x.hasta);
   return g ? g.nombre : '?';
@@ -83,25 +121,31 @@ export function leerGrupos(texto) {
 
 /**
  * Agrega los documentos leídos.
- *   docs     Map `${slug}--${codigo}` → { ej, actualizado } | null (null = no existe)
- *   tarea    la tarea de la semana (tareas.js)
+ *   docs     Map `claveDocumento(tarea, slug, codigo)` → { ej, actualizado } | null (null = no existe)
+ *   tarea    la tarea (tareas.js)
  *   alumnos  cuántos (códigos 1..alumnos)
  *   desde    ms: desde cuándo cuenta como actividad reciente
  *   grupos   [{ nombre, desde, hasta }]
+ *   asignaciones  Map código → { tareas: [ids] } | null; solo se mira si la tarea es `asignada`
+ *   ahora    ms: «hoy», para el plazo y el retraso (por defecto, ahora mismo)
  */
-export function agregar({ docs, tarea, alumnos, desde, grupos = [], umbrales = UMBRALES }) {
+export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones = null, ahora = Date.now(), umbrales = UMBRALES }) {
   const ejercicios = ejerciciosDe(tarea);
   const slugs = [...new Set(ejercicios.map(e => e.slug))];
   const porEjercicio = ejercicios.map(e => ({ ...e, intentan: 0, terminan: 0, aciertos: 0, fallos: 0, reinicios: 0, reinician: 0 }));
   const diaDesde = diaDe(new Date(desde));
+  const hoyDia = diaDeFecha(fechaMadrid(ahora));
+  const plazoVencido = Boolean(tarea.hasta) && hoyDia > diaDeFecha(tarea.hasta);
   const filas = [];
+  let noAsignados = 0;
   for (let i = 0; i < alumnos; i++) {
     const codigo = codigoAlumno(i);
     const numero = i + 1;
+    if (tarea.asignada && !asignaciones?.get(codigo)?.tareas?.includes(tarea.id)) { noAsignados++; continue; }
     let existe = false, ultima = 0;
     const porSlug = new Map();
     for (const slug of slugs) {
-      const d = docs.get(`${slug}--${codigo}`);
+      const d = docs.get(claveDocumento(tarea, slug, codigo));
       if (!d) continue;
       existe = true;
       ultima = Math.max(ultima, Number(d.actualizado) || 0);
@@ -122,8 +166,10 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], umbrales = U
     });
     puntosElegir.sort((a, b) => b - a);
     const puntos = puntosEstrella + puntosElegir.slice(0, tarea.nElegir).reduce((a, b) => a + b, 0);
+    const estado = estadoTarea(tarea, (slug, n) => porSlug.get(slug)?.[n - 1] ?? null);
+    const entrega = estadoPlazo(tarea, estado, hoyDia, true);
     filas.push({
-      numero, codigo, grupo: grupoDe(numero, grupos), existe, activo: existe && ultima >= desde, ultima,
+      numero, codigo, grupo: grupoDe(numero, grupos), existe, activo: existe && ultima >= desde, ultima, entrega,
       puntos, terminadosEstrella, terminadosElegir: Math.min(terminadosElegir, tarea.nElegir), terminadosHoy, fallos, reinicios,
       completa: terminadosEstrella === tarea.estrella.length && terminadosElegir >= tarea.nElegir,
     });
@@ -134,10 +180,12 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], umbrales = U
   }
 
   const alertas = [];
+  const total = filas.length;
   const activos = filas.filter(f => f.activo).length;
   const hanEntrado = filas.filter(f => f.existe).length;
-  if (activos < umbrales.parteActivaBaja * alumnos) {
-    alertas.push(`Poca actividad: solo ${activos} de ${alumnos} alumnos han hecho algo en la ventana (${hanEntrado} han entrado alguna vez).`);
+  // Pasado el plazo es normal que casi nadie esté activo: no se avisa.
+  if (!plazoVencido && total > 0 && activos < umbrales.parteActivaBaja * total) {
+    alertas.push(`Poca actividad: solo ${activos} de ${total} alumnos han hecho algo en la ventana (${hanEntrado} han entrado alguna vez).`);
   }
   for (const f of filas) {
     if (f.existe && f.puntos === 0 && f.fallos >= umbrales.fallosSinPuntos) {
@@ -153,18 +201,37 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], umbrales = U
       alertas.push(`Muchos reinicios: ${nombre}: ${pe.reinician} de ${pe.intentan} alumnos han perdido las 5 vidas alguna vez.`);
     }
   }
-  return { alumnos: filas, ejercicios: porEjercicio, alertas, activos, hanEntrado, total: alumnos, desde, diaDesde };
+  // Entregas (solo en tareas obligatorias con plazo): a tiempo, con retraso, sin entregar.
+  const conPlazo = Boolean(tarea.hasta) && filas.some(f => f.entrega.tipo !== 'repaso');
+  const plazo = conPlazo ? {
+    hasta: tarea.hasta,
+    vencido: plazoVencido,
+    aTiempo: filas.filter(f => f.entrega.entregada && !f.entrega.fueraDePlazo).length,
+    conRetraso: filas.filter(f => f.entrega.entregada && f.entrega.fueraDePlazo).length,
+    sinEntregar: filas.filter(f => !f.entrega.entregada).length,
+  } : null;
+  return { alumnos: filas, ejercicios: porEjercicio, alertas, activos, hanEntrado, total, noAsignados, plazo, desde, diaDesde };
+}
+
+/** «a tiempo», «3 días tarde» o «sin entregar» (vacío si la tarea no tiene plazo para el alumno). */
+export function textoEntrega(e) {
+  if (!e || e.tipo === 'repaso') return '';
+  const dias = n => `${n} ${n === 1 ? 'día' : 'días'}`;
+  if (e.entregada) return e.fueraDePlazo ? `entregada ${dias(e.diasRetraso)} tarde` : 'entregada a tiempo';
+  return e.fueraDePlazo ? `sin entregar, ${dias(e.diasRetraso)} de retraso` : 'sin entregar';
 }
 
 const pct = (a, b) => (b ? `${Math.round((100 * a) / b)} %` : '—');
 
 /** El informe en Markdown (en español, para Juan Luis). */
-export function formatear(r, { tarea, ahora = Date.now(), horas = 24 } = {}) {
+export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = null } = {}) {
   const fecha = f => new Date(f).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   const L = [];
   L.push(`# Actividad en las prácticas · ${fecha(ahora)} (hora peninsular)`);
   L.push('');
   L.push(`Tarea: ${tarea.titulo.es}. Ventana: últimas ${horas} h (desde ${fecha(r.desde)}).`);
+  if (motivo) L.push(`Tarea elegida automáticamente: ${motivo}.`);
+  if (tarea.asignada) L.push(`Tarea asignada: cuentan solo los ${r.total} alumnos asignados (${r.noAsignados} no asignados, fuera de todas las cifras).`);
   L.push('');
   L.push(r.alertas.length ? '## ⚠ Alertas' : '## Sin alertas');
   for (const a of r.alertas) L.push(`- ${a}`);
@@ -175,6 +242,12 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24 } = {}) {
   const completas = r.alumnos.filter(f => f.completa).length;
   const terminadosHoy = r.alumnos.reduce((s, f) => s + f.terminadosHoy, 0);
   L.push(`- Tarea completa (100 puntos): **${completas}**. Ejercicios terminados en la ventana: ${terminadosHoy}.`);
+  if (r.plazo) {
+    const p = r.plazo;
+    L.push(p.vencido
+      ? `- Plazo vencido (hasta el ${p.hasta}): **${p.aTiempo} a tiempo, ${p.conRetraso} con retraso, ${p.sinEntregar} sin entregar**.`
+      : `- Plazo: hasta el ${p.hasta}. Entregadas: ${p.aTiempo}; sin entregar: ${p.sinEntregar}.`);
+  }
   const porGrupo = new Map();
   for (const f of r.alumnos) {
     const g = porGrupo.get(f.grupo) ?? { total: 0, entrado: 0, activos: 0, completas: 0, puntos: 0 };
@@ -198,45 +271,59 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24 } = {}) {
   L.push('## Alumnos (número de lista · grupo · puntos de la tarea · ★ terminadas · fallos · última actividad)');
   const orden = [...r.alumnos].filter(f => f.existe).sort((a, b) => b.puntos - a.puntos || a.numero - b.numero);
   for (const f of orden) {
-    L.push(`- ${f.numero} · ${f.grupo} · ${f.puntos} pt · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}`);
+    L.push(`- ${f.numero} · ${f.grupo} · ${f.puntos} pt · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}${textoEntrega(f.entrega) ? ` · ${textoEntrega(f.entrega)}` : ''}`);
   }
   if (!orden.length) L.push('- (nadie ha entrado todavía)');
   const nunca = r.alumnos.filter(f => !f.existe).map(f => f.numero);
   L.push('');
   L.push(nunca.length ? `Nunca han entrado (números de lista): ${nunca.join(', ')}.` : 'Todos han entrado alguna vez.');
   L.push('');
-  L.push(`_Fuente: documentos practicas/<slug>--<código> de Firestore (día ${r.diaDesde} = ${fechaDeDia(r.diaDesde)} en adelante para «terminados en la ventana»)._`);
+  const fuente = tarea.progresoPorPractica ? 'practicas/<slug>--<código>' : 'practicas-tareas/t<id>--<slug>--<código>';
+  L.push(`_Fuente: documentos ${fuente} de Firestore (día ${r.diaDesde} = ${fechaDeDia(r.diaDesde)} en adelante para «terminados en la ventana»)._`);
   return L.join('\n');
 }
 
 // --- Lectura de Firestore -----------------------------------------------------------
 
-async function leerDocumento(slug, codigo) {
-  const url = urlDocumento(slug, codigo);
+async function leerDocumento(tarea, slug, codigo) {
+  const url = urlDocumento(slug, codigo, undefined, tarea.progresoPorPractica ? {} : { coleccion: COLECCION_TAREAS, id: idDocumentoTarea(tarea.id, slug, codigo) });
   if (!url) throw new Error('Sin configuración de Firebase (src/config.js)');
   const r = await fetch(url);
   if (r.status === 404) return null;
-  if (!r.ok) throw new Error(`HTTP ${r.status} en ${slug}--${codigo}`);
+  if (!r.ok) throw new Error(`HTTP ${r.status} en ${claveDocumento(tarea, slug, codigo)}`);
   const json = await r.json();
   const leido = leerDocumentoRest(json);
   return { ej: leido?.ej ?? [], actualizado: Number(json?.fields?.actualizado?.integerValue) || 0 };
 }
 
-async function leerTodos(slugs, alumnos, concurrencia = 8) {
+async function leerTodos(tarea, slugs, alumnos, concurrencia = 8) {
+  // Primero las asignaciones (si la tarea es `asignada`): los no asignados no se leen.
+  const asignaciones = new Map();
+  if (tarea.asignada) {
+    const codigos = Array.from({ length: alumnos }, (_, i) => codigoAlumno(i));
+    let j = 0;
+    await Promise.all(Array.from({ length: concurrencia }, async () => {
+      while (j < codigos.length) { const c = codigos[j++]; asignaciones.set(c, await leerAsignacion(c)); }
+    }));
+  }
   const pendientes = [];
-  for (let i = 0; i < alumnos; i++) for (const slug of slugs) pendientes.push([slug, codigoAlumno(i)]);
+  for (let i = 0; i < alumnos; i++) {
+    const codigo = codigoAlumno(i);
+    if (tarea.asignada && !asignaciones.get(codigo)?.tareas?.includes(tarea.id)) continue;
+    for (const slug of slugs) pendientes.push([slug, codigo]);
+  }
   const docs = new Map();
   const errores = [];
   let k = 0;
   async function obrero() {
     while (k < pendientes.length) {
       const [slug, codigo] = pendientes[k++];
-      try { docs.set(`${slug}--${codigo}`, await leerDocumento(slug, codigo)); }
-      catch (e) { errores.push(`${slug}--${codigo}: ${e.message}`); }
+      try { docs.set(claveDocumento(tarea, slug, codigo), await leerDocumento(tarea, slug, codigo)); }
+      catch (e) { errores.push(`${claveDocumento(tarea, slug, codigo)}: ${e.message}`); }
     }
   }
   await Promise.all(Array.from({ length: concurrencia }, obrero));
-  return { docs, errores };
+  return { docs, errores, asignaciones };
 }
 
 function argumento(nombre, porDefecto) {
@@ -246,16 +333,18 @@ function argumento(nombre, porDefecto) {
 
 async function main() {
   const alumnos = Number(argumento('alumnos', 51));
-  const tarea = tareaPorId(Number(argumento('tarea', 1)));
   const horas = Number(argumento('horas', 24));
   const grupos = leerGrupos(argumento('grupos', '1.º A:1-29,E1CB:30-46,E1DB:47-51'));
-  if (!tarea) { console.error('Tarea desconocida'); process.exit(2); }
   const ahora = Date.now();
+  const idPedido = argumento('tarea', null);
+  const elegida = idPedido === null ? tareaVigente(fechaMadrid(ahora)) : { tarea: tareaPorId(Number(idPedido)), motivo: null };
+  const { tarea, motivo } = elegida;
+  if (!tarea) { console.error('Tarea desconocida'); process.exit(2); }
   const desde = ahora - horas * 3600 * 1000;
   const slugs = [...new Set(ejerciciosDe(tarea).map(e => e.slug))];
-  const { docs, errores } = await leerTodos(slugs, alumnos);
-  const resumen = agregar({ docs, tarea, alumnos, desde, grupos });
-  console.log(formatear(resumen, { tarea, ahora, horas }));
+  const { docs, errores, asignaciones } = await leerTodos(tarea, slugs, alumnos);
+  const resumen = agregar({ docs, tarea, alumnos, desde, grupos, asignaciones, ahora });
+  console.log(formatear(resumen, { tarea, ahora, horas, motivo }));
   if (errores.length) {
     console.log(`\n⚠ ${errores.length} lecturas han fallado (el informe puede quedarse corto):`);
     for (const e of errores.slice(0, 10)) console.log(`- ${e}`);
