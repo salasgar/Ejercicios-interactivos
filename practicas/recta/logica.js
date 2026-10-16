@@ -8,6 +8,7 @@
 
 import { divisores as divisoresDe } from '../_comun/aritmetica.js';
 import { explicacionCompleta, cerrar, noEsMultiploCorto, noEsDivisorCorto } from '../_comun/relaciones.js';
+import { unir } from '../_comun/textos.js';
 
 // --- Ejercicio 1: marca los múltiplos --------------------------------------------
 
@@ -30,10 +31,17 @@ export function generarMultiplos(rng) {
 
 export const NUMEROS_DIVISORES = [12, 16, 18, 20, 24, 28, 30];
 
-/** Ítem del ejercicio 2: n de la lista fija, recta hasta n + 4. */
+/**
+ * La recta del ejercicio 2 llega hasta cerrar la fila de diez en la que está
+ * 3·n (16 → 49, 30 → 99): así se ven 2·n y 3·n, y se descubre al alumno que
+ * cree que los divisores de 16 son los de su tabla (0, 16, 32, 48…).
+ */
+export const hastaDivisores = n => Math.ceil((3 * n + 1) / 10) * 10 - 1;
+
+/** Ítem del ejercicio 2: n de la lista fija. */
 export function generarDivisores(rng) {
   const n = rng.elegir(NUMEROS_DIVISORES);
-  return { tipo: 'divisores', n, hasta: n + 4, correctos: divisoresDe(n) };
+  return { tipo: 'divisores', n, hasta: hastaDivisores(n), correctos: divisoresDe(n) };
 }
 
 // --- Ejercicio 3: verdadero o falso -----------------------------------------------
@@ -124,8 +132,16 @@ function explicarDivisores(item, respuesta, idioma) {
   const marcados = new Set(respuesta);
   const lista = item.correctos.join(', ');
   const avisos = [];
-  for (const x of [...marcados].filter(v => v !== 0 && !item.correctos.includes(v)).sort((a, b) => a - b)) {
-    avisos.push(noEsDivisorCorto(x, item.n, idioma));
+  const sobran = [...marcados].filter(v => v !== 0 && !item.correctos.includes(v)).sort((a, b) => a - b);
+  // Los de la tabla de n (2·n, 3·n…) van juntos: es confundir divisor con múltiplo.
+  const deLaTabla = sobran.filter(v => v % item.n === 0);
+  for (const x of sobran.filter(v => v % item.n !== 0)) avisos.push(noEsDivisorCorto(x, item.n, idioma));
+  if (deLaTabla.length) {
+    const lista = unir(deLaTabla.map(String), idioma);
+    const varios = deLaTabla.length > 1;
+    avisos.push(idioma === 'es'
+      ? `${lista} ${varios ? 'son múltiplos' : 'es múltiplo'} de ${item.n} (${varios ? 'están' : 'está'} en su tabla), no ${varios ? 'divisores' : 'divisor'}: los divisores de ${item.n} no pasan de ${item.n}.`
+      : `${lista} ${varios ? 'are multiples' : 'is a multiple'} of ${item.n} (in its times table), not ${varios ? 'divisors' : 'a divisor'}: the divisors of ${item.n} are never bigger than ${item.n}.`);
   }
   if (marcados.has(0)) {
     avisos.push(idioma === 'es' ? '0 no es divisor de nada: no se puede dividir entre 0.' : '0 is not a divisor of anything: you cannot divide by 0.');

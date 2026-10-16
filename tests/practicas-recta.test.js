@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar, NUMEROS_DIVISORES,
+  generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar, NUMEROS_DIVISORES, hastaDivisores,
 } from '../practicas/recta/logica.js';
 
 const N = 3000;
@@ -43,7 +43,8 @@ test('esCorrecta (multiplos): exacto, sin importar el orden; falla si falta el 0
 test('ejercicio 2: los correctos son exactamente los divisores de n, por fuerza bruta, sin el 0', () => {
   for (const item of generarN(generarDivisores, N, 2)) {
     assert.ok(NUMEROS_DIVISORES.includes(item.n));
-    assert.equal(item.hasta, item.n + 4);
+    assert.equal(item.hasta, hastaDivisores(item.n));
+    assert.ok(item.hasta >= 3 * item.n && (item.hasta + 1) % 10 === 0); // se ven 2·n y 3·n, filas completas
     assert.deepEqual(item.correctos, divisoresBrutos(item.n));
     assert.ok(!item.correctos.includes(0));
     assert.ok(item.correctos.includes(1) && item.correctos.includes(item.n));
@@ -128,6 +129,15 @@ test('explicar (multiplos y divisores): dice cuál de los números marcados sobr
   const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
   assert.match(explicar(d, [1, 5, 12], 'es'), /5 no es divisor de 12: <span class="cuenta">12 : 5 = 2, resto 2<\/span>; la división no es exacta\./);
   assert.match(explicar({ ...d, hasta: 16 }, [1, 12, 13], 'es'), /13 no es divisor de 12: el 12 no está en la tabla del 13\./);
+});
+
+test('explicar (divisores): quien marca la tabla de n recibe un solo aviso de «múltiplos, no divisores»', () => {
+  const d = { tipo: 'divisores', n: 16, hasta: 49, correctos: [1, 2, 4, 8, 16] };
+  const es = explicar(d, [0, 16, 32, 48], 'es');
+  assert.match(es, /32 y 48 son múltiplos de 16 \(están en su tabla\), no divisores: los divisores de 16 no pasan de 16\./);
+  assert.doesNotMatch(es, /32 no es divisor/);
+  assert.match(explicar(d, [1, 2, 4, 8, 16, 32], 'es'), /32 es múltiplo de 16 \(está en su tabla\), no divisor/);
+  assert.match(explicar(d, [1, 16, 32, 48], 'en'), /32 and 48 are multiples of 16/);
 });
 
 test('explicar (divisores): los avisos del español empiezan en mayúscula tras un punto', () => {
