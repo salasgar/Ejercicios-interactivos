@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 15:01 UTC · por s-20261016T144913-715ee461 (cierre de la 46; relistado hechos/ con git fetch). **Las 44 primeras tareas, la 46 y la 48 están LISTAS; la 45 y la 47 están EN CURSO.** (Regenerado parcial por s-20261016T150340-49a89093 al cerrar la 48.)
+Regenerado: 2026-10-16 15:28 UTC · por s-20261016T144918-b59b6bef (cierre de la 45; relistado hechos/ con git fetch: sin reclamos vivos). **Las 48 tareas están LISTAS.** La 45 deja aprobado el diseño de tareas v2 y una lista de siete tareas de implementación (I1-I7) para que la coordinadora las dé de alta; la 46 deja su propuesta pendiente del visto bueno de Juan Luis.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -161,15 +161,15 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 43 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | LISTA | terminada 14:04Z (16-oct) · commit ed1383e |
 | 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | LISTA | terminada ~14:1xZ (16-oct) · commit d94b7fc |
 | 44 | Sin códigos de resultado a la vista del alumno ni peticiones de enviarlos (desplegable discreto de respaldo) | tareas/tarea-44-sin-codigos-de-resultado.md | ninguna | 1 h | MEDIO | — | practicas/_comun/{base,textos}.js, practicas/semana.js, practicas/profesor.html, README.md, docs/practicas-unidad2.md; salidas/44-sin-codigos-de-resultado/ | LISTA | terminada 14:28Z (16-oct) · commit 3ad179c · sin prueba en navegador · la eliminación del código por práctica pasa a la 47 |
-| 45 | Diseño (con Juan Luis) del modelo de tareas v2: unidades, tres estados, asignación a alumnos, progreso por tarea; lista de tareas de implementación | tareas/tarea-45-diseno-tareas-v2.md | ninguna | 2 h | ALTO | — | salidas/45-diseno-tareas-v2/ (DISENO.md) | EN CURSO | s-20261016T144918-b59b6bef · caduca 18:49Z |
+| 45 | Diseño (con Juan Luis) del modelo de tareas v2: unidades, tres estados, asignación a alumnos, progreso por tarea; lista de tareas de implementación | tareas/tarea-45-diseno-tareas-v2.md | ninguna | 2 h | ALTO | — | salidas/45-diseno-tareas-v2/ (DISENO.md) | LISTA | terminada 15:2xZ (16-oct) · commit c1d3379 · diseño aprobado por Juan Luis · lista I1-I7 en su terminada |
 | 46 | Propuesta de las cuatro tareas de la unidad 1 con las 15 prácticas de repaso (ejercicio → destreza; destrezas sin cubrir) | tareas/tarea-46-tareas-unidad1.md | ninguna | 1 h 30 min | ALTO | — | salidas/46-tareas-unidad1/ (PROPUESTA.md) | LISTA | terminada 15:00Z (16-oct) · commit 67f84f3 · propuesta pendiente del visto bueno de Juan Luis (tareas 11-14) |
-| 47 | Eliminar el código de resultado por práctica y el tope de 32 prácticas del catálogo (toma la titularidad de los ficheros de la 44) | tareas/tarea-47-sin-codigo-por-practica.md | 44 LISTA | 1 h | MEDIO | 48 | practicas/_comun/{codigos,base,catalogo,textos}.js, practicas/profesor.{js,html}, practicas/resultados.js, practicas/semana.html, README.md, docs/practicas-unidad2.md; salidas/47-sin-codigo-por-practica/ | EN CURSO | s-20261016T144921-bfb67163 · caduca 15:34Z |
+| 47 | Eliminar el código de resultado por práctica y el tope de 32 prácticas del catálogo (toma la titularidad de los ficheros de la 44) | tareas/tarea-47-sin-codigo-por-practica.md | 44 LISTA | 1 h | MEDIO | 48 | practicas/_comun/{codigos,base,catalogo,textos}.js, practicas/profesor.{js,html}, practicas/resultados.js, practicas/semana.html, README.md, docs/practicas-unidad2.md; salidas/47-sin-codigo-por-practica/ | LISTA | terminada 15:16Z (16-oct) · commit d06a9af · sin prueba en navegador |
 | 48 | Divisiones sucesivas: escalera (ej. 1) sin avance al fallar y con divisores compuestos como distractores; forma de potencias (ej. 2) con «n =» delante de la lista | tareas/tarea-48-escalera-sin-avance.md | ninguna | 1 h 15 min | MEDIO | 47 | practicas/divisiones/{practica,logica,textos}.js, tests/practicas-divisiones.test.js; salidas/48-escalera-sin-avance/ | LISTA | terminada 15:05Z (16-oct) · commit 58ab713 · sin prueba en navegador |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: **tres** (45 y 47 en curso; queda libre la 48, MEDIO, sin ficheros en común con las otras dos). Las 40-44 se cerraron sin prueba en navegador: conviene que Juan Luis las mire en GitHub Pages.
+Cuántas sesiones caben a la vez: **ninguna tarea libre**. Siguiente paso, de la coordinadora: dar de alta I1-I7 (`salidas/45-diseno-tareas-v2/DISENO.md`, apartado F; I1 e I2 pueden ir a la vez en cuanto existan) y llevarle a Juan Luis la propuesta de la 46. Las 40-44 se cerraron sin prueba en navegador: conviene que Juan Luis las mire en GitHub Pages.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
@@ -185,6 +185,10 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 45 · 2026-10-16 15:2x · s-20261016T144918-b59b6bef · c1d3379 · 1 fichero (salidas/45-diseno-tareas-v2/DISENO.md) · ~40 min (estimada 2 h) · aprobado entero por Juan Luis
+
+LISTA · tarea 47 · 2026-10-16 15:16 · s-20261016T144921-bfb67163 · d06a9af · 10 ficheros (README.md, docs/practicas-unidad2.md, practicas/_comun/{base,catalogo,codigos}.js, practicas/profesor.{html,js}, practicas/semana.html, tests/practicas-{comun,semana}.test.js) · ~28 min (estimada 1 h; ~14 min esperando candados) · sin prueba en navegador
 
 LISTA · tarea 48 · 2026-10-16 15:05 · s-20261016T150340-49a89093 · 58ab713 · 3 ficheros (practicas/divisiones/{logica,practica}.js, tests/practicas-divisiones.test.js) · ~2 min (estimada 1 h 15 min) · sin prueba en navegador
 
