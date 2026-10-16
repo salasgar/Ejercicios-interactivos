@@ -60,8 +60,10 @@ test('tareas: erroresTareas avisa de lo que está mal', () => {
 });
 
 test('tareas: la portada enseña las que han llegado a su día', () => {
-  // Calendario retrasado una semana (2026-10-15): la semana 1 empieza el lunes 19-10.
-  assert.deepEqual(tareasPublicadas('2026-10-18').map(t => t.id), []);
+  // Calendario retrasado una semana (2026-10-15), y la semana 1 adelantada al
+  // viernes 16-10 (publicada en Classroom ese día); las demás, en sus lunes.
+  assert.deepEqual(tareasPublicadas('2026-10-15').map(t => t.id), []);
+  assert.deepEqual(tareasPublicadas('2026-10-16').map(t => t.id), [1]);
   assert.deepEqual(tareasPublicadas('2026-10-19').map(t => t.id), [1]);
   assert.deepEqual(tareasPublicadas('2026-10-26').map(t => t.id), [1, 2]);
   assert.deepEqual(tareasPublicadas('2026-11-08').map(t => t.id), [1, 2, 3]);
