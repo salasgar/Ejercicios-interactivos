@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 15:01 UTC · por s-20261016T144913-715ee461 (cierre de la 46; relistado hechos/ con git fetch). **Las 44 primeras tareas y la 46 están LISTAS; la 45 y la 47 están EN CURSO; la 48 está PENDIENTE (libre).**
+Regenerado: 2026-10-16 15:01 UTC · por s-20261016T144913-715ee461 (cierre de la 46; relistado hechos/ con git fetch). **Las 44 primeras tareas, la 46 y la 48 están LISTAS; la 45 y la 47 están EN CURSO.** (Regenerado parcial por s-20261016T150340-49a89093 al cerrar la 48.)
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -164,7 +164,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 45 | Diseño (con Juan Luis) del modelo de tareas v2: unidades, tres estados, asignación a alumnos, progreso por tarea; lista de tareas de implementación | tareas/tarea-45-diseno-tareas-v2.md | ninguna | 2 h | ALTO | — | salidas/45-diseno-tareas-v2/ (DISENO.md) | EN CURSO | s-20261016T144918-b59b6bef · caduca 18:49Z |
 | 46 | Propuesta de las cuatro tareas de la unidad 1 con las 15 prácticas de repaso (ejercicio → destreza; destrezas sin cubrir) | tareas/tarea-46-tareas-unidad1.md | ninguna | 1 h 30 min | ALTO | — | salidas/46-tareas-unidad1/ (PROPUESTA.md) | LISTA | terminada 15:00Z (16-oct) · commit 67f84f3 · propuesta pendiente del visto bueno de Juan Luis (tareas 11-14) |
 | 47 | Eliminar el código de resultado por práctica y el tope de 32 prácticas del catálogo (toma la titularidad de los ficheros de la 44) | tareas/tarea-47-sin-codigo-por-practica.md | 44 LISTA | 1 h | MEDIO | 48 | practicas/_comun/{codigos,base,catalogo,textos}.js, practicas/profesor.{js,html}, practicas/resultados.js, practicas/semana.html, README.md, docs/practicas-unidad2.md; salidas/47-sin-codigo-por-practica/ | EN CURSO | s-20261016T144921-bfb67163 · caduca 15:34Z |
-| 48 | Divisiones sucesivas: escalera (ej. 1) sin avance al fallar y con divisores compuestos como distractores; forma de potencias (ej. 2) con «n =» delante de la lista | tareas/tarea-48-escalera-sin-avance.md | ninguna | 1 h 15 min | MEDIO | 47 | practicas/divisiones/{practica,logica,textos}.js, tests/practicas-divisiones.test.js; salidas/48-escalera-sin-avance/ | PENDIENTE | — |
+| 48 | Divisiones sucesivas: escalera (ej. 1) sin avance al fallar y con divisores compuestos como distractores; forma de potencias (ej. 2) con «n =» delante de la lista | tareas/tarea-48-escalera-sin-avance.md | ninguna | 1 h 15 min | MEDIO | 47 | practicas/divisiones/{practica,logica,textos}.js, tests/practicas-divisiones.test.js; salidas/48-escalera-sin-avance/ | LISTA | terminada 15:05Z (16-oct) · commit 58ab713 · sin prueba en navegador |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
@@ -185,6 +185,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 48 · 2026-10-16 15:05 · s-20261016T150340-49a89093 · 58ab713 · 3 ficheros (practicas/divisiones/{logica,practica}.js, tests/practicas-divisiones.test.js) · ~2 min (estimada 1 h 15 min) · sin prueba en navegador
 
 LISTA · tarea 46 · 2026-10-16 15:00 · s-20261016T144913-715ee461 · 67f84f3 · 1 fichero (salidas/46-tareas-unidad1/PROPUESTA.md) · ~11 min (estimada 1 h 30 min) · propuesta pendiente del visto bueno de Juan Luis
 
