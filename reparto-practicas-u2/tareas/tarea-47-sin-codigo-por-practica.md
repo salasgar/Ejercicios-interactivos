@@ -115,6 +115,16 @@ tarea puede cambiar después: aquí no se toca).
 - La terminada de la 44 avisa de un test ajeno en rojo (`practicas-semana.test.js`): la
   coordinadora lo arregló en el commit siguiente a 19074b5; si lo ves en rojo, trae `main`.
 
+- (Aprendido el 16-10 al cerrarla) Los candados de fichero de sesiones **ya cerradas** duran
+  30 min: `base.js`, `textos.js` y `tests/practicas-comun.test.js` los retuvo la sesión de la 44
+  (cerrada a las 14:28Z) hasta ~14:58Z, y `practicas-semana.test.js` la coordinadora hasta
+  ~15:13Z. Se espera a que caduquen (un `until [ "$(date -u +%H%M)" -ge HHMM ]` en segundo plano),
+  no se borra el `.json` ajeno. `practicas-semana.test.js` también usaba `codigoResultado`: la
+  ficha no lo listaba y hay que incluirlo en «Ficheros que toca».
+- Los tests del panel necesitaban un «código de 16» para comprobar que ya no vale: se usa la
+  cadena fija `ABCD-EFGH-JKLM-NPQR` (cualquier 16 válido de alfabeto da lo mismo, no se lee).
+- En zsh, `F="a b"; git add $F` no separa las rutas: usar un array `F=(a b)` y `"${F[@]}"`.
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar `codigoTarea`, `nube.js`, el contador, el progreso o cualquier práctica.
