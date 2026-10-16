@@ -102,3 +102,17 @@ export function generarParte3(rng) {
 }
 
 export { raizEntera };
+
+// --- Tamaño de la celda del ejercicio 1 ------------------------------------------
+
+/** Lado (px CSS) de la celda: el rectángulo 1 × n cabe entero en `disponible`; entre 3 y `tope`. */
+export function ladoCelda(disponible, n, tope = 20) {
+  return Math.max(3, Math.min(tope, Math.floor(disponible / n)));
+}
+
+/** Hueco (px) entre celdas según su lado: 2, 1 o 0. */
+export function huecoCelda(lado) {
+  if (lado >= 8) return 2;
+  if (lado >= 5) return 1;
+  return 0;
+}

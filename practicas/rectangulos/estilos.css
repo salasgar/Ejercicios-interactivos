@@ -2,6 +2,14 @@
    ../_comun/estilos.css (.rejilla, .pasos, .elecciones, .botones-numeros,
    .instruccion, .frase) y en ../../css/estilos.css (.aviso). */
 
+/* Ejercicio 1: celda de tamaño fijo por ítem (--lado y --hueco los pone practica.js).
+   Cambia el ancho del rectángulo, no el de la celda; las sobrantes, en rojo claro. */
+.rejilla--fija { grid-template-columns: repeat(var(--columnas), var(--lado)); grid-auto-rows: var(--lado);
+  gap: var(--hueco); width: max-content; max-width: 100%; margin: 0 auto 1rem; }
+.rejilla--fija .rejilla__celda { aspect-ratio: auto; border-radius: 2px; font-size: 0; }
+.rejilla--fija-pequena .rejilla__celda { border-radius: 0; }
+.rejilla--fija .rejilla__celda--tachada { background: var(--error-claro); border-color: #f3b4b4; text-decoration: none; }
+
 /* Banco (ej. 2) al corregir. En el común, el azul de «elegido» ([aria-pressed])
    y la opacidad de :disabled pesan lo mismo que .bien/.mal y van antes, así que
    un número tocado se quedaba azul, acertara o no. Aquí, después y con button:
