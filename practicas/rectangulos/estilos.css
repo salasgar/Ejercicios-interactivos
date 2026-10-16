@@ -1,3 +1,14 @@
 /* Divisores por parejas con rectángulos: todo lo necesario ya está en
    ../_comun/estilos.css (.rejilla, .pasos, .elecciones, .botones-numeros,
    .instruccion, .frase) y en ../../css/estilos.css (.aviso). */
+
+/* Banco (ej. 2) al corregir. En el común, el azul de «elegido» ([aria-pressed])
+   y la opacidad de :disabled pesan lo mismo que .bien/.mal y van antes, así que
+   un número tocado se quedaba azul, acertara o no. Aquí, después y con button:
+   verde relleno = acertado, borde de puntos = faltaba, rojo tachado = sobraba. */
+.botones-numeros button.bien,
+.botones-numeros button.falta,
+.botones-numeros button.mal { opacity: 1; }
+.botones-numeros button.bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.botones-numeros button.falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
+.botones-numeros button.mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; text-decoration-thickness: 2px; }
