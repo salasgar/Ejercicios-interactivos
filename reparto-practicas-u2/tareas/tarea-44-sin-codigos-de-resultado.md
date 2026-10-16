@@ -1,16 +1,18 @@
-# Tarea 44 · Eliminar el código de resultado por práctica y la petición de enviar códigos; el de la tarea queda como respaldo discreto
+# Tarea 44 · Quitar de la vista del alumno los códigos de resultado y la petición de enviarlos por correo (la nube ya lo cuenta)
 
-Actualizado: 2026-10-16 (segunda versión, tras decidir Juan Luis que el código por práctica se ELIMINA, no se esconde)
+Actualizado: 2026-10-16
 Precondición: ninguna (38 LISTA: el progreso ya está en la nube) · Disparo: MANUAL (sesión atendida)
 Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/44-sin-codigos-de-resultado/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/base.js` (`cajaResultado`, `activarCopiar` y sus llamadas), `practicas/_comun/codigos.js` (borrar `codigoResultado` y lo que solo él use), `practicas/_comun/catalogo.js` (quitar el tope de 32 ids), `practicas/_comun/textos.js`, `practicas/semana.js`, `practicas/profesor.js` y `practicas/profesor.html` (dejar de leer códigos de 16; texto de la sección), `practicas/resultados.js` si lee códigos de 16, `docs/practicas-unidad2.md`, `README.md`, `tests/practicas-comun.test.js` y el test de códigos
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/base.js` (solo `cajaResultado`, `activarCopiar` y sus llamadas), `practicas/_comun/textos.js`, `practicas/semana.js`, `practicas/profesor.html` (texto de la sección «Códigos de resultado»), `docs/practicas-unidad2.md`, `README.md` (los párrafos de los códigos), `tests/practicas-comun.test.js` si algún test afirma los textos quitados
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
 la fuente de la banda**: el tablón la copia de aquí cada vez que se regenera. La banda
 dice con qué modelo conviene abrir la sesión; la tabla de bandas de `proyecto.md` la
 traduce al menú de hoy (ALTO = Opus 5, esfuerzo Alto; MEDIO = Sonnet 5, esfuerzo Medio).
+
+> **Nota de la coordinadora (2026-10-16, 14:40Z).** Esta es la versión que ejecutó la sesión s-20261016T142535-baf582e4 (commit 3ad179c: el código por práctica queda en un desplegable). Diez minutos antes de que cerrara, Juan Luis decidió que el código por práctica se **elimina**, no se esconde; esa parte es la **tarea 47**, que toma la titularidad de los ficheros de esta.
 
 ## Antes de empezar
 
@@ -59,25 +61,16 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 Hasta la tarea 38 el único camino de los resultados hasta el profesor era el **código de
 resultado** (16 caracteres por práctica, 20 por tarea de la semana) que el alumno copiaba y
 mandaba por correo. Desde la 38 el progreso de cada alumno está en Firestore
-(`practicas/<slug>--<código>`) y el panel del profesor lo lee entero («Cargar la nube»).
-Juan Luis decidió el 2026-10-16: **la app no da códigos de resultado por práctica ni pide
-enviar nada por correo.** El correo que reciben con su código de alumno ya dice «No tienes
+(`practicas/<slug>--<código>`) y el panel del profesor lo lee entero («Cargar la nube»), así
+que Juan Luis decidió el 2026-10-16: **la app no da códigos de resultado a los alumnos ni
+les pide que los envíen.** El correo que reciben con su código de alumno ya dice «No tienes
 que mandarme nada: con tu código veo yo lo que llevas».
 
-Qué se elimina y qué se queda (decidido con él, a la pregunta «¿son necesarios?»):
-
-- **Se elimina el código de resultado por práctica** (16 caracteres): `codigoResultado` en
-  `codigos.js` deja de usarse en la app y se borra con sus tests; el panel deja de leer códigos
-  de 16. Con él desaparece el límite de 32 prácticas del catálogo (los 5 bits de práctica):
-  `MAX_PRACTICAS`/el tope de ids del catálogo y el párrafo «El catálogo está lleno» de
-  `docs/practicas-unidad2.md` se quitan. Los `id` existentes **no se renumeran** (los usa el
-  progreso guardado y el panel).
-- **Se queda el código de la tarea de la semana** (20 caracteres, `codigoTarea`): es el único
-  respaldo si la nube no llega (una red de aula que bloquee googleapis). El alumno solo lo ve
-  si lo pide con un desplegable discreto, sin ninguna frase que le mande enviarlo. La tarea 45
-  (progreso por tarea) puede cambiar su formato después; aquí no se toca.
-- **Se queda la lectura de los códigos antiguos de 12** de «divisores» en el panel (ya no se
-  generan desde la tarea 17).
+Lo que se conserva, decidido con él: `codigoResultado` y `codigoTarea` en `codigos.js`
+(con sus tests) y la caja «Códigos de resultado» del panel donde se pegan, porque son la
+red de seguridad si la nube falla (una red de aula que bloquee googleapis, por ejemplo). El
+alumno solo verá el código si lo pide expresamente con un enlace discreto, y sin ninguna
+frase que le mande enviarlo.
 
 ## Siguiente paso
 
@@ -92,13 +85,13 @@ Qué se elimina y qué se queda (decidido con él, a la pregunta «¿son necesar
 
 ## Qué hay que hacer
 
-1. **Fin de ejercicio y menú de una práctica** (`base.js`): `cajaResultado` desaparece. En su
-   lugar, cuando están todos los ejercicios terminados, una línea: «¡Has terminado los N
-   ejercicios! Tu profesor ya puede verlo.» (texto `resultado_completo` sin la frase del
-   código); si no, nada. Sin código de práctica: `codigoResultado` se borra de `codigos.js`
-   junto con sus tests, y con él el tope de 32 ids del catálogo (`catalogo.js` y la
-   comprobación del test común que lo afirme). `activarCopiar` se queda solo para
-   `semana.js`.
+1. **Fin de ejercicio y menú de una práctica** (`base.js`, `cajaResultado`): en lugar de la
+   tarjeta con título «Tu código de resultado», el código grande y «Copiar», una línea
+   discreta: cuando están todos los ejercicios terminados, «¡Has terminado los N ejercicios!
+   Tu profesor ya puede verlo.» (texto nuevo `resultado_completo` sin la frase del código); si
+   no, nada (quita `resultado_parcial`). Debajo, un `<details class="pequeno">` con
+   `<summary>` «Código de resultado (solo si te lo pide tu profesor)» que al abrirse enseña
+   el código y el botón «Copiar» de siempre. `activarCopiar` sigue sirviendo.
 2. **Tarea de la semana** (`semana.js`): al cumplirla, «¡Tarea cumplida! Tu profesor ya puede
    verlo.» sin código; el mismo `<details>` discreto para el código de 20 caracteres. Quita
    el botón «Ver mi código (lo que llevo)» (`semana_pedir`) y el texto `semana_parcial`: el
@@ -140,8 +133,6 @@ las «Reglas de contenido comunes» de `proyecto.md`.
 
 ## Trampas conocidas
 
-- (Cerrada) `practicas/semana.html` conserva el CSS `.semana__pedir`, ya sin uso. Un test ajeno de `practicas-semana.test.js` falla desde que la tarea 1 se publicó el 16-10.
-
 - `cajaResultado` devuelve '' cuando se viene de una tarea de la semana (`semana !== null`):
   mantenlo, la tarea tiene su propia caja en `semana.js`.
 - `activarCopiar` busca `#copiar` y `#codigo-resultado`: dentro de un `<details>` siguen
@@ -151,7 +142,7 @@ las «Reglas de contenido comunes» de `proyecto.md`.
 
 ## Prohibido (propio de esta tarea)
 
-- Borrar `codigoTarea`, sus tests, la lectura de los códigos de 12 de «divisores» o la caja de pegar códigos del panel. Renumerar o reordenar los `id` del catálogo.
+- Borrar `codigoResultado`, `codigoTarea`, sus tests o la caja de pegar códigos del panel.
 - Tocar la lógica de guardado, la nube (`nube.js`), el contador o cualquier práctica.
 - Dejar en cualquier idioma una frase que mande al alumno enviar algo por correo.
 
