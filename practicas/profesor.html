@@ -68,6 +68,27 @@
       </div>
       <div class="tabla" id="tabla-resultados"></div>
     </section>
+
+    <section class="tarjeta">
+      <h2>3. Fallos, uno a uno</h2>
+      <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno. Hay que entrar con tu cuenta de Google de profesor. Cada carga gasta una lectura por fallo: elige desde qué día.</p>
+      <div class="botonera">
+        <label for="fallos-desde">Desde el día</label>
+        <input type="date" id="fallos-desde">
+        <button type="button" id="fallos-cargar">Cargar fallos</button>
+      </div>
+      <p class="pequeno" id="fallos-estado"></p>
+      <div class="selector">
+        <label for="fallos-tarea">Tarea:</label>
+        <select id="fallos-tarea"></select>
+        <label for="fallos-practica">Práctica:</label>
+        <select id="fallos-practica"></select>
+        <label for="fallos-alumno">Alumno:</label>
+        <select id="fallos-alumno"></select>
+        <button type="button" class="secundario" id="fallos-csv">Descargar los fallos (CSV)</button>
+      </div>
+      <div class="tabla" id="tabla-fallos"></div>
+    </section>
   </main>
 </body>
 </html>

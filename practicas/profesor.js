@@ -4,11 +4,12 @@
 // La lista de nombres vive solo en este navegador.
 
 import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun/catalogo.js';
-import { codigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
+import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
 import { fechaDeDia } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
-import { TAREAS, tareaPorId } from './_comun/tareas.js';
-import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, leerDocumentos } from './resultados.js';
+import { TAREAS, tareaPorId, fechaISO } from './_comun/tareas.js';
+import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, leerDocumentos } from './resultados.js';
+import { DESTREZAS, leerFallos } from './_comun/registro.js';
 import { declaracionDe } from './_comun/base.js';
 
 const $ = id => document.getElementById(id);
@@ -236,7 +237,10 @@ function pedirNombres(practicas) {
   Promise.all(faltan.map(async p => {
     const declaracion = await declaracionDe(p);
     declaracion?.ejercicios?.forEach((e, i) => nombresEjercicio.set(`${p.slug}/${i + 1}`, e.nombre.es));
-  })).then(() => { if ($('vista').value.startsWith(FALLOS)) pintarResultados(); });
+  })).then(() => {
+    if ($('vista').value.startsWith(FALLOS)) pintarResultados();
+    if (registro.length) pintarRegistro();
+  });
 }
 
 /** Las filas de la vista: de todas las prácticas que salen en el panel, o de una tarea (con ★ o «elegir»). */
@@ -314,21 +318,27 @@ function descargarResultados() {
 
 let firebase = null;
 
+/** Entra con la cuenta de Google del profesor (una vez por página). false si no es la suya. */
+async function conectarProfesor(estado) {
+  if (!firebase) {
+    const { iniciarFirebase } = await import('../src/firebase.js');
+    firebase = await iniciarFirebase();
+    await new Promise(listo => firebase.observarSesion(listo));
+  }
+  if (!firebase.usuario()) await firebase.entrarConGoogle();
+  if (!firebase.esProfesor(firebase.usuario())) {
+    estado.textContent = 'Esa cuenta no es la del profesor.';
+    await firebase.salir();
+    return false;
+  }
+  return true;
+}
+
 async function cargarNube() {
   const estado = $('estado-nube');
   estado.textContent = 'Conectando…';
   try {
-    if (!firebase) {
-      const { iniciarFirebase } = await import('../src/firebase.js');
-      firebase = await iniciarFirebase();
-      await new Promise(listo => firebase.observarSesion(listo));
-    }
-    if (!firebase.usuario()) await firebase.entrarConGoogle();
-    if (!firebase.esProfesor(firebase.usuario())) {
-      estado.textContent = 'Esa cuenta no es la del profesor.';
-      await firebase.salir();
-      return;
-    }
+    if (!(await conectarProfesor(estado))) return;
     // Dos colecciones: la de todas las prácticas y la antigua de `divisores/`.
     // Si una falla (por ejemplo, la regla de `practicas` sin publicar), se enseña la otra.
     const [nuevas, viejas] = await Promise.allSettled([firebase.datos.listarPracticas(), firebase.datos.listarPracticaDivisores()]);
@@ -347,6 +357,104 @@ async function cargarNube() {
   }
 }
 
+// --- 3. Fallos, uno a uno (registro de la tarea 39) ------------------------------
+
+let registro = [];   // fallos leídos de la nube: [{ alumno, practica, ejercicio, t, item, feedback, respuesta?, error?, idioma, repeticion }]
+
+/** «N.º 12 · Ana García (ABCD)», o el código solo si no está en la lista. */
+function nombreAlumno(codigo) {
+  const indice = leerCodigoAlumno(codigo);
+  const nombre = indice === null ? '' : nombres()[indice];
+  return indice === null ? codigo : `${indice + 1}${nombre ? ` · ${nombre}` : ''} (${codigo})`;
+}
+
+const nombreEjercicio = (slug, n) => nombresEjercicio.get(`${slug}/${n}`) ?? '';
+const nombrePractica = slug => practicaPorSlug(slug)?.nombre.es ?? slug;
+const destrezasDe = slug => (DESTREZAS[slug] ?? []).join(' ');
+const fechaHora = t => new Date(t).toLocaleString('es', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+function filtrosRegistro() {
+  const tarea = tareaPorId(Number($('fallos-tarea').value));
+  const lista = nombres();
+  const deLista = new Set(lista.map((n, i) => (n ? codigoAlumno(i) : null)).filter(Boolean));
+  return {
+    ejercicios: tarea ? [...tarea.estrella, ...tarea.elegir] : undefined,
+    practica: $('fallos-practica').value || undefined,
+    alumno: $('fallos-alumno').value || undefined,
+    // Con nombres en la lista, solo cuentan los de la lista (fuera queda el código de prueba).
+    alumnos: deLista.size ? deLista : undefined,
+  };
+}
+
+function pintarSelectoresRegistro() {
+  const conservar = (id, html) => { const v = $(id).value; $(id).innerHTML = html; if ([...$(id).options].some(o => o.value === v)) $(id).value = v; };
+  conservar('fallos-tarea', '<option value="">Todas</option>' + TAREAS.map(t => `<option value="${t.id}">Tarea ${t.id}</option>`).join(''));
+  const slugs = [...new Set(registro.map(f => f.practica))].sort((a, b) => nombrePractica(a).localeCompare(nombrePractica(b)));
+  conservar('fallos-practica', '<option value="">Todas</option>' + slugs.map(s => `<option value="${esc(s)}">${esc(nombrePractica(s))}</option>`).join(''));
+  const codigos = [...new Set(registro.map(f => f.alumno))].sort((a, b) => (leerCodigoAlumno(a) ?? 9999) - (leerCodigoAlumno(b) ?? 9999));
+  conservar('fallos-alumno', '<option value="">Todos</option>' + codigos.map(c => `<option value="${esc(c)}">${esc(nombreAlumno(c))}</option>`).join(''));
+}
+
+function pintarRegistro() {
+  if (!registro.length) { $('tabla-fallos').innerHTML = ''; return; }
+  pedirNombres([...new Set(registro.map(f => f.practica))].map(practicaPorSlug).filter(Boolean));
+  const r = agruparFallos(registro, filtrosRegistro());
+  if (!r.total) { $('tabla-fallos').innerHTML = '<p class="vacio">Ningún fallo con estos filtros.</p>'; return; }
+  const ejemplo = e => `<div class="pequeno"><code>${esc(e.item)}</code><br>${esc(e.feedback)}${e.respuesta ? ` <em>(contestó: ${esc(e.respuesta)})</em>` : ''} · ${esc(e.alumno)}, ${fechaHora(e.t)}</div>`;
+  $('tabla-fallos').innerHTML = `
+    <h3>Los fallos más repetidos (${r.total} fallos)</h3>
+    <table>
+      <thead><tr><th class="num">Veces</th><th class="num">Alumnos</th><th>Práctica</th><th class="num">Ej.</th><th>Ejercicio</th><th>Error</th><th>Destrezas de la práctica</th><th>Ejemplos (los más recientes)</th></tr></thead>
+      <tbody>${r.grupos.map(g => `
+        <tr>
+          <td class="num"><strong>${g.veces}</strong></td><td class="num">${g.alumnos}</td>
+          <td>${esc(nombrePractica(g.practica))}</td><td class="num">${g.ejercicio}</td><td>${esc(nombreEjercicio(g.practica, g.ejercicio))}</td>
+          <td>${g.error ? `<code>${esc(g.error)}</code>` : '—'}</td><td class="pequeno">${esc(destrezasDe(g.practica))}</td>
+          <td>${g.ejemplos.map(ejemplo).join('')}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <h3>Qué le cuesta a cada alumno</h3>
+    <table>
+      <thead><tr><th>Alumno</th><th class="num">Fallos</th><th>Ejercicios (de más a menos fallos)</th></tr></thead>
+      <tbody>${r.porAlumno.map(a => `
+        <tr>
+          <td>${esc(nombreAlumno(a.alumno))}</td><td class="num"><strong>${a.total}</strong></td>
+          <td>${a.ejercicios.map(e => `${esc(nombrePractica(e.practica))} ${e.ejercicio}${nombreEjercicio(e.practica, e.ejercicio) ? ` (${esc(nombreEjercicio(e.practica, e.ejercicio))})` : ''}: <strong>${e.veces}</strong>`).join(' · ')}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <p class="pequeno">Se agrupa por tipo de error en las prácticas que lo dan y, si no, por ejercicio. Las destrezas son las de la práctica entera (docs/practicas-unidad2.md, §7). ${filtrosRegistro().alumnos ? 'Solo cuentan los alumnos de la lista.' : ''}</p>`;
+}
+
+function csvRegistro() {
+  const f = filtrosRegistro();
+  const enTarea = f.ejercicios ? new Set(f.ejercicios.map(([s, n]) => `${s}/${n}`)) : null;
+  const filas = registro.filter(x => (!enTarea || enTarea.has(`${x.practica}/${x.ejercicio}`)) && (!f.practica || x.practica === f.practica)
+    && (!f.alumno || x.alumno === f.alumno) && (!f.alumnos || f.alumnos.has(x.alumno)));
+  const cab = ['Fecha', 'N.º', 'Alumno', 'Código', 'Práctica', 'Ej.', 'Ejercicio', 'Destrezas de la práctica', 'Error', 'Respuesta', 'Ítem', 'Explicación que vio', 'Idioma', 'Repitiendo un ejercicio ya terminado'];
+  return [cab, ...filas.map(x => {
+    const i = leerCodigoAlumno(x.alumno);
+    return [fechaHora(x.t), i === null ? '' : i + 1, i === null ? '' : nombres()[i] ?? '', x.alumno, nombrePractica(x.practica), x.ejercicio, nombreEjercicio(x.practica, x.ejercicio),
+      destrezasDe(x.practica), x.error ?? '', x.respuesta ?? '', x.item, x.feedback, x.idioma, x.repeticion ? 'sí' : 'no'];
+  })];
+}
+
+async function cargarRegistro() {
+  const estado = $('fallos-estado');
+  estado.textContent = 'Conectando…';
+  try {
+    if (!(await conectarProfesor(estado))) return;
+    const [a, m, d] = ($('fallos-desde').value || '2026-09-01').split('-').map(Number);
+    const desde = new Date(a, m - 1, d).getTime();
+    registro = await leerFallos(desde, await firebase.usuario().getIdToken());
+    estado.textContent = `Cargados ${registro.length} fallos de ${new Set(registro.map(f => f.alumno)).size} alumnos desde el ${d}/${m}/${a} (${new Date().toLocaleTimeString('es')}).`;
+    pintarSelectoresRegistro();
+    pintarRegistro();
+  } catch (e) {
+    const { mensajeDeError } = await import('../src/firebase.js');
+    estado.textContent = `No se han podido cargar los fallos: ${mensajeDeError(e)}`;
+  }
+}
+
 // --- Arranque ------------------------------------------------------------------
 
 try { $('lista').value = localStorage.getItem(CLAVE_LISTA) ?? ''; } catch { /* sin almacén */ }
@@ -354,6 +462,8 @@ $('lista').addEventListener('input', () => {
   try { localStorage.setItem(CLAVE_LISTA, $('lista').value); } catch { /* sin almacén */ }
   pintarCodigos();
   pintarResultados();
+  pintarSelectoresRegistro();
+  pintarRegistro();
 });
 $('idioma-enlaces').addEventListener('change', pintarCodigos);
 $('destino-enlaces').addEventListener('change', pintarCodigos);
@@ -367,5 +477,10 @@ $('copiar-codigos').addEventListener('click', async ev => {
 $('csv-codigos').addEventListener('click', () => descargar('codigos-practicas.csv', tablaCodigos()));
 $('csv-resultados').addEventListener('click', descargarResultados);
 $('nube').addEventListener('click', cargarNube);
+$('fallos-desde').value = fechaISO(new Date(Date.now() - 7 * 86400000));
+$('fallos-cargar').addEventListener('click', cargarRegistro);
+for (const id of ['fallos-tarea', 'fallos-practica', 'fallos-alumno']) $(id).addEventListener('change', pintarRegistro);
+$('fallos-csv').addEventListener('click', () => descargar('fallos.csv', csvRegistro()));
+pintarSelectoresRegistro();
 pintarCodigos();
 pintarResultados();

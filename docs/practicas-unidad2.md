@@ -117,6 +117,20 @@ En `practicas/profesor.html`:
    **fallos por alumno que lo ha empezado** (el orden de la tabla) y veces que se quedaron sin
    vidas. De cada alumno se toma lo mismo que en la tabla de su práctica; si hay nombres en la
    lista, solo cuentan los de la lista. Con CSV. Lo calcula `juntarFallos` (`resultados.js`).
+6. **Fallos, uno a uno** (tarea 39, sección 3 del panel). Cada vez que un alumno con código
+   falla un ítem, la base crea un documento en la colección `fallos` de Firestore (uno por
+   fallo; decisión de Juan Luis del 16-10-2026): código del alumno, práctica, ejercicio, hora y
+   día, idioma, el ítem (lo que devolvió `generar`, en JSON, hasta 400 caracteres), la
+   explicación que vio en texto plano (hasta 500), si estaba repitiendo un ejercicio ya
+   terminado y, si la práctica los da, `error` y `respuesta`. El alumno solo puede **crear**
+   esos documentos (regla `match /fallos/{id}`); leerlos, solo el profesor. Si no hay red, el
+   fallo espera en el navegador (hasta 50) y se manda en el siguiente fallo o al entrar; el id
+   lo pone la app, así que un reintento no duplica. El panel los lee **desde el día que se
+   elija** (una lectura por fallo: unos 2.500 a la semana para 51 alumnos, lejos de las 50.000
+   diarias gratuitas) y da los fallos más repetidos (por `error` si lo hay, si no por
+   ejercicio) con tres ejemplos reales, qué le cuesta a cada alumno, y un CSV con un fallo por
+   fila y las destrezas de la práctica (§7). Filtros: tarea, práctica y alumno; con nombres en
+   la lista, solo cuentan los de la lista.
 
 ### Los tres códigos de resultado
 
@@ -143,6 +157,7 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 | Fichero | Qué pone |
 |---|---|
 | `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore (leído y fusionado al entrar). También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar`, `URL_PORTADA`, `progresoGuardado`, `sincronizarGuardado` (navegador y nube de acuerdo, para la página de la semana) y `adoptarIdioma` |
+| `registro.js` | Registro de cada fallo (tarea 39): `datosFallo` (qué se guarda y sus topes, `LIMITES`), `textoPlano`, `registrarFallo` y `enviarPendientes` (cola del navegador), `leerFallos` (panel, con el token del profesor) y `DESTREZAS` (práctica → destrezas, copia del §7; un test comprueba que coinciden) |
 | `nube.js` | Progreso en la nube entre aparatos: `leerNube` (REST, con tiempo máximo; `ok`, `vacio`, `prohibido` o `error`), `escribirNube`, `subirFusionado` (lee, fusiona y escribe), y la fusión pura `fusionarEjercicio` / `fusionarProgreso` |
 | `catalogo.js` | Las 32 filas (31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
 | `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`), de resultado de una práctica (16) y de una tarea de la semana (20); `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
@@ -199,12 +214,17 @@ Lo que recibe `montar` en `api`:
 - `api.t`: textos comunes en ese idioma (`comprobar`, `siguiente`, `si`, `no`, `verdadero`,
   `falso`, `borrar`, `fijate`…). `api.tt(obj)`: atajo para los textos propios `{ es, en }`.
 - `api.esc(texto)`, `api.respondido()`.
-- `api.responder({ acierto, html, espera, pistas })`: **una vez por ítem**. `html` es la
+- `api.responder({ acierto, html, espera, pistas, error, respuesta })`: **una vez por ítem**. `html` es la
   explicación con los números de ese ítem. Acierto: feedback verde y pasa solo al siguiente a
   los `espera` ms (1300 por defecto; algo más si hay punto extra por la racha, que se anuncia).
   Fallo: feedback rojo con los puntos perdidos y las vidas que quedan (o el aviso de que el
   ejercicio vuelve a empezar), el ánimo y el botón «Siguiente». `pistas` (entero ≥ 0) son las
   ayudas usadas: se suman a los fallos sin tocar los puntos ni las vidas.
+  Desde la tarea 39, **cada fallo se registra** en la nube (ver §2, punto 6) con el ítem y el
+  `html` en texto plano. Dos campos opcionales lo afinan: `error`, el identificador del tipo
+  de error (minúsculas, cifras y guiones, hasta 40: `'criterio-3-ultima-cifra'`), con el que el
+  panel agrupa; y `respuesta`, lo que contestó el alumno en texto corto. Ninguna práctica los
+  pasa todavía; sin ellos todo funciona igual.
 
 Cosas que conviene saber, aprendidas al escribir las 31:
 

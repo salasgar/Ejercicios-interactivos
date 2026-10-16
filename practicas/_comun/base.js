@@ -15,6 +15,7 @@ import { practicaPorSlug } from './catalogo.js';
 import { codigoAlumno, leerCodigoAlumno, codigoResultado } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
 import { leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico } from './nube.js';
+import { datosFallo, registrarFallo, enviarPendientes } from './registro.js';
 import { crearRng } from './rng.js';
 import { T, TRADUCCION, esc } from './textos.js';
 
@@ -403,6 +404,7 @@ export function arrancar(practica) {
     const miTurno = turno;
     await leerYFusionar();
     if (miTurno === turno) pintarInicio();
+    enviarPendientes();   // fallos que no llegaron a la nube la última vez (registro.js)
   }
 
   // Al volver a esta pestaña en el menú (quizá después de practicar en otro
@@ -580,10 +582,11 @@ export function arrancar(practica) {
       tt: obj => tt(obj, idi),
       esc,
       respondido: () => miTurno !== turno || actual.respondido,
-      responder: ({ acierto, html = '', espera = 1300, pistas = 0 }) => {
+      responder: ({ acierto, html = '', espera = 1300, pistas = 0, error, respuesta }) => {
         if (miTurno !== turno || actual.respondido) return;
         registrar(Boolean(acierto), Math.max(0, Math.floor(pistas) || 0));
         mostrarFeedback(Boolean(acierto), html, espera);
+        if (!acierto) anotarFallo({ html, error, respuesta });
       },
     };
     try {
@@ -618,6 +621,20 @@ export function arrancar(practica) {
     }
     actual.cambio = queHaPasado(antes, actual.sesion);
     pintarContador();
+  }
+
+  /**
+   * Registra el fallo en la nube (colección `fallos`, ver registro.js), sin
+   * esperar y sin que el alumno note nada. Sin código no se registra.
+   */
+  function anotarFallo({ html, error, respuesta }) {
+    if (!estado.codigo) return;
+    try {
+      registrarFallo(datosFallo({
+        codigo: estado.codigo, slug: ficha.slug, ejercicio: actual.n + 1, idioma: actual.idioma, item: actual.item,
+        html, respuesta, error, t: Date.now(), dia: diaDe(new Date()), repeticion: actual.practica,
+      }));
+    } catch { /* el registro nunca molesta al alumno */ }
   }
 
   /** Vuelve a montar el mismo ítem, de solo lectura, en el otro idioma. */

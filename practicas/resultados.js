@@ -200,6 +200,61 @@ export function juntarFallos(nombres, deCodigos, deNube, ejercicios) {
 }
 
 /**
+ * Vista «Fallos» (registro de cada fallo, tarea 39): los fallos más repetidos y
+ * qué le cuesta a cada alumno.
+ *
+ * @param fallos  [{ alumno (código), practica (slug), ejercicio (desde 1), t, item, feedback, respuesta?, error?, repeticion }]
+ * @param filtros { ejercicios: [[slug, n]] (los de una tarea), practica: slug, ejercicio: n, alumno: código,
+ *                  alumnos: Set de códigos (solo esos; p. ej. los de la lista) }; todos opcionales
+ * @param ejemplos cuántos ejemplos por grupo (los más recientes)
+ * @returns { total, grupos: [{ practica, ejercicio, error, veces, alumnos, ejemplos }],
+ *            porAlumno: [{ alumno, total, ejercicios: [{ practica, ejercicio, veces }] }] }
+ *          Grupos: por `error` cuando la práctica lo da y, si no, por ejercicio; de más a
+ *          menos veces. Por alumno: de más a menos fallos, y sus ejercicios igual.
+ */
+export function agruparFallos(fallos, filtros = {}, ejemplos = 3) {
+  const enTarea = filtros.ejercicios ? new Set(filtros.ejercicios.map(([s, n]) => `${s}/${n}`)) : null;
+  const vale = f => (!enTarea || enTarea.has(`${f.practica}/${f.ejercicio}`))
+    && (!filtros.practica || f.practica === filtros.practica)
+    && (!filtros.ejercicio || f.ejercicio === filtros.ejercicio)
+    && (!filtros.alumno || f.alumno === filtros.alumno)
+    && (!filtros.alumnos || filtros.alumnos.has(f.alumno));
+  const elegidos = fallos.filter(vale).sort((a, b) => (b.t ?? 0) - (a.t ?? 0));
+
+  const grupos = new Map();
+  const alumnos = new Map();
+  for (const f of elegidos) {
+    const clave = `${f.practica}|${f.ejercicio}|${f.error ?? ''}`;
+    if (!grupos.has(clave)) grupos.set(clave, { practica: f.practica, ejercicio: f.ejercicio, error: f.error ?? '', veces: 0, deQuien: new Set(), ejemplos: [] });
+    const g = grupos.get(clave);
+    g.veces++;
+    g.deQuien.add(f.alumno);
+    if (g.ejemplos.length < ejemplos) g.ejemplos.push({ alumno: f.alumno, t: f.t, item: f.item, feedback: f.feedback, respuesta: f.respuesta ?? '' });
+
+    if (!alumnos.has(f.alumno)) alumnos.set(f.alumno, { alumno: f.alumno, total: 0, porEjercicio: new Map() });
+    const a = alumnos.get(f.alumno);
+    a.total++;
+    const e = `${f.practica}|${f.ejercicio}`;
+    a.porEjercicio.set(e, (a.porEjercicio.get(e) ?? 0) + 1);
+  }
+  const porPracticaEj = (x, y) => x.practica.localeCompare(y.practica) || x.ejercicio - y.ejercicio;
+  return {
+    total: elegidos.length,
+    grupos: [...grupos.values()]
+      .map(({ deQuien, ...g }) => ({ ...g, alumnos: deQuien.size }))
+      .sort((x, y) => y.veces - x.veces || y.alumnos - x.alumnos || porPracticaEj(x, y) || x.error.localeCompare(y.error)),
+    porAlumno: [...alumnos.values()]
+      .map(a => ({
+        alumno: a.alumno,
+        total: a.total,
+        ejercicios: [...a.porEjercicio].map(([e, veces]) => { const [practica, n] = e.split('|'); return { practica, ejercicio: Number(n), veces }; })
+          .sort((x, y) => y.veces - x.veces || porPracticaEj(x, y)),
+      }))
+      .sort((x, y) => y.total - x.total || x.alumno.localeCompare(y.alumno)),
+  };
+}
+
+/**
  * Documentos de Firestore → datos planos para las funciones de arriba.
  * En la colección `practicas` el id es `<slug>--<código>`; en la antigua
  * `divisores`, el código a secas (y es la práctica 0). Lo ilegible se descarta.
