@@ -157,6 +157,10 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   nada (`practicas/_comun/nube.js`): se puede **seguir desde cualquier
   aparato** y un aparato no machaca lo de otro. El panel da los puntos de cada
   tarea de la semana y una vista «Qué falla más».
+- Cada fallo se registra en la colección `fallos` (el ítem, la explicación que
+  vio el alumno y, si la práctica lo da, el tipo de error; `practicas/_comun/registro.js`);
+  el panel tiene una sección «Fallos, uno a uno» con los más repetidos, lo que le
+  cuesta a cada alumno y un CSV con las destrezas.
 - `practicas/_comun/`: la base (`base.js`), el catálogo con los ids (`catalogo.js`,
   no se renumera), códigos, contador, aritmética de la unidad y estilos.
 - **Añadir una práctica**: copiar `practicas/plantilla/`, registrarla en

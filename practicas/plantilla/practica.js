@@ -60,7 +60,7 @@
 //   api.tt(obj)       atajo para los textos propios: api.tt({ es, en })
 //   api.esc(texto)    escapa HTML (para textos que no sean tuyos)
 //   api.respondido()  true cuando ya se ha respondido este ítem
-//   api.responder({ acierto, html, espera, pistas })
+//   api.responder({ acierto, html, espera, pistas, error, respuesta })
 //                     UNA vez por ítem (las siguientes llamadas no hacen nada).
 //                     `html` es la explicación, con los números de ese ítem.
 //                     Acierto: feedback verde y pasa solo al siguiente a los
@@ -71,6 +71,14 @@
 //                     de ánimo (las pone la base) y botón «Siguiente».
 //                     `pistas` (opcional, entero ≥ 0): ayudas usadas en el ítem;
 //                     se suman a los fallos sin tocar los puntos ni las vidas.
+//                     `error` (opcional, solo al fallar): identificador corto del
+//                     tipo de error, en minúsculas con guiones (p. ej.
+//                     'confunde-mcd-mcm'); `respuesta` (opcional): lo que contestó
+//                     el alumno, en texto corto («6», «Verdadero», «2³ · 5»).
+//                     La base registra cada fallo en la nube (colección `fallos`,
+//                     ver ../_comun/registro.js) con el ítem, el feedback en texto
+//                     plano y, si se pasan, estos dos campos, para el panel del
+//                     profesor. Sin ellos se registra igual; el alumno no ve nada.
 //
 // La base no toca nada de `contenedor` después de montar: marcar en verde o en
 // rojo lo elegido y bloquear los botones es cosa de `montar`, ANTES de llamar
