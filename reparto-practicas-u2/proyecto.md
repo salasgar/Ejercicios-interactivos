@@ -195,6 +195,16 @@ fuente es esta:
 8. **Feedback ligado al error:** cuando el alumno falla, el mensaje dice qué ha pasado
    con los números de ese ítem («51 = 3 · 17: la suma de las cifras es 6»), no una regla
    genérica. Es lo que distingue estas prácticas de un test en papel.
+9. **Repaso de realismo de los problemas de enunciado (regla de Juan Luis, 2026-10-16):**
+   antes de dar por terminado un enunciado con contexto, comprobar que **la situación es
+   posible** (dos cabinas de una noria nunca pasan a la vez; no se hacen pulseras con
+   canicas) y que **todos los números que puede sacar el generador son creíbles en ese
+   contexto**, no solo el ejemplo que se mira: periodos (una noria no da una vuelta en
+   3 segundos; un metrónomo va de 20 a 240 clics por minuto; una vuelta a la pista son
+   90-200 s), longitudes (una manguera no mide 12 cm), cantidades (un m.c.d. de 1 hace
+   absurdo «el mayor número de pulseras»). Si el rango común no le vale a un contexto, ese
+   contexto lleva su propia cota o se cambia de contexto; nunca se deja. Lo revisa la
+   sesión que escribe el banco y lo comprueba el test cuando la cota es numérica.
 
 ## Decisiones de reparto
 

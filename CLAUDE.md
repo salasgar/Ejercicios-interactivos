@@ -32,6 +32,20 @@ Tres de estas comprobaciones están automatizadas en
 `npm test`. Lo que el test **no** puede comprobar es el significado, así que la
 revisión a mano sigue siendo obligatoria.
 
+## Repaso de realismo en los problemas de enunciado
+
+Regla de Juan Luis (2026-10-16), para la app, las hojas y los exámenes: antes de dar por
+terminado un enunciado con contexto, comprobar **que la situación es posible** (dos cabinas
+de una noria no pasan a la vez por abajo; no se hacen pulseras con canicas) y **que todos
+los números que puede sacar el generador son creíbles en ese contexto**, no solo el
+ejemplo que se mira. Referencias que ya han fallado: una noria no da una vuelta en
+3 segundos; un metrónomo va de 20 a 240 clics por minuto (0,25-3 s); una vuelta a la pista
+de atletismo son 90-200 s; un semáforo no cambia cada 2 s; una manguera no mide 12 cm; con
+m.c.d. 1, «el mayor número de pulseras» es 1 y el contexto se vuelve absurdo. Si el rango
+común no le vale a un contexto, ese contexto lleva su propia cota (y un test la comprueba)
+o se cambia de contexto; nunca se deja. `src/ejercicios/contextos_mcd_mcm.js` es el modelo:
+cada contexto declara su `max` creíble.
+
 ## Trampa conocida del motor
 
 `construirOpciones` (en [src/ejercicios/index.js](src/ejercicios/index.js))
