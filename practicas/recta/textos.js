@@ -5,12 +5,12 @@ export const TX = {
   ej1: {
     nombre: { es: 'Marca los múltiplos', en: 'Mark the multiples' },
     detalle: { es: 'Toca los múltiplos en la recta del 0 al 60', en: 'Tap the multiples on the 0 to 60 number line' },
-    pregunta: { es: n => `Marca los múltiplos de ${n} que ves en la recta.`, en: n => `Mark the multiples of ${n} on the number line.` },
+    pregunta: { es: n => `Marca los <strong>múltiplos de ${n}</strong> que ves en la recta.`, en: n => `Mark the <strong>multiples of ${n}</strong> on the number line.` },
   },
   ej2: {
     nombre: { es: 'Marca los divisores', en: 'Mark the divisors' },
     detalle: { es: 'Toca los divisores en la recta', en: 'Tap the divisors on the number line' },
-    pregunta: { es: n => `Marca los divisores de ${n}.`, en: n => `Mark the divisors of ${n}.` },
+    pregunta: { es: n => `Marca los <strong>divisores de ${n}</strong>.`, en: n => `Mark the <strong>divisors of ${n}</strong>.` },
   },
   ej3: {
     nombre: { es: '¿Verdadero o falso?', en: 'True or false?' },
