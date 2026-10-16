@@ -20,13 +20,16 @@ const EXPONENTE_MAXIMO = 6;
 // sigue ella misma con el paso correcto: el ítem termina siempre al llegar a 1,
 // y es acierto solo si no hubo ningún error en todo el camino.
 
+const enunciadoEscalera = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.escalera.instruccion)}</p>
+    <div class="operacion">${item.n}</div>`;
+
 function montarEscalera(contenedor, item, api) {
-  const { tt } = api;
   let m = item.n;
   let errores = 0;
   const realizados = [];
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.escalera.instruccion)}</p>
+    <p class="instruccion">${api.tt(TX.escalera.instruccion)}</p>
     <div class="operacion" id="numero">${m}</div>
     <p class="frase" id="mensaje"></p>
     <div class="botones-numeros" id="botones" role="group" aria-label="primos"></div>`;
@@ -49,7 +52,7 @@ function montarEscalera(contenedor, item, api) {
     numeroEl.textContent = String(m);
     if (m === 1) {
       botones.forEach(b => { b.disabled = true; });
-      api.responder({ acierto: errores === 0, html: explicarEscalera(item.n, realizados, api.idioma), espera: 2600 });
+      api.responder({ acierto: errores === 0, html: ({ idioma }) => explicarEscalera(item.n, realizados, idioma), espera: 2600 });
     }
   }
 
@@ -75,6 +78,10 @@ function montarEscalera(contenedor, item, api) {
 // Se da la lista de primos («2 · 2 · 2 · 3 · 3 · 5») y el alumno fija, con
 // steppers, el exponente de cada base candidata (las que aparecen, más una que
 // no, para que poner 0 también sea una respuesta válida).
+
+const enunciadoPotencias = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.potencias.instruccion)}</p>
+    <div class="operacion">${item.lista.join(' · ')}</div>`;
 
 function montarPotencias(contenedor, item, api) {
   const { tt } = api;
@@ -106,7 +113,7 @@ function montarPotencias(contenedor, item, api) {
     const acierto = esFactorizacionCorrecta(item, exponentes);
     controles.forEach(c => c.bloquear());
     ev.target.hidden = true;
-    api.responder({ acierto, html: explicarPotencias(item.factorizacion, api.idioma), espera: 2200 });
+    api.responder({ acierto, html: ({ idioma }) => explicarPotencias(item.factorizacion, idioma), espera: 2200 });
   });
 }
 
@@ -116,22 +123,24 @@ function montarPotencias(contenedor, item, api) {
 // falsas: el error clásico de tratar p^e como p·e, ese mismo error en solo uno
 // de los factores, y el valor correcto ± un factor.
 
+const enunciadoValor = (item, { tt }) => `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_valor)(htmlFact(item.factorizacion))}</p>`;
+const enunciadoSino = (item, { tt }) => `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_sino)(htmlFact(item.factorizacion), item.valorMostrado)}</p>`;
+const enunciadoEj3 = (item, textos) => (item.tipo === 'sino' ? enunciadoSino(item, textos) : enunciadoValor(item, textos));
+
 function montarValor(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_valor)(htmlFact(item.factorizacion))}</p>`;
+  contenedor.innerHTML = enunciadoValor(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(v => ({ valor: v, html: String(v) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicarEj3(item.factorizacion, api.idioma), espera: 2000 });
+      api.responder({ acierto: valor === item.solucion, html: ({ idioma }) => explicarEj3(item.factorizacion, idioma), espera: 2000 });
     },
   });
 }
 
 function montarSino(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion instruccion--enunciado">${tt(TX.ej3.pregunta_sino)(htmlFact(item.factorizacion), item.valorMostrado)}</p>`;
+  contenedor.innerHTML = enunciadoSino(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
@@ -139,7 +148,7 @@ function montarSino(contenedor, item, api) {
       if (api.respondido()) return;
       const correcta = item.igualdadCorrecta ? 'si' : 'no';
       botones.marcar([correcta], valor);
-      api.responder({ acierto: valor === correcta, html: explicarEj3(item.factorizacion, api.idioma), espera: 2000 });
+      api.responder({ acierto: valor === correcta, html: ({ idioma }) => explicarEj3(item.factorizacion, idioma), espera: 2000 });
     },
   });
 }
@@ -160,6 +169,7 @@ arrancar({
       generar: generarEscalera,
       clave: item => String(item.n),
       montar: montarEscalera,
+      enunciado: enunciadoEscalera,
     },
     {
       nombre: TX.potencias.nombre,
@@ -167,12 +177,14 @@ arrancar({
       generar: generarPotencias,
       clave: item => item.lista.join(','),
       montar: montarPotencias,
+      enunciado: enunciadoPotencias,
     },
     {
       nombre: TX.ej3.nombre,
       detalle: TX.ej3.detalle,
       generar: generarEjercicio3,
       montar: montarEj3,
+      enunciado: enunciadoEj3,
     },
   ],
 });

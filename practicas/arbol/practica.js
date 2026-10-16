@@ -76,12 +76,19 @@ const igualdadFinal = n => `<span class="cuenta">${n} = ${htmlFact(factorizar(n)
 // puede partir (elige él el producto: cualquiera vale). Equivocarse se dice en
 // el acto y cuenta como fallo del ítem, pero el árbol se termina igual.
 
+// Los enunciados salen también en la traducción (sin botones ni huecos).
+const enunciadoConstruir = (item, { tt }) => `<p class="instruccion">${tt(TX.construir.instruccion)}</p>`;
+const enunciadoTerminada = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.terminada.instruccion)}</p>
+    <div class="operacion igualdad">${item.n} = ${item.igualdad.map(([base, e]) => `<span class="factor">${base}${e > 1 ? `<sup>${e}</sup>` : ''}</span>`).join(' · ')}</div>`;
+const enunciadoCompletar = (item, { tt }) => `<p class="instruccion">${tt(TX.completar.instruccion)}</p>`;
+
 function montarConstruir(contenedor, item, api) {
   const { tt } = api;
   const x = TX.construir;
   const lectura = api.respondido();
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.instruccion)}</p>
+    ${enunciadoConstruir(item, api)}
     <div class="arbol"></div>
     <div class="panel-arbol"></div>`;
   const caja = contenedor.querySelector('.arbol');
@@ -92,8 +99,8 @@ function montarConstruir(contenedor, item, api) {
   const abiertas = () => rutasDe(raiz).filter(ruta => { const n = nodoEn(raiz, ruta); return !n.hijos.length && !n.primo; });
   let elegida = '';        // ruta del número sobre el que se está decidiendo
   let partiendo = false;   // ya se sabe que se puede partir: se enseñan los productos
-  let aviso = '';          // el error que se acaba de cometer
-  const errores = new Set();
+  let aviso = null;        // el error que se acaba de cometer: función de los textos de un idioma
+  const errores = new Map();   // clave del error -> su texto como función (para poder darlo en los dos idiomas)
 
   const pintaNodo = (nodo, ruta) => {
     if (nodo.hijos.length) return `<span class="nodo nodo--partido">${nodo.valor}</span>`;
@@ -103,7 +110,7 @@ function montarConstruir(contenedor, item, api) {
   };
 
   const avanzar = () => { elegida = abiertas()[0] ?? null; partiendo = false; };
-  const error = html => { aviso = html; errores.add(html); };
+  const error = (clave, texto) => { aviso = texto; errores.set(clave, texto); };
 
   function pintar() {
     pintarArbol(caja, raiz, pintaNodo);
@@ -123,7 +130,7 @@ function montarConstruir(contenedor, item, api) {
         </div>`;
     }
     panel.innerHTML = `
-      ${aviso ? `<p class="aviso-arbol" role="alert">${aviso}.</p>` : ''}
+      ${aviso ? `<p class="aviso-arbol" role="alert">${aviso(api)}.</p>` : ''}
       ${cuerpo}
       <button type="button" class="comprobar terminado"${quedan || lectura ? ' disabled' : ''}>${tt(x.terminado)}</button>`;
   }
@@ -131,20 +138,24 @@ function montarConstruir(contenedor, item, api) {
   function decidir(decision) {
     const nodo = nodoEn(raiz, elegida);
     const primo = esPrimo(nodo.valor);
-    aviso = '';
+    aviso = null;
     if (decision === 'primo' && primo) { nodo.primo = true; avanzar(); }
-    else if (decision === 'primo') { error(porQueNoPrimo(nodo.valor, api)); partiendo = true; }
-    else if (primo) { error(tt(TX.es_primo_pequeno)(nodo.valor)); nodo.primo = true; avanzar(); }
+    else if (decision === 'primo') { error(`no-primo-${nodo.valor}`, textos => porQueNoPrimo(nodo.valor, textos)); partiendo = true; }
+    else if (primo) { error(`primo-${nodo.valor}`, ({ tt }) => tt(TX.es_primo_pequeno)(nodo.valor)); nodo.primo = true; avanzar(); }
     else partiendo = true;
   }
 
   function terminar() {
     panel.remove();   // ni pregunta, ni aviso, ni botón: queda el árbol y la corrección
-    const otros = tieneVariosArboles(item.n) ? ` ${tt(x.otros_arboles)}` : '';
-    const lista = [...errores].map(e => `${e}.`).join('<br>');
+    const varios = tieneVariosArboles(item.n);
+    const textosErrores = [...errores.values()];
     api.responder({
       acierto: errores.size === 0,
-      html: `${lista ? `${lista}<br>` : ''}${igualdadFinal(item.n)}.${otros}`,
+      html: textos => {
+        const otros = varios ? ` ${textos.tt(x.otros_arboles)}` : '';
+        const lista = textosErrores.map(e => `${e(textos)}.`).join('<br>');
+        return `${lista ? `${lista}<br>` : ''}${igualdadFinal(item.n)}.${otros}`;
+      },
       espera: 2800,
     });
   }
@@ -154,12 +165,12 @@ function montarConstruir(contenedor, item, api) {
     const boton = ev.target.closest('button');
     if (!boton || !contenedor.contains(boton)) return;
     if (boton.classList.contains('terminado')) return terminar();
-    if (boton.dataset.ruta !== undefined) { elegida = boton.dataset.ruta; partiendo = false; aviso = ''; }
+    if (boton.dataset.ruta !== undefined) { elegida = boton.dataset.ruta; partiendo = false; aviso = null; }
     else if (boton.dataset.decide) decidir(boton.dataset.decide);
     else if (boton.dataset.pareja !== undefined) {
       const nodo = nodoEn(raiz, elegida);
       nodo.hijos = parejasPropias(nodo.valor)[Number(boton.dataset.pareja)].map(nuevo);
-      aviso = '';
+      aviso = null;
       avanzar();
     } else return;
     pintar();
@@ -185,15 +196,17 @@ function montarTerminada(contenedor, item, api) {
   const igualdad = contenedor.querySelector('.igualdad');
   const botonesFactor = [...igualdad.querySelectorAll('.factor')];
   const datos = explicar(item);
-  const seria = () => `${tt(x.seria)(item.n, htmlFact(datos.factorizacion))}.`;
+  const seria = ({ tt }) => `${tt(x.seria)(item.n, htmlFact(datos.factorizacion))}.`;
 
   /** Por qué está terminada: todos son primos, y del más grande se dice por qué lo es. */
-  const razonTerminada = () => {
+  const razonTerminada = textos => {
+    const { tt, idioma } = textos;
     const bases = item.igualdad.map(([base]) => base);
-    const frase = bases.length > 1 ? tt(x.todos_primos)(unir(bases, api.idioma)) : tt(x.un_primo)(bases[0]);
+    const frase = bases.length > 1 ? tt(x.todos_primos)(unir(bases, idioma)) : tt(x.un_primo)(bases[0]);
     const mayor = Math.max(...bases);
-    return `${frase}.${mayor > 13 ? ` ${porQuePrimo(mayor, api)}.` : ''}`;
+    return `${frase}.${mayor > 13 ? ` ${porQuePrimo(mayor, textos)}.` : ''}`;
   };
+  const razonNoTerminada = textos => `${porQueNoPrimo(item.compuesto, textos)}. ${seria(textos)}`;
 
   const botones = elecciones(contenedor, {
     clase: 'si-no',
@@ -201,10 +214,10 @@ function montarTerminada(contenedor, item, api) {
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.terminada ? 'si' : 'no'], valor);
-      if (item.terminada) return api.responder({ acierto: valor === 'si', html: razonTerminada(), espera: 2200 });
+      if (item.terminada) return api.responder({ acierto: valor === 'si', html: razonTerminada, espera: 2200 });
       if (valor === 'si') {
         marcarFactores(null);
-        return api.responder({ acierto: false, html: `${porQueNoPrimo(item.compuesto, api)}. ${seria()}` });
+        return api.responder({ acierto: false, html: razonNoTerminada });
       }
       // Ha dicho que no, y es verdad: ahora tiene que encontrar el compuesto.
       contenedor.querySelector('.paso-dos').hidden = false;
@@ -227,9 +240,8 @@ function montarTerminada(contenedor, item, api) {
     if (api.respondido()) return;
     const base = item.igualdad[i][0];
     marcarFactores(i);
-    const porQue = `${porQueNoPrimo(item.compuesto, api)}. ${seria()}`;
-    if (base === item.compuesto) return api.responder({ acierto: true, html: porQue, espera: 2600 });
-    api.responder({ acierto: false, html: `${tt(x.no_era_ese)(base, item.compuesto)}. ${porQue}` });
+    if (base === item.compuesto) return api.responder({ acierto: true, html: razonNoTerminada, espera: 2600 });
+    api.responder({ acierto: false, html: textos => `${textos.tt(x.no_era_ese)(base, item.compuesto)}. ${razonNoTerminada(textos)}` });
   }));
 }
 
@@ -243,7 +255,7 @@ function montarCompletar(contenedor, item, api) {
   const x = TX.completar;
   const lectura = api.respondido();
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.instruccion)}</p>
+    ${enunciadoCompletar(item, api)}
     <div class="arbol arbol--huecos"></div>
     <div class="banco">${item.banco.map((v, i) => `<span class="sitio" data-sitio="${i}"><button type="button" class="ficha" data-ficha="${i}"${lectura ? ' disabled' : ''}>${v}</button></span>`).join('')}</div>
     <button type="button" class="comprobar" disabled>${api.t.comprobar}</button>
@@ -367,11 +379,16 @@ function montarCompletar(contenedor, item, api) {
     const fact = htmlFact(factorizar(item.n));
     if (acierto) {
       if (item.otro) ensenar(`${tt(TX.otro_arbol)(item.n, fact)}.`, item.otro);
-      return api.responder({ acierto: true, html: `${tt(x.bien)(item.n, fact)}.`, espera: item.otro ? 5000 : 1800 });
+      return api.responder({ acierto: true, html: ({ tt }) => `${tt(x.bien)(item.n, fact)}.`, espera: item.otro ? 5000 : 1800 });
     }
     ensenar(tt(x.correcto), item.arbol);
-    const cuentas = mal.map(r => tt(x.rama_mal)(r.a, r.b, r.producto, r.valor)).join('; ');
-    api.responder({ acierto: false, html: `${cuentas}. ${tt(x.faltaban)(unir(solucionCompletar(item), api.idioma))}.` });
+    api.responder({
+      acierto: false,
+      html: ({ tt, idioma }) => {
+        const cuentas = mal.map(r => tt(x.rama_mal)(r.a, r.b, r.producto, r.valor)).join('; ');
+        return `${cuentas}. ${tt(x.faltaban)(unir(solucionCompletar(item), idioma))}.`;
+      },
+    });
   });
 
   pintarFichas();
@@ -391,12 +408,14 @@ arrancar({
       generar: rng => generar('construir', rng),
       clave: item => String(item.n),
       montar: montarConstruir,
+      enunciado: enunciadoConstruir,
     },
     {
       nombre: TX.terminada.nombre,
       detalle: TX.terminada.detalle,
       generar: rng => generar('terminada', rng),
       montar: montarTerminada,
+      enunciado: enunciadoTerminada,
     },
     {
       nombre: TX.completar.nombre,
@@ -404,6 +423,7 @@ arrancar({
       generar: rng => generar('completar', rng),
       clave: item => String(item.n),
       montar: montarCompletar,
+      enunciado: enunciadoCompletar,
     },
   ],
 });

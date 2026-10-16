@@ -20,13 +20,15 @@ const cuentaDe = (op, terminos, api) => terminos.map(t => num(t, api)).join(` ${
 
 // ─── Ejercicio 1: en la recta ───────────────────────────────────────────────────
 
+const enunciadoRecta = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.recta.pregunta)(num(item.n, textos), item.orden)}</p>
+    <div class="operacion">${num(item.n, textos)}</div>`;
+
 function montarRecta(contenedor, item, api) {
   const { tt } = api;
   const T = TX.recta;
   const [inf, sup] = item.marcas;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.pregunta)(num(item.n, api), item.orden)}</p>
-    <div class="operacion">${num(item.n, api)}</div>
+  contenedor.innerHTML = `${enunciadoRecta(item, api)}
     <p class="instruccion redondeo-paso">${tt(T.paso1)}</p>
     <div class="recta" id="recta" role="button" tabindex="0" aria-label="${api.esc(tt(T.paso1))}">
       <div class="recta__pista" id="pista">
@@ -77,10 +79,14 @@ function montarRecta(contenedor, item, api) {
       if (punto) punto.classList.add(buenaPos ? 'recta__punto--bien' : 'recta__punto--mal');
       poner(fraccionDe(item.n, item.orden), 'recta__punto--real', num(item.n, api));
       const c = cifraDecisiva(item.n, item.orden);
-      let html = tt(T.entre)(num(item.n, api), num(inf, api), num(sup, api));
-      if (item.medio) html += tt(T.medio)(num(item.redondeado, api));
-      else html += item.exceso ? tt(T.sube)(num(item.redondeado, api), c) : tt(T.baja)(num(item.redondeado, api), c);
-      if (!buenaPos) html += tt(T.posicion_mal)(num(item.n, api));
+      const html = textos => {
+        const { tt } = textos;
+        let h = tt(T.entre)(num(item.n, textos), num(inf, textos), num(sup, textos));
+        if (item.medio) h += tt(T.medio)(num(item.redondeado, textos));
+        else h += item.exceso ? tt(T.sube)(num(item.redondeado, textos), c) : tt(T.baja)(num(item.redondeado, textos), c);
+        if (!buenaPos) h += tt(T.posicion_mal)(num(item.n, textos));
+        return h;
+      };
       api.responder({ acierto, html, espera: 2600 });
     },
   });
@@ -88,13 +94,15 @@ function montarRecta(contenedor, item, api) {
 
 // ─── Ejercicio 2: a tres órdenes ────────────────────────────────────────────────
 
+const enunciadoTres = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.tres.pregunta)(num(item.n, textos))}</p>
+    <div class="operacion">${num(item.n, textos)}</div>
+    <p class="instruccion">${textos.tt(TX.tres.leyenda)}</p>`;
+
 function montarTres(contenedor, item, api) {
   const { tt } = api;
   const T = TX.tres;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.pregunta)(num(item.n, api))}</p>
-    <div class="operacion">${num(item.n, api)}</div>
-    <p class="instruccion">${tt(T.leyenda)}</p>
+  contenedor.innerHTML = `${enunciadoTres(item, api)}
     <div class="tres-filas">${ORDENES.map(o => `
       <div class="tres-fila" data-o="${o}">
         <label for="tres-${o}">${tt(ETIQUETA_ORDEN[o])}</label>
@@ -137,20 +145,22 @@ function montarTres(contenedor, item, api) {
       fila.classList.add(bien ? 'tres-fila--bien' : 'tres-fila--mal');
       fila.querySelectorAll('input, button').forEach(e => { e.disabled = true; });
     }
-    const filas = ORDENES.map(o => tt(T.fila)(num(item.n, api), o, num(item.redondeados[o], api), cifraDecisiva(item.n, o)));
-    api.responder({ acierto, html: filas.join('<br>'), espera: 3600 });
+    const html = textos => ORDENES.map(o => textos.tt(T.fila)(num(item.n, textos), o, num(item.redondeados[o], textos), cifraDecisiva(item.n, o))).join('<br>');
+    api.responder({ acierto, html, espera: 3600 });
   });
 }
 
 // ─── Ejercicio 3: estimar y cazar el error ──────────────────────────────────────
 
+const enunciadoEstimar = (item, textos) => `
+    <p class="instruccion">${textos.tt(item.ordenes.length === 1 ? TX.estimar.instr_fijo : TX.estimar.instr_elige)}</p>
+    <div class="operacion">${cuentaDe(item.op, item.terminos, textos)}</div>`;
+
 function montarEstimar(contenedor, item, api) {
   const { tt } = api;
   const T = TX.estimar;
   const fijo = item.ordenes.length === 1;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(fijo ? T.instr_fijo : T.instr_elige)}</p>
-    <div class="operacion">${cuentaDe(item.op, item.terminos, api)}</div>
+  contenedor.innerHTML = `${enunciadoEstimar(item, api)}
     ${fijo ? '' : '<div class="botones-numeros" id="ordenes"></div>'}
     <label class="instruccion" for="est">${tt(T.est_label)}</label>
     <input type="text" inputmode="numeric" id="est" class="redondeo-entero" autocomplete="off">
@@ -181,22 +191,26 @@ function montarEstimar(contenedor, item, api) {
     aviso.textContent = '';
     est.disabled = dif.disabled = true;
     caja?.querySelectorAll('button').forEach(b => { b.disabled = true; });
-    const redondeados = item.terminos.map(t => num(redondear(t, orden), api));
-    const cuenta = `${redondeados.join(` ${SIGNO[item.op]} `)} = ${num(item.estimaciones[orden], api)}`;
+    const html = textos => {
+      const redondeados = item.terminos.map(t => num(redondear(t, orden), textos));
+      const cuenta = `${redondeados.join(` ${SIGNO[item.op]} `)} = ${num(item.estimaciones[orden], textos)}`;
+      return textos.tt(T.estimar_fb)(orden, cuenta, num(item.exacto, textos), num(diferenciaCon(item, orden), textos));
+    };
     api.responder({
       acierto,
-      html: tt(T.estimar_fb)(orden, cuenta, num(item.exacto, api), num(diferenciaCon(item, orden), api)),
+      html,
       espera: 3200,
     });
   });
 }
 
+const enunciadoRazonable = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.estimar.pregunta_razonable)(cuentaDe(item.op, item.terminos, textos), num(item.propuesto, textos))}</p>
+    <p class="instruccion">${textos.tt(TX.estimar.pista_razonable)}</p>`;
+
 function montarRazonable(contenedor, item, api) {
-  const { tt } = api;
   const T = TX.estimar;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.pregunta_razonable)(cuentaDe(item.op, item.terminos, api), num(item.propuesto, api))}</p>
-    <p class="instruccion">${tt(T.pista_razonable)}</p>`;
+  contenedor.innerHTML = enunciadoRazonable(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
@@ -204,24 +218,27 @@ function montarRazonable(contenedor, item, api) {
       if (api.respondido()) return;
       const acierto = esAciertoRazonable(item, valor === 'si');
       botones.marcar([item.razonable ? 'si' : 'no'], valor);
-      const rs = item.terminos.map(t => num(redondear(t, item.orden), api));
-      const est = `${rs.join(` ${SIGNO[item.op]} `)} = ${num(item.estimacion, api)}`;
-      const propuesto = num(item.propuesto, api), exacto = num(item.exacto, api);
-      const html = item.razonable
-        ? tt(T.razonable_si)(est, propuesto)
-        : tt(T.razonable_no[item.motivo])(est, propuesto, exacto, num(item.terminos[0], api), num(item.terminos[1], api));
+      const html = textos => {
+        const { tt } = textos;
+        const rs = item.terminos.map(t => num(redondear(t, item.orden), textos));
+        const est = `${rs.join(` ${SIGNO[item.op]} `)} = ${num(item.estimacion, textos)}`;
+        const propuesto = num(item.propuesto, textos), exacto = num(item.exacto, textos);
+        return item.razonable
+          ? tt(T.razonable_si)(est, propuesto)
+          : tt(T.razonable_no[item.motivo])(est, propuesto, exacto, num(item.terminos[0], textos), num(item.terminos[1], textos));
+      };
       api.responder({ acierto, html, espera: 3200 });
     },
   });
 }
 
+const enunciadoContexto = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.estimar.pregunta_contexto)(item.orden)}</p>
+    <p class="redondeo-frase">${textos.tt(TX.estimar.contextos[item.contexto])(num(item.n, textos), '<span class="hueco hueco--corto" id="hueco">&nbsp;</span>')}</p>`;
+
 function montarContexto(contenedor, item, api) {
-  const { tt } = api;
   const T = TX.estimar;
-  const frase = TX.estimar.contextos[item.contexto];
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.pregunta_contexto)(item.orden)}</p>
-    <p class="redondeo-frase">${tt(frase)(num(item.n, api), '<span class="hueco hueco--corto" id="hueco">&nbsp;</span>')}</p>`;
+  contenedor.innerHTML = enunciadoContexto(item, api);
   const hueco = contenedor.querySelector('#hueco');
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4',
@@ -234,11 +251,17 @@ function montarContexto(contenedor, item, api) {
       hueco.classList.add('hueco--bien');
       api.responder({
         acierto,
-        html: tt(T.contexto_fb)(num(item.n, api), item.orden, num(item.correcto, api), cifraDecisiva(item.n, item.orden)),
+        html: textos => textos.tt(T.contexto_fb)(num(item.n, textos), item.orden, num(item.correcto, textos), cifraDecisiva(item.n, item.orden)),
         espera: 2800,
       });
     },
   });
+}
+
+function enunciadoEstimacion(item, textos) {
+  if (item.tipo === 'estimar') return enunciadoEstimar(item, textos);
+  if (item.tipo === 'razonable') return enunciadoRazonable(item, textos);
+  return enunciadoContexto(item, textos);
 }
 
 function montarEstimacion(contenedor, item, api) {
@@ -259,6 +282,7 @@ arrancar({
       generar: generarRecta,
       clave: item => `${item.n}/${item.orden}`,
       montar: montarRecta,
+      enunciado: enunciadoRecta,
     },
     {
       nombre: TX.tres.nombre,
@@ -267,6 +291,7 @@ arrancar({
       generar: generarTres,
       clave: item => String(item.n),
       montar: montarTres,
+      enunciado: enunciadoTres,
     },
     {
       nombre: TX.estimar.nombre,
@@ -274,6 +299,7 @@ arrancar({
       introduccion: TX.estimar.introduccion,
       generar: generarEstimacion,
       montar: montarEstimacion,
+      enunciado: enunciadoEstimacion,
     },
   ],
 });

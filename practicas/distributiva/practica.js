@@ -37,13 +37,17 @@ function cadenaHtml(texto) {
 
 // ─── Ejercicio 1: parte el rectángulo ──────────────────────────────────────────
 
+const enunciadoPartir = (item, { tt }) => {
+  const pregunta = item.resta ? TX.partir.pregunta_resta : TX.partir.pregunta_suma;
+  return `<p class="instruccion">${tt(pregunta)(item.a, item.b, item.c)}</p>`;
+};
+
 function montarPartir(contenedor, item, api) {
   const { tt } = api;
   const x = TX.partir;
   const { a, b, c, resta, largo, corte } = item;
-  const pregunta = resta ? x.pregunta_resta : x.pregunta_suma;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(pregunta)(a, b, c)}</p>
+    ${enunciadoPartir(item, api)}
     <div class="dist-rect" id="rect" style="--columnas:${largo};--filas:${a}">
       <div class="dist-etiquetas" id="etiquetas"></div>
       <div class="dist-cuadricula" id="cuadricula">${celdasHtml(a, largo)}<span class="dist-cursor" id="cursor"></span></div>
@@ -121,8 +125,8 @@ function montarPartir(contenedor, item, api) {
     if (api.respondido() || cortado) return;
     if (!corteCorrecto(item, pos)) {
       mostrarCorte(corte);
-      const razon = resta ? tt(x.corte_mal_resta)(b, c, b - c) : tt(x.corte_mal_suma)(b, c);
-      return api.responder({ acierto: false, html: `${razon} ${cadenaHtml(igualdad(item))}`, espera: 3200 });
+      const razon = tt => (resta ? tt(x.corte_mal_resta)(b, c, b - c) : tt(x.corte_mal_suma)(b, c));
+      return api.responder({ acierto: false, html: ({ tt }) => `${razon(tt)} ${cadenaHtml(igualdad(item))}`, espera: 3200 });
     }
     mostrarCorte(pos);
     const paso2 = contenedor.querySelector('#paso2');
@@ -142,7 +146,7 @@ function montarPartir(contenedor, item, api) {
       campo.disabled = true;
       boton.hidden = true;
       const completa = cadenaHtml(igualdad(item));
-      api.responder({ acierto, html: acierto ? `${completa}.` : `${tt(x.total_mal)(item.solucion)} ${completa}`, espera: 2400 });
+      api.responder({ acierto, html: ({ tt }) => (acierto ? `${completa}.` : `${tt(x.total_mal)(item.solucion)} ${completa}`), espera: 2400 });
     };
     boton.addEventListener('click', comprobar);
     campo.addEventListener('keydown', ev => { if (ev.key === 'Enter') comprobar(); });
@@ -164,6 +168,10 @@ function dibujoDosRectangulos(item, junto) {
     </div>`;
 }
 
+const enunciadoFactor = (item, { tt }) => (item.tipo === 'juntar'
+  ? `<p class="instruccion">${tt(TX.factor.pregunta_juntar)(sumaDeProductos(item))}</p>`
+  : `<p class="instruccion">${tt(TX.factor.pregunta_elegir)(`<span class="cuenta">${sumaDeProductos(item)}</span>`)}</p>`);
+
 function montarFactor(contenedor, item, api) {
   if (item.tipo === 'juntar') return montarJuntar(contenedor, item, api);
   return montarElegirFactor(contenedor, item, api);
@@ -174,7 +182,7 @@ function montarJuntar(contenedor, item, api) {
   const x = TX.factor;
   const valores = { a: item.a, b: item.b, c: item.c };
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.pregunta_juntar)(sumaDeProductos(item))}</p>
+    ${enunciadoFactor(item, api)}
     ${dibujoDosRectangulos(item, false)}
     <div class="dist-linea" id="linea"><span class="dist-vacio">${tt(x.vacio)}</span></div>
     <div class="botones-numeros" id="fichas">
@@ -216,12 +224,12 @@ function montarJuntar(contenedor, item, api) {
     const escrito = textoFichas(item, fichas);
     const v = valorFichas(item, fichas);
     // Nada de negativos (aún no se han dado): si no es un natural, solo se dice que no coincide.
-    const suyo = v === null ? tt(x.incompleta)(escrito)
+    const suyo = ({ tt, idioma }) => (v === null ? tt(x.incompleta)(escrito)
       : v < 0 ? tt(x.no_coincide)(escrito)
-      : tt(v === item.valor ? x.mismo_valor : x.tu_valor)(escrito, fmt(v, api.idioma));
+      : tt(v === item.valor ? x.mismo_valor : x.tu_valor)(escrito, fmt(v, idioma)));
     api.responder({
       acierto,
-      html: acierto ? `${completa}.` : `${suyo} ${tt(x.correcta)} ${buena}. ${completa}.`,
+      html: textos => (acierto ? `${completa}.` : `${suyo(textos)} ${textos.tt(x.correcta)} ${buena}. ${completa}.`),
       espera: 2600,
     });
   });
@@ -232,7 +240,7 @@ function montarElegirFactor(contenedor, item, api) {
   const { tt } = api;
   const x = TX.factor;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.pregunta_elegir)(`<span class="cuenta">${sumaDeProductos(item)}</span>`)}</p>
+    ${enunciadoFactor(item, api)}
     <div class="operacion">${sumaDeProductos(item)}</div>`;
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map((o, i) => ({ valor: i, html: o.expr })),
@@ -242,10 +250,10 @@ function montarElegirFactor(contenedor, item, api) {
       botones.marcar([buena], i);
       const elegida = item.opciones[i];
       const completa = cadenaHtml(igualdad(item));
-      if (i === buena) return api.responder({ acierto: true, html: `${completa}.`, espera: 2400 });
+      if (i === buena) return api.responder({ acierto: true, html: () => `${completa}.`, espera: 2400 });
       api.responder({
         acierto: false,
-        html: `${tt(x.no_igual)(elegida.expr, fmt(elegida.valor, api.idioma), fmt(item.valor, api.idioma))} ${tt(x.correcta)} <span class="cuenta">${item.opciones[buena].expr}</span>. ${completa}.`,
+        html: ({ tt, idioma }) => `${tt(x.no_igual)(elegida.expr, fmt(elegida.valor, idioma), fmt(item.valor, idioma))} ${tt(x.correcta)} <span class="cuenta">${item.opciones[buena].expr}</span>. ${completa}.`,
         espera: 3200,
       });
     },
@@ -269,13 +277,18 @@ function dibujoCompensar(item, api) {
     </div>`;
 }
 
+const enunciadoCompensar3 = (item, { tt }) => {
+  const texto = enunciadoCompensar(item);
+  return `<p class="instruccion">${tt(TX.compensar.pregunta)(texto)}</p>
+    <div class="operacion">${texto}</div>`;
+};
+
 function montarCompensar(contenedor, item, api) {
   const { tt } = api;
   const x = TX.compensar;
   const texto = enunciadoCompensar(item);
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.pregunta)(texto)}</p>
-    <div class="operacion">${texto}</div>
+    ${enunciadoCompensar3(item, api)}
     ${item.tipo === 'producto' ? dibujoCompensar(item, api) : ''}
     <div id="paso1">
       <label class="instruccion" for="resultado">${tt(x.label)}</label>
@@ -283,9 +296,9 @@ function montarCompensar(contenedor, item, api) {
       <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>
     </div>
     <div id="paso2"></div>`;
-  const explicacion = item.tipo === 'producto'
+  const explicacion = ({ tt }) => (item.tipo === 'producto'
     ? tt(x.explicacion_producto)(item.n, item.k, item.falta, item.valor)
-    : tt(x.explicacion_suma)(item.n, item.k, item.falta, item.valor);
+    : tt(x.explicacion_suma)(item.n, item.k, item.falta, item.valor));
   const campo = contenedor.querySelector('#resultado');
   const boton = contenedor.querySelector('#comprobar');
 
@@ -294,7 +307,7 @@ function montarCompensar(contenedor, item, api) {
     campo.disabled = true;
     boton.hidden = true;
     if (!compensarCorrecto(item, campo.value)) {
-      return api.responder({ acierto: false, html: `<span class="cuenta">${texto} = ${fmt(item.valor, api.idioma)}</span>. ${explicacion}`, espera: 3600 });
+      return api.responder({ acierto: false, html: textos => `<span class="cuenta">${texto} = ${fmt(item.valor, textos.idioma)}</span>. ${explicacion(textos)}`, espera: 3600 });
     }
     contenedor.querySelector('#paso2').innerHTML = `<p class="instruccion">${tt(x.elige)}</p>`;
     const botones = elecciones(contenedor.querySelector('#paso2'), {
@@ -308,7 +321,7 @@ function montarCompensar(contenedor, item, api) {
         const mala = item.opciones[i];
         api.responder({
           acierto: false,
-          html: `${tt(x.escritura_mal)(mala.expr, mala.valor, item.valor)} ${explicacion}`,
+          html: textos => `${textos.tt(x.escritura_mal)(mala.expr, mala.valor, item.valor)} ${explicacion(textos)}`,
           espera: 3600,
         });
       },
@@ -329,6 +342,7 @@ arrancar({
       introduccion: TX.partir.introduccion,
       generar: generarPartir,
       montar: montarPartir,
+      enunciado: enunciadoPartir,
     },
     {
       nombre: TX.factor.nombre,
@@ -337,6 +351,7 @@ arrancar({
       generar: generarFactorValido,
       clave: item => `${item.tipo}${item.a}${item.b}${item.c}${item.resta}`,
       montar: montarFactor,
+      enunciado: enunciadoFactor,
     },
     {
       nombre: TX.compensar.nombre,
@@ -345,6 +360,7 @@ arrancar({
       generar: generarCompensar,
       clave: item => `${item.tipo}${item.n}${item.k}`,
       montar: montarCompensar,
+      enunciado: enunciadoCompensar3,
     },
   ],
 });

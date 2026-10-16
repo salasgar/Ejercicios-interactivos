@@ -24,6 +24,8 @@ function pintarLista(lista, encontrados, tt) {
   lista.innerHTML = `<strong>${tt(TX.rect.encontradas)}:</strong> ${texto}`;
 }
 
+const enunciadoRectangulos = (item, { tt }) => `<p class="instruccion">${tt(TX.rect.instruccion)(item.n)}</p>`;
+
 function montarRectangulos(contenedor, item, api) {
   const { tt } = api;
   const n = item.n;
@@ -33,7 +35,7 @@ function montarRectangulos(contenedor, item, api) {
   let anchoExplorado = 1;
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.rect.instruccion)(n)}</p>
+    ${enunciadoRectangulos(item, api)}
     <div id="control"></div>
     <div id="rejilla" class="rejilla"></div>
     <p id="mensaje" class="aviso"></p>
@@ -79,26 +81,27 @@ function montarRectangulos(contenedor, item, api) {
     const correctas = todasLasClaves(n);
     const faltan = correctas.filter(c => !encontrados.includes(c));
     const acierto = faltan.length === 0;
-    let html;
-    if (acierto) {
-      html = tt(TX.rect.correcto)(n);
-    } else {
+    const faltaUno = faltan.includes(clavePar([1, n]));
+    const noLlegoALaRaiz = anchoExplorado < r;
+    const html = ({ tt }) => {
+      if (acierto) return tt(TX.rect.correcto)(n);
       const partes = [`<strong>${tt(TX.rect.faltan)}</strong> ${faltan.map(c => { const [a, b] = c.split('x').map(Number); return `${a} · ${b}`; }).join(', ')}.`];
-      if (faltan.includes(clavePar([1, n]))) partes.push(tt(TX.rect.el_uno_y_el_propio));
-      if (anchoExplorado < r) partes.push(tt(TX.rect.se_para_en)(r, n));
-      html = partes.join(' ');
-    }
+      if (faltaUno) partes.push(tt(TX.rect.el_uno_y_el_propio));
+      if (noLlegoALaRaiz) partes.push(tt(TX.rect.se_para_en)(r, n));
+      return partes.join(' ');
+    };
     api.responder({ acierto, html, espera: 2600 });
   });
 }
 
 // ─── Ejercicio 2: sin dibujo, las parejas ──────────────────────────────────────
 
+const enunciadoBanco = (item, { tt }) => `<p class="instruccion">${tt(TX.banco.instruccion)(item.n)}</p>`;
+
 function montarBanco(contenedor, item, api) {
-  const { tt } = api;
   const n = item.n;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.banco.instruccion)(n)}</p>
+    ${enunciadoBanco(item, api)}
     <div class="botones-numeros" id="banco"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
 
@@ -130,10 +133,8 @@ function montarBanco(contenedor, item, api) {
     const faltan = item.divisoresN.filter(d => !elegidos.has(d));
     const sobran = [...elegidos].filter(x => n % x !== 0);
     const acierto = faltan.length === 0 && sobran.length === 0;
-    let html;
-    if (acierto) {
-      html = tt(TX.banco.acierto)(n);
-    } else {
+    const html = ({ tt }) => {
+      if (acierto) return tt(TX.banco.acierto)(n);
       const frases = [];
       faltan.forEach(d => frases.push(tt(TX.banco.falta)(d)));
       if (faltan.some(d => d === 1 || d === n)) frases.push(tt(TX.banco.el_uno_y_el_propio));
@@ -141,45 +142,49 @@ function montarBanco(contenedor, item, api) {
         const cociente = Math.floor(n / x), resto = n % x;
         frases.push(tt(TX.banco.division_resto)(n, x, cociente, resto));
       });
-      html = frases.join('<br>');
-    }
+      return frases.join('<br>');
+    };
     api.responder({ acierto, html, espera: 2600 });
   });
 }
 
 // ─── Ejercicio 3: ¿dónde se para? ───────────────────────────────────────────────
 
-function montarParar(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoParar = (item, { tt }) => `
     <p class="instruccion">${tt(TX.parar.pregunta)(item.n)}</p>
     <div class="operacion">${item.n}</div>`;
+
+const enunciadoCuadrado = (item, { tt }) => `<p class="instruccion">${tt(TX.cuadrado.pregunta)(item.n, item.r)}</p>`;
+
+const enunciadoParte3 = (item, textos) => (item.tipo === 'cuadrado' ? enunciadoCuadrado : enunciadoParar)(item, textos);
+
+function montarParar(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoParar(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(valor => ({ valor, html: String(valor) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
       const acierto = valor === item.solucion;
-      const html = acierto
+      const html = ({ tt }) => (acierto
         ? tt(TX.parar.correcto)(item.solucion, item.n)
-        : tt(TX.parar.incorrecto)(valor, item.solucion, item.n);
+        : tt(TX.parar.incorrecto)(valor, item.solucion, item.n));
       api.responder({ acierto, html, espera: 2200 });
     },
   });
 }
 
 function montarCuadrado(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.cuadrado.pregunta)(item.n, item.r)}</p>`;
+  contenedor.innerHTML = enunciadoCuadrado(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(valor => ({ valor, html: String(valor) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
       const acierto = valor === item.solucion;
-      const html = acierto
+      const html = ({ tt }) => (acierto
         ? tt(TX.cuadrado.correcto)(item.n, item.r)
-        : tt(TX.cuadrado.incorrecto)(item.n, item.r);
+        : tt(TX.cuadrado.incorrecto)(item.n, item.r));
       api.responder({ acierto, html, espera: 2200 });
     },
   });
@@ -202,6 +207,7 @@ arrancar({
       generar: generarRectangulos,
       clave: item => String(item.n),
       montar: montarRectangulos,
+      enunciado: enunciadoRectangulos,
     },
     {
       nombre: TX.banco.nombre,
@@ -209,12 +215,14 @@ arrancar({
       generar: generarBanco,
       clave: item => String(item.n),
       montar: montarBanco,
+      enunciado: enunciadoBanco,
     },
     {
       nombre: TX.parar.nombre,
       detalle: TX.parar.detalle,
       generar: generarParte3,
       montar: montarParte3,
+      enunciado: enunciadoParte3,
     },
   ],
 });

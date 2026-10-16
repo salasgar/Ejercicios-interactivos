@@ -65,12 +65,13 @@ function cuatroOpciones(correcta, pool) {
 
 // ─── Ejercicio 1: Escúchalo ─────────────────────────────────────────────────
 
+const enunciadoEscuchar = (item, { tt }) => `<p class="instruccion">${tt(TX.escuchar.detalle)}</p>`;
+
 function montarEscuchar(contenedor, item, api) {
   const { tt } = api;
   const { correcta, pool } = opcionesEscuchar(item);
   const opciones = cuatroOpciones(correcta, pool);
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.escuchar.detalle)}</p>
+  contenedor.innerHTML = `${enunciadoEscuchar(item, api)}
     <div id="voz"></div>
     <div id="caja-elecciones"></div>`;
   detectarVoz().then(hay => {
@@ -90,7 +91,7 @@ function montarEscuchar(contenedor, item, api) {
       botones.marcar([correcta], valor);
       api.responder({
         acierto: valor === correcta,
-        html: `${tt(TX.escuchar.correcta)} ${api.esc(leer(item))}.`,
+        html: ({ tt, esc }) => `${tt(TX.escuchar.correcta)} ${esc(leer(item))}.`,
       });
     },
   });
@@ -98,13 +99,15 @@ function montarEscuchar(contenedor, item, api) {
 
 // ─── Ejercicio 2: ¿Cómo se lee? ─────────────────────────────────────────────
 
+const enunciadoLeer = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.leer.detalle)}</p>
+    <div class="operacion">${notacion(item)}</div>`;
+
 function montarLeer(contenedor, item, api) {
   const { tt } = api;
   const { correcta, pool } = opcionesLeer(item);
   const opciones = cuatroOpciones(correcta, pool);
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.leer.detalle)}</p>
-    <div class="operacion">${notacion(item)}</div>
+  contenedor.innerHTML = `${enunciadoLeer(item, api)}
     <div id="caja-elecciones"></div>
     <button type="button" class="secundario" id="oir" hidden>${tt(TX.leer.escucha)}</button>`;
   const botonOir = contenedor.querySelector('#oir');
@@ -116,7 +119,7 @@ function montarLeer(contenedor, item, api) {
       botonOir.hidden = false;
       api.responder({
         acierto: valor === correcta,
-        html: valor === correcta ? '' : api.esc(correcta),
+        html: ({ esc }) => (valor === correcta ? '' : esc(correcta)),
       });
     },
   });
@@ -125,11 +128,12 @@ function montarLeer(contenedor, item, api) {
 
 // ─── Ejercicio 3: Completa la frase ────────────────────────────────────────
 
-function montarCompletar(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoCompletar = (item, { tt, esc }) => `
     <p class="instruccion">${tt(TX.completar.detalle)}</p>
-    <div class="operacion">${api.esc(item.frase)}</div>
+    <div class="operacion">${esc(item.frase)}</div>`;
+
+function montarCompletar(contenedor, item, api) {
+  contenedor.innerHTML = `${enunciadoCompletar(item, api)}
     <div id="caja-elecciones"></div>`;
   const botones = elecciones(contenedor.querySelector('#caja-elecciones'), {
     opciones: item.opciones.map(texto => ({ valor: texto, html: api.esc(texto) })),
@@ -139,7 +143,7 @@ function montarCompletar(contenedor, item, api) {
       const fraseCompleta = item.frase.replace('___', item.solucion);
       api.responder({
         acierto: valor === item.solucion,
-        html: `${tt(TX.completar.correcta_fue)} ${api.esc(fraseCompleta)}.`,
+        html: ({ tt, esc }) => `${tt(TX.completar.correcta_fue)} ${esc(fraseCompleta)}.`,
       });
     },
   });
@@ -156,6 +160,7 @@ arrancar({
       generar: generarEscuchar,
       clave: item => JSON.stringify(item),
       montar: montarEscuchar,
+      enunciado: enunciadoEscuchar,
     },
     {
       nombre: TX.leer.nombre,
@@ -163,6 +168,7 @@ arrancar({
       generar: generarLeer,
       clave: item => JSON.stringify({ ...item, estilo: undefined }),
       montar: montarLeer,
+      enunciado: enunciadoLeer,
     },
     {
       nombre: TX.completar.nombre,
@@ -170,6 +176,7 @@ arrancar({
       generar: generarCompletar,
       clave: item => item.frase,
       montar: montarCompletar,
+      enunciado: enunciadoCompletar,
     },
   ],
 });

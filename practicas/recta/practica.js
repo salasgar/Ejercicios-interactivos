@@ -10,11 +10,13 @@ import { TX } from './textos.js';
 
 // ─── Ejercicios 1 y 2: marca en la recta (filas de diez, toque para encender) ───
 
+// La orden sale también en la traducción, sin la recta.
+const enunciadoRecta = (item, { tt }) =>
+  `<p class="instruccion">${item.tipo === 'multiplos' ? tt(TX.ej1.pregunta)(item.n) : tt(TX.ej2.pregunta)(item.n)}</p>`;
+
 function montarRecta(contenedor, item, api) {
-  const { tt } = api;
-  const pregunta = item.tipo === 'multiplos' ? tt(TX.ej1.pregunta)(item.n) : tt(TX.ej2.pregunta)(item.n);
   contenedor.innerHTML = `
-    <p class="instruccion">${pregunta}</p>
+    ${enunciadoRecta(item, api)}
     <div id="recta"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
   const recta = contenedor.querySelector('#recta');
@@ -53,8 +55,10 @@ function montarRecta(contenedor, item, api) {
       if (buenos.has(valor)) b.classList.add(marcados.has(valor) ? 'rejilla__celda--bien' : 'rejilla__celda--falta');
       else if (marcados.has(valor)) b.classList.add('rejilla__celda--mal');
     });
-    const explicacion = explicar(item, respuesta, api.idioma);
-    const html = acierto ? explicacion : `${recuento(item, marcados, api)}<br>${explicacion}`;
+    const html = textos => {
+      const explicacion = explicar(item, respuesta, textos.idioma);
+      return acierto ? explicacion : `${recuento(item, marcados, textos)}<br>${explicacion}`;
+    };
     api.responder({ acierto, html, espera: 2400 });
   });
 }
@@ -64,8 +68,7 @@ function montarRecta(contenedor, item, api) {
  * PENDIENTE: llevarlo a `explicar` en logica.js, con su test en practicas-recta.test.js
  * (se hizo aquí el 16-10 porque otra sesión estaba editando logica.js).
  */
-function recuento(item, marcados, api) {
-  const { tt } = api;
+function recuento(item, marcados, { tt, idioma }) {
   const R = TX.recuento;
   const acertados = item.correctos.filter(v => marcados.has(v)).length;
   const faltan = item.correctos.filter(v => !marcados.has(v));
@@ -75,21 +78,22 @@ function recuento(item, marcados, api) {
     const cosa = item.tipo === 'multiplos' ? R.multiplos : R.divisores;
     partes.push(tt(R.acertados)(acertados, item.correctos.length, cosa, item.n));
   }
-  if (faltan.length) partes.push(tt(R.faltan)(unir(faltan.map(String), api.idioma), faltan.length > 1));
+  if (faltan.length) partes.push(tt(R.faltan)(unir(faltan.map(String), idioma), faltan.length > 1));
   if (sobran) partes.push(tt(R.sobran)(sobran));
   return partes.join(' ');
 }
 
 // ─── Ejercicio 3: ¿verdadero o falso? ───────────────────────────────────────────
 
-function fraseVF(item, api) {
-  const { tt } = api;
+function fraseVF(item, { tt }) {
   const plantilla = TX.ej3.frase[item.plantilla];
   return item.a !== undefined ? tt(plantilla)(item.a, item.b) : tt(plantilla)(item.n);
 }
 
+const enunciadoVF = (item, textos) => `<p class="frase">${fraseVF(item, textos)}</p>`;
+
 function montarVF(contenedor, item, api) {
-  contenedor.innerHTML = `<p class="frase">${fraseVF(item, api)}</p>`;
+  contenedor.innerHTML = enunciadoVF(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'v', html: api.t.verdadero }, { valor: 'f', html: api.t.falso }],
@@ -97,7 +101,7 @@ function montarVF(contenedor, item, api) {
       if (api.respondido()) return;
       const buena = item.verdad ? 'v' : 'f';
       botones.marcar([buena], valor);
-      api.responder({ acierto: valor === buena, html: explicar(item, null, api.idioma), espera: 1800 });
+      api.responder({ acierto: valor === buena, html: ({ idioma }) => explicar(item, null, idioma), espera: 1800 });
     },
   });
 }
@@ -113,6 +117,7 @@ arrancar({
       generar: generarMultiplos,
       clave: item => `${item.n}`,
       montar: montarRecta,
+      enunciado: enunciadoRecta,
     },
     {
       nombre: TX.ej2.nombre,
@@ -120,6 +125,7 @@ arrancar({
       generar: generarDivisores,
       clave: item => `${item.n}`,
       montar: montarRecta,
+      enunciado: enunciadoRecta,
     },
     {
       nombre: TX.ej3.nombre,
@@ -127,6 +133,7 @@ arrancar({
       generar: generarVF,
       clave: item => `${item.plantilla}-${item.n ?? ''}-${item.a ?? ''}-${item.b ?? ''}`,
       montar: montarVF,
+      enunciado: enunciadoVF,
     },
   ],
 });

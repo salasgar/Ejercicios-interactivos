@@ -58,10 +58,14 @@ function explicacionTachar(item, seleccionadas, api) {
   return partes.join(' ');
 }
 
+const enunciadoTachar = (item, { tt }) => `<p class="instruccion">${tt(TX.criba.tachar)(item.primo)}</p>`;
+const enunciadoPregunta11 = (item, { tt }) => `<p class="instruccion">${tt(TX.pregunta11.instruccion)}</p>`;
+const enunciadoCriba = (item, textos) => (item.tipo === 'tachar' ? enunciadoTachar(item, textos) : enunciadoPregunta11(item, textos));
+
 function montarTachar(contenedor, item, api) {
   const { tt, t } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.criba.tachar)(item.primo)}</p>
+    ${enunciadoTachar(item, api)}
     <div class="rejilla" id="rejilla" style="--columnas:10"></div>
     <button type="button" class="comprobar" id="comprobar">${t.comprobar}</button>`;
   const rejilla = contenedor.querySelector('#rejilla');
@@ -134,20 +138,20 @@ function montarTachar(contenedor, item, api) {
     for (const n of seleccionadas) {
       if (!objetivo.has(n)) rejilla.querySelector(`[data-n="${n}"]`)?.classList.add('rejilla__celda--mal');
     }
-    api.responder({ acierto, html: explicacionTachar(item, seleccionadas, api), espera: 1500 });
+    api.responder({ acierto, html: textos => explicacionTachar(item, seleccionadas, textos), espera: 1500 });
   });
 }
 
 function montarPregunta11(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.pregunta11.instruccion)}</p>`;
+  contenedor.innerHTML = enunciadoPregunta11(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(clave => ({ valor: clave, html: tt(TX.pregunta11.opcion[clave]) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar(['buena'], valor);
       const acierto = valor === 'buena';
-      const html = `${acierto ? tt(TX.pregunta11.bien) : tt(TX.pregunta11.mal)} ${tt(TX.pregunta11.final)} ${htmlCribaFinal()}`;
+      const html = ({ tt }) => `${acierto ? tt(TX.pregunta11.bien) : tt(TX.pregunta11.mal)} ${tt(TX.pregunta11.final)} ${htmlCribaFinal()}`;
       api.responder({ acierto, html, espera: 2600 });
     },
   });
@@ -160,18 +164,20 @@ function montarCriba(contenedor, item, api) {
 
 // ─── Ejercicio 2: ¿primo, compuesto o ninguno? ──────────────────────────────────
 
-function montarFlashcard(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoFlashcard = (item, { tt }) => `
     <p class="instruccion">${tt(TX.flash.pregunta)(item.n)}</p>
     <div class="operacion">${item.n}</div>`;
+
+function montarFlashcard(contenedor, item, api) {
+  const { tt } = api;
+  contenedor.innerHTML = enunciadoFlashcard(item, api);
   const buena = claseDe(item.n);
   const botones = elecciones(contenedor, {
     opciones: ['primo', 'compuesto', 'ninguno'].map(valor => ({ valor, html: tt(TX.flash.opcion[valor]) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([buena], valor);
-      api.responder({ acierto: valor === buena, html: explicarClase(item.n, buena, api), espera: 1800 });
+      api.responder({ acierto: valor === buena, html: textos => explicarClase(item.n, buena, textos), espera: 1800 });
     },
   });
 }
@@ -187,11 +193,14 @@ function htmlExplicacionLista(item, api) {
   return api.tt(TX.raiz.explicacion)(item.n, r, siguiente, ultimo);
 }
 
+const enunciadoRaiz = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.raiz.instruccion)(item.n)}</p>
+    <div class="operacion">${item.n}</div>`;
+
 function montarRaiz(contenedor, item, api) {
   const { tt, t } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.raiz.instruccion)(item.n)}</p>
-    <div class="operacion">${item.n}</div>
+    ${enunciadoRaiz(item, api)}
     <div class="elecciones elecciones--4" id="opciones"></div>`;
   const caja = contenedor.querySelector('#opciones');
   let resuelto = false;
@@ -209,12 +218,12 @@ function montarRaiz(contenedor, item, api) {
       if (!o.correcta) {
         b.classList.add('eleccion--mal');
         resuelto = true;
-        api.responder({ acierto: false, html: htmlExplicacionLista(item, api) });
+        api.responder({ acierto: false, html: textos => htmlExplicacionLista(item, textos) });
         return;
       }
       if (!item.compuesto) {
         resuelto = true;
-        api.responder({ acierto: true, html: htmlExplicacionLista(item, api) });
+        api.responder({ acierto: true, html: textos => htmlExplicacionLista(item, textos) });
         return;
       }
       mostrarPreguntaPrimo();
@@ -234,7 +243,7 @@ function montarRaiz(contenedor, item, api) {
         resuelto = true;
         botones2.marcar(['no'], valor);
         const acierto = valor === 'no';
-        const html = `${htmlExplicacionLista(item, api)} ${explicarClase(item.n, 'compuesto', api)}`;
+        const html = textos => `${htmlExplicacionLista(item, textos)} ${explicarClase(item.n, 'compuesto', textos)}`;
         api.responder({ acierto, html });
       },
     });
@@ -253,6 +262,7 @@ arrancar({
       introduccion: TX.criba.introduccion,
       generar: generarCriba,
       montar: montarCriba,
+      enunciado: enunciadoCriba,
     },
     {
       nombre: TX.flash.nombre,
@@ -260,12 +270,14 @@ arrancar({
       generar: generarFlashcard,
       clave: item => String(item.n),
       montar: montarFlashcard,
+      enunciado: enunciadoFlashcard,
     },
     {
       nombre: TX.raiz.nombre,
       detalle: TX.raiz.detalle,
       generar: generarRaiz,
       montar: montarRaiz,
+      enunciado: enunciadoRaiz,
     },
   ],
 });

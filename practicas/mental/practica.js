@@ -43,19 +43,29 @@ function pedirNumero(caja, api, etiqueta, alComprobar) {
 
 // ─── Ejercicio 1: compensar ────────────────────────────────────────────────────
 
+const enunciadoCompensarTexto = (item, { tt }) => {
+  const texto = enunciadoCompensar(item);
+  return `
+    <p class="instruccion">${tt(TX.compensar.pregunta)(texto)}</p>
+    <div class="operacion">${texto}</div>`;
+};
+
+/** La explicación del ítem, en el idioma de los textos que recibe. */
+const explicacionCompensar = (item, { tt }) => {
+  const x = TX.compensar;
+  return (item.variante === 'producto' ? tt(x.explicacion_producto) : tt(x.explicacion_suma))(item.n, item.k, item.R, item.falta, item.valor);
+};
+
 function montarCompensar(contenedor, item, api) {
   const { tt } = api;
   const x = TX.compensar;
-  const texto = enunciadoCompensar(item);
-  const explicacion = (item.variante === 'producto' ? tt(x.explicacion_producto) : tt(x.explicacion_suma))(item.n, item.k, item.R, item.falta, item.valor);
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.pregunta)(texto)}</p>
-    <div class="operacion">${texto}</div>
+  contenedor.innerHTML = `${enunciadoCompensarTexto(item, api)}
     <div class="mental-linea" id="linea"></div>
     <div id="paso"></div>`;
   const linea = contenedor.querySelector('#linea');
   const paso = contenedor.querySelector('#paso');
   const fallo = html => api.responder({ acierto: false, html, espera: 3800 });
+  const conExplicacion = frase => textos => `${frase(textos)} ${explicacionCompensar(item, textos)}`;
 
   // Paso 1: el redondeo.
   paso.innerHTML = `<p class="instruccion">${tt(x.paso_redondeo)(item.k)}</p>`;
@@ -65,7 +75,7 @@ function montarCompensar(contenedor, item, api) {
     alElegir(i) {
       if (api.respondido()) return;
       r.marcar([item.redondeos.findIndex(o => o.correcta)], i);
-      if (!redondeoCorrecto(item, i)) return fallo(`${tt(x.redondeo_mal)(item.k, item.R)} ${explicacion}`);
+      if (!redondeoCorrecto(item, i)) return fallo(conExplicacion(({ tt }) => tt(x.redondeo_mal)(item.k, item.R)));
       linea.innerHTML = cadena(lineaCompensar(item));
       paso2();
     },
@@ -83,7 +93,7 @@ function montarCompensar(contenedor, item, api) {
         a.marcar([bien], i);
         if (!ajusteCorrecto(item, i)) {
           const mala = item.ajustes[i];
-          return fallo(`${tt(x.ajuste_mal)(mala.expr, mala.valor, item.valor)} ${explicacion}`);
+          return fallo(conExplicacion(({ tt }) => tt(x.ajuste_mal)(mala.expr, mala.valor, item.valor)));
         }
         linea.innerHTML = cadena(lineaCompensar(item, item.ajustes[bien]));
         paso3();
@@ -94,20 +104,22 @@ function montarCompensar(contenedor, item, api) {
   // Paso 3: el resultado.
   function paso3() {
     pedirNumero(paso, api, tt(x.paso_resultado), valor => {
-      if (resultadoCorrecto(item, valor)) return api.responder({ acierto: true, html: explicacion, espera: 2800 });
-      fallo(`${tt(x.resultado_mal)(item.valor)} ${explicacion}`);
+      if (resultadoCorrecto(item, valor)) return api.responder({ acierto: true, html: textos => explicacionCompensar(item, textos), espera: 2800 });
+      fallo(conExplicacion(({ tt }) => tt(x.resultado_mal)(item.valor)));
     });
   }
 }
 
 // ─── Ejercicio 2: descomponer ──────────────────────────────────────────────────
 
+const enunciadoDescomponer = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.descomponer.pregunta)(item.a, item.b)}</p>
+    <div class="operacion">${item.a} ${P} ${item.b}</div>`;
+
 function montarDescomponer(contenedor, item, api) {
   const { tt } = api;
   const x = TX.descomponer;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.pregunta)(item.a, item.b)}</p>
-    <div class="operacion">${item.a} ${P} ${item.b}</div>
+  contenedor.innerHTML = `${enunciadoDescomponer(item, api)}
     <div class="mental-linea" id="linea"></div>
     <div id="paso"></div>`;
   const linea = contenedor.querySelector('#linea');
@@ -122,7 +134,7 @@ function montarDescomponer(contenedor, item, api) {
       if (!reconstruye(item, op)) {
         return api.responder({
           acierto: false,
-          html: `${tt(x.no_reconstruye)(op.texto, valorOpcion(op), item.b)} ${cadena(lineaDescomponer(item, item.opciones.find(o => o.correcta && o.clase === 'producto')))}`,
+          html: ({ tt }) => `${tt(x.no_reconstruye)(op.texto, valorOpcion(op), item.b)} ${cadena(lineaDescomponer(item, item.opciones.find(o => o.correcta && o.clase === 'producto')))}`,
           espera: 3600,
         });
       }
@@ -130,9 +142,10 @@ function montarDescomponer(contenedor, item, api) {
       pedirNumero(paso, api, tt(x.resultado), valor => {
         const acierto = descomposicionCorrecta(item, i, valor);
         const completa = cadena(lineaDescomponer(item, op));
-        const comoda = op.clase === 'producto' ? '' : ` ${tt(x.comoda)(item.a, item.p, item.q, item.b)}`;
-        if (acierto) return api.responder({ acierto: true, html: `${completa}.${comoda}`, espera: comoda ? 3600 : 2600 });
-        api.responder({ acierto: false, html: `${tt(x.cuenta_mal)(item.valor)} ${completa}`, espera: 3600 });
+        const esProducto = op.clase === 'producto';
+        const comoda = ({ tt }) => esProducto ? '' : ` ${tt(x.comoda)(item.a, item.p, item.q, item.b)}`;
+        if (acierto) return api.responder({ acierto: true, html: textos => `${completa}.${comoda(textos)}`, espera: esProducto ? 2600 : 3600 });
+        api.responder({ acierto: false, html: ({ tt }) => `${tt(x.cuenta_mal)(item.valor)} ${completa}`, espera: 3600 });
       });
     },
   });
@@ -150,6 +163,7 @@ arrancar({
       generar: generarCompensar,
       clave: item => `${item.variante}${item.n}${item.k}`,
       montar: montarCompensar,
+      enunciado: enunciadoCompensarTexto,
     },
     {
       nombre: TX.descomponer.nombre,
@@ -158,6 +172,7 @@ arrancar({
       generar: generarDescomponer,
       clave: item => `${item.a}${item.b}`,
       montar: montarDescomponer,
+      enunciado: enunciadoDescomponer,
     },
   ],
 });

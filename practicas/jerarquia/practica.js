@@ -31,13 +31,25 @@ function htmlFichas(fichas, idioma, activo) {
   }).join('');
 }
 
+/** La orden y la expresión de partida (sin botones). */
+const enunciadoPasos = (item, { tt, idioma }) => `
+    <p class="instruccion">${tt(TX.instruccion)}</p>
+    <div class="jer-hist">${htmlTexto(item.fichas, idioma)}</div>`;
+
+/** Por qué no valía un toque (en el idioma de los textos que se pasan). */
+const textoMotivo = (m, fichas, i, { tt }) => {
+  if (m.clave === 'parentesis') return tt(TX.motivo.parentesis)();
+  if (m.clave === 'prioridad') return tt(TX.motivo.prioridad)(m.nivel, NIVEL[fichas[i]]);
+  return tt(TX.motivo.izquierda)(m.nivel);
+};
+
 function montarPasos(contenedor, item, api) {
   const { tt, idioma } = api;
   // Los estados se van haciendo con lo que toca el alumno: si hay dos operaciones que
   // no se estorban, el orden que elija es el que se escribe en el historial.
   const estados = api.respondido() ? cadena(item.fichas) : [{ fichas: cadena(item.fichas)[0].fichas }];
   const fin = () => estados.at(-1).fichas.length === 1;
-  let fallo = false, primerMotivo = '';
+  let fallo = false, primerMotivo = null;
 
   contenedor.innerHTML = `
     <p class="instruccion">${tt(TX.instruccion)}</p>
@@ -57,12 +69,6 @@ function montarPasos(contenedor, item, api) {
     linea.classList.toggle('jer-linea--fin', fin());
   };
 
-  const textoMotivo = (m, fichas, i) => {
-    if (m.clave === 'parentesis') return tt(TX.motivo.parentesis)();
-    if (m.clave === 'prioridad') return tt(TX.motivo.prioridad)(m.nivel, NIVEL[fichas[i]]);
-    return tt(TX.motivo.izquierda)(m.nivel);
-  };
-
   linea.addEventListener('click', ev => {
     const boton = ev.target.closest('button[data-i]');
     if (!boton || api.respondido() || fin()) return;
@@ -73,8 +79,8 @@ function montarPasos(contenedor, item, api) {
     const hecho = m ? toca(fichas) : i;
     if (m) {
       fallo = true;
-      const por = textoMotivo(m, fichas, i);
-      if (!primerMotivo) primerMotivo = por;
+      const por = textoMotivo(m, fichas, i, api);
+      if (!primerMotivo) primerMotivo = { m, fichas, i };
       aviso.textContent = `${tt(TX.has_fallado)} ${por}`;
     } else {
       aviso.textContent = '';
@@ -85,15 +91,31 @@ function montarPasos(contenedor, item, api) {
   });
 
   function terminar() {
-    const cuenta = estados.map(e => htmlTexto(e.fichas, idioma)).join(' = ');
-    const por = fallo ? `${primerMotivo} ` : '';
-    api.responder({ acierto: !fallo, html: `${por}<span class="jer-cadena">${cuenta}</span>`, espera: 2200 });
+    const html = textos => {
+      const cuenta = estados.map(e => htmlTexto(e.fichas, textos.idioma)).join(' = ');
+      const por = fallo ? `${textoMotivo(primerMotivo.m, primerMotivo.fichas, primerMotivo.i, textos)} ` : '';
+      return `${por}<span class="jer-cadena">${cuenta}</span>`;
+    };
+    api.responder({ acierto: !fallo, html, espera: 2200 });
   }
 
   pintar(false);
 }
 
 // ─── Ejercicio 4: agrupadores invisibles ───────────────────────────────────────
+
+/** La orden y la expresión (sin botones ni paréntesis puestos). */
+function enunciadoInvisibles(item, { tt, idioma }) {
+  const raya = item.agrupador === 'raya';
+  const fuera = fichas => (fichas.length ? `<span class="jer-fuera">${texto(fichas, idioma)}</span>` : '');
+  const grupo = i => `<span class="cuenta">${texto(item.grupos[i], idioma)}</span>`;
+  const cuerpo = raya
+    ? `<span class="jer-frac">${grupo(0)}<span class="jer-raya"></span>${grupo(1)}</span>`
+    : `<span class="jer-rad"><span class="jer-rad__signo">√</span>${grupo(0)}</span>`;
+  return `
+    <p class="instruccion">${tt(TX.instruccion4)}</p>
+    <div class="jer-dos-alturas">${fuera(item.antes)}${cuerpo}${fuera(item.despues)}</div>`;
+}
 
 function montarInvisibles(contenedor, item, api) {
   const { tt, idioma } = api;
@@ -137,26 +159,32 @@ function montarInvisibles(contenedor, item, api) {
     ev.target.hidden = true;
     const piden = exigidos(item);
     const acierto = esCorrecto(item, p);
-    const correcta = cadena(item.correcta).map(e => texto(e.fichas, idioma)).join(' = ');
-    const explicacion = tt(raya ? TX.explicacion_raya : TX.explicacion_radical);
-    const sobran = p.map((m, i) => (m && !piden[i] ? i : -1)).filter(i => i >= 0)
+    const correctaDe = idioma => cadena(item.correcta).map(e => texto(e.fichas, idioma)).join(' = ');
+    const sobranDe = ({ tt, idioma }) => p.map((m, i) => (m && !piden[i] ? i : -1)).filter(i => i >= 0)
       .map(i => ` ${tt(TX.sobran)(`<span class="cuenta">${texto(item.grupos[i], idioma)}</span>`)}`).join('');
     if (acierto) {
-      return api.responder({ acierto: true, html: `${explicacion} <span class="jer-cadena">${correcta}</span>.${sobran}`, espera: 2600 });
+      return api.responder({
+        acierto: true,
+        html: textos => `${textos.tt(raya ? TX.explicacion_raya : TX.explicacion_radical)} <span class="jer-cadena">${correctaDe(textos.idioma)}</span>.${sobranDe(textos)}`,
+        espera: 2600,
+      });
     }
     const que = i => (raya ? (i === 0 ? 'num' : 'den') : 'rad');
     const faltan = piden.map((r, i) => (r && !p[i] ? que(i) : null)).filter(Boolean);
-    const faltas = faltan.map(c => tt(TX[`falta_${c}`])).join('; ');
-    const porque = faltan.map(c => tt(TX[`porque_${c}`])).join(' ');
     // Solo se escribe lo que sale si es un natural: con decimales o negativos no se ha dado nada.
     const sale = evaluar(lineal(item, p));
-    const linea = texto(lineal(item, p), idioma);
-    const resultado = esNatural(sale)
-      ? `${tt(TX.saldria)(sale)} ${item.valor}: <span class="cuenta">${linea} = ${sale}</span>.`
-      : `${tt(TX.no_da)(item.valor)}: <span class="cuenta">${linea}</span>.`;
     api.responder({
       acierto: false,
-      html: `${faltas}. ${porque} ${resultado} ${tt(TX.correcta)}: <span class="jer-cadena">${correcta}</span>.${sobran}`,
+      html: textos => {
+        const { tt } = textos;
+        const faltas = faltan.map(c => tt(TX[`falta_${c}`])).join('; ');
+        const porque = faltan.map(c => tt(TX[`porque_${c}`])).join(' ');
+        const linea = texto(lineal(item, p), textos.idioma);
+        const resultado = esNatural(sale)
+          ? `${tt(TX.saldria)(sale)} ${item.valor}: <span class="cuenta">${linea} = ${sale}</span>.`
+          : `${tt(TX.no_da)(item.valor)}: <span class="cuenta">${linea}</span>.`;
+        return `${faltas}. ${porque} ${resultado} ${tt(TX.correcta)}: <span class="jer-cadena">${correctaDe(textos.idioma)}</span>.${sobranDe(textos)}`;
+      },
     });
   });
 }
@@ -168,13 +196,14 @@ const clavePasos = item => item.fichas.join(' ');
 arrancar({
   slug: 'jerarquia',
   ejercicios: [
-    { nombre: TX.nombre1, detalle: TX.detalle1, introduccion: TX.intro1, generar: generarPasos1, clave: clavePasos, montar: montarPasos },
-    { nombre: TX.nombre2, detalle: TX.detalle2, introduccion: TX.intro2, generar: generarPasos2, clave: clavePasos, montar: montarPasos },
-    { nombre: TX.nombre3, detalle: TX.detalle3, introduccion: TX.intro3, generar: generarPasos3, clave: clavePasos, montar: montarPasos },
+    { nombre: TX.nombre1, detalle: TX.detalle1, introduccion: TX.intro1, generar: generarPasos1, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
+    { nombre: TX.nombre2, detalle: TX.detalle2, introduccion: TX.intro2, generar: generarPasos2, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
+    { nombre: TX.nombre3, detalle: TX.detalle3, introduccion: TX.intro3, generar: generarPasos3, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
     {
       nombre: TX.nombre4, detalle: TX.detalle4, introduccion: TX.intro4, generar: generarInvisibles,
       clave: item => `${item.antes.join('')}|${item.grupos.map(g => g.join('')).join('/')}|${item.despues.join('')}`,
       montar: montarInvisibles,
+      enunciado: enunciadoInvisibles,
     },
   ],
 });

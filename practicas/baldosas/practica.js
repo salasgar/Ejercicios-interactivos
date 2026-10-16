@@ -67,6 +67,11 @@ function explicarMcd(tt, a, b, g) {
 
 // ─── Ejercicio 1: la baldosa más grande ────────────────────────────────────────
 
+// Los enunciados salen también en la traducción (sin dibujos, campos ni botones).
+const enunciadoBaldosa = (item, { tt }) => `<p class="instruccion">${tt(TX.baldosa.instruccion)(item.a, item.b)}</p>`;
+const enunciadoCuantas = (item, { tt }) => `<p class="instruccion">${tt(TX.cuantas.instruccion)(item.a, item.b, item.g)}</p>`;
+const enunciadoCuerdas = (item, { tt }) => `<p class="instruccion">${tt(TX.cuerdas.instruccion)(item.longitudes)}</p>`;
+
 function montarBaldosa(contenedor, item, api) {
   const { tt } = api;
   const T = TX.baldosa;
@@ -74,7 +79,7 @@ function montarBaldosa(contenedor, item, api) {
   let ladoActual = candidatos[0];
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.instruccion)(a, b)}</p>
+    ${enunciadoBaldosa(item, api)}
     <div class="botones-numeros" id="lados"></div>
     <div id="dibujo"></div>
     <p id="mensaje" class="frase"></p>
@@ -127,15 +132,13 @@ function montarBaldosa(contenedor, item, api) {
     });
     botonEsta.hidden = true;
     const acierto = esLaMasGrande(item, s);
-    let html;
-    if (acierto) {
-      html = explicarMcd(tt, a, b, g);
-    } else {
+    const html = ({ tt }) => {
+      if (acierto) return explicarMcd(tt, a, b, g);
       const ca = cabeEnLado(a, s), cb = cabeEnLado(b, s);
       const [dim, c] = ca.cabe ? [b, cb] : [a, ca];
       const base = (ca.cabe && cb.cabe) ? tt(T.incorrecto_no_mayor)(s, g) : tt(T.incorrecto_no_cabe)(s, tt(T.resto_en)(dim, s, c.cociente, c.resto));
-      html = `${base} ${tt(T.y_el_mcd)(a, b, g)}`;
-    }
+      return `${base} ${tt(T.y_el_mcd)(a, b, g)}`;
+    };
     api.responder({ acierto, html, espera: 2800 });
   });
 }
@@ -148,7 +151,7 @@ function montarCuantas(contenedor, item, api) {
   const { a, b, g, cuantas, errorSuma } = item;
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.instruccion)(a, b, g)}</p>
+    ${enunciadoCuantas(item, api)}
     <div id="dibujo"></div>
     <label class="instruccion" for="baldosas-cuantas">${tt(T.respuesta_label)}</label>
     <input type="number" inputmode="numeric" id="baldosas-cuantas" class="baldosas-entero" autocomplete="off">
@@ -164,12 +167,14 @@ function montarCuantas(contenedor, item, api) {
     const acierto = esNumeroDeBaldosas(item, respuesta);
     campo.disabled = true;
     boton.hidden = true;
-    const cuenta = tt(T.cuenta)(a, b, g, a / g, b / g, cuantas);
-    let html = cuenta;
-    if (!acierto) {
-      if (respuesta === errorSuma) html = `${tt(T.error_suma)(a / g, b / g, cuantas)} ${cuenta}`;
-      else if (respuesta === g) html = `${tt(T.error_lado)(g)} ${cuenta}`;
-    }
+    const html = ({ tt }) => {
+      const cuenta = tt(T.cuenta)(a, b, g, a / g, b / g, cuantas);
+      if (!acierto) {
+        if (respuesta === errorSuma) return `${tt(T.error_suma)(a / g, b / g, cuantas)} ${cuenta}`;
+        if (respuesta === g) return `${tt(T.error_lado)(g)} ${cuenta}`;
+      }
+      return cuenta;
+    };
     api.responder({ acierto, html, espera: 2800 });
   }
   boton.addEventListener('click', comprobar);
@@ -185,7 +190,7 @@ function montarCuerdas(contenedor, item, api) {
   let trozoUsuario = null;
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.instruccion)(longitudes)}</p>
+    ${enunciadoCuerdas(item, api)}
     <div id="barras"></div>
     <div id="paso-a">
       <label class="instruccion" for="cuerdas-trozo">${tt(T.pregunta_a)}</label>
@@ -224,18 +229,21 @@ function montarCuerdas(contenedor, item, api) {
     campoB.disabled = true;
     botonB.hidden = true;
     const acierto = esCorteDeCuerdas(item, trozoUsuario, totalUsuario);
-    const partes = [];
-    if (trozoUsuario !== g) partes.push(tt(T.pista_trozo_mal)(g));
-    if (totalUsuario !== trozosTotal) {
-      // ¿Sumó bien con su propio trozo? Entonces el fallo es solo el trozo.
-      const suyos = longitudes.every(l => trozoUsuario > 0 && l % trozoUsuario === 0) ? longitudes.map(l => l / trozoUsuario) : null;
-      const coherente = suyos && suyos.reduce((s, x) => s + x, 0) === totalUsuario;
-      partes.push(coherente
-        ? tt(T.pista_total_coherente)(trozoUsuario, suyos, totalUsuario)
-        : tt(T.pista_total_mal)(porCuerda, trozosTotal));
-    }
-    partes.push(tt(T.cuenta)(longitudes, g, porCuerda, trozosTotal));
-    api.responder({ acierto, html: partes.join(' '), espera: 3000 });
+    const html = ({ tt }) => {
+      const partes = [];
+      if (trozoUsuario !== g) partes.push(tt(T.pista_trozo_mal)(g));
+      if (totalUsuario !== trozosTotal) {
+        // ¿Sumó bien con su propio trozo? Entonces el fallo es solo el trozo.
+        const suyos = longitudes.every(l => trozoUsuario > 0 && l % trozoUsuario === 0) ? longitudes.map(l => l / trozoUsuario) : null;
+        const coherente = suyos && suyos.reduce((s, x) => s + x, 0) === totalUsuario;
+        partes.push(coherente
+          ? tt(T.pista_total_coherente)(trozoUsuario, suyos, totalUsuario)
+          : tt(T.pista_total_mal)(porCuerda, trozosTotal));
+      }
+      partes.push(tt(T.cuenta)(longitudes, g, porCuerda, trozosTotal));
+      return partes.join(' ');
+    };
+    api.responder({ acierto, html, espera: 3000 });
   }
   botonB.addEventListener('click', comprobarFinal);
   campoB.addEventListener('keydown', ev => { if (ev.key === 'Enter') comprobarFinal(); });
@@ -253,6 +261,7 @@ arrancar({
       generar: generarBaldosa,
       clave: item => `${item.a}x${item.b}`,
       montar: montarBaldosa,
+      enunciado: enunciadoBaldosa,
     },
     {
       nombre: TX.cuantas.nombre,
@@ -261,6 +270,7 @@ arrancar({
       generar: generarCuantas,
       clave: item => `${item.a}x${item.b}`,
       montar: montarCuantas,
+      enunciado: enunciadoCuantas,
     },
     {
       nombre: TX.cuerdas.nombre,
@@ -269,6 +279,7 @@ arrancar({
       generar: generarCuerdas,
       clave: item => item.longitudes.join(','),
       montar: montarCuerdas,
+      enunciado: enunciadoCuerdas,
     },
   ],
 });

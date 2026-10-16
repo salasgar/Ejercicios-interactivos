@@ -95,31 +95,39 @@ function teclado(contenedor, api, alComprobar) {
 }
 
 /** Explicación de un dictado: el número en palabras y por grupos (inglés) o solo el número (español). */
-function explicarDictado(item, api) {
-  let html = `${api.esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
+function explicarDictado(item, { tt, esc }) {
+  let html = `${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
   if (item.tipo === 'dictado') {
     const grupos = gruposConValor(item.n).map(g => `${g.texto} = ${agrupar(g.valor)}`);
-    if (grupos.length > 1) html += `<br>${api.tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
+    if (grupos.length > 1) html += `<br>${tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
   }
   return html;
 }
 
+function textosDictado(item) {
+  return item.tipo === 'dictado'
+    ? { instruccion: TX.dictado.instruccion, sinVoz: TX.dictado.instruccion_sin_voz, boton: TX.voz.escuchar_en }
+    : { instruccion: TX.fichas.dictado_instruccion, sinVoz: TX.fichas.dictado_instruccion_sin_voz, boton: TX.voz.escuchar_es };
+}
+
+const enunciadoDictado = (item, { tt }) => `<p class="instruccion">${tt(textosDictado(item).instruccion)}</p>`;
+
 function montarDictado(contenedor, item, api) {
   const { tt } = api;
   const lengua = item.tipo === 'dictado' ? 'en-GB' : 'es-ES';
-  const textos = item.tipo === 'dictado'
-    ? { instruccion: TX.dictado.instruccion, sinVoz: TX.dictado.instruccion_sin_voz, boton: TX.voz.escuchar_en }
-    : { instruccion: TX.fichas.dictado_instruccion, sinVoz: TX.fichas.dictado_instruccion_sin_voz, boton: TX.voz.escuchar_es };
+  const textos = textosDictado(item);
   contenedor.innerHTML = `<p class="instruccion" id="instruccion">${tt(textos.instruccion)}</p><div id="voz"></div>`;
   const instruccion = contenedor.querySelector('#instruccion');
   pintarVoz(contenedor.querySelector('#voz'), item, lengua, api, textos.boton, () => { instruccion.innerHTML = tt(textos.sinVoz); });
   teclado(contenedor, api, (escrito, pantalla) => {
     const acierto = esRespuestaDictado(item, escrito);
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
-    const buena = explicarDictado(item, api);
     api.responder({
       acierto,
-      html: acierto ? buena : `${tt(TX.dictado.tu_respuesta)(agrupar(Number(escrito)))} ${buena}`,
+      html: textos => {
+        const buena = explicarDictado(item, textos);
+        return acierto ? buena : `${textos.tt(TX.dictado.tu_respuesta)(agrupar(Number(escrito)))} ${buena}`;
+      },
       espera: 3000,
     });
   });
@@ -133,6 +141,10 @@ function acentuada(n, sufijo) {
   const raiz = palabra.slice(0, -sufijo.length);
   return sufijo === 'teen' ? `${raiz}<strong>TEEN</strong>` : `<strong>${raiz.toUpperCase()}</strong>${sufijo}`;
 }
+
+const enunciadoTeen = (item, { tt }) => `<p class="instruccion">${tt(TX.teen.instruccion)}</p>`;
+const enunciadoEscritura = (item, { tt }) => `<p class="instruccion">${tt(TX.teen.escritura)(agrupar(item.n))}</p>`;
+const enunciadoTeenOEscritura = (item, textos) => (item.tipo === 'teen' ? enunciadoTeen : enunciadoEscritura)(item, textos);
 
 function montarTeen(contenedor, item, api) {
   const { tt } = api;
@@ -148,7 +160,7 @@ function montarTeen(contenedor, item, api) {
       const otro = item.opciones[1 - item.solucion];
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), api.esc(item.texto), acentuada(item.base[0], 'teen'), acentuada(item.base[1], 'ty')),
+        html: ({ tt, esc }) => tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), esc(item.texto), acentuada(item.base[0], 'teen'), acentuada(item.base[1], 'ty')),
         espera: 3200,
       });
     },
@@ -156,8 +168,7 @@ function montarTeen(contenedor, item, api) {
 }
 
 function montarEscritura(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.teen.escritura)(agrupar(item.n))}</p>`;
+  contenedor.innerHTML = enunciadoEscritura(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4 elecciones--palabras',
     opciones: item.opciones.map((o, i) => ({ valor: i, html: api.esc(o) })),
@@ -166,14 +177,16 @@ function montarEscritura(contenedor, item, api) {
       botones.marcar([item.solucion], valor);
       const buena = item.opciones[item.solucion];
       const malas = item.opciones.filter((_, i) => i !== item.solucion);
-      const nota = {
-        compuesto: () => tt(TX.teen.nota_compuesto),
-        decena: () => tt(TX.teen.nota_decena)(api.esc(buena), api.esc(malas.join(', '))),
-        plural: () => tt(TX.teen.nota_plural)(api.esc(buena), api.esc(malas.find(o => o.endsWith('s')))),
-      }[item.clase]();
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: `${tt(TX.teen.escritura_ok)(agrupar(item.n), api.esc(buena))} ${nota}`,
+        html: ({ tt, esc }) => {
+          const nota = {
+            compuesto: () => tt(TX.teen.nota_compuesto),
+            decena: () => tt(TX.teen.nota_decena)(esc(buena), esc(malas.join(', '))),
+            plural: () => tt(TX.teen.nota_plural)(esc(buena), esc(malas.find(o => o.endsWith('s')))),
+          }[item.clase]();
+          return `${tt(TX.teen.escritura_ok)(agrupar(item.n), esc(buena))} ${nota}`;
+        },
         espera: 3200,
       });
     },
@@ -186,10 +199,13 @@ function montarTeenOEscritura(contenedor, item, api) {
 
 // ─── Ejercicio 3: fichas de palabras en español ──────────────────────────────
 
+const enunciadoFichas = (item, { tt }) => `<p class="instruccion">${tt(TX.fichas.instruccion)(agrupar(item.n))}</p>`;
+const enunciadoFichasODictadoEs = (item, textos) => (item.tipo === 'fichas' ? enunciadoFichas : enunciadoDictado)(item, textos);
+
 function montarFichas(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.fichas.instruccion)(agrupar(item.n))}</p>
+    ${enunciadoFichas(item, api)}
     <div class="linea-fichas" id="linea" aria-live="polite"></div>
     <div class="banco-fichas" id="banco"></div>
     <button type="button" class="comprobar" id="comprobar" disabled>${api.t.comprobar}</button>`;
@@ -221,13 +237,15 @@ function montarFichas(contenedor, item, api) {
     const acierto = esSecuenciaCorrecta(item, mias);
     linea.classList.add(acierto ? 'linea-fichas--bien' : 'linea-fichas--mal');
     banco.querySelectorAll('button').forEach(b => { b.disabled = true; });
-    const buena = `${tt(TX.fichas.correcta)}: ${api.esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
     // Solo las notas de las fichas erróneas que el alumno puso, con las palabras de este número
     const pre = item.texto.startsWith('mil') ? '' : item.texto.split(' mil')[0];
-    const notas = item.sobran.filter(s => mias.includes(s)).map(s => tt(TX.fichas.notas[s])(api.esc(item.texto), api.esc(pre))).join(' ');
     api.responder({
       acierto,
-      html: acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: ${api.esc(mias.join(' '))}.<br>${buena}${notas ? `<br>${notas}` : ''}`,
+      html: ({ tt, esc }) => {
+        const buena = `${tt(TX.fichas.correcta)}: ${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
+        const notas = item.sobran.filter(s => mias.includes(s)).map(s => tt(TX.fichas.notas[s])(esc(item.texto), esc(pre))).join(' ');
+        return acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: ${esc(mias.join(' '))}.<br>${buena}${notas ? `<br>${notas}` : ''}`;
+      },
       espera: 3200,
     });
   });
@@ -248,6 +266,7 @@ arrancar({
       introduccion: TX.dictado.introduccion,
       generar: generarDictado,
       montar: montarDictado,
+      enunciado: enunciadoDictado,
     },
     {
       nombre: TX.teen.nombre,
@@ -255,6 +274,7 @@ arrancar({
       introduccion: TX.teen.introduccion,
       generar: rng => (rng.azar() < 0.5 ? generarTeen(rng) : generarEscritura(rng)),
       montar: montarTeenOEscritura,
+      enunciado: enunciadoTeenOEscritura,
     },
     {
       nombre: TX.fichas.nombre,
@@ -262,6 +282,7 @@ arrancar({
       introduccion: TX.fichas.introduccion,
       generar: rng => (rng.azar() < 0.6 ? generarFichas(rng) : generarDictadoEs(rng)),
       montar: montarFichasODictadoEs,
+      enunciado: enunciadoFichasODictadoEs,
     },
   ],
 });

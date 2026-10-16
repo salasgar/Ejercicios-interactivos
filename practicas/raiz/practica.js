@@ -80,11 +80,13 @@ const PASO = 20;          // lo que ocupa una ficha (18 px + 2 de hueco)
 const COLUMNAS = LADO_MAXIMO;
 const SEPARACION = 16;    // hueco entre el cuadrado y las fichas que sobran
 
+const enunciadoForma = (item, { tt }) => `<p class="instruccion">${tt(TX.forma.instruccion)(item.n)}</p>`;
+
 function montarForma(contenedor, item, api) {
   const { tt } = api;
   const { n } = item;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.forma.instruccion)(n)}</p>
+    ${enunciadoForma(item, api)}
     <div class="zona" id="zona"><div class="marco" id="marco"></div></div>
     <div class="selector-lado">
       <span class="selector-lado__nombre">${tt(TX.forma.lado)}</span>
@@ -142,7 +144,7 @@ function montarForma(contenedor, item, api) {
     este.hidden = true;
     if (s !== item.raiz) {
       const motivo = s > item.raiz ? TX.forma.lado_grande : TX.forma.lado_pequeno;
-      return api.responder({ acierto: false, html: `${tt(motivo)(s, n)} ${explicacion(n, item.raiz, item.resto, api)}`, espera: 4500 });
+      return api.responder({ acierto: false, html: textos => `${textos.tt(motivo)(s, n)} ${explicacion(n, item.raiz, item.resto, textos)}`, espera: 4500 });
     }
     fase2.hidden = false;
     tec = teclado(fase2.querySelector('#teclado'), [tt(TX.forma.sobran)], () => { comprobar.disabled = !tec.lleno(); });
@@ -155,19 +157,31 @@ function montarForma(contenedor, item, api) {
     tec.bloquear();
     tec.marcar(0, acierto);
     comprobar.hidden = true;
-    const base = explicacion(n, item.raiz, item.resto, api);
-    api.responder({ acierto, html: acierto ? base : `${tt(TX.forma.resto_mal)(tuyo, n, item.raiz, item.resto)} ${base}`, espera: 3200 });
+    api.responder({
+      acierto,
+      html: textos => {
+        const base = explicacion(n, item.raiz, item.resto, textos);
+        return acierto ? base : `${textos.tt(TX.forma.resto_mal)(tuyo, n, item.raiz, item.resto)} ${base}`;
+      },
+      espera: 3200,
+    });
   });
 }
 
 // ─── Ejercicio 2: sin dibujo ────────────────────────────────────────────────────────
+
+function enunciadoSinDibujo(item, textos) {
+  if (item.tipo === 'puede') return enunciadoPuede(item, textos);
+  const { tt } = textos;
+  return `<p class="instruccion">${item.tipo === 'exacta' ? tt(TX.sin.exacta_pregunta)(item.n) : tt(TX.sin.entera_pregunta)(item.n)}</p>`;
+}
 
 function montarSinDibujo(contenedor, item, api) {
   if (item.tipo === 'puede') return montarPuede(contenedor, item, api);
   const { tt } = api;
   const exacta = item.tipo === 'exacta';
   contenedor.innerHTML = `
-    <p class="instruccion">${exacta ? tt(TX.sin.exacta_pregunta)(item.n) : tt(TX.sin.entera_pregunta)(item.n)}</p>
+    ${enunciadoSinDibujo(item, api)}
     <div class="operacion">${exacta ? `√${item.n}` : item.n}</div>
     ${exacta ? '' : `<p class="ayuda">${tt(TX.sin.entera_ayuda)}</p>`}
     <div id="teclado"></div>
@@ -185,22 +199,28 @@ function montarSinDibujo(contenedor, item, api) {
     if (exacta) {
       const acierto = ku === item.raiz;
       tec.marcar(0, acierto);
-      let html = tt(TX.sin.exacta_bien)(n, item.raiz);
-      if (!acierto) html = `${ku * 2 === n ? tt(TX.sin.exacta_mitad)(ku, n) : tt(TX.sin.exacta_mal)(ku, n)} ${html}`;
+      const html = ({ tt }) => {
+        const bien = tt(TX.sin.exacta_bien)(n, item.raiz);
+        return acierto ? bien : `${ku * 2 === n ? tt(TX.sin.exacta_mitad)(ku, n) : tt(TX.sin.exacta_mal)(ku, n)} ${bien}`;
+      };
       return api.responder({ acierto, html, espera: 3000 });
     }
     const bienRaiz = ku === item.raiz, bienResto = ru === item.resto;
     tec.marcar(0, bienRaiz);
     tec.marcar(1, bienResto);
-    let html = explicacion(n, item.raiz, item.resto, api);
-    if (!(bienRaiz && bienResto) && ku * ku + ru === n && ru > 2 * ku) html = `${tt(TX.sin.resto_grande)(n, ku, ru)} ${html}`;
+    const html = textos => {
+      const base = explicacion(n, item.raiz, item.resto, textos);
+      if (!(bienRaiz && bienResto) && ku * ku + ru === n && ru > 2 * ku) return `${textos.tt(TX.sin.resto_grande)(n, ku, ru)} ${base}`;
+      return base;
+    };
     api.responder({ acierto: bienRaiz && bienResto, html, espera: 3600 });
   });
 }
 
+const enunciadoPuede = (item, { tt }) => `<p class="instruccion">${tt(TX.sin.puede_pregunta)(item.raiz, item.resto)}</p>`;
+
 function montarPuede(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.sin.puede_pregunta)(item.raiz, item.resto)}</p>`;
+  contenedor.innerHTML = enunciadoPuede(item, api);
   const buena = item.puede ? 'si' : 'no';
   const botones = elecciones(contenedor, {
     clase: 'si-no',
@@ -210,7 +230,7 @@ function montarPuede(contenedor, item, api) {
       botones.marcar([buena], valor);
       api.responder({
         acierto: valor === buena,
-        html: tt(item.puede ? TX.sin.puede_si : TX.sin.puede_no)(item.raiz, item.resto),
+        html: ({ tt }) => tt(item.puede ? TX.sin.puede_si : TX.sin.puede_no)(item.raiz, item.resto),
         espera: 4000,
       });
     },
@@ -219,11 +239,12 @@ function montarPuede(contenedor, item, api) {
 
 // ─── Ejercicio 3: problemas ─────────────────────────────────────────────────────────
 
+const enunciadoProblema = (item, { tt }) => `<p class="enunciado">${tt(TX.prob[item.plantilla][item.variante])(item.n)}</p>`;
+
 function montarProblema(contenedor, item, api) {
   const { tt } = api;
-  const enunciado = TX.prob[item.plantilla][item.variante];
   contenedor.innerHTML = `
-    <p class="enunciado">${tt(enunciado)(item.n)}</p>
+    ${enunciadoProblema(item, api)}
     <div id="teclado"></div>
     <button type="button" class="comprobar" id="comprobar" disabled>${api.t.comprobar}</button>`;
   const comprobar = contenedor.querySelector('#comprobar');
@@ -240,8 +261,14 @@ function montarProblema(contenedor, item, api) {
     tec.marcar(0, bienLado);
     if (item.dosCampos) tec.marcar(1, bienResto);
     const acierto = bienLado && bienResto;
-    const buena = `${explicacion(item.n, item.raiz, item.resto, api)} ${tt(TX.prob.respuesta)(item.raiz, item.resto, item.dosCampos)}`;
-    api.responder({ acierto, html: acierto ? buena : `${tt(TX.prob.tu_respuesta)(a, b)} ${buena}`, espera: 4200 });
+    api.responder({
+      acierto,
+      html: textos => {
+        const buena = `${explicacion(item.n, item.raiz, item.resto, textos)} ${textos.tt(TX.prob.respuesta)(item.raiz, item.resto, item.dosCampos)}`;
+        return acierto ? buena : `${textos.tt(TX.prob.tu_respuesta)(a, b)} ${buena}`;
+      },
+      espera: 4200,
+    });
   });
 }
 
@@ -257,6 +284,7 @@ arrancar({
       generar: generarForma,
       clave: item => String(item.n),
       montar: montarForma,
+      enunciado: enunciadoForma,
     },
     {
       nombre: TX.sin.nombre,
@@ -264,12 +292,14 @@ arrancar({
       introduccion: TX.sin.introduccion,
       generar: generarSinDibujo,
       montar: montarSinDibujo,
+      enunciado: enunciadoSinDibujo,
     },
     {
       nombre: TX.prob.nombre,
       detalle: TX.prob.detalle,
       generar: generarProblema,
       montar: montarProblema,
+      enunciado: enunciadoProblema,
     },
   ],
 });

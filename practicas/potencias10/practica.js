@@ -14,15 +14,19 @@ const potencia = n => `10<sup>${n}</sup>`;
 
 // ─── Ejercicio 1: el deslizador de ceros ─────────────────────────────────────
 
-function montarDeslizador(contenedor, item, api) {
-  const { tt } = api;
+const enunciadoDeslizador = (item, { tt }) => {
   const pregunta = {
     cifras: () => tt(TX.desl.cifras)(mostrarDeslizador(item.n).en),
     potencia: () => tt(TX.desl.potencia)(mostrarDeslizador(item.n).cifras),
     ceros: () => tt(TX.desl.ceros)(item.n),
   }[item.pide]();
+  return `<p class="instruccion">${pregunta}</p>`;
+};
+
+function montarDeslizador(contenedor, item, api) {
+  const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${pregunta}</p>
+    ${enunciadoDeslizador(item, api)}
     <div class="deslizador">
       <div class="operacion" id="pot"></div>
       <div class="deslizador__numero" id="num"></div>
@@ -52,16 +56,20 @@ function montarDeslizador(contenedor, item, api) {
     desl.disabled = true;
     ev.target.hidden = true;
     const v = mostrarDeslizador(item.n);
-    const buena = `<span class="cuenta">${potencia(item.n)} = ${v.cifras}</span> (${tt(TX.desl.ceros_dice)(item.n)}) = ${v.en}${v.enGb ? ` = ${v.enGb} (${tt(TX.desl.gb)})` : ''} = ${v.es}.`;
+    const buena = ({ tt }) => `<span class="cuenta">${potencia(item.n)} = ${v.cifras}</span> (${tt(TX.desl.ceros_dice)(item.n)}) = ${v.en}${v.enGb ? ` = ${v.enGb} (${tt(TX.desl.gb)})` : ''} = ${v.es}.`;
     api.responder({
       acierto,
-      html: acierto ? buena : `${tt(TX.desl.tu_respuesta)(elegido)} ${buena}`,
+      html: textos => (acierto ? buena(textos) : `${textos.tt(TX.desl.tu_respuesta)(elegido)} ${buena(textos)}`),
       espera: 2200,
     });
   });
 }
 
 // ─── Ejercicio 2: el «and» y los ceros de cada grupo ─────────────────────────
+
+const enunciadoAnd = (item, { tt }) => `<p class="instruccion">${tt(TX.and.empareja)}</p>
+    <ul>${item.nombres.map(nombre => `<li>${nombre}</li>`).join('')}</ul>
+    <p>${item.numeros.map(agrupar).join(' &nbsp; ')}</p>`;
 
 function montarAnd(contenedor, item, api) {
   const { tt } = api;
@@ -97,21 +105,23 @@ function montarAnd(contenedor, item, api) {
     item.solucion.forEach((j, i) => boton(i, j).classList.add('pareja__boton--correcta'));
     if (!acierto) boton(0, asignado[0]).classList.add('pareja__boton--mal'), boton(1, asignado[1]).classList.add('pareja__boton--mal');
     // El nombre en su línea (se puede partir) y el número debajo; y por qué: dónde va el «and»
-    const lineas = item.nombres.map((nombre, i) => {
+    const lineas = ({ tt }) => item.nombres.map((nombre, i) => {
       const n = item.numeros[item.solucion[i]], g = gruposDe(n);
       const razon = tt(/ thousand and /.test(nombre) ? TX.and.por_que.despues : TX.and.por_que.dentro)(g.miles, g.unidades);
       return `${nombre}<br><span class="cuenta">= ${agrupar(n)}</span><br>${razon}`;
     });
-    api.responder({ acierto, html: lineas.join('<br><br>'), espera: 4200 });
+    api.responder({ acierto, html: textos => lineas(textos).join('<br><br>'), espera: 4200 });
   });
 }
 
 const MAX_CIFRAS = 12;
 
+const enunciadoCifras = (item, { tt }) => `<p class="instruccion">${tt(TX.and.escribe)(item.texto)}</p>`;
+
 function montarCifras(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.and.escribe)(item.texto)}</p>
+    ${enunciadoCifras(item, api)}
     <div class="operacion operacion--teclado" id="pantalla"></div>
     <div class="botones-numeros teclado" id="teclado">
       ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => `<button type="button" data-d="${d}">${d}</button>`).join('')}
@@ -140,10 +150,10 @@ function montarCifras(contenedor, item, api) {
     ev.target.hidden = true;
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
     const g = gruposDe(item.n);
-    const buena = `${item.texto}<br><span class="cuenta">= ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
+    const buena = ({ tt }) => `${item.texto}<br><span class="cuenta">= ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
     api.responder({
       acierto,
-      html: acierto ? buena : `${tt(TX.and.tu_respuesta)(agrupar(Number(escrito)))} ${buena}<br>${tt(item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es)}`,
+      html: textos => (acierto ? buena(textos) : `${textos.tt(TX.and.tu_respuesta)(agrupar(Number(escrito)))} ${buena(textos)}<br>${textos.tt(item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es)}`),
       espera: 3000,
     });
   });
@@ -153,36 +163,43 @@ function montarAndOCifras(contenedor, item, api) {
   (item.tipo === 'and' ? montarAnd : montarCifras)(contenedor, item, api);
 }
 
+const enunciadoAndOCifras = (item, textos) => (item.tipo === 'and' ? enunciadoAnd : enunciadoCifras)(item, textos);
+
 // ─── Ejercicio 3: billion ────────────────────────────────────────────────────
 
 /** Todas las formas de nombrar c · 10ᵉ, con los números de ese ítem. */
-function descripcion(c, e, api) {
+function descripcion(c, e, { tt }) {
   const f = formasDe(c, e);
   let texto = `<span class="cuenta">${f.cifras} = ${pot(c, e)}</span> = ${f.en}${f.enGb ? ` = ${f.enGb}` : ''} = ${f.es}.`;
-  if (e === 9) texto += ` ${api.tt(TX.billion.nota_billion)}`;
-  if (e === 12) texto += ` ${api.tt(TX.billion.nota_trillion)}`;
+  if (e === 9) texto += ` ${tt(TX.billion.nota_billion)}`;
+  if (e === 12) texto += ` ${tt(TX.billion.nota_trillion)}`;
   return texto;
 }
 
+/** La pregunta del ítem (sin opciones). */
+function preguntaBillion(item, { tt }) {
+  if (item.clase === 'potencia') return tt(TX.billion.potencia)(item.nombre, item.uso);
+  if (item.clase === 'nombre') return tt(TX.billion.en_ingles)(agrupar(item.c * 10 ** item.e), pot(item.c, item.e));
+  if (item.clase === 'espanol') return tt(TX.billion.en_espanol)(item.nombre, item.uso);
+  return tt(TX.billion.mismo)(`${item.a.texto}${item.a.uso ? ` (${item.a.uso})` : ''}`, `${item.b.texto}${item.b.uso ? ` (${item.b.uso})` : ''}`);
+}
+
+const enunciadoBillion = (item, textos) => `<p class="instruccion">${preguntaBillion(item, textos)}</p>`;
+
 function montarBillion(contenedor, item, api) {
-  const { tt } = api;
-  let pregunta, opciones, clase = '', buena;
+  let opciones, clase = '', buena;
   if (item.clase === 'potencia') {
-    pregunta = tt(TX.billion.potencia)(item.nombre, item.uso);
     opciones = item.opciones.map((o, i) => ({ valor: i, html: pot(o.c, o.e) }));
   } else if (item.clase === 'nombre') {
-    pregunta = tt(TX.billion.en_ingles)(agrupar(item.c * 10 ** item.e), pot(item.c, item.e));
     opciones = item.opciones.map((o, i) => ({ valor: i, html: o }));
   } else if (item.clase === 'espanol') {
-    pregunta = tt(TX.billion.en_espanol)(item.nombre, item.uso);
     opciones = item.opciones.map((o, i) => ({ valor: i, html: o }));
   } else {
-    pregunta = tt(TX.billion.mismo)(`${item.a.texto}${item.a.uso ? ` (${item.a.uso})` : ''}`, `${item.b.texto}${item.b.uso ? ` (${item.b.uso})` : ''}`);
     opciones = [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }];
     clase = 'si-no';
     buena = item.verdad ? 'si' : 'no';
   }
-  contenedor.innerHTML = `<p class="instruccion">${pregunta}</p>`;
+  contenedor.innerHTML = enunciadoBillion(item, api);
   const botones = elecciones(contenedor, {
     clase: clase || `elecciones elecciones--4 elecciones--palabras`,
     opciones,
@@ -191,14 +208,17 @@ function montarBillion(contenedor, item, api) {
       const correcta = item.clase === 'mismo' ? buena : item.solucion;
       botones.marcar([correcta], valor);
       const acierto = String(valor) === String(correcta);
+      const html = ({ tt }) => {
       let html;
       if (item.clase === 'mismo') {
         html = `${item.a.texto}<br><span class="cuenta">= ${agrupar(item.a.valor)}</span><br>${item.b.texto}<br><span class="cuenta">= ${agrupar(item.b.valor)}</span><br>${tt(item.verdad ? TX.billion.es_igual : TX.billion.es_distinto)}.`;
         if (item.verdad) html += ` ${tt(TX.billion.nota_billion)}`;
         else if ([item.a, item.b].some(x => /trillion/.test(x.texto))) html += ` ${tt(TX.billion.nota_trillion)}`;
       } else {
-        html = descripcion(item.c, item.e, api);
+        html = descripcion(item.c, item.e, { tt });
       }
+      return html;
+      };
       api.responder({ acierto, html, espera: 3200 });
     },
   });
@@ -214,6 +234,7 @@ arrancar({
       detalle: TX.desl.detalle,
       generar: generarDeslizador,
       montar: montarDeslizador,
+      enunciado: enunciadoDeslizador,
     },
     {
       nombre: TX.and.nombre,
@@ -221,6 +242,7 @@ arrancar({
       introduccion: TX.and.introduccion,
       generar: rng => (rng.azar() < 0.5 ? generarAnd(rng) : generarCifras(rng)),
       montar: montarAndOCifras,
+      enunciado: enunciadoAndOCifras,
     },
     {
       nombre: TX.billion.nombre,
@@ -228,6 +250,7 @@ arrancar({
       introduccion: TX.billion.introduccion,
       generar: generarBillion,
       montar: montarBillion,
+      enunciado: enunciadoBillion,
     },
   ],
 });

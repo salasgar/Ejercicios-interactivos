@@ -10,15 +10,14 @@ import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clave
 /** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
 const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
 
-function procedimiento(item, api) {
+function procedimiento(item, { tt }) {
   const filas = item.lineas.map((l, i) =>
-    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${html(api.tt(l))}</span></li>`);
+    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${html(tt(l))}</span></li>`);
   return `<ol class="procedimiento">${filas.join('')}</ol>`;
 }
 
 /** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
-function explicacion(item, api) {
-  const { tt } = api;
+function explicacion(item, { tt }) {
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
   if (!item.error) {
     // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
@@ -30,23 +29,28 @@ function explicacion(item, api) {
   return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
 }
 
+const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
+const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
+const enunciadoNombre = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.nombre)}</p>${procedimiento(item, textos)}`;
+const enunciadoPasos = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.pasos)}</p>${procedimiento(item, textos)}`;
+
 function montarHay(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.hay)}</p>${procedimiento(item, api)}`;
+  contenedor.innerHTML = enunciadoHay(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'bien', html: tt(TX.bien) }, { valor: 'error', html: tt(TX.error) }],
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
 
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
+  contenedor.innerHTML = enunciadoLinea(item, api);
   const botones = elecciones(contenedor, {
     clase: 'procedimiento procedimiento--botones',
     opciones: item.lineas.map((l, i) => ({
@@ -56,28 +60,27 @@ function montarLinea(contenedor, item, api) {
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
 
 function montarNombre(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.nombre)}</p>${procedimiento(item, api)}`;
+  contenedor.innerHTML = enunciadoNombre(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones nombres',
     opciones: item.opciones.map(clave => ({ valor: clave, html: esc(tt(NOMBRES[clave])) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
 
 /** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
-function explicacionPasos(item, api) {
-  const { tt } = api;
+function explicacionPasos(item, { tt }) {
   const plantilla = PASOS_POR_ID[item.plantilla];
   if (item.salta) {
     const k = plantilla.entre ?? item.lineas.length - 1;
@@ -88,14 +91,14 @@ function explicacionPasos(item, api) {
 
 function montarPasos(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.pasos)}</p>${procedimiento(item, api)}`;
+  contenedor.innerHTML = enunciadoPasos(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: tt(TX.si) }, { valor: 'no', html: tt(TX.no) }],
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacionPasos(item, api), espera: 3600 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacionPasos(item, textos), espera: 3600 });
     },
   });
 }
@@ -110,6 +113,7 @@ arrancar({
       generar: generarHay,
       clave: claveItem,
       montar: montarHay,
+      enunciado: enunciadoHay,
     },
     {
       nombre: TX.nombre.linea,
@@ -117,6 +121,7 @@ arrancar({
       generar: generarLinea,
       clave: claveItem,
       montar: montarLinea,
+      enunciado: enunciadoLinea,
     },
     {
       nombre: TX.nombre.nombre,
@@ -124,6 +129,7 @@ arrancar({
       generar: generarNombre,
       clave: claveItem,
       montar: montarNombre,
+      enunciado: enunciadoNombre,
     },
     {
       nombre: TX.nombre.pasos,
@@ -132,6 +138,7 @@ arrancar({
       generar: generarPasos,
       clave: clavePasos,
       montar: montarPasos,
+      enunciado: enunciadoPasos,
     },
   ],
 });
