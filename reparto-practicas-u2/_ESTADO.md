@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 14:28 UTC · por s-20261016T142535-baf582e4 (cierre de la 44). **Las 44 tareas están LISTAS**, sin reclamos vivos.
+Regenerado: 2026-10-16 14:42 UTC · por la coordinadora s-20261016T122625-186b4bd8 (alta de la 45 y la 46; la 44 reescrita: el código por práctica se ELIMINA. Relistado hechos/ con git fetch: sin reclamos vivos). **Las 43 primeras tareas están LISTAS; la 44, la 45 y la 46 están PENDIENTES (libres).** La 45 y la 46 son de diseño/propuesta (ALTO, con Juan Luis delante) y solo escriben en su carpeta de salida; la 44 toca la base.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -160,12 +160,14 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 41 | Enunciados creíbles en clasificador e imposibles: contextos, unidades y cotas (noria, metrónomo, corredor, semáforo, grifo, cuentas, alambre, m.c.d. ≥ 2) | tareas/tarea-41-enunciados-creibles.md | ninguna | 1 h | MEDIO | 40, 42 | practicas/clasificador/textos.js, practicas/imposibles/textos.js, sus dos tests; salidas/41-enunciados-creibles/ | LISTA | terminada 13:5xZ (16-oct) · commit 0ad1821 |
 | 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 43 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | LISTA | terminada 14:04Z (16-oct) · commit ed1383e |
 | 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | LISTA | terminada ~14:1xZ (16-oct) · commit d94b7fc |
-| 44 | Quitar de la vista del alumno los códigos de resultado y la petición de enviarlos (la nube ya lo cuenta); desplegable discreto de respaldo | tareas/tarea-44-sin-codigos-de-resultado.md | ninguna | 1 h | MEDIO | — | practicas/_comun/{base,textos}.js (solo la caja del código), practicas/semana.js, practicas/profesor.html, README.md, docs/practicas-unidad2.md; salidas/44-sin-codigos-de-resultado/ | LISTA | terminada 14:28Z (16-oct) · commit 3ad179c |
+| 44 | Eliminar el código de resultado por práctica (y el tope de 32 ids del catálogo); sin peticiones de enviar códigos; el de la tarea, en un desplegable discreto | tareas/tarea-44-sin-codigos-de-resultado.md | ninguna | 1 h | MEDIO | — | practicas/_comun/{base,codigos,catalogo,textos}.js, practicas/semana.js, practicas/profesor.{js,html}, README.md, docs/practicas-unidad2.md; salidas/44-sin-codigos-de-resultado/ | PENDIENTE | — |
+| 45 | Diseño (con Juan Luis) del modelo de tareas v2: unidades, tres estados, asignación a alumnos, progreso por tarea; lista de tareas de implementación | tareas/tarea-45-diseno-tareas-v2.md | ninguna | 2 h | ALTO | — | salidas/45-diseno-tareas-v2/ (DISENO.md) | PENDIENTE | — |
+| 46 | Propuesta de las cuatro tareas de la unidad 1 con las 15 prácticas de repaso (ejercicio → destreza; destrezas sin cubrir) | tareas/tarea-46-tareas-unidad1.md | ninguna | 1 h 30 min | ALTO | — | salidas/46-tareas-unidad1/ (PROPUESTA.md) | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: ninguna tarea libre. Las 40-43 se cerraron sin prueba en navegador (lo dicen sus terminadas): conviene que Juan Luis mire semáforo (ej. 1 y 2), clasificador (ej. 1), rectángulos (ej. 1) y léelo (ej. 1 y 2) en GitHub Pages.
+Cuántas sesiones caben a la vez: **tres** (44 MEDIO; 45 y 46 ALTO, sin ficheros en común). Las 45 y 46 necesitan a Juan Luis en la conversación. Las 40-43 se cerraron sin prueba en navegador: conviene que Juan Luis mire semáforo, clasificador, rectángulos (ej. 1) y léelo en GitHub Pages.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
