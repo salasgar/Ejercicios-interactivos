@@ -7,7 +7,7 @@
 
    Piezas para los ítems (ver ejemplos en ../plantilla/):
      .instruccion                     la orden, en gris, encima del ítem; lo que decide qué
-                                      hacer va en <strong> (negrita y en azul)
+                                      hacer va en <strong> (negrita y en azul; un <strong class> conserva su color)
      .operacion  .frase  .numero      la cuenta destacada y la frase con huecos
      .elecciones.elecciones--N > .eleccion     botones de elegir (N = 2, 3 o 4)
      .si-no > .eleccion               dos botones grandes, siempre en fila
@@ -61,7 +61,7 @@
 .introduccion { text-align: left; }
 .introduccion button { margin-top: .4rem; }
 .instruccion { color: var(--texto-suave); font-size: .95rem; margin-bottom: .9rem; }
-.instruccion strong { color: var(--primario-oscuro); font-weight: 700; }
+.instruccion strong:not([class]) { color: var(--primario-oscuro); font-weight: 700; }
 .operacion {
   display: inline-block; font-size: 1.6rem; font-weight: 700;
   background: var(--primario-claro); color: var(--primario-oscuro);
