@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 13:49 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta la tarea 42, tercera de la revisión de la app por Juan Luis el 16-10; relistado hechos/ con git fetch: sin hechos nuevos desde la regeneración de la 39 a las 05:31 UTC, sin reclamos de la 40 ni la 41). **Las 39 tareas anteriores están LISTAS; la 40, la 41 y la 42 están PENDIENTES (libres), no comparten ficheros y caben a la vez o en cadena.** Vendrán más (43, 44…) según siga la revisión; cada una se da de alta con su ficha y su fila aquí.
+Regenerado: 2026-10-16 13:56 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta la tarea 43, cuarta de la revisión de la app por Juan Luis el 16-10; relistado hechos/ con git fetch: la 40 y la 41 tienen terminada y commit (ad30481, 0ad1821), cerradas en ~20 min cada una, sin prueba en navegador según sus terminadas; sin reclamos vivos). **Las 41 primeras tareas están LISTAS; la 42 y la 43 están PENDIENTES (libres), no comparten ficheros y caben a la vez o en cadena 42+43.** Vendrán más (44, 45…) según siga la revisión.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -158,12 +158,13 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 39 | Registro de cada fallo (ítem, respuesta, error) y vista «Fallos» en el panel | tareas/tarea-39-registro-fallos.md | 38 LISTA | 2 h 30 min | ALTO | 38 | practicas/_comun/{base,textos,registro}.js, plantilla (comentarios), panel, resultados.js, firestore.rules (bloque nuevo), tests; salidas/39-registro-fallos/ | LISTA | terminada 05:30Z (16-oct) · commits 0a96ea4 (reglas, publicadas por Juan Luis a las 05:25Z), 45b1125, 90be2b0, 8b5aaae · almacenamiento: un documento por fallo (decisión de Juan Luis) |
 | 40 | Semáforo: botón «Ninguno / None», Check solo con algo pulsado, corrección visible de cada botón | tareas/tarea-40-semaforo-ninguno.md | ninguna | 45 min | MEDIO | 41, 42 | practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js; salidas/40-semaforo-ninguno/ | LISTA | terminada 13:3xZ (16-oct) · commit ad30481 |
 | 41 | Enunciados creíbles en clasificador e imposibles: contextos, unidades y cotas (noria, metrónomo, corredor, semáforo, grifo, cuentas, alambre, m.c.d. ≥ 2) | tareas/tarea-41-enunciados-creibles.md | ninguna | 1 h | MEDIO | 40, 42 | practicas/clasificador/textos.js, practicas/imposibles/textos.js, sus dos tests; salidas/41-enunciados-creibles/ | LISTA | terminada 13:5xZ (16-oct) · commit 0ad1821 |
-| 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 40, 41 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | PENDIENTE | — |
+| 42 | Rectángulos (ej. 1): celda de tamaño fijo por ítem (lado = ancho disponible ÷ n, tope 20 px), sobrantes en rojo claro | tareas/tarea-42-rectangulos-celda-fija.md | ninguna | 45 min | MEDIO | 43 | practicas/rectangulos/{practica,logica}.js y estilos.css, tests/practicas-rectangulos.test.js; salidas/42-rectangulos-celda-fija/ | PENDIENTE | — |
+| 43 | «Léelo en inglés»: distractores con los mismos números (inglés incorrecto de lista cerrada, estructura cambiada, -teen/-ty), ej. 1 y 2 | tareas/tarea-43-leelo-distractores.md | ninguna | 1 h 15 min | MEDIO | 42 | practicas/leelo/logica.js, tests/practicas-leelo.test.js; salidas/43-leelo-distractores/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: **tres** (40, 41 y 42, sin ficheros en común), o menos con cadenas (todas MEDIO, cortas, sin esperas: por ejemplo 40+42 y 41). Fuera del reparto, otra sesión de Juan Luis arregla el 16-10 el CSS común de los botones encendidos (`practicas/_comun/estilos.css`): la 40 lo tiene en «Trampas» y no toca el común. La 38 y la 39 están LISTAS (reglas publicadas, probadas en GitHub Pages). La 39 propone, en su terminada, tareas MEDIO nuevas para que seis prácticas pasen `error` y `respuesta` (semaforo, recta, clasificador, criba, venn y factorizaciones, arbol y divisiones), si Juan Luis las quiere.
+Cuántas sesiones caben a la vez: **dos** (42 y 43, sin ficheros en común), o una con la cadena 42+43 (las dos MEDIO, cortas, sin esperas). Fuera del reparto, otra sesión de Juan Luis arregla el 16-10 el CSS común de los botones encendidos; la 40 copió las reglas en semaforo/estilos.css mientras tanto. La 40 y la 41 se cerraron sin prueba en navegador: conviene que Juan Luis mire semáforo (ej. 1 y 2) y clasificador (ej. 1) antes de darlas por buenas.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
@@ -179,6 +180,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 41 · 2026-10-16 13:32 · s-20261016T133021-06953205 · 0ad1821 · 4 ficheros (practicas/clasificador/textos.js, practicas/imposibles/textos.js, tests/practicas-clasificador.test.js, tests/practicas-imposibles.test.js) · ~20 min (estimada 1 h) · sin prueba en navegador
 
 LISTA · tarea 40 · 2026-10-16 13:3x · s-20261016T132904-99e664cb · ad30481 · 5 ficheros (practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js) · ≈ 20 min (estimada: 45 min)
 
