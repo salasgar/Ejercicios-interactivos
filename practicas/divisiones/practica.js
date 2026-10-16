@@ -6,7 +6,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
 import { htmlFact } from '../_comun/aritmetica.js';
 import {
-  PRIMOS_ESCALERA, generarEscalera, evaluarEleccion, razonNoDivide, razonNoMenor, explicarEscalera,
+  botonesEscalera, generarEscalera, evaluarEleccion, razonNoDivide, razonNoMenor, razonCompuesto, explicarEscalera,
   generarPotencias, exponenteDe, esFactorizacionCorrecta, explicarPotencias,
   generarEjercicio3, explicarEj3,
 } from './logica.js';
@@ -16,9 +16,9 @@ const EXPONENTE_MAXIMO = 6;
 
 // ─── Ejercicio 1: la escalera de divisiones ─────────────────────────────────────
 // El alumno pulsa, paso a paso, el MENOR primo que divide al número actual. Si
-// se equivoca (no divide, o divide pero no es el menor), la app lo explica y
-// sigue ella misma con el paso correcto: el ítem termina siempre al llegar a 1,
-// y es acierto solo si no hubo ningún error en todo el camino.
+// se equivoca (no divide, es compuesto, o divide pero no es el menor), la app
+// lo explica y el número se queda como está hasta que pulse el primo correcto.
+// El ítem termina al llegar a 1 y es acierto solo si no hubo ningún error.
 
 const enunciadoEscalera = (item, { tt }) => `
     <p class="instruccion">${tt(TX.escalera.instruccion)}</p>
@@ -37,7 +37,7 @@ function montarEscalera(contenedor, item, api) {
   const mensajeEl = contenedor.querySelector('#mensaje');
   const cajaBotones = contenedor.querySelector('#botones');
 
-  const botones = PRIMOS_ESCALERA.map(p => {
+  const botones = botonesEscalera(item).map(p => {
     const b = document.createElement('button');
     b.type = 'button';
     b.textContent = String(p);
@@ -56,21 +56,19 @@ function montarEscalera(contenedor, item, api) {
     }
   }
 
+  // Al fallar el número se queda como está: el alumno hace la escalera entera.
   function manejar(p) {
     if (api.respondido() || m === 1) return;
     const { resultado, correcto } = evaluarEleccion(m, p);
-    if (resultado === 'no_divide') {
-      errores++;
-      mensajeEl.innerHTML = razonNoDivide(m, p, api.idioma);
-      avanzar(correcto);
-    } else if (resultado === 'no_menor') {
-      errores++;
-      mensajeEl.innerHTML = razonNoMenor(m, p, correcto, api.idioma);
-      avanzar(correcto);
-    } else {
+    if (resultado === 'correcto') {
       mensajeEl.textContent = '';
       avanzar(p);
+      return;
     }
+    errores++;
+    mensajeEl.innerHTML = resultado === 'no_divide' ? razonNoDivide(m, p, api.idioma)
+      : resultado === 'compuesto' ? razonCompuesto(m, p, api.idioma)
+        : razonNoMenor(m, p, correcto, api.idioma);
   }
 }
 
@@ -81,13 +79,13 @@ function montarEscalera(contenedor, item, api) {
 
 const enunciadoPotencias = (item, { tt }) => `
     <p class="instruccion">${tt(TX.potencias.instruccion)}</p>
-    <div class="operacion">${item.lista.join(' · ')}</div>`;
+    <div class="operacion">${item.n} = ${item.lista.join(' · ')}</div>`;
 
 function montarPotencias(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
     <p class="instruccion">${tt(TX.potencias.instruccion)}</p>
-    <div class="operacion" id="lista">${item.lista.join(' · ')}</div>
+    <div class="operacion" id="lista">${item.n} = ${item.lista.join(' · ')}</div>
     <div class="operacion" id="expresion"></div>
     <div class="grupo-pasos" id="controles"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;

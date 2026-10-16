@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  PRIMOS_ESCALERA, generarEscalera, pasoCorrecto, evaluarEleccion, razonNoDivide, razonNoMenor, explicarEscalera,
+  PRIMOS_ESCALERA, generarEscalera, pasoCorrecto, evaluarEleccion, razonNoDivide, razonNoMenor, razonCompuesto, botonesEscalera, explicarEscalera,
   generarPotencias, exponenteDe, esFactorizacionCorrecta, explicarPotencias,
   generarEjercicio3, generarValor, generarSino, distractoresEj3, explicarEj3,
 } from '../practicas/divisiones/logica.js';
@@ -92,6 +92,43 @@ test('evaluarEleccion: no divide, divide pero no es el menor, y correcto', () =>
   // 1001 = 7 · 11 · 13: el 11 divide pero no es el menor (7 sí lo es).
   assert.deepEqual(evaluarEleccion(1001, 11), { resultado: 'no_menor', correcto: 7 });
   assert.deepEqual(evaluarEleccion(1001, 7), { resultado: 'correcto', correcto: 7 });
+});
+
+test('evaluarEleccion: un divisor compuesto es «compuesto» (después de «no divide», antes de «no menor»)', () => {
+  assert.deepEqual(evaluarEleccion(81, 9), { resultado: 'compuesto', correcto: 3 });
+  assert.deepEqual(evaluarEleccion(81, 5), { resultado: 'no_divide', correcto: 3 });
+  assert.deepEqual(evaluarEleccion(45, 5), { resultado: 'no_menor', correcto: 3 });
+  assert.deepEqual(evaluarEleccion(45, 3), { resultado: 'correcto', correcto: 3 });
+  assert.deepEqual(evaluarEleccion(12, 4), { resultado: 'compuesto', correcto: 2 });
+  assert.deepEqual(evaluarEleccion(12, 6), { resultado: 'compuesto', correcto: 2 });
+});
+
+test('escalera: los distractores dividen a n, no son primos, están entre 4 y 25, son a lo sumo dos y no repiten un primo', () => {
+  let conDistractores = 0;
+  for (const item of generarN(generarEscalera, 1000)) {
+    assert.ok(Array.isArray(item.distractores));
+    assert.ok(item.distractores.length <= 2, `n=${item.n}`);
+    if (item.distractores.length) conDistractores++;
+    for (const d of item.distractores) {
+      assert.equal(item.n % d, 0, `${d} no divide a ${item.n}`);
+      assert.ok(factorizarIndep(d).reduce((s, [, e]) => s + e, 0) > 1, `${d} es primo`);
+      assert.ok(d >= 4 && d <= 25, `${d} fuera de rango`);
+      assert.ok(!PRIMOS_ESCALERA.includes(d));
+    }
+    assert.equal(new Set(item.distractores).size, item.distractores.length);
+    const botones = botonesEscalera(item);
+    assert.deepEqual(botones, [...botones].sort((a, b) => a - b));
+    assert.equal(botones.length, PRIMOS_ESCALERA.length + item.distractores.length);
+  }
+  assert.ok(conDistractores > 500, `solo ${conDistractores} de 1000 con distractores`);
+});
+
+test('razonCompuesto: menciona el número, el compuesto y su factorización, en los dos idiomas', () => {
+  const es = razonCompuesto(81, 9, 'es');
+  const en = razonCompuesto(81, 9, 'en');
+  for (const r of [es, en]) assert.ok(r.includes('81') && r.includes('9 = 3 · 3'), r);
+  assert.match(es, /no es primo/);
+  assert.match(en, /not prime/);
 });
 
 test('razonNoDivide y razonNoMenor: no lanzan, y mencionan los números, en los dos idiomas', () => {

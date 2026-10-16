@@ -11,7 +11,7 @@
 //   'sino'       ejercicio 3 (40 %): ¿es correcta esta igualdad?
 //                { tipo, factorizacion, valorMostrado, igualdadCorrecta }
 
-import { factorizar, valorDe, criterio, htmlFact } from '../_comun/aritmetica.js';
+import { factorizar, valorDe, criterio, htmlFact, esPrimo } from '../_comun/aritmetica.js';
 
 export const PRIMOS_ESCALERA = [2, 3, 5, 7, 11, 13];
 // 2, 3 y 5 tienen un criterio de divisibilidad sencillo (aritmetica.js); para
@@ -71,7 +71,22 @@ export function generarEscalera(rng, intentos = 0) {
   const r = rng.azar();
   const { n, factores } = r < 0.3 ? nCon11o13(rng, 600) : r < 0.45 ? nFactorRepetido(rng, 600) : nAlAzar(rng, 600);
   if (n < 10) return generarEscalera(rng, intentos + 1);
-  return { tipo: 'escalera', n, pasos: pasosDesde(n, factores) };
+  return { tipo: 'escalera', n, pasos: pasosDesde(n, factores), distractores: elegirCompuestos(rng, n) };
+}
+
+// Divisores compuestos que se ofrecen como botones-trampa (el error típico:
+// dividir entre 4, 6, 9… que sí dividen al número pero no son primos).
+const COMPUESTOS_TRAMPA = [4, 6, 8, 9, 10, 12, 14, 15, 18, 20, 25];
+
+/** Hasta dos divisores compuestos de n, al azar, de menor a mayor (ninguno si n no tiene). */
+function elegirCompuestos(rng, n) {
+  const validos = COMPUESTOS_TRAMPA.filter(c => n % c === 0);
+  return rng.barajar(validos).slice(0, 2).sort((a, b) => a - b);
+}
+
+/** Los botones del ítem: los primos de siempre y sus compuestos-trampa, de menor a mayor. */
+export function botonesEscalera(item) {
+  return [...PRIMOS_ESCALERA, ...(item.distractores || [])].sort((a, b) => a - b);
 }
 
 /** Los pasos de referencia: dividir, en orden, por cada primo de la lista (ya ordenada). */
@@ -106,11 +121,24 @@ export function razonNoMenor(numero, primoElegido, primoCorrecto, idioma) {
     : `Yes, ${primoElegido} divides ${numero}, but ${primoCorrecto} also does and it is smaller; we always start with the smallest.`;
 }
 
-/** Qué pasa si el alumno elige `primo` cuando el número actual es `m`. */
-export function evaluarEleccion(m, primo) {
+/** El elegido divide al número, pero no es primo (4, 6, 9…): hay que dividir entre un primo. */
+export function razonCompuesto(numero, elegido, idioma) {
+  // Escrito como producto de primos sin potencias (9 = 3 · 3), que es lo que se ve en la escalera.
+  const f = factorizar(elegido).flatMap(([p, e]) => Array(e).fill(p)).join(' · ');
+  return idioma === 'es'
+    ? `${elegido} divide a ${numero}, pero ${elegido} no es primo (${elegido} = ${f}): hay que dividir entre un primo.`
+    : `${elegido} divides ${numero}, but ${elegido} is not prime (${elegido} = ${f}): you must divide by a prime.`;
+}
+
+/**
+ * Qué pasa si el alumno elige `x` cuando el número actual es `m`: no divide,
+ * divide pero no es primo (compuesto), divide y es primo pero no el menor, o correcto.
+ */
+export function evaluarEleccion(m, x) {
   const correcto = pasoCorrecto(m);
-  if (m % primo !== 0) return { resultado: 'no_divide', correcto };
-  if (primo !== correcto) return { resultado: 'no_menor', correcto };
+  if (m % x !== 0) return { resultado: 'no_divide', correcto };
+  if (!esPrimo(x)) return { resultado: 'compuesto', correcto };
+  if (x !== correcto) return { resultado: 'no_menor', correcto };
   return { resultado: 'correcto', correcto };
 }
 
