@@ -124,7 +124,7 @@ function montarBanco(contenedor, item, api) {
     if (api.respondido()) return;
     botones.forEach(({ x, boton }) => {
       boton.disabled = true;
-      if (n % x === 0) boton.classList.add('bien');
+      if (n % x === 0) boton.classList.add(elegidos.has(x) ? 'bien' : 'falta');
       else if (elegidos.has(x)) boton.classList.add('mal');
     });
     const faltan = item.divisoresN.filter(d => !elegidos.has(d));
