@@ -64,7 +64,8 @@ export const T = {
     resultado_completo: total => `¡Has terminado los ${total} ejercicios! Copia este código y envíaselo a tu profesor.`,
     copiar: 'Copiar',
     copiado: '¡Copiado!',
-    cambiar_codigo: 'Salir',
+    cambiar_codigo: 'Cerrar sesión',
+    entrar_codigo: 'Entrar con mi código',
     // Portada
     portada_titulo: 'Prácticas de la unidad 2',
     portada_subtitulo: 'Divisibilidad',
@@ -162,6 +163,7 @@ export const T = {
     copiar: 'Copy',
     copiado: 'Copied!',
     cambiar_codigo: 'Log out',
+    entrar_codigo: 'Log in with my code',
     // Portada
     portada_titulo: 'Unit 2 practices',
     portada_subtitulo: 'Divisibility',

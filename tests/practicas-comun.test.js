@@ -13,7 +13,7 @@ import {
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, fechaDeDia, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from '../practicas/_comun/contador.js';
 import {
   validarPractica, parametrosDe, claveProgreso, documentoNube, claveIdiomaFijo,
-  modoIdioma, crearSecuenciaIdiomas,
+  modoIdioma, crearSecuenciaIdiomas, sinCodigo,
 } from '../practicas/_comun/base.js';
 import {
   PRIMOS, esPrimo, factorizar, valorDe, divisores as divisoresDe, parejasDivisores, raizEntera, mcd, mcm, sumaCifras, cifras,
@@ -669,4 +669,12 @@ test('plantilla: textos propios en los dos idiomas', () => {
   }
   assert.equal(TX.primo.es_compuesto.es(51), '51 es compuesto');
   assert.match(TX.primo.se_pasa.en(97, 11), /11 · 11 = 121/);
+});
+
+test('cerrar sesión: el código se quita de la dirección y lo demás se queda', () => {
+  const base = 'https://salasgar.github.io/Ejercicios-interactivos/practicas/';
+  assert.equal(sinCodigo(`${base}?c=AJJN`), base);
+  assert.equal(sinCodigo(`${base}semana.html?t=1&c=AJJN`), `${base}semana.html?t=1`);
+  assert.equal(sinCodigo(`${base}recta/?c=AJJN&idioma=en#x`), `${base}recta/?idioma=en#x`);
+  assert.equal(sinCodigo(`${base}recta/`), `${base}recta/`);
 });
