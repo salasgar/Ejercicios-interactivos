@@ -35,8 +35,8 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
 4. Al fallar, el mensaje dice qué ha pasado **con los números de ese ítem**, no una regla
    genérica, y la base añade unas palabras de ánimo.
 5. Al terminar los ejercicios aparece «Tu profesor ya puede verlo» (la nube ya cuenta el
-   progreso). El **código de resultado** (16 caracteres) queda en un desplegable discreto, solo
-   de respaldo si el profesor lo pide; nada manda al alumno enviarlo.
+   progreso). Una práctica suelta no da ningún código (el de 16 caracteres por práctica
+   existió hasta el 2026-10-16 y se eliminó); nada manda al alumno enviar nada.
 6. **La tarea de la semana** (desde el 2026-10-15): un enlace, `practicas/semana.html?t=<id>`,
    abre en una página los ejercicios de esa semana: unos con ★, obligatorios, y una lista de la
    que elige unos cuantos («Termina los 6 ejercicios con ★ y 4 más de la lista, los que tú
@@ -91,12 +91,13 @@ En `practicas/profesor.html`:
    códigos.
 2. **Resultados**, de dos fuentes que el panel junta:
    - (respaldo, para cuando la nube no llega) los **códigos de resultado** que los alumnos dan si se piden, pegados tal cual (el mensaje entero
-     vale: el panel extrae los códigos). Cada código dice de quién es, de qué práctica, qué
-     ejercicios ha terminado, con cuántos fallos (hasta 15 por ejercicio) y qué día. Lee
-     mezclados los de 16 caracteres y los antiguos de 12 de `divisores/`;
+     vale: el panel extrae los códigos). Cada código dice de quién es y de qué tarea (o, los
+     antiguos de 12 de `divisores/`, de qué ejercicios ha terminado y con cuántos fallos).
+     Lee mezclados los de 20 caracteres de las tareas y los de 12; uno de 16 (el código por
+     práctica, que ya no existe) sale en el aviso de «no válidos»;
    - la **nube**: el progreso está en Firestore (`practicas/{práctica}--{código}`, regla
      en `firestore.rules`), fusionado entre los aparatos del alumno, y el panel lo lee entrando
-     con la cuenta del profesor. Si la nube falla no se pierde nada: el código de resultado
+     con la cuenta del profesor. Si la nube falla no se pierde nada: el código de la tarea
      lleva lo necesario para calificar.
 3. La vista «Resumen de todas las prácticas» da una fila por alumno; eligiendo una práctica
    se ve ejercicio a ejercicio. Las dos tablas se descargan en CSV.
@@ -105,7 +106,7 @@ En `practicas/profesor.html`:
    código la primera vez, o ya lo tiene recordado si entró en otra práctica en ese
    dispositivo. Para el enlace de cada alumno (`…&c=ABCD`), se elige la tarea en «Enlaces a»,
    en la sección 1. En el cuadro de códigos se pegan mezclados los de las tareas (20
-   caracteres), los de práctica (16) y los de `divisores/` (12), y la vista «Tareas de la
+   caracteres) y los de `divisores/` (12), y la vista «Tareas de la
    semana» da una fila por alumno y una columna por tarea: «✓ cumplida · 100 pt», «★ 4 de 6 ·
    2 de 4 · 65 pt» o «sin empezar». Los **puntos** (sobre 100) los calcula `estadoTarea`, la
    misma función del marcador del alumno; lo que va a medias solo lo sabe la nube. Un ejercicio cuenta como terminado si lo dice el código de la tarea **o**
@@ -133,35 +134,36 @@ En `practicas/profesor.html`:
    fila y las destrezas de la práctica (§7). Filtros: tarea, práctica y alumno; con nombres en
    la lista, solo cuentan los de la lista.
 
-### Los tres códigos de resultado
+### Los dos códigos de resultado
 
-La longitud dice qué es cada uno; el panel los separa solo.
+La longitud dice qué es cada uno; el panel los separa solo. (Hubo un tercero, de 16
+caracteres, uno por práctica: existió hasta el 2026-10-16 y se eliminó, porque con la nube y
+el de la tarea sobraba y sus 5 bits de práctica limitaban el catálogo a 32 prácticas.)
 
 | Largo | De qué | Qué lleva (en bits) |
 |---|---|---|
 | 12 | la `divisores/` antigua (antes de la tarea 17) | su formato de siempre (`divisores/logica.js`) |
-| 16 | una práctica | práctica (5) · alumno (10) · seis ejercicios × (terminado 1 + fallos hasta 15: 4) · día (10) · control (25) |
 | 20 | una tarea de la semana | versión (5, hoy 1) · tarea (10) · alumno (10) · ★ terminados (10, un bit por ★ en el orden de `tareas.js`) · de elegir terminados (15, igual) · fallos de todos los ejercicios de la tarea (10, hasta 1023) · día del último ejercicio terminado (10) · control (30) |
 
 El de la tarea se escribe en cinco grupos de cuatro (`ABCD-EFGH-JKLM-NPQR-STUV`), con el mismo
-alfabeto (sin I, O, 0 ni 1) y el mismo enmascarado que el de práctica, con otra sal. Los 30
+alfabeto (sin I, O, 0 ni 1) y enmascarado. Los 30
 bits de control hacen que cualquier carácter mal copiado lo invalide. El panel lo interpreta
 con `tareas.js`, así que **una tarea ya mandada no se cambia** (el bit «3.er ★» pasaría a
 querer decir otro ejercicio): si hay que cambiarla, se copia con un `id` nuevo. Cabe una tarea
 de hasta 10 ★ y 15 de elegir, y ids hasta 1023.
 
-Ninguno de los tres códigos es **criptografía** (el programa es público): impiden inventárselo
+Ninguno de los dos códigos es **criptografía** (el programa es público): impiden inventárselo
 a ojo o copiar el de un compañero, no a quien lea el código fuente.
 
 ## 3. La base común (`practicas/_comun/`)
 
 | Fichero | Qué pone |
 |---|---|
-| `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, código de resultado, guardado en el navegador y en Firestore (leído y fusionado al entrar). También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar`, `URL_PORTADA`, `progresoGuardado`, `sincronizarGuardado` (navegador y nube de acuerdo, para la página de la semana) y `adoptarIdioma` |
+| `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, guardado en el navegador y en Firestore (leído y fusionado al entrar). También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar`, `URL_PORTADA`, `progresoGuardado`, `sincronizarGuardado` (navegador y nube de acuerdo, para la página de la semana) y `adoptarIdioma` |
 | `registro.js` | Registro de cada fallo (tarea 39): `datosFallo` (qué se guarda y sus topes, `LIMITES`), `textoPlano`, `registrarFallo` y `enviarPendientes` (cola del navegador), `leerFallos` (panel, con el token del profesor) y `DESTREZAS` (práctica → destrezas, copia del §7; un test comprueba que coinciden) |
 | `nube.js` | Progreso en la nube entre aparatos: `leerNube` (REST, con tiempo máximo; `ok`, `vacio`, `prohibido` o `error`), `escribirNube`, `subirFusionado` (lee, fusiona y escribe), y la fusión pura `fusionarEjercicio` / `fusionarProgreso` |
-| `catalogo.js` | Las 32 filas (31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
-| `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`), de resultado de una práctica (16) y de una tarea de la semana (20); `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
+| `catalogo.js` | Las filas del catálogo (hoy 31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible` |
+| `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`) y de resultado de una tarea de la semana (20); lee también los antiguos de 12 de `divisores/`; `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
 | `tareas.js` | Las tareas de la semana (**se cambia a mano**; el formato está en su cabecera): `id`, `titulo`, `desde`, `estrella`, `elegir`, `nElegir`. También `estadoTarea` (marcador y «cumplida») y `erroresTareas`, que comprueba los datos contra el catálogo |
 | `contador.js` | `OBJETIVO = 10`, `PENALIZACION = 1`, `VIDAS = 5`, `RACHA = 5`, `EXTRA = 1`; `ejercicioNuevo`, `anotar`, `queHaPasado`, `migrarProgreso`, fechas |
 | `aritmetica.js` | `esPrimo`, `factorizar`, `divisores`, `parejasDivisores`, `mcd`, `mcm`, `criterio(n, d)` con `CRITERIOS = [2, 3, 5, 9, 10, 11]`, y las operaciones con factorizaciones (`multiplicarFact`, `dividirFact`, `mcdFact`, `mcmFact`, `htmlFact`…) |
@@ -170,12 +172,11 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 | `rng.js` | `crearRng(semilla)`: `azar()`, `entero(min, max)`, `elegir(lista)`, `barajar(lista)` |
 | `estilos.css` | Lo que comparten: `.instruccion`, `.operacion`, `.elecciones`, `.si-no`, `.pasos`, `.rejilla`, `.hueco`, `.ficha`, `.comprobar`, `.cuenta`… (la lista está en su cabecera) |
 
-**El catálogo está lleno.** El código de resultado reserva 5 bits para la práctica (ids 0 a
-31) y los 32 están ocupados. Una práctica más exige cambiar el formato del código de
-resultado (`codigos.js`, el panel y sus tests), y los códigos ya repartidos dejarían de
-leerse si no se conserva el formato antiguo. Los `id` **no se renumeran ni se reordenan**:
-viajan dentro de los códigos. El orden en que la portada enseña las prácticas no es el del
-catálogo: está en `BLOQUES`, en `practicas/portada.js`.
+**El catálogo ya no tiene tope** (desde el 2026-10-16, al eliminar el código de resultado por
+práctica, que reservaba 5 bits para el id y limitaba a 32 prácticas): una práctica nueva lleva
+el siguiente entero libre. Los `id` **no se renumeran ni se reordenan**: los usan el panel y
+`BLOQUES`. El orden en que la portada enseña las prácticas no es el del catálogo: está en
+`BLOQUES`, en `practicas/portada.js`.
 
 ## 4. El contrato de una práctica
 
@@ -248,7 +249,7 @@ Cosas que conviene saber, aprendidas al escribir las 31:
   `constructor`, `distributiva`, `division`, `reloj` y `baldosas` (las que tienen
   `type="number"`), cada una en su tarea.
 - `…/<slug>/?ejercicio=n` abre directamente el ejercicio n; con `&semana=<id>` vuelve a la
-  tarea de la semana al salir o al terminar, y no enseña el código de la práctica. Lo hace la
+  tarea de la semana al salir o al terminar. Lo hace la
   base: la práctica no tiene que hacer nada.
 - La página de la semana lee el nombre de cada ejercicio importando el `practica.js` de su
   práctica con la base en modo «solo declarar» (`declaracionDe`, en `base.js`): `arrancar` no
@@ -259,7 +260,7 @@ Cosas que conviene saber, aprendidas al escribir las 31:
 
 ## 5. Cómo se añade una práctica
 
-1. Hoy no cabe ninguna más (apartado 3). Si se libera o se amplía el catálogo: copiar
+1. Copiar
    `practicas/plantilla/` a `practicas/<slug>/`, dar de alta la fila en `catalogo.js` con
    `disponible: false` y actualizar las listas de `tests/practicas-comun.test.js`.
 2. Escribir `logica.js` (puro) y su test **antes** que la interfaz. El test tiene que
@@ -277,7 +278,7 @@ Cosas que conviene saber, aprendidas al escribir las 31:
 
 ## 6. Las 31 prácticas
 
-`id` es el del catálogo (el que viaja en el código de resultado). El orden es el de la
+`id` es el del catálogo (el que usan el panel y la portada). El orden es el de la
 portada.
 
 ### Unidad 2 · Divisibilidad
@@ -436,9 +437,9 @@ qué funcionan los criterios y los criterios del 4 y del 25 son de la hoja y de 
 U2-1C-15, U2-2A-04, U2-2C-15, U2-3A-03, U2-3B-04, U2-3C-07, U2-3C-12, U2-4A-05 y U2-4A-06.
 Casi todas son de tres datos o de justificar por escrito.
 
-Para practicarlas hoy quedan las hojas de ejercicios y los cuestionarios; una práctica nueva
-no cabe en el catálogo (apartado 3), así que cubrirlas pasa por añadir un ejercicio a una
-práctica existente (hay sitio: el código de resultado admite hasta seis por práctica).
+Para practicarlas hoy quedan las hojas de ejercicios y los cuestionarios; cubrirlas pasa por
+añadir un ejercicio a una práctica existente o, ahora que el catálogo no tiene tope
+(apartado 3), por una práctica nueva.
 
 ## 8. Dónde está lo demás
 

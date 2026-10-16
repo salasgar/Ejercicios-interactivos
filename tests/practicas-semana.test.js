@@ -12,7 +12,7 @@ import * as divisores from '../divisores/logica.js';
 import { CATALOGO, ID_PLANTILLA, practicaPorSlug } from '../practicas/_comun/catalogo.js';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  codigoAlumno, codigoResultado, leerCodigoResultado, codigoTarea, leerCodigoTarea, leerCualquierCodigo, extraerCodigosResultado,
+  codigoAlumno, leerCodigoResultado, codigoTarea, leerCodigoTarea, leerCualquierCodigo, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import {
   TAREAS, PUNTOS_POR_EJERCICIO, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, erroresTareas, enlaceEjercicio, fechaISO,
@@ -178,17 +178,19 @@ test('código de tarea: no vale con un carácter cambiado, de otro alumno, de ot
   for (const malo of ['', 'ABCD-EFGH-JKLM-NPQR', 'ABCD-EFGH-JKLM-NPQR-STUV', `${codigo}-ABCD`, codigo.slice(0, -1) + '1']) assert.equal(leerCodigoTarea(malo), null);
 });
 
-test('códigos: los tres tipos no se confunden', () => {
+// Un código de 16 caracteres, como los que daba cada práctica hasta el 2026-10-16: ya no vale.
+const DE_16_ANTIGUO = 'ABCD-EFGH-JKLM-NPQR';
+
+test('códigos: los dos tipos no se confunden y el de práctica de 16 ya no existe', () => {
   const t = TAREAS[0];
   const deTarea = codigoTarea(t.id, 7, { estrella: [true], elegir: [], fallos: 3, dia: 44 });
-  const dePractica = codigoResultado(3, 7, [{ terminado: true, fallos: 1 }], 44);
   const deDivisores = divisores.codigoResultado(7, divisores.EJERCICIOS.map(() => ({ terminado: true, fallos: 0 })), 44);
   assert.equal(leerCodigoResultado(deTarea), null, 'uno de tarea no es de práctica');
-  assert.equal(leerCodigoTarea(dePractica), null);
   assert.equal(leerCodigoTarea(deDivisores), null);
+  assert.equal(leerCodigoResultado(DE_16_ANTIGUO), null);
+  assert.equal(leerCualquierCodigo(DE_16_ANTIGUO), null);
   assert.equal(leerCualquierCodigo(deTarea).tipo, 'tarea');
   assert.equal(leerCualquierCodigo(deTarea).tarea, 1);
-  assert.deepEqual([leerCualquierCodigo(dePractica).tipo, leerCualquierCodigo(dePractica).practica], ['practica', 3]);
   assert.deepEqual([leerCualquierCodigo(deDivisores).tipo, leerCualquierCodigo(deDivisores).practica], ['practica', 0]);
   assert.equal(leerCualquierCodigo('ABCD-EFGH-JKLM-NPQR-STUV'), null);
   // Al azar, ninguna tira de 20 símbolos es un código de tarea (30 bits de control).
@@ -197,20 +199,21 @@ test('códigos: los tres tipos no se confunden', () => {
   for (let i = 0; i < 20000; i++) assert.equal(leerCodigoTarea(Array.from({ length: 20 }, () => rng.elegir([...alfabeto])).join('')), null);
 });
 
-test('extraerCodigosResultado: encuentra los de 12, 16 y 20 mezclados en un texto cualquiera', () => {
+test('extraerCodigosResultado: encuentra los de 12 y 20 mezclados en un texto cualquiera', () => {
   const t = TAREAS[0];
   const de20 = codigoTarea(t.id, 2, { estrella: [true, true], elegir: [false, true], fallos: 7, dia: 44 });
   const otro20 = codigoTarea(TAREAS[3].id, 9, { estrella: [true], elegir: [], fallos: 0, dia: 50 });
-  const de16 = codigoResultado(1, 2, [{ terminado: true, fallos: 0 }], 44);
   const de12 = divisores.codigoResultado(3, divisores.EJERCICIOS.map(() => ({ terminado: true, fallos: 0 })), 36);
-  const texto = `Hola profe, mi tarea: ${de20.toLowerCase()}. Y la práctica: ${de16}
+  const texto = `Hola profe, mi tarea: ${de20.toLowerCase()}.
     Luis: ${otro20.replaceAll('-', ' ')} para la semana 4 (y otra vez ${de20})
     Divisores: ${de12} gracias`;
-  assert.deepEqual(extraerCodigosResultado(texto), [de20, de16, otro20, de12]);
-  // Pegados con un espacio: dos de 16, uno de 16 y uno de 20, uno de 12 y uno de 20.
-  assert.deepEqual(extraerCodigosResultado(`${de16} ${de16.replace(/^..../, 'ABCD')}`).length, 2, 'dos de 16 seguidos son dos (el segundo, inválido)');
-  assert.deepEqual(extraerCodigosResultado(`${de16} ${de20}`), [de16, de20]);
-  assert.deepEqual(extraerCodigosResultado(`${de20} ${de16}`), [de20, de16]);
+  assert.deepEqual(extraerCodigosResultado(texto), [de20, otro20, de12]);
+  // Un código de 16 (el de práctica, que ya no existe) sale como no válido (con sus 12 primeros
+  // caracteres) y no tapa a los demás.
+  assert.deepEqual(extraerCodigosResultado(`Mi práctica: ${DE_16_ANTIGUO}`), ['ABCD-EFGH-JKLM']);
+  assert.deepEqual(extraerCodigosResultado(`${DE_16_ANTIGUO} ${de20}`), ['ABCD-EFGH-JKLM', de20]);
+  assert.deepEqual(extraerCodigosResultado(`${de20} ${DE_16_ANTIGUO}`), [de20, 'ABCD-EFGH-JKLM']);
+  // Pegados con un espacio: uno de 12 y uno de 20.
   assert.deepEqual(extraerCodigosResultado(`${de12} ${de20}`), [de12, de20]);
   assert.deepEqual(extraerCodigosResultado(`casa ${de20} para`), [de20]);
   assert.deepEqual(extraerCodigosResultado(`${de20.replaceAll('-', '')}`), [de20]);
