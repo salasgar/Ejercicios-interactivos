@@ -199,6 +199,9 @@ válidas: no pueden ser distractores) y `CLAUDE.md` del repositorio (variantes r
   clases: si las añades al ejercicio 2 para usar «cousin number», hazlo con poco peso y
   comprueba el test de equilibrio de clases (línea 90).
 
+- (T43 hecha) `practica.js` usa `JSON.stringify(item)` como clave anti-repetición: las `falsas` van como propiedad no enumerable y, si faltan, se derivan de una semilla del contenido del ítem.
+- (T43 hecha) Una forma como «elevated to two» añade una palabra-número; los tests comparan por «contiene todas las de la correcta».
+
 ## Prohibido (propio de esta tarea)
 
 - Formas incorrectas fuera de la lista A, o cualquiera de las «fuera a propósito».
