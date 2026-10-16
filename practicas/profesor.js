@@ -377,12 +377,14 @@ function filtrosRegistro() {
   const tarea = tareaPorId(Number($('fallos-tarea').value));
   const lista = nombres();
   const deLista = new Set(lista.map((n, i) => (n ? codigoAlumno(i) : null)).filter(Boolean));
+  const alumno = $('fallos-alumno').value || undefined;
   return {
     ejercicios: tarea ? [...tarea.estrella, ...tarea.elegir] : undefined,
     practica: $('fallos-practica').value || undefined,
-    alumno: $('fallos-alumno').value || undefined,
-    // Con nombres en la lista, solo cuentan los de la lista (fuera queda el código de prueba).
-    alumnos: deLista.size ? deLista : undefined,
+    alumno,
+    // Con nombres en la lista, solo cuentan los de la lista (fuera queda el código de
+    // prueba), salvo que se elija a mano un alumno concreto.
+    alumnos: deLista.size && !alumno ? deLista : undefined,
   };
 }
 
@@ -399,7 +401,11 @@ function pintarRegistro() {
   if (!registro.length) { $('tabla-fallos').innerHTML = ''; return; }
   pedirNombres([...new Set(registro.map(f => f.practica))].map(practicaPorSlug).filter(Boolean));
   const r = agruparFallos(registro, filtrosRegistro());
-  if (!r.total) { $('tabla-fallos').innerHTML = '<p class="vacio">Ningún fallo con estos filtros.</p>'; return; }
+  if (!r.total) {
+    const soloLista = filtrosRegistro().alumnos ? ' Solo cuentan los alumnos de la lista: para ver otro código, elígelo en «Alumno».' : '';
+    $('tabla-fallos').innerHTML = `<p class="vacio">Ningún fallo con estos filtros.${soloLista}</p>`;
+    return;
+  }
   const ejemplo = e => `<div class="pequeno"><code>${esc(e.item)}</code><br>${esc(e.feedback)}${e.respuesta ? ` <em>(contestó: ${esc(e.respuesta)})</em>` : ''} · ${esc(e.alumno)}, ${fechaHora(e.t)}</div>`;
   $('tabla-fallos').innerHTML = `
     <h3>Los fallos más repetidos (${r.total} fallos)</h3>
