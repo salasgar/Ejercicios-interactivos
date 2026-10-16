@@ -113,6 +113,19 @@ Los de «Siguiente paso». Todo es de solo lectura.
   (viajan en el código de la tarea); propón 11, 12, 13, 14 y que la coordinadora lo confirme.
 - Un mismo ejercicio puede ir en dos semanas, pero hasta que la 45 esté implementada
   aparecería ya terminado la segunda vez: dilo en la propuesta donde lo uses.
+- (2026-10-16, s-20261016T144913-715ee461) **El inventario de la U1 no marca nucleares**
+  (272 filas, sin columna). Lo más parecido son las 20 destrezas de cada examen semanal:
+  `…/1. Natural numbers, powers and roots/exámenes-semanales/semana-N/clave-semanaN.json`,
+  campo `destrezas`.
+- La secuenciación buena es la de la carpeta de la unidad
+  (`…/1. Natural numbers, powers and roots/secuenciación-unidad1.tex`, 17-09); la de
+  `apuntes-1eso-bilingue/` es más antigua y distinta. Las semanas de la U1 son: 1 números
+  naturales y redondeo; 2 operaciones, división y propiedades; 3 potencias y raíces; 4
+  jerarquía y problemas.
+- Hay 47 ejercicios, no 49 (`mental` tiene 2; `errores1`, 4). Los `practica.js` no se
+  pueden importar con node mientras otra sesión tenga a medias `_comun/codigos.js`: los
+  nombres se leen con `git show HEAD:practicas/<slug>/textos.js`, y el bloque de tareas se
+  valida con `erroresTareas` sobre una copia de `practicas/_comun` sacada con `git archive HEAD`.
 
 ## Prohibido (propio de esta tarea)
 
