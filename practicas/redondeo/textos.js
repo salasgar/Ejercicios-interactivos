@@ -63,8 +63,8 @@ export const TX = {
     },
     pregunta: { es: n => `Redondea ${n}:`, en: n => `Round ${n}:` },
     leyenda: {
-      es: '↑ por exceso: el redondeo es mayor que el número · ↓ por defecto: es menor',
-      en: '↑ up: the rounded number is bigger than the number · ↓ down: it is smaller',
+      es: '<strong>↑ por exceso</strong>: el redondeo es mayor que el número; <strong>↓ por defecto</strong>: es menor',
+      en: '<strong>↑ up</strong>: the rounded number is bigger than the number; <strong>↓ down</strong>: it is smaller',
     },
     exceso: { es: '↑', en: '↑' },
     defecto: { es: '↓', en: '↓' },
@@ -89,12 +89,12 @@ export const TX = {
       en: 'Estimate the result. Choose if you round each number to the nearest ten, hundred or thousand, and write your estimate.',
     },
     instr_fijo: {
-      es: 'Estima el resultado: redondea cada número a la decena y escribe tu estimación.',
-      en: 'Estimate the result: round each number to the nearest ten and write your estimate.',
+      es: 'Estima el resultado: redondea cada número <strong>a la decena</strong> y escribe tu estimación.',
+      en: 'Estimate the result: round each number <strong>to the nearest ten</strong> and write your estimate.',
     },
     orden_btn: { es: o => `Redondeo ${A_ORDEN[o].es}`, en: o => `Round ${A_ORDEN[o].en}` },
     est_label: { es: 'Mi estimación', en: 'My estimate' },
-    dif_label: { es: 'Diferencia entre el resultado exacto y mi estimación', en: 'Difference between the exact result and my estimate' },
+    dif_label: { es: '<strong>Diferencia</strong> entre el resultado exacto y mi estimación', en: '<strong>Difference</strong> between the exact result and my estimate' },
     falta: { es: 'Elige el orden y rellena los dos números.', en: 'Choose how to round and fill in both numbers (whole numbers only).' },
     estimar_fb: {
       es: (o, cuenta, exacto, dif) => `Redondeando ${A_ORDEN[o].es}: <span class="cuenta">${cuenta}</span>. El resultado exacto es ${exacto}; la diferencia es <span class="cuenta">${dif}</span>.`,
@@ -102,8 +102,8 @@ export const TX = {
     },
     // razonable
     pregunta_razonable: {
-      es: (cuenta, propuesto) => `Un alumno ha calculado ${cuenta} = ${propuesto}. ¿Es razonable?`,
-      en: (cuenta, propuesto) => `A student calculated ${cuenta} = ${propuesto}. Is it reasonable?`,
+      es: (cuenta, propuesto) => `Un alumno ha calculado <strong>${cuenta} = ${propuesto}</strong>. ¿Es razonable?`,
+      en: (cuenta, propuesto) => `A student calculated <strong>${cuenta} = ${propuesto}</strong>. Is it reasonable?`,
     },
     pista_razonable: { es: 'Estima primero, sin hacer la cuenta exacta.', en: 'Estimate first; do not do the exact calculation.' },
     razonable_si: {
@@ -126,8 +126,8 @@ export const TX = {
     },
     // contexto
     pregunta_contexto: {
-      es: orden => `Elige el número que va en el hueco: redondea ${A_ORDEN[orden].es}.`,
-      en: orden => `Choose the number for the gap: round ${A_ORDEN[orden].en}.`,
+      es: orden => `Elige el número que va en el hueco: redondea <strong>${A_ORDEN[orden].es}</strong>.`,
+      en: orden => `Choose the number for the gap: round <strong>${A_ORDEN[orden].en}</strong>.`,
     },
     contexto_fb: {
       es: (n, orden, correcto, c) => `${n} redondeado ${A_ORDEN[orden].es} es <span class="cuenta">${correcto}</span> (la cifra decisiva es ${c}).`,

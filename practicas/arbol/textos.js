@@ -62,8 +62,8 @@ export const TX = {
     nombre: { es: '¿Está terminada?', en: 'Is it finished?' },
     detalle: { es: 'Decide si una factorización tiene todos sus factores primos', en: 'Decide if all the factors of a factorisation are prime' },
     instruccion: {
-      es: '¿Está terminada esta factorización? Está terminada cuando todos los factores son primos.',
-      en: 'Is this prime factorisation finished? It is finished when all the factors are prime numbers.',
+      es: '¿Está terminada esta factorización? Está terminada cuando <strong>todos los factores son primos</strong>.',
+      en: 'Is this prime factorisation finished? It is finished when <strong>all the factors are prime numbers</strong>.',
     },
     si: { es: 'Sí, terminada', en: 'Yes, finished' },
     no: { es: 'No', en: 'No' },

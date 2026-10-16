@@ -35,11 +35,11 @@ export const TX = {
       en: '<h2>How it works</h2><p>You have some digits and some boxes with names. <strong>Tap a digit</strong> and it goes into the first free box; <strong>tap a box</strong> to take its digit out. Use all the digits. A number cannot start with 0.</p>',
     },
     consigna: {
-      mayor: { es: 'Construye el número MAYOR posible.', en: 'Build the GREATEST number you can.' },
-      menor: { es: 'Construye el número MENOR posible (no puede empezar por 0).', en: 'Build the SMALLEST number you can (it cannot start with 0).' },
-      menor_par: { es: 'Construye el número PAR más pequeño posible.', en: 'Build the smallest EVEN number you can.' },
-      mayor_impar: { es: 'Construye el número IMPAR más grande posible.', en: 'Build the greatest ODD number you can.' },
-      cercano: { es: o => `Construye el número más cercano a ${o}.`, en: o => `Build the number closest to ${o}.` },
+      mayor: { es: 'Construye el <strong>número MAYOR</strong> posible.', en: 'Build the <strong>GREATEST number</strong> you can.' },
+      menor: { es: 'Construye el <strong>número MENOR</strong> posible (no puede empezar por 0).', en: 'Build the <strong>SMALLEST number</strong> you can (it cannot start with 0).' },
+      menor_par: { es: 'Construye el número <strong>PAR más pequeño</strong> posible.', en: 'Build the <strong>smallest EVEN number</strong> you can.' },
+      mayor_impar: { es: 'Construye el número <strong>IMPAR más grande</strong> posible.', en: 'Build the <strong>greatest ODD number</strong> you can.' },
+      cercano: { es: o => `Construye el número <strong>más cercano a ${o}</strong>.`, en: o => `Build the number <strong>closest to ${o}</strong>.` },
     },
     quitar: { es: 'Quitar', en: 'Remove' },
     // feedback: el número construido y el que tocaba, con la cifra que decide
@@ -112,8 +112,8 @@ export const TX = {
       en: '<h2>How it works</h2><p><strong>In English</strong> the comma separates groups of three digits (12,500 = twelve thousand five hundred) and the point is the decimal (12.5 = twelve and a half). <strong>In Spanish</strong> it is the other way round: a point or a space between the groups (12.500, 12 500) and a decimal comma (12,5). You will also write numbers with digits when they are given in words.</p>',
     },
     pregunta: {
-      en_es: { es: 'En inglés se escribe así. ¿Cómo se escribe el mismo número en español?', en: 'This is how it is written in English. How is the same number written in Spanish?' },
-      es_en: { es: 'En español se escribe así. ¿Cómo se escribe el mismo número en inglés?', en: 'This is how it is written in Spanish. How is the same number written in English?' },
+      en_es: { es: '<strong>En inglés</strong> se escribe así. ¿Cómo se escribe el mismo número <strong>en español</strong>?', en: 'This is how it is written <strong>in English</strong>. How is the same number written <strong>in Spanish</strong>?' },
+      es_en: { es: '<strong>En español</strong> se escribe así. ¿Cómo se escribe el mismo número <strong>en inglés</strong>?', en: 'This is how it is written <strong>in Spanish</strong>. How is the same number written <strong>in English</strong>?' },
     },
     fb_miles: {
       en_es: {
