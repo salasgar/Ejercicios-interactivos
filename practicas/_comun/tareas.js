@@ -91,9 +91,9 @@ export function tareasPublicadas(hoy, tareas = TAREAS) {
  * desde la tarea `tareaId`: la base lo abre directamente y, al salir o al
  * terminarlo, vuelve a la tarea (`?ejercicio=n&semana=id`, ver base.js).
  */
-export function enlaceEjercicio(slug, n, tareaId, codigo = null) {
+export function enlaceEjercicio(slug, n, tareaId, codigo = null, num = null) {
   const ficha = practicaPorSlug(slug);
-  return `${ficha.ruta}?${codigo ? `c=${codigo}&` : ''}ejercicio=${n}&semana=${tareaId}`;
+  return `${ficha.ruta}?${codigo ? `c=${codigo}&` : ''}ejercicio=${n}&semana=${tareaId}${num ? `&num=${num}` : ''}`;
 }
 
 /** 'AAAA-MM-DD' de una fecha, en la hora local. */

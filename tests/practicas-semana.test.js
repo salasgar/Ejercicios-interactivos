@@ -74,6 +74,8 @@ test('tareas: la portada enseña las que han llegado a su día', () => {
 test('tareas: el enlace de cada ejercicio abre ese ejercicio y vuelve a la tarea', () => {
   assert.equal(enlaceEjercicio('recta', 2, 1, 'ABCD'), 'recta/?c=ABCD&ejercicio=2&semana=1');
   assert.equal(enlaceEjercicio('divisores', 4, 1), '../divisores/?ejercicio=4&semana=1');
+  // Con el número que tiene en la lista de la tarea, para la cabecera del ejercicio.
+  assert.equal(enlaceEjercicio('recta', 2, 1, 'ABCD', 3), 'recta/?c=ABCD&ejercicio=2&semana=1&num=3');
   assert.match(urlSemana(3, 'ABCD'), /\/practicas\/semana\.html\?t=3&c=ABCD$/);
 });
 
