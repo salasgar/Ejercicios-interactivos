@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 05:03 UTC · por la sesión s-20261015T204306-1ed3fc83 (cierre de la tarea 38; relistado hechos/ con git fetch: los únicos hechos nuevos desde las 20:35 UTC del 15-10 son el reclamo y la terminada de la 38; el resto de filas, sin cambios). La 39 pasa de BLOQUEADA a PENDIENTE y la encadena esta misma sesión.
+Regenerado: 2026-10-16 05:31 UTC · por la sesión s-20261016T050222-d0960de2 (cierre de la tarea 39, encadenada en la misma conversación que cerró la 38 como s-20261015T204306-1ed3fc83; relistado hechos/ con git fetch: los únicos hechos nuevos desde las 20:35 UTC del 15-10 son los reclamos y las terminadas de la 38 y la 39; el resto de filas, sin cambios). **Las 39 tareas están LISTAS.**
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -155,12 +155,12 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 36 | Segunda revisión: comprobar las 28 reaperturas | tareas/tarea-36-segunda-revision.md | las 28 reabiertas con terminada, o con código comiteado (30, 33) | 1 h 30 min | ALTO | — | practicas/_comun/catalogo.js (solo `disponible`, solo para retirar); salidas/36-segunda-revision/ | LISTA | terminada 10:07Z (9-oct) · commit 17a9e5c |
 | 37 | Tarea de la semana (página, marcador, código único) y arreglos de la base | tareas/tarea-37-tarea-semanal.md | 36 LISTA; reaperturas del 9-10 de la 30 y la 32 LISTAS | 2 h | ALTO | — | practicas/_comun/, practicas/semana.*, panel, portada, tests; salidas/37-tarea-semanal/ | LISTA | terminada 20:18Z (15-oct) · commits 42bb8cd y dae33d6 |
 | 38 | Progreso en la nube entre aparatos; puntos y «qué falla más» en el panel (plazo: lun 19-10 8:00) | tareas/tarea-38-progreso-nube.md | 37 LISTA | 2 h | ALTO | 39 | practicas/_comun/{base,textos,nube}.js, practicas/semana.js, panel, resultados.js, firestore.rules (bloque practicas), tests; salidas/38-progreso-nube/ | LISTA | terminada 05:01Z (16-oct) · commits 5a43e60 (reglas, publicadas por Juan Luis a las 20:58Z) y 51543cf |
-| 39 | Registro de cada fallo (ítem, respuesta, error) y vista «Fallos» en el panel | tareas/tarea-39-registro-fallos.md | 38 LISTA | 2 h 30 min | ALTO | 38 | practicas/_comun/{base,textos,registro}.js, plantilla (comentarios), panel, resultados.js, firestore.rules (bloque nuevo), tests; salidas/39-registro-fallos/ | PENDIENTE | |
+| 39 | Registro de cada fallo (ítem, respuesta, error) y vista «Fallos» en el panel | tareas/tarea-39-registro-fallos.md | 38 LISTA | 2 h 30 min | ALTO | 38 | practicas/_comun/{base,textos,registro}.js, plantilla (comentarios), panel, resultados.js, firestore.rules (bloque nuevo), tests; salidas/39-registro-fallos/ | LISTA | terminada 05:30Z (16-oct) · commits 0a96ea4 (reglas, publicadas por Juan Luis a las 05:25Z), 45b1125, 90be2b0, 8b5aaae · almacenamiento: un documento por fallo (decisión de Juan Luis) |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: una. La 38 está LISTA (reglas publicadas, cambio de aparato probado en GitHub Pages); la 39 está PENDIENTE y la encadena la sesión s-20261015T204306-1ed3fc83.
+Cuántas sesiones caben a la vez: ninguna; no hay tareas LIBRES. La 38 y la 39 están LISTAS (reglas publicadas, probadas en GitHub Pages). La 39 propone, en su terminada, tareas MEDIO nuevas para que seis prácticas pasen `error` y `respuesta` (semaforo, recta, clasificador, criba, venn y factorizaciones, arbol y divisiones), si Juan Luis las quiere.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
@@ -176,6 +176,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 39 · 2026-10-16 05:30 · s-20261016T050222-d0960de2 · 0a96ea4, 45b1125, 90be2b0, 8b5aaae · 10 ficheros (firestore.rules; practicas/_comun/{base,registro}.js, plantilla, profesor.{html,js}, resultados.js, tests/practicas-registro.test.js, docs, README) · ≈ 28 min (estimada: 2 h 30 min)
 
 LISTA · tarea 38 · 2026-10-16 05:01 · s-20261015T204306-1ed3fc83 · 5a43e60, 51543cf · 10 ficheros (firestore.rules; practicas/_comun/{base,nube,textos}.js, practicas/{semana,profesor,resultados}.js, tests/practicas-nube.test.js, docs, README) · ≈ 1 h 45 min de trabajo (estimada: 2 h) + parada de la sesión de 22:28Z a 05:01Z
 
