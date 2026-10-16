@@ -261,6 +261,12 @@ export function arrancar(practica) {
   const pedido = Number(parametros.get('ejercicio'));
   let ejercicioPedido = Number.isInteger(pedido) && pedido >= 1 && pedido <= defs.length ? pedido - 1 : null;
   const semana = ejercicioPedido !== null && /^\d{1,4}$/.test(parametros.get('semana') ?? '') ? Number(parametros.get('semana')) : null;
+  // `&num=k`: el número que tiene ese ejercicio en la lista de la tarea (1, 2…),
+  // que es el que ve el alumno en la cabecera en vez del de la práctica.
+  const numTarea = semana !== null && /^\d{1,2}$/.test(parametros.get('num') ?? '') ? Number(parametros.get('num')) : null;
+  const indicePedido = ejercicioPedido;
+  /** El número que se enseña del ejercicio n (desde 0): el de la tarea si se vino de ella. */
+  const numeroVisible = n => (numTarea !== null && n === indicePedido ? numTarea : n + 1);
 
   /** Al salir de un ejercicio: a la tarea de la semana si se vino de ella; si no, al menú. */
   function salirDelEjercicio() {
@@ -530,7 +536,7 @@ export function arrancar(practica) {
   function cabeceraEjercicio() {
     return `
       <button type="button" class="discreto volver" id="salir">${textoSalir()}</button>
-      <div class="progreso"><span>${t().ejercicio(actual.n + 1)} · ${tt(defs[actual.n].nombre)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
+      <div class="progreso"><span>${t().ejercicio(numeroVisible(actual.n))} · ${tt(defs[actual.n].nombre)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
       <div class="barra"><div id="barra"></div></div>`;
   }
 
@@ -717,7 +723,7 @@ export function arrancar(practica) {
         <div class="tarjeta fin">
           <div class="fin__icono" aria-hidden="true">🎉</div>
           <h2>${t().fin_titulo}</h2>
-          <p>${t().ejercicio(n + 1)} · ${tt(defs[n].nombre)} · ${t().fin_resumen(sesion.puntos, sesion.fallos)}</p>
+          <p>${t().ejercicio(numeroVisible(n))} · ${tt(defs[n].nombre)} · ${t().fin_resumen(sesion.puntos, sesion.fallos)}</p>
           ${sesion.reinicios ? `<p class="pequeno">${t().fin_reinicios(sesion.reinicios)}</p>` : ''}
           ${repeticion ? `<p class="pequeno">${t().fin_practica}</p>` : ''}
         </div>

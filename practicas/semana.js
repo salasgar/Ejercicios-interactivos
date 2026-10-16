@@ -107,7 +107,7 @@ function pintarEntrada(error = false) {
 
 // --- La tarea -------------------------------------------------------------------------
 
-function filaEjercicio(e, estrella) {
+function filaEjercicio(e, estrella, num) {
   const t = T[idioma];
   const ficha = practicaPorSlug(e.slug);
   const nombre = nombres.get(`${e.slug}/${e.n}`);
@@ -119,10 +119,10 @@ function filaEjercicio(e, estrella) {
     <li class="lista__item tarea-item ${e.terminado ? 'tarea-item--hecho' : ''}">
       <div>
         <div class="tarea-item__practica">${esc(ficha.nombre[idioma])}</div>
-        <h3>${estrella ? '★ ' : ''}${t.ejercicio(e.n)} · <span data-nombre="${e.slug}/${e.n}">${nombre ? esc(nombre[idioma]) : t.semana_cargando_nombre}</span></h3>
+        <h3>${estrella ? '★ ' : ''}${t.ejercicio(num)} · <span data-nombre="${e.slug}/${e.n}">${nombre ? esc(nombre[idioma]) : t.semana_cargando_nombre}</span></h3>
         ${etiqueta}
       </div>
-      <a class="boton ${e.terminado ? 'secundario' : ''}" href="${enlaceEjercicio(e.slug, e.n, tarea.id, codigo)}">${boton}</a>
+      <a class="boton ${e.terminado ? 'secundario' : ''}" href="${enlaceEjercicio(e.slug, e.n, tarea.id, codigo, num)}">${boton}</a>
     </li>`;
 }
 
@@ -171,11 +171,11 @@ function pintarTarea() {
       ${est.cumplida ? cajaCodigo(est) : ''}
       ${est.estrella.length ? `
         <h3 class="semana__bloque">${t.semana_estrella}</h3>
-        <ul class="lista">${est.estrella.map(e => filaEjercicio(e, true)).join('')}</ul>` : ''}
+        <ul class="lista">${est.estrella.map((e, i) => filaEjercicio(e, true, i + 1)).join('')}</ul>` : ''}
       ${est.elegir.length ? `
         <h3 class="semana__bloque">${t.semana_elegir(tarea.nElegir)}</h3>
         <p class="pequeno semana__ayuda">${t.semana_elegir_ayuda(tarea.nElegir)}</p>
-        <ul class="lista">${est.elegir.map(e => filaEjercicio(e, false)).join('')}</ul>` : ''}
+        <ul class="lista">${est.elegir.map((e, i) => filaEjercicio(e, false, est.estrella.length + i + 1)).join('')}</ul>` : ''}
       ${est.cumplida ? '' : cajaCodigo(est)}
       <div class="pie-menu">
         <a class="enlace-portada" href="${URL_PORTADA}?c=${codigo}">${t.todas}</a>
