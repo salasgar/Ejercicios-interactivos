@@ -4,14 +4,15 @@
 // guardado en este navegador.
 //
 // El enlace que reparte el profesor es `practicas/?c=ABCD`: la portada guarda
-// el código y todas las prácticas lo encuentran.
+// el código y todas las prácticas lo encuentran. «Cerrar sesión» lo olvida
+// (para un aparato compartido); lo hecho sigue guardado con el código.
 //
 // Arriba, las tareas de la semana que ya han llegado a su día (`desde` en
 // `_comun/tareas.js`), con lo que lleva el alumno en cada una.
 
 import { CATALOGO, ID_PLANTILLA } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno } from './_comun/codigos.js';
-import { leer, escribir, progresoGuardado } from './_comun/base.js';
+import { leer, escribir, cerrarSesion, progresoGuardado } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { tareasPublicadas, estadoTarea, fechaISO } from './_comun/tareas.js';
 
@@ -104,7 +105,7 @@ let idioma = leer('practicas.idioma') === 'en' ? 'en' : 'es';
 
 const indice = enNavegador
   ? leerCodigoAlumno(new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '') : null;
-const codigo = indice === null ? null : codigoAlumno(indice);
+let codigo = indice === null ? null : codigoAlumno(indice);
 if (codigo) escribir('practicas.codigo', codigo);
 
 /** Ejercicios terminados de una práctica, según lo guardado en este navegador. */
@@ -158,11 +159,17 @@ function pintar() {
       <ul class="lista">${b.practicas.map(fila).join('')}</ul>`).join('');
   app.innerHTML = `
     <section>
-      <p>${t.portada_ayuda}${codigo ? ` <span class="portada__codigo">${t.portada_codigo(codigo)}</span>` : ''}</p>
+      <p>${t.portada_ayuda}${codigo ? ` <span class="portada__codigo">${t.portada_codigo(codigo)}</span>
+        <button type="button" class="discreto" id="cerrar-sesion">${t.cambiar_codigo}</button>` : ''}</p>
       ${htmlTareas(t)}
       ${bloques || `<p class="vacio">${t.portada_vacia}</p>`}
       <p class="portada__pie"><a href="profesor.html">${PANEL[idioma]}</a></p>
     </section>`;
+  app.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
+    cerrarSesion();
+    codigo = null;
+    pintar();
+  });
 }
 
 if (enNavegador) {

@@ -112,6 +112,24 @@ export function borrar(clave) {
   try { localStorage.removeItem(clave); } catch { /* nada */ }
 }
 
+/** La misma dirección sin el código del alumno (`?c=`), y sin `?` si no queda nada. */
+export function sinCodigo(href) {
+  const url = new URL(href);
+  url.searchParams.delete('c');
+  return url.href;
+}
+
+/**
+ * Cierra la sesión en este navegador: olvida el código recordado y lo quita
+ * de la dirección (si se quedara, al recargar volvería a entrar el anterior,
+ * aunque el siguiente ya hubiera escrito el suyo). Lo hecho no se pierde:
+ * sigue guardado con el código, aquí y en la nube.
+ */
+export function cerrarSesion() {
+  borrar('practicas.codigo');
+  try { history.replaceState(history.state, '', sinCodigo(location.href)); } catch { /* nada */ }
+}
+
 /** Portada de las prácticas (`practicas/`), esté donde esté la práctica. */
 export const URL_PORTADA = new URL('../', import.meta.url).href;
 
@@ -485,12 +503,12 @@ export function arrancar(practica) {
         ${cajaResultado()}
         <div class="pie-menu">
           <a class="enlace-portada" href="${URL_PORTADA}${estado.codigo ? `?c=${estado.codigo}` : ''}">${t().todas}</a>
-          <button type="button" class="discreto" id="cambiar">${t().cambiar_codigo}${estado.codigo ? ` (${estado.codigo})` : ''}</button>
+          <button type="button" class="discreto" id="cambiar">${estado.codigo ? `${t().cambiar_codigo} (${estado.codigo})` : t().entrar_codigo}</button>
         </div>
       </section>`;
     app.querySelectorAll('[data-ejercicio]').forEach(b => b.addEventListener('click', () => abrirEjercicio(Number(b.dataset.ejercicio))));
     app.querySelector('#cambiar').addEventListener('click', () => {
-      borrar('practicas.codigo');
+      cerrarSesion();
       estado.codigo = null;
       estado.indice = null;
       nubeLeida = false;

@@ -15,7 +15,7 @@
 
 import { practicaPorSlug } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno, codigoTarea } from './_comun/codigos.js';
-import { leer, escribir, borrar, claveIdiomaFijo, modoIdioma, progresoGuardado, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
+import { leer, escribir, cerrarSesion, claveIdiomaFijo, modoIdioma, progresoGuardado, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
 
@@ -193,7 +193,7 @@ function pintarTarea() {
     }
   });
   app.querySelector('#cambiar').addEventListener('click', () => {
-    borrar('practicas.codigo');
+    cerrarSesion();
     codigo = null;
     indice = null;
     verCodigo = false;
