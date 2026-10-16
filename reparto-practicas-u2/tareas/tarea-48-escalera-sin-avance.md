@@ -1,10 +1,10 @@
-# Tarea 48 · La escalera de divisiones (divisiones, ej. 1): al fallar, el número se queda; y divisores compuestos como distractores
+# Tarea 48 · Divisiones sucesivas: en la escalera (ej. 1) el número se queda al fallar y hay divisores compuestos como distractores; en la forma de potencias (ej. 2) la lista de primos lleva delante «n =»
 
 Actualizado: 2026-10-16
 Precondición: ninguna (la 07 está LISTA; para este cambio la dueña de `practicas/divisiones/` es esta tarea) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 47
+Duración esperada: 1 h 15 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 47
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/48-escalera-sin-avance/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/divisiones/practica.js` (solo `montarEscalera`), `practicas/divisiones/logica.js` (ejercicio 1), `practicas/divisiones/textos.js`, `tests/practicas-divisiones.test.js`
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/divisiones/practica.js` (`montarEscalera` y `montarPotencias`), `practicas/divisiones/logica.js` (ejercicio 1), `practicas/divisiones/textos.js`, `tests/practicas-divisiones.test.js`
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -107,7 +107,17 @@ primos.
 5. **Instrucción**: se queda («Pulsa el MENOR primo que divide a este número»); si quieres
    reforzarlo, un `detalle` en `textos.js` puede decir «Cuidado: no todos los botones son
    primos» en los dos idiomas (opcional, propónlo).
-6. **Tests**: (a) con semilla fija, 1000 ítems: cada distractor divide a n, no es primo y está
+6. **Ejercicio 2, «La forma de potencias»** (`montarPotencias` y `enunciadoPotencias`, líneas
+   78-128; observación de Juan Luis del 16-10): hoy se enseña la lista «3 · 3 · 3 · 3 · 5 · 5 · 5 ·
+   7 · 7 · 7» y debajo «3472875 = …», y muchos alumnos no sabrán de dónde sale ese número. La
+   lista pasa a llevar el número delante, en las dos cajas:
+   ```
+   3472875 = 3 · 3 · 3 · 3 · 5 · 5 · 5 · 7 · 7 · 7
+   3472875 = 3⁴ · 5³ · 7³       (la de abajo, la que el alumno construye; con □ mientras está vacía)
+   ```
+   Lo mismo en el `enunciado` que se usa para la traducción y el registro de fallos. El
+   texto de la instrucción no cambia.
+7. **Tests**: (a) con semilla fija, 1000 ítems: cada distractor divide a n, no es primo y está
    entre 4 y 25; nunca más de dos; nunca coincide con un primo de la lista; (b)
    `evaluarEleccion(81, 9)` → `compuesto`, `(81, 5)` → `no_divide`, `(45, 5)` → `no_menor`,
    `(45, 3)` → `correcto`, `(12, 4)` → `compuesto`, `(12, 6)` → `compuesto`; (c) `razonCompuesto`
@@ -144,7 +154,7 @@ Solo lectura: `practicas/_comun/aritmetica.js` (`factorizar`, `htmlFact`, `esPri
 
 ## Prohibido (propio de esta tarea)
 
-- Tocar los ejercicios 2 y 3 de la práctica, `practicas/_comun/` o la puntuación.
+- Tocar el ejercicio 3 de la práctica, `practicas/_comun/` o la puntuación.
 - Distractores que no dividan a n, o primos fuera de la lista como distractores.
 - Avanzar la escalera por el alumno en ningún caso.
 
