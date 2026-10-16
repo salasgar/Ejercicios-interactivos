@@ -151,3 +151,29 @@ test('explicar: menciona el número del ítem, en los dos idiomas, para los cuat
     }
   }
 });
+
+// --- Tarea 40: el botón «Ninguno» (el conjunto vacío tiene que salir) -------------
+
+test('el conjunto vacío sale: ≥ 3 % en el ejercicio 1 y ≥ 1 % en el 2', () => {
+  const vacios = fn => generarN(fn, 2000, 7).filter(i => i.correctos.length === 0).length / 2000;
+  assert.ok(vacios(generarSemaforo1) >= 0.03, 'ejercicio 1');
+  assert.ok(vacios(generarSemaforo2) >= 0.01, 'ejercicio 2');
+});
+
+test('esCorrecta(item, []) es true exactamente cuando no hay divisores correctos', () => {
+  for (const fn of [generarSemaforo1, generarSemaforo2]) {
+    for (const item of generarN(fn, 1000, 3)) {
+      assert.equal(esCorrecta(item, []), item.correctos.length === 0);
+    }
+  }
+});
+
+test('explicar añade la frase de cierre solo cuando no es divisible entre ninguno', () => {
+  for (const fn of [generarSemaforo1, generarSemaforo2]) {
+    for (const item of generarN(fn, 500, 5)) {
+      const vacio = item.correctos.length === 0;
+      assert.equal(explicar(item, [], 'es').includes('ninguno de ellos'), vacio);
+      assert.equal(explicar(item, [], 'en').includes('any of them'), vacio);
+    }
+  }
+});

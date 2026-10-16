@@ -178,7 +178,10 @@ const SI_NO = { es: { si: 'sí', no: 'no' }, en: { si: 'yes', no: 'no' } };
 
 function explicarSemaforo(item, idioma) {
   const lineas = razonesSemaforo(item, idioma).map(({ d, divisible, razon }) => `${d}: ${SI_NO[idioma][divisible ? 'si' : 'no']} (${razon})`);
-  return `<ul class="explicacion">${lineas.map(l => `<li>${l}</li>`).join('')}</ul>`;
+  const cierre = item.correctos.length === 0
+    ? `<p class="frase">${idioma === 'es' ? 'No es divisible entre ninguno de ellos.' : 'It is not divisible by any of them.'}</p>`
+    : '';
+  return `<ul class="explicacion">${lineas.map(l => `<li>${l}</li>`).join('')}</ul>${cierre}`;
 }
 
 function explicarSino(item, idioma) {
