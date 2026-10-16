@@ -153,8 +153,8 @@ export const BANCO_NOMBRAR = [
   {
     clase: 'mcm',
     numeros: rng => enteros(rng, 2, 9),
-    es: (a, b, r) => `Un corredor pasa por la meta cada ${a} segundos y otro cada ${b} segundos: pasan juntos cada ${r} segundos. El ${r} es…`,
-    en: (a, b, r) => `One runner passes the finish line every ${a} seconds and another every ${b} seconds: they pass together every ${r} seconds. The ${r} is…`,
+    es: (a, b, r) => `Un coche de juguete da una vuelta al circuito cada ${a} segundos y otro cada ${b} segundos: pasan juntos por la salida cada ${r} segundos. El ${r} es…`,
+    en: (a, b, r) => `One toy car goes round the track every ${a} seconds and another one every ${b} seconds: they pass the start together every ${r} seconds. The ${r} is…`,
   },
   {
     clase: 'mcd',
@@ -189,7 +189,7 @@ export const BANCO_NOMBRAR = [
   {
     clase: 'mcd',
     numeros: rng => enterosMcd(rng, 12, 60),
-    es: (a, b, r) => `${a} canicas y ${b} cuentas se reparten en el mayor número posible de pulseras iguales, sin que sobre nada: salen ${r} pulseras. El ${r} es…`,
-    en: (a, b, r) => `${a} marbles and ${b} beads are shared into the largest possible number of identical bracelets, with nothing left over: you get ${r} bracelets. The ${r} is…`,
+    es: (a, b, r) => `${a} cuentas rojas y ${b} cuentas azules se reparten en el mayor número posible de pulseras iguales, sin que sobre nada: salen ${r} pulseras. El ${r} es…`,
+    en: (a, b, r) => `${a} red beads and ${b} blue beads are shared into the largest possible number of identical bracelets, with nothing left over: you get ${r} bracelets. The ${r} is…`,
   },
 ];
