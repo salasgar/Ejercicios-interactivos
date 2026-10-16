@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 14:21 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta la tarea 44; relistado hechos/ con git fetch: sin reclamos vivos; 40 y 41 LISTAS). **Las 41 primeras tareas están LISTAS; la 42, la 43 y la 44 están PENDIENTES (libres).** La 44 toca la base (`practicas/_comun/base.js`, `textos.js`) y `practicas/semana.js`: no comparte ficheros con la 42 ni la 43, pero cualquier tarea futura que toque la base espera a que cierre.
+Regenerado: 2026-10-16 14:24 UTC · por la coordinadora s-20261016T122625-186b4bd8 (tras el alta de la 44; relistado hechos/ con git fetch: la 42 y la 43 tienen terminada y commit, cerradas a las 14:04Z y 14:07Z; sin reclamos vivos). **Las 43 primeras tareas están LISTAS; la 44 está PENDIENTE (libre).** La 44 toca la base (`practicas/_comun/base.js`, `textos.js`) y `practicas/semana.js`: cualquier tarea futura que toque la base espera a que cierre.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -165,7 +165,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-Cuántas sesiones caben a la vez: **tres** (42, 43 y 44, sin ficheros en común), o dos con la cadena 42+43 y la 44 aparte (todas MEDIO). La 40 y la 41 se cerraron sin prueba en navegador: conviene que Juan Luis mire semáforo (ej. 1 y 2) y clasificador (ej. 1).
+Cuántas sesiones caben a la vez: **una** (solo la 44 está libre). Las 40-43 se cerraron sin prueba en navegador (lo dicen sus terminadas): conviene que Juan Luis mire semáforo (ej. 1 y 2), clasificador (ej. 1), rectángulos (ej. 1) y léelo (ej. 1 y 2) en GitHub Pages.
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
 
