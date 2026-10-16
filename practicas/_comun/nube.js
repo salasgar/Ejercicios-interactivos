@@ -103,10 +103,66 @@ export function fusionarProgreso(a, b) {
 
 // --- Firestore por REST ------------------------------------------------------------
 
-/** URL REST del documento `practicas/{slug}--{código}`, o null si no hay Firebase configurado. */
-export function urlDocumento(slug, codigo, config = firebaseConfig) {
+/** Colección del progreso de la práctica libre (y de la tarea 1). */
+export const COLECCION_PRACTICAS = 'practicas';
+/** Colección del progreso por tarea (modelo v2, tarea 50): un documento por alumno, tarea y práctica. */
+export const COLECCION_TAREAS = 'practicas-tareas';
+/** Colección de las asignaciones de tareas a alumnos (un documento por código). */
+export const COLECCION_ASIGNACIONES = 'practicas-asignaciones';
+
+/** Id del documento de una práctica libre: `{slug}--{código}`. */
+export const idDocumentoPractica = (slug, codigo) => `${slug}--${codigo}`;
+
+/** Id del documento de una práctica dentro de una tarea v2: `t{id}--{slug}--{código}`. */
+export const idDocumentoTarea = (tareaId, slug, codigo) => `t${tareaId}--${slug}--${codigo}`;
+
+/** Clave del navegador del progreso de una práctica dentro de una tarea: `practicas.v1.{slug}.{código}.t{id}`. */
+export const claveProgresoTarea = (slug, codigo, tareaId) => `practicas.v1.${slug}.${codigo}.t${tareaId}`;
+
+/**
+ * URL REST de un documento, o null si no hay Firebase configurado. Por defecto
+ * `practicas/{slug}--{código}`; con `coleccion` e `id` se apunta a otro (las
+ * tareas v2 usan `practicas-tareas/t{id}--{slug}--{código}`).
+ */
+export function urlDocumento(slug, codigo, config = firebaseConfig, { coleccion = COLECCION_PRACTICAS, id = idDocumentoPractica(slug, codigo) } = {}) {
   if (!config?.apiKey || !config?.projectId) return null;
-  return `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/practicas/${slug}--${codigo}?key=${config.apiKey}`;
+  return `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccion}/${id}?key=${config.apiKey}`;
+}
+
+/** URL REST de la asignación de un alumno, `practicas-asignaciones/{código}`, o null sin Firebase. */
+export function urlAsignacion(codigo, config = firebaseConfig) {
+  return urlDocumento(null, codigo, config, { coleccion: COLECCION_ASIGNACIONES, id: codigo });
+}
+
+/** Lo que dice una asignación leída por REST: { tareas: [ids] } o null si no se entiende. */
+export function leerAsignacionRest(json) {
+  const valores = json?.fields?.tareas?.arrayValue?.values;
+  if (valores === undefined && json?.fields?.tareas?.arrayValue) return { tareas: [] };   // lista vacía: Firestore omite «values»
+  if (!Array.isArray(valores)) return null;
+  const tareas = valores.map(v => Number(v?.integerValue));
+  return tareas.every(Number.isInteger) ? { tareas } : null;
+}
+
+/**
+ * Lee la asignación de tareas de un alumno, con el mismo tiempo máximo que el
+ * progreso. Devuelve { tareas: [ids] } o null (sin documento, sin permiso,
+ * sin red o ilegible: se sigue con la copia del navegador). Nunca lanza.
+ */
+export async function leerAsignacion(codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig } = {}) {
+  const url = urlAsignacion(codigo, config);
+  if (!url || typeof pedir !== 'function') return null;
+  const control = typeof AbortController === 'function' ? new AbortController() : null;
+  let reloj;
+  try {
+    const tiempo = new Promise((_, rechazar) => { reloj = setTimeout(() => { control?.abort(); rechazar(new Error('tiempo')); }, espera); });
+    const respuesta = await Promise.race([pedir(url, { method: 'GET', signal: control?.signal, cache: 'no-store' }), tiempo]);
+    if (!respuesta.ok) return null;
+    return leerAsignacionRest(await Promise.race([respuesta.json(), tiempo]));
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(reloj);
+  }
 }
 
 /**
@@ -128,8 +184,8 @@ export function leerDocumentoRest(json) {
  *   'error'     sin red, tiempo agotado, documento ilegible u otro fallo.
  * Nunca lanza.
  */
-export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig } = {}) {
-  const url = urlDocumento(slug, codigo, config);
+export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig, coleccion, id } = {}) {
+  const url = urlDocumento(slug, codigo, config, { coleccion, id });
   if (!url || typeof pedir !== 'function') return { estado: 'error', ej: null, idioma: null };
   const control = typeof AbortController === 'function' ? new AbortController() : null;
   let reloj;
@@ -153,8 +209,8 @@ export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, 
  * llegue aunque el alumno cambie de página justo después. No espera respuesta
  * útil: si falla, el progreso sigue en el navegador y vuelve a subir la próxima vez.
  */
-export function escribirNube(slug, codigo, ej, idioma, { fetch: pedir = globalThis.fetch, config = firebaseConfig } = {}) {
-  const url = urlDocumento(slug, codigo, config);
+export function escribirNube(slug, codigo, ej, idioma, { fetch: pedir = globalThis.fetch, config = firebaseConfig, coleccion, id } = {}) {
+  const url = urlDocumento(slug, codigo, config, { coleccion, id });
   if (!url || typeof pedir !== 'function') return Promise.resolve(false);
   const fields = {
     estado: { stringValue: JSON.stringify({ v: 1, idioma: idioma ?? 'alterno', ej }) },
