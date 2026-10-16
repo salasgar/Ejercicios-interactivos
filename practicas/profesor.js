@@ -406,7 +406,7 @@ function pintarRegistro() {
     $('tabla-fallos').innerHTML = `<p class="vacio">Ningún fallo con estos filtros.${soloLista}</p>`;
     return;
   }
-  const ejemplo = e => `<div class="pequeno"><code>${esc(e.item)}</code><br>${esc(e.feedback)}${e.respuesta ? ` <em>(contestó: ${esc(e.respuesta)})</em>` : ''} · ${esc(e.alumno)}, ${fechaHora(e.t)}</div>`;
+  const ejemplo = e => `<div class="pequeno" style="min-width: 18rem; margin-bottom: .4rem"><code style="white-space: normal; word-break: break-all">${esc(e.item)}</code><br>${esc(e.feedback)}${e.respuesta ? ` <em>(contestó: ${esc(e.respuesta)})</em>` : ''} · ${esc(e.alumno)}, ${fechaHora(e.t)}</div>`;
   $('tabla-fallos').innerHTML = `
     <h3>Los fallos más repetidos (${r.total} fallos)</h3>
     <table>
