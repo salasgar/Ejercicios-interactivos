@@ -95,9 +95,9 @@ const tablaCodigos = () => [['N.º', 'Alumno', 'Código', 'Enlace'], ...filasCod
 // --- 2. Resultados -------------------------------------------------------------
 
 /**
- * Los códigos pegados, de los tres tipos mezclados: los de práctica (16, y los
- * de 12 de `divisores/`) en `validos`, los de tarea de la semana (20) en
- * `deTareas`, y los que no son válidos.
+ * Los códigos pegados, de los dos tipos mezclados: los de 12 de `divisores/`
+ * en `validos`, los de tarea de la semana (20) en `deTareas`, y los que no son
+ * válidos (también los de 16 de práctica, que ya no existen: salen en el aviso).
  */
 function pegados() {
   const leidos = extraerCodigosResultado($('pegados').value).map(texto => ({ texto, dato: leerCualquierCodigo(texto) }));

@@ -5,10 +5,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as divisores from '../divisores/logica.js';
-import { CATALOGO, ID_PLANTILLA, MAX_EJERCICIOS, practicaPorSlug, practicaPorId } from '../practicas/_comun/catalogo.js';
+import { CATALOGO, ID_PLANTILLA, practicaPorSlug, practicaPorId } from '../practicas/_comun/catalogo.js';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  ALFABETO, MAX_ALUMNOS, codigoAlumno, leerCodigoAlumno, codigoResultado, leerCodigoResultado, extraerCodigosResultado,
+  ALFABETO, MAX_ALUMNOS, codigoAlumno, leerCodigoAlumno, leerCodigoResultado, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, fechaDeDia, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from '../practicas/_comun/contador.js';
 import {
@@ -44,9 +44,11 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [23, 'constructor', 3], [24, 'distributiva', 3], [25, 'potencias10', 3], [26, 'dictado', 3], [27, 'mental', 2],
     [28, 'especiales', 2], [29, 'errores1', 4], [30, 'propiedades', 3], [31, 'plantilla', 2],
   ]);
+  assert.equal(new Set(CATALOGO.map(p => p.id)).size, CATALOGO.length, 'ids distintos');
+  assert.equal(new Set(CATALOGO.map(p => p.slug)).size, CATALOGO.length, 'slugs distintos');
   for (const p of CATALOGO) {
-    assert.ok(p.id >= 0 && p.id < 32, 'el id cabe en 5 bits');
-    assert.ok(p.nEjercicios >= 1 && p.nEjercicios <= MAX_EJERCICIOS);
+    assert.ok(Number.isInteger(p.id) && p.id >= 0, 'el id es un entero no negativo (sin tope: no viaja en ningún código)');
+    assert.ok(Number.isInteger(p.nEjercicios) && p.nEjercicios >= 1);
     assert.ok(p.nombre.es && p.nombre.en && p.ruta.endsWith('/'));
     assert.match(p.slug, /^[a-z0-9-]+$/, 'el slug vale para el id del documento de Firestore');
     assert.equal(practicaPorSlug(p.slug), p);
@@ -88,107 +90,41 @@ test('códigos de alumno: los inventados se leen igual que en divisores/', () =>
   }
 });
 
-test('código de resultado: ida y vuelta en todas las prácticas, con los extremos', () => {
-  for (const p of CATALOGO) {
-    for (const indice of [0, 1, 500, 1023]) {
-      for (const fallos of [0, 15]) {
-        for (const dia of [0, 1023]) {
-          const ejercicios = Array.from({ length: p.nEjercicios }, (_, n) => ({ terminado: n % 2 === 0, fallos }));
-          const codigo = codigoResultado(p.id, indice, ejercicios, dia);
-          assert.match(codigo, /^[A-HJ-NP-Z2-9]{4}(-[A-HJ-NP-Z2-9]{4}){3}$/);
-          assert.deepEqual(leerCodigoResultado(codigo), { practica: p.id, indice, ejercicios, dia });
-          assert.deepEqual(leerCodigoResultado(codigo.toLowerCase().replaceAll('-', ' ')), { practica: p.id, indice, ejercicios, dia });
-        }
-      }
-    }
-  }
-});
-
-test('código de resultado: ida y vuelta al azar, y todos distintos', () => {
-  const rng = crearRng(11);
-  const vistos = new Map();
-  for (let i = 0; i < 2000; i++) {
-    const p = rng.elegir(CATALOGO);
-    const dato = {
-      practica: p.id,
-      indice: rng.entero(0, MAX_ALUMNOS - 1),
-      ejercicios: Array.from({ length: p.nEjercicios }, () => ({ terminado: rng.azar() < 0.6, fallos: rng.entero(0, 15) })),
-      dia: rng.entero(0, 1023),
-    };
-    const codigo = codigoResultado(dato.practica, dato.indice, dato.ejercicios, dato.dia);
-    assert.deepEqual(leerCodigoResultado(codigo), dato);
-    const clave = JSON.stringify(dato);
-    if (vistos.has(codigo)) assert.equal(vistos.get(codigo), clave, 'dos resultados distintos no dan el mismo código');
-    vistos.set(codigo, clave);
-  }
-});
-
-test('código de resultado: los fallos se guardan hasta 15 y sobran los ejercicios de más', () => {
-  const muchos = Array.from({ length: 9 }, () => ({ terminado: true, fallos: 40 }));
-  const leido = leerCodigoResultado(codigoResultado(1, 3, muchos, 40));
-  assert.equal(leido.ejercicios.length, 4, 'la práctica 1 tiene 4 ejercicios');
-  assert.deepEqual(leido.ejercicios[0], { terminado: true, fallos: 15 });
-  // Con menos ejercicios de los que tiene la práctica, los que faltan van sin hacer.
-  assert.deepEqual(leerCodigoResultado(codigoResultado(1, 3, [{ terminado: true, fallos: 2 }], 40)).ejercicios,
-    [{ terminado: true, fallos: 2 }, { terminado: false, fallos: 0 }, { terminado: false, fallos: 0 }, { terminado: false, fallos: 0 }]);
-});
-
-test('código de resultado: un carácter cambiado lo invalida', () => {
-  const rng = crearRng(9);
-  let colados = 0;
-  const PROBADOS = 3000;
-  for (let i = 0; i < PROBADOS; i++) {
-    const p = rng.elegir(CATALOGO);
-    const ejercicios = Array.from({ length: p.nEjercicios }, () => ({ terminado: rng.azar() < 0.6, fallos: rng.entero(0, 15) }));
-    const codigo = codigoResultado(p.id, rng.entero(0, MAX_ALUMNOS - 1), ejercicios, rng.entero(0, 1023));
-    const pos = rng.elegir([...codigo].map((c, j) => (c === '-' ? -1 : j)).filter(j => j >= 0));
-    const otro = rng.elegir([...ALFABETO].filter(c => c !== codigo[pos]));
-    if (leerCodigoResultado(codigo.slice(0, pos) + otro + codigo.slice(pos + 1)) !== null) colados++;
-  }
-  assert.equal(colados, 0, `${colados} de ${PROBADOS} códigos alterados pasan por buenos`);
-});
-
-test('código de resultado: no vale el de otro alumno, ni uno al azar, ni de una práctica que no existe', () => {
-  const rng = crearRng(21);
-  let validos = 0;
-  for (let i = 0; i < 20000; i++) {
-    if (leerCodigoResultado(Array.from({ length: 16 }, () => rng.elegir([...ALFABETO])).join('')) !== null) validos++;
-  }
-  assert.equal(validos, 0, `${validos} códigos al azar válidos de 20000 (se espera 1 de cada 33 millones)`);
-  const ej = [{ terminado: true, fallos: 0 }, { terminado: true, fallos: 0 }];
-  assert.notEqual(codigoResultado(31, 4, ej, 30), codigoResultado(31, 5, ej, 30), 'el código dice de quién es');
-  assert.notEqual(codigoResultado(31, 4, ej, 30), codigoResultado(2, 4, ej, 30), 'y de qué práctica');
-  for (const malo of ['', 'ABCD-EFGH', 'ABCD-EFGH-JKLM-NPQ', 'ABCD-EFGH-JKLM-NPQR-STUV', 'ABCD-EFGH-JKLM-NPQ1']) assert.equal(leerCodigoResultado(malo), null);
-});
-
 test('código de resultado: el de 12 caracteres de divisores/ se lee como práctica 0', () => {
   const ejercicios = divisores.EJERCICIOS.map(n => ({ terminado: n < 3, fallos: n }));
   const viejo = divisores.codigoResultado(17, ejercicios, 36);
   // El código antiguo solo trae los cinco ejercicios de entonces (el 6, los bichos, llegó después).
   assert.deepEqual(leerCodigoResultado(viejo), { practica: 0, indice: 17, ejercicios, dia: 36 });
-  // Sobre la base, divisores/ da códigos de 16 con la misma práctica 0 y sus 6 ejercicios.
-  const seis = [...ejercicios, { terminado: false, fallos: 0 }];
-  assert.deepEqual(leerCodigoResultado(codigoResultado(0, 17, seis, 36)), { practica: 0, indice: 17, ejercicios: seis, dia: 36 });
-  assert.deepEqual(leerCodigoResultado(codigoResultado(0, 17, ejercicios, 36)).ejercicios, seis, 'con cinco declarados, el sexto sale sin hacer');
+  assert.deepEqual(leerCodigoResultado(viejo.toLowerCase().replaceAll('-', ' ')), { practica: 0, indice: 17, ejercicios, dia: 36 });
   assert.equal(leerCodigoResultado('ABCD-EFGH-JKLM'), null);
 });
 
-test('extraerCodigosResultado: encuentra los de 12 y los de 16 en un texto cualquiera', () => {
-  const ej = [{ terminado: true, fallos: 1 }, { terminado: false, fallos: 0 }];
-  const de16 = codigoResultado(31, 0, ej, 36);
-  const otro16 = codigoResultado(4, 9, [{ terminado: true, fallos: 0 }], 37);
+test('código de resultado: el de 16 caracteres por práctica ya no existe, y uno al azar tampoco vale', () => {
+  const rng = crearRng(21);
+  let validos = 0;
+  for (const largo of [12, 16]) {
+    for (let i = 0; i < 10000; i++) {
+      if (leerCodigoResultado(Array.from({ length: largo }, () => rng.elegir([...ALFABETO])).join('')) !== null) validos++;
+    }
+  }
+  assert.equal(validos, 0, `${validos} códigos al azar válidos`);
+  for (const malo of ['', 'ABCD-EFGH', 'ABCD-EFGH-JKLM-NPQR', 'ABCD-EFGH-JKLM-NPQR-STUV']) assert.equal(leerCodigoResultado(malo), null);
+});
+
+test('extraerCodigosResultado: encuentra los de 12 en un texto cualquiera y avisa de los de 16', () => {
   const de12 = divisores.codigoResultado(3, divisores.EJERCICIOS.map(() => ({ terminado: true, fallos: 0 })), 36);
-  const texto = `Hola profe, soy Ana. Mi código es ${de16.toLowerCase()}. Gracias.
-    El de divisores: ${de12}
-    Luis: ${otro16.replaceAll('-', ' ')}   (y otra vez ${de16})
-    Sin guiones: ${de16.replaceAll('-', '')}`;
-  assert.deepEqual(extraerCodigosResultado(texto), [de16, de12, otro16]);
+  const otro12 = divisores.codigoResultado(9, divisores.EJERCICIOS.map(() => ({ terminado: false, fallos: 2 })), 37);
+  const texto = `Hola profe, soy Ana. El de divisores: ${de12.toLowerCase()}. Gracias.
+    Luis: ${otro12.replaceAll('-', ' ')}   (y otra vez ${de12})
+    Sin guiones: ${de12.replaceAll('-', '')}`;
+  assert.deepEqual(extraerCodigosResultado(texto), [de12, otro12]);
   assert.deepEqual(extraerCodigosResultado('nada que ver, 123456'), []);
-  // Uno de 12 pegado a una palabra de cuatro letras no se toma por uno de 16.
+  // Uno de 12 pegado a una palabra de cuatro letras no se toma por uno más largo.
   assert.deepEqual(extraerCodigosResultado(`${de12} para`), [de12]);
   assert.deepEqual(extraerCodigosResultado(`casa ${de12}`), [de12]);
-  // Los que tienen la forma pero no son válidos salen también, para avisar.
-  assert.deepEqual(extraerCodigosResultado('ABCD-EFGH-JKLM-NPQR'), ['ABCD-EFGH-JKLM-NPQR']);
+  // Lo que tiene la forma pero no es válido sale también, para avisar: un código de 16
+  // (el de práctica, que ya no existe) sale con sus doce primeros caracteres.
+  assert.deepEqual(extraerCodigosResultado('ABCD-EFGH-JKLM-NPQR'), ['ABCD-EFGH-JKLM']);
   assert.equal(leerCodigoResultado('ABCD-EFGH-JKLM-NPQR'), null);
 });
 

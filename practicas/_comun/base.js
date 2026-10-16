@@ -12,7 +12,7 @@
 // lo del navegador, y el código de resultado lleva lo necesario para calificar.
 
 import { practicaPorSlug } from './catalogo.js';
-import { codigoAlumno, leerCodigoAlumno, codigoResultado } from './codigos.js';
+import { codigoAlumno, leerCodigoAlumno } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
 import { leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico } from './nube.js';
 import { datosFallo, registrarFallo, enviarPendientes } from './registro.js';
@@ -443,37 +443,10 @@ export function arrancar(practica) {
 
   // --- Menú -----------------------------------------------------------------------
 
+  /** Cuando están todos los ejercicios terminados, la frase de que el profesor ya lo ve (en la nube). */
   function cajaResultado() {
-    const hechos = estado.ej.filter(e => e.terminado);
-    if (estado.indice === null || !hechos.length || semana !== null) return '';
-    const codigo = codigoResultado(ficha.id, estado.indice, estado.ej, Math.max(...hechos.map(e => e.dia)));
-    const completo = hechos.length === defs.length;
-    return `
-      <div class="resultado-discreto">
-        ${completo ? `<p class="pequeno resultado-discreto__fin">${t().resultado_completo(defs.length)}</p>` : ''}
-        <details class="pequeno">
-          <summary>${t().resultado_desplegable}</summary>
-          <div class="resultado__fila">
-            <output class="resultado__codigo" id="codigo-resultado">${codigo}</output>
-            <button type="button" class="secundario" id="copiar">${t().copiar}</button>
-          </div>
-        </details>
-      </div>`;
-  }
-
-  function activarCopiar() {
-    const boton = app.querySelector('#copiar');
-    if (!boton) return;
-    boton.addEventListener('click', async () => {
-      const salida = app.querySelector('#codigo-resultado');
-      try {
-        await navigator.clipboard.writeText(salida.textContent);
-        boton.textContent = t().copiado;
-      } catch {
-        // Sin permiso de portapapeles (o sin HTTPS): se deja seleccionado para copiarlo a mano.
-        getSelection().selectAllChildren(salida);
-      }
-    });
+    if (estado.indice === null || semana !== null || !estado.ej.every(e => e.terminado)) return '';
+    return `<div class="resultado-discreto"><p class="pequeno resultado-discreto__fin">${t().resultado_completo(defs.length)}</p></div>`;
   }
 
   /** La frase del menú que explica el contador, según lo que declaren los ejercicios. */
@@ -524,7 +497,6 @@ export function arrancar(practica) {
       ultimoRemoto = null;
       pintarEntrada();
     });
-    activarCopiar();
   }
 
   // --- Ejercicio ------------------------------------------------------------------
@@ -762,7 +734,6 @@ export function arrancar(practica) {
         <button type="button" class="ancho" id="al-menu">${textoSalir()}</button>
       </section>`;
     app.querySelector('#al-menu').addEventListener('click', salirDelEjercicio);
-    activarCopiar();
   }
 
   // --- Arranque ---------------------------------------------------------------------

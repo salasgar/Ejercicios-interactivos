@@ -1,8 +1,10 @@
 // Catálogo de las prácticas de la unidad 2. Lo fija el reparto PU2 (ficha de
-// la tarea 01): el `id` viaja dentro del código de resultado, así que NO se
-// renumera ni se reordena. `ruta` es relativa a `practicas/`; `nEjercicios` es
-// el número de ejercicios que la práctica tiene que declarar (la base lo
-// comprueba al arrancar). `disponible` decide si la portada la enlaza.
+// la tarea 01): el `id` lo usan el panel y el progreso guardado, así que NO se
+// renumera ni se reordena; una práctica nueva lleva el siguiente entero libre
+// (ya no hay tope: el código de resultado por práctica, que limitaba los ids a
+// 0-31, se eliminó el 2026-10-16). `ruta` es relativa a `practicas/`;
+// `nEjercicios` es el número de ejercicios que la práctica tiene que declarar
+// (la base lo comprueba al arrancar). `disponible` decide si la portada la enlaza.
 //
 // Las que siguen con `disponible: false` existen y funcionan, pero la revisión
 // final (tarea 18, 2026-10-08) encontró en ellas algo que penaliza una
@@ -48,9 +50,6 @@ export const CATALOGO = [
 
 /** Id de la práctica de plantilla (la portada no la enseña). */
 export const ID_PLANTILLA = 31;
-
-/** El código de resultado tiene sitio para seis ejercicios por práctica. */
-export const MAX_EJERCICIOS = 6;
 
 export function practicaPorSlug(slug) {
   return CATALOGO.find(p => p.slug === slug) ?? null;

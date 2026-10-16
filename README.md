@@ -85,8 +85,8 @@ del profesor: lo que sigue vale también para ella.
   (y en «18 es … 18», las tres).
 - Los códigos de alumno de 4 caracteres son los mismos de siempre. Quien la
   hizo con la versión anterior tiene un código de resultado de 12 caracteres:
-  el panel los sigue leyendo, mezclados con los de 16 (traen solo los cinco
-  ejercicios de entonces; el 6 sale como no hecho).
+  el panel los sigue leyendo, mezclados con los de las tareas (traen solo los
+  cinco ejercicios de entonces; el 6 sale como no hecho).
 - Código en `divisores/` (`logica.js` es pura y tiene sus tests en
   `tests/divisores.test.js`).
 
@@ -148,10 +148,11 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   común para Classroom y la vista «Tareas de la semana».
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
   en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Lo normal es que
-  el profesor vea los resultados en la nube; cada práctica guarda además un
-  **código de resultado de 16 caracteres** (en un desplegable discreto, solo si
-  el profesor lo pide) como respaldo si la nube no llega; el panel lee mezclados
-  los de 20 de las tareas, los de 16 y los de 12 de `divisores/`.
+  el profesor vea los resultados en la nube; el único respaldo si la nube no
+  llega es el código de la tarea (20 caracteres, en un desplegable); el panel lee
+  mezclados los de 20 de las tareas y los de 12 de `divisores/`. El código de
+  resultado por práctica (16 caracteres) existió hasta el 2026-10-16: se eliminó
+  y con él el tope de 32 prácticas del catálogo.
 - El progreso se guarda en el navegador y en Firestore, en
   `practicas/{práctica}--{código}` (regla en `firestore.rules`; **hay que
   publicarla** para que funcione la nube). Al entrar con su código, el alumno
