@@ -4,7 +4,7 @@
 // «factor»; producto con «·»; GCD/LCM en inglés, m.c.d./m.c.m. en español;
 // inglés sencillo; nada de «×», «HCF», «factor of» ni letras como incógnita.
 //
-// El banco (BANCO) tiene 36 plantillas: 24 limpias (12 m.c.d. + 12 m.c.m.) y
+// El banco (BANCO) tiene 37 plantillas: 25 limpias (12 m.c.d. + 13 m.c.m.) y
 // 12 con trampa (6 + 6). Cada una es { clase, trampa, es, en, numeros, razon }:
 //   clase    'mcd' | 'mcm'
 //   trampa   true si una palabra del enunciado empuja hacia la clase contraria
@@ -12,18 +12,26 @@
 //   numeros  rng => [a, b] o [a, b, c], los datos del ítem
 //   razon    (a, b[, c]) => { es, en }: el porqué, con esos mismos números
 
+import { mcd } from '../_comun/aritmetica.js';
+
+// Dos enteros distintos en [min, max].
+function dosDistintos(rng, min, max) {
+  let a = rng.entero(min, max);
+  let b = rng.entero(min, max);
+  while (b === a) b = rng.entero(min, max);
+  return [a, b];
+}
+
+// Con m.c.d. 1 «el mayor número de pulseras» (o de trozos) es 1 y el contexto
+// se vuelve absurdo: se exige m.c.d. >= 2.
 function dosGrandes(rng) {
-  let a = rng.entero(12, 96);
-  let b = rng.entero(12, 96);
-  while (b === a) b = rng.entero(12, 96);
+  let [a, b] = dosDistintos(rng, 12, 96);
+  while (mcd(a, b) < 2) [a, b] = dosDistintos(rng, 12, 96);
   return [a, b];
 }
 
 function dosPequenos(rng) {
-  let a = rng.entero(2, 20);
-  let b = rng.entero(2, 20);
-  while (b === a) b = rng.entero(2, 20);
-  return [a, b];
+  return dosDistintos(rng, 2, 20);
 }
 
 function tresPequenos(rng) {
@@ -38,7 +46,7 @@ function tresPequenos(rng) {
 
 const LIMPIOS_MCD_PAQUETES = [
   { oEs: 'lápices', oEn: 'pencils', pEs: 'gomas', pEn: 'erasers', gEs: 'bolsas de regalo', gEn: 'gift bags' },
-  { oEs: 'canicas', oEn: 'marbles', pEs: 'cuentas', pEn: 'beads', gEs: 'pulseras', gEn: 'bracelets' },
+  { oEs: 'cuentas rojas', oEn: 'red beads', pEs: 'cuentas azules', pEn: 'blue beads', gEs: 'pulseras', gEn: 'bracelets' },
   { oEs: 'manzanas', oEn: 'apples', pEs: 'naranjas', pEn: 'oranges', gEs: 'cestas de fruta', gEn: 'fruit baskets' },
   { oEs: 'pegatinas', oEn: 'stickers', pEs: 'cromos', pEn: 'cards', gEs: 'sobres', gEn: 'packs', gMasc: true },
   { oEs: 'bombones', oEn: 'chocolates', pEs: 'caramelos', pEn: 'sweets', gEs: 'cajas', gEn: 'boxes' },
@@ -61,7 +69,7 @@ const LIMPIOS_MCD_TROZOS = [
   { oEs: 'cinta', oEn: 'ribbon', tEs: 'trozos', tEn: 'pieces', tsEs: 'cada trozo', tsEn: 'each piece' },
   { oEs: 'tabla de madera', oEn: 'wooden board', tEs: 'tablones', tEn: 'planks', tsEs: 'cada tablón', tsEn: 'each plank' },
   { oEs: 'tela', oEn: 'fabric', tEs: 'retales', tEn: 'strips', tsEs: 'cada retal', tsEn: 'each strip' },
-  { oEs: 'manguera', oEn: 'garden hose', tEs: 'trozos', tEn: 'pieces', tsEs: 'cada trozo', tsEn: 'each piece' },
+  { oEs: 'alambre', oEn: 'wire', tEs: 'trozos', tEn: 'pieces', tsEs: 'cada trozo', tsEn: 'each piece' },
   { oEs: 'cable', oEn: 'cable', tEs: 'trozos', tEn: 'pieces', tsEs: 'cada trozo', tsEn: 'each piece' },
 ].map(d => ({
   clase: 'mcd',
@@ -85,25 +93,33 @@ const LIMPIOS_MCM = [
   { sEs: 'Un tren sale cada', sEn: 'One train leaves every', s2Es: 'otro sale cada', s2En: 'another one leaves every', uEs: 'minutos', uEn: 'minutes', vEs: 'los dos acaban de salir juntos', vEn: 'both of them have just left together' },
   { sEs: 'Un faro se enciende cada', sEn: 'One lighthouse flashes every', s2Es: 'otro se enciende cada', s2En: 'another one flashes every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de encenderse juntos', vEn: 'both of them have just flashed together' },
   { sEs: 'Una campana suena cada', sEn: 'One bell rings every', s2Es: 'otra suena cada', s2En: 'another one rings every', uEs: 'minutos', uEn: 'minutes', vEs: 'las dos acaban de sonar juntas', vEn: 'both of them have just rung together' },
-  { sEs: 'Un corredor pasa por la meta cada', sEn: 'One runner passes the finish line every', s2Es: 'otro pasa cada', s2En: 'another one passes every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de pasar juntos', vEn: 'both of them have just passed together' },
-  { sEs: 'Un semáforo cambia cada', sEn: 'One traffic light changes every', s2Es: 'otro cambia cada', s2En: 'another one changes every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de cambiar juntos', vEn: 'both of them have just changed together' },
+  { sEs: 'Un corredor pasa por la meta cada', sEn: 'One runner passes the finish line every', s2Es: 'otro pasa cada', s2En: 'another one passes every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de pasar juntos', vEn: 'both of them have just passed together',
+    numeros: rng => dosDistintos(rng, 9, 20).map(x => 10 * x) },
+  { sEs: 'Un semáforo cambia cada', sEn: 'One traffic light changes every', s2Es: 'otro cambia cada', s2En: 'another one changes every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de cambiar juntos', vEn: 'both of them have just changed together',
+    numeros: rng => dosDistintos(rng, 3, 12).map(x => 10 * x) },
   { sEs: 'Una luz parpadea cada', sEn: 'One light blinks every', s2Es: 'otra parpadea cada', s2En: 'another one blinks every', uEs: 'segundos', uEn: 'seconds', vEs: 'las dos acaban de parpadear juntas', vEn: 'both of them have just blinked together' },
   { sEs: 'Riegas un rosal cada', sEn: 'You water one rose bush every', s2Es: 'otro cada', s2En: 'another one every', uEs: 'días', uEn: 'days', vEs: 'hoy has regado los dos el mismo día', vEn: 'today you watered both on the same day' },
   { sEs: 'Un aspersor se activa cada', sEn: 'One sprinkler turns on every', s2Es: 'otro se activa cada', s2En: 'another one turns on every', uEs: 'minutos', uEn: 'minutes', vEs: 'los dos acaban de activarse juntos', vEn: 'both of them have just turned on together' },
   { sEs: 'Una alarma suena cada', sEn: 'One alarm goes off every', s2Es: 'otra suena cada', s2En: 'another one goes off every', uEs: 'minutos', uEn: 'minutes', vEs: 'las dos acaban de sonar juntas', vEn: 'both of them have just gone off together' },
-  { sEs: 'Una cabina de la noria pasa por abajo cada', sEn: 'One Ferris wheel cabin passes the bottom every', s2Es: 'otra pasa cada', s2En: 'another one passes every', uEs: 'segundos', uEn: 'seconds', vEs: 'las dos acaban de pasar juntas por abajo', vEn: 'both of them have just passed the bottom together' },
-  { sEs: 'Un metrónomo marca cada', sEn: 'One metronome ticks every', s2Es: 'otro marca cada', s2En: 'another one ticks every', uEs: 'segundos', uEn: 'seconds', vEs: 'los dos acaban de marcar juntos', vEn: 'both of them have just ticked together' },
+  { sEs: 'Una noria da una vuelta cada', sEn: 'One big wheel goes round every', s2Es: 'otra noria da una vuelta cada', s2En: 'another big wheel goes round every', uEs: 'minutos', uEn: 'minutes',
+    vEs: 'Ana va en una y Raúl en la otra, y los dos acaban de pasar por el punto más alto a la vez',
+    vEn: 'Ana is on one and Raúl is on the other, and both of them have just passed the top at the same time' },
+  { sEs: 'Un metrónomo hace clic cada', sEn: 'One metronome clicks every', s2Es: 'otro hace clic cada', s2En: 'another one clicks every', uEs: 'décimas de segundo', uEn: 'tenths of a second', genero: 'f',
+    vEs: 'los dos acaban de hacer clic a la vez', vEn: 'both of them have just clicked together',
+    numeros: rng => dosDistintos(rng, 3, 30) },
+  { sEs: 'De un grifo cae una gota cada', sEn: 'One tap drips every', s2Es: 'de otro cae una cada', s2En: 'another one drips every', uEs: 'segundos', uEn: 'seconds',
+    vEs: 'las dos acaban de caer a la vez', vEn: 'both of them have just dripped together' },
 ].map(d => ({
   clase: 'mcm',
   trampa: false,
   dice: [],
-  es: (a, b) => `${d.sEs} ${a} ${d.uEs} y ${d.s2Es} ${b} ${d.uEs}: ${d.vEs}. ¿Dentro de cuántos ${d.uEs} volverán a coincidir? ¿Hace falta el m.c.d. o el m.c.m.?`,
+  es: (a, b) => `${d.sEs} ${a} ${d.uEs} y ${d.s2Es} ${b} ${d.uEs}: ${d.vEs}. ¿Dentro de ${d.genero === 'f' ? 'cuántas' : 'cuántos'} ${d.uEs} volverán a coincidir? ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b) => `${d.sEn} ${a} ${d.uEn} and ${d.s2En} ${b} ${d.uEn}: ${d.vEn}. In how many ${d.uEn} will they coincide again? Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
     es: `El momento en que vuelven a coincidir tiene que ser múltiplo de ${a} y de ${b}: el primero que vale para los dos es su mínimo común múltiplo → m.c.m.`,
     en: `The moment they coincide again must be a multiple of ${a} and of ${b}: the first one that works for both is their least common multiple → LCM.`,
   }),
-  numeros: dosPequenos,
+  numeros: d.numeros ?? dosPequenos,
 }));
 
 // --- Trampa A (m.c.d.): pregunta por el MENOR número de piezas, cuando en

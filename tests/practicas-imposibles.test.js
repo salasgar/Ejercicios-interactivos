@@ -129,6 +129,17 @@ test('ejercicio 3: el banco tiene 12 plantillas, 6 m.c.d. y 6 m.c.m., sin tokens
   }
 });
 
+test('ejercicio 3: realismo (regla 9): nada de canicas con pulseras ni de corredores con segundos', () => {
+  const rng = crearRng(31);
+  for (const plantilla of BANCO_NOMBRAR) {
+    const [a, b] = plantilla.numeros(rng);
+    const r = valorExpr(plantilla.clase, a, b);
+    const texto = plantilla.es(a, b, r);
+    assert.ok(!(/canicas/i.test(texto) && /pulseras/i.test(texto)), texto);
+    assert.ok(!/corredor/i.test(texto), texto);
+  }
+});
+
 test('ejercicio 3: el valor de la opción correcta es la respuesta real, y las otras tres son distintas', () => {
   const rng = crearRng(1010);
   for (let i = 0; i < 2000; i++) {

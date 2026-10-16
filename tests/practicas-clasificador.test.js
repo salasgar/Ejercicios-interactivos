@@ -11,14 +11,14 @@ import { generarLimpio, generarTrampa, generarJustificar } from '../practicas/cl
 
 const PROHIBIDO = ['×', 'HCF', 'factor of'];
 
-test('el banco tiene 36 plantillas: 24 limpias (12+12) y 12 con trampa (6+6)', () => {
+test('el banco tiene 37 plantillas: 25 limpias (12+13) y 12 con trampa (6+6)', () => {
   const limpios = BANCO.filter(p => !p.trampa);
   const trampas = BANCO.filter(p => p.trampa);
-  assert.equal(BANCO.length, 36);
-  assert.equal(limpios.length, 24);
+  assert.equal(BANCO.length, 37);
+  assert.equal(limpios.length, 25);
   assert.equal(trampas.length, 12);
   assert.equal(limpios.filter(p => p.clase === 'mcd').length, 12);
-  assert.equal(limpios.filter(p => p.clase === 'mcm').length, 12);
+  assert.equal(limpios.filter(p => p.clase === 'mcm').length, 13);
   assert.equal(trampas.filter(p => p.clase === 'mcd').length, 6);
   assert.equal(trampas.filter(p => p.clase === 'mcm').length, 6);
 });
@@ -98,7 +98,61 @@ test('ejercicio 3 (justificar): exactamente una opción es la correcta, y las cl
   }
   const proporcion = correctasVa / 2000;
   assert.ok(proporcion >= 0.4 && proporcion <= 0.6, `proporción «va»: ${proporcion}`);
-  assert.ok(vistos.size > 20, 'se han usado bastantes plantillas distintas de las 36');
+  assert.ok(vistos.size > 20, 'se han usado bastantes plantillas distintas de las 37');
+});
+
+// ─── Realismo de los enunciados (regla 9 de proyecto.md) ─────────────────────
+
+function mcdBF(a, b) {
+  for (let d = Math.min(a, b); d >= 1; d--) if (a % d === 0 && b % d === 0) return d;
+}
+
+function numerosDe(p, rng) {
+  const [a, b] = p.numeros(rng);
+  return [a, b];
+}
+
+test('realismo: metrónomo en 3..30 décimas, corredor 90..200 s y semáforo 30..120 s, todos múltiplos de 10', () => {
+  const rng = crearRng(2026);
+  const por = frag => BANCO.find(p => p.es(2, 3).startsWith(frag));
+  const metro = por('Un metrónomo');
+  const corredor = por('Un corredor');
+  const semaforo = por('Un semáforo');
+  for (let i = 0; i < 400; i++) {
+    const [a, b] = numerosDe(metro, rng);
+    assert.ok([a, b].every(x => x >= 3 && x <= 30) && a !== b, `${a} ${b}`);
+    assert.match(metro.es(a, b), /cuántas décimas de segundo/);
+    const [c, d] = numerosDe(corredor, rng);
+    assert.ok([c, d].every(x => x >= 90 && x <= 200 && x % 10 === 0) && c !== d, `${c} ${d}`);
+    const [e, f] = numerosDe(semaforo, rng);
+    assert.ok([e, f].every(x => x >= 30 && x <= 120 && x % 10 === 0) && e !== f, `${e} ${f}`);
+  }
+});
+
+test('realismo: toda plantilla m.c.d. de dos números da m.c.d. >= 2', () => {
+  const rng = crearRng(4040);
+  for (const p of BANCO.filter(q => q.clase === 'mcd')) {
+    for (let i = 0; i < 300; i++) {
+      const [a, b] = numerosDe(p, rng);
+      assert.ok(mcdBF(a, b) >= 2, `${a} ${b} en: ${p.es(a, b)}`);
+    }
+  }
+});
+
+test('realismo: ningún enunciado habla de canicas con pulseras, mangueras, cabinas ni «cuántos décimas»', () => {
+  const rng = crearRng(5150);
+  for (const p of BANCO) {
+    for (let i = 0; i < 300; i++) {
+      const n = p.numeros(rng);
+      for (const texto of [p.es(...n), p.en(...n)]) {
+        for (const mal of ['manguera', 'garden hose', 'cabina', 'cabin', 'cuántos décimas', 'cuántos días de segundo']) {
+          assert.ok(!texto.includes(mal), `«${mal}» en: ${texto}`);
+        }
+        assert.ok(!/canicas.*pulseras|marbles.*bracelets/.test(texto), texto);
+        assert.ok(!texto.includes('undefined'), texto);
+      }
+    }
+  }
 });
 
 test('las opciones de justificación existen en TX.justificacion y no mencionan "factor"', () => {
