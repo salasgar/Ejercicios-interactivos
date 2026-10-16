@@ -95,7 +95,9 @@ test('regla: existe, solo deja crear, y acepta lo que manda la app', () => {
   // Los campos obligatorios y permitidos de la regla son los de datosFallo.
   const lista = nombre => JSON.parse(BLOQUE.match(new RegExp(`${nombre}\\((\\[[^\\]]+\\])\\)`))[1].replace(/'/g, '"'));
   assert.deepEqual(lista('hasAll').sort(), Object.keys(datosFallo(FALLO)).sort());
-  assert.deepEqual(lista('hasOnly').sort(), Object.keys(datosFallo({ ...FALLO, error: 'x', respuesta: 'y' })).sort());
+  // «tarea» (tarea 49): la regla lo admite ya; datosFallo lo manda desde la tarea 51.
+  assert.deepEqual(lista('hasOnly').sort(), [...new Set([...Object.keys(datosFallo({ ...FALLO, error: 'x', respuesta: 'y', tarea: 1 })), 'tarea'])].sort());
+  assert.match(BLOQUE, /data\.tarea is int && request\.resource\.data\.tarea >= 1 && request\.resource\.data\.tarea <= 1023/);
   // Los topes de la regla dejan pasar los de la app (con margen por si cuentan bytes).
   for (const [campo, tope] of Object.entries({ item: LIMITES.item, feedback: LIMITES.feedback, respuesta: LIMITES.respuesta })) {
     const enRegla = Number(BLOQUE.match(new RegExp(`data\\.${campo}\\.size\\(\\) <= (\\d+)`))[1]);
