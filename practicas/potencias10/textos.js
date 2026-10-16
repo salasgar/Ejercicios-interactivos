@@ -18,8 +18,8 @@ export const TX = {
       en: cifras => `Which power of 10 is <strong>${cifras}</strong>? Move the slider to find it.`,
     },
     ceros: {
-      es: n => `¿Cuántos ceros tiene 10<sup>${n}</sup>? Mueve el deslizador hasta 10<sup>${n}</sup> y cuéntalos.`,
-      en: n => `How many zeros does 10<sup>${n}</sup> have? Move the slider to 10<sup>${n}</sup> and count them.`,
+      es: n => `¿Cuántos ceros tiene <strong>10<sup>${n}</sup></strong>? Mueve el deslizador hasta 10<sup>${n}</sup> y cuéntalos.`,
+      en: n => `How many zeros does <strong>10<sup>${n}</sup></strong> have? Move the slider to 10<sup>${n}</sup> and count them.`,
     },
     este: { es: 'Este', en: 'This one' },
     ceros_dice: { es: n => (n === 1 ? '1 cero' : `${n} ceros`), en: n => (n === 1 ? '1 zero' : `${n} zeros`) },

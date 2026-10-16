@@ -33,7 +33,12 @@ function explicacionPuede(item, api) {
 
 function montarPuede(contenedor, item, api) {
   const { tt, esc } = api;
-  contenedor.innerHTML = `<p class="instruccion">${esc(enunciadoPuede(item, api))}</p>`;
+  // El texto se escapa entero y luego se destaca la pregunta (o la igualdad, sin contexto).
+  const enunciado = esc(enunciadoPuede(item, api));
+  const destacado = item.contexto === null
+    ? enunciado.replace(/^.*? = \d+/, '<strong>$&</strong>')
+    : enunciado.replace(/(¿[^¿]*|(Can|can) [^.,]*)\?$/, '<strong>$&</strong>');
+  contenedor.innerHTML = `<p class="instruccion">${destacado}</p>`;
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [
@@ -92,7 +97,7 @@ function montarNombrar(contenedor, item, api) {
   const plantilla = BANCO_NOMBRAR[item.plantilla];
   const r = valorExpr(item.cantidad, item.a, item.b);
   const enunciado = tt(plantilla)(item.a, item.b, r);
-  contenedor.innerHTML = `<p class="instruccion">${esc(enunciado)}</p>`;
+  contenedor.innerHTML = `<p class="instruccion">${esc(enunciado).replace(/(El|The) \d+ (es|is)…$/, '<strong>$&</strong>')}</p>`;
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4',
     opciones: item.opciones.map(o => ({ valor: o.valor, html: esc(textoExpr(o, idioma)) })),

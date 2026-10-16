@@ -66,7 +66,7 @@ export const TX = {
   },
   instruccion: {
     hay: { es: 'Mira el procedimiento. ¿Está bien o hay un error?', en: 'Look at the work. Is it right or is there a mistake?' },
-    linea: { es: 'Hay un error. Toca la PRIMERA línea que está mal.', en: 'There is a mistake. Tap the FIRST line that is wrong.' },
+    linea: { es: 'Hay un error. Toca la <strong>PRIMERA línea</strong> que está mal.', en: 'There is a mistake. Tap the <strong>FIRST line</strong> that is wrong.' },
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
   },
   introduccion: {

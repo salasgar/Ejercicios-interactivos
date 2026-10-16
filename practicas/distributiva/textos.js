@@ -16,12 +16,12 @@ export const TX = {
       en: '<p>A product with brackets is a rectangle. Drag the line to the place where the long side splits.</p>',
     },
     pregunta_suma: {
-      es: (a, b, c) => `Parte el rectángulo de ${a} · (${b} + ${c}).`,
-      en: (a, b, c) => `Cut the rectangle of ${a} · (${b} + ${c}).`,
+      es: (a, b, c) => `Parte el rectángulo de <strong>${a} · (${b} + ${c})</strong>.`,
+      en: (a, b, c) => `Cut the rectangle of <strong>${a} · (${b} + ${c})</strong>.`,
     },
     pregunta_resta: {
-      es: (a, b, c) => `Parte el rectángulo de ${a} · (${b} − ${c}): el trozo de la derecha se quita.`,
-      en: (a, b, c) => `Cut the rectangle of ${a} · (${b} − ${c}): the piece on the right is taken away.`,
+      es: (a, b, c) => `Parte el rectángulo de <strong>${a} · (${b} − ${c})</strong>: el trozo de la derecha <strong>se quita</strong>.`,
+      en: (a, b, c) => `Cut the rectangle of <strong>${a} · (${b} − ${c})</strong>: the piece on the right <strong>is taken away</strong>.`,
     },
     cortar: { es: 'Cortar aquí', en: 'Cut here' },
     izquierda: { es: 'Mover el corte a la izquierda', en: 'Move the cut left' },
@@ -53,8 +53,8 @@ export const TX = {
       en: '<p>Two rectangles with the same height can be joined into one. Write the product with brackets.</p>',
     },
     pregunta_juntar: {
-      es: texto => `Junta los dos rectángulos: escribe ${texto} como un solo producto con paréntesis.`,
-      en: texto => `Join the two rectangles: write ${texto} as one product with brackets.`,
+      es: texto => `Junta los dos rectángulos: escribe ${texto} como <strong>un solo producto con paréntesis</strong>.`,
+      en: texto => `Join the two rectangles: write ${texto} as <strong>one product with brackets</strong>.`,
     },
     pregunta_elegir: {
       es: texto => `¿Cuál es lo mismo que ${texto}?`,

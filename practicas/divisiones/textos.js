@@ -5,7 +5,7 @@ export const TX = {
   escalera: {
     nombre: { es: 'La escalera de divisiones', en: 'The division ladder' },
     detalle: { es: 'Divide paso a paso por el menor primo, hasta llegar a 1', en: 'Divide step by step by the smallest prime, down to 1' },
-    instruccion: { es: 'Pulsa el MENOR primo que divide a este número', en: 'Press the SMALLEST prime that divides this number' },
+    instruccion: { es: 'Pulsa el <strong>MENOR primo</strong> que divide a este número', en: 'Press the <strong>SMALLEST prime</strong> that divides this number' },
   },
   potencias: {
     nombre: { es: 'La forma de potencias', en: 'The powers form' },
@@ -16,8 +16,8 @@ export const TX = {
   ej3: {
     nombre: { es: 'Comprobar multiplicando', en: 'Check by multiplying' },
     detalle: { es: '¿Cuánto vale esta factorización?', en: 'What does this factorisation equal?' },
-    pregunta_valor: { es: f => `¿Cuánto vale ${f}?`, en: f => `What does ${f} equal?` },
-    pregunta_sino: { es: (f, v) => `¿Es correcto que ${f} = ${v}?`, en: (f, v) => `Is it correct that ${f} = ${v}?` },
+    pregunta_valor: { es: f => `¿Cuánto vale <strong>${f}</strong>?`, en: f => `What does <strong>${f}</strong> equal?` },
+    pregunta_sino: { es: (f, v) => `¿Es correcto que <strong>${f} = ${v}</strong>?`, en: (f, v) => `Is it correct that <strong>${f} = ${v}</strong>?` },
     no_da: { es: 'no da', en: 'is not' },
     correcta: { es: 'La cuenta correcta es', en: 'The correct working is' },
   },

@@ -8,8 +8,8 @@ export const TX = {
   alcance: {
     nombre: { es: '¿A qué afecta el exponente?', en: 'What does the exponent apply to?' },
     detalle: { es: 'Toca la parte que se eleva', en: 'Tap the part that is raised to the power' },
-    instruccion_una: { es: 'Toca la base del exponente: la parte que de verdad se eleva.', en: 'Tap the base of the exponent: the part that is really raised to the power.' },
-    instruccion_dos: { es: 'Toca la base del exponente marcado.', en: 'Tap the base of the marked exponent.' },
+    instruccion_una: { es: 'Toca <strong>la base del exponente</strong>: la parte que de verdad se eleva.', en: 'Tap <strong>the base of the exponent</strong>: the part that is really raised to the power.' },
+    instruccion_dos: { es: 'Toca <strong>la base del exponente marcado</strong>.', en: 'Tap <strong>the base of the marked exponent</strong>.' },
     bien: {
       es: (c, e) => `Correcto: el exponente solo afecta a esa parte. <span class="cuenta">${c}</span>. Si afectara a otra, saldría otra cosa: <span class="cuenta">${e}</span>.`,
       en: (c, e) => `Correct: the exponent only applies to that part. <span class="cuenta">${c}</span>. If it applied to something else, you would get another result: <span class="cuenta">${e}</span>.`,
@@ -23,8 +23,8 @@ export const TX = {
     nombre: { es: 'Multiplicación repetida', en: 'Repeated multiplication' },
     detalle: { es: 'Construye la potencia con fichas y con los botones − y +', en: 'Build the power with tiles and with the − and + buttons' },
     instruccion_construir: {
-      es: (b, e) => `Escribe ${b}<sup>${e}</sup> como un producto de ${e} factores, todos iguales a ${b}. Toca las fichas en orden.`,
-      en: (b, e) => `Write ${b}<sup>${e}</sup> as a product of ${e} factors, all of them equal to ${b}. Tap the tiles in order.`,
+      es: (b, e) => `Escribe <strong>${b}<sup>${e}</sup></strong> como un <strong>producto de ${e} factores</strong>, todos iguales a ${b}. Toca las fichas en orden.`,
+      en: (b, e) => `Write <strong>${b}<sup>${e}</sup></strong> as a <strong>product of ${e} factors</strong>, all of them equal to ${b}. Tap the tiles in order.`,
     },
     instruccion_deshacer: { es: 'Toca una ficha de la fila para quitarla.', en: 'Tap a tile in the row to remove it.' },
     bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
@@ -52,7 +52,7 @@ export const TX = {
   valor: {
     nombre: { es: '¿Cuánto vale?', en: 'What is its value?' },
     detalle: { es: 'Elige el valor correcto de la potencia', en: 'Choose the correct value of the power' },
-    pregunta: { es: (b, e) => `¿Cuánto vale ${b} elevado a ${e}?`, en: (b, e) => `What is ${b} to the power of ${e}?` },
+    pregunta: { es: (b, e) => `¿Cuánto vale <strong>${b} elevado a ${e}</strong>?`, en: (b, e) => `What is <strong>${b} to the power of ${e}</strong>?` },
     bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
     // `elegido` es la opción que ha tocado el alumno: se dice qué cuenta daría ese número
     mal: {
@@ -73,10 +73,10 @@ export const TX = {
       en: (a, b) => `Compare (${a} · ${b}) squared with ${a} squared · ${b} squared.`,
     },
     aria_cuadrado: { es: lado => `cuadrado de lado ${lado}`, en: lado => `square with side ${lado}` },
-    pregunta1_suma: { es: (a, b) => `¿Cuánto vale (${a} + ${b}) elevado a 2?`, en: (a, b) => `What is (${a} + ${b}) to the power of 2?` },
-    pregunta2_suma: { es: (a, b) => `¿Y ${a} al cuadrado + ${b} al cuadrado?`, en: (a, b) => `And ${a} squared + ${b} squared?` },
-    pregunta1_prod: { es: (a, b) => `¿Cuánto vale (${a} · ${b}) elevado a 2?`, en: (a, b) => `What is (${a} · ${b}) to the power of 2?` },
-    pregunta2_prod: { es: (a, b) => `¿Y ${a} al cuadrado · ${b} al cuadrado?`, en: (a, b) => `And ${a} squared · ${b} squared?` },
+    pregunta1_suma: { es: (a, b) => `¿Cuánto vale <strong>(${a} + ${b}) elevado a 2</strong>?`, en: (a, b) => `What is <strong>(${a} + ${b}) to the power of 2</strong>?` },
+    pregunta2_suma: { es: (a, b) => `¿Y <strong>${a} al cuadrado + ${b} al cuadrado</strong>?`, en: (a, b) => `And <strong>${a} squared + ${b} squared</strong>?` },
+    pregunta1_prod: { es: (a, b) => `¿Cuánto vale <strong>(${a} · ${b}) elevado a 2</strong>?`, en: (a, b) => `What is <strong>(${a} · ${b}) to the power of 2</strong>?` },
+    pregunta2_prod: { es: (a, b) => `¿Y <strong>${a} al cuadrado · ${b} al cuadrado</strong>?`, en: (a, b) => `And <strong>${a} squared · ${b} squared</strong>?` },
     bien_suma: {
       es: (a, b, ab) => `(${a} + ${b}) al cuadrado no es ${a} al cuadrado + ${b} al cuadrado: faltan los dos rectángulos de ${a} · ${b}, que valen ${2 * ab} en total.`,
       en: (a, b, ab) => `(${a} + ${b}) squared is not ${a} squared + ${b} squared: the two ${a} · ${b} rectangles are missing, worth ${2 * ab} in total.`,

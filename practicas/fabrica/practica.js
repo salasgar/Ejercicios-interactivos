@@ -65,9 +65,9 @@ function montarConstruir(contenedor, item, api) {
 // ─── Ejercicio 2: ¿cuántos divisores tiene? ────────────────────────────────
 
 function montarContar(contenedor, item, api) {
-  const { tt, esc } = api;
+  const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${esc(tt(TX.contar.pregunta))}</p>
+    <p class="instruccion">${tt(TX.contar.pregunta)}</p>
     <div class="operacion">${htmlFact(item.fact)}</div>
     <div class="flecha" aria-hidden="true">↓</div>
     <div class="operacion" id="pantalla">0</div>

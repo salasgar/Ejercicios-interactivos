@@ -103,8 +103,8 @@ export const TX = {
         <p>First fill in the table with the last digit of each power (working out only the last digit of each multiplication). Then say how many digits the shortest pattern that repeats has, and the digit you are asked for.</p>`,
     },
     pregunta: {
-      es: (b, n) => `¿En qué cifra acaba ${b}<sup>${n}</sup>?`,
-      en: (b, n) => `What digit does ${b}<sup>${n}</sup> end in?`,
+      es: (b, n) => `¿En qué cifra <strong>acaba ${b}<sup>${n}</sup></strong>?`,
+      en: (b, n) => `What digit does <strong>${b}<sup>${n}</sup> end in</strong>?`,
     },
     tabla_titulo: {
       es: 'Rellena la última cifra de cada potencia',

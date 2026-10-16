@@ -19,8 +19,8 @@ export const TX = {
         <p>Find the <strong>biggest side</strong> for which the square is complete. Press "This side" and say how many counters are left over. That number is called the <strong>remainder</strong>.</p>`,
     },
     instruccion: {
-      es: n => `Tienes ${n} fichas. Cambia el lado hasta encontrar el cuadrado más grande que se completa.`,
-      en: n => `You have ${n} counters. Change the side until you find the biggest square that is complete.`,
+      es: n => `Tienes ${n} fichas. Cambia el lado hasta encontrar el <strong>cuadrado más grande</strong> que se completa.`,
+      en: n => `You have ${n} counters. Change the side until you find the <strong>biggest square</strong> that is complete.`,
     },
     lado: { es: 'Lado del cuadrado', en: 'Side of the square' },
     completo: { es: 'Se completa', en: 'It is complete' },
@@ -80,8 +80,8 @@ export const TX = {
       en: (n, ku, ru) => `<span class="cuenta">${n} = ${c(ku)} + ${ru}</span> is true, but the remainder ${ru} is too big: the square of side ${ku + 1} still fits (<span class="cuenta">${c(ku + 1)} = ${(ku + 1) * (ku + 1)} ≤ ${n}</span>).`,
     },
     puede_pregunta: {
-      es: (k, r) => `La raíz entera de un número es ${k} y su resto es ${r}. ¿Puede ser?`,
-      en: (k, r) => `The whole square root of a number is ${k} and its remainder is ${r}. Is that possible?`,
+      es: (k, r) => `La raíz entera de un número es <strong>${k}</strong> y su resto es <strong>${r}</strong>. ¿Puede ser?`,
+      en: (k, r) => `The whole square root of a number is <strong>${k}</strong> and its remainder is <strong>${r}</strong>. Is that possible?`,
     },
     puede_si: {
       es: (k, r) => `Sí: <span class="cuenta">${c(k)} + ${r} = ${k * k} + ${r} = ${k * k + r}</span> y ${k * k + r} es menor que <span class="cuenta">${c(k + 1)} = ${(k + 1) * (k + 1)}</span>. El resto más grande posible es 2 · ${k} = ${2 * k}.`,

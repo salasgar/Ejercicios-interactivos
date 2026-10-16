@@ -27,7 +27,7 @@ export const TX = {
         You do not need to go past the square root of the number (forget the decimals): after that the pairs repeat
         the other way round.</p>`,
     },
-    instruccion: { es: n => `El área es ${n}. Elige un ancho y mira si el rectángulo se cierra.`, en: n => `The area is ${n}. Choose a width and see if the rectangle closes.` },
+    instruccion: { es: n => `El <strong>área es ${n}</strong>. Elige un ancho y mira si el rectángulo se cierra.`, en: n => `The <strong>area is ${n}</strong>. Choose a width and see if the rectangle closes.` },
     ancho: { es: 'Ancho', en: 'Width' },
     sobran: { es: (w, faltan, n) => `Con ancho ${w} ${faltan === 1 ? 'falta' : 'faltan'} ${faltan} ${faltan === 1 ? 'celda' : 'celdas'} (${faltan === 1 ? 'la tachada' : 'las tachadas'}) para cerrar el rectángulo: ${w} no es divisor de ${n}.`, en: (w, faltan, n) => `With width ${w}, ${faltan} ${faltan === 1 ? 'cell is' : 'cells are'} missing (the crossed-out ${faltan === 1 ? 'one' : 'ones'}) to close the rectangle: ${w} is not a divisor of ${n}.` },
     encontradas: { es: 'Parejas encontradas', en: 'Pairs found' },
@@ -44,7 +44,7 @@ export const TX = {
   banco: {
     nombre: { es: 'Sin dibujo: las parejas', en: 'No drawing: the pairs' },
     detalle: { es: 'Toca los divisores en el banco de números', en: 'Tap the divisors in the number bank' },
-    instruccion: { es: n => `Toca todos los divisores de ${n} y nada más.`, en: n => `Tap every divisor of ${n}, and nothing else.` },
+    instruccion: { es: n => `Toca <strong>todos los divisores de ${n}</strong> y nada más.`, en: n => `Tap <strong>every divisor of ${n}</strong>, and nothing else.` },
     division_resto: { es: (n, x, c, r) => `${n} : ${x} = ${c}, resto ${r}`, en: (n, x, c, r) => `${n} : ${x} = ${c}, remainder ${r}` },
     acierto: { es: n => `¡Correcto! Esos son todos los divisores de ${n}.`, en: n => `Correct! Those are all the divisors of ${n}.` },
     el_uno_y_el_propio: { es: 'El 1 y el propio número siempre son divisores.', en: 'The number 1 and the number itself are always divisors.' },
@@ -53,12 +53,12 @@ export const TX = {
   parar: {
     nombre: { es: '¿Dónde se para?', en: 'Where do you stop?' },
     detalle: { es: 'Hasta dónde hay que probar para tener todos los divisores', en: 'How far you must try to find every divisor' },
-    pregunta: { es: n => `Para encontrar todos los divisores de ${n} por parejas, ¿hasta qué número hay que probar?`, en: n => `To find all the divisors of ${n} in pairs, up to which number do you have to try?` },
+    pregunta: { es: n => `Para encontrar todos los divisores de ${n} por parejas, ¿<strong>hasta qué número</strong> hay que probar?`, en: n => `To find all the divisors of ${n} in pairs, <strong>up to which number</strong> do you have to try?` },
     correcto: { es: (r, n) => `Correcto: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; a partir de ${r + 1} las parejas se repiten al revés.`, en: (r, n) => `Correct: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; from ${r + 1} on, the pairs repeat the other way round.` },
     incorrecto: { es: (elegido, r, n) => `${elegido} no es el número. Hay que probar hasta ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.`, en: (elegido, r, n) => `${elegido} is not the number. You must try up to ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.` },
   },
   cuadrado: {
-    pregunta: { es: (n, r) => `${n} = ${r} · ${r}. ¿Cuántas veces se escribe el ${r} en la lista de divisores de ${n}?`, en: (n, r) => `${n} = ${r} · ${r}. How many times is ${r} written in the list of divisors of ${n}?` },
+    pregunta: { es: (n, r) => `${n} = ${r} · ${r}. ¿<strong>Cuántas veces se escribe el ${r}</strong> en la lista de divisores de ${n}?`, en: (n, r) => `${n} = ${r} · ${r}. <strong>How many times is ${r} written</strong> in the list of divisors of ${n}?` },
     correcto: { es: (n, r) => `Correcto: en ${n} = ${r} · ${r}, la pareja central es la misma por los dos lados, así que ${r} solo se escribe una vez en la lista de divisores.`, en: (n, r) => `Correct: in ${n} = ${r} · ${r}, the middle pair is the same on both sides, so ${r} is written only once in the list of divisors.` },
     incorrecto: { es: (n, r) => `No es correcto: en ${n} = ${r} · ${r}, la pareja central es la misma por los dos lados, así que ${r} se escribe una sola vez en la lista de divisores de ${n}.`, en: (n, r) => `Not correct: in ${n} = ${r} · ${r}, the middle pair is the same on both sides, so ${r} is written only once in the list of divisors of ${n}.` },
   },

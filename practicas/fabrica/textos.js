@@ -15,7 +15,7 @@ export const TX = {
     divisible: { es: 'Decide mirando los exponentes, sin dividir', en: 'Decide by looking at the exponents, without dividing' },
   },
   construir: {
-    instruccion: { es: n => `Construye el ${n}`, en: n => `Build ${n}` },
+    instruccion: { es: n => `<strong>Construye el ${n}</strong>`, en: n => `<strong>Build ${n}</strong>` },
     exponenteDe: { es: p => `Exponente de ${p}`, en: p => `Exponent of ${p}` },
     feedbackBien: { es: (d, explicacion) => `${d} = ${explicacion}`, en: (d, explicacion) => `${d} = ${explicacion}` },
     feedbackMal: {
@@ -28,7 +28,7 @@ export const TX = {
     },
   },
   contar: {
-    pregunta: { es: '¿Cuántos divisores tiene?', en: 'How many divisors does it have?' },
+    pregunta: { es: '¿<strong>Cuántos divisores</strong> tiene?', en: '<strong>How many divisors</strong> does it have?' },
     feedbackBien: { es: cuenta => `✓ ${cuenta}.`, en: cuenta => `✓ ${cuenta}.` },
     // `cuenta` = «(2+1) · (1+1) = 6», con la cuenta completa.
     feedbackOlvido: {
@@ -42,7 +42,7 @@ export const TX = {
     premio: { es: lista => `Sus divisores son: ${lista.join(', ')}.`, en: lista => `Its divisors are: ${lista.join(', ')}.` },
   },
   divisible: {
-    pregunta: { es: (n, d) => `¿Es ${n} divisible entre ${d}? Míralo en la factorización de ${n}.`, en: (n, d) => `Is ${n} divisible by ${d}? Look at the factorisation of ${n}.` },
+    pregunta: { es: (n, d) => `¿Es ${n} <strong>divisible entre ${d}</strong>? Míralo en la factorización de ${n}.`, en: (n, d) => `Is ${n} <strong>divisible by ${d}</strong>? Look at the factorisation of ${n}.` },
     // La factorización del divisor, antes de comparar exponentes: «12 = 2² · 3:».
     factorDelDivisor: { es: (d, fact) => `${d} = ${fact}:`, en: (d, fact) => `${d} = ${fact}:` },
     feedbackSiTiene: {

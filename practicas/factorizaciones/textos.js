@@ -50,12 +50,12 @@ export const TX = {
         <p>Look at the exponents and decide.</p>`,
     },
     pregunta: {
-      es: (a, b) => `¿Es ${a} múltiplo de ${b}?`,
-      en: (a, b) => `Is ${a} a multiple of ${b}?`,
+      es: (a, b) => `¿Es ${a} <strong>múltiplo de ${b}</strong>?`,
+      en: (a, b) => `Is ${a} <strong>a multiple of ${b}</strong>?`,
     },
     segunda: {
-      es: (a, b) => `¿Por qué número hay que multiplicar ${b} para obtener ${a}? Construye su factorización.`,
-      en: (a, b) => `What number do we multiply ${b} by to get ${a}? Build its prime factorisation.`,
+      es: (a, b) => `¿<strong>Por qué número hay que multiplicar ${b}</strong> para obtener ${a}? Construye su factorización.`,
+      en: (a, b) => `<strong>What number do we multiply ${b} by</strong> to get ${a}? Build its prime factorisation.`,
     },
   },
   cociente: {

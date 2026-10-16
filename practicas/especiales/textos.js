@@ -14,7 +14,7 @@ export const TX = {
   racha: { es: n => (n === 1 ? '1 acierto seguido' : `${n} aciertos seguidos`), en: n => (n === 1 ? '1 in a row' : `${n} in a row`) },
   nombre2: { es: '¿Cuál es la falsa?', en: 'Which one is false?' },
   detalle2: { es: 'De cuatro igualdades, solo una es falsa', en: 'Of four equalities, only one is false' },
-  instruccion2: { es: 'Toca la igualdad que es falsa.', en: 'Tap the equality that is false.' },
+  instruccion2: { es: 'Toca la igualdad que es <strong>falsa</strong>.', en: 'Tap the equality that is <strong>false</strong>.' },
   correcta2: { es: 'Correcto: es la única falsa.', en: "Correct: it's the only false one." },
   incorrecta2: { es: 'Esa es verdadera. La falsa es esta:', en: 'That one is true. The false one is this:' },
 };

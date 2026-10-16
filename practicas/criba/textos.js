@@ -20,8 +20,8 @@ export const TX = {
     },
     ni_primo_ni_compuesto: { es: '1 no es primo ni compuesto', en: '1 is neither prime nor composite' },
     tachar: {
-      es: p => `Tacha los múltiplos de ${p} que quedan (el ${p} no, que es primo).`,
-      en: p => `Cross out the remaining multiples of ${p} (not ${p} itself, which is prime).`,
+      es: p => `Tacha los <strong>múltiplos de ${p}</strong> que quedan (el ${p} no, que es primo).`,
+      en: p => `Cross out the remaining <strong>multiples of ${p}</strong> (not ${p} itself, which is prime).`,
     },
     bien: { es: p => `Esos eran los múltiplos de ${p} que quedaban por tachar.`, en: p => `Those were the remaining multiples of ${p}.` },
     // `ej` = { n, p }: la primera celda que falta, con su cuenta n = p · (n : p).
@@ -103,7 +103,7 @@ export const TX = {
       en: n => `To find out if ${n} is prime, which is the <strong>shortest</strong> list of primes that is enough to try?`,
     },
     mitad: { es: n => `todos los primos hasta la mitad de ${n}`, en: n => `all the primes up to half of ${n}` },
-    primo_pregunta: { es: '¿Y es primo?', en: 'And is it prime?' },
+    primo_pregunta: { es: '¿Y <strong>es primo</strong>?', en: 'And <strong>is it prime</strong>?' },
     explicacion: {
       es: (n, r, s, ultimo) => `${r} · ${r} = ${r * r} ≤ ${n} < ${s} · ${s} = ${s * s}, así que basta probar hasta el ${ultimo}.`,
       en: (n, r, s, ultimo) => `${r} · ${r} = ${r * r} ≤ ${n} < ${s} · ${s} = ${s * s}, so it is enough to try up to ${ultimo}.`,

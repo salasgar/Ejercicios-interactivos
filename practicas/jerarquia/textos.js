@@ -72,8 +72,8 @@ export const TX = {
 
   // Ejercicio 4
   instruccion4: {
-    es: 'Escríbela en una línea: toca un grupo para ponerle o quitarle el paréntesis.',
-    en: 'Write it on one line: tap a group to add or remove its brackets.',
+    es: 'Escríbela en una línea: toca un grupo para <strong>ponerle o quitarle el paréntesis</strong>.',
+    en: 'Write it on one line: tap a group to <strong>add or remove its brackets</strong>.',
   },
   tu_linea: { es: 'En una línea:', en: 'On one line:' },
   explicacion_raya: {

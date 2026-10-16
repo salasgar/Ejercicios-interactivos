@@ -15,8 +15,8 @@ export const TX = {
   ej3: {
     nombre: { es: 'Criterios compuestos', en: 'Combined rules' },
     detalle: { es: '¿Es divisible entre 6, 15, 22, 30 o 33?', en: 'Is it divisible by 6, 15, 22, 30 or 33?' },
-    pregunta_sino: { es: n => `¿Es ${n} divisible entre __D__?`, en: n => `Is ${n} divisible by __D__?` },
-    pregunta_trampa: { es: n => `${n} es divisible entre 4 y entre 6. ¿Es divisible entre 24?`, en: n => `${n} is divisible by 4 and by 6. Is it divisible by 24?` },
+    pregunta_sino: { es: n => `¿Es <strong>${n} divisible entre __D__</strong>?`, en: n => `Is <strong>${n} divisible by __D__</strong>?` },
+    pregunta_trampa: { es: n => `${n} es divisible entre 4 y entre 6. ¿<strong>Es divisible entre 24</strong>?`, en: n => `${n} is divisible by 4 and by 6. <strong>Is it divisible by 24</strong>?` },
   },
   ej4: {
     nombre: { es: 'La cifra que falta', en: 'The missing digit' },
