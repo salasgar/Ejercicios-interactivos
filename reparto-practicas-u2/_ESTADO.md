@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-16 12:30 UTC · por la coordinadora s-20261016T122625-186b4bd8 (da de alta las tareas 40 y 41, salidas de la revisión de la app por Juan Luis el 16-10; relistado hechos/ con git fetch: sin hechos nuevos desde la regeneración de la 39 a las 05:31 UTC; 87 reclamos, 84 terminadas, 51 reabiertas, 0 fallos, 0 sustituidas). **Las 39 tareas anteriores están LISTAS; la 40 y la 41 están PENDIENTES (libres), no comparten ficheros y caben a la vez o en cadena 40+41.** Vendrán más (42, 43…) según siga la revisión; cada una se da de alta con su ficha y su fila aquí.
+Regenerado: 2026-10-16 13:30 UTC · por la 40 (s-20261016T132904-99e664cb): la 40 pasa a LISTA, la 41 sigue PENDIENTE. Antes: por la coordinadora s-20261016T122625-186b4bd8 (da de alta las tareas 40 y 41, salidas de la revisión de la app por Juan Luis el 16-10; relistado hechos/ con git fetch: sin hechos nuevos desde la regeneración de la 39 a las 05:31 UTC; 87 reclamos, 84 terminadas, 51 reabiertas, 0 fallos, 0 sustituidas). **Las 39 tareas anteriores están LISTAS; la 40 y la 41 están PENDIENTES (libres), no comparten ficheros y caben a la vez o en cadena 40+41.** Vendrán más (42, 43…) según siga la revisión; cada una se da de alta con su ficha y su fila aquí.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -156,7 +156,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 37 | Tarea de la semana (página, marcador, código único) y arreglos de la base | tareas/tarea-37-tarea-semanal.md | 36 LISTA; reaperturas del 9-10 de la 30 y la 32 LISTAS | 2 h | ALTO | — | practicas/_comun/, practicas/semana.*, panel, portada, tests; salidas/37-tarea-semanal/ | LISTA | terminada 20:18Z (15-oct) · commits 42bb8cd y dae33d6 |
 | 38 | Progreso en la nube entre aparatos; puntos y «qué falla más» en el panel (plazo: lun 19-10 8:00) | tareas/tarea-38-progreso-nube.md | 37 LISTA | 2 h | ALTO | 39 | practicas/_comun/{base,textos,nube}.js, practicas/semana.js, panel, resultados.js, firestore.rules (bloque practicas), tests; salidas/38-progreso-nube/ | LISTA | terminada 05:01Z (16-oct) · commits 5a43e60 (reglas, publicadas por Juan Luis a las 20:58Z) y 51543cf |
 | 39 | Registro de cada fallo (ítem, respuesta, error) y vista «Fallos» en el panel | tareas/tarea-39-registro-fallos.md | 38 LISTA | 2 h 30 min | ALTO | 38 | practicas/_comun/{base,textos,registro}.js, plantilla (comentarios), panel, resultados.js, firestore.rules (bloque nuevo), tests; salidas/39-registro-fallos/ | LISTA | terminada 05:30Z (16-oct) · commits 0a96ea4 (reglas, publicadas por Juan Luis a las 05:25Z), 45b1125, 90be2b0, 8b5aaae · almacenamiento: un documento por fallo (decisión de Juan Luis) |
-| 40 | Semáforo: botón «Ninguno / None», Check solo con algo pulsado, corrección visible de cada botón | tareas/tarea-40-semaforo-ninguno.md | ninguna | 45 min | MEDIO | 41 | practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js; salidas/40-semaforo-ninguno/ | PENDIENTE | — |
+| 40 | Semáforo: botón «Ninguno / None», Check solo con algo pulsado, corrección visible de cada botón | tareas/tarea-40-semaforo-ninguno.md | ninguna | 45 min | MEDIO | 41 | practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js; salidas/40-semaforo-ninguno/ | LISTA | terminada 13:3xZ (16-oct) · commit ad30481 |
 | 41 | Enunciados creíbles en clasificador e imposibles: contextos, unidades y cotas (noria, metrónomo, corredor, semáforo, grifo, cuentas, alambre, m.c.d. ≥ 2) | tareas/tarea-41-enunciados-creibles.md | ninguna | 1 h | MEDIO | 40 | practicas/clasificador/textos.js, practicas/imposibles/textos.js, sus dos tests; salidas/41-enunciados-creibles/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
@@ -178,6 +178,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 40 · 2026-10-16 13:3x · s-20261016T132904-99e664cb · ad30481 · 5 ficheros (practicas/semaforo/{practica,textos,logica}.js y estilos.css, tests/practicas-semaforo.test.js) · ≈ 20 min (estimada: 45 min)
 
 LISTA · tarea 39 · 2026-10-16 05:30 · s-20261016T050222-d0960de2 · 0a96ea4, 45b1125, 90be2b0, 8b5aaae · 10 ficheros (firestore.rules; practicas/_comun/{base,registro}.js, plantilla, profesor.{html,js}, resultados.js, tests/practicas-registro.test.js, docs, README) · ≈ 28 min (estimada: 2 h 30 min)
 
