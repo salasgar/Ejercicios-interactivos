@@ -29,7 +29,9 @@
 // el borrador de la coordinadora del 2026-10-09 (reparto PU2,
 // hechos/notas/s-20261008T174225-f75f5cdb-temporizacion.md), copiado tal cual.
 // Los `desde` van con el calendario retrasado una semana (decisión del
-// 2026-10-15: la semana 1 empieza el lunes 19-10).
+// 2026-10-15: la semana 1 empieza el lunes 19-10). La semana 1 se adelantó al
+// viernes 16-10 (Juan Luis la publicó en Classroom ese día, con plazo hasta el
+// jueves 22-10); las demás siguen en sus lunes.
 
 import { practicaPorSlug } from './catalogo.js';
 
@@ -37,7 +39,7 @@ export const TAREAS = [
   {
     id: 1,
     titulo: { es: 'Semana 1 · Múltiplos, divisores y criterios', en: 'Week 1 · Multiples, divisors and divisibility rules' },
-    desde: '2026-10-19',
+    desde: '2026-10-16',
     estrella: [['divisores', 4], ['recta', 1], ['recta', 2], ['rectangulos', 2], ['semaforo', 1], ['clasificador', 1]],
     elegir: [['semaforo', 2], ['semaforo', 4], ['recta', 3], ['rectangulos', 1], ['reloj', 1], ['leelo', 2], ['jerarquia', 1], ['division', 2]],
     nElegir: 4,
