@@ -449,13 +449,15 @@ export function arrancar(practica) {
     const codigo = codigoResultado(ficha.id, estado.indice, estado.ej, Math.max(...hechos.map(e => e.dia)));
     const completo = hechos.length === defs.length;
     return `
-      <div class="tarjeta resultado ${completo ? 'resultado--completo' : ''}">
-        <h3>${t().resultado_titulo}</h3>
-        <p class="pequeno">${completo ? t().resultado_completo(defs.length) : t().resultado_parcial(hechos.length, defs.length)}</p>
-        <div class="resultado__fila">
-          <output class="resultado__codigo" id="codigo-resultado">${codigo}</output>
-          <button type="button" class="secundario" id="copiar">${t().copiar}</button>
-        </div>
+      <div class="resultado-discreto">
+        ${completo ? `<p class="pequeno resultado-discreto__fin">${t().resultado_completo(defs.length)}</p>` : ''}
+        <details class="pequeno">
+          <summary>${t().resultado_desplegable}</summary>
+          <div class="resultado__fila">
+            <output class="resultado__codigo" id="codigo-resultado">${codigo}</output>
+            <button type="button" class="secundario" id="copiar">${t().copiar}</button>
+          </div>
+        </details>
       </div>`;
   }
 

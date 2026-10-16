@@ -34,8 +34,9 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
    `?idioma=alterno` lo quita).
 4. Al fallar, el mensaje dice qué ha pasado **con los números de ese ítem**, no una regla
    genérica, y la base añade unas palabras de ánimo.
-5. Al terminar un ejercicio aparece el **código de resultado** (16 caracteres), que el alumno
-   copia y envía.
+5. Al terminar los ejercicios aparece «Tu profesor ya puede verlo» (la nube ya cuenta el
+   progreso). El **código de resultado** (16 caracteres) queda en un desplegable discreto, solo
+   de respaldo si el profesor lo pide; nada manda al alumno enviarlo.
 6. **La tarea de la semana** (desde el 2026-10-15): un enlace, `practicas/semana.html?t=<id>`,
    abre en una página los ejercicios de esa semana: unos con ★, obligatorios, y una lista de la
    que elige unos cuantos («Termina los 6 ejercicios con ★ y 4 más de la lista, los que tú
@@ -44,8 +45,8 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
    al salir de él o al terminarlo se vuelve a la tarea. Un marcador dice cuánto lleva («★ 4 de 6
    · a elegir 2 de 4 · 60 de 100 puntos»: cada ejercicio vale 10, los terminados enteros y los
    que van a medias en proporción a sus puntos; de los de elegir cuentan los mejores). Al
-   cumplirla da **un único código de resultado de la tarea** (20 caracteres); antes también
-   puede pedirlo («lo que llevo»). La página no guarda nada suyo: lee el progreso que guardan
+   cumplirla dice «Tu profesor ya puede verlo» y deja el **código de resultado de la tarea**
+   (20 caracteres) en un desplegable de respaldo; no hay código parcial. La página no guarda nada suyo: lee el progreso que guardan
    las prácticas en ese navegador, así que un ejercicio terminado antes de que existiera la
    tarea cuenta. Al entrar con el código trae antes lo de la nube (ver «Seguir desde cualquier
    aparato», abajo), así que el alumno ve lo que hizo en otro móvil u ordenador.
@@ -89,7 +90,7 @@ En `practicas/profesor.html`:
    lista es la misma que usaba el panel antiguo de `divisores/`: mismos alumnos, mismos
    códigos.
 2. **Resultados**, de dos fuentes que el panel junta:
-   - los **códigos de resultado** que mandan los alumnos, pegados tal cual (el mensaje entero
+   - (respaldo, para cuando la nube no llega) los **códigos de resultado** que los alumnos dan si se piden, pegados tal cual (el mensaje entero
      vale: el panel extrae los códigos). Cada código dice de quién es, de qué práctica, qué
      ejercicios ha terminado, con cuántos fallos (hasta 15 por ejercicio) y qué día. Lee
      mezclados los de 16 caracteres y los antiguos de 12 de `divisores/`;

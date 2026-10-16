@@ -444,7 +444,9 @@ test('textos comunes: los dos idiomas tienen lo mismo, con producto de punto', (
   assert.equal(T.es.vidas_quedan(1), 'Te queda 1 vida');
   assert.equal(T.en.racha_extra(5, 1), '5 in a row! +1 extra point.');
   assert.equal(T.es.ejercicio(1), 'Ejercicio 1');
-  assert.match(T.en.resultado_parcial(2, 3), /2 of 3 exercises/);
+  assert.match(T.en.resultado_completo(3), /finished the 3 exercises/);
+  // El alumno no recibe ninguna petición de enviar el código (la nube ya lo cuenta).
+  assert.doesNotMatch(JSON.stringify([T], (k, v) => (typeof v === 'function' ? v(2, 3, 5, 4) : v)), /envíaselo|send it to your teacher|Copia este código|Copy this code/);
   assert.doesNotMatch(JSON.stringify([T, TX], (k, v) => (typeof v === 'function' ? v(2, 3, 5) : v)), /×|HCF|\bfactor de\b/);
 });
 

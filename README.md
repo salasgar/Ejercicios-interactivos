@@ -142,14 +142,16 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
 - **Tarea de la semana** (desde el 2026-10-15): `practicas/semana.html?t=<id>`
   abre los ejercicios de esa semana (unos obligatorios con ★ y otros a elegir),
   con un marcador («★ 4 de 6 · a elegir 2 de 4 · 60 de 100 puntos») y, al
-  cumplirla, **un único código de resultado de 20 caracteres**. Qué lleva cada
+  cumplirla, «Tu profesor ya puede verlo» (el profesor lo ve en la nube; el código de
+  resultado de 20 caracteres queda en un desplegable de respaldo). Qué lleva cada
   semana se cambia a mano en `practicas/_comun/tareas.js`; el panel da el enlace
   común para Classroom y la vista «Tareas de la semana».
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
-  en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Cada
-  práctica da un **código de resultado de 16 caracteres** que dice además de
-  qué práctica es; el panel lee mezclados los de 20 de las tareas, los de 16 y
-  los de 12 de `divisores/`.
+  en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Lo normal es que
+  el profesor vea los resultados en la nube; cada práctica guarda además un
+  **código de resultado de 16 caracteres** (en un desplegable discreto, solo si
+  el profesor lo pide) como respaldo si la nube no llega; el panel lee mezclados
+  los de 20 de las tareas, los de 16 y los de 12 de `divisores/`.
 - El progreso se guarda en el navegador y en Firestore, en
   `practicas/{práctica}--{código}` (regla en `firestore.rules`; **hay que
   publicarla** para que funcione la nube). Al entrar con su código, el alumno
