@@ -156,6 +156,14 @@ Solo lectura: todo lo listado en «Siguiente paso»; `reparto-practicas-u2/proye
   no pueden cambiar.
 - `codigos.js` deriva el código del alumno de su número de lista: ninguna estructura nueva
   puede necesitar que se reordene la lista del panel.
+- (s-20261016T144918-b59b6bef, al cerrar) El panel lee la colección `practicas` partiendo el
+  id por `--` (`leerDocumentos` de `resultados.js`): un documento nuevo con más `--` dentro de
+  esa colección se leería como progreso de práctica. Lo nuevo va en colecciones aparte.
+- (ídem) En las mismas reglas ya existen `tareas/` y `alumnos/*/progreso/` de la aplicación
+  con cuentas: las colecciones nuevas de las prácticas llevan el prefijo `practicas-`.
+- (ídem) A Juan Luis una pregunta técnica («¿apruebas el diseño…?») le resultó opaca: hubo
+  que explicarle en llano qué cambiaba para él. Las preguntas de aprobación, en sus términos.
+- (ídem) Duración real ≈ 40 min con tres rondas de preguntas; la estimación de 2 h sobra.
 
 ## Prohibido (propio de esta tarea)
 
