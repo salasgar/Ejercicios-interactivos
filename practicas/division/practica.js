@@ -32,12 +32,14 @@ const leerEntero = input => {
 
 // ─── Ejercicio 1: reparte en cajas ───────────────────────────────────────────
 
+const enunciadoCajas = (item, { tt }) => `<p class="instruccion">${tt(TX.cajas.enunciado)(item.D, item.d)}</p>`;
+
 function montarCajas(contenedor, item, api) {
   const { tt } = api;
   const { D, d, q, r } = item;
   let cajas = 0;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.cajas.enunciado)(D, d)}</p>
+    ${enunciadoCajas(item, api)}
     <div class="div-zona">
       <p class="div-etiqueta">${tt(TX.cajas.cajas_llenas)}: <strong id="n-cajas">0</strong></p>
       <div id="dibujo"></div>
@@ -67,7 +69,7 @@ function montarCajas(contenedor, item, api) {
     if (D - cajas * d >= d) {
       // Aún cabe otra caja llena: fallo, y se enseña cómo queda.
       bloquear();
-      return api.responder({ acierto: false, html: `${tt(TX.cajas.aun_cabe)(D, d, cajas)} ${tt(TX.cajas.correcto)(q, r)}` + ` <span class="cuenta">${prueba(D, d, q, r)}</span>.` + dibujo(D, d, q) });
+      return api.responder({ acierto: false, html: ({ tt }) => `${tt(TX.cajas.aun_cabe)(D, d, cajas)} ${tt(TX.cajas.correcto)(q, r)}` + ` <span class="cuenta">${prueba(D, d, q, r)}</span>.` + dibujo(D, d, q) });
     }
     const mq = leerEntero($('#q')), mr = leerEntero($('#r'));
     if (mq === null || mr === null) return (mq === null ? $('#q') : $('#r')).focus();
@@ -79,13 +81,13 @@ function montarCajas(contenedor, item, api) {
     if (acierto) {
       return api.responder({
         acierto: true,
-        html: `${tt(TX.cajas.prueba)}: ${tuya}.${r === 0 ? ` ${tt(TX.cajas.exacta)}` : ''}`,
+        html: ({ tt }) => `${tt(TX.cajas.prueba)}: ${tuya}.${r === 0 ? ` ${tt(TX.cajas.exacta)}` : ''}`,
         espera: 2200,
       });
     }
     api.responder({
       acierto: false,
-      html: `${tt(TX.cajas.no_cuadra)(mq, mr)} ${tt(TX.cajas.correcto)(q, r)} ${tuya}.${r === 0 ? ` ${tt(TX.cajas.exacta)}` : ''}${dibujo(D, d, q)}`,
+      html: ({ tt }) => `${tt(TX.cajas.no_cuadra)(mq, mr)} ${tt(TX.cajas.correcto)(q, r)} ${tuya}.${r === 0 ? ` ${tt(TX.cajas.exacta)}` : ''}${dibujo(D, d, q)}`,
     });
     function bloquear() { contenedor.querySelectorAll('input, button').forEach(e => { e.disabled = true; }); ev.target.hidden = true; }
   });
@@ -95,6 +97,10 @@ function montarCajas(contenedor, item, api) {
 
 const igualdadDe = o => `${o.izq} = ${o.a} · ${o.b} ${o.signo} ${o.c}`;
 
+const enunciadoPrueba = (item, { tt, idioma }) => `<p class="div-pregunta">${item.tipo === 'prueba'
+  ? tt(TX.prueba.pregunta)(item.D, item.d, item.q, item.r)
+  : tt(TX.prueba.pregunta_inversa)(prueba(item.D, item.a, item.b, item.r))}</p>`;
+
 function montarPrueba(contenedor, item, api) {
   return item.tipo === 'prueba' ? montarPruebaDirecta(contenedor, item, api) : montarInversa(contenedor, item, api);
 }
@@ -102,19 +108,19 @@ function montarPrueba(contenedor, item, api) {
 function montarPruebaDirecta(contenedor, item, api) {
   const { tt } = api;
   const { D, d, q, r, opciones, solucion } = item;
-  contenedor.innerHTML = `<p class="div-pregunta">${tt(TX.prueba.pregunta)(D, d, q, r)}</p>`;
+  contenedor.innerHTML = enunciadoPrueba(item, api);
   const botones = elecciones(contenedor, {
     opciones: opciones.map((o, i) => ({ valor: i, html: igualdadDe(o) })),
     alElegir(i) {
       if (api.respondido()) return;
       botones.marcar([solucion], i);
       const buena = prueba(D, d, q, r);
-      if (i === solucion) return api.responder({ acierto: true, html: tt(TX.prueba.ok_prueba)(buena, D, d, q, r), espera: 2200 });
+      if (i === solucion) return api.responder({ acierto: true, html: ({ tt }) => tt(TX.prueba.ok_prueba)(buena, D, d, q, r), espera: 2200 });
       const o = opciones[i];
       const valor = o.signo === '+' ? o.a * o.b + o.c : o.a * o.b * o.c;
       api.responder({
         acierto: false,
-        html: `${tt(TX.prueba.esa_vale)(igualdadDe(o), tt(TX.prueba.no_vale_numeros)(o.izq, valor))}`
+        html: ({ tt }) => `${tt(TX.prueba.esa_vale)(igualdadDe(o), tt(TX.prueba.no_vale_numeros)(o.izq, valor))}`
           + ` ${tt(TX.prueba.ok_prueba)(buena, D, d, q, r)}`,
       });
     },
@@ -125,7 +131,7 @@ function montarInversa(contenedor, item, api) {
   const { tt } = api;
   const { a, b, r, D, solucion } = item;
   const idioma = api.idioma;
-  contenedor.innerHTML = `<p class="div-pregunta">${tt(TX.prueba.pregunta_inversa)(prueba(D, a, b, r))}</p>`;
+  contenedor.innerHTML = enunciadoPrueba(item, api);
   const opciones = [
     { valor: 'a', html: tt(TX.prueba.solo)(divTxt(D, a, idioma)) },
     { valor: 'b', html: tt(TX.prueba.solo)(divTxt(D, b, idioma)) },
@@ -137,10 +143,10 @@ function montarInversa(contenedor, item, api) {
     alElegir(v) {
       if (api.respondido()) return;
       botones.marcar([solucion], v);
-      const explicacion = solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r, D)
+      const explicacion = ({ tt }) => (solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r, D)
         : solucion === 'ninguna' ? tt(TX.prueba.inversa_ninguna)(D, a, b, r)
         : solucion === 'a' ? tt(TX.prueba.inversa_una)(D, a, b, r, b)
-        : tt(TX.prueba.inversa_una)(D, b, a, r, a);
+        : tt(TX.prueba.inversa_una)(D, b, a, r, a));
       api.responder({ acierto: v === solucion, html: explicacion, espera: 2600 });
     },
   });
@@ -148,12 +154,17 @@ function montarInversa(contenedor, item, api) {
 
 // ─── Ejercicio 3: ¿qué significa el resto? ───────────────────────────────────
 
+const enunciadoSignificado = (item, { tt }) => {
+  const cosa = COSAS[item.clave];
+  return `<p class="div-pregunta">${tt(TX.significado.enunciado)(item.D, cosa, item.d)}<br>${tt(TX.significado.preguntas[item.pide])(cosa)}</p>`;
+};
+
 function montarSignificado(contenedor, item, api) {
   const { tt } = api;
   const { clave, D, d, q, r, pide, solucion } = item;
   const cosa = COSAS[clave];
   contenedor.innerHTML = `
-    <p class="div-pregunta">${tt(TX.significado.enunciado)(D, cosa, d)}<br>${tt(TX.significado.preguntas[pide])(cosa)}</p>
+    ${enunciadoSignificado(item, api)}
     <div class="div-entradas">
       <label>${tt(TX.significado.respuesta)}<input type="number" inputmode="numeric" min="0" id="resp" autocomplete="off"></label>
     </div>
@@ -167,23 +178,25 @@ function montarSignificado(contenedor, item, api) {
     ev.target.hidden = true;
     const acierto = mia === solucionSignificado({ q, r, pide });
     entrada.classList.add(acierto ? 'hueco--bien' : 'hueco--mal');
-    const explicacion = pide === 'llenas' ? tt(TX.significado.ok_llenas)(D, d, q, r, cosa)
+    const explicacion = tt => (pide === 'llenas' ? tt(TX.significado.ok_llenas)(D, d, q, r, cosa)
       : pide === 'sueltos' ? tt(TX.significado.ok_sueltos)(D, d, q, r)
       : r === 0 ? tt(TX.significado.ok_hacen_exacto)(D, d, q)
-      : tt(TX.significado.ok_hacen)(D, d, q, r, cosa);
+      : tt(TX.significado.ok_hacen)(D, d, q, r, cosa));
     // Quien pone «q» donde había que poner «q + 1» se olvidó del resto.
-    const olvido = !acierto && pide === 'hacen' && r > 0 && mia === q ? ` ${tt(TX.significado.olvido)(cosa)}` : '';
-    api.responder({ acierto, html: `${explicacion}${olvido}${dibujo(D, d, q)}`, espera: 2600 });
+    const olvido = tt => (!acierto && pide === 'hacen' && r > 0 && mia === q ? ` ${tt(TX.significado.olvido)(cosa)}` : '');
+    api.responder({ acierto, html: ({ tt }) => `${explicacion(tt)}${olvido(tt)}${dibujo(D, d, q)}`, espera: 2600 });
   });
 }
 
 // ─── Ejercicio 4: ¿puede ser? ────────────────────────────────────────────────
 
+const enunciadoPuede = (item, { tt }) => `<p class="div-pregunta">${item.variante === 'resto'
+  ? tt(TX.puede.pregunta_resto)(item.d, item.r) : tt(TX.puede.pregunta_division)(item.D, item.d, item.q, item.r)}</p>`;
+
 function montarPuede(contenedor, item, api) {
   const { tt } = api;
   const { variante, D, d, q, r, solucion } = item;
-  contenedor.innerHTML = `<p class="div-pregunta">${variante === 'resto'
-    ? tt(TX.puede.pregunta_resto)(d, r) : tt(TX.puede.pregunta_division)(D, d, q, r)}</p>`;
+  contenedor.innerHTML = enunciadoPuede(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
@@ -191,12 +204,13 @@ function montarPuede(contenedor, item, api) {
       if (api.respondido()) return;
       const buena = solucion ? 'si' : 'no';
       botones.marcar([buena], v);
-      let html;
-      if (variante === 'resto') html = solucion ? tt(TX.puede.si_puede)(d, r) : tt(TX.puede.no_puede)(d, r);
-      else if (solucion) html = tt(TX.puede.esta_bien)(D, d, q, r);
-      else if (r >= d && d * q + r !== D) html = tt(TX.puede.mal_los_dos)(D, d, q, r);
-      else if (r >= d) html = tt(TX.puede.mal_resto)(D, d, q, r);
-      else html = tt(TX.puede.mal_cuenta)(D, d, q, r);
+      const html = ({ tt }) => {
+        if (variante === 'resto') return solucion ? tt(TX.puede.si_puede)(d, r) : tt(TX.puede.no_puede)(d, r);
+        if (solucion) return tt(TX.puede.esta_bien)(D, d, q, r);
+        if (r >= d && d * q + r !== D) return tt(TX.puede.mal_los_dos)(D, d, q, r);
+        if (r >= d) return tt(TX.puede.mal_resto)(D, d, q, r);
+        return tt(TX.puede.mal_cuenta)(D, d, q, r);
+      };
       api.responder({ acierto: v === buena, html, espera: 2400 });
     },
   });
@@ -209,21 +223,22 @@ arrancar({
   ejercicios: [
     {
       nombre: TX.cajas.nombre, detalle: TX.cajas.detalle, introduccion: TX.cajas.introduccion,
-      generar: generarCajas, clave: it => `${it.D}/${it.d}`, montar: montarCajas,
+      generar: generarCajas, clave: it => `${it.D}/${it.d}`, montar: montarCajas, enunciado: enunciadoCajas,
     },
     {
       nombre: TX.prueba.nombre, detalle: TX.prueba.detalle, introduccion: TX.prueba.introduccion,
       generar: generarPruebaOInversa,
       clave: it => (it.tipo === 'prueba' ? `p${it.D}/${it.d}` : `i${it.a}x${it.b}+${it.r}`),
       montar: montarPrueba,
+      enunciado: enunciadoPrueba,
     },
     {
       nombre: TX.significado.nombre, detalle: TX.significado.detalle, introduccion: TX.significado.introduccion,
-      generar: generarSignificado, clave: it => `${it.clave}${it.D}/${it.d}${it.pide}`, montar: montarSignificado,
+      generar: generarSignificado, clave: it => `${it.clave}${it.D}/${it.d}${it.pide}`, montar: montarSignificado, enunciado: enunciadoSignificado,
     },
     {
       nombre: TX.puede.nombre, detalle: TX.puede.detalle, introduccion: TX.puede.introduccion,
-      generar: generarPuede, clave: it => `${it.variante}${it.D ?? ''}/${it.d}/${it.q ?? ''}/${it.r}`, montar: montarPuede,
+      generar: generarPuede, clave: it => `${it.variante}${it.D ?? ''}/${it.d}/${it.q ?? ''}/${it.r}`, montar: montarPuede, enunciado: enunciadoPuede,
     },
   ],
 });

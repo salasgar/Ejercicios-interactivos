@@ -12,11 +12,12 @@ import { TX } from './textos.js';
 
 // ─── Ejercicios 1 y 2: el semáforo (botones que se encienden y se apagan) ───────
 
-function montarSemaforo(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoSemaforo = (item, { tt }) => `
     <p class="instruccion">${tt(TX.ej1.pregunta)(item.n)}</p>
-    <div class="operacion">${item.n}</div>
+    <div class="operacion">${item.n}</div>`;
+
+function montarSemaforo(contenedor, item, api) {
+  contenedor.innerHTML = `${enunciadoSemaforo(item, api)}
     <div class="botones-numeros" id="botones" role="group" aria-label="divisores"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
   const caja = contenedor.querySelector('#botones');
@@ -43,41 +44,47 @@ function montarSemaforo(contenedor, item, api) {
       if (item.correctos.includes(d)) b.classList.add('bien');
       else if (encendidos.has(d)) b.classList.add('mal');
     });
-    api.responder({ acierto, html: explicar(item, respuesta, api.idioma), espera: 2200 });
+    api.responder({ acierto, html: ({ idioma }) => explicar(item, respuesta, idioma), espera: 2200 });
   });
 }
 
 // ─── Ejercicio 3: ¿es divisible? (y la trampa del 4, el 6 y el 24) ──────────────
 
-function montarSino(contenedor, item, api) {
-  const { tt } = api;
+function enunciadoSino(item, { tt }) {
   const pregunta = item.tipo === 'trampa'
     ? tt(TX.ej3.pregunta_trampa)(item.n)
     : tt(TX.ej3.pregunta_sino)(item.n).replace('__D__', item.d);
-  contenedor.innerHTML = `<p class="instruccion">${pregunta}</p>`;
+  return `<p class="instruccion">${pregunta}</p>`;
+}
+
+function montarSino(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoSino(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.correctos], valor);
-      api.responder({ acierto: valor === item.correctos, html: explicar(item, valor, api.idioma), espera: 1800 });
+      api.responder({ acierto: valor === item.correctos, html: ({ idioma }) => explicar(item, valor, idioma), espera: 1800 });
     },
   });
 }
 
 // ─── Ejercicio 4: la cifra que falta ────────────────────────────────────────────
 
-function montarCifra(contenedor, item, api) {
-  const { tt } = api;
+function enunciadoCifra(item, { tt }) {
   const texto = item.cifras.map((c, i) => (i === item.hueco ? '□' : c)).join('');
   const condicion = item.divisores.length === 1
     ? tt(TX.ej4.pregunta_uno)(item.divisores[0])
     : tt(TX.ej4.pregunta_dos)(item.divisores[0], item.divisores[1]);
-  contenedor.innerHTML = `
+  return `
     <p class="instruccion">${tt(TX.ej4.instruccion)}</p>
     <div class="operacion">${texto}</div>
-    <p class="frase">${condicion}</p>
+    <p class="frase">${condicion}</p>`;
+}
+
+function montarCifra(contenedor, item, api) {
+  contenedor.innerHTML = `${enunciadoCifra(item, api)}
     <div class="botones-numeros" id="botones" role="group" aria-label="cifras"></div>`;
   const caja = contenedor.querySelector('#botones');
   const botones = [];
@@ -91,7 +98,7 @@ function montarCifra(contenedor, item, api) {
       const acierto = esCorrecta(item, d);
       if (acierto) b.classList.add('bien');
       else { b.classList.add('mal'); botones[item.solucion].classList.add('bien'); }
-      api.responder({ acierto, html: explicar(item, d, api.idioma), espera: 1800 });
+      api.responder({ acierto, html: ({ idioma }) => explicar(item, d, idioma), espera: 1800 });
     });
     caja.append(b);
     botones.push(b);
@@ -109,6 +116,7 @@ arrancar({
       generar: generarSemaforo1,
       clave: item => `${item.n}`,
       montar: montarSemaforo,
+      enunciado: enunciadoSemaforo,
     },
     {
       nombre: TX.ej2.nombre,
@@ -116,6 +124,7 @@ arrancar({
       generar: generarSemaforo2,
       clave: item => `${item.n}`,
       montar: montarSemaforo,
+      enunciado: enunciadoSemaforo,
     },
     {
       nombre: TX.ej3.nombre,
@@ -123,6 +132,7 @@ arrancar({
       generar: generarSinoOTrampa,
       clave: item => `${item.tipo}-${item.n}-${item.d ?? ''}`,
       montar: montarSino,
+      enunciado: enunciadoSino,
     },
     {
       nombre: TX.ej4.nombre,
@@ -130,6 +140,7 @@ arrancar({
       generar: generarCifra,
       clave: item => `${item.cifras.join('')}-${item.hueco}`,
       montar: montarCifra,
+      enunciado: enunciadoCifra,
     },
   ],
 });

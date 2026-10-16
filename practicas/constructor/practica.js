@@ -27,13 +27,20 @@ function numeroConMarca(n, marcada) {
 
 // ─── Ejercicio 1: construye ─────────────────────────────────────────────────────
 
+// Los enunciados salen también en la traducción (sin casillas, botones ni campos).
+const enunciadoConstruir = (item, textos) => {
+  const { tt } = textos;
+  const T = TX.construir;
+  const consigna = item.consigna === 'cercano' ? tt(T.consigna.cercano)(num(item.objetivo, textos)) : tt(T.consigna[item.consigna]);
+  return `<p class="instruccion">${consigna}</p>`;
+};
+
 function montarConstruir(contenedor, item, api) {
   const { tt } = api;
   const T = TX.construir;
   const L = item.cifras.length;
-  const consigna = item.consigna === 'cercano' ? tt(T.consigna.cercano)(num(item.objetivo, api)) : tt(T.consigna[item.consigna]);
   contenedor.innerHTML = `
-    <p class="instruccion">${consigna}</p>
+    ${enunciadoConstruir(item, api)}
     <div class="casillas" id="casillas">${Array.from({ length: L }, (_, i) => `
       <div class="casilla-col">
         <button type="button" class="casilla" data-i="${i}" aria-label="${api.esc(tt(T.quitar))}">&nbsp;</button>
@@ -70,32 +77,41 @@ function montarConstruir(contenedor, item, api) {
     boton.style.display = 'none';
     casillas.forEach(c => { c.disabled = true; c.classList.add(acierto ? 'casilla--bien' : 'casilla--mal'); });
     fichas.forEach(f => { f.disabled = true; });
-    const buena = num(item.solucion, api);
     const ultima = item.solucion % 10;
-    const porQue = {
-      mayor: () => tt(T.por_que.mayor)(),
-      menor: () => tt(T.por_que.menor)(item.hayCero),
-      menor_par: () => {
-        const resto = [...item.cifras];
-        resto.splice(resto.indexOf(ultima), 1);
-        return tt(T.por_que.menor_par)(ultima, resto.includes(0));
-      },
-      mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
-      cercano: () => tt(T.por_que.cercano)(num(item.objetivo, api), num(Math.abs(item.solucion - item.objetivo), api)),
-    }[item.consigna]();
     const mio = Number(mias.join(''));
-    const cabecera = acierto ? tt(T.bien)(buena) : tt(T.hecho)(mias[0] === 0 ? mias.join('') : num(mio, api), buena);
-    api.responder({ acierto, html: `${cabecera}${porQue}`, espera: 3200 });
+    api.responder({
+      acierto,
+      html: textos => {
+        const { tt } = textos;
+        const buena = num(item.solucion, textos);
+        const porQue = {
+          mayor: () => tt(T.por_que.mayor)(),
+          menor: () => tt(T.por_que.menor)(item.hayCero),
+          menor_par: () => {
+            const resto = [...item.cifras];
+            resto.splice(resto.indexOf(ultima), 1);
+            return tt(T.por_que.menor_par)(ultima, resto.includes(0));
+          },
+          mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
+          cercano: () => tt(T.por_que.cercano)(num(item.objetivo, textos), num(Math.abs(item.solucion - item.objetivo), textos)),
+        }[item.consigna]();
+        const cabecera = acierto ? tt(T.bien)(buena) : tt(T.hecho)(mias[0] === 0 ? mias.join('') : num(mio, textos), buena);
+        return `${cabecera}${porQue}`;
+      },
+      espera: 3200,
+    });
   });
 }
 
 // ─── Ejercicio 2: valor de las cifras ───────────────────────────────────────────
 
+const enunciadoASuma = (item, textos) => `<p class="instruccion">${textos.tt(TX.descomposicion.a_suma_instr)(num(item.n, textos))}</p>`;
+
 function montarASuma(contenedor, item, api) {
   const { tt } = api;
   const T = TX.descomposicion;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.a_suma_instr)(num(item.n, api))}</p>
+    ${enunciadoASuma(item, api)}
     <div class="operacion">${num(item.n, api)}</div>
     <div class="botones-numeros" id="fichas">${item.fichas.map(v => `<button type="button" data-v="${v}" aria-pressed="false">${num(v, api)}</button>`).join('')}</div>
     <p class="instruccion" id="suma">&nbsp;</p>
@@ -119,17 +135,18 @@ function montarASuma(contenedor, item, api) {
       if (bueno) f.classList.add('bien');
       else if (f.getAttribute('aria-pressed') === 'true') f.classList.add('mal');
     });
-    api.responder({ acierto, html: tt(T.a_suma_fb)(num(item.n, api), item.correctas.map(v => num(v, api)).join(' + ')), espera: 3000 });
+    api.responder({ acierto, html: ({ tt, idioma }) => tt(T.a_suma_fb)(num(item.n, { idioma }), item.correctas.map(v => num(v, { idioma })).join(' + ')), espera: 3000 });
   });
 }
+
+const enunciadoANumero = (item, textos) => `<p class="instruccion">${textos.tt(TX.descomposicion.a_numero_instr)}</p>
+    <div class="operacion">${item.sumandos.map(v => num(v, textos)).join(' + ')}</div>`;
 
 function montarANumero(contenedor, item, api) {
   const { tt } = api;
   const T = TX.descomposicion;
-  const partes = item.sumandos.map(v => num(v, api)).join(' + ');
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.a_numero_instr)}</p>
-    <div class="operacion">${partes}</div>
+    ${enunciadoANumero(item, api)}
     <input type="text" inputmode="numeric" id="respuesta" class="constructor-entero" autocomplete="off" aria-label="${api.esc(tt(T.a_numero_instr))}">
     <p class="constructor-aviso" id="aviso" role="status"></p>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
@@ -145,20 +162,25 @@ function montarANumero(contenedor, item, api) {
     const acierto = esAciertoANumero(item, escrito);
     campo.disabled = true; boton.style.display = 'none';
     const pegado = errorPegado(item);
-    let html = tt(T.a_numero_fb)(num(item.n, api), partes);
-    if (!acierto && escrito === pegado) html += tt(T.pegado)(num(item.n, api), num(pegado, api));
+    const html = ({ tt, idioma }) => {
+      const partes = item.sumandos.map(v => num(v, { idioma })).join(' + ');
+      let h = tt(T.a_numero_fb)(num(item.n, { idioma }), partes);
+      if (!acierto && escrito === pegado) h += tt(T.pegado)(num(item.n, { idioma }), num(pegado, { idioma }));
+      return h;
+    };
     api.responder({ acierto, html, espera: 2800 });
   };
   boton.addEventListener('click', comprobar);
   campo.addEventListener('keydown', ev => { if (ev.key === 'Enter') comprobar(); });
 }
 
-function montarValor(contenedor, item, api) {
-  const { tt } = api;
-  const T = TX.descomposicion;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.valor_pregunta)(item.cifra, num(item.n, api))}</p>
+const enunciadoValor = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.descomposicion.valor_pregunta)(item.cifra, num(item.n, textos))}</p>
     <div class="operacion operacion--cifras">${numeroConMarca(item.n, item.pos)}</div>`;
+
+function montarValor(contenedor, item, api) {
+  const T = TX.descomposicion;
+  contenedor.innerHTML = enunciadoValor(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4',
     opciones: item.opciones.map(v => ({ valor: v, html: num(v, api) })),
@@ -167,19 +189,21 @@ function montarValor(contenedor, item, api) {
       botones.marcar([item.correcto], valor);
       api.responder({
         acierto: esAciertoOpcion(item, valor),
-        html: tt(T.valor_fb)(num(item.n, api), item.cifra, item.pos, num(item.correcto, api)),
+        html: ({ tt, idioma }) => tt(T.valor_fb)(num(item.n, { idioma }), item.cifra, item.pos, num(item.correcto, { idioma })),
         espera: 2600,
       });
     },
   });
 }
 
+const enunciadoPosicion = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.descomposicion.posicion_pregunta)(item.cifra, num(item.n, textos))}</p>
+    <div class="operacion operacion--cifras">${numeroConMarca(item.n, item.pos)}</div>`;
+
 function montarPosicion(contenedor, item, api) {
   const { tt } = api;
   const T = TX.descomposicion;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.posicion_pregunta)(item.cifra, num(item.n, api))}</p>
-    <div class="operacion operacion--cifras">${numeroConMarca(item.n, item.pos)}</div>`;
+  contenedor.innerHTML = enunciadoPosicion(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4',
     opciones: item.opciones.map(p => ({ valor: p, html: tt(POSICION[p]) })),
@@ -188,11 +212,18 @@ function montarPosicion(contenedor, item, api) {
       botones.marcar([item.correcto], valor);
       api.responder({
         acierto: esAciertoOpcion(item, valor),
-        html: tt(T.posicion_fb)(num(item.n, api), item.cifra, item.pos),
+        html: ({ tt, idioma }) => tt(T.posicion_fb)(num(item.n, { idioma }), item.cifra, item.pos),
         espera: 2600,
       });
     },
   });
+}
+
+function enunciadoDescomposicion(item, textos) {
+  if (item.tipo === 'a_suma') return enunciadoASuma(item, textos);
+  if (item.tipo === 'a_numero') return enunciadoANumero(item, textos);
+  if (item.tipo === 'valor') return enunciadoValor(item, textos);
+  return enunciadoPosicion(item, textos);
 }
 
 function montarDescomposicion(contenedor, item, api) {
@@ -204,12 +235,13 @@ function montarDescomposicion(contenedor, item, api) {
 
 // ─── Ejercicio 3: comas, puntos y palabras ──────────────────────────────────────
 
-function montarComa(contenedor, item, api) {
-  const { tt } = api;
-  const T = TX.coma;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.pregunta[item.dir])}</p>
+const enunciadoComa = (item, textos) => `
+    <p class="instruccion">${textos.tt(TX.coma.pregunta[item.dir])}</p>
     <div class="operacion">${item.dado}</div>`;
+
+function montarComa(contenedor, item, api) {
+  const T = TX.coma;
+  contenedor.innerHTML = enunciadoComa(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones elecciones--4',
     opciones: item.opciones.map(o => ({ valor: o, html: o })),
@@ -217,21 +249,26 @@ function montarComa(contenedor, item, api) {
       if (api.respondido()) return;
       botones.marcar([item.correcto], valor);
       const fb = (item.sub === 'miles' ? T.fb_miles : T.fb_decimal)[item.dir];
-      let html = tt(fb)(item.dado, item.correcto);
-      if (item.sub === 'decimal') html += tt(T.trampa_decimal)(escribir(item.c, 'es'), escribir(item.c, 'en'));
-      else if (item.mal !== null && item.mal !== item.correcto) html += tt(T.trampa)(escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto'), item.mal);
+      const html = ({ tt }) => {
+        let h = tt(fb)(item.dado, item.correcto);
+        if (item.sub === 'decimal') h += tt(T.trampa_decimal)(escribir(item.c, 'es'), escribir(item.c, 'en'));
+        else if (item.mal !== null && item.mal !== item.correcto) h += tt(T.trampa)(escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto'), item.mal);
+        return h;
+      };
       api.responder({ acierto: esAciertoComa(item, valor), html, espera: 3600 });
     },
   });
 }
 
+const enunciadoPalabras = (item, { tt, idioma, esc }) => `
+    <p class="instruccion">${tt(TX.coma.palabras_instr)}</p>
+    <div class="operacion operacion--texto">${esc(enPalabras(item.n, idioma))}</div>`;
+
 function montarPalabras(contenedor, item, api) {
   const { tt } = api;
   const T = TX.coma;
-  const texto = enPalabras(item.n, api.idioma);
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(T.palabras_instr)}</p>
-    <div class="operacion operacion--texto">${api.esc(texto)}</div>
+    ${enunciadoPalabras(item, api)}
     <input type="text" inputmode="numeric" id="respuesta" class="constructor-entero" autocomplete="off" aria-label="${api.esc(tt(T.palabras_instr))}">
     <p class="constructor-grupos" id="vista" aria-live="polite">&nbsp;</p>
     <p class="constructor-aviso" id="aviso" role="status"></p>
@@ -252,11 +289,18 @@ function montarPalabras(contenedor, item, api) {
     campo.disabled = true; boton.style.display = 'none'; aviso.textContent = '';
     const m = Math.floor(item.n / 1000000), k = Math.floor(item.n / 1000) % 1000, u = item.n % 1000;
     const g = x => String(x).padStart(3, '0');
-    const grupos = tt(T.grupos_nombres)(m, g(k), g(u));
-    api.responder({ acierto, html: tt(T.palabras_fb)(num(item.n, api), grupos), espera: 3600 });
+    api.responder({
+      acierto,
+      html: ({ tt, idioma }) => tt(T.palabras_fb)(num(item.n, { idioma }), tt(T.grupos_nombres)(m, g(k), g(u))),
+      espera: 3600,
+    });
   };
   boton.addEventListener('click', comprobar);
   campo.addEventListener('keydown', ev => { if (ev.key === 'Enter') comprobar(); });
+}
+
+function enunciadoComaPalabras(item, textos) {
+  return item.tipo === 'coma' ? enunciadoComa(item, textos) : enunciadoPalabras(item, textos);
 }
 
 function montarComaPalabras(contenedor, item, api) {
@@ -275,6 +319,7 @@ arrancar({
       generar: generarConstruir,
       clave: item => `${item.cifras.join('')}/${item.consigna}/${item.objetivo ?? ''}`,
       montar: montarConstruir,
+      enunciado: enunciadoConstruir,
     },
     {
       nombre: TX.descomposicion.nombre,
@@ -283,6 +328,7 @@ arrancar({
       generar: generarDescomposicion,
       clave: item => `${item.tipo}/${item.n}`,
       montar: montarDescomposicion,
+      enunciado: enunciadoDescomposicion,
     },
     {
       nombre: TX.coma.nombre,
@@ -291,6 +337,7 @@ arrancar({
       generar: generarComaPalabras,
       clave: item => `${item.tipo}/${item.n ?? item.dado}`,
       montar: montarComaPalabras,
+      enunciado: enunciadoComaPalabras,
     },
   ],
 });

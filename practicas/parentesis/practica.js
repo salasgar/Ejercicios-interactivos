@@ -69,16 +69,18 @@ function crearEditor(contenedor, item, api, { alCambiar, activo }) {
 }
 
 /** Resumen de las agrupaciones: cada resultado con una forma de conseguirlo. */
-function resumenHtml(item, api, formas) {
+function resumenHtml(item, { idioma }, formas) {
   const e = expresionDe(item);
   const filas = item.resultados.map(v => {
     const texto = formas?.get(v) ?? textoArbol(arbolQueDa(e, v));
-    return `<li><span class="cuenta">${formatear(texto, api.idioma)} = ${v}</span></li>`;
+    return `<li><span class="cuenta">${formatear(texto, idioma)} = ${v}</span></li>`;
   });
   return `<ul class="resumen">${filas.join('')}</ul>`;
 }
 
 // ─── Ejercicios 1 a 3: encontrar todos los resultados ─────────────────────────────
+
+const enunciadoTodos = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion_todos)}</p>`;
 
 function montarTodos(contenedor, item, api) {
   const { tt } = api;
@@ -92,8 +94,7 @@ function montarTodos(contenedor, item, api) {
     return;
   }
 
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.instruccion_todos)}</p>`;
+  contenedor.innerHTML = enunciadoTodos(item, api);
   const formas = new Map();            // valor → cómo lo ha conseguido el alumno
   const encontrados = new Set();
   let pistas = 0, ronda = 0, terminado = false;
@@ -188,7 +189,7 @@ function montarTodos(contenedor, item, api) {
     api.responder({
       acierto: true,
       pistas,
-      html: `${tt(TX.todos_titulo)}${resumenHtml(item, api, formas)}`,
+      html: textos => `${textos.tt(TX.todos_titulo)}${resumenHtml(item, textos, formas)}`,
       espera: 5000,
     });
   }
@@ -218,14 +219,16 @@ function montarTodos(contenedor, item, api) {
 
 // ─── Ejercicio 4: una diana ─────────────────────────────────────────────────────────
 
+const enunciadoDiana = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.objetivo)}</p>
+    <div class="objetivo">${item.objetivo}</div>`;
+
 function montarDiana(contenedor, item, api) {
   const { tt } = api;
   const e = expresionDe(item);
   const resuelto = api.respondido();
 
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.objetivo)}</p>
-    <div class="objetivo">${item.objetivo}</div>`;
+  contenedor.innerHTML = enunciadoDiana(item, api);
   if (resuelto) {
     contenedor.insertAdjacentHTML('beforeend', `<div class="expr expr--fija">${formatear(textoArbol(sinParentesis(e)), api.idioma)}</div>`);
     return;
@@ -258,20 +261,20 @@ function montarDiana(contenedor, item, api) {
     contenedor.querySelectorAll('.acciones button').forEach(b => { b.disabled = true; });
     ev.target.hidden = true;
     const suyo = evaluar(r.arbol);
-    const suyoTexto = `<p>${tt(TX.tu_agrupacion)} <span class="cuenta">${formatear(textoColocacion(e, colocada), api.idioma)}</span></p>
-      <div class="resolucion resolucion--fija">${textoPasos(suyo.pasos, api.idioma)}</div>`;
+    const suyoTexto = ({ tt, idioma }) => `<p>${tt(TX.tu_agrupacion)} <span class="cuenta">${formatear(textoColocacion(e, colocada), idioma)}</span></p>
+      <div class="resolucion resolucion--fija">${textoPasos(suyo.pasos, idioma)}</div>`;
     if (suyo.valor === item.objetivo) return api.responder({ acierto: true, html: suyoTexto, espera: 2600 });
-    let diagnostico;
-    if (suyo.valor === undefined) {
+    const diagnostico = ({ tt, idioma }) => {
+      if (suyo.valor !== undefined) return `<p>${tt(TX.da)} <span class="cuenta">${suyo.valor}</span>, ${idioma === 'es' ? 'no' : 'not'} ${item.objetivo}.</p>`;
       const { razon, a, op, b } = suyo.invalido;
-      diagnostico = `<p>${tt(TX.imposible[razon])(textoOperacion(a, op, b, api.idioma))}</p>`;
-    } else diagnostico = `<p>${tt(TX.da)} <span class="cuenta">${suyo.valor}</span>, ${api.idioma === 'es' ? 'no' : 'not'} ${item.objetivo}.</p>`;
+      return `<p>${tt(TX.imposible[razon])(textoOperacion(a, op, b, idioma))}</p>`;
+    };
     const buena = arbolQueDa(e, item.objetivo);
     const solucion = evaluar(buena);
     api.responder({
       acierto: false,
-      html: `${suyoTexto}${diagnostico}<p>${tt(TX.una_que_da)(item.objetivo)} <span class="cuenta">${formatear(textoArbol(buena), api.idioma)}</span></p>
-        <div class="resolucion resolucion--fija">${textoPasos(solucion.pasos, api.idioma)}</div>`,
+      html: textos => `${suyoTexto(textos)}${diagnostico(textos)}<p>${textos.tt(TX.una_que_da)(item.objetivo)} <span class="cuenta">${formatear(textoArbol(buena), textos.idioma)}</span></p>
+        <div class="resolucion resolucion--fija">${textoPasos(solucion.pasos, textos.idioma)}</div>`,
     });
   });
 }
@@ -286,6 +289,7 @@ const EJERCICIOS = TX.ejercicios.map((x, i) => ({
   ...(i < 3 ? { objetivo: 5, penalizacion: 0 } : {}),
   generar: rng => generar(i + 1, rng),
   montar: i < 3 ? montarTodos : montarDiana,
+  enunciado: i < 3 ? enunciadoTodos : enunciadoDiana,
 }));
 
 arrancar({ slug: 'parentesis', ejercicios: EJERCICIOS });

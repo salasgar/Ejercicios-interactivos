@@ -42,6 +42,11 @@ function desarrolloJunto(base, ea, eb, suma, idioma) {
 
 // ─── Ejercicio 1: junta las potencias ──────────────────────────────────────────
 
+// La orden y la cuenta inicial: salen también en la traducción.
+const enunciadoJuntar = (item, { tt, idioma }) => `
+    <p class="instruccion">${tt(TX.juntar.instruccion)}</p>
+    ${cuentaDe(item.terminos, item.operadores, idioma)}`;
+
 function montarJuntar(contenedor, item, api) {
   const { tt, idioma } = api;
   let terminos = item.terminos.map(t => ({ ...t }));
@@ -125,28 +130,36 @@ function montarJuntar(contenedor, item, api) {
       const x = TX.juntar;
       const suma = op === '·';
       const ea = efectivo(a), eb = efectivo(b);
-      const desarrolado = desarrolloJunto(a.base, ea, eb, suma, idioma);
-      const linea = suma
-        ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}.${desarrolado}`
-        : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}.${desarrolado}`;
+      // La línea de explicación de esta pareja, en el idioma que reciba.
+      const linea = ({ tt, idioma }) => {
+        const desarrolado = desarrolloJunto(a.base, ea, eb, suma, idioma);
+        return suma
+          ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}.${desarrolado}`
+          : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}.${desarrolado}`;
+      };
       if (mio !== bueno) {
-        let sugerencia = '';
-        if (suma && mio === ea * eb) sugerencia = ` ${tt(x.no_multiplica)}`;
-        if (!suma && eb !== 0 && mio * eb === ea) sugerencia = ` ${tt(x.no_divide)}`;
+        const sugerencia = ({ tt }) => {
+          if (suma && mio === ea * eb) return ` ${tt(x.no_multiplica)}`;
+          if (!suma && eb !== 0 && mio * eb === ea) return ` ${tt(x.no_divide)}`;
+          return '';
+        };
         pintar(true);
         juntador.querySelector('.juntador__botones').hidden = true;
-        return api.responder({ acierto: false, html: `${tt(x.correcta)} ${linea}${sugerencia}` });
+        return api.responder({ acierto: false, html: textos => `${textos.tt(x.correcta)} ${linea(textos)}${sugerencia(textos)}` });
       }
       pasosHechos.push(linea);
       ({ terminos, ops } = juntar(terminos, ops, par, bueno));
       abierto = null; juntador.hidden = true; juntador.innerHTML = '';
       if (terminado(terminos, ops)) {
         pintar(true);
-        const final = cuentaDe(terminos, ops, idioma);
-        const nota = terminos.length > 1 ? ` ${tt(x.ajena_nota)}` : '';
+        const terminosFinales = terminos, opsFinales = ops;
         return api.responder({
           acierto: true,
-          html: `${pasosHechos.join('<br>')}<br>${tt(x.en_total)} ${final}.${nota}`,
+          html: textos => {
+            const final = cuentaDe(terminosFinales, opsFinales, textos.idioma);
+            const nota = terminosFinales.length > 1 ? ` ${textos.tt(x.ajena_nota)}` : '';
+            return `${pasosHechos.map(f => f(textos)).join('<br>')}<br>${textos.tt(x.en_total)} ${final}.${nota}`;
+          },
           espera: 2600,
         });
       }
@@ -160,6 +173,10 @@ function montarJuntar(contenedor, item, api) {
 }
 
 // ─── Ejercicio 2: potencia de potencia y cadenas ────────────────────────────────
+
+const enunciadoPotencias = (item, { tt, idioma }) => `
+    <p class="instruccion">${tt(item.tipo === 'potencia' ? TX.potencia.instruccion_potencia : TX.potencia.instruccion_cadena)}</p>
+    ${cuentaDe(item.terminos, item.operadores, idioma)} =`;
 
 function montarPotencias(contenedor, item, api) {
   const { tt, idioma } = api;
@@ -185,6 +202,7 @@ function montarPotencias(contenedor, item, api) {
     control.bloquear();
     ev.target.hidden = true;
     const bueno = item.solucion;
+    const html = ({ tt, idioma }) => {
     let html;
     if (esPotencia) {
       const m = t0.exp, k = t0.k;
@@ -201,11 +219,15 @@ function montarPotencias(contenedor, item, api) {
       html = cadena(tt(x.cadena_cuenta)(original, cuentaExp, bueno, base));
     }
     if (mio !== bueno) html = `${tt(x.tu_respuesta)} ${base}<sup>${mio || '□'}</sup> ${tt(x.no_da)} ${html}`;
+    return html;
+    };
     api.responder({ acierto: mio === bueno, html, espera: 2400 });
   });
 }
 
 // ─── Ejercicio 3: ★ la última cifra ─────────────────────────────────────────────
+
+const enunciadoUltima = (item, { tt }) => `<p class="instruccion">${tt(TX.ultima.pregunta)(item.base, item.exponente)}</p>`;
 
 function montarUltima(contenedor, item, api) {
   const { tt } = api;
@@ -310,17 +332,20 @@ function montarUltima(contenedor, item, api) {
       cajaCiclo.marcar([item.ciclo], cicloElegido);
       cajaCifra.marcar([item.solucion], cifraElegida);
       const L = item.ciclo, d = item.solucion;
-      let razon;
-      if (L === 1) razon = tt(x.explica_uno)(base, exponente, d);
-      else if (exponente % L === 0) razon = tt(x.explica_multiplo)(base, exponente, L, exponente / L, d);
-      else razon = tt(x.explica_resto)(base, exponente, L, Math.floor(exponente / L), posicionEnCiclo(exponente, L), d);
       const acierto = cicloElegido === L && cifraElegida === d;
-      const fallos = [];
-      if (cicloElegido !== L) fallos.push(tt(x.ciclo_mal)(L));
-      if (cifraElegida !== d) fallos.push(tt(x.cifra_mal)(d));
+      const cicloMal = cicloElegido !== L, cifraMal = cifraElegida !== d;
       api.responder({
         acierto,
-        html: `${acierto ? '' : `${fallos.join(' ')} `}${razon}`,
+        html: ({ tt }) => {
+          let razon;
+          if (L === 1) razon = tt(x.explica_uno)(base, exponente, d);
+          else if (exponente % L === 0) razon = tt(x.explica_multiplo)(base, exponente, L, exponente / L, d);
+          else razon = tt(x.explica_resto)(base, exponente, L, Math.floor(exponente / L), posicionEnCiclo(exponente, L), d);
+          const fallos = [];
+          if (cicloMal) fallos.push(tt(x.ciclo_mal)(L));
+          if (cifraMal) fallos.push(tt(x.cifra_mal)(d));
+          return `${acierto ? '' : `${fallos.join(' ')} `}${razon}`;
+        },
         pistas: fallosTabla,
         espera: 3200,
       });
@@ -341,6 +366,7 @@ arrancar({
       introduccion: TX.juntar.introduccion,
       generar: generarJuntar,
       montar: montarJuntar,
+      enunciado: enunciadoJuntar,
     },
     {
       nombre: TX.potencia.nombre,
@@ -348,6 +374,7 @@ arrancar({
       introduccion: TX.potencia.introduccion,
       generar: generarPotencias,
       montar: montarPotencias,
+      enunciado: enunciadoPotencias,
     },
     {
       nombre: TX.ultima.nombre,
@@ -357,6 +384,7 @@ arrancar({
       generar: generarUltima,
       clave: item => `${item.base}^${item.exponente}`,
       montar: montarUltima,
+      enunciado: enunciadoUltima,
     },
   ],
 });

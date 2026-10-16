@@ -39,14 +39,17 @@
 //                         el del ítem que se va a generar: permite ítems que solo
 //                         tienen sentido en un idioma (por ejemplo, un error que
 //                         solo lo es en inglés). Ojo: tras responder, el alumno
-//                         puede ver el MISMO ítem en el otro idioma; `montar` tiene
-//                         que pintarlo bien también ahí.
+//                         puede ver el enunciado y el feedback de ESE ítem en el
+//                         otro idioma (ver `enunciado` y `api.responder`).
 //     clave(item)         opcional: texto que identifica el ítem (por defecto,
 //                         JSON.stringify). La base no repite la clave anterior
 //                         (lo intenta hasta 5 veces).
 //     montar(contenedor, item, api)  pinta el ítem dentro de `contenedor` (un
-//                         <div> vacío) e instala sus eventos. La base lo llama
-//                         otra vez con el mismo ítem si se cambia de idioma.
+//                         <div> vacío) e instala sus eventos.
+//     enunciado(item, { idioma, t, tt, esc })  opcional: el HTML del enunciado
+//                         (la orden, el problema…) en ese idioma, con las mismas
+//                         clases que en `montar`. Sale en la traducción, encima
+//                         del feedback. Solo el texto: nada de botones ni casillas.
 //
 // ─── api (lo que recibe `montar`) ──────────────────────────────────────────────
 //
@@ -63,6 +66,12 @@
 //   api.responder({ acierto, html, espera, pistas, error, respuesta })
 //                     UNA vez por ítem (las siguientes llamadas no hacen nada).
 //                     `html` es la explicación, con los números de ese ítem.
+//                     Mejor como FUNCIÓN de los textos de un idioma:
+//                       html: ({ tt, t, idioma }) => tt(TX.razon)(item.n)
+//                     Así la base puede darla también en el otro idioma: solo
+//                     entonces sale el botón «See in English» / «Ver en español».
+//                     Ojo: dentro de la función, `tt` y `t` tienen que ser los
+//                     que recibe, no los de `api`.
 //                     Acierto: feedback verde y pasa solo al siguiente a los
 //                     `espera` ms (1300 por defecto; sube si hay mucho que leer).
 //                     Con punto extra por la racha, lo dice y espera un poco más.
@@ -84,11 +93,10 @@
 // rojo lo elegido y bloquear los botones es cosa de `montar`, ANTES de llamar
 // a `api.responder`.
 //
-// Tras responder, la base añade su propio botón «Ver en español» / «See in
-// English», que vuelve a llamar a `montar` con el MISMO ítem en el otro
-// idioma dentro de una caja de solo lectura (su `api.responder` no hace nada
-// y `api.respondido()` ya da `true`): no hay que hacer nada especial para
-// esto, solo que `montar` siga funcionando con un ítem ya respondido.
+// Tras responder, si `html` es una función, la base añade su propio botón «Ver
+// en español» / «See in English», que abre debajo una caja con el `enunciado`
+// del ejercicio (si lo hay) y el feedback completo en el otro idioma. Si se
+// abre tras un acierto, ya no pasa solo al siguiente: sale «Siguiente».
 //
 // ─── Lo que la práctica no tiene que hacer ─────────────────────────────────────
 //
@@ -143,10 +151,13 @@ function explicacionPrimo(n, api) {
   return `${tt(x.es_primo)(n)}: ${tt(x.no_divisible)(lista)}, ${tt(x.se_pasa)(n, siguiente)}.`;
 }
 
+// El enunciado sale también en la traducción (sin los botones).
+const enunciadoPrimo = (item, { tt }) => `<p class="instruccion">${tt(TX.primo.pregunta)(item.n)}</p>`;
+
 function montarPrimo(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.primo.pregunta)(item.n)}</p>
+    ${enunciadoPrimo(item, api)}
     <div class="operacion">${item.n}</div>
     <div class="flecha" aria-hidden="true">↓</div>`;
   const buena = clasePrimo(item);
@@ -159,7 +170,7 @@ function montarPrimo(contenedor, item, api) {
       botones.marcar([buena], valor);          // primero se pinta la corrección…
       api.responder({                          // …y después se avisa a la base
         acierto: valor === buena,
-        html: explicacionPrimo(item.n, api),
+        html: textos => explicacionPrimo(item.n, textos),   // función: se puede traducir
         espera: 1800,
       });
     },
@@ -171,10 +182,12 @@ function montarPrimo(contenedor, item, api) {
 // «Comprobar». El estado de lo que va construyendo vive aquí, en `montar`
 // (si se cambia de idioma a medias, se vuelve a empezar el ítem).
 
+const enunciadoFactorizacion = (item, { tt }) => `<p class="instruccion">${tt(TX.fact.instruccion)}</p>`;
+
 function montarFactorizacion(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.fact.instruccion)}</p>
+    ${enunciadoFactorizacion(item, api)}
     <div class="operacion" id="expresion"></div>
     <div class="grupo-pasos" id="primos"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
@@ -200,11 +213,17 @@ function montarFactorizacion(contenedor, item, api) {
     controles.forEach(c => c.bloquear());
     ev.target.hidden = true;
     const buena = `<span class="cuenta">${item.n} = ${htmlFact(factorizar(item.n))}</span>`;
-    if (acierto) return api.responder({ acierto: true, html: `${buena}.` });
+    if (acierto) return api.responder({ acierto: true, html: () => `${buena}.` });
     // Fallo: se dice cuánto vale lo que ha escrito el alumno, y después la buena.
+    // Dentro de la función, el `tt` que recibe (el del idioma que se pida).
     const f = factDe(mios);
-    const suya = f.length ? `<span class="cuenta">${htmlFact(f)} = ${valorDe(f)}</span>, ${tt(TX.fact.no_da)} ${item.n}. ` : '';
-    api.responder({ acierto: false, html: `${suya}${tt(TX.fact.correcta)} ${buena}.` });
+    api.responder({
+      acierto: false,
+      html: ({ tt }) => {
+        const suya = f.length ? `<span class="cuenta">${htmlFact(f)} = ${valorDe(f)}</span>, ${tt(TX.fact.no_da)} ${item.n}. ` : '';
+        return `${suya}${tt(TX.fact.correcta)} ${buena}.`;
+      },
+    });
   });
 }
 
@@ -219,6 +238,7 @@ arrancar({
       generar: generarPrimo,
       clave: item => String(item.n),
       montar: montarPrimo,
+      enunciado: enunciadoPrimo,
     },
     {
       nombre: TX.fact.nombre,
@@ -229,6 +249,7 @@ arrancar({
       introduccion: TX.fact.introduccion,
       generar: generarFactorizacion,
       montar: montarFactorizacion,
+      enunciado: enunciadoFactorizacion,
     },
   ],
 });

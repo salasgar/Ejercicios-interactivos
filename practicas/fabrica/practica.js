@@ -31,10 +31,12 @@ function valorDeExponentes(fact, exponentes) {
   return fact.reduce((v, [p], i) => v * p ** exponentes[i], 1);
 }
 
+const enunciadoConstruir = (item, { tt }) => `<p class="instruccion">${tt(TX.construir.instruccion)(item.objetivo)}</p>`;
+
 function montarConstruir(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.construir.instruccion)(item.objetivo)}</p>
+    ${enunciadoConstruir(item, api)}
     <div class="operacion" id="construido"></div>
     <div class="grupo-pasos" id="bases"></div>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
@@ -58,17 +60,19 @@ function montarConstruir(contenedor, item, api) {
     const acierto = esConstruccionCorrecta(item, mis);
     controles.forEach(c => c.bloquear());
     contenedor.querySelector('#comprobar').hidden = true;
-    api.responder({ acierto, html: explicacionConstruir(item, mis, api), espera: 2200 });
+    api.responder({ acierto, html: textos => explicacionConstruir(item, mis, textos), espera: 2200 });
   });
 }
 
 // ─── Ejercicio 2: ¿cuántos divisores tiene? ────────────────────────────────
 
-function montarContar(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoContar = (item, { tt }) => `
     <p class="instruccion">${tt(TX.contar.pregunta)}</p>
-    <div class="operacion">${htmlFact(item.fact)}</div>
+    <div class="operacion">${htmlFact(item.fact)}</div>`;
+
+function montarContar(contenedor, item, api) {
+  contenedor.innerHTML = `
+    ${enunciadoContar(item, api)}
     <div class="flecha" aria-hidden="true">↓</div>
     <div class="operacion" id="pantalla">0</div>
     <div class="botones-numeros" id="teclado"></div>
@@ -105,15 +109,15 @@ function montarContar(contenedor, item, api) {
     contenedor.querySelector('#comprobar').hidden = true;
     const acierto = tuyo === item.solucion;
     const cuenta = `${item.fact.map(([, e]) => `(${e}+1)`).join(' · ')} = ${item.solucion}`;
-    let html;
-    if (acierto) {
-      html = `${tt(TX.contar.feedbackBien)(cuenta)}`;
-      if (item.premio) html += ` ${tt(TX.contar.premio)(divisores(item.n))}`;
-    } else if (tuyo === olvidoSumarUno(item)) {
-      html = tt(TX.contar.feedbackOlvido)(tuyo, cuenta);
-    } else {
-      html = tt(TX.contar.feedbackMal)(tuyo, cuenta);
-    }
+    const html = ({ tt }) => {
+      if (acierto) {
+        let bien = `${tt(TX.contar.feedbackBien)(cuenta)}`;
+        if (item.premio) bien += ` ${tt(TX.contar.premio)(divisores(item.n))}`;
+        return bien;
+      }
+      if (tuyo === olvidoSumarUno(item)) return tt(TX.contar.feedbackOlvido)(tuyo, cuenta);
+      return tt(TX.contar.feedbackMal)(tuyo, cuenta);
+    };
     api.responder({ acierto, html, espera: 2600 });
   });
 }
@@ -134,9 +138,10 @@ function explicacionDivisible(item, api) {
   return `${cabecera} ${clausulas.join('; ')} ${conclusion}`;
 }
 
+const enunciadoDivisible = (item, { tt }) => `<p class="instruccion">${tt(TX.divisible.pregunta)(item.n, item.d)}</p><div class="operacion">${htmlFact(item.fact)}</div>`;
+
 function montarDivisible(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.divisible.pregunta)(item.n, item.d)}</p><div class="operacion">${htmlFact(item.fact)}</div>`;
+  contenedor.innerHTML = enunciadoDivisible(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'si', html: api.t.si }, { valor: 'no', html: api.t.no }],
@@ -144,7 +149,7 @@ function montarDivisible(contenedor, item, api) {
       if (api.respondido()) return;
       const buena = item.divisible ? 'si' : 'no';
       botones.marcar([buena], valor);
-      api.responder({ acierto: valor === buena, html: explicacionDivisible(item, api), espera: 2200 });
+      api.responder({ acierto: valor === buena, html: textos => explicacionDivisible(item, textos), espera: 2200 });
     },
   });
 }
@@ -159,18 +164,21 @@ arrancar({
       detalle: TX.detalle.construir,
       generar: generarConstruir,
       montar: montarConstruir,
+      enunciado: enunciadoConstruir,
     },
     {
       nombre: TX.nombre.contar,
       detalle: TX.detalle.contar,
       generar: generarContar,
       montar: montarContar,
+      enunciado: enunciadoContar,
     },
     {
       nombre: TX.nombre.divisible,
       detalle: TX.detalle.divisible,
       generar: generarDivisible,
       montar: montarDivisible,
+      enunciado: enunciadoDivisible,
     },
   ],
 });

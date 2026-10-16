@@ -472,6 +472,8 @@ test('base: una práctica bien declarada pasa, y se dice qué le falta a la que 
   assert.throws(() => validarPractica(con({ montar: undefined })), /falta la función «montar»/);
   assert.throws(() => validarPractica(con({ generar: 'x' })), /falta la función «generar»/);
   assert.throws(() => validarPractica(con({ introduccion: '<p>hola</p>' })), /«introduccion» tiene que ser \{ es, en \}/);
+  assert.throws(() => validarPractica(con({ enunciado: '<p>hola</p>' })), /«enunciado» tiene que ser una función/);
+  assert.doesNotThrow(() => validarPractica(con({ enunciado: () => '<p>hola</p>' })));
   assert.throws(() => validarPractica(con({ objetivo: 0 })), /enteros/);
   assert.throws(() => validarPractica(con({ vidas: 0 })), /vidas ≥ 1/);
   assert.throws(() => validarPractica(con({ penalizacion: 1.5 })), /enteros/);

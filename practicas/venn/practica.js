@@ -2,9 +2,8 @@
 // cruzarlas. La interfaz; los generadores, las comprobaciones y el feedback
 // están en logica.js (puro, con su test), y los textos en textos.js.
 //
-// La base vuelve a llamar a `montar` con el mismo ítem para enseñar la
-// traducción después de responder (con `api.respondido()` ya en true): ahí se
-// pinta el ítem resuelto y sin nada que tocar.
+// Tras responder, la traducción enseña `enunciado` y el feedback en el otro
+// idioma (el `html` de `api.responder` es una función del idioma).
 
 import { arrancar } from '../_comun/base.js';
 import { pasos } from '../_comun/piezas.js';
@@ -23,6 +22,8 @@ import {
 
 /** Las zonas del DOM a las que puede ir una ficha de cada lado. */
 const DESTINOS = { a: { soloA: 'solo', comun: 'comun', banco: null }, b: { soloB: 'solo', comun: 'comun', banco: null } };
+
+const enunciadoVenn = (item, { tt }) => `<p class="instruccion">${tt(TX.venn.instruccion)}</p>`;
 
 function montarVenn(contenedor, item, api) {
   const { tt } = api;
@@ -44,7 +45,7 @@ function montarVenn(contenedor, item, api) {
   }
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(x.instruccion)}</p>
+    ${enunciadoVenn(item, api)}
     <div class="venn-banco" data-zona="banco">
       <div class="venn-fila" data-fila="a"></div>
       <div class="venn-fila" data-fila="b"></div>
@@ -180,10 +181,12 @@ function montarVenn(contenedor, item, api) {
     elegida = null;
     boton.hidden = true;
     pintar();
-    const resumen = resumenVenn(item, api.idioma);
     api.responder({
       acierto,
-      html: acierto ? resumen : `${explicarVenn(item, zonas, api.idioma)}<br>${resumen}`,
+      html: ({ idioma }) => {
+        const resumen = resumenVenn(item, idioma);
+        return acierto ? resumen : `${explicarVenn(item, zonas, idioma)}<br>${resumen}`;
+      },
       espera: 5000,
     });
   });
@@ -197,6 +200,11 @@ function montarVenn(contenedor, item, api) {
 
 const celda = (p, e) => (e === 0 ? '<span class="tabla-fact__nada">—</span>' : e === 1 ? `${p}` : `${p}<sup>${e}</sup>`);
 
+const enunciadoReglas = (item, { tt }) => {
+  const nombre = `<strong class="venn-${item.pide}">${tt(NOMBRE[item.pide])}</strong>`;
+  return `<p class="instruccion venn-pregunta">${tt(TX.reglas.instruccion)(nombre, `<span class="va">${item.a}</span>`, `<span class="vb">${item.b}</span>`)}</p>`;
+};
+
 function montarReglas(contenedor, item, api) {
   const { tt } = api;
   const x = TX.reglas;
@@ -206,7 +214,7 @@ function montarReglas(contenedor, item, api) {
   const fila = (clase, n, f) => `<tr><th scope="row" class="${clase}">${n} =</th>${primos.map(p => `<td>${celda(p, exponente(f, p))}</td>`).join('')}</tr>`;
 
   contenedor.innerHTML = `
-    <p class="instruccion venn-pregunta">${tt(x.instruccion)(nombre, `<span class="va">${item.a}</span>`, `<span class="vb">${item.b}</span>`)}</p>
+    ${enunciadoReglas(item, api)}
     <table class="tabla-fact">
       ${fila('va', item.a, item.fa)}
       ${fila('vb', item.b, item.fb)}
@@ -259,11 +267,14 @@ function montarReglas(contenedor, item, api) {
       const bien = respuesta !== 0 && exponente(respuesta, primos[i]) === exponente(item.solucion, primos[i]);
       td.classList.add(bien ? 'tabla-fact__bien' : 'tabla-fact__mal');
     });
-    const partes = [];
-    if (!acierto) partes.push(explicar(item, respuesta, api.idioma), `${tt(x.respuesta)} ${solucionHtml(item, api.idioma)}`);
-    else partes.push(solucionHtml(item, api.idioma));
-    if (item.tipo === 'mezcla') partes.push(comprobaciones(item, api.idioma));
-    api.responder({ acierto, html: partes.join('<br>'), espera: item.tipo === 'mezcla' ? 5000 : 3000 });
+    const html = ({ tt, idioma }) => {
+      const partes = [];
+      if (!acierto) partes.push(explicar(item, respuesta, idioma), `${tt(x.respuesta)} ${solucionHtml(item, idioma)}`);
+      else partes.push(solucionHtml(item, idioma));
+      if (item.tipo === 'mezcla') partes.push(comprobaciones(item, idioma));
+      return partes.join('<br>');
+    };
+    api.responder({ acierto, html, espera: item.tipo === 'mezcla' ? 5000 : 3000 });
   }
 
   boton.addEventListener('click', () => {
@@ -289,9 +300,9 @@ const [venn, mcd, mcm, mezcla] = TX.ejercicios;
 arrancar({
   slug: 'venn',
   ejercicios: [
-    { ...venn, generar: generarVenn, clave, montar: montarVenn },
-    { ...mcd, generar: generarMcd, clave, montar: montarReglas },
-    { ...mcm, generar: generarMcm, clave, montar: montarReglas },
-    { ...mezcla, generar: generarMezcla, clave: item => `${clave(item)}-${item.pide}`, montar: montarReglas },
+    { ...venn, generar: generarVenn, clave, montar: montarVenn, enunciado: enunciadoVenn },
+    { ...mcd, generar: generarMcd, clave, montar: montarReglas, enunciado: enunciadoReglas },
+    { ...mcm, generar: generarMcm, clave, montar: montarReglas, enunciado: enunciadoReglas },
+    { ...mezcla, generar: generarMezcla, clave: item => `${clave(item)}-${item.pide}`, montar: montarReglas, enunciado: enunciadoReglas },
   ],
 });

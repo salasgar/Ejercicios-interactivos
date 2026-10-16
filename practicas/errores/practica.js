@@ -30,23 +30,28 @@ function explicacion(item, api) {
   return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
 }
 
+// Los enunciados salen también en la traducción (sin los botones).
+const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
+const enunciadoLinea = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.linea)}</p>${procedimiento(item, textos)}`;
+const enunciadoNombre = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.nombre)}</p>${procedimiento(item, textos)}`;
+
 function montarHay(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.hay)}</p>${procedimiento(item, api)}`;
+  contenedor.innerHTML = enunciadoHay(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: [{ valor: 'bien', html: tt(TX.bien) }, { valor: 'error', html: tt(TX.error) }],
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
 
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
+  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;   // las líneas son los botones
   const botones = elecciones(contenedor, {
     clase: 'procedimiento procedimiento--botones',
     opciones: item.lineas.map((l, i) => ({
@@ -56,21 +61,21 @@ function montarLinea(contenedor, item, api) {
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
 
 function montarNombre(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.nombre)}</p>${procedimiento(item, api)}`;
+  contenedor.innerHTML = enunciadoNombre(item, api);
   const botones = elecciones(contenedor, {
     clase: 'elecciones nombres',
     opciones: item.opciones.map(clave => ({ valor: clave, html: esc(tt(NOMBRES[clave])) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: explicacion(item, api), espera: 3200 });
+      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
     },
   });
 }
@@ -85,6 +90,7 @@ arrancar({
       generar: generarHay,
       clave: claveItem,
       montar: montarHay,
+      enunciado: enunciadoHay,
     },
     {
       nombre: TX.nombre.linea,
@@ -92,6 +98,7 @@ arrancar({
       generar: generarLinea,
       clave: claveItem,
       montar: montarLinea,
+      enunciado: enunciadoLinea,
     },
     {
       nombre: TX.nombre.nombre,
@@ -99,6 +106,7 @@ arrancar({
       generar: generarNombre,
       clave: claveItem,
       montar: montarNombre,
+      enunciado: enunciadoNombre,
     },
   ],
 });

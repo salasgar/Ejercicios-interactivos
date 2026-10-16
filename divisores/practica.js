@@ -23,18 +23,26 @@ const BICHO_MUERTO = new URL('./bicho-muerto.svg', import.meta.url).href;
 
 // ─── Ejercicio 0: patrón ELEGIR («de» / «entre») ───────────────────────────────
 
-function montarPreposicion(contenedor, item, api) {
-  const { t, idioma } = api;
+// Los enunciados salen también en la traducción, sin botones ni fichas.
+const operacion = (item, idioma) => `<div class="operacion">${textoOperacion(item.op, idioma)}</div>`;
+
+function enunciadoPreposicion(item, { t, idioma }, hueco = '') {
   const tx = TX[idioma];
-  contenedor.innerHTML = `
+  return `
     <p class="instruccion">${tx.instruccion.preposicion}</p>
-    <div class="operacion">${textoOperacion(item.op, idioma)}</div>
-    <div class="flecha" aria-hidden="true">↓</div>
+    ${operacion(item, idioma)}
+    ${hueco && '<div class="flecha" aria-hidden="true">↓</div>'}
     <div class="frase">
       <span class="numero">${item.x}</span> ${t.es} ${tx.palabra[item.relacion]}
-      <span class="hueco hueco--corto" id="hueco"></span>
+      <span class="hueco hueco--corto" ${hueco}></span>
       <span class="numero">${item.y}</span>
     </div>`;
+}
+
+function montarPreposicion(contenedor, item, api) {
+  const { idioma } = api;
+  const tx = TX[idioma];
+  contenedor.innerHTML = enunciadoPreposicion(item, api, 'id="hueco"');
   const botones = elecciones(contenedor, {
     clase: 'si-no',
     opciones: ['de', 'entre'].map(valor => ({ valor, html: tx.preposicion[valor] })),
@@ -45,22 +53,31 @@ function montarPreposicion(contenedor, item, api) {
       hueco.textContent = tx.preposicion[valor];
       hueco.classList.add(acierto ? 'hueco--bien' : 'hueco--mal');
       botones.marcar([item.correcta], valor);
-      const buena = `${frase(item.relacion, item.x, item.y, idioma)}.`;
-      api.responder({ acierto, html: acierto ? buena : `${tx.se_dice}<br>${buena}` });
+      api.responder({
+        acierto,
+        html: ({ idioma: i }) => {
+          const buena = `${frase(item.relacion, item.x, item.y, i)}.`;
+          return acierto ? buena : `${TX[i].se_dice}<br>${buena}`;
+        },
+      });
     },
   });
 }
 
 // ─── Ejercicios 1, 2 y 3: patrón ELEGIR (divisor / múltiplo / divisible) ───────
 
+function enunciadoEleccion(item, { t, idioma }, hueco = '') {
+  return `
+    <p class="instruccion">${TX[idioma].instruccion.eleccion}</p>
+    ${operacion(item, idioma)}
+    ${hueco && '<div class="flecha" aria-hidden="true">↓</div>'}
+    <div class="frase"><span class="numero">${item.x}</span> ${t.es} <span class="hueco" ${hueco}></span> <span class="numero">${item.y}</span></div>`;
+}
+
 function montarEleccion(contenedor, item, api) {
-  const { t, idioma } = api;
+  const { idioma } = api;
   const tx = TX[idioma];
-  contenedor.innerHTML = `
-    <p class="instruccion">${tx.instruccion.eleccion}</p>
-    <div class="operacion">${textoOperacion(item.op, idioma)}</div>
-    <div class="flecha" aria-hidden="true">↓</div>
-    <div class="frase"><span class="numero">${item.x}</span> ${t.es} <span class="hueco" id="hueco"></span> <span class="numero">${item.y}</span></div>`;
+  contenedor.innerHTML = enunciadoEleccion(item, api, 'id="hueco"');
   const botones = elecciones(contenedor, {
     opciones: RELACIONES.map(valor => ({ valor, html: tx.relacion[valor] })),
     alElegir(valor) {
@@ -71,16 +88,22 @@ function montarEleccion(contenedor, item, api) {
       hueco.classList.add(acierto ? 'hueco--bien' : 'hueco--mal');
       botones.marcar(item.correctas, valor);
       if (acierto) {
-        const otras = item.correctas.filter(r => r !== valor).map(r => frase(r, item.x, item.y, idioma));
-        const extra = otras.length ? `<br>${t.tambien} ${unir(otras, idioma)}.` : '';
-        api.responder({ acierto: true, html: `${frase(valor, item.x, item.y, idioma)}.${extra}`, espera: otras.length ? 2600 : 1300 });
+        const otras = item.correctas.filter(r => r !== valor);
+        api.responder({
+          acierto: true,
+          html: ({ t, idioma: i }) => {
+            const extra = otras.length ? `<br>${t.tambien} ${unir(otras.map(r => frase(r, item.x, item.y, i)), i)}.` : '';
+            return `${frase(valor, item.x, item.y, i)}.${extra}`;
+          },
+          espera: otras.length ? 2600 : 1300,
+        });
         return;
       }
       api.responder({
         acierto: false,
-        html: `${cerrar(`${fraseNegada(valor, item.x, item.y, idioma)}; ${explicacion(valor, item.x, item.y, idioma, { conAlReves: false })}`)}<br>
-          ${t.fijate} <span class="cuenta">${razon(item.correctas[0], item.x, item.y, idioma)}</span>.
-          ${t.por_eso} ${unir(item.correctas.map(r => frase(r, item.x, item.y, idioma)), idioma)}.`,
+        html: ({ t, idioma: i }) => `${cerrar(`${fraseNegada(valor, item.x, item.y, i)}; ${explicacion(valor, item.x, item.y, i, { conAlReves: false })}`)}<br>
+          ${t.fijate} <span class="cuenta">${razon(item.correctas[0], item.x, item.y, i)}</span>.
+          ${t.por_eso} ${unir(item.correctas.map(r => frase(r, item.x, item.y, i)), i)}.`,
       });
     },
   });
@@ -88,16 +111,21 @@ function montarEleccion(contenedor, item, api) {
 
 // ─── Ejercicio 4: patrón ARRASTRAR (tocar, dedo, ratón o lápiz) ───────────────
 
-function montarArrastrar(contenedor, item, api) {
-  const { t, idioma } = api;
+function enunciadoArrastrar(item, { t, idioma }) {
   const tx = TX[idioma];
-  const colocadas = [null, null];
-  contenedor.innerHTML = `
+  return `
     <p class="instruccion">${tx.instruccion.arrastrar}</p>
     <div class="frase">
       <span class="hueco hueco--ficha" data-hueco="0"></span> ${t.es} ${tx.relacion[item.relacion]}
       <span class="hueco hueco--ficha" data-hueco="1"></span>
-    </div>
+    </div>`;
+}
+
+function montarArrastrar(contenedor, item, api) {
+  const { t } = api;
+  const colocadas = [null, null];
+  contenedor.innerHTML = `
+    ${enunciadoArrastrar(item, api)}
     <div class="banco" id="banco">${item.numeros.map((num, i) => `<span class="sitio" data-sitio="${i}"><button type="button" class="ficha" data-ficha="${i}">${num}</button></span>`).join('')}</div>
     <button type="button" id="comprobar" class="comprobar" disabled>${t.comprobar}</button>`;
 
@@ -174,15 +202,15 @@ function montarArrastrar(contenedor, item, api) {
     contenedor.querySelectorAll('.ficha').forEach(f => { f.disabled = true; });
     contenedor.querySelectorAll('[data-hueco]').forEach(el => el.classList.add(acierto ? 'hueco--bien' : 'hueco--mal'));
     if (acierto) {
-      api.responder({ acierto: true, html: `${frase(item.relacion, x, y, idioma)}: <span class="cuenta">${razon(item.relacion, x, y, idioma)}</span>.`, espera: 1800 });
+      api.responder({ acierto: true, html: ({ idioma: i }) => `${frase(item.relacion, x, y, i)}: <span class="cuenta">${razon(item.relacion, x, y, i)}</span>.`, espera: 1800 });
       return;
     }
     const [sx, sy] = solucionArrastrar(item);
     const alReves = cumple(item.relacion, y, x);
     api.responder({
       acierto: false,
-      html: `${cerrar(`${fraseNegada(item.relacion, x, y, idioma)}; ${explicacion(item.relacion, x, y, idioma)}`)}${alReves ? '' : `<br>
-        ${t.por_ejemplo} ${frase(item.relacion, sx, sy, idioma)}, <span class="cuenta">${razon(item.relacion, sx, sy, idioma)}</span>.`}`,
+      html: ({ t: ti, idioma: i }) => `${cerrar(`${fraseNegada(item.relacion, x, y, i)}; ${explicacion(item.relacion, x, y, i)}`)}${alReves ? '' : `<br>
+        ${ti.por_ejemplo} ${frase(item.relacion, sx, sy, i)}, <span class="cuenta">${razon(item.relacion, sx, sy, i)}</span>.`}`,
     });
   });
   pintarFichas();
@@ -195,6 +223,13 @@ function montarArrastrar(contenedor, item, api) {
 // MIENTE» (solo uno miente) o «pulsa el que dice la VERDAD» (solo uno la
 // dice). Al acertar, el mentiroso aparece aplastado y al sincero le salen
 // corazones. Sin cronómetro: lo que cuenta es leer las frases.
+
+// En la traducción, la consigna y las frases de los bichos, en lista.
+function enunciadoBichos(item, { idioma }) {
+  return `
+    <p class="consigna consigna--${item.modo}">${TX[idioma].instruccion.bichos[item.modo]}</p>
+    <ul>${item.frases.map(f => `<li>${frase(f.relacion, f.x, f.y, idioma)}</li>`).join('')}</ul>`;
+}
 
 function montarBichos(contenedor, item, api) {
   const { idioma } = api;
@@ -230,13 +265,16 @@ function montarBichos(contenedor, item, api) {
       boton.classList.add('bicho--amor');
     }
     if (acierto) {
-      api.responder({ acierto: true, html: `${esMentira ? tx.bichos.aplastado : tx.bichos.acertado} ${cerrar(fraseRazonada(buena, idioma))}`, espera: esMentira ? 3200 : 2200 });
+      api.responder({ acierto: true, html: ({ idioma: i }) => `${esMentira ? TX[i].bichos.aplastado : TX[i].bichos.acertado} ${cerrar(fraseRazonada(buena, i))}`, espera: esMentira ? 3200 : 2200 });
       return;
     }
     api.responder({
       acierto: false,
-      html: `${pulsada.verdadera ? tx.bichos.este_verdad : tx.bichos.este_mentia} ${cerrar(fraseRazonada(pulsada, idioma))}<br>
-        ${tx.bichos.habia_que[item.modo]} ${esMentira ? tx.bichos.el_que_mentia : tx.bichos.el_sincero} ${cerrar(fraseRazonada(buena, idioma))}`,
+      html: ({ idioma: i }) => {
+        const b = TX[i].bichos;
+        return `${pulsada.verdadera ? b.este_verdad : b.este_mentia} ${cerrar(fraseRazonada(pulsada, i))}<br>
+        ${b.habia_que[item.modo]} ${esMentira ? b.el_que_mentia : b.el_sincero} ${cerrar(fraseRazonada(buena, i))}`;
+      },
     });
   }));
 }
@@ -251,5 +289,6 @@ arrancar({
     generar: (rng, sesion) => generar(n, rng, sesion),
     clave,
     montar: n === 0 ? montarPreposicion : n === 4 ? montarArrastrar : n === 5 ? montarBichos : montarEleccion,
+    enunciado: n === 0 ? enunciadoPreposicion : n === 4 ? enunciadoArrastrar : n === 5 ? enunciadoBichos : enunciadoEleccion,
   })),
 });

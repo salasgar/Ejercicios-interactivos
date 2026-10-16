@@ -26,13 +26,12 @@ function renderParte(p, i, activa) {
   return `<span class="exp-parte" data-parte="${i}">${cuerpo}</span>`;
 }
 
+const enunciadoAlcance = (item, { tt }) => `
+    <p class="instruccion">${item.partes.length === 2 ? tt(TX.alcance.instruccion_dos) : tt(TX.alcance.instruccion_una)}</p>
+    <div class="operacion exp-expresion">${item.partes.map((p, i) => renderParte(p, i, i === item.preguntada)).join(' <span class="exp-op">+</span> ')}</div>`;
+
 function montarAlcance(contenedor, item, api) {
-  const { tt } = api;
-  const dos = item.partes.length === 2;
-  const html = item.partes.map((p, i) => renderParte(p, i, i === item.preguntada)).join(' <span class="exp-op">+</span> ');
-  contenedor.innerHTML = `
-    <p class="instruccion">${dos ? tt(TX.alcance.instruccion_dos) : tt(TX.alcance.instruccion_una)}</p>
-    <div class="operacion exp-expresion">${html}</div>`;
+  contenedor.innerHTML = enunciadoAlcance(item, api);
   const activaRoot = contenedor.querySelector(`[data-parte="${item.preguntada}"]`);
   const parte = item.partes[item.preguntada];
   const correctaId = idBaseDe(parte.forma);
@@ -51,19 +50,21 @@ function montarAlcance(contenedor, item, api) {
       });
       const correcta = cuentaParte(parte);
       // «Si afectara a otra parte» (acierto) es el error típico; «lo que has tocado daría» (fallo) es la región tocada.
-      const html2 = acierto ? tt(TX.alcance.bien)(correcta, cuentaErronea(parte)) : tt(TX.alcance.mal)(correcta, cuentaTocada(parte, id));
-      api.responder({ acierto, html: html2, espera: 1800 });
+      const html = ({ tt }) => acierto ? tt(TX.alcance.bien)(correcta, cuentaErronea(parte)) : tt(TX.alcance.mal)(correcta, cuentaTocada(parte, id));
+      api.responder({ acierto, html, espera: 1800 });
     });
   });
 }
 
 // ─── Ejercicio 2: multiplicación repetida (tres subtipos) ──────────────────────
 
+const enunciadoRepetida = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.repetida.instruccion_construir)(item.base, item.exponente)}</p>
+    <p class="pequeno">${item.base}<sup>${item.exponente}</sup> = ${lecturaIngles(item.base, item.exponente)}</p>`;
+
 function montarRepetida(contenedor, item, api) {
   const { tt, t } = api;
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.repetida.instruccion_construir)(item.base, item.exponente)}</p>
-    <p class="pequeno">${item.base}<sup>${item.exponente}</sup> = ${lecturaIngles(item.base, item.exponente)}</p>
+  contenedor.innerHTML = `${enunciadoRepetida(item, api)}
     <div class="frase" id="secuencia"></div>
     <div class="banco" id="banco"></div>
     <button type="button" class="comprobar" id="comprobar">${t.comprobar}</button>`;
@@ -102,17 +103,21 @@ function montarRepetida(contenedor, item, api) {
     const acierto = aciertaRepetida(item, valores);
     contenedor.querySelectorAll('.ficha').forEach(b => { b.disabled = true; });
     const p = secuenciaCorrecta(item).join(' ');
-    const html = acierto ? tt(TX.repetida.bien)(item.base, item.exponente, p) : tt(TX.repetida.mal)(p, item.base, item.exponente);
+    const html = ({ tt }) => acierto ? tt(TX.repetida.bien)(item.base, item.exponente, p) : tt(TX.repetida.mal)(p, item.base, item.exponente);
     api.responder({ acierto, html, espera: 1600 });
   });
 }
 
+const productoDe = item => Array(item.exponente).fill(item.base).join(' · ');
+
+const enunciadoPotencia = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.potencia.instruccion)}</p>
+    <div class="operacion">${productoDe(item)}</div>`;
+
 function montarPotencia(contenedor, item, api) {
   const { tt, t } = api;
-  const prod = Array(item.exponente).fill(item.base).join(' · ');
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.potencia.instruccion)}</p>
-    <div class="operacion">${prod}</div>
+  const prod = productoDe(item);
+  contenedor.innerHTML = `${enunciadoPotencia(item, api)}
     <div class="operacion" id="vista"></div>
     <div class="grupo-pasos" id="pasos"></div>
     <button type="button" class="comprobar" id="comprobar">${t.comprobar}</button>`;
@@ -127,25 +132,32 @@ function montarPotencia(contenedor, item, api) {
     basePaso.bloquear();
     expPaso.bloquear();
     const acierto = aciertaPotencia(item, b, e);
-    const html = acierto ? tt(TX.potencia.bien)(item.base, item.exponente, prod) : tt(TX.potencia.mal)(item.base, item.exponente, prod, b, e);
+    const html = ({ tt }) => acierto ? tt(TX.potencia.bien)(item.base, item.exponente, prod) : tt(TX.potencia.mal)(item.base, item.exponente, prod, b, e);
     api.responder({ acierto, html, espera: 1600 });
   });
 }
 
-function montarValor(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `<p class="instruccion">${tt(TX.valor.pregunta)(item.base, item.exponente)}</p>
+const enunciadoValor = (item, { tt }) => `<p class="instruccion">${tt(TX.valor.pregunta)(item.base, item.exponente)}</p>
     <p class="pequeno">${item.base}<sup>${item.exponente}</sup> = ${lecturaIngles(item.base, item.exponente)}</p>`;
+
+function montarValor(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoValor(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map(v => ({ valor: v, html: String(v) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.correcta], valor);
       const acierto = valor === item.correcta;
-      const html = acierto ? tt(TX.valor.bien)(item.base, item.exponente, item.correcta) : tt(TX.valor.mal)(item.base, item.exponente, item.correcta, valor);
+      const html = ({ tt }) => acierto ? tt(TX.valor.bien)(item.base, item.exponente, item.correcta) : tt(TX.valor.mal)(item.base, item.exponente, item.correcta, valor);
       api.responder({ acierto, html, espera: 1600 });
     },
   });
+}
+
+function enunciadoMultiplicacion(item, textos) {
+  if (item.tipo === 'repetida') return enunciadoRepetida(item, textos);
+  if (item.tipo === 'potencia') return enunciadoPotencia(item, textos);
+  return enunciadoValor(item, textos);
 }
 
 function montarMultiplicacion(contenedor, item, api) {
@@ -201,12 +213,14 @@ function crearTeclado(contenedor, { onAceptar }) {
   }));
 }
 
+const enunciadoAreas = (item, { tt }) => `
+    <p class="instruccion">${item.variante ? tt(TX.areas.instruccion_prod)(item.a, item.b) : tt(TX.areas.instruccion)(item.a, item.b)}</p>`;
+
 function montarAreas(contenedor, item, api) {
   const { tt } = api;
   const lado = item.a + item.b;
   // La variante (a · b)² no tiene que ver con un cuadrado de lado a + b: va sin dibujo.
-  contenedor.innerHTML = `
-    <p class="instruccion">${item.variante ? tt(TX.areas.instruccion_prod)(item.a, item.b) : tt(TX.areas.instruccion)(item.a, item.b)}</p>
+  contenedor.innerHTML = `${enunciadoAreas(item, api)}
     <div id="dibujo"></div>
     <div id="pasos"></div>
     <div id="preguntas"></div>`;
@@ -241,7 +255,7 @@ function montarAreas(contenedor, item, api) {
       onAceptar(valor) {
         if (api.respondido()) return;
         const acierto = aciertaAreas(item, respuesta1, valor);
-        const html = acierto
+        const html = ({ tt }) => acierto
           ? (item.variante ? tt(TX.areas.bien_prod)(item.a, item.b) : tt(TX.areas.bien_suma)(item.a, item.b, item.a * item.b))
           : (item.variante ? tt(TX.areas.mal)(pregunta1, pregunta2) : tt(TX.areas.mal_suma)(item.a, item.b, pregunta1, pregunta2));
         api.responder({ acierto, html, espera: 2200 });
@@ -261,18 +275,21 @@ arrancar({
       detalle: TX.alcance.detalle,
       generar: generarAlcance,
       montar: montarAlcance,
+      enunciado: enunciadoAlcance,
     },
     {
       nombre: TX.repetida.nombre,
       detalle: TX.repetida.detalle,
       generar: generarMultiplicacion,
       montar: montarMultiplicacion,
+      enunciado: enunciadoMultiplicacion,
     },
     {
       nombre: TX.areas.nombre,
       detalle: TX.areas.detalle,
       generar: generarAreas,
       montar: montarAreas,
+      enunciado: enunciadoAreas,
     },
   ],
 });

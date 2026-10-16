@@ -41,13 +41,22 @@ function cuenta(fichas, valor, idioma) {
 const htmlEnunciado = (item, idioma) => `<p class="enunciado">${plantillaPorId(item.plantilla)[idioma](item.numeros)}</p>`;
 
 /** La explicación del modelo, con los números del ítem: «…: (7 + 3) · 2 = 20». */
-function htmlModelo(item, api) {
+function htmlModelo(item, { tt, idioma }) {
   const plantilla = plantillaPorId(item.plantilla);
-  const explica = plantilla.explica[api.idioma](item.numeros);
-  const modelo = cuenta(aFichas(item.modelo), evaluar(item.modelo), api.idioma);
+  const explica = plantilla.explica[idioma](item.numeros);
+  const modelo = cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma);
   // Si la explicación acaba en dos puntos, la expresión la remata; si no, va en su frase.
-  return explica.endsWith(':') ? `${explica} ${modelo}.` : `${explica} ${api.tt(TX.la_expresion_es)} ${modelo}.`;
+  return explica.endsWith(':') ? `${explica} ${modelo}.` : `${explica} ${tt(TX.la_expresion_es)} ${modelo}.`;
 }
+
+// El enunciado de cada ítem (también en la traducción).
+const enunciadoMontar = (item, { tt, idioma }) => `
+    <p class="instruccion">${tt(TX.instruccion_montar)}</p>
+    ${htmlEnunciado(item, idioma)}`;
+const enunciadoElegir = (item, { tt, idioma }) => `
+    <p class="instruccion">${tt(TX.instruccion_elegir)}</p>
+    ${htmlEnunciado(item, idioma)}`;
+const enunciado = (item, textos) => (item.tipo === 'elegir' ? enunciadoElegir : enunciadoMontar)(item, textos);
 
 // ─── Montar la expresión con fichas ────────────────────────────────────────────
 
@@ -67,8 +76,7 @@ function montarExpresion(contenedor, item, api) {
   const rotulo = ficha => (ficha === '²' ? '□<sup>2</sup>' : simbolo(ficha, idioma));
 
   contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.instruccion_montar)}</p>
-    ${htmlEnunciado(item, idioma)}
+    ${enunciadoMontar(item, api)}
     <div class="linea" role="group" aria-label="${tt(TX.linea_nombre)}"></div>
     <p class="aviso-linea" role="status" hidden></p>
     <div class="teclado">
@@ -132,25 +140,32 @@ function montarExpresion(contenedor, item, api) {
     contenedor.querySelector('.acciones').hidden = true;
 
     if (r.estado === 'bien') {
-      const sobraba = r.quitados
-        ? ` ${tt(TX.sobraba)(r.quitados)} <span class="cuenta">${htmlExpresion(aFichas(r.limpia), idioma)}</span>.` : '';
-      // La suma repetida es un planteamiento correcto: se acepta y se enseña la forma corta.
-      const repetida = r.repetida
-        ? ` ${tt(esRestaRepetida(item.modelo, r.repetida) ? TX.repetidaResta : TX.repetida)(r.repetida)} ${cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma)}.` : '';
+      const escritas = [...fichas];
       return api.responder({
         acierto: true,
-        html: `${cuenta(fichas, r.valor, idioma)}.${sobraba}${repetida} ${plantillaPorId(item.plantilla).explica[idioma](item.numeros).replace(/:$/, '.')}`,
+        html: ({ tt, idioma }) => {
+          const sobraba = r.quitados
+            ? ` ${tt(TX.sobraba)(r.quitados)} <span class="cuenta">${htmlExpresion(aFichas(r.limpia), idioma)}</span>.` : '';
+          // La suma repetida es un planteamiento correcto: se acepta y se enseña la forma corta.
+          const repetida = r.repetida
+            ? ` ${tt(esRestaRepetida(item.modelo, r.repetida) ? TX.repetidaResta : TX.repetida)(r.repetida)} ${cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma)}.` : '';
+          return `${cuenta(escritas, r.valor, idioma)}.${sobraba}${repetida} ${plantillaPorId(item.plantilla).explica[idioma](item.numeros).replace(/:$/, '.')}`;
+        },
         espera: r.quitados || r.repetida ? 4200 : 2600,
       });
     }
-    const pegas = [
-      r.faltan.length ? tt(TX.faltan)(r.faltan) : '',
-      r.tipo ? tt(TX.error[r.tipo]) : '',
-      r.casualidad ? tt(TX.casualidad) : '',
-    ].filter(Boolean).join(' ');
+    const escritas = [...fichas];
     api.responder({
       acierto: false,
-      html: `${tt(TX.has_escrito)} ${cuenta(fichas, r.valor, idioma)}. ${pegas} ${htmlModelo(item, api)}`,
+      html: textos => {
+        const { tt, idioma } = textos;
+        const pegas = [
+          r.faltan.length ? tt(TX.faltan)(r.faltan) : '',
+          r.tipo ? tt(TX.error[r.tipo]) : '',
+          r.casualidad ? tt(TX.casualidad) : '',
+        ].filter(Boolean).join(' ');
+        return `${tt(TX.has_escrito)} ${cuenta(escritas, r.valor, idioma)}. ${pegas} ${htmlModelo(item, textos)}`;
+      },
     });
   });
 }
@@ -160,20 +175,18 @@ function montarExpresion(contenedor, item, api) {
 function montarEleccion(contenedor, item, api) {
   const { tt, idioma } = api;
   if (api.respondido()) { contenedor.innerHTML = htmlEnunciado(item, idioma); return; }
-  contenedor.innerHTML = `
-    <p class="instruccion">${tt(TX.instruccion_elegir)}</p>
-    ${htmlEnunciado(item, idioma)}`;
+  contenedor.innerHTML = enunciadoElegir(item, api);
   const botones = elecciones(contenedor, {
     opciones: item.opciones.map((arbol, valor) => ({ valor, html: htmlExpresion(aFichas(arbol), idioma) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      if (valor === item.solucion) return api.responder({ acierto: true, html: htmlModelo(item, api), espera: 2600 });
+      if (valor === item.solucion) return api.responder({ acierto: true, html: textos => htmlModelo(item, textos), espera: 2600 });
       const gemela = item.opciones[valor];
       const tipo = erroresDe(plantillaPorId(item.plantilla), item.numeros)[0].tipo;
       api.responder({
         acierto: false,
-        html: `${tt(TX.has_elegido)} ${cuenta(aFichas(gemela), evaluar(gemela), idioma)}. ${tt(TX.error[tipo])} ${htmlModelo(item, api)}`,
+        html: textos => `${textos.tt(TX.has_elegido)} ${cuenta(aFichas(gemela), evaluar(gemela), textos.idioma)}. ${textos.tt(TX.error[tipo])} ${htmlModelo(item, textos)}`,
       });
     },
   });
@@ -187,8 +200,8 @@ const montar = (contenedor, item, api) => (item.tipo === 'elegir' ? montarElecci
 arrancar({
   slug: 'expresion',
   ejercicios: [
-    { ...TX.sin, generar: generarSin, clave: claveItem, montar },
-    { ...TX.con, generar: generarCon, clave: claveItem, montar },
-    { ...TX.potencias, generar: generarPotencias, clave: claveItem, montar },
+    { ...TX.sin, generar: generarSin, clave: claveItem, montar, enunciado },
+    { ...TX.con, generar: generarCon, clave: claveItem, montar, enunciado },
+    { ...TX.potencias, generar: generarPotencias, clave: claveItem, montar, enunciado },
   ],
 });

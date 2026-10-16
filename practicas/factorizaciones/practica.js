@@ -56,18 +56,19 @@ function comprobable(caja, item, api, panel) {
     const mios = panel.exponentes();
     panel.bloquear();
     boton.hidden = true;
-    api.responder({ acierto: esCorrecta(item, mios), html: explicar(item, mios, api.idioma), espera: 2600 });
+    api.responder({ acierto: esCorrecta(item, mios), html: ({ idioma }) => explicar(item, mios, idioma), espera: 2600 });
   });
 }
 
 // ─── Ejercicio 1: el producto ──────────────────────────────────────────────────
 
-function montarProducto(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoProducto = (item, { tt }) => `
     <p class="instruccion">${tt(TX.producto.instruccion)}</p>
     ${datos(item.fa, item.a, item.fb, item.b)}
     <div class="operacion">${tt(TX.producto_de)(item.a, item.b)} = ${item.a * item.b}</div>`;
+
+function montarProducto(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoProducto(item, api);
   const maximo = Object.fromEntries(primosDe(item).map(p => [p, (item.fa.find(([q]) => q === p)?.[1] ?? 0) + (item.fb.find(([q]) => q === p)?.[1] ?? 0)]));
   const panel = steppers(contenedor, item, api, p => maximo[p]);
   comprobable(contenedor, item, api, panel);
@@ -75,11 +76,13 @@ function montarProducto(contenedor, item, api) {
 
 // ─── Ejercicio 2: ¿es múltiplo? ────────────────────────────────────────────────
 
-function montarMultiplo(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoMultiplo = (item, { tt }) => `
     <p class="instruccion">${tt(TX.multiplo.pregunta)(item.a, item.b)}</p>
     ${datos(item.fa, item.a, item.fb, item.b)}`;
+
+function montarMultiplo(contenedor, item, api) {
+  const { tt } = api;
+  contenedor.innerHTML = enunciadoMultiplo(item, api);
   const segunda = document.createElement('div');
   const botones = elecciones(contenedor, {
     clase: 'si-no',
@@ -89,9 +92,9 @@ function montarMultiplo(contenedor, item, api) {
       const dijoSi = valor === 'si';
       botones.marcar([item.esMultiplo ? 'si' : 'no'], valor);
       if (dijoSi !== item.esMultiplo) {
-        return api.responder({ acierto: false, html: explicar(item, null, api.idioma), espera: 2600 });
+        return api.responder({ acierto: false, html: ({ idioma }) => explicar(item, null, idioma), espera: 2600 });
       }
-      if (!item.esMultiplo) return api.responder({ acierto: true, html: explicarNoMultiplo(item, api.idioma), espera: 2600 });
+      if (!item.esMultiplo) return api.responder({ acierto: true, html: ({ idioma }) => explicarNoMultiplo(item, idioma), espera: 2600 });
       // Sí y es verdad: queda la segunda parte, construir el número por el que se multiplica.
       segunda.innerHTML = `<p class="instruccion">${tt(TX.multiplo.segunda)(item.a, item.b)}</p>`;
       contenedor.append(segunda);
@@ -103,12 +106,13 @@ function montarMultiplo(contenedor, item, api) {
 
 // ─── Ejercicio 3: el cociente ──────────────────────────────────────────────────
 
-function montarCociente(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
+const enunciadoCociente = (item, { tt }) => `
     <p class="instruccion">${tt(TX.cociente.instruccion)}</p>
     ${datos(item.fa, item.a, item.fb, item.b)}
     <div class="operacion">${tt(TX.cociente.enunciado)(item.a, item.b)} = □</div>`;
+
+function montarCociente(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoCociente(item, api);
   const panel = steppers(contenedor, item, api, () => EXPONENTE_MAXIMO);
   comprobable(contenedor, item, api, panel);
 }
@@ -118,8 +122,8 @@ function montarCociente(contenedor, item, api) {
 arrancar({
   slug: 'factorizaciones',
   ejercicios: [
-    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto },
-    { nombre: TX.multiplo.nombre, detalle: TX.multiplo.detalle, introduccion: TX.multiplo.introduccion, generar: generarMultiplo, montar: montarMultiplo },
-    { nombre: TX.cociente.nombre, detalle: TX.cociente.detalle, introduccion: TX.cociente.introduccion, generar: generarCociente, montar: montarCociente },
+    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto },
+    { nombre: TX.multiplo.nombre, detalle: TX.multiplo.detalle, introduccion: TX.multiplo.introduccion, generar: generarMultiplo, montar: montarMultiplo, enunciado: enunciadoMultiplo },
+    { nombre: TX.cociente.nombre, detalle: TX.cociente.detalle, introduccion: TX.cociente.introduccion, generar: generarCociente, montar: montarCociente, enunciado: enunciadoCociente },
   ],
 });

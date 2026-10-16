@@ -42,6 +42,7 @@ export function validarPractica(practica) {
     for (const fn of ['generar', 'montar']) {
       if (typeof e[fn] !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: falta la función «${fn}»`);
     }
+    if (e.enunciado !== undefined && typeof e.enunciado !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «enunciado» tiene que ser una función (item, { idioma, t, tt, esc })`);
     for (const viejo of ['inicial', 'maximo']) {
       if (e[viejo] !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «${viejo}» ya no existe; el contador es por puntos («objetivo», «penalizacion», «vidas»)`);
     }
@@ -582,6 +583,7 @@ export function arrancar(practica) {
     for (let i = 0; i < 5 && anterior !== null && clave(item) === clave(anterior); i++) item = def.generar(rng, sesion);
     actual.item = item;
     actual.respondido = false;
+    actual.feedback = null;
     pintarEjercicio();
   }
 
@@ -601,16 +603,17 @@ export function arrancar(practica) {
     const miTurno = turno;
     const idi = actual.idioma;
     const api = {
-      idioma: idi,
-      t: t(idi),
-      tt: obj => tt(obj, idi),
-      esc,
+      ...textosDe(idi),
       respondido: () => miTurno !== turno || actual.respondido,
       responder: ({ acierto, html = '', espera = 1300, pistas = 0, error, respuesta }) => {
         if (miTurno !== turno || actual.respondido) return;
+        // `html` puede ser una función de los textos de un idioma: entonces el
+        // feedback se puede traducir (botón «See in English» / «Ver en español»).
+        actual.feedback = typeof html === 'function' ? html : null;
+        const texto = actual.feedback ? actual.feedback(textosDe(idi)) : html;
         registrar(Boolean(acierto), Math.max(0, Math.floor(pistas) || 0));
-        mostrarFeedback(Boolean(acierto), html, espera);
-        if (!acierto) anotarFallo({ html, error, respuesta });
+        mostrarFeedback(Boolean(acierto), texto, espera);
+        if (!acierto) anotarFallo({ html: texto, error, respuesta });
       },
     };
     try {
@@ -661,29 +664,42 @@ export function arrancar(practica) {
     } catch { /* el registro nunca molesta al alumno */ }
   }
 
-  /** Vuelve a montar el mismo ítem, de solo lectura, en el otro idioma. */
-  function pintarTraduccion(contenedor) {
-    const otro = actual.idioma === 'es' ? 'en' : 'es';
-    const apiSolo = { idioma: otro, t: t(otro), tt: obj => tt(obj, otro), esc, respondido: () => true, responder: () => {} };
-    try { defs[actual.n].montar(contenedor, actual.item, apiSolo); } catch { /* es solo un apoyo visual */ }
+  /** Lo que reciben `montar` (dentro de `api`), `enunciado` y el feedback traducible. */
+  function textosDe(idi) {
+    return { idioma: idi, t: t(idi), tt: obj => tt(obj, idi), esc };
   }
 
+  /**
+   * Botón «See in English» / «Ver en español» y su caja (cerrada). Solo si la
+   * práctica da el feedback como función: sin él, la traducción no aporta.
+   */
   function botonTraduccion() {
-    if (estado.idiomaFijo) return '';
+    if (estado.idiomaFijo || !actual.feedback) return '';
     const otro = actual.idioma === 'es' ? 'en' : 'es';
-    return `<button type="button" class="discreto traducir" id="traducir">${TRADUCCION[otro]}</button><div class="traduccion" id="caja-traduccion" hidden></div>`;
+    return `<button type="button" class="discreto traducir" id="traducir">${TRADUCCION[otro]}</button><div class="traduccion" id="caja-traduccion" lang="${otro}" hidden></div>`;
   }
 
-  function activarTraduccion() {
+  /**
+   * Abre y cierra la traducción: el enunciado (si la práctica lo da) y el
+   * feedback en el otro idioma. `tarjeta(idioma, html)` es el feedback entero.
+   * `alAbrir` se llama la primera vez que se abre.
+   */
+  function activarTraduccion(tarjeta, alAbrir) {
     const boton = app.querySelector('#traducir');
     if (!boton) return;
     const caja = app.querySelector('#caja-traduccion');
+    const otro = actual.idioma === 'es' ? 'en' : 'es';
+    const { item, feedback, n } = actual;
     boton.addEventListener('click', () => {
       caja.hidden = !caja.hidden;
-      if (!caja.hidden && !caja.dataset.montada) {
-        caja.dataset.montada = '1';
-        pintarTraduccion(caja);
-      }
+      if (caja.hidden || caja.dataset.montada) return;
+      caja.dataset.montada = '1';
+      let enunciado = '';
+      try { enunciado = defs[n].enunciado?.(item, textosDe(otro)) ?? ''; } catch (e) { console.error(e); }
+      let html = '';
+      try { html = feedback(textosDe(otro)); } catch (e) { console.error(e); }
+      caja.innerHTML = `${enunciado}${tarjeta(otro, html)}`;
+      alAbrir?.();
     });
   }
 
@@ -692,21 +708,34 @@ export function arrancar(practica) {
     const caja = app.querySelector('#feedback');
     const cambio = actual.cambio;
     if (acierto) {
-      const racha = cambio.extra ? `<p class="racha">${t(idi).racha_extra(RACHA, cambio.ganados - 1)}</p>` : '';
-      caja.innerHTML = `<div class="feedback feedback--bien"><strong>✓ ${t(idi).bien}</strong> ${html}${racha}</div>${botonTraduccion()}`;
-      activarTraduccion();
+      const tarjeta = (i, texto) => {
+        const racha = cambio.extra ? `<p class="racha">${t(i).racha_extra(RACHA, cambio.ganados - 1)}</p>` : '';
+        return `<div class="feedback feedback--bien"><strong>✓ ${t(i).bien}</strong> ${texto}${racha}</div>`;
+      };
+      caja.innerHTML = `${tarjeta(idi, html)}${botonTraduccion()}`;
       const miTurno = turno;
-      setTimeout(() => { if (miTurno === turno) siguiente(); }, espera + (cambio.extra ? 900 : 0));
+      const temporizador = setTimeout(() => { if (miTurno === turno) siguiente(); }, espera + (cambio.extra ? 900 : 0));
+      // Si abre la traducción, no se pasa solo al siguiente: le damos tiempo a leerla.
+      activarTraduccion(tarjeta, () => {
+        clearTimeout(temporizador);
+        caja.insertAdjacentHTML('beforeend', `<button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`);
+        caja.querySelector('#siguiente').addEventListener('click', siguiente);
+      });
       return;
     }
-    const vidas = cambio.reinicio
-      ? `<p class="sin-vidas">${t(idi).sin_vidas}</p>`
-      : `<p class="penalizacion">${t(idi).penalizacion(cambio.perdidos)} · ${t(idi).vidas_quedan(cambio.vidas)}</p><p class="animo">${rng.elegir(t(idi).animos)}</p>`;
+    // El mismo ánimo en los dos idiomas (las listas son paralelas).
+    const animo = rng.elegir(t(idi).animos.map((_, i) => i));
+    const tarjeta = (i, texto) => {
+      const vidas = cambio.reinicio
+        ? `<p class="sin-vidas">${t(i).sin_vidas}</p>`
+        : `<p class="penalizacion">${t(i).penalizacion(cambio.perdidos)} · ${t(i).vidas_quedan(cambio.vidas)}</p><p class="animo">${t(i).animos[animo % t(i).animos.length]}</p>`;
+      return `<div class="feedback feedback--mal"><strong>✗ ${t(i).mal}</strong> ${texto}${vidas}</div>`;
+    };
     caja.innerHTML = `
-      <div class="feedback feedback--mal"><strong>✗ ${t(idi).mal}</strong> ${html}${vidas}</div>
+      ${tarjeta(idi, html)}
       ${botonTraduccion()}
       <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
-    activarTraduccion();
+    activarTraduccion(tarjeta);
     const boton = app.querySelector('#siguiente');
     boton.addEventListener('click', siguiente);
     boton.focus({ preventScroll: true });
