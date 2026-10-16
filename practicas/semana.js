@@ -25,7 +25,6 @@ const tarea = tareaPorId(Number(params.get('t')));
 
 let codigo = null, indice = null;
 let idioma = 'es';
-let verCodigo = false;           // el alumno ha pedido el código antes de cumplir la tarea
 const nombres = new Map();       // 'slug/n' → { es, en }: el nombre de cada ejercicio, de su práctica
 
 /** Como en la base: `?idioma=es|en` lo fija para el alumno, `?idioma=alterno` lo quita. */
@@ -128,7 +127,7 @@ function filaEjercicio(e, estrella, num) {
 
 function cajaCodigo(est) {
   const t = T[idioma];
-  if (!est.cumplida && !verCodigo) return `<button type="button" class="secundario ancho semana__pedir" id="pedir">${t.semana_pedir}</button>`;
+  if (!est.cumplida) return '';
   const texto = codigoTarea(tarea.id, indice, {
     estrella: est.estrella.map(e => e.terminado),
     elegir: est.elegir.map(e => e.terminado),
@@ -136,13 +135,16 @@ function cajaCodigo(est) {
     dia: est.dia,
   });
   return `
-    <div class="tarjeta resultado ${est.cumplida ? 'resultado--completo' : ''}">
-      <h3>${est.cumplida ? t.semana_cumplida : t.resultado_titulo}</h3>
-      <p class="pequeno">${est.cumplida ? t.semana_cumplida_texto : t.semana_parcial(est.estrellaHechos, est.estrella.length, est.elegirHechos, tarea.nElegir)}</p>
-      <div class="resultado__fila">
-        <output class="resultado__codigo" id="codigo-resultado">${texto}</output>
-        <button type="button" class="secundario" id="copiar">${t.copiar}</button>
-      </div>
+    <div class="tarjeta resultado resultado--completo">
+      <h3>${t.semana_cumplida}</h3>
+      <p class="pequeno">${t.semana_cumplida_texto}</p>
+      <details class="pequeno">
+        <summary>${t.resultado_desplegable}</summary>
+        <div class="resultado__fila">
+          <output class="resultado__codigo" id="codigo-resultado">${texto}</output>
+          <button type="button" class="secundario" id="copiar">${t.copiar}</button>
+        </div>
+      </details>
     </div>`;
 }
 
@@ -168,7 +170,7 @@ function pintarTarea() {
         <div class="semana__marcador" aria-live="polite">${marcador}</div>
         <div class="barra"><div style="width: ${Math.round(100 * est.puntos / Math.max(1, est.maximo))}%"></div></div>
       </div>
-      ${est.cumplida ? cajaCodigo(est) : ''}
+      ${cajaCodigo(est)}
       ${est.estrella.length ? `
         <h3 class="semana__bloque">${t.semana_estrella}</h3>
         <ul class="lista">${est.estrella.map((e, i) => filaEjercicio(e, true, i + 1)).join('')}</ul>` : ''}
@@ -176,13 +178,11 @@ function pintarTarea() {
         <h3 class="semana__bloque">${t.semana_elegir(tarea.nElegir)}</h3>
         <p class="pequeno semana__ayuda">${t.semana_elegir_ayuda(tarea.nElegir)}</p>
         <ul class="lista">${est.elegir.map((e, i) => filaEjercicio(e, false, est.estrella.length + i + 1)).join('')}</ul>` : ''}
-      ${est.cumplida ? '' : cajaCodigo(est)}
       <div class="pie-menu">
         <a class="enlace-portada" href="${URL_PORTADA}?c=${codigo}">${t.todas}</a>
         <button type="button" class="discreto" id="cambiar">${t.cambiar_codigo} (${codigo})</button>
       </div>
     </section>`;
-  app.querySelector('#pedir')?.addEventListener('click', () => { verCodigo = true; pintar(); });
   app.querySelector('#copiar')?.addEventListener('click', async ev => {
     const salida = app.querySelector('#codigo-resultado');
     try {
@@ -196,7 +196,6 @@ function pintarTarea() {
     cerrarSesion();
     codigo = null;
     indice = null;
-    verCodigo = false;
     pintar();
   });
 }
