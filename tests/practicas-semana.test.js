@@ -9,13 +9,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import * as divisores from '../divisores/logica.js';
-import { CATALOGO, ID_PLANTILLA, practicaPorSlug } from '../practicas/_comun/catalogo.js';
+import { CATALOGO, ID_PLANTILLA, UNIDADES, unidadActual, practicaPorSlug } from '../practicas/_comun/catalogo.js';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
   codigoAlumno, leerCodigoResultado, codigoTarea, leerCodigoTarea, leerCualquierCodigo, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import {
-  TAREAS, PUNTOS_POR_EJERCICIO, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, erroresTareas, enlaceEjercicio, fechaISO,
+  TAREAS, PUNTOS_POR_EJERCICIO, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, estadoPlazo, diaDeFecha, erroresTareas, enlaceEjercicio, fechaISO,
 } from '../practicas/_comun/tareas.js';
 import { declaracionDe, progresoGuardado, claveProgreso, urlSemana } from '../practicas/_comun/base.js';
 import { leerNumero } from '../practicas/_comun/piezas.js';
@@ -35,7 +35,8 @@ test('tareas: coherentes con el catálogo, sin repetidos y dentro de los topes',
 });
 
 test('tareas: las cuatro semanas de la nota de temporización, 6 ★ + 4 de 8, 100 puntos', () => {
-  assert.deepEqual(TAREAS.map(t => [t.id, t.estrella.length, t.elegir.length, t.nElegir]), [[1, 6, 8, 4], [2, 6, 8, 4], [3, 6, 8, 4], [4, 6, 8, 4]]);
+  const u2 = TAREAS.filter(t => t.unidad === 2);
+  assert.deepEqual(u2.map(t => [t.id, t.estrella.length, t.elegir.length, t.nElegir]), [[1, 6, 8, 4], [2, 6, 8, 4], [3, 6, 8, 4], [4, 6, 8, 4]]);
   for (const t of TAREAS) assert.equal(estadoTarea(t, () => null).maximo, 100);
   // Muestras copiadas de la nota (slug/n), una por lista y semana.
   assert.deepEqual(tareaPorId(1).estrella[0], ['divisores', 4]);
@@ -44,8 +45,36 @@ test('tareas: las cuatro semanas de la nota de temporización, 6 ★ + 4 de 8, 1
   assert.deepEqual(tareaPorId(4).elegir[5], ['criba', 3]);
 });
 
+test('tareas de la unidad 1 (propuesta de la tarea 46, ids 11-14): 6 ★ + 4 a elegir, sin desde ni hasta', () => {
+  const u1 = TAREAS.filter(t => t.unidad === 1);
+  assert.deepEqual(u1.map(t => [t.id, t.estrella.length, t.elegir.length, t.nElegir]), [[11, 6, 6, 4], [12, 6, 7, 4], [13, 6, 8, 4], [14, 6, 8, 4]]);
+  for (const t of u1) {
+    assert.equal(t.desde, undefined);
+    assert.equal(t.hasta, undefined);
+    assert.equal(t.asignada, undefined);
+    assert.match(t.titulo.es, /^U1 · Semana \d · /);
+    assert.equal(estadoTarea(t, () => null).maximo, 100);
+  }
+  assert.deepEqual(TAREAS.map(t => t.unidad), [2, 2, 2, 2, 1, 1, 1, 1]);
+});
+
+test('regla de publicación: la tarea 1 conserva el modelo de hoy (progresoPorPractica) y erroresTareas falla si se le quita', () => {
+  const t1 = tareaPorId(1);
+  assert.equal(t1.progresoPorPractica, true);
+  assert.equal(t1.unidad, 2);
+  assert.equal(t1.hasta, '2026-10-22');
+  assert.equal(t1.desde, '2026-10-16', 'su día de publicación no cambia');
+  assert.deepEqual(TAREAS.filter(t => t.progresoPorPractica).map(t => t.id), [1], 'solo la tarea 1');
+  const sin = { ...t1 }; delete sin.progresoPorPractica;
+  assert.match(erroresTareas([sin]).join(), /tarea 1.*progresoPorPractica/);
+  assert.match(erroresTareas([{ ...tareaPorId(2), progresoPorPractica: true }]).join(), /progresoPorPractica/);
+  assert.deepEqual(erroresTareas(), []);
+  // Plazos del diseño (B.1): la 1 como Classroom, las demás el jueves de su semana.
+  assert.deepEqual([2, 3, 4].map(id => tareaPorId(id).hasta), ['2026-10-29', '2026-11-05', '2026-11-12']);
+});
+
 test('tareas: erroresTareas avisa de lo que está mal', () => {
-  const buena = { id: 9, titulo: { es: 'a', en: 'b' }, estrella: [['recta', 1]], elegir: [['recta', 2], ['recta', 3]], nElegir: 1 };
+  const buena = { id: 9, unidad: 2, titulo: { es: 'a', en: 'b' }, estrella: [['recta', 1]], elegir: [['recta', 2], ['recta', 3]], nElegir: 1 };
   assert.deepEqual(erroresTareas([buena]), []);
   const mal = cambios => erroresTareas([{ ...buena, ...cambios }]).join(' | ');
   assert.match(mal({ estrella: [['recta', 4]] }), /recta no tiene ejercicio 4/);
@@ -55,6 +84,14 @@ test('tareas: erroresTareas avisa de lo que está mal', () => {
   assert.match(mal({ id: 0 }), /id/);
   assert.match(mal({ titulo: 'solo' }), /titulo/);
   assert.match(mal({ desde: '19/10/2026' }), /desde/);
+  assert.match(mal({ unidad: 7 }), /unidad/);
+  assert.match(mal({ unidad: undefined }), /unidad/);
+  assert.match(mal({ hasta: '22/10/2026' }), /hasta/);
+  assert.match(mal({ desde: '2026-10-20', hasta: '2026-10-19' }), /hasta.*anterior/);
+  assert.deepEqual(erroresTareas([{ ...buena, desde: '2026-10-20', hasta: '2026-10-20' }]), [], 'el plazo puede ser el mismo día');
+  assert.match(mal({ asignada: false }), /asignada/);
+  assert.deepEqual(erroresTareas([{ ...buena, asignada: true }]), []);
+  assert.match(mal({ progresoPorPractica: true }), /progresoPorPractica/);
   assert.match(mal({ estrella: Array.from({ length: 11 }, (_, i) => ['divisores', 1 + (i % 6)]) }), /más de 10/);
   assert.match(erroresTareas([buena, { ...buena }]).join(), /id repetido/);
 });
@@ -62,13 +99,17 @@ test('tareas: erroresTareas avisa de lo que está mal', () => {
 test('tareas: la portada enseña las que han llegado a su día', () => {
   // Calendario retrasado una semana (2026-10-15), y la semana 1 adelantada al
   // viernes 16-10 (publicada en Classroom ese día); las demás, en sus lunes.
-  assert.deepEqual(tareasPublicadas('2026-10-15').map(t => t.id), []);
-  assert.deepEqual(tareasPublicadas('2026-10-16').map(t => t.id), [1]);
-  assert.deepEqual(tareasPublicadas('2026-10-19').map(t => t.id), [1]);
-  assert.deepEqual(tareasPublicadas('2026-10-26').map(t => t.id), [1, 2]);
-  assert.deepEqual(tareasPublicadas('2026-11-08').map(t => t.id), [1, 2, 3]);
-  assert.deepEqual(tareasPublicadas('2026-11-09').map(t => t.id), [1, 2, 3, 4]);
-  assert.deepEqual(tareasPublicadas('2026-12-01').map(t => t.id), [1, 2, 3, 4]);
+  // (De la unidad 2; las de la unidad 1 no llevan `desde`, así que salen siempre.)
+  const u2 = hoy => tareasPublicadas(hoy, TAREAS, 2).map(t => t.id);
+  assert.deepEqual(u2('2026-10-15'), []);
+  assert.deepEqual(u2('2026-10-16'), [1]);
+  assert.deepEqual(u2('2026-10-19'), [1]);
+  assert.deepEqual(u2('2026-10-26'), [1, 2]);
+  assert.deepEqual(u2('2026-11-08'), [1, 2, 3]);
+  assert.deepEqual(u2('2026-11-09'), [1, 2, 3, 4]);
+  assert.deepEqual(u2('2026-12-01'), [1, 2, 3, 4]);
+  assert.deepEqual(tareasPublicadas('2026-10-15').map(t => t.id), [11, 12, 13, 14], 'sin filtrar: las de la unidad 1 y las que han llegado');
+  assert.deepEqual(tareasPublicadas('2026-10-16', TAREAS, 1).map(t => t.id), [11, 12, 13, 14]);
   assert.deepEqual(tareasPublicadas('2020-01-01', [{ id: 7 }]).map(t => t.id), [7], 'sin «desde», siempre');
   assert.equal(fechaISO(new Date(2026, 9, 5)), '2026-10-05');
 });
@@ -108,6 +149,82 @@ test('estado: sin nada, a medias, cumplida justo y con elegidos de sobra', () =>
   // Con nElegir 0 basta con los ★; sin ★, basta con los de elegir.
   assert.equal(estadoTarea({ ...TAREA, nElegir: 0 }, con({ 'recta/1': hecho(), 'recta/2': hecho() })).cumplida, true);
   assert.equal(estadoTarea({ ...TAREA, estrella: [] }, con({ 'semaforo/1': hecho(), 'semaforo/2': hecho() })).cumplida, true);
+});
+
+test('estado: diaEntrega es el día en que se cumplió por primera vez, aunque se siguiera después', () => {
+  // ★ el 40 y el 41; de elegir (nElegir 2) el 38, el 45 y el 50: se cumple el 45.
+  const mapa = { 'recta/1': hecho(0, 40), 'recta/2': hecho(0, 41), 'semaforo/1': hecho(0, 45), 'semaforo/2': hecho(0, 38), 'semaforo/3': hecho(0, 50) };
+  const e = estadoTarea(TAREA, con(mapa));
+  assert.equal(e.cumplida, true);
+  assert.equal(e.dia, 50, 'dia sigue siendo el del último ejercicio terminado');
+  assert.equal(e.diaEntrega, 45, 'diaEntrega, el del momento de cumplirla');
+  // Si el último ★ llega después que los de elegir, manda el ★.
+  assert.equal(estadoTarea(TAREA, con({ ...mapa, 'recta/2': hecho(0, 47) })).diaEntrega, 47);
+  // Sin cumplir: 0. Con nElegir 0, basta el último ★.
+  assert.equal(estadoTarea(TAREA, con({ 'recta/1': hecho(0, 40) })).diaEntrega, 0);
+  assert.equal(estadoTarea({ ...TAREA, nElegir: 0 }, con({ 'recta/1': hecho(0, 40), 'recta/2': hecho(0, 43), 'semaforo/1': hecho(0, 60) })).diaEntrega, 43);
+  assert.equal(estadoTarea(TAREA, con({})).diaEntrega, 0);
+});
+
+test('estadoPlazo: repaso, obligatoria y obligatoria para ti, con los días de retraso', () => {
+  const plazo = '2026-10-22';
+  const dPlazo = diaDeFecha(plazo);
+  assert.equal(dPlazo, 51, '1-9-2026 es el día 0');
+  const hecha = (diaEntrega) => ({ cumplida: true, diaEntrega });
+  const sinHacer = { cumplida: false, diaEntrega: 0 };
+  const base = { ...TAREA, unidad: 2 };
+  const repaso = { ...base };
+  const obligatoria = { ...base, hasta: plazo };
+  const asignada = { ...base, hasta: plazo, asignada: true };
+  const asignadaSinPlazo = { ...base, asignada: true };
+
+  // Los cuatro casos de la tabla (B.1).
+  assert.deepEqual(estadoPlazo(repaso, sinHacer, dPlazo + 10, false), { tipo: 'repaso', entregada: false, fueraDePlazo: false, diasRetraso: 0 });
+  assert.equal(estadoPlazo(obligatoria, sinHacer, dPlazo - 3, false).tipo, 'obligatoria');
+  assert.equal(estadoPlazo(asignada, sinHacer, dPlazo - 3, true).tipo, 'obligatoria_para_ti');
+  assert.equal(estadoPlazo(asignada, sinHacer, dPlazo - 3, false).tipo, 'repaso', 'un no asignado la ve como repaso');
+  assert.equal(estadoPlazo(asignadaSinPlazo, sinHacer, dPlazo, true).tipo, 'obligatoria_para_ti');
+  assert.equal(estadoPlazo(asignadaSinPlazo, sinHacer, dPlazo, false).tipo, 'repaso');
+  // Un no asignado nunca va fuera de plazo, aunque haya pasado.
+  assert.deepEqual(estadoPlazo(asignada, sinHacer, dPlazo + 9, false), { tipo: 'repaso', entregada: false, fueraDePlazo: false, diasRetraso: 0 });
+  // Sin plazo no hay retraso.
+  assert.deepEqual(estadoPlazo(asignadaSinPlazo, sinHacer, dPlazo + 9, true), { tipo: 'obligatoria_para_ti', entregada: false, fueraDePlazo: false, diasRetraso: 0 });
+
+  // A tiempo: el mismo día del plazo cuenta (el plazo es hasta el final de ese día).
+  assert.deepEqual(estadoPlazo(obligatoria, hecha(dPlazo), dPlazo + 5, false), { tipo: 'obligatoria', entregada: true, fueraDePlazo: false, diasRetraso: 0 });
+  assert.deepEqual(estadoPlazo(obligatoria, sinHacer, dPlazo, false), { tipo: 'obligatoria', entregada: false, fueraDePlazo: false, diasRetraso: 0 }, 'el día del plazo aún no hay retraso');
+  // Entregada tarde: 3 días de retraso, y no sube con los días que pasan.
+  assert.deepEqual(estadoPlazo(obligatoria, hecha(dPlazo + 3), dPlazo + 9, false), { tipo: 'obligatoria', entregada: true, fueraDePlazo: true, diasRetraso: 3 });
+  // Sin entregar 2 días después del plazo: 2 «y subiendo» (con hoy).
+  assert.deepEqual(estadoPlazo(obligatoria, sinHacer, dPlazo + 2, false), { tipo: 'obligatoria', entregada: false, fueraDePlazo: true, diasRetraso: 2 });
+  assert.equal(estadoPlazo(obligatoria, sinHacer, dPlazo + 7, false).diasRetraso, 7);
+  // Obligatoria para ti, entregada tarde.
+  assert.deepEqual(estadoPlazo(asignada, hecha(dPlazo + 1), dPlazo + 4, true), { tipo: 'obligatoria_para_ti', entregada: true, fueraDePlazo: true, diasRetraso: 1 });
+  // Repaso entregada: entregada y nada más.
+  assert.deepEqual(estadoPlazo(repaso, hecha(40), 60, false), { tipo: 'repaso', entregada: true, fueraDePlazo: false, diasRetraso: 0 });
+});
+
+test('unidades: la actual es la última cuyo desde ha llegado, y todas las filas del catálogo tienen la suya', () => {
+  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3]);
+  assert.equal(unidadActual('2026-10-15'), 2);
+  assert.equal(unidadActual('2026-11-15'), 2);
+  assert.equal(unidadActual('2026-11-16'), 3);
+  assert.equal(unidadActual('2026-09-01'), 1, 'antes del curso: la primera');
+  for (const u of UNIDADES) assert.ok(u.titulo.es && u.titulo.en && /^\d{4}-\d{2}-\d{2}$/.test(u.desde));
+  assert.deepEqual(CATALOGO.filter(p => p.id <= 15).map(p => p.unidad), Array(16).fill(2));
+  assert.deepEqual(CATALOGO.filter(p => p.id >= 16 && p.id <= 30).map(p => p.unidad), Array(15).fill(1));
+  assert.equal(practicaPorSlug('plantilla').unidad, null);
+});
+
+test('catálogo: los nombres no llevan la coletilla «repaso de la unidad 1», salvo la ampliación', () => {
+  for (const p of CATALOGO) {
+    assert.doesNotMatch(p.nombre.es, /repaso de la unidad 1|\(unidad 1\)/);
+    assert.doesNotMatch(p.nombre.en, /unit 1 review|\(unit 1\)/);
+  }
+  assert.deepEqual(practicaPorSlug('errores1').nombre, { es: 'Caza el error', en: 'Spot the mistake' });
+  assert.deepEqual(practicaPorSlug('errores').nombre, practicaPorSlug('errores1').nombre, 'los dos «Caza el error» se llaman igual');
+  assert.deepEqual(practicaPorSlug('propiedades').nombre, { es: 'Propiedades de las potencias (ampliación)', en: 'Laws of indices (extension)' });
+  assert.deepEqual(practicaPorSlug('parentesis').nombre, { es: 'Coloca los paréntesis', en: 'Place the brackets' });
 });
 
 test('estado: los puntos de un ejercicio a medias son proporcionales y nunca llegan a 10', () => {
@@ -338,7 +455,7 @@ test('tareas: cada ejercicio de una tarea tiene el nombre que dice la nota de te
     'criba/3': 'probar', 'expresion/1': 'Dos operaciones', 'errores1/1': 'error',
   };
   const vistos = new Set();
-  for (const t of TAREAS) {
+  for (const t of TAREAS.filter(t => t.unidad === 2)) {
     for (const [slug, n] of [...t.estrella, ...t.elegir]) {
       const d = await declaracionDe(practicaPorSlug(slug));
       const nombre = d.ejercicios[n - 1].nombre.es;

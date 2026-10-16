@@ -14,6 +14,8 @@ import { ejercicioNuevo, anotar, migrarProgreso } from '../practicas/_comun/cont
 import { estadoTarea } from '../practicas/_comun/tareas.js';
 import {
   fusionarEjercicio, fusionarProgreso, canonico, leerNube, escribirNube, subirFusionado, urlDocumento, leerDocumentoRest,
+  idDocumentoTarea, idDocumentoPractica, claveProgresoTarea, urlAsignacion, leerAsignacion, leerAsignacionRest,
+  COLECCION_TAREAS, COLECCION_ASIGNACIONES,
 } from '../practicas/_comun/nube.js';
 import { sincronizarGuardado, adoptarIdioma, claveProgreso, claveIdiomaFijo, progresoGuardado } from '../practicas/_comun/base.js';
 import { juntarTareas, juntarFallos } from '../practicas/resultados.js';
@@ -143,6 +145,60 @@ test('nube: URL del documento y lectura del formato REST', () => {
   assert.deepEqual(leerDocumentoRest({ fields: { estado: { stringValue: '{"v":1,"idioma":"es","ej":[]}' } } }), { ej: [], idioma: 'es' });
   assert.equal(leerDocumentoRest({ fields: { estado: { stringValue: 'basura' } } }), null);
   assert.equal(leerDocumentoRest(null), null);
+});
+
+test('nube: colección e id del documento como parámetros (tareas v2); sin ellos, lo de siempre', async () => {
+  // Ids y claves nuevos.
+  assert.equal(idDocumentoTarea(2, 'semaforo', 'K7QM'), 't2--semaforo--K7QM');
+  assert.equal(idDocumentoPractica('semaforo', 'K7QM'), 'semaforo--K7QM');
+  assert.equal(claveProgresoTarea('semaforo', 'K7QM', 2), 'practicas.v1.semaforo.K7QM.t2');
+  assert.equal(COLECCION_TAREAS, 'practicas-tareas');
+  assert.equal(COLECCION_ASIGNACIONES, 'practicas-asignaciones');
+  const base = 'https://firestore.googleapis.com/v1/projects/proyecto/databases/(default)/documents/';
+  assert.equal(urlDocumento('semaforo', 'K7QM', CONFIG, { coleccion: COLECCION_TAREAS, id: idDocumentoTarea(2, 'semaforo', 'K7QM') }), `${base}practicas-tareas/t2--semaforo--K7QM?key=clave`);
+  assert.equal(urlDocumento('semaforo', 'K7QM', CONFIG, {}), urlDocumento('semaforo', 'K7QM', CONFIG), 'sin opciones, practicas/{slug}--{código}');
+  assert.equal(urlDocumento('semaforo', 'K7QM', CONFIG, { coleccion: undefined, id: undefined }), `${base}practicas/semaforo--K7QM?key=clave`);
+  assert.equal(urlAsignacion('K7QM', CONFIG), `${base}practicas-asignaciones/K7QM?key=clave`);
+  assert.equal(urlAsignacion('K7QM', {}), null);
+
+  // Una nube de mentira que distingue la colección: el progreso de la tarea y el de la práctica libre no se mezclan.
+  const docs = new Map();
+  const fetch = async (url, opciones = {}) => {
+    const ruta = new URL(url).pathname.split('/documents/')[1];
+    if (opciones.method === 'PATCH') { docs.set(ruta, JSON.parse(opciones.body)); return { ok: true, status: 200, json: async () => ({}) }; }
+    return docs.has(ruta) ? { ok: true, status: 200, json: async () => docs.get(ruta) } : { ok: false, status: 404, json: async () => ({}) };
+  };
+  const op = { fetch, config: CONFIG };
+  const deTarea = { ...op, coleccion: COLECCION_TAREAS, id: idDocumentoTarea(2, 'semaforo', 'K7QM') };
+  await escribirNube('semaforo', 'K7QM', [tras([true, true])], 'es', deTarea);
+  assert.deepEqual([...docs.keys()], ['practicas-tareas/t2--semaforo--K7QM']);
+  assert.equal((await leerNube('semaforo', 'K7QM', op)).estado, 'vacio', 'la práctica libre no ve lo de la tarea');
+  assert.equal((await leerNube('semaforo', 'K7QM', deTarea)).ej[0].puntos, 2);
+  await subirFusionado('semaforo', 'K7QM', [tras([true])], 'es', op);
+  assert.deepEqual([...docs.keys()].sort(), ['practicas-tareas/t2--semaforo--K7QM', 'practicas/semaforo--K7QM']);
+  assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--K7QM')).ej[0].puntos, 2, 'subir a la práctica libre no toca el documento de la tarea');
+  await subirFusionado('semaforo', 'K7QM', [tras([true, true, true])], 'es', deTarea);
+  assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--K7QM')).ej[0].puntos, 3);
+  assert.equal(leerDocumentoRest(docs.get('practicas/semaforo--K7QM')).ej[0].puntos, 1);
+});
+
+test('nube: la asignación de tareas de un alumno se lee con el mismo tiempo máximo y sin lanzar nunca', async () => {
+  const doc = ids => ({ fields: { tareas: { arrayValue: ids.length ? { values: ids.map(i => ({ integerValue: String(i) })) } : {} }, actualizado: { integerValue: '1' } } });
+  assert.deepEqual(leerAsignacionRest(doc([7, 9])), { tareas: [7, 9] });
+  assert.deepEqual(leerAsignacionRest(doc([])), { tareas: [] }, 'lista vacía: Firestore no manda «values»');
+  assert.equal(leerAsignacionRest({ fields: {} }), null);
+  assert.equal(leerAsignacionRest({ fields: { tareas: { arrayValue: { values: [{ stringValue: 'x' }] } } } }), null);
+  assert.equal(leerAsignacionRest(null), null);
+
+  const sirve = json => async url => { assert.match(url, /\/practicas-asignaciones\/K7QM\?key=clave$/); return { ok: true, status: 200, json: async () => json }; };
+  assert.deepEqual(await leerAsignacion('K7QM', { fetch: sirve(doc([3])), config: CONFIG }), { tareas: [3] });
+  assert.equal(await leerAsignacion('K7QM', { fetch: async () => ({ ok: false, status: 404, json: async () => ({}) }), config: CONFIG }), null, 'sin documento');
+  assert.equal(await leerAsignacion('K7QM', { fetch: async () => ({ ok: false, status: 403, json: async () => ({}) }), config: CONFIG }), null, 'sin permiso');
+  assert.equal(await leerAsignacion('K7QM', { fetch: async () => { throw new TypeError('sin red'); }, config: CONFIG }), null);
+  assert.equal(await leerAsignacion('K7QM', { fetch: sirve(doc([3])), config: {} }), null, 'sin Firebase configurado');
+  const inicio = Date.now();
+  assert.equal(await leerAsignacion('K7QM', { fetch: () => new Promise(() => {}), espera: 30, config: CONFIG }), null);
+  assert.ok(Date.now() - inicio < 1000, 'no deja esperando más de lo pedido');
 });
 
 test('nube: leer da ok, vacio (404), prohibido (403) o error (sin red, tiempo agotado), sin lanzar nunca', async () => {
