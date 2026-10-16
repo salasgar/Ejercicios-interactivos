@@ -132,6 +132,13 @@ objeto devuelve `generar` y qué `html` mandan al fallar.
 - La escritura va al responder, no al salir: no puede retrasar el paso al ítem siguiente.
 - iCloud evacúa ficheros de este árbol (`ls -lO` → `dataless`) y deja copias en conflicto
   dentro de `.git/`; nunca `git stash` ni `--autostash` (`proyecto.md`, «Repositorio git»).
+- (Aprendido en la sesión s-20261016T050222-d0960de2.) El panel publicado guarda los módulos
+  en caché: tras subir un cambio de `profesor.js`, recargar la página no basta; hay que
+  pedirlo con `fetch('profesor.js', { cache: 'reload' })` (o recarga forzada) antes de probar.
+- Con la lista de nombres escrita, el código de prueba no sale en «Fallos» salvo que se elija
+  a mano en «Alumno» (así se diseñó; antes de 90be2b0 no salía ni eligiéndolo).
+- Saber si las reglas nuevas están publicadas sin preguntar: crear por REST un fallo válido
+  con id fijo (`fallos/KTFN-zzzzzz-prue`, t = 1, no sale en el panel): 403 antes, 200 después.
 - Hay un `stash@{0}: autostash` antiguo y un reclamo ajeno sin comitear
   (`hechos/reclamos/23--s-20261007T214947-e0ab035d.md`): no son tuyos, no los toques.
 
