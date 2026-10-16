@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-16
 Precondición: ninguna (la 03 está LISTA; para este cambio la dueña de `practicas/rectangulos/` es esta tarea) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 40, 41
+Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: 43
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/42-rectangulos-celda-fija/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/rectangulos/practica.js`, `practicas/rectangulos/logica.js` (el helper puro `ladoCelda`), `practicas/rectangulos/estilos.css`, `tests/practicas-rectangulos.test.js`
 
