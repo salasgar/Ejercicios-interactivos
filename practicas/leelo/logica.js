@@ -7,6 +7,7 @@ import {
   factorizar, valorDe, htmlFact, mcd, mcm, esPrimo,
 } from '../_comun/aritmetica.js';
 import { numeroAIngles } from '../../src/ejercicios/palabras.js';
+import { crearRng } from '../_comun/rng.js';
 
 // Re-exportado para que practica.js no importe directamente de src/ejercicios/.
 export { numeroAIngles };
@@ -19,12 +20,20 @@ export const NUMEROS_FACT = [
   120, 126, 132, 140, 150, 156, 180, 198, 242, 286, 338, 363,
 ];
 
-/** Pareja de números para GCD/LCM, pequeños para que la lectura sea corta. */
+/** Números de la pareja que dan juego a los distractores «palabra-número parecida»
+ * (-teen/-ty: 13↔30...; cifras invertidas: 41↔14...). Dentro de 4..48. */
+const ESPECIALES_PAR = [
+  13, 14, 15, 16, 17, 18, 19, 30, 40,
+  12, 21, 23, 24, 25, 26, 27, 28, 29, 31, 32, 34, 35, 36, 37, 38, 39, 41, 42, 43, 45, 46, 47, 48,
+];
+
+/** Pareja de números para GCD/LCM, pequeños para que la lectura sea corta. Más de la mitad
+ * de las veces uno de los dos es de {13..19, 30, 40} o tiene cifras invertibles. */
 export function generarPar(rng) {
-  const a = rng.entero(4, 48);
+  const a = rng.azar() < 0.55 ? rng.elegir(ESPECIALES_PAR) : rng.entero(4, 48);
   let b = rng.entero(4, 48);
   while (b === a) b = rng.entero(4, 48);
-  return [a, b];
+  return rng.azar() < 0.5 ? [a, b] : [b, a];
 }
 
 // ─── Lectura en inglés ──────────────────────────────────────────────────────
@@ -119,12 +128,200 @@ function textosUnicos(expresiones, textoCorrecta, aTexto) {
   return salida;
 }
 
+// ─── Distractores que fallan en la LECTURA, no en los números ──────────────
+// Tres familias, todas con los mismos números que la lectura correcta (salvo la C):
+//  A. inglés incorrecto de una lista CERRADA (calcos del español), una pieza cada vez;
+//  B. estructura cambiada (exponentes intercambiados; GCD ↔ LCM);
+//  C. palabra-número parecida (-teen/-ty: 13↔30; cifras invertidas: 41↔14).
+// Quedan fuera a propósito, por si alguien las diera por válidas: `by` como producto,
+// `to the power N` (británico), `between`, `smallest common multiple`, `is a prime`,
+// `to the second power` (americano), `raised to`.
+
+const FALLOS_VECES = {
+  times: ['multiplicated by', 'times by', 'multiplied for'],
+  'multiplied by': ['multiplicated by', 'multiplied for', 'multiplied'],
+};
+const FALLOS_IGUAL = {
+  equals: ['equals to', 'is equal', 'is the same that'],
+  'is equal to': ['is equal than', 'equals to', 'is the same that'],
+};
+const FALLOS_GCD = {
+  GCD: ['MCD', 'GDC'],
+  'greatest common divisor': ['maximum common divisor', 'greatest common divider', 'greatest common division'],
+};
+const FALLOS_LCM = {
+  LCM: ['MCM', 'LMC'],
+  'lowest common multiple': ['minimum common multiple', 'lowest common multiply', 'lowest common multiplier'],
+  'least common multiple': ['minimum common multiple', 'least common multiply', 'least common multiplier'],
+};
+
+/** Formas incorrectas de leer «p elevado a e» (e ≥ 2). */
+function fallosExponente(p, e) {
+  const base = numeroAIngles(p);
+  if (e === 2) return [`${base} square`, `${base} elevated to two`, `${base} to the two`];
+  if (e === 3) return [`${base} cube`, `${base} elevated to three`, `${base} to the three`];
+  const w = numeroAIngles(e);
+  return [`${base} elevated to ${w}`, `${base} powered to ${w}`];
+}
+
+/** Lectura de una expresión con UNA pieza sustituida: `m` puede traer `veces`, `igual`,
+ * `nombre`, `de` ('from' | 'with') o `exp` ({ i, texto }: el término i de la factorización). */
+function componer(expresion, estilo, m = {}) {
+  if (expresion.clase === 'fact') {
+    const veces = m.veces ?? estilo.veces;
+    const cuerpo = expresion.f
+      .map(([p, e], i) => (m.exp && m.exp.i === i ? m.exp.texto : leerExponente(p, e)))
+      .join(` ${veces} `);
+    return `${numeroAIngles(expresion.n)} ${m.igual ?? estilo.verboFact} ${cuerpo}`;
+  }
+  const nombre = m.nombre ?? (expresion.clase === 'gcd' ? estilo.gcd : estilo.lcm);
+  const a = numeroAIngles(expresion.a), b = numeroAIngles(expresion.b);
+  const sujeto = m.de === 'from' ? `from ${a} and ${b}` : m.de === 'with' ? `of ${a} with ${b}` : `of ${a} and ${b}`;
+  return `the ${nombre} ${sujeto} ${m.igual ?? estilo.verboPred} ${numeroAIngles(expresion.valor)}`;
+}
+
+/** Familia A: grupos de textos falsos, un grupo por pieza sustituida. */
+function gruposA(expresion, estilo) {
+  const grupos = [];
+  if (expresion.clase === 'fact') {
+    if (expresion.f.length >= 2) grupos.push(FALLOS_VECES[estilo.veces].map(veces => componer(expresion, estilo, { veces })));
+    expresion.f.forEach(([p, e], i) => {
+      if (e >= 2) grupos.push(fallosExponente(p, e).map(texto => componer(expresion, estilo, { exp: { i, texto } })));
+    });
+    grupos.push(FALLOS_IGUAL[estilo.verboFact].map(igual => componer(expresion, estilo, { igual })));
+  } else if (expresion.clase === 'gcd' || expresion.clase === 'lcm') {
+    const tabla = expresion.clase === 'gcd' ? FALLOS_GCD : FALLOS_LCM;
+    const nombreOk = expresion.clase === 'gcd' ? estilo.gcd : estilo.lcm;
+    grupos.push(tabla[nombreOk].map(nombre => componer(expresion, estilo, { nombre })));
+    grupos.push(['from', 'with'].map(de => componer(expresion, estilo, { de })));
+    if (FALLOS_IGUAL[estilo.verboPred]) grupos.push(FALLOS_IGUAL[estilo.verboPred].map(igual => componer(expresion, estilo, { igual })));
+  }
+  return grupos;
+}
+
+/** Familia B: expresiones con la estructura cambiada (mismos números, valor distinto). */
+function estructuraB(item) {
+  if (item.clase === 'fact') {
+    const salida = [];
+    const f = item.f;
+    for (let i = 0; i < f.length; i++) {
+      for (let j = i + 1; j < f.length; j++) {
+        if (f[i][1] === f[j][1]) continue;
+        const g = f.map((x, k) => (k === i ? [x[0], f[j][1]] : k === j ? [x[0], f[i][1]] : x));
+        if (valorDe(g) !== item.n) salida.push({ clase: 'fact', n: item.n, f: g });
+      }
+    }
+    return salida;
+  }
+  if (item.clase === 'gcd' || item.clase === 'lcm') {
+    // a ≠ b garantizado por generarPar: mcd(a, b) ≠ mcm(a, b), así que el nombre cambiado es falso.
+    return [{ clase: item.clase === 'gcd' ? 'lcm' : 'gcd', a: item.a, b: item.b, valor: item.valor }];
+  }
+  return [];
+}
+
+/** Números cuya palabra se parece: 13↔30 (-teen/-ty) y 41↔14 (cifras invertidas). */
+function numerosParecidos(x) {
+  const s = new Set();
+  if (x >= 13 && x <= 19) s.add((x - 10) * 10);
+  if (x >= 30 && x <= 90 && x % 10 === 0) s.add(x / 10 + 10);
+  if (x >= 10 && x <= 99) {
+    const d = Math.floor(x / 10), u = x % 10;
+    if (u !== 0 && d !== u) s.add(u * 10 + d);
+  }
+  return [...s];
+}
+
+/** Familia C: la misma expresión con UNA palabra-número cambiada por otra parecida. */
+function parecidosC(item) {
+  const salida = [];
+  if (item.clase === 'fact') {
+    numerosParecidos(item.n).filter(n => valorDe(item.f) !== n).forEach(n => salida.push({ ...item, n }));
+  } else if (item.clase === 'gcd' || item.clase === 'lcm') {
+    const op = item.clase === 'gcd' ? mcd : mcm;
+    for (const campo of ['a', 'b', 'valor']) {
+      numerosParecidos(item[campo]).forEach(x => {
+        const e = { clase: item.clase, a: item.a, b: item.b, valor: item.valor, [campo]: x };
+        if (e.a !== e.b && op(e.a, e.b) !== e.valor) salida.push(e);
+      });
+    }
+  }
+  return salida;
+}
+
+/** Elige hasta tres textos de las familias, sin repetir (y sin los `prohibidos`):
+ * un A y, si hay, un B primero; el tercero (o los que falten) de cualquier familia. */
+function elegirFalsas(rng, { A, B, C }, relleno) {
+  const elegidas = [];
+  const libres = lista => lista.filter(t => !elegidas.includes(t));
+  const tomar = lista => {
+    const l = libres(lista);
+    if (!l.length) return false;
+    elegidas.push(rng.elegir(l));
+    return true;
+  };
+  const tomarA = () => {
+    const grupos = A.map(g => ({ g, libres: libres(g) })).filter(x => x.libres.length);
+    if (!grupos.length) return false;
+    // Mejor una pieza que aún no ha fallado en otro distractor.
+    const nuevas = grupos.filter(x => x.g.every(t => !elegidas.includes(t)));
+    elegidas.push(rng.elegir(rng.elegir(nuevas.length ? nuevas : grupos).libres));
+    return true;
+  };
+  tomarA();
+  tomar(B);
+  while (elegidas.length < 3) {
+    const hecho = rng.barajar(['A', 'B', 'C']).some(f => (f === 'A' ? tomarA() : tomar(f === 'B' ? B : C)));
+    if (!hecho) break;
+  }
+  for (const t of rng.barajar(relleno())) {
+    if (elegidas.length >= 3) break;
+    if (!elegidas.includes(t)) elegidas.push(t);
+  }
+  return elegidas;
+}
+
+/** Semilla estable a partir del contenido del ítem (para ítems que llegan sin `falsas`). */
+function semillaDe(item) {
+  let h = 2166136261;
+  for (const c of JSON.stringify({ ...item, estilo: undefined })) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  return h >>> 0;
+}
+
+/** Guarda `falsas` en el ítem sin que `JSON.stringify` las vea (practica.js usa el JSON
+ * del ítem como clave para no repetir). */
+function guardarFalsas(item, falsas) {
+  Object.defineProperty(item, 'falsas', { value: falsas, enumerable: false, writable: true, configurable: true });
+}
+
+/** Ejercicio 2: tres lecturas falsas en el estilo del ítem (A, B y C). */
+function falsasLeer(item, rng) {
+  const estilo = item.estilo;
+  const prohibidos = new Set(ESTILOS.map(e => leer(item, e)));
+  const ok = t => !prohibidos.has(t);
+  return elegirFalsas(rng, {
+    A: gruposA(item, estilo).map(g => g.filter(ok)).filter(g => g.length),
+    B: estructuraB(item).map(e => componer(e, estilo)).filter(ok),
+    C: parecidosC(item).map(e => componer(e, estilo)).filter(ok),
+  }, () => textosUnicos(variantesDe(item), leer(item, estilo), e => leer(e, estilo)));
+}
+
+/** Ejercicio 1: tres notaciones falsas (B y C primero; la mutación antigua solo de relleno). */
+function falsasEscuchar(item, rng) {
+  const correcta = notacion(item);
+  const ok = t => t !== correcta;
+  return elegirFalsas(rng, {
+    A: [],
+    B: estructuraB(item).map(notacion).filter(ok),
+    C: parecidosC(item).map(notacion).filter(ok),
+  }, () => textosUnicos(variantesDe(item), correcta, notacion));
+}
+
 // ─── Ejercicio 1: Escúchalo (oír la frase, elegir la notación) ─────────────
 
 const CLASES_ESCUCHAR = ['fact', 'fact', 'gcd', 'lcm'];
 
-/** Ítem: { clase, n, f } o { clase, a, b, valor }. */
-export function generarEscuchar(rng) {
+function generarExpresion(rng) {
   const clase = rng.elegir(CLASES_ESCUCHAR);
   if (clase === 'fact') {
     const n = rng.elegir(NUMEROS_FACT);
@@ -135,28 +332,36 @@ export function generarEscuchar(rng) {
   return { clase, a, b, valor };
 }
 
-/** Las opciones del ejercicio 1: la correcta (en notación) y el resto de un pool falso. */
+/** Ítem: { clase, n, f } o { clase, a, b, valor }; las tres notaciones falsas van en
+ * `item.falsas` (propiedad no enumerable). */
+export function generarEscuchar(rng) {
+  const item = generarExpresion(rng);
+  guardarFalsas(item, falsasEscuchar(item, rng));
+  return item;
+}
+
+/** Las opciones del ejercicio 1: la correcta (en notación) y exactamente tres falsas. */
 export function opcionesEscuchar(item) {
-  const correcta = notacion(item);
-  const pool = textosUnicos(variantesDe(item), correcta, notacion);
-  return { correcta, pool };
+  const falsas = item.falsas ?? falsasEscuchar(item, crearRng(semillaDe(item)));
+  return { correcta: notacion(item), pool: falsas };
 }
 
 // ─── Ejercicio 2: ¿Cómo se lee? (ver la notación, elegir la lectura) ───────
 
-/** Ítem: igual que el del ejercicio 1, más el estilo de lectura elegido para este ítem. */
+/** Ítem: igual que el del ejercicio 1, más el estilo de lectura elegido para este ítem;
+ * las tres lecturas falsas (en ese estilo) van en `item.falsas`. */
 export function generarLeer(rng) {
-  const item = generarEscuchar(rng);
+  const item = generarExpresion(rng);
   item.estilo = rng.elegir(ESTILOS);
+  guardarFalsas(item, falsasLeer(item, rng));
   return item;
 }
 
-/** Las opciones del ejercicio 2: la lectura correcta y el resto de un pool falso,
- * todas en el mismo estilo (nunca se enfrentan dos formas válidas entre sí). */
+/** Las opciones del ejercicio 2: la lectura correcta y exactamente tres falsas, todas
+ * en el mismo estilo (nunca se enfrentan dos formas válidas entre sí). */
 export function opcionesLeer(item) {
-  const correcta = leer(item, item.estilo);
-  const pool = textosUnicos(variantesDe(item), correcta, e => leer(e, item.estilo));
-  return { correcta, pool };
+  const falsas = item.falsas ?? falsasLeer(item, crearRng(semillaDe(item)));
+  return { correcta: leer(item, item.estilo), pool: falsas };
 }
 
 // ─── Ejercicio 3: Completa la frase ────────────────────────────────────────
