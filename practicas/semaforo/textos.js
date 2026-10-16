@@ -5,12 +5,12 @@ export const TX = {
   ej1: {
     nombre: { es: 'Semáforo básico', en: 'Basic traffic light' },
     detalle: { es: 'Enciende, entre 2, 3, 5, 9 y 10, los que son divisores del número', en: 'Switch on the divisors among 2, 3, 5, 9 and 10' },
-    pregunta: { es: n => `¿Entre qué números es divisible el ${n}?`, en: n => `Which of these is ${n} divisible by?` },
+    pregunta: { es: n => `¿Entre qué números <strong>es divisible el ${n}</strong>?`, en: n => `Which of these is <strong>${n} divisible by</strong>?` },
   },
   ej2: {
     nombre: { es: 'Con el 11', en: 'With 11' },
     detalle: { es: 'Lo mismo, con el criterio del 11', en: 'The same, with the rule for 11' },
-    pregunta: { es: n => `¿Entre qué números es divisible el ${n}?`, en: n => `Which of these is ${n} divisible by?` },
+    pregunta: { es: n => `¿Entre qué números <strong>es divisible el ${n}</strong>?`, en: n => `Which of these is <strong>${n} divisible by</strong>?` },
   },
   ej3: {
     nombre: { es: 'Criterios compuestos', en: 'Combined rules' },

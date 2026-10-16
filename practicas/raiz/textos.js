@@ -69,8 +69,8 @@ export const TX = {
       en: (tuyo, n) => `<span class="cuenta">${c(tuyo)} = ${tuyo} · ${tuyo} = ${tuyo * tuyo}</span>, not ${n}.`,
     },
     entera_pregunta: {
-      es: n => `Raíz entera y resto de ${n}`,
-      en: n => `Whole square root and remainder of ${n}`,
+      es: n => `<strong>Raíz entera y resto</strong> de ${n}`,
+      en: n => `<strong>Whole square root and remainder</strong> of ${n}`,
     },
     entera_ayuda: { es: 'Busca el cuadrado más grande que no pasa del número.', en: 'Find the biggest square that is not greater than the number.' },
     campo_raiz: { es: 'Raíz entera', en: 'Whole root' },
