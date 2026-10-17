@@ -10,8 +10,17 @@
   <link rel="stylesheet" href="_comun/estilos.css">
   <style>
     /* Solo de la portada: las tareas de la semana, los bloques por semana y el pie con el panel. */
+    .portada__unidad { margin-top: 1.4rem; }
+    .portada__titulo-unidad { font-size: 1.3rem; font-weight: 700; margin: 0 0 .4rem; }
+    details.portada__unidad { border: 1px solid var(--borde); border-radius: .6rem; padding: .3rem .9rem .9rem; }
+    details.portada__unidad > summary { cursor: pointer; padding: .6rem 0; }
     .portada__bloque { font-size: 1.05rem; margin: 1.6rem 0 .6rem; }
-    .portada__bloque--todas { font-size: 1.25rem; margin-top: 2.2rem; padding-top: 1.2rem; border-top: 1px solid var(--borde); }
+    .portada__bloque--todas { font-size: 1.15rem; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--borde); }
+    .portada__subbloque { font-size: .95rem; color: var(--texto-suave); margin: 1.2rem 0 .5rem; }
+    .portada__estado { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .6rem; margin-top: .25rem; }
+    .portada__plazo { font-size: .85rem; font-weight: 600; }
+    .portada__plazo--fuera, .portada__plazo--tarde { color: var(--error); }
+    .portada__plazo--entregada { color: var(--correcto); }
     .portada__pie { margin-top: 2rem; text-align: center; font-size: .85rem; }
     .portada__pie a { color: var(--texto-suave); display: inline-block; padding: .8rem 1rem; }
   </style>

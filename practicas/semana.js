@@ -15,9 +15,11 @@
 
 import { practicaPorSlug } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno, codigoTarea } from './_comun/codigos.js';
-import { leer, escribir, cerrarSesion, claveIdiomaFijo, modoIdioma, progresoGuardado, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
+import { leer, escribir, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
+import { diaDe } from './_comun/contador.js';
+import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, ejercicioFueraDePlazo, esRepasoDeOtraUnidad } from './vista-tareas.js';
 
 const app = document.querySelector('#app');
 const params = new URLSearchParams(location.search);
@@ -25,6 +27,7 @@ const tarea = tareaPorId(Number(params.get('t')));
 
 let codigo = null, indice = null;
 let idioma = 'es';
+let asignacion = null;           // ids de las tareas asignadas a este alumno (copia del navegador o de la nube)
 const nombres = new Map();       // 'slug/n' → { es, en }: el nombre de cada ejercicio, de su práctica
 
 /** Como en la base: `?idioma=es|en` lo fija para el alumno, `?idioma=alterno` lo quita. */
@@ -37,11 +40,18 @@ function aplicarIdioma() {
 
 let ultimaLectura = 0;
 
-/** Navegador y nube de acuerdo en todas las prácticas de la tarea (cada una, como mucho 4 s). */
+/**
+ * Navegador y nube de acuerdo en todas las prácticas de la tarea (cada una, como mucho 4 s;
+ * en las tareas v2, sus documentos de la tarea), y la asignación del alumno.
+ */
 async function sincronizar() {
   const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
   const suyo = codigo;
-  await Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo)));
+  const [, asignada] = await Promise.all([
+    Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo, { tareaId: ambitoDeTarea(tarea) }))),
+    tarea.asignada ? cargarAsignacion(suyo) : null,
+  ]);
+  if (suyo === codigo && tarea.asignada) asignacion = asignada;
   ultimaLectura = Date.now();
   return suyo === codigo;
 }
@@ -50,6 +60,7 @@ async function entrar(i) {
   indice = i;
   codigo = codigoAlumno(i);
   escribir('practicas.codigo', codigo);
+  asignacion = asignacionGuardada(codigo);
   aplicarIdioma();
   if (!tarea) return pintar();
   cabecera(tarea.titulo[idioma]);
@@ -106,18 +117,19 @@ function pintarEntrada(error = false) {
 
 // --- La tarea -------------------------------------------------------------------------
 
-function filaEjercicio(e, estrella, num) {
+function filaEjercicio(e, estrella, num, tipo) {
   const t = T[idioma];
   const ficha = practicaPorSlug(e.slug);
   const nombre = nombres.get(`${e.slug}/${e.n}`);
-  const etiqueta = e.terminado ? `<span class="etiqueta etiqueta--ok">${t.semana_terminado(e.ej.fallos ?? 0)}</span>`
+  const tarde = ejercicioFueraDePlazo(tarea, e.ej, tipo) ? ` <span class="etiqueta etiqueta--tarde">${t.tarea_ejercicio_fuera_de_plazo}</span>` : '';
+  const etiqueta = e.terminado ? `<span class="etiqueta etiqueta--ok">${t.semana_terminado(e.ej.fallos ?? 0)}</span>${tarde}`
     : e.empezado ? `<span class="etiqueta">${t.puntos(e.ej.puntos ?? 0, e.ej.objetivo ?? 10)}</span>`
       : `<span class="pequeno">${t.semana_sin_empezar}</span>`;
   const boton = e.terminado ? t.repetir : e.empezado ? t.seguir : t.empezar;
   return `
     <li class="lista__item tarea-item ${e.terminado ? 'tarea-item--hecho' : ''}">
       <div>
-        <div class="tarea-item__practica">${esc(ficha.nombre[idioma])}</div>
+        <div class="tarea-item__practica">${esc(ficha.nombre[idioma])}${esRepasoDeOtraUnidad(ficha, tarea) ? ` ${t.repaso_de_unidad(ficha.unidad)}` : ''}</div>
         <h3>${estrella ? '★ ' : ''}${t.ejercicio(num)} · <span data-nombre="${e.slug}/${e.n}">${nombre ? esc(nombre[idioma]) : t.semana_cargando_nombre}</span></h3>
         ${etiqueta}
       </div>
@@ -132,7 +144,8 @@ function cajaCodigo(est) {
     estrella: est.estrella.map(e => e.terminado),
     elegir: est.elegir.map(e => e.terminado),
     fallos: est.fallos,
-    dia: est.dia,
+    // La tarea 1 conserva el día de siempre (el del último ejercicio terminado); las v2, el de entrega.
+    dia: tarea.progresoPorPractica ? est.dia : est.diaEntrega,
   });
   return `
     <div class="tarjeta resultado resultado--completo">
@@ -151,11 +164,8 @@ function cajaCodigo(est) {
 function pintarTarea() {
   const t = T[idioma];
   cabecera(tarea.titulo[idioma]);
-  const guardado = new Map();
-  const est = estadoTarea(tarea, (slug, n) => {
-    if (!guardado.has(slug)) guardado.set(slug, progresoGuardado(slug, codigo));
-    return guardado.get(slug)[n - 1] ?? null;
-  });
+  const est = estadoTarea(tarea, progresoDeTarea(tarea, codigo));
+  const plazo = vistaPlazo(tarea, est, diaDe(new Date()), asignadaAMi(tarea, asignacion), t);
   const elegidos = Math.min(est.elegirHechos, tarea.nElegir);
   const marcador = [
     est.estrella.length ? `<span class="${est.estrellaHechos === est.estrella.length ? 'listo' : ''}">${t.semana_marcador_estrella(est.estrellaHechos, est.estrella.length)}</span>` : '',
@@ -165,6 +175,7 @@ function pintarTarea() {
   app.innerHTML = `
     <section>
       <h2>${esc(tarea.titulo[idioma])}</h2>
+      <p class="semana__tipo"><span class="etiqueta etiqueta--${plazo.tipo}">${plazo.etiqueta}</span>${plazo.frase ? ` <span class="semana__plazo semana__plazo--${plazo.estado}">${plazo.frase}</span>` : ''}</p>
       <p class="semana__objetivo">${t.semana_objetivo(est.estrella.length, tarea.nElegir, est.maximo)}</p>
       <div class="tarjeta">
         <div class="semana__marcador" aria-live="polite">${marcador}</div>
@@ -173,11 +184,11 @@ function pintarTarea() {
       ${cajaCodigo(est)}
       ${est.estrella.length ? `
         <h3 class="semana__bloque">${t.semana_estrella}</h3>
-        <ul class="lista">${est.estrella.map((e, i) => filaEjercicio(e, true, i + 1)).join('')}</ul>` : ''}
+        <ul class="lista">${est.estrella.map((e, i) => filaEjercicio(e, true, i + 1, plazo.tipo)).join('')}</ul>` : ''}
       ${est.elegir.length ? `
         <h3 class="semana__bloque">${t.semana_elegir(tarea.nElegir)}</h3>
         <p class="pequeno semana__ayuda">${t.semana_elegir_ayuda(tarea.nElegir)}</p>
-        <ul class="lista">${est.elegir.map((e, i) => filaEjercicio(e, false, est.estrella.length + i + 1)).join('')}</ul>` : ''}
+        <ul class="lista">${est.elegir.map((e, i) => filaEjercicio(e, false, est.estrella.length + i + 1, plazo.tipo)).join('')}</ul>` : ''}
       <div class="pie-menu">
         <a class="enlace-portada" href="${URL_PORTADA}?c=${codigo}">${t.todas}</a>
         <button type="button" class="discreto" id="cambiar">${t.cambiar_codigo} (${codigo})</button>
