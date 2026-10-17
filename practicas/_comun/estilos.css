@@ -265,3 +265,9 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
 .celda--ok { color: var(--correcto); font-weight: 600; }
 .celda--medio { color: #92400e; font-weight: 600; }
 .celda--no { color: var(--texto-suave); }
+
+/* Pie en inglés cuando se ve un ítem en inglés (pintarCabecera pone lang en <html>).
+   Mismos escapes que css/estilos.css: © = \0000A9, í = \0000ED. */
+html:lang(en) body::after {
+  content: "\0000A9  2026 Juan Luis Salas Garc\0000EDa. All rights reserved.";
+}
