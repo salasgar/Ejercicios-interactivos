@@ -87,6 +87,18 @@ Comprobar que el sistema nuevo cumple el diseño y es seguro antes de que lo use
 ## Trampas conocidas
 
 - La tarea 55 hizo lo mismo para el modelo v2: su `VEREDICTO.md` es el modelo de formato.
+- (De la sesión s-20261017T215223-49ff9905, que la cerró en ~55 min.) **El panel solo ofrece
+  «Entrar con Google»**: para entrar con una cuenta de prueba de correo y contraseña, con la
+  página ya cargada, desde la consola: importar `firebase-app.js` y `firebase-auth.js` del mismo
+  CDN que `src/firebase.js` (`VERSION_SDK`), `signInWithEmailAndPassword(getAuth(getApp()), …)`
+  y **recargar** (el panel no escucha los cambios de sesión). Si el panel aún no ha arrancado
+  Firebase (sistema actual), `getApp()` falla.
+- **«Cargar la plantilla del curso» abre un `confirm()`** que congela la extensión del navegador
+  (hubo que cerrar la pestaña). Antes de pulsarlo: `window.confirm = () => true`.
+- Dos «navegadores» = `127.0.0.1:<puerto>` y `localhost:<puerto>`: no comparten ni la sesión de
+  Firebase ni el almacenamiento. Al acabar, cerrar las sesiones de las cuentas reales.
+- Mientras dure la revisión puede llegar código nuevo a `main` (aquí, la 70 y la 74): repetir lo
+  esencial sobre el último `main` antes de dar el veredicto.
 - Los datos de prueba se quedan en la nube: lístalos al final para que Juan Luis los borre.
 
 ## Prohibido (propio de esta tarea)
