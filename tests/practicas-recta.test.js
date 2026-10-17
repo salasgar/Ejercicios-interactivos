@@ -158,9 +158,28 @@ test('recuento: lo acertado, lo que falta y lo que sobra, en los dos idiomas', (
   assert.equal(recuento(m, ok, 'es'), 'Has encontrado <strong>8 de los 9</strong> múltiplos de 7 (en verde). Te falta el 0 (con borde de puntos).');
   assert.equal(recuento(m, ok, 'en'), 'You found <strong>8 of the 9</strong> multiples of 7 (in green). Missing: 0 (dotted border).');
   const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
-  assert.equal(recuento(d, [1, 2, 3, 4, 6, 12, 5], 'es'), 'Has encontrado <strong>6 de los 6</strong> divisores de 12 (en verde). Sobra 1 (en rojo).');
-  assert.equal(recuento(d, [1, 5, 7], 'en'), 'You found <strong>1 of the 6</strong> divisors of 12 (in green). Missing: 2, 3, 4, 6 and 12 (dotted border). 2 are wrong (in red).');
-  assert.match(recuento(d, [1, 5, 7], 'es'), /Te faltan 2, 3, 4, 6 y 12 \(con borde de puntos\)\. Sobran 2 \(en rojo\)\./);
+  assert.equal(recuento(d, [1, 2, 3, 4, 6, 12, 5], 'es'), 'Has encontrado <strong>6 de los 6</strong> divisores de 12 (en verde). Sobra un número (en rojo).');
+  assert.equal(recuento(d, [1, 5, 7], 'en'), 'You found <strong>1 of the 6</strong> divisors of 12 (in green). Missing: 2, 3, 4, 6 and 12 (dotted border). Two numbers are wrong (in red).');
+  assert.match(recuento(d, [1, 5, 7], 'es'), /Te faltan 2, 3, 4, 6 y 12 \(con borde de puntos\)\. Sobran dos números \(en rojo\)\./);
+});
+
+test('recuento: la cantidad de los que sobran va con letras hasta 20 y con cifra después', () => {
+  const m = { tipo: 'multiplos', n: 7, hasta: 60, correctos: [0, 7, 14, 21, 28, 35, 42, 49, 56] };
+  const frase = (k, idioma) => {
+    const resp = [];
+    for (let x = 1; resp.length < k; x++) if (!m.correctos.includes(x)) resp.push(x);
+    return recuento(m, resp, idioma);
+  };
+  assert.match(frase(1, 'es'), /Sobra un número \(en rojo\)\.$/);
+  assert.match(frase(1, 'en'), /One number is wrong \(in red\)\.$/);
+  assert.match(frase(2, 'es'), /Sobran dos números \(en rojo\)\.$/);
+  assert.match(frase(2, 'en'), /Two numbers are wrong \(in red\)\.$/);
+  assert.match(frase(16, 'es'), /Sobran dieciséis números \(en rojo\)\.$/);
+  assert.match(frase(16, 'en'), /Sixteen numbers are wrong \(in red\)\.$/);
+  assert.match(frase(20, 'es'), /Sobran veinte números \(en rojo\)\.$/);
+  assert.match(frase(20, 'en'), /Twenty numbers are wrong \(in red\)\.$/);
+  assert.match(frase(21, 'es'), /Sobran 21 números \(en rojo\)\.$/);
+  assert.match(frase(21, 'en'), /21 numbers are wrong \(in red\)\.$/);
 });
 
 test('explicar (multiplos y divisores): el recuento va delante al fallar y no aparece al acertar', () => {
