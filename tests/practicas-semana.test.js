@@ -343,7 +343,7 @@ test('extraerCodigosResultado: encuentra los de 12 y 20 mezclados en un texto cu
 // --- Panel --------------------------------------------------------------------------------
 
 test('panel: tareas de la semana con códigos de tarea, de práctica y la nube', () => {
-  const tarea = { ...TAREA, id: 1 };  // recta/1, recta/2 ★; semaforo/1-3, elegir 2
+  const tarea = { ...TAREA, id: 1, progresoPorPractica: true };  // recta/1, recta/2 ★; semaforo/1-3, elegir 2
   const sin = { terminado: false, fallos: 0 };
   const filas = juntarTareas(
     ['Ana', 'Luis', 'Eva', 'Paco'],

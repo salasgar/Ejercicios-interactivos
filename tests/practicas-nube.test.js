@@ -280,7 +280,7 @@ test('semana: el idioma fijado en otro aparato se adopta si aquí no hay nada di
 // --- El panel -----------------------------------------------------------------------------
 
 test('panel: los puntos de la tarea son los mismos que ve el alumno en su marcador', () => {
-  const tarea = { id: 1, estrella: [['recta', 1], ['recta', 2]], elegir: [['semaforo', 1], ['semaforo', 2], ['semaforo', 3]], nElegir: 2 };
+  const tarea = { id: 1, progresoPorPractica: true, estrella: [['recta', 1], ['recta', 2]], elegir: [['semaforo', 1], ['semaforo', 2], ['semaforo', 3]], nElegir: 2 };
   const rng = crearRng(38);
   for (let i = 0; i < 200; i++) {
     const recta = [estadoAlAzar(rng), estadoAlAzar(rng), null].map(e => (e?.puntos === undefined ? null : e));

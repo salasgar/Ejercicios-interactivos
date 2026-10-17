@@ -1,0 +1,179 @@
+// Panel del profesor, modelo de tareas v2 (tarea 53 del reparto PU2): el reparto del
+// id `t12--semaforo--K7QM`, `juntarTareas` con las dos clases de tarea (la 1 desde el
+// progreso de práctica; las v2 desde `practicas-tareas`), el retraso, la vista
+// «Retrasos» con tres alumnos, las asignaciones y el filtro de fallos por tarea.
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { practicaPorSlug } from '../practicas/_comun/catalogo.js';
+import { codigoAlumno } from '../practicas/_comun/codigos.js';
+import { TAREAS, diaDeFecha } from '../practicas/_comun/tareas.js';
+import {
+  juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
+  filtrarFallos, agruparFallos, juntarFallos,
+} from '../practicas/resultados.js';
+
+const SEMAFORO = practicaPorSlug('semaforo').id;
+const PLAZO = diaDeFecha('2026-10-22');
+
+// Una tarea de un solo ejercicio ★ (semáforo 1), sin ejercicios a elegir.
+const base = { unidad: 2, titulo: { es: 'Prueba', en: 'Test' }, estrella: [['semaforo', 1]], elegir: [], nElegir: 0 };
+const v2 = { ...base, id: 90, hasta: '2026-10-22' };
+const antigua = { ...base, id: 91, hasta: '2026-10-22', progresoPorPractica: true };
+const asignada = { ...base, id: 92, hasta: '2026-10-22', asignada: true };
+
+const ej = (dia) => [{ terminado: true, dia, aciertos: 10, fallos: 0 }];
+const deTarea = (tarea, indice, dia) => ({ tarea, practica: SEMAFORO, indice, ej: ej(dia) });
+const columnas = (filas, indice) => filas.find(f => f.indice === indice).tareas;
+
+test('el id t12--semaforo--K7QM se parte en tarea, práctica y código', () => {
+  assert.deepEqual(partirIdTarea('t12--semaforo--K7QM'), { tarea: 12, slug: 'semaforo', codigo: 'K7QM' });
+  assert.equal(partirIdTarea('semaforo--K7QM'), null, 'el de práctica tiene dos trozos');
+  assert.equal(partirIdTarea('12--semaforo--K7QM'), null);
+  assert.equal(partirIdTarea('t12--semaforo--K7QM--x'), null);
+});
+
+test('leerDocumentos: cada colección con su forma de id, sin mezclarlas', () => {
+  const estado = JSON.stringify({ v: 1, ej: ej(5) });
+  const delaTarea = leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado, actualizado: 7 }], 'practicas-tareas');
+  assert.equal(delaTarea.length, 1);
+  assert.deepEqual([delaTarea[0].tarea, delaTarea[0].practica, delaTarea[0].indice], [2, SEMAFORO, 3]);
+  // Un documento de tarea metido en `practicas` no se lee como progreso de práctica libre.
+  assert.deepEqual(leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado }], 'practicas'), []);
+  // Y uno de práctica en `practicas-tareas` tampoco se lee como de una tarea.
+  assert.deepEqual(leerDocumentos([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'practicas-tareas'), []);
+  const libre = leerDocumentos([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'practicas');
+  assert.equal(libre[0].tarea, undefined);
+  assert.deepEqual(leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado: 'no es json' }], 'practicas-tareas'), []);
+});
+
+test('leerAsignaciones: el id es el código y las tareas, una lista de enteros', () => {
+  const r = leerAsignaciones([{ id: codigoAlumno(4), tareas: [92, 7] }, { id: 'ZZZZ', tareas: [1] }, { id: codigoAlumno(5), tareas: [] }, { id: codigoAlumno(6) }]);
+  assert.deepEqual(r, [{ indice: 4, tareas: [92, 7] }, { indice: 5, tareas: [] }]);
+});
+
+test('REGLA DE PUBLICACIÓN: la tarea 1 se junta desde los documentos de práctica, y las v2 no los miran', () => {
+  const tarea1 = TAREAS.find(t => t.id === 1);
+  assert.equal(tarea1.progresoPorPractica, true);
+  // Un alumno con TODOS los ejercicios de la tarea 1 terminados en sus documentos de práctica.
+  const deNube = [];
+  for (const [slug, n] of [...tarea1.estrella, ...tarea1.elegir]) {
+    const p = practicaPorSlug(slug);
+    let doc = deNube.find(d => d.practica === p.id);
+    if (!doc) deNube.push(doc = { practica: p.id, indice: 0, ej: Array.from({ length: p.nEjercicios }, () => ({})) });
+    doc.ej[n - 1] = { terminado: true, dia: PLAZO - 1, aciertos: 10, fallos: 0 };
+  }
+  const filas = juntarTareas(['Ana'], [], [], deNube, TAREAS, { hoyDia: PLAZO });
+  const t1 = columnas(filas, 0).find(c => c.id === 1);
+  assert.equal(t1.cumplida, true);
+  assert.equal(t1.puntos, 100);
+  assert.equal(t1.fuente, 'prácticas');
+  assert.equal(t1.entrega, 'a tiempo');
+  // Las mismas prácticas no hacen cumplida ninguna tarea v2 que lleve esos ejercicios.
+  const v2conLosMismos = { ...base, id: 93, estrella: tarea1.estrella, elegir: tarea1.elegir, nElegir: tarea1.nElegir };
+  const otra = juntarTareas(['Ana'], [], [], deNube, [v2conLosMismos], { hoyDia: PLAZO });
+  assert.equal(columnas(otra, 0)[0].cumplida, false);
+  assert.equal(columnas(otra, 0)[0].empezada, false);
+});
+
+test('juntarTareas: una tarea v2 cuenta lo de su documento y no lo de la práctica libre', () => {
+  const libre = [{ practica: SEMAFORO, indice: 0, ej: ej(PLAZO - 2) }];
+  const solo = juntarTareas(['Ana'], [], [], libre, [v2, antigua], { hoyDia: PLAZO });
+  const [c2, c1] = columnas(solo, 0);
+  assert.equal(c2.cumplida, false, 'v2: lo de la práctica libre no cuenta');
+  assert.equal(c1.cumplida, true, 'tarea con progreso por práctica: sí cuenta');
+  const conTarea = juntarTareas(['Ana'], [], [], [], [v2, antigua], { hoyDia: PLAZO, deNubeTareas: [deTarea(90, 0, PLAZO - 2), deTarea(91, 0, PLAZO - 2)] });
+  const [d2, d1] = columnas(conTarea, 0);
+  assert.equal(d2.cumplida, true);
+  assert.equal(d2.fuente, 'tarea');
+  assert.equal(d1.cumplida, false, 'el documento de otra tarea no cuenta en una tarea con progreso por práctica');
+  // El documento de la tarea 91 no cuenta en la 90.
+  const otra = juntarTareas(['Ana'], [], [], [], [v2], { hoyDia: PLAZO, deNubeTareas: [deTarea(91, 0, PLAZO - 2)] });
+  assert.equal(columnas(otra, 0)[0].cumplida, false);
+});
+
+test('la vista «Retrasos»: a tiempo, 3 días tarde y sin entregar, con una tarea asignada a uno solo', () => {
+  const hoyDia = PLAZO + 5;
+  const nombres = ['Ana', 'Beto', 'Carla'];
+  const opciones = {
+    hoyDia,
+    deNubeTareas: [
+      deTarea(90, 0, PLAZO - 1), deTarea(90, 1, PLAZO + 3),                    // Ana a tiempo; Beto 3 días tarde; Carla nada
+      deTarea(92, 1, PLAZO + 1),                                               // Beto hizo la asignada, 1 día tarde
+      deTarea(92, 2, PLAZO),                                                   // Carla la hizo sin estar asignada (voluntaria)
+    ],
+    asignaciones: [{ indice: 1, tareas: [92] }],
+  };
+  const filas = juntarTareas(nombres, [], [], [], [v2, asignada], opciones);
+
+  const [a90, a92] = columnas(filas, 0);
+  assert.deepEqual([a90.entrega, a90.diasRetraso, a90.diaEntrega], ['a tiempo', 0, PLAZO - 1]);
+  assert.equal(a92.noAsignado, true);
+  assert.equal(a92.entrega, '', 'no asignada: sin plazo para ella');
+  const [b90, b92] = columnas(filas, 1);
+  assert.deepEqual([b90.entrega, b90.diasRetraso], ['con retraso', 3]);
+  assert.deepEqual([b92.noAsignado, b92.tipo, b92.entrega, b92.diasRetraso], [false, 'obligatoria_para_ti', 'con retraso', 1]);
+  const [c90, c92] = columnas(filas, 2);
+  assert.deepEqual([c90.entrega, c90.diasRetraso], ['sin entregar', 5], 'sin entregar: los días hasta hoy');
+  assert.equal(c92.noAsignado, true);
+  assert.equal(c92.cumplida, true, 'su avance voluntario se ve, pero no cuenta');
+
+  const r = calcularRetrasos(filas, [v2, asignada], hoyDia);
+  const por = Object.fromEntries(r.alumnos.map(a => [a.nombre, a]));
+  assert.deepEqual([por.Ana.conPlazo, por.Ana.aTiempo, por.Ana.conRetraso, por.Ana.sinEntregar, por.Ana.dias], [1, 1, 0, 0, 0]);
+  assert.deepEqual([por.Beto.conPlazo, por.Beto.aTiempo, por.Beto.conRetraso, por.Beto.sinEntregar, por.Beto.dias, por.Beto.maximo], [2, 0, 2, 0, 4, 3]);
+  assert.equal(por.Beto.media, 2);
+  assert.deepEqual([por.Carla.conPlazo, por.Carla.aTiempo, por.Carla.sinEntregar, por.Carla.dias, por.Carla.maximo], [1, 0, 1, 5, 5], 'la asignada no es suya: no cuenta');
+  const t90 = r.tareas.find(t => t.id === 90);
+  assert.deepEqual([t90.conPlazo, t90.aTiempo, t90.conRetraso, t90.sinEntregar, t90.dias], [3, 1, 1, 1, 8]);
+  const t92 = r.tareas.find(t => t.id === 92);
+  assert.deepEqual([t92.conPlazo, t92.aTiempo, t92.conRetraso, t92.dias], [1, 0, 1, 1], 'solo cuenta el alumno asignado');
+});
+
+test('«Retrasos»: lo pendiente (plazo sin llegar) no es retraso y lo no publicado no cuenta', () => {
+  const futura = { ...v2, id: 94, hasta: '2026-11-05' };
+  const nopublicada = { ...v2, id: 95, desde: '2026-12-01', hasta: '2026-12-10' };
+  const hoyDia = PLAZO;
+  const filas = juntarTareas(['Ana'], [], [], [], [futura, nopublicada], { hoyDia });
+  const [f, n] = columnas(filas, 0);
+  assert.deepEqual([f.entrega, f.diasRetraso], ['pendiente', 0]);
+  const r = calcularRetrasos(filas, [futura, nopublicada], hoyDia);
+  assert.deepEqual([r.alumnos[0].conPlazo, r.alumnos[0].pendientes, r.alumnos[0].sinEntregar, r.alumnos[0].dias], [1, 1, 0, 0]);
+  assert.deepEqual(r.tareas.map(t => t.id), [94]);
+  assert.ok(n);   // la columna existe, pero la vista no la cuenta
+});
+
+test('una tarea sin plazo no genera retraso aunque esté sin hacer', () => {
+  const repaso = { ...base, id: 96 };
+  const filas = juntarTareas(['Ana'], [], [], [], [repaso], { hoyDia: PLAZO + 100 });
+  const c = columnas(filas, 0)[0];
+  assert.deepEqual([c.conPlazo, c.entrega, c.diasRetraso], [false, '', 0]);
+});
+
+test('asignacionesParaGuardar: conserva lo que no se puede marcar aquí', () => {
+  assert.deepEqual(asignacionesParaGuardar([3, 92], [92, 95], [95]), [3, 95]);
+  assert.deepEqual(asignacionesParaGuardar([], [92], [92]), [92]);
+  assert.deepEqual(asignacionesParaGuardar([92], [92], []), []);
+  assert.deepEqual(asignacionesParaGuardar([92, 92], [92], [92, 92]), [92]);
+});
+
+test('«qué falla más» por tarea: el campo `tarea` de los fallos', () => {
+  const f = (alumno, tarea, extra = {}) => ({ alumno, practica: 'semaforo', ejercicio: 1, t: 1, item: 'x', feedback: 'y', ...(tarea === undefined ? {} : { tarea }), ...extra });
+  const fallos = [f('AAAA', 1), f('BBBB', 2), f('CCCC', 2), f('DDDD'), f('EEEE', undefined, { ejercicio: 3 })];
+  assert.equal(filtrarFallos(fallos, { tarea: 2 }).length, 2, 'una tarea v2: solo los que traen su id');
+  assert.equal(filtrarFallos(fallos, { tarea: 'ninguna' }).length, 2, 'sin tarea: los que no traen campo');
+  assert.equal(filtrarFallos(fallos, {}).length, 5);
+  // La tarea 1 (progreso por práctica) cuenta también los anteriores al campo que sean de sus ejercicios.
+  const tarea1 = filtrarFallos(fallos, { tarea: 1, ejercicios: [['semaforo', 1]] });
+  assert.deepEqual(tarea1.map(x => x.alumno).sort(), ['AAAA', 'DDDD']);
+  // Sin `tarea`, `ejercicios` filtra por sí solo, como antes.
+  assert.equal(filtrarFallos(fallos, { ejercicios: [['semaforo', 3]] }).length, 1);
+  assert.equal(agruparFallos(fallos, { tarea: 2 }).total, 2);
+});
+
+test('«qué falla más» de una tarea v2 con los documentos de la tarea', () => {
+  const p = practicaPorSlug('semaforo');
+  const deNube = [{ practica: p.id, indice: 0, ej: [{ terminado: false, aciertos: 1, fallos: 4 }] }];
+  const filas = juntarFallos(['Ana'], [], deNube, [{ practica: p, n: 1 }]);
+  assert.deepEqual([filas[0].empezados, filas[0].fallos], [1, 4]);
+});
