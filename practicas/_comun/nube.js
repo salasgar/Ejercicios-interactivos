@@ -130,8 +130,85 @@ export function urlDocumento(slug, codigo, config = firebaseConfig, { coleccion 
 }
 
 /** URL REST de la asignación de un alumno, `practicas-asignaciones/{código}`, o null sin Firebase. */
-export function urlAsignacion(codigo, config = firebaseConfig) {
-  return urlDocumento(null, codigo, config, { coleccion: COLECCION_ASIGNACIONES, id: codigo });
+export function urlAsignacion(codigo, config = firebaseConfig, coleccion = COLECCION_ASIGNACIONES) {
+  return urlDocumento(null, codigo, config, { coleccion, id: codigo });
+}
+
+// --- Espacio de un profesor (varios profesores, tarea 62) --------------------------
+//
+// Los datos de cada profesor viven en subcolecciones de `practicas-espacios/{uid}`.
+// Los lectores de arriba ya aceptan la colección como parámetro: basta con pasarles
+// `coleccionEspacio(uid, 'progreso')`, que lleva barras y va tal cual en la URL.
+
+/** Qué subcolecciones tiene un espacio (DISENO.md, C.1). */
+export const SUBCOLECCIONES_ESPACIO = ['progreso', 'progreso-tareas', 'asignaciones', 'fallos'];
+export const COLECCION_ESPACIOS = 'practicas-espacios';
+export const COLECCION_BUSQUEDA = 'practicas-alumnos';
+
+/** Ruta de una subcolección del espacio de `uid`: `practicas-espacios/{uid}/{que}`. */
+export function coleccionEspacio(uid, que) {
+  if (typeof uid !== 'string' || !/^[A-Za-z0-9]{1,128}$/.test(uid)) throw new Error('uid de profesor no válido');
+  if (!SUBCOLECCIONES_ESPACIO.includes(que)) throw new Error(`subcolección desconocida: ${que}`);
+  return `${COLECCION_ESPACIOS}/${uid}/${que}`;
+}
+
+/** URL REST de la fila de búsqueda de un código secreto (`practicas-alumnos/{código}`), o null sin Firebase. */
+export function urlBusqueda(codigo, config = firebaseConfig) {
+  return urlDocumento(null, codigo, config, { coleccion: COLECCION_BUSQUEDA, id: codigo });
+}
+
+/** URL REST de la configuración de tareas de un profesor (`practicas-espacios/{uid}/config/tareas`), o null sin Firebase. */
+export function urlConfig(uid, config = firebaseConfig) {
+  coleccionEspacio(uid, 'progreso');   // solo para validar el uid
+  return urlDocumento(null, null, config, { coleccion: `${COLECCION_ESPACIOS}/${uid}/config`, id: 'tareas' });
+}
+
+/** Lo que dice una fila de búsqueda leída por REST: { profesor, n } o null si no se entiende. */
+export function leerBusquedaRest(json) {
+  const profesor = json?.fields?.profesor?.stringValue;
+  const n = Number(json?.fields?.n?.integerValue);
+  return typeof profesor === 'string' && profesor && Number.isInteger(n) && n >= 1 ? { profesor, n } : null;
+}
+
+/** El texto JSON de la configuración leída por REST, o null si no se entiende. */
+export function leerConfigRest(json) {
+  const texto = json?.fields?.json?.stringValue;
+  return typeof texto === 'string' ? texto : null;
+}
+
+/** GET con tiempo máximo: { estado: 'ok', json } | 'vacio' (404) | 'prohibido' (403) | 'error'. Nunca lanza. */
+async function pedirJson(url, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA } = {}) {
+  if (!url || typeof pedir !== 'function') return { estado: 'error', json: null };
+  const control = typeof AbortController === 'function' ? new AbortController() : null;
+  let reloj;
+  try {
+    const tiempo = new Promise((_, rechazar) => { reloj = setTimeout(() => { control?.abort(); rechazar(new Error('tiempo')); }, espera); });
+    const respuesta = await Promise.race([pedir(url, { method: 'GET', signal: control?.signal, cache: 'no-store' }), tiempo]);
+    if (respuesta.status === 404) return { estado: 'vacio', json: null };
+    if (respuesta.status === 403) return { estado: 'prohibido', json: null };
+    if (!respuesta.ok) return { estado: 'error', json: null };
+    return { estado: 'ok', json: await Promise.race([respuesta.json(), tiempo]) };
+  } catch {
+    return { estado: 'error', json: null };
+  } finally {
+    clearTimeout(reloj);
+  }
+}
+
+/** Lee a qué profesor pertenece un código secreto: { estado, profesor, n } (estados de `pedirJson`; 'error' si es ilegible). */
+export async function leerBusqueda(codigo, { config = firebaseConfig, ...opciones } = {}) {
+  const r = await pedirJson(urlBusqueda(codigo, config), opciones);
+  if (r.estado !== 'ok') return { estado: r.estado, profesor: null, n: null };
+  const leido = leerBusquedaRest(r.json);
+  return leido ? { estado: 'ok', ...leido } : { estado: 'error', profesor: null, n: null };
+}
+
+/** Lee la configuración de tareas de un profesor: { estado, json } con el texto JSON sin interpretar. */
+export async function leerConfig(uid, { config = firebaseConfig, ...opciones } = {}) {
+  const r = await pedirJson(urlConfig(uid, config), opciones);
+  if (r.estado !== 'ok') return { estado: r.estado, json: null };
+  const texto = leerConfigRest(r.json);
+  return texto === null ? { estado: 'error', json: null } : { estado: 'ok', json: texto };
 }
 
 /** Lo que dice una asignación leída por REST: { tareas: [ids] } o null si no se entiende. */
@@ -148,8 +225,8 @@ export function leerAsignacionRest(json) {
  * progreso. Devuelve { tareas: [ids] } o null (sin documento, sin permiso,
  * sin red o ilegible: se sigue con la copia del navegador). Nunca lanza.
  */
-export async function leerAsignacion(codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig } = {}) {
-  const url = urlAsignacion(codigo, config);
+export async function leerAsignacion(codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig, coleccion } = {}) {
+  const url = urlAsignacion(codigo, config, coleccion);
   if (!url || typeof pedir !== 'function') return null;
   const control = typeof AbortController === 'function' ? new AbortController() : null;
   let reloj;

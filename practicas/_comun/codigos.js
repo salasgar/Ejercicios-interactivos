@@ -17,7 +17,7 @@
 // de quién es y de qué tarea).
 
 import { leerCodigoResultado as leerCodigoDivisores } from '../../divisores/logica.js';
-import { tareaPorId, MAX_ESTRELLA, MAX_ELEGIR } from './tareas.js';
+import { tareaPorId, TAREAS, MAX_ESTRELLA, MAX_ELEGIR } from './tareas.js';
 
 /** Sin I, O, 0 ni 1, que se confunden al copiar a mano. */
 export const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -65,6 +65,42 @@ export function leerCodigoAlumno(texto) {
   const s = (v[0] << 5) | v[1];
   if (hash(`${SAL_ALUMNO}|alumno|${s}`) % 1024 !== ((v[2] << 5) | v[3])) return null;
   return DESMEZCLADO.get(s);
+}
+
+// --- Código secreto del alumno (varios profesores, tarea 62) ----------------------
+
+/** Símbolos de un código secreto. */
+export const LONGITUD_SECRETO = 8;
+
+/**
+ * Código secreto nuevo: 8 símbolos de `ALFABETO` al azar, sin fórmula ni sal
+ * (no se puede calcular a partir de nada). `azar` rellena con bytes aleatorios
+ * el `Uint8Array` que recibe (como `crypto.getRandomValues`); se inyecta en los
+ * tests. Con 32 símbolos y bytes de 256 valores, `byte & 31` reparte parejo
+ * (256 es múltiplo de 32): no hay que descartar ningún byte ni queda sesgo.
+ */
+export function codigoSecreto(azar = bytes => globalThis.crypto.getRandomValues(bytes)) {
+  const bytes = azar(new Uint8Array(LONGITUD_SECRETO));
+  return simbolos(Array.from(bytes, b => b & 31));
+}
+
+/** Los 8 símbolos en mayúsculas y sin guiones de un código secreto, o `null` si no lo es. */
+export function leerCodigoSecreto(texto) {
+  const t = limpiar(texto);
+  return t.length === LONGITUD_SECRETO && !valores(t).includes(-1) ? t : null;
+}
+
+/** Un código secreto para mostrarlo: `K7QM-P3XA`. */
+export const mostrarCodigoSecreto = codigo => agrupar(limpiar(codigo));
+
+/**
+ * El sistema al que pertenece un código tecleado: `'antiguo'` (4 símbolos con
+ * la comprobación de `leerCodigoAlumno`), `'nuevo'` (8 símbolos del alfabeto) o
+ * `null`. La longitud decide; el código de 4 no cambia.
+ */
+export function modoDeCodigo(texto) {
+  if (leerCodigoAlumno(texto) !== null) return 'antiguo';
+  return leerCodigoSecreto(texto) !== null ? 'nuevo' : null;
 }
 
 /**
@@ -117,10 +153,10 @@ export function codigoTarea(tareaId, indice, { estrella = [], elegir = [], fallo
 /**
  * Lo contrario: { tarea, indice, estrella: [bool], elegir: [bool], fallos,
  * tope, dia } o `null`. Las listas tienen la longitud de la tarea de
- * `tareas.js`; un código de una tarea que no existe, o con un ejercicio
- * terminado que la tarea no tiene, no vale.
+ * `tareas.js` (o de `tareas`, la lista de un profesor); un código de una tarea
+ * que no existe, o con un ejercicio terminado que la tarea no tiene, no vale.
  */
-export function leerCodigoTarea(texto) {
+export function leerCodigoTarea(texto, tareas = TAREAS) {
   const t = limpiar(texto);
   if (t.length !== 20) return null;
   const v = valores(t);
@@ -128,7 +164,7 @@ export function leerCodigoTarea(texto) {
   const control = juntar(v.slice(14));
   const datos = v.slice(0, 14).map((d, i) => d ^ mascaraTarea(control, i));
   if (controlTarea(datos) !== control || datos[0] !== VERSION_TAREA) return null;
-  const tarea = tareaPorId(juntar(datos.slice(1, 3)));
+  const tarea = tareaPorId(juntar(datos.slice(1, 3)), tareas);
   if (!tarea) return null;
   const mEstrella = juntar(datos.slice(5, 7)), mElegir = juntar(datos.slice(7, 10));
   if (mEstrella >> tarea.estrella.length || mElegir >> tarea.elegir.length) return null;

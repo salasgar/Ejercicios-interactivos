@@ -132,8 +132,8 @@ export const MAX_ESTRELLA = 10;
 export const MAX_ELEGIR = 15;
 export const MAX_ID_TAREA = 1023;
 
-export function tareaPorId(id) {
-  return TAREAS.find(t => t.id === id) ?? null;
+export function tareaPorId(id, tareas = TAREAS) {
+  return tareas.find(t => t.id === id) ?? null;
 }
 
 /**
@@ -239,7 +239,7 @@ export function estadoTarea(tarea, progresoDe) {
  * Lo que está mal en una lista de tareas, en frases (vacía si todo está bien).
  * Lo usa el test; sirve también para comprobar a mano un cambio en este fichero.
  */
-export function erroresTareas(tareas = TAREAS) {
+export function erroresTareas(tareas = TAREAS, { tareaUnoAntigua = true } = {}) {
   const errores = [];
   const ids = new Set();
   for (const t of tareas) {
@@ -255,8 +255,13 @@ export function erroresTareas(tareas = TAREAS) {
       else if (t.desde !== undefined && /^\d{4}-\d{2}-\d{2}$/.test(t.desde) && t.hasta < t.desde) errores.push(`${nombre}: «hasta» no puede ser anterior a «desde»`);
     }
     if (t.asignada !== undefined && t.asignada !== true) errores.push(`${nombre}: «asignada» solo puede ser true o no estar`);
-    if (t.id === 1 && t.progresoPorPractica !== true) errores.push('tarea 1: tiene que llevar «progresoPorPractica: true» (conserva el modelo de la práctica libre)');
-    if (t.id !== 1 && t.progresoPorPractica !== undefined) errores.push(`${nombre}: «progresoPorPractica» solo existe en la tarea 1`);
+    if (!tareaUnoAntigua) {
+      // Tareas de un profesor del sistema nuevo: la 1 es una tarea como las demás.
+      if (t.progresoPorPractica !== undefined) errores.push(`${nombre}: «progresoPorPractica» solo existe en la plantilla del curso`);
+    } else {
+      if (t.id === 1 && t.progresoPorPractica !== true) errores.push('tarea 1: tiene que llevar «progresoPorPractica: true» (conserva el modelo de la práctica libre)');
+      if (t.id !== 1 && t.progresoPorPractica !== undefined) errores.push(`${nombre}: «progresoPorPractica» solo existe en la tarea 1`);
+    }
     if (!Array.isArray(t.estrella) || !Array.isArray(t.elegir)) { errores.push(`${nombre}: «estrella» y «elegir» tienen que ser listas`); continue; }
     if (t.estrella.length > MAX_ESTRELLA) errores.push(`${nombre}: más de ${MAX_ESTRELLA} ejercicios con ★`);
     if (t.elegir.length > MAX_ELEGIR) errores.push(`${nombre}: más de ${MAX_ELEGIR} ejercicios para elegir`);
@@ -273,4 +278,69 @@ export function erroresTareas(tareas = TAREAS) {
     }
   }
   return errores;
+}
+
+// --- Configuración de un profesor (varios profesores, tarea 62) ---------------------
+//
+// Cada profesor guarda en su espacio (`config/tareas`) un objeto
+// `{ unidades: [{ n, desde }], tareas: [...] }`: sus tareas, con los mismos campos
+// que `TAREAS`, y solo las fechas de comienzo de las unidades (los títulos son
+// comunes, en `UNIDADES`). Se guarda como texto JSON.
+
+const FECHA = /^\d{4}-\d{2}-\d{2}$/;
+const fechaValida = texto => {
+  if (typeof texto !== 'string' || !FECHA.test(texto)) return false;
+  const [a, m, d] = texto.split('-').map(Number);
+  const fecha = new Date(Date.UTC(a, m - 1, d));
+  return fecha.getUTCFullYear() === a && fecha.getUTCMonth() === m - 1 && fecha.getUTCDate() === d;
+};
+
+/**
+ * La configuración que dice un texto JSON, o `null` si no es JSON o no tiene la
+ * forma `{ unidades: [...], tareas: [...] }`. No comprueba el contenido: eso es
+ * `erroresConfig`.
+ */
+export function configDeJSON(texto) {
+  let config;
+  try { config = JSON.parse(texto); } catch { return null; }
+  if (config === null || typeof config !== 'object' || !Array.isArray(config.unidades) || !Array.isArray(config.tareas)) return null;
+  return { unidades: config.unidades, tareas: config.tareas };
+}
+
+/** El texto JSON que se guarda: solo `unidades` (n, desde) y `tareas`. */
+export function configAJSON(config) {
+  return JSON.stringify({
+    unidades: (config?.unidades ?? []).map(u => ({ n: u.n, desde: u.desde })),
+    tareas: config?.tareas ?? [],
+  });
+}
+
+/**
+ * Lo que está mal en una configuración, en frases (vacía si todo está bien):
+ * lo de `erroresTareas` (con la tarea 1 como una más) y las fechas de unidad.
+ */
+export function erroresConfig(config) {
+  if (config === null || typeof config !== 'object' || !Array.isArray(config.unidades) || !Array.isArray(config.tareas)) {
+    return ['la configuración tiene que ser { unidades: [...], tareas: [...] }'];
+  }
+  const errores = [];
+  const vistas = new Set();
+  for (const u of config.unidades) {
+    if (!UNIDADES.some(c => c.n === u?.n)) errores.push(`unidad ${u?.n}: no es una de ${UNIDADES.map(c => c.n).join(', ')}`);
+    else if (vistas.has(u.n)) errores.push(`unidad ${u.n}: repetida`);
+    else if (!fechaValida(u.desde)) errores.push(`unidad ${u.n}: «desde» tiene que ser una fecha 'AAAA-MM-DD'`);
+    vistas.add(u?.n);
+  }
+  return [...errores, ...erroresTareas(config.tareas, { tareaUnoAntigua: false })];
+}
+
+/**
+ * Lo que copia «Cargar la plantilla del curso»: las `TAREAS` y las fechas de
+ * `UNIDADES` de hoy, sin el campo `progresoPorPractica` (solo vale en el modo
+ * antiguo: en el espacio de un profesor la tarea 1 es una más).
+ */
+export function configPlantilla() {
+  const copia = JSON.parse(JSON.stringify(TAREAS));
+  for (const t of copia) delete t.progresoPorPractica;
+  return { unidades: UNIDADES.map(u => ({ n: u.n, desde: u.desde })), tareas: copia };
 }
