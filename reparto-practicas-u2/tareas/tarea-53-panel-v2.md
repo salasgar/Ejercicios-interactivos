@@ -225,3 +225,5 @@ Si paras sin terminar: `$R/hechos/fallos/53--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+
+- (53) Los fixtures de tarea 1 en tests deben llevar progresoPorPractica: true: sin él juntarTareas la trata como v2. La carga con Google y la escritura de asignaciones solo las puede probar Juan Luis.
