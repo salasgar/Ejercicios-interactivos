@@ -405,14 +405,17 @@ export function partirIdTarea(id) {
  * En la colección `practicas` el id es `<slug>--<código>`; en la antigua
  * `divisores`, el código a secas (y es la práctica 0); en `practicas-tareas`
  * (modelo v2), `t<tarea>--<slug>--<código>` y el dato lleva además `tarea`.
- * Lo ilegible se descarta.
+ * En el espacio de un profesor (tarea 66), `progreso-libre` tiene la forma de
+ * `practicas` y `progreso-tareas` la de `practicas-tareas`, con códigos de 8:
+ * `indiceDe` dice qué número de alumno es cada código (por defecto, el del modo
+ * antiguo). Lo ilegible se descarta.
  */
-export function leerDocumentos(docs, coleccion = 'practicas') {
+export function leerDocumentos(docs, coleccion = 'practicas', indiceDe = leerCodigoAlumno) {
   return docs.map(doc => {
     let tarea;
     let slug, codigo;
     if (coleccion === 'divisores') [slug, codigo] = ['divisores', doc.id];
-    else if (coleccion === 'practicas-tareas') {
+    else if (coleccion === 'practicas-tareas' || coleccion === 'progreso-tareas') {
       const partes = partirIdTarea(doc.id);
       if (!partes) return null;
       ({ tarea, slug, codigo } = partes);
@@ -422,17 +425,101 @@ export function leerDocumentos(docs, coleccion = 'practicas') {
       [slug, codigo] = trozos;
     }
     const practica = practicaPorSlug(slug);
-    const indice = leerCodigoAlumno(codigo ?? '');
-    if (!practica || indice === null) return null;
+    const indice = indiceDe(codigo ?? '');
+    if (!practica || indice === null || indice === undefined) return null;
     try { return { ...(tarea === undefined ? {} : { tarea }), practica: practica.id, indice, ...JSON.parse(doc.estado), actualizado: doc.actualizado }; } catch { return null; }
   }).filter(Boolean);
 }
 
-/** Documentos de `practicas-asignaciones` (id = código, `tareas` = ids) → [{ indice, tareas }]. */
-export function leerAsignaciones(docs) {
+/** Documentos de `practicas-asignaciones` (id = código, `tareas` = ids) → [{ indice, tareas }]. `indiceDe`, como en `leerDocumentos`. */
+export function leerAsignaciones(docs, indiceDe = leerCodigoAlumno) {
   return docs.map(doc => {
-    const indice = leerCodigoAlumno(String(doc.id));
-    if (indice === null || !Array.isArray(doc.tareas)) return null;
+    const indice = indiceDe(String(doc.id));
+    if (indice === null || indice === undefined || !Array.isArray(doc.tareas)) return null;
     return { indice, tareas: doc.tareas.map(Number).filter(Number.isInteger) };
   }).filter(Boolean);
+}
+
+// --- Espacio del profesor (varios profesores, tarea 66; DISENO.md, B.2 y F.1) ----------
+//
+// En el espacio, el código de 8 no dice nada: el número de lista lo dice la fila de
+// `practicas-alumnos` del profesor (`n`, desde 1). El panel sigue trabajando con
+// `indice` = posición en la lista de nombres (desde 0), como en el modo antiguo:
+// `indice = n − 1`. Así la línea 1 de la lista es el alumno n.º 1 en los dos modos.
+
+/**
+ * Los códigos del profesor (lo que devuelve `listarMisCodigos`: [{ id: código, n }])
+ * → `{ codigoDe(indice), indiceDe(código) }`. Un código ajeno da `null`. Si dos
+ * códigos tienen el mismo número (no debería pasar), vale el primero que llegue.
+ */
+export function indicesDeCodigos(codigos) {
+  const porIndice = new Map();
+  const porCodigo = new Map();
+  for (const c of codigos ?? []) {
+    if (typeof c?.id !== 'string' || !Number.isInteger(c?.n) || c.n < 1) continue;
+    if (!porIndice.has(c.n - 1)) porIndice.set(c.n - 1, c.id);
+    porCodigo.set(c.id, c.n - 1);
+  }
+  return {
+    codigoDe: indice => porIndice.get(indice) ?? null,
+    indiceDe: codigo => porCodigo.get(String(codigo).toUpperCase().replace(/[^A-Z0-9]/g, '')) ?? null,
+  };
+}
+
+/**
+ * Filas de «Mis alumnos»: una por línea con nombre y por código sin línea (un
+ * alumno que se borró de la lista sigue teniendo su código), por número.
+ * @returns [{ n, nombre, codigo }] (`codigo` null si aún no tiene)
+ */
+export function filasMisAlumnos(nombres, codigos) {
+  const { codigoDe } = indicesDeCodigos(codigos);
+  const ns = new Set(nombres.map((nombre, i) => (nombre ? i + 1 : null)).filter(Boolean));
+  for (const c of codigos ?? []) if (Number.isInteger(c?.n) && c.n >= 1) ns.add(c.n);
+  return [...ns].sort((a, b) => a - b).map(n => ({ n, nombre: nombres[n - 1] ?? '', codigo: codigoDe(n - 1) }));
+}
+
+/** Números de lista (desde 1) de las líneas con nombre que aún no tienen código, hasta `maximo`. */
+export function faltanCodigos(nombres, codigos, maximo = 250) {
+  const { codigoDe } = indicesDeCodigos(codigos);
+  return nombres.map((nombre, i) => (nombre && codigoDe(i) === null && i < maximo ? i + 1 : null)).filter(Boolean);
+}
+
+/**
+ * Un código nuevo para cada número de `ns`, que no repita ninguno de `usados`
+ * (los propios ya creados) ni otro de esta tanda. `generar` es `codigoSecreto` de
+ * `codigos.js`. Un código de otro profesor no se sabe aquí: lo detecta
+ * `crearCodigos` (63), que lo devuelve en `chocan` y el panel vuelve a pedir.
+ * @returns [{ codigo, n }]
+ */
+export function repartirCodigos(ns, usados, generar) {
+  const vistos = new Set(usados);
+  return ns.map(n => {
+    let codigo;
+    do { codigo = generar(); } while (vistos.has(codigo));
+    vistos.add(codigo);
+    return { codigo, n };
+  });
+}
+
+/**
+ * Junta lo que ya estaba en la caché del panel con lo recién leído de la nube:
+ * por `id`; lo leído gana (es la última versión). Devuelve una lista nueva.
+ */
+export function fusionarLeidos(previos, nuevos) {
+  const porId = new Map((previos ?? []).map(d => [d.id, d]));
+  for (const d of nuevos ?? []) porId.set(d.id, d);
+  return [...porId.values()];
+}
+
+/** Margen de «solo lo nuevo»: el `actualizado` lo pone el aparato del alumno, y su reloj puede ir atrasado. */
+export const MARGEN_LECTURA = 2 * 86400000;
+
+/**
+ * Desde qué momento (ms) pedir a la nube lo nuevo de una colección ya en caché:
+ * el tiempo más reciente que se tiene (`campo`: `actualizado`, o `t` en los fallos)
+ * menos `MARGEN_LECTURA`. 0 (leerlo todo) si la caché está vacía.
+ */
+export function desdeParaLeer(docs, campo = 'actualizado', margen = MARGEN_LECTURA) {
+  const ultimo = (docs ?? []).map(d => d?.[campo]).filter(Number.isFinite).reduce((a, b) => Math.max(a, b), -Infinity);
+  return ultimo === -Infinity ? 0 : Math.max(0, ultimo - margen);
 }

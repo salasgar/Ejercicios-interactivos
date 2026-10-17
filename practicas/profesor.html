@@ -8,6 +8,25 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2720%27 fill=%27%231d4ed8%27/%3E%3Ctext x=%2750%27 y=%2768%27 font-size=%2752%27 text-anchor=%27middle%27 fill=%27white%27 font-family=%27sans-serif%27 font-weight=%27bold%27%3E%C3%B7%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="../css/estilos.css">
   <link rel="stylesheet" href="_comun/estilos.css">
+  <style>
+    /* `display: flex` (barra, botonera) anularía el atributo `hidden`. */
+    .profesor [hidden] { display: none !important; }
+    /* Lo de un solo sistema (data-solo) se esconde en el otro. */
+    .profesor[data-modo="nuevo"] [data-solo="antiguo"], .profesor[data-modo="antiguo"] [data-solo="nuevo"] { display: none !important; }
+    .profesor .barra-modo { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
+    .profesor .barra-modo select { width: auto; max-width: 100%; margin: 0; }
+    .profesor .contrasenas { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+    .profesor .contrasenas input { width: auto; flex: 1 1 14rem; margin: 0; }
+    #tarjetas { display: none; }
+    @media print {
+      body > header { display: none !important; }
+      .profesor > *:not(#tarjetas) { display: none !important; }
+      #tarjetas { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6mm; }
+      .tarjeta-alumno { border: 1px dashed #000; padding: 4mm 5mm; break-inside: avoid; font-size: 11pt; }
+      .tarjeta-alumno strong { display: block; font-size: 13pt; margin-bottom: 2mm; }
+      .tarjeta-alumno code { font-size: 15pt; letter-spacing: .08em; }
+    }
+  </style>
   <script type="module" src="profesor.js"></script>
 </head>
 <body>
@@ -15,90 +34,195 @@
     <span class="cabecera__titulo">Prácticas de Matemáticas · Profesor</span>
     <a class="cabecera__usuario" href="./" style="color:#fff">Ver las prácticas</a>
   </header>
-  <main class="app profesor">
-    <div class="aviso">Los nombres que escribas aquí <strong>no salen de este navegador</strong>: se guardan solo en este ordenador.</div>
-
-    <section class="tarjeta">
-      <h2>1. Alumnos y sus códigos</h2>
-      <p class="pequeno">Un alumno por línea. El código depende de la <strong>posición en la lista</strong>: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. Cada alumno usa <strong>el mismo código en todas las prácticas</strong> (es el que ya tenía en «Divisor, múltiplo, divisible»).</p>
-      <textarea id="lista" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
-      <div class="selector">
-        <label for="destino-enlaces">Enlaces a:</label>
-        <select id="destino-enlaces"></select>
-      </div>
-      <div class="selector">
-        <label for="idioma-enlaces">Idioma de los enlaces:</label>
-        <select id="idioma-enlaces">
-          <option value="alterno">Alterno (por defecto)</option>
-          <option value="es">Español</option>
-          <option value="en">Inglés</option>
+  <main class="app profesor" id="panel" data-modo="antiguo">
+    <!-- Selector de sistema: solo para Juan Luis (el administrador), hasta su migración. -->
+    <div class="barra-modo" id="barra-modo" hidden>
+      <span class="barra-modo" id="selector-modo" style="margin: 0">
+        <label for="modo">Sistema:</label>
+        <select id="modo">
+          <option value="antiguo">Sistema actual (códigos de 4)</option>
+          <option value="nuevo">Sistema nuevo (mi espacio)</option>
         </select>
-      </div>
-      <p class="pequeno">Para fijarlo solo a un alumno (dislexia, recién llegado…), copia su enlace y cambia a mano el final por <code>&amp;idioma=es</code> o <code>&amp;idioma=en</code>.</p>
+      </span>
+      <span class="pequeno" id="cuenta"></span>
+      <button type="button" class="secundario" id="salir" hidden>Salir</button>
+    </div>
+
+    <!-- Entrar con Google (sistema nuevo). -->
+    <section class="tarjeta" id="acceso" hidden>
+      <h2>Entrar</h2>
+      <p id="acceso-texto">Entra con tu cuenta de Google del centro para ver tus alumnos y sus resultados.</p>
       <div class="botonera">
-        <button type="button" class="secundario" id="copiar-codigos">Copiar tabla (para pegarla en una hoja de cálculo)</button>
-        <button type="button" class="secundario" id="csv-codigos">Descargar CSV</button>
+        <button type="button" id="acceso-entrar">Entrar con Google</button>
+        <button type="button" class="secundario" id="acceso-salir" hidden>Entrar con otra cuenta</button>
       </div>
-      <div class="tabla" id="tabla-codigos"></div>
+      <p class="pequeno" id="acceso-estado"></p>
+      <p class="pequeno" id="acceso-antiguo">Sistema actual, con los códigos de 4 caracteres (solo Juan Luis): <button type="button" class="secundario" id="ir-antiguo">Abrir el sistema actual</button></p>
     </section>
 
-    <section class="tarjeta">
-      <h2>Tareas de la semana</h2>
-      <p class="pequeno">Cada tarea abre en una página sus ejercicios con ★ y los de elegir, con un marcador; al cumplirla, el profesor lo ve en la nube (el alumno tiene un código de 20 caracteres en un desplegable, de respaldo). El <strong>enlace común</strong> es el que se pega en Classroom: cada alumno escribe su código la primera vez (si ya entró en otra práctica en ese dispositivo, lo recuerda). Para dar el enlace de cada alumno, elige la tarea en «Enlaces a», arriba. Las tareas se cambian a mano en <code>practicas/_comun/tareas.js</code>.</p>
-      <div class="tabla" id="tabla-tareas"></div>
-    </section>
+    <!-- ===== Sistema actual (modo antiguo): igual que antes de la tarea 66 ===== -->
+    <div id="modo-antiguo">
+      <div class="aviso">Los nombres que escribas aquí <strong>no salen de este navegador</strong>: se guardan solo en este ordenador.</div>
 
-    <section class="tarjeta">
-      <h2>2. Resultados</h2>
-      <h3>Códigos de resultado</h3>
-      <p class="pequeno"><strong>Lo normal es «Cargar de la nube» (abajo).</strong> Esto es solo el respaldo para cuando la nube no llega (una red de aula que bloquee Google, por ejemplo): los alumnos tienen su código en un desplegable y solo lo dan si se lo pides. Pega aquí lo que te den, tal cual (correos enteros, la lista de Classroom…), mezclados: se buscan solos los códigos de las tareas de la semana (20 caracteres) y los antiguos de 12 de «Divisor, múltiplo, divisible». Cada código dice de quién es y de qué tarea. Los de 16 caracteres (el código por práctica, que ya no existe) se avisan como no válidos.</p>
-      <textarea id="pegados" placeholder="ABCD-EFGH-JKLM-NPQR" spellcheck="false"></textarea>
-      <h3>Datos guardados en la nube</h3>
-      <p class="pequeno">Con más detalle (aciertos, lo que le queda a quien va a medias) y sin que el alumno tenga que enviar nada. Hay que entrar con tu cuenta de Google de profesor.</p>
-      <div class="botonera">
-        <button type="button" id="nube">Cargar de la nube</button>
-      </div>
-      <p class="pequeno" id="estado-nube"></p>
-      <div id="avisos"></div>
+      <section class="tarjeta">
+        <h2>1. Alumnos y sus códigos</h2>
+        <p class="pequeno">Un alumno por línea. El código depende de la <strong>posición en la lista</strong>: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. Cada alumno usa <strong>el mismo código en todas las prácticas</strong> (es el que ya tenía en «Divisor, múltiplo, divisible»).</p>
+        <textarea id="lista" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
+        <div class="selector">
+          <label for="destino-enlaces">Enlaces a:</label>
+          <select id="destino-enlaces"></select>
+        </div>
+        <div class="selector">
+          <label for="idioma-enlaces">Idioma de los enlaces:</label>
+          <select id="idioma-enlaces">
+            <option value="alterno">Alterno (por defecto)</option>
+            <option value="es">Español</option>
+            <option value="en">Inglés</option>
+          </select>
+        </div>
+        <p class="pequeno">Para fijarlo solo a un alumno (dislexia, recién llegado…), copia su enlace y cambia a mano el final por <code>&amp;idioma=es</code> o <code>&amp;idioma=en</code>.</p>
+        <div class="botonera">
+          <button type="button" class="secundario" id="copiar-codigos">Copiar tabla (para pegarla en una hoja de cálculo)</button>
+          <button type="button" class="secundario" id="csv-codigos">Descargar CSV</button>
+        </div>
+        <div class="tabla" id="tabla-codigos"></div>
+      </section>
 
-      <div class="selector">
-        <label for="vista">Ver:</label>
-        <select id="vista"></select>
-        <button type="button" class="secundario" id="csv-resultados">Descargar esta tabla (CSV)</button>
-      </div>
-      <div class="tabla" id="tabla-resultados"></div>
-    </section>
+      <section class="tarjeta">
+        <h2>Tareas de la semana</h2>
+        <p class="pequeno">Cada tarea abre en una página sus ejercicios con ★ y los de elegir, con un marcador; al cumplirla, el profesor lo ve en la nube (el alumno tiene un código de 20 caracteres en un desplegable, de respaldo). El <strong>enlace común</strong> es el que se pega en Classroom: cada alumno escribe su código la primera vez (si ya entró en otra práctica en ese dispositivo, lo recuerda). Para dar el enlace de cada alumno, elige la tarea en «Enlaces a», arriba. Las tareas se cambian a mano en <code>practicas/_comun/tareas.js</code>.</p>
+        <div class="tabla" id="tabla-tareas"></div>
+      </section>
+    </div>
 
-    <section class="tarjeta">
-      <h2>Asignar tareas</h2>
-      <p class="pequeno">Una tarea <strong>asignada</strong> (campo <code>asignada: true</code> en <code>practicas/_comun/tareas.js</code>) es obligatoria solo para los alumnos que marques aquí; para los demás es una tarea de repaso más, sin ninguna marca. Primero pulsa «Cargar de la nube» (arriba, en «2. Resultados»), para ver lo que ya hay guardado; después marca y pulsa «Guardar asignaciones». Se guarda en la nube, no en el repositorio. Hay que entrar con tu cuenta de Google de profesor.</p>
-      <div class="botonera">
-        <button type="button" id="asignar-guardar" disabled>Guardar asignaciones</button>
-      </div>
-      <p class="pequeno" id="asignar-estado"></p>
-      <div class="tabla" id="tabla-asignar"></div>
-    </section>
+    <!-- ===== Sistema nuevo (el espacio del profesor) ===== -->
+    <div id="modo-nuevo" hidden>
+      <section class="tarjeta" id="seccion-profesores" hidden>
+        <h2>Profesores</h2>
+        <p class="pequeno">Solo lo ves tú. Quien entra en el panel sin estar dado de alta deja aquí su solicitud, con su correo y su nombre de Google. «Dar de alta» le abre su espacio; «Dar de baja» le cierra el acceso sin borrar sus datos. Como administrador no ves los alumnos de nadie: solo das altas y bajas.</p>
+        <div class="botonera"><button type="button" class="secundario" id="profesores-recargar">Volver a leer</button></div>
+        <p class="pequeno" id="estado-profesores"></p>
+        <h3>Solicitudes</h3>
+        <div class="tabla" id="tabla-solicitudes"></div>
+        <h3>Dados de alta</h3>
+        <div class="tabla" id="tabla-profesores"></div>
+      </section>
 
-    <section class="tarjeta">
-      <h2>3. Fallos, uno a uno</h2>
-      <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno. Hay que entrar con tu cuenta de Google de profesor. Cada carga gasta una lectura por fallo: elige desde qué día.</p>
-      <div class="botonera">
-        <label for="fallos-desde">Desde el día</label>
-        <input type="date" id="fallos-desde">
-        <button type="button" id="fallos-cargar">Cargar fallos</button>
-      </div>
-      <p class="pequeno" id="fallos-estado"></p>
-      <div class="selector">
-        <label for="fallos-tarea">Tarea:</label>
-        <select id="fallos-tarea"></select>
-        <label for="fallos-practica">Práctica:</label>
-        <select id="fallos-practica"></select>
-        <label for="fallos-alumno">Alumno:</label>
-        <select id="fallos-alumno"></select>
-        <button type="button" class="secundario" id="fallos-csv">Descargar los fallos (CSV)</button>
-      </div>
-      <div class="tabla" id="tabla-fallos"></div>
-    </section>
+      <section class="tarjeta">
+        <h2>1. Mis alumnos</h2>
+        <div class="aviso">Los nombres solo suben a la nube <strong>cifrados con tu contraseña</strong>: nadie más puede leerlos, ni siquiera el administrador. En este ordenador se guardan sin cifrar, como siempre.</div>
+        <p class="pequeno">Un alumno por línea, en orden. El número de lista es la línea: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. «Generar códigos» da un código secreto de 8 caracteres, al azar, a cada línea que aún no tiene. Los códigos se guardan en la nube con su número de lista, así que en otro ordenador los recuperas sin hacer nada.</p>
+        <div id="caja-descifrar" class="aviso" hidden>
+          <p id="texto-descifrar"></p>
+          <div class="contrasenas">
+            <input type="password" id="contrasena-descifrar" autocomplete="current-password" placeholder="Contraseña de la lista">
+            <button type="button" id="descifrar">Descifrar</button>
+          </div>
+          <p class="pequeno" id="estado-descifrar"></p>
+        </div>
+        <textarea id="lista-espacio" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
+        <div class="botonera">
+          <button type="button" id="generar-codigos" disabled>Generar códigos</button>
+        </div>
+        <p class="pequeno" id="estado-codigos"></p>
+        <h3>Guardar la lista en la nube, cifrada</h3>
+        <p class="pequeno">Para abrir la lista en otro ordenador. La contraseña tiene que tener al menos 10 caracteres y ser distinta de la de Google. <strong>Nadie puede recuperarla</strong>: si la olvidas, vuelve a pegar la lista y ponle otra (los códigos no se pierden: van por número de línea).</p>
+        <div class="contrasenas">
+          <input type="password" id="contrasena" autocomplete="new-password" placeholder="Contraseña (10 caracteres o más)">
+          <input type="password" id="contrasena2" autocomplete="new-password" placeholder="Repítela">
+          <button type="button" id="guardar-nombres">Guardar la lista cifrada</button>
+        </div>
+        <p class="pequeno" id="estado-nombres"></p>
+        <div class="selector">
+          <label for="destino-espacio">Enlaces a:</label>
+          <select id="destino-espacio"></select>
+        </div>
+        <div class="selector">
+          <label for="idioma-espacio">Idioma de los enlaces:</label>
+          <select id="idioma-espacio">
+            <option value="alterno">Alterno (por defecto)</option>
+            <option value="es">Español</option>
+            <option value="en">Inglés</option>
+          </select>
+        </div>
+        <div class="botonera">
+          <button type="button" class="secundario" id="csv-espacio">Descargar CSV (número, nombre, código, enlace)</button>
+          <button type="button" class="secundario" id="tarjetas-espacio">Imprimir tarjetas para recortar</button>
+        </div>
+        <div class="tabla" id="tabla-espacio"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Hoy</h2>
+        <div id="panel-hoy"><p class="pequeno">En preparación: quién no ha entrado, qué ejercicios fallan demasiado y las entregas del día.</p></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Tareas</h2>
+        <p class="pequeno">Tus tareas y sus fechas, en tu espacio. El <strong>enlace común</strong> de cada una es el que se pega en Classroom: cada alumno escribe su código la primera vez. Para dar el enlace de cada alumno, elige la tarea en «Enlaces a», arriba.</p>
+        <div class="tabla" id="tabla-tareas-espacio"></div>
+        <div id="editor-tareas"><p class="pequeno">En preparación: el editor para crear tus tareas y sus fechas (o cargar la plantilla del curso).</p></div>
+      </section>
+    </div>
+
+    <!-- ===== Las vistas de los resultados: las mismas en los dos sistemas ===== -->
+    <div id="vistas">
+      <section class="tarjeta">
+        <h2>2. Resultados</h2>
+        <h3>Códigos de resultado</h3>
+        <p class="pequeno"><strong>Lo normal es «Cargar de la nube» (abajo).</strong> Esto es solo el respaldo para cuando la nube no llega (una red de aula que bloquee Google, por ejemplo): los alumnos tienen su código en un desplegable y solo lo dan si se lo pides. Pega aquí lo que te den, tal cual (correos enteros, la lista de Classroom…), mezclados: se buscan solos los códigos de las tareas de la semana (20 caracteres)<span data-solo="antiguo"> y los antiguos de 12 de «Divisor, múltiplo, divisible»</span>. Cada código dice de quién es y de qué tarea.<span data-solo="antiguo"> Los de 16 caracteres (el código por práctica, que ya no existe) se avisan como no válidos.</span></p>
+        <textarea id="pegados" placeholder="ABCD-EFGH-JKLM-NPQR" spellcheck="false"></textarea>
+        <h3>Datos guardados en la nube</h3>
+        <p class="pequeno">Con más detalle (aciertos, lo que le queda a quien va a medias) y sin que el alumno tenga que enviar nada. <span data-solo="antiguo">Hay que entrar con tu cuenta de Google de profesor.</span><span data-solo="nuevo">Lo leído se guarda en este navegador y cada carga pide a la nube solo lo nuevo; «Volver a leer todo» empieza de cero.</span></p>
+        <div class="botonera">
+          <button type="button" id="nube">Cargar de la nube</button>
+          <button type="button" class="secundario" id="releer-todo" data-solo="nuevo">Volver a leer todo</button>
+        </div>
+        <p class="pequeno" id="estado-nube"></p>
+        <div id="avisos"></div>
+
+        <div class="selector">
+          <label for="vista">Ver:</label>
+          <select id="vista"></select>
+          <button type="button" class="secundario" id="csv-resultados">Descargar esta tabla (CSV)</button>
+        </div>
+        <div class="tabla" id="tabla-resultados"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>Asignar tareas</h2>
+        <p class="pequeno">Una tarea <strong>asignada</strong> (<span data-solo="antiguo">campo <code>asignada: true</code> en <code>practicas/_comun/tareas.js</code></span><span data-solo="nuevo">«solo para algunos alumnos», en «Tareas»</span>) es obligatoria solo para los alumnos que marques aquí; para los demás es una tarea de repaso más, sin ninguna marca. Primero pulsa «Cargar de la nube» (arriba, en «2. Resultados»), para ver lo que ya hay guardado; después marca y pulsa «Guardar asignaciones». Se guarda en la nube, no en el repositorio.<span data-solo="antiguo"> Hay que entrar con tu cuenta de Google de profesor.</span></p>
+        <div class="botonera">
+          <button type="button" id="asignar-guardar" disabled>Guardar asignaciones</button>
+        </div>
+        <p class="pequeno" id="asignar-estado"></p>
+        <div class="tabla" id="tabla-asignar"></div>
+      </section>
+
+      <section class="tarjeta">
+        <h2>3. Fallos, uno a uno</h2>
+        <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno.<span data-solo="antiguo"> Hay que entrar con tu cuenta de Google de profesor.</span> Cada carga gasta una lectura por fallo: elige desde qué día.<span data-solo="nuevo"> Los ya leídos se guardan en este navegador y no se vuelven a pedir.</span></p>
+        <div class="botonera">
+          <label for="fallos-desde">Desde el día</label>
+          <input type="date" id="fallos-desde">
+          <button type="button" id="fallos-cargar">Cargar fallos</button>
+        </div>
+        <p class="pequeno" id="fallos-estado"></p>
+        <div class="selector">
+          <label for="fallos-tarea">Tarea:</label>
+          <select id="fallos-tarea"></select>
+          <label for="fallos-practica">Práctica:</label>
+          <select id="fallos-practica"></select>
+          <label for="fallos-alumno">Alumno:</label>
+          <select id="fallos-alumno"></select>
+          <button type="button" class="secundario" id="fallos-csv">Descargar los fallos (CSV)</button>
+        </div>
+        <div class="tabla" id="tabla-fallos"></div>
+      </section>
+    </div>
+
+    <!-- Solo al imprimir las tarjetas. -->
+    <div id="tarjetas"></div>
   </main>
 </body>
 </html>
