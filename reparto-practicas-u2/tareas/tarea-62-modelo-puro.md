@@ -92,6 +92,9 @@ Las piezas puras del sistema nuevo, con sus tests y **sin que nadie las use toda
 - `leerCodigoTarea` importa `tareaPorId` de `tareas.js`: al parametrizar, no crees una dependencia circular.
 - La página de la tarea y el panel llaman a estas funciones sin la lista nueva: el valor por defecto tiene que dar exactamente lo de hoy.
 - `crypto.getRandomValues` existe en Node ≥ 19 como global; en los tests, inyéctalo.
+- (Aprendido en la 62) `erroresTareas` exigía `progresoPorPractica` en la tarea 1: en el espacio de un compañero la tarea 1 es una más. Se resolvió con `{ tareaUnoAntigua: false }`; no lo olvides si añades comprobaciones.
+- (Aprendido en la 62) `unidadActual` usa el orden de la lista, no el de las fechas: unas fechas de profesor no crecientes con el número de unidad dan una unidad actual rara. `erroresConfig` no lo comprueba; el editor (N7) debería.
+- (Aprendido en la 62) Edita los ficheros del código con Edit/Write, no con heredocs ni python: el candado de sesiones no lo ve.
 
 ## Prohibido (propio de esta tarea)
 
