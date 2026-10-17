@@ -139,5 +139,192 @@ service cloud.firestore {
       allow read: if esProfesor() || (autenticado() && resource.data.grupo == grupoDelAlumno());
       allow write: if esProfesor();
     }
+
+    // ===== Varios profesores (diseño de la tarea 57 de PU2, reglas de la 61) =====
+    //
+    // Cada profesor, dado de alta por el administrador, tiene un espacio
+    // practicas-espacios/{uid} con sus alumnos, tareas, fechas y resultados.
+    // Sus alumnos entran con un código secreto de 8 caracteres, al azar, que
+    // apunta a su profesor en practicas-alumnos/{código}. El administrador
+    // (esAdmin) da altas y bajas, pero no aparece en ningún bloque del espacio:
+    // no lee los alumnos de los demás. Los bloques de arriba (modo antiguo,
+    // códigos de 4) no cambian hasta la migración de Juan Luis.
+    //
+    // Ninguna subcolección del espacio se llama «progreso»: el comodín
+    // {ruta=**}/progreso de arriba (aplicación antigua) dejaría leerla al
+    // administrador. Por eso el progreso libre va en «progreso-libre».
+    //
+    // get() de un documento que no existe hace fallar la expresión, y la regla
+    // deniega: es lo que se quiere en activo() y en alumnoDe().
+
+    function esAdmin() {
+      return esProfesor();   // el uid de Juan Luis, el mismo de siempre
+    }
+    function activo(uid) {
+      return get(/databases/$(db)/documents/practicas-profesores/$(uid)).data.activo == true;
+    }
+    function profesorActivo() {
+      return autenticado() && activo(request.auth.uid);
+    }
+    function esDueno(uid) {
+      return autenticado() && request.auth.uid == uid && activo(uid);
+    }
+    // Cuenta de solo lectura que el dueño puso en su espacio (el informe
+    // diario). Con el dueño de baja, sus lectores tampoco leen.
+    function esLector(uid) {
+      return autenticado()
+        && request.auth.uid in get(/databases/$(db)/documents/practicas-espacios/$(uid)).data.lectores
+        && activo(uid);
+    }
+    function codigoSecreto(c) {
+      return c is string && c.matches('^[A-HJ-NP-Z2-9]{8}$');
+    }
+    // El código es de un alumno de ese profesor (una lectura más por escritura).
+    function alumnoDe(uid, c) {
+      return codigoSecreto(c)
+        && get(/databases/$(db)/documents/practicas-alumnos/$(c)).data.profesor == uid;
+    }
+    function estadoValido() {
+      return request.resource.data.keys().hasOnly(['estado', 'actualizado'])
+        && request.resource.data.estado is string
+        && request.resource.data.estado.size() < 4000
+        && request.resource.data.actualizado is int;
+    }
+
+    // Solicitud de alta: la deja quien entra en el panel sin estar dado de
+    // alta; la ve y la borra el administrador.
+    match /practicas-solicitudes/{uid} {
+      allow get: if autenticado() && request.auth.uid == uid;
+      allow read, delete: if esAdmin();
+      allow create, update: if autenticado() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'nombre', 'pedido'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.nombre is string && request.resource.data.nombre.size() <= 100
+        && request.resource.data.pedido is int;
+    }
+
+    // Profesores dados de alta (activo: true) o de baja (activo: false). Solo
+    // los escribe el administrador; no se borran.
+    match /practicas-profesores/{uid} {
+      allow get: if autenticado() && request.auth.uid == uid;
+      allow read: if esAdmin();
+      allow create, update: if esAdmin()
+        && request.resource.data.keys().hasOnly(['activo', 'alta'])
+        && request.resource.data.activo is bool
+        && request.resource.data.alta is int;
+    }
+
+    // Búsqueda de códigos: a qué profesor pertenece cada código y con qué
+    // número de lista. get, cualquiera con el código; listar, cada profesor
+    // solo lo suyo (consulta con profesor == su uid). Crear sobre un código que
+    // ya existe es una modificación: nadie se queda el código de otro.
+    match /practicas-alumnos/{codigo} {
+      allow get: if codigoSecreto(codigo);
+      allow list: if profesorActivo() && resource.data.profesor == request.auth.uid;
+      allow create: if profesorActivo() && codigoSecreto(codigo)
+        && request.resource.data.keys().hasOnly(['profesor', 'n', 'alta'])
+        && request.resource.data.profesor == request.auth.uid
+        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 250
+        && request.resource.data.alta is int;
+      allow update: if profesorActivo() && resource.data.profesor == request.auth.uid
+        && request.resource.data.keys().hasOnly(['profesor', 'n', 'alta'])
+        && request.resource.data.profesor == request.auth.uid
+        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 250
+        && request.resource.data.alta is int;
+      allow delete: if profesorActivo() && resource.data.profesor == request.auth.uid;
+    }
+
+    match /practicas-espacios/{uid} {
+      allow get, delete: if esDueno(uid);
+      allow create, update: if esDueno(uid)
+        && request.resource.data.keys().hasOnly(['lectores', 'actualizado'])
+        && request.resource.data.lectores is list
+        && request.resource.data.lectores.size() <= 5
+        && request.resource.data.actualizado is int;
+
+      // Sus tareas y fechas (JSON): sin datos de alumnos, se leen sin cuenta.
+      match /config/{doc} {
+        allow get: if doc == 'tareas';
+        allow read, delete: if esDueno(uid);
+        allow create, update: if esDueno(uid) && doc == 'tareas'
+          && request.resource.data.keys().hasOnly(['json', 'actualizado'])
+          && request.resource.data.json is string
+          && request.resource.data.json.size() < 200000
+          && request.resource.data.actualizado is int;
+      }
+
+      // La lista de nombres, cifrada en el navegador del profesor: solo él
+      // (ni sus lectores ni el administrador). sal e iv, en base64.
+      match /privado/{doc} {
+        allow read, delete: if esDueno(uid);
+        allow create, update: if esDueno(uid) && doc == 'nombres'
+          && request.resource.data.keys().hasOnly(['v', 'sal', 'iv', 'cifrado', 'actualizado'])
+          && request.resource.data.v is int
+          && request.resource.data.sal is string && request.resource.data.sal.size() <= 200
+          && request.resource.data.iv is string && request.resource.data.iv.size() <= 200
+          && request.resource.data.cifrado is string
+          && request.resource.data.cifrado.size() < 100000
+          && request.resource.data.actualizado is int;
+      }
+
+      // Progreso de práctica libre, «<práctica>--<código>»: como practicas/,
+      // con el código de 8, y solo si el código es de este profesor.
+      match /progreso-libre/{doc} {
+        allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$');
+        allow read: if esDueno(uid) || esLector(uid);
+        allow delete: if esDueno(uid);
+        allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$')
+          && alumnoDe(uid, doc.split('--')[1])
+          && estadoValido();
+      }
+
+      // Progreso por tarea, «t<tarea>--<práctica>--<código>»: como practicas-tareas/.
+      match /progreso-tareas/{doc} {
+        allow get: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$');
+        allow read: if esDueno(uid) || esLector(uid);
+        allow delete: if esDueno(uid);
+        allow create, update: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$')
+          && alumnoDe(uid, doc.split('--')[2])
+          && estadoValido();
+      }
+
+      // Tareas asignadas a algunos alumnos: como practicas-asignaciones/.
+      match /asignaciones/{codigo} {
+        allow get: if codigoSecreto(codigo);
+        allow read: if esDueno(uid) || esLector(uid);
+        allow delete: if esDueno(uid);
+        allow create, update: if esDueno(uid) && alumnoDe(uid, codigo)
+          && request.resource.data.keys().hasOnly(['tareas', 'actualizado'])
+          && request.resource.data.tareas is list
+          && request.resource.data.tareas.size() <= 1023
+          && request.resource.data.actualizado is int;
+      }
+
+      // Registro de fallos: los mismos campos y topes que fallos/ de arriba,
+      // con el código de 8 y solo si el alumno es de este profesor. El alumno
+      // solo crea; leen el dueño y sus lectores.
+      match /fallos/{id} {
+        allow read: if esDueno(uid) || esLector(uid);
+        allow delete: if esDueno(uid);
+        allow create: if id.matches('^[A-HJ-NP-Z2-9]{8}-[a-z0-9]{6,12}-[a-z0-9]{4}$')
+          && request.resource.data.keys().hasAll(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion'])
+          && request.resource.data.keys().hasOnly(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion', 'respuesta', 'error', 'tarea'])
+          && request.resource.data.v is int
+          && request.resource.data.alumno is string && request.resource.data.alumno.matches('^[A-HJ-NP-Z2-9]{8}$')
+          && id.matches('^' + request.resource.data.alumno + '-.*')
+          && alumnoDe(uid, request.resource.data.alumno)
+          && request.resource.data.practica is string && request.resource.data.practica.matches('^[a-z0-9-]{1,30}$')
+          && request.resource.data.ejercicio is int && request.resource.data.ejercicio >= 1 && request.resource.data.ejercicio <= 20
+          && request.resource.data.t is int
+          && request.resource.data.dia is int
+          && request.resource.data.idioma in ['es', 'en']
+          && request.resource.data.item is string && request.resource.data.item.size() <= 1200
+          && request.resource.data.feedback is string && request.resource.data.feedback.size() <= 1500
+          && request.resource.data.repeticion is bool
+          && (!('respuesta' in request.resource.data) || (request.resource.data.respuesta is string && request.resource.data.respuesta.size() <= 240))
+          && (!('error' in request.resource.data) || (request.resource.data.error is string && request.resource.data.error.matches('^[a-z0-9][a-z0-9-]{0,39}$')))
+          && (!('tarea' in request.resource.data) || (request.resource.data.tarea is int && request.resource.data.tarea >= 1 && request.resource.data.tarea <= 1023));
+      }
+    }
   }
 }
