@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-17
 Precondición: 61 LISTA (reglas publicadas), 62 LISTA y 60 LISTA (las tres tocan o dependen de `base.js`) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h (tiempo de sesión, no de persona; real: ~25 min) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/64-base-en-el-espacio/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/base.js`, `practicas/_comun/registro.js`, `practicas/_comun/textos.js`, `tests/practicas-comun.test.js`, `tests/practicas-registro.test.js`
 
@@ -90,6 +90,9 @@ Que una práctica abierta con un código de 8 caracteres guarde y lea su progres
 - La 51 metió el ámbito de tarea en `base.js` (`claveProgresoTarea`, documento de `practicas-tareas`): sigue sus pasos, no los dupliques.
 - La 60 cambió `cabeceraEjercicio` y `pintarContador` para el idioma del ítem: no lo deshagas.
 - El código de 8 cabe en la clave de `localStorage` (`practicas.v1.<slug>.<código>`): no hay que migrar nada en el navegador.
+- (s-20261017T164354-d4766809) La subcolección del progreso libre es `progreso-libre`, no `progreso` (lo de arriba en «Cómo saber…» es del borrador; nota de la 61).
+- (ídem) El ámbito de tarea ya no se puede fijar al arrancar con un código de 8: depende de las tareas del profesor, que solo se saben tras `resolverCodigo`. `fijarAmbito(tareas)` se llama al arrancar (con `TAREAS`) y otra vez en `entrar`.
+- (ídem) Sin las cuentas de prueba de la 61 (variables `PROFE_A_*`, que solo tiene Juan Luis) no se puede probar contra la nube real: se probó con una página de prueba que sustituye `fetch` por un Firestore falso en memoria antes de cargar `practica.js` (un `<script>` clásico va antes que el módulo) y anota cada petición. En zsh, `F="a b"; git add $F` no parte la variable: rutas escritas una a una.
 
 ## Prohibido (propio de esta tarea)
 
