@@ -14,14 +14,14 @@
 // mismas en los dos: leen de `fuente`, la del sistema elegido.
 
 import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun/catalogo.js';
-import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, leerCodigoTarea, extraerCodigosResultado, MAX_ALUMNOS, codigoSecreto, mostrarCodigoSecreto } from './_comun/codigos.js';
+import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS, codigoSecreto, mostrarCodigoSecreto } from './_comun/codigos.js';
 import { fechaDeDia, diaDe } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
 import { TAREAS, tareaPorId, fechaISO, configDeJSON } from './_comun/tareas.js';
 import {
   juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones,
   calcularRetrasos, asignacionesParaGuardar, tareaPublicada, cumplidasDe,
-  indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer,
+  indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer, leerCodigoTareaEspacio,
 } from './resultados.js';
 import { DESTREZAS, leerFallos } from './_comun/registro.js';
 import { declaracionDe } from './_comun/base.js';
@@ -86,10 +86,7 @@ const espacio = {
   indiceDe: codigo => espacio.indices.indiceDe(codigo),
   tareas: () => espacio.config.tareas,
   // Solo códigos de tarea (20), con las tareas de este profesor; los de 12 son de `divisores/`.
-  leerCodigo: texto => {
-    const dato = leerCodigoTarea(texto, espacio.config.tareas);
-    return dato ? { tipo: 'tarea', ...dato } : null;
-  },
+  leerCodigo: texto => leerCodigoTareaEspacio(texto, espacio.config.tareas),
 };
 
 let fuente = antigua;

@@ -2,7 +2,7 @@
 // los códigos de resultado y los datos de la nube. Puro, para poder probarlo.
 
 import { practicaPorSlug } from './_comun/catalogo.js';
-import { leerCodigoAlumno } from './_comun/codigos.js';
+import { leerCodigoAlumno, leerCodigoTarea } from './_comun/codigos.js';
 import { estadoTarea, estadoPlazo, diaDeFecha } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
 
@@ -476,6 +476,18 @@ export function filasMisAlumnos(nombres, codigos) {
   const ns = new Set(nombres.map((nombre, i) => (nombre ? i + 1 : null)).filter(Boolean));
   for (const c of codigos ?? []) if (Number.isInteger(c?.n) && c.n >= 1) ns.add(c.n);
   return [...ns].sort((a, b) => a - b).map(n => ({ n, nombre: nombres[n - 1] ?? '', codigo: codigoDe(n - 1) }));
+}
+
+/**
+ * Un código de resultado de tarea (20 caracteres) de un alumno con código de 8, leído
+ * con las tareas del profesor: `{ tipo: 'tarea', …, indice }` o `null`. La página de la
+ * tarea (tarea 65) escribe dentro el número de lista `n` (desde 1), no la posición:
+ * aquí se pasa a `indice = n − 1`, como todo lo demás del espacio. Un 0 no es de nadie.
+ */
+export function leerCodigoTareaEspacio(texto, tareas) {
+  const dato = leerCodigoTarea(texto, tareas);
+  if (!dato || !(dato.indice >= 1)) return null;
+  return { tipo: 'tarea', ...dato, indice: dato.indice - 1 };
 }
 
 /** Números de lista (desde 1) de las líneas con nombre que aún no tienen código, hasta `maximo`. */

@@ -12,7 +12,9 @@ import {
   juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
   filtrarFallos, agruparFallos, juntarFallos, tareaPublicada, cumplidasDe,
   indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer, MARGEN_LECTURA,
+  leerCodigoTareaEspacio,
 } from '../practicas/resultados.js';
+import { codigoTarea } from '../practicas/_comun/codigos.js';
 
 test('«Obligatorias» y «Repaso»: solo las publicadas; las asignadas, si está marcado; el repaso sin total', () => {
   const hoy = diaDeFecha('2026-10-17');
@@ -239,6 +241,16 @@ test('repartirCodigos: uno por número, sin repetir los ya usados ni entre ellos
   const salen = ['K7QMP3XA', 'K7QMP3XA', 'NUEVO222', 'NUEVO222', 'NUEVO333'];
   const r = repartirCodigos([2, 4], ['K7QMP3XA'], () => salen.shift());
   assert.deepEqual(r, [{ codigo: 'NUEVO222', n: 2 }, { codigo: 'NUEVO333', n: 4 }]);
+});
+
+test('código de resultado de un alumno de 8: lleva n (desde 1, como lo escribe semana.js) y el panel lo pone en n − 1', () => {
+  // Las tareas de un profesor, con un id que no está en tareas.js.
+  const mias = [{ id: 40, titulo: { es: 'x', en: 'x' }, estrella: [['semaforo', 1], ['criba', 1]], elegir: [['recta', 1]], nElegir: 1 }];
+  const texto = codigoTarea(40, 3, { estrella: [true, false], elegir: [true], fallos: 2, dia: 50 });
+  const dato = leerCodigoTareaEspacio(texto, mias);
+  assert.deepEqual([dato.tipo, dato.tarea, dato.indice, dato.estrella, dato.elegir], ['tarea', 40, 2, [true, false], [true]]);
+  assert.equal(leerCodigoTareaEspacio(texto, TAREAS), null, 'con las tareas de otro, no vale');
+  assert.equal(leerCodigoTareaEspacio(codigoTarea(40, 0, {}), mias), null, 'el n.º 0 no es de nadie');
 });
 
 test('caché del panel: lo leído gana por id; desde cuándo pedir lo nuevo', () => {
