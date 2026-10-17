@@ -95,6 +95,10 @@ Primer paso de la construcción (DISENO.md, C.2 y C.3; lista H.2, N1): las regla
 - `list` en `practicas-alumnos` solo funciona con una consulta que filtre `profesor == uid` (las reglas no son filtros): el script lo prueba con `runQuery` y con un `list` sin filtro (403).
 - Juan Luis puede tardar en publicar: alarga la caducidad antes de esperar.
 - Duración de referencia: la 49 tardó ~15 min de trabajo más la espera de la publicación.
+- (Aprendido en la 61) **Los comodines recursivos de hoy alcanzan las rutas nuevas**: `match /{ruta=**}/progreso/{tareaId}` (app antigua) deja leer al administrador cualquier subcolección llamada `progreso`, esté donde esté. Antes de nombrar una subcolección nueva, busca `=**}` en las reglas. Por eso el progreso libre del espacio es `progreso-libre`. El banco lo vigila (fila «ningún comodín ** alcanza el espacio»).
+- (Aprendido en la 61) En la consola, el campo `alta` de `practicas-profesores` es **int64**, no double (la regla pide `is int`). Juan Luis lo preguntó al crearlo.
+- (Aprendido en la 61) `esDueno(uid) || esLector(uid)` funciona aunque el documento del espacio no exista todavía (el error de `esLector` se absorbe si `esDueno` es verdadero): comprobado con «A lista su progreso libre sin espacio creado» → 200.
+- (Aprendido en la 61) Pedirle a Juan Luis las tres cosas a la vez (cuentas, altas, publicar) y en el mensaje primero: hizo publicar y cuentas, y las altas en `practicas-profesores` se quedaron para una segunda vuelta. Con todo, ~35 min de reloj.
 
 ## Prohibido (propio de esta tarea)
 
