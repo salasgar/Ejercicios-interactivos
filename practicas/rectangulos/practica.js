@@ -95,6 +95,7 @@ function montarRectangulos(contenedor, item, api) {
     if (api.respondido()) return;
     control.bloquear();
     botonTodas.disabled = true;
+    botonTodas.hidden = true;
     const correctas = todasLasClaves(n);
     const faltan = correctas.filter(c => !encontrados.includes(c));
     const acierto = faltan.length === 0;
@@ -140,8 +141,9 @@ function montarBanco(contenedor, item, api) {
     return { x, boton };
   });
 
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
+  contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
+    ev.currentTarget.hidden = true;
     botones.forEach(({ x, boton }) => {
       boton.disabled = true;
       const c = claseCorreccion(elegidos.has(x), n % x === 0);

@@ -97,8 +97,9 @@ function montarRepetida(contenedor, item, api) {
   }
   pintar();
 
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
+  contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
+    ev.currentTarget.hidden = true;
     const valores = usados.map(id => item.fichas.find(f => f.id === id).valor);
     const acierto = aciertaRepetida(item, valores);
     contenedor.querySelectorAll('.ficha').forEach(b => { b.disabled = true; });
@@ -126,8 +127,9 @@ function montarPotencia(contenedor, item, api) {
   const basePaso = pasos(contenedor.querySelector('#pasos'), { valor: 2, min: 2, max: 9, nombre: tt(TX.potencia.base), alCambiar: pintarVista });
   const expPaso = pasos(contenedor.querySelector('#pasos'), { valor: 2, min: 2, max: 4, nombre: tt(TX.potencia.exponente), alCambiar: pintarVista });
   pintarVista();
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
+  contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
+    ev.currentTarget.hidden = true;
     const b = basePaso.valor(), e = expPaso.valor();
     basePaso.bloquear();
     expPaso.bloquear();

@@ -58,6 +58,7 @@ function montarSemaforo(contenedor, item, api) {
   caja.append(botonNinguno);
   comprobar.addEventListener('click', () => {
     if (api.respondido() || comprobar.disabled) return;
+    comprobar.hidden = true;
     const respuesta = [...encendidos];
     const acierto = esCorrecta(item, respuesta);
     const pinta = (b, correcto, pulsado) => {

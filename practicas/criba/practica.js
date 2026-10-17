@@ -127,8 +127,9 @@ function montarTachar(contenedor, item, api) {
     document.addEventListener('pointercancel', soltar);
   });
 
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
+  contenedor.querySelector('#comprobar').addEventListener('click', ev => {
     if (api.respondido()) return;
+    ev.currentTarget.hidden = true;
     const acierto = aciertaTachar(item, [...seleccionadas]);
     rejilla.querySelectorAll('button').forEach(b => { b.disabled = true; });
     for (const n of objetivo) {
