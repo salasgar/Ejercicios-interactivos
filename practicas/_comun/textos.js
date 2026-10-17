@@ -97,6 +97,9 @@ export const T = {
     semana_no_existe: 'Esa tarea no existe.',
     semana_elige_tarea: 'Estas son las tareas de la semana:',
     semana_cargando_nombre: '…',
+    // Código de 8 (tareas de su profesor; tarea 65)
+    espacio_sin_red: 'No se han podido cargar las tareas de tu profesor. Comprueba la conexión y vuelve a intentarlo; mientras tanto puedes practicar.',
+    espacio_sin_tareas: 'Tu profesor todavía no ha publicado tareas.',
     // Tareas v2: tipo, plazo y retraso, y unidades (DISENO.md, A y B; tarea 51, las usa la 52)
     tarea_repaso: 'Repaso',
     tarea_obligatoria: 'Obligatoria',
@@ -206,6 +209,9 @@ export const T = {
     semana_no_existe: 'That task does not exist.',
     semana_elige_tarea: 'These are the weekly tasks:',
     semana_cargando_nombre: '…',
+    // 8-character code (your teacher’s tasks; task 65)
+    espacio_sin_red: 'Your teacher’s tasks could not be loaded. Check your connection and try again; meanwhile you can practise.',
+    espacio_sin_tareas: 'Your teacher has not published any tasks yet.',
     // Tareas v2: tipo, plazo y retraso, y unidades (DISENO.md, A y B; tarea 51, las usa la 52)
     tarea_repaso: 'Review',
     tarea_obligatoria: 'Required',

@@ -11,13 +11,13 @@
 // En cada unidad, las tareas que ya han llegado a su día (`desde` en
 // `_comun/tareas.js`) con su plazo y lo que lleva el alumno en cada una.
 
-import { CATALOGO, ID_PLANTILLA } from './_comun/catalogo.js';
-import { leerCodigoAlumno, codigoAlumno } from './_comun/codigos.js';
-import { leer, escribir, cerrarSesion, progresoGuardado } from './_comun/base.js';
+import { CATALOGO, ID_PLANTILLA, UNIDADES } from './_comun/catalogo.js';
+import { leerCodigoAlumno, leerCodigoSecreto, modoDeCodigo } from './_comun/codigos.js';
+import { leer, escribir, borrar, cerrarSesion, progresoGuardado } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { TAREAS, estadoTarea, fechaISO } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
-import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad } from './vista-tareas.js';
+import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad, contextoAntiguo, contextoGuardado, identificar } from './vista-tareas.js';
 
 // El orden de la portada no es el del catálogo (que no se puede renumerar):
 // es el de la unidad. Cada bloque es de una unidad (`unidad`); las unidades sin
@@ -112,10 +112,26 @@ const enNavegador = typeof document !== 'undefined';
 const app = enNavegador ? document.querySelector('#app') : null;
 let idioma = leer('practicas.idioma') === 'en' ? 'en' : 'es';
 
-const indice = enNavegador
-  ? leerCodigoAlumno(new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '') : null;
-let codigo = indice === null ? null : codigoAlumno(indice);
+// El código puede ser de 4 (modo antiguo: las tareas son las de `tareas.js`) o de 8 (las tareas y las
+// fechas son las de su profesor, de su espacio en la nube; mientras llegan, la copia del navegador).
+const textoCodigo = enNavegador ? new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '' : '';
+let contexto = modoDeCodigo(textoCodigo) === 'antiguo' ? contextoAntiguo(leerCodigoAlumno(textoCodigo))
+  : contextoGuardado(textoCodigo);
+let codigo = contexto?.codigo ?? leerCodigoSecreto(textoCodigo);
+let tareas = contexto?.tareas ?? TAREAS;
+let unidades = contexto?.unidades ?? UNIDADES;
+let profesor = contexto?.profesor ?? null;
+let avisoEspacio = null;       // 'no-existe' | 'sin-red' | 'sin-tareas' | null: lo que se dice sobre el espacio del profesor
 if (codigo) escribir('practicas.codigo', codigo);
+
+/** Pone las tareas, las fechas y el espacio de un alumno (`null`: sin código, lo de siempre). */
+function ponerContexto(c) {
+  contexto = c;
+  tareas = c?.tareas ?? TAREAS;
+  unidades = c?.unidades ?? UNIDADES;
+  profesor = c?.profesor ?? null;
+  avisoEspacio = null;
+}
 
 /** Ejercicios terminados de una práctica, según lo guardado en este navegador. */
 function hechos(practica) {
@@ -187,15 +203,17 @@ function pintar() {
   };
   // La unidad actual, arriba y abierta; las anteriores, plegadas (y se recuerda cuáles abrió el alumno).
   const abiertas = unidadesAbiertas();
-  const secciones = seccionesPorUnidad(fechaISO(new Date()), { tareas: TAREAS }).map(s => {
+  const secciones = seccionesPorUnidad(fechaISO(new Date()), { tareas, unidades }).map(s => {
     const titulo = t.unidad_titulo(s.unidad.n, s.unidad.titulo[idioma]);
     return s.actual
       ? `<section class="portada__unidad"><h2 class="portada__titulo-unidad">${titulo}</h2>${htmlUnidad(t, s, fila)}</section>`
       : `<details class="portada__unidad" data-unidad="${s.unidad.n}"${abiertas[s.unidad.n] ? ' open' : ''}>
           <summary class="portada__titulo-unidad">${titulo}</summary>${htmlUnidad(t, s, fila)}</details>`;
   }).join('');
+  const frase = { 'no-existe': t.entrada_no_existe, 'sin-red': t.espacio_sin_red, 'sin-tareas': t.espacio_sin_tareas }[avisoEspacio];
   app.innerHTML = `
     <section>
+      ${frase ? `<div class="aviso ${avisoEspacio === 'sin-tareas' ? '' : 'aviso--error'}">${frase}</div>` : ''}
       <p>${t.portada_ayuda}${codigo ? ` <span class="portada__codigo">${t.portada_codigo(codigo)}</span>
         <button type="button" class="discreto" id="cerrar-sesion">${t.cambiar_codigo}</button>` : ''}</p>
       ${secciones || `<p class="vacio">${t.portada_vacia}</p>`}
@@ -207,6 +225,8 @@ function pintar() {
   app.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     cerrarSesion();
     codigo = null;
+    ponerContexto(null);
+    asignacion = null;
     pintar();
   });
 }
@@ -222,10 +242,39 @@ if (enNavegador) {
   // Al volver atrás desde una práctica, se actualiza lo hecho.
   addEventListener('pageshow', pintar);
   pintar();
-  // Con código y alguna tarea asignada, se mira la asignación en la nube (como mucho 4 s) y se repinta si cambia.
-  if (codigo && TAREAS.some(x => x.asignada)) {
-    const suyo = codigo;
-    cargarAsignacion(suyo).then(lista => {
+  arrancar();
+}
+
+/** Con un código de 8, de qué profesor es y cuáles son sus tareas (la copia del navegador ya está pintada). */
+async function arrancar() {
+  const suyo = codigo;
+  if (suyo && contexto?.modo !== 'antiguo') {
+    const c = await identificar(suyo);
+    if (suyo !== codigo) return;
+    if (c.error === 'no-existe') {
+      // Un código que la nube no conoce no se recuerda: se vuelve a la portada sin sesión.
+      borrar('practicas.codigo');
+      cerrarSesion();
+      codigo = null;
+      ponerContexto(null);
+      avisoEspacio = 'no-existe';
+      return pintar();
+    }
+    if (c.error) {
+      // Sin red y sin copia: las prácticas se pueden hacer; las tareas, no se saben.
+      ponerContexto(null);
+      tareas = [];
+      avisoEspacio = 'sin-red';
+      return pintar();
+    }
+    ponerContexto(c);
+    avisoEspacio = c.sinConfig ? 'sin-red' : tareas.length ? null : 'sin-tareas';
+    asignacion = asignacionGuardada(codigo);
+    pintar();
+  }
+  // Con alguna tarea asignada, se mira la asignación en la nube (como mucho 4 s) y se repinta si cambia.
+  if (codigo && tareas.some(x => x.asignada)) {
+    cargarAsignacion(suyo, { profesor }).then(lista => {
       if (suyo !== codigo || JSON.stringify(lista) === JSON.stringify(asignacion)) return;
       asignacion = lista;
       pintar();
