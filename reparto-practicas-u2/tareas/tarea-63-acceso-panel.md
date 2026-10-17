@@ -190,3 +190,7 @@ Si paras sin terminar: `$R/hechos/fallos/63--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+
+## Aprendido (tarea 63)
+- Sin credenciales de cuenta de prueba en el entorno (`PROFE_A_*`), una sesión MEDIO no puede probar contra el proyecto real: la 66 o la 69 deben hacerlo. `crearAccesoPanel` se puede probar con un Firestore simulado (guion en la ENTREGA).
+- `api.datos.panel` agrupa lo nuevo para no chocar con `datos.guardarAsignacion` (colección antigua).
