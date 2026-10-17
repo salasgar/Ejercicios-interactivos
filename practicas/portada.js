@@ -1,49 +1,54 @@
-// Portada de las prácticas de la unidad 2: la lista de las que están
-// publicadas (`disponible` en el catálogo), ordenadas por la semana de la
-// unidad en que tocan, con lo que lleva hecho el alumno en cada una según lo
-// guardado en este navegador.
+// Portada de las prácticas: una sección por unidad (la actual arriba y abierta;
+// las anteriores, plegadas), cada una con sus tareas y sus prácticas
+// publicadas (`disponible` en el catálogo). En la unidad 2 las prácticas van
+// ordenadas por la semana de la unidad en que tocan. Lleva lo que ha hecho el
+// alumno según lo guardado en este navegador.
 //
 // El enlace que reparte el profesor es `practicas/?c=ABCD`: la portada guarda
 // el código y todas las prácticas lo encuentran. «Cerrar sesión» lo olvida
 // (para un aparato compartido); lo hecho sigue guardado con el código.
 //
-// Arriba, las tareas de la semana que ya han llegado a su día (`desde` en
-// `_comun/tareas.js`), con lo que lleva el alumno en cada una.
+// En cada unidad, las tareas que ya han llegado a su día (`desde` en
+// `_comun/tareas.js`) con su plazo y lo que lleva el alumno en cada una.
 
 import { CATALOGO, ID_PLANTILLA } from './_comun/catalogo.js';
 import { leerCodigoAlumno, codigoAlumno } from './_comun/codigos.js';
 import { leer, escribir, cerrarSesion, progresoGuardado } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
-import { tareasPublicadas, estadoTarea, fechaISO } from './_comun/tareas.js';
+import { TAREAS, estadoTarea, fechaISO } from './_comun/tareas.js';
+import { diaDe } from './_comun/contador.js';
+import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad } from './vista-tareas.js';
 
 // El orden de la portada no es el del catálogo (que no se puede renumerar):
-// es el de la unidad. Una práctica del catálogo que no esté en ningún bloque
-// sale al final, en «Otras», para que no se pierda.
+// es el de la unidad. Cada bloque es de una unidad (`unidad`); las unidades sin
+// bloques (la 1) enseñan sus prácticas en una lista sin subtítulos. Una
+// práctica del catálogo que no esté en ningún bloque de su unidad sale al
+// final, en «Otras», para que no se pierda.
 export const BLOQUES = [
   {
+    unidad: 2,
     titulo: { es: 'Semana 1 · Múltiplos, divisores y criterios', en: 'Week 1 · Multiples, divisors and divisibility rules' },
     slugs: ['semaforo', 'rectangulos', 'recta'],
   },
   {
+    unidad: 2,
     titulo: { es: 'Semana 2 · Números primos y factorización', en: 'Week 2 · Prime numbers and factorisation' },
     slugs: ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
   },
   {
+    unidad: 2,
     titulo: { es: 'Semana 3 · m.c.d. y m.c.m. con factores primos', en: 'Week 3 · GCD and LCM with prime factors' },
     slugs: ['venn', 'imposibles'],
   },
   {
+    unidad: 2,
     titulo: { es: 'Semana 4 · Problemas y errores típicos', en: 'Week 4 · Word problems and common mistakes' },
     slugs: ['clasificador', 'reloj', 'baldosas', 'errores'],
   },
   {
+    unidad: 2,
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo', 'divisores'],
-  },
-  {
-    titulo: { es: 'Repaso de la unidad 1', en: 'Unit 1 review' },
-    slugs: ['jerarquia', 'parentesis', 'exponente', 'raiz', 'division', 'expresion', 'redondeo', 'constructor',
-      'distributiva', 'potencias10', 'dictado', 'mental', 'especiales', 'errores1', 'propiedades'],
   },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
@@ -84,14 +89,18 @@ export const DESCRIPCION = {
 };
 
 const PANEL = { es: 'Panel del profesor', en: 'Teacher’s panel' };
-// En el bloque de repaso sobra la coletilla que el catálogo pone a cada nombre.
-const SIN_COLETILLA = / \((repaso de la unidad 1|unit 1 review)\)$/;
 
-/** Las prácticas publicadas, agrupadas en los bloques de la portada (sin bloques vacíos). */
-export function bloquesPublicados(catalogo = CATALOGO) {
-  const publicadas = catalogo.filter(p => p.disponible && p.id !== ID_PLANTILLA);
-  const colocadas = new Set(BLOQUES.flatMap(b => b.slugs));
-  const bloques = BLOQUES.map(b => ({
+/**
+ * Las prácticas publicadas de una unidad, agrupadas en los bloques de la
+ * portada (sin bloques vacíos). Si la unidad no tiene bloques, un solo grupo
+ * sin título (`titulo: null`).
+ */
+export function bloquesPublicados(catalogo = CATALOGO, unidad = 2) {
+  const publicadas = catalogo.filter(p => p.disponible && p.id !== ID_PLANTILLA && p.unidad === unidad);
+  const propios = BLOQUES.filter(b => b.unidad === unidad);
+  if (!propios.length) return publicadas.length ? [{ titulo: null, practicas: publicadas }] : [];
+  const colocadas = new Set(propios.flatMap(b => b.slugs));
+  const bloques = propios.map(b => ({
     titulo: b.titulo,
     practicas: b.slugs.map(slug => publicadas.find(p => p.slug === slug)).filter(Boolean),
   }));
@@ -115,25 +124,41 @@ function hechos(practica) {
   return progresoGuardado(practica.slug, codigo).filter(e => e?.terminado).length;
 }
 
-/** Las tareas de la semana publicadas, con lo que lleva el alumno en cada una. */
-function htmlTareas(t) {
-  const tareas = tareasPublicadas(fechaISO(new Date()));
+// Ids de las tareas asignadas a este alumno (copia del navegador; la nube la pone al día en `arrancar`).
+let asignacion = codigo ? asignacionGuardada(codigo) : null;
+
+/** Las tareas de una unidad, con su plazo y lo que lleva el alumno en cada una. */
+function htmlTareas(t, tareas) {
   if (!tareas.length) return '';
+  const hoyDia = diaDe(new Date());
   const fila = tarea => {
-    const est = codigo ? estadoTarea(tarea, (slug, n) => progresoGuardado(slug, codigo)[n - 1] ?? null) : null;
+    const est = codigo ? estadoTarea(tarea, progresoDeTarea(tarea, codigo)) : null;
+    const plazo = est ? vistaPlazo(tarea, est, hoyDia, asignadaAMi(tarea, asignacion), t) : null;
     const etiqueta = !est?.empezada ? ''
       : est.cumplida ? `<span class="etiqueta etiqueta--ok">✓ ${t.semana_cumplida}</span>`
         : `<span class="etiqueta">${t.semana_marcador_puntos(est.puntos, est.maximo)}</span>`;
+    const tipo = plazo ? `<span class="etiqueta etiqueta--${plazo.tipo}">${plazo.etiqueta}</span>` : '';
+    const frase = plazo?.frase ? `<span class="portada__plazo portada__plazo--${plazo.estado}">${plazo.frase}</span>` : '';
     return `
       <li class="lista__item">
-        <div><h3>${esc(tarea.titulo[idioma])}</h3>${etiqueta}</div>
+        <div><h3>${esc(tarea.titulo[idioma])}</h3><div class="portada__estado">${tipo}${frase}</div>${etiqueta}</div>
         <a class="boton ${est?.cumplida ? 'secundario' : ''}" href="semana.html?t=${tarea.id}${codigo ? `&c=${codigo}` : ''}">${t.portada_abrir}</a>
       </li>`;
   };
   return `
-      <h2 class="portada__bloque">${t.portada_tareas}</h2>
-      <ul class="lista">${[...tareas].reverse().map(fila).join('')}</ul>
-      <h2 class="portada__bloque portada__bloque--todas">${t.portada_practicas}</h2>`;
+      <h3 class="portada__bloque">${t.unidad_tareas}</h3>
+      <ul class="lista">${[...tareas].reverse().map(fila).join('')}</ul>`;
+}
+
+/** Una sección de unidad: sus tareas y sus prácticas (con subtítulos si la unidad tiene bloques). */
+function htmlUnidad(t, seccion, filaPractica) {
+  const grupos = bloquesPublicados(CATALOGO, seccion.unidad.n);
+  const practicas = grupos.map(b => `
+      ${b.titulo ? `<h4 class="portada__subbloque">${b.titulo[idioma]}</h4>` : ''}
+      <ul class="lista">${b.practicas.map(filaPractica).join('')}</ul>`).join('');
+  return `
+      ${htmlTareas(t, seccion.tareas)}
+      ${practicas ? `<h3 class="portada__bloque portada__bloque--todas">${t.unidad_practicas}</h3>${practicas}` : ''}`;
 }
 
 function pintar() {
@@ -150,21 +175,29 @@ function pintar() {
     const etiqueta = n ? `<span class="etiqueta ${completa ? 'etiqueta--ok' : ''}">${completa ? '✓ ' : ''}${t.portada_hechos(n, p.nEjercicios)}</span>` : '';
     return `
       <li class="lista__item">
-        <div><h3>${p.nombre[idioma].replace(SIN_COLETILLA, '')}</h3><div class="detalle">${DESCRIPCION[p.slug]?.[idioma] ?? ''}</div>${etiqueta}</div>
+        <div><h3>${esc(p.nombre[idioma])}</h3><div class="detalle">${DESCRIPCION[p.slug]?.[idioma] ?? ''}</div>${etiqueta}</div>
         <a class="boton ${completa ? 'secundario' : ''}" href="${p.ruta}${codigo ? `?c=${codigo}` : ''}">${t.portada_abrir}</a>
       </li>`;
   };
-  const bloques = bloquesPublicados().map(b => `
-      <h2 class="portada__bloque">${b.titulo[idioma]}</h2>
-      <ul class="lista">${b.practicas.map(fila).join('')}</ul>`).join('');
+  // La unidad actual, arriba y abierta; las anteriores, plegadas (y se recuerda cuáles abrió el alumno).
+  const abiertas = unidadesAbiertas();
+  const secciones = seccionesPorUnidad(fechaISO(new Date()), { tareas: TAREAS }).map(s => {
+    const titulo = t.unidad_titulo(s.unidad.n, s.unidad.titulo[idioma]);
+    return s.actual
+      ? `<section class="portada__unidad"><h2 class="portada__titulo-unidad">${titulo}</h2>${htmlUnidad(t, s, fila)}</section>`
+      : `<details class="portada__unidad" data-unidad="${s.unidad.n}"${abiertas[s.unidad.n] ? ' open' : ''}>
+          <summary class="portada__titulo-unidad">${titulo}</summary>${htmlUnidad(t, s, fila)}</details>`;
+  }).join('');
   app.innerHTML = `
     <section>
       <p>${t.portada_ayuda}${codigo ? ` <span class="portada__codigo">${t.portada_codigo(codigo)}</span>
         <button type="button" class="discreto" id="cerrar-sesion">${t.cambiar_codigo}</button>` : ''}</p>
-      ${htmlTareas(t)}
-      ${bloques || `<p class="vacio">${t.portada_vacia}</p>`}
+      ${secciones || `<p class="vacio">${t.portada_vacia}</p>`}
       <p class="portada__pie"><a href="profesor.html">${PANEL[idioma]}</a></p>
     </section>`;
+  for (const d of app.querySelectorAll('details[data-unidad]')) {
+    d.addEventListener('toggle', () => recordarUnidad(d.dataset.unidad, d.open));
+  }
   app.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     cerrarSesion();
     codigo = null;
@@ -183,4 +216,13 @@ if (enNavegador) {
   // Al volver atrás desde una práctica, se actualiza lo hecho.
   addEventListener('pageshow', pintar);
   pintar();
+  // Con código y alguna tarea asignada, se mira la asignación en la nube (como mucho 4 s) y se repinta si cambia.
+  if (codigo && TAREAS.some(x => x.asignada)) {
+    const suyo = codigo;
+    cargarAsignacion(suyo).then(lista => {
+      if (suyo !== codigo || JSON.stringify(lista) === JSON.stringify(asignacion)) return;
+      asignacion = lista;
+      pintar();
+    });
+  }
 }

@@ -467,3 +467,157 @@ test('tareas: cada ejercicio de una tarea tiene el nombre que dice la nota de te
   }
   assert.equal(vistos.size, 56, 'las cuatro semanas: 14 ejercicios cada una, sin repetir ninguno entre semanas');
 });
+
+// --- Página de la tarea y portada por unidades (tarea 52) ----------------------------------
+
+import {
+  ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo,
+  ejercicioFueraDePlazo, esRepasoDeOtraUnidad, seccionesPorUnidad, unidadesAbiertas, recordarUnidad, claveAsignacion,
+} from '../practicas/vista-tareas.js';
+import { claveProgresoTarea } from '../practicas/_comun/nube.js';
+import { T } from '../practicas/_comun/textos.js';
+
+async function conAlmacen(prueba) {
+  const almacen = new Map();
+  globalThis.localStorage = { getItem: k => almacen.get(k) ?? null, setItem: (k, v) => almacen.set(k, String(v)), removeItem: k => almacen.delete(k) };
+  try { return await prueba(almacen); } finally { delete globalThis.localStorage; }
+}
+
+test('regla de publicación: con t=1 se lee el progreso de la práctica; con una tarea v2, el de la tarea', async () => {
+  assert.equal(ambitoDeTarea(tareaPorId(1)), null);
+  for (const t of TAREAS.filter(x => x.id !== 1)) assert.equal(ambitoDeTarea(t), t.id);
+  await conAlmacen(almacen => {
+    // El mismo ejercicio terminado en la práctica libre y NO en la tarea 2.
+    almacen.set(claveProgreso('semaforo', 'ABCD'), JSON.stringify({ ej: [hecho(), hecho(), hecho(), hecho()] }));
+    const t1 = estadoTarea(tareaPorId(1), progresoDeTarea(tareaPorId(1), 'ABCD'));
+    assert.ok(t1.estrella.find(e => e.slug === 'semaforo').terminado, 'la tarea 1 cuenta lo de la práctica libre');
+    const t2 = estadoTarea(tareaPorId(2), progresoDeTarea(tareaPorId(2), 'ABCD'));
+    assert.equal(t2.estrella.find(e => e.slug === 'semaforo').terminado, false, 'una tarea v2 no cuenta lo de la práctica libre');
+    // Y al revés: lo hecho dentro de la tarea 2 se lee de su clave.
+    almacen.set(claveProgresoTarea('semaforo', 'ABCD', 2), JSON.stringify({ ej: [null, null, hecho(0, 60)] }));
+    const t2b = estadoTarea(tareaPorId(2), progresoDeTarea(tareaPorId(2), 'ABCD'));
+    assert.ok(t2b.estrella.find(e => e.slug === 'semaforo' && e.n === 3).terminado);
+    assert.equal(t2b.estrella.find(e => e.slug === 'semaforo' && e.n === 3).ej.dia, 60);
+  });
+});
+
+test('vistaPlazo: las frases en los cuatro estados, en los dos idiomas', () => {
+  const tarea = { ...TAREA, unidad: 2, hasta: '2026-10-22' };
+  const d = diaDeFecha('2026-10-22');
+  const hecha = dia => ({ cumplida: true, diaEntrega: dia });
+  const sin = { cumplida: false, diaEntrega: 0 };
+  const es = T.es, en = T.en;
+  const f = (est, hoy, asig = false, t = es) => vistaPlazo(tarea, est, hoy, asig, t);
+  assert.equal(f(sin, d - 2).frase, 'Plazo: jueves 22-10');
+  assert.equal(f(sin, d - 2, false, en).frase, 'Deadline: Thursday 22/10');
+  assert.equal(f(sin, d).frase, 'Plazo: jueves 22-10', 'el día del plazo aún vale');
+  assert.equal(f(sin, d + 3).frase, 'Fuera de plazo · 3 días de retraso');
+  assert.equal(f(sin, d + 1).frase, 'Fuera de plazo · 1 día de retraso');
+  assert.equal(f(sin, d + 3, false, en).frase, 'Past the deadline · 3 days late');
+  assert.equal(f(hecha(d + 3), d + 9).frase, 'Entregada con 3 días de retraso');
+  assert.equal(f(hecha(d), d + 9).frase, '✓ Entregada');
+  assert.equal(f(hecha(d + 3), d + 9, false, en).frase, 'Handed in 3 days late');
+  assert.deepEqual([f(sin, d - 2).estado, f(sin, d + 3).estado, f(hecha(d + 3), d + 9).estado, f(hecha(d), d).estado], ['plazo', 'fuera', 'tarde', 'entregada']);
+  assert.equal(f(sin, d - 2).etiqueta, 'Obligatoria');
+  // Repaso (sin plazo): etiqueta y nada más.
+  const repaso = vistaPlazo({ ...TAREA, unidad: 1 }, sin, d + 40, false, es);
+  assert.deepEqual([repaso.tipo, repaso.etiqueta, repaso.frase, repaso.fueraDePlazo], ['repaso', 'Repaso', '', false]);
+  // Asignada: obligatoria para ti al asignado; al resto, repaso sin plazo ni marca (aunque haya pasado).
+  const asignada = { ...tarea, asignada: true };
+  const mia = vistaPlazo(asignada, sin, d + 3, true, es);
+  assert.deepEqual([mia.etiqueta, mia.frase], ['Obligatoria para ti', 'Fuera de plazo · 3 días de retraso']);
+  const ajena = vistaPlazo(asignada, sin, d + 3, false, es);
+  assert.deepEqual([ajena.tipo, ajena.etiqueta, ajena.frase, ajena.estado], ['repaso', 'Repaso', '', '']);
+  assert.doesNotMatch(JSON.stringify(ajena), /obligatoria|asignad|required/i, 'a un no asignado nada le dice que otros la tienen obligatoria');
+});
+
+test('ejercicioFueraDePlazo: solo lo terminado después del plazo, y solo si hay plazo para ese alumno', () => {
+  const tarea = { ...TAREA, hasta: '2026-10-22' };
+  const d = diaDeFecha('2026-10-22');
+  assert.equal(ejercicioFueraDePlazo(tarea, { terminado: true, dia: d }, 'obligatoria'), false);
+  assert.equal(ejercicioFueraDePlazo(tarea, { terminado: true, dia: d + 1 }, 'obligatoria'), true);
+  assert.equal(ejercicioFueraDePlazo(tarea, { terminado: false, dia: d + 1 }, 'obligatoria'), false);
+  assert.equal(ejercicioFueraDePlazo(tarea, { terminado: true, dia: d + 1 }, 'repaso'), false);
+  assert.equal(ejercicioFueraDePlazo(TAREA, { terminado: true, dia: 999 }, 'obligatoria'), false, 'sin plazo');
+});
+
+test('«· repaso U1» solo cuando la práctica es de otra unidad que la tarea', () => {
+  const t1 = tareaPorId(1);
+  assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('jerarquia'), t1), true);
+  assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('semaforo'), t1), false);
+  assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('errores1'), tareaPorId(14)), false);
+  assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('errores'), tareaPorId(4)), false);
+  assert.equal(T.es.repaso_de_unidad(1), '· repaso U1');
+});
+
+test('asignación: copia en el navegador, nube con prioridad y sin red se sigue con la copia', async () => {
+  const tarea = { id: 7, asignada: true };
+  assert.equal(asignadaAMi(tarea, [3, 7]), true);
+  assert.equal(asignadaAMi(tarea, [3]), false);
+  assert.equal(asignadaAMi(tarea, null), false, 'sin red ni copia, como repaso');
+  assert.equal(asignadaAMi({ id: 7 }, [7]), false, 'una tarea que no es asignada no se marca');
+  await conAlmacen(async almacen => {
+    assert.equal(asignacionGuardada('ABCD'), null);
+    assert.deepEqual(await cargarAsignacion('ABCD', { leerRemota: async () => null }), null, 'ni nube ni copia');
+    assert.deepEqual(await cargarAsignacion('ABCD', { leerRemota: async () => ({ tareas: [7, 9] }) }), [7, 9]);
+    assert.equal(almacen.get(claveAsignacion('ABCD')), '[7,9]', 'la copia se guarda');
+    assert.deepEqual(asignacionGuardada('ABCD'), [7, 9]);
+    assert.deepEqual(await cargarAsignacion('ABCD', { leerRemota: async () => null }), [7, 9], 'sin red: la copia');
+    assert.deepEqual(await cargarAsignacion('ABCD', { leerRemota: async () => ({ tareas: [] }) }), [], 'la nube vacía quita la asignación');
+    almacen.set(claveAsignacion('ABCD'), '{roto');
+    assert.equal(asignacionGuardada('ABCD'), null);
+  });
+});
+
+test('portada: la unidad actual arriba y las anteriores detrás; sin nada publicado, una unidad no sale', () => {
+  const ids = (hoy, opciones) => seccionesPorUnidad(hoy, opciones).map(s => `${s.unidad.n}${s.actual ? '*' : ''}`);
+  assert.deepEqual(ids('2026-10-17', { tareas: TAREAS }), ['2*', '1']);
+  assert.deepEqual(ids('2026-09-20', { tareas: TAREAS }), ['1*'], 'antes de la unidad 2, solo la 1');
+  // El 16-11 la actual pasa a ser la 3, pero sin prácticas ni tareas publicadas no sale.
+  assert.deepEqual(ids('2026-11-16', { tareas: TAREAS }), ['2', '1']);
+  const u3 = { id: 21, unidad: 3, titulo: { es: 'x', en: 'x' }, estrella: [['recta', 1]], elegir: [], nElegir: 0 };
+  assert.deepEqual(ids('2026-11-16', { tareas: [...TAREAS, u3] }), ['3*', '2', '1']);
+  assert.deepEqual(ids('2026-10-17', { tareas: [...TAREAS, u3] }), ['2*', '1'], 'una unidad que no ha llegado no sale');
+  const [u2, u1] = seccionesPorUnidad('2026-10-17', { tareas: TAREAS });
+  assert.deepEqual(u2.tareas.map(t => t.id), [1], 'el 17-10 solo ha llegado la semana 1');
+  assert.deepEqual(u1.tareas.map(t => t.id), [11, 12, 13, 14]);
+  assert.ok(u2.practicas.every(p => p.unidad === 2 && p.id !== ID_PLANTILLA));
+  assert.equal(u1.practicas.length, 15);
+  assert.ok(![...u1.practicas, ...u2.practicas].some(p => p.slug === 'plantilla'));
+});
+
+test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
+  const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
+  assert.ok(BLOQUES.every(b => b.unidad === 2), 'ya no hay bloque «Repaso de la unidad 1»');
+  const u2 = bloquesPublicados(CATALOGO, 2);
+  assert.equal(u2.length, 5);
+  assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 16);
+  assert.ok(u2.every(b => b.titulo));
+  const u1 = bloquesPublicados(CATALOGO, 1);
+  assert.equal(u1.length, 1);
+  assert.equal(u1[0].titulo, null);
+  assert.equal(u1[0].practicas.length, 15);
+  // Una práctica de la U2 que no esté en ningún bloque no se pierde.
+  const extra = [...CATALOGO, { id: 99, slug: 'nueva', ruta: 'nueva/', unidad: 2, nombre: { es: 'N', en: 'N' }, nEjercicios: 1, disponible: true }];
+  const otras = bloquesPublicados(extra, 2).at(-1);
+  assert.deepEqual(otras.practicas.map(p => p.slug), ['nueva']);
+});
+
+test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => conAlmacen(() => {
+  assert.deepEqual(unidadesAbiertas(), {});
+  recordarUnidad(1, true);
+  recordarUnidad(3, false);
+  assert.deepEqual(unidadesAbiertas(), { 1: true, 3: false });
+  recordarUnidad(1, false);
+  assert.deepEqual(unidadesAbiertas(), { 1: false, 3: false });
+  globalThis.localStorage.setItem('practicas.portada.abiertas', '[1,2]');
+  assert.deepEqual(unidadesAbiertas(), {}, 'una lista no vale');
+}));
+
+test('semana.js: pasa el ámbito de la tarea a la base y deja la tarea 1 con el día de siempre', () => {
+  const fuente = readFileSync(new URL('../practicas/semana.js', import.meta.url), 'utf8');
+  assert.match(fuente, /sincronizarGuardado\(slug, suyo, \{ tareaId: ambitoDeTarea\(tarea\) \}\)/);
+  assert.match(fuente, /progresoDeTarea\(tarea, codigo\)/);
+  assert.match(fuente, /tarea\.progresoPorPractica \? est\.dia : est\.diaEntrega/);
+  assert.doesNotMatch(fuente, /semana__pedir/);
+});
