@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-17 07:14 UTC · por s-20261017T065839-a86bc12f al cerrar la 51 (LISTA, commit d828fd9; probada en navegador con el código 60 contra Firestore; relistado hechos/ con git fetch: 53 LISTA a las 07:06Z, sin reclamos vivos). **Las 51 primeras tareas, la 53 y la 54 están LISTAS; la 52 pasa de BLOQUEADA a PENDIENTE (libre, MEDIO); la 56 (alta de la coordinadora del 17-10, MEDIO) está PENDIENTE; la 55 sigue BLOQUEADA (espera a la 52).** Añadida a las 07:2x UTC por la coordinadora s-20261017T065935-3ecc253b la fila de la 57 (diseño para varios profesores, ALTO, BLOQUEADA hasta que cierre la 52). Regla de publicación de las 49-55 (DISENO.md, D): se publica cuanto antes sin tocar la tarea 1, y cada una lo comprueba con un test; la ventana 23-25 de octubre de la ficha 45 queda sustituida.
+Regenerado: 2026-10-17 08:30 UTC · por s-20261017T082757-d15878d1 al cerrar la 56 (LISTA, commit c20fab4; sin prueba en navegador). Las demás filas, como las dejó la regeneración de las 07:2x UTC: la 52 EN CURSO (s-20261017T082741-51bbe95f, reclamo de las 08:27Z), la 55 y la 57 BLOQUEADAS hasta que cierre la 52.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -172,7 +172,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 53 | Tareas v2 · I5: panel con practicas-tareas, retraso, vista «Retrasos» con CSV, «Asignar tareas», «qué falla más» por tarea | tareas/tarea-53-panel-v2.md | 49 y 50 LISTAS | 2 h 30 min | MEDIO | — | practicas/{profesor.js,profesor.html,resultados.js}, tests/practicas-resultados.test.js; salidas/53-panel-v2/ | LISTA | terminada 2026-10-17T07:06:49Z · commit 8102beb · sin login de Google (ver ENTREGA) |
 | 54 | Tareas v2 · I6: informe diario con documentos v2, asignadas, retraso y tarea vigente | tareas/tarea-54-informe-v2.md | 50 LISTA | 1 h | MEDIO | 50 | herramientas/informe-actividad.mjs, tests/herramientas-informe.test.js; salidas/54-informe-v2/ | LISTA | terminada 22:5xZ (16-oct) · commit 1d380bd · sin cambios en la rutina de la nube (si pasa `--tarea 1` fijo, hay que quitarlo) |
 | 55 | Tareas v2 · I7: revisión de extremo a extremo (códigos 60-63, dos navegadores) y documentación | tareas/tarea-55-revision-v2.md | 51, 52, 53 y 54 LISTAS | 1 h 30 min | ALTO | — | docs/practicas-unidad2.md, README.md; salidas/55-revision-v2/ (VEREDICTO.md) | BLOQUEADA | — |
-| 56 | Botones de números: los cuatro estados de la corrección en el CSS común y en todas las prácticas que los usan | tareas/tarea-56-botones-cuatro-estados.md | ninguna | 1 h | MEDIO | — | practicas/_comun/estilos.css (bloque de botones), practicas/_comun/piezas.js (función nueva al final), practicas/{semaforo,rectangulos}/{estilos.css,practica.js}, practicas/{constructor,baldosas}/practica.js, tests/practicas-botones.test.js (nuevo); salidas/56-botones-cuatro-estados/ | PENDIENTE | — |
+| 56 | Botones de números: los cuatro estados de la corrección en el CSS común y en todas las prácticas que los usan | tareas/tarea-56-botones-cuatro-estados.md | ninguna | 1 h | MEDIO | — | practicas/_comun/estilos.css (bloque de botones), practicas/_comun/piezas.js (función nueva al final), practicas/{semaforo,rectangulos}/{estilos.css,practica.js}, practicas/{constructor,baldosas}/practica.js, tests/practicas-botones.test.js (nuevo); salidas/56-botones-cuatro-estados/ | LISTA | terminada 08:30Z (17-oct) · commit c20fab4 · sin prueba en navegador |
 | 57 | Diseño (con Juan Luis) de la app para varios profesores con separación estricta: cada profesor, sus alumnos, sus tareas y sus fechas | tareas/tarea-57-diseno-varios-profesores.md | 51, 52 y 53 LISTAS | 2 h | ALTO | — | salidas/57-diseno-varios-profesores/ (DISENO.md) | BLOQUEADA | — (espera a la 52; sesión atendida con Juan Luis delante) |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
@@ -194,6 +194,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 56 · 2026-10-17 08:30 · s-20261017T082757-d15878d1 · c20fab4 · 9 ficheros (practicas/_comun/{estilos.css,piezas.js}, practicas/{semaforo,rectangulos}/{estilos.css,practica.js}, practicas/{constructor,baldosas}/practica.js, tests/practicas-botones.test.js) · ~15 min (estimada: 1 h) · sin prueba en navegador
 
 LISTA · tarea 51 · 2026-10-17 07:13 · s-20261017T065839-a86bc12f · d828fd9 · 5 ficheros (practicas/_comun/{base,registro,textos}.js, tests/practicas-{comun,registro}.test.js) · 15 min (estimada: 2 h)
 
