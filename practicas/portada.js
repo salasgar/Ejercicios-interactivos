@@ -149,7 +149,10 @@ let asignacion = codigo ? asignacionGuardada(codigo) : null;
  * En qué orden salen las tareas de una unidad: en la actual, de la más nueva a la más
  * antigua (la de esta semana, arriba); en las anteriores, en su orden (semana 1, 2…).
  */
-export const ordenTareas = (tareas, actual) => (actual ? [...tareas].reverse() : [...tareas]);
+/** La unidad actual sale siempre abierta (ahí está la tarea nueva); las demás, solo si el alumno la abrió. */
+export const unidadSaleAbierta = (seccion, abiertas = {}) => Boolean(seccion.actual) || Boolean(abiertas[seccion.unidad.n]);
+
+export const ordenTareas =(tareas, actual) => (actual ? [...tareas].reverse() : [...tareas]);
 
 /** Las tareas de una unidad, con su plazo y lo que lleva el alumno en cada una. */
 function htmlTareas(t, tareas, actual) {
@@ -203,14 +206,12 @@ function pintar() {
         <a class="boton ${completa ? 'secundario' : ''}" href="${p.ruta}${codigo ? `?c=${codigo}` : ''}">${t.portada_abrir}</a>
       </li>`;
   };
-  // La unidad actual, arriba y abierta; las anteriores, plegadas (y se recuerda cuáles abrió el alumno).
+  // Todas las unidades se pliegan. La actual sale siempre abierta; las anteriores, plegadas salvo las que abrió el alumno (se recuerda).
   const abiertas = unidadesAbiertas();
   const secciones = seccionesPorUnidad(fechaISO(new Date()), { tareas, unidades }).map(s => {
     const titulo = t.unidad_titulo(s.unidad.n, s.unidad.titulo[idioma]);
-    return s.actual
-      ? `<section class="portada__unidad"><h2 class="portada__titulo-unidad">${titulo}</h2>${htmlUnidad(t, s, fila)}</section>`
-      : `<details class="portada__unidad" data-unidad="${s.unidad.n}"${abiertas[s.unidad.n] ? ' open' : ''}>
-          <summary class="portada__titulo-unidad">${titulo}</summary>${htmlUnidad(t, s, fila)}</details>`;
+    return `<details class="portada__unidad" data-unidad="${s.unidad.n}" data-actual="${Boolean(s.actual)}"${unidadSaleAbierta(s, abiertas) ? ' open' : ''}>
+          <summary><h2 class="portada__titulo-unidad">${titulo}</h2></summary>${htmlUnidad(t, s, fila)}</details>`;
   }).join('');
   const frase = { 'no-existe': t.entrada_no_existe, 'sin-red': t.espacio_sin_red, 'sin-tareas': t.espacio_sin_tareas }[avisoEspacio];
   app.innerHTML = `
@@ -221,7 +222,7 @@ function pintar() {
       ${secciones || `<p class="vacio">${t.portada_vacia}</p>`}
       <p class="portada__pie"><a href="profesor.html">${PANEL[idioma]}</a></p>
     </section>`;
-  for (const d of app.querySelectorAll('details[data-unidad]')) {
+  for (const d of app.querySelectorAll('details[data-unidad]:not([data-actual="true"])')) {
     d.addEventListener('toggle', () => recordarUnidad(d.dataset.unidad, d.open));
   }
   app.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
