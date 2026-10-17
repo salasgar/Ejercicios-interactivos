@@ -11,6 +11,7 @@ import { TAREAS, diaDeFecha } from '../practicas/_comun/tareas.js';
 import {
   juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
   filtrarFallos, agruparFallos, juntarFallos, tareaPublicada, cumplidasDe,
+  indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer, MARGEN_LECTURA,
 } from '../practicas/resultados.js';
 
 test('«Obligatorias» y «Repaso»: solo las publicadas; las asignadas, si está marcado; el repaso sin total', () => {
@@ -190,6 +191,66 @@ test('«qué falla más» por tarea: el campo `tarea` de los fallos', () => {
   // Sin `tarea`, `ejercicios` filtra por sí solo, como antes.
   assert.equal(filtrarFallos(fallos, { ejercicios: [['semaforo', 3]] }).length, 1);
   assert.equal(agruparFallos(fallos, { tarea: 2 }).total, 2);
+});
+
+// --- Espacio del profesor (tarea 66) ---------------------------------------------------
+// Códigos inventados, con la forma de los de 8 (ninguno es de un alumno).
+const MIS = [{ id: 'K7QMP3XA', n: 1 }, { id: 'B2C3D4E5', n: 3 }, { id: 'ZZZZ9999', n: 7 }];
+
+test('espacio: código de 8 ↔ posición en la lista (n − 1); uno ajeno da null', () => {
+  const { codigoDe, indiceDe } = indicesDeCodigos(MIS);
+  assert.equal(indiceDe('K7QMP3XA'), 0);
+  assert.equal(indiceDe('b2c3-d4e5'), 2, 'con guion y en minúsculas también');
+  assert.equal(indiceDe('AAAABBBB'), null);
+  assert.equal(indiceDe(codigoAlumno(0)), null, 'un código de 4 no es del espacio');
+  assert.equal(codigoDe(6), 'ZZZZ9999');
+  assert.equal(codigoDe(1), null);
+  assert.equal(indicesDeCodigos(undefined).codigoDe(0), null);
+});
+
+test('espacio: leerDocumentos y leerAsignaciones con los códigos del profesor', () => {
+  const { indiceDe } = indicesDeCodigos(MIS);
+  const estado = JSON.stringify({ ej: [{ terminado: true, fallos: 1 }] });
+  const libre = leerDocumentos([{ id: 'semaforo--B2C3D4E5', estado, actualizado: 5 }, { id: 'semaforo--AAAABBBB', estado }], 'progreso-libre', indiceDe);
+  assert.deepEqual(libre.map(d => [d.practica, d.indice, d.actualizado]), [[practicaPorSlug('semaforo').id, 2, 5]]);
+  const deTarea = leerDocumentos([{ id: 't4--semaforo--K7QMP3XA', estado }], 'progreso-tareas', indiceDe);
+  assert.deepEqual(deTarea.map(d => [d.tarea, d.indice]), [[4, 0]]);
+  assert.deepEqual(leerDocumentos([{ id: 'semaforo--K7QMP3XA', estado }], 'progreso-tareas', indiceDe), []);
+  // Sin `indiceDe`, como siempre: un código de 8 no se entiende en el modo antiguo.
+  assert.deepEqual(leerDocumentos([{ id: 'semaforo--K7QMP3XA', estado }], 'practicas'), []);
+  assert.deepEqual(leerAsignaciones([{ id: 'ZZZZ9999', tareas: [2, 5] }, { id: 'AAAABBBB', tareas: [1] }], indiceDe), [{ indice: 6, tareas: [2, 5] }]);
+});
+
+test('«Mis alumnos»: filas por número, también códigos sin línea; qué líneas faltan por código', () => {
+  const nombres = ['Ana', 'Luis', '', 'Marta'];
+  assert.deepEqual(filasMisAlumnos(nombres, MIS), [
+    { n: 1, nombre: 'Ana', codigo: 'K7QMP3XA' },
+    { n: 2, nombre: 'Luis', codigo: null },
+    { n: 3, nombre: '', codigo: 'B2C3D4E5' },
+    { n: 4, nombre: 'Marta', codigo: null },
+    { n: 7, nombre: '', codigo: 'ZZZZ9999' },
+  ]);
+  assert.deepEqual(faltanCodigos(nombres, MIS), [2, 4]);
+  assert.deepEqual(faltanCodigos(nombres, []), [1, 2, 4]);
+  assert.deepEqual(faltanCodigos(nombres, [], 2), [1, 2], 'no pasa de 250 (lo que dejan las reglas)');
+});
+
+test('repartirCodigos: uno por número, sin repetir los ya usados ni entre ellos', () => {
+  const salen = ['K7QMP3XA', 'K7QMP3XA', 'NUEVO222', 'NUEVO222', 'NUEVO333'];
+  const r = repartirCodigos([2, 4], ['K7QMP3XA'], () => salen.shift());
+  assert.deepEqual(r, [{ codigo: 'NUEVO222', n: 2 }, { codigo: 'NUEVO333', n: 4 }]);
+});
+
+test('caché del panel: lo leído gana por id; desde cuándo pedir lo nuevo', () => {
+  const previos = [{ id: 'a', actualizado: 10 }, { id: 'b', actualizado: 20 }];
+  assert.deepEqual(fusionarLeidos(previos, [{ id: 'b', actualizado: 30 }, { id: 'c', actualizado: 5 }]),
+    [{ id: 'a', actualizado: 10 }, { id: 'b', actualizado: 30 }, { id: 'c', actualizado: 5 }]);
+  assert.deepEqual(fusionarLeidos(undefined, [{ id: 'x' }]), [{ id: 'x' }]);
+  assert.equal(desdeParaLeer([]), 0, 'sin caché, todo');
+  const ahora = 1_800_000_000_000;
+  assert.equal(desdeParaLeer([{ actualizado: ahora - 5 }, { actualizado: ahora }]), ahora - MARGEN_LECTURA);
+  assert.equal(desdeParaLeer([{ t: 1000 }], 't'), 0, 'el margen no baja de 0');
+  assert.equal(desdeParaLeer([{ t: ahora }, { sin: 1 }], 't', 0), ahora);
 });
 
 test('«qué falla más» de una tarea v2 con los documentos de la tarea', () => {
