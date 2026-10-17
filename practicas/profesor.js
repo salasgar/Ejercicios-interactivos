@@ -5,10 +5,10 @@
 
 import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun/catalogo.js';
 import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS } from './_comun/codigos.js';
-import { fechaDeDia } from './_comun/contador.js';
+import { fechaDeDia, diaDe } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
 import { TAREAS, tareaPorId, fechaISO } from './_comun/tareas.js';
-import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, leerDocumentos } from './resultados.js';
+import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones, calcularRetrasos, asignacionesParaGuardar } from './resultados.js';
 import { DESTREZAS, leerFallos } from './_comun/registro.js';
 import { declaracionDe } from './_comun/base.js';
 
@@ -18,10 +18,17 @@ const CLAVE_LISTA = 'divisores.profesor.lista';
 const URL_PORTADA = new URL('./', location.href).href;
 const RESUMEN = 'resumen';
 const TAREAS_SEMANA = 'tareas';
+const RETRASOS = 'retrasos';
 const FALLOS = 'fallos';            // «Qué falla más», todas las prácticas
 const FALLOS_TAREA = 'fallos-t';    // «Qué falla más» de una tarea: 'fallos-t<id>'
 
 let nube = [];   // datos de Firestore ya leídos: [{ practica, indice, ej, actualizado }]
+let nubeTareas = [];   // los de la colección `practicas-tareas` (modelo v2): [{ tarea, practica, indice, ej, actualizado }]
+let asignaciones = [];   // [{ indice, tareas: [ids] }] de `practicas-asignaciones`
+let asignacionesCargadas = false;   // hasta cargar la nube no se pueden guardar (se machacaría lo que hubiera)
+
+/** Lo que `juntarTareas` necesita además de los códigos: documentos de las tareas v2, asignaciones y hoy. */
+const opcionesTareas = () => ({ deNubeTareas: nubeTareas, asignaciones, hoyDia: diaDe(new Date()) });
 
 function nombres() {
   return $('lista').value.split('\n').map(l => l.trim()).slice(0, MAX_ALUMNOS);
@@ -68,7 +75,7 @@ function pintarTareasEnlaces() {
       <tbody>${TAREAS.map(t => `
         <tr>
           <td class="num">${t.id}</td><td>${esc(t.titulo.es)}</td>
-          <td>${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.desde ? ` · en la portada desde el ${t.desde.split('-').reverse().join('/')}` : ''}</td>
+          <td>${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.desde ? ` · en la portada desde el ${t.desde.split('-').reverse().join('/')}` : ''}${t.hasta ? ` · plazo ${t.hasta.split('-').reverse().join('/')}` : ''}${t.asignada ? ' · asignada' : ''}${t.progresoPorPractica ? '' : ' · progreso propio'}</td>
           <td class="celda-enlace"><code class="enlace">${enlaceComun(t)}</code></td>
           <td><button type="button" class="secundario" data-copiar-tarea="${t.id}">Copiar</button></td>
         </tr>`).join('')}</tbody>
@@ -118,6 +125,7 @@ function pintarSelector(practicas) {
   const elegida = $('vista').value || RESUMEN;
   $('vista').innerHTML = `<option value="${RESUMEN}">Resumen de todas las prácticas</option>`
     + `<option value="${TAREAS_SEMANA}">Tareas de la semana</option>`
+    + `<option value="${RETRASOS}">Retrasos en las tareas</option>`
     + `<option value="${FALLOS}">Qué falla más · todas las prácticas</option>`
     + TAREAS.map(t => `<option value="${FALLOS_TAREA}${t.id}">Qué falla más · tarea ${t.id}</option>`).join('')
     + practicas.map(p => `<option value="${p.id}">${esc(p.nombre.es)}</option>`).join('');
@@ -192,35 +200,112 @@ function csvResumen(practicas, validos) {
 
 // --- Tareas de la semana -------------------------------------------------------
 
-function celdaTarea(c) {
-  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida · <strong>${c.puntos}</strong> pt</td>`;
-  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir} · <strong>${c.puntos}</strong> pt</td>`;
-  return '<td class="num celda--no">sin empezar</td>';
+/** «, 2 d tarde» / «, 3 d de retraso» si la tarea tiene plazo y hay retraso. */
+function textoRetraso(c) {
+  if (!c.conPlazo || !c.diasRetraso) return '';
+  return c.cumplida ? ` · ${c.diasRetraso} d tarde` : ` · <span class="celda--no">${c.diasRetraso} d de retraso</span>`;
 }
 
+function celdaTarea(c) {
+  // Tarea asignada a otros: «—» (o su avance voluntario en gris) y no cuenta.
+  if (c.noAsignado) return `<td class="num celda--no">—${c.empezada ? ` <span class="pequeno">(voluntaria: ${c.cumplida ? 'cumplida' : `★ ${c.estrellaHechos} de ${c.nEstrella}`} · ${c.puntos} pt)</span>` : ''}</td>`;
+  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida · <strong>${c.puntos}</strong> pt${textoRetraso(c)}</td>`;
+  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir} · <strong>${c.puntos}</strong> pt${textoRetraso(c)}</td>`;
+  return `<td class="num celda--no">sin empezar${textoRetraso(c)}</td>`;
+}
+
+const estadoTareaCsv = c => (c.cumplida ? 'cumplida' : c.empezada ? 'a medias' : 'sin empezar');
+/** Fecha de un día contado desde el 1-9-2026, o '' si no hay. */
+const fechaCsv = dia => (dia ? fechaDeDia(dia) : '');
+const plazoCsv = c => (c.plazo ? c.plazo.split('-').reverse().join('/') : '');
+
 function htmlTareas(validos, deTareas) {
-  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS);
+  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas());
   if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
   return `
     <table>
-      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${TAREAS.map(t => `<th class="practica">${esc(t.titulo.es)}</th>`).join('')}<th class="num">Cumplidas</th></tr></thead>
-      <tbody>${filas.map(f => `
+      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${TAREAS.map(t => `<th class="practica">${esc(t.titulo.es)}${t.hasta ? `<br><span class="pequeno">plazo ${t.hasta.split('-').reverse().join('/')}</span>` : ''}${t.asignada ? '<br><span class="pequeno">asignada</span>' : ''}</th>`).join('')}<th class="num">Cumplidas</th></tr></thead>
+      <tbody>${filas.map(f => {
+        const suyas = f.tareas.filter(c => !c.noAsignado);
+        return `
         <tr>
           <td class="num">${f.indice + 1}</td><td>${esc(f.nombre || '(no está en la lista)')}</td><td><code>${codigoAlumno(f.indice)}</code></td>
           ${f.tareas.map(celdaTarea).join('')}
-          <td class="num">${f.tareas.filter(c => c.cumplida).length}/${TAREAS.length}</td>
-        </tr>`).join('')}</tbody>
+          <td class="num">${suyas.filter(c => c.cumplida).length}/${suyas.length}</td>
+        </tr>`;
+      }).join('')}</tbody>
     </table>
-    <p class="pequeno">«★ x de 6 · y de 4 · N pt»: obligatorios terminados, de los de elegir cuántos ha terminado, y los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube); de los de elegir cuentan los mejores. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> lo que se sabe de su práctica (sus códigos o la nube), así que se ve el avance de quien todavía no ha mandado el código de la tarea. El CSV trae también los fallos y el día.</p>`;
+    <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
 }
 
 function csvTareas(validos, deTareas) {
-  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS);
-  const cab = ['N.º', 'Alumno', 'Código', ...TAREAS.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`])];
+  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas());
+  const cab = ['N.º', 'Alumno', 'Código', ...TAREAS.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`, `T${t.id} plazo`, `T${t.id} fecha de entrega`, `T${t.id} días de retraso`, `T${t.id} entrega`])];
   return [cab, ...filas.map(f => [
     f.indice + 1, f.nombre, codigoAlumno(f.indice),
-    ...f.tareas.flatMap(c => [c.cumplida ? 'cumplida' : c.empezada ? 'a medias' : 'sin empezar', c.puntos, c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, c.dia ? fechaDeDia(c.dia) : '', c.fuente]),
+    ...f.tareas.flatMap(c => (c.noAsignado
+      ? ['no asignada', '', '', '', '', '', '', '', '', '', '']
+      : [estadoTareaCsv(c), c.puntos, c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, fechaCsv(c.dia), c.fuente, plazoCsv(c), fechaCsv(c.diaEntrega), c.conPlazo ? c.diasRetraso : '', c.entrega])),
   ])];
+}
+
+// --- Retrasos ------------------------------------------------------------------
+
+/** Los retrasos de los alumnos de la lista (o de todos, si la lista está vacía). */
+function datosRetrasos(validos, deTareas) {
+  const hoyDia = opcionesTareas().hoyDia;
+  let filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas());
+  if (nombres().some(Boolean)) filas = filas.filter(f => f.nombre);
+  return calcularRetrasos(filas, TAREAS, hoyDia);
+}
+
+const mediaTexto = x => (x ? decimal(x) : '—');
+
+function htmlRetrasos(validos, deTareas) {
+  const r = datosRetrasos(validos, deTareas);
+  if (!r.alumnos.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
+  const tituloTarea = id => `T${id} · ${esc(tareaPorId(id)?.titulo.es ?? '')}`;
+  return `
+    <h3>Por alumno</h3>
+    <table>
+      <thead><tr><th class="num">N.º</th><th>Alumno</th><th class="num">Con plazo</th><th class="num">A tiempo</th><th class="num">Con retraso</th><th class="num">Sin entregar</th><th class="num">Pendientes</th><th class="num">Días de retraso (total)</th><th class="num">Media</th><th class="num">Máximo</th></tr></thead>
+      <tbody>${r.alumnos.map(a => `
+        <tr>
+          <td class="num">${a.indice + 1}</td><td>${esc(a.nombre || '(no está en la lista)')}</td>
+          <td class="num">${a.conPlazo}</td><td class="num ${a.aTiempo === a.conPlazo - a.pendientes && a.conPlazo > a.pendientes ? 'celda--ok' : ''}">${a.aTiempo}</td>
+          <td class="num ${a.conRetraso ? 'celda--medio' : ''}">${a.conRetraso}</td><td class="num ${a.sinEntregar ? 'celda--no' : ''}">${a.sinEntregar}</td><td class="num">${a.pendientes}</td>
+          <td class="num"><strong>${a.dias}</strong></td><td class="num">${mediaTexto(a.media)}</td><td class="num">${a.maximo || '—'}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <h3>Por tarea</h3>
+    <table>
+      <thead><tr><th>Tarea</th><th class="num">Con plazo (alumnos)</th><th class="num">A tiempo</th><th class="num">Con retraso</th><th class="num">Sin entregar</th><th class="num">Pendientes</th><th class="num">Días de retraso (total)</th><th class="num">Media</th><th class="num">Máximo</th></tr></thead>
+      <tbody>${r.tareas.map(t => `
+        <tr>
+          <td>${tituloTarea(t.id)}</td><td class="num">${t.conPlazo}</td><td class="num">${t.aTiempo}</td><td class="num">${t.conRetraso}</td><td class="num">${t.sinEntregar}</td><td class="num">${t.pendientes}</td>
+          <td class="num"><strong>${t.dias}</strong></td><td class="num">${mediaTexto(t.media)}</td><td class="num">${t.maximo || '—'}</td>
+        </tr>`).join('')}</tbody>
+    </table>
+    <p class="pequeno">Solo cuentan las tareas con plazo que ya están publicadas y, para cada alumno, las que son obligatorias para él (una tarea asignada, solo si está marcado). Los días son naturales, contados desde el plazo hasta el día en que se cumplió la tarea o, si todavía no la ha entregado, hasta hoy. «Pendientes»: el plazo no ha llegado y no la ha entregado todavía. «Media» y «Máximo» son de las tareas con retraso (entregadas tarde o sin entregar y con el plazo vencido). Si hay nombres en la lista, solo cuentan los alumnos de la lista. El CSV trae también las fechas de plazo y de entrega de cada tarea.</p>`;
+}
+
+function csvRetrasos(validos, deTareas) {
+  const hoyDia = opcionesTareas().hoyDia;
+  const r = datosRetrasos(validos, deTareas);
+  const cab = ['N.º', 'Alumno', 'Código', 'Tareas con plazo', 'A tiempo', 'Con retraso', 'Sin entregar', 'Pendientes', 'Días de retraso (total)', 'Media de días (tareas con retraso)', 'Máximo de días'];
+  const alumnos = r.alumnos.map(a => [a.indice + 1, a.nombre, codigoAlumno(a.indice), a.conPlazo, a.aTiempo, a.conRetraso, a.sinEntregar, a.pendientes, a.dias, a.media ? decimal(a.media) : '', a.maximo || '']);
+  // Una fila por alumno y tarea, con las fechas, para decidir el criterio con calma (días lectivos, por ejemplo).
+  const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas()).filter(f => !nombres().some(Boolean) || f.nombre);
+  const detalle = filas.flatMap(f => f.tareas.filter(c => c.conPlazo).map(c => [f.indice + 1, f.nombre, codigoAlumno(f.indice), `T${c.id}`, plazoCsv(c), fechaCsv(c.diaEntrega), c.diasRetraso, c.entrega]));
+  return [
+    cab, ...alumnos,
+    [],
+    ['Tarea', 'Alumnos con plazo', 'A tiempo', 'Con retraso', 'Sin entregar', 'Pendientes', 'Días de retraso (total)', 'Media de días', 'Máximo de días'],
+    ...r.tareas.map(t => [`T${t.id}`, t.conPlazo, t.aTiempo, t.conRetraso, t.sinEntregar, t.pendientes, t.dias, t.media ? decimal(t.media) : '', t.maximo || '']),
+    [],
+    ['N.º', 'Alumno', 'Código', 'Tarea', 'Plazo', 'Fecha de entrega', 'Días de retraso', 'Entrega'],
+    ...detalle,
+  ].map(f => (f.length ? f : ['']));
 }
 
 // --- Qué falla más -------------------------------------------------------------
@@ -256,7 +341,12 @@ function filasFallos(vista, practicas, validos) {
   const ejercicios = ejerciciosDeVista(vista, practicas);
   pedirNombres([...new Set(ejercicios.map(e => e.practica))]);
   const marcas = new Map(ejercicios.map(e => [`${e.practica.id}/${e.n}`, e.marca]));
-  return juntarFallos(nombres(), validos, nube, ejercicios).map(f => {
+  // Una tarea con progreso propio (modelo v2) cuenta solo lo hecho dentro de la tarea.
+  const tarea = vista === FALLOS ? null : tareaPorId(Number(vista.slice(FALLOS_TAREA.length)));
+  const propia = tarea && !tarea.progresoPorPractica;
+  const deCodigos = propia ? [] : validos;
+  const deNube = propia ? nubeTareas.filter(d => d.tarea === tarea.id) : nube;
+  return juntarFallos(nombres(), deCodigos, deNube, ejercicios).map(f => {
     const practica = practicaPorId(f.practica);
     return { ...f, practica, nombre: nombresEjercicio.get(`${practica.slug}/${f.n}`) ?? '', marca: marcas.get(`${f.practica}/${f.n}`) };
   });
@@ -300,8 +390,9 @@ function pintarResultados() {
   const vista = $('vista').value;
   $('tabla-resultados').innerHTML = vista === RESUMEN ? htmlResumen(practicas, validos)
     : vista === TAREAS_SEMANA ? htmlTareas(validos, deTareas)
-      : vista.startsWith(FALLOS) ? htmlFallos(vista, practicas, validos)
-        : htmlPractica(practicaPorId(Number(vista)), validos);
+      : vista === RETRASOS ? htmlRetrasos(validos, deTareas)
+        : vista.startsWith(FALLOS) ? htmlFallos(vista, practicas, validos)
+          : htmlPractica(practicaPorId(Number(vista)), validos);
 }
 
 function descargarResultados() {
@@ -309,6 +400,7 @@ function descargarResultados() {
   const vista = $('vista').value;
   if (vista === RESUMEN) return descargar('resultados-practicas-resumen.csv', csvResumen(practicasVisibles(validos), validos));
   if (vista === TAREAS_SEMANA) return descargar('resultados-tareas-de-la-semana.csv', csvTareas(validos, deTareas));
+  if (vista === RETRASOS) return descargar('retrasos-en-las-tareas.csv', csvRetrasos(validos, deTareas));
   if (vista.startsWith(FALLOS)) return descargar(`que-falla-mas${vista === FALLOS ? '' : `-tarea-${vista.slice(FALLOS_TAREA.length)}`}.csv`, csvFallos(vista, practicasVisibles(validos), validos));
   const practica = practicaPorId(Number(vista));
   descargar(`resultados-${practica.slug}.csv`, csvPractica(practica, validos));
@@ -339,18 +431,31 @@ async function cargarNube() {
   estado.textContent = 'Conectando…';
   try {
     if (!(await conectarProfesor(estado))) return;
-    // Dos colecciones: la de todas las prácticas y la antigua de `divisores/`.
-    // Si una falla (por ejemplo, la regla de `practicas` sin publicar), se enseña la otra.
-    const [nuevas, viejas] = await Promise.allSettled([firebase.datos.listarPracticas(), firebase.datos.listarPracticaDivisores()]);
-    nube = [
-      ...(nuevas.status === 'fulfilled' ? leerDocumentos(nuevas.value, 'practicas') : []),
-      ...(viejas.status === 'fulfilled' ? leerDocumentos(viejas.value, 'divisores') : []),
+    // Cuatro colecciones: la de todas las prácticas, la antigua de `divisores/`, el progreso de
+    // las tareas v2 y las asignaciones. Si una falla (por ejemplo, una regla sin publicar), se enseñan las otras.
+    const lecturas = [
+      ['practicas', firebase.datos.listarPracticas()],
+      ['divisores', firebase.datos.listarPracticaDivisores()],
+      ['practicas-tareas', firebase.datos.listarPracticasTareas()],
+      ['practicas-asignaciones', firebase.datos.listarAsignaciones()],
     ];
-    const fallos = [nuevas, viejas].filter(r => r.status === 'rejected');
+    const resultado = await Promise.allSettled(lecturas.map(([, p]) => p));
+    const leidas = Object.fromEntries(lecturas.map(([nombre], i) => [nombre, resultado[i]]));
+    const ok = nombre => (leidas[nombre].status === 'fulfilled' ? leidas[nombre].value : null);
+    nube = [
+      ...leerDocumentos(ok('practicas') ?? [], 'practicas'),
+      ...leerDocumentos(ok('divisores') ?? [], 'divisores'),
+    ];
+    nubeTareas = leerDocumentos(ok('practicas-tareas') ?? [], 'practicas-tareas');
+    // Sin leer las asignaciones no se puede guardar nada: se machacaría lo que hubiera.
+    asignaciones = leerAsignaciones(ok('practicas-asignaciones') ?? []);
+    asignacionesCargadas = ok('practicas-asignaciones') !== null;
+    const fallos = lecturas.map(([nombre]) => [nombre, leidas[nombre]]).filter(([, r]) => r.status === 'rejected');
     const { mensajeDeError } = await import('../src/firebase.js');
-    estado.textContent = `Cargados ${nube.length} registros de ${new Set(nube.map(d => d.indice)).size} alumnos (${new Date().toLocaleTimeString('es')}).`
-      + (fallos.length ? ` No se ha podido leer ${nuevas.status === 'rejected' ? 'la colección «practicas»' : 'la colección «divisores»'}: ${mensajeDeError(fallos[0].reason)}` : '');
+    estado.textContent = `Cargados ${nube.length} registros de práctica y ${nubeTareas.length} de tareas, de ${new Set([...nube, ...nubeTareas].map(d => d.indice)).size} alumnos, y las asignaciones de ${asignaciones.length} (${new Date().toLocaleTimeString('es')}).`
+      + fallos.map(([nombre, r]) => ` No se ha podido leer la colección «${nombre}»: ${mensajeDeError(r.reason)}`).join('');
     pintarResultados();
+    pintarAsignar();
   } catch (e) {
     const { mensajeDeError } = await import('../src/firebase.js');
     estado.textContent = `No se ha podido cargar: ${mensajeDeError(e)}`;
@@ -373,13 +478,26 @@ const nombrePractica = slug => practicaPorSlug(slug)?.nombre.es ?? slug;
 const destrezasDe = slug => (DESTREZAS[slug] ?? []).join(' ');
 const fechaHora = t => new Date(t).toLocaleString('es', { day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit' });
 
+/**
+ * El filtro de tarea del registro. Los fallos llevan el campo `tarea` (tarea 51): «Tarea N»
+ * enseña los de esa tarea; «Sin tarea», los que no lo traen (práctica libre o anteriores).
+ * Para la tarea 1, que cuenta también la práctica libre, los fallos sin campo de sus
+ * ejercicios siguen contando (así no se pierden los anteriores al campo).
+ */
+function filtroTareaRegistro() {
+  const valor = $('fallos-tarea').value;
+  if (valor === 'ninguna') return { tarea: 'ninguna' };
+  const tarea = tareaPorId(Number(valor));
+  if (!tarea) return {};
+  return { tarea: tarea.id, ejercicios: tarea.progresoPorPractica ? [...tarea.estrella, ...tarea.elegir] : undefined };
+}
+
 function filtrosRegistro() {
-  const tarea = tareaPorId(Number($('fallos-tarea').value));
   const lista = nombres();
   const deLista = new Set(lista.map((n, i) => (n ? codigoAlumno(i) : null)).filter(Boolean));
   const alumno = $('fallos-alumno').value || undefined;
   return {
-    ejercicios: tarea ? [...tarea.estrella, ...tarea.elegir] : undefined,
+    ...filtroTareaRegistro(),
     practica: $('fallos-practica').value || undefined,
     alumno,
     // Con nombres en la lista, solo cuentan los de la lista (fuera queda el código de
@@ -390,7 +508,7 @@ function filtrosRegistro() {
 
 function pintarSelectoresRegistro() {
   const conservar = (id, html) => { const v = $(id).value; $(id).innerHTML = html; if ([...$(id).options].some(o => o.value === v)) $(id).value = v; };
-  conservar('fallos-tarea', '<option value="">Todas</option>' + TAREAS.map(t => `<option value="${t.id}">Tarea ${t.id}</option>`).join(''));
+  conservar('fallos-tarea', '<option value="">Todas</option><option value="ninguna">Sin tarea (práctica libre)</option>' + TAREAS.map(t => `<option value="${t.id}">Tarea ${t.id}</option>`).join(''));
   const slugs = [...new Set(registro.map(f => f.practica))].sort((a, b) => nombrePractica(a).localeCompare(nombrePractica(b)));
   conservar('fallos-practica', '<option value="">Todas</option>' + slugs.map(s => `<option value="${esc(s)}">${esc(nombrePractica(s))}</option>`).join(''));
   const codigos = [...new Set(registro.map(f => f.alumno))].sort((a, b) => (leerCodigoAlumno(a) ?? 9999) - (leerCodigoAlumno(b) ?? 9999));
@@ -432,15 +550,12 @@ function pintarRegistro() {
 }
 
 function csvRegistro() {
-  const f = filtrosRegistro();
-  const enTarea = f.ejercicios ? new Set(f.ejercicios.map(([s, n]) => `${s}/${n}`)) : null;
-  const filas = registro.filter(x => (!enTarea || enTarea.has(`${x.practica}/${x.ejercicio}`)) && (!f.practica || x.practica === f.practica)
-    && (!f.alumno || x.alumno === f.alumno) && (!f.alumnos || f.alumnos.has(x.alumno)));
-  const cab = ['Fecha', 'N.º', 'Alumno', 'Código', 'Práctica', 'Ej.', 'Ejercicio', 'Destrezas de la práctica', 'Error', 'Respuesta', 'Ítem', 'Explicación que vio', 'Idioma', 'Repitiendo un ejercicio ya terminado'];
+  const filas = filtrarFallos(registro, filtrosRegistro());
+  const cab = ['Fecha', 'N.º', 'Alumno', 'Código', 'Práctica', 'Ej.', 'Ejercicio', 'Destrezas de la práctica', 'Error', 'Respuesta', 'Ítem', 'Explicación que vio', 'Idioma', 'Repitiendo un ejercicio ya terminado', 'Tarea'];
   return [cab, ...filas.map(x => {
     const i = leerCodigoAlumno(x.alumno);
     return [fechaHora(x.t), i === null ? '' : i + 1, i === null ? '' : nombres()[i] ?? '', x.alumno, nombrePractica(x.practica), x.ejercicio, nombreEjercicio(x.practica, x.ejercicio),
-      destrezasDe(x.practica), x.error ?? '', x.respuesta ?? '', x.item, x.feedback, x.idioma, x.repeticion ? 'sí' : 'no'];
+      destrezasDe(x.practica), x.error ?? '', x.respuesta ?? '', x.item, x.feedback, x.idioma, x.repeticion ? 'sí' : 'no', x.tarea ?? ''];
   })];
 }
 
@@ -461,6 +576,66 @@ async function cargarRegistro() {
   }
 }
 
+// --- 4. Asignar tareas (DISENO.md, B.3) --------------------------------------------
+
+const marcasAsignar = new Map();   // 'indice|tarea' → bool: lo marcado a mano y aún sin guardar
+
+const asignablesAhora = () => TAREAS.filter(t => t.asignada);
+const guardadas = indice => asignaciones.find(a => a.indice === indice)?.tareas ?? [];
+const marcada = (indice, id) => (marcasAsignar.has(`${indice}|${id}`) ? marcasAsignar.get(`${indice}|${id}`) : guardadas(indice).includes(id));
+
+function pintarAsignar() {
+  const tareas = asignablesAhora();
+  const alumnos = nombres().map((nombre, indice) => ({ indice, nombre })).filter(a => a.nombre);
+  $('asignar-guardar').disabled = !asignacionesCargadas || !tareas.length || !alumnos.length;
+  if (!tareas.length) {
+    $('tabla-asignar').innerHTML = '<p class="vacio">Ninguna tarea es <code>asignada</code> en <code>practicas/_comun/tareas.js</code> (campo <code>asignada: true</code>): no hay nada que asignar.</p>';
+    return;
+  }
+  if (!alumnos.length) {
+    $('tabla-asignar').innerHTML = '<p class="vacio">Escribe antes la lista de alumnos (arriba).</p>';
+    return;
+  }
+  $('tabla-asignar').innerHTML = `
+    <table>
+      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${tareas.map(t => `<th class="practica">T${t.id} · ${esc(t.titulo.es)}${t.hasta ? `<br><span class="pequeno">plazo ${t.hasta.split('-').reverse().join('/')}</span>` : ''}</th>`).join('')}</tr></thead>
+      <tbody>${alumnos.map(a => `
+        <tr>
+          <td class="num">${a.indice + 1}</td><td>${esc(a.nombre)}</td><td><code>${codigoAlumno(a.indice)}</code></td>
+          ${tareas.map(t => `<td class="num"><input type="checkbox" data-asignar="${a.indice}|${t.id}" aria-label="Tarea ${t.id} para ${esc(a.nombre)}"${marcada(a.indice, t.id) ? ' checked' : ''}></td>`).join('')}
+        </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+async function guardarAsignaciones() {
+  const estado = $('asignar-estado');
+  if (!asignacionesCargadas) { estado.textContent = 'Carga primero la nube (arriba, «Cargar de la nube»): hace falta saber qué hay ya guardado.'; return; }
+  estado.textContent = 'Conectando…';
+  try {
+    if (!(await conectarProfesor(estado))) return;
+    const ids = asignablesAhora().map(t => t.id);
+    let guardados = 0;
+    for (const a of nombres().map((nombre, indice) => ({ indice, nombre })).filter(a => a.nombre)) {
+      const previas = guardadas(a.indice);
+      const nuevas = asignacionesParaGuardar(previas, ids, ids.filter(id => marcada(a.indice, id)));
+      const igual = nuevas.length === previas.length && nuevas.every((id, i) => id === previas[i]);
+      // Sin cambios no se escribe; y a un alumno sin documento y sin nada marcado tampoco se le crea uno.
+      if (igual) continue;
+      await firebase.datos.guardarAsignacion(codigoAlumno(a.indice), nuevas);
+      const resto = asignaciones.filter(x => x.indice !== a.indice);
+      asignaciones = [...resto, { indice: a.indice, tareas: nuevas }];
+      guardados++;
+    }
+    marcasAsignar.clear();
+    estado.textContent = guardados ? `Guardadas las asignaciones de ${guardados} alumno${guardados === 1 ? '' : 's'} (${new Date().toLocaleTimeString('es')}).` : 'No había cambios que guardar.';
+    pintarAsignar();
+    pintarResultados();
+  } catch (e) {
+    const { mensajeDeError } = await import('../src/firebase.js');
+    estado.textContent = `No se han podido guardar: ${mensajeDeError(e)}`;
+  }
+}
+
 // --- Arranque ------------------------------------------------------------------
 
 try { $('lista').value = localStorage.getItem(CLAVE_LISTA) ?? ''; } catch { /* sin almacén */ }
@@ -470,7 +645,13 @@ $('lista').addEventListener('input', () => {
   pintarResultados();
   pintarSelectoresRegistro();
   pintarRegistro();
+  pintarAsignar();
 });
+$('tabla-asignar').addEventListener('change', ev => {
+  const clave = ev.target.dataset?.asignar;
+  if (clave) marcasAsignar.set(clave, ev.target.checked);
+});
+$('asignar-guardar').addEventListener('click', guardarAsignaciones);
 $('idioma-enlaces').addEventListener('change', pintarCodigos);
 $('destino-enlaces').addEventListener('change', pintarCodigos);
 pintarTareasEnlaces();
@@ -490,3 +671,4 @@ $('fallos-csv').addEventListener('click', () => descargar('fallos.csv', csvRegis
 pintarSelectoresRegistro();
 pintarCodigos();
 pintarResultados();
+pintarAsignar();

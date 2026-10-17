@@ -70,6 +70,16 @@
     </section>
 
     <section class="tarjeta">
+      <h2>Asignar tareas</h2>
+      <p class="pequeno">Una tarea <strong>asignada</strong> (campo <code>asignada: true</code> en <code>practicas/_comun/tareas.js</code>) es obligatoria solo para los alumnos que marques aquí; para los demás es una tarea de repaso más, sin ninguna marca. Primero pulsa «Cargar de la nube» (arriba, en «2. Resultados»), para ver lo que ya hay guardado; después marca y pulsa «Guardar asignaciones». Se guarda en la nube, no en el repositorio. Hay que entrar con tu cuenta de Google de profesor.</p>
+      <div class="botonera">
+        <button type="button" id="asignar-guardar" disabled>Guardar asignaciones</button>
+      </div>
+      <p class="pequeno" id="asignar-estado"></p>
+      <div class="tabla" id="tabla-asignar"></div>
+    </section>
+
+    <section class="tarjeta">
       <h2>3. Fallos, uno a uno</h2>
       <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno. Hay que entrar con tu cuenta de Google de profesor. Cada carga gasta una lectura por fallo: elige desde qué día.</p>
       <div class="botonera">
