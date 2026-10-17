@@ -27,7 +27,7 @@
 // Las funciones de cálculo son puras y están probadas en tests/practicas-migracion.test.js.
 
 import { codigoAlumno, MAX_ALUMNOS } from './_comun/codigos.js';
-import { CATALOGO, UNIDADES } from './_comun/catalogo.js';
+import { CATALOGO, UNIDADES, adaptarProgreso } from './_comun/catalogo.js';
 import { TAREAS, configAJSON, configDeJSON, erroresConfig } from './_comun/tareas.js';
 import { fusionarProgreso, canonico, coleccionEspacio, COLECCION_ESPACIOS, COLECCION_BUSQUEDA, COLECCION_PRACTICAS, COLECCION_TAREAS, COLECCION_ASIGNACIONES } from './_comun/nube.js';
 import { firebaseConfig } from '../src/config.js';
@@ -124,13 +124,16 @@ function estadoDe(fields) {
  * cambiar de aparato: gana lo más avanzado, ejercicio a ejercicio; nunca retrocede.
  * `{ ilegible: true }` si el de origen no se entiende y en el destino ya hay algo.
  */
-export function fusionDeProgreso(origen, destino) {
+export function fusionDeProgreso(origen, destino, slug = null) {
   if (!destino) return { fields: origen };
   const a = estadoDe(origen), b = estadoDe(destino);
   if (!a) return { ilegible: true };
   if (!b) return { fields: origen };
-  const ej = fusionarProgreso(a.ej, b.ej);
-  if (canonico(ej) === canonico(b.ej)) return null;
+  // Una práctica que ha perdido ejercicios (`quitados` del catálogo, como la Fábrica
+  // desde la tarea 76): las dos listas, a la forma de ahora antes de fusionar.
+  const ejA = adaptarProgreso(slug, a.ej), ejB = adaptarProgreso(slug, b.ej);
+  const ej = fusionarProgreso(ejA, ejB);
+  if (canonico(ej) === canonico(ejB)) return null;
   const estado = JSON.stringify({ v: 1, idioma: b.idioma ?? a.idioma ?? 'alterno', ej });
   if (estado.length >= 4000) return { grande: true };
   return { fields: { estado: { stringValue: estado }, actualizado: { integerValue: String(Math.max(enteroDe(origen.actualizado), enteroDe(destino.actualizado))) } } };
@@ -187,7 +190,8 @@ export function planDelPaso({ uid, alumnos, origen, destino, opciones = {} }) {
       if (!queda.has(codigoDeDocumento(sub, d.id, d.fields))) { omitidos.otros++; continue; }
       c.origen++;
       const ya = enDestino.get(d.id) ?? null;
-      const r = sub === 'asignaciones' ? fusionDeAsignacion(d.fields, ya) : fusionDeProgreso(d.fields, ya);
+      const slug = sub === 'progreso-libre' ? d.id.split('--')[0] : d.id.split('--')[1];
+      const r = sub === 'asignaciones' ? fusionDeAsignacion(d.fields, ya) : fusionDeProgreso(d.fields, ya, slug);
       if (r === null) { c.iguales++; continue; }
       if (r.ilegible) { omitidos.ilegibles++; continue; }
       if (r.grande) { omitidos.grandes++; continue; }

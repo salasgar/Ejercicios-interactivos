@@ -95,6 +95,15 @@ test('fusionDeProgreso: copia si no hay nada; fusiona sin retroceder; nada si el
   assert.deepEqual(fusionDeProgreso({ estado: { stringValue: 'basura' }, actualizado: { integerValue: '1' } }, atrasado), { ilegible: true });
 });
 
+test('fusionDeProgreso: una práctica que perdió ejercicios (Fábrica, tarea 76) se adapta antes de fusionar', () => {
+  // En el sistema actual, con los 3 de antes (el 1 se quitó); en el espacio, con los 2 de ahora.
+  const viejo = progreso([ej(10, true), ej(10, true), ej(2)], 100);
+  const nuevo = progreso([ej(4), ej(1)], 200);
+  const r = fusionDeProgreso(viejo, nuevo, 'fabrica');
+  assert.deepEqual(ejDe(r.fields).map(e => [e.puntos, e.terminado]), [[10, true], [2, false]]);
+  assert.equal(fusionDeProgreso(progreso([ej(10, true), ej(3), ej(1)]), progreso([ej(3), ej(1)]), 'fabrica'), null, 'lo mismo en las dos formas: nada que escribir');
+});
+
 test('fusionDeAsignacion: la unión de las tareas', () => {
   assert.equal(fusionDeAsignacion(asignacion([5]), asignacion([5, 6])), null);
   const r = fusionDeAsignacion(asignacion([5, 7]), asignacion([6]));
