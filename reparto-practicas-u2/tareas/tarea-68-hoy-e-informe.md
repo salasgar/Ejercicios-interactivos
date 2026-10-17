@@ -86,6 +86,10 @@ Que los compañeros vean en su panel lo que Juan Luis recibe cada noche en el in
 
 ## Trampas conocidas
 
+- (aprendido en la ejecución) La cuenta lectora NO puede listar `practicas-alumnos`: `--espacio` necesita `--codigos <CSV de «Mis alumnos»>` para saber quién no ha entrado.
+- `informe-actividad.mjs` lo importa también el navegador: ningún `import` estático de `node:*` y `process` solo dentro de `main` (lo vigila un test).
+- El candado de sesiones sigue 30 min tras cerrar la tarea de otra sesión: el esqueleto de la tarea anterior puede tardar en liberarse.
+
 - La rutina de la nube (trig_018p4Y73wGMvZu7Uxjf27Tc1) ejecuta el script cada noche a las 21:30: un error de sintaxis la rompe. Prueba el script tal como lo lanza la rutina antes de comitear.
 
 ## Prohibido (propio de esta tarea)
