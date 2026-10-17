@@ -2,7 +2,8 @@
 
 Escrito el 2026-10-08, al cerrar el reparto PU2 (`reparto-practicas-u2/`), y puesto al día
 el 2026-10-17 con el modelo de tareas v2 (unidades, plazos, asignación y progreso por tarea:
-§1, §2 y §3). Es el documento
+§1, §2 y §3) y con el sistema de **varios profesores** (espacios, código secreto y alta de
+profesores: §9). Es el documento
 que la coordinación de la unidad necesita sobre las prácticas, con el mismo espíritu que
 [coordinacion-unidad1.md](coordinacion-unidad1.md): qué hay, cómo se amplía, cómo se leen los
 resultados y qué destreza del inventario practica cada una.
@@ -10,6 +11,15 @@ resultados y qué destreza del inventario practica cada una.
 Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
 (Divisibilidad) y 15 de repaso de la unidad 1. Todas se apoyan en una **base común**
 (`practicas/_comun/`) y comparten **un solo panel del profesor** (`practicas/profesor.html`).
+
+**Dos sistemas conviven** desde el 2026-10-17. El **actual** (códigos de 4 caracteres
+calculables, colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`,
+tareas en `tareas.js`) es el de los alumnos de Juan Luis hasta su paso al nuevo (tarea 70 de
+PU2), y es el que describen §1 y §2. El **nuevo** (un espacio por profesor, códigos al azar,
+nombres cifrados, tareas en la nube) está en §9; los compañeros empiezan con él, con la guía
+[practicas-como-empezar.md](practicas-como-empezar.md). La base, las prácticas y las vistas
+del panel son las mismas en los dos: solo cambian dónde viven los datos y cómo se llama cada
+alumno.
 
 - Portada: https://salasgar.github.io/Ejercicios-interactivos/practicas/
 - En local: `npm run servir` y http://localhost:8080/practicas/ (los módulos ES no cargan
@@ -155,7 +165,9 @@ solo del profesor; dentro solo hay números, sin nombres). Lo hace `practicas/_c
 
 ## 2. Cómo lee el profesor los resultados
 
-En `practicas/profesor.html`:
+En `practicas/profesor.html`, con el **sistema actual** (Juan Luis lo elige en el selector de
+arriba; en el **sistema nuevo** las vistas son las mismas, pero cada profesor entra con Google en
+su espacio, los códigos los genera el panel y la lista se guarda cifrada en la nube: §9):
 
 1. **Alumnos y sus códigos.** Se pega la lista de clase (un nombre por línea; no sale del
    navegador). El panel asigna un código a cada línea y da el enlace de cada alumno; el
@@ -576,3 +588,173 @@ añadir un ejercicio a una práctica existente o, ahora que el catálogo no tien
   `tests/practicas-semana.test.js`, la nube en `tests/practicas-nube.test.js`, el panel en
   `tests/practicas-resultados.test.js` y el informe en `tests/herramientas-informe.test.js`.
   `npm test` los corre todos.
+- Varios profesores (§9): el diseño en `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`
+  (aprobado por Juan Luis el 2026-10-17), los códigos de 4 al azar en `salidas/72-codigos-de-4/`
+  y la revisión de punta a punta (tarea 69) en `salidas/69-revision-varios-profesores/`. Tests:
+  `tests/practicas-{espacio,codigos-4,cifrado,editor,registro,migracion}.test.js` y las
+  reglas con `herramientas/probar-reglas.mjs` (§9.8).
+
+## 9. Varios profesores (desde el 2026-10-17)
+
+Construido en las tareas 60-68 y 72 de PU2 sobre el diseño de la 57, y revisado en la 69 (se
+entrega). Cada profesor entra en el panel con su cuenta de Google y tiene un **espacio** propio
+en la nube con sus alumnos, sus tareas, sus fechas y sus resultados. **Un profesor no puede leer
+nada de los alumnos de otro**, ni desde el panel ni sabiendo programar (lo comprueban las reglas
+y su banco de pruebas). La guía para los compañeros, en llano, es
+[practicas-como-empezar.md](practicas-como-empezar.md).
+
+### 9.1 Quién es profesor
+
+- Entra con **Google** (su cuenta de murciaeduca). Sin alta, el panel dice «Aún no tienes
+  acceso. Juan Luis tiene que darte de alta.» y deja una **solicitud** con su correo y su nombre
+  (`practicas-solicitudes/{uid}`).
+- El **administrador** es el uid de siempre (`esProfesor()` en las reglas, `PROFESOR_UID` en
+  `src/config.js`): Juan Luis. Solo él ve la sección **«Profesores»**: las solicitudes («Dar de
+  alta», «Rechazar») y los dados de alta («Dar de baja», «Volver a dar de alta»). Dar de alta
+  escribe `practicas-profesores/{uid}` con `{ activo: true, alta }`; dar de baja pone
+  `activo: false` (el profesor deja de entrar en su espacio; sus datos no se borran).
+- **El administrador no ve los alumnos de nadie**: en su panel solo tiene su propio espacio,
+  como un profesor más (se da de alta a sí mismo la primera vez que entra en el sistema nuevo).
+  Lo único que no puede prometer ningún diseño: desde la **consola de Firebase** el dueño del
+  proyecto ve todos los documentos; por eso en la nube no hay ningún nombre legible (§9.4).
+
+### 9.2 El código del alumno
+
+- **Lo genera el panel del profesor, al azar** (`crypto.getRandomValues`, `codigoSecreto` en
+  `practicas/_comun/codigos.js`), con el alfabeto de siempre (sin I, O, 0 ni 1). El profesor elige
+  la longitud en «Mis alumnos» (se guarda en su configuración, `longitudCodigo`):
+  - **8** (por defecto; se escribe `K7QM-P3XA`): 32⁸ posibilidades, nadie da con uno probando;
+  - **4**: más fácil de recordar; se descartan los 1024 calculables del sistema actual, pero son
+    pocos y alguien con paciencia podría encontrar alguno (y ver sus resultados, nunca su nombre).
+- Cada código tiene su documento de búsqueda, `practicas-alumnos/{código}` = `{ profesor, n,
+  alta }` (`n`, el número de línea de la lista, de 1 a 1023). El alumno lo lee con `get` sin cuenta;
+  **nadie puede listar** la colección salvo cada profesor sus propias filas; un código creado no lo
+  puede «quedarse» otro profesor.
+- **Quién decide el sistema es la nube, no la longitud** (`resolverCodigo` en
+  `practicas/_comun/espacio.js`, tarea 72): con un código de 8, o de 4 que no es de los
+  calculables, la búsqueda da su profesor o «Ese código no existe. Copia el de tu correo o usa
+  tu enlace.»; con uno de **los 1024 calculables** (los de los alumnos de Juan Luis), si está
+  registrado en `practicas-alumnos` va al espacio de su profesor, y si no (404) va al sistema
+  actual, y eso se recuerda **una hora** en el navegador. Así Juan Luis pasa al sistema nuevo
+  conservando los códigos de 4 de siempre (tarea 70).
+- El enlace sigue siendo corto (`practicas/?c=K7QMP3XA`, `semana.html?t=3&c=…`): no lleva el
+  profesor. La búsqueda y la configuración del profesor se guardan en el navegador.
+- El **código de resultado de la tarea** (20 caracteres, §2) no cambia de formato: lleva el
+  número de lista **en la lista de su profesor** (desde 1; en el sistema actual, la posición desde
+  0) y el id de la tarea **de ese profesor**. Solo lo interpreta el panel de ese profesor.
+
+### 9.3 Dónde viven los datos
+
+| Qué | Ruta | Lee | Escribe |
+|---|---|---|---|
+| Solicitudes de alta | `practicas-solicitudes/{uid}` | el interesado y el administrador | el interesado |
+| Profesores dados de alta | `practicas-profesores/{uid}` = `{ activo, alta }` | el propio profesor y el administrador | el administrador |
+| Búsqueda de códigos | `practicas-alumnos/{código}` = `{ profesor, n, alta }` | cualquiera con `get`; listar, cada profesor lo suyo | el profesor dueño |
+| Espacio | `practicas-espacios/{uid}` = `{ lectores, actualizado }` | su dueño | su dueño |
+| Tareas y fechas | `…/{uid}/config/tareas` = `{ json, actualizado }` | cualquiera con `get` (no hay datos de alumnos) | su dueño |
+| Lista de nombres, cifrada | `…/{uid}/privado/nombres` = `{ v, sal, iv, cifrado, actualizado }` | solo su dueño | su dueño |
+| Progreso de práctica libre | `…/{uid}/progreso-libre/{práctica}--{código}` | el alumno con `get`; listar, el dueño y sus lectores | el alumno, si el código es de ese profesor |
+| Progreso por tarea | `…/{uid}/progreso-tareas/t{id}--{práctica}--{código}` | ídem | ídem |
+| Asignaciones | `…/{uid}/asignaciones/{código}` = `{ tareas, actualizado }` | el alumno con `get`; listar, el dueño y sus lectores | el dueño |
+| Fallos | `…/{uid}/fallos/{código}-{hora}-{azar}` | el dueño y sus lectores | el alumno, solo crear |
+
+Los documentos tienen el mismo formato que en el sistema actual; cambia la ruta. Se llama
+`progreso-libre` y no `progreso` porque la aplicación antigua de `src/` tiene una regla con
+comodín (`{ruta=**}/progreso`) que habría dejado al administrador leerlo (tarea 61). Un
+profesor dado de baja no entra en nada de su espacio, y sus lectores tampoco.
+
+### 9.4 Los nombres, cifrados
+
+La lista de «Mis alumnos» se guarda en el navegador sin cifrar (como siempre) y en la nube
+**cifrada** con una contraseña que solo sabe el profesor: Web Crypto, PBKDF2-SHA-256 con 600 000
+vueltas y AES-GCM de 256 bits (`practicas/_comun/cifrado.js`); contraseña de al menos 10
+caracteres y distinta de la de Google. En otro ordenador el panel pide la contraseña y descifra.
+**Nadie puede recuperarla**: si se olvida, se vuelve a pegar la lista y se pone otra; los
+códigos no se pierden, porque van por número de línea. En la nube solo hay códigos, números de
+lista, resultados (con lo que tecleó el alumno al fallar) y esa lista cifrada.
+
+### 9.5 Las tareas de cada profesor
+
+- Viven en su espacio (`config/tareas`): el mismo objeto de `tareas.js`,
+  `{ unidades: [{ n, desde }], tareas: [ … ] }` (más `longitudCodigo` si es 4), con las mismas
+  comprobaciones (`erroresConfig`). Los títulos de las unidades son comunes (`UNIDADES`); de cada
+  profesor son las fechas.
+- Se hacen en la sección **«Tareas»** del panel (tarea 67): por unidad, «Nueva tarea», «Editar»
+  y «Duplicar»; los ids los pone el editor (el mayor + 1) y no se reutilizan; **desde su `desde`
+  una tarea no cambia de ejercicios** (solo título y fechas). «Cargar la plantilla del curso»
+  copia las de `tareas.js` (sin tareas, las pone; con tareas, las añade con ids nuevos).
+- En el espacio de un profesor la tarea 1 es una tarea más, con su propio progreso. La única
+  excepción es la tarea 1 que trae Juan Luis del sistema actual al pasar (tarea 70), que conserva
+  `progresoPorPractica: true`.
+- `tareas.js` queda como **plantilla del curso** y, hasta su paso, como las tareas del sistema
+  actual de Juan Luis.
+
+### 9.6 El panel en el sistema nuevo
+
+- Entra con Google y abre el espacio; las vistas de §2 son las mismas, leyendo del espacio y con
+  las tareas del profesor. **Lee solo lo nuevo**: lo leído se guarda en el navegador (IndexedDB)
+  y cada carga pide solo los documentos cambiados desde la última lectura, con un margen de dos
+  días hacia atrás (el `actualizado` lo pone el aparato del alumno, y su reloj puede ir
+  atrasado); «Volver a leer todo» empieza de cero.
+- **«Hoy»** (tarea 68): lo que cuenta el informe diario (alertas, quién no ha entrado, entregas,
+  cada ejercicio de la tarea), para los profesores que no reciben correo.
+- **«Mis alumnos»**: la lista, la longitud de los códigos, «Generar códigos», la lista cifrada,
+  los enlaces por alumno, el CSV (número, nombre, código, enlace) y las tarjetas para recortar.
+- Juan Luis tiene además el **selector de sistema** (actual / nuevo), «Profesores» y **«Pasar al
+  sistema nuevo»** (tarea 70: copia sus alumnos, con sus códigos de siempre, su progreso y sus
+  tareas a su espacio, y desde ahí añade la cuenta lectora del informe).
+
+### 9.7 Dar de alta a un compañero
+
+1. Mándale [practicas-como-empezar.md](practicas-como-empezar.md) y el enlace del panel.
+2. Él entra con Google: su solicitud aparece en tu panel, «Profesores → Solicitudes», con su
+   nombre y su correo. **Comprueba el correo** (cualquiera con la `apiKey` puede crear una
+   cuenta y dejar una solicitud) y pulsa «Dar de alta». Si no es de nadie que conozcas,
+   «Rechazar».
+3. Él pulsa «Volver a comprobar» y ya está en su espacio. No hay que tocar las reglas ni el
+   repositorio.
+4. Para quitarle el acceso, «Dar de baja» (sus datos se quedan; «Volver a dar de alta» lo
+   devuelve). Borrar sus datos, solo desde la consola.
+
+### 9.8 Las reglas y su banco de pruebas
+
+Las reglas de varios profesores son la sección «Varios profesores» de `firestore.rules`
+(detrás de las del sistema actual, que no cambian hasta la tarea 71). Se publican como siempre
+(README, «Puesta en marcha de Firebase»). Después de publicar un cambio:
+
+```
+PROFE_A_EMAIL=… PROFE_A_CLAVE=… PROFE_B_EMAIL=… PROFE_B_CLAVE=… node herramientas/probar-reglas.mjs
+```
+
+con dos cuentas de prueba de correo y contraseña (Authentication → Add user) dadas de alta como
+profesores. Comprueba por REST, contra el proyecto real, cada cosa que un profesor, un alumno
+sin cuenta o un lector puede y no puede hacer (154 comprobaciones el 17-10), y borra lo que crea.
+`--baja` comprueba un profesor de baja; `--dejar` no borra los datos de prueba. Sin las
+variables solo hace las comprobaciones sin red.
+
+### 9.9 Las cuotas del plan gratuito
+
+El plan gratuito de Firebase (Spark) da **por día** 50 000 lecturas, 20 000 escrituras y 20 000
+borrados, y 1 GiB guardado; el contador vuelve a cero a las 9:00 hora peninsular. El cálculo del
+diseño (F.7) para el peor día, con unos 400 alumnos practicando todos, es de un 65 % de las
+escrituras y un 64 % de las lecturas. Si se pasa, **la app no se rompe**: el progreso queda en el
+navegador y sube al día siguiente.
+
+**Cómo mirarlo** (Juan Luis, cada día de la primera semana de los compañeros):
+
+1. https://console.firebase.google.com → el proyecto → **Firestore Database** → pestaña **«Uso»**
+   («Usage»).
+2. Elige el periodo de los últimos 7 días y mira, **por día**, las lecturas, las escrituras y los
+   borrados.
+3. **Umbral: el 70 %**, o sea 35 000 lecturas o 14 000 escrituras en un día. Si algún día lo
+   pasa, se decide entonces: bajar escrituras (subir el progreso menos a menudo) o pasar al plan de
+   pago con una alerta de gasto.
+
+### 9.10 El informe diario en un espacio
+
+Sigue siendo solo para Juan Luis. Mientras esté en el sistema actual lee sin cuenta, como en §2.
+Después de su paso lee su espacio con una **cuenta lectora** (correo y contraseña, solo lectura,
+añadida como lectora en su panel; nunca ve los nombres):
+`LECTOR_EMAIL=… LECTOR_CLAVE=… node herramientas/informe-actividad.mjs --espacio <uid> --alumnos 51`
+(o `--codigos <CSV de «Mis alumnos»>`). La contraseña va en la configuración de la rutina en la
+nube, nunca en el repositorio. Los demás profesores ven lo mismo en «Hoy».
