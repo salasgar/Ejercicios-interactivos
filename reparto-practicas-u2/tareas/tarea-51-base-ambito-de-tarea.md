@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-16
 Precondición: 49 LISTA (reglas publicadas) y 50 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h (tiempo de sesión, no de persona; real: 15 min el 2026-10-17) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/51-base-ambito-de-tarea/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/base.js`, `practicas/_comun/registro.js`, `practicas/_comun/textos.js`, `tests/practicas-comun.test.js`, `tests/practicas-registro.test.js`
 
@@ -137,6 +137,16 @@ siguen exactamente como hoy. Cada fallo registrado dentro de una tarea lleva `ta
   documento de una tarea tiene el mismo formato, así que se aplica igual; no la dupliques.
 - Las reglas tienen que estar publicadas (49) antes de probar en la nube; si al escribir sale
   403, no toques las reglas: avisa.
+- (2026-10-17, s-20261017T065839-a86bc12f) Con otra sesión editando el panel en el mismo árbol,
+  `npm test` falló en dos tests de `resultados.js` que no eran míos. Para saber si el verde es
+  tuyo: `git worktree add --detach <scratchpad>/wt HEAD`, copiar allí solo tus ficheros, enlazar
+  `node_modules` y `npm test` dentro; `git worktree remove --force` al acabar. Sirve también para
+  probar en el navegador sin ficheros ajenos a medias (`python3 -m http.server 8091` en el worktree).
+- En zsh, `F="a b"; git add $F` no parte la variable (falla con «pathspec did not match»): las
+  rutas, escritas una a una.
+- Para el navegador, el ejercicio 3 del semáforo (está en la tarea 2) se contesta por JS: el ítem
+  es «¿Es N divisible entre D?»; envolver `window.fetch` en la página muestra cada GET/PATCH a
+  `practicas-tareas/` y el `tarea` de cada POST a `fallos`.
 
 ## Prohibido (propio de esta tarea)
 
