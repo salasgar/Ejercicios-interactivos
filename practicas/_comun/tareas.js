@@ -256,8 +256,12 @@ export function erroresTareas(tareas = TAREAS, { tareaUnoAntigua = true } = {}) 
     }
     if (t.asignada !== undefined && t.asignada !== true) errores.push(`${nombre}: «asignada» solo puede ser true o no estar`);
     if (!tareaUnoAntigua) {
-      // Tareas de un profesor del sistema nuevo: la 1 es una tarea como las demás.
-      if (t.progresoPorPractica !== undefined) errores.push(`${nombre}: «progresoPorPractica» solo existe en la plantilla del curso`);
+      // Tareas de un profesor del sistema nuevo: la 1 es una tarea como las demás,
+      // salvo en el espacio de Juan Luis, que la trae del modo antiguo tal cual
+      // (tarea 70: su progreso está en el de la práctica libre). Se puede llevar, no se exige.
+      if (t.progresoPorPractica !== undefined && !(t.id === 1 && t.progresoPorPractica === true)) {
+        errores.push(`${nombre}: «progresoPorPractica» solo existe en la tarea 1 que viene del sistema actual`);
+      }
     } else {
       if (t.id === 1 && t.progresoPorPractica !== true) errores.push('tarea 1: tiene que llevar «progresoPorPractica: true» (conserva el modelo de la práctica libre)');
       if (t.id !== 1 && t.progresoPorPractica !== undefined) errores.push(`${nombre}: «progresoPorPractica» solo existe en la tarea 1`);

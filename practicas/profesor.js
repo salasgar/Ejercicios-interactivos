@@ -29,6 +29,7 @@ import { declaracionDe } from './_comun/base.js';
 import { cifrar, descifrar, errorContrasena, ContrasenaIncorrecta } from './_comun/cifrado.js';
 import * as editorTareas from './profesor-tareas.js';
 import * as panelHoy from './profesor-hoy.js';
+import * as migracion from './profesor-migracion.js';
 
 const $ = id => document.getElementById(id);
 // La lista es la misma que la del panel antiguo de `divisores/`: mismos alumnos, mismos códigos.
@@ -965,8 +966,30 @@ async function montarEspacio(usuario, esAdmin) {
     panelHoy.montar($('panel-hoy'), contexto);
   }
   if (esAdmin) pintarProfesores();
+  $('seccion-migracion').hidden = !esAdmin;
+  if (esAdmin && !migracionMontada) {
+    migracionMontada = true;
+    migracion.montar($('migracion'), contextoMigracion);
+  }
   await cargarEspacio();
 }
+
+// «Pasar al sistema nuevo» (tarea 70): solo el administrador, en su espacio.
+let migracionMontada = false;
+const contextoMigracion = {
+  get uid() { return espacio.uid; },
+  get datos() { return panelDatos(); },
+  token: () => firebase.usuario().getIdToken(),
+  listaAntigua: () => leerLocal(CLAVE_LISTA) ?? $('lista').value,
+  listaEspacio: () => $('lista-espacio').value,
+  ponerListaEspacio: texto => {
+    $('lista-espacio').value = texto;
+    escribirLocal(claveListaEspacio(espacio.uid), texto);
+    alCambiarLista();
+  },
+  cambiarConfig: config => contexto.cambiarConfig(config),
+  recargarTodo: () => cargarEspacio({ todo: true }),
+};
 
 /** Los códigos del profesor (`listarMisCodigos`): con ellos se sabe de quién es cada documento. */
 function ponerCodigos(codigos) {

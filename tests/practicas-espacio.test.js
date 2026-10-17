@@ -195,9 +195,15 @@ test('erroresConfig: la tarea 1 de un profesor es una más', () => {
   const c = configPlantilla();
   assert.equal(c.tareas[0].id, 1);
   assert.deepEqual(erroresConfig(c), []);
-  // Y «progresoPorPractica» no vale en un espacio.
+  // «progresoPorPractica» solo vale en la tarea 1 y como true: la del espacio de
+  // Juan Luis, que viene del sistema actual (tarea 70).
   c.tareas[0].progresoPorPractica = true;
-  assert.match(erroresConfig(c).join('|'), /progresoPorPractica/);
+  assert.deepEqual(erroresConfig(c), []);
+  c.tareas[0].progresoPorPractica = false;
+  assert.match(erroresConfig(c).join('|'), /tarea 1: .*progresoPorPractica/);
+  delete c.tareas[0].progresoPorPractica;
+  c.tareas[1].progresoPorPractica = true;
+  assert.match(erroresConfig(c).join('|'), new RegExp(`tarea ${c.tareas[1].id}: .*progresoPorPractica`));
 });
 
 test('unidadesCon: títulos comunes y fechas del profesor', () => {
