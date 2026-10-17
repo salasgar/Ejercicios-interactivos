@@ -134,6 +134,18 @@ function avisoDivisoresMarcados(deDivisores, n, idioma) {
 // Cada aviso de los ejercicios 1 y 2 va en su línea: seguidos no se leían.
 const enLineas = avisos => avisos.join('<br>');
 
+const LETRAS = {
+  es: ['un', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece',
+    'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve', 'veinte'],
+  en: ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen',
+    'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'],
+};
+
+/** De 1 a 20 con letras (en español, «un» delante del sustantivo); de 21 en adelante, la cifra. */
+export function cantidadConLetras(n, idioma) {
+  return n >= 1 && n <= 20 ? LETRAS[idioma === 'es' ? 'es' : 'en'][n - 1] : String(n);
+}
+
 /**
  * «Has encontrado 8 de los 9 múltiplos de 7 (en verde). Te falta el 0 (con borde de puntos).»:
  * que vea lo que sí ha hecho bien. Lo antepone `explicar` cuando el ítem no está acertado.
@@ -159,9 +171,11 @@ export function recuento(item, respuesta, idioma) {
       : `Missing: ${lista} (dotted border).`);
   }
   if (sobran) {
+    // Cantidad con letras y «número(s)» detrás: «Sobran 2» se leía como «el 2 está mal».
+    const cant = cantidadConLetras(sobran, idioma);
     partes.push(es
-      ? `${sobran === 1 ? 'Sobra 1' : `Sobran ${sobran}`} (en rojo).`
-      : `${sobran === 1 ? '1 is' : `${sobran} are`} wrong (in red).`);
+      ? `${sobran === 1 ? 'Sobra' : 'Sobran'} ${cant} ${sobran === 1 ? 'número' : 'números'} (en rojo).`
+      : `${cant[0].toUpperCase() + cant.slice(1)} ${sobran === 1 ? 'number is' : 'numbers are'} wrong (in red).`);
   }
   return partes.join(' ');
 }
