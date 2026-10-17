@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-17 08:36 UTC · por s-20261017T082741-51bbe95f al cerrar la 52 (LISTA, commit bf65a9f). Antes, a las 08:30 UTC, s-20261017T082757-d15878d1 cerró la 56 (LISTA, commit c20fab4; sin prueba en navegador). **La 55 y la 57 pasan de BLOQUEADA a PENDIENTE** (no hay ninguna tarea MEDIO libre).
+Regenerado: 2026-10-17 08:36 UTC · por s-20261017T082741-51bbe95f al cerrar la 52 (LISTA, commit bf65a9f). Antes, a las 08:30 UTC, s-20261017T082757-d15878d1 cerró la 56 (LISTA, commit c20fab4; sin prueba en navegador). **La 55 y la 57 pasan de BLOQUEADA a PENDIENTE** (no hay ninguna tarea MEDIO libre). A las 08:5x UTC la coordinadora s-20261017T065935-3ecc253b dio de alta la 58 (MEDIO, PENDIENTE: ocultar «Comprobar» al responder; JL 17-10); no comparte ficheros con la 55 ni con la 57.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
 únicos hechos nuevos son el reclamo y la terminada de la 37. **Las 37 tareas están LISTAS**:
 ninguna REABIERTA, ninguna RELEVABLE, ninguna BLOQUEADA, ningún reclamo vivo. Los reclamos sin
@@ -174,6 +174,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 55 | Tareas v2 · I7: revisión de extremo a extremo (códigos 60-63, dos navegadores) y documentación | tareas/tarea-55-revision-v2.md | 51, 52, 53 y 54 LISTAS | 1 h 30 min | ALTO | — | docs/practicas-unidad2.md, README.md; salidas/55-revision-v2/ (VEREDICTO.md) | PENDIENTE | — |
 | 56 | Botones de números: los cuatro estados de la corrección en el CSS común y en todas las prácticas que los usan | tareas/tarea-56-botones-cuatro-estados.md | ninguna | 1 h | MEDIO | — | practicas/_comun/estilos.css (bloque de botones), practicas/_comun/piezas.js (función nueva al final), practicas/{semaforo,rectangulos}/{estilos.css,practica.js}, practicas/{constructor,baldosas}/practica.js, tests/practicas-botones.test.js (nuevo); salidas/56-botones-cuatro-estados/ | LISTA | terminada 08:30Z (17-oct) · commit c20fab4 · sin prueba en navegador |
 | 57 | Diseño (con Juan Luis) de la app para varios profesores con separación estricta: cada profesor, sus alumnos, sus tareas y sus fechas | tareas/tarea-57-diseno-varios-profesores.md | 51, 52 y 53 LISTAS | 2 h | ALTO | — | salidas/57-diseno-varios-profesores/ (DISENO.md) | PENDIENTE | — (sesión atendida con Juan Luis delante) |
+| 58 | «Comprobar» se oculta al responder en semáforo, criba, exponente, recta y rectángulos (y test que lo vigila) | tareas/tarea-58-ocultar-comprobar.md | ninguna | 30 min | MEDIO | — | practicas/{semaforo,criba,exponente,recta,rectangulos}/practica.js (la recta, solo si no hay cambios ajenos sin commit), tests/practicas-comprobar.test.js (nuevo); salidas/58-ocultar-comprobar/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, comprobado el 2026-09-20): ALTO = Opus 5, esfuerzo Alto ·
 MEDIO = Sonnet 5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
