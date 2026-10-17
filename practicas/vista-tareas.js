@@ -13,7 +13,7 @@ import { CATALOGO, ID_PLANTILLA, UNIDADES, unidadActual, unidadesCon } from './_
 import { leer, escribir, progresoGuardado } from './_comun/base.js';
 import { leerAsignacion, coleccionEspacio } from './_comun/nube.js';
 import { TAREAS, configDeJSON, diaDeFecha, estadoPlazo, tareasPublicadas } from './_comun/tareas.js';
-import { codigoAlumno, leerCodigoAlumno, leerCodigoSecreto, modoDeCodigo, MAX_ALUMNOS } from './_comun/codigos.js';
+import { codigoAlumno, leerCodigoSecreto, MAX_ALUMNOS } from './_comun/codigos.js';
 import { claveEspacio, resolverCodigo } from './_comun/espacio.js';
 
 /** Qué `tareaId` se pasa a la base para leer el progreso: null en la tarea 1 (práctica), el id en las v2. */
@@ -64,9 +64,9 @@ export const asignadaAMi = (tarea, asignacion) => Boolean(tarea.asignada && asig
 /**
  * Lo que enseñan la portada y la página de la tarea de un alumno (tarea 65):
  *   codigo    el código normalizado (4 o 8 caracteres, mayúsculas, sin guion);
- *   modo      'antiguo' | 'nuevo';
+ *   modo      'antiguo' (código de 4 que la nube no conoce) | 'nuevo' (registrado, de 4 u 8);
  *   indice    número de lista (el del código de resultado), o null si no cabe en él;
- *   profesor  uid de su espacio (código de 8) o null;
+ *   profesor  uid de su espacio (sistema nuevo) o null;
  *   tareas    las tareas de su profesor (o `TAREAS`, en el modo antiguo);
  *   unidades  las unidades con las fechas de su profesor (o `UNIDADES`);
  *   sinConfig el espacio no ha podido dar las tareas (se sigue sin ellas);
@@ -84,7 +84,7 @@ function contextoDeResuelto(codigo, r) {
   };
 }
 
-/** Lo que se sabe de un código de 8 sin red ni espera: la copia del navegador, o null. Para pintar sin esperar. */
+/** Lo que se sabe de un código registrado (4 u 8) sin red ni espera: la copia del navegador, o null. Para pintar sin esperar. */
 export function contextoGuardado(texto, leerClave = leer) {
   const codigo = leerCodigoSecreto(texto);
   if (codigo === null) return null;
@@ -95,14 +95,17 @@ export function contextoGuardado(texto, leerClave = leer) {
   } catch { return null; }
 }
 
-/** Resuelve un código tecleado o de enlace (4 o 8 caracteres). Nunca lanza. */
+/**
+ * Resuelve un código tecleado o de enlace (4 o 8 caracteres): pregunta a la nube
+ * (`resolverCodigo`), también con un código de 4 del modo antiguo, que puede estar
+ * ya registrado en el sistema nuevo. Nunca lanza.
+ */
 export async function identificar(texto, { resolver = resolverCodigo } = {}) {
-  const modo = modoDeCodigo(texto);
-  if (modo === 'antiguo') return contextoAntiguo(leerCodigoAlumno(texto));
-  if (modo !== 'nuevo') return { error: 'no-valido' };
   const codigo = leerCodigoSecreto(texto);
+  if (codigo === null) return { error: 'no-valido' };
   const r = await resolver(codigo);
   if (r?.error) return { error: r.error };
+  if (r?.modo === 'antiguo') return contextoAntiguo(r.n);
   return r?.modo === 'nuevo' ? contextoDeResuelto(codigo, r) : { error: 'sin-red' };
 }
 

@@ -43,7 +43,8 @@ function hash(texto) {
 
 const simbolos = valores => valores.map(v => ALFABETO[v]).join('');
 const valores = texto => [...texto].map(c => ALFABETO.indexOf(c));
-const limpiar = texto => String(texto).toUpperCase().replace(/[^A-Z0-9]/g, '');
+// `null` y `undefined` son «nada» (con String() saldría 'NULL': 4 símbolos del alfabeto).
+const limpiar = texto => String(texto ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 const agrupar = texto => texto.match(/.{4}/g).join('-');
 
 const mezclado = indice => (indice * PASO + DESFASE) % MAX_ALUMNOS;
@@ -67,40 +68,56 @@ export function leerCodigoAlumno(texto) {
   return DESMEZCLADO.get(s);
 }
 
-// --- Código secreto del alumno (varios profesores, tarea 62) ----------------------
+// --- Código secreto del alumno (varios profesores, tareas 62 y 72) ----------------
+//
+// En el sistema nuevo un código tiene 4 u 8 símbolos de `ALFABETO`; cada profesor
+// elige la longitud de los que genera (por defecto 8). Los 1024 de 4 que pasan
+// la comprobación de `leerCodigoAlumno` son los del modo antiguo («calculables»):
+// los de Juan Luis pasan al sistema nuevo tal cual (tarea 70), así que con un
+// código de 4 ya no se sabe el sistema sin preguntar a la nube (`resolverCodigo`,
+// espacio.js). Aquí solo se mira el formato.
 
-/** Símbolos de un código secreto. */
+/** Símbolos de un código secreto: 8 por defecto, o 4 si el profesor lo elige. */
 export const LONGITUD_SECRETO = 8;
+export const LONGITUDES_SECRETO = [4, 8];
 
 /**
- * Código secreto nuevo: 8 símbolos de `ALFABETO` al azar, sin fórmula ni sal
- * (no se puede calcular a partir de nada). `azar` rellena con bytes aleatorios
- * el `Uint8Array` que recibe (como `crypto.getRandomValues`); se inyecta en los
- * tests. Con 32 símbolos y bytes de 256 valores, `byte & 31` reparte parejo
- * (256 es múltiplo de 32): no hay que descartar ningún byte ni queda sesgo.
+ * Código secreto nuevo: `longitud` (4 u 8) símbolos de `ALFABETO` al azar, sin
+ * fórmula ni sal (no se puede calcular a partir de nada). `azar` rellena con
+ * bytes aleatorios el `Uint8Array` que recibe (como `crypto.getRandomValues`);
+ * se inyecta en los tests. Con 32 símbolos y bytes de 256 valores, `byte & 31`
+ * reparte parejo (256 es múltiplo de 32): no hay que descartar ningún byte ni
+ * queda sesgo. De 4, se descartan los que serían un código antiguo válido (los
+ * calculables: 1 de cada 1024) y se sortea otro.
  */
-export function codigoSecreto(azar = bytes => globalThis.crypto.getRandomValues(bytes)) {
-  const bytes = azar(new Uint8Array(LONGITUD_SECRETO));
-  return simbolos(Array.from(bytes, b => b & 31));
+export function codigoSecreto(longitud = LONGITUD_SECRETO, azar = bytes => globalThis.crypto.getRandomValues(bytes)) {
+  if (!LONGITUDES_SECRETO.includes(longitud)) throw new Error(`Un código secreto tiene 4 u 8 símbolos, no ${longitud}`);
+  for (;;) {
+    const codigo = simbolos(Array.from(azar(new Uint8Array(longitud)), b => b & 31));
+    if (longitud !== 4 || leerCodigoAlumno(codigo) === null) return codigo;
+  }
 }
 
-/** Los 8 símbolos en mayúsculas y sin guiones de un código secreto, o `null` si no lo es. */
+/** Los 4 u 8 símbolos en mayúsculas y sin guiones de un código, o `null` si no tiene ese formato. */
 export function leerCodigoSecreto(texto) {
   const t = limpiar(texto);
-  return t.length === LONGITUD_SECRETO && !valores(t).includes(-1) ? t : null;
+  return LONGITUDES_SECRETO.includes(t.length) && !valores(t).includes(-1) ? t : null;
 }
 
-/** Un código secreto para mostrarlo: `K7QM-P3XA`. */
+/** Un código para mostrarlo: `K7QM-P3XA` (uno de 4, tal cual: `K7QM`). */
 export const mostrarCodigoSecreto = codigo => agrupar(limpiar(codigo));
 
+/** ¿Es uno de los 1024 códigos del modo antiguo (4 símbolos con su comprobación)? */
+export const esCodigoAntiguo = texto => leerCodigoAlumno(texto) !== null;
+
 /**
- * El sistema al que pertenece un código tecleado: `'antiguo'` (4 símbolos con
- * la comprobación de `leerCodigoAlumno`), `'nuevo'` (8 símbolos del alfabeto) o
- * `null`. La longitud decide; el código de 4 no cambia.
+ * Solo el formato de un código tecleado: `'4'`, `'8'` o `null` si no es un código.
+ * No dice el sistema: un código de 4 puede ser del modo antiguo o del nuevo, y
+ * eso lo decide `resolverCodigo` (espacio.js) preguntando a la nube.
  */
-export function modoDeCodigo(texto) {
-  if (leerCodigoAlumno(texto) !== null) return 'antiguo';
-  return leerCodigoSecreto(texto) !== null ? 'nuevo' : null;
+export function formatoDeCodigo(texto) {
+  const t = leerCodigoSecreto(texto);
+  return t === null ? null : String(t.length);
 }
 
 /**

@@ -77,7 +77,7 @@ export function ponerFechaUnidad(config, n, desde) {
  */
 export function cargarPlantilla(config) {
   const plantilla = configPlantilla();
-  if (!config.tareas.length) return { config: { unidades: config.unidades.length ? config.unidades : plantilla.unidades, tareas: plantilla.tareas }, sustituye: true };
+  if (!config.tareas.length) return { config: { ...config, unidades: config.unidades.length ? config.unidades : plantilla.unidades, tareas: plantilla.tareas }, sustituye: true };
   let id = siguienteId(config.tareas);
   const nuevas = plantilla.tareas.map(t => ({ ...t, id: id++ }));
   return { config: { ...config, tareas: [...config.tareas, ...nuevas] }, sustituye: false };
@@ -147,7 +147,8 @@ export function montar(contenedor, contexto) {
 
   const config = () => {
     const c = contexto.config() ?? {};
-    return { unidades: c.unidades ?? [], tareas: c.tareas ?? [] };
+    // Con lo demás de la configuración (longitudCodigo, tarea 72), para no perderlo al guardar.
+    return { ...c, unidades: c.unidades ?? [], tareas: c.tareas ?? [] };
   };
   const hoy = () => fechaISO(new Date());
 

@@ -111,7 +111,7 @@
       <section class="tarjeta">
         <h2>1. Mis alumnos</h2>
         <div class="aviso">Los nombres solo suben a la nube <strong>cifrados con tu contraseña</strong>: nadie más puede leerlos, ni siquiera el administrador. En este ordenador se guardan sin cifrar, como siempre.</div>
-        <p class="pequeno">Un alumno por línea, en orden. El número de lista es la línea: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. «Generar códigos» da un código secreto de 8 caracteres, al azar, a cada línea que aún no tiene. Los códigos se guardan en la nube con su número de lista, así que en otro ordenador los recuperas sin hacer nada.</p>
+        <p class="pequeno">Un alumno por línea, en orden. El número de lista es la línea: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. «Generar códigos» da un código secreto, al azar, a cada línea que aún no tiene, de la longitud que elijas abajo. Los códigos se guardan en la nube con su número de lista, así que en otro ordenador los recuperas sin hacer nada.</p>
         <div id="caja-descifrar" class="aviso" hidden>
           <p id="texto-descifrar"></p>
           <div class="contrasenas">
@@ -121,6 +121,14 @@
           <p class="pequeno" id="estado-descifrar"></p>
         </div>
         <textarea id="lista-espacio" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
+        <div class="selector">
+          <label for="longitud-codigos">Longitud de los códigos nuevos:</label>
+          <select id="longitud-codigos" disabled>
+            <option value="8">8 (más seguro)</option>
+            <option value="4">4 (más fácil de recordar)</option>
+          </select>
+        </div>
+        <p class="pequeno">Con 8 caracteres hay tantos códigos posibles que nadie puede dar con el de un alumno probando al azar. Con 4 hay muchos menos: alguien con paciencia y conocimientos de programación podría encontrar alguno y ver el progreso de ese alumno (nunca su nombre). Solo cambia los códigos que generes a partir de ahora: los ya repartidos se quedan como están.</p>
         <div class="botonera">
           <button type="button" id="generar-codigos" disabled>Generar códigos</button>
         </div>

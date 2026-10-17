@@ -14,7 +14,7 @@
 // El panel da también el enlace de cada alumno, con `&c=<código>`.
 
 import { practicaPorSlug } from './_comun/catalogo.js';
-import { codigoTarea, modoDeCodigo } from './_comun/codigos.js';
+import { codigoTarea, formatoDeCodigo } from './_comun/codigos.js';
 import { leer, escribir, borrar, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
@@ -24,10 +24,11 @@ import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, a
 const app = document.querySelector('#app');
 const params = new URLSearchParams(location.search);
 const idTarea = Number(params.get('t'));
-// Con un código de 8, las tareas son las de su profesor (`entrar` las pone); sin código, las de siempre.
+// Con un código registrado (4 u 8), las tareas son las de su profesor (`entrar` las pone); sin código
+// o con uno del modo antiguo, las de siempre.
 let tareas = TAREAS;
 let tarea = tareaPorId(idTarea, tareas);
-let profesor = null;             // uid del espacio del alumno (código de 8) o null (código de 4)
+let profesor = null;             // uid del espacio del alumno (código registrado) o null (modo antiguo)
 let sinConfig = false;           // el espacio no pudo dar las tareas del profesor (sin red y sin copia)
 
 let codigo = null, indice = null;
@@ -62,15 +63,14 @@ async function sincronizar() {
 }
 
 /**
- * Entra con un código de 4 o de 8 (tecleado o del enlace). El de 8 se resuelve primero
- * (de qué profesor es y cuáles son sus tareas); la tarea de la dirección se busca entre las
- * de ese profesor. Si el código no vale, no existe o no se puede comprobar, vuelve a la entrada.
+ * Entra con un código de 4 o de 8 (tecleado o del enlace). Primero se resuelve (de qué
+ * profesor es y cuáles son sus tareas; un código de 4 que la nube no conoce es del modo
+ * antiguo); la tarea de la dirección se busca entre las de ese profesor. Si el código no
+ * vale, no existe o no se puede comprobar, vuelve a la entrada.
  */
 async function entrar(texto) {
-  if (modoDeCodigo(texto) === 'nuevo') {
-    cabecera(T[idioma].semana_titulo);
-    app.innerHTML = `<p class="vacio">${T[idioma].cargando_progreso}</p>`;
-  }
+  cabecera(T[idioma].semana_titulo);
+  app.innerHTML = `<p class="vacio">${T[idioma].cargando_progreso}</p>`;
   const c = await identificar(texto);
   if (c.error) {
     // Lo que había recordado no sirve: se olvida para que no vuelva a entrar al recargar.
@@ -139,7 +139,7 @@ function pintarEntrada(error = false) {
   app.querySelector('#form-codigo').addEventListener('submit', ev => {
     ev.preventDefault();
     const texto = app.querySelector('#codigo').value;
-    if (modoDeCodigo(texto) === null) return pintarEntrada('formato');
+    if (formatoDeCodigo(texto) === null) return pintarEntrada('formato');
     entrar(texto);
   });
 }
@@ -267,7 +267,7 @@ function pintar() {
 // --- Arranque -------------------------------------------------------------------------
 
 const inicial = params.get('c') ?? leer('practicas.codigo') ?? '';
-if (modoDeCodigo(inicial) === null) {
+if (formatoDeCodigo(inicial) === null) {
   aplicarIdioma();
   pintar();
   if (tarea) cargarNombres();

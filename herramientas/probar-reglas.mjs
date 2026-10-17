@@ -21,12 +21,16 @@
 //
 // Además crea por REST una tercera cuenta desechable, «sin alta», y la borra al
 // terminar. Los datos de prueba llevan códigos inventados de 8 caracteres que
-// empiezan por ZZ. No imprime uids, correos ni contraseñas. Termina con código
-// 1 si alguna comprobación no da lo esperado.
+// empiezan por ZZ y, desde la tarea 72, de 4 que empiezan por ZZ (nunca uno
+// del modo antiguo). Además, si nadie lo tiene registrado, registra un rato en
+// el espacio de A el código de prueba 60 (7NPD, del modo antiguo) y lo borra.
+// No imprime uids, correos ni contraseñas. Termina con código 1 si alguna
+// comprobación no da lo esperado.
 
 import { readFileSync } from 'node:fs';
 import { webcrypto } from 'node:crypto';
 import { firebaseConfig } from '../src/config.js';
+import { leerCodigoAlumno } from '../practicas/_comun/codigos.js';
 
 const ALFABETO = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // el de practicas/_comun/codigos.js
 const { apiKey, projectId } = firebaseConfig;
@@ -42,6 +46,13 @@ function azar(n, alfabeto = ALFABETO) {
   return [...v].map(x => alfabeto[x % alfabeto.length]).join('');
 }
 const codigoPrueba = () => `ZZ${azar(6)}`;
+/** Código de prueba de 4 (tarea 72): ZZ + 2, nunca uno de los 1024 del modo antiguo. */
+function codigoPrueba4() {
+  for (;;) { const c = `ZZ${azar(2)}`; if (leerCodigoAlumno(c) === null) return c; }
+}
+/** El código de prueba 60 del modo antiguo (nunca el de un alumno). */
+const ANTIGUO_PRUEBA = '7NPD';
+const N_ANTIGUO_PRUEBA = 60;
 
 /** Un valor JS en el formato de Firestore REST. */
 function valor(v) {
@@ -191,6 +202,11 @@ async function main() {
 
   // Códigos inventados: dos de A, uno de B, uno que no existe.
   const cA1 = codigoPrueba(), cA2 = codigoPrueba(), cB1 = codigoPrueba(), cX = codigoPrueba();
+  // Y de 4 (tarea 72): dos de A y uno de B.
+  const cA4 = codigoPrueba4(), cB4 = codigoPrueba4();
+  let cA4b = codigoPrueba4();
+  while (cA4b === cA4 || cA4b === cB4) cA4b = codigoPrueba4();
+  if (cB4 === cA4) throw new Error('dos códigos de prueba de 4 iguales: vuelve a lanzarlo');
 
   titulo('Modo antiguo intacto');
   await comprobar('sin cuenta: get practicas/semaforo--7NPD', [200, 404], () => leer('practicas/semaforo--7NPD', anon));
@@ -242,9 +258,13 @@ async function main() {
   await comprobar('B se queda un código de A', 403, () => escribir(`practicas-alumnos/${cA1}`, { profesor: B.uid, n: 1, alta: ahora }, B));
   await comprobar('A crea un código a nombre de B', 403, () => escribir(`practicas-alumnos/${cX}`, { profesor: B.uid, n: 3, alta: ahora }, A));
   await comprobar('A crea un código con I y O', 403, () => escribir('practicas-alumnos/ZZIOIOIO', { profesor: A.uid, n: 3, alta: ahora }, A));
-  await comprobar('A crea un código de 4', 403, () => escribir('practicas-alumnos/ZZAB', { profesor: A.uid, n: 3, alta: ahora }, A));
+  await comprobar('A crea un código de 5', 403, () => escribir('practicas-alumnos/ZZABC', { profesor: A.uid, n: 3, alta: ahora }, A));
+  await comprobar('A crea un código de 7', 403, () => escribir('practicas-alumnos/ZZABCDE', { profesor: A.uid, n: 3, alta: ahora }, A));
   await comprobar('A crea con n = 0', 403, () => escribir(`practicas-alumnos/${cX}`, { profesor: A.uid, n: 0, alta: ahora }, A));
-  await comprobar('A crea con n = 251', 403, () => escribir(`practicas-alumnos/${cX}`, { profesor: A.uid, n: 251, alta: ahora }, A));
+  await comprobar('A crea con n = 1024', 403, () => escribir(`practicas-alumnos/${cX}`, { profesor: A.uid, n: 1024, alta: ahora }, A));
+  await comprobar('A cambia su n.º 2 a 1023', 200, () => escribir(`practicas-alumnos/${cA2}`, { profesor: A.uid, n: 1023, alta: ahora }, A));
+  await comprobar('A lo cambia a 1024', 403, () => escribir(`practicas-alumnos/${cA2}`, { profesor: A.uid, n: 1024, alta: ahora }, A));
+  await comprobar('A lo deja en 2', 200, () => escribir(`practicas-alumnos/${cA2}`, { profesor: A.uid, n: 2, alta: ahora }, A));
   await comprobar('A crea con un campo de más', 403, () => escribir(`practicas-alumnos/${cX}`, { profesor: A.uid, n: 3, alta: ahora, nombre: 'x' }, A));
   await comprobar('sin cuenta: get de un código', 200, () => leer(`practicas-alumnos/${cA1}`, anon),
     r => (r.json?.fields?.n?.integerValue === '1' ? 'n = 1' : { fallo: 'no trae n = 1' }));
@@ -294,7 +314,7 @@ async function main() {
   await comprobar('alumno de A lee su progreso (get)', 200, () => leer(`${libre}/semaforo--${cA1}`, anon));
   await comprobar('código de B escribe en el espacio de A', 403, () => escribir(`${libre}/semaforo--${cB1}`, estado, anon));
   await comprobar('código que no existe escribe', 403, () => escribir(`${libre}/semaforo--${cX}`, estado, anon));
-  await comprobar('código de 4 escribe en el espacio', 403, () => escribir(`${libre}/semaforo--7NPD`, estado, anon));
+  await comprobar('código de 4 sin registrar escribe en el espacio', 403, () => escribir(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, estado, anon));
   await comprobar('progreso con un campo de más', 403, () => escribir(`${libre}/semaforo--${cA1}`, { ...estado, nombre: 'x' }, anon));
   await comprobar('subcolección «progreso» (nombre viejo)', 403, () => escribir(`${esp(A.uid)}/progreso/semaforo--${cA1}`, estado, anon));
   await comprobar('sin cuenta: lista el progreso de A', 403, () => listar(libre, anon));
@@ -332,11 +352,64 @@ async function main() {
   await comprobar('id de un código y alumno de otro', 403, () => crearEn(fallos, idF(cA2), fallo(cA1), anon));
   await comprobar('fallo con un campo de más', 403, () => crearEn(fallos, idF(cA1), { ...fallo(cA1), nombre: 'x' }, anon));
   await comprobar('fallo con tarea = 1024', 403, () => crearEn(fallos, idF(cA1), { ...fallo(cA1), tarea: 1024 }, anon));
-  await comprobar('fallo con código de 4', 403, () => crearEn(fallos, `7NPD-${ahora.toString(36)}-abcd`, fallo('7NPD'), anon));
+  await comprobar('fallo con código de 4 sin registrar', 403, () => crearEn(fallos, `${ANTIGUO_PRUEBA}-${ahora.toString(36)}-abcd`, fallo(ANTIGUO_PRUEBA), anon));
   await comprobar('sin cuenta: lee un fallo', 403, () => leer(`${fallos}/${idBueno}`, anon));
   await comprobar('sin cuenta: cambia un fallo', 403, () => escribir(`${fallos}/${idBueno}`, fallo(cA1), anon));
   await comprobar('A lista sus fallos', 200, () => listar(fallos, A), r => `${(r.json?.documents ?? []).length} documento(s)`);
   await comprobar('B lista los fallos de A', 403, () => listar(fallos, B));
+
+  // Tarea 72: un código de 4 del sistema nuevo vale lo mismo que uno de 8 en su espacio, y en
+  // ningún otro. Uno generado (ZZ + 2) y, si está libre, el de prueba 60 del modo antiguo.
+  titulo('Códigos de 4 (tarea 72)');
+  const idsF4 = [];
+  await comprobar('A crea un código de 4 (n.º 3)', 200, () => escribir(`practicas-alumnos/${cA4}`, { profesor: A.uid, n: 3, alta: ahora }, A));
+  await comprobar('B crea un código de 4 (n.º 2)', 200, () => escribir(`practicas-alumnos/${cB4}`, { profesor: B.uid, n: 2, alta: ahora }, B));
+  await comprobar('B se queda el código de 4 de A', 403, () => escribir(`practicas-alumnos/${cA4}`, { profesor: B.uid, n: 3, alta: ahora }, B));
+  await comprobar('sin cuenta: get del código de 4', 200, () => leer(`practicas-alumnos/${cA4}`, anon),
+    r => (r.json?.fields?.n?.integerValue === '3' ? 'n = 3' : { fallo: 'no trae n = 3' }));
+  await comprobar('alumno de 4 de A guarda su progreso', 200, () => escribir(`${libre}/semaforo--${cA4}`, estado, anon));
+  await comprobar('alumno de 4 de A lo lee (get)', 200, () => leer(`${libre}/semaforo--${cA4}`, anon));
+  await comprobar('alumno de 4 de A guarda la tarea 2', 200, () => escribir(`${tareas}/t2--semaforo--${cA4}`, estado, anon));
+  await comprobar('alumno de 4 de A la lee (get)', 200, () => leer(`${tareas}/t2--semaforo--${cA4}`, anon));
+  const idF4 = idF(cA4);
+  await comprobar('alumno de 4 de A registra un fallo', 200, () => crearEn(fallos, idF4, fallo(cA4), anon), r => { idsF4.push(idF4); return null; });
+  await comprobar('A asigna la tarea 2 a su alumno de 4', 200, () => escribir(`${asig}/${cA4}`, { tareas: [2], actualizado: ahora }, A));
+  await comprobar('alumno de 4 de A lee su asignación (get)', 200, () => leer(`${asig}/${cA4}`, anon));
+  await comprobar('código de 4 de B escribe en el espacio de A', 403, () => escribir(`${libre}/semaforo--${cB4}`, estado, anon));
+  await comprobar('código de 4 de B registra un fallo en A', 403, () => crearEn(fallos, idF(cB4), fallo(cB4), anon));
+  await comprobar('B asigna en el espacio de A a un código de 4', 403, () => escribir(`${asig}/${cA4}`, { tareas: [3], actualizado: ahora }, B));
+  await comprobar('A asigna en su espacio a un código de 4 de B', 403, () => escribir(`${asig}/${cB4}`, { tareas: [2], actualizado: ahora }, A));
+  await comprobar('A lista su progreso libre (con el de 4)', 200, () => listar(libre, A), r => {
+    const ids = (r.json?.documents ?? []).map(d => d.name.split('/').pop());
+    return ids.includes(`semaforo--${cA4}`) ? `${ids.length} documento(s), con semaforo--${cA4}` : { fallo: 'no sale el progreso del código de 4' };
+  });
+  await comprobar('A consulta sus códigos (con el de 4)', 200, () => consultarCodigos(A.uid, A), r => {
+    const ids = (r.json ?? []).filter(x => x.document).map(x => x.document.name.split('/').pop());
+    return ids.includes(cA4) && !ids.includes(cB4) ? 'el suyo sí, el de B no' : { fallo: 'falta el suyo o sale el de B' };
+  });
+  await comprobar('B lista el progreso libre de A', 403, () => listar(libre, B));
+  await comprobar('B borra el código de 4 de A', 403, () => borrar(`practicas-alumnos/${cA4}`, B));
+  await comprobar('A crea un código de 4 con n = 1000', 200, () => escribir(`practicas-alumnos/${cA4b}`, { profesor: A.uid, n: 1000, alta: ahora }, A));
+
+  // El de prueba 60 del modo antiguo, registrado en el espacio de A como hará la tarea 70 con los de Juan Luis.
+  const libreAntiguo = await leer(`practicas-alumnos/${ANTIGUO_PRUEBA}`, anon);
+  let antiguoRegistrado = false;
+  if (libreAntiguo.status !== 404) {
+    for (const n of ['A registra el código antiguo de prueba', 'su alumno guarda en el espacio de A', 'y lo lee (get)', 'y registra un fallo en A',
+      'el modo antiguo sigue leyéndose', 'A lo borra', 'ya no escribe en el espacio de A']) omitir(n, `${ANTIGUO_PRUEBA} ya está registrado (get: ${libreAntiguo.status}); no se toca`);
+  } else {
+    antiguoRegistrado = await comprobar('A registra el código antiguo de prueba', 200,
+      () => escribir(`practicas-alumnos/${ANTIGUO_PRUEBA}`, { profesor: A.uid, n: N_ANTIGUO_PRUEBA, alta: ahora }, A));
+    await comprobar('su alumno guarda en el espacio de A', 200, () => escribir(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, estado, anon));
+    await comprobar('y lo lee (get)', 200, () => leer(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, anon));
+    const idFA = idF(ANTIGUO_PRUEBA);
+    await comprobar('y registra un fallo en A', 200, () => crearEn(fallos, idFA, fallo(ANTIGUO_PRUEBA), anon), () => { idsF4.push(idFA); return null; });
+    await comprobar('el modo antiguo sigue leyéndose', [200, 404], () => leer(`practicas/semaforo--${ANTIGUO_PRUEBA}`, anon));
+    await comprobar('A borra su progreso en el espacio', 200, () => borrar(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, A));
+    const borrado = await comprobar('A lo borra', 200, () => borrar(`practicas-alumnos/${ANTIGUO_PRUEBA}`, A));
+    if (borrado) antiguoRegistrado = false;
+    await comprobar('ya no escribe en el espacio de A', 403, () => escribir(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, estado, anon));
+  }
 
   titulo('Lectores (B, lector del espacio de A)');
   await comprobar('A pone a B de lector', 200, () => escribir(esp(A.uid), { lectores: [B.uid], actualizado: ahora }, A));
@@ -354,14 +427,27 @@ async function main() {
   await comprobar('B ya no lista el progreso de A', 403, () => listar(libre, B));
 
   const quedan = [];
+  if (antiguoRegistrado) quedan.push(`practicas-alumnos/${ANTIGUO_PRUEBA} en el espacio de A (no se pudo borrar: bórralo en la consola)`);
   if (DEJAR) {
-    quedan.push(`practicas-alumnos/{${cA1}, ${cA2}, ${cB1}}`, `practicas-espacios/<uid de A> con config/tareas, privado/nombres, progreso-libre/semaforo--${cA1}, progreso-tareas/t2--semaforo--${cA1}, asignaciones/${cA1}, fallos/${idBueno}`);
+    quedan.push(`practicas-alumnos/{${cA1}, ${cA2}, ${cB1}, ${cA4}, ${cA4b}, ${cB4}}`, `practicas-espacios/<uid de A> con config/tareas, privado/nombres, progreso-libre/semaforo--{${cA1}, ${cA4}}, progreso-tareas/t2--semaforo--{${cA1}, ${cA4}}, asignaciones/{${cA1}, ${cA4}}, fallos/{${[idBueno, ...idsF4].join(', ')}}`);
   } else {
     titulo('Limpieza (el dueño borra lo suyo)');
     await comprobar('A borra el fallo', 200, () => borrar(`${fallos}/${idBueno}`, A));
     await comprobar('A borra la asignación', 200, () => borrar(`${asig}/${cA1}`, A));
     await comprobar('A borra el progreso por tarea', 200, () => borrar(`${tareas}/t2--semaforo--${cA1}`, A));
     await comprobar('A borra el progreso libre', 200, () => borrar(`${libre}/semaforo--${cA1}`, A));
+    await comprobar('A borra lo de sus códigos de 4', 200, async () => {
+      const rs = [
+        ...await Promise.all(idsF4.map(id => borrar(`${fallos}/${id}`, A))),
+        await borrar(`${asig}/${cA4}`, A),
+        await borrar(`${tareas}/t2--semaforo--${cA4}`, A),
+        await borrar(`${libre}/semaforo--${cA4}`, A),
+        await borrar(`practicas-alumnos/${cA4}`, A),
+        await borrar(`practicas-alumnos/${cA4b}`, A),
+      ];
+      return rs.find(r => r.status !== 200) ?? rs[0];
+    });
+    await comprobar('B borra su código de 4', 200, () => borrar(`practicas-alumnos/${cB4}`, B));
     await comprobar('A borra su lista de nombres', 200, () => borrar(`${esp(A.uid)}/privado/nombres`, A));
     await comprobar('A borra sus tareas', 200, () => borrar(`${esp(A.uid)}/config/tareas`, A));
     await comprobar('A borra su espacio', 200, () => borrar(esp(A.uid), A));
@@ -377,7 +463,7 @@ async function main() {
     const ok = await borrarCuenta(C);
     if (!ok) quedan.push('la cuenta desechable zz-sin-alta-…@example.com en Authentication (no se pudo borrar)');
   }
-  return terminar(quedan, [cA1, cA2, cB1, cX]);
+  return terminar(quedan, [cA1, cA2, cB1, cX, cA4, cA4b, cB4]);
 }
 
 function terminar(quedan, codigos = []) {

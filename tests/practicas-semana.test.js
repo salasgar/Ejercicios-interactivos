@@ -656,8 +656,11 @@ const resolverA = async codigo => (codigo === CODIGO8
   ? { modo: 'nuevo', profesor: 'uidProfesorA0001', n: 7, config: CONFIG_A, desdeCache: false }
   : { error: 'no-existe' });
 
-test('identificar: con 4 caracteres es lo de hoy (TAREAS y UNIDADES) y no pregunta a nadie', async () => {
-  const c = await identificar('7NPD', { resolver: () => assert.fail('no debe preguntar') });
+test('identificar: un código de 4 del modo antiguo que la nube no conoce es lo de hoy (TAREAS y UNIDADES); registrado, el de su profesor (tarea 72)', async () => {
+  const preguntados = [];
+  const antiguo = async codigo => { preguntados.push(codigo); return { modo: 'antiguo', n: leerCodigoAlumno(codigo) }; };
+  const c = await identificar('7npd', { resolver: antiguo });
+  assert.deepEqual(preguntados, ['7NPD'], 'también se pregunta: puede estar registrado');
   assert.equal(c.modo, 'antiguo');
   assert.equal(c.codigo, '7NPD');
   assert.equal(c.profesor, null);
@@ -665,6 +668,17 @@ test('identificar: con 4 caracteres es lo de hoy (TAREAS y UNIDADES) y no pregun
   assert.equal(c.unidades, UNIDADES_CURSO);
   assert.equal(c.indice, leerCodigoAlumno('7NPD'));
   assert.deepEqual(contextoAntiguo(3).codigo, codigoAlumno(3));
+  // El mismo código, ya registrado en el espacio de un profesor: sus tareas y su número de lista.
+  const r = await identificar('7NPD', { resolver: async () => ({ modo: 'nuevo', profesor: 'uidProfesorA0001', n: 60, config: CONFIG_A, desdeCache: false }) });
+  assert.equal(r.modo, 'nuevo');
+  assert.equal(r.codigo, '7NPD');
+  assert.equal(r.profesor, 'uidProfesorA0001');
+  assert.equal(r.indice, 60);
+  assert.deepEqual(r.tareas.map(t => t.id), [1, 2, 3, 4, 5]);
+  // Uno de 4 generado al azar (sin la comprobación antigua) es como uno de 8.
+  const g = await identificar('K7QM', { resolver: async () => ({ modo: 'nuevo', profesor: 'uidProfesorA0001', n: 3, config: CONFIG_A }) });
+  assert.equal(g.modo, 'nuevo');
+  assert.equal(g.codigo, 'K7QM');
 });
 
 test('identificar: con 8 caracteres salen las tareas y las fechas de su profesor (también con guion y en minúsculas)', async () => {
@@ -683,7 +697,9 @@ test('identificar: con 8 caracteres salen las tareas y las fechas de su profesor
 
 test('identificar: código mal escrito, que no existe o sin red ni copia', async () => {
   assert.deepEqual(await identificar('ABC', { resolver: resolverA }), { error: 'no-valido' });
-  assert.deepEqual(await identificar('7NPE', { resolver: resolverA }), { error: 'no-valido' });
+  assert.deepEqual(await identificar('7N1E', { resolver: resolverA }), { error: 'no-valido' }, 'el 1 no está en el alfabeto');
+  // 4 símbolos sin la comprobación antigua: puede ser del sistema nuevo, así que se pregunta.
+  assert.deepEqual(await identificar('7NPE', { resolver: resolverA }), { error: 'no-existe' });
   assert.deepEqual(await identificar('ZZZZ-ZZZZ', { resolver: resolverA }), { error: 'no-existe' });
   assert.deepEqual(await identificar(CODIGO8, { resolver: async () => ({ error: 'sin-red' }) }), { error: 'sin-red' });
   // Un número de lista que no cabe en el código de resultado no se usa.

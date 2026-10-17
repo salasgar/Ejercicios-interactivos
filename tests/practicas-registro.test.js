@@ -242,7 +242,11 @@ test('espacio: un fallo con código de 8 y profesor va a practicas-espacios/{uid
   const id = [...nube.docs.keys()][0];
   assert.match(id, new RegExp(BLOQUE_ESPACIO.match(/id\.matches\('([^']+)'\)/)[1]));
   assert.ok(id.startsWith(`${SECRETO}-`), 'el id empieza por el código (id.matches(^ + alumno + -))');
-  assert.match(datos.alumno, new RegExp(BLOQUE_ESPACIO.match(/data\.alumno\.matches\('([^']+)'\)/)[1]));
+  assert.ok(BLOQUE_ESPACIO.includes('codigoSecreto(request.resource.data.alumno)'), 'el alumno es un código secreto (4 u 8, tarea 72)');
+  const patronSecreto = new RegExp(REGLAS.match(/function codigoSecreto\(c\) \{\s*return c is string && c\.matches\('([^']+)'\)/)[1]);
+  assert.match(datos.alumno, patronSecreto);
+  for (const bueno of ['K7QM', 'K7QMP3XA', 'KTFN']) assert.match(bueno, patronSecreto);
+  for (const malo of ['K7Q', 'K7QMP', 'K7QMP3X', 'K7QMP3XAB', 'K7QO', 'k7qm']) assert.doesNotMatch(malo, patronSecreto);
   const lista = campo => BLOQUE_ESPACIO.match(new RegExp(`keys\\(\\)\\.${campo}\\(\\[([^\\]]+)\\]\\)`))[1].match(/'([a-z]+)'/g).map(s => s.slice(1, -1));
   const campos = Object.keys(nube.docs.get(id));
   for (const c of lista('hasAll')) assert.ok(campos.includes(c), `falta ${c}`);
@@ -250,7 +254,7 @@ test('espacio: un fallo con código de 8 y profesor va a practicas-espacios/{uid
   assert.equal(nube.docs.get(id).tarea.integerValue, '3');
 });
 
-test('espacio: con un código de 4, los fallos van a «fallos» como siempre (aunque haya profesor guardado de otro código)', async () => {
+test('espacio: con un código del modo antiguo sin profesor, los fallos van a «fallos» como siempre (aunque haya profesor guardado de otro código)', async () => {
   const almacen = almacenFalso();
   almacen.setItem(`practicas.v1.espacio.${SECRETO}`, JSON.stringify({ profesor: UID_A, n: 3, json: '{"unidades":[],"tareas":[]}' }));
   const urls = [];
@@ -260,7 +264,25 @@ test('espacio: con un código de 4, los fallos van a «fallos» como siempre (au
   assert.equal(urls.length, 1);
   assert.match(urls[0], /^fallos\?documentId=KTFN-[a-z0-9]+-[a-z0-9]{4}&key=clave$/);
   assert.equal(coleccionFallo({ datos }), 'fallos');
-  assert.equal(coleccionFallo({ datos, profesor: UID_A }), 'fallos', 'un código de 4 nunca va a un espacio');
+});
+
+test('espacio (tarea 72): un código de 4 registrado va al espacio de su profesor; uno de 4 del sistema nuevo sin profesor espera', async () => {
+  const almacen = almacenFalso();
+  const antiguo = datosFallo(FALLO);   // KTFN: del modo antiguo
+  assert.equal(coleccionFallo({ datos: antiguo, profesor: UID_A }), `practicas-espacios/${UID_A}/fallos`, 'registrado: a su espacio');
+  almacen.setItem(`practicas.v1.espacio.${antiguo.alumno}`, JSON.stringify({ profesor: UID_A, n: 60, json: '{"unidades":[],"tareas":[]}' }));
+  assert.equal(coleccionFallo({ datos: antiguo }, almacen), `practicas-espacios/${UID_A}/fallos`, 'o por la copia del navegador');
+  const nuevo4 = datosFallo({ ...FALLO, codigo: 'K7QM' });
+  assert.equal(coleccionFallo({ datos: nuevo4 }, almacenFalso()), null, 'sin profesor no va a «fallos»: espera');
+  assert.equal(coleccionFallo({ datos: nuevo4, profesor: UID_A }), `practicas-espacios/${UID_A}/fallos`);
+  // Y sale de verdad, con un id que acepta la regla del espacio.
+  const nube = nubeFalsa();
+  const urls = [];
+  await registrarFallo(nuevo4, { profesor: UID_A, fetch: async (url, op) => { urls.push(rutaDe(url)); return nube.fetch(url, op); }, config: CONFIG, almacen });
+  assert.deepEqual(urls, [`practicas-espacios/${UID_A}/fallos`]);
+  const id = [...nube.docs.keys()][0];
+  assert.ok(id.startsWith('K7QM-'));
+  assert.match(id, new RegExp(BLOQUE_ESPACIO.match(/id\.matches\('([^']+)'\)/)[1]));
 });
 
 test('espacio: sin saber el profesor, el fallo espera en la cola; en cuanto el navegador lo sabe (espacio.js), sale a su espacio', async () => {

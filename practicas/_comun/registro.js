@@ -15,14 +15,15 @@
 // en el siguiente fallo o al entrar. El id del documento lo pone la app, así que
 // un reintento de algo que sí llegó no lo duplica (Firestore responde 409).
 //
-// Con un código secreto de 8 caracteres (varios profesores, tarea 64) el fallo
-// va al espacio de su profesor, `practicas-espacios/{uid}/fallos`, con los
-// mismos campos. Si al fallar aún no se sabe de qué profesor es el código (sin
-// red al entrar), se queda en la cola hasta que lo diga la copia del navegador
-// que deja `espacio.js`. Con un código de 4, como siempre: `fallos`.
+// Con un código registrado en el sistema nuevo (varios profesores, tareas 64 y
+// 72; de 4 u 8 caracteres) el fallo va al espacio de su profesor,
+// `practicas-espacios/{uid}/fallos`, con los mismos campos. Si al fallar aún no
+// se sabe de qué profesor es el código (sin red al entrar), se queda en la cola
+// hasta que lo diga la copia del navegador que deja `espacio.js`. Con un código
+// del modo antiguo sin profesor conocido, como siempre: `fallos`.
 
 import { firebaseConfig } from '../../src/config.js';
-import { LONGITUD_SECRETO } from './codigos.js';
+import { esCodigoAntiguo } from './codigos.js';
 import { claveEspacio } from './espacio.js';
 import { coleccionEspacio } from './nube.js';
 
@@ -185,15 +186,16 @@ function profesorGuardado(almacen, codigo) {
 }
 
 /**
- * La colección a la que va un fallo pendiente: `fallos` con un código de 4; con
- * uno de 8, la del espacio de su profesor, o null si aún no se sabe cuál es (se
- * queda en la cola).
+ * La colección a la que va un fallo pendiente: la del espacio de su profesor si
+ * se sabe cuál es (el del fallo o el de la copia del navegador); si no, `fallos`
+ * con un código del modo antiguo, o null con uno del sistema nuevo (se queda en
+ * la cola).
  */
 export function coleccionFallo(pendiente, almacen = null) {
   const alumno = String(pendiente?.datos?.alumno ?? '');
-  if (alumno.length !== LONGITUD_SECRETO) return 'fallos';
-  const profesor = pendiente.profesor ?? profesorGuardado(almacen, alumno);
-  try { return profesor ? coleccionEspacio(profesor, 'fallos') : null; } catch { return null; }
+  const profesor = pendiente?.profesor ?? profesorGuardado(almacen, alumno);
+  if (!profesor) return esCodigoAntiguo(alumno) ? 'fallos' : null;
+  try { return coleccionEspacio(profesor, 'fallos'); } catch { return null; }
 }
 
 function leerPendientes(almacen) {

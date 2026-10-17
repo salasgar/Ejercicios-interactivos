@@ -298,20 +298,29 @@ const fechaValida = texto => {
 /**
  * La configuración que dice un texto JSON, o `null` si no es JSON o no tiene la
  * forma `{ unidades: [...], tareas: [...] }`. No comprueba el contenido: eso es
- * `erroresConfig`.
+ * `erroresConfig`. Lleva `longitudCodigo: 4` solo si el profesor la eligió (sin
+ * el campo, los códigos que genera son de 8).
  */
 export function configDeJSON(texto) {
   let config;
   try { config = JSON.parse(texto); } catch { return null; }
   if (config === null || typeof config !== 'object' || !Array.isArray(config.unidades) || !Array.isArray(config.tareas)) return null;
-  return { unidades: config.unidades, tareas: config.tareas };
+  return { unidades: config.unidades, tareas: config.tareas, ...(longitudDeCodigos(config) === 4 && { longitudCodigo: 4 }) };
 }
 
-/** El texto JSON que se guarda: solo `unidades` (n, desde) y `tareas`. */
+/**
+ * Longitud de los códigos que genera el profesor en «Mis alumnos» (tarea 72):
+ * 8 (por defecto, no se pueden adivinar probando) o 4 (más fáciles de recordar).
+ * Solo vale para los que se generan: los ya repartidos no cambian.
+ */
+export const longitudDeCodigos = config => (config?.longitudCodigo === 4 ? 4 : 8);
+
+/** El texto JSON que se guarda: `unidades` (n, desde), `tareas` y, si no es la de por defecto (8), `longitudCodigo`. */
 export function configAJSON(config) {
   return JSON.stringify({
     unidades: (config?.unidades ?? []).map(u => ({ n: u.n, desde: u.desde })),
     tareas: config?.tareas ?? [],
+    ...(longitudDeCodigos(config) === 4 && { longitudCodigo: 4 }),
   });
 }
 
@@ -330,6 +339,9 @@ export function erroresConfig(config) {
     else if (vistas.has(u.n)) errores.push(`unidad ${u.n}: repetida`);
     else if (!fechaValida(u.desde)) errores.push(`unidad ${u.n}: «desde» tiene que ser una fecha 'AAAA-MM-DD'`);
     vistas.add(u?.n);
+  }
+  if (config.longitudCodigo !== undefined && config.longitudCodigo !== 4 && config.longitudCodigo !== 8) {
+    errores.push('longitudCodigo: tiene que ser 4 u 8');
   }
   return [...errores, ...erroresTareas(config.tareas, { tareaUnoAntigua: false })];
 }
