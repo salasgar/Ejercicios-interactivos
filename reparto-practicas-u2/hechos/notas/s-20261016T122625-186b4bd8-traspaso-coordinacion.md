@@ -1,6 +1,6 @@
 # Traspaso — Revisión de la app y coordinación del reparto PU2 (tareas 40-55)
 
-Actualizado: 2026-10-16 23:05 (hora peninsular) · Sesiones previas: 1 (la coordinadora s-20261016T122625-186b4bd8, Fable 5.1)
+Actualizado: 2026-10-17 09:00 (hora peninsular) · Sesiones previas: 1 (la coordinadora s-20261016T122625-186b4bd8, Fable 5.1, del 16-10 al 17-10)
 
 ## Objetivo
 
@@ -13,17 +13,22 @@ coordinadora hace las cosas de fuera del reparto que él pide (Classroom, correo
 ## Estado actual
 
 El estado de cada tarea está en `reparto-practicas-u2/_ESTADO.md` (vista derivada de
-`reparto-practicas-u2/hechos/`): 1-48 LISTAS; 49 y 50 reclamadas a las 23:01 (16-10); 51-55
-BLOQUEADAS por sus precondiciones. Fuera del reparto, todo hecho el 16-10: tarea de Classroom
-«2. Interactive exercises · Week 1 (100 points)» publicada (plazo jue 22-10 23:59), 51 correos
-con el código enviados desde murciaeduca, rutina diaria del informe de actividad creada,
+`reparto-practicas-u2/hechos/`): 1-50 y 54 LISTAS (la 49 cerró el 17-10 a las 08:56, cuando Juan
+Luis publicó las reglas de Firestore en la consola; la 50 pegó las tareas 11-14 de la U1 en
+`tareas.js`, commit ae6c6f1; la 54 adaptó el informe diario, 1d380bd); **51 y 53 LIBRES**; 52
+BLOQUEADA (espera a 51); 55 BLOQUEADA (espera a 51-53). Fuera del reparto, hecho el 16-10: tarea
+de Classroom «2. Interactive exercises · Week 1 (100 points)» publicada (plazo jue 22-10 23:59),
+51 correos con el código enviados desde murciaeduca, rutina diaria del informe creada,
 `herramientas/informe-actividad.mjs` en `main`, semana 1 visible en la portada desde el 16-10.
+Incidencia cerrada: la noche del 16-10 una sesión sin reclamo (id del entorno 1f09009c) reservó
+`tareas.js` y `PROPUESTA.md` un rato y desapareció sin dejar cambios.
 
 ## Siguiente paso
 
 Al retomar: `git fetch origin`, leer `_ESTADO.md`, listar `hechos/reclamos/` y `hechos/terminadas/`,
 regenerar el tablón si hace falta y darle a Juan Luis la foto del momento con las frases de
-arranque **solo de las LIBRES** (plantilla en `proyecto.md`). Después, seguir recibiendo sus
+arranque **solo de las LIBRES** (plantilla en `proyecto.md`). El 17-10 a las 09:00 las libres
+eran la 51 (ALTO) y la 53 (MEDIO), y él ya tenía sus frases; cuando cierren, la 52 y después la 55. Después, seguir recibiendo sus
 observaciones: cada una, opinión + ficha 56, 57… con el procedimiento de «Preferencias».
 
 Banda de modelo para retomar: ALTO (Opus 5, esfuerzo Alto) — hay que juzgar observaciones
@@ -90,7 +95,7 @@ pedagógicas y escribir fichas que otras sesiones ejecutan sin preguntar; el dis
 ## Contexto que no está en los archivos
 
 - La tarea 1 (semana 1 de la U2) está viva del 16 al 22-10 con 51 alumnos; examen 1 el viernes 23-10; la semana 2 empieza el lunes 26-10 y lleva divisiones ej. 1 y 2 como ★ (la 48 ya está en `main`). Las tareas 2-4 usarán el modelo v2 si las 49-55 llegan antes del 26-10; si no, saldrán con el modelo viejo y no pasa nada.
-- Pendiente de Juan Luis: poner la categoría «Tareas» a la tarea de Classroom (la API no deja); mirar en Pages lo que cerraron las 40-44 y 47-48 sin prueba en navegador (semáforo, clasificador, rectángulos ej. 1, léelo, fin de ejercicio sin código, escalera); comprobar que el informe diario llegó a su Gmail (primera ejecución 16-10 a las 21:30).
+- Pendiente de Juan Luis: poner la categoría «Tareas» a la tarea de Classroom (la API no deja); mirar en Pages lo que cerraron las 40-44 y 47-48 sin prueba en navegador (semáforo, clasificador, rectángulos ej. 1, léelo, fin de ejercicio sin código, escalera); comprobar que el informe diario llega a su Gmail cada noche a las 21:30 (primera ejecución el 16-10). Las reglas de Firestore nuevas ya están publicadas (17-10, 08:5x).
 - **El arreglo del CSS común de los botones encendidos NO ha llegado a `main`** (último commit de `practicas/_comun/estilos.css` es 7d3f019, anterior a la revisión): la sesión «fuera del reparto» que él dijo que lo llevaba no lo publicó. Hoy semáforo lleva las reglas copiadas en su CSS (T40) y rectángulos en el suyo (31733ea); constructor sigue mostrando iguales los botones acertados y errados tras Check. Candidata a tarea 56 (MEDIO): mover las reglas al común y quitar las copias.
 - Rutina diaria: pasa `--alumnos 51` y elige `--tarea` leyendo `tareas.js`; si cambia la lista del panel, actualizar la rutina. La 54 hará que el script elija solo la tarea obligatoria vigente.
 - Unidad 3 (Integers) empieza el 16-11: hace falta un reparto nuevo (PU3) con su inventario de destrezas (hoy «por revisar») y el diseño del pool de prácticas con Juan Luis; diseño la última semana de octubre, construcción la primera de noviembre. Montar ese reparto es banda ALTO (Fable 5.1, esfuerzo Alto).
