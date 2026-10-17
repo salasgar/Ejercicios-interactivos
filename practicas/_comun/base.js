@@ -328,7 +328,7 @@ export function arrancar(practica) {
     turno++;
     location.replace(urlSemana(semana, estado.codigo));
   }
-  const textoSalir = () => (semana === null ? t().salir : t().volver_semana);
+  const textoSalir = idioma => (semana === null ? t(idioma).salir : t(idioma).volver_semana);
 
   /** Tras entrar (con código o sin él): el ejercicio pedido en la URL, una sola vez, o el menú. */
   function pintarInicio() {
@@ -564,10 +564,14 @@ export function arrancar(practica) {
     if (defs[n].introduccion) pintarIntroduccion(); else siguiente();
   }
 
+  /** Idioma de la barra: el del ítem que se ve; en la introducción (sin ítem), el de la interfaz. */
+  const idiomaBarra = () => actual.idioma ?? idiomaInterfaz();
+
   function cabeceraEjercicio() {
+    const idi = idiomaBarra();
     return `
-      <button type="button" class="discreto volver" id="salir">${textoSalir()}</button>
-      <div class="progreso"><span>${t().ejercicio(numeroVisible(actual.n))} · ${tt(defs[actual.n].nombre)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
+      <button type="button" class="discreto volver" id="salir">${textoSalir(idi)}</button>
+      <div class="progreso"><span>${t(idi).ejercicio(numeroVisible(actual.n))} · ${tt(defs[actual.n].nombre, idi)}</span><span class="marcador"><strong id="puntos"></strong><span class="vidas" id="vidas"></span></span></div>
       <div class="barra"><div id="barra"></div></div>`;
   }
 
@@ -575,11 +579,12 @@ export function arrancar(practica) {
   function pintarContador() {
     const s = actual.sesion;
     const total = params[actual.n].vidas;
-    app.querySelector('#puntos').textContent = t().puntos(s.puntos, s.objetivo);
+    const idi = idiomaBarra();
+    app.querySelector('#puntos').textContent = t(idi).puntos(s.puntos, s.objetivo);
     app.querySelector('#barra').style.width = `${Math.round(100 * s.puntos / Math.max(1, s.objetivo))}%`;
     const vidas = app.querySelector('#vidas');
     vidas.textContent = '♥'.repeat(Math.max(0, Math.min(total, s.vidas))) + '♡'.repeat(Math.max(0, total - s.vidas));
-    vidas.setAttribute('aria-label', t().vidas_quedan(s.vidas));
+    vidas.setAttribute('aria-label', t(idi).vidas_quedan(s.vidas));
   }
 
   function pintarIntroduccion() {
