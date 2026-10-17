@@ -127,8 +127,14 @@ function hechos(practica) {
 // Ids de las tareas asignadas a este alumno (copia del navegador; la nube la pone al día en `arrancar`).
 let asignacion = codigo ? asignacionGuardada(codigo) : null;
 
+/**
+ * En qué orden salen las tareas de una unidad: en la actual, de la más nueva a la más
+ * antigua (la de esta semana, arriba); en las anteriores, en su orden (semana 1, 2…).
+ */
+export const ordenTareas = (tareas, actual) => (actual ? [...tareas].reverse() : [...tareas]);
+
 /** Las tareas de una unidad, con su plazo y lo que lleva el alumno en cada una. */
-function htmlTareas(t, tareas) {
+function htmlTareas(t, tareas, actual) {
   if (!tareas.length) return '';
   const hoyDia = diaDe(new Date());
   const fila = tarea => {
@@ -147,7 +153,7 @@ function htmlTareas(t, tareas) {
   };
   return `
       <h3 class="portada__bloque">${t.unidad_tareas}</h3>
-      <ul class="lista">${[...tareas].reverse().map(fila).join('')}</ul>`;
+      <ul class="lista">${ordenTareas(tareas, actual).map(fila).join('')}</ul>`;
 }
 
 /** Una sección de unidad: sus tareas y sus prácticas (con subtítulos si la unidad tiene bloques). */
@@ -157,7 +163,7 @@ function htmlUnidad(t, seccion, filaPractica) {
       ${b.titulo ? `<h4 class="portada__subbloque">${b.titulo[idioma]}</h4>` : ''}
       <ul class="lista">${b.practicas.map(filaPractica).join('')}</ul>`).join('');
   return `
-      ${htmlTareas(t, seccion.tareas)}
+      ${htmlTareas(t, seccion.tareas, seccion.actual)}
       ${practicas ? `<h3 class="portada__bloque portada__bloque--todas">${t.unidad_practicas}</h3>${practicas}` : ''}`;
 }
 

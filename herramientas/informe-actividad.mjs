@@ -241,7 +241,8 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = n
   L.push(`- Activos en la ventana: **${r.activos}** (${pct(r.activos, r.total)}).`);
   const completas = r.alumnos.filter(f => f.completa).length;
   const terminadosHoy = r.alumnos.reduce((s, f) => s + f.terminadosHoy, 0);
-  L.push(`- Tarea completa (100 puntos): **${completas}**. Ejercicios terminados en la ventana: ${terminadosHoy}.`);
+  const maximo = PUNTOS_POR_EJERCICIO * (tarea.estrella.length + tarea.nElegir);
+  L.push(`- Tarea completa (${maximo} puntos): **${completas}**. Ejercicios terminados en la ventana: ${terminadosHoy}.`);
   if (r.plazo) {
     const p = r.plazo;
     L.push(p.vencido
