@@ -38,7 +38,7 @@ export const BLOQUES = [
   {
     unidad: 2,
     titulo: { es: 'Semana 3 · m.c.d. y m.c.m. con factores primos', en: 'Week 3 · GCD and LCM with prime factors' },
-    slugs: ['venn', 'imposibles'],
+    slugs: ['venn', 'imposibles', 'por-primos'],
   },
   {
     unidad: 2,
@@ -66,6 +66,7 @@ export const DESCRIPCION = {
   factorizaciones: { es: 'Multiplica, divide y decide si un número es múltiplo de otro mirando solo las factorizaciones.', en: 'Multiply, divide and decide if a number is a multiple of another by looking only at the factorisations.' },
   venn: { es: 'Reparte los factores primos de dos números: lo común es el m.c.d. y todo junto es el m.c.m.', en: 'Sort the prime factors of two numbers: the common part is the GCD and everything together is the LCM.' },
   imposibles: { es: 'Respuestas que no pueden ser: lo que el m.c.d. y el m.c.m. cumplen siempre, y cómo se nombra la respuesta.', en: 'Answers that cannot be right: what the GCD and the LCM always satisfy, and how to name the answer.' },
+  'por-primos': { es: 'Toca · 2, : 3… hasta que el número sea múltiplo o divisor del objetivo, y busca el m.c.m. y el m.c.d.', en: 'Tap · 2, : 3… until the number is a multiple or a divisor of the target, and find the LCM and the GCD.' },
   clasificador: { es: 'Lee el problema y decide, sin calcular, si pide el m.c.d. o el m.c.m., y por qué.', en: 'Read the problem and decide, without calculating, if it asks for the GCD or the LCM, and why.' },
   reloj: { es: 'Problemas de coincidencias: cada cuánto coinciden y a qué hora.', en: 'Coincidence problems: how often things coincide and at what time.' },
   baldosas: { es: 'La baldosa más grande que cubre un suelo sin cortar y los trozos de cuerda iguales más largos.', en: 'The biggest tile that covers a floor without cutting and the longest equal pieces of rope.' },

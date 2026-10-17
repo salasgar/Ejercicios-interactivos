@@ -1,0 +1,16 @@
+/* Práctica «Multiplica y divide por primos»: aquí va solo lo que no esté ya en ../_comun/estilos.css. */
+.pp-numero { margin: .4rem 0; }
+.pp-numero .operacion { margin: .15rem 0; }
+.pp-etiqueta { font-size: .85rem; color: var(--texto-suave); }
+.pp-toques { text-align: center; margin: .3rem 0; }
+.pp-botones { display: grid; gap: .5rem; margin: .8rem 0; }
+.pp-fila { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; }
+.pp-boton { min-height: 48px; font-size: 1.2rem; font-variant-numeric: tabular-nums; padding: 0 .25rem; }
+.pp-boton:disabled { opacity: .35; }
+.pp-acciones { display: flex; justify-content: space-between; gap: .5rem; margin-bottom: .8rem; }
+.pp-primo { display: inline-block; }
+.pp-cambio { animation: pp-resalte .7s ease-out; }
+@keyframes pp-resalte { from { background: var(--primario-claro, #dbeafe); border-radius: 6px; transform: scale(1.25); } to { background: transparent; transform: none; } }
+.pp-chips { display: inline-flex; gap: .35rem; margin: 0 0 0 .3rem; vertical-align: middle; }
+.pp-chips button { min-width: 40px; min-height: 40px; font-size: 1.05rem; }
+@media (prefers-reduced-motion: reduce) { .pp-cambio { animation: none; } }

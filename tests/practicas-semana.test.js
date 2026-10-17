@@ -599,7 +599,7 @@ test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una l
   assert.ok(BLOQUES.every(b => b.unidad === 2), 'ya no hay bloque «Repaso de la unidad 1»');
   const u2 = bloquesPublicados(CATALOGO, 2);
   assert.equal(u2.length, 5);
-  assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 16);
+  assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 17);
   assert.ok(u2.every(b => b.titulo));
   const u1 = bloquesPublicados(CATALOGO, 1);
   assert.equal(u1.length, 1);
