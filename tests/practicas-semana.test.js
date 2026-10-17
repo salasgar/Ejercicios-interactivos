@@ -624,8 +624,163 @@ test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => 
 
 test('semana.js: pasa el ámbito de la tarea a la base y deja la tarea 1 con el día de siempre', () => {
   const fuente = readFileSync(new URL('../practicas/semana.js', import.meta.url), 'utf8');
-  assert.match(fuente, /sincronizarGuardado\(slug, suyo, \{ tareaId: ambitoDeTarea\(tarea\) \}\)/);
+  assert.match(fuente, /sincronizarGuardado\(slug, suyo, \{ tareaId: ambitoDeTarea\(tarea\), profesor \}\)/);
   assert.match(fuente, /progresoDeTarea\(tarea, codigo\)/);
   assert.match(fuente, /tarea\.progresoPorPractica \? est\.dia : est\.diaEntrega/);
   assert.doesNotMatch(fuente, /semana__pedir/);
+});
+
+// --- Portada y página de la tarea con el código de 8: las tareas del profesor (tarea 65) ----
+
+import { identificar, contextoGuardado, contextoAntiguo } from '../practicas/vista-tareas.js';
+import { claveEspacio } from '../practicas/_comun/espacio.js';
+import { leerCodigoAlumno } from '../practicas/_comun/codigos.js';
+import { UNIDADES as UNIDADES_CURSO } from '../practicas/_comun/catalogo.js';
+
+const CODIGO8 = 'K7QMP3XA';
+const tareaDe = (id, unidad, extra = {}) => ({
+  id, unidad, titulo: { es: `Tarea ${id}`, en: `Task ${id}` }, estrella: [['recta', 1], ['semaforo', 1]], elegir: [['criba', 1], ['arbol', 1]], nElegir: 1, ...extra,
+});
+// Un profesor inventado: la unidad 2 empieza más tarde que en el curso, y sus tareas llevan sus fechas.
+const CONFIG_A = {
+  unidades: [{ n: 1, desde: '2026-09-14' }, { n: 2, desde: '2026-11-02' }],
+  tareas: [
+    tareaDe(1, 1, { hasta: '2026-10-30' }),
+    tareaDe(2, 1),
+    tareaDe(3, 2, { desde: '2026-11-02', hasta: '2026-11-06' }),
+    tareaDe(4, 2, { desde: '2026-11-09', hasta: '2026-11-13' }),
+    tareaDe(5, 2, { desde: '2026-11-09', asignada: true, hasta: '2026-11-13' }),
+  ],
+};
+const resolverA = async codigo => (codigo === CODIGO8
+  ? { modo: 'nuevo', profesor: 'uidProfesorA0001', n: 7, config: CONFIG_A, desdeCache: false }
+  : { error: 'no-existe' });
+
+test('identificar: con 4 caracteres es lo de hoy (TAREAS y UNIDADES) y no pregunta a nadie', async () => {
+  const c = await identificar('7NPD', { resolver: () => assert.fail('no debe preguntar') });
+  assert.equal(c.modo, 'antiguo');
+  assert.equal(c.codigo, '7NPD');
+  assert.equal(c.profesor, null);
+  assert.equal(c.tareas, TAREAS);
+  assert.equal(c.unidades, UNIDADES_CURSO);
+  assert.equal(c.indice, leerCodigoAlumno('7NPD'));
+  assert.deepEqual(contextoAntiguo(3).codigo, codigoAlumno(3));
+});
+
+test('identificar: con 8 caracteres salen las tareas y las fechas de su profesor (también con guion y en minúsculas)', async () => {
+  for (const texto of [CODIGO8, 'K7QM-P3XA', ' k7qm p3xa ']) {
+    const c = await identificar(texto, { resolver: resolverA });
+    assert.equal(c.modo, 'nuevo');
+    assert.equal(c.codigo, CODIGO8, 'el código se guarda sin guion y en mayúsculas');
+    assert.equal(c.profesor, 'uidProfesorA0001');
+    assert.equal(c.indice, 7);
+    assert.deepEqual(c.tareas.map(t => t.id), [1, 2, 3, 4, 5]);
+    assert.equal(c.unidades.find(u => u.n === 2).desde, '2026-11-02', 'la fecha es la suya');
+    assert.equal(c.unidades.find(u => u.n === 3).desde, UNIDADES_CURSO.find(u => u.n === 3).desde, 'la que no fija conserva la del curso');
+    assert.deepEqual(c.unidades.map(u => u.titulo.es), UNIDADES_CURSO.map(u => u.titulo.es), 'los títulos son comunes');
+  }
+});
+
+test('identificar: código mal escrito, que no existe o sin red ni copia', async () => {
+  assert.deepEqual(await identificar('ABC', { resolver: resolverA }), { error: 'no-valido' });
+  assert.deepEqual(await identificar('7NPE', { resolver: resolverA }), { error: 'no-valido' });
+  assert.deepEqual(await identificar('ZZZZ-ZZZZ', { resolver: resolverA }), { error: 'no-existe' });
+  assert.deepEqual(await identificar(CODIGO8, { resolver: async () => ({ error: 'sin-red' }) }), { error: 'sin-red' });
+  // Un número de lista que no cabe en el código de resultado no se usa.
+  const grande = await identificar(CODIGO8, { resolver: async () => ({ modo: 'nuevo', profesor: 'u', n: 5000, config: CONFIG_A }) });
+  assert.equal(grande.indice, null);
+});
+
+test('portada con la configuración del profesor: qué tareas salen cada día, con sus fechas y en qué orden', async () => {
+  const c = await identificar(CODIGO8, { resolver: resolverA });
+  const ids = (hoy, n) => seccionesPorUnidad(hoy, { tareas: c.tareas, unidades: c.unidades }).find(s => s.unidad.n === n)?.tareas.map(t => t.id);
+  // El 17-10 (con las fechas del curso ya sería la unidad 2) para este profesor aún es la 1.
+  const el17 = seccionesPorUnidad('2026-10-17', { tareas: c.tareas, unidades: c.unidades });
+  assert.deepEqual(el17.map(s => `${s.unidad.n}${s.actual ? '*' : ''}`), ['1*']);
+  assert.deepEqual(ids('2026-10-17', 1), [1, 2]);
+  // El 2-11 llega su unidad 2 con la tarea 3; la 4 y la 5 esperan al 9-11.
+  assert.deepEqual(ids('2026-11-02', 2), [3]);
+  assert.deepEqual(ids('2026-11-09', 2), [3, 4, 5]);
+  const [u2, u1] = seccionesPorUnidad('2026-11-09', { tareas: c.tareas, unidades: c.unidades });
+  assert.equal(u2.actual, true);
+  assert.deepEqual(u1.tareas.map(t => t.id), [1, 2]);
+  // Con las tareas del curso (código de 4) el mismo día sale lo de hoy, no lo del profesor.
+  const antiguo = contextoAntiguo(0);
+  const deHoy = seccionesPorUnidad('2026-10-17', { tareas: antiguo.tareas, unidades: antiguo.unidades });
+  assert.deepEqual(deHoy.map(s => s.unidad.n), [2, 1]);
+  assert.deepEqual(deHoy[1].tareas.map(t => t.id), [11, 12, 13, 14]);
+});
+
+test('página de la tarea: la tarea se busca entre las del profesor; una que no tiene no existe', async () => {
+  const c = await identificar(CODIGO8, { resolver: resolverA });
+  assert.equal(tareaPorId(3, c.tareas).titulo.es, 'Tarea 3');
+  assert.equal(tareaPorId(11, c.tareas), null, 'la tarea 11 del curso no es de este profesor');
+  assert.ok(tareaPorId(11, TAREAS), 'pero con un código de 4 sí');
+  assert.equal(tareaPorId(NaN, c.tareas), null);
+});
+
+test('plazo con las fechas del profesor y asignación del espacio', async () => {
+  const c = await identificar(CODIGO8, { resolver: resolverA });
+  const t = T.es;
+  const tarea3 = tareaPorId(3, c.tareas), tarea5 = tareaPorId(5, c.tareas);
+  const sinNada = estadoTarea(tarea3, () => null);
+  assert.equal(vistaPlazo(tarea3, sinNada, diaDeFecha('2026-11-04'), false, t).estado, 'plazo');
+  assert.equal(vistaPlazo(tarea3, sinNada, diaDeFecha('2026-11-09'), false, t).estado, 'fuera');
+  // La 5 es asignada: solo es obligatoria para quien está marcado en el espacio.
+  const lista = await cargarAsignacion(CODIGO8, { profesor: 'uidProfesorA0001', leerRemota: async () => ({ tareas: [5] }), escribirClave: () => {} });
+  assert.deepEqual(lista, [5]);
+  assert.equal(vistaPlazo(tarea5, sinNada, diaDeFecha('2026-11-10'), asignadaAMi(tarea5, lista), t).tipo, 'obligatoria_para_ti');
+  assert.equal(vistaPlazo(tarea5, sinNada, diaDeFecha('2026-11-10'), asignadaAMi(tarea5, []), t).tipo, 'repaso');
+});
+
+test('la asignación de un código de 8 se lee de las asignaciones de su espacio', async () => {
+  const pedidos = [];
+  const anterior = globalThis.fetch;
+  globalThis.fetch = async url => { pedidos.push(String(url)); return { ok: true, json: async () => ({ fields: { tareas: { arrayValue: { values: [{ integerValue: '5' }] } } } }) }; };
+  try {
+    await conAlmacen(async () => {
+      assert.deepEqual(await cargarAsignacion(CODIGO8, { profesor: 'uidProfesorA0001' }), [5]);
+      assert.deepEqual(await cargarAsignacion('7NPD'), [5]);
+    });
+  } finally { globalThis.fetch = anterior; }
+  if (pedidos.length) {   // sin configuración de Firebase en el entorno de pruebas no se llega a pedir nada
+    assert.match(pedidos[0], /\/practicas-espacios\/uidProfesorA0001\/asignaciones\/K7QMP3XA\?/);
+    assert.match(pedidos[1], /\/practicas-asignaciones\/7NPD\?/, 'con 4, la colección de siempre');
+  }
+});
+
+test('sin red se sigue con la copia del navegador; sin copia, las prácticas sin tareas', async () => {
+  await conAlmacen(almacen => {
+    assert.equal(contextoGuardado(CODIGO8), null, 'sin copia no hay nada');
+    almacen.set(claveEspacio(CODIGO8), JSON.stringify({ profesor: 'uidProfesorA0001', n: 7, json: JSON.stringify(CONFIG_A) }));
+    const c = contextoGuardado('k7qm-p3xa');
+    assert.equal(c.profesor, 'uidProfesorA0001');
+    assert.deepEqual(c.tareas.map(t => t.id), [1, 2, 3, 4, 5]);
+    assert.equal(c.desdeCache, true);
+    almacen.set(claveEspacio(CODIGO8), '{roto');
+    assert.equal(contextoGuardado(CODIGO8), null, 'una copia rota no vale');
+    assert.equal(contextoGuardado('7NPD'), null, 'el modo antiguo no usa copia');
+  });
+});
+
+test('portada.js y semana.js: aceptan los dos códigos, mantienen los enlaces del modo antiguo y no tocan la base', () => {
+  const semana = readFileSync(new URL('../practicas/semana.js', import.meta.url), 'utf8');
+  const portada = readFileSync(new URL('../practicas/portada.js', import.meta.url), 'utf8');
+  assert.match(semana, /maxlength="12"/, 'con guion, un código de 8 mide 9');
+  assert.match(semana, /await identificar\(texto\)/);
+  assert.match(semana, /tareaPorId\(idTarea, tareas\)/);
+  assert.match(semana, /cargarAsignacion\(suyo, \{ profesor \}\)/);
+  assert.match(portada, /seccionesPorUnidad\(fechaISO\(new Date\(\)\), \{ tareas, unidades \}\)/);
+  assert.match(portada, /cargarAsignacion\(suyo, \{ profesor \}\)/);
+  // Los enlaces de siempre siguen valiendo: t=<id> y c=<código>.
+  assert.match(semana, /params\.get\('c'\) \?\? leer\('practicas\.codigo'\)/);
+  assert.match(portada, /href="semana\.html\?t=\$\{tarea\.id\}\$\{codigo \? `&c=\$\{codigo\}` : ''\}"/);
+});
+
+test('textos del código de 8: sin red y sin tareas, en los dos idiomas', () => {
+  for (const idioma of ['es', 'en']) {
+    for (const clave of ['espacio_sin_red', 'espacio_sin_tareas', 'entrada_no_existe']) {
+      assert.ok(typeof T[idioma][clave] === 'string' && T[idioma][clave].length > 10, `${idioma}.${clave}`);
+    }
+  }
 });

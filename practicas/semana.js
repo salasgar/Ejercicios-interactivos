@@ -14,16 +14,21 @@
 // El panel da también el enlace de cada alumno, con `&c=<código>`.
 
 import { practicaPorSlug } from './_comun/catalogo.js';
-import { leerCodigoAlumno, codigoAlumno, codigoTarea } from './_comun/codigos.js';
-import { leer, escribir, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
+import { codigoTarea, modoDeCodigo } from './_comun/codigos.js';
+import { leer, escribir, borrar, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
-import { tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
+import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
-import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, ejercicioFueraDePlazo, esRepasoDeOtraUnidad } from './vista-tareas.js';
+import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, ejercicioFueraDePlazo, esRepasoDeOtraUnidad, identificar } from './vista-tareas.js';
 
 const app = document.querySelector('#app');
 const params = new URLSearchParams(location.search);
-const tarea = tareaPorId(Number(params.get('t')));
+const idTarea = Number(params.get('t'));
+// Con un código de 8, las tareas son las de su profesor (`entrar` las pone); sin código, las de siempre.
+let tareas = TAREAS;
+let tarea = tareaPorId(idTarea, tareas);
+let profesor = null;             // uid del espacio del alumno (código de 8) o null (código de 4)
+let sinConfig = false;           // el espacio no pudo dar las tareas del profesor (sin red y sin copia)
 
 let codigo = null, indice = null;
 let idioma = 'es';
@@ -48,23 +53,43 @@ async function sincronizar() {
   const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
   const suyo = codigo;
   const [, asignada] = await Promise.all([
-    Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo, { tareaId: ambitoDeTarea(tarea) }))),
-    tarea.asignada ? cargarAsignacion(suyo) : null,
+    Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo, { tareaId: ambitoDeTarea(tarea), profesor }))),
+    tarea.asignada ? cargarAsignacion(suyo, { profesor }) : null,
   ]);
   if (suyo === codigo && tarea.asignada) asignacion = asignada;
   ultimaLectura = Date.now();
   return suyo === codigo;
 }
 
-async function entrar(i) {
-  indice = i;
-  codigo = codigoAlumno(i);
+/**
+ * Entra con un código de 4 o de 8 (tecleado o del enlace). El de 8 se resuelve primero
+ * (de qué profesor es y cuáles son sus tareas); la tarea de la dirección se busca entre las
+ * de ese profesor. Si el código no vale, no existe o no se puede comprobar, vuelve a la entrada.
+ */
+async function entrar(texto) {
+  if (modoDeCodigo(texto) === 'nuevo') {
+    cabecera(T[idioma].semana_titulo);
+    app.innerHTML = `<p class="vacio">${T[idioma].cargando_progreso}</p>`;
+  }
+  const c = await identificar(texto);
+  if (c.error) {
+    // Lo que había recordado no sirve: se olvida para que no vuelva a entrar al recargar.
+    if (c.error === 'no-existe') borrar('practicas.codigo');
+    return pintarEntrada(c.error === 'no-valido' ? 'formato' : c.error);
+  }
+  codigo = c.codigo;
+  indice = c.indice;
+  profesor = c.profesor;
+  tareas = c.tareas;
+  sinConfig = c.sinConfig;
+  tarea = tareaPorId(idTarea, tareas);
   escribir('practicas.codigo', codigo);
   asignacion = asignacionGuardada(codigo);
   aplicarIdioma();
   if (!tarea) return pintar();
   cabecera(tarea.titulo[idioma]);
   app.innerHTML = `<p class="vacio">${T[idioma].cargando_progreso}</p>`;
+  cargarNombres();
   if (!(await sincronizar())) return;
   aplicarIdioma();   // la nube puede haber traído el idioma fijado en otro aparato
   pintar();
@@ -81,10 +106,10 @@ function cabecera(titulo) {
 function pintarSinTarea() {
   const t = T[idioma];
   cabecera(t.semana_titulo);
-  const lista = tareasPublicadas(fechaISO(new Date()));
+  const lista = tareasPublicadas(fechaISO(new Date()), tareas);
   app.innerHTML = `
     <section>
-      <div class="aviso">${t.semana_no_existe}</div>
+      <div class="aviso">${sinConfig ? t.espacio_sin_red : t.semana_no_existe}</div>
       ${lista.length ? `<p>${t.semana_elige_tarea}</p>
       <ul class="lista">${lista.map(x => `
         <li class="lista__item"><div><h3>${esc(x.titulo[idioma])}</h3></div>
@@ -93,25 +118,29 @@ function pintarSinTarea() {
     </section>`;
 }
 
+/** `error`: false | 'formato' | 'no-existe' | 'sin-red' (el código no vale, la nube no lo conoce, no se pudo preguntar). */
 function pintarEntrada(error = false) {
   const t = T[idioma];
-  cabecera(tarea.titulo[idioma]);
+  // Con un código de 8, la tarea solo se sabe después de resolverlo: antes, el título es genérico.
+  const titulo = tarea ? tarea.titulo[idioma] : t.semana_titulo;
+  const frase = { formato: t.entrada_error, 'no-existe': t.entrada_no_existe, 'sin-red': t.espacio_sin_red }[error];
+  cabecera(titulo);
   app.innerHTML = `
     <section class="entrada">
-      <h2>${esc(tarea.titulo[idioma])}</h2>
+      <h2>${esc(titulo)}</h2>
       <form class="tarjeta" id="form-codigo">
         <h2>${t.entrada_titulo}</h2>
         <p class="pequeno">${t.entrada_ayuda} ${t.entrada_aparatos}</p>
-        <input id="codigo" type="text" class="codigo-entrada" maxlength="8" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${t.entrada_titulo}" required>
-        ${error ? `<div class="aviso aviso--error">${t.entrada_error}</div>` : ''}
+        <input id="codigo" type="text" class="codigo-entrada" maxlength="12" autocapitalize="characters" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="${t.entrada_titulo}" required>
+        ${frase ? `<div class="aviso aviso--error">${frase}</div>` : ''}
         <button type="submit" class="ancho">${t.entrada_boton}</button>
       </form>
     </section>`;
   app.querySelector('#form-codigo').addEventListener('submit', ev => {
     ev.preventDefault();
-    const i = leerCodigoAlumno(app.querySelector('#codigo').value);
-    if (i === null) return pintarEntrada(true);
-    entrar(i);
+    const texto = app.querySelector('#codigo').value;
+    if (modoDeCodigo(texto) === null) return pintarEntrada('formato');
+    entrar(texto);
   });
 }
 
@@ -139,7 +168,8 @@ function filaEjercicio(e, estrella, num, tipo) {
 
 function cajaCodigo(est) {
   const t = T[idioma];
-  if (!est.cumplida) return '';
+  // Sin número de lista que quepa en el código de resultado (código de 8 fuera de rango), no hay código.
+  if (!est.cumplida || indice === null) return '';
   const texto = codigoTarea(tarea.id, indice, {
     estrella: est.estrella.map(e => e.terminado),
     elegir: est.elegir.map(e => e.terminado),
@@ -207,6 +237,10 @@ function pintarTarea() {
     cerrarSesion();
     codigo = null;
     indice = null;
+    profesor = null;
+    tareas = TAREAS;
+    sinConfig = false;
+    tarea = tareaPorId(idTarea, tareas);
     pintar();
   });
 }
@@ -232,14 +266,14 @@ function pintar() {
 
 // --- Arranque -------------------------------------------------------------------------
 
-const inicial = leerCodigoAlumno(params.get('c') ?? leer('practicas.codigo') ?? '');
-if (inicial === null) {
+const inicial = params.get('c') ?? leer('practicas.codigo') ?? '';
+if (modoDeCodigo(inicial) === null) {
   aplicarIdioma();
   pintar();
+  if (tarea) cargarNombres();
 } else {
   entrar(inicial);
 }
-if (tarea) cargarNombres();
 // Al volver atrás desde una práctica (si el navegador guarda la página), se actualiza el progreso.
 addEventListener('pageshow', ev => { if (ev.persisted && codigo) pintar(); });
 // Y al volver a la pestaña después de practicar en otra (sin borrar lo que se esté tecleando en la entrada);
