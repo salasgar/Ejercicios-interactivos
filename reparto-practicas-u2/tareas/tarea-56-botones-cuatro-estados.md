@@ -138,6 +138,7 @@ En el navegador (`npm run servir`), ventana estrecha (375 px) y ancha, en españ
 - `.elegido` (rectángulos) se pinta con la misma regla que `[aria-pressed="true"]`, así que el arreglo lo cubre igual.
 - La caché de GitHub Pages: tras publicar, Juan Luis puede ver el CSS viejo un rato. No es un fallo de la tarea; dilo en la entrega («recarga forzada»).
 - `divisores/` (la práctica antigua) tiene su propio CSS y no carga el común de `practicas/`: queda fuera.
+- (Cierre del 17-10, s-20261017T082757-d15878d1) En zsh, `F="a b c"; git add $F` no separa las rutas: usar un array `F=(a b); git add "${F[@]}"`. Un test que busque `.botones-numeros button.mal {` encuentra antes la regla agrupada de `opacity`: buscar `button.mal { background`. La prueba en navegador NO se hizo (la extensión de Chrome no estaba conectada): pendiente de Juan Luis o de la 55.
 
 ## Prohibido (propio de esta tarea)
 
