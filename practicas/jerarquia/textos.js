@@ -50,7 +50,7 @@ export const TX = {
       <p>Tap a group to add or remove its brackets, then press Check.</p>`,
   },
 
-  instruccion: { es: 'Toca una operación que ya se pueda hacer.', en: 'Tap an operation you can already do.' },
+  instruccion: { es: 'Toca una operación que <strong>ya se pueda hacer</strong>.', en: 'Tap an operation you <strong>can already do</strong>.' },
   cuenta_dice: { es: 'La cuenta queda así:', en: 'The sum now reads:' },
   has_fallado: { es: 'No era esa. La app hace el paso correcto y sigues.', en: 'That was not it. The app does the right step and you carry on.' },
 

@@ -32,7 +32,7 @@ export const TX = {
       en: `<h2>How it works</h2><p>You will see two marks on a number line. First <strong>tap the line</strong> where you think the number is. Then <strong>tap the nearest mark</strong>: that is the rounded number.</p>${REGLA_EN}`,
     },
     pregunta: { es: (n, orden) => `Redondea ${n} ${A_ORDEN[orden].es}.`, en: (n, orden) => `Round ${n} ${A_ORDEN[orden].en}.` },
-    paso1: { es: '1. Toca la recta donde está el número', en: '1. Tap the line where the number is' },
+    paso1: { es: '1. <strong>Toca la recta</strong> donde está el número', en: '1. <strong>Tap the line</strong> where the number is' },
     paso2: { es: '2. Toca la marca más cercana', en: '2. Tap the nearest mark' },
     paso2_medio: { es: '2. Está justo en medio: ¿a qué marca se redondea?', en: '2. It is exactly in the middle: which mark do you round to?' },
     falta_posicion: { es: 'Primero toca la recta donde está el número.', en: 'First tap the line where the number is.' },
