@@ -71,6 +71,18 @@ export function unidadActual(hoy, unidades = UNIDADES) {
   return (llegadas.length ? llegadas[llegadas.length - 1] : unidades[0]).n;
 }
 
+/**
+ * Las unidades con las fechas de un profesor: los títulos comunes de `UNIDADES`
+ * y el `desde` de `fechas` ([{ n, desde }], lo que guarda su configuración).
+ * Una unidad sin fecha suya conserva la del curso.
+ */
+export function unidadesCon(fechas = []) {
+  return UNIDADES.map(u => {
+    const suya = fechas.find(f => f?.n === u.n);
+    return { ...u, desde: suya?.desde ?? u.desde };
+  });
+}
+
 export function practicaPorSlug(slug) {
   return CATALOGO.find(p => p.slug === slug) ?? null;
 }
