@@ -1,10 +1,10 @@
-# Tarea 72 · Varios profesores: códigos al azar de 4 u 8 caracteres según el profesor (Juan Luis: 4 desde el curso 2027-28)
+# Tarea 72 · Varios profesores: códigos de 4 u 8 caracteres y el modo decidido por la nube (para pasar ya a Juan Luis con sus códigos de siempre)
 
 Actualizado: 2026-10-17
 Precondición: 61-68 LISTAS (lo están). Atendida: Juan Luis publica las reglas durante la sesión · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/72-codigos-de-4/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `firestore.rules` (solo la sección de varios profesores), `herramientas/probar-reglas.mjs`, `practicas/_comun/codigos.js`, `practicas/_comun/espacio.js`, `practicas/_comun/tareas.js` (solo el campo nuevo de la configuración), `practicas/profesor.js` y `practicas/resultados.js` (solo generar códigos y el ajuste de longitud), `practicas/_comun/base.js`, `practicas/portada.js`, `practicas/semana.js` y `practicas/vista-tareas.js` (solo si dan por hecho que un código nuevo tiene 8 caracteres), sus tests y `tests/practicas-codigos-4.test.js` (nuevo)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `firestore.rules` (solo la sección de varios profesores), `herramientas/probar-reglas.mjs`, `practicas/_comun/codigos.js`, `practicas/_comun/espacio.js`, `practicas/_comun/tareas.js` (solo el campo nuevo de la configuración), `practicas/_comun/base.js`, `practicas/_comun/textos.js`, `practicas/portada.js`, `practicas/semana.js`, `practicas/vista-tareas.js`, `practicas/profesor.js` y `practicas/resultados.js` (solo generar códigos y el ajuste de longitud), sus tests y `tests/practicas-codigos-4.test.js` (nuevo)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -60,56 +60,53 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 - **El modo antiguo no se rompe nunca**: hasta la migración de Juan Luis (vuelta de Navidad) sus 51 alumnos siguen con códigos de 4 caracteres, `tareas.js` y las colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`. Cada tarea lo comprueba con un test (la longitud del código decide el modo: 4, antiguo; 8, nuevo).
 - **Nada de datos reales en el repositorio**: ni nombres, ni códigos de alumnos, ni uids de compañeros, ni contraseñas. Las cuentas de prueba y sus contraseñas, por variables de entorno.
 - **Código de prueba del modo antiguo**: 60 (`7NPD`), 61-63. Nunca el de un alumno.
-- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (la 69 tiene que estar LISTA con «se entrega» antes); **cambio de los códigos (17-10, tarde): este curso los alumnos de Juan Luis se quedan con sus códigos de 4 de siempre; desde el curso 2027-28 sus alumnos nuevos tendrán códigos de 4 al azar, y los de los compañeros, de 8 (tarea 72)**. Qué se hace el 1 de enero de 2027 (fecha que había fijado para pasarse al sistema nuevo) queda pendiente de él tras ese cambio: la 70 no se lanza sin esa decisión.
+- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (la 69 tiene que estar LISTA con «se entrega» antes); **códigos (17-10, noche): Juan Luis pasa YA al sistema nuevo, y sus alumnos conservan sus códigos de 4 de siempre, registrados en `practicas-alumnos` como si fueran al azar** («Nadie va a fisgonear en las tareas de mis alumnos; te lo garantizo»: acepta que esos códigos se puedan calcular). Sus alumnos nuevos de cursos próximos, códigos de 4 al azar; los de los compañeros, de 8 (tarea 72). El paso de Juan Luis lo hace la 70, en el fin de semana del 24-25 de octubre (entre el cierre de la tarea 1, jue 22-10 23:59, y la apertura de la tarea 2, lun 26-10 8:00), con él delante.
 - Hay una sesión de Juan Luis fuera del reparto que el 17-10 por la tarde editaba `practicas/profesor.js`, `practicas/resultados.js` y su test: antes de tocar esos ficheros, `git status`; si hay cambios sin commit que no son tuyos, no los pises y avisa.
 
 ## Objetivo
 
-Juan Luis, 2026-10-17, por la tarde (cambia el diseño de la 57, B.1): *«Me gustaría que mis alumnos no tuvieran que memorizar un código de 8 caracteres. Quiero que mis alumnos puedan entrar con su código de 4 caracteres. Si es necesario que los alumnos de mis compañeros usen 8 caracteres, de acuerdo.»* Y después: *«Este año ya se quedan con los códigos que tienen. Para el próximo curso, a los nuevos alumnos, les damos códigos aleatorios de 4 caracteres.»*
+Juan Luis, 2026-10-17 (cambia el diseño de la 57, B.1 y E). Primero: *«Me gustaría que mis alumnos no tuvieran que memorizar un código de 8 caracteres. Quiero que mis alumnos puedan entrar con su código de 4 caracteres. Si es necesario que los alumnos de mis compañeros usen 8 caracteres, de acuerdo.»* Y al final: *«Mi propuesta es que cambiemos ya al sistema de códigos generados aleatoriamente, pero les asignamos a mis alumnos los códigos que ya tienen, como si los hubiéramos generado aleatoriamente y casualmente hubieran coincidido así […]. Nadie va a fisgonear en las tareas de mis alumnos; te lo garantizo.»*
 
-Lo decidido (no se rediscute):
-1. **Este curso (2026-27)** los alumnos de Juan Luis siguen con sus códigos de 4 de siempre (los calculables con `codigoAlumno`), en el modo antiguo. Lo que pase el 1 de enero (tarea 70) se decide aparte con él.
-2. **Desde el curso 2027-28**, los alumnos nuevos de Juan Luis reciben, en el sistema nuevo, **códigos de 4 caracteres al azar** (no calculables).
-3. Los alumnos de los compañeros, **8 caracteres** al azar, como dice el diseño.
+Lo decidido (no se rediscute; la coordinadora le explicó el riesgo y lo acepta):
+1. En el sistema nuevo, un código de alumno puede tener **4 u 8 caracteres**. Cada profesor elige la longitud de los que genera (por defecto 8; Juan Luis, 4).
+2. **Los códigos de 4 de siempre de Juan Luis pasan al sistema nuevo tal cual**: la tarea 70 los registra en `practicas-alumnos` con su número de lista. Por eso un código de 4 **ya no se puede clasificar sin mirar la nube**: uno con el control antiguo válido puede estar registrado (sistema nuevo) o no (modo antiguo, mientras dure).
+3. Los códigos de 4 que se **generen** a partir de ahora no pueden ser de los 1024 calculables: se descartan.
 
-Así que el sistema nuevo tiene que aceptar códigos al azar de **4 u 8** caracteres, y cada profesor elige la longitud de los suyos (por defecto 8; Juan Luis, 4).
-
-Lo que la coordinadora le explicó, y él aceptó: con 4 caracteres hay ~1 millón de códigos posibles y alguien muy decidido podría probarlos todos con un programa (unas tres semanas al ritmo del plan gratuito, visible en la consola); con 8, es imposible en la práctica. No hay nombres en la nube, en ningún caso.
+Esta tarea deja el sistema preparado para eso; **no registra ni copia nada** (eso es la 70).
 
 ## Siguiente paso
 
-1. Lee DISENO.md (B y C.2), la terminada y la entrega de la 61 (reglas y `probar-reglas.mjs`), de la 62 (`codigoSecreto`, `modoDeCodigo`, `espacio.js`) y de la 66 (generar códigos en «Mis alumnos»).
-2. `grep -rn "modoDeCodigo\|codigoSecreto\|LONGITUD_SECRETO\|{8}" practicas firestore.rules herramientas tests`: son todos los sitios que dan por hecho los 8 caracteres.
+1. Lee DISENO.md (B, C.2, E), las terminadas y entregas de la 61 (reglas, `probar-reglas.mjs`), la 62 (`codigoSecreto`, `modoDeCodigo`, `espacio.js`), la 64 y la 65 (cómo deciden la base y las páginas el modo) y la 66 («Mis alumnos»).
+2. `grep -rn "modoDeCodigo\|codigoSecreto\|LONGITUD_SECRETO\|resolverCodigo\|{8}" practicas firestore.rules herramientas tests`: son todos los sitios que deciden el modo por la longitud o dan por hecho los 8 caracteres.
 
 ## Qué hay que hacer
 
-1. **Cómo se distingue un código** (`codigos.js`, `modoDeCodigo`), sin red, como hoy:
-   - 4 caracteres **con el control del código antiguo correcto** (`leerCodigoAlumno` no es `null`) → `'antiguo'`;
-   - 4 caracteres sin ese control, u 8 caracteres → `'nuevo'` (se busca en `practicas-alumnos`);
-   - lo demás → `null`.
-   Para que no haya ambigüedad, **un código nuevo de 4 nunca puede ser uno antiguo válido**: `codigoSecreto(longitud)` descarta los que pasen `leerCodigoAlumno` (son 1024 de ~1 millón). Test con muchos sorteos.
-2. **`codigoSecreto(longitud = 8)`** acepta 4 u 8. La configuración del profesor (`tareas.js`, `configDeJSON`/`erroresConfig`) gana un campo opcional `longitudCodigo` (4 u 8; por defecto 8).
-3. **Panel, «Mis alumnos»**: un ajuste «Longitud de los códigos nuevos: 8 (más seguro) / 4 (más fácil de recordar)», con una línea que explique la diferencia, guardado en la configuración; «Generar códigos» usa esa longitud. Los códigos ya generados no cambian.
-4. **Reglas** (sección de varios profesores de `firestore.rules`): `codigoSecreto(c)` acepta `{4}` u `{8}`; los ids de `progreso-libre`, `progreso-tareas`, `asignaciones` y `fallos` del espacio, y el campo `alumno` de los fallos, igual. Los bloques del modo antiguo **no se tocan**. Pide a Juan Luis que publique (enlace en la ficha 61) y vuelve a pasar `herramientas/probar-reglas.mjs`, ampliado con comprobaciones de un código de 4 en el espacio de un profesor de prueba (lee, escribe y lista como uno de 8; otro profesor no).
-5. **Páginas y base**: donde se formatee, valide o muestre un código nuevo dando por hecho 8 caracteres (`LONGITUD_SECRETO`, `mostrarCodigo`, el campo de entrada, mensajes «8 caracteres»), que acepte los dos. Con un código antiguo, todo exactamente como hoy.
-6. **Tests**: `modoDeCodigo` con antiguos válidos, de 4 al azar, de 8 y erróneos; `codigoSecreto(4)` nunca da un antiguo válido; la configuración con y sin `longitudCodigo`; y que el modo antiguo no cambia.
+1. **Formato** (`codigos.js`): `modoDeCodigo` pasa a decir solo si el **formato** es válido (`'4'`, `'8'` o `null`); el modo lo decide `resolverCodigo` (`espacio.js`), con red:
+   - código de 8, o de 4 sin el control antiguo: búsqueda en `practicas-alumnos` → sistema nuevo, o «Ese código no existe…»;
+   - código de 4 **con el control antiguo válido**: búsqueda primero; si está registrado → sistema nuevo; si da 404 → modo antiguo, como hoy (hasta la 71);
+   - **sin red**: lo guardado en el navegador de la última vez; si no hay nada y el código es antiguo válido → modo antiguo, como hoy.
+   Guarda la respuesta en el navegador para no buscar en cada página.
+2. **Base y páginas** (`base.js`, `portada.js`, `semana.js`, `vista-tareas.js`): donde hoy se decide con `modoDeCodigo(…) === 'antiguo'`, pasar por `resolverCodigo`. Con un código no registrado del modo antiguo, todo exactamente como hoy (test).
+3. **`codigoSecreto(longitud = 8)`** acepta 4 u 8; con 4, descarta los que pasen `leerCodigoAlumno` (test con muchos sorteos). La configuración del profesor (`tareas.js`) gana `longitudCodigo` (4 u 8; por defecto 8). En «Mis alumnos», el ajuste «Longitud de los códigos nuevos: 8 (más seguro) / 4 (más fácil de recordar)», con una línea que explique la diferencia; «Generar códigos» la usa. Los códigos ya generados no cambian.
+4. **Reglas** (solo la sección de varios profesores): `codigoSecreto(c)` acepta `{4}` u `{8}`; los ids de `progreso-libre`, `progreso-tareas`, `asignaciones` y `fallos` del espacio y el campo `alumno` de los fallos, igual; en `practicas-alumnos`, `n` hasta **1023** (el alumno de prueba de Juan Luis, AJJN, es el número 1000; el código de resultado de la tarea admite hasta 1023). Pide a Juan Luis que publique (enlace en la ficha 61) y amplía `probar-reglas.mjs`: un código de 4 en el espacio de un profesor de prueba se lee, se escribe y se lista como uno de 8, y otro profesor no puede.
+5. **Tests**: los casos del punto 1 con dobles de `fetch` (registrado, no registrado, sin red con y sin copia), `codigoSecreto(4)`, la configuración con y sin `longitudCodigo`, y que el modo antiguo no cambia para un código no registrado.
 
 ## Cómo saber que ha terminado
 
 - `probar-reglas.mjs` en verde contra las reglas publicadas, con la salida literal en `ENTREGA.md`.
-- En local, con el profesor de prueba A con longitud 4: genera tres códigos de 4, entra con uno en una práctica y en una tarea suya, guarda y se lee desde otra ventana; con el código 60 (`7NPD`), todo como antes. Con longitud 8, como antes.
+- En local: registra a mano en la nube (consola o script, en el espacio del profesor de prueba A) el código 60 (`7NPD`) con `n: 60`; con él, una práctica y una tarea de A guardan en el espacio de A. Bórralo después: el 60 vuelve al modo antiguo y todo es como hoy. Con un código de 4 al azar generado por A, lo mismo que con uno de 8.
 - `npm test` en verde.
 
 ## Trampas conocidas
 
-- El alfabeto (`ALFABETO`, sin I, O, 0 ni 1) es el mismo para los dos sistemas: por eso hace falta el descarte del punto 1.
-- AJJN (número 1000) es el alumno de prueba de Juan Luis en el modo antiguo: no lo uses.
-- Lo que pasa el 1 de enero (la 70) no es de esta tarea.
+- El alfabeto (`ALFABETO`) es el mismo en los dos sistemas: por eso los de 4 generados descartan los calculables.
+- AJJN (número 1000) es el alumno de prueba de Juan Luis: no lo uses ni lo registres (lo registra la 70).
+- Una búsqueda más por alumno al entrar: va al navegador para no repetirla (cuotas, DISENO.md F.7).
 
 ## Prohibido (propio de esta tarea)
 
-- Tocar los bloques del modo antiguo de las reglas, los códigos antiguos o `codigoAlumno`.
-- Cambiar la longitud de códigos ya generados.
+- Registrar o copiar los códigos de Juan Luis (es la 70) o tocar los bloques del modo antiguo de las reglas.
+- Cambiar `codigoAlumno` o la longitud de códigos ya generados.
 
 ## Salida esperada
 

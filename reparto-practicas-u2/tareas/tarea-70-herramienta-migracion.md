@@ -1,10 +1,10 @@
-# Tarea 70 · Varios profesores, N10: herramienta de migración de Juan Luis al sistema nuevo, preparada y probada con datos de prueba, sin ejecutarla
+# Tarea 70 · Varios profesores, N10 (rehecha el 17-10): pasar a Juan Luis al sistema nuevo con sus códigos de siempre (fin de semana del 24-25-10)
 
 Actualizado: 2026-10-17
-Precondición: 69 LISTA con veredicto «se entrega» **y la decisión de Juan Luis sobre el 1 de enero** (tras el cambio de los códigos del 17-10, esta ficha hay que revisarla con él antes de lanzarla) · Disparo: MANUAL (sesión atendida)
+Precondición: 69 LISTA con veredicto «se entrega» (y, por tanto, 72 LISTA). **La herramienta se prepara cuando se pueda; se EJECUTA con Juan Luis delante el fin de semana del 24-25 de octubre** (fecha propuesta por la coordinadora, pendiente de que él la confirme) · Disparo: MANUAL (sesión atendida, CON Juan Luis delante)
 Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/70-herramienta-migracion/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/profesor-migracion.js` (nuevo), `practicas/profesor.html` (solo el botón y su sección), `practicas/_comun/espacio.js`, `practicas/_comun/textos.js`, `firestore.rules` (solo un bloque comentado al final), `tests/practicas-migracion.test.js` (nuevo)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/profesor-migracion.js` (nuevo), `practicas/profesor.html` (solo el botón y su sección), `practicas/profesor.js` (solo para enganchar la sección), `practicas/_comun/textos.js`, `herramientas/informe-actividad.mjs` (solo si hace falta para la rutina), `tests/practicas-migracion.test.js` (nuevo)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -54,43 +54,53 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 `$R/hechos/reclamos/*.md`; si te han relevado, `ABANDONADA (relevado)` y no toques nada.
 
 
-## Lo común a las tareas 61-71 (varios profesores)
+## Lo común a las tareas 61-72 (varios profesores)
 
 - **La especificación es `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`**, aprobado entero por Juan Luis el 2026-10-17. Léelo entero antes de empezar (no solo tu apartado). Lo que esté mal pensado se propone en la terminada; no se cambia por tu cuenta.
 - **El modo antiguo no se rompe nunca**: hasta la migración de Juan Luis (vuelta de Navidad) sus 51 alumnos siguen con códigos de 4 caracteres, `tareas.js` y las colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`. Cada tarea lo comprueba con un test (la longitud del código decide el modo: 4, antiguo; 8, nuevo).
 - **Nada de datos reales en el repositorio**: ni nombres, ni códigos de alumnos, ni uids de compañeros, ni contraseñas. Las cuentas de prueba y sus contraseñas, por variables de entorno.
 - **Código de prueba del modo antiguo**: 60 (`7NPD`), 61-63. Nunca el de un alumno.
-- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (la 69 tiene que estar LISTA con «se entrega» antes); **cambio de los códigos (17-10, tarde): este curso los alumnos de Juan Luis se quedan con sus códigos de 4 de siempre; desde el curso 2027-28 sus alumnos nuevos tendrán códigos de 4 al azar, y los de los compañeros, de 8 (tarea 72)**. Qué se hace el 1 de enero de 2027 (fecha que había fijado para pasarse al sistema nuevo) queda pendiente de él tras ese cambio: la 70 no se lanza sin esa decisión.
+- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (la 69 tiene que estar LISTA con «se entrega» antes); **códigos (17-10, noche): Juan Luis pasa YA al sistema nuevo, y sus alumnos conservan sus códigos de 4 de siempre, registrados en `practicas-alumnos` como si fueran al azar** («Nadie va a fisgonear en las tareas de mis alumnos; te lo garantizo»: acepta que esos códigos se puedan calcular). Sus alumnos nuevos de cursos próximos, códigos de 4 al azar; los de los compañeros, de 8 (tarea 72). El paso de Juan Luis lo hace la 70, en el fin de semana del 24-25 de octubre (entre el cierre de la tarea 1, jue 22-10 23:59, y la apertura de la tarea 2, lun 26-10 8:00), con él delante.
 - Hay una sesión de Juan Luis fuera del reparto que el 17-10 por la tarde editaba `practicas/profesor.js`, `practicas/resultados.js` y su test: antes de tocar esos ficheros, `git status`; si hay cambios sin commit que no son tuyos, no los pises y avisa.
 
 ## Objetivo
 
-Dejar lista la migración de Juan Luis para el día que él elija a la vuelta de Navidad (DISENO.md, E.4; lista H.2, N10). **No se ejecuta en esta tarea**: se prueba con una copia de prueba de los números 60-63.
+Pasar a Juan Luis al sistema nuevo **ya**, con sus alumnos conservando sus códigos de 4 de siempre (decisión suya del 17-10; ver «Lo común» y la ficha 72). Sustituye a la migración de E.4 del diseño, que daba códigos nuevos el 1 de enero: ya no hay códigos nuevos ni correo a los alumnos, y los enlaces repartidos (`?c=<código>`) siguen valiendo.
+
+Por qué el fin de semana del 24-25 de octubre: la tarea 1 está viva hasta el jueves 22 a las 23:59 y la tarea 2 se abre el lunes 26 a las 8:00. En medio, casi nadie practica.
 
 ## Siguiente paso
 
-1. Lee DISENO.md (E entero, F.3, F.4); `profesor.js`, `espacio.js`, `nube.js` y las funciones de la 63.
+1. Lee DISENO.md (E, F.3), las terminadas de la 61 a la 69 y la 72, y la nota de la 68 para la 70 (`f9d33d6`: los lectores listan `practicas-alumnos`).
+2. Mide antes cuántos documentos hay en `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos` (con la cuenta de Juan Luis en el panel, o pídeselo): de eso dependen las cuotas del día del paso (F.7: 20 000 escrituras al día).
 
 ## Qué hay que hacer
 
-1. **Botón «Pasar al sistema nuevo»** (solo administrador, una sola vez, con confirmación escrita): genera un código secreto para cada número de su lista **con el mismo número**; copia a su espacio el progreso libre, el progreso por tarea y las asignaciones de cada alumno; copia sus tareas de `tareas.js` y las fechas de `UNIDADES` a su configuración; exporta el CSV (número, código, enlace) para su script de correos. Los fallos no se copian (antes, descargar el CSV de «Qué falla más»: el panel lo recuerda).
-2. **Modo de prueba**: la misma herramienta sobre los números 60-63 solamente, para ensayar sin tocar a los alumnos.
-3. **Aviso «Tu código ha cambiado. Busca el nuevo en tu correo»** para códigos de 4, preparado tras un interruptor (apagado) en `espacio.js`.
-4. **Reglas que cierran el modo antiguo**: escritas en un bloque **comentado** al final de `firestore.rules`, con instrucciones para el día de la migración. No se publican.
-5. Tests de la lógica de copia (qué se copia, con qué id, que no se pierde nada) con datos inventados.
+1. **Herramienta «Pasar al sistema nuevo»** en el panel (solo el administrador, una sola vez, con confirmación escrita y un modo de ensayo):
+   - **Registrar los códigos de siempre** en `practicas-alumnos`: para cada número `n` de su lista (1-51, y los que añada) `codigoAlumno(n − 1)` con `{ profesor: su uid, n }`; y **AJJN con `n: 1000`** (su alumno de prueba). Los de prueba de Claude (60-63) **no**: se registran en el espacio del profesor de prueba A, para que no salgan en su panel.
+   - **Copiar** a su espacio, con los mismos ids: progreso libre (`practicas/<slug>--<código>` → `progreso-libre`), progreso por tarea (`practicas-tareas` → `progreso-tareas`), asignaciones y **fallos** (si son menos de ~8 000; si son más, se para y se le pregunta).
+   - **Su configuración**: `TAREAS` de `tareas.js` y las fechas de `UNIDADES`, **con los mismos ids de tarea** (los enlaces `semana.html?t=N` siguen valiendo), y `longitudCodigo: 4`.
+   - **Orden**: primero copiar, después registrar (registrar es lo que cambia a los alumnos de sistema); si algo falla a medias, se puede repetir sin duplicar.
+2. **Ensayo** con un profesor de prueba y los códigos 60-63 (en su espacio): todo copiado, y con esos códigos la portada, una práctica y `semana.html?t=1` enseñan su progreso de antes.
+3. **El día del paso**, con Juan Luis delante: descargar antes el CSV de «Qué falla más»; ejecutar; comprobar con AJJN y con dos alumnos al azar (sin abrir su sesión: leyendo sus documentos) que su progreso está en el espacio; que la tarea 1 (`progresoPorPractica`) sale bien en el panel; y el informe diario: que Juan Luis cree la cuenta lectora, la añada como lectora en su panel, y la rutina pase a `--espacio` con esa cuenta (la contraseña, en la configuración de la rutina, nunca en el repositorio).
+4. Las colecciones del modo antiguo **se quedan como están** (nadie escribe ya en ellas): las limpia la 71, con firma, cuando Juan Luis lo diga.
+5. Tests de la lógica de copia y registro con datos inventados (qué se copia, con qué id, que repetir no duplica, que AJJN entra con `n: 1000`).
 
 ## Cómo saber que ha terminado
 
-- El ensayo con los números 60-63 copia todo y los códigos nuevos entran en las prácticas y en la tarea con su progreso.
-- `npm test` en verde; el modo antiguo sin cambios.
+- El ensayo con 60-63 sale bien, con el resultado en `ENTREGA.md`.
+- El día del paso: los alumnos de Juan Luis entran con su código de siempre y ven su progreso; el panel de Juan Luis lee de su espacio; el informe de esa noche llega leyendo del espacio.
+- `npm test` en verde.
 
 ## Trampas conocidas
 
-- Ejecutarla de verdad es una sesión aparte, atendida, el día que elija Juan Luis (y con su firma para borrar lo viejo, que es la 71).
+- Si un alumno practica durante el paso, su progreso queda en su navegador y se fusiona al volver (la base fusiona lo local con la nube): no se pierde, pero dilo en la entrega.
+- AJJN es el número 1000 (no está en la lista de 51): por eso la 72 sube el tope de `n` en las reglas a 1023.
 
 ## Prohibido (propio de esta tarea)
 
-- Ejecutar la migración real, publicar las reglas que cierran el modo antiguo o borrar nada.
+- Ejecutar el paso de verdad sin Juan Luis delante, o borrar nada (es la 71, con firma).
+- Dar códigos nuevos a los alumnos de Juan Luis.
 
 ## Salida esperada
 
