@@ -12,7 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-10-17 15:4x UTC · por la coordinadora s-20261017T065935-3ecc253b (relistado `hechos/` con `git fetch`): **las 58 primeras tareas están LISTAS** (la 55 cerró a las 10:19Z, commit 17d97af, sin regenerar el tablón; la 58, a las 09:01Z). Sin reclamos vivos. Alta de la **59** (MEDIO, PENDIENTE): rematar la recta, con los cambios sin commit que dejó una sesión ya cerrada. La lista N1-N11 de la 57 sigue sin dar de alta (pendiente de decidir dónde y cuándo con Juan Luis).
+Regenerado: 2026-10-17 15:5x UTC · por s-20261017T153707-d47ce0fe al cerrar la 59 (LISTA, commits 2776026 y 45eef3a). **Las 59 tareas están LISTAS**, sin reclamos vivos.
+Regeneración anterior: 2026-10-17 15:4x UTC · por la coordinadora s-20261017T065935-3ecc253b (relistado `hechos/` con `git fetch`): **las 58 primeras tareas están LISTAS** (la 55 cerró a las 10:19Z, commit 17d97af, sin regenerar el tablón; la 58, a las 09:01Z). Sin reclamos vivos. Alta de la **59** (MEDIO, PENDIENTE): rematar la recta, con los cambios sin commit que dejó una sesión ya cerrada. La lista N1-N11 de la 57 sigue sin dar de alta (pendiente de decidir dónde y cuándo con Juan Luis).
 Regeneración anterior: 2026-10-17 10:16 UTC · por s-20261017T085824-72f01790 al cerrar la 57 (LISTA, commit 4883fd1: `salidas/57-diseno-varios-profesores/DISENO.md`, **aprobado entero por Juan Luis**; lista de 11 tareas de implementación N1-N11 en su terminada, para que la coordinadora las dé de alta). Relistado `hechos/` con `git fetch`: desde las 08:36 UTC, la 58 se cerró (LISTA, commit 31f59ce, a las 09:01Z; la recta queda pendiente por cambios ajenos sin commit; no regeneró el tablón porque estaba reservado) y la 55 sigue EN CURSO (s-20261017T085758-fd6852c8, caduca 11:57Z). Ninguna tarea libre.
 Regeneración anterior: 2026-10-17 08:36 UTC · por s-20261017T082741-51bbe95f al cerrar la 52 (LISTA, commit bf65a9f). Antes, a las 08:30 UTC, s-20261017T082757-d15878d1 cerró la 56 (LISTA, commit c20fab4; sin prueba en navegador). **La 55 y la 57 pasan de BLOQUEADA a PENDIENTE** (no hay ninguna tarea MEDIO libre). A las 08:5x UTC la coordinadora s-20261017T065935-3ecc253b dio de alta la 58 (MEDIO, PENDIENTE: ocultar «Comprobar» al responder; JL 17-10); no comparte ficheros con la 55 ni con la 57.
 Relistado `hechos/` con `git fetch` antes: desde la regeneración del 9-10 a las 10:44 UTC los
@@ -198,6 +199,8 @@ apartado 2): los decide la coordinadora.
 ## Registro de finalizaciones
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
+
+LISTA · tarea 59 · 2026-10-17 15:5x · s-20261017T153707-d47ce0fe · 2776026, 45eef3a · 7 ficheros (practicas/recta/{logica,practica,textos}.js, tests/practicas-{recta,comprobar}.test.js) · ~10 min (estimada: 45 min) · sin prueba en navegador
 
 LISTA · tarea 55 · 2026-10-17 10:19 · s-20261017T085758-fd6852c8 · 17d97af · 2 ficheros (README.md, docs/practicas-unidad2.md) · ~1 h 25 min (estimada 1 h 30 min) · 10 de 10 criterios PASAN · probada en navegador
 
