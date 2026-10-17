@@ -50,7 +50,10 @@ export function mensajeDeError(e) {
 // por parámetro para poder probarla sin red. Las rutas y los campos son los que
 // aceptan las reglas de `firestore.rules` (tarea 61): ahí manda cada nombre.
 
-const CODIGO_SECRETO = /^[A-HJ-NP-Z2-9]{8}$/;
+// De 4 u 8 símbolos (tarea 72): cada profesor elige la longitud de los que genera.
+const CODIGO_SECRETO = /^[A-HJ-NP-Z2-9]{4}(?:[A-HJ-NP-Z2-9]{4})?$/;
+/** Número de lista más alto que aceptan las reglas (el código de resultado de la tarea lo admite). */
+const MAX_N = 1023;
 /** Subcolecciones del espacio que el panel lee; `progreso` es sinónimo de `progreso-libre`. */
 const LECTURAS_ESPACIO = { 'progreso': 'progreso-libre', 'progreso-libre': 'progreso-libre', 'progreso-tareas': 'progreso-tareas', 'asignaciones': 'asignaciones', 'fallos': 'fallos' };
 /** Campo de tiempo (milisegundos) de cada subcolección: los fallos usan `t`. */
@@ -163,7 +166,7 @@ export function crearAccesoPanel({ Fs, db, auth, esAdmin }) {
     const chocan = [];
     for (const { codigo, n } of lista) {
       if (!CODIGO_SECRETO.test(codigo)) throw new Error(`Código no válido: ${codigo}`);
-      if (!Number.isInteger(n) || n < 1 || n > 250) throw new Error(`Número de lista no válido: ${n}`);
+      if (!Number.isInteger(n) || n < 1 || n > MAX_N) throw new Error(`Número de lista no válido: ${n}`);
       const ref = docRef('practicas-alumnos', codigo);
       const libre = await Fs.runTransaction(db, async t => {
         if ((await t.get(ref)).exists()) return false;
@@ -177,7 +180,7 @@ export function crearAccesoPanel({ Fs, db, auth, esAdmin }) {
 
   /** Cambia el número de lista de un código propio. */
   async function cambiarNumero(codigo, n) {
-    if (!Number.isInteger(n) || n < 1 || n > 250) throw new Error(`Número de lista no válido: ${n}`);
+    if (!Number.isInteger(n) || n < 1 || n > MAX_N) throw new Error(`Número de lista no válido: ${n}`);
     await Fs.updateDoc(docRef('practicas-alumnos', codigo), { n });
   }
 

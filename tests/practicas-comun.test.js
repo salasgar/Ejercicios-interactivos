@@ -676,8 +676,8 @@ test('base: dentro de arrancar, el progreso solo se lee, se guarda y se sube por
   // Varios profesores (tarea 64): la ubicación lleva el profesor del espacio, y los fallos también.
   assert.match(arranque, /ubicacionProgreso\(ficha\.slug, estado\.codigo, tareaDelProgreso, estado\.espacio\?\.profesor \?\? null\)/);
   assert.match(arranque, /\{ profesor: estado\.espacio\?\.profesor \?\? null \}\);/);
-  // Con un código de 4, el ámbito sale de tareas.js; con uno de 8, de la configuración de su profesor.
-  assert.match(arranque, /if \(modo === 'antiguo'\) \{[^}]*fijarAmbito\(TAREAS\);/);
+  // En el modo antiguo, el ámbito sale de tareas.js; con un código registrado, de la configuración de su profesor.
+  assert.match(arranque, /if \(resuelto\.modo === 'antiguo'\) \{[^}]*fijarAmbito\(TAREAS\);/);
   assert.match(arranque, /fijarAmbito\(estado\.espacio && !estado\.espacio\.sinConfig \? estado\.espacio\.config\.tareas : null\)/);
 });
 
@@ -751,11 +751,25 @@ test('espacio: sincronizarGuardado con un código de 8 lee y sube en el espacio 
     assert.equal(leerDocumentoRest(docs.get(`practicas-espacios/${UID_A}/progreso-tareas/t4--semaforo--${SECRETO}`)).ej[1].fallos, 5);
     // Mismo formato de documento que hoy: { estado, actualizado }, que es lo que deja pasar la regla.
     assert.deepEqual(Object.keys(docs.get(`practicas-espacios/${UID_A}/progreso-libre/semaforo--${SECRETO}`).fields).sort(), ['actualizado', 'estado']);
-    // Con un código de 4 (la base no pasa profesor: estado.espacio es null en el modo antiguo), donde siempre.
+    // Con un código del modo antiguo (la base no pasa profesor: estado.espacio es null en el modo antiguo), donde siempre.
     urls.length = 0;
-    almacen.set('practicas.v1.semaforo.ABCD', JSON.stringify({ ej: [hecho] }));
-    await sincronizarGuardado('semaforo', 'ABCD', op);
-    assert.deepEqual(urls, ['GET practicas/semaforo--ABCD', 'PATCH practicas/semaforo--ABCD']);
+    const antiguo = codigoAlumno(13);
+    almacen.set(`practicas.v1.semaforo.${antiguo}`, JSON.stringify({ ej: [hecho] }));
+    await sincronizarGuardado('semaforo', antiguo, op);
+    assert.deepEqual(urls, [`GET practicas/semaforo--${antiguo}`, `PATCH practicas/semaforo--${antiguo}`]);
+    // Un código de 4 del sistema nuevo (sin la comprobación antigua) se trata como uno de 8 (tarea 72).
+    urls.length = 0;
+    const nuevo4 = 'K7QM';
+    assert.equal(leerCodigoAlumno(nuevo4), null);
+    almacen.set(`practicas.v1.semaforo.${nuevo4}`, JSON.stringify({ ej: [hecho] }));
+    assert.equal((await sincronizarGuardado('semaforo', nuevo4, op)).estado, 'error');
+    assert.deepEqual(urls, [], 'sin profesor, ni a las colecciones de siempre ni a ningún espacio');
+    await sincronizarGuardado('semaforo', nuevo4, { ...op, profesor: UID_A });
+    assert.deepEqual(urls, [`GET practicas-espacios/${UID_A}/progreso-libre/semaforo--${nuevo4}`, `PATCH practicas-espacios/${UID_A}/progreso-libre/semaforo--${nuevo4}`]);
+    // Y uno antiguo ya registrado (la base sí pasa su profesor): a su espacio, no a las colecciones de siempre.
+    urls.length = 0;
+    await sincronizarGuardado('semaforo', antiguo, { ...op, profesor: UID_A });
+    assert.deepEqual(urls, [`GET practicas-espacios/${UID_A}/progreso-libre/semaforo--${antiguo}`, `PATCH practicas-espacios/${UID_A}/progreso-libre/semaforo--${antiguo}`]);
   } finally {
     delete globalThis.localStorage;
   }
@@ -773,19 +787,20 @@ test('página de la tarea: progresoGuardado y sincronizarGuardado con tareaId va
     };
     const op = { fetch, config: { apiKey: 'clave', projectId: 'proyecto' } };
     const hecho = { puntos: 10, objetivo: 10, aciertos: 10, fallos: 1, terminado: true, dia: 50 };
-    almacen.set(claveProgreso('semaforo', 'ABCD'), JSON.stringify({ ej: [hecho] }));
-    assert.deepEqual(progresoGuardado('semaforo', 'ABCD', 2), [], 'lo de la práctica libre no cuenta en la tarea');
-    assert.equal(progresoGuardado('semaforo', 'ABCD')[0].terminado, true);
-    almacen.set('practicas.v1.semaforo.ABCD.t2', JSON.stringify({ ej: [null, null, { ...hecho, fallos: 4 }] }));
-    assert.equal(progresoGuardado('semaforo', 'ABCD', 2)[2].fallos, 4);
-    assert.equal((await sincronizarGuardado('semaforo', 'ABCD', { ...op, tareaId: 2 })).estado, 'vacio');
-    assert.deepEqual([...docs.keys()], ['practicas-tareas/t2--semaforo--ABCD'], 'solo sube el documento de la tarea');
-    assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--ABCD')).ej[2].fallos, 4);
+    const c = codigoAlumno(13);   // del modo antiguo
+    almacen.set(claveProgreso('semaforo', c), JSON.stringify({ ej: [hecho] }));
+    assert.deepEqual(progresoGuardado('semaforo', c, 2), [], 'lo de la práctica libre no cuenta en la tarea');
+    assert.equal(progresoGuardado('semaforo', c)[0].terminado, true);
+    almacen.set(`practicas.v1.semaforo.${c}.t2`, JSON.stringify({ ej: [null, null, { ...hecho, fallos: 4 }] }));
+    assert.equal(progresoGuardado('semaforo', c, 2)[2].fallos, 4);
+    assert.equal((await sincronizarGuardado('semaforo', c, { ...op, tareaId: 2 })).estado, 'vacio');
+    assert.deepEqual([...docs.keys()], [`practicas-tareas/t2--semaforo--${c}`], 'solo sube el documento de la tarea');
+    assert.equal(leerDocumentoRest(docs.get(`practicas-tareas/t2--semaforo--${c}`)).ej[2].fallos, 4);
     // Sin tareaId, como siempre: el documento de la práctica.
-    await sincronizarGuardado('semaforo', 'ABCD', op);
-    assert.deepEqual([...docs.keys()].sort(), ['practicas-tareas/t2--semaforo--ABCD', 'practicas/semaforo--ABCD']);
-    assert.equal(leerDocumentoRest(docs.get('practicas/semaforo--ABCD')).ej[0].fallos, 1);
-    assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--ABCD')).ej.length, 3, 'la tarea no se entera');
+    await sincronizarGuardado('semaforo', c, op);
+    assert.deepEqual([...docs.keys()].sort(), [`practicas-tareas/t2--semaforo--${c}`, `practicas/semaforo--${c}`]);
+    assert.equal(leerDocumentoRest(docs.get(`practicas/semaforo--${c}`)).ej[0].fallos, 1);
+    assert.equal(leerDocumentoRest(docs.get(`practicas-tareas/t2--semaforo--${c}`)).ej.length, 3, 'la tarea no se entera');
   } finally {
     delete globalThis.localStorage;
   }

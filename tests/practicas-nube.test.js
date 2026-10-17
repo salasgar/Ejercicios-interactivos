@@ -12,6 +12,7 @@ import { practicaPorSlug } from '../practicas/_comun/catalogo.js';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { ejercicioNuevo, anotar, migrarProgreso } from '../practicas/_comun/contador.js';
 import { estadoTarea } from '../practicas/_comun/tareas.js';
+import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import {
   fusionarEjercicio, fusionarProgreso, canonico, leerNube, escribirNube, subirFusionado, urlDocumento, leerDocumentoRest,
   idDocumentoTarea, idDocumentoPractica, claveProgresoTarea, urlAsignacion, leerAsignacion, leerAsignacionRest,
@@ -252,19 +253,20 @@ test('semana: en un aparato nuevo trae lo de la nube, y lo que solo está aquí 
   const op = { fetch: nube.fetch, config: CONFIG };
   // El móvil terminó recta/1 y lo subió; este ordenador no tiene nada de la recta,
   // pero sí el semáforo/1 a medias, que la nube no tiene.
-  await escribirNube('recta', 'ABCD', [tras(Array(10).fill(true), 49)], 'alterno', op);
-  almacen.set(claveProgreso('semaforo', 'ABCD'), JSON.stringify({ ej: [tras([true, true])] }));
-  assert.equal((await sincronizarGuardado('recta', 'ABCD', op)).estado, 'ok');
-  assert.equal((await sincronizarGuardado('semaforo', 'ABCD', op)).estado, 'vacio');
-  assert.equal(progresoGuardado('recta', 'ABCD')[0].terminado, true, 'el ordenador ve lo del móvil');
-  assert.equal(nube.ej('semaforo--ABCD')[0].puntos, 2, 'la nube recibe lo del ordenador');
+  const c = codigoAlumno(13);   // del modo antiguo (sin profesor, a las colecciones de siempre)
+  await escribirNube('recta', c, [tras(Array(10).fill(true), 49)], 'alterno', op);
+  almacen.set(claveProgreso('semaforo', c), JSON.stringify({ ej: [tras([true, true])] }));
+  assert.equal((await sincronizarGuardado('recta', c, op)).estado, 'ok');
+  assert.equal((await sincronizarGuardado('semaforo', c, op)).estado, 'vacio');
+  assert.equal(progresoGuardado('recta', c)[0].terminado, true, 'el ordenador ve lo del móvil');
+  assert.equal(nube.ej(`semaforo--${c}`)[0].puntos, 2, 'la nube recibe lo del ordenador');
   // Una práctica sin nada en ningún sitio no crea documentos.
-  await sincronizarGuardado('criba', 'ABCD', op);
-  assert.equal(nube.docs.has('criba--ABCD'), false);
+  await sincronizarGuardado('criba', c, op);
+  assert.equal(nube.docs.has(`criba--${c}`), false);
   // Sin red, no se toca nada.
-  const antes = almacen.get(claveProgreso('recta', 'ABCD'));
-  assert.equal((await sincronizarGuardado('recta', 'ABCD', { fetch: async () => { throw new Error('sin red'); }, config: CONFIG })).estado, 'error');
-  assert.equal(almacen.get(claveProgreso('recta', 'ABCD')), antes);
+  const antes = almacen.get(claveProgreso('recta', c));
+  assert.equal((await sincronizarGuardado('recta', c, { fetch: async () => { throw new Error('sin red'); }, config: CONFIG })).estado, 'error');
+  assert.equal(almacen.get(claveProgreso('recta', c)), antes);
 }));
 
 test('semana: el idioma fijado en otro aparato se adopta si aquí no hay nada dicho', () => conAlmacen(async () => {

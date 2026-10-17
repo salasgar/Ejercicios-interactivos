@@ -8,7 +8,8 @@
 //   `fallos`, y las tareas de `tareas.js`. La lista de nombres vive solo en este
 //   navegador. Es el de Juan Luis hasta su migración, y no cambia;
 // - el NUEVO (el espacio del profesor): cada profesor entra con Google, genera
-//   códigos secretos de 8 para sus alumnos y lee solo lo de su espacio; los
+//   códigos secretos para sus alumnos (de 8 o, si lo elige, de 4; tarea 72) y
+//   lee solo lo de su espacio; los
 //   nombres suben a la nube cifrados con su contraseña (`_comun/cifrado.js`).
 // Las vistas de los resultados (Resultados, Asignar tareas, Fallos) son las
 // mismas en los dos: leen de `fuente`, la del sistema elegido.
@@ -17,7 +18,7 @@ import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun
 import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS, codigoSecreto, mostrarCodigoSecreto } from './_comun/codigos.js';
 import { fechaDeDia, diaDe } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
-import { TAREAS, tareaPorId, fechaISO, configDeJSON } from './_comun/tareas.js';
+import { TAREAS, tareaPorId, fechaISO, configDeJSON, configAJSON, longitudDeCodigos } from './_comun/tareas.js';
 import {
   juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones,
   calcularRetrasos, asignacionesParaGuardar, tareaPublicada, cumplidasDe,
@@ -93,7 +94,7 @@ let fuente = antigua;
 const nombres = () => fuente.nombres();
 const tareasDe = () => fuente.tareas();
 const tareaDe = id => tareaPorId(id, tareasDe());
-/** Cómo se enseña un código: los de 8, en dos grupos (`K7QM-P3XA`), como los teclea el alumno. */
+/** Cómo se enseña un código: los de 8, en dos grupos (`K7QM-P3XA`), como los teclea el alumno; los de 4, tal cual. */
 const verCodigo = codigo => (codigo && fuente === espacio ? mostrarCodigoSecreto(codigo) : codigo);
 /** El código del alumno n.º `indice + 1` tal como se enseña ('' si aún no tiene). */
 const codigoVisible = indice => verCodigo(fuente.codigoDe(indice)) ?? '';
@@ -908,7 +909,7 @@ const alCargar = [];           // avisos de `contexto.alCargar`
 function reiniciarEspacio(uid, esAdmin) {
   Object.assign(espacio, datosVacios(), {
     uid, esAdmin, codigos: [], codigosLeidos: false, indices: indicesDeCodigos([]),
-    config: { unidades: [], tareas: [] }, cifrada: null,
+    config: { unidades: [], tareas: [] }, configLeida: false, cifrada: null,
     documentos: { 'progreso-libre': [], 'progreso-tareas': [], 'asignaciones': [] },
   });
   contrasenaSesion = null;
@@ -981,7 +982,28 @@ function ponerConfig(leida) {
   const config = leida ? configDeJSON(leida.json) : null;
   espacio.config = config ?? { unidades: [], tareas: [] };
   espacio.configIlegible = Boolean(leida) && !config;
+  espacio.configLeida = true;
   pintarTareasEspacio();
+}
+
+/**
+ * «Longitud de los códigos nuevos» (tarea 72): se guarda en la configuración del
+ * espacio (`longitudCodigo`) y solo afecta a los que se generen después. Solo con
+ * la configuración leída y entendida, para no pisar las tareas guardadas.
+ */
+async function cambiarLongitud() {
+  const elegida = Number($('longitud-codigos').value) === 4 ? 4 : 8;
+  if (!espacio.configLeida || espacio.configIlegible || elegida === longitudDeCodigos(espacio.config)) return pintarMisAlumnos();
+  $('longitud-codigos').disabled = true;
+  const nueva = { ...espacio.config, longitudCodigo: elegida };
+  try {
+    await panelDatos().guardarConfig(configAJSON(nueva));
+    contexto.cambiarConfig(nueva);
+    $('estado-codigos').textContent = `Los códigos que generes a partir de ahora tendrán ${elegida} caracteres. Los ya repartidos no cambian.`;
+  } catch (e) {
+    $('estado-codigos').textContent = `No se ha podido guardar la longitud: ${await mensajeDeError(e)}`;
+  }
+  pintarMisAlumnos();
 }
 
 function pintarTareasEspacio() {
@@ -998,6 +1020,8 @@ function pintarMisAlumnos() {
   const faltan = faltanCodigos(lista, espacio.codigos);
   $('generar-codigos').disabled = !espacio.codigosLeidos || !faltan.length;
   $('generar-codigos').textContent = faltan.length ? `Generar códigos (${faltan.length} sin código)` : 'Generar códigos';
+  $('longitud-codigos').value = String(longitudDeCodigos(espacio.config));
+  $('longitud-codigos').disabled = !espacio.configLeida || espacio.configIlegible;
   const enlace = codigo => enlaceDe(codigo, 'destino-espacio', 'idioma-espacio');
   $('tabla-espacio').innerHTML = filas.length ? `
     <table>
@@ -1016,7 +1040,8 @@ async function generarCodigos() {
     for (let vuelta = 0; vuelta < 5; vuelta++) {
       const faltan = faltanCodigos(espacio.nombres(), espacio.codigos);
       if (!faltan.length) break;
-      const lista = repartirCodigos(faltan, espacio.codigos.map(c => c.id), () => codigoSecreto());
+      const longitud = longitudDeCodigos(espacio.config);
+      const lista = repartirCodigos(faltan, espacio.codigos.map(c => c.id), () => codigoSecreto(longitud));
       const { creados: hechos } = await panelDatos().crearCodigos(lista);
       const si = new Set(hechos);
       const ahora = Date.now();
@@ -1362,6 +1387,7 @@ $('lista-espacio').addEventListener('input', () => {
   alCambiarLista();
 });
 $('generar-codigos').addEventListener('click', generarCodigos);
+$('longitud-codigos').addEventListener('change', cambiarLongitud);
 $('guardar-nombres').addEventListener('click', guardarNombres);
 $('descifrar').addEventListener('click', descifrarLista);
 $('contrasena-descifrar').addEventListener('keydown', ev => { if (ev.key === 'Enter') descifrarLista(); });

@@ -144,7 +144,7 @@ service cloud.firestore {
     //
     // Cada profesor, dado de alta por el administrador, tiene un espacio
     // practicas-espacios/{uid} con sus alumnos, tareas, fechas y resultados.
-    // Sus alumnos entran con un código secreto de 8 caracteres, al azar, que
+    // Sus alumnos entran con un código secreto de 4 u 8 caracteres, al azar, que
     // apunta a su profesor en practicas-alumnos/{código}. El administrador
     // (esAdmin) da altas y bajas, pero no aparece en ningún bloque del espacio:
     // no lee los alumnos de los demás. Los bloques de arriba (modo antiguo,
@@ -176,8 +176,11 @@ service cloud.firestore {
         && request.auth.uid in get(/databases/$(db)/documents/practicas-espacios/$(uid)).data.lectores
         && activo(uid);
     }
+    // Código del sistema nuevo: 4 u 8 símbolos del alfabeto (tarea 72; cada
+    // profesor elige la longitud de los que genera, y los de 4 de Juan Luis
+    // pasan tal cual).
     function codigoSecreto(c) {
-      return c is string && c.matches('^[A-HJ-NP-Z2-9]{8}$');
+      return c is string && c.matches('^[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$');
     }
     // El código es de un alumno de ese profesor (una lectura más por escritura).
     function alumnoDe(uid, c) {
@@ -224,12 +227,12 @@ service cloud.firestore {
       allow create: if profesorActivo() && codigoSecreto(codigo)
         && request.resource.data.keys().hasOnly(['profesor', 'n', 'alta'])
         && request.resource.data.profesor == request.auth.uid
-        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 250
+        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 1023
         && request.resource.data.alta is int;
       allow update: if profesorActivo() && resource.data.profesor == request.auth.uid
         && request.resource.data.keys().hasOnly(['profesor', 'n', 'alta'])
         && request.resource.data.profesor == request.auth.uid
-        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 250
+        && request.resource.data.n is int && request.resource.data.n >= 1 && request.resource.data.n <= 1023
         && request.resource.data.alta is int;
       allow delete: if profesorActivo() && resource.data.profesor == request.auth.uid;
     }
@@ -268,22 +271,22 @@ service cloud.firestore {
       }
 
       // Progreso de práctica libre, «<práctica>--<código>»: como practicas/,
-      // con el código de 8, y solo si el código es de este profesor.
+      // con el código secreto, y solo si el código es de este profesor.
       match /progreso-libre/{doc} {
-        allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$');
+        allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$');
         allow read: if esDueno(uid) || esLector(uid);
         allow delete: if esDueno(uid);
-        allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$')
+        allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$')
           && alumnoDe(uid, doc.split('--')[1])
           && estadoValido();
       }
 
       // Progreso por tarea, «t<tarea>--<práctica>--<código>»: como practicas-tareas/.
       match /progreso-tareas/{doc} {
-        allow get: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$');
+        allow get: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$');
         allow read: if esDueno(uid) || esLector(uid);
         allow delete: if esDueno(uid);
-        allow create, update: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{8}$')
+        allow create, update: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$')
           && alumnoDe(uid, doc.split('--')[2])
           && estadoValido();
       }
@@ -301,16 +304,16 @@ service cloud.firestore {
       }
 
       // Registro de fallos: los mismos campos y topes que fallos/ de arriba,
-      // con el código de 8 y solo si el alumno es de este profesor. El alumno
+      // con el código secreto y solo si el alumno es de este profesor. El alumno
       // solo crea; leen el dueño y sus lectores.
       match /fallos/{id} {
         allow read: if esDueno(uid) || esLector(uid);
         allow delete: if esDueno(uid);
-        allow create: if id.matches('^[A-HJ-NP-Z2-9]{8}-[a-z0-9]{6,12}-[a-z0-9]{4}$')
+        allow create: if id.matches('^[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?-[a-z0-9]{6,12}-[a-z0-9]{4}$')
           && request.resource.data.keys().hasAll(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion'])
           && request.resource.data.keys().hasOnly(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion', 'respuesta', 'error', 'tarea'])
           && request.resource.data.v is int
-          && request.resource.data.alumno is string && request.resource.data.alumno.matches('^[A-HJ-NP-Z2-9]{8}$')
+          && request.resource.data.alumno is string && codigoSecreto(request.resource.data.alumno)
           && id.matches('^' + request.resource.data.alumno + '-.*')
           && alumnoDe(uid, request.resource.data.alumno)
           && request.resource.data.practica is string && request.resource.data.practica.matches('^[a-z0-9-]{1,30}$')

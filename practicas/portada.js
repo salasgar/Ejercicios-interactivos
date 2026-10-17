@@ -12,7 +12,7 @@
 // `_comun/tareas.js`) con su plazo y lo que lleva el alumno en cada una.
 
 import { CATALOGO, ID_PLANTILLA, UNIDADES } from './_comun/catalogo.js';
-import { leerCodigoAlumno, leerCodigoSecreto, modoDeCodigo } from './_comun/codigos.js';
+import { leerCodigoAlumno, leerCodigoSecreto, esCodigoAntiguo } from './_comun/codigos.js';
 import { leer, escribir, borrar, cerrarSesion, progresoGuardado } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { TAREAS, estadoTarea, fechaISO } from './_comun/tareas.js';
@@ -112,11 +112,13 @@ const enNavegador = typeof document !== 'undefined';
 const app = enNavegador ? document.querySelector('#app') : null;
 let idioma = leer('practicas.idioma') === 'en' ? 'en' : 'es';
 
-// El código puede ser de 4 (modo antiguo: las tareas son las de `tareas.js`) o de 8 (las tareas y las
-// fechas son las de su profesor, de su espacio en la nube; mientras llegan, la copia del navegador).
+// El código puede ser del modo antiguo (4 caracteres que la nube no conoce: las tareas son las de
+// `tareas.js`) o del sistema nuevo (4 u 8, registrado: las tareas y las fechas son las de su profesor,
+// de su espacio en la nube). Mientras llega la respuesta, la copia del navegador; sin copia, un código
+// antiguo se pinta como antiguo (y cambia si resulta estar registrado).
 const textoCodigo = enNavegador ? new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '' : '';
-let contexto = modoDeCodigo(textoCodigo) === 'antiguo' ? contextoAntiguo(leerCodigoAlumno(textoCodigo))
-  : contextoGuardado(textoCodigo);
+let contexto = contextoGuardado(textoCodigo)
+  ?? (esCodigoAntiguo(textoCodigo) ? contextoAntiguo(leerCodigoAlumno(textoCodigo)) : null);
 let codigo = contexto?.codigo ?? leerCodigoSecreto(textoCodigo);
 let tareas = contexto?.tareas ?? TAREAS;
 let unidades = contexto?.unidades ?? UNIDADES;
@@ -245,10 +247,13 @@ if (enNavegador) {
   arrancar();
 }
 
-/** Con un código de 8, de qué profesor es y cuáles son sus tareas (la copia del navegador ya está pintada). */
+/**
+ * Con código, de qué profesor es y cuáles son sus tareas (la copia del navegador ya está pintada).
+ * También con uno de 4 del modo antiguo: puede estar ya registrado en el sistema nuevo.
+ */
 async function arrancar() {
   const suyo = codigo;
-  if (suyo && contexto?.modo !== 'antiguo') {
+  if (suyo) {
     const c = await identificar(suyo);
     if (suyo !== codigo) return;
     if (c.error === 'no-existe') {
