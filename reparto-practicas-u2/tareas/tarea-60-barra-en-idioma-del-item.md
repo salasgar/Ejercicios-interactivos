@@ -89,6 +89,7 @@ En local (`npm run servir`), con el código de prueba 60 (`7NPD`; nunca el de un
 
 - `actual` es `null` fuera de un ítem: no uses `actual.idioma` en pantallas sin ítem.
 - En la introducción de un ejercicio (`pintarIntroduccion`) `actual.idioma` todavía es `null`: deja esa pantalla en el idioma de la interfaz.
+- `t(null)` NO usa el valor por defecto (solo `undefined` lo activa): por eso `base.js` tiene `idiomaBarra()` = `actual.idioma ?? idiomaInterfaz()`. (Hecho en la 60; no se probó en navegador.)
 - Hay otra sesión de Juan Luis, fuera del reparto, que el 17-10 por la tarde editaba `practicas/profesor.js`, `practicas/resultados.js` y su test: no los toques ni los metas en tus commits.
 
 ## Prohibido (propio de esta tarea)
