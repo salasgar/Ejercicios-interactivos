@@ -8,7 +8,7 @@ import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResu
 import { fechaDeDia, diaDe } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
 import { TAREAS, tareaPorId, fechaISO } from './_comun/tareas.js';
-import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones, calcularRetrasos, asignacionesParaGuardar } from './resultados.js';
+import { juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones, calcularRetrasos, asignacionesParaGuardar, tareaPublicada, cumplidasDe } from './resultados.js';
 import { DESTREZAS, leerFallos } from './_comun/registro.js';
 import { declaracionDe } from './_comun/base.js';
 
@@ -218,23 +218,33 @@ const estadoTareaCsv = c => (c.cumplida ? 'cumplida' : c.empezada ? 'a medias' :
 /** Fecha de un día contado desde el 1-9-2026, o '' si no hay. */
 const fechaCsv = dia => (dia ? fechaDeDia(dia) : '');
 const plazoCsv = c => (c.plazo ? c.plazo.split('-').reverse().join('/') : '');
+const fechaCorta = iso => iso.split('-').reverse().slice(0, 2).join('/');
+
+/** Encabezado de la columna de una tarea; las que aún no se han publicado, en gris y con su «desde». */
+function cabeceraTarea(t, hoyDia) {
+  const publicada = tareaPublicada(t, hoyDia);
+  return `<th class="practica${publicada ? '' : ' celda--no'}">${esc(t.titulo.es)}${t.hasta ? `<br><span class="pequeno">plazo ${t.hasta.split('-').reverse().join('/')}</span>` : ''}${t.asignada ? '<br><span class="pequeno">asignada</span>' : ''}${publicada ? '' : `<br><span class="pequeno">desde ${fechaCorta(t.desde)}</span>`}</th>`;
+}
 
 function htmlTareas(validos, deTareas) {
+  const { hoyDia } = opcionesTareas();
   const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas());
   if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
   return `
     <table>
-      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${TAREAS.map(t => `<th class="practica">${esc(t.titulo.es)}${t.hasta ? `<br><span class="pequeno">plazo ${t.hasta.split('-').reverse().join('/')}</span>` : ''}${t.asignada ? '<br><span class="pequeno">asignada</span>' : ''}</th>`).join('')}<th class="num">Cumplidas</th></tr></thead>
+      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th>${TAREAS.map(t => cabeceraTarea(t, hoyDia)).join('')}<th class="num">Obligatorias</th><th class="num">Repaso</th></tr></thead>
       <tbody>${filas.map(f => {
-        const suyas = f.tareas.filter(c => !c.noAsignado);
+        const c = cumplidasDe(f, TAREAS, hoyDia);
         return `
         <tr>
           <td class="num">${f.indice + 1}</td><td>${esc(f.nombre || '(no está en la lista)')}</td><td><code>${codigoAlumno(f.indice)}</code></td>
           ${f.tareas.map(celdaTarea).join('')}
-          <td class="num">${suyas.filter(c => c.cumplida).length}/${suyas.length}</td>
+          <td class="num ${c.debidas && c.entregadas === c.debidas ? 'celda--ok' : ''}">${c.entregadas} de ${c.debidas}</td>
+          <td class="num">${c.repaso}</td>
         </tr>`;
       }).join('')}</tbody>
     </table>
+    <p class="pequeno">«Obligatorias»: de las tareas ya publicadas que este alumno tenía que hacer (las que tienen plazo y, de las asignadas, aquellas en las que está marcado), cuántas ha entregado. «Repaso»: cuántas tareas voluntarias ha completado. Las tareas en gris aún no se han publicado (salen en la portada desde el día que dice) y no cuentan en nada.</p>
     <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre. Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
 }
 
@@ -296,7 +306,8 @@ function csvRetrasos(validos, deTareas) {
   const alumnos = r.alumnos.map(a => [a.indice + 1, a.nombre, codigoAlumno(a.indice), a.conPlazo, a.aTiempo, a.conRetraso, a.sinEntregar, a.pendientes, a.dias, a.media ? decimal(a.media) : '', a.maximo || '']);
   // Una fila por alumno y tarea, con las fechas, para decidir el criterio con calma (días lectivos, por ejemplo).
   const filas = juntarTareas(nombres(), deTareas, validos, nube, TAREAS, opcionesTareas()).filter(f => !nombres().some(Boolean) || f.nombre);
-  const detalle = filas.flatMap(f => f.tareas.filter(c => c.conPlazo).map(c => [f.indice + 1, f.nombre, codigoAlumno(f.indice), `T${c.id}`, plazoCsv(c), fechaCsv(c.diaEntrega), c.diasRetraso, c.entrega]));
+  const publicadas = new Set(TAREAS.filter(t => tareaPublicada(t, hoyDia)).map(t => t.id));
+  const detalle = filas.flatMap(f => f.tareas.filter(c => c.conPlazo && publicadas.has(c.id)).map(c => [f.indice + 1, f.nombre, codigoAlumno(f.indice), `T${c.id}`, plazoCsv(c), fechaCsv(c.diaEntrega), c.diasRetraso, c.entrega]));
   return [
     cab, ...alumnos,
     [],

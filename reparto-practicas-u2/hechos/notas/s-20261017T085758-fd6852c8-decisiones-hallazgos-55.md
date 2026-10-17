@@ -12,3 +12,5 @@ Sesión s-20261017T085758-fd6852c8, después de cerrar la 55, por petición dire
 
 Ficheros tocados fuera de cualquier ficha (sin reclamo, sin otra tarea en curso sobre ellos): practicas/_comun/textos.js,
 practicas/{index,profesor}.html, practicas/portada.js, herramientas/informe-actividad.mjs y sus dos tests.
+
+4. (decidido ~11:00 UTC: «hazlo así») «Cumplidas n/m» → «Obligatorias: X de Y» (solo publicadas y obligatorias para el alumno) y «Repaso: Z» (voluntarias completadas, sin total); columnas de tareas no publicadas en gris con «desde dd/mm»; el CSV de detalle de «Retrasos» ya no lista las no publicadas. `tareaPublicada` y `cumplidasDe` en resultados.js, con test. Ver el commit de esta línea.
