@@ -30,7 +30,7 @@ function montarRecta(contenedor, item, api) {
   const [inf, sup] = item.marcas;
   contenedor.innerHTML = `${enunciadoRecta(item, api)}
     <p class="instruccion redondeo-paso">${tt(T.paso1)}</p>
-    <div class="recta" id="recta" role="button" tabindex="0" aria-label="${api.esc(tt(T.paso1))}">
+    <div class="recta" id="recta" role="button" tabindex="0" aria-label="${api.esc(tt(T.paso1).replace(/<[^>]+>/g, ''))}">
       <div class="recta__pista" id="pista">
         <div class="recta__linea"></div>
         <div class="recta__marca" style="left:0"></div>

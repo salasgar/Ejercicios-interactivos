@@ -63,7 +63,7 @@ const enunciadoProducto = (item, { tt, esc, idioma }) => {
   const instruccion = tres ? TX.producto.instruccionTres : TX.producto.instruccionDos;
   const base = tres ? `${item.a} · ${item.b} · ${item.c} = ${item.a * item.b * item.c}` : `${item.a} · ${item.b} = ${item.a * item.b}`;
   return `
-    <p class="instruccion">${esc(tt(instruccion))}</p>
+    <p class="instruccion">${esc(tt(instruccion)).replace(/con tres números|with three numbers/, '<strong>$&</strong>')}</p>
     <div class="operacion">${base}</div>
     <div class="flecha" aria-hidden="true">↓</div>
     <div class="operacion">${nombres} = ${item.g} · ${item.m} = ${item.g * item.m}</div>`;

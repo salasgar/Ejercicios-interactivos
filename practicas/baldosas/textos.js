@@ -22,7 +22,7 @@ export const TX = {
         without cutting any. Find the largest side for which that happens.</p>
         <p>That side is the <strong>GCD</strong> of the two sides of the rectangle.</p>`,
     },
-    instruccion: { es: (a, b) => `Suelo de ${a} dm por ${b} dm. Prueba lados y busca la baldosa más grande que cubra sin cortar.`, en: (a, b) => `A floor of ${a} dm by ${b} dm. Try side lengths and find the biggest tile that covers it without cutting.` },
+    instruccion: { es: (a, b) => `Suelo de ${a} dm por ${b} dm. Prueba lados y busca la <strong>baldosa más grande</strong> que cubra sin cortar.`, en: (a, b) => `A floor of ${a} dm by ${b} dm. Try side lengths and find the <strong>biggest tile</strong> that covers it without cutting.` },
     lado: { es: 'Lado de la baldosa', en: 'Tile side' },
     cabe: { es: (a, b, s) => `Lado ${s}: cabe exacta en los dos lados (${a} y ${b}).`, en: (a, b, s) => `Side ${s}: it fits exactly on both sides (${a} and ${b}).` },
     // La cuenta de un lado que no cabe, sin prefijo ni conclusión: «40 : 7 = 5, sobran 5 dm».

@@ -11,8 +11,8 @@ export const TX = {
     },
     pregunta: { es: texto => `Calcula ${texto} con una estrategia.`, en: texto => `Work out ${texto} using a strategy.` },
     paso_redondeo: {
-      es: k => `Paso 1. Redondea ${k} a la centena más cercana:`,
-      en: k => `Step 1. Round ${k} to the nearest hundred:`,
+      es: k => `Paso 1. Redondea ${k} <strong>a la centena más cercana</strong>:`,
+      en: k => `Step 1. Round ${k} <strong>to the nearest hundred</strong>:`,
     },
     paso_ajuste: { es: 'Paso 2. ¿Qué ajuste hay que hacer?', en: 'Step 2. What adjustment do you need?' },
     paso_resultado: { es: 'Paso 3. Escribe el resultado:', en: 'Step 3. Write the result:' },

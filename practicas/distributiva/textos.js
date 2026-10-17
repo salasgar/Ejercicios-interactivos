@@ -103,7 +103,7 @@ export const TX = {
       en: (falta, n) => falta === 1 ? `1 extra column (${n})` : `${falta} extra columns (2 · ${n})`,
     },
     label: { es: 'Escribe el resultado:', en: 'Write the result:' },
-    elige: { es: '¿Cuál es la escritura correcta?', en: 'Which is the correct way to write it?' },
+    elige: { es: '¿Cuál es la <strong>escritura correcta</strong>?', en: 'Which is the <strong>correct way to write it</strong>?' },
     resultado_mal: {
       es: (texto, valor) => `${texto} = ${fmt(valor, 'es')}.`,
       en: (texto, valor) => `${texto} = ${fmt(valor, 'en')}.`,
