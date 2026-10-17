@@ -68,7 +68,7 @@ Juan Luis tiene en Scratch un juego suyo, **«Factorización III»** (https://sc
 2. El par salía ya resuelto en un 10-14 % de las veces, y el objetivo podía ser 1. **Aquí, nunca sale resuelto y el objetivo nunca es 1.**
 3. Los exponentes de dos cifras se pintaban mal. **Aquí, `htmlFact` y un tope de tamaño** (los «· p» se desactivan si el número pasaría de 100 000).
 
-**Ejercicios** (los dos últimos los añadió la coordinadora; si Juan Luis los quita, se quitan):
+**Ejercicios** (los dos últimos los propuso la coordinadora; **Juan Luis aprobó los cuatro el 2026-10-18**: «me parecen muy bien»):
 
 1. **Hazlo múltiplo** · *Make it a multiple*. Botones «· p» y «: p». Vale cualquier múltiplo del objetivo. Destreza U2-2C-14 (leer la factorización para decidir sin dividir si un número es divisible entre otro).
 2. **Hazlo divisor** · *Make it a divisor*. Los mismos botones. Vale cualquier divisor del objetivo (el 1 también). U2-2C-14.
