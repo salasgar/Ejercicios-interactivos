@@ -250,3 +250,9 @@ test('regla de publicación: el informe de la tarea 1 es el de siempre (document
   assert.match(texto, /Fuente: documentos practicas\/<slug>--<código>/);
   assert.match(texto, /Plazo: hasta el 2026-10-22/);
 });
+
+test('«Tarea completa» dice lo que vale la tarea, no siempre 100 puntos', () => {
+  const r = agregar({ docs: new Map(), tarea: TAREA_V2, alumnos: 3, desde: DESDE, ahora: AHORA });
+  assert.match(formatear(r, { tarea: TAREA_V2, ahora: AHORA, horas: 24 }), /Tarea completa \(30 puntos\)/);
+  assert.match(formatear(agregar({ docs: new Map(), tarea, alumnos: 3, desde: DESDE, ahora: AHORA }), { tarea, ahora: AHORA, horas: 24 }), /Tarea completa \(100 puntos\)/);
+});

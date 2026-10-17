@@ -586,6 +586,14 @@ test('portada: la unidad actual arriba y las anteriores detrás; sin nada public
   assert.ok(![...u1.practicas, ...u2.practicas].some(p => p.slug === 'plantilla'));
 });
 
+test('portada: tareas de la unidad actual, de la más nueva a la más antigua; las de las anteriores, en su orden', async () => {
+  const { ordenTareas } = await import('../practicas/portada.js');
+  const [u2, u1] = seccionesPorUnidad('2026-10-17', { tareas: TAREAS });
+  assert.deepEqual(ordenTareas(u1.tareas, u1.actual).map(t => t.id), [11, 12, 13, 14], 'la U1, de la semana 1 a la 4');
+  assert.deepEqual(ordenTareas([{ id: 1 }, { id: 2 }], true).map(t => t.id), [2, 1]);
+  assert.equal(u2.actual, true);
+});
+
 test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
   const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
   assert.ok(BLOQUES.every(b => b.unidad === 2), 'ya no hay bloque «Repaso de la unidad 1»');

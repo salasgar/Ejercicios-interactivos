@@ -66,7 +66,7 @@ export const T = {
     cambiar_codigo: 'Cerrar sesión',
     entrar_codigo: 'Entrar con mi código',
     // Portada
-    portada_titulo: 'Prácticas de la unidad 2',
+    portada_titulo: 'Prácticas de Matemáticas',
     portada_subtitulo: 'Divisibilidad',
     portada_ayuda: 'Elige una práctica. En todas entras con el mismo código.',
     portada_codigo: codigo => `Tu código: ${codigo}`,
@@ -174,7 +174,7 @@ export const T = {
     cambiar_codigo: 'Log out',
     entrar_codigo: 'Log in with my code',
     // Portada
-    portada_titulo: 'Unit 2 practices',
+    portada_titulo: 'Maths practice',
     portada_subtitulo: 'Divisibility',
     portada_ayuda: 'Choose a practice. You use the same code in all of them.',
     portada_codigo: codigo => `Your code: ${codigo}`,
