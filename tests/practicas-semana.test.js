@@ -34,9 +34,10 @@ test('tareas: coherentes con el catálogo, sin repetidos y dentro de los topes',
   assert.equal(tareaPorId(999), null);
 });
 
-test('tareas: las cuatro semanas de la nota de temporización, 6 ★ + 4 de 8, 100 puntos', () => {
+test('tareas: las cuatro semanas de la nota de temporización, 6 ★ + 4 de 8 (la 2, de 7), 100 puntos', () => {
   const u2 = TAREAS.filter(t => t.unidad === 2);
-  assert.deepEqual(u2.map(t => [t.id, t.estrella.length, t.elegir.length, t.nElegir]), [[1, 6, 8, 4], [2, 6, 8, 4], [3, 6, 8, 4], [4, 6, 8, 4]]);
+  // La 2 tiene 7 para elegir desde que el árbol 2 pasó a ★ en lugar de la Fábrica 1 de antes (tarea 76).
+  assert.deepEqual(u2.map(t => [t.id, t.estrella.length, t.elegir.length, t.nElegir]), [[1, 6, 8, 4], [2, 6, 7, 4], [3, 6, 8, 4], [4, 6, 8, 4]]);
   for (const t of TAREAS) assert.equal(estadoTarea(t, () => null).maximo, 100);
   // Muestras copiadas de la nota (slug/n), una por lista y semana.
   assert.deepEqual(tareaPorId(1).estrella[0], ['divisores', 4]);
@@ -273,7 +274,7 @@ test('código de tarea: los extremos, los fallos con tope y cualquier forma de e
 
 test('código de tarea: no vale con un carácter cambiado, de otro alumno, de otra tarea ni de una que no existe', () => {
   const t = TAREAS[1];
-  const datos = { estrella: [true, false, true, true, false, true], elegir: [true, true, false, false, false, false, false, true], fallos: 12, dia: 45 };
+  const datos = { estrella: [true, false, true, true, false, true], elegir: [true, true, false, false, false, false, true], fallos: 12, dia: 45 };
   const codigo = codigoTarea(t.id, 33, datos);
   const limpio = codigo.replaceAll('-', '');
   let cazados = 0, total = 0;
@@ -445,10 +446,10 @@ test('tareas: cada ejercicio de una tarea tiene el nombre que dice la nota de te
     'clasificador/1': 'limpios', 'semaforo/2': '11', 'semaforo/4': 'cifra', 'recta/3': 'falso', 'rectangulos/1': 'rectángulos',
     'reloj/1': 'Predice', 'leelo/2': 'lee', 'jerarquia/1': 'Sin paréntesis', 'division/2': 'prueba',
     'criba/2': 'Primo o compuesto', 'semaforo/3': 'ompuestos', 'arbol/1': 'Construye', 'divisiones/1': 'scalera', 'divisiones/2': 'potencias',
-    'fabrica/1': 'Construye', 'criba/1': 'criba', 'arbol/2': 'terminad', 'arbol/3': 'Completa', 'divisiones/3': 'multiplicando',
-    'fabrica/2': 'Cuántos', 'factorizaciones/2': 'múltiplo', 'exponente/2': 'repetida', 'especiales/1': 'erdadero',
+    'criba/1': 'criba', 'arbol/2': 'terminad', 'arbol/3': 'Completa', 'divisiones/3': 'multiplicando',
+    'fabrica/1': 'Cuántos', 'factorizaciones/2': 'múltiplo', 'exponente/2': 'repetida', 'especiales/1': 'erdadero',
     'venn/1': 'Reparte', 'venn/2': 'm.c.d.', 'venn/3': 'm.c.m.', 'venn/4': 'Mezcla', 'imposibles/1': 'Puede ser', 'factorizaciones/1': 'producto',
-    'imposibles/2': 'producto', 'imposibles/3': 'Nómbralo', 'factorizaciones/3': 'cociente', 'fabrica/3': 'Sin dividir', 'leelo/3': 'Completa',
+    'imposibles/2': 'producto', 'imposibles/3': 'Nómbralo', 'factorizaciones/3': 'cociente', 'fabrica/2': 'Sin dividir', 'leelo/3': 'Completa',
     'divisores/6': 'miente', 'parentesis/1': 'Tres', 'raiz/2': 'Sin dibujo',
     'clasificador/2': 'trampa', 'reloj/2': 'hora', 'baldosas/1': 'más grande', 'baldosas/2': 'Cuántas', 'errores/1': 'error',
     'errores/2': 'paso', 'clasificador/3': 'Justif', 'reloj/3': 'días', 'baldosas/3': 'Cuerdas', 'errores/3': 'Nombra', 'leelo/1': 'Escúchalo',
@@ -465,7 +466,8 @@ test('tareas: cada ejercicio de una tarea tiene el nombre que dice la nota de te
       vistos.add(clave);
     }
   }
-  assert.equal(vistos.size, 56, 'las cuatro semanas: 14 ejercicios cada una, sin repetir ninguno entre semanas');
+  // La semana 2 tiene 13 desde que la Fábrica perdió su ejercicio 1 (tarea 76, 2026-10-18).
+  assert.equal(vistos.size, 55, 'las cuatro semanas: 14 ejercicios cada una (la 2, 13), sin repetir ninguno entre semanas');
 });
 
 // --- Página de la tarea y portada por unidades (tarea 52) ----------------------------------

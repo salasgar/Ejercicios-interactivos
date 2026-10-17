@@ -1,70 +1,22 @@
 // Práctica «Fábrica de divisores» — Unidad 2.
 //
-// Tres ejercicios:
-//  1. construir   elegir exponentes hasta formar el divisor pedido
-//  2. contar      cuántos divisores tiene (producto de exponentes + 1)
-//  3. divisible   decidir sin dividir, mirando los exponentes
+// Dos ejercicios:
+//  1. contar      cuántos divisores tiene (producto de exponentes + 1)
+//  2. divisible   decidir sin dividir, mirando los exponentes
+//
+// Hasta el 2026-10-18 había otro antes, «Construye el divisor» (elegir los
+// exponentes hasta formar el número pedido). Se quitó porque, como no se veía
+// el número del que salía el divisor, lo que hacía el alumno era factorizar el
+// número pedido (tarea 76 del reparto PU2). El progreso guardado con tres
+// ejercicios se adapta solo: `quitados` en catalogo.js.
 
 import { arrancar } from '../_comun/base.js';
-import { pasos, elecciones } from '../_comun/piezas.js';
+import { elecciones } from '../_comun/piezas.js';
 import { htmlFact } from '../_comun/aritmetica.js';
 import { TX } from './textos.js';
-import {
-  generarConstruir, factDeConstruido, esConstruccionCorrecta,
-  generarContar, olvidoSumarUno, divisores,
-  generarDivisible,
-} from './logica.js';
+import { generarContar, olvidoSumarUno, divisores, generarDivisible } from './logica.js';
 
-// ─── Ejercicio 1: construye el divisor ─────────────────────────────────────
-
-function explicacionConstruir(item, exponentes, api) {
-  const { tt } = api;
-  const clausulas = item.fact.map(([p, e], i) => tt(TX.construir.clausula)(p, exponentes[i], e));
-  const explicacion = clausulas.join(', ');
-  const tuyo = valorDeExponentes(item.fact, exponentes);
-  if (tuyo === item.objetivo) return tt(TX.construir.feedbackBien)(item.objetivo, explicacion);
-  const clausulasBuenas = item.fact.map(([p, e], i) => tt(TX.construir.clausula)(p, item.expObjetivo[i], e));
-  return tt(TX.construir.feedbackMal)(tuyo, explicacion, item.objetivo, clausulasBuenas.join(', '));
-}
-
-function valorDeExponentes(fact, exponentes) {
-  return fact.reduce((v, [p], i) => v * p ** exponentes[i], 1);
-}
-
-const enunciadoConstruir = (item, { tt }) => `<p class="instruccion">${tt(TX.construir.instruccion)(item.objetivo)}</p>`;
-
-function montarConstruir(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `
-    ${enunciadoConstruir(item, api)}
-    <div class="operacion" id="construido"></div>
-    <div class="grupo-pasos" id="bases"></div>
-    <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;
-  const salida = contenedor.querySelector('#construido');
-  const exponentes = () => controles.map(c => c.valor());
-  const pintar = () => {
-    const f = factDeConstruido(item.fact, exponentes());
-    salida.innerHTML = f.length ? htmlFact(f) : '1';
-  };
-  const controles = item.fact.map(([p, e]) => pasos(contenedor.querySelector('#bases'), {
-    max: e,
-    nombre: tt(TX.construir.exponenteDe)(p),
-    pinta: v => (v === 0 ? `${p}` : `${p}<sup>${v}</sup>`),
-    alCambiar: pintar,
-  }));
-  pintar();
-
-  contenedor.querySelector('#comprobar').addEventListener('click', () => {
-    if (api.respondido()) return;
-    const mis = exponentes();
-    const acierto = esConstruccionCorrecta(item, mis);
-    controles.forEach(c => c.bloquear());
-    contenedor.querySelector('#comprobar').hidden = true;
-    api.responder({ acierto, html: textos => explicacionConstruir(item, mis, textos), espera: 2200 });
-  });
-}
-
-// ─── Ejercicio 2: ¿cuántos divisores tiene? ────────────────────────────────
+// ─── Ejercicio 1: ¿cuántos divisores tiene? ────────────────────────────────
 
 const enunciadoContar = (item, { tt }) => `
     <p class="instruccion">${tt(TX.contar.pregunta)}</p>
@@ -122,7 +74,7 @@ function montarContar(contenedor, item, api) {
   });
 }
 
-// ─── Ejercicio 3: sin dividir ───────────────────────────────────────────────
+// ─── Ejercicio 2: sin dividir ───────────────────────────────────────────────
 
 function explicacionDivisible(item, api) {
   const { tt } = api;
@@ -159,13 +111,6 @@ function montarDivisible(contenedor, item, api) {
 arrancar({
   slug: 'fabrica',
   ejercicios: [
-    {
-      nombre: TX.nombre.construir,
-      detalle: TX.detalle.construir,
-      generar: generarConstruir,
-      montar: montarConstruir,
-      enunciado: enunciadoConstruir,
-    },
     {
       nombre: TX.nombre.contar,
       detalle: TX.detalle.contar,

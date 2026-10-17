@@ -13,6 +13,19 @@
 // respuesta correcta o que no se puede contestar. Cada una tiene su reapertura
 // en `reparto-practicas-u2/hechos/reabiertas/`; quien la cierre pone aquí su
 // `disponible: true` (solo ese campo de su fila).
+//
+// `quitados` (opcional): ejercicios que la práctica tenía y ya no tiene. El
+// progreso se guarda por posición (lista `ej`, en el navegador y en la nube),
+// así que una lista guardada antes del cambio no casa con los ejercicios de
+// ahora. `{ antes: 3, posiciones: [1] }` dice que la práctica tenía 3
+// ejercicios y se quitó el 1 (empezando en 1). `adaptarProgreso` (abajo) quita
+// esas posiciones de toda lista que tenga exactamente `antes` elementos, y
+// todo lo que lee un `ej` guardado pasa por ella antes de fusionar o contar.
+// Un ejercicio nuevo va siempre al final (la lista corta de antes sigue
+// valiendo tal cual). OJO: si una práctica con `quitados` vuelve a tener
+// `antes` ejercicios, las listas nuevas se confundirían con las viejas; antes
+// de eso hay que cambiar este mecanismo (o ese ejercicio va a otra práctica).
+// Fábrica: el 1, «Construye el divisor», se quitó el 2026-10-18 (tarea 76).
 
 export const CATALOGO = [
   { id: 0, slug: 'divisores', ruta: '../divisores/', unidad: 2, nombre: { es: 'Divisor, múltiplo, divisible', en: 'Divisor, multiple, divisible' }, nEjercicios: 6, disponible: true },
@@ -22,7 +35,7 @@ export const CATALOGO = [
   { id: 4, slug: 'criba', ruta: 'criba/', unidad: 2, nombre: { es: 'Criba y números primos', en: 'Sieve and prime numbers' }, nEjercicios: 3, disponible: true },
   { id: 5, slug: 'arbol', ruta: 'arbol/', unidad: 2, nombre: { es: 'Árbol de factores', en: 'Factor tree' }, nEjercicios: 3, disponible: true },
   { id: 6, slug: 'divisiones', ruta: 'divisiones/', unidad: 2, nombre: { es: 'Divisiones sucesivas', en: 'Repeated division' }, nEjercicios: 3, disponible: true },
-  { id: 7, slug: 'fabrica', ruta: 'fabrica/', unidad: 2, nombre: { es: 'Fábrica de divisores', en: 'Divisor factory' }, nEjercicios: 3, disponible: true },
+  { id: 7, slug: 'fabrica', ruta: 'fabrica/', unidad: 2, nombre: { es: 'Fábrica de divisores', en: 'Divisor factory' }, nEjercicios: 2, quitados: { antes: 3, posiciones: [1] }, disponible: true },
   { id: 8, slug: 'venn', ruta: 'venn/', unidad: 2, nombre: { es: 'm.c.d. y m.c.m. con factores primos', en: 'GCD and LCM with prime factors' }, nEjercicios: 4, disponible: true },
   { id: 9, slug: 'imposibles', ruta: 'imposibles/', unidad: 2, nombre: { es: 'Detector de imposibles', en: 'Impossible answers' }, nEjercicios: 3, disponible: true },
   { id: 10, slug: 'clasificador', ruta: 'clasificador/', unidad: 2, nombre: { es: '¿m.c.d. o m.c.m.?', en: 'GCD or LCM?' }, nEjercicios: 3, disponible: true },
@@ -90,4 +103,17 @@ export function practicaPorSlug(slug) {
 
 export function practicaPorId(id) {
   return CATALOGO.find(p => p.id === id) ?? null;
+}
+
+/**
+ * Una lista `ej` guardada (navegador, nube, espacio) puesta al día con los
+ * ejercicios que tiene hoy la práctica `slug`: si la práctica declara
+ * `quitados` y la lista tiene exactamente `quitados.antes` elementos, se le
+ * quitan esas posiciones (los demás ejercicios se quedan en su sitio nuevo).
+ * Cualquier otra cosa se devuelve tal cual (la misma lista, no una copia).
+ */
+export function adaptarProgreso(slug, ej) {
+  const quitados = practicaPorSlug(slug)?.quitados;
+  if (!quitados || !Array.isArray(ej) || ej.length !== quitados.antes) return ej;
+  return ej.filter((_, i) => !quitados.posiciones.includes(i + 1));
 }

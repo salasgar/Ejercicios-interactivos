@@ -15,6 +15,7 @@
 // tenga en su navegador vuelve a subir en cuanto se entra con él.
 
 import { firebaseConfig } from '../../src/config.js';
+import { adaptarProgreso } from './catalogo.js';
 
 /** Lo que espera como mucho la lectura antes de seguir con lo del navegador. */
 export const ESPERA_LECTURA = 4000;
@@ -259,7 +260,9 @@ export function leerDocumentoRest(json) {
  *   'vacio'     no existe (alumno que no ha subido nada de esa práctica);
  *   'prohibido' las reglas no dejan leerlo (las de antes de la tarea 38);
  *   'error'     sin red, tiempo agotado, documento ilegible u otro fallo.
- * Nunca lanza.
+ * Nunca lanza. El `ej` leído ya viene adaptado a los ejercicios de hoy
+ * (`adaptarProgreso`: una lista guardada antes de quitar un ejercicio); si
+ * se ha adaptado, además `adaptado: true` (el documento hay que reescribirlo).
  */
 export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA, config = firebaseConfig, coleccion, id } = {}) {
   const url = urlDocumento(slug, codigo, config, { coleccion, id });
@@ -273,7 +276,9 @@ export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, 
     if (respuesta.status === 403) return { estado: 'prohibido', ej: null, idioma: null };
     if (!respuesta.ok) return { estado: 'error', ej: null, idioma: null };
     const leido = leerDocumentoRest(await Promise.race([respuesta.json(), tiempo]));
-    return leido ? { estado: 'ok', ...leido } : { estado: 'error', ej: null, idioma: null };
+    if (!leido) return { estado: 'error', ej: null, idioma: null };
+    const ej = adaptarProgreso(slug, leido.ej);
+    return { estado: 'ok', ...leido, ej, ...(ej !== leido.ej ? { adaptado: true } : {}) };
   } catch {
     return { estado: 'error', ej: null, idioma: null };
   } finally {
@@ -312,6 +317,6 @@ export async function subirFusionado(slug, codigo, ej, idioma, { ultimo = null, 
   const lectura = await leerNube(slug, codigo, opciones);
   const remoto = lectura.estado === 'ok' ? lectura.ej : ultimo;
   const fusion = fusionarProgreso(ej, remoto);
-  if (lectura.estado !== 'ok' || canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, idioma, opciones);
+  if (lectura.estado !== 'ok' || lectura.adaptado || canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, idioma, opciones);
   return { ej: fusion, lectura };
 }

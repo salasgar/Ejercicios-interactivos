@@ -62,7 +62,7 @@ export const DESCRIPCION = {
   criba: { es: 'La criba de Eratóstenes, primo o compuesto, y hasta qué primo hay que probar.', en: 'The sieve of Eratosthenes, prime or composite, and how far you need to try.' },
   arbol: { es: 'Descompón un número con un árbol de factores hasta que solo queden primos.', en: 'Break a number down with a factor tree until only primes are left.' },
   divisiones: { es: 'Factoriza dividiendo entre el menor primo, escríbelo con potencias y comprueba multiplicando.', en: 'Factorise by dividing by the smallest prime, write it with powers and check by multiplying.' },
-  fabrica: { es: 'Construye los divisores de un número con sus factores primos y cuenta cuántos tiene.', en: 'Build the divisors of a number from its prime factors and count how many it has.' },
+  fabrica: { es: 'Cuenta los divisores de un número con su factorización y decide sin dividir si uno es divisor de otro.', en: 'Count the divisors of a number from its factorisation and decide without dividing if one number is a divisor of another.' },
   factorizaciones: { es: 'Multiplica, divide y decide si un número es múltiplo de otro mirando solo las factorizaciones.', en: 'Multiply, divide and decide if a number is a multiple of another by looking only at the factorisations.' },
   venn: { es: 'Reparte los factores primos de dos números: lo común es el m.c.d. y todo junto es el m.c.m.', en: 'Sort the prime factors of two numbers: the common part is the GCD and everything together is the LCM.' },
   imposibles: { es: 'Respuestas que no pueden ser: lo que el m.c.d. y el m.c.m. cumplen siempre, y cómo se nombra la respuesta.', en: 'Answers that cannot be right: what the GCD and the LCM always satisfy, and how to name the answer.' },

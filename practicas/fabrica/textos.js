@@ -5,27 +5,12 @@
 
 export const TX = {
   nombre: {
-    construir: { es: 'Construye el divisor', en: 'Build the divisor' },
     contar: { es: '¿Cuántos divisores tiene?', en: 'How many divisors does it have?' },
     divisible: { es: 'Sin dividir', en: 'Without dividing' },
   },
   detalle: {
-    construir: { es: 'Elige los exponentes hasta llegar al divisor pedido', en: 'Choose the exponents to reach the given divisor' },
     contar: { es: 'Suma 1 a cada exponente y multiplica', en: 'Add 1 to each exponent and multiply' },
     divisible: { es: 'Decide mirando los exponentes, sin dividir', en: 'Decide by looking at the exponents, without dividing' },
-  },
-  construir: {
-    instruccion: { es: n => `<strong>Construye el ${n}</strong>`, en: n => `<strong>Build ${n}</strong>` },
-    exponenteDe: { es: p => `Exponente de ${p}`, en: p => `Exponent of ${p}` },
-    feedbackBien: { es: (d, explicacion) => `${d} = ${explicacion}`, en: (d, explicacion) => `${d} = ${explicacion}` },
-    feedbackMal: {
-      es: (tuyo, tuExplicacion, d, explicacion) => `${tuyo ? `Tú: ${tuyo} = ${tuExplicacion}. ` : ''}${d} = ${explicacion}.`,
-      en: (tuyo, tuExplicacion, d, explicacion) => `${tuyo ? `Yours: ${tuyo} = ${tuExplicacion}. ` : ''}${d} = ${explicacion}.`,
-    },
-    clausula: {
-      es: (p, exp, max) => `el ${p} con exponente ${exp} (≤ ${max})`,
-      en: (p, exp, max) => `${p} with exponent ${exp} (≤ ${max})`,
-    },
   },
   contar: {
     pregunta: { es: '¿<strong>Cuántos divisores</strong> tiene?', en: '<strong>How many divisors</strong> does it have?' },

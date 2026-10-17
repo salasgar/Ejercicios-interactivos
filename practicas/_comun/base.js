@@ -26,7 +26,7 @@
 // conoce sigue como antes. Las claves del navegador no cambian: el código ya
 // distingue al alumno.
 
-import { practicaPorSlug } from './catalogo.js';
+import { practicaPorSlug, adaptarProgreso } from './catalogo.js';
 import { codigoAlumno, leerCodigoSecreto, formatoDeCodigo, esCodigoAntiguo } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
 import { resolverCodigo } from './espacio.js';
@@ -211,6 +211,7 @@ export const urlSemana = (id, codigo = null) => `${URL_PORTADA}semana.html?t=${i
  * también la clave de antes de la tarea 17 y, ejercicio a ejercicio, gana el
  * terminado (o el que tenga más fallos, si ninguno lo está). Con `tareaId`, lo
  * que lleva dentro de esa tarea (modelo v2), sin mezclar la práctica libre.
+ * Una lista guardada antes de quitar un ejercicio se adapta (`adaptarProgreso`).
  */
 export function progresoGuardado(slug, codigo, tareaId = null) {
   const claves = tareaId !== null && tareaId !== undefined ? [ubicacionProgreso(slug, codigo, tareaId).clave]
@@ -218,7 +219,7 @@ export function progresoGuardado(slug, codigo, tareaId = null) {
   const listas = claves.map(clave => {
     try {
       const ej = JSON.parse(leer(clave))?.ej;
-      return Array.isArray(ej) ? ej : [];
+      return Array.isArray(ej) ? adaptarProgreso(slug, ej) : [];
     } catch { return []; }
   });
   const largo = Math.max(...listas.map(l => l.length));
@@ -259,7 +260,7 @@ export async function sincronizarGuardado(slug, codigo, { tareaId = null, profes
   const fusion = fusionarProgreso(local, lectura.ej);
   if (!fusion.some(Boolean)) return lectura;
   if (canonico(fusion) !== canonico(local)) escribir(clave, JSON.stringify({ ej: fusion }));
-  if (canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, leer(claveIdiomaFijo(codigo)) ?? 'alterno', { ...opciones, ...nube });
+  if (lectura.adaptado || canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, leer(claveIdiomaFijo(codigo)) ?? 'alterno', { ...opciones, ...nube });
   return lectura;
 }
 
@@ -392,13 +393,18 @@ export function arrancar(practica) {
 
   /** El progreso guardado en este navegador, fusionado con el de la nube si se pasa (`remoto`). */
   function cargarProgreso(remoto = null) {
-    let local = [];
+    let local = [], adaptado = false;
     try {
       const guardado = JSON.parse(leer(ubicacion().clave));
-      if (Array.isArray(guardado?.ej)) local = guardado.ej;
+      if (Array.isArray(guardado?.ej)) {
+        local = adaptarProgreso(ficha.slug, guardado.ej);
+        adaptado = local !== guardado.ej;
+      }
     } catch { /* guardado ilegible: se empieza de cero */ }
     const fusion = remoto ? fusionarProgreso(local, remoto) : local;
     estado.ej = nuevos().map((nuevo, n) => migrarProgreso({ ...nuevo, ...fusion[n] }, params[n]));
+    // Una lista de antes de quitar un ejercicio se guarda ya con los de hoy.
+    if (adaptado) guardar();
   }
 
   function guardar() {
@@ -456,7 +462,7 @@ export function arrancar(practica) {
     }
     // Se sube si la nube no tiene lo de este navegador (o si aún no hay documento).
     const empezado = estado.ej.some(e => e.terminado || e.aciertos + e.fallos > 0);
-    if (lectura.estado === 'ok' ? canonico(estado.ej) !== canonico(lectura.ej) : lectura.estado === 'vacio' && empezado) subir();
+    if (lectura.estado === 'ok' ? lectura.adaptado || canonico(estado.ej) !== canonico(lectura.ej) : lectura.estado === 'vacio' && empezado) subir();
   }
 
   // --- Cabecera: título y, durante un ítem, su idioma ----------------------------

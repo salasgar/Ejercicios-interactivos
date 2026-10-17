@@ -41,7 +41,7 @@ const primoBruto = n => n >= 2 && divisoresBrutos(n).length === 2;
 test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () => {
   assert.deepEqual(CATALOGO.map(p => [p.id, p.slug, p.nEjercicios]), [
     [0, 'divisores', 6], [1, 'semaforo', 4], [2, 'rectangulos', 3], [3, 'recta', 3], [4, 'criba', 3], [5, 'arbol', 3],
-    [6, 'divisiones', 3], [7, 'fabrica', 3], [8, 'venn', 4], [9, 'imposibles', 3], [10, 'clasificador', 3], [11, 'reloj', 3],
+    [6, 'divisiones', 3], [7, 'fabrica', 2], [8, 'venn', 4], [9, 'imposibles', 3], [10, 'clasificador', 3], [11, 'reloj', 3],
     [12, 'baldosas', 3], [13, 'errores', 3], [14, 'leelo', 3], [15, 'factorizaciones', 3], [16, 'parentesis', 4],
     [17, 'jerarquia', 4], [18, 'exponente', 3], [19, 'raiz', 3], [20, 'division', 4], [21, 'expresion', 3], [22, 'redondeo', 3],
     [23, 'constructor', 3], [24, 'distributiva', 3], [25, 'potencias10', 3], [26, 'dictado', 3], [27, 'mental', 2],
