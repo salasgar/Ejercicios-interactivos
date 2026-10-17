@@ -3,7 +3,7 @@
 // `logica.js`, puro y probado en `tests/practicas-semaforo.test.js`.
 
 import { arrancar } from '../_comun/base.js';
-import { elecciones } from '../_comun/piezas.js';
+import { elecciones, claseCorreccion } from '../_comun/piezas.js';
 import {
   generarSemaforo1, generarSemaforo2, generarSinoOTrampa, generarCifra,
   esCorrecta, explicar,
@@ -60,11 +60,10 @@ function montarSemaforo(contenedor, item, api) {
     if (api.respondido() || comprobar.disabled) return;
     const respuesta = [...encendidos];
     const acierto = esCorrecta(item, respuesta);
-    // Pulsado y correcto: bien · pulsado y erróneo: mal · sin pulsar pero correcto: falta.
     const pinta = (b, correcto, pulsado) => {
       b.disabled = true;
-      if (pulsado) b.classList.add(correcto ? 'bien' : 'mal');
-      else if (correcto) b.classList.add('falta');
+      const c = claseCorreccion(pulsado, correcto);
+      if (c) b.classList.add(c);
     };
     botones.forEach(([d, b]) => pinta(b, item.correctos.includes(d), encendidos.has(d)));
     pinta(botonNinguno, item.correctos.length === 0, ninguno);
@@ -120,8 +119,10 @@ function montarCifra(contenedor, item, api) {
       if (api.respondido()) return;
       botones.forEach(x => { x.disabled = true; });
       const acierto = esCorrecta(item, d);
-      if (acierto) b.classList.add('bien');
-      else { b.classList.add('mal'); botones[item.solucion].classList.add('bien'); }
+      botones.forEach((x, v) => {
+        const c = claseCorreccion(v === d, esCorrecta(item, v));
+        if (c) x.classList.add(c);
+      });
       api.responder({ acierto, html: ({ idioma }) => explicar(item, d, idioma), espera: 1800 });
     });
     caja.append(b);

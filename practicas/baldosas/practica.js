@@ -10,6 +10,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { factorizar, htmlFact } from '../_comun/aritmetica.js';
+import { claseCorreccion } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
   generarBaldosa, esLaMasGrande, cabeEnLado,
@@ -127,8 +128,8 @@ function montarBaldosa(contenedor, item, api) {
     const s = ladoActual;
     botones.forEach(({ boton, valor }) => {
       boton.disabled = true;
-      if (valor === g) boton.classList.add('bien');
-      else if (valor === s) boton.classList.add('mal');
+      const c = claseCorreccion(valor === s, valor === g);
+      if (c) boton.classList.add(c);
     });
     botonEsta.hidden = true;
     const acierto = esLaMasGrande(item, s);

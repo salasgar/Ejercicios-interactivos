@@ -1,14 +1,5 @@
-/* Semáforo: lo común está en ../_comun/estilos.css; aquí solo el botón «Ninguno»
-   y el pintado al corregir (en el común, el azul de [aria-pressed] y la opacidad
-   de :disabled pesan lo mismo que .bien/.mal y van antes, así que un botón pulsado
-   se quedaba azul y atenuado, acertara o no). Después y con button:
-   verde relleno = acertado, borde de puntos = faltaba, rojo tachado = sobraba. */
-.botones-numeros button.bien,
-.botones-numeros button.falta,
-.botones-numeros button.mal { opacity: 1; }
-.botones-numeros button.bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
-.botones-numeros button.falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
-.botones-numeros button.mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; text-decoration-thickness: 2px; }
+/* Semáforo: lo común está en ../_comun/estilos.css (también los cuatro estados de
+   la corrección); aquí solo el botón «Ninguno». */
 
 /* «Ninguno»: más ancho que los números, borde del color primario; encendido se ve
    como un número encendido (la regla común de [aria-pressed="true"] lo pinta). */

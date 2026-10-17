@@ -5,6 +5,7 @@
 //   elecciones   botones de elegir una opción
 //   campoNumero  campo para escribir un número (y `leerNumero`, que lo lee)
 //   pasos        contador −/valor/+
+//   claseCorreccion  clase de un botón de número al corregir (cuatro estados)
 
 /**
  * Botones de elegir una opción.
@@ -144,4 +145,14 @@ export function pasos(contenedor, { valor = 0, min = 0, max = 9, nombre = '', pi
     valor: () => valor,
     bloquear() { bloqueado = true; pintar(); },
   };
+}
+
+/**
+ * Clase de un botón de número al corregir (cuatro estados, iguales en toda la app):
+ * pulsado y correcto → 'bien' (verde relleno); pulsado y no → 'mal' (rojo tachado);
+ * no pulsado y correcto → 'falta' (borde verde de puntos); ni lo uno ni lo otro → ''.
+ */
+export function claseCorreccion(pulsado, correcto) {
+  if (pulsado) return correcto ? 'bien' : 'mal';
+  return correcto ? 'falta' : '';
 }
