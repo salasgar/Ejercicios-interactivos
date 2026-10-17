@@ -64,7 +64,7 @@ Lo que se quiere:
 
 1. **Todas las unidades son `<details>`**, también la actual, con el mismo aspecto.
 2. **Cuál sale abierta** (criterio de la coordinadora, aceptado al dar de alta la ficha; si Juan Luis lo cambia, manda él): **la unidad actual sale abierta siempre al cargar la portada**, aunque el alumno la plegara en otra visita, porque ahí están las tareas de la semana y un alumno que la plegó un día no debe perderse la tarea nueva. Las anteriores, como hoy: plegadas, salvo que el alumno las abriera (se recuerda). Plegar la actual no se guarda; plegar o abrir una anterior, sí.
-3. **El título de cada unidad destaca sin chillar**: el `<summary>` es una franja con fondo `var(--primario-claro)` (#dbeafe) y texto `var(--primario-oscuro)` (#1e40af), en negrita, con el radio de la tarjeta, y el triángulo del desplegable visible. El contraste da unos 7,9:1, de sobra para AA. **Nada de colores nuevos**: solo las variables de `css/estilos.css`. Que se vea igual de bien a 375 px.
+3. **El título de cada unidad destaca sin chillar**: el `<summary>` es una franja con fondo `var(--primario-claro)` (#dbeafe) y texto `var(--primario-oscuro)` (#1e40af), en negrita, con el radio de la tarjeta, y el triángulo del desplegable visible. El contraste da unos 7,1:1, de sobra para AA. **Nada de colores nuevos**: solo las variables de `css/estilos.css`. Que se vea igual de bien a 375 px.
 4. El título sigue siendo el de `t.unidad_titulo(n, nombre)` («Unidad 2 · Divisibilidad», «Unit 2 · Divisibility»), dentro del `<summary>` y con nivel de encabezado (por ejemplo, `<summary><h2 class="portada__titulo-unidad">…</h2></summary>`, con el `h2` en línea para que el triángulo no salte de línea).
 
 ## Siguiente paso
