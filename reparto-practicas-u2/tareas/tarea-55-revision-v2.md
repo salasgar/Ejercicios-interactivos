@@ -123,6 +123,25 @@ lo que sigue siendo cierto.
 - Deja limpio lo que crees con los códigos de prueba, o anótalo (documentos en
   `practicas-tareas/` y `practicas-asignaciones/` de los códigos 60-63): solo el profesor puede
   borrarlos; pídeselo a Juan Luis en la terminada.
+- (s-20261017T085758-fd6852c8) Lo que salió bien y conviene repetir: probar desde un
+  **worktree limpio** de `origin/main` en el scratchpad, con tareas de prueba **solo ahí**
+  (ids 900+, sin comitear), servido en otro puerto (8095); así no se toca el árbol compartido.
+  **Dos aparatos** = dos orígenes del mismo Chrome (`localhost:8095` y `127.0.0.1:8095`), que
+  tienen almacenamiento separado.
+- Tras cambiar `tareas.js` en el worktree, una pestaña que ya lo había cargado sigue con el
+  módulo viejo en caché: el enlace `&semana=<id nuevo>` se trata como «tarea que no existe» y
+  el avance va a la práctica libre. Recarga sin caché (cmd+shift+R) antes de probar.
+- La ventana de Chrome no baja de ~570 px: los 375 px se prueban con un `<iframe>` de 375 px
+  en el mismo origen, midiendo `scrollWidth` dentro.
+- La base sube a la nube cada 5 respuestas o al terminar: tras 1-4 respuestas, el documento
+  no cambia hasta que se abre la tarea (que sincroniza). No es un fallo.
+- Para leer un CSV del panel sin descargar nada: envolver `URL.createObjectURL` en la página y
+  leer el `Blob` (el enlace se revoca enseguida, `fetch` del href falla).
+- La extensión de Chrome bloquea las salidas de JavaScript que parecen datos sensibles
+  (códigos de 4 letras en tablas, URLs con `?c=`): devolver recuentos o filtrar antes.
+- El panel no pidió inicio de sesión: la sesión de Google del profesor ya estaba abierta en
+  Chrome. Si no lo está, lo tiene que hacer Juan Luis (no se introducen credenciales).
+- Duración real: ~1 h 22 min (estimada 1 h 30 min).
 
 ## Prohibido (propio de esta tarea)
 
