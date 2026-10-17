@@ -146,6 +146,24 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   resultado de 20 caracteres queda en un desplegable de respaldo). Qué lleva cada
   semana se cambia a mano en `practicas/_comun/tareas.js`; el panel da el enlace
   común para Classroom y la vista «Tareas de la semana».
+- **Tareas v2** (desde el 2026-10-17; diseño en
+  `reparto-practicas-u2/salidas/45-diseno-tareas-v2/DISENO.md`): cada unidad
+  tiene sus prácticas y sus tareas, y la portada enseña la unidad actual arriba
+  y las anteriores plegadas (`UNIDADES` en `catalogo.js`). Una tarea es de
+  **repaso** (sin plazo), **obligatoria** (con `hasta`, el plazo) u
+  **obligatoria solo para los alumnos marcados** en el panel (`asignada: true`;
+  la asignación vive en Firestore, `practicas-asignaciones/<código>`, y los no
+  marcados la ven como repaso). Lo hecho tarde sigue contando, pero sale «fuera
+  de plazo» con los días de retraso (vista «Retrasos» del panel, con CSV).
+  **Cada tarea lleva su propio progreso** (`practicas-tareas/t<id>--<práctica>--<código>`),
+  separado del de la práctica libre; **la tarea 1 es la excepción**
+  (`progresoPorPractica: true`): sigue con el progreso de las prácticas, como se
+  mandó. Detalle en [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §1.
+- **Informe diario**: `node herramientas/informe-actividad.mjs` (sin cuenta, por
+  REST; solo números de lista) resume la actividad en la tarea vigente (la
+  obligatoria de plazo abierto más próximo, o la que se pida con `--tarea`), con
+  retrasos y, en las asignadas, solo los marcados. Una rutina de Claude en la nube
+  lo manda por correo cada noche (docs, §2).
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
   en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Lo normal es que
   el profesor vea los resultados en la nube; el único respaldo si la nube no
@@ -154,8 +172,8 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   resultado por práctica (16 caracteres) existió hasta el 2026-10-16: se eliminó
   y con él el tope de 32 prácticas del catálogo.
 - El progreso se guarda en el navegador y en Firestore, en
-  `practicas/{práctica}--{código}` (regla en `firestore.rules`; **hay que
-  publicarla** para que funcione la nube). Al entrar con su código, el alumno
+  `practicas/{práctica}--{código}` (y el de cada tarea v2 en `practicas-tareas/`;
+  reglas en `firestore.rules`; **hay que publicarlas** para que funcione la nube). Al entrar con su código, el alumno
   lee su documento y la app lo fusiona con lo del navegador antes de subir
   nada (`practicas/_comun/nube.js`): se puede **seguir desde cualquier
   aparato** y un aparato no machaca lo de otro. El panel da los puntos de cada
