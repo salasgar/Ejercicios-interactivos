@@ -164,6 +164,18 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   obligatoria de plazo abierto más próximo, o la que se pida con `--tarea`), con
   retrasos y, en las asignadas, solo los marcados. Una rutina de Claude en la nube
   lo manda por correo cada noche (docs, §2).
+- **Varios profesores** (desde el 2026-10-17; diseño en
+  `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`, revisado en la
+  tarea 69): cada profesor entra en el panel con su cuenta de Google y tiene un
+  **espacio** propio en la nube (`practicas-espacios/<uid>`) con sus alumnos, sus
+  tareas y sus resultados; ningún profesor puede leer los de otro. Los códigos de
+  sus alumnos los genera el panel **al azar** (8 caracteres, o 4 si lo elige), la
+  lista de nombres sube **cifrada** con una contraseña que solo sabe él, y las
+  tareas se hacen en el panel. Juan Luis da las altas (sección «Profesores») y,
+  hasta su paso al sistema nuevo (tarea 70), sigue con el sistema actual que
+  describe el resto de esta lista. Detalle en
+  [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9; guía para los
+  compañeros en [docs/practicas-como-empezar.md](docs/practicas-como-empezar.md).
 - El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
   en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Lo normal es que
   el profesor vea los resultados en la nube; el único respaldo si la nube no
@@ -246,6 +258,39 @@ npx firebase-tools login
 npx firebase-tools use <id-del-proyecto>
 npx firebase-tools deploy --only firestore:rules
 ```
+
+### Varios profesores: publicar las reglas y dar de alta a alguien
+
+**Las reglas.** Las de varios profesores son la sección «Varios profesores» de
+`firestore.rules`; se publican con el fichero entero, igual que siempre (consola:
+Firestore Database → Reglas → pegar todo `firestore.rules` → **Publicar**; o la CLI
+de arriba). El uid del administrador ya está escrito en `esProfesor()`. Después de
+publicar un cambio en esa sección, se pasa el banco de pruebas con dos cuentas de
+prueba (correo y contraseña, creadas en Authentication y dadas de alta como
+profesores; sus contraseñas nunca en el repositorio):
+
+```
+PROFE_A_EMAIL=… PROFE_A_CLAVE=… PROFE_B_EMAIL=… PROFE_B_CLAVE=… node herramientas/probar-reglas.mjs
+```
+
+Tiene que acabar en «N de N comprobaciones como se esperaba» (154 el 17-10). Detalle
+en [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9.8.
+
+**Dar de alta a un compañero.** No hay que tocar las reglas ni el repositorio:
+
+1. Mándale [docs/practicas-como-empezar.md](docs/practicas-como-empezar.md) y el
+   enlace del panel (`…/practicas/profesor.html`).
+2. Entra con su cuenta de Google y le sale «Aún no tienes acceso»; su solicitud te
+   aparece en tu panel, sección **«Profesores»**, con su nombre y su correo.
+3. **Comprueba el correo** (cualquiera puede dejar una solicitud) y pulsa **«Dar de
+   alta»**; si no sabes de quién es, «Rechazar».
+4. Él pulsa «Volver a comprobar» y ya tiene su espacio. «Dar de baja» le quita el
+   acceso sin borrar sus datos (se borran, si hace falta, desde la consola).
+
+**Las cuotas.** La primera semana de cada compañero nuevo, mira cada día en la
+consola Firestore Database → **Uso** las lecturas y escrituras: el umbral es el 70 %
+del plan gratuito (35 000 lecturas o 14 000 escrituras al día). Por qué y qué hacer
+si se pasa: docs, §9.9.
 
 ## Límites conocidos (y por qué)
 
