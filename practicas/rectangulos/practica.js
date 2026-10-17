@@ -6,7 +6,7 @@
 // estilos.css (vacío: todo lo necesario ya está en ../_comun/estilos.css).
 
 import { arrancar } from '../_comun/base.js';
-import { elecciones, pasos } from '../_comun/piezas.js';
+import { elecciones, pasos, claseCorreccion } from '../_comun/piezas.js';
 import { TX } from './textos.js';
 import {
   generarRectangulos, parPara, clavePar, todasLasClaves, sonTodasLasParejas, raizEntera,
@@ -144,8 +144,8 @@ function montarBanco(contenedor, item, api) {
     if (api.respondido()) return;
     botones.forEach(({ x, boton }) => {
       boton.disabled = true;
-      if (n % x === 0) boton.classList.add(elegidos.has(x) ? 'bien' : 'falta');
-      else if (elegidos.has(x)) boton.classList.add('mal');
+      const c = claseCorreccion(elegidos.has(x), n % x === 0);
+      if (c) boton.classList.add(c);
     });
     const faltan = item.divisoresN.filter(d => !elegidos.has(d));
     const sobran = [...elegidos].filter(x => n % x !== 0);

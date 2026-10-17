@@ -4,7 +4,7 @@
 //   3. Comas, puntos y palabras: la notación inglesa/española y números dichos con palabras.
 
 import { arrancar } from '../_comun/base.js';
-import { elecciones } from '../_comun/piezas.js';
+import { elecciones, claseCorreccion } from '../_comun/piezas.js';
 import { TX, POSICION } from './textos.js';
 import {
   fmt, generarConstruir, esAciertoConstruir, generarDescomposicion, esAciertoASuma, esAciertoANumero,
@@ -131,9 +131,8 @@ function montarASuma(contenedor, item, api) {
     ev.target.style.display = 'none';
     fichas.forEach(f => {
       f.disabled = true;
-      const bueno = item.correctas.includes(Number(f.dataset.v));
-      if (bueno) f.classList.add('bien');
-      else if (f.getAttribute('aria-pressed') === 'true') f.classList.add('mal');
+      const c = claseCorreccion(f.getAttribute('aria-pressed') === 'true', item.correctas.includes(Number(f.dataset.v)));
+      if (c) f.classList.add(c);
     });
     api.responder({ acierto, html: ({ tt, idioma }) => tt(T.a_suma_fb)(num(item.n, { idioma }), item.correctas.map(v => num(v, { idioma })).join(' + ')), espera: 3000 });
   });

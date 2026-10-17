@@ -120,8 +120,16 @@ sup { font-size: .7em; line-height: 0; }
 }
 .botones-numeros button[aria-pressed="true"], .botones-numeros .elegido { background: var(--primario); border-color: var(--primario); color: #fff; }
 .botones-numeros button:disabled { opacity: .5; }
-.botones-numeros .bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); opacity: 1; }
-.botones-numeros .mal { background: var(--error-claro); border-color: var(--error); color: var(--error); opacity: 1; }
+/* Corrección, cuatro estados (clase que decide piezas.claseCorreccion). Van después
+   de [aria-pressed] y :disabled y con button: pesan lo mismo y ganan por el orden.
+     pulsado y correcto → bien (verde relleno)   · pulsado y no → mal (rojo tachado)
+     sin pulsar y correcto → falta (borde de puntos) · sin pulsar y no → gris de :disabled */
+.botones-numeros button.bien,
+.botones-numeros button.falta,
+.botones-numeros button.mal { opacity: 1; }
+.botones-numeros button.bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.botones-numeros button.falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
+.botones-numeros button.mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; text-decoration-thickness: 2px; }
 
 /* Contador −/valor/+ (css/estilos.css tiene otro «.pasos»: se anula lo suyo) */
 .grupo-pasos { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin: 1rem 0; justify-items: center; }
