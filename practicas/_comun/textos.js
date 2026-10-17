@@ -96,6 +96,19 @@ export const T = {
     semana_no_existe: 'Esa tarea no existe.',
     semana_elige_tarea: 'Estas son las tareas de la semana:',
     semana_cargando_nombre: '…',
+    // Tareas v2: tipo, plazo y retraso, y unidades (DISENO.md, A y B; tarea 51, las usa la 52)
+    tarea_repaso: 'Repaso',
+    tarea_obligatoria: 'Obligatoria',
+    tarea_obligatoria_para_ti: 'Obligatoria para ti',
+    tarea_plazo: iso => `Plazo: ${fechaCorta(iso, 'es')}`,
+    tarea_fuera_de_plazo: dias => `Fuera de plazo · ${dias === 1 ? '1 día' : `${dias} días`} de retraso`,
+    tarea_entregada_tarde: dias => `Entregada con ${dias === 1 ? '1 día' : `${dias} días`} de retraso`,
+    tarea_entregada: '✓ Entregada',
+    tarea_ejercicio_fuera_de_plazo: 'fuera de plazo',
+    unidad_titulo: (n, nombre) => `Unidad ${n} · ${nombre}`,
+    unidad_tareas: 'Tareas',
+    unidad_practicas: 'Prácticas',
+    repaso_de_unidad: n => `· repaso U${n}`,
   },
   en: {
     cargando: 'Loading…',
@@ -191,8 +204,37 @@ export const T = {
     semana_no_existe: 'That task does not exist.',
     semana_elige_tarea: 'These are the weekly tasks:',
     semana_cargando_nombre: '…',
+    // Tareas v2: tipo, plazo y retraso, y unidades (DISENO.md, A y B; tarea 51, las usa la 52)
+    tarea_repaso: 'Review',
+    tarea_obligatoria: 'Required',
+    tarea_obligatoria_para_ti: 'Required for you',
+    tarea_plazo: iso => `Deadline: ${fechaCorta(iso, 'en')}`,
+    tarea_fuera_de_plazo: dias => `Past the deadline · ${dias === 1 ? '1 day' : `${dias} days`} late`,
+    tarea_entregada_tarde: dias => `Handed in ${dias === 1 ? '1 day' : `${dias} days`} late`,
+    tarea_entregada: '✓ Handed in',
+    tarea_ejercicio_fuera_de_plazo: 'late',
+    unidad_titulo: (n, nombre) => `Unit ${n} · ${nombre}`,
+    unidad_tareas: 'Tasks',
+    unidad_practicas: 'Practices',
+    repaso_de_unidad: n => `· U${n} review`,
   },
 };
+
+const DIAS_SEMANA = {
+  es: ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
+  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+};
+
+/**
+ * Una fecha 'AAAA-MM-DD' (la de `hasta` en tareas.js) como la ve el alumno:
+ * «jueves 22-10» / «Thursday 22/10». Lo que no tenga esa forma se deja tal cual.
+ */
+export function fechaCorta(iso, idioma) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso));
+  if (!m) return String(iso);
+  const dia = DIAS_SEMANA[idioma === 'en' ? 'en' : 'es'][new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getDay()];
+  return `${dia} ${m[3]}${idioma === 'en' ? '/' : '-'}${m[2]}`;
+}
 
 // El botón que, tras responder, traduce el ítem al otro idioma: su texto va
 // siempre en el idioma AL QUE se cambia (no en el del ítem actual).

@@ -5,7 +5,8 @@
 // del 16-10-2026) con qué práctica y ejercicio era, el ítem (lo que devolvió
 // `generar`, recortado), el feedback en texto plano (que ya dice qué ha pasado
 // con esos números) y, si la práctica los pasa a `api.responder`, el tipo de
-// `error` y la `respuesta` del alumno. Los aciertos no se registran uno a uno
+// `error` y la `respuesta` del alumno; si se hizo desde una tarea, su id
+// (`tarea`, desde la tarea 51). Los aciertos no se registran uno a uno
 // (ya están los recuentos de `practicas/`).
 //
 // El alumno solo puede CREAR documentos (regla en `firestore.rules`); leerlos,
@@ -106,11 +107,18 @@ export function idFallo(codigo, t, azar = Math.random) {
   return `${codigo}-${Math.max(0, Math.floor(t)).toString(36)}-${sufijo}`;
 }
 
+/** Tope del id de tarea (el de `tareas.js` y el de la regla). */
+const MAX_TAREA = 1023;
+/** Un id de tarea que la regla acepta (entero de 1 a 1023), o null. */
+export const tareaValida = tarea => (Number.isInteger(tarea) && tarea >= 1 && tarea <= MAX_TAREA ? tarea : null);
+
 /**
  * Los datos de UN fallo, tal como se guardan. `ejercicio` empieza en 1.
  * `repeticion`: el ejercicio ya estaba terminado y lo está practicando otra vez.
+ * `tarea`: el id de la tarea desde la que se hizo (tarea 51; también la 1); sin
+ * tarea (práctica libre) el campo no va.
  */
-export function datosFallo({ codigo, slug, ejercicio, idioma, item, html, respuesta, error, t = Date.now(), dia = 0, repeticion = false }) {
+export function datosFallo({ codigo, slug, ejercicio, idioma, item, html, respuesta, error, t = Date.now(), dia = 0, repeticion = false, tarea = null }) {
   const datos = {
     v: VERSION,
     alumno: String(codigo),
@@ -127,6 +135,8 @@ export function datosFallo({ codigo, slug, ejercicio, idioma, item, html, respue
   if (r) datos.respuesta = r;
   const e = errorValido(error);
   if (e) datos.error = e;
+  const id = tareaValida(tarea);
+  if (id !== null) datos.tarea = id;
   return datos;
 }
 
@@ -232,13 +242,24 @@ export function leerConsulta(respuesta) {
 }
 
 /**
- * Lee los fallos desde una fecha con el token de la sesión del profesor (el
- * panel ya ha entrado con Google). Lanza si la nube lo rechaza.
+ * Los fallos hechos desde la tarea `tarea` (los que llevan ese campo). Con
+ * `tarea` null, todos. Los fallos anteriores a la tarea 51 (17-10-2026) no
+ * llevan el campo: no salen en ninguna tarea.
  */
-export async function leerFallos(desde, token, { fetch: pedir = globalThis.fetch, config = firebaseConfig } = {}) {
+export function deLaTarea(fallos, tarea = null) {
+  return tarea === null || tarea === undefined ? fallos : fallos.filter(f => f.tarea === tarea);
+}
+
+/**
+ * Lee los fallos desde una fecha con el token de la sesión del profesor (el
+ * panel ya ha entrado con Google). Con `tarea`, solo los hechos desde esa
+ * tarea (se filtra aquí y no en la consulta, que necesitaría un índice
+ * compuesto en Firestore). Lanza si la nube lo rechaza.
+ */
+export async function leerFallos(desde, token, { fetch: pedir = globalThis.fetch, config = firebaseConfig, tarea = null } = {}) {
   const url = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents:runQuery`;
   const r = await pedir(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(consultaDesde(desde)) });
   const json = await r.json();
   if (!r.ok) throw new Error(json?.error?.message ?? json?.[0]?.error?.message ?? `HTTP ${r.status}`);
-  return leerConsulta(json);
+  return deLaTarea(leerConsulta(json), tarea);
 }
