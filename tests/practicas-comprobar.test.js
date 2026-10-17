@@ -11,9 +11,7 @@ import { readdirSync, readFileSync, existsSync } from 'node:fs';
 const raiz = new URL('../practicas/', import.meta.url);
 
 // Prácticas correctas que no pasan la red por cómo están escritas: slug → motivo.
-const EXCEPCIONES = {
-  recta: 'pendiente: otra sesión tiene cambios sin commit en practicas/recta/; quitar al ocultar el botón',
-};
+const EXCEPCIONES = {};
 
 const ocultan = /\.hidden\s*=\s*true|style\.display\s*=\s*['"]none['"]|\.remove\(\)/;
 

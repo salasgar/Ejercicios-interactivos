@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar, NUMEROS_DIVISORES, hastaDivisores,
+  generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar, recuento, NUMEROS_DIVISORES, hastaDivisores,
 } from '../practicas/recta/logica.js';
 
 const N = 3000;
@@ -143,13 +143,35 @@ test('explicar (divisores): quien marca la tabla de n recibe un solo aviso de «
 test('explicar (multiplos): quien marca los divisores de n recibe un solo aviso, y cada aviso va en su línea', () => {
   const m = { tipo: 'multiplos', n: 10, hasta: 60, correctos: [0, 10, 20, 30, 40, 50, 60] };
   const en = explicar(m, [1, 2, 5, 10], 'en');
-  assert.match(en, /^You have marked the divisors of 10 \(1, 2 and 5\) instead of its multiples/);
+  assert.match(en, /<br>You have marked the divisors of 10 \(1, 2 and 5\) instead of its multiples/);
   assert.doesNotMatch(en, /2 is not a multiple/);
-  assert.equal(en.split('<br>').length, 3); // divisores, el 0 y la lista
-  assert.match(explicar(m, [0, 2, 5, 10], 'es'), /^2 y 5 son divisores de 10, no múltiplos: no están en la tabla del 10\.<br>/);
+  assert.equal(en.split('<br>').length, 4); // recuento, divisores, el 0 y la lista
+  assert.match(explicar(m, [0, 2, 5, 10], 'es'), /<br>2 y 5 son divisores de 10, no múltiplos: no están en la tabla del 10\.<br>/);
   // Con n primo el único divisor menor es el 1: no se le dice «has marcado los divisores».
   const p = { tipo: 'multiplos', n: 7, hasta: 60, correctos: [0, 7, 14, 21, 28, 35, 42, 49, 56] };
-  assert.match(explicar(p, [0, 1, 7], 'es'), /^1 es divisor de 7, no múltiplo/);
+  assert.match(explicar(p, [0, 1, 7], 'es'), /<br>1 es divisor de 7, no múltiplo/);
+});
+
+test('recuento: lo acertado, lo que falta y lo que sobra, en los dos idiomas', () => {
+  const m = { tipo: 'multiplos', n: 7, hasta: 60, correctos: [0, 7, 14, 21, 28, 35, 42, 49, 56] };
+  const ok = [7, 14, 21, 28, 35, 42, 49, 56];
+  assert.equal(recuento(m, ok, 'es'), 'Has encontrado <strong>8 de los 9</strong> múltiplos de 7 (en verde). Te falta el 0 (con borde de puntos).');
+  assert.equal(recuento(m, ok, 'en'), 'You found <strong>8 of the 9</strong> multiples of 7 (in green). Missing: 0 (dotted border).');
+  const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
+  assert.equal(recuento(d, [1, 2, 3, 4, 6, 12, 5], 'es'), 'Has encontrado <strong>6 de los 6</strong> divisores de 12 (en verde). Sobra 1 (en rojo).');
+  assert.equal(recuento(d, [1, 5, 7], 'en'), 'You found <strong>1 of the 6</strong> divisors of 12 (in green). Missing: 2, 3, 4, 6 and 12 (dotted border). 2 are wrong (in red).');
+  assert.match(recuento(d, [1, 5, 7], 'es'), /Te faltan 2, 3, 4, 6 y 12 \(con borde de puntos\)\. Sobran 2 \(en rojo\)\./);
+});
+
+test('explicar (multiplos y divisores): el recuento va delante al fallar y no aparece al acertar', () => {
+  const m = { tipo: 'multiplos', n: 7, hasta: 60, correctos: [0, 7, 14, 21, 28, 35, 42, 49, 56] };
+  const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
+  for (const idioma of ['es', 'en']) {
+    assert.ok(explicar(m, [7, 14], idioma).startsWith(recuento(m, [7, 14], idioma) + '<br>'));
+    assert.ok(explicar(d, [1, 5], idioma).startsWith(recuento(d, [1, 5], idioma) + '<br>'));
+    assert.doesNotMatch(explicar(m, m.correctos, idioma), /found|encontrado|Has encontrado/);
+    assert.doesNotMatch(explicar(d, d.correctos, idioma), /found|encontrado/);
+  }
 });
 
 test('explicar (divisores): los avisos del español empiezan en mayúscula tras un punto', () => {
