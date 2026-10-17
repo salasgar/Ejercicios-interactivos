@@ -131,6 +131,8 @@ y la portada se organiza por unidades, la actual abierta y las anteriores plegad
 - La portada se abre sin código («Probar sin código»): sin código no hay asignación ni
   progreso, y debe seguir funcionando.
 - `semana.html` perdió `.semana__pedir` en la 47: no la resucites.
+- (Sesión 52) La lógica común de página y portada vive en `practicas/vista-tareas.js` (sin DOM, probada); el test que hace `conAlmacen` con `localStorage` falso debe ser `async` y esperar, o el `finally` borra el almacén antes de las comprobaciones.
+- (Sesión 52) Al comitear `_ESTADO.md`, otra sesión (la 56) lo había regenerado minutos antes: relee la cabecera antes de editarla.
 
 ## Prohibido (propio de esta tarea)
 
