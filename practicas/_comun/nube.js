@@ -138,10 +138,10 @@ export function urlAsignacion(codigo, config = firebaseConfig, coleccion = COLEC
 //
 // Los datos de cada profesor viven en subcolecciones de `practicas-espacios/{uid}`.
 // Los lectores de arriba ya aceptan la colección como parámetro: basta con pasarles
-// `coleccionEspacio(uid, 'progreso')`, que lleva barras y va tal cual en la URL.
+// `coleccionEspacio(uid, 'progreso-libre')`, que lleva barras y va tal cual en la URL.
 
 /** Qué subcolecciones tiene un espacio (DISENO.md, C.1). */
-export const SUBCOLECCIONES_ESPACIO = ['progreso', 'progreso-tareas', 'asignaciones', 'fallos'];
+export const SUBCOLECCIONES_ESPACIO = ['progreso-libre', 'progreso-tareas', 'asignaciones', 'fallos'];
 export const COLECCION_ESPACIOS = 'practicas-espacios';
 export const COLECCION_BUSQUEDA = 'practicas-alumnos';
 
@@ -159,7 +159,7 @@ export function urlBusqueda(codigo, config = firebaseConfig) {
 
 /** URL REST de la configuración de tareas de un profesor (`practicas-espacios/{uid}/config/tareas`), o null sin Firebase. */
 export function urlConfig(uid, config = firebaseConfig) {
-  coleccionEspacio(uid, 'progreso');   // solo para validar el uid
+  coleccionEspacio(uid, 'progreso-libre');   // solo para validar el uid
   return urlDocumento(null, null, config, { coleccion: `${COLECCION_ESPACIOS}/${uid}/config`, id: 'tareas' });
 }
 

@@ -165,21 +165,21 @@ test('unidadesCon: títulos comunes y fechas del profesor', () => {
 // --- Rutas del espacio -------------------------------------------------------------
 
 test('coleccionEspacio: cuatro subcolecciones y un uid razonable', () => {
-  assert.equal(coleccionEspacio(UID, 'progreso'), `practicas-espacios/${UID}/progreso`);
+  assert.equal(coleccionEspacio(UID, 'progreso-libre'), `practicas-espacios/${UID}/progreso-libre`);
   assert.equal(coleccionEspacio(UID, 'progreso-tareas'), `practicas-espacios/${UID}/progreso-tareas`);
   assert.equal(coleccionEspacio(UID, 'asignaciones'), `practicas-espacios/${UID}/asignaciones`);
   assert.equal(coleccionEspacio(UID, 'fallos'), `practicas-espacios/${UID}/fallos`);
   assert.throws(() => coleccionEspacio(UID, 'privado'));
-  assert.throws(() => coleccionEspacio('a/b', 'progreso'));
-  assert.throws(() => coleccionEspacio('', 'progreso'));
-  assert.throws(() => coleccionEspacio(undefined, 'progreso'));
+  assert.throws(() => coleccionEspacio('a/b', 'progreso-libre'));
+  assert.throws(() => coleccionEspacio('', 'progreso-libre'));
+  assert.throws(() => coleccionEspacio(undefined, 'progreso-libre'));
 });
 
 test('las URL REST: documento con colección con barras, búsqueda y configuración', () => {
   const base = 'https://firestore.googleapis.com/v1/projects/proyecto/databases/(default)/documents';
   assert.equal(
-    urlDocumento('semaforo', CODIGO, CONFIG, { coleccion: coleccionEspacio(UID, 'progreso'), id: `semaforo--${CODIGO}` }),
-    `${base}/practicas-espacios/${UID}/progreso/semaforo--${CODIGO}?key=clave`);
+    urlDocumento('semaforo', CODIGO, CONFIG, { coleccion: coleccionEspacio(UID, 'progreso-libre'), id: `semaforo--${CODIGO}` }),
+    `${base}/practicas-espacios/${UID}/progreso-libre/semaforo--${CODIGO}?key=clave`);
   assert.equal(urlAsignacion(CODIGO, CONFIG, coleccionEspacio(UID, 'asignaciones')), `${base}/practicas-espacios/${UID}/asignaciones/${CODIGO}?key=clave`);
   assert.equal(urlAsignacion('7NPD', CONFIG), `${base}/practicas-asignaciones/7NPD?key=clave`, 'sin colección, la de siempre');
   assert.equal(urlBusqueda(CODIGO, CONFIG), `${base}/practicas-alumnos/${CODIGO}?key=clave`);
@@ -206,18 +206,18 @@ function fetchFalso(respuestas) {
 const docEstado = ej => ({ fields: { estado: { stringValue: JSON.stringify({ v: 1, idioma: 'es', ej }) } } });
 
 test('leerNube, escribirNube y leerAsignacion con la colección del espacio', async () => {
-  const coleccion = coleccionEspacio(UID, 'progreso');
+  const coleccion = coleccionEspacio(UID, 'progreso-libre');
   const id = `semaforo--${CODIGO}`;
   const ej = [{ puntos: 3, objetivo: 10, terminado: false }];
-  const f = fetchFalso({ [`practicas-espacios/${UID}/progreso/${id}`]: { json: docEstado(ej) } });
+  const f = fetchFalso({ [`practicas-espacios/${UID}/progreso-libre/${id}`]: { json: docEstado(ej) } });
   const leido = await leerNube('semaforo', CODIGO, { fetch: f, config: CONFIG, coleccion, id });
   assert.equal(leido.estado, 'ok');
   assert.deepEqual(leido.ej, ej);
-  assert.match(f.pedidos[0].url, new RegExp(`documents/practicas-espacios/${UID}/progreso/${id}\\?`));
+  assert.match(f.pedidos[0].url, new RegExp(`documents/practicas-espacios/${UID}/progreso-libre/${id}\\?`));
 
   assert.equal(await escribirNube('semaforo', CODIGO, ej, 'es', { fetch: f, config: CONFIG, coleccion, id }), true);
   assert.equal(f.pedidos[1].metodo, 'PATCH');
-  assert.match(f.pedidos[1].url, new RegExp(`/practicas-espacios/${UID}/progreso/${id}\\?`));
+  assert.match(f.pedidos[1].url, new RegExp(`/practicas-espacios/${UID}/progreso-libre/${id}\\?`));
 
   const g = fetchFalso({ [`practicas-espacios/${UID}/asignaciones/${CODIGO}`]: { json: { fields: { tareas: { arrayValue: { values: [{ integerValue: '5' }] } } } } } });
   assert.deepEqual(await leerAsignacion(CODIGO, { fetch: g, config: CONFIG, coleccion: coleccionEspacio(UID, 'asignaciones') }), { tareas: [5] });
