@@ -65,8 +65,11 @@ export const TAREAS = [
     titulo: { es: 'U2 · Semana 2 · Números primos y factorización', en: 'U2 · Week 2 · Prime numbers and factorisation' },
     desde: '2026-10-26',
     hasta: '2026-10-29',
-    estrella: [['criba', 2], ['semaforo', 3], ['arbol', 1], ['divisiones', 1], ['divisiones', 2], ['fabrica', 1]],
-    elegir: [['criba', 1], ['arbol', 2], ['arbol', 3], ['divisiones', 3], ['fabrica', 2], ['factorizaciones', 2], ['exponente', 2], ['especiales', 1]],
+    // 2026-10-18 (tarea 76): la Fábrica perdió su ejercicio 1 («Construye el
+    // divisor»), que era ★ aquí; lo sustituye el árbol 2, que estaba entre los de
+    // elegir (decisión de Juan Luis). El antiguo fabrica 2 es ahora fabrica 1.
+    estrella: [['criba', 2], ['semaforo', 3], ['arbol', 1], ['arbol', 2], ['divisiones', 1], ['divisiones', 2]],
+    elegir: [['criba', 1], ['arbol', 3], ['divisiones', 3], ['fabrica', 1], ['factorizaciones', 2], ['exponente', 2], ['especiales', 1]],
     nElegir: 4,
   },
   {
@@ -76,7 +79,7 @@ export const TAREAS = [
     desde: '2026-11-02',
     hasta: '2026-11-05',
     estrella: [['venn', 1], ['venn', 2], ['venn', 3], ['venn', 4], ['imposibles', 1], ['factorizaciones', 1]],
-    elegir: [['imposibles', 2], ['imposibles', 3], ['factorizaciones', 3], ['fabrica', 3], ['leelo', 3], ['divisores', 6], ['parentesis', 1], ['raiz', 2]],
+    elegir: [['imposibles', 2], ['imposibles', 3], ['factorizaciones', 3], ['fabrica', 2], ['leelo', 3], ['divisores', 6], ['parentesis', 1], ['raiz', 2]],
     nElegir: 4,
   },
   {

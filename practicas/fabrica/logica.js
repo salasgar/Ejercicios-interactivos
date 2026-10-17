@@ -13,31 +13,7 @@ const NUMEROS = [
 
 export { factorizar, valorDe, divisores };
 
-// ─── Ejercicio 1: construye el divisor ─────────────────────────────────────
-
-/** Ítem: { n, fact, expObjetivo, objetivo }. Un 20 % pide el 1 o el propio n. */
-export function generarConstruir(rng) {
-  const n = rng.elegir(NUMEROS);
-  const fact = factorizar(n);
-  const r = rng.azar();
-  let expObjetivo;
-  if (r < 0.1) expObjetivo = fact.map(() => 0);
-  else if (r < 0.2) expObjetivo = fact.map(([, e]) => e);
-  else expObjetivo = fact.map(([, e]) => rng.entero(0, e));
-  const objetivo = valorDe(fact.map(([p], i) => [p, expObjetivo[i]]));
-  return { tipo: 'construir', n, fact, expObjetivo, objetivo };
-}
-
-/** La factorización que ha construido el alumno (exponentes en el orden de `fact`). */
-export function factDeConstruido(fact, exponentes) {
-  return fact.map(([p], i) => [p, exponentes[i]]).filter(([, e]) => e > 0);
-}
-
-export function esConstruccionCorrecta(item, exponentes) {
-  return valorDe(factDeConstruido(item.fact, exponentes)) === item.objetivo;
-}
-
-// ─── Ejercicio 2: ¿cuántos divisores tiene? ────────────────────────────────
+// ─── Ejercicio 1: ¿cuántos divisores tiene? ────────────────────────────────
 
 /** Ítem: { n, fact, solucion, premio }. `premio`: si acierta, mostrar la lista. */
 export function generarContar(rng) {
@@ -52,7 +28,7 @@ export function olvidoSumarUno(item) {
   return item.fact.reduce((v, [, e]) => v * e, 1);
 }
 
-// ─── Ejercicio 3: sin dividir, ¿es divisible? ──────────────────────────────
+// ─── Ejercicio 2: sin dividir, ¿es divisible? ──────────────────────────────
 
 const PRIMOS_POSIBLES = [2, 3, 5, 7, 11, 13];
 

@@ -1,7 +1,7 @@
 // Junta en una sola tabla lo que se sabe de cada alumno: la lista de nombres,
 // los códigos de resultado y los datos de la nube. Puro, para poder probarlo.
 
-import { practicaPorSlug } from './_comun/catalogo.js';
+import { practicaPorSlug, adaptarProgreso } from './_comun/catalogo.js';
 import { leerCodigoAlumno, leerCodigoTarea } from './_comun/codigos.js';
 import { estadoTarea, estadoPlazo, diaDeFecha } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
@@ -427,7 +427,12 @@ export function leerDocumentos(docs, coleccion = 'practicas', indiceDe = leerCod
     const practica = practicaPorSlug(slug);
     const indice = indiceDe(codigo ?? '');
     if (!practica || indice === null || indice === undefined) return null;
-    try { return { ...(tarea === undefined ? {} : { tarea }), practica: practica.id, indice, ...JSON.parse(doc.estado), actualizado: doc.actualizado }; } catch { return null; }
+    try {
+      const estado = JSON.parse(doc.estado);
+      // Una lista guardada antes de quitar un ejercicio, con los ejercicios de hoy (catalogo.js, `quitados`).
+      const ej = adaptarProgreso(slug, estado?.ej);
+      return { ...(tarea === undefined ? {} : { tarea }), practica: practica.id, indice, ...estado, ...(ej === undefined ? {} : { ej }), actualizado: doc.actualizado };
+    } catch { return null; }
   }).filter(Boolean);
 }
 
