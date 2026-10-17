@@ -186,3 +186,9 @@ Si paras sin terminar: `$R/hechos/fallos/67--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí», distractores que puedan ser
   verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+
+## Trampas aprendidas (sesión s-20261017T174538-c9b87eb9)
+
+- `profesor-tareas.js` quedó reservado por el candado de la sesión de la 66 (ya cerrada) ~20 min: reserva 30 min tras su última edición. Espera a que caduque; no borres su fichero de `.claude/sesiones/`.
+- La plantilla del catálogo tiene `unidad: null` y `disponible: true`: filtrar por unidad con cuidado de no incluirla.
+- La pantalla no se probó en navegador (hace falta sesión de Google); la 69 debe probarla.
