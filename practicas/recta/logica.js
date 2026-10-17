@@ -134,6 +134,38 @@ function avisoDivisoresMarcados(deDivisores, n, idioma) {
 // Cada aviso de los ejercicios 1 y 2 va en su línea: seguidos no se leían.
 const enLineas = avisos => avisos.join('<br>');
 
+/**
+ * «Has encontrado 8 de los 9 múltiplos de 7 (en verde). Te falta el 0 (con borde de puntos).»:
+ * que vea lo que sí ha hecho bien. Lo antepone `explicar` cuando el ítem no está acertado.
+ */
+export function recuento(item, respuesta, idioma) {
+  const es = idioma === 'es';
+  const marcados = new Set(respuesta);
+  const acertados = item.correctos.filter(v => marcados.has(v)).length;
+  const faltan = item.correctos.filter(v => !marcados.has(v));
+  const sobran = [...marcados].filter(v => !item.correctos.includes(v)).length;
+  const partes = [];
+  if (acertados > 0) {
+    const total = item.correctos.length;
+    const cosa = item.tipo === 'multiplos' ? (es ? 'múltiplos' : 'multiples') : (es ? 'divisores' : 'divisors');
+    partes.push(es
+      ? `Has encontrado <strong>${acertados} de los ${total}</strong> ${cosa} de ${item.n} (en verde).`
+      : `You found <strong>${acertados} of the ${total}</strong> ${cosa} of ${item.n} (in green).`);
+  }
+  if (faltan.length) {
+    const lista = unir(faltan.map(String), idioma);
+    partes.push(es
+      ? `${faltan.length > 1 ? `Te faltan ${lista}` : `Te falta el ${lista}`} (con borde de puntos).`
+      : `Missing: ${lista} (dotted border).`);
+  }
+  if (sobran) {
+    partes.push(es
+      ? `${sobran === 1 ? 'Sobra 1' : `Sobran ${sobran}`} (en rojo).`
+      : `${sobran === 1 ? '1 is' : `${sobran} are`} wrong (in red).`);
+  }
+  return partes.join(' ');
+}
+
 function explicarMultiplos(item, respuesta, idioma) {
   const marcados = new Set(respuesta);
   const ultimo = item.correctos.at(-1);
@@ -213,8 +245,10 @@ function explicarVF(item, idioma) {
 
 /** `explicar(item, respuesta, idioma)`: el HTML de la explicación, con los números del ítem. */
 export function explicar(item, respuesta, idioma) {
-  if (item.tipo === 'multiplos') return explicarMultiplos(item, respuesta, idioma);
-  if (item.tipo === 'divisores') return explicarDivisores(item, respuesta, idioma);
+  if (item.tipo === 'multiplos' || item.tipo === 'divisores') {
+    const detalle = item.tipo === 'multiplos' ? explicarMultiplos(item, respuesta, idioma) : explicarDivisores(item, respuesta, idioma);
+    return esCorrecta(item, respuesta) ? detalle : enLineas([recuento(item, respuesta, idioma), detalle]);
+  }
   if (item.tipo === 'vf') return explicarVF(item, idioma);
   throw new Error(`Tipo de ítem desconocido: ${item.tipo}`);
 }
