@@ -11,15 +11,18 @@ import {
   ALFABETO, MAX_ALUMNOS, codigoAlumno, leerCodigoAlumno, leerCodigoResultado, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, fechaDeDia, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from '../practicas/_comun/contador.js';
+import { readFileSync } from 'node:fs';
 import {
   validarPractica, parametrosDe, claveProgreso, documentoNube, claveIdiomaFijo,
-  modoIdioma, crearSecuenciaIdiomas, sinCodigo,
+  modoIdioma, crearSecuenciaIdiomas, sinCodigo, ambitoDe, ubicacionProgreso, progresoGuardado, sincronizarGuardado,
 } from '../practicas/_comun/base.js';
+import { TAREAS, tareaPorId } from '../practicas/_comun/tareas.js';
+import { leerDocumentoRest } from '../practicas/_comun/nube.js';
 import {
   PRIMOS, esPrimo, factorizar, valorDe, divisores as divisoresDe, parejasDivisores, raizEntera, mcd, mcm, sumaCifras, cifras,
   criterio, CRITERIOS, multiplicarFact, dividirFact, esMultiploFact, mcdFact, mcmFact, htmlFact, textoFact,
 } from '../practicas/_comun/aritmetica.js';
-import { T, TRADUCCION, unir, esc } from '../practicas/_comun/textos.js';
+import { T, TRADUCCION, unir, esc, fechaCorta } from '../practicas/_comun/textos.js';
 import { juntarResultados, juntarResumen, leerDocumentos } from '../practicas/resultados.js';
 import {
   generarPrimo, clasePrimo, primosAProbar, generarFactorizacion, esFactorizacionDe, factDe, BASES, EXPONENTE_MAXIMO, NUMEROS,
@@ -617,4 +620,107 @@ test('cerrar sesión: el código se quita de la dirección y lo demás se queda'
   assert.equal(sinCodigo(`${base}semana.html?t=1&c=AJJN`), `${base}semana.html?t=1`);
   assert.equal(sinCodigo(`${base}recta/?c=AJJN&idioma=en#x`), `${base}recta/?idioma=en#x`);
   assert.equal(sinCodigo(`${base}recta/`), `${base}recta/`);
+});
+
+// --- Ámbito de una tarea (tarea 51, DISENO.md C.2 y D) ---------------------------------
+
+// Una tarea v2 de prueba (sin progresoPorPractica) y la tarea 1 de verdad.
+const TAREA_V2 = { id: 7, unidad: 2, titulo: { es: 'a', en: 'b' }, estrella: [['semaforo', 3]], elegir: [['criba', 1]], nElegir: 1 };
+
+test('ámbito: sin tarea, la práctica; en una tarea v2 con el ejercicio dentro, la tarea; fuera, la práctica libre', () => {
+  assert.deepEqual(ambitoDe(null, null, 'semaforo', 3), { tipo: 'practica', tareaId: null, semana: null });
+  assert.deepEqual(ambitoDe(7, TAREA_V2, 'semaforo', 3), { tipo: 'tarea', tareaId: 7, semana: 7 }, 'un ★');
+  assert.deepEqual(ambitoDe(7, TAREA_V2, 'criba', 1), { tipo: 'tarea', tareaId: 7, semana: 7 }, 'uno de elegir');
+  assert.deepEqual(ambitoDe(7, TAREA_V2, 'semaforo', 1), { tipo: 'practica', tareaId: null, semana: null }, 'enlace tocado a mano: se ignora la tarea');
+  assert.deepEqual(ambitoDe(7, TAREA_V2, 'recta', 3), { tipo: 'practica', tareaId: null, semana: null });
+  assert.deepEqual(ambitoDe(999, null, 'semaforo', 3), { tipo: 'practica', tareaId: null, semana: 999 }, 'una tarea que no existe, como antes');
+  // Las tareas v2 de tareas.js: cada uno de sus ejercicios abre en el ámbito de la tarea.
+  for (const tarea of TAREAS.filter(t => !t.progresoPorPractica)) {
+    for (const [slug, n] of [...tarea.estrella, ...tarea.elegir]) assert.equal(ambitoDe(tarea.id, tarea, slug, n).tipo, 'tarea', `${tarea.id}: ${slug}/${n}`);
+  }
+});
+
+test('regla de publicación: la tarea 1 sigue con el progreso de la práctica (clave y documento de siempre)', () => {
+  const tarea1 = tareaPorId(1);
+  assert.equal(tarea1.progresoPorPractica, true);
+  const codigo = codigoAlumno(59);
+  for (const [slug, n] of [...tarea1.estrella, ...tarea1.elegir, ['semaforo', 3]]) {
+    const ambito = ambitoDe(1, tarea1, slug, n);
+    assert.deepEqual(ambito, { tipo: 'practica', tareaId: 1, semana: 1 }, `${slug}/${n}`);
+    assert.deepEqual(ubicacionProgreso(slug, codigo, ambito.tipo === 'tarea' ? ambito.tareaId : null), {
+      clave: claveProgreso(slug, codigo), nube: { coleccion: 'practicas', id: documentoNube(slug, codigo) },
+    });
+  }
+});
+
+test('ubicación: la de una tarea v2 es suya, y la regla de Firestore acepta su id', () => {
+  const codigo = codigoAlumno(59);
+  assert.deepEqual(ubicacionProgreso('semaforo', codigo, 2), {
+    clave: `practicas.v1.semaforo.${codigo}.t2`, nube: { coleccion: 'practicas-tareas', id: `t2--semaforo--${codigo}` },
+  });
+  assert.deepEqual(ubicacionProgreso('semaforo', codigo), ubicacionProgreso('semaforo', codigo, null));
+  const reglas = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+  const bloque = reglas.slice(reglas.indexOf('match /practicas-tareas/{doc}'));
+  const patron = new RegExp(bloque.match(/doc\.matches\('([^']+)'\)/)[1]);
+  for (const p of CATALOGO) for (const id of [1, 2, 1023]) for (const i of [0, 59, 1023]) assert.match(ubicacionProgreso(p.slug, codigoAlumno(i), id).nube.id, patron);
+});
+
+test('base: dentro de arrancar, el progreso solo se lee, se guarda y se sube por la ubicación del ámbito', () => {
+  const base = readFileSync(new URL('../practicas/_comun/base.js', import.meta.url), 'utf8');
+  const arranque = base.slice(base.indexOf('export function arrancar('));
+  assert.doesNotMatch(arranque, /claveProgreso\(/, 'nada de la clave de la práctica a mano');
+  assert.match(arranque, /const tareaDelProgreso = ambito\.tipo === 'tarea' \? ambito\.tareaId : null;/);
+  assert.match(arranque, /leerNube\(ficha\.slug, codigo, ubicacion\(\)\.nube\)/);
+  assert.match(arranque, /subirFusionado\(slug, codigo, ej, idioma, \{ ultimo: ultimoRemoto, \.\.\.nube \}\)/);
+  assert.match(arranque, /tarea: ambito\.tareaId/, 'los fallos llevan la tarea (también la 1)');
+});
+
+test('página de la tarea: progresoGuardado y sincronizarGuardado con tareaId van a lo de la tarea, sin tocar la práctica', async () => {
+  const almacen = new Map();
+  globalThis.localStorage = { getItem: k => almacen.get(k) ?? null, setItem: (k, v) => almacen.set(k, String(v)), removeItem: k => almacen.delete(k) };
+  try {
+    const docs = new Map();
+    const fetch = async (url, opciones = {}) => {
+      const ruta = new URL(url).pathname.split('/documents/')[1];
+      if (opciones.method === 'PATCH') { docs.set(ruta, JSON.parse(opciones.body)); return { ok: true, status: 200, json: async () => ({}) }; }
+      return docs.has(ruta) ? { ok: true, status: 200, json: async () => docs.get(ruta) } : { ok: false, status: 404, json: async () => ({}) };
+    };
+    const op = { fetch, config: { apiKey: 'clave', projectId: 'proyecto' } };
+    const hecho = { puntos: 10, objetivo: 10, aciertos: 10, fallos: 1, terminado: true, dia: 50 };
+    almacen.set(claveProgreso('semaforo', 'ABCD'), JSON.stringify({ ej: [hecho] }));
+    assert.deepEqual(progresoGuardado('semaforo', 'ABCD', 2), [], 'lo de la práctica libre no cuenta en la tarea');
+    assert.equal(progresoGuardado('semaforo', 'ABCD')[0].terminado, true);
+    almacen.set('practicas.v1.semaforo.ABCD.t2', JSON.stringify({ ej: [null, null, { ...hecho, fallos: 4 }] }));
+    assert.equal(progresoGuardado('semaforo', 'ABCD', 2)[2].fallos, 4);
+    assert.equal((await sincronizarGuardado('semaforo', 'ABCD', { ...op, tareaId: 2 })).estado, 'vacio');
+    assert.deepEqual([...docs.keys()], ['practicas-tareas/t2--semaforo--ABCD'], 'solo sube el documento de la tarea');
+    assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--ABCD')).ej[2].fallos, 4);
+    // Sin tareaId, como siempre: el documento de la práctica.
+    await sincronizarGuardado('semaforo', 'ABCD', op);
+    assert.deepEqual([...docs.keys()].sort(), ['practicas-tareas/t2--semaforo--ABCD', 'practicas/semaforo--ABCD']);
+    assert.equal(leerDocumentoRest(docs.get('practicas/semaforo--ABCD')).ej[0].fallos, 1);
+    assert.equal(leerDocumentoRest(docs.get('practicas-tareas/t2--semaforo--ABCD')).ej.length, 3, 'la tarea no se entera');
+  } finally {
+    delete globalThis.localStorage;
+  }
+});
+
+test('textos de las tareas v2: plazo, retraso, tipo y unidades en los dos idiomas', () => {
+  assert.equal(fechaCorta('2026-10-22', 'es'), 'jueves 22-10');
+  assert.equal(fechaCorta('2026-10-22', 'en'), 'Thursday 22/10');
+  assert.equal(fechaCorta('2026-11-02', 'es'), 'lunes 02-11');
+  assert.equal(fechaCorta('mañana', 'es'), 'mañana');
+  assert.equal(T.es.tarea_plazo('2026-10-22'), 'Plazo: jueves 22-10');
+  assert.equal(T.en.tarea_plazo('2026-10-22'), 'Deadline: Thursday 22/10');
+  assert.equal(T.es.tarea_fuera_de_plazo(3), 'Fuera de plazo · 3 días de retraso');
+  assert.equal(T.es.tarea_fuera_de_plazo(1), 'Fuera de plazo · 1 día de retraso');
+  assert.equal(T.en.tarea_fuera_de_plazo(1), 'Past the deadline · 1 day late');
+  assert.equal(T.es.tarea_entregada_tarde(3), 'Entregada con 3 días de retraso');
+  assert.equal(T.en.tarea_entregada_tarde(3), 'Handed in 3 days late');
+  assert.equal(T.es.tarea_entregada, '✓ Entregada');
+  assert.equal(T.es.unidad_titulo(2, 'Divisibilidad'), 'Unidad 2 · Divisibilidad');
+  assert.equal(T.en.unidad_titulo(2, 'Divisibility'), 'Unit 2 · Divisibility');
+  assert.equal(T.es.repaso_de_unidad(1), '· repaso U1');
+  assert.equal(T.en.repaso_de_unidad(1), '· U1 review');
+  assert.equal(T.es.tarea_obligatoria_para_ti, 'Obligatoria para ti');
 });

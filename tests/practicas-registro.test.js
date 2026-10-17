@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { practicaPorSlug } from '../practicas/_comun/catalogo.js';
 import {
   LIMITES, MAX_PENDIENTES, DESTREZAS, recortar, textoPlano, itemTexto, errorValido, idFallo, datosFallo, camposRest, datosDeDocumento,
-  registrarFallo, enviarPendientes, consultaDesde, leerConsulta,
+  registrarFallo, enviarPendientes, consultaDesde, leerConsulta, tareaValida, deLaTarea, leerFallos,
 } from '../practicas/_comun/registro.js';
 import { agruparFallos } from '../practicas/resultados.js';
 
@@ -186,4 +186,32 @@ test('panel: «Fallos» agrupa por error cuando lo hay y si no por ejercicio, co
   assert.equal(agruparFallos(fallos, { ejercicios: [['recta', 2]] }).total, 3);
   assert.equal(agruparFallos(fallos, { practica: 'semaforo', ejercicio: 1, alumno: 'AAAA' }).total, 3);
   assert.deepEqual(agruparFallos([], {}), { total: 0, grupos: [], porAlumno: [] });
+});
+
+// --- La tarea desde la que se falló (tarea 51) ----------------------------------------------
+
+test('registro: «tarea» viaja en el fallo solo si es un id que la regla acepta', () => {
+  assert.equal(datosFallo(FALLO).tarea, undefined, 'práctica libre: sin campo');
+  assert.equal(datosFallo({ ...FALLO, tarea: 1 }).tarea, 1, 'también la tarea 1');
+  assert.equal(datosFallo({ ...FALLO, tarea: 1023 }).tarea, 1023);
+  for (const mala of [0, 1024, 2.5, '3', null, undefined]) assert.equal(datosFallo({ ...FALLO, tarea: mala }).tarea, undefined, String(mala));
+  assert.equal(tareaValida(7), 7);
+  assert.equal(tareaValida(-1), null);
+  // Ida y vuelta por Firestore REST: llega como entero.
+  const datos = datosFallo({ ...FALLO, tarea: 2 });
+  assert.equal(camposRest(datos).tarea.integerValue, '2');
+  assert.equal(datosDeDocumento({ name: 'x/KTFN-1-aaaa', fields: camposRest(datos) }).tarea, 2);
+});
+
+test('registro: los fallos se filtran por tarea al leerlos (los de antes, sin tarea, no salen en ninguna)', async () => {
+  const doc = (id, extra) => ({ document: { name: `p/fallos/${id}`, fields: camposRest(datosFallo({ ...FALLO, ...extra })) } });
+  const respuesta = [doc('KTFN-1-aaaa', {}), doc('KTFN-2-bbbb', { tarea: 1 }), doc('KTFN-3-cccc', { tarea: 2 }), doc('KTFN-4-dddd', { tarea: 2 })];
+  const fetch = async () => ({ ok: true, status: 200, json: async () => respuesta });
+  const op = { fetch, config: CONFIG };
+  assert.equal((await leerFallos(0, 'token', op)).length, 4);
+  assert.deepEqual((await leerFallos(0, 'token', { ...op, tarea: 2 })).map(f => f.id), ['KTFN-3-cccc', 'KTFN-4-dddd']);
+  assert.deepEqual((await leerFallos(0, 'token', { ...op, tarea: 1 })).map(f => f.id), ['KTFN-2-bbbb']);
+  const todos = leerConsulta(respuesta);
+  assert.equal(deLaTarea(todos).length, 4);
+  assert.equal(deLaTarea(todos, 3).length, 0);
 });

@@ -10,13 +10,24 @@
 // nube y se fusiona con lo del navegador antes de subir nada (`nube.js`): así
 // se sigue desde cualquier aparato. Si la nube falla no pasa nada: se sigue con
 // lo del navegador, y el código de resultado lleva lo necesario para calificar.
+//
+// Abierta desde una tarea del modelo v2 (`?ejercicio=n&semana=<id>`, tarea sin
+// `progresoPorPractica`), la base trabaja en el ÁMBITO DE LA TAREA (tarea 51,
+// DISENO.md C.2): mismo formato, misma fusión y misma migración, pero con la
+// clave `practicas.v1.{slug}.{código}.t{id}` y el documento
+// `practicas-tareas/t{id}--{slug}--{código}`. Lo hecho en la tarea no sale en la
+// práctica libre ni al revés. La tarea 1 se queda con el progreso de la práctica.
 
 import { practicaPorSlug } from './catalogo.js';
 import { codigoAlumno, leerCodigoAlumno } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
-import { leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico } from './nube.js';
+import {
+  leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico,
+  COLECCION_PRACTICAS, COLECCION_TAREAS, idDocumentoPractica, idDocumentoTarea, claveProgresoTarea,
+} from './nube.js';
 import { datosFallo, registrarFallo, enviarPendientes } from './registro.js';
 import { crearRng } from './rng.js';
+import { tareaPorId } from './tareas.js';
 import { T, TRADUCCION, esc } from './textos.js';
 
 const CAMPOS_TEXTO = ['nombre', 'detalle'];
@@ -71,6 +82,38 @@ export const claveProgreso = (slug, codigo) => `practicas.v1.${slug}.${codigo}`;
 export const documentoNube = (slug, codigo) => `${slug}--${codigo}`;
 /** Clave del idioma fijado para un alumno (vacía de alumno a alumno). */
 export const claveIdiomaFijo = codigo => `practicas.idioma_fijo.${codigo}`;
+
+/**
+ * En qué ámbito trabaja la base (DISENO.md, C.2). `semana` es el id de tarea del
+ * enlace (`&semana=`) o null; `tarea`, esa tarea de `tareas.js` (null si no
+ * existe); `n`, el ejercicio pedido (empezando en 1). Devuelve:
+ *   tipo     'tarea': progreso propio de la tarea (v2, con el ejercicio dentro);
+ *            'practica': el de la práctica libre (también la tarea 1).
+ *   tareaId  la tarea a la que se apuntan los fallos, o null.
+ *   semana   a qué tarea se vuelve al salir del ejercicio, o null (menú).
+ * Si el ejercicio no está en una tarea v2 (enlace tocado a mano), se ignora
+ * `semana`: práctica libre. Una tarea que no existe se trata como hasta ahora
+ * (se vuelve a su página, que lo dice), sin ámbito propio ni fallos apuntados.
+ */
+export function ambitoDe(semana, tarea, slug, n) {
+  if (semana === null || semana === undefined) return { tipo: 'practica', tareaId: null, semana: null };
+  if (!tarea) return { tipo: 'practica', tareaId: null, semana };
+  if (tarea.progresoPorPractica) return { tipo: 'practica', tareaId: tarea.id, semana };
+  const dentro = [...tarea.estrella, ...tarea.elegir].some(([s, k]) => s === slug && k === n);
+  return dentro ? { tipo: 'tarea', tareaId: tarea.id, semana } : { tipo: 'practica', tareaId: null, semana: null };
+}
+
+/**
+ * Dónde se guarda el progreso de un alumno en una práctica: la clave del
+ * navegador y la colección y el id del documento de la nube (lo que reciben
+ * `leerNube`, `escribirNube` y `subirFusionado`). Sin `tareaId`, los de la
+ * práctica libre (y de la tarea 1); con él, los de esa tarea (modelo v2).
+ */
+export function ubicacionProgreso(slug, codigo, tareaId = null) {
+  return tareaId === null || tareaId === undefined
+    ? { clave: claveProgreso(slug, codigo), nube: { coleccion: COLECCION_PRACTICAS, id: idDocumentoPractica(slug, codigo) } }
+    : { clave: claveProgresoTarea(slug, codigo, tareaId), nube: { coleccion: COLECCION_TAREAS, id: idDocumentoTarea(tareaId, slug, codigo) } };
+}
 
 /**
  * El modo de idioma a partir del parámetro `?idioma=` de la URL y de lo
@@ -142,10 +185,12 @@ export const urlSemana = (id, codigo = null) => `${URL_PORTADA}semana.html?t=${i
  * de sus ejercicios tal como la guarda la base ({ puntos, objetivo, fallos,
  * terminado, dia… }), vacía si no ha hecho nada. En `divisores` se mira
  * también la clave de antes de la tarea 17 y, ejercicio a ejercicio, gana el
- * terminado (o el que tenga más fallos, si ninguno lo está).
+ * terminado (o el que tenga más fallos, si ninguno lo está). Con `tareaId`, lo
+ * que lleva dentro de esa tarea (modelo v2), sin mezclar la práctica libre.
  */
-export function progresoGuardado(slug, codigo) {
-  const claves = [claveProgreso(slug, codigo), ...(slug === 'divisores' ? [`divisores.v1.${codigo}`] : [])];
+export function progresoGuardado(slug, codigo, tareaId = null) {
+  const claves = tareaId !== null && tareaId !== undefined ? [ubicacionProgreso(slug, codigo, tareaId).clave]
+    : [claveProgreso(slug, codigo), ...(slug === 'divisores' ? [`divisores.v1.${codigo}`] : [])];
   const listas = claves.map(clave => {
     try {
       const ej = JSON.parse(leer(clave))?.ej;
@@ -174,17 +219,19 @@ export function adoptarIdioma(codigo, idiomaNube) {
  * conocer sus ejercicios (lo usa la página de la semana): lee el documento,
  * fusiona con lo guardado aquí, guarda la fusión en el navegador y la sube si
  * la nube no la tenía. Sin red o sin permiso, no toca nada. Devuelve el
- * resultado de `leerNube` (su `estado`).
+ * resultado de `leerNube` (su `estado`). Con `opciones.tareaId`, el progreso de
+ * esa tarea (modelo v2: su clave y su documento de `practicas-tareas`).
  */
-export async function sincronizarGuardado(slug, codigo, opciones = {}) {
-  const lectura = await leerNube(slug, codigo, opciones);
+export async function sincronizarGuardado(slug, codigo, { tareaId = null, ...opciones } = {}) {
+  const { clave, nube } = ubicacionProgreso(slug, codigo, tareaId);
+  const lectura = await leerNube(slug, codigo, { ...opciones, ...nube });
   if (lectura.estado !== 'ok' && lectura.estado !== 'vacio') return lectura;
   if (lectura.estado === 'ok') adoptarIdioma(codigo, lectura.idioma);
-  const local = progresoGuardado(slug, codigo);
+  const local = progresoGuardado(slug, codigo, tareaId);
   const fusion = fusionarProgreso(local, lectura.ej);
   if (!fusion.some(Boolean)) return lectura;
-  if (canonico(fusion) !== canonico(local)) escribir(claveProgreso(slug, codigo), JSON.stringify({ ej: fusion }));
-  if (canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, leer(claveIdiomaFijo(codigo)) ?? 'alterno', opciones);
+  if (canonico(fusion) !== canonico(local)) escribir(clave, JSON.stringify({ ej: fusion }));
+  if (canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, leer(claveIdiomaFijo(codigo)) ?? 'alterno', { ...opciones, ...nube });
   return lectura;
 }
 
@@ -257,11 +304,17 @@ export function arrancar(practica) {
   // es el alumno, en vez del menú. Con `&semana=<id>` además se viene de una
   // tarea de la semana: al salir del ejercicio o al terminarlo se vuelve a
   // ella, y no se enseña el código de resultado de la práctica (la tarea tiene
-  // el suyo). Sin estos parámetros, todo es como siempre.
+  // el suyo). Sin estos parámetros, todo es como siempre. En una tarea v2 con
+  // ese ejercicio dentro, además, el progreso es el de la tarea (`ambitoDe`).
   const parametros = new URLSearchParams(location.search);
   const pedido = Number(parametros.get('ejercicio'));
   let ejercicioPedido = Number.isInteger(pedido) && pedido >= 1 && pedido <= defs.length ? pedido - 1 : null;
-  const semana = ejercicioPedido !== null && /^\d{1,4}$/.test(parametros.get('semana') ?? '') ? Number(parametros.get('semana')) : null;
+  const semanaPedida = ejercicioPedido !== null && /^\d{1,4}$/.test(parametros.get('semana') ?? '') ? Number(parametros.get('semana')) : null;
+  const ambito = ambitoDe(semanaPedida, semanaPedida === null ? null : tareaPorId(semanaPedida), ficha.slug, ejercicioPedido + 1);
+  const semana = ambito.semana;
+  const tareaDelProgreso = ambito.tipo === 'tarea' ? ambito.tareaId : null;
+  /** Clave del navegador y documento de la nube del alumno, en este ámbito. */
+  const ubicacion = () => ubicacionProgreso(ficha.slug, estado.codigo, tareaDelProgreso);
   // `&num=k`: el número que tiene ese ejercicio en la lista de la tarea (1, 2…),
   // que es el que ve el alumno en la cabecera en vez del de la práctica.
   const numTarea = semana !== null && /^\d{1,2}$/.test(parametros.get('num') ?? '') ? Number(parametros.get('num')) : null;
@@ -302,7 +355,7 @@ export function arrancar(practica) {
   function cargarProgreso(remoto = null) {
     let local = [];
     try {
-      const guardado = JSON.parse(leer(claveProgreso(ficha.slug, estado.codigo)));
+      const guardado = JSON.parse(leer(ubicacion().clave));
       if (Array.isArray(guardado?.ej)) local = guardado.ej;
     } catch { /* guardado ilegible: se empieza de cero */ }
     const fusion = remoto ? fusionarProgreso(local, remoto) : local;
@@ -310,7 +363,7 @@ export function arrancar(practica) {
   }
 
   function guardar() {
-    if (estado.codigo) escribir(claveProgreso(ficha.slug, estado.codigo), JSON.stringify({ ej: estado.ej }));
+    if (estado.codigo) escribir(ubicacion().clave, JSON.stringify({ ej: estado.ej }));
   }
 
   // La nube. Nada se sube antes de haber intentado leerla al entrar (`nubeLeida`):
@@ -321,13 +374,16 @@ export function arrancar(practica) {
   let colaSubidas = Promise.resolve();
   let ultimaLectura = 0;
 
-  /** Copia del progreso en Firestore (documento `practicas/{slug}--{código}`), fusionada con lo que ya haya. */
+  /**
+   * Copia del progreso en Firestore (documento `practicas/{slug}--{código}`, o el
+   * de la tarea en su ámbito), fusionada con lo que ya haya.
+   */
   function subir() {
     sinSubir = 0;
     if (!estado.codigo || !nubeLeida) return;
-    const [slug, codigo, ej, idioma] = [ficha.slug, estado.codigo, estado.ej.map(e => ({ ...e })), estado.idiomaFijo ?? 'alterno'];
+    const [slug, codigo, ej, idioma, { nube }] = [ficha.slug, estado.codigo, estado.ej.map(e => ({ ...e })), estado.idiomaFijo ?? 'alterno', ubicacion()];
     colaSubidas = colaSubidas
-      .then(() => subirFusionado(slug, codigo, ej, idioma, { ultimo: ultimoRemoto }))
+      .then(() => subirFusionado(slug, codigo, ej, idioma, { ultimo: ultimoRemoto, ...nube }))
       .then(({ ej: enNube }) => { if (codigo === estado.codigo) ultimoRemoto = enNube; }, () => {});
   }
 
@@ -338,7 +394,7 @@ export function arrancar(practica) {
    */
   async function leerYFusionar() {
     const codigo = estado.codigo;
-    const lectura = await leerNube(ficha.slug, codigo);
+    const lectura = await leerNube(ficha.slug, codigo, ubicacion().nube);
     ultimaLectura = Date.now();
     if (codigo !== estado.codigo) return;   // ha cambiado de código mientras tanto
     nubeLeida = true;
@@ -633,7 +689,7 @@ export function arrancar(practica) {
     try {
       registrarFallo(datosFallo({
         codigo: estado.codigo, slug: ficha.slug, ejercicio: actual.n + 1, idioma: actual.idioma, item: actual.item,
-        html, respuesta, error, t: Date.now(), dia: diaDe(new Date()), repeticion: actual.practica,
+        html, respuesta, error, t: Date.now(), dia: diaDe(new Date()), repeticion: actual.practica, tarea: ambito.tareaId,
       }));
     } catch { /* el registro nunca molesta al alumno */ }
   }
