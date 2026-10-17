@@ -14,7 +14,7 @@ import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, fechaDeDia,
 import { readFileSync } from 'node:fs';
 import {
   validarPractica, parametrosDe, claveProgreso, documentoNube, claveIdiomaFijo,
-  modoIdioma, crearSecuenciaIdiomas, sinCodigo, ambitoDe, ubicacionProgreso, progresoGuardado, sincronizarGuardado,
+  modoIdioma, crearSecuenciaIdiomas, sinCodigo, ambitoDe, ubicacionProgreso, progresoGuardado, sincronizarGuardado, tareaSupuesta,
 } from '../practicas/_comun/base.js';
 import { TAREAS, tareaPorId } from '../practicas/_comun/tareas.js';
 import { leerDocumentoRest } from '../practicas/_comun/nube.js';
@@ -669,10 +669,96 @@ test('base: dentro de arrancar, el progreso solo se lee, se guarda y se sube por
   const base = readFileSync(new URL('../practicas/_comun/base.js', import.meta.url), 'utf8');
   const arranque = base.slice(base.indexOf('export function arrancar('));
   assert.doesNotMatch(arranque, /claveProgreso\(/, 'nada de la clave de la práctica a mano');
-  assert.match(arranque, /const tareaDelProgreso = ambito\.tipo === 'tarea' \? ambito\.tareaId : null;/);
-  assert.match(arranque, /leerNube\(ficha\.slug, codigo, ubicacion\(\)\.nube\)/);
+  assert.match(arranque, /tareaDelProgreso = ambito\.tipo === 'tarea' \? ambito\.tareaId : null;/);
+  assert.match(arranque, /const \{ nube \} = ubicacion\(\);\s+if \(!nube\) \{[\s\S]*?leerNube\(ficha\.slug, codigo, nube\)/);
   assert.match(arranque, /subirFusionado\(slug, codigo, ej, idioma, \{ ultimo: ultimoRemoto, \.\.\.nube \}\)/);
   assert.match(arranque, /tarea: ambito\.tareaId/, 'los fallos llevan la tarea (también la 1)');
+  // Varios profesores (tarea 64): la ubicación lleva el profesor del espacio, y los fallos también.
+  assert.match(arranque, /ubicacionProgreso\(ficha\.slug, estado\.codigo, tareaDelProgreso, estado\.espacio\?\.profesor \?\? null\)/);
+  assert.match(arranque, /\{ profesor: estado\.espacio\?\.profesor \?\? null \}\);/);
+  // Con un código de 4, el ámbito sale de tareas.js; con uno de 8, de la configuración de su profesor.
+  assert.match(arranque, /if \(modo === 'antiguo'\) \{[^}]*fijarAmbito\(TAREAS\);/);
+  assert.match(arranque, /fijarAmbito\(estado\.espacio && !estado\.espacio\.sinConfig \? estado\.espacio\.config\.tareas : null\)/);
+});
+
+// --- Varios profesores: la base en el espacio del profesor (tarea 64) ---------------------
+
+const UID_A = 'uidProfesorA0001';
+const SECRETO = 'K7QMP3XA';   // inventado
+
+test('espacio: con un código de 8 y su profesor, la ubicación es la del espacio; sin profesor, sin nube; con uno de 4, la de hoy', () => {
+  assert.deepEqual(ubicacionProgreso('semaforo', SECRETO, null, UID_A), {
+    clave: `practicas.v1.semaforo.${SECRETO}`, nube: { coleccion: `practicas-espacios/${UID_A}/progreso-libre`, id: `semaforo--${SECRETO}` },
+  });
+  assert.deepEqual(ubicacionProgreso('semaforo', SECRETO, 7, UID_A), {
+    clave: `practicas.v1.semaforo.${SECRETO}.t7`, nube: { coleccion: `practicas-espacios/${UID_A}/progreso-tareas`, id: `t7--semaforo--${SECRETO}` },
+  });
+  assert.deepEqual(ubicacionProgreso('semaforo', SECRETO), { clave: `practicas.v1.semaforo.${SECRETO}`, nube: null }, 'sin saber el profesor no se sube a ningún sitio');
+  assert.deepEqual(ubicacionProgreso('semaforo', SECRETO, 7), { clave: `practicas.v1.semaforo.${SECRETO}.t7`, nube: null });
+  // El modo antiguo (código de 4, sin profesor) no cambia.
+  for (const i of [0, 59, 1023]) {
+    const c = codigoAlumno(i);
+    assert.deepEqual(ubicacionProgreso('criba', c), { clave: `practicas.v1.criba.${c}`, nube: { coleccion: 'practicas', id: `criba--${c}` } });
+    assert.deepEqual(ubicacionProgreso('criba', c, 3), { clave: `practicas.v1.criba.${c}.t3`, nube: { coleccion: 'practicas-tareas', id: `t3--criba--${c}` } });
+  }
+  assert.throws(() => ubicacionProgreso('semaforo', SECRETO, null, 'uid/raro'), /uid/);
+  // Las reglas publicadas (tarea 61) aceptan los ids de los dos documentos del espacio.
+  const reglas = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
+  const patron = bloque => new RegExp(reglas.slice(reglas.indexOf(`match /${bloque}/{doc}`)).match(/doc\.matches\('([^']+)'\)/)[1]);
+  for (const p of CATALOGO) {
+    assert.match(ubicacionProgreso(p.slug, SECRETO, null, UID_A).nube.id, patron('progreso-libre'));
+    for (const id of [1, 2, 1023]) assert.match(ubicacionProgreso(p.slug, SECRETO, id, UID_A).nube.id, patron('progreso-tareas'));
+  }
+});
+
+test('espacio: una tarea de la que solo se sabe el id se supone v2 con el ejercicio dentro', () => {
+  assert.deepEqual(ambitoDe(5, tareaSupuesta(5, 'criba', 2), 'criba', 2), { tipo: 'tarea', tareaId: 5, semana: 5 });
+  // Con las tareas de un profesor (la lista como parámetro), el ámbito sale de las suyas y no de tareas.js.
+  const suyas = [{ ...TAREA_V2, id: 1, estrella: [['recta', 1]], elegir: [] }];
+  assert.deepEqual(ambitoDe(1, tareaPorId(1, suyas), 'recta', 1), { tipo: 'tarea', tareaId: 1, semana: 1 }, 'su tarea 1 no es la de Juan Luis');
+  assert.deepEqual(ambitoDe(1, tareaPorId(1), 'recta', 1), { tipo: 'practica', tareaId: 1, semana: 1 }, 'la tarea 1 de tareas.js sigue igual');
+});
+
+test('espacio: sincronizarGuardado con un código de 8 lee y sube en el espacio de su profesor; sin profesor no pregunta a nadie', async () => {
+  const almacen = new Map();
+  globalThis.localStorage = { getItem: k => almacen.get(k) ?? null, setItem: (k, v) => almacen.set(k, String(v)), removeItem: k => almacen.delete(k) };
+  try {
+    const docs = new Map();
+    const urls = [];
+    const fetch = async (url, opciones = {}) => {
+      urls.push(`${opciones.method ?? 'GET'} ${new URL(url).pathname.split('/documents/')[1]}`);
+      const ruta = new URL(url).pathname.split('/documents/')[1];
+      if (opciones.method === 'PATCH') { docs.set(ruta, JSON.parse(opciones.body)); return { ok: true, status: 200, json: async () => ({}) }; }
+      return docs.has(ruta) ? { ok: true, status: 200, json: async () => docs.get(ruta) } : { ok: false, status: 404, json: async () => ({}) };
+    };
+    const op = { fetch, config: { apiKey: 'clave', projectId: 'proyecto' } };
+    const hecho = { puntos: 10, objetivo: 10, aciertos: 10, fallos: 2, terminado: true, dia: 50 };
+    almacen.set(`practicas.v1.semaforo.${SECRETO}`, JSON.stringify({ ej: [hecho] }));
+    almacen.set(`practicas.v1.semaforo.${SECRETO}.t4`, JSON.stringify({ ej: [null, { ...hecho, fallos: 5 }] }));
+    // Sin profesor: ni una petición, y lo del navegador intacto.
+    assert.equal((await sincronizarGuardado('semaforo', SECRETO, op)).estado, 'error');
+    assert.deepEqual(urls, []);
+    // Con profesor: el documento del espacio (libre y de la tarea), y nada en las colecciones de hoy.
+    assert.equal((await sincronizarGuardado('semaforo', SECRETO, { ...op, profesor: UID_A })).estado, 'vacio');
+    assert.equal((await sincronizarGuardado('semaforo', SECRETO, { ...op, profesor: UID_A, tareaId: 4 })).estado, 'vacio');
+    assert.deepEqual(urls, [
+      `GET practicas-espacios/${UID_A}/progreso-libre/semaforo--${SECRETO}`,
+      `PATCH practicas-espacios/${UID_A}/progreso-libre/semaforo--${SECRETO}`,
+      `GET practicas-espacios/${UID_A}/progreso-tareas/t4--semaforo--${SECRETO}`,
+      `PATCH practicas-espacios/${UID_A}/progreso-tareas/t4--semaforo--${SECRETO}`,
+    ]);
+    assert.equal(leerDocumentoRest(docs.get(`practicas-espacios/${UID_A}/progreso-libre/semaforo--${SECRETO}`)).ej[0].fallos, 2);
+    assert.equal(leerDocumentoRest(docs.get(`practicas-espacios/${UID_A}/progreso-tareas/t4--semaforo--${SECRETO}`)).ej[1].fallos, 5);
+    // Mismo formato de documento que hoy: { estado, actualizado }, que es lo que deja pasar la regla.
+    assert.deepEqual(Object.keys(docs.get(`practicas-espacios/${UID_A}/progreso-libre/semaforo--${SECRETO}`).fields).sort(), ['actualizado', 'estado']);
+    // Con un código de 4 (la base no pasa profesor: estado.espacio es null en el modo antiguo), donde siempre.
+    urls.length = 0;
+    almacen.set('practicas.v1.semaforo.ABCD', JSON.stringify({ ej: [hecho] }));
+    await sincronizarGuardado('semaforo', 'ABCD', op);
+    assert.deepEqual(urls, ['GET practicas/semaforo--ABCD', 'PATCH practicas/semaforo--ABCD']);
+  } finally {
+    delete globalThis.localStorage;
+  }
 });
 
 test('página de la tarea: progresoGuardado y sincronizarGuardado con tareaId van a lo de la tarea, sin tocar la práctica', async () => {
