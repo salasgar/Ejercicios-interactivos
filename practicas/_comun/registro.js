@@ -14,8 +14,17 @@
 // espera, y si falla (sin red) queda en una cola del navegador que se reintenta
 // en el siguiente fallo o al entrar. El id del documento lo pone la app, así que
 // un reintento de algo que sí llegó no lo duplica (Firestore responde 409).
+//
+// Con un código secreto de 8 caracteres (varios profesores, tarea 64) el fallo
+// va al espacio de su profesor, `practicas-espacios/{uid}/fallos`, con los
+// mismos campos. Si al fallar aún no se sabe de qué profesor es el código (sin
+// red al entrar), se queda en la cola hasta que lo diga la copia del navegador
+// que deja `espacio.js`. Con un código de 4, como siempre: `fallos`.
 
 import { firebaseConfig } from '../../src/config.js';
+import { LONGITUD_SECRETO } from './codigos.js';
+import { claveEspacio } from './espacio.js';
+import { coleccionEspacio } from './nube.js';
 
 /** Topes de cada campo de texto (los mismos que comprueba la regla). */
 export const LIMITES = { item: 400, feedback: 500, respuesta: 80, error: 40 };
@@ -164,8 +173,28 @@ export function datosDeDocumento(doc) {
 
 // --- Escritura (alumno) ------------------------------------------------------------------
 
-const urlColeccion = (config = firebaseConfig) => (config?.apiKey && config?.projectId
-  ? `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/fallos` : null);
+const urlColeccion = (config = firebaseConfig, coleccion = 'fallos') => (config?.apiKey && config?.projectId
+  ? `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccion}` : null);
+
+/** El profesor de un código secreto según la copia del navegador de `espacio.js`, o null. */
+function profesorGuardado(almacen, codigo) {
+  try {
+    const profesor = JSON.parse(almacen?.getItem(claveEspacio(codigo)) ?? 'null')?.profesor;
+    return typeof profesor === 'string' && profesor ? profesor : null;
+  } catch { return null; }
+}
+
+/**
+ * La colección a la que va un fallo pendiente: `fallos` con un código de 4; con
+ * uno de 8, la del espacio de su profesor, o null si aún no se sabe cuál es (se
+ * queda en la cola).
+ */
+export function coleccionFallo(pendiente, almacen = null) {
+  const alumno = String(pendiente?.datos?.alumno ?? '');
+  if (alumno.length !== LONGITUD_SECRETO) return 'fallos';
+  const profesor = pendiente.profesor ?? profesorGuardado(almacen, alumno);
+  try { return profesor ? coleccionEspacio(profesor, 'fallos') : null; } catch { return null; }
+}
 
 function leerPendientes(almacen) {
   try {
@@ -193,7 +222,8 @@ export function enviarPendientes({ fetch: pedir = globalThis.fetch, config = fir
     if (!pendientes.length) return;
     const quedan = [];
     for (const p of pendientes) {
-      const url = urlColeccion(config);
+      const coleccion = coleccionFallo(p, almacen);
+      const url = coleccion && urlColeccion(config, coleccion);
       if (!url || typeof pedir !== 'function') { quedan.push(p); continue; }
       let r = null;
       try {
@@ -213,11 +243,12 @@ export function enviarPendientes({ fetch: pedir = globalThis.fetch, config = fir
 
 /**
  * Registra un fallo: lo pone en la cola del navegador y la manda. No hay que
- * esperarlo (devuelve la promesa por si un test quiere hacerlo).
+ * esperarlo (devuelve la promesa por si un test quiere hacerlo). Con un código
+ * de 8, `profesor` es el uid de su espacio (null si aún no se sabe).
  */
-export function registrarFallo(datos, opciones = {}) {
+export function registrarFallo(datos, { profesor = null, ...opciones } = {}) {
   const almacen = opciones.almacen ?? globalThis.localStorage;
-  const pendiente = { id: idFallo(datos.alumno, datos.t), datos };
+  const pendiente = { id: idFallo(datos.alumno, datos.t), datos, ...(profesor && { profesor }) };
   guardarPendientes(almacen, [...leerPendientes(almacen), pendiente]);
   return enviarPendientes({ ...opciones, almacen });
 }
