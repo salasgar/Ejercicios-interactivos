@@ -123,8 +123,8 @@ test('explicar: devuelve una explicación no vacía, en los dos idiomas, para lo
 test('explicar (multiplos y divisores): dice cuál de los números marcados sobra y por qué', () => {
   const m = { tipo: 'multiplos', n: 4, hasta: 20, correctos: [0, 4, 8, 12, 16, 20] };
   assert.match(explicar(m, [0, 4, 14], 'es'), /14 no es múltiplo de 4: no está en la tabla del 4 \(queda entre 12 y 16\)\./);
-  // El que sabe que 2 y 4 van juntos pero no en qué sentido: se le dice que es al revés.
-  assert.match(explicar(m, [0, 2, 4], 'es'), /2 no es múltiplo de 4: no está en la tabla del 4 \(queda entre 0 y 4\)\. Es al revés: 4 es múltiplo de 2 \(<span class="cuenta">4 = 2 · 2<\/span>\)\./);
+  // El que sabe que 2 y 4 van juntos pero no en qué sentido: se le dice que 2 es divisor.
+  assert.match(explicar(m, [0, 2, 4], 'es'), /2 es divisor de 4, no múltiplo: no está en la tabla del 4\./);
   assert.match(explicar(m, [0, 4, 14], 'en'), /14 is not a multiple of 4/);
   const d = { tipo: 'divisores', n: 12, correctos: [1, 2, 3, 4, 6, 12] };
   assert.match(explicar(d, [1, 5, 12], 'es'), /5 no es divisor de 12: <span class="cuenta">12 : 5 = 2, resto 2<\/span>; la división no es exacta\./);
@@ -138,6 +138,18 @@ test('explicar (divisores): quien marca la tabla de n recibe un solo aviso de «
   assert.doesNotMatch(es, /32 no es divisor/);
   assert.match(explicar(d, [1, 2, 4, 8, 16, 32], 'es'), /32 es múltiplo de 16 \(está en su tabla\), no divisor/);
   assert.match(explicar(d, [1, 16, 32, 48], 'en'), /32 and 48 are multiples of 16/);
+});
+
+test('explicar (multiplos): quien marca los divisores de n recibe un solo aviso, y cada aviso va en su línea', () => {
+  const m = { tipo: 'multiplos', n: 10, hasta: 60, correctos: [0, 10, 20, 30, 40, 50, 60] };
+  const en = explicar(m, [1, 2, 5, 10], 'en');
+  assert.match(en, /^You have marked the divisors of 10 \(1, 2 and 5\) instead of its multiples/);
+  assert.doesNotMatch(en, /2 is not a multiple/);
+  assert.equal(en.split('<br>').length, 3); // divisores, el 0 y la lista
+  assert.match(explicar(m, [0, 2, 5, 10], 'es'), /^2 y 5 son divisores de 10, no múltiplos: no están en la tabla del 10\.<br>/);
+  // Con n primo el único divisor menor es el 1: no se le dice «has marcado los divisores».
+  const p = { tipo: 'multiplos', n: 7, hasta: 60, correctos: [0, 7, 14, 21, 28, 35, 42, 49, 56] };
+  assert.match(explicar(p, [0, 1, 7], 'es'), /^1 es divisor de 7, no múltiplo/);
 });
 
 test('explicar (divisores): los avisos del español empiezan en mayúscula tras un punto', () => {
