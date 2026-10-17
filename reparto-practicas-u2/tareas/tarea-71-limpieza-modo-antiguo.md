@@ -60,7 +60,7 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 - **El modo antiguo no se rompe nunca**: hasta la migración de Juan Luis (vuelta de Navidad) sus 51 alumnos siguen con códigos de 4 caracteres, `tareas.js` y las colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`. Cada tarea lo comprueba con un test (la longitud del código decide el modo: 4, antiguo; 8, nuevo).
 - **Nada de datos reales en el repositorio**: ni nombres, ni códigos de alumnos, ni uids de compañeros, ni contraseñas. Las cuentas de prueba y sus contraseñas, por variables de entorno.
 - **Código de prueba del modo antiguo**: 60 (`7NPD`), 61-63. Nunca el de un alumno.
-- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (decidido por Juan Luis el 17-10, «en principio»: la 69 tiene que estar LISTA con «se entrega» antes); el día de enero de su migración, pendiente.
+- Decisiones de Juan Luis posteriores al diseño (17-10): el centro ha dicho que **sí** se puede usar su proyecto de Firebase con alumnos de sus compañeros (G, resuelto); los compañeros empiezan el **lunes 14-12** (decidido por Juan Luis el 17-10, «en principio»: la 69 tiene que estar LISTA con «se entrega» antes); Juan Luis se pasa al sistema nuevo el **1 de enero de 2027** (decidido por él el 17-10; la 70 tiene que estar LISTA antes).
 - Hay una sesión de Juan Luis fuera del reparto que el 17-10 por la tarde editaba `practicas/profesor.js`, `practicas/resultados.js` y su test: antes de tocar esos ficheros, `git status`; si hay cambios sin commit que no son tuyos, no los pises y avisa.
 
 ## Objetivo
