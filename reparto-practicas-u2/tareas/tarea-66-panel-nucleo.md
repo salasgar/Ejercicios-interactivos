@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-17
 Precondición: 63 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h 30 min (real: ~28 min el 17-10; tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/66-panel-nucleo/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/profesor.js`, `practicas/profesor.html`, `practicas/resultados.js`, `practicas/_comun/cifrado.js` (nuevo), `practicas/profesor-tareas.js` y `practicas/profesor-hoy.js` (nuevos, **solo como esqueleto**: ver punto 6), `tests/practicas-resultados.test.js`, `tests/practicas-cifrado.test.js` (nuevo)
 
@@ -92,6 +92,10 @@ El panel para varios profesores (DISENO.md, A.2, F.1; lista H.2, N6). Con la cue
 - No uses `localStorage` para la caché de resultados (no cabe con 100 alumnos): IndexedDB.
 - Web Crypto (`crypto.subtle`) solo funciona en contexto seguro: GitHub Pages y `localhost` lo son; `127.0.0.1` también.
 - Las tarjetas se imprimen con `window.print()` y CSS de impresión; no añadas bibliotecas.
+- (s-20261017T170731-ac14a523) `display: flex` de `.botonera` o de una barra anula el atributo `hidden`: hace falta `.profesor [hidden] { display: none !important; }` (está en el `<style>` de `profesor.html`).
+- (s-20261017T170731-ac14a523) El código de resultado de 20 de un alumno de 8 lleva `n` (desde 1; lo decidió la 65 en `vista-tareas.js`); el del modo antiguo, la posición (desde 0). El panel usa `leerCodigoTareaEspacio` (`resultados.js`), que resta 1.
+- (s-20261017T170731-ac14a523) Para probar sin cuentas: servidor en el scratchpad que sirve el repositorio y cambia `/src/firebase.js` por uno falso que usa la `crearAccesoPanel` real sobre un Firestore en memoria en el servidor; `localhost`, `127.0.0.1` y `[::1]` hacen de tres ordenadores (cada uno con su almacén y su IndexedDB, y los tres son contexto seguro). Para comparar el modo antiguo, `git show HEAD:practicas/profesor.*` servido al lado. La herramienta de JavaScript de Chrome bloquea las salidas con `?c=…`: tapar los enlaces antes de devolverlos.
+- (s-20261017T170731-ac14a523) En zsh, `F="a b c"; git add $F` no parte en palabras: rutas escritas una a una.
 
 ## Prohibido (propio de esta tarea)
 
