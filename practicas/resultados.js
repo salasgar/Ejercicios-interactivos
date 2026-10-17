@@ -195,6 +195,31 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
   }));
 }
 
+/** ¿Ha llegado ya la tarea a su `desde` el día `hoyDia` (contador.js)? Sin `desde`, sí. */
+export const tareaPublicada = (tarea, hoyDia) => !tarea.desde || diaDeFecha(tarea.desde) <= hoyDia;
+
+/**
+ * Lo que resume la última columna de «Tareas de la semana» para un alumno (decisión
+ * de Juan Luis del 17-10-2026): de las tareas ya publicadas que eran obligatorias
+ * para él (las obligatorias con plazo y las asignadas si está marcado), cuántas ha
+ * entregado; y cuántas de repaso ha completado (sin total: son voluntarias). Las
+ * que aún no se han publicado no cuentan en nada.
+ *
+ * @param fila    una fila de `juntarTareas`
+ * @param tareas  las columnas de `juntarTareas`
+ * @returns { entregadas, debidas, repaso }
+ */
+export function cumplidasDe(fila, tareas, hoyDia) {
+  const vigentes = new Set(tareas.filter(t => tareaPublicada(t, hoyDia)).map(t => t.id));
+  const suyas = fila.tareas.filter(c => vigentes.has(c.id));
+  const debidas = suyas.filter(c => c.tipo !== 'repaso');
+  return {
+    entregadas: debidas.filter(c => c.cumplida).length,
+    debidas: debidas.length,
+    repaso: suyas.filter(c => c.tipo === 'repaso' && c.cumplida).length,
+  };
+}
+
 /**
  * Vista «Retrasos» (DISENO.md, B.2): por alumno y por tarea, cuántas entregas a
  * tiempo, con retraso y sin entregar. Solo cuentan las tareas con plazo que
@@ -212,7 +237,7 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
  *          `media` y `maximo`: de las tareas con retraso (entregadas tarde o sin entregar con plazo vencido).
  */
 export function calcularRetrasos(filas, tareas, hoyDia) {
-  const publicada = t => !t.desde || diaDeFecha(t.desde) <= hoyDia;
+  const publicada = t => tareaPublicada(t, hoyDia);
   const resumir = lista => {
     const retrasos = lista.filter(c => c.entrega === 'con retraso' || c.entrega === 'sin entregar').map(c => c.diasRetraso);
     const dias = retrasos.reduce((s, d) => s + d, 0);

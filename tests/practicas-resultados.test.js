@@ -10,8 +10,29 @@ import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import { TAREAS, diaDeFecha } from '../practicas/_comun/tareas.js';
 import {
   juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
-  filtrarFallos, agruparFallos, juntarFallos,
+  filtrarFallos, agruparFallos, juntarFallos, tareaPublicada, cumplidasDe,
 } from '../practicas/resultados.js';
+
+test('«Obligatorias» y «Repaso»: solo las publicadas; las asignadas, si está marcado; el repaso sin total', () => {
+  const hoy = diaDeFecha('2026-10-17');
+  const tareas = [
+    { id: 1, desde: '2026-10-16', hasta: '2026-10-22' },          // obligatoria publicada
+    { id: 2, desde: '2026-10-26', hasta: '2026-10-29' },          // aún no publicada
+    { id: 5, hasta: '2026-10-15', asignada: true },              // asignada
+    { id: 11 },                                                  // repaso
+    { id: 12 },                                                  // repaso
+  ];
+  assert.deepEqual(tareas.map(t => tareaPublicada(t, hoy)), [true, false, true, true, true]);
+  const fila = tipos => ({ tareas: tareas.map((t, i) => ({ id: t.id, ...tipos[i] })) });
+  const ob = (cumplida = false) => ({ tipo: 'obligatoria', cumplida });
+  const rep = (cumplida = false) => ({ tipo: 'repaso', cumplida });
+  // Marcado en la 5: dos obligatorias (la 1 y la 5); la 2 no cuenta aunque la haya hecho.
+  assert.deepEqual(cumplidasDe(fila([ob(true), ob(true), { tipo: 'obligatoria_para_ti', cumplida: false }, rep(true), rep()]), tareas, hoy),
+    { entregadas: 1, debidas: 2, repaso: 1 });
+  // No marcado en la 5: la ve como repaso (y si la completa, cuenta como repaso).
+  assert.deepEqual(cumplidasDe(fila([ob(true), ob(), { tipo: 'repaso', cumplida: true, noAsignado: true }, rep(true), rep(true)]), tareas, hoy),
+    { entregadas: 1, debidas: 1, repaso: 3 });
+});
 
 const SEMAFORO = practicaPorSlug('semaforo').id;
 const PLAZO = diaDeFecha('2026-10-22');
