@@ -102,6 +102,11 @@ Esta tarea deja el sistema preparado para eso; **no registra ni copia nada** (es
 - El alfabeto (`ALFABETO`) es el mismo en los dos sistemas: por eso los de 4 generados descartan los calculables.
 - AJJN (número 1000) es el alumno de prueba de Juan Luis: no lo uses ni lo registres (lo registra la 70).
 - Una búsqueda más por alumno al entrar: va al navegador para no repetirla (cuotas, DISENO.md F.7).
+- (Aprendido en la sesión, 17-10) La lista de «Ficheros que toca» se quedaba corta: `registro.js` (`coleccionFallo`) y `src/firebase.js` (`CODIGO_SECRETO`, `n ≤ 250`) también decidían por la longitud, y `profesor-tareas.js` borraba al guardar cualquier campo de la configuración que no fuera `unidades`/`tareas`. Antes de empezar una tarea así: `grep` de la longitud (`=== 8`, `{8}`, `LONGITUD_`) en `practicas/`, `src/` y `herramientas/`, no solo en lo que nombra la ficha.
+- `String(null)` es `'NULL'`: 4 símbolos del alfabeto. Con los códigos de 4 sin control, `limpiar(null)` pasaba por un código; ahora `null`/`undefined` son «nada».
+- Las reglas antiguas de `practicas/` aceptan cualquier código de 4 símbolos (no pueden calcular el control): un código de 4 del sistema nuevo sin profesor conocido no puede caer ahí (`ubicacionProgreso` solo manda a las colecciones de siempre los antiguos).
+- Antes de publicar las reglas, la búsqueda de un código de 4 da 403, no 404: el modo antiguo sigue igual, pero un código de 4 mal tecleado no avisa de «no existe» (se practica sin nube). Publicar las reglas a la vez que el código.
+- Las cuentas de prueba de la 61 dejaron de entrar (INVALID_LOGIN_CREDENTIALS); con correos inventados «Restablecer contraseña» no sirve: se crean otras dos y se dan de alta en `practicas-profesores`. Para que Juan Luis lance el banco sin pasar contraseñas por el chat: bloque con `read -s` en la app Terminal y `| tee` a un fichero del scratchpad (el `!` de la extensión de VS Code no le funcionó).
 
 ## Prohibido (propio de esta tarea)
 
