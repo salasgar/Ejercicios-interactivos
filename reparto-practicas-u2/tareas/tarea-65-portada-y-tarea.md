@@ -88,6 +88,7 @@ Que el alumno con código de 8 vea en la portada y en la página de la tarea **l
 
 - `portada.js` y `semana.js` comparten lógica en `vista-tareas.js` (52): pon ahí lo nuevo, que se prueba sin DOM.
 - La tarea 1 de Juan Luis (`progresoPorPractica`) solo existe en el modo antiguo.
+- (Tras hacerla) `index.html` y `semana.html` no hicieron falta. `resolverCodigo` espera hasta 4 s a la red: la portada pinta antes con la copia (`contextoGuardado`). El `maxlength` de la entrada es 12 (el código con guion mide 9). No editar código con scripts de shell: el candado no lo ve.
 
 ## Prohibido (propio de esta tarea)
 
