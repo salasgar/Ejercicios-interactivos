@@ -27,6 +27,14 @@
 //   --grupos   nombre:desde-hasta por grupo, con los números de lista
 //   --json     además del informe, el resumen completo en JSON (última línea)
 //
+// En el espacio de un profesor (varios profesores, tareas 68 y 70), con una cuenta
+// lectora (LECTOR_EMAIL y LECTOR_CLAVE en el entorno):
+//   node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>]
+//        [--grupos …] [--tarea N] [--horas 24] [--json]
+//   --alumnos  (Juan Luis, desde su paso al sistema nuevo) sus códigos de siempre 1..N
+//   --codigos  el CSV de «Mis alumnos» (número y código; códigos de 4 u 8)
+//   Sin ninguno de los dos, el informe no sabe quién no ha entrado.
+//
 // Las funciones de cálculo (resumirEjercicio, agregar, formatear) son puras y
 // están probadas en tests/herramientas-informe.test.js.
 
@@ -327,13 +335,48 @@ export function listaDeCodigos(codigos) {
  */
 export function leerCsvCodigos(texto) {
   const lista = [];
+  const deCodigo = c => c.replace(/-/g, '').toUpperCase();
+  const es8 = c => /^[A-HJ-NP-Z2-9]{8}$/.test(c);
+  const es4u8 = c => /^[A-HJ-NP-Z2-9]{4}(?:[A-HJ-NP-Z2-9]{4})?$/.test(c);
   for (const linea of String(texto ?? '').split(/\r?\n/)) {
-    const campos = linea.split(/[;,]/).map(c => c.trim().replace(/^"|"$/g, ''));
+    const campos = camposCsv(linea);
     const numero = Number(campos[0]);
-    const codigo = campos.map(c => c.replace(/-/g, '').toUpperCase()).find(c => /^[A-HJ-NP-Z2-9]{8}$/.test(c));
+    // De 8 o de 4 (tarea 72: los de Juan Luis son los de siempre). Uno de 4 solo se
+    // toma de la columna «Código» o del enlace (?c=…): un nombre como «Juan» también
+    // son cuatro letras del alfabeto.
+    const columna = deCodigo(campos[2] ?? '');
+    const enlace = campos.map(c => c.match(/[?&]c=([A-Za-z0-9]{4,8})(?:[&#]|$)/)?.[1]).find(Boolean);
+    const codigo = es4u8(columna) ? columna
+      : campos.map(deCodigo).find(es8) ?? (enlace && es4u8(deCodigo(enlace)) ? deCodigo(enlace) : null);
     if (Number.isInteger(numero) && numero >= 1 && codigo) lista.push({ numero, codigo });
   }
   return lista.sort((a, b) => a.numero - b.numero);
+}
+
+/** Los campos de una línea CSV, con `,` o `;` y comillas (dentro de comillas, ni el separador ni `""` cortan). */
+function camposCsv(linea) {
+  const campos = [];
+  let actual = '', comillas = false;
+  for (let i = 0; i < linea.length; i++) {
+    const c = linea[i];
+    if (comillas) {
+      if (c === '"' && linea[i + 1] === '"') { actual += '"'; i++; }
+      else if (c === '"') comillas = false;
+      else actual += c;
+    } else if (c === '"') comillas = true;
+    else if (c === ',' || c === ';') { campos.push(actual.trim()); actual = ''; }
+    else actual += c;
+  }
+  campos.push(actual.trim());
+  return campos;
+}
+
+/**
+ * Los códigos de siempre de los números 1..N (`codigoAlumno`): la lista de Juan Luis
+ * en su espacio (tarea 70: sus alumnos conservan los códigos de 4 del modo antiguo).
+ */
+export function listaDeSiempre(alumnos) {
+  return Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) }));
 }
 
 /** Sin lista de códigos: los que aparecen en los documentos (el último trozo del id), sin número de lista. */
@@ -452,8 +495,11 @@ async function mainEspacio(uid) {
   const csv = argumento('codigos', null);
   // `node:fs` solo se pide aquí: este módulo también lo importa el navegador (pestaña «Hoy»).
   const listaCsv = csv ? leerCsvCodigos((await import('node:fs')).readFileSync(csv, 'utf8')) : [];
-  const listaCompleta = listaCsv.length > 0;
-  const lista = listaCompleta ? listaCsv : listaDeDocumentos(docs, tarea.asignada ? asignaciones : null);
+  // `--alumnos N` (sin CSV): los códigos de siempre 1..N, los del espacio de Juan Luis (tarea 70).
+  const alumnos = Number(argumento('alumnos', 0));
+  const listaFija = listaCsv.length ? listaCsv : alumnos > 0 ? listaDeSiempre(alumnos) : [];
+  const listaCompleta = listaFija.length > 0;
+  const lista = listaCompleta ? listaFija : listaDeDocumentos(docs, tarea.asignada ? asignaciones : null);
   const resumen = agregar({ docs, tarea, lista, listaCompleta, desde: ahora - horas * 3600 * 1000, grupos, asignaciones, ahora });
   console.log(formatear(resumen, { tarea, ahora, horas, motivo, fuente: `practicas-espacios/${uid}/progreso-tareas y progreso-libre (cuenta lectora)` }));
   if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));

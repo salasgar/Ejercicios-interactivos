@@ -103,6 +103,8 @@ export function tareaDeFormulario(base, { tituloEs, tituloEn, unidad, desde, has
   if (desde) t.desde = desde;
   if (hasta) t.hasta = hasta;
   if (asignada) t.asignada = true;
+  // La tarea 1 que viene del sistema actual (tarea 70) sigue leyendo el progreso de la práctica libre.
+  if (base.progresoPorPractica === true) t.progresoPorPractica = true;
   t.estrella = marcas.filter(m => m.tipo === 'estrella').map(m => [m.slug, m.n]);
   t.elegir = marcas.filter(m => m.tipo === 'elegir').map(m => [m.slug, m.n]);
   t.nElegir = Math.max(0, Math.min(Number.isFinite(nElegir) ? nElegir : 0, t.elegir.length));
