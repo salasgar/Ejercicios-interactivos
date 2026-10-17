@@ -121,6 +121,17 @@ si el código escribiera en una colección sin regla, el alumno perdería progre
   terminadas por si dejaron algo escrito sobre la consola.
 - Sin las reglas publicadas, la 51 (base) y la 53 (panel) no pueden cerrarse: por eso esta es
   atendida y corta.
+- (2026-10-17, s-20261016T210110-64cbee4b) `tests/practicas-registro.test.js` lee
+  `firestore.rules` y exige que `hasOnly` de `fallos/` sea igual a los campos de `datosFallo`:
+  tocar esa regla rompe `npm test`, y `pages.yml` no despliega con tests en rojo. Hubo que
+  tocar ese test (de la 51) aunque la ficha no lo listaba.
+- Las reglas de Firestore no pueden comprobar el tipo de cada elemento de una lista: «lista de
+  enteros» se queda en `is list` + tamaño, y lo asegura el código del profesor.
+- Enlace directo a las reglas en la consola:
+  https://console.firebase.google.com/project/ejercicios-interactivos/firestore/databases/-default-/rules
+  Juan Luis puede tardar horas en publicarlas: alarga la caducidad antes de esperar y, si caduca
+  igualmente, comprueba que nadie te ha relevado antes de seguir.
+- Duración real: ~15 min de trabajo; la espera de la publicación, aparte.
 
 ## Prohibido (propio de esta tarea)
 
