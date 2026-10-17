@@ -130,6 +130,9 @@ Solo lectura: todo lo listado en «Siguiente paso»; `reparto-practicas-u2/proye
 - El panel lee la colección `practicas` partiendo el id por `--` (`resultados.js`): lo nuevo va en colecciones aparte, con el prefijo `practicas-` (en las mismas reglas ya existen `tareas/` y `alumnos/` de la aplicación antigua).
 - A Juan Luis una pregunta técnica le resulta opaca (lección de la 45): explica en llano qué cambia para él, para sus compañeros y para los alumnos.
 - La 45 duró unos 40 minutos con tres rondas de preguntas; esta tiene más decisiones (B y E son de peso). No las precipites: si él duda, déjalas como «propuesta pendiente» con tu recomendación.
+- (s-20261017T085824-72f01790, al cerrar) Al pedirle que apruebe un documento, dale **la ruta completa** del fichero en el mismo mensaje: la primera vez contestó «¿dónde está el archivo?». Tres rondas de preguntas (cuatro, cuatro y una) bastaron; duró ~1 h 20 min.
+- (ídem) Este Mac **no tiene Java** (`java -version` falla), así que no hay emulador de Firestore; Juan Luis prefirió no instalarlo. Las reglas de la implementación se prueban por REST en el proyecto real, como en la 49.
+- (ídem) `_ESTADO.md` estuvo reservado por el candado de otra sesión desde el reclamo hasta el cierre: se regenera al cerrar, como dice el tablón.
 
 ## Prohibido (propio de esta tarea)
 
