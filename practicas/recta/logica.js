@@ -112,20 +112,46 @@ export function esCorrecta(item, respuesta) {
   throw new Error(`Tipo de ítem desconocido: ${item.tipo}`);
 }
 
+/**
+ * Los divisores de n marcados como múltiplos van en una sola frase: es
+ * confundir múltiplo con divisor (el espejo del ejercicio 2). Si los ha marcado
+ * todos (y n tiene más de uno, sin contarse a sí mismo), se le dice tal cual.
+ */
+function avisoDivisoresMarcados(deDivisores, n, idioma) {
+  const lista = unir(deDivisores.map(String), idioma);
+  const todos = deDivisores.length >= 2 && deDivisores.length === divisoresDe(n).length - 1;
+  const varios = deDivisores.length > 1;
+  if (idioma === 'es') {
+    return todos
+      ? `Has marcado los divisores de ${n} (${lista}) en vez de sus múltiplos: los múltiplos de ${n} empiezan en 0 y van de ${n} en ${n}.`
+      : `${lista} ${varios ? 'son divisores' : 'es divisor'} de ${n}, no ${varios ? 'múltiplos' : 'múltiplo'}: no ${varios ? 'están' : 'está'} en la tabla del ${n}.`;
+  }
+  return todos
+    ? `You have marked the divisors of ${n} (${lista}) instead of its multiples: the multiples of ${n} start at 0 and go up in ${n}s.`
+    : `${lista} ${varios ? 'are divisors' : 'is a divisor'} of ${n}, not ${varios ? 'multiples' : 'a multiple'}: ${varios ? 'they are' : 'it is'} not in the ${n} times table.`;
+}
+
+// Cada aviso de los ejercicios 1 y 2 va en su línea: seguidos no se leían.
+const enLineas = avisos => avisos.join('<br>');
+
 function explicarMultiplos(item, respuesta, idioma) {
   const marcados = new Set(respuesta);
-  const faltaCero = !marcados.has(0);
   const ultimo = item.correctos.at(-1);
   const siguientes = [ultimo + item.n, ultimo + 2 * item.n, ultimo + 3 * item.n].join(', ');
   const lista = item.correctos.join(', ');
-  const sobran = [...marcados].filter(x => x !== 0 && !item.correctos.includes(x)).sort((x, y) => x - y)
-    .map(x => `${noEsMultiploCorto(x, item.n, idioma)} `).join('');
-  if (idioma === 'es') {
-    const cero = faltaCero ? `<span class="cuenta">0 = ${item.n} · 0</span>: el 0 es múltiplo de ${item.n} (y de todos los números). ` : '';
-    return `${sobran}${cero}Los múltiplos de ${item.n} hasta ${item.hasta} son ${lista}. Y siguen: ${siguientes}… los múltiplos no se acaban.`;
+  const sobran = [...marcados].filter(x => x !== 0 && !item.correctos.includes(x)).sort((x, y) => x - y);
+  const deDivisores = sobran.filter(x => item.n % x === 0);
+  const avisos = sobran.filter(x => item.n % x !== 0).map(x => noEsMultiploCorto(x, item.n, idioma));
+  if (deDivisores.length) avisos.unshift(avisoDivisoresMarcados(deDivisores, item.n, idioma));
+  if (!marcados.has(0)) {
+    avisos.push(idioma === 'es'
+      ? `<span class="cuenta">0 = ${item.n} · 0</span>: el 0 es múltiplo de ${item.n} (y de todos los números).`
+      : `<span class="cuenta">0 = ${item.n} · 0</span>: 0 is a multiple of ${item.n} (and of every number).`);
   }
-  const cero = faltaCero ? `<span class="cuenta">0 = ${item.n} · 0</span>: 0 is a multiple of ${item.n} (and of every number). ` : '';
-  return `${sobran}${cero}The multiples of ${item.n} up to ${item.hasta} are ${lista}. And they carry on: ${siguientes}… multiples never end.`;
+  avisos.push(idioma === 'es'
+    ? `Los múltiplos de ${item.n} hasta ${item.hasta} son ${lista}. Y siguen: ${siguientes}… los múltiplos no se acaban.`
+    : `The multiples of ${item.n} up to ${item.hasta} are ${lista}. And they carry on: ${siguientes}… multiples never end.`);
+  return enLineas(avisos);
 }
 
 function explicarDivisores(item, respuesta, idioma) {
@@ -156,7 +182,7 @@ function explicarDivisores(item, respuesta, idioma) {
     ? `Los divisores de ${item.n} son ${lista}. Después del ${item.n} ya no hay más: los divisores se acaban.`
     : `The divisors of ${item.n} are ${lista}. After ${item.n} there are no more: divisors run out.`;
   const mayus = a => a.charAt(0).toUpperCase() + a.slice(1);
-  return `${avisos.length ? `${avisos.map(mayus).join(' ')} ` : ''}${base}`;
+  return enLineas([...avisos.map(mayus), base]);
 }
 
 const EXPLICACION_FIJA = {
