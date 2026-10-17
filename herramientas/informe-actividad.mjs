@@ -31,10 +31,12 @@
 // están probadas en tests/herramientas-informe.test.js.
 
 import { codigoAlumno } from '../practicas/_comun/codigos.js';
-import { TAREAS, tareaPorId, PUNTOS_POR_EJERCICIO, estadoTarea, estadoPlazo, diaDeFecha } from '../practicas/_comun/tareas.js';
+import { TAREAS, tareaPorId, PUNTOS_POR_EJERCICIO, estadoTarea, estadoPlazo, diaDeFecha, configDeJSON } from '../practicas/_comun/tareas.js';
 import {
   urlDocumento, leerDocumentoRest, leerAsignacion, idDocumentoPractica, idDocumentoTarea, COLECCION_TAREAS,
+  leerConfig, leerAsignacionRest, coleccionEspacio,
 } from '../practicas/_comun/nube.js';
+import { firebaseConfig } from '../src/config.js';
 import { diaDe, fechaDeDia } from '../practicas/_comun/contador.js';
 
 // --- Umbrales de las alertas (se pueden ajustar) --------------------------------
@@ -129,7 +131,11 @@ export function leerGrupos(texto) {
  *   asignaciones  Map código → { tareas: [ids] } | null; solo se mira si la tarea es `asignada`
  *   ahora    ms: «hoy», para el plazo y el retraso (por defecto, ahora mismo)
  */
-export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones = null, ahora = Date.now(), umbrales = UMBRALES }) {
+export function agregar({ docs, tarea, alumnos, lista = null, listaCompleta = true, nombres = null, desde, grupos = [], asignaciones = null, ahora = Date.now(), umbrales = UMBRALES }) {
+  // `lista` ([{ numero, codigo }]) sustituye a «los códigos 1..alumnos» del modo antiguo (en el espacio
+  // de un profesor los códigos son secretos); `numero` puede ser null si no se conoce. `nombres`
+  // (Map número → nombre) solo lo usa la pestaña «Hoy» del panel, que los tiene descifrados.
+  const alumnosDe = lista ?? Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) }));
   const ejercicios = ejerciciosDe(tarea);
   const slugs = [...new Set(ejercicios.map(e => e.slug))];
   const porEjercicio = ejercicios.map(e => ({ ...e, intentan: 0, terminan: 0, aciertos: 0, fallos: 0, reinicios: 0, reinician: 0 }));
@@ -138,9 +144,7 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones
   const plazoVencido = Boolean(tarea.hasta) && hoyDia > diaDeFecha(tarea.hasta);
   const filas = [];
   let noAsignados = 0;
-  for (let i = 0; i < alumnos; i++) {
-    const codigo = codigoAlumno(i);
-    const numero = i + 1;
+  for (const { numero, codigo } of alumnosDe) {
     if (tarea.asignada && !asignaciones?.get(codigo)?.tareas?.includes(tarea.id)) { noAsignados++; continue; }
     let existe = false, ultima = 0;
     const porSlug = new Map();
@@ -169,7 +173,7 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones
     const estado = estadoTarea(tarea, (slug, n) => porSlug.get(slug)?.[n - 1] ?? null);
     const entrega = estadoPlazo(tarea, estado, hoyDia, true);
     filas.push({
-      numero, codigo, grupo: grupoDe(numero, grupos), existe, activo: existe && ultima >= desde, ultima, entrega,
+      numero, codigo, ...(nombres?.get(numero) && { nombre: nombres.get(numero) }), grupo: numero ? grupoDe(numero, grupos) : '?', existe, activo: existe && ultima >= desde, ultima, entrega,
       puntos, terminadosEstrella, terminadosElegir: Math.min(terminadosElegir, tarea.nElegir), terminadosHoy, fallos, reinicios,
       completa: terminadosEstrella === tarea.estrella.length && terminadosElegir >= tarea.nElegir,
     });
@@ -184,12 +188,12 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones
   const activos = filas.filter(f => f.activo).length;
   const hanEntrado = filas.filter(f => f.existe).length;
   // Pasado el plazo es normal que casi nadie esté activo: no se avisa.
-  if (!plazoVencido && total > 0 && activos < umbrales.parteActivaBaja * total) {
+  if (listaCompleta && !plazoVencido && total > 0 && activos < umbrales.parteActivaBaja * total) {
     alertas.push(`Poca actividad: solo ${activos} de ${total} alumnos han hecho algo en la ventana (${hanEntrado} han entrado alguna vez).`);
   }
   for (const f of filas) {
     if (f.existe && f.puntos === 0 && f.fallos >= umbrales.fallosSinPuntos) {
-      alertas.push(`El alumno n.º ${f.numero} (${f.grupo}, código ${f.codigo}) lleva ${f.fallos} fallos y 0 puntos: puede que no se aclare.`);
+      alertas.push(`${f.nombre ? `${f.nombre} (n.º ${f.numero}, código ${f.codigo})` : `El alumno ${f.numero ? `n.º ${f.numero}` : 'con código'} (${f.grupo}, código ${f.codigo})`} lleva ${f.fallos} fallos y 0 puntos: puede que no se aclare.`);
     }
   }
   for (const pe of porEjercicio) {
@@ -210,7 +214,7 @@ export function agregar({ docs, tarea, alumnos, desde, grupos = [], asignaciones
     conRetraso: filas.filter(f => f.entrega.entregada && f.entrega.fueraDePlazo).length,
     sinEntregar: filas.filter(f => !f.entrega.entregada).length,
   } : null;
-  return { alumnos: filas, ejercicios: porEjercicio, alertas, activos, hanEntrado, total, noAsignados, plazo, desde, diaDesde };
+  return { alumnos: filas, ejercicios: porEjercicio, alertas, activos, hanEntrado, total, noAsignados, plazo, desde, diaDesde, ...(listaCompleta ? {} : { listaCompleta }) };
 }
 
 /** «a tiempo», «3 días tarde» o «sin entregar» (vacío si la tarea no tiene plazo para el alumno). */
@@ -224,7 +228,7 @@ export function textoEntrega(e) {
 const pct = (a, b) => (b ? `${Math.round((100 * a) / b)} %` : '—');
 
 /** El informe en Markdown (en español, para Juan Luis). */
-export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = null } = {}) {
+export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = null, fuente: fuenteTexto = null } = {}) {
   const fecha = f => new Date(f).toLocaleString('es-ES', { timeZone: 'Europe/Madrid', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
   const L = [];
   L.push(`# Actividad en las prácticas · ${fecha(ahora)} (hora peninsular)`);
@@ -272,16 +276,72 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = n
   L.push('## Alumnos (número de lista · grupo · puntos de la tarea · ★ terminadas · fallos · última actividad)');
   const orden = [...r.alumnos].filter(f => f.existe).sort((a, b) => b.puntos - a.puntos || a.numero - b.numero);
   for (const f of orden) {
-    L.push(`- ${f.numero} · ${f.grupo} · ${f.puntos} pt · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}${textoEntrega(f.entrega) ? ` · ${textoEntrega(f.entrega)}` : ''}`);
+    L.push(`- ${f.numero ?? f.codigo} · ${f.grupo} · ${f.puntos} pt · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}${textoEntrega(f.entrega) ? ` · ${textoEntrega(f.entrega)}` : ''}`);
   }
   if (!orden.length) L.push('- (nadie ha entrado todavía)');
   const nunca = r.alumnos.filter(f => !f.existe).map(f => f.numero);
   L.push('');
-  L.push(nunca.length ? `Nunca han entrado (números de lista): ${nunca.join(', ')}.` : 'Todos han entrado alguna vez.');
+  if (r.listaCompleta === false) L.push('No se sabe quién no ha entrado: el informe no tiene la lista de códigos del espacio (pásala con --codigos <CSV de «Mis alumnos»>).');
+  else L.push(nunca.length ? `Nunca han entrado (números de lista): ${nunca.join(', ')}.` : 'Todos han entrado alguna vez.');
   L.push('');
-  const fuente = tarea.progresoPorPractica ? 'practicas/<slug>--<código>' : 'practicas-tareas/t<id>--<slug>--<código>';
+  const fuente = fuenteTexto ?? (tarea.progresoPorPractica ? 'practicas/<slug>--<código>' : 'practicas-tareas/t<id>--<slug>--<código>');
   L.push(`_Fuente: documentos ${fuente} de Firestore (día ${r.diaDesde} = ${fechaDeDia(r.diaDesde)} en adelante para «terminados en la ventana»)._`);
   return L.join('\n');
+}
+
+// --- Datos del espacio de un profesor (varios profesores, tarea 68) -----------------
+//
+// Los mismos cálculos de arriba sirven a la pestaña «Hoy» del panel (en el navegador)
+// y a `--espacio` (en Node). Los documentos llegan crudos, como los devuelven el SDK
+// del panel y la lista REST de abajo: `{ id, estado, actualizado }` (`estado` es el JSON
+// de la app) y, en las asignaciones, `{ id, tareas }`.
+
+/** Documentos crudos de `progreso-libre` y `progreso-tareas` → Map id → { ej, actualizado } (lo ilegible se descarta). */
+export function documentosAMapa(...listas) {
+  const docs = new Map();
+  for (const doc of listas.flat()) {
+    try {
+      const estado = JSON.parse(doc.estado);
+      if (Array.isArray(estado?.ej)) docs.set(String(doc.id), { ej: estado.ej, actualizado: Number(doc.actualizado) || 0 });
+    } catch { /* un documento ilegible no cuenta */ }
+  }
+  return docs;
+}
+
+/** Asignaciones crudas ({ id: código, tareas: [ids] }) → Map código → { tareas }. */
+export function asignacionesAMapa(crudas) {
+  const mapa = new Map();
+  for (const a of crudas ?? []) if (Array.isArray(a?.tareas)) mapa.set(String(a.id), { tareas: a.tareas.map(Number).filter(Number.isInteger) });
+  return mapa;
+}
+
+/** Los códigos del profesor (`listarMisCodigos`: [{ id, n }]) → [{ numero, codigo }] por número de lista. */
+export function listaDeCodigos(codigos) {
+  return (codigos ?? []).filter(c => typeof c?.id === 'string' && Number.isInteger(c?.n) && c.n >= 1)
+    .map(c => ({ numero: c.n, codigo: c.id })).sort((a, b) => a.numero - b.numero);
+}
+
+/**
+ * La lista de códigos de un CSV de «Mis alumnos» (número, nombre, código, enlace): solo
+ * se leen el número y el código, no los nombres. Acepta `,` o `;` y comillas.
+ */
+export function leerCsvCodigos(texto) {
+  const lista = [];
+  for (const linea of String(texto ?? '').split(/\r?\n/)) {
+    const campos = linea.split(/[;,]/).map(c => c.trim().replace(/^"|"$/g, ''));
+    const numero = Number(campos[0]);
+    const codigo = campos.map(c => c.replace(/-/g, '').toUpperCase()).find(c => /^[A-HJ-NP-Z2-9]{8}$/.test(c));
+    if (Number.isInteger(numero) && numero >= 1 && codigo) lista.push({ numero, codigo });
+  }
+  return lista.sort((a, b) => a.numero - b.numero);
+}
+
+/** Sin lista de códigos: los que aparecen en los documentos (el último trozo del id), sin número de lista. */
+export function listaDeDocumentos(docs, asignaciones = null) {
+  const codigos = new Set();
+  for (const id of docs.keys()) codigos.add(id.split('--').at(-1));
+  for (const c of asignaciones?.keys() ?? []) codigos.add(c);
+  return [...codigos].sort().map(codigo => ({ numero: null, codigo }));
 }
 
 // --- Lectura de Firestore -----------------------------------------------------------
@@ -327,12 +387,81 @@ async function leerTodos(tarea, slugs, alumnos, concurrencia = 8) {
   return { docs, errores, asignaciones };
 }
 
+// Con `--espacio <uid>`: una cuenta de solo lectura (correo y contraseña de Firebase, en las
+// variables de entorno LECTOR_EMAIL y LECTOR_CLAVE) que el profesor ha añadido como lectora
+// de su espacio. Inicio de sesión y lectura por REST, sin el SDK.
+
+/** Inicia sesión con correo y contraseña; devuelve el token. Los errores no repiten la contraseña. */
+async function iniciarSesion(email, clave) {
+  const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password: clave, returnSecureToken: true }),
+  });
+  const json = await r.json().catch(() => ({}));
+  if (!r.ok || !json.idToken) throw new Error(`No se ha podido iniciar sesión con la cuenta lectora (HTTP ${r.status}: ${json?.error?.message ?? 'sin detalle'})`);
+  return json.idToken;
+}
+
+/** Todos los documentos de una subcolección del espacio, crudos como los da el SDK; 403 si la cuenta no es lectora. */
+export async function listarSubcoleccion(uid, sub, token, { pedir = globalThis.fetch, config = firebaseConfig } = {}) {
+  const base = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccionEspacio(uid, sub)}`;
+  const docs = [];
+  let pagina = '';
+  do {
+    const r = await pedir(`${base}?pageSize=300${pagina}`, { headers: { Authorization: `Bearer ${token}` } });
+    if (r.status === 403) throw new Error(`Sin permiso para leer «${sub}» del espacio (403): la cuenta no es lectora de ese espacio`);
+    if (!r.ok) throw new Error(`HTTP ${r.status} al leer «${sub}»`);
+    const json = await r.json();
+    for (const d of json.documents ?? []) {
+      const f = d.fields ?? {};
+      docs.push({
+        id: d.name.split('/').at(-1),
+        estado: f.estado?.stringValue,
+        actualizado: Number(f.actualizado?.integerValue) || 0,
+        ...(sub === 'asignaciones' ? leerAsignacionRest(d) : {}),
+      });
+    }
+    pagina = json.nextPageToken ? `&pageToken=${encodeURIComponent(json.nextPageToken)}` : '';
+  } while (pagina);
+  return docs;
+}
+
 function argumento(nombre, porDefecto) {
   const i = process.argv.indexOf(`--${nombre}`);
   return i >= 0 && process.argv[i + 1] !== undefined ? process.argv[i + 1] : porDefecto;
 }
 
+/** El informe de un espacio (`--espacio`): tareas del profesor, documentos del espacio, lista de códigos del CSV si se da. */
+async function mainEspacio(uid) {
+  const email = process.env.LECTOR_EMAIL;
+  const clave = process.env.LECTOR_CLAVE;
+  if (!email || !clave) { console.error('Faltan LECTOR_EMAIL y LECTOR_CLAVE (variables de entorno) para --espacio'); process.exit(2); }
+  const horas = Number(argumento('horas', 24));
+  const grupos = leerGrupos(argumento('grupos', ''));
+  const ahora = Date.now();
+  const lectura = await leerConfig(uid);
+  if (lectura.estado !== 'ok') { console.error(`No se ha podido leer la configuración de tareas del espacio (${lectura.estado})`); process.exit(1); }
+  const tareas = configDeJSON(lectura.json)?.tareas ?? [];
+  const idPedido = argumento('tarea', null);
+  const elegida = idPedido === null ? tareaVigente(fechaMadrid(ahora), tareas) : { tarea: tareaPorId(Number(idPedido), tareas), motivo: null };
+  const { tarea, motivo } = elegida;
+  if (!tarea) { console.error('Ese espacio no tiene esa tarea (o no tiene ninguna)'); process.exit(2); }
+  const token = await iniciarSesion(email, clave);
+  const [libre, deTareas, crudasAsignaciones] = await Promise.all(['progreso-libre', 'progreso-tareas', 'asignaciones'].map(s => listarSubcoleccion(uid, s, token)));
+  const docs = documentosAMapa(libre, deTareas);
+  const asignaciones = asignacionesAMapa(crudasAsignaciones);
+  const csv = argumento('codigos', null);
+  // `node:fs` solo se pide aquí: este módulo también lo importa el navegador (pestaña «Hoy»).
+  const listaCsv = csv ? leerCsvCodigos((await import('node:fs')).readFileSync(csv, 'utf8')) : [];
+  const listaCompleta = listaCsv.length > 0;
+  const lista = listaCompleta ? listaCsv : listaDeDocumentos(docs, tarea.asignada ? asignaciones : null);
+  const resumen = agregar({ docs, tarea, lista, listaCompleta, desde: ahora - horas * 3600 * 1000, grupos, asignaciones, ahora });
+  console.log(formatear(resumen, { tarea, ahora, horas, motivo, fuente: `practicas-espacios/${uid}/progreso-tareas y progreso-libre (cuenta lectora)` }));
+  if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));
+}
+
 async function main() {
+  const espacio = argumento('espacio', null);
+  if (espacio) return mainEspacio(espacio);
   const alumnos = Number(argumento('alumnos', 51));
   const horas = Number(argumento('horas', 24));
   const grupos = leerGrupos(argumento('grupos', '1.º A:1-29,E1CB:30-46,E1DB:47-51'));
@@ -353,6 +482,7 @@ async function main() {
   if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));
 }
 
-if (process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
+// En el navegador (pestaña «Hoy») `process` no existe: solo se ejecuta como programa en Node.
+if (typeof process !== 'undefined' && process.argv?.[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
   main().catch(e => { console.error(e); process.exit(1); });
 }

@@ -6,7 +6,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   resumirEjercicio, ejerciciosDe, leerGrupos, agregar, formatear, UMBRALES, claveDocumento, tareaVigente, fechaMadrid, textoEntrega,
+  documentosAMapa, asignacionesAMapa, listaDeCodigos, leerCsvCodigos, listaDeDocumentos, listarSubcoleccion,
 } from '../herramientas/informe-actividad.mjs';
+import { calcularHoy, etiqueta } from '../practicas/profesor-hoy.js';
 import { tareaPorId, diaDeFecha } from '../practicas/_comun/tareas.js';
 import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import { diaDe } from '../practicas/_comun/contador.js';
@@ -255,4 +257,125 @@ test('«Tarea completa» dice lo que vale la tarea, no siempre 100 puntos', () =
   const r = agregar({ docs: new Map(), tarea: TAREA_V2, alumnos: 3, desde: DESDE, ahora: AHORA });
   assert.match(formatear(r, { tarea: TAREA_V2, ahora: AHORA, horas: 24 }), /Tarea completa \(30 puntos\)/);
   assert.match(formatear(agregar({ docs: new Map(), tarea, alumnos: 3, desde: DESDE, ahora: AHORA }), { tarea, ahora: AHORA, horas: 24 }), /Tarea completa \(100 puntos\)/);
+});
+
+// --- Espacio de un profesor (tarea 68): códigos secretos, «Hoy» y `--espacio` ------------------------
+
+const SECRETOS = ['K7QMP3XA', 'H2N8WRTB', 'ZC4D9EFG'];   // inventados; el alfabeto no tiene I, O, 0 ni 1
+const estadoDe = ejs => JSON.stringify({ ej: ejs });
+/** Un documento crudo como lo da el SDK del panel o la lista REST. */
+const crudo = (id, ejs, actualizado = AHORA - 1000) => ({ id, estado: estadoDe(ejs), actualizado });
+
+test('documentosAMapa y asignacionesAMapa: de los crudos al Map de agregar; lo ilegible se descarta', () => {
+  const docs = documentosAMapa(
+    [crudo('recta--K7QMP3XA', [ej(10)])],
+    [crudo('t77--recta--K7QMP3XA', [ej(5)]), { id: 't77--recta--H2N8WRTB', estado: 'no es json', actualizado: 1 }, { id: 'x', estado: '{"sin":"ej"}', actualizado: 1 }],
+  );
+  assert.deepEqual([...docs.keys()], ['recta--K7QMP3XA', 't77--recta--K7QMP3XA']);
+  assert.equal(docs.get('t77--recta--K7QMP3XA').ej[0].puntos, 5);
+  assert.equal(docs.get('t77--recta--K7QMP3XA').actualizado, AHORA - 1000);
+  const asig = asignacionesAMapa([{ id: 'K7QMP3XA', tareas: [77, '3'] }, { id: 'sin-tareas' }]);
+  assert.deepEqual([...asig.keys()], ['K7QMP3XA']);
+  assert.deepEqual(asig.get('K7QMP3XA'), { tareas: [77, 3] });
+});
+
+test('listaDeCodigos, leerCsvCodigos y listaDeDocumentos: de dónde sale la lista de códigos', () => {
+  assert.deepEqual(listaDeCodigos([{ id: SECRETOS[1], n: 2 }, { id: SECRETOS[0], n: 1 }, { id: 'x', n: 0 }, { n: 3 }]), [{ numero: 1, codigo: SECRETOS[0] }, { numero: 2, codigo: SECRETOS[1] }]);
+  // El CSV de «Mis alumnos» trae los nombres: no se leen, solo el número y el código (con o sin guion).
+  const csv = 'número,nombre,código,enlace\n1,"Prueba Uno, Ana",K7QM-P3XA,https://x.example/?c=K7QMP3XA\n2;Prueba Dos;H2N8WRTB;https://x.example\n\nsin,numero,ZC4D9EFG';
+  assert.deepEqual(leerCsvCodigos(csv), [{ numero: 1, codigo: 'K7QMP3XA' }, { numero: 2, codigo: 'H2N8WRTB' }]);
+  assert.ok(!JSON.stringify(leerCsvCodigos(csv)).includes('Prueba'));
+  const docs = new Map([['t77--recta--K7QMP3XA', {}], ['recta--H2N8WRTB', {}]]);
+  assert.deepEqual(listaDeDocumentos(docs, new Map([['ZC4D9EFG', { tareas: [] }]])), SECRETOS.slice().sort().map(codigo => ({ numero: null, codigo })));
+});
+
+test('agregar con lista de códigos secretos: mismos cálculos, sin tocar los códigos de 4', () => {
+  const lista = SECRETOS.map((codigo, i) => ({ numero: i + 1, codigo }));
+  const docs = new Map([
+    ['t77--recta--K7QMP3XA', { ej: [ej(10), ej(10)], actualizado: AHORA - 1000 }],
+    ['t77--recta--H2N8WRTB', { ej: [ej(0, { aciertos: 0, fallos: 12 })], actualizado: AHORA - 1000 }],
+  ]);
+  const nombres = new Map([[2, 'Prueba Dos, Luis']]);
+  const r = agregar({ docs, tarea: TAREA_V2, lista, nombres, desde: DESDE, ahora: AHORA });
+  assert.deepEqual([r.total, r.hanEntrado, r.activos], [3, 2, 2]);
+  assert.deepEqual(r.alumnos.map(f => f.codigo), SECRETOS);
+  assert.equal(r.alumnos[0].puntos, 20);
+  assert.equal(r.alumnos[1].nombre, 'Prueba Dos, Luis');
+  assert.ok(r.alertas.some(a => a.startsWith('Prueba Dos, Luis (n.º 2, código H2N8WRTB) lleva 12 fallos')), r.alertas.join('\n'));
+  assert.ok(!('nombre' in r.alumnos[0]), 'sin nombre, la fila no lleva el campo (la salida del informe no cambia)');
+  assert.equal('listaCompleta' in r, false);
+});
+
+test('agregar sin número de lista (lista deducida de los documentos): no inventa quién falta ni avisa de poca actividad', () => {
+  const lista = listaDeDocumentos(new Map([['t77--recta--K7QMP3XA', {}]]));
+  const docs = new Map([['t77--recta--K7QMP3XA', { ej: [ej(10)], actualizado: AHORA - 1000 }]]);
+  const r = agregar({ docs, tarea: TAREA_V2, lista, listaCompleta: false, desde: DESDE - 99 * 3600 * 1000, ahora: AHORA });
+  assert.equal(r.alumnos[0].numero, null);
+  assert.equal(r.alumnos[0].grupo, '?');
+  assert.deepEqual(r.alertas, []);
+  const texto = formatear(r, { tarea: TAREA_V2, ahora: AHORA, horas: 24, fuente: 'practicas-espacios/UID' });
+  assert.match(texto, /- K7QMP3XA · \? · 10 pt/);
+  assert.match(texto, /No se sabe quién no ha entrado/);
+  assert.doesNotMatch(texto, /Nunca han entrado/);
+  assert.match(texto, /Fuente: documentos practicas-espacios\/UID/);
+});
+
+test('calcularHoy («Hoy» del panel): vacíos, nombres y lo mismo que el informe', () => {
+  const alumnos = [{ n: 1, nombre: 'Prueba Uno, Ana', codigo: SECRETOS[0] }, { n: 2, nombre: 'Prueba Dos, Luis', codigo: SECRETOS[1] }, { n: 3, nombre: 'Prueba Tres', codigo: null }];
+  const documentos = {
+    'progreso-libre': [crudo(`recta--${SECRETOS[0]}`, [ej(10), ej(10)])],
+    'progreso-tareas': [crudo(`t77--recta--${SECRETOS[0]}`, [ej(10), ej(10)])],
+    asignaciones: [],
+  };
+  const base = { tareas: [TAREA_V2], alumnos, documentos, ahora: AHORA };
+  assert.deepEqual(calcularHoy({ ...base, tareas: [] }), { motivoVacio: 'tareas' });
+  assert.deepEqual(calcularHoy({ ...base, alumnos: [{ n: 1, nombre: 'Ana', codigo: null }] }), { motivoVacio: 'alumnos' });
+  const hoy = calcularHoy(base);
+  assert.equal(hoy.tarea.id, 77);
+  assert.match(hoy.motivo, /plazo abierto más próximo/);
+  // El alumno 3 no tiene código: no cuenta. El 2 no ha entrado; el 1, sí.
+  assert.deepEqual([hoy.resumen.total, hoy.resumen.hanEntrado], [2, 1]);
+  assert.deepEqual(hoy.resumen.alumnos.filter(f => !f.existe).map(etiqueta), ['Prueba Dos, Luis']);
+  // Mismo resultado que llamando al informe con los mismos datos.
+  const directo = agregar({
+    docs: new Map([[`t77--recta--${SECRETOS[0]}`, { ej: [ej(10), ej(10)], actualizado: AHORA - 1000 }], [`recta--${SECRETOS[0]}`, { ej: [ej(10), ej(10)], actualizado: AHORA - 1000 }]]),
+    tarea: TAREA_V2, lista: SECRETOS.slice(0, 2).map((codigo, i) => ({ numero: i + 1, codigo })), desde: AHORA - 24 * 3600 * 1000, ahora: AHORA,
+  });
+  assert.deepEqual(hoy.resumen.alumnos.map(f => f.puntos), directo.alumnos.map(f => f.puntos));
+  assert.equal(etiqueta({ numero: 4 }), 'n.º 4');
+  // Elegir la tarea a mano manda sobre la vigente.
+  assert.equal(calcularHoy({ ...base, tareas: [TAREA_V2, { ...TAREA_V2, id: 78 }], tareaId: 78 }).tarea.id, 78);
+});
+
+test('listarSubcoleccion: pagina, devuelve los crudos de siempre y avisa si la cuenta no es lectora', async () => {
+  const paginas = [
+    { documents: [{ name: 'projects/p/databases/(default)/documents/practicas-espacios/U1/progreso-tareas/t77--recta--K7QMP3XA', fields: { estado: { stringValue: estadoDe([ej(5)]) }, actualizado: { integerValue: '12345' } } }], nextPageToken: 'SIGUE' },
+    { documents: [{ name: 'projects/p/databases/(default)/documents/practicas-espacios/U1/progreso-tareas/t77--recta--H2N8WRTB', fields: { estado: { stringValue: estadoDe([]) }, actualizado: { integerValue: '9' } } }] },
+  ];
+  const pedidas = [];
+  const pedir = async (url, opciones) => {
+    pedidas.push([url, opciones.headers.Authorization]);
+    return { ok: true, status: 200, json: async () => paginas[pedidas.length - 1] };
+  };
+  const config = { projectId: 'p' };
+  const docs = await listarSubcoleccion('U1', 'progreso-tareas', 'TOKEN', { pedir, config });
+  assert.deepEqual(docs.map(d => [d.id, d.actualizado]), [['t77--recta--K7QMP3XA', 12345], ['t77--recta--H2N8WRTB', 9]]);
+  assert.equal(pedidas.length, 2);
+  assert.ok(pedidas[0][0].includes('/practicas-espacios/U1/progreso-tareas?pageSize=300'));
+  assert.ok(pedidas[1][0].includes('pageToken=SIGUE'));
+  assert.ok(pedidas.every(([, auth]) => auth === 'Bearer TOKEN'));
+  const asignaciones = await listarSubcoleccion('U1', 'asignaciones', 'T', {
+    pedir: async () => ({ ok: true, status: 200, json: async () => ({ documents: [{ name: '.../asignaciones/K7QMP3XA', fields: { tareas: { arrayValue: { values: [{ integerValue: '77' }] } } } }] }) }), config,
+  });
+  assert.deepEqual(asignaciones, [{ id: 'K7QMP3XA', estado: undefined, actualizado: 0, tareas: [77] }]);
+  await assert.rejects(listarSubcoleccion('U1', 'fallos', 'T', { pedir: async () => ({ ok: false, status: 403 }), config }), /403.*no es lectora/);
+  await assert.rejects(listarSubcoleccion('U1', 'privado', 'T', { pedir, config }), /subcolección desconocida/);
+});
+
+test('el informe también lo importa el navegador: ninguna importación de node:* ni uso de process fuera de main', async () => {
+  const { readFileSync } = await import('node:fs');
+  const fuente = readFileSync(new URL('../herramientas/informe-actividad.mjs', import.meta.url), 'utf8');
+  assert.doesNotMatch(fuente, /^import .* from 'node:/m);
+  assert.match(fuente, /typeof process !== 'undefined'/);
+  assert.doesNotMatch(fuente.split('function argumento')[0], /process\./);
 });
