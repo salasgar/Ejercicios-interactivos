@@ -424,7 +424,7 @@ portada.
 | 2 | `criba` | 4 | La criba de Eratóstenes · ¿Primo o compuesto? · ¿Hasta qué primo hay que probar? |
 | 2 | `arbol` | 5 | Construye el árbol · ¿Está terminada? · Completa el árbol |
 | 2 | `divisiones` | 6 | La escalera de divisiones · La forma de potencias · Comprobar multiplicando |
-| 2 | `fabrica` | 7 | Construye el divisor · ¿Cuántos divisores tiene? · Sin dividir |
+| 2 | `fabrica` | 7 | ¿Cuántos divisores tiene? · Sin dividir (hasta el 18-10 había un ejercicio 1, «Construye el divisor», quitado en la tarea 76; el progreso guardado con 3 se adapta solo: `quitados` en `catalogo.js`) |
 | 2 | `factorizaciones` | 15 | El producto · ¿Es múltiplo? · El cociente |
 | 3 | `venn` | 8 | Reparte los factores · El m.c.d. con factores primos · El m.c.m. con factores primos · Mezcla y comprobación |
 | 3 | `imposibles` | 9 | ¿Puede ser? · La comprobación del producto · Nómbralo |
@@ -529,7 +529,7 @@ expresa.
 | U2-3B-01 | 3 | sí | Vocabulario de las dos reglas: common prime factors, lowest power, highest power, common and non-common… | `venn` |
 | U2-3B-03 | 3 |  | Leer en voz alta un m.c.d. o un m.c.m. en inglés | `leelo` |
 | U2-3B-04 | 3 |  | Justificar en inglés el método elegido: I chose ... because ... | — |
-| U2-3C-01 | 3 |  | Obtener todos los divisores de un número combinando sus factores primos | `fabrica` |
+| U2-3C-01 | 3 |  | Obtener todos los divisores de un número combinando sus factores primos | — |
 | U2-3C-02 | 3 |  | Contar los divisores a partir de los exponentes: se suma 1 a cada uno y se multiplica | `fabrica` |
 | U2-3C-03 | 3 | sí | Calcular el m.c.d. por factorización (solo los primos comunes, con el menor exponente) y saber por qué | `factorizaciones`, `venn` |
 | U2-3C-04 | 3 | sí | Calcular el m.c.m. por factorización (todos los primos, comunes y no comunes, con el mayor exponente) y… | `factorizaciones`, `venn` |
