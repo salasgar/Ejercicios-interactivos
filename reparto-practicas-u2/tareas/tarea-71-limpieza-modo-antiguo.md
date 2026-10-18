@@ -1,10 +1,10 @@
 # Tarea 71 · Varios profesores, N11: limpieza del modo antiguo y borrado de los datos viejos (con firma)
 
-Actualizado: 2026-10-17
-Precondición: paso de Juan Luis al sistema nuevo hecho y comprobado (tarea 70, lo antes posible tras la 69; una o dos semanas antes); firma de la tarea 71 en `autorizaciones.md`. **Antes de lanzarla, la coordinadora revisa esta ficha** (el código habrá cambiado mucho desde el 17-10) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 2 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Actualizado: 2026-10-18 (**revisada por la coordinadora** s-20261017T203500-e4f6b02c, tras el paso de la 70)
+Precondición: paso de Juan Luis hecho y comprobado (**sí**: tarea 70 LISTA, paso el 18-10 hacia las 07:35Z, recopia sin nada pendiente a las 13:48Z) · firma de la 71 en `autorizaciones.md` (**sí**: «Juan Luis Salas García, 18-10-26») · **no antes del domingo 25-10**, una semana después del paso, por si queda algún aparato o enlace viejo escribiendo en el modo antiguo; antes de que empiecen los compañeros (14-12) · 78 LISTA (comparte `profesor-hoy.js` y el informe) · Disparo: MANUAL, **con Juan Luis delante** (publica las reglas y borra en la consola)
+Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/71-limpieza-modo-antiguo/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): los que diga la revisión de la coordinadora antes de lanzarla; previsiblemente `practicas/_comun/{base,registro,codigos,espacio,nube,textos,tareas}.js`, `practicas/{portada,semana,vista-tareas,profesor,resultados}.js` y sus `.html`, `herramientas/informe-actividad.mjs`, `firestore.rules`, `divisores/index.html` y sus tests
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/{base,registro,codigos,espacio,nube,tareas,textos}.js`, `practicas/{portada,semana,vista-tareas,profesor,profesor-hoy,profesor-tareas,profesor-migracion,resultados}.js`, `practicas/profesor.html`, `divisores/profesor.html` (solo para que lleve al panel nuevo), `src/firebase.js` (solo las funciones de las colecciones viejas), `firestore.rules` (solo los bloques viejos), `herramientas/informe-actividad.mjs`, `herramientas/probar-reglas.mjs`, `docs/practicas-unidad2.md`, `README.md`, y los tests de todo eso
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -56,6 +56,8 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 
 ## Lo común a las tareas 61-71 (varios profesores)
 
+> **Para esta tarea (revisión del 18-10):** lo de «el modo antiguo no se rompe nunca» ya no vale. El paso de Juan Luis está hecho y esta tarea quita el modo antiguo; mandan el objetivo y sus correcciones.
+
 - **La especificación es `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`**, aprobado entero por Juan Luis el 2026-10-17. Léelo entero antes de empezar (no solo tu apartado). Lo que esté mal pensado se propone en la terminada; no se cambia por tu cuenta.
 - **El modo antiguo no se rompe nunca**: hasta la migración de Juan Luis (vuelta de Navidad) sus 51 alumnos siguen con códigos de 4 caracteres, `tareas.js` y las colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`. Cada tarea lo comprueba con un test (la longitud del código decide el modo: 4, antiguo; 8, nuevo).
 - **Nada de datos reales en el repositorio**: ni nombres, ni códigos de alumnos, ni uids de compañeros, ni contraseñas. Las cuentas de prueba y sus contraseñas, por variables de entorno.
@@ -65,33 +67,68 @@ Cualquier pausa cuenta como operación larga: tras un turno terminado o un «Con
 
 ## Objetivo
 
-Quitar el modo antiguo cuando ya nadie lo use (DISENO.md, E.5, F.4; lista H.2, N11): el código de 4 caracteres de la base, las páginas, el panel y el informe; `tareas.js` solo como plantilla; reglas sin los bloques antiguos; `divisores/` lleva a `practicas/`; y borrar las colecciones viejas (`practicas`, `practicas-tareas`, `practicas-asignaciones`, `fallos`, `divisores`) con firma.
+Quitar el modo antiguo ahora que nadie lo usa (DISENO.md, E.5; lista H.2, N11) y **borrar las colecciones viejas** (`practicas`, `practicas-tareas`, `practicas-asignaciones`, `fallos` y `divisores`), con la firma de Juan Luis del 18-10. Borrar es **irreversible**: antes, copia completa y comprobación de que no se ha escrito nada nuevo en ellas.
+
+**Correcciones de la revisión a DISENO.md** (las ha visto la coordinadora el 18-10; mandan sobre el diseño):
+1. **Los códigos de 4 caracteres NO se quitan.** Los alumnos de Juan Luis siguen con sus códigos de 4 de siempre, registrados en `practicas-alumnos` (tarea 72), y sus alumnos nuevos tendrán códigos de 4 al azar. Lo que se quita es el **modo antiguo**: un código **sin registrar** ya no cae en las colecciones viejas, sino en «ese código no existe». `codigoSecreto(4)` sigue descartando los códigos calculables.
+2. **`divisores/index.html` NO se redirige.** Es la práctica viva `divisores` (id 0 del catálogo, `ruta: '../divisores/'`): es obligatoria (★) en la tarea 1 y está en la 3. F.4 del diseño se equivocaba al decir que estaba en `practicas/divisores/`, que no existe. Solo `divisores/profesor.html`, el panel viejo de esa mini-app, pasa a llevar a `practicas/profesor.html`. La colección `divisores` es de la mini-app de antes de la tarea 17 y sí se borra, con copia.
+3. `tareas.js` se queda como plantilla de los profesores nuevos (y de los tests). Juan Luis ya lee su configuración de su espacio.
+4. `adaptarProgreso` y `quitados` (tarea 76) se quedan: valen para cualquier práctica que pierda un ejercicio.
 
 ## Siguiente paso
 
-1. Comprueba la firma en `autorizaciones.md` y que la migración está hecha (su nota en `hechos/`). Sin las dos cosas, no empieces.
-2. Lee DISENO.md (E, F.4) y la revisión de esta ficha que haya hecho la coordinadora.
+1. `date -u`: si es antes del domingo 25-10, no empieces. Comprueba la firma en `autorizaciones.md` (línea de la tarea 71) y lee la terminada de la 70 (`hechos/terminadas/70--*.md`) y `salidas/70-herramienta-migracion/ENTREGA.md`.
+2. Lee DISENO.md (E, F) con las correcciones de arriba, y la nota `hechos/notas/s-20261017T174551-a1224f1f-para-70-lectores-listan-alumnos.md`.
 
 ## Qué hay que hacer
 
-Lo que diga la ficha revisada. Esbozo: quitar las ramas del modo antiguo con sus tests; publicar (Juan Luis) las reglas sin los bloques antiguos; `divisores/index.html` → `practicas/`; borrar las colecciones viejas **solo** después de confirmar con Juan Luis que tiene el CSV de fallos y que la migración se comprobó.
+Por este orden; cada paso, con su resultado literal en la entrega.
+
+1. **¿Ha escrito alguien en las colecciones viejas después del paso?** Lista por REST, con la cuenta lectora o con la de Juan Luis (pídesela; nunca al repositorio), los documentos de las cinco colecciones con `updateTime` posterior a 2026-10-18T07:35Z.
+   - Si hay alguno: **para**, averigua de quién es (un aparato viejo, un enlace guardado) y pásalo con la herramienta «Pasar al sistema nuevo» de la 70. Es repetible y no duplica. Vuelve a comprobar.
+   - Si no hay ninguno, sigue.
+2. **Copia completa** de las cinco colecciones, documento a documento y en JSON, en `~/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/Curso 2026-2027/copias-firestore/<fecha>/`. Lleva datos de alumnos: **nunca al repositorio**. Añade el recuento por colección y comprueba que cuadra con un recuento independiente. Confirma con Juan Luis que tiene guardado el CSV de «Qué falla más» del 18-10 (la 70 lo descargó antes del paso).
+3. **Código**: quita las ramas del modo antiguo.
+   - En la base, la portada, la página de la tarea, el registro de fallos y la nube: un código de 4 sin registrar → «no existe».
+   - En el panel: las vistas, lecturas y exportaciones de las colecciones viejas, y la herramienta de la 70, que ya no tiene nada que pasar. Su botón se va; deja el código en el historial de git.
+   - En el informe (`informe-actividad.mjs`): solo el modo `--espacio`.
+   - En `src/firebase.js`: las funciones de las colecciones viejas, entre ellas `listarPracticaDivisores` y `listarPracticas`.
+   - **Tests**:
+     - fuera los del modo antiguo;
+     - nuevos: un código de 4 registrado (el 62 o el 63, en el espacio del profesor de prueba A) entra y ve su progreso; uno de 4 sin registrar da «no existe»; uno de 8 sigue igual.
+   - `npm test` en verde.
+4. **Reglas**: `firestore.rules` sin los bloques de las colecciones viejas; `probar-reglas.mjs` ajustado (fuera las comprobaciones viejas, y una nueva: las colecciones viejas no se leen ni se escriben). **Las publica Juan Luis** en la consola. Después, el banco REST entero en verde.
+5. **Publicar el código** (commit y `git push`) y comprobar en Pages, con recarga forzada:
+   - con los códigos 62 y 63: portada, una práctica, `semana.html?t=2` y la Fábrica;
+   - el panel de Juan Luis (que lo abra él): «Mis alumnos», «Hoy», «Qué falla más»;
+   - el informe de esa noche, que llega.
+   - Nunca con AJJN ni con los números 1-51.
+6. **Borrar**: con todo lo anterior en verde y **Juan Luis delante**, él borra en la consola de Firebase las cinco colecciones viejas (Firestore → la colección → «Eliminar colección»), una a una, y tú compruebas por REST que ya no hay documentos.
+7. **Documentación**: `docs/practicas-unidad2.md` y `README.md` sin el modo antiguo; en DISENO.md no se escribe (es de la 57): las correcciones van en tu entrega.
 
 ## Cómo saber que ha terminado
 
-- Lo que diga la ficha revisada; como mínimo, `npm test` en verde y las prácticas funcionando con códigos de 8.
+- `npm test` en verde, banco REST en verde con las reglas publicadas.
+- Las cinco colecciones viejas, vacías, y su copia en `Curso 2026-2027/copias-firestore/` con el recuento cuadrado.
+- Las comprobaciones del paso 5, con su resultado literal en la entrega.
 
 ## Trampas conocidas
 
-- Borrar es irreversible: nada sin firma (regla 8 de `_ESTADO.md`).
+- Los alumnos de Juan Luis tienen códigos de 4 **registrados**: «quitar los códigos de 4» rompería a los 51. Lo que se quita es el camino de los no registrados.
+- `divisores/` es una práctica viva: no se redirige (ver el objetivo).
+- El «antiguo» se recordaba 1 h en el navegador (nota de la 72). Con el código nuevo ya no importa, pero si en el paso 1 aparecen escrituras recientes, ese es el sospechoso.
+- Las cuentas de prueba A y B siguen vivas y con contraseña nueva (18-10): las contraseñas, por variables de entorno.
 
 ## Prohibido (propio de esta tarea)
 
-- Empezar sin la revisión de la coordinadora, sin la firma o sin la migración comprobada.
+- Borrar nada antes de los pasos 1-5 en verde, sin la copia o sin Juan Luis delante.
+- Quitar el soporte de los códigos de 4 registrados o redirigir `divisores/index.html`.
+- Tocar la aplicación antigua de `src/` (`alumnos/`, `tareas/`, `credenciales/`), salvo las funciones de las colecciones viejas en `src/firebase.js`.
 
 ## Salida esperada
 
 - Los ficheros de «Ficheros que toca» cambiados y comiteados, con `npm test` en verde.
-- `reparto-practicas-u2/salidas/71-limpieza-modo-antiguo/ENTREGA.md` (hash, ficheros, lo comprobado con su resultado literal, lo que queda para la tarea siguiente) y su marcador `ENTREGA.md.ok-<sid>`.
+- `reparto-practicas-u2/salidas/71-limpieza-modo-antiguo/ENTREGA.md` (hash, ficheros, cada paso con su resultado literal, recuentos de la copia, lo que queda) y su marcador `ENTREGA.md.ok-<sid>`.
 
 ## Si la sesión se alarga
 
