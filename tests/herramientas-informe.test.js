@@ -347,6 +347,31 @@ test('calcularHoy («Hoy» del panel): vacíos, nombres y lo mismo que el inform
   assert.equal(calcularHoy({ ...base, tareas: [TAREA_V2, { ...TAREA_V2, id: 78 }], tareaId: 78 }).tarea.id, 78);
 });
 
+test('alumnos de prueba (n.º ≥ 1000, AJJN): no cuentan en «Hoy» ni en el informe', () => {
+  const docs = new Map([
+    ['t77--recta--K7QMP3XA', { ej: [ej(10), ej(10)], actualizado: AHORA - 1000 }],
+    [`t77--recta--${SECRETOS[1]}`, { ej: [ej(0, { aciertos: 0, fallos: 12 })], actualizado: AHORA - 1000 }],
+  ]);
+  const lista = [...SECRETOS.map((codigo, i) => ({ numero: i + 1, codigo })), { numero: 1000, codigo: 'AJJN' }];
+  const sin = agregar({ docs, tarea: TAREA_V2, lista: lista.slice(0, 3), desde: DESDE, ahora: AHORA });
+  const con = agregar({ docs, tarea: TAREA_V2, lista, desde: DESDE, ahora: AHORA });
+  assert.equal(con.total, 3);
+  assert.deepEqual(con, sin);
+  assert.ok(!con.alumnos.some(f => f.numero >= 1000));
+  assert.ok(!formatear(con, { tarea: TAREA_V2, ahora: AHORA, horas: 24 }).includes('1000'));
+  // El 999 sí es un alumno; un número null (lista deducida) también.
+  assert.equal(agregar({ docs, tarea: TAREA_V2, lista: [{ numero: 999, codigo: 'AAAA' }, { numero: null, codigo: 'BBBB' }], desde: DESDE, ahora: AHORA }).total, 2);
+  // «Hoy»: con tres alumnos y el 1000, tres en todos los totales; solo el 1000 = sin alumnos.
+  const alumnos = [...SECRETOS.map((codigo, i) => ({ n: i + 1, nombre: `Alumno ${i + 1}`, codigo })), { n: 1000, nombre: 'Prueba, AJJN', codigo: 'AJJN' }];
+  const documentos = { 'progreso-libre': [], 'progreso-tareas': [crudo('t77--recta--K7QMP3XA', [ej(10)])], asignaciones: [] };
+  const hoy = calcularHoy({ tareas: [TAREA_V2], alumnos, documentos, ahora: AHORA });
+  assert.equal(hoy.resumen.total, 3);
+  assert.equal(hoy.resumen.alumnos.length, 3);
+  assert.ok(!hoy.resumen.alumnos.some(f => f.numero === 1000 || f.nombre === 'Prueba, AJJN'));
+  assert.ok(!hoy.resumen.alertas.join('\n').includes('1000'));
+  assert.deepEqual(calcularHoy({ tareas: [TAREA_V2], alumnos: [alumnos[3]], documentos, ahora: AHORA }), { motivoVacio: 'alumnos' });
+});
+
 test('listarSubcoleccion: pagina, devuelve los crudos de siempre y avisa si la cuenta no es lectora', async () => {
   const paginas = [
     { documents: [{ name: 'projects/p/databases/(default)/documents/practicas-espacios/U1/progreso-tareas/t77--recta--K7QMP3XA', fields: { estado: { stringValue: estadoDe([ej(5)]) }, actualizado: { integerValue: '12345' } } }], nextPageToken: 'SIGUE' },
