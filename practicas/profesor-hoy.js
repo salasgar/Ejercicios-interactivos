@@ -9,7 +9,7 @@
 // `#panel-hoy`; el contexto está documentado en `profesor-tareas.js`.
 
 import {
-  agregar, tareaVigente, fechaMadrid, textoEntrega, documentosAMapa, asignacionesAMapa,
+  agregar, sinAlumnosDePrueba, tareaVigente, fechaMadrid, textoEntrega, documentosAMapa, asignacionesAMapa,
 } from '../herramientas/informe-actividad.mjs';
 import { PUNTOS_POR_EJERCICIO } from './_comun/tareas.js';
 
@@ -25,7 +25,8 @@ export const HORAS = [24, 48, 72];
  */
 export function calcularHoy({ tareas, alumnos, documentos, tareaId = null, horas = 24, ahora = Date.now() }) {
   if (!tareas?.length) return { motivoVacio: 'tareas' };
-  const lista = (alumnos ?? []).filter(a => a.codigo).map(a => ({ numero: a.n, codigo: a.codigo }));
+  // Sin los alumnos de prueba (n.º ≥ 1000, p. ej. AJJN): no cuentan en nada, ni en «sin alumnos».
+  const lista = sinAlumnosDePrueba((alumnos ?? []).filter(a => a.codigo).map(a => ({ numero: a.n, codigo: a.codigo })));
   if (!lista.length) return { motivoVacio: 'alumnos' };
   let tarea = tareaId === null ? null : tareas.find(t => t.id === tareaId);
   let motivo = null;

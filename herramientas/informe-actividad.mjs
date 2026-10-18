@@ -130,6 +130,16 @@ export function leerGrupos(texto) {
 }
 
 /**
+ * Los números de lista de 1000 en adelante son de prueba (el alumno ficticio AJJN de Juan Luis es el
+ * 1000; la tarea 72 subió el tope de `n` a 1023 para eso) y no cuentan en el informe ni en «Hoy».
+ * Un profesor no llega a 1000 alumnos (el tope del diseño es 200). Tarea 78.
+ */
+export const PRIMER_NUMERO_DE_PRUEBA = 1000;
+
+/** La lista sin los alumnos de prueba. Un `numero` null (lista deducida de los documentos) se conserva. */
+export const sinAlumnosDePrueba = lista => lista.filter(a => !(a.numero >= PRIMER_NUMERO_DE_PRUEBA));
+
+/**
  * Agrega los documentos leídos.
  *   docs     Map `claveDocumento(tarea, slug, codigo)` → { ej, actualizado } | null (null = no existe)
  *   tarea    la tarea (tareas.js)
@@ -143,7 +153,7 @@ export function agregar({ docs, tarea, alumnos, lista = null, listaCompleta = tr
   // `lista` ([{ numero, codigo }]) sustituye a «los códigos 1..alumnos» del modo antiguo (en el espacio
   // de un profesor los códigos son secretos); `numero` puede ser null si no se conoce. `nombres`
   // (Map número → nombre) solo lo usa la pestaña «Hoy» del panel, que los tiene descifrados.
-  const alumnosDe = lista ?? Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) }));
+  const alumnosDe = sinAlumnosDePrueba(lista ?? Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) })));
   const ejercicios = ejerciciosDe(tarea);
   const slugs = [...new Set(ejercicios.map(e => e.slug))];
   const porEjercicio = ejercicios.map(e => ({ ...e, intentan: 0, terminan: 0, aciertos: 0, fallos: 0, reinicios: 0, reinician: 0 }));
