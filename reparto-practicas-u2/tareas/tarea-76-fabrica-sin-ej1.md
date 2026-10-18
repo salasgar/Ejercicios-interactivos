@@ -102,6 +102,10 @@ Resultado: la Fábrica se queda con **2 ejercicios**: 1 = «¿Cuántos divisores
 
 - La 70 copia `TAREAS` y los progresos al espacio de Juan Luis el día del paso. Con `adaptarProgreso` en la lectura, los progresos copiados con 3 posiciones se corrigen igual al abrirlos. La configuración de tareas copiada, no: ver el paso 6.
 - Hay sesiones de Juan Luis fuera del reparto que tocan `practicas/`: no metas en tu commit nada que no sea tuyo.
+- (76, 2026-10-17) `DESTREZAS` de `registro.js` está atada por test (`practicas-registro.test.js`) al §7 de `docs/practicas-unidad2.md`: quitar una destreza obliga a tocar también esa tabla, que no estaba en «Ficheros que toca». Tenía el candado de la sesión de la 69 (cerrada): se esperó a que caducara (30 min) y se comiteó aparte.
+- (76) Los tests `practicas-semana` cuentan los ejercicios de las tareas (56 en total, «6 ★ + 4 de 8», un código de tarea con 8 de elegir): al cambiar una tarea hay que tocar esas líneas además de las de `fabrica`.
+- (76) Sin documento en la nube, la base no reescribía lo del navegador: `cargarProgreso` guarda ahora si adaptó. Y Chrome sirve el `practica.js` viejo de caché: recarga con cmd+shift+r antes de mirar. La ventana de Chrome no baja de ~1358 px: los 375 px se prueban en un iframe.
+- (76) `fallos/` no se puede leer por REST sin la cuenta del profesor: el recuento se hace con los documentos de progreso (sí legibles con `get`) y el panel.
 
 ## Prohibido (propio de esta tarea)
 
