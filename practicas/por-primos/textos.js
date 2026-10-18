@@ -94,7 +94,33 @@ export const TX = {
     regla: regla('Llega a un divisor del número de arriba dividiendo lo menos posible.', 'Reach a divisor of the top number by dividing as little as possible.'),
   },
 
+  e5: {
+    nombre: { es: 'Todos los divisores', en: 'All the divisors' },
+    detalle: { es: 'Fabrica los divisores uno a uno', en: 'Build the divisors one by one' },
+    introduccion: {
+      es: `<h2>Todos los divisores</h2>
+        <p>Arriba hay un número y, debajo, todos sus divisores, <strong>apagados</strong>. Tú fabricas números con los botones
+        <strong>· p</strong> y <strong>: p</strong>. Cada vez que fabriques un divisor, <strong>se ilumina</strong>.</p>
+        <p>Ejemplo: 12 = 2<sup>2</sup> · 3. Sus divisores se fabrican con los mismos primos sin pasarse de los exponentes:
+        1, 2, 2<sup>2</sup>, 3, 2 · 3, 2<sup>2</sup> · 3; o sea 1, 2, 4, 3, 6 y 12.</p>
+        <p>Si te pasas y fabricas un número que no es divisor, sale en rojo. Divide para volver.
+        Tienes que iluminarlos <strong>todos</strong>.</p>`,
+      en: `<h2>All the divisors</h2>
+        <p>On top there is a number and, below it, all its divisors, <strong>switched off</strong>. You build numbers with the
+        <strong>· p</strong> and <strong>: p</strong> buttons. Each time you build a divisor, it <strong>lights up</strong>.</p>
+        <p>Example: 12 = 2<sup>2</sup> · 3. Its divisors are built with the same primes, without going over the exponents:
+        1, 2, 2<sup>2</sup>, 3, 2 · 3, 2<sup>2</sup> · 3; that is 1, 2, 4, 3, 6 and 12.</p>
+        <p>If you go too far and build a number that is not a divisor, it turns red. Divide to go back.
+        You have to light up <strong>all</strong> of them.</p>`,
+    },
+    regla: regla('Ilumina todos los divisores del número de arriba.', 'Light up all the divisors of the top number.'),
+  },
+
   objetivo: { es: 'Objetivo', en: 'Target' },
+  numeroDe: { es: 'Número', en: 'Number' },
+  encontrados: { es: (a, b) => `Encontrados: ${a} de ${b}`, en: (a, b) => `Found: ${a} of ${b}` },
+  avisos: { es: 'Avisos', en: 'Warnings' },
+  unoDivisor: { es: 'El 1 es divisor de todos los números.', en: '1 is a divisor of every number.' },
   tuNumero: { es: 'Tu número', en: 'Your number' },
   toques: { es: 'Toques', en: 'Taps' },
   deshacer: { es: 'Deshacer', en: 'Undo' },
@@ -139,6 +165,19 @@ export const TX = {
     mcdBien: {
       es: (v, f, a, b) => `Has llegado a ${cuenta(v === 1 ? '1' : `${f} = ${v}`)}, el m.c.d. de ${a} y ${b}: cada primo, con el menor exponente.`,
       en: (v, f, a, b) => `You have reached ${cuenta(v === 1 ? '1' : `${f} = ${v}`)}, the GCD of ${a} and ${b}: each prime, with the smallest exponent.`,
+    },
+    // Ejercicio 5. Frases normales (sin `cuenta`, que no se parte en líneas).
+    todosNo: {
+      es: (a, fa, n, fn, sobran) => `${a === Number(fa) ? a : `${a} = ${fa}`} no es divisor de ${n} = ${fn}: ${sobran.map(([p, , o]) => (o === 0 ? `${n} no tiene ningún ${p}` : `${n} solo tiene ${o === 1 ? `un ${p}` : pot(p, o)}`)).join('; ')}. Divide para volver.`,
+      en: (a, fa, n, fn, sobran) => `${a === Number(fa) ? a : `${a} = ${fa}`} is not a divisor of ${n} = ${fn}: ${sobran.map(([p, , o]) => (o === 0 ? `${n} has no ${p}` : `${n} only has ${o === 1 ? `one ${p}` : pot(p, o)}`)).join('; ')}. Divide to go back.`,
+    },
+    todosBien: {
+      es: (n, fn, k, primos) => `¡Los has fabricado todos! ${n} = ${fn} tiene ${k} divisores: ${primos.map(([p, e]) => `para el ${p} hay ${e + 1} posibilidades (${Array.from({ length: e + 1 }, (_, i) => `${p}<sup>${i}</sup>`).join(', ')})`).join(', ')}; ${primos.map(([, e]) => e + 1).join(' · ')} = ${k}.`,
+      en: (n, fn, k, primos) => `You built them all! ${n} = ${fn} has ${k} divisors: ${primos.map(([p, e]) => `for ${p} there are ${e + 1} choices (${Array.from({ length: e + 1 }, (_, i) => `${p}<sup>${i}</sup>`).join(', ')})`).join(', ')}; ${primos.map(([, e]) => e + 1).join(' · ')} = ${k}.`,
+    },
+    todosAvisos: {
+      es: veces => `Los tienes todos, pero te has pasado ${veces} veces: mira los exponentes del número antes de multiplicar.`,
+      en: veces => `You have them all, but you went too far ${veces} times: look at the exponents of the number before multiplying.`,
     },
     mcdUno: {
       es: (a, b) => ` No tienen ningún primo en común, así que el único divisor común de ${a} y ${b} es 1.`,

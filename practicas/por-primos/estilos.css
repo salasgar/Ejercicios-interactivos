@@ -13,4 +13,14 @@
 @keyframes pp-resalte { from { background: var(--primario-claro, #dbeafe); border-radius: 6px; transform: scale(1.25); } to { background: transparent; transform: none; } }
 .pp-chips { display: inline-flex; gap: .35rem; margin: 0 0 0 .3rem; vertical-align: middle; }
 .pp-chips button { min-width: 40px; min-height: 40px; font-size: 1.05rem; }
+/* Ejercicio 5: rejilla de divisores, apagados hasta que se fabrican. */
+.pp-rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: .4rem; margin: .6rem 0; }
+.pp-div { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 58px; padding: .2rem;
+  border: 2px solid #cbd5e1; border-radius: 8px; background: #f1f5f9; color: #64748b; }
+.pp-div-n { font-size: 1.2rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pp-div-f { font-size: .8rem; min-height: 1em; }
+.pp-div--luz { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.pp-div--aqui { border-width: 4px; }
+.pp-mal { color: var(--error); }
+.pp-aviso { min-height: 2.6rem; margin: .3rem 0; }
 @media (prefers-reduced-motion: reduce) { .pp-cambio { animation: none; } }

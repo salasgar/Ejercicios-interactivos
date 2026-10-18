@@ -59,7 +59,7 @@ export const CATALOGO = [
   { id: 28, slug: 'especiales', ruta: 'especiales/', unidad: 1, nombre: { es: 'Potencias especiales: ¿verdadero o falso?', en: 'Special powers: true or false?' }, nEjercicios: 2, disponible: true },
   { id: 29, slug: 'errores1', ruta: 'errores1/', unidad: 1, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 4, disponible: true },
   { id: 30, slug: 'propiedades', ruta: 'propiedades/', unidad: 1, nombre: { es: 'Propiedades de las potencias (ampliación)', en: 'Laws of indices (extension)' }, nEjercicios: 3, disponible: true },
-  { id: 32, slug: 'por-primos', ruta: 'por-primos/', unidad: 2, nombre: { es: 'Multiplica y divide por primos', en: 'Multiply and divide by primes' }, nEjercicios: 4, disponible: true },
+  { id: 32, slug: 'por-primos', ruta: 'por-primos/', unidad: 2, nombre: { es: 'Multiplica y divide por primos', en: 'Multiply and divide by primes' }, nEjercicios: 5, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];
