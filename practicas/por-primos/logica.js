@@ -27,6 +27,7 @@ export const EJERCICIOS = {
   2: { sube: true, baja: true },
   3: { sube: true, baja: false },
   4: { sube: false, baja: true },
+  5: { sube: true, baja: true },
 };
 
 /** Cada primo con el exponente mínimo y máximo que vale en la respuesta. */
@@ -111,6 +112,57 @@ export function generar(ejercicio, rng) {
   }
 }
 
+// ─── Ejercicio 5: todos los divisores ─────────────────────────────────────────
+
+/** Avisos (pasos por un número que no es divisor) que aún cuentan como acierto. */
+export const AVISOS_MAX = 2;
+const TODOS_N_MAX = 300, TODOS_EXP_MAX = 4, TODOS_DIV_MIN = 6, TODOS_DIV_MAX = 12;
+
+/** ¿`actual` (factorización) es divisor de `nExps` (exponentes de [2, 3, 5, 7])? */
+export function esDivisorDe(nExps, actual) {
+  const e = expsDe(actual);
+  return e.every((x, i) => x <= nExps[i]);
+}
+
+/** Todos los divisores de un número dado por sus exponentes, de menor a mayor. */
+export function divisoresDe(nExps) {
+  let lista = [[]];
+  BASES.forEach((p, i) => {
+    const nueva = [];
+    for (const f of lista) for (let e = 0; e <= nExps[i]; e++) nueva.push(e ? [...f, [p, e]] : f);
+    lista = nueva;
+  });
+  return lista.sort((a, b) => valorDe(a) - valorDe(b));
+}
+
+/** Los números del ejercicio 5: ≤ 300, a lo sumo tres primos, 6-12 divisores. */
+export const NUMEROS_TODOS = (() => {
+  const lista = [];
+  const rec = (i, exps, v) => {
+    if (i === BASES.length) {
+      if (v < 2 || exps.filter(Boolean).length > 3) return;
+      const d = exps.reduce((s, e) => s * (e + 1), 1);
+      if (d >= TODOS_DIV_MIN && d <= TODOS_DIV_MAX) lista.push({ exps: exps.slice(), v, d });
+      return;
+    }
+    for (let e = 0, w = v; e <= TODOS_EXP_MAX && w <= TODOS_N_MAX; e++, w *= BASES[i]) rec(i + 1, [...exps, e], w);
+  };
+  rec(0, [], 1);
+  return lista.sort((a, b) => a.v - b.v);
+})();
+
+/** Un ítem: la mitad con 6 u 8 divisores, la otra mitad con 9-12. */
+export function generarTodos(rng) {
+  const pocos = rng.azar() < 0.5;
+  const pool = NUMEROS_TODOS.filter(c => (c.d <= 8) === pocos);
+  const c = pool[rng.entero(0, pool.length - 1)];
+  const factN = factDe(c.exps);
+  return { ejercicio: 5, n: c.v, factN, divisores: divisoresDe(c.exps).map(valorDe) };
+}
+
+/** ¿Es `actual` un divisor de n? Con la misma regla que `esDivisorDe`, sobre el ítem. */
+export const esDivisorItem = (item, actual) => esDivisorDe(expsDe(item.factN), actual);
+
 // ─── Feedback ──────────────────────────────────────────────────────────────────
 
 /**
@@ -150,4 +202,18 @@ export function explicar(item, actual, idioma) {
   if (!esMultiploFact(item.objetivo, actual)) return t(x.noDivisor)(b, fb, a, fa, sobran());
   const quitados = BASES.map((p, i) => [p, em[i] - e[i]]).filter(([, n]) => n > 0);
   return t(x.mcdDeMas)(b, quitados, valorDe(m), htmlFact(m), sv);
+}
+
+/** Por qué `actual` no es divisor de n (ejercicio 5): qué primos se pasan. */
+export function explicarNoDivisor(item, actual, idioma) {
+  const o = expsDe(item.factN), e = expsDe(actual);
+  const sobran = BASES.map((p, i) => [p, e[i], o[i]]).filter(([, tiene, tope]) => tiene > tope);
+  return TX.expl.todosNo[idioma](valorDe(actual), htmlFact(actual), item.n, htmlFact(item.factN), sobran);
+}
+
+/** El resumen al tener todos los divisores: cuántas posibilidades tiene cada primo. */
+export function resumenTodos(item, idioma) {
+  const o = expsDe(item.factN);
+  const primos = BASES.map((p, i) => [p, o[i]]).filter(([, e]) => e > 0);
+  return TX.expl.todosBien[idioma](item.n, htmlFact(item.factN), item.divisores.length, primos);
 }
