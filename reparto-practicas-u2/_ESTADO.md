@@ -12,6 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-10-18 14:2x UTC por s-20261018T140509-57ee2d01 al cerrar la 78 (LISTA, commit 25b8501; `npm test` 938/938; relistado `hechos/` con `git fetch`: sin hechos nuevos ajenos). Cambia solo la fila 78 y el registro. Sin reclamos vivos. Pendiente de Juan Luis: abrir «Hoy» en el panel (51 alumnos, ningún n.º 1000).
 Actualizado 2026-10-18 13:55 UTC por la coordinadora s-20261017T203500-e4f6b02c (sin reclamo): **ficha 71 revisada** (ALTO; los códigos de 4 registrados se quedan y `divisores/index.html` no se redirige; copia completa antes de borrar; no antes del dom 25-10; espera a la 78) y alta de la **78** (MEDIO, PENDIENTE: «Hoy» y el informe sin AJJN; aprobada por JL el 18-10). Firma de la 71 de JL (18-10) comiteada. No se ha relistado el resto.
 Actualizado 2026-10-18 08:2x UTC por s-20261017T215325-bbc75a2d al cerrar la 70 (LISTA, commits dc260d2 y e41349a; relistado `hechos/` con `git fetch`): **el paso de Juan Luis está HECHO** (18-10 ~07:35Z, de día por decisión suya; 52 códigos registrados, 47 documentos, 282 fallos, sus tareas; informe con cuenta lectora y rutina cambiada). Cambian las filas 70 y 71 y el registro. La 71 sigue BLOQUEADA (ya tiene el paso; faltan su firma y la revisión de la ficha). Sin reclamos vivos. Propuesta aprobada por JL para una tarea nueva: `hechos/notas/s-20261017T215325-bbc75a2d-para-la-coordinadora.md`.
 Actualizado 2026-10-18 07:5x UTC por s-20261018T072214-7e56bd07 al cerrar la 77 (LISTA, commit 056ce17; sin registrar en registro.js: propuesta en su terminada). Cambia solo la fila 77. Sin reclamos vivos salvo lo ya dicho de la 70 (RELEVABLE).
@@ -243,6 +244,7 @@ apartado 2): los decide la coordinadora.
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
+LISTA · tarea 78 · 2026-10-18 14:2x · s-20261018T140509-57ee2d01 · 25b8501 · 3 ficheros (herramientas/informe-actividad.mjs, practicas/profesor-hoy.js, tests/herramientas-informe.test.js) · ~20 min (estimada: 30 min) · sin comprobar en el panel publicado
 LISTA · tarea 70 · 2026-10-18 08:22 · s-20261017T215325-bbc75a2d · dc260d2, e41349a · 9 ficheros (herramientas/{ensayar-migracion (nuevo),informe-actividad}.mjs, practicas/_comun/tareas.js, practicas/{profesor-migracion (nuevo),profesor-tareas,profesor}.js, practicas/profesor.html, tests/practicas-{espacio,migracion (nuevo)}.test.js) · ~2 h 15 min de trabajo (estimada: 2 h) más la noche · ensayo 14/14 · paso hecho por JL el 18-10
 LISTA · tarea 76 · 2026-10-18 07:20 · s-20261017T224938-945993c9 · f726ec1, dd09dc5 · 16 ficheros (practicas/fabrica/{practica,logica,textos}.js y estilos.css, practicas/_comun/{catalogo,base,nube,tareas,registro}.js, practicas/{portada,resultados}.js, docs/practicas-unidad2.md, tests/practicas-{fabrica,comun,semana,renumerar}.test.js) · ~30 min de trabajo (estimada: 1 h 30 min) más una espera de candado y la noche · probada en navegador
 
