@@ -96,6 +96,19 @@ Cuándo: lo antes posible (Juan Luis, 17-10: «Me va bien cualquier momento. Cua
 
 - Si un alumno practica durante el paso, su progreso queda en su navegador y se fusiona al volver (la base fusiona lo local con la nube): no se pierde, pero dilo en la entrega.
 - AJJN es el número 1000 (no está en la lista de 51): por eso la 72 sube el tope de `n` en las reglas a 1023.
+- (s-20261017T215325-bbc75a2d) **«Primero copiar, después registrar» es imposible**: las reglas solo dejan escribir en el
+  espacio documentos de códigos ya registrados a nombre del dueño (`alumnoDe`). Se registra primero y se copia fusionando
+  (nunca pisa, repetir no escribe nada).
+- `erroresConfig` rechazaba `progresoPorPractica` en un espacio y el editor de tareas se lo quitaba a la tarea 1 al
+  guardar: la tarea 1 de Juan Luis habría dejado de leer la práctica libre. Arreglado en tareas.js y profesor-tareas.js.
+- La API de las rutinas **no admite variables de entorno en la rutina** («not supported on triggers»): las credenciales de
+  la cuenta lectora van en las variables del entorno en la nube («Default»), que edita Juan Luis en claude.ai, junto con
+  los dominios permitidos (`firestore.googleapis.com`, `identitytoolkit.googleapis.com`).
+- Una pestaña del panel abierta antes de un cambio de `TAREAS` copia las tareas viejas: recargar con Cmd+Shift+R (aviso de
+  la 76, que cambió la tarea 2 y la 3 esa misma noche).
+- En el panel no había dónde añadir la cuenta lectora (hallazgo 1 de la 69): va en la sección del paso.
+- Los profesores de prueba no pueden listar las colecciones antiguas ni leer `fallos`: el ensayo lee documento a documento
+  y no copia fallos.
 
 ## Prohibido (propio de esta tarea)
 
