@@ -17,6 +17,13 @@ de resultado, guardado en el navegador y en Firestore, español/inglés) y **un 
 del profesor**. La práctica ya existente `divisores/` («divisor, múltiplo, divisible»)
 es el modelo de todo esto y se migra a la base al final.
 
+**Desde el 2026-10-21, también la unidad 3 (Integers)**: doce prácticas más (tareas 80-91, ids 33-44
+del catálogo), con su base común (79), el generador `enteros` de la aplicación principal (92) y una
+revisión y publicación por semana (93-96). La unidad empieza el lunes 16-11; las de la semana 1 tienen
+que estar publicadas el jueves 12-11. Sus destrezas se citan con los ids del inventario de la unidad 3
+(`U3-1C-03`…): `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/3. Integers/inventario-unidad3.tsv`. El
+reparto de la unidad 3 (`3. Integers/reparto-unidad3/`) no toca la app: su `proyecto.md` lo manda aquí.
+
 Las destrezas que cubre cada aplicación se citan con los identificadores del inventario
 de la unidad (`U2-1C-05`, etc.), que está en
 `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/2. Divisibility/inventario-unidad2.tsv`
@@ -138,6 +145,12 @@ duración real con la estimada y, si difieren mucho, se lo dice al usuario.
 En VS Code, «Default (recommended)» y «Opus (1M context)» son el mismo Opus 5. El
 esfuerzo es el deslizador de debajo de la lista de modelos.
 
+**Puesta al día del 2026-10-21** (coordinadora s-20261021T195149-596ac86a): el menú ya da **Opus 5.5**
+y **Sonnet 5.5** en el sitio de Opus 5 y Sonnet 5 (la sesión que lo escribe corre en Opus 5.5, y la
+del 19-10 en Sonnet 5.5). Desde ahí: ALTO = Opus 5.5, esfuerzo Alto; MEDIO = Sonnet 5.5, esfuerzo
+Medio; BAJO, sin cambios. Las fichas 79-96 ya lo dicen así; las anteriores dicen «Opus 5» y
+«Sonnet 5», que hoy son esos mismos huecos del menú.
+
 ## Nombres de sesión
 
 Abreviatura del proyecto: **`PU2`**. El nombre va como prefijo de la frase de arranque y
@@ -205,6 +218,55 @@ fuente es esta:
    absurdo «el mayor número de pulseras»). Si el rango común no le vale a un contexto, ese
    contexto lleva su propia cota o se cambia de contexto; nunca se deja. Lo revisa la
    sesión que escribe el banco y lo comprueba el test cuando la cota es numérica.
+
+## Reglas de contenido de la unidad 3 (tareas 79-96)
+
+Se repiten en cada ficha de la unidad 3; la fuente es esta. Salen de `3. Integers/reparto-unidad3/proyecto.md`
+(«Reglas de contenido comunes») y de los «Avisos para quien escriba preguntas» de `3. Integers/PLAN-UNIDAD3.md`.
+Las reglas 2-4 y 8-9 de la lista anterior (signos, inglés, regla de oro, feedback, realismo) valen igual.
+
+1. **La suma y la resta empiezan sin paréntesis**: `5 + 3`, `5 − 3`, `−5 + 3`, `−5 − 3`. **Nunca**
+   `(+5) + (+3) = +8`, ni `+8` como resultado. El paréntesis de un número (`5 − (−3)`, `5 · (−2)`)
+   aparece en la sesión 6, como algo que se quita; `(+6)` y compañía, solo en el ejercicio que
+   enseña a quitarlos (U3-2C-08). Un negativo que no va el primero en un producto o un cociente va
+   entre paréntesis: `5 · (−2)`, `12 : (−3)`. El opuesto del opuesto, `−(−4)`, es de la sesión 1.
+2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el
+   inventario. Ningún producto o cociente de enteros antes de la sesión 6, ningún paréntesis que
+   envuelva una operación antes de la 11 (salvo `30 : (−5 · 2)` en la 9), ninguna potencia de base
+   negativa antes de la 10, corchetes solo en la 13. Ni letras ni ecuaciones (el número que falta es
+   un hueco `□`), ni decimales, fracciones ni porcentajes.
+3. **Escritura**: el menos que se ve en pantalla es U+2212 `−` (`fmt` de `practicas/_comun/enteros.js`,
+   de la tarea 79); el alumno puede teclear `-`, `−` o `–` (`leerEntero`). Producto con `·`, nunca
+   `×`; división con `:` (en inglés, `÷` o `:`, como el resto de la app). Exponentes con `<sup>`.
+4. **Regla de oro**: todo distractor, inequívocamente falso, y cada distractor sale de un **error
+   típico** de la columna `nota` del inventario, calculado con los números del ítem y comprobado en el
+   test (nunca un número al azar): `−2 − 3 = +5`, `5 · (−2) = 10`, `(−2)⁴ = −16`, `(−2)³ = +8`,
+   `(−5)² = −10`, `−(−3)² = 9`, `5 − (2 − 4) = 5 − 2 − 4`, `2 − 4 + 3 = 2 − 7`, `4 − 5 · 2 = 4 − (−10)`,
+   `3 − (−2) = 3 − 2`, `|−4| = −4`, `−(−9) = −9`. Los generadores de estos valores están en
+   `_comun/enteros.js` (tarea 79): úsalos.
+5. **Parejas válidas, que nunca se enfrentan** (U3-4C-09): *negative three* / *minus three*;
+   *subtract* / *take away*; *times* / *multiplied by*; *exponent* / *index*; *brackets* /
+   *parentheses*; `÷` / `:`; `+5` / `5`; agrupar positivos y negativos / ir de izquierda a derecha;
+   operar dentro del paréntesis / quitarlo. **Riesgos de dos respuestas correctas** (las destrezas
+   con `cuidado` en la columna `tipo_test`): `√49` con 7 y ±7 a la vez entre las opciones; colocar
+   paréntesis (varias colocaciones pueden dar lo mismo: vale cualquiera que dé el resultado); años
+   a. C. (no hubo año 0); la escritura de dos signos seguidos (solo como «¿cuál está bien escrita?»).
+6. **Inglés sencillo**; la palabra no matemática que decide la respuesta se aclara entre paréntesis
+   (*to owe (deber)*, *rose (subió)*), salvo que sea justo lo que se evalúa. *Even* y *odd* se aclaran
+   siempre salvo en su pregunta.
+7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los
+   números que pueda sacar el generador, creíbles en su contexto, con una cota por contexto que el
+   test comprueba. Orientativas (la sesión fija las suyas y las escribe en su ENTREGA): temperatura de
+   una ciudad, de −30 a 45 °C, y su cambio en un día, de 1 a 20 grados; plantas de un edificio, de −5
+   a 20; buceo, de 0 a −40 m; saldo de un alumno, de −50 a 300 €; altitudes, de −400 m (mar Muerto) a
+   8849 m; años, de 3000 a. C. a 2026, sin año 0.
+8. **Feedback ligado al error**, con los números del ítem («−2 − 3: vas hacia abajo dos veces; 2 + 3 =
+   5, así que el resultado es −5»), no una regla genérica. Frase sencilla antes que caso límite: «el
+   valor absoluto es siempre positivo» se queda aunque |0| = 0 (decisión de Juan Luis del 17-10; no
+   vale para los distractores).
+9. **Casos fijos** (frases, contextos, cálculos con error) que no copien los de las hojas, los
+   exámenes semanales ni el examen final de la unidad 3 (en la carpeta de la unidad: `hojas-de-ejercicios/`,
+   `exámenes-semanales/`, `examen-final/`): los alumnos los verán en papel.
 
 ## Decisiones de reparto
 
@@ -296,3 +358,30 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
   fallo (ítem, respuesta, feedback, tipo de error opcional en `api.responder`) en una colección nueva que
   elige Juan Luis, con su vista en el panel. Las dos son ALTO, atendidas (él publica las reglas) y en serie:
   tocan `base.js`, el panel y `firestore.rules`.
+
+- **Tareas 79-96, prácticas de la unidad 3 (2026-10-21, coordinadora s-20261021T195149-596ac86a)**, pedidas por
+  Juan Luis el 19-10 («dar de alta tareas en el reparto para hacer las prácticas de la unidad 3») y
+  confirmadas el 21-10. Parten del diseño del traspaso `hechos/notas/s-20261019T210346-894df6be-traspaso-alta-u3.md`,
+  con estos cambios: (1) **la 79 deja un esqueleto en cada `practicas/<slug>/`**, porque `npm test` carga el
+  `practica.js` de cada fila del catálogo y sin él no podría añadir las doce filas de una vez; desde que la
+  79 está LISTA, cada carpeta es de su práctica (traspaso de titularidad, como en la skill); (2) la 79
+  escribe también `DESTREZAS` de la U3 en `registro.js` y el §7 de un `docs/practicas-unidad3.md` nuevo,
+  porque un test exige que las dos tablas coincidan; (3) la 79 es **ALTO**, no MEDIO: fija el evaluador
+  y los errores típicos que usan las doce; (4) la «propuesta de tareas» (93) y la «revisión final» (94)
+  del traspaso pasan a ser **cuatro tareas de revisión y publicación, una por semana (93-96)**, porque
+  una sola revisión al final no llegaba al plazo de la semana 1; cada una propone a Juan Luis la tarea
+  de su semana, que él monta en el panel (editor de la 67); (5) **número de ejercicios fijado** por
+  práctica (51 en total) y destrezas de vocabulario (1B-01, 1B-03, 2B-01, 2B-03) y U3-1C-02, que el
+  diseño dejaba sin práctica, asignadas a la 91 y a la 80. Sin práctica, a propósito: U3-2A-04, 2C-09 y
+  2C-17 como explicación. **Años a. C./d. C. (U3-4C-05)**: la 90 no cruza el año 0 hasta que Juan Luis
+  decida qué cuenta vale.
+
+## Orden de prioridad de la unidad 3 (por los plazos de publicación)
+
+1. **79** (base; ALTO) y, a la vez, **92** (generador `enteros`; MEDIO).
+2. **Semana 1**: 83 `saltos` (la central), 80 `termometro`, 81 `opuestos`, 82 `situaciones`, 91 `leelo3` →
+   **93** publica el jueves 12-11.
+3. **Semana 2**: 84, 85 → **94** (jueves 19-11).
+4. **Semana 3**: 86, 87, 88 → **95** (jueves 26-11).
+5. **Semana 4**: 89, 90 → **96** (jueves 3-12).
+Las prácticas no dependen unas de otras: con la 79 LISTA pueden ir todas a la vez.
