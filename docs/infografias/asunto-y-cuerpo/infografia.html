@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Asunto y cuerpo de un correo</title>
+<!-- Infografía para alumnos que escriben todo el correo en el asunto (2026-10-23).
+     Capturas de Gmail con un correo inventado. Se pasa a PNG con
+     generar.sh (Chrome sin ventana); lo que se envía es asunto-y-cuerpo.png. -->
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1400px; font-family: "Helvetica Neue", Arial, sans-serif; color: #1f2937; background: #fff; padding: 48px 56px 40px; }
+  h1 { font-size: 54px; text-align: center; color: #1d4ed8; }
+  .sub { text-align: center; font-size: 26px; color: #4b5563; margin: 10px 0 34px; }
+  .definiciones { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 40px; }
+  .def { border-radius: 18px; padding: 22px 26px; font-size: 25px; line-height: 1.45; }
+  .def h2 { font-size: 32px; margin-bottom: 8px; }
+  .def--asunto { background: #fef3c7; border: 3px solid #f59e0b; }
+  .def--cuerpo { background: #dbeafe; border: 3px solid #3b82f6; }
+  .comparar { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .caso h3 { font-size: 36px; margin-bottom: 14px; text-align: center; }
+  .caso--mal h3 { color: #b91c1c; }
+  .caso--bien h3 { color: #15803d; }
+  .captura { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.18); }
+  .caso--mal .captura { outline: 6px solid #dc2626; }
+  .caso--bien .captura { outline: 6px solid #16a34a; }
+  .captura img { display: block; width: 100%; }
+  /* Marcas sobre la captura (porcentajes de la imagen de 1082 × 1087). */
+  .marca { position: absolute; left: 1.5%; right: 1.5%; border-radius: 8px; }
+  .marca--asunto { top: 11.6%; height: 6.6%; border: 5px solid #f59e0b; background: rgba(245,158,11,.12); }
+  .marca--cuerpo { top: 18.8%; height: 62%; border: 5px dashed #3b82f6; background: rgba(59,130,246,.06); }
+  .etiqueta { position: absolute; font-size: 22px; font-weight: 700; padding: 6px 12px; border-radius: 8px; color: #fff; white-space: nowrap; }
+  .etiqueta--asunto { background: #f59e0b; right: 3%; top: 19.5%; }
+  .etiqueta--cuerpo { background: #3b82f6; right: 3%; bottom: 21%; }
+  /* En el caso bueno, el asunto es corto: la etiqueta cabe en su misma línea. */
+  .caso--bien .etiqueta--asunto { top: 12.2%; right: 3%; font-size: 20px; padding: 2px 10px; }
+  .nota { margin-top: 18px; font-size: 24px; line-height: 1.4; }
+  .nota li { margin: 6px 0 6px 28px; }
+  .pie { margin-top: 40px; text-align: center; font-size: 28px; background: #f3f4f6; border-radius: 16px; padding: 20px; }
+  .pie b { color: #1d4ed8; }
+</style>
+</head>
+<body>
+  <h1>¿Qué va en el asunto y qué va en el cuerpo?</h1>
+  <p class="sub">Así se escribe un correo en Gmail</p>
+
+  <div class="definiciones">
+    <div class="def def--asunto">
+      <h2>📌 Asunto</h2>
+      Es el <b>título</b> del correo: <b>pocas palabras</b> que dicen de qué trata.<br>
+      Por ejemplo: <i>Duda del ejercicio 3 de la hoja</i>.
+    </div>
+    <div class="def def--cuerpo">
+      <h2>✉️ Cuerpo</h2>
+      Es el <b>mensaje</b>: el espacio grande de debajo. Lleva el <b>saludo</b>, <b>lo que quieres decir</b>, la <b>despedida</b> y <b>tu nombre y tu grupo</b>.
+    </div>
+  </div>
+
+  <div class="comparar">
+    <div class="caso caso--mal">
+      <h3>✗ Así no</h3>
+      <div class="captura">
+        <img src="gmail-mal.png" alt="Correo con todo el mensaje escrito en el asunto y el cuerpo vacío">
+        <div class="marca marca--asunto"></div>
+        <div class="marca marca--cuerpo"></div>
+        <span class="etiqueta etiqueta--asunto">Todo el mensaje en el asunto</span>
+        <span class="etiqueta etiqueta--cuerpo">El cuerpo, vacío</span>
+      </div>
+      <ul class="nota">
+        <li>El asunto <b>no cabe</b>: se corta y no se lee entero.</li>
+        <li>No hay saludo, ni despedida, ni nombre.</li>
+      </ul>
+    </div>
+    <div class="caso caso--bien">
+      <h3>✓ Así sí</h3>
+      <div class="captura">
+        <img src="gmail-bien.png" alt="Correo con un asunto corto y el mensaje escrito en el cuerpo">
+        <div class="marca marca--asunto"></div>
+        <div class="marca marca--cuerpo"></div>
+        <span class="etiqueta etiqueta--asunto">Asunto: corto</span>
+        <span class="etiqueta etiqueta--cuerpo">Cuerpo: el mensaje</span>
+      </div>
+      <ul class="nota">
+        <li>Asunto corto: se sabe de qué va antes de abrirlo.</li>
+        <li>En el cuerpo: saludo, mensaje, despedida, nombre y grupo.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="pie">Pulsa en la línea <b>Asunto</b>, escribe el título y después pulsa en el <b>espacio grande de debajo</b> para escribir el mensaje.</p>
+</body>
+</html>
