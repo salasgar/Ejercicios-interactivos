@@ -15,6 +15,8 @@ import { explicacion } from '../practicas/ortografia/textos.js';
 import {
   VOCATIVO_ESCRITA, VOCATIVO_SIGNIFICADO, COMAS_SIGNIFICADO, generarVocativo, generarComas, opciones, buena as buenaComa, explicacionComa, idErrorComa,
 } from '../practicas/ortografia/comas.js';
+import { INTERROGATIVOS, listaDe, frase, alPrincipio, generadorTilde, explicacionTilde, idErrorTilde } from '../practicas/ortografia/tildes.js';
+import { SIGNOS, generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from '../practicas/ortografia/signos.js';
 
 const IRREGULARES = ['hecho', 'roto', 'puesto', 'vuelto', 'escrito', 'visto', 'dicho', 'abierto', 'muerto', 'impreso'];
 const esParticipio = palabra => /(ado|ido|ído)$/i.test(palabra) || IRREGULARES.includes(palabra.toLowerCase());
@@ -211,4 +213,64 @@ test('comas: los generadores, las opciones y la explicación casan', () => {
   }
   assert.ok(tipos.escrita > 1300 && tipos.significado > 1300, JSON.stringify(tipos));
   assert.ok(cual[0] > 1300 && cual[1] > 1300, JSON.stringify(cual));
+});
+
+// --- Tildes (ejercicios 8 y 9) y signos (ejercicio 10) -------------------------------
+
+test('tildes: cada frase tiene un hueco, su pareja y un motivo; las dos palabras salen a partes iguales', () => {
+  for (const grupo of ['interrogativos', 'diacriticas']) {
+    const lista = listaDe(grupo);
+    lista.forEach(([texto], n) => {
+      assert.equal(texto.split('_').length, 2, texto);
+      const f = frase(grupo, n);
+      assert.ok(f.opciones && f.opciones.includes(f.buena), texto);
+      assert.notEqual(f.opciones[0], f.opciones[1]);
+      if (alPrincipio(grupo, n)) assert.match(f.antes, /^[¿¡]?$/);
+      else assert.ok(!/^[¿¡]?$/.test(f.antes));
+      assert.match(explicacionTilde(grupo, n), new RegExp(`Va <b>${f.buena}</b>`));
+      assert.match(idErrorTilde(grupo, n), /^[a-z0-9-]{1,40}$/);
+    });
+    assert.equal(new Set(lista.map(f => f[0])).size, lista.length, `${grupo}: sin repetidas`);
+    const rng = crearRng(5);
+    const generar = generadorTilde(grupo);
+    let con = 0;
+    for (let i = 0; i < 2000; i++) { const it = generar(rng); if (frase(grupo, it.n).buena === frase(grupo, it.n).opciones[1]) con++; }
+    assert.ok(con > 850 && con < 1150, `${grupo}: ${con} de 2000 con tilde`);
+  }
+});
+
+test('tildes, interrogativos: con tilde en preguntas, exclamaciones y «No sé _»; sin tilde, nunca en esos sitios', () => {
+  INTERROGATIVOS.forEach(([texto, buena, motivo], n) => {
+    const { antes } = frase('interrogativos', n);
+    if (motivo === 'pregunta') assert.ok(antes.includes('¿'), texto);
+    if (motivo === 'exclamacion') assert.match(antes, /¡$/, texto);
+    if (motivo === 'indirecta') assert.equal(antes, 'No sé ', texto);
+    if (motivo === 'no') assert.doesNotMatch(antes, /[¿¡]$|^No sé $/, texto);
+    assert.equal(motivo === 'no', buena === frase('interrogativos', n).opciones[0], texto);
+  });
+  // Las que valen de las dos maneras no pueden estar.
+  for (const prohibida of ['Me gusta _ cantas.', 'Dime _ quieres.']) assert.ok(!INTERROGATIVOS.some(f => f[0] === prohibida));
+});
+
+test('signos: las malas son la buena con un fallo de signos o espacios, y la explicación dice cuál', () => {
+  const letras = t => t.replace(/[\s¿?¡!,.]/g, '');
+  for (const { bien, malas } of SIGNOS) {
+    assert.equal(malas.length, 2, bien);
+    for (const [m, motivo] of malas) {
+      assert.notEqual(m, bien);
+      assert.equal(letras(m), letras(bien), `solo cambian signos y espacios: ${m}`);
+      assert.ok(motivo.length > 20);
+    }
+  }
+  const rng = crearRng(9);
+  for (let i = 0; i < 500; i++) {
+    const item = generarSignos(rng);
+    const ops = opcionesSignos(item);
+    assert.deepEqual([...ops.map(o => o.k)].sort(), [0, 1, 2]);
+    assert.ok(explicacionSignos(item, 0).includes(SIGNOS[item.i].bien));
+    for (const k of [1, 2]) {
+      assert.ok(explicacionSignos(item, k).includes(SIGNOS[item.i].malas[k - 1][1]));
+      assert.match(idErrorSignos(item, k), /^[a-z0-9-]{1,40}$/);
+    }
+  }
 });
