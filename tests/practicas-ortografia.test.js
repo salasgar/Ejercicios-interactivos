@@ -9,9 +9,12 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { esc } from '../practicas/_comun/textos.js';
 import {
-  PAREJAS, CLAVES_PAREJAS, partes, rellenar, otra, generadorHueco, generarRevision, estaBien, idError,
+  PAREJAS, CLAVES_PAREJAS, partes, rellenar, otra, generadorHueco, generarRevision, estaBien, idError, slug,
 } from '../practicas/ortografia/logica.js';
 import { explicacion } from '../practicas/ortografia/textos.js';
+import {
+  VOCATIVO_ESCRITA, VOCATIVO_SIGNIFICADO, COMAS_SIGNIFICADO, generarVocativo, generarComas, opciones, buena as buenaComa, explicacionComa, idErrorComa,
+} from '../practicas/ortografia/comas.js';
 
 const IRREGULARES = ['hecho', 'roto', 'puesto', 'vuelto', 'escrito', 'visto', 'dicho', 'abierto', 'muerto', 'impreso'];
 const esParticipio = palabra => /(ado|ido|ído)$/i.test(palabra) || IRREGULARES.includes(palabra.toLowerCase());
@@ -120,7 +123,7 @@ test('ortografía: el identificador del error vale para el panel', () => {
   for (const { pareja, n, buena } of todas()) {
     const id = idError(pareja, n, otra(pareja, buena));
     assert.match(id, /^[a-z0-9-]{1,40}$/);
-    assert.equal(id, `${otra(pareja, buena)}-por-${buena}`);
+    assert.equal(id, `${slug(otra(pareja, buena))}-por-${slug(buena)}`);
   }
   assert.equal(rellenar('a_ha', 0, 'ha'), PAREJAS.a_ha.frases[0][0].replace('_', 'ha'));
 });
@@ -128,4 +131,84 @@ test('ortografía: el identificador del error vale para el panel', () => {
 test('ortografía: el aviso de «echado» también tras «¿Has…»', () => {
   const cama = PAREJAS.echo_hecho.frases.findIndex(f => f[0].startsWith('¿Has _'));
   assert.match(explicacion('echo_hecho', cama, esc), /detrás de «has» nunca va «echo».*«has echado»/);
+});
+
+// --- porque / por qué (ejercicio 5) --------------------------------------------------
+
+test('ortografía, porque / por qué: «por qué» en una pregunta o tras un verbo de preguntar; «porque», nunca justo tras «¿»', () => {
+  const INDIRECTAS = /^(Dime|Explícame|Explícanos|Me pregunto|Quiero saber) $/;
+  PAREJAS.porque.frases.forEach((f, n) => {
+    const { antes, buena } = partes('porque', n);
+    assert.doesNotMatch(f[0], /\b(el|un) _/, `sin «el porqué»: ${f[0]}`);
+    if (buena === 'por qué') assert.ok(antes.includes('¿') || INDIRECTAS.test(antes), `pregunta: ${f[0]}`);
+    else assert.doesNotMatch(antes, /¿\s*$/, f[0]);
+  });
+  const llego = PAREJAS.porque.frases.findIndex(f => f[0].startsWith('Llego tarde'));
+  assert.match(explicacion('porque', llego, esc), /Va <b>porque<\/b>.*Llego tarde ya que he perdido el autobús\.<\/i> ✓/);
+  const dime = PAREJAS.porque.frases.findIndex(f => f[0].startsWith('Dime'));
+  assert.match(explicacion('porque', dime, esc), /Va <b>por qué<\/b>.*aunque no lleve ¿\?/);
+  assert.equal(idError('porque', dime, 'porque'), 'porque-por-por-que');
+});
+
+test('ortografía: el ejercicio 4 sigue mezclando solo las tres primeras parejas', () => {
+  const rng = crearRng(3);
+  for (let i = 0; i < 500; i++) assert.ok(['a_ha', 'e_he', 'echo_hecho'].includes(generarRevision(rng).pareja));
+});
+
+// --- Comas (ejercicios 6 y 7) ---------------------------------------------------------
+
+const sinComas = t => t.replace(/,/g, '').replace(/\s+/g, ' ');
+const comas = t => (t.match(/,/g) ?? []).length;
+
+test('comas, vocativo «escrita»: las malas son la buena con alguna coma de menos', () => {
+  for (const { voc, frases } of VOCATIVO_ESCRITA) {
+    const [bien, ...malas] = frases;
+    assert.ok(malas.length >= 1 && malas.length <= 2, bien);
+    assert.ok(bien.toLowerCase().includes(voc.toLowerCase()), bien);
+    assert.equal(new Set(frases).size, frases.length, bien);
+    for (const m of malas) {
+      assert.equal(sinComas(m), sinComas(bien), `solo cambian las comas: ${m}`);
+      assert.ok(comas(m) < comas(bien), m);
+    }
+  }
+});
+
+test('comas, «significado»: dos frases que solo se diferencian en las comas, dos sentidos distintos', () => {
+  for (const p of [...VOCATIVO_SIGNIFICADO, ...COMAS_SIGNIFICADO]) {
+    assert.equal(p.frases.length, 2);
+    assert.notEqual(p.frases[0], p.frases[1]);
+    assert.equal(sinComas(p.frases[0]), sinComas(p.frases[1]), p.frases[0]);
+    assert.equal(p.sentidos.length, 2);
+    assert.notEqual(p.sentidos[0], p.sentidos[1]);
+    assert.ok(p.por.length > 20);
+  }
+  assert.ok(VOCATIVO_SIGNIFICADO.length >= 6 && COMAS_SIGNIFICADO.length >= 8);
+});
+
+test('comas: los generadores, las opciones y la explicación casan', () => {
+  const rng = crearRng(11);
+  const tipos = { escrita: 0, significado: 0 };
+  const cual = [0, 0];
+  for (let i = 0; i < 3000; i++) {
+    const v = generarVocativo(rng);
+    tipos[v.tipo]++;
+    const ops = opciones(v);
+    assert.equal(new Set(ops.map(o => o.k)).size, ops.length);
+    assert.ok(ops.some(o => o.k === buenaComa(v)));
+    if (v.tipo === 'escrita') {
+      assert.equal(ops.length, VOCATIVO_ESCRITA[v.i].frases.length);
+      assert.ok(explicacionComa(v).includes(VOCATIVO_ESCRITA[v.i].frases[0]));
+      assert.equal(idErrorComa(v), 'vocativo-sin-coma');
+    } else {
+      assert.equal(v.grupo, 'vocativo');
+      assert.equal(idErrorComa(v), 'vocativo-significado');
+    }
+    const c = generarComas(rng);
+    assert.equal(c.grupo, 'comas');
+    cual[c.cual]++;
+    assert.ok(explicacionComa(c).includes(COMAS_SIGNIFICADO[c.i].frases[c.cual]));
+    assert.match(idErrorComa(c), /^[a-z0-9-]{1,40}$/);
+  }
+  assert.ok(tipos.escrita > 1300 && tipos.significado > 1300, JSON.stringify(tipos));
+  assert.ok(cual[0] > 1300 && cual[1] > 1300, JSON.stringify(cual));
 });

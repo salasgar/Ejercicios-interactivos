@@ -10,3 +10,11 @@
 }
 .marcada s { color: var(--error); }
 .marcada .corregida { color: var(--correcto); }
+/* Comas (ejercicios 6 y 7): lo que se ha dicho antes, lo que tiene que decir la frase
+   y las frases como botones, una debajo de otra y alineadas a la izquierda. */
+.contexto { font-style: italic; margin-bottom: .6rem; }
+.sentido {
+  font-size: 1.1rem; font-weight: 600; background: var(--primario-claro); color: var(--primario-oscuro);
+  border-radius: 10px; padding: .6rem .9rem; margin-bottom: 1rem;
+}
+.frases .eleccion { text-align: left; font-size: 1.1rem; }

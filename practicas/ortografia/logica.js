@@ -2,9 +2,12 @@
 // `npm test`. Es la única práctica que no es de Matemáticas: los errores de
 // ortografía que Juan Luis ve en sus alumnos (2026-10-23). Va solo en español.
 //
-// Cuatro ejercicios:
+// Siete ejercicios (un ejercicio nuevo va siempre al FINAL: el progreso se
+// guarda por posición y las tareas de la U3 citan los cuatro primeros):
 //   1. a / ha        2. e / he        3. echo / hecho
-//   4. ¿Está bien escrita? (mezcla de las tres parejas, con la palabra ya puesta)
+//   4. ¿Está bien escrita? (mezcla de las tres primeras parejas, con la palabra ya puesta)
+//   5. porque / por qué
+//   6-7. Comas (vocativo y comas que cambian el significado): en `comas.js`
 //
 // Cada frase tiene UN hueco (`_`) y una sola palabra posible de la pareja: la
 // regla de oro de los distractores. Lo comprueban los tests con reglas de
@@ -17,8 +20,14 @@
 //     de hie- (hielo, hierro) se escribe «y», así que esas palabras no valen.
 //   - Ninguna frase lleva «había»: es la palabra del truco de la explicación.
 //   - El hueco nunca va al principio (los botones van en minúscula).
+//   - «porque» / «por qué»: una pregunta indirecta solo vale si leída con «porque»
+//     no tiene sentido («Dime _ te ríes» sí; «No sé _ llora» no, porque «No sé,
+//     porque llora» también se puede decir). Ninguna frase con «el porqué».
 
-/** Las tres parejas. `con` es la palabra con h; `sin`, la de sin h. */
+/**
+ * Las parejas de palabras. `con` es la palabra con h (en «porque» / «por qué»,
+ * la de la pregunta) y `sin`, la otra; los botones salen en el orden sin, con.
+ */
 export const PAREJAS = {
   a_ha: {
     sin: 'a', con: 'ha',
@@ -152,9 +161,48 @@ export const PAREJAS = {
       ['Cada mañana le _ de comer al gato.', 'echo'],
     ],
   },
+  porque: {
+    sin: 'porque', con: 'por qué',
+    nombre: 'porque / por qué',
+    frases: [
+      // «por qué»: pregunta directa (con ¿?) o indirecta («dime por qué…»).
+      ['Mamá, ¿_ no puedo ir a la excursión?', 'por qué'],
+      ['¿Y _ no me lo dijiste antes?', 'por qué'],
+      ['Oye, ¿_ estás tan contento hoy?', 'por qué'],
+      ['¿Sabes _ el agua del mar es salada?', 'por qué'],
+      ['¿Me explicas _ has borrado la pizarra?', 'por qué'],
+      ['¿Tú sabes _ no ha venido Lucía?', 'por qué'],
+      ['Profesora, ¿_ «hecho» se escribe con h?', 'por qué'],
+      ['¿Y tú _ te ríes?', 'por qué'],
+      ['Me pregunto _ el cielo es azul.', 'por qué'],
+      ['Dime _ te ríes.', 'por qué'],
+      ['Quiero saber _ has llegado tarde.', 'por qué'],
+      ['Explícanos _ el resultado es negativo.', 'por qué'],
+      ['Explícame _ has cogido mi estuche.', 'por qué'],
+      ['Me pregunto _ los gatos ronronean.', 'por qué'],
+      // «porque»: la causa (también dentro de una pregunta).
+      ['Llego tarde _ he perdido el autobús.', 'porque'],
+      ['Ayer no fui al cine _ estaba enfermo.', 'porque'],
+      ['Me pongo el abrigo _ hace frío.', 'porque'],
+      ['Estudio mucho _ quiero aprobar.', 'porque'],
+      ['El perro ladra _ tiene hambre.', 'porque'],
+      ['Lucía está contenta _ ha aprobado.', 'porque'],
+      ['Cerré la ventana _ entraba mucho aire.', 'porque'],
+      ['Me gusta el verano _ no hay clase.', 'porque'],
+      ['No salimos al patio _ estaba lloviendo.', 'porque'],
+      ['¿Te vas a casa _ estás cansado?', 'porque'],
+      ['¿Lloras _ te has caído?', 'porque'],
+      ['¿Estás enfadado _ he llegado tarde?', 'porque'],
+      ['Bebo agua _ tengo sed.', 'porque'],
+      ['Mi hermano no tiene hambre _ ha merendado.', 'porque'],
+    ],
+  },
 };
 
 export const CLAVES_PAREJAS = Object.keys(PAREJAS);
+
+/** Las parejas que mezcla el ejercicio 4 (las de las tareas de la U3: no se cambia). */
+export const PAREJAS_REVISION = ['a_ha', 'e_he', 'echo_hecho'];
 
 /** La frase n de una pareja, partida por el hueco: { antes, despues, buena, siguiente }. */
 export function partes(pareja, n) {
@@ -196,7 +244,7 @@ export function generadorHueco(pareja) {
 
 /** Ítem: { pareja, n, puesta }: la frase con `puesta` en el hueco, bien o mal (mitad y mitad). */
 export function generarRevision(rng) {
-  const pareja = rng.elegir(CLAVES_PAREJAS);
+  const pareja = rng.elegir(PAREJAS_REVISION);
   const { n } = generadorHueco(pareja)(rng);
   const { buena } = partes(pareja, n);
   return { pareja, n, puesta: rng.azar() < 0.5 ? buena : otra(pareja, buena) };
@@ -212,5 +260,8 @@ export function estaBien(item) {
  * vez de qué («ha-por-a»: escribió «ha» donde va «a»).
  */
 export function idError(pareja, n, puso) {
-  return `${puso}-por-${partes(pareja, n).buena}`;
+  return `${slug(puso)}-por-${slug(partes(pareja, n).buena)}`;
 }
+
+/** «por qué» → «por-que»: el panel solo admite minúsculas, cifras y guiones. */
+export const slug = texto => texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
