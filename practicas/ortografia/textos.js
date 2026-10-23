@@ -63,6 +63,27 @@ export const TX = {
     escrita: '¿Cuál está bien escrita?',
     significado: '¿Qué frase dice esto?',
   },
+  interrogativos: {
+    nombre: { es: '¿Lleva tilde? Qué, cómo, dónde…', en: 'Spanish spelling: qué, cómo, dónde…' },
+    detalle: { es: '¿Qué hora es?; el libro que me prestaste', en: '¿Qué hora es?; el libro que me prestaste' },
+    introduccion: mismo(`<p><b>qué, cómo, dónde, cuándo, quién, cuál</b> llevan tilde cuando <b>preguntan</b> o <b>exclaman</b>: <i>¿Qué hora es?</i>, <i>¡Qué frío!</i></p>
+      <p>También en una pregunta metida dentro de la frase, aunque no lleve ¿?: <i>No sé qué hacer</i>.</p>
+      <p>Si no preguntan ni exclaman, van <b>sin tilde</b>, aunque estén dentro de una pregunta: <i>¿Sabes que mañana no hay clase?</i></p>`),
+  },
+  diacriticas: {
+    nombre: { es: 'Tilde diacrítica: sé, sí, tú, él, mí, más', en: 'Spanish spelling: sé, sí, tú, él, mí, más' },
+    detalle: { es: 'Yo no sé nadar; el vaso se ha roto', en: 'Yo no sé nadar; el vaso se ha roto' },
+    introduccion: mismo(`<p>Algunas palabras llevan tilde para no confundirse con otra que se escribe igual:</p>
+      <p><b>sé</b> (de saber) y se;<br><b>sí</b> (para afirmar) y si (condición);<br><b>tú</b>, <b>él</b>, <b>mí</b> (personas) y tu, el, mi (delante de una cosa);<br><b>más</b> (cantidad).</p>
+      <p><b>Truco:</b> «tú» se puede cambiar por «yo», «él» por «ella» y «mí» por «ti».</p>`),
+  },
+  signos: {
+    nombre: { es: 'Signos ¿ ¡ y espacios', en: 'Spanish spelling: ¿ ¡ and spaces' },
+    detalle: { es: '¿Vienes?, no «Vienes?»; «Hola, Pablo», no «Hola,Pablo»', en: '¿Vienes?, no «Vienes?»; «Hola, Pablo», no «Hola,Pablo»' },
+    introduccion: mismo(`<p>En español las preguntas se abren con <b>¿</b> y las exclamaciones con <b>¡</b>: <i>¿Vienes?</i>, <i>¡Qué bien!</i></p>
+      <p>Los signos van <b>pegados</b> a la primera y a la última palabra: <i>¿Vienes?</i>, no <i>¿ Vienes ?</i></p>
+      <p>Detrás de una <b>coma</b> o de un <b>punto</b> va un espacio, y delante no: <i>Hola, Pablo. ¿Qué tal?</i></p>`),
+  },
   hueco: {
     pregunta: '¿Qué palabra va en el hueco?',
   },
