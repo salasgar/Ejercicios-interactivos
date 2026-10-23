@@ -1,0 +1,12 @@
+/* Ortografía: la frase se lee como un texto, no como una cuenta. */
+.oracion {
+  font-size: 1.3rem; line-height: 2.1; margin: .2rem 0 1.2rem; text-align: center;
+}
+.oracion .hueco { min-height: 1.7em; vertical-align: baseline; }
+/* La palabra que hay que revisar (ejercicio 4). */
+.marcada {
+  font-weight: 700; color: var(--primario-oscuro); background: var(--primario-claro);
+  border-radius: 6px; padding: .05em .35em;
+}
+.marcada s { color: var(--error); }
+.marcada .corregida { color: var(--correcto); }
