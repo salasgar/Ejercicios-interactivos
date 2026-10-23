@@ -40,6 +40,29 @@ export const TX = {
     esta_bien: 'Está bien escrita.',
     esta_mal: (puesta, buena) => `Está mal: no es «${puesta}», es «${buena}».`,
   },
+  porque: {
+    nombre: { es: '¿porque o por qué?', en: 'Spanish spelling: porque or por qué?' },
+    detalle: { es: '¿… no vienes?; no voy … llueve', en: '¿… no vienes?; no voy … llueve' },
+    introduccion: mismo(`<p><b>por qué</b>, separado y con tilde, <b>pregunta</b>: <i>¿Por qué no vienes?</i> También dentro de una frase sin signos de interrogación: <i>Dime por qué no vienes</i>.</p>
+      <p><b>porque</b>, junto y sin tilde, <b>da la causa</b>: <i>No voy porque llueve</i>. Es lo que se contesta a un «¿por qué?».</p>
+      <p><b>Truco:</b> si en su sitio puedes poner <b>ya que</b>, se escribe <b>porque</b>.</p>`),
+  },
+  vocativo: {
+    nombre: { es: 'La coma del vocativo', en: 'Spanish spelling: the vocative comma' },
+    detalle: { es: '«Vamos a comer, niños» no es «Vamos a comer niños»', en: '«Vamos a comer, niños» no es «Vamos a comer niños»' },
+    introduccion: mismo(`<p>El <b>vocativo</b> es el nombre de la persona a la que hablas: <i>Lucía, ven aquí</i>.</p>
+      <p>Se separa con <b>coma</b> del resto de la frase. Si va en medio, lleva <b>dos comas</b>: <i>Oye, Marcos, ¿me dejas un lápiz?</i></p>
+      <p>Sin la coma, la frase puede decir otra cosa: <i>Vamos a comer, niños</i> (llamas a los niños) no es <i>Vamos a comer niños</i> (¡los niños son la comida!).</p>`),
+  },
+  comas: {
+    nombre: { es: 'Comas que cambian el significado', en: 'Spanish spelling: commas that change the meaning' },
+    detalle: { es: '«No, tengo hambre» no es «No tengo hambre»', en: '«No, tengo hambre» no es «No tengo hambre»' },
+    introduccion: mismo(`<p>Una coma puede cambiar lo que dice una frase:</p>
+      <p><i>—¿Has comido? —No, tengo hambre.</i> (No he comido, y tengo hambre.)<br><i>—No tengo hambre.</i> (No tengo hambre.)</p>
+      <p><i>Los alumnos, que estudiaron, aprobaron.</i> (Todos estudiaron.)<br><i>Los alumnos que estudiaron aprobaron.</i> (Solo los que estudiaron.)</p>`),
+    escrita: '¿Cuál está bien escrita?',
+    significado: '¿Qué frase dice esto?',
+  },
   hueco: {
     pregunta: '¿Qué palabra va en el hueco?',
   },
@@ -66,6 +89,14 @@ export function explicacion(pareja, n, esc) {
     }
     const empieza = /^h/i.test(siguiente) ? 'hi' : 'i';
     return `Va <b>e</b>, sin h: une dos cosas, como la «y», que se escribe «e» porque «${esc(siguiente)}» empieza por ${empieza}. No es el verbo haber: con «había» no tiene sentido (${conHabia} ✗).`;
+  }
+  if (pareja === 'porque') {
+    if (buena === p.sin) {
+      return `Va <b>porque</b>, junto y sin tilde: da la causa, el motivo. Se puede cambiar por «ya que»: <i>${esc(rellenar(pareja, n, 'ya que'))}</i> ✓`;
+    }
+    return /[¿]\s*$/.test(antes) || antes.includes('¿')
+      ? `Va <b>por qué</b>, separado y con tilde: es una pregunta, y no da la causa (la causa sería la respuesta: «porque…»).`
+      : `Va <b>por qué</b>, separado y con tilde: aunque no lleve ¿?, es una pregunta metida dentro de la frase. La respuesta empezaría por «porque…».`;
   }
   // echo / hecho
   if (buena === p.con) {

@@ -4,13 +4,17 @@
 //
 //   1-3. Una frase con un hueco y los dos botones de la pareja.
 //   4.   La frase con la palabra ya puesta, bien o mal: «¿Está bien escrita?».
+//   5.   porque / por qué, como los 1-3 (2026-10-23).
+//   6-7. Comas: elegir la frase bien escrita o la que dice lo que se pide.
 //
-// Las frases están en logica.js; las explicaciones, en textos.js.
+// Las frases de los 1-5 están en logica.js y sus explicaciones en textos.js;
+// las de las comas, con las suyas, en comas.js.
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX, explicacion } from './textos.js';
 import { PAREJAS, partes, otra, generadorHueco, generarRevision, estaBien, idError } from './logica.js';
+import { grupo, generarVocativo, generarComas, opciones, buena as opcionBuena, explicacionComa, idErrorComa } from './comas.js';
 
 // --- Ejercicios 1-3: ¿qué palabra va en el hueco? ----------------------------------
 
@@ -79,6 +83,36 @@ function montarRevision(contenedor, item, api) {
   });
 }
 
+// --- Ejercicios 6-7: las comas -----------------------------------------------------
+
+function enunciadoComa(item) {
+  if (item.tipo === 'escrita') return `<p class="instruccion">${TX.comas.escrita}</p>`;
+  const p = grupo(item.grupo)[item.i];
+  const contexto = p.contexto ? `<p class="contexto">${p.contexto}</p>` : '';
+  return `${contexto}<p class="instruccion">${TX.comas.significado}</p><p class="sentido">${p.sentidos[item.cual]}</p>`;
+}
+
+function montarComa(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoComa(item);
+  const ops = opciones(item);
+  const correcta = opcionBuena(item);
+  const botones = elecciones(contenedor, {
+    clase: 'elecciones frases',
+    opciones: ops.map(o => ({ valor: o.k, html: o.texto })),
+    alElegir(k) {
+      if (api.respondido()) return;
+      botones.marcar([correcta], k);
+      const acierto = k === correcta;
+      api.responder({
+        acierto,
+        html: explicacionComa(item),
+        espera: 3500,
+        ...(acierto ? {} : { error: idErrorComa(item), respuesta: ops.find(o => o.k === k).texto.slice(0, 60) }),
+      });
+    },
+  });
+}
+
 // --- La práctica -------------------------------------------------------------------
 
 const ejercicioHueco = pareja => ({
@@ -105,6 +139,25 @@ arrancar({
       clave: item => `${item.pareja}/${item.n}`,
       montar: montarRevision,
       enunciado: enunciadoRevision,
+    },
+    ejercicioHueco('porque'),
+    {
+      nombre: TX.vocativo.nombre,
+      detalle: TX.vocativo.detalle,
+      introduccion: TX.vocativo.introduccion,
+      generar: generarVocativo,
+      clave: item => `${item.tipo}/${item.grupo ?? ''}/${item.i}`,
+      montar: montarComa,
+      enunciado: enunciadoComa,
+    },
+    {
+      nombre: TX.comas.nombre,
+      detalle: TX.comas.detalle,
+      introduccion: TX.comas.introduccion,
+      generar: generarComas,
+      clave: item => `${item.grupo}/${item.i}`,
+      montar: montarComa,
+      enunciado: enunciadoComa,
     },
   ],
 });
