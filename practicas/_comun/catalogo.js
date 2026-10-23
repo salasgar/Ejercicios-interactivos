@@ -60,10 +60,11 @@ export const CATALOGO = [
   { id: 29, slug: 'errores1', ruta: 'errores1/', unidad: 1, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 4, disponible: true },
   { id: 30, slug: 'propiedades', ruta: 'propiedades/', unidad: 1, nombre: { es: 'Propiedades de las potencias (ampliación)', en: 'Laws of indices (extension)' }, nEjercicios: 3, disponible: true },
   { id: 32, slug: 'por-primos', ruta: 'por-primos/', unidad: 2, nombre: { es: 'Multiplica y divide por primos', en: 'Multiply and divide by primes' }, nEjercicios: 5, disponible: true },
-  // Ortografía española (2026-10-23): no es de Matemáticas ni de ninguna unidad; `unidad`
-  // solo decide en qué sección de la portada sale cuando se publique. El 45 porque del 33
-  // al 44 son de la unidad 3 (reparto PU2, tareas 79-91).
-  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 2, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 4, disponible: false },
+  // Ortografía española (2026-10-23): no es de Matemáticas; va en la unidad 3 porque es
+  // donde se usa (decisión de Juan Luis: un ejercicio ★ en cada tarea semanal de la U3, en
+  // orden, de la semana 1 a la 4), y así en esas tareas no sale como «repaso». El 45 porque
+  // del 33 al 44 son de la unidad 3 (reparto PU2, tareas 79-91).
+  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 4, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];
