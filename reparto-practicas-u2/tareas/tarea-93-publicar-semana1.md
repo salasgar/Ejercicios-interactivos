@@ -4,7 +4,7 @@ Actualizado: 2026-10-21
 Precondición: 80, 81, 82, 83 y 91 LISTAS · Disparo: MANUAL (sesión atendida)
 Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/93-publicar-semana1/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de `termometro`, `opuestos`, `situaciones`, `saltos`, `leelo3`)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de `termometro`, `opuestos`, `situaciones`, `saltos`, `leelo3` y `ortografia`)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -94,6 +94,7 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
    publicación, y la lista de destrezas nucleares de la semana que no cubre ninguna práctica. Modelo:
    la terminada de la tarea 46 y el diseño de la 45. **Él la monta en el panel** (editor de tareas,
    tarea 67); tú no la creas.
+   **Ortografía (decisión de Juan Luis, 2026-10-23):** la propuesta lleva entre los ★ el ejercicio `['ortografia', 1]` («¿a o ha?», práctica de ortografía española, id 45, unidad 3, commit e436a81). Es obligatorio y ocupa 10 de los 100 puntos (él lo acepta): el resto de la tarea suma 90. No cubre destrezas del inventario de la unidad 3. Si `ortografia` sigue con `disponible: false` en `catalogo.js`, esta tarea le pone `true` (la práctica ya está revisada y aprobada por Juan Luis el 23-10).
 
 ## Datos de entrada
 

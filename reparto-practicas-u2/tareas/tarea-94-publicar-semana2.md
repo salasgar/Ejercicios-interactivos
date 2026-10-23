@@ -95,6 +95,7 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
    publicación, y la lista de destrezas nucleares de la semana que no cubre ninguna práctica. Modelo:
    la terminada de la tarea 46 y el diseño de la 45. **Él la monta en el panel** (editor de tareas,
    tarea 67); tú no la creas.
+   **Ortografía (decisión de Juan Luis, 2026-10-23):** la propuesta lleva entre los ★ el ejercicio `['ortografia', 2]` («¿e o he?», práctica de ortografía española, id 45, unidad 3, commit e436a81). Es obligatorio y ocupa 10 de los 100 puntos (él lo acepta): el resto de la tarea suma 90. No cubre destrezas del inventario de la unidad 3.
 
 ## Datos de entrada
 

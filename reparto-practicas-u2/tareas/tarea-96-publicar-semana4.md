@@ -95,6 +95,7 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
    publicación, y la lista de destrezas nucleares de la semana que no cubre ninguna práctica. Modelo:
    la terminada de la tarea 46 y el diseño de la 45. **Él la monta en el panel** (editor de tareas,
    tarea 67); tú no la creas.
+   **Ortografía (decisión de Juan Luis, 2026-10-23):** la propuesta lleva entre los ★ el ejercicio `['ortografia', 4]` («¿Está bien escrita?», práctica de ortografía española, id 45, unidad 3, commit e436a81). Es obligatorio y ocupa 10 de los 100 puntos (él lo acepta): el resto de la tarea suma 90. No cubre destrezas del inventario de la unidad 3.
 
 **Y además, al ser la última**: escribe lo que la 79 dejó «por escribir» en `docs/practicas-unidad3.md`
 (modelo: `docs/practicas-unidad2.md`: qué hace cada práctica, sus ejercicios, sus cotas, sus errores
