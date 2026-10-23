@@ -50,6 +50,7 @@ const esBilingue = obj => typeof obj?.es === 'string' && typeof obj?.en === 'str
 export function validarPractica(practica) {
   const ficha = practicaPorSlug(practica?.slug);
   if (!ficha) throw new Error(`La práctica «${practica?.slug}» no está en practicas/_comun/catalogo.js`);
+  if (practica.idioma !== undefined && practica.idioma !== 'es' && practica.idioma !== 'en') throw new Error(`«${ficha.slug}»: «idioma» tiene que ser 'es' o 'en' (o no ponerse)`);
   const ejercicios = practica.ejercicios;
   if (!Array.isArray(ejercicios) || ejercicios.length !== ficha.nEjercicios) {
     throw new Error(`La práctica «${ficha.slug}» tiene que declarar ${ficha.nEjercicios} ejercicios (catálogo) y declara ${ejercicios?.length ?? 0}`);
@@ -318,6 +319,9 @@ export function arrancar(practica) {
   const nuevos = () => params.map(p => ejercicioNuevo(p.objetivo, p.vidas));
   const rng = crearRng((Date.now() ^ Math.floor(Math.random() * 2 ** 32)) >>> 0);
   const idiomasDe = defs.map(() => crearSecuenciaIdiomas(rng));
+  // Una práctica de un solo idioma (la de ortografía española) lo declara en
+  // `idioma`: manda sobre el sorteo y sobre el idioma fijado del alumno.
+  const idiomaPropio = practica.idioma ?? null;
 
   const estado = {
     idiomaFijo: null,  // 'es' | 'en' | null (modo alterno); nunca lo elige el alumno
@@ -378,7 +382,7 @@ export function arrancar(practica) {
     abrirEjercicio(n);
   }
 
-  const idiomaInterfaz = () => estado.idiomaFijo ?? 'es';
+  const idiomaInterfaz = () => idiomaPropio ?? estado.idiomaFijo ?? 'es';
   const t = (idioma = idiomaInterfaz()) => T[idioma];
   const tt = (obj, idioma = idiomaInterfaz()) => obj[idioma];
 
@@ -481,7 +485,7 @@ export function arrancar(practica) {
     if (titulo) titulo.textContent = tt(ficha.nombre, idi);
     const idiomas = document.querySelector('#idiomas');
     if (idiomas) {
-      idiomas.innerHTML = (idiomaItem && !estado.idiomaFijo)
+      idiomas.innerHTML = (idiomaItem && !estado.idiomaFijo && !idiomaPropio)
         ? `<span class="etiqueta-idioma" aria-hidden="true">${idiomaItem.toUpperCase()}</span>` : '';
     }
   }
@@ -726,7 +730,7 @@ export function arrancar(practica) {
     // El idioma del ítem se fija antes de generarlo (y no al mostrarlo): un
     // recargado de la pantalla (por ejemplo tras la traducción) no lo cambia,
     // y `generar` lo recibe en `sesion.idioma` por si tiene ítems de un solo idioma.
-    actual.idioma = estado.idiomaFijo ?? idiomasDe[actual.n].siguiente();
+    actual.idioma = idiomaPropio ?? estado.idiomaFijo ?? idiomasDe[actual.n].siguiente();
     const sesion = { aciertos: actual.sesion.aciertos, fallos: actual.sesion.fallos, puntos: actual.sesion.puntos, vidas: actual.sesion.vidas, anterior, idioma: actual.idioma };
     let item = def.generar(rng, sesion);
     for (let i = 0; i < 5 && anterior !== null && clave(item) === clave(anterior); i++) item = def.generar(rng, sesion);
@@ -824,7 +828,7 @@ export function arrancar(practica) {
    * práctica da el feedback como función: sin él, la traducción no aporta.
    */
   function botonTraduccion() {
-    if (estado.idiomaFijo || !actual.feedback) return '';
+    if (idiomaPropio || estado.idiomaFijo || !actual.feedback) return '';
     const otro = actual.idioma === 'es' ? 'en' : 'es';
     return `<button type="button" class="discreto traducir" id="traducir">${TRADUCCION[otro]}</button><div class="traduccion" id="caja-traduccion" lang="${otro}" hidden></div>`;
   }

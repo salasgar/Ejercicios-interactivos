@@ -17,6 +17,11 @@
 //   slug        el del catálogo. De ahí salen el id, el título y cuántos
 //               ejercicios tiene que haber (si no coincide, la base lo dice en
 //               pantalla y no arranca).
+//   idioma      opcional, 'es' | 'en': la práctica entera va siempre en ese
+//               idioma (ni sorteo, ni idioma fijado del alumno, ni botón de
+//               traducción). Solo para lo que no tiene sentido en el otro,
+//               como la ortografía española. `nombre` y `detalle` siguen
+//               siendo { es, en } (los usan la portada y la tarea).
 //   ejercicios  lista de ejercicios. El alumno los ve como «Ejercicio 1»,
 //               «Ejercicio 2»… seguidos de su `nombre`. Cada uno:
 //
