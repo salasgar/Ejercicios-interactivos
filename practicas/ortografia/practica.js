@@ -6,7 +6,8 @@
 //   4.   La frase con la palabra ya puesta, bien o mal: «¿Está bien escrita?».
 //   5.   porque / por qué, como los 1-3 (2026-10-23).
 //   6-7. Comas: elegir la frase bien escrita o la que dice lo que se pide.
-//   8-9. Tildes: interrogativos y exclamativos, y tilde diacrítica (hueco).
+//   8-9. Tildes: interrogativos y exclamativos, y tilde diacrítica (hueco; uno de
+//        cada cuatro, un par de significado o, en el 9, una pregunta de sí o no).
 //   10.  Signos ¿ ¡ y espacios: elegir la bien escrita.
 //   11.  La coma entre sujeto y verbo frente a la del inciso (2026-10-25): igual.
 //
@@ -18,7 +19,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX, explicacion } from './textos.js';
 import { PAREJAS, partes, otra, generadorHueco, generarRevision, estaBien, idError } from './logica.js';
-import { frase, alPrincipio, mayuscula, generadorTilde, explicacionTilde, idErrorTilde } from './tildes.js';
+import { frase, alPrincipio, mayuscula, generadorTilde, explicacionTilde, idErrorTilde, PARES, PREGUNTAS, explicacionExtra, idErrorExtra } from './tildes.js';
 import { generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from './signos.js';
 import { generarSujeto, opcionesSujeto, explicacionSujeto, idErrorSujeto } from './sujeto.js';
 import { grupo, generarVocativo, generarComas, opciones, buena as opcionBuena, explicacionComa, idErrorComa } from './comas.js';
@@ -122,7 +123,10 @@ function montarComa(contenedor, item, api) {
 
 // --- Ejercicios 8-9: las tildes --------------------------------------------------
 
+/** Los ítems sin `tipo` son de antes de los pares (2026-10-25): huecos. */
 function montarTilde(contenedor, item, api) {
+  if (item.tipo === 'par') return montarParTilde(contenedor, item, api);
+  if (item.tipo === 'pregunta') return montarPreguntaTilde(contenedor, item, api);
   const { esc } = api;
   const { antes, despues, buena, opciones } = frase(item.grupo, item.n);
   const forma = alPrincipio(item.grupo, item.n) ? mayuscula : p => p;
@@ -144,6 +148,58 @@ function montarTilde(contenedor, item, api) {
         html: explicacionTilde(item.grupo, item.n),
         espera: 2600,
         ...(acierto ? {} : { error: idErrorTilde(item.grupo, item.n), respuesta: valor }),
+      });
+    },
+  });
+}
+
+function enunciadoTilde(item) {
+  if (item.tipo === 'par') {
+    const p = PARES[item.grupo][item.i];
+    return `<p class="instruccion">${TX.comas.significado}</p><p class="sentido">${p.sentidos[item.cual]}</p>`;
+  }
+  if (item.tipo === 'pregunta') {
+    const p = PREGUNTAS[item.i];
+    return `<p class="contexto">${p.contexto}</p><p class="instruccion">${TX.tildes.te_preguntan}</p><p class="oracion">«${p.pregunta}»</p>`;
+  }
+  return enunciadoHueco();
+}
+
+function montarParTilde(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoTilde(item);
+  const p = PARES[item.grupo][item.i];
+  const botones = elecciones(contenedor, {
+    clase: 'elecciones frases',
+    opciones: item.orden.map(k => ({ valor: k, html: api.esc(p.frases[k]) })),
+    alElegir(k) {
+      if (api.respondido()) return;
+      botones.marcar([item.cual], k);
+      const acierto = k === item.cual;
+      api.responder({
+        acierto,
+        html: explicacionExtra(item),
+        espera: 3500,
+        ...(acierto ? {} : { error: idErrorExtra(item), respuesta: p.frases[k].slice(0, 60) }),
+      });
+    },
+  });
+}
+
+function montarPreguntaTilde(contenedor, item, api) {
+  contenedor.innerHTML = enunciadoTilde(item);
+  const { respuesta } = PREGUNTAS[item.i];
+  const botones = elecciones(contenedor, {
+    clase: 'si-no',
+    opciones: [{ valor: 'sí', html: 'Sí' }, { valor: 'no', html: 'No' }],
+    alElegir(valor) {
+      if (api.respondido()) return;
+      botones.marcar([respuesta], valor);
+      const acierto = valor === respuesta;
+      api.responder({
+        acierto,
+        html: explicacionExtra(item),
+        espera: 3500,
+        ...(acierto ? {} : { error: idErrorExtra(item), respuesta: valor }),
       });
     },
   });
@@ -224,9 +280,9 @@ arrancar({
       detalle: TX[g].detalle,
       introduccion: TX[g].introduccion,
       generar: generadorTilde(g),
-      clave: item => `${item.grupo}/${item.n}`,
+      clave: item => `${item.tipo}/${item.grupo}/${item.n ?? item.i}`,
       montar: montarTilde,
-      enunciado: enunciadoHueco,
+      enunciado: enunciadoTilde,
     })),
     {
       nombre: TX.signos.nombre,

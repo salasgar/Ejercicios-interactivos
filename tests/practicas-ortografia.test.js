@@ -15,7 +15,7 @@ import { explicacion } from '../practicas/ortografia/textos.js';
 import {
   VOCATIVO_ESCRITA, VOCATIVO_SIGNIFICADO, COMAS_SIGNIFICADO, generarVocativo, generarComas, opciones, buena as buenaComa, explicacionComa, idErrorComa,
 } from '../practicas/ortografia/comas.js';
-import { INTERROGATIVOS, listaDe, frase, alPrincipio, generadorTilde, explicacionTilde, idErrorTilde } from '../practicas/ortografia/tildes.js';
+import { INTERROGATIVOS, listaDe, frase, alPrincipio, generadorTilde, explicacionTilde, idErrorTilde, PARES, PREGUNTAS, explicacionExtra, idErrorExtra } from '../practicas/ortografia/tildes.js';
 import { SIGNOS, generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from '../practicas/ortografia/signos.js';
 import { SUJETOS, INCISOS, frases as frasesSujeto, generarSujeto, opcionesSujeto, explicacionSujeto, idErrorSujeto } from '../practicas/ortografia/sujeto.js';
 
@@ -228,15 +228,22 @@ test('tildes: cada frase tiene un hueco, su pareja y un motivo; las dos palabras
       assert.notEqual(f.opciones[0], f.opciones[1]);
       if (alPrincipio(grupo, n)) assert.match(f.antes, /^[¿¡]?$/);
       else assert.ok(!/^[¿¡]?$/.test(f.antes));
-      assert.match(explicacionTilde(grupo, n), new RegExp(`Va <b>${f.buena}</b>`));
+      assert.match(explicacionTilde(grupo, n), new RegExp(`Va <b>${f.buena}</b>`, 'i'));
       assert.match(idErrorTilde(grupo, n), /^[a-z0-9-]{1,40}$/);
     });
     assert.equal(new Set(lista.map(f => f[0])).size, lista.length, `${grupo}: sin repetidas`);
     const rng = crearRng(5);
     const generar = generadorTilde(grupo);
     let con = 0;
-    for (let i = 0; i < 2000; i++) { const it = generar(rng); if (frase(grupo, it.n).buena === frase(grupo, it.n).opciones[1]) con++; }
-    assert.ok(con > 850 && con < 1150, `${grupo}: ${con} de 2000 con tilde`);
+    let huecos = 0;
+    for (let i = 0; i < 4000; i++) {
+      const it = generar(rng);
+      if (it.tipo !== 'hueco') continue;
+      huecos++;
+      if (frase(grupo, it.n).buena === frase(grupo, it.n).opciones[1]) con++;
+    }
+    assert.ok(huecos > 2800 && huecos < 3200, `${grupo}: ${huecos} de 4000 son huecos`);
+    assert.ok(con > huecos * 0.43 && con < huecos * 0.57, `${grupo}: ${con} de ${huecos} con tilde`);
   }
 });
 
@@ -245,9 +252,9 @@ test('tildes, interrogativos: con tilde en preguntas, exclamaciones y «No sé _
     const { antes } = frase('interrogativos', n);
     if (motivo === 'pregunta') assert.ok(antes.includes('¿'), texto);
     if (motivo === 'exclamacion') assert.match(antes, /¡$/, texto);
-    if (motivo === 'indirecta') assert.equal(antes, 'No sé ', texto);
-    if (motivo === 'no') assert.doesNotMatch(antes, /[¿¡]$|^No sé $/, texto);
-    assert.equal(motivo === 'no', buena === frase('interrogativos', n).opciones[0], texto);
+    if (motivo === 'indirecta') assert.ok(['No sé ', 'Mi hermana dice '].includes(antes), texto);
+    if (motivo === 'no' || motivo === 'causa') assert.doesNotMatch(antes, /[¿¡]$|^No sé $/, texto);
+    assert.equal(['no', 'causa'].includes(motivo), buena === frase('interrogativos', n).opciones[0], texto);
   });
   // Las que valen de las dos maneras no pueden estar.
   for (const prohibida of ['Me gusta _ cantas.', 'Dime _ quieres.']) assert.ok(!INTERROGATIVOS.some(f => f[0] === prohibida));
@@ -318,4 +325,38 @@ test('sujeto e inciso: generador, opciones, explicación e identificador del err
   assert.match(explicacionSujeto(lapiz, 1), /«El lápiz que te dejé» es el sujeto, y «era…»/);
   const aquel = { tipo: 'inciso', i: 0, orden: [0, 1, 2] };
   assert.match(explicacionSujeto(aquel, 1), /«el que yo te dejé».*«Aquel lápiz era rojo\.».*le falta la de delante/);
+});
+
+test('tildes: los pares de Juan Luis solo cambian en la tilde (y la puntuación o el artículo que la deciden), con dos sentidos distintos', () => {
+  const sinTildes = t => t.normalize('NFD').replace(/\u0301/g, '').normalize('NFC').toLowerCase().replace(/[^a-zñ ]/g, '').replace(/\bel /g, '');
+  for (const grupo of ['interrogativos', 'diacriticas']) {
+    for (const p of PARES[grupo]) {
+      assert.equal(p.frases.length, 2);
+      assert.notEqual(p.frases[0], p.frases[1]);
+      assert.equal(sinTildes(p.frases[0]), sinTildes(p.frases[1]), p.frases[0]);
+      assert.notEqual(p.sentidos[0], p.sentidos[1]);
+      for (const cual of [0, 1]) assert.ok(explicacionExtra({ tipo: 'par', grupo, i: PARES[grupo].indexOf(p), cual }).includes(p.frases[cual]));
+    }
+  }
+  // La silla: «tu silla» (la tuya) → no; «tú silla» (¿la llevarás tú?) → sí.
+  assert.deepEqual(PREGUNTAS.map(q => [q.pregunta, q.respuesta]), [['¿Llevarás tu silla?', 'no'], ['¿Llevarás tú silla?', 'sí']]);
+  assert.equal(idErrorExtra({ tipo: 'pregunta', i: 0 }), 'tu-tu-significado');
+  assert.equal(idErrorExtra({ tipo: 'par', grupo: 'interrogativos', i: 0 }), 'tilde-significado');
+  // En el 8 solo hay pares; las preguntas de sí o no salen en el 9.
+  const rng = crearRng(21);
+  const vistos = { interrogativos: new Set(), diacriticas: new Set() };
+  for (const grupo of Object.keys(vistos)) for (let i = 0; i < 2000; i++) vistos[grupo].add(generadorTilde(grupo)(rng).tipo);
+  assert.deepEqual([...vistos.interrogativos].sort(), ['hueco', 'par']);
+  assert.deepEqual([...vistos.diacriticas].sort(), ['hueco', 'par', 'pregunta']);
+});
+
+test('tildes: las explicaciones nuevas usan la frase del ejercicio', () => {
+  const L = listaDe('interrogativos');
+  const examen = L.findIndex(f => f[0] === 'Mi hermana dice _ examen era difícil.');
+  assert.match(explicacionTilde('interrogativos', examen), /«¿Qué examen era difícil\?»/);
+  const como = L.findIndex(f => f[0] === '_ voy a ir, no me importa.');
+  assert.ok(alPrincipio('interrogativos', como));
+  assert.match(explicacionTilde('interrogativos', como), /Va <b>Como<\/b>, sin tilde.*«Ya que voy a ir, no me importa\.»/);
+  const si = listaDe('diacriticas').findIndex(f => f[0] === '_ ha hecho los deberes; no le suspendas.');
+  assert.match(explicacionTilde('diacriticas', si), /Va <b>Sí<\/b>/);
 });

@@ -92,6 +92,9 @@ export const TX = {
       <p>Otra cosa es una <b>explicación metida en medio</b>, que se podría quitar: esa va <b>entre dos comas</b>, una delante y otra detrás.</p>
       <p><i>Aquel lápiz, el que yo te dejé, era rojo.</i> ✓</p>`),
   },
+  tildes: {
+    te_preguntan: 'Te preguntan esto. ¿Qué contestas?',
+  },
   hueco: {
     pregunta: '¿Qué palabra va en el hueco?',
   },
