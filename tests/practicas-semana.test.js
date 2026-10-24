@@ -547,6 +547,8 @@ test('«· repaso U1» solo cuando la práctica es de otra unidad que la tarea',
   const t1 = tareaPorId(1);
   assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('jerarquia'), t1), true);
   assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('semaforo'), t1), false);
+  // La ortografía es transversal: en una tarea de cualquier unidad, nunca «repaso».
+  for (const unidad of [2, 3, 4]) assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('ortografia'), { ...t1, unidad }), false);
   assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('errores1'), tareaPorId(14)), false);
   assert.equal(esRepasoDeOtraUnidad(practicaPorSlug('errores'), tareaPorId(4)), false);
   assert.equal(T.es.repaso_de_unidad(1), '· repaso U1');

@@ -137,7 +137,8 @@ export function ejercicioFueraDePlazo(tarea, ej, tipo) {
 }
 
 /** Cuando la práctica es de otra unidad que la tarea, el nombre lleva «· repaso U1». */
-export const esRepasoDeOtraUnidad = (ficha, tarea) => Boolean(ficha?.unidad) && ficha.unidad !== tarea.unidad;
+// Una práctica `transversal` (la de ortografía) no es de ninguna unidad en concreto: nunca es «repaso».
+export const esRepasoDeOtraUnidad = (ficha, tarea) => Boolean(ficha?.unidad) && !ficha.transversal && ficha.unidad !== tarea.unidad;
 
 // --- Portada por unidades -------------------------------------------------------------
 
