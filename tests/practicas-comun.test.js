@@ -45,8 +45,16 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [12, 'baldosas', 3], [13, 'errores', 3], [14, 'leelo', 3], [15, 'factorizaciones', 3], [16, 'parentesis', 4],
     [17, 'jerarquia', 4], [18, 'exponente', 3], [19, 'raiz', 3], [20, 'division', 4], [21, 'expresion', 3], [22, 'redondeo', 3],
     [23, 'constructor', 3], [24, 'distributiva', 3], [25, 'potencias10', 3], [26, 'dictado', 3], [27, 'mental', 2],
-    [28, 'especiales', 2], [29, 'errores1', 4], [30, 'propiedades', 3], [32, 'por-primos', 5], [45, 'ortografia', 11], [31, 'plantilla', 2],
+    [28, 'especiales', 2], [29, 'errores1', 4], [30, 'propiedades', 3], [32, 'por-primos', 5],
+    // Unidad 3 (tarea 79).
+    [33, 'termometro', 5], [34, 'opuestos', 4], [35, 'situaciones', 3], [36, 'saltos', 5], [37, 'dos-signos', 4],
+    [38, 'signos-producto', 5], [39, 'potencias-enteros', 4], [40, 'jerarquia-enteros', 4], [41, 'parentesis-enteros', 5],
+    [42, 'errores3', 3], [43, 'variacion', 5], [44, 'leelo3', 4],
+    [45, 'ortografia', 11], [31, 'plantilla', 2],
   ]);
+  const u3 = CATALOGO.filter(p => p.id >= 33 && p.id <= 44);
+  assert.ok(u3.every(p => p.unidad === 3 && !p.transversal), 'las doce de la unidad 3');
+  assert.equal(u3.reduce((s, p) => s + p.nEjercicios, 0), 51, 'número de ejercicios fijado por el reparto (51 en total)');
   assert.equal(new Set(CATALOGO.map(p => p.id)).size, CATALOGO.length, 'ids distintos');
   assert.equal(new Set(CATALOGO.map(p => p.slug)).size, CATALOGO.length, 'slugs distintos');
   for (const p of CATALOGO) {
@@ -58,7 +66,7 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     assert.equal(practicaPorId(p.id), p);
   }
   assert.equal(practicaPorSlug('no-existe'), null);
-  assert.equal(practicaPorId(33), null);
+  assert.equal(practicaPorId(999), null);
   assert.equal(ID_PLANTILLA, 31);
 });
 

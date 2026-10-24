@@ -145,14 +145,20 @@ test('cola: lo que la regla rechaza se descarta; un 500 se reintenta; nunca más
 
 // --- Destrezas y panel ---------------------------------------------------------------------
 
-test('destrezas: la tabla de registro.js es la del §7 de docs/practicas-unidad2.md', () => {
-  const docs = readFileSync(new URL('../docs/practicas-unidad2.md', import.meta.url), 'utf8');
+test('destrezas: la tabla de registro.js es la del §7 de docs/practicas-unidad2.md y la de docs/practicas-unidad3.md', () => {
   const deDocs = {};
-  for (const linea of docs.split('\n')) {
-    const c = linea.split('|').map(s => s.trim());
-    if (!/^U2-/.test(c[1] ?? '')) continue;
-    for (const slug of (c[5].match(/`([a-z0-9-]+)`/g) ?? []).map(x => x.slice(1, -1))) (deDocs[slug] ??= []).push(c[1]);
+  const filas = {};
+  for (const [unidad, fichero] of [[2, 'practicas-unidad2.md'], [3, 'practicas-unidad3.md']]) {
+    const docs = readFileSync(new URL(`../docs/${fichero}`, import.meta.url), 'utf8');
+    filas[unidad] = 0;
+    for (const linea of docs.split('\n')) {
+      const c = linea.split('|').map(s => s.trim());
+      if (!new RegExp(`^U${unidad}-`).test(c[1] ?? '')) continue;
+      filas[unidad]++;
+      for (const slug of (c[5].match(/`([a-z0-9-]+)`/g) ?? []).map(x => x.slice(1, -1))) (deDocs[slug] ??= []).push(c[1]);
+    }
   }
+  assert.deepEqual(filas, { 2: 78, 3: 81 }, 'una fila por destreza de cada inventario');
   assert.deepEqual(DESTREZAS, deDocs);
   for (const slug of Object.keys(DESTREZAS)) assert.ok(practicaPorSlug(slug), slug);
 });

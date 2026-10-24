@@ -34,7 +34,11 @@ export const MAX_PENDIENTES = 50;
 const CLAVE_PENDIENTES = 'practicas.fallos.pendientes';
 export const VERSION = 1;
 
-/** Qué destrezas del inventario de la unidad 2 trabaja cada práctica (docs/practicas-unidad2.md, §7). */
+/**
+ * Qué destrezas del inventario trabaja cada práctica: las de la unidad 2, como en el §7 de
+ * docs/practicas-unidad2.md, y las de la unidad 3, como en el §7 de docs/practicas-unidad3.md
+ * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91). En el orden del inventario.
+ */
 export const DESTREZAS = {
   arbol: ['U2-2B-02', 'U2-2C-08', 'U2-2C-09', 'U2-2C-11', 'U2-2C-13'],
   baldosas: ['U2-2A-02', 'U2-3A-01', 'U2-4A-03', 'U2-4A-04', 'U2-4A-07'],
@@ -52,6 +56,19 @@ export const DESTREZAS = {
   reloj: ['U2-1A-02', 'U2-2A-03', 'U2-3A-04', 'U2-4A-02', 'U2-4A-07'],
   semaforo: ['U2-1C-05', 'U2-1C-06', 'U2-1C-07', 'U2-1C-08', 'U2-1C-09', 'U2-1C-10'],
   venn: ['U2-3B-01', 'U2-3C-03', 'U2-3C-04', 'U2-3C-05', 'U2-3C-06', 'U2-3C-08', 'U2-3C-10'],
+  // Unidad 3
+  'dos-signos': ['U3-2C-05', 'U3-2C-06', 'U3-2C-07', 'U3-2C-08', 'U3-2C-10'],
+  errores3: ['U3-2C-21', 'U3-3C-19', 'U3-4A-05', 'U3-4C-08', 'U3-4C-09'],
+  'jerarquia-enteros': ['U3-3A-01', 'U3-3A-02', 'U3-3A-03', 'U3-3C-20', 'U3-4A-01', 'U3-4A-02'],
+  leelo3: ['U3-1B-01', 'U3-1B-02', 'U3-1B-03', 'U3-2B-01', 'U3-2B-02', 'U3-2B-03', 'U3-3B-02', 'U3-4B-01', 'U3-4B-02'],
+  opuestos: ['U3-1C-07', 'U3-1C-08', 'U3-1C-09', 'U3-1C-10'],
+  'parentesis-enteros': ['U3-3A-04', 'U3-3C-16', 'U3-3C-17', 'U3-3C-18', 'U3-4A-03', 'U3-4A-04', 'U3-4A-06', 'U3-4A-07'],
+  'potencias-enteros': ['U3-3C-02', 'U3-3C-03', 'U3-3C-10', 'U3-3C-11', 'U3-3C-12', 'U3-3C-13', 'U3-3C-14', 'U3-3C-15'],
+  saltos: ['U3-1A-01', 'U3-1A-02', 'U3-1C-11', 'U3-1C-12', 'U3-1C-13', 'U3-1C-14', 'U3-1C-15', 'U3-2A-01', 'U3-2C-01', 'U3-2C-02', 'U3-2C-03', 'U3-2C-04'],
+  'signos-producto': ['U3-2C-15', 'U3-2C-16', 'U3-2C-17', 'U3-2C-18', 'U3-2C-19', 'U3-2C-20', 'U3-2C-21'],
+  situaciones: ['U3-1B-04', 'U3-1C-01', 'U3-1C-16'],
+  termometro: ['U3-1C-02', 'U3-1C-03', 'U3-1C-04', 'U3-1C-05', 'U3-1C-06'],
+  variacion: ['U3-3C-21', 'U3-4B-02', 'U3-4C-01', 'U3-4C-02', 'U3-4C-03', 'U3-4C-04', 'U3-4C-05', 'U3-4C-07', 'U3-4C-10'],
 };
 
 // --- Qué se guarda -------------------------------------------------------------------

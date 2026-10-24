@@ -600,7 +600,11 @@ test('portada: tareas de la unidad actual, de la más nueva a la más antigua; l
 
 test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
   const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
-  assert.ok(BLOQUES.every(b => b.unidad === 2), 'ya no hay bloque «Repaso de la unidad 1»');
+  assert.ok(BLOQUES.every(b => b.unidad === 2 || b.unidad === 3), 'ya no hay bloque «Repaso de la unidad 1»');
+  assert.deepEqual(BLOQUES.filter(b => b.unidad === 2).map(b => b.slugs), [
+    ['semaforo', 'rectangulos', 'recta'], ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
+    ['venn', 'imposibles', 'por-primos'], ['clasificador', 'reloj', 'baldosas', 'errores'], ['leelo', 'divisores'],
+  ]);
   const u2 = bloquesPublicados(CATALOGO, 2);
   assert.equal(u2.length, 5);
   assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 17);
@@ -613,6 +617,34 @@ test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una l
   const extra = [...CATALOGO, { id: 99, slug: 'nueva', ruta: 'nueva/', unidad: 2, nombre: { es: 'N', en: 'N' }, nEjercicios: 1, disponible: true }];
   const otras = bloquesPublicados(extra, 2).at(-1);
   assert.deepEqual(otras.practicas.map(p => p.slug), ['nueva']);
+});
+
+test('portada: los cinco bloques de la unidad 3 (tarea 79), con las doce prácticas y ninguna publicada todavía', async () => {
+  const { bloquesPublicados, BLOQUES, DESCRIPCION } = await import('../practicas/portada.js');
+  const u3 = BLOQUES.filter(b => b.unidad === 3);
+  assert.deepEqual(u3.map(b => b.titulo.es), [
+    'Semana 1 · Los enteros: recta, orden, sumas y restas', 'Semana 2 · Dos signos seguidos y la regla de los signos',
+    'Semana 3 · Potencias, jerarquía y paréntesis', 'Semana 4 · Problemas y errores típicos', 'Para toda la unidad · Vocabulario',
+  ]);
+  assert.deepEqual(u3.map(b => b.slugs), [
+    ['termometro', 'opuestos', 'situaciones', 'saltos'], ['dos-signos', 'signos-producto'],
+    ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros'], ['variacion', 'errores3'], ['leelo3'],
+  ]);
+  // Las doce de la unidad 3 (sin la ortografía, que es transversal), cada una en un bloque y con su descripción.
+  const doce = CATALOGO.filter(p => p.unidad === 3 && !p.transversal);
+  assert.deepEqual(doce.map(p => p.slug).sort(), u3.flatMap(b => b.slugs).sort());
+  for (const p of doce) {
+    assert.equal(p.disponible, false, `${p.slug}: sin publicar hasta su tarea de la semana`);
+    const d = DESCRIPCION[p.slug];
+    assert.ok(d?.es && d?.en, p.slug);
+    assert.ok(!/-\d|×/.test(d.es + d.en), `${p.slug}: el menos es −, y el producto ·`);
+  }
+  assert.deepEqual(bloquesPublicados(CATALOGO, 3), [], 'sin publicadas, la unidad 3 no enseña ninguna');
+  // Cuando se publiquen, salen en su bloque y en su orden.
+  const publicadas = CATALOGO.map(p => (p.unidad === 3 && !p.transversal ? { ...p, disponible: true } : p));
+  const bloques = bloquesPublicados(publicadas, 3);
+  assert.equal(bloques.length, 5);
+  assert.deepEqual(bloques[3].practicas.map(p => p.slug), ['variacion', 'errores3']);
 });
 
 test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => conAlmacen(() => {

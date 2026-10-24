@@ -1,7 +1,7 @@
 // Portada de las prácticas: una sección por unidad (la actual arriba y abierta;
 // las anteriores, plegadas), cada una con sus tareas y sus prácticas
-// publicadas (`disponible` en el catálogo). En la unidad 2 las prácticas van
-// ordenadas por la semana de la unidad en que tocan. Lleva lo que ha hecho el
+// publicadas (`disponible` en el catálogo). En las unidades 2 y 3 las prácticas
+// van ordenadas por la semana de la unidad en que tocan. Lleva lo que ha hecho el
 // alumno según lo guardado en este navegador.
 //
 // El enlace que reparte el profesor es `practicas/?c=ABCD`: la portada guarda
@@ -50,6 +50,32 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo', 'divisores'],
   },
+  // Unidad 3 (PU2, tarea 79): cada práctica sale en su bloque cuando su tarea de la semana la publica.
+  {
+    unidad: 3,
+    titulo: { es: 'Semana 1 · Los enteros: recta, orden, sumas y restas', en: 'Week 1 · Integers: number line, order, adding and subtracting' },
+    slugs: ['termometro', 'opuestos', 'situaciones', 'saltos'],
+  },
+  {
+    unidad: 3,
+    titulo: { es: 'Semana 2 · Dos signos seguidos y la regla de los signos', en: 'Week 2 · Two signs in a row and the rule of signs' },
+    slugs: ['dos-signos', 'signos-producto'],
+  },
+  {
+    unidad: 3,
+    titulo: { es: 'Semana 3 · Potencias, jerarquía y paréntesis', en: 'Week 3 · Powers, order of operations and brackets' },
+    slugs: ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros'],
+  },
+  {
+    unidad: 3,
+    titulo: { es: 'Semana 4 · Problemas y errores típicos', en: 'Week 4 · Word problems and common mistakes' },
+    slugs: ['variacion', 'errores3'],
+  },
+  {
+    unidad: 3,
+    titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
+    slugs: ['leelo3'],
+  },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
 
@@ -87,6 +113,18 @@ export const DESCRIPCION = {
   especiales: { es: 'Exponentes 0 y 1, potencias de 10 y las igualdades con las que todos se confunden.', en: 'Indices 0 and 1, powers of 10 and the equalities that everyone gets wrong.' },
   errores1: { es: 'Procedimientos de la unidad 1: decide si hay un error, en qué línea está y qué error es.', en: 'Worked answers from unit 1: decide if there is a mistake, which line it is in and what mistake it is.' },
   propiedades: { es: 'Ampliación: producto, cociente y potencia de potencias de la misma base, y el reto de la última cifra.', en: 'Extension: product, quotient and power of powers with the same base, and the last-digit challenge.' },
+  termometro: { es: 'Coloca y lee enteros en la recta y en el termómetro, compáralos y ordénalos.', en: 'Place and read integers on the number line and on a thermometer, compare them and put them in order.' },
+  opuestos: { es: 'El opuesto, como el simétrico respecto del 0, y el valor absoluto, como la distancia al 0.', en: 'The opposite, as the mirror image across 0, and the absolute value, as the distance from 0.' },
+  situaciones: { es: 'Temperaturas, plantas, saldos, buceo y años: de la situación al entero y del entero a la situación.', en: 'Temperatures, floors, money, diving and years: from the situation to the integer and back.' },
+  saltos: { es: 'Sumas y restas sin paréntesis con saltos en la recta, el signo antes de calcular y cadenas de varios términos.', en: 'Adding and subtracting without brackets with jumps on the number line, the sign before you calculate and chains of several terms.' },
+  'dos-signos': { es: 'Sumar y restar un negativo: de dos signos seguidos a uno solo, y quitar los paréntesis de los números.', en: 'Adding and subtracting a negative number: from two signs in a row to just one, and removing the brackets around numbers.' },
+  'signos-producto': { es: 'Multiplica y divide con la regla de los signos, sin confundirla con la de la suma.', en: 'Multiply and divide with the rule of signs, without mixing it up with addition.' },
+  'potencias-enteros': { es: 'El signo de un producto de varios factores y de una potencia de base negativa: (−3)² frente a −3².', en: 'The sign of a product of several factors and of a power with a negative base: (−3)² compared with −3².' },
+  'jerarquia-enteros': { es: 'Toca la operación que va primero, paso a paso, con enteros, productos y potencias.', en: 'Tap the operation that comes first, step by step, with integers, products and powers.' },
+  'parentesis-enteros': { es: 'Quita paréntesis precedidos de + y de −, opera de dentro afuera y coloca paréntesis para conseguir un resultado.', en: 'Remove brackets after + and after −, work from the inside out and place brackets to get a result.' },
+  errores3: { es: 'Procedimientos de la unidad 3: dónde está el error, qué error es y qué no es un error.', en: 'Worked answers from unit 3: where the mistake is, which mistake it is and what is not a mistake.' },
+  variacion: { es: 'Cuánto ha subido o bajado, diferencias de temperaturas y de alturas, el dato que falta y los años antes de Cristo.', en: 'How much it has risen or fallen, differences of temperatures and heights, the missing piece and years BC.' },
+  leelo3: { es: 'Lee en inglés enteros, sumas, productos y potencias con signo, y pasa de las palabras a los símbolos.', en: 'Read integers, sums, products and powers with signs in English, and go from words to symbols.' },
 };
 
 const PANEL = { es: 'Panel del profesor', en: 'Teacher’s panel' };
