@@ -119,19 +119,23 @@ export const PARES = {
   ],
 };
 
-/** Preguntas de sí o no (Juan Luis, 2026-10-25): qué contestar según la tilde de la pregunta. */
+/**
+ * Preguntas de sí o no (Juan Luis, 2026-10-25): qué contestar según la tilde de la pregunta.
+ * El contexto dice de quién es la silla («de tu vecina», no solo «prestada»): si no,
+ * se podría defender que la silla que usas es «tu silla» y que la respuesta es sí.
+ */
 export const PREGUNTAS = [
   {
-    contexto: 'Has pedido prestada una silla y te la llevarás para ver el desfile.',
+    contexto: 'Tu vecina te ha prestado una silla suya, y te la llevarás para ver el desfile.',
     pregunta: '¿Llevarás tu silla?',
     respuesta: 'no',
-    por: '«Tu silla», sin tilde, es la silla que es <b>tuya</b>. La que llevas es prestada, así que la respuesta es <b>no</b>.',
+    por: '«Tu silla», sin tilde, es la silla que es <b>tuya</b>. La que llevas es de tu vecina, así que la respuesta es <b>no</b>.',
   },
   {
-    contexto: 'Has pedido prestada una silla y te la llevarás para ver el desfile.',
+    contexto: 'Tu vecina te ha prestado una silla suya, y te la llevarás para ver el desfile.',
     pregunta: '¿Llevarás tú silla?',
     respuesta: 'sí',
-    por: '«Tú», con tilde, es la <b>persona</b>: te preguntan si <b>tú</b> llevarás una silla. La respuesta es <b>sí</b>: llevas la prestada.',
+    por: '«Tú», con tilde, es la <b>persona</b>: te preguntan si <b>tú</b> llevarás una silla. La respuesta es <b>sí</b>: llevas la de tu vecina.',
   },
 ];
 
