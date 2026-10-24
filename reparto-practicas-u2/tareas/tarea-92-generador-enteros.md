@@ -102,6 +102,9 @@ con el inventario y con las reglas de la unidad: es la tarea 6 del plan viejo de
 - `construirOpciones` toma los distractores en orden y se planta en tres: los sobrantes son código muerto (CLAUDE.md).
 - `tests/csv.test.js` usa `tipo: 'enteros'` y comprueba «Errores: Números enteros»: no cambies el nombre del tipo.
 
+- (Aprendido en la 92) Un `-(a + b)` en un paso de solución es un paréntesis que envuelve una operación: prohibido antes de la sesión 11. Se escribe `-10 - 2 = -12` con el cálculo `10 + 2 = 12` al lado. Y `tex()` deja el `-` ASCII: KaTeX ya lo compone como U+2212.
+- Un subtipo con pocos errores típicos (`quitar_parentesis` con 3 términos) acaba rellenando con genéricos: usa 4 términos y devuelve `null` si no hay tres errores distintos.
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar `practicas/` (eso son las tareas 79-91) o cualquier otro generador.
