@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-21
 Precondición: ninguna · no en paralelo con la 71 (las dos tocan `registro.js`, `portada.js` y sus tests; la 71 no empieza antes del 25-10: lo natural es que la 79 cierre antes) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 1 h 30 min (tiempo de sesión, no de persona; real, ~70 min) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/79-base-unidad3/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/enteros.js` (nuevo), `practicas/_comun/recta-enteros.js` (nuevo), `practicas/_comun/catalogo.js` (doce filas), `practicas/portada.js` (bloques y descripciones de la U3), `practicas/_comun/registro.js` (`DESTREZAS` de la U3), `practicas/<slug>/` de los doce slugs (solo el esqueleto), `docs/practicas-unidad3.md` (nuevo, §7), `tests/practicas-enteros.test.js` (nuevo), `tests/practicas-comun.test.js` (lista del catálogo), `tests/practicas-semana.test.js` (el test de los bloques), `tests/practicas-registro.test.js` (leer también la tabla de la U3)
 
@@ -195,6 +195,19 @@ fija ids, slugs y número de ejercicios).
 - `-` y `−` se parecen: en el test, busca U+2212 por su código.
 - `eval` de JavaScript con `-3**2` da error de sintaxis: en la comparación, genera el texto para
   `eval` con paréntesis explícitos.
+- (s-20261024T224223-4911ef6c, al cerrar) **En un SVG, lo que se dibuja encima se queda el clic**:
+  las zonas de toque iban debajo de la línea y las marcas, y tocar justo en la línea no hacía
+  nada. Las capas de dibujo llevan `pointer-events: none` (clase `re-capa`). El test puro no lo
+  ve: solo se nota tocando en el navegador.
+- (íd.) **La letra de la recta no puede salir de la separación entre marcas**: con 21 marcas
+  quedaba a 9 aunque solo hubiera cinco números. Ahora sale de los huecos entre las marcas
+  numeradas, y con todas numeradas van en dos filas.
+- (íd.) Para probar en el navegador sin dejar nada en el árbol compartido: servir una carpeta del
+  scratchpad con enlaces a `practicas/`, `css/`, `src/`, `divisores/` y `herramientas/` (sin
+  `src/` la base se queda en «Cargando…» sin ningún error en la consola). Chrome guarda en
+  caché los módulos: `fetch(url, { cache: 'reload' })` antes de recargar.
+- (íd.) En zsh una variable con varias rutas no se parte en palabras: `git add $F` falla con
+  «File name too long». Usar una lista: `F=(a b c); git add "${F[@]}"`.
 
 ## Prohibido (propio de esta tarea)
 
