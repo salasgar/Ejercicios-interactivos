@@ -181,6 +181,14 @@ fija ids, slugs y número de ejercicios).
 
 ## Trampas conocidas
 
+- **La fila 45 del catálogo, `ortografia`, ya es `unidad: 3`** (con `transversal: true`, sin publicar;
+  commits del 23 y el 25-10, fuera del reparto). No es una de tus doce: los ids 33-44 siguen libres, pero
+  cualquier test o bloque que filtre «las prácticas de la unidad 3» tiene que excluirla (o filtrar por
+  `!transversal`), y el ★ de ortografía de cada tarea semanal de la U3 ya está en las fichas 93-96. La
+  sesión que la hace (otra de Claude Code en este mismo árbol) tocó también `catalogo.js`, `base.js`,
+  `vista-tareas.js` y los tests `practicas-comun` y `practicas-semana`: antes de editarlos mira
+  `.claude/sesiones/` y `git log -3 -- <fichero>`, y si los tiene reservados, espera; nunca comitees sus
+  cambios (aviso de la coordinadora s-20261024T223205-13077485, 25-10).
 - Hay sesiones de Juan Luis fuera del reparto que tocan `practicas/`, y la 71 puede estar en curso
   desde el 25-10 (base, panel, informe, reglas): si coincidís, **no** toquéis los mismos ficheros a la
   vez. La 71 no toca `catalogo.js`, `portada.js` ni `registro.js` salvo lo que diga su ficha: mírala.
