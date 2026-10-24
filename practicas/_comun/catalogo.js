@@ -64,7 +64,7 @@ export const CATALOGO = [
   // donde se usa (decisión de Juan Luis: un ejercicio ★ en cada tarea semanal de la U3, en
   // orden, de la semana 1 a la 4), y así en esas tareas no sale como «repaso». El 45 porque
   // del 33 al 44 son de la unidad 3 (reparto PU2, tareas 79-91).
-  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 10, disponible: false },
+  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 11, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];

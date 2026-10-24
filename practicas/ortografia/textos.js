@@ -84,6 +84,14 @@ export const TX = {
       <p>Los signos van <b>pegados</b> a la primera y a la última palabra: <i>¿Vienes?</i>, no <i>¿ Vienes ?</i></p>
       <p>Detrás de una <b>coma</b> o de un <b>punto</b> va un espacio, y delante no: <i>Hola, Pablo. ¿Qué tal?</i></p>`),
   },
+  sujeto: {
+    nombre: { es: 'Sin coma entre el sujeto y el verbo', en: 'Spanish spelling: no comma between subject and verb' },
+    detalle: { es: '«El lápiz que te dejé era rojo», sin coma', en: '«El lápiz que te dejé era rojo», sin coma' },
+    introduccion: mismo(`<p>El <b>sujeto</b> no se separa de su verbo con una coma, <b>aunque sea largo</b>:</p>
+      <p><i>El lápiz que te dejé era rojo.</i> ✓<br><i>El lápiz que te dejé, era rojo.</i> ✗</p>
+      <p>Otra cosa es una <b>explicación metida en medio</b>, que se podría quitar: esa va <b>entre dos comas</b>, una delante y otra detrás.</p>
+      <p><i>Aquel lápiz, el que yo te dejé, era rojo.</i> ✓</p>`),
+  },
   hueco: {
     pregunta: '¿Qué palabra va en el hueco?',
   },

@@ -8,10 +8,11 @@
 //   6-7. Comas: elegir la frase bien escrita o la que dice lo que se pide.
 //   8-9. Tildes: interrogativos y exclamativos, y tilde diacrítica (hueco).
 //   10.  Signos ¿ ¡ y espacios: elegir la bien escrita.
+//   11.  La coma entre sujeto y verbo frente a la del inciso (2026-10-25): igual.
 //
 // Las frases de los 1-5 están en logica.js y sus explicaciones en textos.js;
 // las de las comas, con las suyas, en comas.js; las de las tildes, en
-// tildes.js, y las de los signos, en signos.js.
+// tildes.js; las de los signos, en signos.js, y las del sujeto, en sujeto.js.
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
@@ -19,6 +20,7 @@ import { TX, explicacion } from './textos.js';
 import { PAREJAS, partes, otra, generadorHueco, generarRevision, estaBien, idError } from './logica.js';
 import { frase, alPrincipio, mayuscula, generadorTilde, explicacionTilde, idErrorTilde } from './tildes.js';
 import { generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from './signos.js';
+import { generarSujeto, opcionesSujeto, explicacionSujeto, idErrorSujeto } from './sujeto.js';
 import { grupo, generarVocativo, generarComas, opciones, buena as opcionBuena, explicacionComa, idErrorComa } from './comas.js';
 
 // --- Ejercicios 1-3: ¿qué palabra va en el hueco? ----------------------------------
@@ -147,13 +149,14 @@ function montarTilde(contenedor, item, api) {
   });
 }
 
-// --- Ejercicio 10: signos ¿ ¡ y espacios ------------------------------------------
+// --- Ejercicios 10-11: ¿cuál está bien escrita? (la buena es siempre la k = 0) ----
 
-const enunciadoSignos = () => `<p class="instruccion">${TX.comas.escrita}</p>`;
+const enunciadoEscrita = () => `<p class="instruccion">${TX.comas.escrita}</p>`;
 
-function montarSignos(contenedor, item, api) {
-  contenedor.innerHTML = enunciadoSignos();
-  const ops = opcionesSignos(item);
+/** El `montar` de un ejercicio de «¿cuál está bien escrita?», a partir de sus funciones puras. */
+const montarEscrita = ({ opciones: opcionesDe, explicacion: explicar, idError }) => (contenedor, item, api) => {
+  contenedor.innerHTML = enunciadoEscrita();
+  const ops = opcionesDe(item);
   const botones = elecciones(contenedor, {
     clase: 'elecciones frases',
     opciones: ops.map(o => ({ valor: o.k, html: api.esc(o.texto) })),
@@ -162,13 +165,13 @@ function montarSignos(contenedor, item, api) {
       botones.marcar([0], k);
       api.responder({
         acierto: k === 0,
-        html: explicacionSignos(item, k),
+        html: explicar(item, k),
         espera: 3500,
-        ...(k === 0 ? {} : { error: idErrorSignos(item, k), respuesta: ops.find(o => o.k === k).texto.slice(0, 60) }),
+        ...(k === 0 ? {} : { error: idError(item, k), respuesta: ops.find(o => o.k === k).texto.slice(0, 60) }),
       });
     },
   });
-}
+};
 
 // --- La práctica -------------------------------------------------------------------
 
@@ -231,8 +234,17 @@ arrancar({
       introduccion: TX.signos.introduccion,
       generar: generarSignos,
       clave: item => String(item.i),
-      montar: montarSignos,
-      enunciado: enunciadoSignos,
+      montar: montarEscrita({ opciones: opcionesSignos, explicacion: explicacionSignos, idError: idErrorSignos }),
+      enunciado: enunciadoEscrita,
+    },
+    {
+      nombre: TX.sujeto.nombre,
+      detalle: TX.sujeto.detalle,
+      introduccion: TX.sujeto.introduccion,
+      generar: generarSujeto,
+      clave: item => `${item.tipo}/${item.i}`,
+      montar: montarEscrita({ opciones: opcionesSujeto, explicacion: explicacionSujeto, idError: idErrorSujeto }),
+      enunciado: enunciadoEscrita,
     },
   ],
 });

@@ -17,6 +17,7 @@ import {
 } from '../practicas/ortografia/comas.js';
 import { INTERROGATIVOS, listaDe, frase, alPrincipio, generadorTilde, explicacionTilde, idErrorTilde } from '../practicas/ortografia/tildes.js';
 import { SIGNOS, generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from '../practicas/ortografia/signos.js';
+import { SUJETOS, INCISOS, frases as frasesSujeto, generarSujeto, opcionesSujeto, explicacionSujeto, idErrorSujeto } from '../practicas/ortografia/sujeto.js';
 
 const IRREGULARES = ['hecho', 'roto', 'puesto', 'vuelto', 'escrito', 'visto', 'dicho', 'abierto', 'muerto', 'impreso'];
 const esParticipio = palabra => /(ado|ido|ído)$/i.test(palabra) || IRREGULARES.includes(palabra.toLowerCase());
@@ -273,4 +274,48 @@ test('signos: las malas son la buena con un fallo de signos o espacios, y la exp
       assert.match(idErrorSignos(item, k), /^[a-z0-9-]{1,40}$/);
     }
   }
+});
+
+// --- Sujeto y verbo frente a inciso (ejercicio 11) -----------------------------------
+
+test('sujeto: la buena no lleva coma y la mala solo la del sujeto; nunca la versión con dos comas', () => {
+  SUJETOS.forEach((_, i) => {
+    const fs = frasesSujeto({ tipo: 'sujeto', i });
+    assert.equal(fs.length, 2);
+    assert.equal((fs[0][0].match(/,/g) ?? []).length, 0, fs[0][0]);
+    assert.equal((fs[1][0].match(/,/g) ?? []).length, 1, fs[1][0]);
+    assert.equal(fs[1][0].replace(',', ''), fs[0][0]);
+  });
+});
+
+test('inciso: la buena lleva las dos comas y cada mala solo una; ninguna empieza por un nombre de persona', () => {
+  INCISOS.forEach(([antes], i) => {
+    const fs = frasesSujeto({ tipo: 'inciso', i });
+    assert.equal(fs.length, 3);
+    assert.equal((fs[0][0].match(/,/g) ?? []).length, 2, fs[0][0]);
+    for (const [m] of fs.slice(1)) {
+      assert.equal((m.match(/,/g) ?? []).length, 1, m);
+      assert.equal(m.replace(/,/g, ''), fs[0][0].replace(/,/g, ''));
+    }
+    // Con un nombre al principio, la de una coma se leería como vocativo (y valdría).
+    assert.doesNotMatch(antes, /^(Lucía|Pablo|Marta|Marcos|Ana|Pedro|Sara|Laura|Juan)\b/, antes);
+  });
+});
+
+test('sujeto e inciso: generador, opciones, explicación e identificador del error', () => {
+  const rng = crearRng(13);
+  const tipos = { sujeto: 0, inciso: 0 };
+  for (let i = 0; i < 2000; i++) {
+    const item = generarSujeto(rng);
+    tipos[item.tipo]++;
+    const ops = opcionesSujeto(item);
+    assert.deepEqual([...ops.map(o => o.k)].sort(), item.tipo === 'sujeto' ? [0, 1] : [0, 1, 2]);
+    assert.ok(explicacionSujeto(item, 0).includes(frasesSujeto(item)[0][0]));
+    for (const o of ops.filter(o => o.k > 0)) assert.match(idErrorSujeto(item, o.k), /^[a-z0-9-]{1,40}$/);
+  }
+  assert.ok(tipos.sujeto > 850 && tipos.inciso > 850, JSON.stringify(tipos));
+  const lapiz = { tipo: 'sujeto', i: 0, orden: [0, 1] };
+  assert.match(explicacionSujeto(lapiz, 1), /«El lápiz que te dejé» es el sujeto, y «era…»/);
+  const aquel = { tipo: 'inciso', i: 0, orden: [0, 1, 2] };
+  assert.match(explicacionSujeto(aquel, 1), /«el que yo te dejé».*«Aquel lápiz era rojo\.».*le falta la de delante/);
 });
