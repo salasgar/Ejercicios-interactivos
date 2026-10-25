@@ -1,0 +1,28 @@
+/* ¿Qué se hace primero? Con enteros: lo común está en ../_comun/estilos.css. */
+
+/* Las operaciones que se tocan: el signo (o el exponente) con una zona de toque generosa. */
+.ent-op {
+  display: inline-block; min-width: 1.6em; padding: .15em .3em; margin: 0 .05em;
+  border-radius: 8px; background: #fff; border: 2px solid var(--primario);
+  color: var(--primario-oscuro); cursor: pointer; touch-action: manipulation;
+}
+sup.ent-op, .ent-op sup { line-height: 1; }
+.ent-op--quieto { cursor: default; }
+.ent-op--bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.ent-op--mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; }
+.ent-op--falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
+.jer-linea--fin .ent-op { all: unset; }
+
+/* La expresión en curso y el historial de líneas ya hechas. */
+.jer-historial { margin-bottom: .6rem; }
+.jer-hist { font-size: 1.1rem; color: var(--texto-suave); margin-bottom: .3rem; overflow-wrap: anywhere; }
+.jer-linea { max-width: 100%; line-height: 2.1; }
+.jer-pregunta { margin-top: .8rem; }
+.jer-aviso { min-height: 1.4em; margin: .6rem 0 0; font-size: .95rem; color: var(--error); }
+.jer-cadena { overflow-wrap: anywhere; }
+
+/* El par de U3-3C-20: cada expresión con su campo. */
+.jer-par { display: grid; gap: .8rem; margin-bottom: .6rem; }
+.jer-par__fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .6rem; }
+.jer-par__fila .campo { min-width: 9rem; }
+.jer-igual { font-size: 1.4rem; font-weight: 700; color: var(--texto-suave); }
