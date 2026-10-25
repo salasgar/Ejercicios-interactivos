@@ -1,0 +1,18 @@
+/* «La recta y el termómetro»: fichas de número y cajas del reparto. Colores de css/estilos.css. */
+.fichas { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: .6rem 0; min-height: 3rem; }
+.fichas-titulo { margin: .8rem 0 0; font-weight: 600; text-align: center; }
+.ficha { min-width: 3.2rem; min-height: 3rem; padding: .3rem .7rem; border: 2px solid var(--primario, #1d4ed8); border-radius: .7rem; background: var(--tarjeta, #fff); color: var(--texto, #1f2933); font: 700 1.25rem system-ui, sans-serif; cursor: pointer; }
+.ficha:disabled { opacity: .45; cursor: default; }
+.ficha--elegida { background: var(--primario-claro, #dbeafe); box-shadow: 0 0 0 3px var(--primario, #1d4ed8); }
+.ficha--puesta { cursor: default; }
+.caja .ficha--puesta { cursor: pointer; }
+.ficha--bien { border-color: var(--correcto, #15803d); background: var(--correcto-claro, #dcfce7); opacity: 1; }
+.ficha--mal { border-color: var(--error, #b91c1c); background: var(--error-claro, #fee2e2); opacity: 1; text-decoration: line-through; }
+.cajas { display: grid; gap: .6rem; margin: .8rem 0; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .cajas { grid-template-columns: repeat(3, 1fr); } }
+.caja { display: flex; flex-direction: column; align-items: center; gap: .4rem; min-height: 6rem; padding: .6rem; border: 2px dashed var(--borde, #94a3b8); border-radius: .8rem; background: var(--tarjeta, #fff); color: var(--texto, #1f2933); cursor: pointer; text-align: center; }
+.caja--cerrada { cursor: default; }
+.caja__titulo { font-weight: 700; }
+.caja__dentro { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; }
+.acciones { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.operacion + .si-no { margin-top: .9rem; }
