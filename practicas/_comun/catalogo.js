@@ -63,18 +63,18 @@ export const CATALOGO = [
   { id: 46, slug: 'fichas-de-pablo', ruta: 'fichas-de-pablo/', unidad: 2, nombre: { es: 'Las fichas de Pablo', en: "Pablo's counters" }, nEjercicios: 8, disponible: true },
   // Unidad 3, Integers (PU2, tareas 80-91; filas puestas por la 79 el 2026-10-25, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (93-96).
-  { id: 33, slug: 'termometro', ruta: 'termometro/', unidad: 3, nombre: { es: 'La recta y el termómetro', en: 'The number line and the thermometer' }, nEjercicios: 5, disponible: false },
+  { id: 33, slug: 'termometro', ruta: 'termometro/', unidad: 3, nombre: { es: 'La recta y el termómetro', en: 'The number line and the thermometer' }, nEjercicios: 5, disponible: true },
   { id: 34, slug: 'opuestos', ruta: 'opuestos/', unidad: 3, nombre: { es: 'Opuesto y valor absoluto', en: 'Opposite and absolute value' }, nEjercicios: 4, disponible: true },
   { id: 35, slug: 'situaciones', ruta: 'situaciones/', unidad: 3, nombre: { es: 'Enteros en la vida real', en: 'Integers in real life' }, nEjercicios: 3, disponible: true },
-  { id: 36, slug: 'saltos', ruta: 'saltos/', unidad: 3, nombre: { es: 'Sumas y restas con saltos', en: 'Adding and subtracting with jumps' }, nEjercicios: 5, disponible: false },
+  { id: 36, slug: 'saltos', ruta: 'saltos/', unidad: 3, nombre: { es: 'Sumas y restas con saltos', en: 'Adding and subtracting with jumps' }, nEjercicios: 5, disponible: true },
   { id: 37, slug: 'dos-signos', ruta: 'dos-signos/', unidad: 3, nombre: { es: 'Dos signos seguidos', en: 'Two signs in a row' }, nEjercicios: 4, disponible: false },
-  { id: 38, slug: 'signos-producto', ruta: 'signos-producto/', unidad: 3, nombre: { es: 'La regla de los signos', en: 'The rule of signs' }, nEjercicios: 5, disponible: false },
+  { id: 38, slug: 'signos-producto', ruta: 'signos-producto/', unidad: 3, nombre: { es: 'La regla de los signos', en: 'The rule of signs' }, nEjercicios: 5, disponible: true },
   { id: 39, slug: 'potencias-enteros', ruta: 'potencias-enteros/', unidad: 3, nombre: { es: 'Productos y potencias con signo', en: 'Signs in products and powers' }, nEjercicios: 4, disponible: false },
   { id: 40, slug: 'jerarquia-enteros', ruta: 'jerarquia-enteros/', unidad: 3, nombre: { es: '¿Qué se hace primero? Con enteros', en: 'What comes first? With integers' }, nEjercicios: 4, disponible: false },
   { id: 41, slug: 'parentesis-enteros', ruta: 'parentesis-enteros/', unidad: 3, nombre: { es: 'Paréntesis y corchetes', en: 'Brackets' }, nEjercicios: 5, disponible: false },
   { id: 42, slug: 'errores3', ruta: 'errores3/', unidad: 3, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
   { id: 43, slug: 'variacion', ruta: 'variacion/', unidad: 3, nombre: { es: 'Subidas, bajadas y diferencias', en: 'Rises, falls and differences' }, nEjercicios: 5, disponible: false },
-  { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
+  { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Ortografía española (2026-10-23): no es de Matemáticas. Un ejercicio ★ en cada tarea
   // semanal desde la U3 (decisión de Juan Luis; el reparto por semanas, en
   // apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md). `unidad: 3` solo decide la

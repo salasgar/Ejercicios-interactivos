@@ -59,7 +59,7 @@ export const TX = {
       en: `<h2>How it works</h2>
         <p>The rule of signs is only for the <strong>product</strong>. It does not work in an addition or a subtraction:</p>
         <p>(−3) · (−5) = 15, but −3 − 5 = −8.<br>(−3) · 5 = −15, but −3 + 5 = 2.</p>
-        <p>First decide what the sum is, then work it out.</p>`,
+        <p>First decide what the calculation is, then work it out.</p>`,
     },
     bien: {
       es: `<h2>Cómo se hace</h2>
@@ -69,7 +69,7 @@ export const TX = {
       en: `<h2>How it works</h2>
         <p>In a product, a negative number that is not first goes in brackets.</p>
         <p>Written correctly: <strong>6 · (−3)</strong>. Not written correctly: 6 · −3.</p>
-        <p>You do not work anything out here: you just choose the sum that is written correctly.</p>`,
+        <p>You do not work anything out here: you just choose the product that is written correctly.</p>`,
     },
   },
   enunciado: {
@@ -77,7 +77,7 @@ export const TX = {
     multiplica2: { es: 'Ahora escribe el producto.', en: 'Now write the product.' },
     divide: { es: 'Divide. Si no se puede, pulsa el botón.', en: 'Divide. If it is not possible, press the button.' },
     falta: { es: 'Escribe el número que falta (□).', en: 'Write the missing number (□).' },
-    mezcla: { es: '¿Qué es esta cuenta?', en: 'What is this sum?' },
+    mezcla: { es: '¿Qué es esta cuenta?', en: 'What is this calculation?' },
     mezcla2: { es: 'Ahora calcula.', en: 'Now work it out.' },
     bien: { es: '¿Cuál de estos productos está bien escrito?', en: 'Which of these products is written correctly?' },
   },
@@ -90,8 +90,8 @@ export const TX = {
 const mismos = (tt, a, b) => {
   const sa = a < 0 ? MENOS : '+', sb = b < 0 ? MENOS : '+';
   return a < 0 === b < 0
-    ? tt({ es: `los signos son iguales (${sa} y ${sb}), así que el signo es +`, en: `the signs are the same (${sa} and ${sb}), so the sign is +` })
-    : tt({ es: `los signos son distintos (${sa} y ${sb}), así que el signo es ${MENOS}`, en: `the signs are different (${sa} and ${sb}), so the sign is ${MENOS}` });
+    ? tt({ es: `Los signos son iguales (${sa} y ${sb}), así que el signo es +`, en: `The signs are the same (${sa} and ${sb}), so the sign is +` })
+    : tt({ es: `Los signos son distintos (${sa} y ${sb}), así que el signo es ${MENOS}`, en: `The signs are different (${sa} and ${sb}), so the sign is ${MENOS}` });
 };
 
 /** Ejercicio 1, signo mal elegido, y también valor mal (o todo bien). */
@@ -134,7 +134,7 @@ export function feedbackClase(item, { tt }) {
 export function feedbackValorSumaProducto(item, ctx, acierto) {
   const buena = cuenta(`${item.texto} = ${fmt(item.valor)}`);
   if (acierto) return `${buena}.`;
-  return ctx.tt({ es: `Está bien lo que has decidido; la cuenta es`, en: 'You decided right; the sum is' }) + ` ${buena}.`;
+  return ctx.tt({ es: `Está bien lo que has decidido; la cuenta es`, en: 'You decided right; the result is' }) + ` ${buena}.`;
 }
 
 /** Ejercicio 5. */
