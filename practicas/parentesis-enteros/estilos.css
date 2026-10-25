@@ -1,0 +1,56 @@
+/* Paréntesis y corchetes: fichas con signo, expresiones y huecos de paréntesis. */
+
+.tarjeta.ejercicio { padding-left: .5rem; padding-right: .5rem; }
+
+.operacion .par-tocable, .operacion .par-tocable--fuera { cursor: pointer; }
+.par-tocable { border-radius: 8px; padding: .1rem .2rem; background: var(--primario-claro); box-shadow: 0 0 0 2px var(--borde) inset; }
+.par-tocable--fuera { background: transparent; }
+.par-tocable--elegido { box-shadow: 0 0 0 3px var(--primario) inset; background: var(--aviso-claro); }
+.par-tocable--bloqueado { cursor: default; background: transparent; box-shadow: none; }
+
+/* Las fichas con signo del ejercicio 1 */
+.fichas { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .4rem; margin: .4rem 0 .8rem; }
+.fichas__etiqueta { flex-basis: 100%; text-align: center; color: var(--texto-suave); font-size: .95rem; font-weight: 600; }
+.ficha, button.ficha {
+  min-width: 3.4rem; min-height: 52px; padding: .3rem .8rem; border-radius: 12px;
+  font-size: 1.4rem; font-weight: 700; font-variant-numeric: tabular-nums;
+  background: #fff; color: var(--primario-oscuro); border: 2px solid var(--primario);
+}
+.ficha--fija { background: var(--fondo); color: var(--texto); border: 2px solid var(--borde); display: inline-flex; align-items: center; justify-content: center; }
+button.ficha:disabled { opacity: 1; cursor: default; }
+.ficha--bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.ficha--mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; }
+
+/* Dos cuentas, una sobre otra */
+.cuenta-campo { margin: 0 0 1rem; }
+.cuenta-campo__nombre { color: var(--texto-suave); font-size: .95rem; font-weight: 700; margin: 0 0 .2rem; }
+
+.acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: .4rem 0 .8rem; }
+.acciones button { min-height: 44px; padding: .5rem 1rem; }
+
+.resolucion {
+  text-align: left; margin: 0 auto .8rem; max-width: 28rem; background: var(--fondo);
+  border-radius: 10px; padding: .6rem .9rem; font-size: 1.1rem; font-variant-numeric: tabular-nums;
+}
+.resolucion:empty { display: none; }
+.resolucion .paso { padding: .12rem 0; margin: 0; background: none; border: 0; border-radius: 0; box-shadow: none; overflow-wrap: anywhere; }
+.resolucion__titulo { color: var(--texto-suave); font-size: .9rem; font-weight: 700; }
+
+.mensaje { min-height: 1.5rem; margin: .5rem 0; font-weight: 600; }
+.mensaje--aviso { color: #92400e; }
+
+/* El editor del ejercicio 5: cada número con un hueco «(» a la izquierda y «)» a la derecha */
+.expr { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .2rem 0; margin: 0 0 .8rem; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.celda { display: inline-flex; align-items: center; }
+.num { padding: 0 .08em; }
+.signo { padding: 0 .1em; color: var(--texto-suave); }
+button.hueco-p {
+  min-width: 32px; width: 32px; min-height: 52px; padding: 0; border-radius: 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1em; font-weight: 700; line-height: 1;
+  background: transparent; color: var(--primario); border: 2px dashed var(--borde);
+}
+button.hueco-p--puesto { background: var(--primario-claro); border: 2px solid var(--primario); color: var(--primario-oscuro); }
+button.hueco-p--rojo { background: var(--error-claro); border-color: var(--error); color: var(--error); }
+button.hueco-p:disabled { opacity: 1; cursor: default; }
+.objetivo { display: inline-block; margin: 0 0 .9rem; padding: .3rem 1.4rem; border-radius: 14px; background: var(--aviso-claro); color: #92400e; font-size: 2.2rem; font-weight: 800; }
