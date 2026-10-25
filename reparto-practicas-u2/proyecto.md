@@ -385,3 +385,43 @@ de arranque que dé cada sesión al cerrar nombran primero las de arriba:
 4. **Semana 3**: 86, 87, 88 → **95** (jueves 26-11).
 5. **Semana 4**: 89, 90 → **96** (jueves 3-12).
 Las prácticas no dependen unas de otras: con la 79 LISTA pueden ir todas a la vez.
+
+## Tareas 98-114: la unidad 4 (Fractions) y las fichas del parchís (2026-10-26, s-20261025T214721-c42a0135)
+
+Dadas de alta la noche del 25 al 26-10 por la misma sesión que montó el reparto de la unidad 4
+(`apuntes-1eso-bilingue/4. Fractions/reparto-unidad4/`), siguiendo el traspaso de Juan Luis del 25-10 («dar de alta las
+piezas de la app en el reparto del repositorio»). La unidad 4 se da del **lun 14-12 al vie 15-1**, partida por la Navidad;
+sus destrezas se citan con los ids de `4. Fractions/inventario-unidad4.tsv`, **que a 26-10 no existe**: la tarea 01 de aquel
+reparto escribe la propuesta y la 02 la revisa con Juan Luis (firma F0). Por eso las fichas 99-108 citan las destrezas por
+descripción y la 98 pone los ids (provisionales si F0 no está) en `DESTREZAS` y en el §7 de `docs/practicas-unidad4.md`.
+
+- **98** base de la unidad 4 (ALTO): `_comun/fracciones.js` (modelo de fracción inmutable, comparar, operar, `htmlFraccion`,
+  `leerFraccion`, `enPalabras`, `ERRORES_TIPICOS`), `_comun/dibujo-fracciones.js` (barras, pizzas, cuadrículas, recta),
+  catálogo (ids **47-56**, `disponible: false`; `UNIDADES` con la U4 desde el 14-12), portada, `DESTREZAS`, esqueletos, tests.
+- **99-108** las diez prácticas (MEDIO; carpetas disjuntas; todas en paralelo con la 98 LISTA): 99 `que-fraccion`, 100
+  `equivalentes`, 101 `simplifica`, 102 `compara` (semana 1); 103 `fraccion-de`, 104 `suma-resta` (semana 2); 105
+  `multiplica-divide`, 106 `combinadas-fracciones`, 107 `errores4` (semana 3); 108 `leelo4` (toda la unidad).
+- **109-111** revisión y publicación por semana (ALTO), con la propuesta de la tarea de la semana para el panel y el ★ de
+  ortografía (ejercicios 5, 6 y 7): antes del **jue 10-12**, del **jue 17-12** y del **mar 22-12** (límite jue 7-1).
+- **112** generadores `fracciones_equivalentes`, `suma_fracciones` y `producto_division_fracciones` de la app principal al día
+  con el inventario (MEDIO; con F0), como la 92 con `enteros`.
+- **113** guía para los compañeros del departamento, que entran el **14-12**, y prueba del circuito de un profesor nuevo con
+  las cuentas A y B (ALTO; con la 71 LISTA y Juan Luis delante).
+- **114** «Las fichas de Pablo» pasa a llamarse **«Las fichas del parchís» / «Ludo counters»** (el slug `fichas-de-pablo` no
+  cambia) y su ejercicio 6 se rehace con la tabla de divisores del boceto de Juan Luis del 25-10 (MEDIO; no en paralelo con
+  la 98: comparten `catalogo.js`).
+
+**Reglas de contenido de la unidad 4**: en cada ficha 98-112 (sección propia) y en `4. Fractions/reparto-unidad4/proyecto.md`.
+La trampa propia de la unidad: **dos fracciones equivalentes son la misma respuesta** (ninguna opción puede equivaler a otra;
+se comprueba por valor, nunca con decimales); y hasta que el acta del inventario lo diga, ni decimales, ni fracciones
+negativas, ni números mixtos, ni potencias de fracciones.
+
+## Orden de prioridad de la unidad 4 (por los plazos de publicación)
+
+0. **114** (fichas del parchís) puede ir ya: no depende de nada, pero no a la vez que la 98.
+1. **98** (base; ALTO) en cuanto exista la propuesta de inventario de la U4 (tarea 01 de aquel reparto; mejor con F0), y, a la
+   vez, **112** (MEDIO; con F0) y **113** (ALTO; con la 71 LISTA).
+2. **Semana 1**: 99, 100, 101, 102, 108 → **109** publica el jueves 10-12.
+3. **Semana 2**: 103, 104 → **110** (jueves 17-12).
+4. **Semana 3**: 105, 106, 107 → **111** (martes 22-12; límite jueves 7-1).
+Las tareas de Classroom de cada semana las programa la tarea 29 del reparto de la U4 cuando Juan Luis haya montado la tarea en el panel.
