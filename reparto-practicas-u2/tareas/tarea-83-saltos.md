@@ -149,6 +149,12 @@ con su `error` (el nombre del error típico) y la `respuesta` del alumno, para e
 - Puede haber hasta doce sesiones a la vez en este árbol (las prácticas 80-91 van en paralelo): no
   metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 
+- (Lección de la 83) Las opciones falsas de una cuenta («elige la cuenta que corresponde») con solo los verbos cambiados
+  se quedan en dos en cuentas de tres términos (cambiar todos los verbos puede dar el mismo valor); hay que cambiar también
+  el signo del inicio. Con `campoEntero` ya hay botón «+/−»: no pases `boton` si hay varios campos en la misma etapa.
+- Probar en navegador sin la extensión de Chrome: Chrome headless con `--remote-debugging-port` y un script CDP en Node
+  (`Emulation.setDeviceMetricsOverride` a 375 px, `Runtime.evaluate`); el ítem se juega con «Probar sin código».
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar otras prácticas, la base (`practicas/_comun/`), `catalogo.js`, `portada.js`, `registro.js`,
