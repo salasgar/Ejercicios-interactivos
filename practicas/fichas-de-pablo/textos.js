@@ -178,20 +178,20 @@ export const TX = {
   // ─── 4. Dividir es quitar ─────────────────────────────────────────────────────────
   quita: {
     nombre: { es: 'Dividir es quitar', en: 'Dividing is taking counters away' },
-    detalle: { es: 'Quita las fichas del divisor; si faltan fichas, no se puede', en: 'Take away the counters of the divisor; if some are missing, it cannot be done' },
+    detalle: { es: 'Quita las fichas del divisor y lee lo que queda', en: 'Take away the counters of the divisor and read what is left' },
     introduccion: {
       es: `<h2>Dividir es quitar</h2>
         <p>9 000 = 2<sup>3</sup> · 3<sup>2</sup> · 5<sup>3</sup>: ${M({ 2: 3, 3: 2, 5: 3 })}.</p>
         <p>Para dividir 9 000 : 75, Pablo quita las fichas de 75 = 3 · 5<sup>2</sup>, que son una azul (blue) y dos amarillas (yellow), y lee lo que queda: ${M({ 2: 3, 3: 1, 5: 1 })}, es decir, 2<sup>3</sup> · 3 · 5 = 120.</p>
-        <p>Si a Pablo le <strong>falta una ficha</strong> que tiene que quitar, <strong>se atasca</strong>: no se puede dividir.</p>`,
+        <p>Aquí todas las divisiones son <strong>exactas</strong>: Pablo siempre tiene las fichas que quita. Lo que pasa cuando le falta alguna se ve en el ejercicio 5.</p>`,
       en: `<h2>Dividing is taking counters away</h2>
         <p>9 000 = 2<sup>3</sup> · 3<sup>2</sup> · 5<sup>3</sup>: ${M({ 2: 3, 3: 2, 5: 3 })}.</p>
         <p>To divide 9 000 : 75, Pablo takes away the counters of 75 = 3 · 5<sup>2</sup>, which are one blue (azul) and two yellow (amarillas), and reads what is left: ${M({ 2: 3, 3: 1, 5: 1 })}, that is, 2<sup>3</sup> · 3 · 5 = 120.</p>
-        <p>If Pablo is <strong>missing a counter</strong> he has to take away, he <strong>gets stuck</strong>: it cannot be done.</p>`,
+        <p>Here every division is <strong>exact</strong>: Pablo always has the counters he takes away. What happens when one is missing comes in exercise 5.</p>`,
     },
     instruccion: {
-      es: (a, d) => `Pablo divide <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} y ${valor(d)} = ${indice(d)}. Toca las fichas de ${valor(a)} que Pablo quita, o di que se atasca.`,
-      en: (a, d) => `Pablo divides <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} and ${valor(d)} = ${indice(d)}. Tap the counters of ${valor(a)} that Pablo takes away, or say he gets stuck.`,
+      es: (a, d) => `Pablo divide <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} y ${valor(d)} = ${indice(d)}. Toca las fichas de ${valor(a)} que Pablo quita.`,
+      en: (a, d) => `Pablo divides <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} and ${valor(d)} = ${indice(d)}. Tap the counters of ${valor(a)} that Pablo takes away.`,
     },
     atasca: { es: 'Pablo se atasca: no se puede', en: "Pablo gets stuck: it can't be done" },
     quienFalta: {
@@ -238,7 +238,8 @@ export const TX = {
       es: (a, d) => `Sí. ¿Cuál es el cociente ${valor(a)} : ${valor(d)} en forma de potencias?`,
       en: (a, d) => `Yes. What is the quotient ${valor(a)} : ${valor(d)} in index form?`,
     },
-    pideColor: { es: '¿De qué color le falta una ficha?', en: 'Which colour is missing a counter?' },
+    // Con el número delante (Juan Luis, 25-10): «¿De qué color le falta al 36 una ficha?».
+    pideColor: { es: a => `¿De qué color le falta al ${valor(a)} una ficha?`, en: a => `Which colour is ${valor(a)} missing a counter?` },
     buena: { es: (a, d) => `${quedaTxt.es(a, d)}.`, en: (a, d) => `${quedaTxt.en(a, d)}.` },
     buenaNo: { es: (a, d, c) => `${faltaTxt.es(a, d, c)}.`, en: (a, d, c) => `${faltaTxt.en(a, d, c)}.` },
     nota: {

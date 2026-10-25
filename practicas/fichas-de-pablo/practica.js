@@ -195,60 +195,30 @@ function montarAnadir(contenedor, item, api) {
 
 const enunciadoQuita = (item, { tt }) => `<p class="instruccion">${tt(TX.quita.instruccion)(item.a, item.d)}</p>${escena(numeroConFichas(item.d))}`;
 
+// Solo divisiones exactas (Juan Luis, 2026-10-25): sin botón «Pablo se atasca». El caso en que
+// falta un color se practica en el ejercicio 5.
 function montarQuita(contenedor, item, api) {
-  const { tt } = api;
   contenedor.innerHTML = `${enunciadoQuita(item, api)}<div id="fichas"></div>
     <div class="fp-acciones">
       <button type="button" class="comprobar" id="comprobar" disabled>${api.t.comprobar}</button>
-      <button type="button" class="fp-atasca" id="atasca">${tt(TX.quita.atasca)}</button>
-    </div>
-    <div id="paso2"></div>`;
-  const boton = contenedor.querySelector('#comprobar'), atasca = contenedor.querySelector('#atasca');
+    </div>`;
+  const boton = contenedor.querySelector('#comprobar');
   const toca = fichasTocables(contenedor.querySelector('#fichas'), item.a, {
     clase: 'fp-quitando',
     alCambiar: () => { boton.disabled = nFichas(toca.seleccion()) === 0; },
   });
-  const cierra = (resp, respuesta) => {
+  boton.addEventListener('click', () => {
     if (api.respondido()) return;
+    const q = toca.seleccion();
     toca.bloquear();
     boton.hidden = true;
-    atasca.hidden = true;
-    const diag = diagnosticarQuita(item, resp);
+    const diag = diagnosticarQuita(item, { tipo: 'quita', q });
     terminar(api, diag, {
-      respuesta,
+      respuesta: textoMonton(q),
       html: ({ tt }) => unir(
-        item.divide ? tt(TX.quita.buena)(item.a, item.d) : tt(TX.quita.buenaNo)(item.a, item.d, item.falta),
+        tt(TX.quita.buena)(item.a, item.d),
         diag.acierto ? '' : tt(TX.quita.nota)(diag.error, item.a, item.d, diag.color),
       ),
-    });
-  };
-  boton.addEventListener('click', () => { const q = toca.seleccion(); cierra({ tipo: 'quita', q }, textoMonton(q)); });
-  atasca.addEventListener('click', () => {
-    if (api.respondido()) return;
-    toca.bloquear();
-    boton.hidden = true;
-    atasca.hidden = true;
-    if (item.divide) {
-      // Sí se puede dividir: Pablo no se atasca, y el fallo es inmediato.
-      const diag = diagnosticarQuita(item, { tipo: 'atasca', color: null });
-      return terminar(api, diag, {
-        respuesta: 'atasca',
-        html: ({ tt }) => unir(tt(TX.quita.buena)(item.a, item.d), tt(TX.quita.nota)(diag.error, item.a, item.d)),
-      });
-    }
-    contenedor.querySelector('#paso2').innerHTML = `<p class="instruccion">${tt(TX.quita.quienFalta)(item.d)}</p>`;
-    const colorBoton = elecciones(contenedor.querySelector('#paso2'), {
-      clase: `elecciones elecciones--${Math.min(4, Math.max(2, colores(item.d).length))} fp-opciones`,
-      opciones: colores(item.d).map(p => ({ valor: p, html: fichaHtml(p) })),
-      alElegir(p) {
-        if (api.respondido()) return;
-        colorBoton.marcar([item.falta], p);
-        const diag = diagnosticarQuita(item, { tipo: 'atasca', color: p });
-        terminar(api, diag, {
-          respuesta: `atasca; ${p}`,
-          html: ({ tt }) => unir(tt(TX.quita.buenaNo)(item.a, item.d, item.falta), diag.acierto ? '' : tt(TX.quita.notaColor)),
-        });
-      },
     });
   });
 }
@@ -303,7 +273,7 @@ function montarRegla(contenedor, item, api) {
       });
       return;
     }
-    caja.innerHTML = `<p class="instruccion">${tt(TX.regla.pideColor)}</p>`;
+    caja.innerHTML = `<p class="instruccion">${tt(TX.regla.pideColor)(item.a)}</p>`;
     const cs = elecciones(caja, {
       clase: `elecciones elecciones--${Math.min(4, Math.max(2, colores(item.d).length))} fp-opciones`,
       opciones: colores(item.d).map(p => ({ valor: p, html: fichaHtml(p) })),

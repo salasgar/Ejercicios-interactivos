@@ -179,33 +179,26 @@ test('ejercicio 3 (añadir): cuatro opciones distintas, una sola buena, cada mal
 
 // --- Ejercicio 4 --------------------------------------------------------------------------------
 
-test('ejercicio 4: un 70 % divide; en el resto falta justo un color; d no es 1 ni a', () => {
+test('ejercicio 4: solo divisiones exactas (Juan Luis, 25-10): d divide a a, d menor que a y no es 1 ni a', () => {
   const lista = items(generarQuita, 4);
-  cerca(lista, it => it.divide, 0.7, 'divide');
   for (const it of lista) {
     assert.ok(valor(it.a) <= TOPE_MONTON && colores(it.a).length >= 2 && colores(it.a).length <= 4);
     assert.ok(nFichas(it.d) >= 1 && nFichas(it.d) <= 3, 'de 1 a 3 fichas');
     assert.notEqual(valor(it.d), 1);
     assert.notEqual(valor(it.d), valor(it.a));
-    assert.equal(it.divide, valor(it.a) % valor(it.d) === 0, 'divide ⇔ el resto es 0');
-    if (it.divide) assert.equal(valor(resto(it)) * valor(it.d), valor(it.a));
-    else {
-      const faltan = PRIMOS_FICHA.filter(p => exp(it.d, p) > exp(it.a, p));
-      assert.deepEqual(faltan, [it.falta], 'falta un solo color');
-    }
+    assert.equal(it.divide, true, 'todas las divisiones son exactas');
+    assert.equal(it.falta, null);
+    assert.equal(valor(it.a) % valor(it.d), 0, `${valor(it.a)} : ${valor(it.d)} tiene que ser exacta`);
+    assert.ok(valor(it.d) < valor(it.a), 'el divisor es menor que el dividendo (nunca 20 : 30)');
+    assert.equal(valor(resto(it)) * valor(it.d), valor(it.a));
   }
   for (const it of lista.slice(0, 200)) {
-    if (it.divide) {
-      for (const q of submontones(it.a)) {
-        const d = diagnosticarQuita(it, { tipo: 'quita', q });
-        assert.equal(d.acierto, igual(q, it.d));
-        if (!d.acierto) assert.match(d.error, /^(quita-de-mas|quita-de-menos|color-equivocado)$/);
-      }
-      assert.equal(diagnosticarQuita(it, { tipo: 'atasca', color: null }).error, 'se-atasca-sin-motivo');
-    } else {
-      assert.equal(diagnosticarQuita(it, { tipo: 'quita', q: { 2: 1 } }).error, 'divide-lo-indivisible');
-      for (const p of colores(it.d)) assert.equal(diagnosticarQuita(it, { tipo: 'atasca', color: p }).acierto, p === it.falta);
+    for (const q of submontones(it.a)) {
+      const d = diagnosticarQuita(it, { tipo: 'quita', q });
+      assert.equal(d.acierto, igual(q, it.d));
+      if (!d.acierto) assert.match(d.error, /^(quita-de-mas|quita-de-menos|color-equivocado)$/);
     }
+    assert.equal(diagnosticarQuita(it, { tipo: 'atasca', color: null }).error, 'se-atasca-sin-motivo');
   }
 });
 

@@ -338,3 +338,4 @@ Si paras sin terminar: `$R/hechos/fallos/97--<sid>.md` con hasta dónde llegaste
 - Las reglas de contenido de `proyecto.md`: «factor» por «divisor», HCF en vez de GCD, `×`
   en vez de `·`, letras o ecuaciones, «primos entre sí» (se dice «su único divisor común es 1»),
   distractores que puedan ser verdad, excluir el 0 de los múltiplos, preguntar «múltiplo de 0».
+- **(Añadido 25-10, tras la prueba de Juan Luis.)** El ejercicio 4 es solo de divisiones exactas: le salió «20 : 30» con el botón «Pablo se atasca» y lo descartó («ese ejercicio solamente debería preguntar por divisiones exactas»). Un ítem en que el divisor es mayor que el dividendo no se le pone a un alumno de 1.º aunque la pregunta sea «¿se puede?». Y en las preguntas de un paso intermedio («¿de qué color le falta una ficha?»), el número siempre va en la frase: en pantalla hay dos montones y el alumno no sabe de cuál se habla.

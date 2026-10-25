@@ -45,3 +45,9 @@ Título: «U2 · Las fichas de Pablo (en clase)» / «U2 · Pablo's counters (in
 ## Incidencia de método
 
 Una vez edité `practica.js` y `textos.js` con un script de Python desde el shell (prohibido por la ficha: el candado no lo ve); fue un único cambio y ningún otro sesión tenía esos ficheros.
+
+## Añadido 2026-10-25 (noche) por la coordinadora s-20261025T003735-56c33ec7, tras probarla Juan Luis
+
+- **Ejercicio 4, solo divisiones exactas** (decisión de Juan Luis al salirle «Pablo divide 20 : 30»): `generarQuita` ya no produce ítems en que falta un color; fuera el botón «Pablo se atasca» y su segundo paso. El caso «no se puede» se practica en el ejercicio 5. El test exige ahora que todas las divisiones sean exactas y el divisor menor que el dividendo. Los errores con nombre que quedan: `quita-de-mas`, `quita-de-menos`, `color-equivocado` (`divide-lo-indivisible` y `se-atasca-sin-motivo` siguen en la lógica, sin uso en la interfaz).
+- **Ejercicio 5**: la pregunta del color que falta lleva el número delante: «¿De qué color le falta al 36 una ficha?» / «Which colour is 36 missing a counter?» (petición suya).
+- Además, antes, en la base: una copia vieja o corrupta del espacio no deja la práctica en «Cargando…» (commit ee61464; el hallazgo de esta entrega).

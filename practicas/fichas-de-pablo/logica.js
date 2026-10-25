@@ -228,21 +228,16 @@ export function diagnosticarAnadir(item, i) {
 // --- Ejercicio 4: dividir es quitar ------------------------------------------------------------
 
 /**
- * Ítem: { a, d, divide, falta }. En el 70 % d divide a a: hay que quitar las fichas de d.
- * En el 30 % no: a a le falta justo un color (falta) para tener las fichas de d.
+ * Ítem: { a, d, divide: true, falta: null }. **Solo divisiones exactas** (decisión de Juan Luis del
+ * 2026-10-25, al salirle 20 : 30): d es siempre un submontón propio de a, así que hay que quitar las
+ * fichas de d y leer lo que queda. El caso «no se puede» (le falta un color) se practica en el
+ * ejercicio 5, la regla. `divide` y `falta` se conservan por si vuelve el otro caso.
  */
 export function generarQuita(rng) {
-  const divide = rng.azar() < 0.7;
   for (let i = 0; i < 500; i++) {
     const a = montonAzar(rng, { colores: [2, 4], fichas: [3, 9] });
-    if (divide) {
-      const d = submontonAzar(rng, a, [1, 3]);
-      if (d && !igual(d, a)) return { a, d, divide: true, falta: null };
-    } else {
-      const base = submontonAzar(rng, a, [0, 2]);
-      const c = base && colorQueFalta(rng, a, base);
-      if (c) return { a, d: juntar(base, una(c)), divide: false, falta: c };
-    }
+    const d = submontonAzar(rng, a, [1, 3]);
+    if (d && !igual(d, a)) return { a, d, divide: true, falta: null };
   }
   const a = limpiar({ 2: 2, 3: 1, 5: 1 });
   return { a, d: limpiar({ 2: 1, 3: 1 }), divide: true, falta: null };
