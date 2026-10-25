@@ -114,6 +114,11 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
 - Una reabierta tuya vuelve a ser cogible por una sesión MEDIO; quien la cierre no puede publicarla
   (no toca `catalogo.js`). La publica la tarea de publicación siguiente: díselo a Juan Luis
   si la semana corre prisa.
+- (s-20261025T212329-34d74420, 25-10) Si una misma sesión encadena 94 → 95 → 96, la reabierta que deja la 94 no está arreglada
+  cuando llega la 95: «las que reabrió la anterior» se quedan sin quien las publique. Decirlo a Juan Luis en el cierre.
+- (íd.) En Chrome headless, `textContent` de una potencia pierde el `<sup>`: «6<sup>2</sup>» se lee «62». Para leer una expresión
+  del DOM, cambiar antes cada `<sup>` por `^n`. Los módulos ES quedan en la caché: tras arreglar una errata, la página recargada
+  puede seguir enseñando el texto viejo (comprobar en el fichero).
 
 ## Prohibido (propio de esta tarea)
 
