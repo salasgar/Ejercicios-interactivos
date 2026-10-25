@@ -2,11 +2,11 @@
 
 Empezado el 2026-10-25 por la tarea 79 del reparto PU2 (`reparto-practicas-u2/`), que deja
 la base de la unidad 3: el catálogo, la portada, los esqueletos y la tabla de destrezas
-(§7). **El resto de este documento lo escribe la tarea 96**, al cerrar la última semana, con
-el mismo espíritu que [practicas-unidad2.md](practicas-unidad2.md): qué hay, cómo se amplía,
+(§7). El resto lo escribió la tarea 96 (2026-10-25), al cerrar la última semana, con el
+mismo espíritu que [practicas-unidad2.md](practicas-unidad2.md): qué hay, cómo se amplía,
 cómo se leen los resultados y qué destreza del inventario practica cada una. La base común,
 el panel, los dos sistemas de códigos y los varios profesores son los de la unidad 2: están
-en ese documento.
+en ese documento, y aquí solo se cuenta lo que cambia.
 
 Son doce mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 3, **Números enteros**
 (ids 33-44 del catálogo, tareas 80-91 de PU2), con dos piezas comunes nuevas en
@@ -21,16 +21,62 @@ Son doce mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 3, **Números
 
 ## 1. Qué ve el alumno
 
-Por escribir (tarea 96).
+Lo mismo que en la unidad 2 (§1 de [practicas-unidad2.md](practicas-unidad2.md)): código,
+10 puntos por ejercicio con 5 vidas, el idioma de cada ítem sorteado, el feedback con los
+números del ítem y la tarea de la semana. Lo propio de la unidad 3:
+
+1. **La portada enseña la unidad 3 desde el lunes 16-11** (`desde` de la unidad 3 en
+   `UNIDADES`, `catalogo.js`). Antes, una práctica publicada solo se abre por su URL. Las
+   prácticas salen por semanas (`BLOQUES` en `practicas/portada.js`): semana 1 (`termometro`,
+   `opuestos`, `situaciones`, `saltos`), semana 2 (`dos-signos`, `signos-producto`), semana 3
+   (`potencias-enteros`, `jerarquia-enteros`, `parentesis-enteros`), semana 4 (`variacion`,
+   `errores3`) y «Para toda la unidad · Vocabulario» (`leelo3`). La práctica de ortografía
+   española (`ortografia`, id 45, unidad 3) sale en un bloque «Otras».
+2. **Los negativos se escriben con el menos de verdad** (−, U+2212). Para contestar, el alumno
+   escribe en un campo de enteros con un botón **+/−** al lado (`campoEntero`); puede teclear
+   también `-` o `–`. Un `+5` se lee como 5.
+3. **La recta y el termómetro** se dibujan en SVG, se tocan y animan los saltos
+   (`recta-enteros.js`). Se usan en `termometro`, `opuestos`, `situaciones`, `saltos` y `variacion`.
+4. **Las operaciones se tocan**: en `jerarquia-enteros` el alumno toca el signo de la operación
+   que va primero (vale cualquiera de las que pueden ir primero sin cambiar el valor: regla de
+   Juan Luis del 8-10); en `parentesis-enteros` toca el paréntesis o el corchete de más adentro;
+   en `errores3`, la línea del cálculo donde está el error.
+5. **Cada ejercicio empieza con «Cómo se hace»**, un ejemplo resuelto en los dos idiomas.
+6. Algunos ítems tienen **dos pasos** (elegir el signo y después escribir el valor; tocar la
+   operación y después su valor): si falla el primero, el ítem termina ahí con su explicación.
 
 ## 2. Cómo lee el profesor los resultados
 
-Por escribir (tarea 96).
+Igual que en la unidad 2 (§2 de [practicas-unidad2.md](practicas-unidad2.md)): el panel
+`practicas/profesor.html`, la nube del espacio de cada profesor y la vista «Fallos» con «qué
+falla más». En la unidad 3, **cada fallo lleva el id de un error típico** en el campo `error`
+(`api.responder({ error })`), que el panel enseña tal cual, en `código`:
+
+- los de la tabla de la unidad, en `ERRORES_TIPICOS` de `practicas/_comun/enteros.js`, cada uno
+  con su nombre `{ es, en }` y su función (`regla-signos-en-suma`, `restar-negativo`,
+  `potencia-par-negativa`, `menos-en-la-base`, `derecha-a-izquierda`, `sin-jerarquia`…);
+- los propios de una práctica, en su `logica.js` (`ERRORES_PROPIOS` en `termometro`,
+  `situaciones` y `variacion`; constantes sueltas en las demás, como `dos-signos-seguidos` o
+  `divide-entre-cero`). El panel **no** traduce todavía estos ids a su nombre: es una
+  propuesta pendiente (terminadas de la 84 y la 85).
+
+La agrupación de «qué falla más» es por práctica, ejercicio y error, así que en la unidad 3
+dice, por ejemplo, cuántos alumnos han hecho `−2 − 3 = 5` en `saltos`.
 
 ## 3. La base común de la unidad 3
 
-Por escribir (tarea 96). Mientras tanto, la referencia es la cabecera de
-`practicas/_comun/enteros.js` y de `practicas/_comun/recta-enteros.js`.
+Dos módulos nuevos en `practicas/_comun/` (tarea 79), puros salvo `campoEntero` y `crearRecta`:
+
+| Fichero | Qué pone |
+|---|---|
+| `enteros.js` | Escritura: `MENOS`, `fmt` (−5, nunca +5), `fmtPar` ((−5) cuando no va el primero), `leerEntero`. Expresiones: `analizar` (texto → árbol, con + − · : ^ ( ) [ ] y superíndices), `evaluar` (jerarquía de clase: −3² = −9, (−3)² = 9), `html` (con `marcarOperadores` para tocar operaciones y `envolver` para resaltar un trozo), `aTexto`. Paso a paso: `pasosPosibles` (las operaciones que se pueden hacer ya, con la regla del 8-10), `aplicarPaso`, `pasoCanonico`, `cadenaDePasos`, `terminos`, `quitarParentesis`, `quitarParentesisDeNumeros`, `bienEscrita`. **Errores típicos**: una función por error que da el valor equivocado con los números del ítem (o null si ese error no cambia nada) y la tabla `ERRORES_TIPICOS` (id → nombre y función); `distractores(candidatos, correcta)` saca de ahí opciones falsas sin repetir y distintas de la buena. `campoEntero`: el campo con el botón +/− |
+| `recta-enteros.js` | `crearRecta(contenedor, opciones)`: recta horizontal o termómetro vertical, con `min`, `max`, `paso`, qué números se escriben (`numeros`), puntos, saltos animados y marcas que se tocan. `marcas`, `geometria`, `marcaMasCercana` son puras (se prueban sin navegador) |
+
+Los distractores de la unidad 3 **salen siempre de un error típico con nombre**, calculado
+con los números del ítem (regla 4 de la unidad en `reparto-practicas-u2/proyecto.md`), nunca
+de un número al azar; y el `error` que se registra al fallar es el de ese distractor.
+
+Tests: `tests/practicas-enteros.test.js` (la base de la unidad) y uno por práctica.
 
 ## 4. El contrato de una práctica
 
@@ -38,12 +84,48 @@ El mismo que en la unidad 2 (§4 de [practicas-unidad2.md](practicas-unidad2.md)
 
 ## 5. Cómo se añade una práctica
 
-Por escribir (tarea 96).
+Como en la unidad 2 (§5 de [practicas-unidad2.md](practicas-unidad2.md)): copiar
+`practicas/plantilla/`, fila en `catalogo.js` con `unidad: 3` y `disponible: false`, `logica.js`
+y su test antes que la interfaz, la línea de `DESTREZAS` en `registro.js` y la fila de §7 en el
+mismo commit (lo exige `tests/practicas-registro.test.js`), su `slug` en un bloque de `BLOQUES`
+y, al publicarla, `disponible: true`. Lo propio de la unidad 3:
+
+1. Escribir los enteros con `fmt` / `fmtPar` y leerlos con `leerEntero` o `campoEntero`; las
+   expresiones con `analizar` / `html`, nunca a mano con un guion.
+2. **Cada distractor, de un error típico** de `ERRORES_TIPICOS` (o uno propio con su nombre
+   `{ es, en }`), calculado con los números del ítem, y el mismo id en `api.responder({ error })`.
+3. Las reglas de contenido de la unidad 3 (en `reparto-practicas-u2/proyecto.md`): la suma y la
+   resta sin paréntesis al empezar (nunca `(+5) + (+3)`), nada de una sesión posterior a la de
+   la destreza, las parejas válidas que nunca se enfrentan (*negative three* / *minus three*,
+   agrupar / ir de izquierda a derecha, operar dentro / quitar el paréntesis…) y el
+   **realismo** de los contextos con una cota por contexto que el test comprueba.
+4. Probarla en el navegador **pulsando cada botón con un clic** (un «Comprobar» que solo
+   respondía a la tecla Intro pasó los tests de `dos-signos`; lo vio la tarea 94).
 
 ## 6. Las doce prácticas
 
-Por escribir (tarea 96). Mientras tanto, las fichas `reparto-practicas-u2/tareas/tarea-80-…` a
-`tarea-91-…`.
+`id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
+bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
+de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
+
+| Semana | `slug` | id | Tarea | Ejercicios | Cotas (sin contexto, de tamaño) |
+|---|---|---|---|---|---|
+| 1 | `termometro` | 33 | 80 | Coloca el entero (recta) · ¿Qué temperatura marca? (escalas de 1, 2 y 5) · Mayor o menor · Ordena · ¿Positivo, negativo o ninguno? | −40…40 °C en el termómetro; −15…15 al ordenar |
+| 1 | `opuestos` | 34 | 81 | El opuesto · Distancia al cero · Opuesto y valor absoluto · ¿Quiénes están a esa distancia? | −20…20 |
+| 1 | `situaciones` | 35 | 82 | ¿Qué entero es? · ¿Qué situación es? · Un paso (termómetro o recta, con la frase de respuesta) | contextos de temperatura, plantas, saldo, buceo, altitud y años, cada uno con su cota |
+| 1-2 | `saltos` | 36 | 83 | Salta en la recta · ¿Qué signo tendrá? · De izquierda a derecha · Varios términos (fichas, agrupar) · Varios movimientos (problema) | buceo −40…−1 m, ascensor −3…12, saldo −50…300 €, temperatura −20…35 °C |
+| 2 | `dos-signos` | 37 | 84 | Un solo signo · Sumar o restar un negativo · Quita los paréntesis y calcula · ¿Cuál está bien escrita? | resultado −30…30 |
+| 2 | `signos-producto` | 38 | 85 | Multiplica (intro con el patrón de U3-2C-17) · Divide (con 0 : d y d : 0) · El factor que falta · ¿Suma o producto? · ¿Cuál está bien escrito? | factores 2-12, cocientes 1-12 |
+| 3 | `potencias-enteros` | 39 | 86 | Cuenta los negativos · Potencia de base negativa · ¿Cuál es la base? ((−a)ⁿ, −aⁿ, −(−a)ⁿ) · Cuadrados y raíces (con «No existe») | \|producto\| ≤ 500, \|potencia\| ≤ 1000, cuadrados 1-144 |
+| 3-4 | `jerarquia-enteros` | 40 | 87 | ¿Qué va primero? · Producto o potencia dentro de una suma · Cadenas de · y : (y el par `30 : (−5) · 2` / `30 : (−5 · 2)`) · Combinadas (sesión 13) | final ±100, pasos ±200 y nunca 0 |
+| 3-4 | `parentesis-enteros` | 41 | 88 | Quita el paréntesis · Calcula (operando dentro o quitando) · ¿Al paréntesis o al número? · De dentro afuera (corchetes) · Coloca los paréntesis (ej. 3-5, sesión 13) | todo valor ±200 |
+| 4 | `errores3` | 42 | 89 | ¿Dónde está el error? · ¿Qué error es? (distractores de otro grupo de errores) · ¿Error o no? (parejas válidas) | términos 1-9, todo ≤ 300 |
+| 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura −20…40 °C, plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 3000 a. C.-2026 |
+| toda | `leelo3` | 44 | 91 | Los enteros · Sumas, restas y productos · Potencias · Palabras y símbolos (cada ejercicio, de una semana) | temperaturas −30…45 °C; parejas de ciudades de un mismo día de invierno |
+
+**Publicadas** (a 2026-10-25): todas salvo `dos-signos` y `variacion`, reabiertas por las
+tareas 94 y 96 (`reparto-practicas-u2/hechos/reabiertas/`). El estado vivo es el campo
+`disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 3
 
@@ -147,9 +229,24 @@ U3-2C-17 (explicar con un patrón por qué menos por menos es más) figura en `s
 porque su ficha la cita, pero solo como **introducción** del ejercicio 1 (el patrón
 `3 · (−2) = −6`, `2 · (−2) = −4`…): la explicación en sí sigue siendo de papel.
 
-**U3-4C-05 (años a. C. y d. C.)**: mientras Juan Luis no decida qué cuenta vale al cruzar el
-año 0 (no lo hubo), `variacion` solo pone ítems con los dos años a. C. o los dos d. C.
+**U3-4C-05 (años a. C. y d. C.)**: decidido el 2026-10-25 (coordinadora, por delegación de Juan
+Luis) con la regla de su hoja 4: al cruzar de a. C. a d. C. se resta y **se quita 1**, porque no
+hubo año 0 (del 10 a. C. al 10 d. C., 10 − (−10) − 1 = 19 años). `variacion` 4 cruza la era desde
+la reabierta de la tarea 90 (commit 182d37c), con el error `año-cero` para quien no quita el 1.
 
 ## 8. Dónde está lo demás
 
-Por escribir (tarea 96).
+- El reparto con el que se hicieron: `reparto-practicas-u2/` (tareas 79-96; las reglas de la
+  unidad 3 en `proyecto.md`, las fichas en `tareas/`, lo entregado en `salidas/NN-<slug>/ENTREGA.md`).
+- La revisión y publicación de cada semana, con la **propuesta de la tarea de la app** de esa
+  semana (★ y a elegir, 100 puntos, con la ortografía): `salidas/93-publicar-semana1/`,
+  `94-publicar-semana2/`, `95-publicar-semana3/` y `96-publicar-semana4/`. Juan Luis las monta
+  en el panel (editor de tareas).
+- Las decisiones del 25-10 (año 0, ejercicio 1 de `jerarquia-enteros` sin combinadas, objetivos
+  de `parentesis-enteros`): `reparto-practicas-u2/hechos/notas/s-20261025T003735-56c33ec7-decisiones-25-10.md`.
+- El inventario de la unidad (solo lectura, fuera del repositorio):
+  `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/3. Integers/inventario-unidad3.tsv`, y la
+  secuenciación por sesiones en `secuenciación-unidad3.pdf` de la misma carpeta.
+- Tests: `tests/practicas-enteros.test.js` (la base de la unidad), `tests/practicas-<slug>.test.js`
+  (uno por práctica), `tests/practicas-registro.test.js` (§7 contra `DESTREZAS`) y
+  `tests/enteros-items.test.js` (el generador `enteros` de la aplicación principal, tarea 92).

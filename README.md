@@ -216,6 +216,34 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   profesor puede fijarlo para un alumno (`?idioma=es` o `?idioma=en`), con un
   selector en el panel para generarlos todos así.
 
+## Prácticas de la unidad 3 (`practicas/`)
+
+Doce prácticas más sobre la misma base y el mismo panel, para la unidad 3,
+**Números enteros** (ids 33-44 del catálogo; la portada las enseña por semanas
+desde el lunes 16-11-2026). Dos piezas comunes nuevas: `practicas/_comun/enteros.js`
+(escritura con el menos de verdad, un evaluador con la jerarquía de clase y los
+**errores típicos de la unidad**, de donde salen todos los distractores) y
+`practicas/_comun/recta-enteros.js` (recta y termómetro en SVG). Qué hace cada
+una, cómo se amplía y qué destreza cubre: [docs/practicas-unidad3.md](docs/practicas-unidad3.md).
+
+| Semana | `slug` | Práctica | Destrezas principales |
+|---|---|---|---|
+| 1 | `termometro` | La recta y el termómetro | Representar, leer, comparar y ordenar enteros (U3-1C-02 a 1C-06) |
+| 1 | `opuestos` | Opuesto y valor absoluto | Opuesto, valor absoluto como distancia al 0 (U3-1C-07 a 1C-10) |
+| 1 | `situaciones` | Enteros en la vida real | De la situación al entero y problemas de un paso (U3-1C-01, 1C-16) |
+| 1-2 | `saltos` | Sumas y restas con saltos | Sumar y restar en la recta, varios términos y problemas (U3-1C-11 a 1C-15, 2A-01, 2C-01 a 2C-04) |
+| 2 | `dos-signos` | Dos signos seguidos | Quitar el paréntesis de un número (U3-2C-05 a 2C-08, 2C-10) |
+| 2 | `signos-producto` | La regla de los signos | Multiplicar y dividir enteros, sin llevar la regla a la suma (U3-2C-15 a 2C-21) |
+| 3 | `potencias-enteros` | Productos y potencias con signo | Signo de un producto, potencias de base negativa, −aⁿ y (−a)ⁿ, raíces (U3-3C-02 a 3C-15) |
+| 3-4 | `jerarquia-enteros` | ¿Qué se hace primero? Con enteros | Jerarquía con enteros paso a paso y cadenas (U3-3A-01 a 3A-03, 3C-20, 4A-01, 4A-02) |
+| 3-4 | `parentesis-enteros` | Paréntesis y corchetes | Quitar paréntesis precedidos de + y de −, corchetes, colocar paréntesis (U3-3A-04, 3C-16 a 3C-18, 4A-03 a 4A-07) |
+| 4 | `variacion` | Subidas, bajadas y diferencias | Variación, diferencia, dato que falta, años a. C. y d. C. (U3-3C-21, 4C-01 a 4C-10) |
+| 4 | `errores3` | Caza el error | Reconocer y nombrar los errores típicos, y lo que no es error (U3-2C-21, 3C-19, 4A-05, 4C-08, 4C-09) |
+| toda | `leelo3` | Léelo en inglés | Leer enteros, operaciones y potencias en inglés (U3-1B, 2B, 3B-02, 4B) |
+
+Cada semana tiene su tarea de revisión y publicación (tareas 93-96 del reparto), que deja
+la propuesta de la tarea de la app de esa semana.
+
 ## Puesta en marcha de Firebase (una sola vez)
 
 Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el
