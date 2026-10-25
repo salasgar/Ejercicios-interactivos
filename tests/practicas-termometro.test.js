@@ -9,7 +9,7 @@ import { marcas } from '../practicas/_comun/recta-enteros.js';
 import {
   generarColoca, escritos, errorColoca, RECTAS,
   generarTemperatura, errorTemperatura, CONTEXTOS_TEMPERATURA,
-  generarComparar, simbolo, errorComparar,
+  generarComparar, simbolo, errorComparar, ERRORES_PROPIOS,
   generarOrden, ordenCorrecto, ordenBien, errorOrden, cadenaOrden,
   generarClases, cajaDe, escribe, fallosClases, errorClases,
 } from '../practicas/termometro/logica.js';
@@ -101,8 +101,23 @@ test('ej. 3: el símbolo es el correcto y el contrario es siempre un error con n
     assert.equal(buena, item.a < item.b ? '<' : '>');
     assert.equal(errorComparar(item, buena), null);
     const mala = buena === '<' ? '>' : '<';
-    assert.match(errorComparar(item, mala), /^(compara-como-naturales|compara-valor-absoluto)$/);
+    const esperado = item.a >= 0 && item.b >= 0 ? 'compara-positivos'
+      : item.a < 0 && item.b < 0 ? 'compara-como-naturales' : 'compara-valor-absoluto';
+    assert.equal(errorComparar(item, mala), esperado, `${item.a} y ${item.b}`);
   }
+});
+
+test('ej. 3: sin negativos no se habla del valor absoluto, y el error propio tiene nombre y texto en los dos idiomas', () => {
+  assert.equal(errorComparar({ a: 3, b: 8 }, '>'), 'compara-positivos');
+  assert.equal(errorComparar({ a: 0, b: 7 }, '>'), 'compara-positivos');
+  assert.equal(errorComparar({ a: 0, b: -7 }, '<'), 'compara-valor-absoluto');
+  assert.equal(errorComparar({ a: -2, b: -7 }, '<'), 'compara-como-naturales');
+  assert.ok(ERRORES_PROPIOS['compara-positivos'].nombre.es && ERRORES_PROPIOS['compara-positivos'].nombre.en);
+  for (const i of ['es', 'en']) {
+    const t = TX.ej3.positivos[i](3, 8);
+    assert.match(t, /8/); assert.match(t, /3/); assert.ok(!/negativ|absolut/i.test(t));
+  }
+  assert.match(TX.ej4.naturales.es(-2, -7), /−2 es mayor que −7/);
 });
 
 // --- Ejercicio 4 ---------------------------------------------------------------
@@ -175,7 +190,7 @@ function textosGenerados() {
     const t = generarTemperatura(rng);
     dos(i => `${TX.ej2.contexto[t.contexto][i]} ${TX.ej2.escala[i](t.paso)} ${TX.ej2.bien[i](t.valor, t.paso)} ${TX.ej2.signo[i](t.valor)} ${TX.ej2.marcas[i](t.valor, -3, t.paso)} ${TX.ej2.otro[i](-t.valor)}`);
     const m = generarComparar(rng);
-    dos(i => `${TX.ej3.bien[i](m.a, m.b)} ${TX.ej3.naturales[i](m.a, m.b)} ${TX.ej3.absoluto[i](m.a, m.b)}`);
+    dos(i => `${TX.ej3.bien[i](m.a, m.b)} ${TX.ej3.naturales[i](m.a, m.b)} ${TX.ej3.absoluto[i](m.a, m.b)} ${TX.ej3.positivos[i](m.a, m.b)} ${TX.ej4.naturales[i](m.a, m.b)}`);
     const o = generarOrden(rng);
     dos(i => `${TX.ej4.pregunta[i](o.creciente)} ${TX.ej4.bien[i](cadenaOrden(o))} ${TX.ej4.suyo[i](o.numeros.map(fmt).join(', '))}`);
     const q = generarClases(rng);

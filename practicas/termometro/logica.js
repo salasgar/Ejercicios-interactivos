@@ -112,9 +112,20 @@ export function generarComparar(rng) {
 /** El símbolo que va entre a y b: '<' o '>'. */
 export const simbolo = ({ a, b }) => (a < b ? '<' : '>');
 
-/** El error de contestar `elegido`: comparar como naturales (dos negativos) o por valor absoluto (un negativo grande frente a un positivo). */
+/** Errores típicos propios de la práctica (los demás vienen de `_comun/enteros.js`). */
+export const ERRORES_PROPIOS = {
+  'compara-positivos': {
+    nombre: { es: 'Se ha equivocado al comparar dos números sin negativos (o el 0 con un positivo)', en: 'Got it wrong comparing two numbers with no negatives (or 0 and a positive)' },
+  },
+};
+
+/**
+ * El error de contestar `elegido`: sin ningún negativo (dos positivos, o el 0 y un positivo), `compara-positivos`;
+ * con dos negativos, comparar como naturales; con un negativo y un positivo o el 0, por valor absoluto.
+ */
 export function errorComparar(item, elegido) {
   if (elegido === simbolo(item)) return null;
+  if (item.a >= 0 && item.b >= 0) return 'compara-positivos';
   if (comparaComoNaturales(item.a, item.b) === elegido) return 'compara-como-naturales';
   return 'compara-valor-absoluto';
 }

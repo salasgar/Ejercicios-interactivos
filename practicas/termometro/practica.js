@@ -135,7 +135,8 @@ function montarComparar(contenedor, item, api) {
         html: ({ tt }) => {
           const bien = `${tt(TX.ej3.bien)(item.a, item.b)}.`;
           if (acierto) return bien;
-          const queDijo = error === 'compara-como-naturales' ? tt(TX.ej3.naturales)(item.a, item.b) : tt(TX.ej3.absoluto)(item.a, item.b);
+          const queDijo = error === 'compara-como-naturales' ? tt(TX.ej3.naturales)(item.a, item.b)
+            : error === 'compara-positivos' ? tt(TX.ej3.positivos)(item.a, item.b) : tt(TX.ej3.absoluto)(item.a, item.b);
           return `${queDijo}. ${bien}`;
         },
         espera: 2200,
@@ -199,7 +200,8 @@ function montarOrden(contenedor, item, api) {
       html: ({ tt }) => {
         const bien = `${tt(TX.ej4.bien)(cadenaOrden(item))}.`;
         if (acierto) return bien;
-        const queDijo = error === 'ordena-como-naturales' ? tt(TX.ej4.naturales)
+        const negativos = item.numeros.filter(v => v < 0);
+        const queDijo = error === 'ordena-como-naturales' ? tt(TX.ej4.naturales)(Math.max(...negativos), Math.min(...negativos))
           : error === 'orden-al-reves' ? tt(TX.ej4.reves) : tt(TX.ej4.suyo)(mio.map(fmt).join(', '));
         return `${queDijo}. ${bien}`;
       },

@@ -94,6 +94,10 @@ export const TX = {
       es: (a, b) => `Un número negativo es siempre menor que uno positivo o que el 0, aunque su número sea grande: ${fmt(Math.min(a, b))} está a la izquierda de ${fmt(Math.max(a, b))}`,
       en: (a, b) => `A negative number is always less than a positive number or 0, even if its number is big: ${fmt(Math.min(a, b))} is to the left of ${fmt(Math.max(a, b))}`,
     },
+    positivos: {
+      es: (a, b) => `Mira la recta: ${fmt(Math.max(a, b))} es mayor que ${fmt(Math.min(a, b))}`,
+      en: (a, b) => `Look at the number line: ${fmt(Math.max(a, b))} is greater than ${fmt(Math.min(a, b))}`,
+    },
     recta: { es: 'Recta numérica', en: 'Number line' },
   },
   ej4: {
@@ -114,8 +118,8 @@ export const TX = {
     tuOrden: { es: 'Tu orden:', en: 'Your order:' },
     bien: { es: lista => `El orden es <span class="cuenta">${lista}</span>`, en: lista => `The order is <span class="cuenta">${lista}</span>` },
     naturales: {
-      es: 'Entre negativos, el que está más cerca del 0 es el mayor (−2 es mayor que −7)',
-      en: 'Among negative numbers, the one closer to 0 is the greater (−2 is greater than −7)',
+      es: (a, b) => `Entre negativos, el que está más cerca del 0 es el mayor (${fmt(a)} es mayor que ${fmt(b)})`,
+      en: (a, b) => `Among negative numbers, the one closer to 0 is the greater (${fmt(a)} is greater than ${fmt(b)})`,
     },
     reves: { es: 'Lo has puesto al revés', en: 'You put it the other way round' },
     suyo: { es: lista => `Has puesto ${lista}`, en: lista => `You put ${lista}` },
