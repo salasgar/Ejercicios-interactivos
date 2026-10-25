@@ -188,13 +188,16 @@ export function generarCombinada(rng) {
 
 // ─── Ejercicio 1: ¿qué va primero? ────────────────────────────────────────────────
 
-/** Ítem: { texto }. Producto o cociente en una suma, potencia en una suma, cadena y combinada. */
+/**
+ * Ítem: { texto }. Producto o cociente en una suma (40 %), potencia en una suma (35 %) y cadena (25 %).
+ * Sin combinadas (potencia, producto y suma juntos): son de la sesión 13 (U3-4A-02) y la práctica
+ * se publica en la semana 3 (decisión de Juan Luis, 25-10).
+ */
 export function generarPrimero(rng) {
   const r = rng.azar();
-  if (r < 0.3) return { texto: hastaQueValga(rng, formaProducto) };
-  if (r < 0.55) return { texto: hastaQueValga(rng, formaPotencia) };
-  if (r < 0.7) return { texto: hastaQueValga(rng, cadenaAzar) };
-  return { texto: hastaQueValga(rng, combinadaAzar) };
+  if (r < 0.4) return { texto: hastaQueValga(rng, formaProducto) };
+  if (r < 0.75) return { texto: hastaQueValga(rng, formaPotencia) };
+  return { texto: hastaQueValga(rng, cadenaAzar) };
 }
 
 // ─── Pasos y toques ───────────────────────────────────────────────────────────────

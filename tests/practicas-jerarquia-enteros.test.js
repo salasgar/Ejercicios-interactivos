@@ -123,11 +123,18 @@ test('ej. 4: todas llevan potencia, producto o cociente y suma o resta', () => {
   }
 });
 
-test('ej. 1: sale de las cuatro familias y hay un solo paso o varios que pueden ir primero', () => {
+test('ej. 1: nunca lleva potencia, producto y suma/resta a la vez (combinadas, sesión 13)', () => {
+  const sumaOResta = t => /[+−]\s/.test(t.replace(/^−/, '').replace(/\(−/g, '('));
+  for (const t of textosDe(generarN(generarPrimero))) {
+    assert.ok(!(/[²³]/.test(t) && /[·:]/.test(t) && sumaOResta(t)), t);
+  }
+});
+
+test('ej. 1: sale de las tres familias y hay un solo paso o varios que pueden ir primero', () => {
   const textos = textosDe(generarN(generarPrimero));
   assert.ok(textos.some(t => /[²³]/.test(t) && !/[·:]/.test(t)));
-  assert.ok(textos.some(t => /[²³]/.test(t) && /[·:]/.test(t)));
   assert.ok(textos.some(t => !/[²³]/.test(t) && /[·:]/.test(t) && /[+−]\s/.test(t.replace(/^−/, ''))));
+  assert.ok(textos.some(t => !/[²³]/.test(t) && /[·:]/.test(t) && !/[+−]\s/.test(t.replace(/^−/, ''))));
   const varios = textos.filter(t => pasosPosibles(analizar(t)).length > 1).length;
   assert.ok(varios > 0);
 });
