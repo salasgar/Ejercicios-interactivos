@@ -578,7 +578,8 @@ test('portada: la unidad actual arriba y las anteriores detrás; sin nada public
   assert.deepEqual(ids('2026-10-17', { tareas: TAREAS }), ['2*', '1']);
   assert.deepEqual(ids('2026-09-20', { tareas: TAREAS }), ['1*'], 'antes de la unidad 2, solo la 1');
   // El 16-11 la actual pasa a ser la 3, pero sin prácticas ni tareas publicadas no sale.
-  assert.deepEqual(ids('2026-11-16', { tareas: TAREAS }), ['2', '1']);
+  const sinU3 = CATALOGO.map(p => (p.unidad === 3 ? { ...p, disponible: false } : p));
+  assert.deepEqual(ids('2026-11-16', { tareas: TAREAS, catalogo: sinU3 }), ['2', '1']);
   const u3 = { id: 21, unidad: 3, titulo: { es: 'x', en: 'x' }, estrella: [['recta', 1]], elegir: [], nElegir: 0 };
   assert.deepEqual(ids('2026-11-16', { tareas: [...TAREAS, u3] }), ['3*', '2', '1']);
   assert.deepEqual(ids('2026-10-17', { tareas: [...TAREAS, u3] }), ['2*', '1'], 'una unidad que no ha llegado no sale');
@@ -634,14 +635,17 @@ test('portada: los cinco bloques de la unidad 3 (tarea 79), con las doce prácti
   const doce = CATALOGO.filter(p => p.unidad === 3 && !p.transversal);
   assert.deepEqual(doce.map(p => p.slug).sort(), u3.flatMap(b => b.slugs).sort());
   for (const p of doce) {
-    assert.equal(p.disponible, false, `${p.slug}: sin publicar hasta su tarea de la semana`);
     const d = DESCRIPCION[p.slug];
     assert.ok(d?.es && d?.en, p.slug);
     assert.ok(!/-\d|×/.test(d.es + d.en), `${p.slug}: el menos es −, y el producto ·`);
   }
-  assert.deepEqual(bloquesPublicados(CATALOGO, 3), [], 'sin publicadas, la unidad 3 no enseña ninguna');
+  // Cada una se publica en su tarea de la semana (93-96): la portada enseña justo las publicadas.
+  assert.deepEqual(bloquesPublicados(CATALOGO, 3).flatMap(b => b.practicas.map(p => p.slug)).sort(),
+    CATALOGO.filter(p => p.unidad === 3 && p.disponible).map(p => p.slug).sort());
+  const sinPublicar = CATALOGO.map(p => (p.unidad === 3 ? { ...p, disponible: false } : p));
+  assert.deepEqual(bloquesPublicados(sinPublicar, 3), [], 'sin publicadas, la unidad 3 no enseña ninguna');
   // Cuando se publiquen, salen en su bloque y en su orden.
-  const publicadas = CATALOGO.map(p => (p.unidad === 3 && !p.transversal ? { ...p, disponible: true } : p));
+  const publicadas = sinPublicar.map(p => (p.unidad === 3 && !p.transversal ? { ...p, disponible: true } : p));
   const bloques = bloquesPublicados(publicadas, 3);
   assert.equal(bloques.length, 5);
   assert.deepEqual(bloques[3].practicas.map(p => p.slug), ['variacion', 'errores3']);

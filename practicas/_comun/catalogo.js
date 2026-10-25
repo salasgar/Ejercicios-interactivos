@@ -63,8 +63,8 @@ export const CATALOGO = [
   // Unidad 3, Integers (PU2, tareas 80-91; filas puestas por la 79 el 2026-10-25, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (93-96).
   { id: 33, slug: 'termometro', ruta: 'termometro/', unidad: 3, nombre: { es: 'La recta y el termómetro', en: 'The number line and the thermometer' }, nEjercicios: 5, disponible: false },
-  { id: 34, slug: 'opuestos', ruta: 'opuestos/', unidad: 3, nombre: { es: 'Opuesto y valor absoluto', en: 'Opposite and absolute value' }, nEjercicios: 4, disponible: false },
-  { id: 35, slug: 'situaciones', ruta: 'situaciones/', unidad: 3, nombre: { es: 'Enteros en la vida real', en: 'Integers in real life' }, nEjercicios: 3, disponible: false },
+  { id: 34, slug: 'opuestos', ruta: 'opuestos/', unidad: 3, nombre: { es: 'Opuesto y valor absoluto', en: 'Opposite and absolute value' }, nEjercicios: 4, disponible: true },
+  { id: 35, slug: 'situaciones', ruta: 'situaciones/', unidad: 3, nombre: { es: 'Enteros en la vida real', en: 'Integers in real life' }, nEjercicios: 3, disponible: true },
   { id: 36, slug: 'saltos', ruta: 'saltos/', unidad: 3, nombre: { es: 'Sumas y restas con saltos', en: 'Adding and subtracting with jumps' }, nEjercicios: 5, disponible: false },
   { id: 37, slug: 'dos-signos', ruta: 'dos-signos/', unidad: 3, nombre: { es: 'Dos signos seguidos', en: 'Two signs in a row' }, nEjercicios: 4, disponible: false },
   { id: 38, slug: 'signos-producto', ruta: 'signos-producto/', unidad: 3, nombre: { es: 'La regla de los signos', en: 'The rule of signs' }, nEjercicios: 5, disponible: false },
@@ -79,7 +79,7 @@ export const CATALOGO = [
   // apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md). `unidad: 3` solo decide la
   // sección de la portada; `transversal` hace que en las tareas de otras unidades no salga
   // como «repaso U3». El 45 porque del 33 al 44 son de la unidad 3 (PU2, tareas 79-91).
-  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 11, disponible: false },
+  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 11, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];

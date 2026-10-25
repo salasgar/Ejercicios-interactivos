@@ -166,7 +166,7 @@ export const TX = {
       en: (ctx, n, v) => `“${frase(ctx, v, 'en')}” is <span class="cuenta">${fmt(v)}</span>, the opposite sign. With ${fmt(n)} the sentence is “${frase(ctx, n, 'en')}”.`,
     },
     otro_tema: {
-      es: (ctx, n, otro, v) => `«${frase(otro, v, 'es')}» habla de ${NOMBRE_CONTEXTO[otro].es}, no de ${NOMBRE_CONTEXTO[ctx].es}. Con ${fmt(n)} la frase de ${NOMBRE_CONTEXTO[ctx].es} es «${frase(ctx, n, 'es')}».`,
+      es: (ctx, n, otro, v) => `«${frase(otro, v, 'es')}» habla de ${NOMBRE_CONTEXTO[otro].es}, no de ${NOMBRE_CONTEXTO[ctx].es}. Con ${fmt(n)} la frase de ${NOMBRE_CONTEXTO[ctx].es} es «${frase(ctx, n, 'es')}».`.replace(/ de el /g, ' del '),
       en: (ctx, n, otro, v) => `“${frase(otro, v, 'en')}” is about ${NOMBRE_CONTEXTO[otro].en}, not ${NOMBRE_CONTEXTO[ctx].en}. With ${fmt(n)} the sentence about ${NOMBRE_CONTEXTO[ctx].en} is “${frase(ctx, n, 'en')}”.`,
     },
   },
