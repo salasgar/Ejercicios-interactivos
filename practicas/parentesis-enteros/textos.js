@@ -102,7 +102,7 @@ export const TX = {
       'signos-a-medias': { es: 'Faltan signos por cambiar: con un − delante cambian todos los de dentro.', en: 'Some signs are not changed: with a − in front, every sign inside changes.' },
     },
     tuya: { es: 'Lo que has escrito', en: 'What you wrote' },
-    original: { es: 'La cuenta original', en: 'The original sum' },
+    original: { es: 'la cuenta original', en: 'the original sum' },
     vale: { es: 'vale', en: 'is worth' },
     bien: { es: 'Bien escrita', en: 'Written correctly' },
   },
