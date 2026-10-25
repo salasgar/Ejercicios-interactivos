@@ -553,7 +553,9 @@ export function arrancar(practica) {
     estado.espacio = resuelto.error ? null : espacioDe(resuelto);   // 'sin-red': aún no se sabe
     estado.codigo = leerCodigoSecreto(texto);
     estado.indice = estado.espacio?.n ?? null;
-    fijarAmbito(estado.espacio && !estado.espacio.sinConfig ? estado.espacio.config.tareas : null);
+    // `config?.`: una respuesta sin configuración (copia vieja o corrupta del navegador) no puede
+    // dejar la práctica en «Cargando…» (hallazgo de la tarea 97, 2026-10-25): se trata como sin config.
+    fijarAmbito(estado.espacio && !estado.espacio.sinConfig ? (estado.espacio.config?.tareas ?? null) : null);
     escribir('practicas.codigo', estado.codigo);
     aplicarIdiomaFijo();
     cargarProgreso();
@@ -570,7 +572,12 @@ export function arrancar(practica) {
   }
 
   /** Lo que se guarda de un código resuelto. */
-  const espacioDe = r => ({ profesor: r.profesor, n: r.n, config: r.config, sinConfig: Boolean(r.sinConfig) });
+  const espacioDe = r => ({
+    profesor: r.profesor,
+    n: r.n,
+    config: r.config ?? { unidades: [], tareas: [] },
+    sinConfig: Boolean(r.sinConfig) || !r.config,   // sin configuración legible, el ámbito es el supuesto
+  });
 
   /**
    * Código cuyo profesor no se supo al entrar (sin red): se vuelve a

@@ -693,7 +693,10 @@ test('base: dentro de arrancar, el progreso solo se lee, se guarda y se sube por
   assert.match(arranque, /\{ profesor: estado\.espacio\?\.profesor \?\? null \}\);/);
   // Con código, el ámbito sale de la configuración de su profesor; sin código, de tareas.js (la plantilla).
   assert.doesNotMatch(arranque, /'antiguo'/, 'ya no hay modo antiguo (tarea 71)');
-  assert.match(arranque, /fijarAmbito\(estado\.espacio && !estado\.espacio\.sinConfig \? estado\.espacio\.config\.tareas : null\)/);
+  // Sin configuración legible (copia vieja o corrupta del navegador), el ámbito es el supuesto y la
+  // práctica no se queda en «Cargando…» (hallazgo de la tarea 97, 2026-10-25).
+  assert.match(arranque, /fijarAmbito\(estado\.espacio && !estado\.espacio\.sinConfig \? \(estado\.espacio\.config\?\.tareas \?\? null\) : null\)/);
+  assert.match(arranque, /sinConfig: Boolean\(r\.sinConfig\) \|\| !r\.config/);
 });
 
 // --- Varios profesores: la base en el espacio del profesor (tarea 64) ---------------------

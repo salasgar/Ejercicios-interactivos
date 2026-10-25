@@ -461,3 +461,24 @@ test('resolverCodigo: la configuración falla o no existe', async () => {
   assert.equal(v.sinConfig, undefined);
   assert.equal(v.desdeCache, false);
 });
+
+test('resolverCodigo: una copia vieja o corrupta del navegador no vale, y ninguna respuesta sin error viene sin config (hallazgo de la 97)', async () => {
+  const sinRed = fetchFalso({ [CODIGO]: new Error('sin red') });
+  // Formato anterior a la tarea 72 (`config` como objeto, no `json`): se ignora → sin red.
+  const viejo = almacenFalso();
+  viejo.setItem(claveEspacio(CODIGO), JSON.stringify({ profesor: UID, n: 14, config: CONFIG_PROFESOR }));
+  assert.deepEqual(await resolverCodigo(CODIGO, { fetch: sinRed, almacen: viejo, config: CONFIG }), { error: 'sin-red' });
+  // `json` que no es una configuración: igual.
+  const roto = almacenFalso();
+  roto.setItem(claveEspacio(CODIGO), JSON.stringify({ profesor: UID, n: 14, json: '{"a":1}' }));
+  assert.deepEqual(await resolverCodigo(CODIGO, { fetch: sinRed, almacen: roto, config: CONFIG }), { error: 'sin-red' });
+  roto.setItem(claveEspacio(CODIGO), 'basura');
+  assert.deepEqual(await resolverCodigo(CODIGO, { fetch: sinRed, almacen: roto, config: CONFIG }), { error: 'sin-red' });
+  // Toda respuesta sin `error` trae `config.tareas` como lista (es lo que lee base.js al fijar el ámbito).
+  const almacen = almacenFalso();
+  for (const fetch of [nubeBuena(), sinRed, fetchFalso({ [CODIGO]: { json: filaBusqueda } })]) {
+    const r = await resolverCodigo(CODIGO, { fetch, almacen, config: CONFIG });
+    assert.equal(r.error, undefined);
+    assert.ok(Array.isArray(r.config?.tareas), `config.tareas con ${fetch === sinRed ? 'copia' : 'red'}`);
+  }
+});
