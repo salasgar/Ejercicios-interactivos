@@ -1,0 +1,11 @@
+/* «Enteros en la vida real»: solo lo que no está ya en ../_comun/estilos.css. */
+
+/* Las frases son largas: una por fila, también en pantalla ancha. */
+.elecciones--frases { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto .9rem; }
+.elecciones--frases .eleccion { text-align: left; font-size: 1rem; line-height: 1.35; padding: .7rem .9rem; }
+
+/* La frase que el alumno ha tocado, antes de comprobar. */
+.eleccion--elegida { border-color: var(--primario); background: var(--primario-claro); }
+
+/* El botón que enseña el salto, centrado debajo de la recta o del termómetro. */
+.boton-salto { display: block; margin: 0 auto .9rem; white-space: normal; }
