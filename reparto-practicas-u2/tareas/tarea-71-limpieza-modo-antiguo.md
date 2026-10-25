@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-18 (**revisada por la coordinadora** s-20261017T203500-e4f6b02c, tras el paso de la 70)
 Precondición: paso de Juan Luis hecho y comprobado (**sí**: tarea 70 LISTA, paso el 18-10 hacia las 07:35Z, recopia sin nada pendiente a las 13:48Z) · firma de la 71 en `autorizaciones.md` (**sí**: «Juan Luis Salas García, 18-10-26») · **no antes del domingo 25-10**, una semana después del paso, por si queda algún aparato o enlace viejo escribiendo en el modo antiguo; antes de que empiecen los compañeros (14-12) · 78 LISTA (comparte `profesor-hoy.js` y el informe) · **no en paralelo con la 79** (comparte `registro.js`, `portada.js` y sus tests; añadido por la coordinadora s-20261021T195149-596ac86a el 21-10: si la 79 tiene reclamo vivo, espera a que cierre, y lee su ENTREGA, porque deja `DESTREZAS` de la U3 y un test de registro que lee también `docs/practicas-unidad3.md`) · Disparo: MANUAL, **con Juan Luis delante** (publica las reglas y borra en la consola)
-Duración esperada: 2 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 2 h 30 min (tiempo de sesión, no de persona; real el 25-10: ~45 min de código, tests y documentación, sin los pasos de Juan Luis) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/71-limpieza-modo-antiguo/` (`ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/{base,registro,codigos,espacio,nube,tareas,textos}.js`, `practicas/{portada,semana,vista-tareas,profesor,profesor-hoy,profesor-tareas,profesor-migracion,resultados}.js`, `practicas/profesor.html`, `divisores/profesor.html` (solo para que lleve al panel nuevo), `src/firebase.js` (solo las funciones de las colecciones viejas), `firestore.rules` (solo los bloques viejos), `herramientas/informe-actividad.mjs`, `herramientas/probar-reglas.mjs`, `docs/practicas-unidad2.md`, `README.md`, y los tests de todo eso
 
@@ -118,6 +118,11 @@ Por este orden; cada paso, con su resultado literal en la entrega.
 - `divisores/` es una práctica viva: no se redirige (ver el objetivo).
 - El «antiguo» se recordaba 1 h en el navegador (nota de la 72). Con el código nuevo ya no importa, pero si en el paso 1 aparecen escrituras recientes, ese es el sospechoso.
 - Las cuentas de prueba A y B siguen vivas y con contraseña nueva (18-10): las contraseñas, por variables de entorno.
+- (s-20261025T000539-5cc03a47, 25-10) **La cuenta lectora NO lee las colecciones viejas**: las reglas publicadas solo se las dejan a `esProfesor()` (403 con la lectora y sin cuenta). Los pasos 1 y 2 solo se pueden hacer con la sesión de Juan Luis: fragmento para la consola de su panel en la ENTREGA.
+- **Con las reglas nuevas publicadas, ni Juan Luis puede listar las colecciones viejas** (no tienen regla): para comprobar por REST que quedan vacías, borrar ANTES de publicar las reglas (copia → borrar → comprobar → publicar).
+- Una vez subido el código nuevo (a061493), nadie con la app al día escribe ya en las colecciones viejas; con las reglas viejas aún publicadas, solo una pestaña con el JavaScript de antes podría hacerlo.
+- `npm test` corre los tests de las sesiones vecinas: mientras la base estaba a medias en el árbol, sus tests fallaban por ella. Commitear y empujar la base en cuanto esté en verde.
+- zsh no parte las variables en palabras: `git add $P` con una lista en `P` falla («pathspec did not match»); usar un array `("${EX[@]}")`.
 
 ## Prohibido (propio de esta tarea)
 
