@@ -1,0 +1,14 @@
+/* Productos y potencias con signo: lo común está en ../_comun/estilos.css. */
+
+/* Factores de un producto: botones separados por el punto de multiplicar. */
+.producto { align-items: center; gap: .35rem; }
+.producto button { min-width: 56px; }
+.punto { font-size: 1.4rem; font-weight: 700; color: var(--texto-suave); }
+.estado { color: var(--texto-suave); font-size: .9rem; min-height: 1.3em; margin-bottom: .8rem; }
+
+/* La base de una potencia, resaltada cuando ya se ha respondido. */
+.base-resaltada { background: var(--aviso-claro); border-radius: 6px; padding: 0 .15em; box-shadow: 0 0 0 2px #f59e0b; }
+
+/* «No existe»: debajo del Comprobar, ancho completo. */
+.no-existe { width: 100%; display: block; margin-top: .6rem; }
+.no-existe[disabled] { opacity: .5; }
