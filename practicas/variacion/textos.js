@@ -20,7 +20,7 @@ export const NOMBRES = {
     { es: 'Valor inicial y valor final: ¿qué ha pasado?', en: 'Start value and end value: what happened?' },
     { es: 'La diferencia entre dos temperaturas, dos plantas o dos alturas', en: 'The difference between two temperatures, two floors or two heights' },
     { es: 'Calcula dónde acaba o dónde estaba', en: 'Work out where it ends or where it was' },
-    { es: 'Años entre dos fechas de la misma era', en: 'Years between two dates in the same era' },
+    { es: 'Años entre dos fechas, a. C. o d. C. (no hubo año 0)', en: 'Years between two dates, BC or AD (there was no year 0)' },
     { es: 'Elige la cuenta, prevé el signo y calcula', en: 'Choose the calculation, predict the sign and work it out' },
   ],
 };
@@ -39,8 +39,8 @@ export const INTRODUCCION = [
     en: '<p>If you know <strong>where it starts</strong> and <strong>how much it changes</strong>, you add the change. If you know where it ends, you do the operation the other way round.</p><p><strong>Example:</strong> it was at −12 m and goes down 3 m: −12 − 3 = −15 m.</p><p>Write the missing number.</p>',
   },
   {
-    es: '<p>Los años a. C. se cuentan hacia atrás: el 500 a. C. es <strong>más antiguo</strong> que el 200 a. C. Entre dos años de la misma era, se resta el mayor menos el menor.</p><p><strong>Ejemplo:</strong> del 500 a. C. al 200 a. C. pasaron 500 − 200 = 300 años.</p>',
-    en: '<p>BC years are counted backwards: 500 BC (a. C.) is <strong>older</strong> than 200 BC. Between two years of the same era, subtract the bigger number minus the smaller one.</p><p><strong>Example:</strong> from 500 BC to 200 BC, 500 − 200 = 300 years went by.</p>',
+    es: '<p>Los años a. C. se cuentan hacia atrás: el 500 a. C. es <strong>más antiguo</strong> que el 200 a. C. Entre dos años de la misma era, se resta el mayor menos el menor.</p><p><strong>Ejemplo:</strong> del 500 a. C. al 200 a. C. pasaron 500 − 200 = 300 años.</p><p><strong>Ojo:</strong> no hubo año 0. Si una fecha es a. C. y la otra d. C., se resta como si los a. C. fueran negativos y <strong>se quita 1</strong>: del 50 a. C. al 30 d. C. pasaron 30 − (−50) − 1 = 79 años.</p>',
+    en: '<p>BC years are counted backwards: 500 BC (a. C.) is <strong>older</strong> than 200 BC. Between two years of the same era, subtract the bigger number minus the smaller one.</p><p><strong>Example:</strong> from 500 BC to 200 BC, 500 − 200 = 300 years went by.</p><p><strong>Careful:</strong> there was no year 0. If one date is BC (a. C.) and the other is AD (d. C.), subtract as if the BC years were negative and <strong>take 1 away</strong>: from 50 BC to 30 AD, 30 − (−50) − 1 = 79 years went by.</p>',
   },
   {
     es: '<p>Cada problema se hace en tres pasos: elegir la <strong>cuenta</strong> que lo resuelve, <strong>prever el signo</strong> del resultado y <strong>calcular</strong>.</p><p><strong>Ejemplo:</strong> «Tenía 10 €, gasté 4 € e ingresé 2 €»: 10 − 4 + 2. Sale positivo, y es 8.</p><p>Los verbos <strong>subir, ingresar</strong> suman; <strong>bajar, gastar</strong> restan.</p>',
@@ -125,10 +125,16 @@ export function txt(idioma) {
     },
     // Ejercicio 4
     anios: {
-      enunciado: ({ era, a, b }) => L(i18,
-        `Una vasija es del año ${a} ${ERA[era].es} y una moneda, del año ${b} ${ERA[era].es}: ¿cuántos años pasaron entre las dos?`,
-        `A pot is from the year ${a} ${ERA[era].en} and a coin is from the year ${b} ${ERA[era].en}: how many years passed between the two?`),
-      explica: ({ a, b, d }) => L(i18, `${Math.max(a, b)} − ${Math.min(a, b)} = ${d} años.`, `${Math.max(a, b)} − ${Math.min(a, b)} = ${d} years.`),
+      enunciado: ({ era, a, b }) => {
+        const [ea, eb] = era === 'cruza' ? ['aC', 'dC'] : [era, era];
+        return L(i18,
+          `Una vasija es del año ${a} ${ERA[ea].es} y una moneda, del año ${b} ${ERA[eb].es}: ¿cuántos años pasaron entre las dos?`,
+          `A pot is from the year ${a} ${ERA[ea].en} and a coin is from the year ${b} ${ERA[eb].en}: how many years passed between the two?`);
+      },
+      explica: ({ era, a, b, d }) => (era === 'cruza'
+        ? L(i18, `Del ${a} a. C. al 1 a. C. hay ${a - 1} años; del 1 a. C. al 1 d. C., uno; y del 1 d. C. al ${b} d. C., ${b - 1}. Con la cuenta: ${b} − ${fmtPar(-a)} = ${a + b}, y como no hubo año 0, se quita 1: ${d} años.`,
+          `From ${a} BC to 1 BC there are ${a - 1} years; from 1 BC to 1 AD, one; and from 1 AD to ${b} AD, ${b - 1}. With the calculation: ${b} − ${fmtPar(-a)} = ${a + b}, and since there was no year 0, take 1 away: ${d} years.`)
+        : L(i18, `${Math.max(a, b)} − ${Math.min(a, b)} = ${d} años.`, `${Math.max(a, b)} − ${Math.min(a, b)} = ${d} years.`)),
     },
     // Ejercicio 5
     cuenta: {
@@ -182,6 +188,9 @@ export function txt(idioma) {
     },
     errorNombre: id => tt(nombreError(id), i18),
     se_llama: L(i18, 'Ese fallo se llama:', 'That mistake is called:'),
+    /** Nombre del dibujo para el lector de pantalla (ejercicio 1). */
+    dibujo: (L(i18, { termometro: 'Termómetro con el valor inicial y el final', recta: 'Recta numérica con el valor inicial y el final' },
+      { termometro: 'Thermometer with the start value and the end value', recta: 'Number line with the start value and the end value' })),
     /** Lo que sigue al hueco de las respuestas numéricas. */
     unidad: item => (item.tipo === 'anios'
       ? L(i18, 'años', 'years')

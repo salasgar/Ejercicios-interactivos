@@ -4,7 +4,7 @@
 //   1. generarCambio     { ctx, i, f, v, opciones: [{ dir, k, error }], solucion }   ¿cuánto ha cambiado? (U3-4C-02, 4C-07)
 //   2. generarDiferencia { par, lo, hi, d }                                          la diferencia entre dos valores (U3-4C-03)
 //   3. generarFalta      { ctx, tipo: 'final' | 'inicial', x, dir, k, r }            el dato que falta (U3-4C-04)
-//   4. generarAnios      { era: 'aC' | 'dC', a, b, d }                               años entre dos años de la misma era (U3-4C-05)
+//   4. generarAnios      { era: 'aC' | 'dC' | 'cruza', a, b, d }                     años entre dos años, también de eras distintas (U3-4C-05)
 //   5. generarCuenta     { tipo: 'cadena' | 'producto' | 'cociente', ctx, … , opciones, solucion, r }   (U3-4C-01, 4C-10, 3C-21)
 //
 // Cada contexto lleva su cota creíble; el test comprueba los 3000 ítems de cada ejercicio. Los distractores
@@ -31,6 +31,7 @@ export const ERRORES_PROPIOS = {
   'suma-sin-signo': { nombre: { es: 'Ha sumado los números sin tener en cuenta su signo', en: 'Added the numbers without looking at their signs' } },
   'resta-en-vez-de-suma': { nombre: { es: 'Ha restado la variación en vez de sumarla (o al revés)', en: 'Subtracted the change instead of adding it (or the other way round)' } },
   'verbo-equivocado': { nombre: { es: 'Ha puesto el signo contrario a uno de los verbos', en: 'Used the opposite sign for one of the verbs' } },
+  'año-cero': { nombre: { es: 'Ha restado sin quitar 1 al cruzar de a. C. a d. C. (no hubo año 0)', en: 'Subtracted without taking 1 away when crossing from BC to AD (there was no year 0)' } },
   'operacion-equivocada': { nombre: { es: 'Ha elegido otra operación', en: 'Chose a different operation' } },
 };
 /** Nombre { es, en } de cualquier error de la práctica. */
@@ -61,6 +62,21 @@ export function generarCambio(rng) {
   const tercera = dif > 0 && dif !== k ? { dir, k: dif, error: 'diferencia-sin-signo' } : { dir, k: suma, error: 'suma-sin-signo' };
   const opciones = rng.barajar([{ dir, k, error: null }, { dir: otra, k, error: 'inicial-menos-final' }, tercera]);
   return { tipo: 'cambio', ctx, i, f, v, opciones, solucion: opciones.findIndex(o => o.error === null) };
+}
+
+/**
+ * El dibujo del ejercicio 1: termómetro (temperatura, plantas, buceo) o recta (saldo), de 0 hasta los extremos
+ * con marcas de 1, 2, 5, 10… hasta que no pasen de 30 (termómetro) o 21 (recta). Copiado de `situaciones` (tarea 82).
+ */
+export function vistaCambio(item) {
+  const tipo = item.ctx === 'saldo' ? 'recta' : 'termometro';
+  const limite = tipo === 'recta' ? 21 : 30;
+  const lo = Math.min(item.i, item.f, 0), hi = Math.max(item.i, item.f, 0);
+  for (const paso of item.ctx === 'saldo' ? [5, 10, 20, 25, 50, 100] : [1, 2, 5, 10, 20]) {
+    const min = Math.floor(lo / paso) * paso, max = Math.ceil(hi / paso) * paso;
+    if ((max - min) / paso + 1 <= limite) return { tipo, min, max, paso };
+  }
+  throw new Error('vistaCambio: rango demasiado grande');
 }
 
 // ─── Ejercicio 2: la diferencia ────────────────────────────────────────────────
@@ -111,20 +127,32 @@ export function errorFalta({ subtipo, x, dir, k, r }, escrito) {
 
 // ─── Ejercicio 4: antes y después de Cristo ────────────────────────────────────
 
-/** Años de la misma era: ningún ítem cruza el cambio de era (no hubo año 0; ver la terminada de la 90). */
+/**
+ * Años entre dos fechas. Misma era: el mayor menos el menor. Eras distintas (`cruza`): `a` es el año a. C.
+ * y `b` el d. C.; no hubo año 0, así que son `a + b − 1` años (regla de la hoja 4: final − inicial − 1).
+ * Nunca salen los casos que los alumnos ven en papel (−753/476/1229; 44 a. C. → 2026; 287 → 212 a. C.).
+ */
 export function generarAnios(rng) {
-  const era = rng.azar() < 0.5 ? 'aC' : 'dC';
-  const max = era === 'aC' ? 2700 : 2026;
+  const q = rng.azar();
+  const era = q < 0.3 ? 'aC' : q < 0.6 ? 'dC' : 'cruza';
   for (;;) {
+    if (era === 'cruza') {
+      const a = rng.entero(2, 2700), b = rng.entero(2, 2026);
+      if ([a, b].some(n => n === 753 || n === 476) || a + b === 1229 || a + b === 1230 || (a === 44 && b === 2026)) continue;
+      return { tipo: 'anios', era, a, b, d: a + b - 1 };
+    }
+    const max = era === 'aC' ? 2700 : 2026;
     const x = rng.entero(50, max), y = rng.entero(50, max);
     if (abs(x - y) < 20 || abs(x - y) === 1229 || [x, y].some(n => n === 753 || n === 476)) continue;
+    if (era === 'aC' && [x, y].sort().join() === '212,287') continue;
     // `a` es el año más antiguo: en a. C. el número mayor, en d. C. el menor.
     const [a, b] = era === 'aC' ? [Math.max(x, y), Math.min(x, y)] : [Math.min(x, y), Math.max(x, y)];
     return { tipo: 'anios', era, a, b, d: abs(a - b) };
   }
 }
 
-export function errorAnios({ a, b, d }, escrito) {
+export function errorAnios({ era, a, b, d }, escrito) {
+  if (era === 'cruza') return escrito === a + b ? 'año-cero' : escrito === abs(a - b) ? 'diferencia-sin-signo' : null;
   return escrito === a + b && a + b !== d ? 'suma-sin-signo' : null;
 }
 

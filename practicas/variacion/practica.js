@@ -10,6 +10,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { fmt, campoEntero } from '../_comun/enteros.js';
+import { crearRecta } from '../_comun/recta-enteros.js';
 import * as L from './logica.js';
 import { NOMBRES, INTRODUCCION, txt } from './textos.js';
 
@@ -69,14 +70,26 @@ const fallo = (explica, error, respuesta) => ({
 const enunciadoCambio = (item, { idioma }) => p(`${txt(idioma).cambio.enunciado(item)} ${txt(idioma).cambio.orden}`);
 
 function montarCambio(contenedor, item, api) {
-  contenedor.innerHTML = enunciadoCambio(item, api);
+  contenedor.innerHTML = `${enunciadoCambio(item, api)}<div class="variacion-dibujo"></div>`;
   const T = txt(api.idioma).cambio;
+  // El dibujo enseña el valor inicial y el final; el salto con su variación aparece al responder.
+  const vista = L.vistaCambio(item);
+  // Números solo en el 0 y en los dos valores (y en los extremos de la recta): con más se montan unos con otros.
+  const numeros = [...new Set(vista.tipo === 'recta' ? [vista.min, 0, vista.max, item.i, item.f] : [0, item.i, item.f])];
+  const recta = crearRecta(contenedor.querySelector('.variacion-dibujo'), {
+    ...vista, numeros,
+    unidad: item.ctx === 'temperatura' ? '°C' : '',
+    nivel: item.i,
+    puntos: [{ valor: item.i, etiqueta: vista.tipo === 'recta' ? '' : fmt(item.i) }, { valor: item.f, etiqueta: vista.tipo === 'recta' ? '' : fmt(item.f) }],
+    nombre: txt(api.idioma).dibujo[vista.tipo],
+  });
   const botones = elecciones(contenedor, {
     clase: 'elecciones nombres',
     opciones: item.opciones.map((o, n) => ({ valor: n, html: T.frase(item.ctx, o.dir, o.k) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
+      recta.saltar({ desde: item.i, hasta: item.f, etiqueta: `${item.v > 0 ? '+' : '−'}${Math.abs(item.v)}` });
       const o = item.opciones[valor];
       const ok = valor === item.solucion;
       api.responder({

@@ -91,22 +91,54 @@ test('ejercicio 3: dentro de la cota, ni dato ni resultado en 0, y los errores s
   assert.ok(por.final > N * 0.45 && por.inicial > N * 0.45, JSON.stringify(por));
 });
 
-test('ejercicio 4: años de la misma era, el más antiguo primero, nunca los de la hoja y sin cruzar el año 0', () => {
+test('ejercicio 4: misma era (mayor − menor) o eras distintas (a + b − 1, no hubo año 0), nunca los casos de papel', () => {
   const eras = {};
   for (const item of generar(L.generarAnios)) {
     eras[item.era] = (eras[item.era] ?? 0) + 1;
-    for (const y of [item.a, item.b]) {
-      assert.ok(y >= 50 && y <= (item.era === 'aC' ? 2700 : 2026), `${item.era} ${y}`);
-      assert.ok(y !== 753 && y !== 476);
+    for (const y of [item.a, item.b]) assert.ok(y !== 753 && y !== 476);
+    assert.ok(item.d !== 1229 && (item.era !== 'cruza' || item.a + item.b !== 1229));
+    assert.ok(!(item.era !== 'dC' && item.a === 44 && item.b === 2026));
+    assert.ok(!(item.era === 'aC' && [item.a, item.b].sort((x, y) => x - y).join() === '212,287'));
+    if (item.era === 'cruza') {
+      // a es el año a. C. y b el d. C.; final − inicial = b − (−a) = a + b, y se quita 1.
+      assert.ok(item.a >= 2 && item.a <= 2700 && item.b >= 2 && item.b <= 2026, `${item.a} a. C. / ${item.b} d. C.`);
+      assert.equal(item.d, item.b - (-item.a) - 1);
+      assert.equal(L.errorAnios(item, item.d), null);
+      assert.equal(L.errorAnios(item, item.a + item.b), 'año-cero');
+      assert.equal(L.errorAnios(item, Math.abs(item.a - item.b)), 'diferencia-sin-signo');
+    } else {
+      for (const y of [item.a, item.b]) assert.ok(y >= 50 && y <= (item.era === 'aC' ? 2700 : 2026), `${item.era} ${y}`);
+      assert.ok(item.d >= 20);
+      assert.equal(item.d, Math.abs(item.a - item.b));
+      // El más antiguo va primero: en a. C. es el número mayor; en d. C., el menor.
+      if (item.era === 'aC') assert.ok(item.a > item.b); else assert.ok(item.a < item.b);
+      assert.equal(L.errorAnios(item, item.d), null);
+      assert.equal(L.errorAnios(item, item.a + item.b), 'suma-sin-signo');
     }
-    assert.ok(item.d >= 20 && item.d !== 1229);
-    assert.equal(item.d, Math.abs(item.a - item.b));
-    // El más antiguo va primero: en a. C. es el número mayor; en d. C., el menor.
-    if (item.era === 'aC') assert.ok(item.a > item.b); else assert.ok(item.a < item.b);
-    assert.equal(L.errorAnios(item, item.d), null);
-    assert.equal(L.errorAnios(item, item.a + item.b), 'suma-sin-signo');
   }
-  assert.ok(eras.aC > N * 0.45 && eras.dC > N * 0.45, JSON.stringify(eras));
+  for (const e of ['aC', 'dC', 'cruza']) assert.ok(eras[e] > N * 0.25, JSON.stringify(eras));
+  assert.ok(L.ERRORES_PROPIOS['año-cero'].nombre.es && L.ERRORES_PROPIOS['año-cero'].nombre.en);
+});
+
+test('ejercicio 4: la explicación de cruzar la era suma bien (44 a. C. → 2026 no sale, pero la cuenta vale para 50 a. C. → 30 d. C. = 79)', () => {
+  const item = { tipo: 'anios', era: 'cruza', a: 50, b: 30, d: 79 };
+  assert.equal(L.errorAnios(item, 80), 'año-cero');
+  assert.match(txt('es').anios.explica(item), /49 años.*uno.*29.*79 años/);
+  assert.match(txt('en').anios.explica(item), /49 years.*one.*29.*79 years/);
+  assert.match(INTRODUCCION[3].es, /no hubo año 0/);
+  assert.match(INTRODUCCION[3].en, /no year 0/);
+  assert.match(txt('en').anios.enunciado(item), /50 BC \(a\. C\.\).*30 AD \(d\. C\.\)/);
+});
+
+test('ejercicio 1: el dibujo (termómetro o recta) lleva los dos valores, el 0 y no pasa de 30 / 21 marcas', () => {
+  for (const item of generar(L.generarCambio)) {
+    const v = L.vistaCambio(item);
+    assert.equal(v.tipo, item.ctx === 'saldo' ? 'recta' : 'termometro');
+    const n = (v.max - v.min) / v.paso + 1;
+    assert.ok(n <= (v.tipo === 'recta' ? 21 : 30), `${item.ctx}: ${n} marcas`);
+    for (const x of [item.i, item.f, 0]) assert.ok(x >= v.min && x <= v.max, `${x} en ${v.min}…${v.max}`);
+    assert.ok(v.min % v.paso === 0 && v.max % v.paso === 0);
+  }
 });
 
 test('ejercicio 5: la cuenta buena vale el resultado, las malas no, y un tercio son producto o cociente', () => {
