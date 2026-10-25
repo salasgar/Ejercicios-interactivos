@@ -4,7 +4,11 @@
 // la semana enseña el marcador y, al cumplirla, da un único código de
 // resultado de la tarea (20 caracteres; ver `codigos.js`).
 //
-// ESTE FICHERO SE CAMBIA A MANO. El formato de cada tarea:
+// Desde la tarea 71 este fichero es la PLANTILLA: lo que carga «Cargar la
+// plantilla del curso» en el editor del panel (configPlantilla) y lo que se
+// enseña sin código. Las tareas de cada profesor, también las de Juan Luis,
+// viven en su espacio (`config/tareas`) y se cambian en el panel. Se cambia a
+// mano. El formato de cada tarea:
 //
 //   id        1, 2, 3… Viaja dentro del código de resultado de la tarea: NO se
 //             renumera ni se reutiliza. Una tarea ya mandada a los alumnos no
@@ -22,7 +26,7 @@
 //   asignada  opcional, true: es obligatoria SOLO para los alumnos marcados en
 //             el panel; para los demás es una tarea de repaso más.
 //   progresoPorPractica  true solo en la tarea 1: su progreso sigue en el
-//             documento de cada práctica (`practicas/<slug>--<código>`) y lo de
+//             documento de cada práctica (`progreso-libre/<slug>--<código>`) y lo de
 //             la práctica libre le cuenta. Las demás llevan su propio progreso.
 //             No se le quita nunca (erroresTareas lo comprueba).
 //   estrella  los obligatorios: lista de [slug, n] = ejercicio n (empezando en
@@ -259,8 +263,8 @@ export function erroresTareas(tareas = TAREAS, { tareaUnoAntigua = true } = {}) 
     }
     if (t.asignada !== undefined && t.asignada !== true) errores.push(`${nombre}: «asignada» solo puede ser true o no estar`);
     if (!tareaUnoAntigua) {
-      // Tareas de un profesor del sistema nuevo: la 1 es una tarea como las demás,
-      // salvo en el espacio de Juan Luis, que la trae del modo antiguo tal cual
+      // Tareas del espacio de un profesor: la 1 es una tarea como las demás,
+      // salvo en el espacio de Juan Luis, que la trajo del modo antiguo tal cual
       // (tarea 70: su progreso está en el de la práctica libre). Se puede llevar, no se exige.
       if (t.progresoPorPractica !== undefined && !(t.id === 1 && t.progresoPorPractica === true)) {
         errores.push(`${nombre}: «progresoPorPractica» solo existe en la tarea 1 que viene del sistema actual`);
@@ -355,8 +359,9 @@ export function erroresConfig(config) {
 
 /**
  * Lo que copia «Cargar la plantilla del curso»: las `TAREAS` y las fechas de
- * `UNIDADES` de hoy, sin el campo `progresoPorPractica` (solo vale en el modo
- * antiguo: en el espacio de un profesor la tarea 1 es una más).
+ * `UNIDADES` de hoy, sin el campo `progresoPorPractica` (solo lo lleva la tarea
+ * 1 de Juan Luis, que viene del modo antiguo: en el espacio de un profesor nuevo
+ * la tarea 1 es una más).
  */
 export function configPlantilla() {
   const copia = JSON.parse(JSON.stringify(TAREAS));

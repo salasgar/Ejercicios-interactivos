@@ -83,10 +83,10 @@ del profesor: lo que sigue vale también para ella.
   («1 es divisor de 7») y mentiras que parecen verdad («60 es divisor de 5»).
   Cuando «múltiplo de» y «divisible entre» valen las dos, se aceptan las dos
   (y en «18 es … 18», las tres).
-- Los códigos de alumno de 4 caracteres son los mismos de siempre. Quien la
-  hizo con la versión anterior tiene un código de resultado de 12 caracteres:
-  el panel los sigue leyendo, mezclados con los de las tareas (traen solo los
-  cinco ejercicios de entonces; el 6 sale como no hecho).
+- Los alumnos entran con su código de siempre, como en las demás prácticas (registrado
+  en el espacio de su profesor). Los códigos de resultado de 12 caracteres de la
+  versión anterior ya no los lee el panel (desde la tarea 71); la colección `divisores`
+  de entonces se borra con las demás del modo antiguo.
 - Código en `divisores/` (`logica.js` es pura y tiene sus tests en
   `tests/divisores.test.js`).
 
@@ -144,26 +144,29 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   con un marcador («★ 4 de 6 · a elegir 2 de 4 · 60 de 100 puntos») y, al
   cumplirla, «Tu profesor ya puede verlo» (el profesor lo ve en la nube; el código de
   resultado de 20 caracteres queda en un desplegable de respaldo). Qué lleva cada
-  semana se cambia a mano en `practicas/_comun/tareas.js`; el panel da el enlace
-  común para Classroom y la vista «Tareas de la semana».
+  semana lo decide cada profesor en la sección «Tareas» de su panel (se guarda en su
+  espacio); `practicas/_comun/tareas.js` es la plantilla del curso («Cargar la plantilla
+  del curso»). El panel da el enlace común para Classroom y la vista «Tareas de la semana».
 - **Tareas v2** (desde el 2026-10-17; diseño en
   `reparto-practicas-u2/salidas/45-diseno-tareas-v2/DISENO.md`): cada unidad
   tiene sus prácticas y sus tareas, y la portada enseña la unidad actual arriba
   y las anteriores plegadas (`UNIDADES` en `catalogo.js`). Una tarea es de
   **repaso** (sin plazo), **obligatoria** (con `hasta`, el plazo) u
   **obligatoria solo para los alumnos marcados** en el panel (`asignada: true`;
-  la asignación vive en Firestore, `practicas-asignaciones/<código>`, y los no
-  marcados la ven como repaso). Lo hecho tarde sigue contando, pero sale «fuera
+  la asignación vive en el espacio del profesor, `practicas-espacios/<uid>/asignaciones/<código>`,
+  y los no marcados la ven como repaso). Lo hecho tarde sigue contando, pero sale «fuera
   de plazo» con los días de retraso (vista «Retrasos» del panel, con CSV).
-  **Cada tarea lleva su propio progreso** (`practicas-tareas/t<id>--<práctica>--<código>`),
-  separado del de la práctica libre; **la tarea 1 es la excepción**
+  **Cada tarea lleva su propio progreso** (`…/<uid>/progreso-tareas/t<id>--<práctica>--<código>`),
+  separado del de la práctica libre; **la tarea 1 de Juan Luis es la excepción**
   (`progresoPorPractica: true`): sigue con el progreso de las prácticas, como se
   mandó. Detalle en [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §1.
-- **Informe diario**: `node herramientas/informe-actividad.mjs` (sin cuenta, por
-  REST; solo números de lista) resume la actividad en la tarea vigente (la
-  obligatoria de plazo abierto más próximo, o la que se pida con `--tarea`), con
-  retrasos y, en las asignadas, solo los marcados. Una rutina de Claude en la nube
-  lo manda por correo cada noche (docs, §2).
+- **Informe diario**: `node herramientas/informe-actividad.mjs --espacio <uid>`
+  (por REST, con una cuenta lectora en `LECTOR_EMAIL` y `LECTOR_CLAVE`; solo números
+  de lista) resume la actividad en la tarea vigente (la obligatoria de plazo abierto
+  más próximo, o la que se pida con `--tarea`), con retrasos y, en las asignadas, solo
+  los marcados. Una rutina de Claude en la nube lo manda por correo cada noche
+  (`--espacio <uid> --alumnos 51 --horas 24 --grupos …`; docs, §2 y §9.10). La cuenta
+  lectora se añade en el panel, sección «Cuenta lectora del informe diario».
 - **Varios profesores** (desde el 2026-10-17; diseño en
   `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`, revisado en la
   tarea 69): cada profesor entra en el panel con su cuenta de Google y tiene un
@@ -171,26 +174,30 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   tareas y sus resultados; ningún profesor puede leer los de otro. Los códigos de
   sus alumnos los genera el panel **al azar** (8 caracteres, o 4 si lo elige), la
   lista de nombres sube **cifrada** con una contraseña que solo sabe él, y las
-  tareas se hacen en el panel. Juan Luis da las altas (sección «Profesores») y,
-  hasta su paso al sistema nuevo (tarea 70), sigue con el sistema actual que
-  describe el resto de esta lista. Detalle en
+  tareas se hacen en el panel. Juan Luis da las altas (sección «Profesores»). Él pasó
+  a su espacio el 18-10-2026 con los códigos de 4 de siempre de sus alumnos (tarea 70),
+  y la tarea 71 quitó el modo antiguo (códigos de 4 calculables sin registrar y las
+  colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones`, `fallos` y
+  `divisores`, que ya no tienen regla y se borran). Detalle en
   [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9; guía para los
   compañeros en [docs/practicas-como-empezar.md](docs/practicas-como-empezar.md).
-- El alumno entra en todas con **el mismo código de 4 caracteres** que ya tenía
-  en `divisores/` (el enlace que reparte el panel es `practicas/?c=ABCD`). Lo normal es que
+- El alumno entra en todas con **el mismo código** (4 u 8 caracteres, registrado en
+  el espacio de su profesor; el enlace que reparte el panel es `practicas/?c=ABCD`).
+  Un código que la nube no conoce da «Ese código no existe». Lo normal es que
   el profesor vea los resultados en la nube; el único respaldo si la nube no
-  llega es el código de la tarea (20 caracteres, en un desplegable); el panel lee
-  mezclados los de 20 de las tareas y los de 12 de `divisores/`. El código de
+  llega es el código de la tarea (20 caracteres, en un desplegable), que el panel
+  lee con las tareas del profesor. El código de
   resultado por práctica (16 caracteres) existió hasta el 2026-10-16: se eliminó
   y con él el tope de 32 prácticas del catálogo.
-- El progreso se guarda en el navegador y en Firestore, en
-  `practicas/{práctica}--{código}` (y el de cada tarea v2 en `practicas-tareas/`;
-  reglas en `firestore.rules`; **hay que publicarlas** para que funcione la nube). Al entrar con su código, el alumno
+- El progreso se guarda en el navegador y en Firestore, en el espacio del profesor
+  (`practicas-espacios/<uid>/progreso-libre/{práctica}--{código}`, y el de cada tarea v2
+  en `progreso-tareas`; reglas en `firestore.rules`; **hay que publicarlas** para que
+  funcione la nube). Al entrar con su código, el alumno
   lee su documento y la app lo fusiona con lo del navegador antes de subir
   nada (`practicas/_comun/nube.js`): se puede **seguir desde cualquier
   aparato** y un aparato no machaca lo de otro. El panel da los puntos de cada
   tarea de la semana y una vista «Qué falla más».
-- Cada fallo se registra en la colección `fallos` (el ítem, la explicación que
+- Cada fallo se registra en la colección `fallos` del espacio del profesor (el ítem, la explicación que
   vio el alumno y, si la práctica lo da, el tipo de error; `practicas/_comun/registro.js`);
   el panel tiene una sección «Fallos, uno a uno» con los más repetidos, lo que le
   cuesta a cada alumno y un CSV con las destrezas.
@@ -273,8 +280,14 @@ profesores; sus contraseñas nunca en el repositorio):
 PROFE_A_EMAIL=… PROFE_A_CLAVE=… PROFE_B_EMAIL=… PROFE_B_CLAVE=… node herramientas/probar-reglas.mjs
 ```
 
-Tiene que acabar en «N de N comprobaciones como se esperaba» (154 el 17-10). Detalle
-en [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9.8.
+Tiene que acabar en «N de N comprobaciones como se esperaba» (154 el 17-10; desde la
+tarea 71 comprueba además que las colecciones del modo antiguo no se leen ni se
+escriben). Detalle en [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9.8.
+
+**Las colecciones del modo antiguo** (`practicas`, `practicas-tareas`,
+`practicas-asignaciones`, `fallos`, `divisores`) no tienen regla desde la tarea 71:
+Firestore las deniega enteras. Se borran a mano en la consola (Firestore → la
+colección → «Eliminar colección»), con copia antes y fuera del repositorio.
 
 **Dar de alta a un compañero.** No hay que tocar las reglas ni el repositorio:
 

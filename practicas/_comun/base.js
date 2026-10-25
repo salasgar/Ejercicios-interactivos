@@ -6,7 +6,7 @@
 // está explicado, con un ejemplo que funciona, en `../plantilla/practica.js`.
 //
 // El progreso se guarda en el navegador (por código de alumno) y en la nube
-// (Firestore, `practicas/{slug}--{código}`). Al entrar con el código se lee la
+// (Firestore, `{slug}--{código}` en el espacio de su profesor). Al entrar con el código se lee la
 // nube y se fusiona con lo del navegador antes de subir nada (`nube.js`): así
 // se sigue desde cualquier aparato. Si la nube falla no pasa nada: se sigue con
 // lo del navegador, y el código de resultado lleva lo necesario para calificar.
@@ -15,24 +15,24 @@
 // `progresoPorPractica`), la base trabaja en el ÁMBITO DE LA TAREA (tarea 51,
 // DISENO.md C.2): mismo formato, misma fusión y misma migración, pero con la
 // clave `practicas.v1.{slug}.{código}.t{id}` y el documento
-// `practicas-tareas/t{id}--{slug}--{código}`. Lo hecho en la tarea no sale en la
+// `progreso-tareas/t{id}--{slug}--{código}`. Lo hecho en la tarea no sale en la
 // práctica libre ni al revés. La tarea 1 se queda con el progreso de la práctica.
 //
 // Varios profesores (tareas 64 y 72, DISENO.md de la 57, B y F.2): la base
 // pregunta al entrar de qué profesor es el código (`resolverCodigo`, espacio.js)
 // y, si está registrado (4 u 8 caracteres), guarda el progreso, el de las tareas
 // y los fallos en el ESPACIO de ese profesor (`practicas-espacios/{uid}/…`), con
-// las tareas de su configuración. Un código de 4 del modo antiguo que la nube no
-// conoce sigue como antes. Las claves del navegador no cambian: el código ya
-// distingue al alumno.
+// las tareas de su configuración. Un código que la nube no conoce no existe (desde
+// la tarea 71 ya no hay modo antiguo). Las claves del navegador no cambian: el
+// código ya distingue al alumno.
 
 import { practicaPorSlug, adaptarProgreso } from './catalogo.js';
-import { codigoAlumno, leerCodigoSecreto, formatoDeCodigo, esCodigoAntiguo } from './codigos.js';
+import { leerCodigoSecreto, formatoDeCodigo } from './codigos.js';
 import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
 import { resolverCodigo } from './espacio.js';
 import {
   leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico,
-  COLECCION_PRACTICAS, COLECCION_TAREAS, idDocumentoPractica, idDocumentoTarea, claveProgresoTarea, coleccionEspacio,
+  idDocumentoPractica, idDocumentoTarea, claveProgresoTarea, coleccionEspacio,
 } from './nube.js';
 import { datosFallo, registrarFallo, enviarPendientes } from './registro.js';
 import { crearRng } from './rng.js';
@@ -114,7 +114,7 @@ export function ambitoDe(semana, tarea, slug, n) {
 }
 
 /**
- * Una tarea de la que solo se sabe el id (código de 8 sin la configuración de
+ * Una tarea de la que solo se sabe el id (código sin la configuración de
  * su profesor: sin red al entrar): se supone que el ejercicio pedido está
  * dentro y que es del modelo v2, que es lo que enlaza la página de la tarea.
  */
@@ -125,19 +125,17 @@ export const tareaSupuesta = (id, slug, n) => ({ id, estrella: [[slug, n]], eleg
  * navegador y la colección y el id del documento de la nube (lo que reciben
  * `leerNube`, `escribirNube` y `subirFusionado`). Sin `tareaId`, los de la
  * práctica libre (y de la tarea 1); con él, los de esa tarea (modelo v2).
- * Con `profesor` (código registrado, de 4 u 8), las mismas en su espacio:
- * `progreso-libre` y `progreso-tareas`. Sin profesor, un código del modo
- * antiguo va a las colecciones de siempre; cualquier otro (del sistema nuevo,
- * sin profesor conocido) no tiene nube (`nube: null`): se guarda solo en el
- * navegador hasta saberlo.
+ * La nube es la del espacio de su profesor (`profesor`, el uid):
+ * `progreso-libre` y `progreso-tareas`. Sin profesor conocido (sin red al
+ * entrar) no hay nube (`nube: null`): se guarda solo en el navegador hasta
+ * saberlo.
  */
 export function ubicacionProgreso(slug, codigo, tareaId = null, profesor = null) {
   const deTarea = tareaId !== null && tareaId !== undefined;
   const clave = deTarea ? claveProgresoTarea(slug, codigo, tareaId) : claveProgreso(slug, codigo);
   const id = deTarea ? idDocumentoTarea(tareaId, slug, codigo) : idDocumentoPractica(slug, codigo);
-  if (profesor) return { clave, nube: { coleccion: coleccionEspacio(profesor, deTarea ? 'progreso-tareas' : 'progreso-libre'), id } };
-  if (!esCodigoAntiguo(codigo ?? '')) return { clave, nube: null };
-  return { clave, nube: { coleccion: deTarea ? COLECCION_TAREAS : COLECCION_PRACTICAS, id } };
+  if (!profesor) return { clave, nube: null };
+  return { clave, nube: { coleccion: coleccionEspacio(profesor, deTarea ? 'progreso-tareas' : 'progreso-libre'), id } };
 }
 
 /**
@@ -246,10 +244,9 @@ export function adoptarIdioma(codigo, idiomaNube) {
  * fusiona con lo guardado aquí, guarda la fusión en el navegador y la sube si
  * la nube no la tenía. Sin red o sin permiso, no toca nada. Devuelve el
  * resultado de `leerNube` (su `estado`). Con `opciones.tareaId`, el progreso de
- * esa tarea (modelo v2: su clave y su documento de `practicas-tareas`). Con un
- * código registrado, `opciones.profesor` es el uid de su espacio (sin él, un
- * código que no es del modo antiguo no tiene nube: devuelve el estado 'error'
- * sin preguntar a nadie).
+ * esa tarea (modelo v2: su clave y su documento de `progreso-tareas`).
+ * `opciones.profesor` es el uid del espacio del alumno (sin él no hay nube:
+ * devuelve el estado 'error' sin preguntar a nadie).
  */
 export async function sincronizarGuardado(slug, codigo, { tareaId = null, profesor = null, ...opciones } = {}) {
   const { clave, nube } = ubicacionProgreso(slug, codigo, tareaId, profesor);
@@ -327,7 +324,7 @@ export function arrancar(practica) {
     idiomaFijo: null,  // 'es' | 'en' | null (modo alterno); nunca lo elige el alumno
     codigo: null,      // código del alumno, o null si practica sin código
     indice: null,
-    espacio: null,     // código registrado (4 u 8): { profesor, n, config, sinConfig } de resolverCodigo; null si no se sabe (o modo antiguo)
+    espacio: null,     // código registrado (4 u 8): { profesor, n, config, sinConfig } de resolverCodigo; null si no se sabe
     ej: nuevos(),
   };
   let actual = null;    // ejercicio en curso: { n, sesion, practica, item, idioma, respondido }
@@ -346,7 +343,7 @@ export function arrancar(practica) {
   const semanaPedida = ejercicioPedido !== null && /^\d{1,4}$/.test(parametros.get('semana') ?? '') ? Number(parametros.get('semana')) : null;
   const indicePedido = ejercicioPedido;
   // El ámbito depende de las tareas del profesor del alumno: las de `tareas.js`
-  // sin código o con uno de 4, las de su configuración con uno de 8. Se fija al
+  // (la plantilla) sin código, las de su configuración con código. Se fija al
   // arrancar con las de `tareas.js` y otra vez al entrar (`fijarAmbito`).
   let ambito, semana, tareaDelProgreso, numTarea;
   /** `tareas`: la lista donde buscar la tarea del enlace; null si no se sabe (se supone, `tareaSupuesta`). */
@@ -361,7 +358,7 @@ export function arrancar(practica) {
     numTarea = semana !== null && /^\d{1,2}$/.test(parametros.get('num') ?? '') ? Number(parametros.get('num')) : null;
   }
   fijarAmbito(TAREAS);
-  /** Clave del navegador y documento de la nube del alumno, en este ámbito (y en el espacio de su profesor, si es de 8). */
+  /** Clave del navegador y documento de la nube del alumno, en este ámbito y en el espacio de su profesor. */
   const ubicacion = () => ubicacionProgreso(ficha.slug, estado.codigo, tareaDelProgreso, estado.espacio?.profesor ?? null);
   /** El número que se enseña del ejercicio n (desde 0): el de la tarea si se vino de ella. */
   const numeroVisible = n => (numTarea !== null && n === indicePedido ? numTarea : n + 1);
@@ -424,14 +421,14 @@ export function arrancar(practica) {
   let ultimaLectura = 0;
 
   /**
-   * Copia del progreso en Firestore (documento `practicas/{slug}--{código}`, o el
-   * de la tarea en su ámbito), fusionada con lo que ya haya.
+   * Copia del progreso en Firestore (documento `{slug}--{código}` del espacio, o
+   * el de la tarea en su ámbito), fusionada con lo que ya haya.
    */
   function subir() {
     sinSubir = 0;
     if (!estado.codigo || !nubeLeida) return;
     const [slug, codigo, ej, idioma, { nube }] = [ficha.slug, estado.codigo, estado.ej.map(e => ({ ...e })), estado.idiomaFijo ?? 'alterno', ubicacion()];
-    if (!nube) return;   // código de 8 sin profesor conocido: solo en el navegador
+    if (!nube) return;   // sin profesor conocido: solo en el navegador
     colaSubidas = colaSubidas
       .then(() => subirFusionado(slug, codigo, ej, idioma, { ultimo: ultimoRemoto, ...nube }))
       .then(({ ej: enNube }) => { if (codigo === estado.codigo) ultimoRemoto = enNube; }, () => {});
@@ -446,7 +443,7 @@ export function arrancar(practica) {
     const codigo = estado.codigo;
     const { nube } = ubicacion();
     if (!nube) {
-      // Código de 8 sin profesor conocido (sin red al entrar): lo del navegador,
+      // Código sin profesor conocido (sin red al entrar): lo del navegador,
       // sin subir nada hasta saber a qué espacio va (`nubeLeida` se queda en false).
       cargarProgreso();
       return;
@@ -492,7 +489,7 @@ export function arrancar(practica) {
 
   // --- Entrada --------------------------------------------------------------------
 
-  /** `error`: 'formato' (no es un código), 'no-existe' (código del sistema nuevo que la nube no conoce) o nada. */
+  /** `error`: 'formato' (no es un código), 'no-existe' (código que la nube no conoce) o nada. */
   function pintarEntrada(error = null) {
     turno++;
     actual = null;
@@ -531,9 +528,8 @@ export function arrancar(practica) {
    * Entra con un código (tecleado, del enlace o recordado): lo del navegador al
    * momento y, antes de enseñar nada, lo de la nube fusionado (como mucho
    * ESPERA_LECTURA; sin red, se sigue). Antes se pregunta de qué profesor es
-   * (`resolverCodigo`): un código de 4 del modo antiguo que la nube no conoce
-   * sigue como siempre; si la nube no conoce otro código, vuelve a la entrada
-   * con el aviso; sin red y sin copia en el navegador, se practica igual y solo
+   * (`resolverCodigo`): si la nube no conoce el código, vuelve a la entrada con
+   * el aviso; sin red y sin copia en el navegador, se practica igual y solo
    * se guarda aquí (sube al volver la red: al entrar otra vez o al volver a la pestaña).
    */
   async function entrar(texto) {
@@ -544,27 +540,20 @@ export function arrancar(practica) {
     const turnoResolver = turno;
     const resuelto = await resolverCodigo(texto);
     if (turnoResolver !== turno) return;
-    if (resuelto.modo === 'antiguo') {
-      estado.indice = resuelto.n;
-      estado.codigo = codigoAlumno(estado.indice);
+    if (resuelto.error === 'no-valido') return pintarEntrada('formato');
+    if (resuelto.error === 'no-existe') {
+      // Ni recordado ni en la dirección: al recargar no tiene que volver a intentarlo.
+      if (leerCodigoSecreto(leer('practicas.codigo') ?? '') === leerCodigoSecreto(texto)) borrar('practicas.codigo');
+      try { history.replaceState(history.state, '', sinCodigo(location.href)); } catch { /* nada */ }
+      estado.codigo = null;
+      estado.indice = null;
       estado.espacio = null;
-      fijarAmbito(TAREAS);
-    } else {
-      if (resuelto.error === 'no-valido') return pintarEntrada('formato');
-      if (resuelto.error === 'no-existe') {
-        // Ni recordado ni en la dirección: al recargar no tiene que volver a intentarlo.
-        if (leerCodigoSecreto(leer('practicas.codigo') ?? '') === leerCodigoSecreto(texto)) borrar('practicas.codigo');
-        try { history.replaceState(history.state, '', sinCodigo(location.href)); } catch { /* nada */ }
-        estado.codigo = null;
-        estado.indice = null;
-        estado.espacio = null;
-        return pintarEntrada('no-existe');
-      }
-      estado.espacio = resuelto.error ? null : espacioDe(resuelto);   // 'sin-red': aún no se sabe
-      estado.codigo = leerCodigoSecreto(texto);
-      estado.indice = estado.espacio?.n ?? null;
-      fijarAmbito(estado.espacio && !estado.espacio.sinConfig ? estado.espacio.config.tareas : null);
+      return pintarEntrada('no-existe');
     }
+    estado.espacio = resuelto.error ? null : espacioDe(resuelto);   // 'sin-red': aún no se sabe
+    estado.codigo = leerCodigoSecreto(texto);
+    estado.indice = estado.espacio?.n ?? null;
+    fijarAmbito(estado.espacio && !estado.espacio.sinConfig ? estado.espacio.config.tareas : null);
     escribir('practicas.codigo', estado.codigo);
     aplicarIdiomaFijo();
     cargarProgreso();
@@ -580,11 +569,11 @@ export function arrancar(practica) {
     enviarPendientes();   // fallos que no llegaron a la nube la última vez (registro.js)
   }
 
-  /** Lo que se guarda de un código de 8 resuelto. */
+  /** Lo que se guarda de un código resuelto. */
   const espacioDe = r => ({ profesor: r.profesor, n: r.n, config: r.config, sinConfig: Boolean(r.sinConfig) });
 
   /**
-   * Código de 8 cuyo profesor no se supo al entrar (sin red): se vuelve a
+   * Código cuyo profesor no se supo al entrar (sin red): se vuelve a
    * preguntar. Si ahora se sabe, el progreso ya tiene adónde subir. El ámbito
    * no cambia (se queda el supuesto, para no cambiar de clave a mitad).
    */
@@ -599,7 +588,7 @@ export function arrancar(practica) {
 
   // Al volver a esta pestaña en el menú (quizá después de practicar en otro
   // aparato), se vuelve a leer la nube; como mucho una vez cada 30 s. Con un
-  // código de 8 sin profesor conocido, antes se vuelve a preguntar de quién es,
+  // código sin profesor conocido, antes se vuelve a preguntar de quién es,
   // y si ya se sabe se sube lo hecho y los fallos que esperaban.
   addEventListener('visibilitychange', async () => {
     if (document.visibilityState !== 'visible' || !estado.codigo || actual !== null || Date.now() - ultimaLectura < 30000) return;
@@ -804,8 +793,8 @@ export function arrancar(practica) {
   }
 
   /**
-   * Registra el fallo en la nube (colección `fallos`, o la del espacio del
-   * profesor con un código de 8; ver registro.js), sin esperar y sin que el
+   * Registra el fallo en la nube (la colección `fallos` del espacio del
+   * profesor; ver registro.js), sin esperar y sin que el
    * alumno note nada. Sin código no se registra.
    */
   function anotarFallo({ html, error, respuesta }) {

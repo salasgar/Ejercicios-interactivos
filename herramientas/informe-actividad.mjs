@@ -4,46 +4,38 @@
 // fallan demasiado). Lo ejecuta una rutina diaria en la nube, que le manda el
 // resultado por correo; también vale a mano.
 //
-// Lee Firestore por REST **sin autenticación**: las reglas dejan leer con `get`
-// cada documento (solo números, sin nombres), y los códigos de los alumnos salen
-// de su número de lista (`codigoAlumno` en practicas/_comun/codigos.js). No lee
-// `fallos/` ni lista colecciones: eso exige la cuenta del profesor y una rutina
-// en la nube no la tiene. Los documentos son:
-//   - `practicas/<slug>--<código>` en la tarea 1 (`progresoPorPractica`);
-//   - `practicas-tareas/t<id>--<slug>--<código>` en las demás (modelo v2);
-//   - `practicas-asignaciones/<código>` en las tareas `asignada`: solo cuentan
-//     los alumnos asignados (los demás no entran en ninguna cifra ni alerta).
-// Con plazo (`hasta`) el informe mide la entrega: a tiempo, N días tarde o sin
-// entregar.
+// Lee el ESPACIO de un profesor (varios profesores, tareas 68 y 70) con una cuenta
+// de solo lectura que el profesor ha añadido como lectora desde su panel
+// (LECTOR_EMAIL y LECTOR_CLAVE en el entorno): la configuración de sus tareas y,
+// por REST, las subcolecciones de `practicas-espacios/<uid>/`:
+//   - `progreso-libre/<slug>--<código>` en las tareas con `progresoPorPractica` (la 1);
+//   - `progreso-tareas/t<id>--<slug>--<código>` en las demás;
+//   - `asignaciones/<código>` en las tareas `asignada`: solo cuentan los alumnos
+//     asignados (los demás no entran en ninguna cifra ni alerta).
+// No lee los fallos. Con plazo (`hasta`) el informe mide la entrega: a tiempo,
+// N días tarde o sin entregar. Las colecciones del modo antiguo (`practicas/`,
+// `practicas-tareas/`…) ya no existen (tarea 71).
 //
 // Uso:
-//   node herramientas/informe-actividad.mjs [--alumnos 51] [--tarea 1] [--horas 24]
-//        [--grupos "1.º A:1-29,E1CB:30-46,E1DB:47-51"] [--json]
+//   node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>]
+//        [--grupos "1.º A:1-29,E1CB:30-46,E1DB:47-51"] [--tarea N] [--horas 24] [--json]
 //
-//   --alumnos  cuántas líneas tiene la lista del panel (los códigos 1..N)
-//   --tarea    id de la tarea (practicas/_comun/tareas.js). Sin él, la tarea
-//              obligatoria vigente por fecha (ver `tareaVigente`).
+//   --espacio  uid del profesor (obligatorio)
+//   --alumnos  (Juan Luis, desde su paso al sistema nuevo) sus códigos de siempre 1..N
+//   --codigos  el CSV de «Mis alumnos» (número y código; códigos de 4 u 8)
+//              Sin ninguno de los dos, el informe no sabe quién no ha entrado.
+//   --tarea    id de una tarea del profesor. Sin él, la tarea obligatoria vigente
+//              por fecha (ver `tareaVigente`).
 //   --horas    ventana de «actividad reciente» (desde hace tantas horas)
 //   --grupos   nombre:desde-hasta por grupo, con los números de lista
 //   --json     además del informe, el resumen completo en JSON (última línea)
-//
-// En el espacio de un profesor (varios profesores, tareas 68 y 70), con una cuenta
-// lectora (LECTOR_EMAIL y LECTOR_CLAVE en el entorno):
-//   node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>]
-//        [--grupos …] [--tarea N] [--horas 24] [--json]
-//   --alumnos  (Juan Luis, desde su paso al sistema nuevo) sus códigos de siempre 1..N
-//   --codigos  el CSV de «Mis alumnos» (número y código; códigos de 4 u 8)
-//   Sin ninguno de los dos, el informe no sabe quién no ha entrado.
 //
 // Las funciones de cálculo (resumirEjercicio, agregar, formatear) son puras y
 // están probadas en tests/herramientas-informe.test.js.
 
 import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import { TAREAS, tareaPorId, PUNTOS_POR_EJERCICIO, estadoTarea, estadoPlazo, diaDeFecha, configDeJSON } from '../practicas/_comun/tareas.js';
-import {
-  urlDocumento, leerDocumentoRest, leerAsignacion, idDocumentoPractica, idDocumentoTarea, COLECCION_TAREAS,
-  leerConfig, leerAsignacionRest, coleccionEspacio,
-} from '../practicas/_comun/nube.js';
+import { idDocumentoPractica, idDocumentoTarea, leerConfig, leerAsignacionRest, coleccionEspacio } from '../practicas/_comun/nube.js';
 import { firebaseConfig } from '../src/config.js';
 import { diaDe, fechaDeDia } from '../practicas/_comun/contador.js';
 
@@ -85,7 +77,7 @@ export function ejerciciosDe(tarea) {
   ];
 }
 
-/** Clave del Map de documentos de una práctica en una tarea: `slug--código` (tarea 1) o `t<id>--slug--código` (v2). */
+/** Clave del Map de documentos de una práctica en una tarea: `slug--código` (progreso-libre, tarea 1) o `t<id>--slug--código` (progreso-tareas). */
 export function claveDocumento(tarea, slug, codigo) {
   return tarea.progresoPorPractica ? idDocumentoPractica(slug, codigo) : idDocumentoTarea(tarea.id, slug, codigo);
 }
@@ -143,17 +135,16 @@ export const sinAlumnosDePrueba = lista => lista.filter(a => !(a.numero >= PRIME
  * Agrega los documentos leídos.
  *   docs     Map `claveDocumento(tarea, slug, codigo)` → { ej, actualizado } | null (null = no existe)
  *   tarea    la tarea (tareas.js)
- *   alumnos  cuántos (códigos 1..alumnos)
+ *   lista    [{ numero, codigo }]: los alumnos del espacio (`numero` puede ser null si no se conoce)
+ *   alumnos  sin `lista`, cuántos: los códigos de siempre 1..alumnos (`listaDeSiempre`)
  *   desde    ms: desde cuándo cuenta como actividad reciente
  *   grupos   [{ nombre, desde, hasta }]
  *   asignaciones  Map código → { tareas: [ids] } | null; solo se mira si la tarea es `asignada`
  *   ahora    ms: «hoy», para el plazo y el retraso (por defecto, ahora mismo)
  */
 export function agregar({ docs, tarea, alumnos, lista = null, listaCompleta = true, nombres = null, desde, grupos = [], asignaciones = null, ahora = Date.now(), umbrales = UMBRALES }) {
-  // `lista` ([{ numero, codigo }]) sustituye a «los códigos 1..alumnos» del modo antiguo (en el espacio
-  // de un profesor los códigos son secretos); `numero` puede ser null si no se conoce. `nombres`
-  // (Map número → nombre) solo lo usa la pestaña «Hoy» del panel, que los tiene descifrados.
-  const alumnosDe = sinAlumnosDePrueba(lista ?? Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) })));
+  // `nombres` (Map número → nombre) solo lo usa la pestaña «Hoy» del panel, que los tiene descifrados.
+  const alumnosDe = sinAlumnosDePrueba(lista ?? listaDeSiempre(alumnos));
   const ejercicios = ejerciciosDe(tarea);
   const slugs = [...new Set(ejercicios.map(e => e.slug))];
   const porEjercicio = ejercicios.map(e => ({ ...e, intentan: 0, terminan: 0, aciertos: 0, fallos: 0, reinicios: 0, reinician: 0 }));
@@ -302,7 +293,7 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = n
   if (r.listaCompleta === false) L.push('No se sabe quién no ha entrado: el informe no tiene la lista de códigos del espacio (pásala con --codigos <CSV de «Mis alumnos»>).');
   else L.push(nunca.length ? `Nunca han entrado (números de lista): ${nunca.join(', ')}.` : 'Todos han entrado alguna vez.');
   L.push('');
-  const fuente = fuenteTexto ?? (tarea.progresoPorPractica ? 'practicas/<slug>--<código>' : 'practicas-tareas/t<id>--<slug>--<código>');
+  const fuente = fuenteTexto ?? (tarea.progresoPorPractica ? 'progreso-libre/<slug>--<código>' : 'progreso-tareas/t<id>--<slug>--<código>');
   L.push(`_Fuente: documentos ${fuente} de Firestore (día ${r.diaDesde} = ${fechaDeDia(r.diaDesde)} en adelante para «terminados en la ventana»)._`);
   return L.join('\n');
 }
@@ -383,7 +374,7 @@ function camposCsv(linea) {
 
 /**
  * Los códigos de siempre de los números 1..N (`codigoAlumno`): la lista de Juan Luis
- * en su espacio (tarea 70: sus alumnos conservan los códigos de 4 del modo antiguo).
+ * en su espacio (tarea 70: sus alumnos conservan los códigos de 4 que salían del número de lista).
  */
 export function listaDeSiempre(alumnos) {
   return Array.from({ length: alumnos }, (_, i) => ({ numero: i + 1, codigo: codigoAlumno(i) }));
@@ -397,49 +388,8 @@ export function listaDeDocumentos(docs, asignaciones = null) {
   return [...codigos].sort().map(codigo => ({ numero: null, codigo }));
 }
 
-// --- Lectura de Firestore -----------------------------------------------------------
-
-async function leerDocumento(tarea, slug, codigo) {
-  const url = urlDocumento(slug, codigo, undefined, tarea.progresoPorPractica ? {} : { coleccion: COLECCION_TAREAS, id: idDocumentoTarea(tarea.id, slug, codigo) });
-  if (!url) throw new Error('Sin configuración de Firebase (src/config.js)');
-  const r = await fetch(url);
-  if (r.status === 404) return null;
-  if (!r.ok) throw new Error(`HTTP ${r.status} en ${claveDocumento(tarea, slug, codigo)}`);
-  const json = await r.json();
-  const leido = leerDocumentoRest(json);
-  return { ej: leido?.ej ?? [], actualizado: Number(json?.fields?.actualizado?.integerValue) || 0 };
-}
-
-async function leerTodos(tarea, slugs, alumnos, concurrencia = 8) {
-  // Primero las asignaciones (si la tarea es `asignada`): los no asignados no se leen.
-  const asignaciones = new Map();
-  if (tarea.asignada) {
-    const codigos = Array.from({ length: alumnos }, (_, i) => codigoAlumno(i));
-    let j = 0;
-    await Promise.all(Array.from({ length: concurrencia }, async () => {
-      while (j < codigos.length) { const c = codigos[j++]; asignaciones.set(c, await leerAsignacion(c)); }
-    }));
-  }
-  const pendientes = [];
-  for (let i = 0; i < alumnos; i++) {
-    const codigo = codigoAlumno(i);
-    if (tarea.asignada && !asignaciones.get(codigo)?.tareas?.includes(tarea.id)) continue;
-    for (const slug of slugs) pendientes.push([slug, codigo]);
-  }
-  const docs = new Map();
-  const errores = [];
-  let k = 0;
-  async function obrero() {
-    while (k < pendientes.length) {
-      const [slug, codigo] = pendientes[k++];
-      try { docs.set(claveDocumento(tarea, slug, codigo), await leerDocumento(tarea, slug, codigo)); }
-      catch (e) { errores.push(`${claveDocumento(tarea, slug, codigo)}: ${e.message}`); }
-    }
-  }
-  await Promise.all(Array.from({ length: concurrencia }, obrero));
-  return { docs, errores, asignaciones };
-}
-
+// --- Lectura del espacio ------------------------------------------------------------
+//
 // Con `--espacio <uid>`: una cuenta de solo lectura (correo y contraseña de Firebase, en las
 // variables de entorno LECTOR_EMAIL y LECTOR_CLAVE) que el profesor ha añadido como lectora
 // de su espacio. Inicio de sesión y lectura por REST, sin el SDK.
@@ -515,27 +465,13 @@ async function mainEspacio(uid) {
   if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));
 }
 
+const USO = 'Uso: node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>] [--grupos "1.º A:1-29,…"] [--tarea N] [--horas 24] [--json]\n'
+  + '(con LECTOR_EMAIL y LECTOR_CLAVE de la cuenta lectora en el entorno). Desde la tarea 71 no hay modo sin --espacio.';
+
 async function main() {
   const espacio = argumento('espacio', null);
-  if (espacio) return mainEspacio(espacio);
-  const alumnos = Number(argumento('alumnos', 51));
-  const horas = Number(argumento('horas', 24));
-  const grupos = leerGrupos(argumento('grupos', '1.º A:1-29,E1CB:30-46,E1DB:47-51'));
-  const ahora = Date.now();
-  const idPedido = argumento('tarea', null);
-  const elegida = idPedido === null ? tareaVigente(fechaMadrid(ahora)) : { tarea: tareaPorId(Number(idPedido)), motivo: null };
-  const { tarea, motivo } = elegida;
-  if (!tarea) { console.error('Tarea desconocida'); process.exit(2); }
-  const desde = ahora - horas * 3600 * 1000;
-  const slugs = [...new Set(ejerciciosDe(tarea).map(e => e.slug))];
-  const { docs, errores, asignaciones } = await leerTodos(tarea, slugs, alumnos);
-  const resumen = agregar({ docs, tarea, alumnos, desde, grupos, asignaciones, ahora });
-  console.log(formatear(resumen, { tarea, ahora, horas, motivo }));
-  if (errores.length) {
-    console.log(`\n⚠ ${errores.length} lecturas han fallado (el informe puede quedarse corto):`);
-    for (const e of errores.slice(0, 10)) console.log(`- ${e}`);
-  }
-  if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));
+  if (!espacio) { console.error(USO); process.exit(2); }
+  return mainEspacio(espacio);
 }
 
 // En el navegador (pestaña «Hoy») `process` no existe: solo se ejecuta como programa en Node.

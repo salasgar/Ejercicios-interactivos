@@ -12,14 +12,13 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
 (Divisibilidad) y 15 de repaso de la unidad 1. Todas se apoyan en una **base común**
 (`practicas/_comun/`) y comparten **un solo panel del profesor** (`practicas/profesor.html`).
 
-**Dos sistemas conviven** desde el 2026-10-17. El **actual** (códigos de 4 caracteres
-calculables, colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y `fallos`,
-tareas en `tareas.js`) es el de los alumnos de Juan Luis hasta su paso al nuevo (tarea 70 de
-PU2), y es el que describen §1 y §2. El **nuevo** (un espacio por profesor, códigos al azar,
-nombres cifrados, tareas en la nube) está en §9; los compañeros empiezan con él, con la guía
-[practicas-como-empezar.md](practicas-como-empezar.md). La base, las prácticas y las vistas
-del panel son las mismas en los dos: solo cambian dónde viven los datos y cómo se llama cada
-alumno.
+**Un solo sistema**: un espacio por profesor (códigos registrados en la nube, nombres
+cifrados, tareas en la nube), descrito en §9; los compañeros empiezan con la guía
+[practicas-como-empezar.md](practicas-como-empezar.md). Historia: del 2026-10-17 al 2026-10-25
+convivió con el **modo antiguo** (códigos de 4 calculables y las colecciones `practicas`,
+`practicas-tareas`, `practicas-asignaciones`, `fallos` y `divisores`). Juan Luis pasó a su
+espacio el 18-10 con sus códigos de 4 de siempre (tarea 70 de PU2) y la tarea 71 quitó el modo
+antiguo: un código que la nube no conoce, aunque sea de 4, da «Ese código no existe».
 
 - Portada: https://salasgar.github.io/Ejercicios-interactivos/practicas/
 - En local: `npm run servir` y http://localhost:8080/practicas/ (los módulos ES no cargan
@@ -27,9 +26,10 @@ alumno.
 
 ## 1. Qué ve el alumno
 
-1. Entra con su **código de 4 caracteres** (el mismo en todas, y el que ya tenía en
-   `divisores/`). El enlace que reparte el panel es `practicas/?c=ABCD`: la portada guarda el
-   código y las prácticas lo encuentran. También puede «probar sin código» (no se guarda nada).
+1. Entra con su **código** (de 4 u 8 caracteres, el mismo en todas; lo da su profesor, §9.2).
+   El enlace que reparte el panel es `practicas/?c=ABCD`: la portada guarda el código y las
+   prácticas lo encuentran. Un código que la nube no conoce da «Ese código no existe». También
+   puede «probar sin código» (no se guarda nada).
 2. Cada práctica tiene entre 2 y 5 ejercicios. En cada uno hay que **llegar a 10 puntos**:
    cada acierto da 1 punto y **5 aciertos seguidos dan 1 extra** (con felicitación). Cada
    fallo **quita 1 punto** (nunca por debajo de 0) **y una vida**; hay **5 vidas** y, si se
@@ -86,7 +86,7 @@ la práctica libre; y el retraso de cada entrega queda medido en días.
   publicado no sale. Los nombres ya no llevan «(repaso de la unidad 1)»: lo dice la sección
   (`propiedades` conserva «(ampliación)»). Dentro de una tarea, un ejercicio de otra unidad
   lleva «· repaso U1».
-- **Tres tipos de tarea**, según los campos de `tareas.js` (nada más se guarda):
+- **Tres tipos de tarea**, según los campos de la tarea (los de `tareas.js`, §9.5; nada más se guarda):
 
   | `asignada` | `hasta` | Para un alumno marcado (o para todos si no es `asignada`) | Para uno no marcado |
   |---|---|---|---|
@@ -107,40 +107,40 @@ la práctica libre; y el retraso de cada entrega queda medido en días.
   al final de cada evaluación con la vista «Retrasos» del panel.
 - **Asignación.** Se marca en el panel («Asignar tareas», casillas alumno × tarea `asignada`,
   botón «Guardar asignaciones») y se guarda en Firestore, **no en el repositorio** (que es
-  público): `practicas-asignaciones/<código>` = `{ tareas: [ids], actualizado }`. La escribe
-  solo el profesor; el alumno la lee con `get` (como su progreso) al abrir la portada o la
-  tarea, como mucho 4 s, y la copia en el navegador (`practicas.asignacion.<código>`). Sin red
-  ni copia, la tarea asignada sale como repaso. Desmarcar deja `tareas: []` (las reglas no
-  dejan borrar). Ojo: quien sepa programar puede calcular los códigos y leer las
-  asignaciones por número de lista, igual que el progreso (no hay nombres).
+  público): `practicas-espacios/{uid}/asignaciones/<código>` = `{ tareas: [ids], actualizado }`.
+  La escribe solo el profesor; el alumno la lee con `get` (como su progreso) al abrir la portada
+  o la tarea, como mucho 4 s, y la copia en el navegador (`practicas.asignacion.<código>`). Sin
+  red ni copia, la tarea asignada sale como repaso. Desmarcar deja `tareas: []`.
 - **Progreso por tarea.** Abierto desde una tarea v2 (`…/<slug>/?ejercicio=n&semana=<id>`), el
   ejercicio trabaja en el **ámbito de la tarea**: lee, guarda y sube
-  `practicas-tareas/t<id>--<slug>--<código>` (en el navegador,
+  `practicas-espacios/{uid}/progreso-tareas/t<id>--<slug>--<código>` (en el navegador,
   `practicas.v1.<slug>.<código>.t<id>`), con el mismo formato, la misma fusión entre aparatos
-  y la misma migración que los de `practicas/`. Lo hecho en la tarea no sale en la práctica
+  y la misma migración que los de la práctica libre (`progreso-libre`). Lo hecho en la tarea no sale en la práctica
   libre ni al revés, y no hay avisos de «ya lo hiciste en otro sitio» (decisión de Juan
   Luis): cada tarea pide sus ejercicios, se hayan hecho antes o no. **Repetir** un ejercicio
   ya terminado dentro de la tarea es practicar: solo suma `repeticiones`, no cambia puntos
   ni fallos. Si el enlace pide un ejercicio que no está en la tarea, se abre la práctica
-  libre. Cada fallo hecho dentro de una tarea lleva `tarea: <id>` en la colección `fallos`.
+  libre. Cada fallo hecho dentro de una tarea lleva `tarea: <id>` en la colección `fallos` del espacio.
   Una tarea puede ser solo de obligatorios (`elegir` vacío y `nElegir: 0`).
-- **La tarea 1 es la excepción, para siempre** (`progresoPorPractica: true`): su progreso es
-  el de `practicas/<slug>--<código>`, lo hecho en la práctica libre le cuenta, su código de
-  resultado lleva el día del último ejercicio terminado (las v2, el de entrega) y sus
-  enlaces no cambian. Así se publicó el modelo v2 mientras 51 alumnos la estaban haciendo.
-  `erroresTareas` impide quitárselo y ponérselo a otra.
-- **Una tarea nueva** se añade a mano en `tareas.js` con un `id` nuevo (no se reutiliza ni se
-  cambia una ya mandada), su `unidad`, `desde` (opcional) y `hasta` (opcional) y, si es solo
-  para algunos, `asignada: true`; `npm test` comprueba los datos (`erroresTareas`). Las cuatro
-  de repaso de la unidad 1 (ids 11-14) no llevan `desde` ni `hasta`: son voluntarias y
-  visibles desde ya.
+- **La tarea 1 de Juan Luis es la excepción, para siempre** (`progresoPorPractica: true`): su
+  progreso es el de la práctica libre (`progreso-libre/<slug>--<código>`), lo hecho en la
+  práctica libre le cuenta, su código de resultado lleva el día del último ejercicio terminado
+  (las v2, el de entrega) y sus enlaces no cambian. Así se publicó el modelo v2 mientras 51
+  alumnos la estaban haciendo, y así pasó a su espacio (tarea 70). En `tareas.js` (la
+  plantilla) `erroresTareas` impide quitárselo y ponérselo a otra; «Cargar la plantilla del
+  curso» la copia sin él (en el espacio de un profesor nuevo la 1 es una más).
+- **Una tarea nueva** se crea en el editor «Tareas» del panel (§9.5), con un `id` nuevo (no se
+  reutiliza ni se cambia una ya mandada), su `unidad`, `desde` (opcional) y `hasta` (opcional)
+  y, si es solo para algunos, «solo para algunos alumnos» (`asignada: true`). `tareas.js` es
+  la plantilla del curso: se cambia a mano y `npm test` comprueba sus datos (`erroresTareas`).
 
 ### Seguir desde cualquier aparato (tarea 38)
 
 El progreso de cada alumno en cada práctica está en el navegador y en Firestore, en el
-documento `practicas/{práctica}--{código}`. Desde el 15-10-2026 la regla deja al alumno
-**leer** ese documento (`allow get`, sabiendo el código; **listar** la colección sigue siendo
-solo del profesor; dentro solo hay números, sin nombres). Lo hace `practicas/_comun/nube.js`:
+documento `practicas-espacios/{uid}/progreso-libre/{práctica}--{código}` del espacio de su
+profesor. La regla deja al alumno **leer** ese documento (`allow get`, sabiendo el código;
+**listar** la colección es solo del profesor y de sus lectores; dentro solo hay números, sin
+nombres). Lo hace `practicas/_comun/nube.js`:
 
 - **Al entrar con el código** (en una práctica o en la página de la semana), antes de enseñar
   nada y antes de subir nada, se lee el documento (como mucho 4 s), se **fusiona** con lo del
@@ -165,35 +165,35 @@ solo del profesor; dentro solo hay números, sin nombres). Lo hace `practicas/_c
 
 ## 2. Cómo lee el profesor los resultados
 
-En `practicas/profesor.html`, con el **sistema actual** (Juan Luis lo elige en el selector de
-arriba; en el **sistema nuevo** las vistas son las mismas, pero cada profesor entra con Google en
-su espacio, los códigos los genera el panel y la lista se guarda cifrada en la nube: §9):
+En `practicas/profesor.html`. Cada profesor entra con Google en su espacio (§9); no hay
+selector de sistema (el «sistema actual» del modo antiguo se quitó en la tarea 71).
 
-1. **Alumnos y sus códigos.** Se pega la lista de clase (un nombre por línea; no sale del
-   navegador). El panel asigna un código a cada línea y da el enlace de cada alumno; el
-   selector «Idioma de los enlaces» los genera todos en alterno, en español o en inglés. La
-   lista es la misma que usaba el panel antiguo de `divisores/`: mismos alumnos, mismos
-   códigos.
+1. **Mis alumnos.** Se pega la lista de clase (un nombre por línea) y «Generar códigos» da un
+   código a cada línea que no lo tiene; el panel da el enlace de cada alumno, y el selector
+   «Idioma de los enlaces» los genera todos en alterno, en español o en inglés. La lista sube
+   a la nube cifrada (§9.4). Los alumnos de Juan Luis conservan sus códigos de 4 de siempre,
+   registrados en su espacio (tarea 70).
 2. **Resultados**, de dos fuentes que el panel junta:
-   - (respaldo, para cuando la nube no llega) los **códigos de resultado** que los alumnos dan si se piden, pegados tal cual (el mensaje entero
-     vale: el panel extrae los códigos). Cada código dice de quién es y de qué tarea (o, los
-     antiguos de 12 de `divisores/`, de qué ejercicios ha terminado y con cuántos fallos).
-     Lee mezclados los de 20 caracteres de las tareas y los de 12; uno de 16 (el código por
-     práctica, que ya no existe) sale en el aviso de «no válidos»;
-   - la **nube**: el progreso está en Firestore (`practicas/{práctica}--{código}` el de la
-     práctica libre y la tarea 1, `practicas-tareas/t{id}--{práctica}--{código}` el de las
-     tareas v2; reglas en `firestore.rules`), fusionado entre los aparatos del alumno, y el
-     panel lo lee entrando con la cuenta del profesor («Cargar de la nube» lee también
-     `divisores/` y `practicas-asignaciones`). Si la nube falla no se pierde nada: el código
-     de la tarea lleva lo necesario para calificar.
+   - (respaldo, para cuando la nube no llega) los **códigos de resultado** de las tareas
+     (20 caracteres) que los alumnos dan si se piden, pegados tal cual (el mensaje entero vale:
+     el panel extrae los códigos). Cada código dice de quién es y de qué tarea, con las tareas
+     del profesor. Los de 12 de la `divisores/` antigua y los de 16 (el código por práctica,
+     que ya no existe) salen en el aviso de «no válidos»;
+   - la **nube**: el progreso está en el espacio del profesor
+     (`practicas-espacios/{uid}/progreso-libre/{práctica}--{código}` el de la práctica libre y
+     la tarea 1 de Juan Luis, `…/progreso-tareas/t{id}--{práctica}--{código}` el de las tareas
+     v2; reglas en `firestore.rules`), fusionado entre los aparatos del alumno, y el panel lo
+     lee con la sesión del profesor («Cargar de la nube» lee también las asignaciones; solo
+     pide lo nuevo, §9.6). Si la nube falla no se pierde nada: el código de la tarea lleva lo
+     necesario para calificar.
 3. La vista «Resumen de todas las prácticas» da una fila por alumno; eligiendo una práctica
    se ve ejercicio a ejercicio. Las dos tablas se descargan en CSV.
-4. **Tareas de la semana.** La sección «Tareas de la semana» da el **enlace común** de cada
+4. **Tareas de la semana.** La sección «Tareas» da el **enlace común** de cada
    tarea (`…/practicas/semana.html?t=2`), el que se pega en Classroom: cada alumno escribe su
    código la primera vez, o ya lo tiene recordado si entró en otra práctica en ese
    dispositivo. Para el enlace de cada alumno (`…&c=ABCD`), se elige la tarea en «Enlaces a»,
-   en la sección 1. En el cuadro de códigos se pegan mezclados los de las tareas (20
-   caracteres) y los de `divisores/` (12), y la vista «Tareas de la
+   en «Mis alumnos». En el cuadro de códigos se pegan los de las tareas (20
+   caracteres), y la vista «Tareas de la
    semana» da una fila por alumno y una columna por tarea: «✓ cumplida · 100 pt», «★ 4 de 6 ·
    2 de 4 · 65 pt» o «sin empezar». Los **puntos** (sobre 100) los calcula `estadoTarea`, la
    misma función del marcador del alumno; lo que va a medias solo lo sabe la nube. Un ejercicio cuenta como terminado si lo dice el código de la tarea **o**
@@ -221,50 +221,55 @@ su espacio, los códigos los genera el panel y la lista se guarda cifrada en la 
    En «tarea N» los datos son los de esa tarea (en las v2, sus propios documentos), no los
    de la práctica libre.
 6. **Fallos, uno a uno** (tarea 39, sección 3 del panel). Cada vez que un alumno con código
-   falla un ítem, la base crea un documento en la colección `fallos` de Firestore (uno por
+   falla un ítem, la base crea un documento en la colección `fallos` del espacio de su
+   profesor (`practicas-espacios/{uid}/fallos`; uno por
    fallo; decisión de Juan Luis del 16-10-2026): código del alumno, práctica, ejercicio, hora y
    día, idioma, el ítem (lo que devolvió `generar`, en JSON, hasta 400 caracteres), la
    explicación que vio en texto plano (hasta 500), si estaba repitiendo un ejercicio ya
    terminado y, si la práctica los da, `error` y `respuesta`. El alumno solo puede **crear**
-   esos documentos (regla `match /fallos/{id}`); leerlos, solo el profesor. Si no hay red, el
-   fallo espera en el navegador (hasta 50) y se manda en el siguiente fallo o al entrar; el id
-   lo pone la app, así que un reintento no duplica. El panel los lee **desde el día que se
-   elija** (una lectura por fallo: unos 2.500 a la semana para 51 alumnos, lejos de las 50.000
-   diarias gratuitas) y da los fallos más repetidos (por `error` si lo hay, si no por
+   esos documentos, y solo si el código es de ese profesor; leerlos, el profesor y sus
+   lectores. Si no hay red, o aún no se sabe de qué profesor es el código, el fallo espera en
+   el navegador (hasta 50) y se manda en el siguiente fallo o al entrar; el id lo pone la app,
+   así que un reintento no duplica. El panel los lee **desde el día que se elija** (una
+   lectura por fallo: unos 2.500 a la semana para 51 alumnos, lejos de las 50.000 diarias
+   gratuitas; los ya leídos se guardan en el navegador y no se vuelven a pedir) y da los fallos más repetidos (por `error` si lo hay, si no por
    ejercicio) con tres ejemplos reales, qué le cuesta a cada alumno, y un CSV con un fallo por
    fila y las destrezas de la práctica (§7). Filtros: tarea (por el campo `tarea` de cada
    fallo: «Sin tarea (práctica libre)», «Tarea 1», «Tarea 2»…), práctica y alumno; con
    nombres en la lista, solo cuentan los de la lista.
-7. **Informe diario por correo** (`herramientas/informe-actividad.mjs`). Lee Firestore por
-   REST, sin cuenta, calculando los códigos 1…N de la lista (solo números de lista y grupos,
+7. **Informe diario por correo** (`herramientas/informe-actividad.mjs`). Lee por REST el
+   espacio de un profesor con una **cuenta lectora** (§9.10; solo números de lista y grupos,
    sin nombres), y da en Markdown: alertas, resumen por grupo, cada ejercicio de la tarea
    (cuántos lo prueban, lo terminan, fallos y reinicios) y cada alumno con sus puntos y su
-   entrega. Lee los documentos de la tarea 1 en `practicas/` y los de las v2 en
-   `practicas-tareas/`; en una tarea `asignada` solo cuenta a los marcados (y dice cuántos
+   entrega. Lee los documentos de la tarea 1 en `progreso-libre` y los de las v2 en
+   `progreso-tareas`; en una tarea `asignada` solo cuenta a los marcados (y dice cuántos
    quedan fuera); con plazo vencido resume «X a tiempo, Y con retraso, Z sin entregar».
-   `node herramientas/informe-actividad.mjs [--alumnos 51] [--tarea <id>] [--horas 24]
-   [--grupos "1.º A:1-29,E1CB:30-46,E1DB:47-51"] [--json]`. **Sin `--tarea` elige solo la
+   `LECTOR_EMAIL=… LECTOR_CLAVE=… node herramientas/informe-actividad.mjs --espacio <uid>
+   [--alumnos 51 | --codigos <CSV>] [--tarea <id>] [--horas 24]
+   [--grupos "1.º A:1-29,E1CB:30-46,E1DB:47-51"] [--json]`; `--espacio` es obligatorio (desde
+   la tarea 71 no hay modo sin cuenta). **Sin `--tarea` elige solo la
    tarea vigente**: la obligatoria (con `hasta` y no `asignada`) de plazo abierto más
    próximo; si no hay ninguna, la última vencida. Lo manda cada noche, a las 21:30 hora
    peninsular, una rutina de Claude en la nube (`trig_018p4Y73wGMvZu7Uxjf27Tc1`) que ejecuta
-   el script de `main` y envía el correo a Juan Luis; la rutina no está en el repositorio y
-   se cambia desde claude.ai.
+   el script de `main` con `--espacio <uid de Juan Luis> --alumnos 51 --horas 24 --grupos …` y
+   envía el correo a Juan Luis; la rutina no está en el repositorio y se cambia desde claude.ai.
 
 ### Los dos códigos de resultado
 
-La longitud dice qué es cada uno; el panel los separa solo. (Hubo un tercero, de 16
+La longitud dice qué es cada uno. Desde la tarea 71 el panel solo lee el de 20 (con las
+tareas del profesor); el de 12 queda descrito como historia. (Hubo un tercero, de 16
 caracteres, uno por práctica: existió hasta el 2026-10-16 y se eliminó, porque con la nube y
 el de la tarea sobraba y sus 5 bits de práctica limitaban el catálogo a 32 prácticas.)
 
 | Largo | De qué | Qué lleva (en bits) |
 |---|---|---|
-| 12 | la `divisores/` antigua (antes de la tarea 17) | su formato de siempre (`divisores/logica.js`) |
+| 12 | la `divisores/` antigua (antes de la tarea 17; el panel ya no lo lee) | su formato de siempre (`divisores/logica.js`) |
 | 20 | una tarea de la semana | versión (5, hoy 1) · tarea (10) · alumno (10) · ★ terminados (10, un bit por ★ en el orden de `tareas.js`) · de elegir terminados (15, igual) · fallos de todos los ejercicios de la tarea (10, hasta 1023) · día (10): en la tarea 1, el del último ejercicio terminado; en las v2, el de entrega (cuando quedó cumplida) · control (30) |
 
 El de la tarea se escribe en cinco grupos de cuatro (`ABCD-EFGH-JKLM-NPQR-STUV`), con el mismo
 alfabeto (sin I, O, 0 ni 1) y enmascarado. Los 30
 bits de control hacen que cualquier carácter mal copiado lo invalide. El panel lo interpreta
-con `tareas.js`, así que **una tarea ya mandada no se cambia** (el bit «3.er ★» pasaría a
+con las tareas del profesor (las de su espacio), así que **una tarea ya mandada no se cambia** (el bit «3.er ★» pasaría a
 querer decir otro ejercicio): si hay que cambiarla, se copia con un `id` nuevo. Cabe una tarea
 de hasta 10 ★ y 15 de elegir, y ids hasta 1023.
 
@@ -276,11 +281,12 @@ a ojo o copiar el de un compañero, no a quien lea el código fuente.
 | Fichero | Qué pone |
 |---|---|
 | `base.js` | `arrancar(practica)`: entrada por código, menú, contador, feedback, traducción, guardado en el navegador y en Firestore (leído y fusionado al entrar). También `validarPractica`, `parametrosDe`, `claveProgreso`, `documentoNube`, `leer`/`escribir`/`borrar`, `URL_PORTADA`, `progresoGuardado`, `sincronizarGuardado` (navegador y nube de acuerdo, para la página de la semana; las dos con `tareaId` para el progreso de una tarea v2), `ambitoDe` (práctica libre, tarea 1 o tarea v2), `ubicacionProgreso` (clave del navegador y documento de la nube de cada ámbito) y `adoptarIdioma` |
-| `registro.js` | Registro de cada fallo (tarea 39): `datosFallo` (qué se guarda y sus topes, `LIMITES`), `textoPlano`, `registrarFallo` y `enviarPendientes` (cola del navegador), `leerFallos` (panel, con el token del profesor) y `DESTREZAS` (práctica → destrezas, copia del §7; un test comprueba que coinciden) |
-| `nube.js` | Progreso en la nube entre aparatos: `leerNube` (REST, con tiempo máximo; `ok`, `vacio`, `prohibido` o `error`), `escribirNube`, `subirFusionado` (lee, fusiona y escribe; las tres aceptan `coleccion` e `id` para los documentos de las tareas), la fusión pura `fusionarEjercicio` / `fusionarProgreso`, los nombres de colección (`COLECCION_PRACTICAS`, `COLECCION_TAREAS`, `COLECCION_ASIGNACIONES`), `idDocumentoTarea`, `claveProgresoTarea` y `leerAsignacion` |
+| `registro.js` | Registro de cada fallo (tarea 39): `datosFallo` (qué se guarda y sus topes, `LIMITES`), `textoPlano`, `registrarFallo` y `enviarPendientes` (cola del navegador; cada fallo va a la colección `fallos` del espacio de su profesor, `coleccionFallo`) y `DESTREZAS` (práctica → destrezas, copia del §7; un test comprueba que coinciden) |
+| `nube.js` | Progreso en la nube entre aparatos: `leerNube` (REST, con tiempo máximo; `ok`, `vacio`, `prohibido` o `error`), `escribirNube`, `subirFusionado` (lee, fusiona y escribe; las tres piden `coleccion`, la del espacio con `coleccionEspacio(uid, …)`, e `id`; sin colección no hay nube), la fusión pura `fusionarEjercicio` / `fusionarProgreso`, `idDocumentoPractica`, `idDocumentoTarea`, `claveProgresoTarea`, `leerAsignacion` y lo del espacio (`leerBusqueda`, `leerConfig`) |
+| `espacio.js` | `resolverCodigo`: de qué profesor es un código (`practicas-alumnos/{código}`) y sus tareas (`config/tareas`), con copia en el navegador para seguir sin red; un código que la nube no conoce da `no-existe` |
 | `catalogo.js` | Las filas del catálogo (hoy 31 prácticas y la plantilla): `id`, `slug`, `ruta`, `nombre { es, en }`, `nEjercicios`, `disponible`, `unidad`; y `UNIDADES` con `unidadActual(hoy)` |
-| `codigos.js` | Código de alumno (4 caracteres, misma sal que `divisores/`) y de resultado de una tarea de la semana (20); lee también los antiguos de 12 de `divisores/`; `leerCualquierCodigo` y `extraerCodigosResultado`, que los encuentra mezclados en un texto |
-| `tareas.js` | Las tareas (**se cambia a mano**; el formato está en su cabecera): `id`, `titulo`, `unidad`, `desde`, `hasta`, `asignada`, `progresoPorPractica` (solo la 1), `estrella`, `elegir`, `nElegir`. También `estadoTarea` (marcador, «cumplida» y `diaEntrega`), `estadoPlazo` (tipo, entrega y días de retraso), `tareasPublicadas` (por unidad), `diaDeFecha` y `erroresTareas`, que comprueba los datos contra el catálogo y las unidades |
+| `codigos.js` | Código de alumno (4 u 8 caracteres al azar, `codigoSecreto`; de 4 descarta los 1024 calculables del modo antiguo) y de resultado de una tarea de la semana (20); `extraerCodigosResultado`, que los encuentra mezclados en un texto |
+| `tareas.js` | La **plantilla** de las tareas («Cargar la plantilla del curso» en el panel, y lo que se ve sin código; **se cambia a mano**; el formato está en su cabecera): `id`, `titulo`, `unidad`, `desde`, `hasta`, `asignada`, `progresoPorPractica` (solo la 1), `estrella`, `elegir`, `nElegir`. También `estadoTarea` (marcador, «cumplida» y `diaEntrega`), `estadoPlazo` (tipo, entrega y días de retraso), `tareasPublicadas` (por unidad), `diaDeFecha` y `erroresTareas`, que comprueba los datos contra el catálogo y las unidades |
 | `contador.js` | `OBJETIVO = 10`, `PENALIZACION = 1`, `VIDAS = 5`, `RACHA = 5`, `EXTRA = 1`; `ejercicioNuevo`, `anotar`, `queHaPasado`, `migrarProgreso`, fechas |
 | `aritmetica.js` | `esPrimo`, `factorizar`, `divisores`, `parejasDivisores`, `mcd`, `mcm`, `criterio(n, d)` con `CRITERIOS = [2, 3, 5, 9, 10, 11]`, y las operaciones con factorizaciones (`multiplicarFact`, `dividirFact`, `mcdFact`, `mcmFact`, `htmlFact`…) |
 | `piezas.js` | `elecciones` (botones de elegir, con `marcar`), `pasos` (contador −/valor/+) y `campoNumero` (campo para escribir un número: teclado de cifras en el móvil, acepta «4.730» y «4 730», no deja comprobar vacío; lo lee `leerNumero`) |
@@ -292,18 +298,12 @@ Fuera de `_comun/`, `practicas/vista-tareas.js` (tarea 52) junta lo que comparte
 de la tarea y la portada, sin DOM: de dónde se lee el progreso de una tarea, la asignación
 del alumno, las frases de plazo y las secciones por unidad.
 
-Colecciones de Firestore de estas prácticas (reglas en `firestore.rules`; las publica Juan
-Luis a mano en la consola, **antes** de comitear el código que las usa):
-
-| Colección | Documento | El alumno (sin cuenta) | El profesor |
-|---|---|---|---|
-| `practicas` | `{práctica}--{código}`: progreso de la práctica libre (y de la tarea 1) | lee el suyo (`get`) y lo escribe | lista y lee |
-| `practicas-tareas` | `t{id}--{práctica}--{código}`: progreso dentro de una tarea v2 | lee el suyo (`get`) y lo escribe | lista y lee |
-| `practicas-asignaciones` | `{código}`: `{ tareas: [ids], actualizado }` | lee el suyo (`get`) | lista, lee y escribe |
-| `fallos` | uno por fallo, con `tarea` si se hizo dentro de una tarea | solo crea | lista y lee |
-| `divisores` | `{código}`: lo que subía la `divisores/` antigua | lo escribe (no lo lee) | lista y lee |
-
-Nadie puede borrar documentos de estas colecciones salvo desde la consola de Firebase.
+Las colecciones de Firestore de estas prácticas son las de los espacios (§9.3; reglas en
+`firestore.rules`, que publica Juan Luis a mano en la consola, **antes** de comitear el
+código que las usa). Las del modo antiguo (`practicas`, `practicas-tareas`,
+`practicas-asignaciones`, `fallos` y `divisores`) no tienen regla desde la tarea 71:
+Firestore las deniega enteras, y Juan Luis las borra desde la consola con su firma (con
+copia antes, fuera del repositorio).
 
 **El catálogo ya no tiene tope** (desde el 2026-10-16, al eliminar el código de resultado por
 práctica, que reservaba 5 bits para el id y limitaba a 32 prácticas): una práctica nueva lleva
@@ -591,7 +591,8 @@ añadir un ejercicio a una práctica existente o, ahora que el catálogo no tien
 - Varios profesores (§9): el diseño en `reparto-practicas-u2/salidas/57-diseno-varios-profesores/DISENO.md`
   (aprobado por Juan Luis el 2026-10-17), los códigos de 4 al azar en `salidas/72-codigos-de-4/`
   y la revisión de punta a punta (tarea 69) en `salidas/69-revision-varios-profesores/`. Tests:
-  `tests/practicas-{espacio,codigos-4,cifrado,editor,registro,migracion}.test.js` y las
+  `tests/practicas-{espacio,codigos-4,cifrado,editor,registro}.test.js` (el de la migración de
+  la tarea 70 se retiró con su herramienta en la 71; queda en el historial de git) y las
   reglas con `herramientas/probar-reglas.mjs` (§9.8).
 
 ## 9. Varios profesores (desde el 2026-10-17)
@@ -614,7 +615,7 @@ y su banco de pruebas). La guía para los compañeros, en llano, es
   escribe `practicas-profesores/{uid}` con `{ activo: true, alta }`; dar de baja pone
   `activo: false` (el profesor deja de entrar en su espacio; sus datos no se borran).
 - **El administrador no ve los alumnos de nadie**: en su panel solo tiene su propio espacio,
-  como un profesor más (se da de alta a sí mismo la primera vez que entra en el sistema nuevo).
+  como un profesor más (se da de alta a sí mismo la primera vez que entra en el panel).
   Lo único que no puede prometer ningún diseño: desde la **consola de Firebase** el dueño del
   proyecto ve todos los documentos; por eso en la nube no hay ningún nombre legible (§9.4).
 
@@ -624,24 +625,25 @@ y su banco de pruebas). La guía para los compañeros, en llano, es
   `practicas/_comun/codigos.js`), con el alfabeto de siempre (sin I, O, 0 ni 1). El profesor elige
   la longitud en «Mis alumnos» (se guarda en su configuración, `longitudCodigo`):
   - **8** (por defecto; se escribe `K7QM-P3XA`): 32⁸ posibilidades, nadie da con uno probando;
-  - **4**: más fácil de recordar; se descartan los 1024 calculables del sistema actual, pero son
+  - **4**: más fácil de recordar; se descartan los 1024 calculables del modo antiguo, pero son
     pocos y alguien con paciencia podría encontrar alguno (y ver sus resultados, nunca su nombre).
 - Cada código tiene su documento de búsqueda, `practicas-alumnos/{código}` = `{ profesor, n,
   alta }` (`n`, el número de línea de la lista, de 1 a 1023). El alumno lo lee con `get` sin cuenta;
   **nadie puede listar** la colección salvo cada profesor sus propias filas; un código creado no lo
   puede «quedarse» otro profesor.
-- **Quién decide el sistema es la nube, no la longitud** (`resolverCodigo` en
-  `practicas/_comun/espacio.js`, tarea 72): con un código de 8, o de 4 que no es de los
-  calculables, la búsqueda da su profesor o «Ese código no existe. Copia el de tu correo o usa
-  tu enlace.»; con uno de **los 1024 calculables** (los de los alumnos de Juan Luis), si está
-  registrado en `practicas-alumnos` va al espacio de su profesor, y si no (404) va al sistema
-  actual, y eso se recuerda **una hora** en el navegador. Así Juan Luis pasa al sistema nuevo
-  conservando los códigos de 4 de siempre (tarea 70).
+- **De quién es un código lo dice la nube, no la longitud** (`resolverCodigo` en
+  `practicas/_comun/espacio.js`): la búsqueda da su profesor o, si no está registrado (404),
+  «Ese código no existe. Copia el de tu correo o usa tu enlace.». Vale igual para los de 8 y
+  para los de 4, también para **los 1024 calculables**: los de los alumnos de Juan Luis siguen
+  valiendo porque están registrados en su espacio (tarea 70), y uno sin registrar no existe.
+  Hasta la tarea 71 un calculable sin registrar iba al modo antiguo; ya no. Sin red, vale la
+  copia del navegador; sin copia, se practica igual y solo se guarda en el navegador hasta
+  saber de quién es.
 - El enlace sigue siendo corto (`practicas/?c=K7QMP3XA`, `semana.html?t=3&c=…`): no lleva el
   profesor. La búsqueda y la configuración del profesor se guardan en el navegador.
 - El **código de resultado de la tarea** (20 caracteres, §2) no cambia de formato: lleva el
-  número de lista **en la lista de su profesor** (desde 1; en el sistema actual, la posición desde
-  0) y el id de la tarea **de ese profesor**. Solo lo interpreta el panel de ese profesor.
+  número de lista **en la lista de su profesor** (desde 1) y el id de la tarea **de ese
+  profesor**. Solo lo interpreta el panel de ese profesor.
 
 ### 9.3 Dónde viven los datos
 
@@ -658,7 +660,9 @@ y su banco de pruebas). La guía para los compañeros, en llano, es
 | Asignaciones | `…/{uid}/asignaciones/{código}` = `{ tareas, actualizado }` | el alumno con `get`; listar, el dueño y sus lectores | el dueño |
 | Fallos | `…/{uid}/fallos/{código}-{hora}-{azar}` | el dueño y sus lectores | el alumno, solo crear |
 
-Los documentos tienen el mismo formato que en el sistema actual; cambia la ruta. Se llama
+Los documentos tienen el mismo formato que tenían en las colecciones del modo antiguo
+(`practicas`, `practicas-tareas`, `practicas-asignaciones`, `fallos`), que desde la tarea 71
+no tienen regla y se borran. Se llama
 `progreso-libre` y no `progreso` porque la aplicación antigua de `src/` tiene una regla con
 comodín (`{ruta=**}/progreso`) que habría dejado al administrador leerlo (tarea 61). Un
 profesor dado de baja no entra en nada de su espacio, y sus lectores tampoco.
@@ -684,12 +688,12 @@ lista, resultados (con lo que tecleó el alumno al fallar) y esa lista cifrada.
   una tarea no cambia de ejercicios** (solo título y fechas). «Cargar la plantilla del curso»
   copia las de `tareas.js` (sin tareas, las pone; con tareas, las añade con ids nuevos).
 - En el espacio de un profesor la tarea 1 es una tarea más, con su propio progreso. La única
-  excepción es la tarea 1 que trae Juan Luis del sistema actual al pasar (tarea 70), que conserva
+  excepción es la tarea 1 que trajo Juan Luis del modo antiguo al pasar (tarea 70), que conserva
   `progresoPorPractica: true`.
-- `tareas.js` queda como **plantilla del curso** y, hasta su paso, como las tareas del sistema
-  actual de Juan Luis.
+- `tareas.js` es la **plantilla del curso** (lo que copia «Cargar la plantilla del curso») y lo
+  que enseñan la portada y la página de la tarea sin código.
 
-### 9.6 El panel en el sistema nuevo
+### 9.6 El panel
 
 - Entra con Google y abre el espacio; las vistas de §2 son las mismas, leyendo del espacio y con
   las tareas del profesor. **Lee solo lo nuevo**: lo leído se guarda en el navegador (IndexedDB)
@@ -700,9 +704,11 @@ lista, resultados (con lo que tecleó el alumno al fallar) y esa lista cifrada.
   cada ejercicio de la tarea), para los profesores que no reciben correo.
 - **«Mis alumnos»**: la lista, la longitud de los códigos, «Generar códigos», la lista cifrada,
   los enlaces por alumno, el CSV (número, nombre, código, enlace) y las tarjetas para recortar.
-- Juan Luis tiene además el **selector de sistema** (actual / nuevo), «Profesores» y **«Pasar al
-  sistema nuevo»** (tarea 70: copia sus alumnos, con sus códigos de siempre, su progreso y sus
-  tareas a su espacio, y desde ahí añade la cuenta lectora del informe).
+- Juan Luis (el administrador) tiene además «Profesores» y **«Cuenta lectora del informe
+  diario»** (`practicas/profesor-lectores.js`: añade el uid de la cuenta lectora a su espacio).
+  Hasta la tarea 71 tenía también el selector de sistema (actual / nuevo) y «Pasar al sistema
+  nuevo» (tarea 70); se quitaron con el modo antiguo y su código queda en el historial de git
+  (`practicas/profesor-migracion.js`, `herramientas/ensayar-migracion.mjs`).
 
 ### 9.7 Dar de alta a un compañero
 
@@ -719,7 +725,8 @@ lista, resultados (con lo que tecleó el alumno al fallar) y esa lista cifrada.
 ### 9.8 Las reglas y su banco de pruebas
 
 Las reglas de varios profesores son la sección «Varios profesores» de `firestore.rules`
-(detrás de las del sistema actual, que no cambian hasta la tarea 71). Se publican como siempre
+(desde la tarea 71, sin los bloques del modo antiguo: esas colecciones no tienen regla y
+Firestore las deniega). Se publican como siempre
 (README, «Puesta en marcha de Firebase»). Después de publicar un cambio:
 
 ```
@@ -728,7 +735,8 @@ PROFE_A_EMAIL=… PROFE_A_CLAVE=… PROFE_B_EMAIL=… PROFE_B_CLAVE=… node her
 
 con dos cuentas de prueba de correo y contraseña (Authentication → Add user) dadas de alta como
 profesores. Comprueba por REST, contra el proyecto real, cada cosa que un profesor, un alumno
-sin cuenta o un lector puede y no puede hacer (154 comprobaciones el 17-10), y borra lo que crea.
+sin cuenta o un lector puede y no puede hacer (154 comprobaciones el 17-10; desde la tarea 71
+también que las cinco colecciones del modo antiguo no se leen ni se escriben), y borra lo que crea.
 `--baja` comprueba un profesor de baja; `--dejar` no borra los datos de prueba. Sin las
 variables solo hace las comprobaciones sin red.
 
@@ -752,9 +760,10 @@ navegador y sube al día siguiente.
 
 ### 9.10 El informe diario en un espacio
 
-Sigue siendo solo para Juan Luis. Mientras esté en el sistema actual lee sin cuenta, como en §2.
-Después de su paso lee su espacio con una **cuenta lectora** (correo y contraseña, solo lectura,
-añadida como lectora en su panel; nunca ve los nombres):
+Sigue siendo solo para Juan Luis. Lee su espacio con una **cuenta lectora** (correo y
+contraseña, solo lectura, añadida en su panel en «Cuenta lectora del informe diario»; nunca ve
+los nombres). Desde la tarea 71 es el único modo (hasta entonces, sin `--espacio`, leía sin
+cuenta las colecciones del modo antiguo):
 `LECTOR_EMAIL=… LECTOR_CLAVE=… node herramientas/informe-actividad.mjs --espacio <uid> --alumnos 51`
 (o `--codigos <CSV de «Mis alumnos»>`). La contraseña va en la configuración de la rutina en la
 nube, nunca en el repositorio. Los demás profesores ven lo mismo en «Hoy».

@@ -1,4 +1,4 @@
-// «Tareas» del panel, sistema nuevo: el editor de tareas del profesor (DISENO.md, D.5;
+// «Tareas» del panel: el editor de tareas del profesor (DISENO.md, D.5;
 // tarea 67 del reparto PU2). Cada profesor hace aquí sus tareas y sus fechas de
 // comienzo de unidad y las guarda en su espacio (`config/tareas`) con `guardarConfig`.
 //

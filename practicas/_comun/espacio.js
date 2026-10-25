@@ -1,22 +1,18 @@
 // Del código del alumno a su profesor y a sus tareas (varios profesores, tareas 62
 // y 72 del reparto PU2; DISENO.md, B.2 y F.2).
 //
-// Un código del sistema nuevo (4 u 8 caracteres) no dice nada por sí mismo, así
-// que se pregunta a la nube de quién es (`practicas-alumnos/{código}`) y cuáles son
-// las tareas de ese profesor (`config/tareas`). Las dos cosas se guardan en el
-// navegador para seguir sin red y para no preguntar de más.
+// Un código (4 u 8 caracteres) no dice nada por sí mismo, así que se pregunta a
+// la nube de quién es (`practicas-alumnos/{código}`) y cuáles son las tareas de
+// ese profesor (`config/tareas`). Las dos cosas se guardan en el navegador para
+// seguir sin red y para no preguntar de más. Los códigos de 4 de siempre de los
+// alumnos de Juan Luis están registrados así desde su paso al sistema nuevo (tarea
+// 70); desde la tarea 71 ya no hay modo antiguo: un código que la nube no conoce
+// no existe, aunque sea uno de los de 4 calculables.
 //
-// Un código de 4 con la comprobación del modo antiguo puede estar registrado (los
-// de Juan Luis pasan al sistema nuevo tal cual, tarea 70) o no (modo antiguo, como
-// siempre, hasta la tarea 71): también se pregunta. Si la nube no lo conoce (404),
-// es del modo antiguo y se recuerda un rato (`VIGENCIA_ANTIGUO`) para no preguntar
-// en cada página; sin red, sin permiso (reglas aún sin publicar) o con la nube
-// caída, vale lo último que se supo de él y, si no se supo nada, el modo antiguo.
-//
-// Todo por REST y sin cuenta (los alumnos no tienen). `fetch`, `almacen` y `ahora`
-// se inyectan en los tests.
+// Todo por REST y sin cuenta (los alumnos no tienen). `fetch` y `almacen` se
+// inyectan en los tests.
 
-import { leerCodigoAlumno, leerCodigoSecreto, esCodigoAntiguo } from './codigos.js';
+import { leerCodigoSecreto } from './codigos.js';
 import { leerBusqueda, leerConfig } from './nube.js';
 import { configDeJSON } from './tareas.js';
 
@@ -54,45 +50,21 @@ function olvidarCache(almacen, codigo) {
   try { almacen?.removeItem(claveEspacio(codigo)); } catch { /* nada que olvidar */ }
 }
 
-/** Cuánto se recuerda que la nube no conoce un código antiguo (ms): una hora de práctica sin preguntar. */
-export const VIGENCIA_ANTIGUO = 60 * 60 * 1000;
-
-/** Clave del navegador del momento en que la nube dijo que un código de 4 antiguo no está registrado. */
-export const claveAntiguo = codigo => `practicas.v1.antiguo.${codigo}`;
-
-function antiguoReciente(almacen, codigo, ahora) {
-  try {
-    const cuando = Number(almacen?.getItem(claveAntiguo(codigo)));
-    return Number.isFinite(cuando) && cuando > 0 && ahora - cuando >= 0 && ahora - cuando < VIGENCIA_ANTIGUO;
-  } catch { return false; }
-}
-function recordarAntiguo(almacen, codigo, ahora) {
-  try { almacen?.setItem(claveAntiguo(codigo), String(ahora)); } catch { /* sin almacén: se pregunta cada vez */ }
-}
-function olvidarAntiguo(almacen, codigo) {
-  try { almacen?.removeItem(claveAntiguo(codigo)); } catch { /* nada que olvidar */ }
-}
-
 /**
  * Resuelve un código tecleado o llegado por enlace:
- *   { modo: 'antiguo', n }                              código de 4 del modo antiguo que la nube
- *                                                       no conoce (o sin red y sin copia); `n` es
- *                                                       su índice de `codigoAlumno` (desde 0);
  *   { modo: 'nuevo', profesor, n, config, desdeCache }  código registrado (4 u 8); `n`, su número
  *                                                       de lista (desde 1); `config`, { unidades,
  *                                                       tareas, longitudCodigo } del profesor;
  *   { error: 'no-valido' }   no tiene el formato de un código;
- *   { error: 'no-existe' }   la nube no conoce ese código (404) y no es del modo antiguo;
+ *   { error: 'no-existe' }   la nube no conoce ese código (404);
  *   { error: 'sin-red' }     no se ha podido preguntar y no hay copia en el navegador.
  * Sin red, o si la nube falla, se sigue con la copia del navegador si la hay. Nunca lanza.
+ * (`modo` siempre vale 'nuevo': se queda para quien ya lo mira.)
  */
-export async function resolverCodigo(codigo, { fetch, almacen = almacenDelNavegador(), espera, config, ahora = Date.now() } = {}) {
+export async function resolverCodigo(codigo, { fetch, almacen = almacenDelNavegador(), espera, config } = {}) {
   const secreto = leerCodigoSecreto(codigo);
   if (secreto === null) return { error: 'no-valido' };
-  const antiguo = esCodigoAntiguo(secreto) ? { modo: 'antiguo', n: leerCodigoAlumno(secreto) } : null;
   const copia = leerCache(almacen, secreto);
-  // Hace poco que la nube no lo conocía: modo antiguo sin preguntar (salvo que se sepa que ya es del nuevo).
-  if (antiguo && !copia && antiguoReciente(almacen, secreto, ahora)) return antiguo;
 
   const modo = 'nuevo';
   const opciones = { ...(fetch && { fetch }), ...(espera && { espera }), ...(config && { config }) };
@@ -100,16 +72,13 @@ export async function resolverCodigo(codigo, { fetch, almacen = almacenDelNavega
 
   if (busqueda.estado === 'vacio') {
     olvidarCache(almacen, secreto);
-    if (antiguo) recordarAntiguo(almacen, secreto, ahora);
-    return antiguo ?? { error: 'no-existe' };
+    return { error: 'no-existe' };
   }
   if (busqueda.estado !== 'ok') {
-    // Sin red, sin permiso o respuesta ilegible: lo último que se supo, si se sabe algo;
-    // si no, un código antiguo sigue en el modo antiguo, como siempre.
+    // Sin red, sin permiso o respuesta ilegible: lo último que se supo, si se sabe algo.
     if (copia) return { modo, ...copia, desdeCache: true };
-    return antiguo ?? { error: 'sin-red' };
+    return { error: 'sin-red' };
   }
-  olvidarAntiguo(almacen, secreto);
 
   const lectura = await leerConfig(busqueda.profesor, opciones);
   if (lectura.estado === 'ok') {

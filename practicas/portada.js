@@ -12,12 +12,12 @@
 // `_comun/tareas.js`) con su plazo y lo que lleva el alumno en cada una.
 
 import { CATALOGO, ID_PLANTILLA, UNIDADES } from './_comun/catalogo.js';
-import { leerCodigoAlumno, leerCodigoSecreto, esCodigoAntiguo } from './_comun/codigos.js';
+import { leerCodigoSecreto } from './_comun/codigos.js';
 import { leer, escribir, borrar, cerrarSesion, progresoGuardado } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
 import { TAREAS, estadoTarea, fechaISO } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
-import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad, contextoAntiguo, contextoGuardado, identificar } from './vista-tareas.js';
+import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad, contextoGuardado, identificar } from './vista-tareas.js';
 
 // El orden de la portada no es el del catálogo (que no se puede renumerar):
 // es el de la unidad. Cada bloque es de una unidad (`unidad`); las unidades sin
@@ -151,13 +151,11 @@ const enNavegador = typeof document !== 'undefined';
 const app = enNavegador ? document.querySelector('#app') : null;
 let idioma = leer('practicas.idioma') === 'en' ? 'en' : 'es';
 
-// El código puede ser del modo antiguo (4 caracteres que la nube no conoce: las tareas son las de
-// `tareas.js`) o del sistema nuevo (4 u 8, registrado: las tareas y las fechas son las de su profesor,
-// de su espacio en la nube). Mientras llega la respuesta, la copia del navegador; sin copia, un código
-// antiguo se pinta como antiguo (y cambia si resulta estar registrado).
+// Con código (4 u 8 caracteres, registrado), las tareas y las fechas son las de su profesor, de su
+// espacio en la nube. Mientras llega la respuesta, la copia del navegador; sin copia, las de `tareas.js`
+// (y cambian al saber de quién es).
 const textoCodigo = enNavegador ? new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '' : '';
-let contexto = contextoGuardado(textoCodigo)
-  ?? (esCodigoAntiguo(textoCodigo) ? contextoAntiguo(leerCodigoAlumno(textoCodigo)) : null);
+let contexto = contextoGuardado(textoCodigo);
 let codigo = contexto?.codigo ?? leerCodigoSecreto(textoCodigo);
 let tareas = contexto?.tareas ?? TAREAS;
 let unidades = contexto?.unidades ?? UNIDADES;
@@ -289,7 +287,6 @@ if (enNavegador) {
 
 /**
  * Con código, de qué profesor es y cuáles son sus tareas (la copia del navegador ya está pintada).
- * También con uno de 4 del modo antiguo: puede estar ya registrado en el sistema nuevo.
  */
 async function arrancar() {
   const suyo = codigo;

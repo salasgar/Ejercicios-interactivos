@@ -97,7 +97,7 @@ export const T = {
     semana_no_existe: 'Esa tarea no existe.',
     semana_elige_tarea: 'Estas son las tareas de la semana:',
     semana_cargando_nombre: '…',
-    // Código de 8 (tareas de su profesor; tarea 65)
+    // Tareas del profesor del alumno (tarea 65)
     espacio_sin_red: 'No se han podido cargar las tareas de tu profesor. Comprueba la conexión y vuelve a intentarlo; mientras tanto puedes practicar.',
     espacio_sin_tareas: 'Tu profesor todavía no ha publicado tareas.',
     // Tareas v2: tipo, plazo y retraso, y unidades (DISENO.md, A y B; tarea 51, las usa la 52)

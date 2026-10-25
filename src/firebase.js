@@ -393,45 +393,10 @@ export async function iniciarFirebase() {
     return snap.docs.map(d => ({ alumno: d.ref.parent.parent.id, tareaId: d.id, ...d.data() }));
   }
 
-  // --- Práctica «divisor, múltiplo, divisible» (divisores/) ----------------
-
-  /** Un documento por alumno, con su código como id: { id, estado, actualizado }. */
-  async function listarPracticaDivisores() {
-    const snap = await Fs.getDocs(col('divisores'));
-    return snap.docs.map(datosDe);
-  }
-
-  // --- Prácticas de la unidad 2 (practicas/) --------------------------------
-
-  /** Un documento por alumno y práctica, con id `<slug>--<código>`: { id, estado, actualizado }. */
-  async function listarPracticas() {
-    const snap = await Fs.getDocs(col('practicas'));
-    return snap.docs.map(datosDe);
-  }
-
-  // --- Tareas de las prácticas, modelo v2 (practicas-tareas, practicas-asignaciones)
-
-  /** Un documento por alumno, tarea y práctica, con id `t<tarea>--<slug>--<código>`: { id, estado, actualizado }. */
-  async function listarPracticasTareas() {
-    const snap = await Fs.getDocs(col('practicas-tareas'));
-    return snap.docs.map(datosDe);
-  }
-
-  /** Tareas asignadas a cada alumno: un documento por código, { id: código, tareas: [ids], actualizado }. */
-  async function listarAsignaciones() {
-    const snap = await Fs.getDocs(col('practicas-asignaciones'));
-    return snap.docs.map(datosDe);
-  }
-
-  /**
-   * Guarda las tareas asignadas a un alumno (sustituye a las que tuviera). Una
-   * lista vacía deja el documento con `tareas: []`: el alumno no tiene ninguna.
-   */
-  async function guardarAsignacion(codigo, tareas) {
-    const ids = [...new Set(tareas.map(Number))].filter(n => Number.isInteger(n) && n >= 1).sort((a, b) => a - b);
-    await Fs.setDoc(docRef('practicas-asignaciones', codigo), { tareas: ids, actualizado: Date.now() });
-    return ids;
-  }
+  // Las prácticas (practicas/) leen y escriben en el espacio de cada profesor:
+  // ver crearAccesoPanel. Las funciones de las colecciones del modo antiguo
+  // (`divisores`, `practicas`, `practicas-tareas`, `practicas-asignaciones`) se
+  // quitaron en la tarea 71, con las colecciones.
 
   return {
     entrar, entrarConGoogle, salir, observarSesion, esProfesor, usuario,
@@ -439,8 +404,6 @@ export async function iniciarFirebase() {
       leerAlumno, listarAlumnos, listarCredenciales, crearAlumno, actualizarAlumno, borrarAlumno,
       listarTareas, crearTarea, actualizarTarea, borrarTarea,
       leerProgreso, listarProgresos, guardarProgreso, progresosDeTarea, todosLosProgresos,
-      listarPracticaDivisores, listarPracticas,
-      listarPracticasTareas, listarAsignaciones, guardarAsignacion,
       // Varios profesores (tarea 63): ver crearAccesoPanel.
       panel: crearAccesoPanel({ Fs, db, auth, esAdmin: esProfesor }),
     },

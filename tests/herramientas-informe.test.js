@@ -142,7 +142,7 @@ function docsTarea(t, indice, porSlug, actualizado = AHORA_TARDE - 1000) {
 /** Todos los ejercicios de TAREA_V2 terminados el día `dia` (recta 1-2 y semaforo 1). */
 const entregadaEl = dia => ({ recta: [ej(10, { dia }), ej(10, { dia })], semaforo: [ej(10, { dia })] });
 
-test('claveDocumento: la tarea 1 lee practicas/<slug>--<código>; las demás, practicas-tareas/t<id>--<slug>--<código>', () => {
+test('claveDocumento: la tarea 1 lee progreso-libre/<slug>--<código>; las demás, progreso-tareas/t<id>--<slug>--<código>', () => {
   assert.equal(claveDocumento(tarea, 'recta', 'ABCD'), 'recta--ABCD');
   assert.equal(claveDocumento(TAREA_V2, 'recta', 'ABCD'), 't77--recta--ABCD');
   // Un documento de la práctica libre no cuenta en una tarea v2.
@@ -249,7 +249,7 @@ test('regla de publicación: el informe de la tarea 1 es el de siempre (document
   assert.equal(r.noAsignados, 0);
   const texto = formatear(r, { tarea, ahora: AHORA, horas: 24 });
   assert.doesNotMatch(texto, /elegida automáticamente|Tarea asignada/);
-  assert.match(texto, /Fuente: documentos practicas\/<slug>--<código>/);
+  assert.match(texto, /Fuente: documentos progreso-libre\/<slug>--<código>/);
   assert.match(texto, /Plazo: hasta el 2026-10-22/);
 });
 
@@ -403,4 +403,15 @@ test('el informe también lo importa el navegador: ninguna importación de node:
   assert.doesNotMatch(fuente, /^import .* from 'node:/m);
   assert.match(fuente, /typeof process !== 'undefined'/);
   assert.doesNotMatch(fuente.split('function argumento')[0], /process\./);
+});
+
+test('sin --espacio no hay informe (tarea 71: el modo antiguo ya no existe): uso y salida 2, sin leer la nube', async () => {
+  const { spawnSync } = await import('node:child_process');
+  const ruta = new URL('../herramientas/informe-actividad.mjs', import.meta.url).pathname;
+  const r = spawnSync(process.execPath, [ruta, '--alumnos', '51'], { encoding: 'utf8', env: { ...process.env, LECTOR_EMAIL: '', LECTOR_CLAVE: '' } });
+  assert.equal(r.status, 2);
+  assert.match(r.stderr, /Uso: .*--espacio <uid>/);
+  assert.equal(r.stdout, '');
+  const fuente = (await import('node:fs')).readFileSync(ruta, 'utf8');
+  assert.doesNotMatch(fuente, /'practicas-tareas'|'practicas-asignaciones'|COLECCION_/, 'no lee las colecciones viejas');
 });

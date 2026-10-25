@@ -1,8 +1,8 @@
 // Modelo puro de varios profesores (tarea 62 del reparto PU2): código secreto,
 // tareas y fechas como parámetro, configuración del profesor, rutas del espacio
-// y resolución de un código a su profesor. Nadie lo usa aún: lo que se comprueba
-// aquí es que las piezas funcionan y que el modo antiguo (código de 4, lista
-// por defecto) da lo mismo que antes.
+// y resolución de un código a su profesor. Desde la tarea 71 no hay modo
+// antiguo: un código de 4 sin registrar no existe; la lista por defecto
+// (`TAREAS`, la plantilla) sigue dando lo mismo que antes.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -18,7 +18,7 @@ import {
   coleccionEspacio, urlDocumento, urlBusqueda, urlConfig, urlAsignacion, leerNube, escribirNube, leerAsignacion,
   leerBusqueda, leerConfig, leerBusquedaRest, leerConfigRest,
 } from '../practicas/_comun/nube.js';
-import { resolverCodigo, claveEspacio, claveAntiguo, VIGENCIA_ANTIGUO } from '../practicas/_comun/espacio.js';
+import { resolverCodigo, claveEspacio } from '../practicas/_comun/espacio.js';
 
 const CONFIG = { apiKey: 'clave', projectId: 'proyecto' };
 const UID = 'AbC123profesor';
@@ -122,7 +122,7 @@ test('configuración (tarea 72): longitudCodigo 4 u 8, por defecto 8, y solo se 
 
 // --- Tareas y fechas como parámetro ----------------------------------------------
 
-test('modo antiguo: con la lista por defecto todo da lo mismo que antes', () => {
+test('plantilla: con la lista por defecto (TAREAS) todo da lo mismo que antes', () => {
   for (const t of TAREAS) {
     assert.equal(tareaPorId(t.id), t);
     assert.equal(tareaPorId(t.id, TAREAS), t);
@@ -237,7 +237,8 @@ test('las URL REST: documento con colección con barras, búsqueda y configuraci
     urlDocumento('semaforo', CODIGO, CONFIG, { coleccion: coleccionEspacio(UID, 'progreso-libre'), id: `semaforo--${CODIGO}` }),
     `${base}/practicas-espacios/${UID}/progreso-libre/semaforo--${CODIGO}?key=clave`);
   assert.equal(urlAsignacion(CODIGO, CONFIG, coleccionEspacio(UID, 'asignaciones')), `${base}/practicas-espacios/${UID}/asignaciones/${CODIGO}?key=clave`);
-  assert.equal(urlAsignacion('7NPD', CONFIG), `${base}/practicas-asignaciones/7NPD?key=clave`, 'sin colección, la de siempre');
+  assert.equal(urlAsignacion('7NPD', CONFIG), null, 'sin colección no hay URL (la del modo antiguo ya no existe)');
+  assert.equal(urlDocumento('semaforo', '7NPD', CONFIG), null);
   assert.equal(urlBusqueda(CODIGO, CONFIG), `${base}/practicas-alumnos/${CODIGO}?key=clave`);
   assert.equal(urlConfig(UID, CONFIG), `${base}/practicas-espacios/${UID}/config/tareas?key=clave`);
   assert.equal(urlBusqueda(CODIGO, {}), null);
@@ -277,8 +278,8 @@ test('leerNube, escribirNube y leerAsignacion con la colección del espacio', as
 
   const g = fetchFalso({ [`practicas-espacios/${UID}/asignaciones/${CODIGO}`]: { json: { fields: { tareas: { arrayValue: { values: [{ integerValue: '5' }] } } } } } });
   assert.deepEqual(await leerAsignacion(CODIGO, { fetch: g, config: CONFIG, coleccion: coleccionEspacio(UID, 'asignaciones') }), { tareas: [5] });
-  assert.equal(await leerAsignacion(CODIGO, { fetch: g, config: CONFIG }), null, 'sin colección, la antigua: 404');
-  assert.match(g.pedidos[1].url, /practicas-asignaciones\//);
+  assert.equal(await leerAsignacion(CODIGO, { fetch: g, config: CONFIG }), null, 'sin colección, nada');
+  assert.equal(g.pedidos.length, 1, 'y sin preguntar a nadie');
 
   const vacio = fetchFalso({});
   assert.equal((await leerNube('semaforo', CODIGO, { fetch: vacio, config: CONFIG, coleccion, id })).estado, 'vacio');
@@ -321,75 +322,55 @@ const nubeBuena = () => fetchFalso({
   [`practicas-espacios/${UID}/config/tareas`]: { json: { fields: { json: { stringValue: configAJSON(CONFIG_PROFESOR) } } } },
 });
 
-// Tarea 72: un código de 4 del modo antiguo puede estar registrado (los de Juan Luis
-// pasan tal cual) o no; uno de 4 generado al azar es como uno de 8.
+// Un código de 4 calculable (los de siempre de Juan Luis, `codigoAlumno`): vale si
+// está registrado (tarea 70) y, si no, no existe (tarea 71: ya no hay modo antiguo).
+// Uno de 4 generado al azar es como uno de 8.
 const ANTIGUO = codigoAlumno(13);
 const filaAntiguo = { fields: { profesor: { stringValue: UID }, n: { integerValue: '60' }, alta: { integerValue: '1' } } };
 const nubeConAntiguo = () => fetchFalso({
   [`practicas-alumnos/${ANTIGUO}`]: { json: filaAntiguo },
   [`practicas-espacios/${UID}/config/tareas`]: { json: { fields: { json: { stringValue: configAJSON(CONFIG_PROFESOR) } } } },
 });
-const AHORA = Date.UTC(2026, 9, 24, 10, 0);
 
-test('resolverCodigo: un código de 4 antiguo que la nube no conoce (404) es del modo antiguo, como siempre, y se recuerda un rato', async () => {
+test('resolverCodigo (tarea 71): un código de 4 calculable que la nube no conoce (404) no existe, y no se recuerda nada', async () => {
   const almacen = almacenFalso();
   const f = fetchFalso({});
-  const r = await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG, ahora: AHORA });
-  assert.deepEqual(r, { modo: 'antiguo', n: 13 });
+  assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG }), { error: 'no-existe' });
   assert.equal(f.pedidos.length, 1);
   assert.ok(f.pedidos[0].url.includes(`practicas-alumnos/${ANTIGUO}`), 'pregunta por el propio código');
-  assert.equal(almacen.datos.get(claveAntiguo(ANTIGUO)), String(AHORA));
-  assert.equal(almacen.datos.has(claveEspacio(ANTIGUO)), false);
-  // Dentro de la vigencia, sin preguntar (otra página, otra práctica…).
+  assert.equal(almacen.datos.size, 0);
+  // Ni una marca vieja del modo antiguo en el navegador (`practicas.v1.antiguo.<código>`) lo salva: se pregunta igual.
+  almacen.setItem(`practicas.v1.antiguo.${ANTIGUO}`, String(Date.now()));
   const g = fetchFalso({});
-  assert.deepEqual(await resolverCodigo(ANTIGUO.toLowerCase(), { fetch: g, almacen, config: CONFIG, ahora: AHORA + VIGENCIA_ANTIGUO - 1 }), { modo: 'antiguo', n: 13 });
-  assert.equal(g.pedidos.length, 0);
-  // Pasada la vigencia, se vuelve a preguntar: si entretanto lo han registrado (tarea 70), ya es del sistema nuevo.
-  const h = nubeConAntiguo();
-  const s = await resolverCodigo(ANTIGUO, { fetch: h, almacen, config: CONFIG, ahora: AHORA + VIGENCIA_ANTIGUO });
-  assert.equal(s.modo, 'nuevo');
-  assert.equal(s.profesor, UID);
-  assert.equal(s.n, 60);
-  assert.equal(h.pedidos.length, 2);
-  assert.equal(almacen.datos.has(claveAntiguo(ANTIGUO)), false, 'ya no se recuerda como antiguo');
-  assert.ok(almacen.datos.has(claveEspacio(ANTIGUO)));
-  // Una hora rara (reloj cambiado hacia atrás) no alarga la vigencia.
-  const k = fetchFalso({});
-  const almacen2 = almacenFalso();
-  almacen2.setItem(claveAntiguo(ANTIGUO), String(AHORA + 1000));
-  await resolverCodigo(ANTIGUO, { fetch: k, almacen: almacen2, config: CONFIG, ahora: AHORA });
-  assert.equal(k.pedidos.length, 1);
+  assert.deepEqual(await resolverCodigo(ANTIGUO.toLowerCase(), { fetch: g, almacen, config: CONFIG }), { error: 'no-existe' });
+  assert.equal(g.pedidos.length, 1);
 });
 
-test('resolverCodigo: un código de 4 antiguo ya registrado es del sistema nuevo, con su profesor, su número y sus tareas', async () => {
+test('resolverCodigo: un código de 4 calculable registrado entra en su espacio, con su profesor, su número y sus tareas', async () => {
   const almacen = almacenFalso();
-  const r = await resolverCodigo(ANTIGUO, { fetch: nubeConAntiguo(), almacen, config: CONFIG, ahora: AHORA });
+  const r = await resolverCodigo(ANTIGUO, { fetch: nubeConAntiguo(), almacen, config: CONFIG });
   assert.deepEqual(r, { modo: 'nuevo', profesor: UID, n: 60, config: CONFIG_PROFESOR, desdeCache: false });
-  // Con la copia del navegador de que es del nuevo, se pregunta siempre (aunque hubiera un «antiguo» reciente).
-  almacen.setItem(claveAntiguo(ANTIGUO), String(AHORA));
-  const f = nubeConAntiguo();
-  assert.equal((await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG, ahora: AHORA })).modo, 'nuevo');
-  assert.equal(f.pedidos.length, 2);
+  assert.ok(almacen.datos.has(claveEspacio(ANTIGUO)));
 });
 
-test('resolverCodigo: un código de 4 antiguo sin red, sin permiso o con la nube caída: la copia si la hay; si no, el modo antiguo', async () => {
+test('resolverCodigo: un código de 4 calculable sin red, sin permiso o con la nube caída: la copia si la hay; si no, sin red', async () => {
   const sinRed = fetchFalso({ [ANTIGUO]: new Error('sin red') });
-  const prohibido = fetchFalso({ [ANTIGUO]: { status: 403 } });   // reglas aún sin publicar
+  const prohibido = fetchFalso({ [ANTIGUO]: { status: 403 } });
   const caida = fetchFalso({ [ANTIGUO]: { status: 500 } });
   for (const f of [sinRed, prohibido, caida]) {
     const almacen = almacenFalso();
-    assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG, ahora: AHORA }), { modo: 'antiguo', n: 13 });
+    assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG }), { error: 'sin-red' });
     assert.equal(almacen.datos.size, 0, 'sin respuesta de la nube no se recuerda nada');
   }
   // Con copia de que está registrado: la copia.
   const almacen = almacenFalso();
-  await resolverCodigo(ANTIGUO, { fetch: nubeConAntiguo(), almacen, config: CONFIG, ahora: AHORA });
-  const r = await resolverCodigo(ANTIGUO, { fetch: sinRed, almacen, config: CONFIG, ahora: AHORA });
+  await resolverCodigo(ANTIGUO, { fetch: nubeConAntiguo(), almacen, config: CONFIG });
+  const r = await resolverCodigo(ANTIGUO, { fetch: sinRed, almacen, config: CONFIG });
   assert.equal(r.modo, 'nuevo');
   assert.equal(r.desdeCache, true);
   assert.equal(r.n, 60);
   // Sin almacén (navegación privada), tampoco rompe.
-  assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: sinRed, almacen: null, config: CONFIG }), { modo: 'antiguo', n: 13 });
+  assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: sinRed, almacen: null, config: CONFIG }), { error: 'sin-red' });
 });
 
 test('resolverCodigo: un código de 4 generado (sin la comprobación antigua) es como uno de 8', async () => {
@@ -400,16 +381,16 @@ test('resolverCodigo: un código de 4 generado (sin la comprobación antigua) es
     [`practicas-espacios/${UID}/config/tareas`]: { json: { fields: { json: { stringValue: configAJSON(CONFIG_PROFESOR) } } } },
   });
   const almacen = almacenFalso();
-  const r = await resolverCodigo('k7qm', { fetch: nube4(), almacen, config: CONFIG, ahora: AHORA });
+  const r = await resolverCodigo('k7qm', { fetch: nube4(), almacen, config: CONFIG });
   assert.deepEqual(r, { modo: 'nuevo', profesor: UID, n: 14, config: CONFIG_PROFESOR, desdeCache: false });
   const sinRed = fetchFalso({ [NUEVO4]: new Error('sin red') });
-  assert.equal((await resolverCodigo(NUEVO4, { fetch: sinRed, almacen, config: CONFIG, ahora: AHORA })).desdeCache, true);
-  assert.deepEqual(await resolverCodigo(NUEVO4, { fetch: sinRed, almacen: almacenFalso(), config: CONFIG, ahora: AHORA }), { error: 'sin-red' });
-  // 404: no existe (no hay modo antiguo al que volver), y no se recuerda como antiguo.
+  assert.equal((await resolverCodigo(NUEVO4, { fetch: sinRed, almacen, config: CONFIG })).desdeCache, true);
+  assert.deepEqual(await resolverCodigo(NUEVO4, { fetch: sinRed, almacen: almacenFalso(), config: CONFIG }), { error: 'sin-red' });
+  // 404: no existe, y no se recuerda nada.
   const vacio = almacenFalso();
-  assert.deepEqual(await resolverCodigo(NUEVO4, { fetch: fetchFalso({}), almacen: vacio, config: CONFIG, ahora: AHORA }), { error: 'no-existe' });
+  assert.deepEqual(await resolverCodigo(NUEVO4, { fetch: fetchFalso({}), almacen: vacio, config: CONFIG }), { error: 'no-existe' });
   assert.equal(vacio.datos.size, 0);
-  await resolverCodigo(NUEVO4, { fetch: fetchFalso({}), almacen, config: CONFIG, ahora: AHORA });
+  await resolverCodigo(NUEVO4, { fetch: fetchFalso({}), almacen, config: CONFIG });
   assert.equal(almacen.datos.has(claveEspacio(NUEVO4)), false, 'la copia se olvida');
 });
 

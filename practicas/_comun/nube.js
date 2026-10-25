@@ -1,7 +1,9 @@
 // Progreso en la nube compartido entre aparatos (tarea 38 del reparto PU2).
 //
 // Cada alumno tiene, por práctica, un documento de Firestore
-// `practicas/{slug}--{código}` con su progreso. Desde la tarea 38 el alumno
+// `{slug}--{código}` con su progreso, en el espacio de su profesor
+// (`practicas-espacios/{uid}/progreso-libre`; hasta la tarea 71, también en la
+// colección `practicas` del modo antiguo). El alumno
 // puede LEER su documento (regla `allow get`, nunca `list`) y la app fusiona
 // lo de la nube con lo del navegador antes de subir nada: así se puede seguir
 // desde cualquier aparato entrando con el mismo código, y un aparato no
@@ -104,13 +106,6 @@ export function fusionarProgreso(a, b) {
 
 // --- Firestore por REST ------------------------------------------------------------
 
-/** Colección del progreso de la práctica libre (y de la tarea 1). */
-export const COLECCION_PRACTICAS = 'practicas';
-/** Colección del progreso por tarea (modelo v2, tarea 50): un documento por alumno, tarea y práctica. */
-export const COLECCION_TAREAS = 'practicas-tareas';
-/** Colección de las asignaciones de tareas a alumnos (un documento por código). */
-export const COLECCION_ASIGNACIONES = 'practicas-asignaciones';
-
 /** Id del documento de una práctica libre: `{slug}--{código}`. */
 export const idDocumentoPractica = (slug, codigo) => `${slug}--${codigo}`;
 
@@ -121,24 +116,24 @@ export const idDocumentoTarea = (tareaId, slug, codigo) => `t${tareaId}--${slug}
 export const claveProgresoTarea = (slug, codigo, tareaId) => `practicas.v1.${slug}.${codigo}.t${tareaId}`;
 
 /**
- * URL REST de un documento, o null si no hay Firebase configurado. Por defecto
- * `practicas/{slug}--{código}`; con `coleccion` e `id` se apunta a otro (las
- * tareas v2 usan `practicas-tareas/t{id}--{slug}--{código}`).
+ * URL REST del documento `id` (por defecto `{slug}--{código}`) de la colección
+ * `coleccion` (la de un espacio: `coleccionEspacio`), o null si no hay Firebase
+ * configurado o no se dice la colección (desde la tarea 71 no hay una por defecto).
  */
-export function urlDocumento(slug, codigo, config = firebaseConfig, { coleccion = COLECCION_PRACTICAS, id = idDocumentoPractica(slug, codigo) } = {}) {
-  if (!config?.apiKey || !config?.projectId) return null;
+export function urlDocumento(slug, codigo, config = firebaseConfig, { coleccion = null, id = idDocumentoPractica(slug, codigo) } = {}) {
+  if (!config?.apiKey || !config?.projectId || !coleccion) return null;
   return `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccion}/${id}?key=${config.apiKey}`;
 }
 
-/** URL REST de la asignación de un alumno, `practicas-asignaciones/{código}`, o null sin Firebase. */
-export function urlAsignacion(codigo, config = firebaseConfig, coleccion = COLECCION_ASIGNACIONES) {
+/** URL REST de la asignación de un alumno, `{coleccion}/{código}`, o null sin Firebase o sin colección. */
+export function urlAsignacion(codigo, config = firebaseConfig, coleccion = null) {
   return urlDocumento(null, codigo, config, { coleccion, id: codigo });
 }
 
 // --- Espacio de un profesor (varios profesores, tarea 62) --------------------------
 //
 // Los datos de cada profesor viven en subcolecciones de `practicas-espacios/{uid}`.
-// Los lectores de arriba ya aceptan la colección como parámetro: basta con pasarles
+// Los lectores de arriba reciben la colección como parámetro: se les pasa
 // `coleccionEspacio(uid, 'progreso-libre')`, que lleva barras y va tal cual en la URL.
 
 /** Qué subcolecciones tiene un espacio (DISENO.md, C.1). */
@@ -258,7 +253,7 @@ export function leerDocumentoRest(json) {
  * Devuelve { estado, ej, idioma }:
  *   'ok'        el documento existe (ej e idioma, lo que dice);
  *   'vacio'     no existe (alumno que no ha subido nada de esa práctica);
- *   'prohibido' las reglas no dejan leerlo (las de antes de la tarea 38);
+ *   'prohibido' las reglas no dejan leerlo;
  *   'error'     sin red, tiempo agotado, documento ilegible u otro fallo.
  * Nunca lanza. El `ej` leído ya viene adaptado a los ejercicios de hoy
  * (`adaptarProgreso`: una lista guardada antes de quitar un ejercicio); si

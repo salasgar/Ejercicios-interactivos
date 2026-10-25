@@ -6,7 +6,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { practicaPorSlug } from '../practicas/_comun/catalogo.js';
-import { codigoAlumno } from '../practicas/_comun/codigos.js';
+import { codigoAlumno, leerCodigoAlumno } from '../practicas/_comun/codigos.js';
 import { TAREAS, diaDeFecha } from '../practicas/_comun/tareas.js';
 import {
   juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
@@ -59,20 +59,24 @@ test('el id t12--semaforo--K7QM se parte en tarea, práctica y código', () => {
 
 test('leerDocumentos: cada colección con su forma de id, sin mezclarlas', () => {
   const estado = JSON.stringify({ v: 1, ej: ej(5) });
-  const delaTarea = leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado, actualizado: 7 }], 'practicas-tareas');
+  // `indiceDe` de prueba: el de los códigos de 4 calculables (como los de siempre de Juan Luis).
+  const leer = (docs, coleccion) => leerDocumentos(docs, coleccion, leerCodigoAlumno);
+  const delaTarea = leer([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado, actualizado: 7 }], 'progreso-tareas');
   assert.equal(delaTarea.length, 1);
   assert.deepEqual([delaTarea[0].tarea, delaTarea[0].practica, delaTarea[0].indice], [2, SEMAFORO, 3]);
-  // Un documento de tarea metido en `practicas` no se lee como progreso de práctica libre.
-  assert.deepEqual(leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado }], 'practicas'), []);
-  // Y uno de práctica en `practicas-tareas` tampoco se lee como de una tarea.
-  assert.deepEqual(leerDocumentos([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'practicas-tareas'), []);
-  const libre = leerDocumentos([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'practicas');
+  // Un documento de tarea metido en `progreso-libre` no se lee como progreso de práctica libre.
+  assert.deepEqual(leer([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado }], 'progreso-libre'), []);
+  // Y uno de práctica en `progreso-tareas` tampoco se lee como de una tarea.
+  assert.deepEqual(leer([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'progreso-tareas'), []);
+  const libre = leer([{ id: `semaforo--${codigoAlumno(3)}`, estado }], 'progreso-libre');
   assert.equal(libre[0].tarea, undefined);
-  assert.deepEqual(leerDocumentos([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado: 'no es json' }], 'practicas-tareas'), []);
+  assert.deepEqual(leer([{ id: `t2--semaforo--${codigoAlumno(3)}`, estado: 'no es json' }], 'progreso-tareas'), []);
+  // Las colecciones del modo antiguo ya no se leen (tarea 71).
+  for (const vieja of ['practicas', 'practicas-tareas', 'divisores', undefined]) assert.throws(() => leer([], vieja), /colección desconocida/);
 });
 
 test('leerAsignaciones: el id es el código y las tareas, una lista de enteros', () => {
-  const r = leerAsignaciones([{ id: codigoAlumno(4), tareas: [92, 7] }, { id: 'ZZZZ', tareas: [1] }, { id: codigoAlumno(5), tareas: [] }, { id: codigoAlumno(6) }]);
+  const r = leerAsignaciones([{ id: codigoAlumno(4), tareas: [92, 7] }, { id: 'ZZZZ', tareas: [1] }, { id: codigoAlumno(5), tareas: [] }, { id: codigoAlumno(6) }], leerCodigoAlumno);
   assert.deepEqual(r, [{ indice: 4, tareas: [92, 7] }, { indice: 5, tareas: [] }]);
 });
 
@@ -218,8 +222,8 @@ test('espacio: leerDocumentos y leerAsignaciones con los códigos del profesor',
   const deTarea = leerDocumentos([{ id: 't4--semaforo--K7QMP3XA', estado }], 'progreso-tareas', indiceDe);
   assert.deepEqual(deTarea.map(d => [d.tarea, d.indice]), [[4, 0]]);
   assert.deepEqual(leerDocumentos([{ id: 'semaforo--K7QMP3XA', estado }], 'progreso-tareas', indiceDe), []);
-  // Sin `indiceDe`, como siempre: un código de 8 no se entiende en el modo antiguo.
-  assert.deepEqual(leerDocumentos([{ id: 'semaforo--K7QMP3XA', estado }], 'practicas'), []);
+  // Un código que no es del profesor no se lee.
+  assert.deepEqual(leerDocumentos([{ id: 'semaforo--ZZZZZZZZ', estado }], 'progreso-libre', indiceDe), []);
   assert.deepEqual(leerAsignaciones([{ id: 'ZZZZ9999', tareas: [2, 5] }, { id: 'AAAABBBB', tareas: [1] }], indiceDe), [{ indice: 6, tareas: [2, 5] }]);
 });
 

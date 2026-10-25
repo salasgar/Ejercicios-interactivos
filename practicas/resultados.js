@@ -2,7 +2,7 @@
 // los códigos de resultado y los datos de la nube. Puro, para poder probarlo.
 
 import { practicaPorSlug, adaptarProgreso } from './_comun/catalogo.js';
-import { leerCodigoAlumno, leerCodigoTarea } from './_comun/codigos.js';
+import { leerCodigoTarea } from './_comun/codigos.js';
 import { estadoTarea, estadoPlazo, diaDeFecha } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
 
@@ -85,7 +85,7 @@ export function juntarResumen(nombres, deCodigos, deNube, practicas) {
  * terminado y, a medias, la parte proporcional (eso solo lo sabe la nube).
  *
  * @param tareas          las columnas, en orden (de `_comun/tareas.js`)
- * @param opciones        { deNubeTareas: [{ tarea, practica, indice, ej }] (colección `practicas-tareas`, modelo v2),
+ * @param opciones        { deNubeTareas: [{ tarea, practica, indice, ej }] (colección `progreso-tareas`, modelo v2),
  *                          asignaciones: [{ indice, tareas: [ids] }] (`practicas-asignaciones`),
  *                          hoyDia: número de día de hoy (contador.js) }
  *
@@ -390,7 +390,7 @@ export function agruparFallos(fallos, filtros = {}, ejemplos = 3) {
 }
 
 /**
- * Parte el id de un documento de `practicas-tareas`, `t<tarea>--<slug>--<código>`,
+ * Parte el id de un documento de `progreso-tareas`, `t<tarea>--<slug>--<código>`,
  * en { tarea, slug, codigo }; null si no tiene esa forma (justo tres trozos).
  */
 export function partirIdTarea(id) {
@@ -401,21 +401,20 @@ export function partirIdTarea(id) {
 }
 
 /**
- * Documentos de Firestore → datos planos para las funciones de arriba.
- * En la colección `practicas` el id es `<slug>--<código>`; en la antigua
- * `divisores`, el código a secas (y es la práctica 0); en `practicas-tareas`
- * (modelo v2), `t<tarea>--<slug>--<código>` y el dato lleva además `tarea`.
- * En el espacio de un profesor (tarea 66), `progreso-libre` tiene la forma de
- * `practicas` y `progreso-tareas` la de `practicas-tareas`, con códigos de 8:
- * `indiceDe` dice qué número de alumno es cada código (por defecto, el del modo
- * antiguo). Lo ilegible se descarta.
+ * Documentos de Firestore (del espacio de un profesor, tarea 66) → datos planos
+ * para las funciones de arriba. En `progreso-libre` el id es `<slug>--<código>`;
+ * en `progreso-tareas` (modelo v2), `t<tarea>--<slug>--<código>` y el dato lleva
+ * además `tarea`. `indiceDe` dice qué número de alumno es cada código (el de
+ * `indicesDeCodigos`, con los códigos del profesor). Lo ilegible se descarta.
+ * (Hasta la tarea 71 leía también las colecciones del modo antiguo: `practicas`,
+ * `practicas-tareas` y `divisores`.)
  */
-export function leerDocumentos(docs, coleccion = 'practicas', indiceDe = leerCodigoAlumno) {
+export function leerDocumentos(docs, coleccion, indiceDe) {
+  if (coleccion !== 'progreso-libre' && coleccion !== 'progreso-tareas') throw new Error(`colección desconocida: ${coleccion}`);
   return docs.map(doc => {
     let tarea;
     let slug, codigo;
-    if (coleccion === 'divisores') [slug, codigo] = ['divisores', doc.id];
-    else if (coleccion === 'practicas-tareas' || coleccion === 'progreso-tareas') {
+    if (coleccion === 'progreso-tareas') {
       const partes = partirIdTarea(doc.id);
       if (!partes) return null;
       ({ tarea, slug, codigo } = partes);
@@ -436,8 +435,8 @@ export function leerDocumentos(docs, coleccion = 'practicas', indiceDe = leerCod
   }).filter(Boolean);
 }
 
-/** Documentos de `practicas-asignaciones` (id = código, `tareas` = ids) → [{ indice, tareas }]. `indiceDe`, como en `leerDocumentos`. */
-export function leerAsignaciones(docs, indiceDe = leerCodigoAlumno) {
+/** Documentos de `asignaciones` (id = código, `tareas` = ids) → [{ indice, tareas }]. `indiceDe`, como en `leerDocumentos`. */
+export function leerAsignaciones(docs, indiceDe) {
   return docs.map(doc => {
     const indice = indiceDe(String(doc.id));
     if (indice === null || indice === undefined || !Array.isArray(doc.tareas)) return null;
@@ -447,10 +446,10 @@ export function leerAsignaciones(docs, indiceDe = leerCodigoAlumno) {
 
 // --- Espacio del profesor (varios profesores, tarea 66; DISENO.md, B.2 y F.1) ----------
 //
-// En el espacio, el código de 8 no dice nada: el número de lista lo dice la fila de
-// `practicas-alumnos` del profesor (`n`, desde 1). El panel sigue trabajando con
-// `indice` = posición en la lista de nombres (desde 0), como en el modo antiguo:
-// `indice = n − 1`. Así la línea 1 de la lista es el alumno n.º 1 en los dos modos.
+// En el espacio, el código no dice nada: el número de lista lo dice la fila de
+// `practicas-alumnos` del profesor (`n`, desde 1). El panel trabaja con
+// `indice` = posición en la lista de nombres (desde 0): `indice = n − 1`. Así la
+// línea 1 de la lista es el alumno n.º 1.
 
 /**
  * Los códigos del profesor (lo que devuelve `listarMisCodigos`: [{ id: código, n }])

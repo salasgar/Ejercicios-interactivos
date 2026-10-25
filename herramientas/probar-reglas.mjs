@@ -3,8 +3,10 @@
 // (tarea 61 del reparto PU2; diseño en reparto-practicas-u2/salidas/57-diseno-
 // varios-profesores/DISENO.md, C.2 y C.3). Comprueba por REST, en el proyecto
 // real y con las reglas ya publicadas, que cada profesor ve lo suyo y no lo del
-// otro, que el alumno sin cuenta solo llega a lo de su código y que el modo
-// antiguo (códigos de 4) sigue igual. Sin emulador: este Mac no tiene Java.
+// otro, que el alumno sin cuenta solo llega a lo de su código y, desde la tarea
+// 71, que las colecciones del modo antiguo (practicas, practicas-tareas,
+// practicas-asignaciones, fallos y divisores) no se leen ni se escriben. Sin
+// emulador: este Mac no tiene Java.
 //
 // Necesita dos cuentas de prueba de correo y contraseña, creadas en la consola
 // (Authentication → Users) y dadas de alta a mano como profesores
@@ -22,8 +24,9 @@
 // Además crea por REST una tercera cuenta desechable, «sin alta», y la borra al
 // terminar. Los datos de prueba llevan códigos inventados de 8 caracteres que
 // empiezan por ZZ y, desde la tarea 72, de 4 que empiezan por ZZ (nunca uno
-// del modo antiguo). Además, si nadie lo tiene registrado, registra un rato en
-// el espacio de A el código de prueba 60 (7NPD, del modo antiguo) y lo borra.
+// de los 1024 calculables, que son los de los alumnos de Juan Luis). Además, si
+// nadie lo tiene registrado, registra un rato en el espacio de A el código de
+// prueba 60 (7NPD, calculable) y lo borra.
 // No imprime uids, correos ni contraseñas. Termina con código 1 si alguna
 // comprobación no da lo esperado.
 
@@ -46,11 +49,11 @@ function azar(n, alfabeto = ALFABETO) {
   return [...v].map(x => alfabeto[x % alfabeto.length]).join('');
 }
 const codigoPrueba = () => `ZZ${azar(6)}`;
-/** Código de prueba de 4 (tarea 72): ZZ + 2, nunca uno de los 1024 del modo antiguo. */
+/** Código de prueba de 4 (tarea 72): ZZ + 2, nunca uno de los 1024 calculables (los de los alumnos de Juan Luis). */
 function codigoPrueba4() {
   for (;;) { const c = `ZZ${azar(2)}`; if (leerCodigoAlumno(c) === null) return c; }
 }
-/** El código de prueba 60 del modo antiguo (nunca el de un alumno). */
+/** El código de prueba 60, calculable (nunca el de un alumno). */
 const ANTIGUO_PRUEBA = '7NPD';
 const N_ANTIGUO_PRUEBA = 60;
 
@@ -169,6 +172,10 @@ function estaticas() {
   ok('la sección nueva va después de match /tareas/', inicio > reglas.indexOf('match /tareas/{tareaId}'));
   ok('esAdmin/esProfesor no aparecen en el espacio', !/esAdmin\(|esProfesor\(/.test(espacio), 'el administrador no lee lo de otros');
   ok('ningún comodín ** alcanza el espacio', !subcolecciones.some(s => recursivos.includes(s)), `subcolecciones: ${subcolecciones.join(', ')}; comodines: ${recursivos.join(', ')}`);
+  // Tarea 71: fuera del espacio, ningún bloque de las colecciones del modo antiguo.
+  const fuera = reglas.slice(0, reglas.indexOf('match /practicas-espacios/{uid}', inicio));
+  const viejas = ['practicas', 'practicas-tareas', 'practicas-asignaciones', 'fallos', 'divisores'].filter(c => fuera.includes(`match /${c}/{`));
+  ok('sin reglas para las colecciones del modo antiguo', !viejas.length, viejas.length ? `quedan: ${viejas.join(', ')}` : '');
 }
 
 // --- Comprobaciones por REST ----------------------------------------------------------
@@ -208,14 +215,25 @@ async function main() {
   while (cA4b === cA4 || cA4b === cB4) cA4b = codigoPrueba4();
   if (cB4 === cA4) throw new Error('dos códigos de prueba de 4 iguales: vuelve a lanzarlo');
 
-  titulo('Modo antiguo intacto');
-  await comprobar('sin cuenta: get practicas/semaforo--7NPD', [200, 404], () => leer('practicas/semaforo--7NPD', anon));
-  await comprobar('sin cuenta: get practicas-tareas/t2--semaforo--7NPD', [200, 404], () => leer('practicas-tareas/t2--semaforo--7NPD', anon));
-  await comprobar('sin cuenta: get practicas-asignaciones/7NPD', [200, 404], () => leer('practicas-asignaciones/7NPD', anon));
-  await comprobar('sin cuenta: listar practicas', 403, () => listar('practicas', anon));
-  await comprobar('A (profesor nuevo) lista practicas', 403, () => listar('practicas', A));
-  await comprobar('A lista practicas-tareas', 403, () => listar('practicas-tareas', A));
-  await comprobar('A lista fallos (de hoy)', 403, () => listar('fallos', A));
+  // Tarea 71: las colecciones del modo antiguo ya no tienen reglas. Nadie las lee (get ni
+  // lista) ni las escribe, ni sin cuenta ni con una de profesor. Con el código de prueba 60
+  // (7NPD) y datos que las reglas de antes sí habrían dejado escribir: si alguna da 200, las
+  // reglas publicadas aún son las viejas.
+  titulo('Colecciones del modo antiguo, cerradas (tarea 71)');
+  const viejas = [
+    ['practicas', 'semaforo--7NPD', { estado: '{"ej":[]}', actualizado: ahora }],
+    ['practicas-tareas', 't2--semaforo--7NPD', { estado: '{"ej":[]}', actualizado: ahora }],
+    ['practicas-asignaciones', '7NPD', { tareas: [2], actualizado: ahora }],
+    ['fallos', `7NPD-${ahora.toString(36)}-abcd`, { v: 1, alumno: '7NPD', practica: 'semaforo', ejercicio: 2, t: ahora, dia: 0, idioma: 'es', item: 'Prueba de reglas', feedback: 'Prueba de reglas', repeticion: false }],
+    ['divisores', '7NPD', { estado: '{}', actualizado: ahora }],
+  ];
+  for (const [coleccion, id, datos] of viejas) {
+    for (const [quien, cuenta] of [['sin cuenta', anon], ['A', A]]) {
+      await comprobar(`${quien}: get ${coleccion}/${id}`, 403, () => leer(`${coleccion}/${id}`, cuenta));
+      await comprobar(`${quien}: lista ${coleccion}`, 403, () => listar(coleccion, cuenta));
+      await comprobar(`${quien}: crea en ${coleccion}`, 403, () => crearEn(coleccion, id, datos, cuenta));
+    }
+  }
 
   titulo('Alta de profesores');
   const altaA = await comprobar('A lee su alta', 200, () => leer(`practicas-profesores/${A.uid}`, A),
@@ -359,7 +377,7 @@ async function main() {
   await comprobar('B lista los fallos de A', 403, () => listar(fallos, B));
 
   // Tarea 72: un código de 4 del sistema nuevo vale lo mismo que uno de 8 en su espacio, y en
-  // ningún otro. Uno generado (ZZ + 2) y, si está libre, el de prueba 60 del modo antiguo.
+  // ningún otro. Uno generado (ZZ + 2) y, si está libre, el de prueba 60 (7NPD).
   titulo('Códigos de 4 (tarea 72)');
   const idsF4 = [];
   await comprobar('A crea un código de 4 (n.º 3)', 200, () => escribir(`practicas-alumnos/${cA4}`, { profesor: A.uid, n: 3, alta: ahora }, A));
@@ -391,12 +409,13 @@ async function main() {
   await comprobar('B borra el código de 4 de A', 403, () => borrar(`practicas-alumnos/${cA4}`, B));
   await comprobar('A crea un código de 4 con n = 1000', 200, () => escribir(`practicas-alumnos/${cA4b}`, { profesor: A.uid, n: 1000, alta: ahora }, A));
 
-  // El de prueba 60 del modo antiguo, registrado en el espacio de A como hará la tarea 70 con los de Juan Luis.
+  // El de prueba 60 (7NPD, uno de los de 4 calculables), registrado en el espacio de A como hizo la
+  // tarea 70 con los de Juan Luis: registrado vale como cualquier otro; sin registrar, en ningún sitio.
   const libreAntiguo = await leer(`practicas-alumnos/${ANTIGUO_PRUEBA}`, anon);
   let antiguoRegistrado = false;
   if (libreAntiguo.status !== 404) {
     for (const n of ['A registra el código antiguo de prueba', 'su alumno guarda en el espacio de A', 'y lo lee (get)', 'y registra un fallo en A',
-      'el modo antiguo sigue leyéndose', 'A lo borra', 'ya no escribe en el espacio de A']) omitir(n, `${ANTIGUO_PRUEBA} ya está registrado (get: ${libreAntiguo.status}); no se toca`);
+      'y fuera del espacio no se lee (practicas/)', 'A borra su progreso en el espacio', 'A lo borra', 'ya no escribe en el espacio de A']) omitir(n, `${ANTIGUO_PRUEBA} ya está registrado (get: ${libreAntiguo.status}); no se toca`);
   } else {
     antiguoRegistrado = await comprobar('A registra el código antiguo de prueba', 200,
       () => escribir(`practicas-alumnos/${ANTIGUO_PRUEBA}`, { profesor: A.uid, n: N_ANTIGUO_PRUEBA, alta: ahora }, A));
@@ -404,7 +423,7 @@ async function main() {
     await comprobar('y lo lee (get)', 200, () => leer(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, anon));
     const idFA = idF(ANTIGUO_PRUEBA);
     await comprobar('y registra un fallo en A', 200, () => crearEn(fallos, idFA, fallo(ANTIGUO_PRUEBA), anon), () => { idsF4.push(idFA); return null; });
-    await comprobar('el modo antiguo sigue leyéndose', [200, 404], () => leer(`practicas/semaforo--${ANTIGUO_PRUEBA}`, anon));
+    await comprobar('y fuera del espacio no se lee (practicas/)', 403, () => leer(`practicas/semaforo--${ANTIGUO_PRUEBA}`, anon));
     await comprobar('A borra su progreso en el espacio', 200, () => borrar(`${libre}/semaforo--${ANTIGUO_PRUEBA}`, A));
     const borrado = await comprobar('A lo borra', 200, () => borrar(`practicas-alumnos/${ANTIGUO_PRUEBA}`, A));
     if (borrado) antiguoRegistrado = false;

@@ -1,4 +1,4 @@
-// «Hoy» del panel, sistema nuevo: lo que cuenta el informe diario (quién no ha
+// «Hoy» del panel: lo que cuenta el informe diario (quién no ha
 // entrado, qué ejercicios fallan demasiado, entregas), para los profesores que no
 // reciben el correo (DISENO.md, F.1 y F.3; tarea 68 del reparto PU2).
 //

@@ -24,11 +24,11 @@ import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, a
 const app = document.querySelector('#app');
 const params = new URLSearchParams(location.search);
 const idTarea = Number(params.get('t'));
-// Con un código registrado (4 u 8), las tareas son las de su profesor (`entrar` las pone); sin código
-// o con uno del modo antiguo, las de siempre.
+// Con código (4 u 8, registrado), las tareas son las de su profesor (`entrar` las pone); sin código,
+// las de `tareas.js` (la plantilla).
 let tareas = TAREAS;
 let tarea = tareaPorId(idTarea, tareas);
-let profesor = null;             // uid del espacio del alumno (código registrado) o null (modo antiguo)
+let profesor = null;             // uid del espacio del alumno, o null si aún no se sabe
 let sinConfig = false;           // el espacio no pudo dar las tareas del profesor (sin red y sin copia)
 
 let codigo = null, indice = null;
@@ -64,8 +64,7 @@ async function sincronizar() {
 
 /**
  * Entra con un código de 4 o de 8 (tecleado o del enlace). Primero se resuelve (de qué
- * profesor es y cuáles son sus tareas; un código de 4 que la nube no conoce es del modo
- * antiguo); la tarea de la dirección se busca entre las de ese profesor. Si el código no
+ * profesor es y cuáles son sus tareas); la tarea de la dirección se busca entre las de ese profesor. Si el código no
  * vale, no existe o no se puede comprobar, vuelve a la entrada.
  */
 async function entrar(texto) {
@@ -121,7 +120,7 @@ function pintarSinTarea() {
 /** `error`: false | 'formato' | 'no-existe' | 'sin-red' (el código no vale, la nube no lo conoce, no se pudo preguntar). */
 function pintarEntrada(error = false) {
   const t = T[idioma];
-  // Con un código de 8, la tarea solo se sabe después de resolverlo: antes, el título es genérico.
+  // La tarea solo se sabe después de resolver el código: antes, el título es genérico.
   const titulo = tarea ? tarea.titulo[idioma] : t.semana_titulo;
   const frase = { formato: t.entrada_error, 'no-existe': t.entrada_no_existe, 'sin-red': t.espacio_sin_red }[error];
   cabecera(titulo);

@@ -1,40 +1,34 @@
-// Panel único del profesor para todas las prácticas de la unidad 2.
+// Panel único del profesor para todas las prácticas.
 // Reparte un código a cada alumno de la lista y lee los resultados, de dos
 // fuentes: los códigos de resultado que envían los alumnos y Firestore.
 //
-// Dos sistemas (tarea 66 del reparto PU2; DISENO.md de la 57, A.2 y F.1):
-// - el ACTUAL (modo antiguo): códigos de 4 sacados del número de lista, las
-//   colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones` y
-//   `fallos`, y las tareas de `tareas.js`. La lista de nombres vive solo en este
-//   navegador. Es el de Juan Luis hasta su migración, y no cambia;
-// - el NUEVO (el espacio del profesor): cada profesor entra con Google, genera
-//   códigos secretos para sus alumnos (de 8 o, si lo elige, de 4; tarea 72) y
-//   lee solo lo de su espacio; los
-//   nombres suben a la nube cifrados con su contraseña (`_comun/cifrado.js`).
-// Las vistas de los resultados (Resultados, Asignar tareas, Fallos) son las
-// mismas en los dos: leen de `fuente`, la del sistema elegido.
+// Cada profesor entra con Google y trabaja en su ESPACIO (tarea 66 del reparto
+// PU2; DISENO.md de la 57, A.2 y F.1): genera códigos secretos para sus alumnos
+// (de 8 o, si lo elige, de 4; tarea 72) y lee solo lo de su espacio; los nombres
+// suben a la nube cifrados con su contraseña (`_comun/cifrado.js`). Hasta la
+// tarea 71 había además un «sistema actual» (el modo antiguo: códigos de 4
+// sacados del número de lista y las colecciones `practicas`, `practicas-tareas`,
+// `practicas-asignaciones` y `fallos`); Juan Luis pasó a su espacio con sus
+// códigos de siempre el 18-10-2026 (tarea 70) y se quitó.
 
 import { CATALOGO, ID_PLANTILLA, practicaPorId, practicaPorSlug } from './_comun/catalogo.js';
-import { codigoAlumno, leerCodigoAlumno, leerCualquierCodigo, extraerCodigosResultado, MAX_ALUMNOS, codigoSecreto, mostrarCodigoSecreto } from './_comun/codigos.js';
+import { extraerCodigosResultado, MAX_ALUMNOS, codigoSecreto, mostrarCodigoSecreto } from './_comun/codigos.js';
 import { fechaDeDia, diaDe } from './_comun/contador.js';
 import { esc } from './_comun/textos.js';
-import { TAREAS, tareaPorId, fechaISO, configDeJSON, configAJSON, longitudDeCodigos } from './_comun/tareas.js';
+import { tareaPorId, fechaISO, configDeJSON, configAJSON, longitudDeCodigos } from './_comun/tareas.js';
 import {
   juntarResultados, juntarResumen, juntarTareas, juntarFallos, agruparFallos, filtrarFallos, leerDocumentos, leerAsignaciones,
   calcularRetrasos, asignacionesParaGuardar, tareaPublicada, cumplidasDe,
   indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer, leerCodigoTareaEspacio,
 } from './resultados.js';
-import { DESTREZAS, leerFallos } from './_comun/registro.js';
+import { DESTREZAS } from './_comun/registro.js';
 import { declaracionDe } from './_comun/base.js';
 import { cifrar, descifrar, errorContrasena, ContrasenaIncorrecta } from './_comun/cifrado.js';
 import * as editorTareas from './profesor-tareas.js';
 import * as panelHoy from './profesor-hoy.js';
-import * as migracion from './profesor-migracion.js';
+import * as lectores from './profesor-lectores.js';
 
 const $ = id => document.getElementById(id);
-// La lista es la misma que la del panel antiguo de `divisores/`: mismos alumnos, mismos códigos.
-const CLAVE_LISTA = 'divisores.profesor.lista';
-const CLAVE_MODO = 'practicas.profesor.modo';   // el último sistema usado en este navegador
 const URL_PORTADA = new URL('./', location.href).href;
 const RESUMEN = 'resumen';
 const TAREAS_SEMANA = 'tareas';
@@ -49,7 +43,7 @@ function escribirLocal(clave, valor) {
   try { localStorage.setItem(clave, valor); } catch { /* sin almacén */ }
 }
 
-// --- Las dos fuentes -----------------------------------------------------------
+// --- El espacio del profesor ---------------------------------------------------
 
 const datosVacios = () => ({
   nube: [],                    // datos de práctica libre ya leídos: [{ practica, indice, ej, actualizado }]
@@ -57,23 +51,10 @@ const datosVacios = () => ({
   asignaciones: [],            // [{ indice, tareas: [ids] }]
   asignacionesCargadas: false, // hasta cargar la nube no se pueden guardar (se machacaría lo que hubiera)
   registro: [],                // fallos leídos de la nube, uno a uno
-  textos: {},                  // lo que decían los avisos de estado y los códigos pegados al cambiar de sistema
 });
 
-/** El sistema actual (modo antiguo): todo como antes de la tarea 66. */
-const antigua = {
-  modo: 'antiguo',
-  ...datosVacios(),
-  nombres: () => $('lista').value.split('\n').map(l => l.trim()).slice(0, MAX_ALUMNOS),
-  codigoDe: indice => codigoAlumno(indice),
-  indiceDe: codigo => leerCodigoAlumno(codigo),
-  tareas: () => TAREAS,
-  leerCodigo: texto => leerCualquierCodigo(texto),
-};
-
-/** El sistema nuevo: el espacio del profesor que ha entrado. */
+/** El espacio del profesor que ha entrado: de él leen todas las vistas. */
 const espacio = {
-  modo: 'nuevo',
   ...datosVacios(),
   uid: null,
   esAdmin: false,
@@ -91,22 +72,20 @@ const espacio = {
   leerCodigo: texto => leerCodigoTareaEspacio(texto, espacio.config.tareas),
 };
 
-let fuente = antigua;
-const nombres = () => fuente.nombres();
-const tareasDe = () => fuente.tareas();
+const nombres = () => espacio.nombres();
+const tareasDe = () => espacio.tareas();
 const tareaDe = id => tareaPorId(id, tareasDe());
 /** Cómo se enseña un código: los de 8, en dos grupos (`K7QM-P3XA`), como los teclea el alumno; los de 4, tal cual. */
-const verCodigo = codigo => (codigo && fuente === espacio ? mostrarCodigoSecreto(codigo) : codigo);
+const verCodigo = codigo => (codigo ? mostrarCodigoSecreto(codigo) : codigo);
 /** El código del alumno n.º `indice + 1` tal como se enseña ('' si aún no tiene). */
-const codigoVisible = indice => verCodigo(fuente.codigoDe(indice)) ?? '';
+const codigoVisible = indice => verCodigo(espacio.codigoDe(indice)) ?? '';
 
 /** Lo que `juntarTareas` necesita además de los códigos: documentos de las tareas v2, asignaciones y hoy. */
-const opcionesTareas = () => ({ deNubeTareas: fuente.nubeTareas, asignaciones: fuente.asignaciones, hoyDia: diaDe(new Date()) });
+const opcionesTareas = () => ({ deNubeTareas: espacio.nubeTareas, asignaciones: espacio.asignaciones, hoyDia: diaDe(new Date()) });
 
-/** Escribe un aviso de estado de las vistas; si `f` no es el sistema de ahora, lo guarda para cuando vuelva. */
-function ponerEstado(f, id, texto) {
-  if (f === fuente) $(id).textContent = texto;
-  else f.textos[id] = texto;
+/** Escribe un aviso de estado de las vistas. */
+function ponerEstado(id, texto) {
+  $(id).textContent = texto;
 }
 
 function descargar(nombre, filas) {
@@ -118,11 +97,7 @@ function descargar(nombre, filas) {
   URL.revokeObjectURL(a.href);
 }
 
-// --- 1. Códigos de los alumnos (sistema actual) ----------------------------------
-
-function filasCodigos() {
-  return antigua.nombres().map((nombre, i) => ({ n: i + 1, nombre, codigo: codigoAlumno(i) })).filter(f => f.nombre);
-}
+// --- Enlaces --------------------------------------------------------------------
 
 /** El `&idioma=` que se añade a los enlaces, según el selector («alterno» no añade nada). */
 function sufijoIdioma(idIdioma) {
@@ -131,7 +106,7 @@ function sufijoIdioma(idIdioma) {
 }
 
 /** Enlace de un alumno: a la portada o, si se elige en «Enlaces a», a una tarea de la semana. */
-function enlaceDe(codigo, idDestino = 'destino-enlaces', idIdioma = 'idioma-enlaces') {
+function enlaceDe(codigo, idDestino = 'destino-espacio', idIdioma = 'idioma-espacio') {
   const destino = $(idDestino)?.value;
   return destino && destino !== 'portada'
     ? `${URL_PORTADA}semana.html?t=${destino}&c=${codigo}${sufijoIdioma(idIdioma)}`
@@ -169,27 +144,17 @@ const copiarEnlaceTarea = lista => async ev => {
   ev.target.textContent = '¡Copiado!';
 };
 
-function pintarCodigos() {
-  const filas = filasCodigos();
-  $('tabla-codigos').innerHTML = filas.length ? `
-    <table>
-      <thead><tr><th class="num">N.º</th><th>Alumno</th><th>Código</th><th>Enlace directo</th></tr></thead>
-      <tbody>${filas.map(f => `<tr><td class="num">${f.n}</td><td>${esc(f.nombre)}</td><td><code>${f.codigo}</code></td><td>${enlaceDe(f.codigo)}</td></tr>`).join('')}</tbody>
-    </table>` : '';
-}
-
-const tablaCodigos = () => [['N.º', 'Alumno', 'Código', 'Enlace'], ...filasCodigos().map(f => [f.n, f.nombre, f.codigo, enlaceDe(f.codigo)])];
-
 // --- 2. Resultados -------------------------------------------------------------
 
 /**
- * Los códigos pegados, de los dos tipos mezclados: los de 12 de `divisores/`
- * en `validos`, los de tarea de la semana (20) en `deTareas`, y los que no son
- * válidos (también los de 16 de práctica, que ya no existen: salen en el aviso).
- * En el sistema nuevo solo valen los de tarea, con las tareas del profesor.
+ * Los códigos pegados: los de tarea de la semana (20), con las tareas del
+ * profesor, en `deTareas`, y los que no son válidos (los de 12 de `divisores/`
+ * y los de 16 de práctica, que ya no valen, también: salen en el aviso).
+ * `validos` (códigos de práctica) se queda vacío: las vistas lo siguen
+ * recibiendo porque juntan las dos fuentes.
  */
 function pegados() {
-  const leidos = extraerCodigosResultado($('pegados').value).map(texto => ({ texto, dato: fuente.leerCodigo(texto) }));
+  const leidos = extraerCodigosResultado($('pegados').value).map(texto => ({ texto, dato: espacio.leerCodigo(texto) }));
   return {
     validos: leidos.filter(l => l.dato?.tipo === 'practica').map(l => l.dato),
     deTareas: leidos.filter(l => l.dato?.tipo === 'tarea').map(l => l.dato),
@@ -199,7 +164,7 @@ function pegados() {
 
 /** Las prácticas que salen en el panel: las publicadas y cualquiera de la que haya datos. */
 function practicasVisibles(validos) {
-  const conDatos = new Set([...validos, ...fuente.nube].map(d => d.practica));
+  const conDatos = new Set([...validos, ...espacio.nube].map(d => d.practica));
   return CATALOGO.filter(p => conDatos.has(p.id) || (p.disponible && p.id !== ID_PLANTILLA));
 }
 
@@ -224,7 +189,7 @@ function celda(e) {
 }
 
 function htmlPractica(practica, validos) {
-  const filas = juntarResultados(nombres(), validos.filter(d => d.practica === practica.id), fuente.nube.filter(d => d.practica === practica.id), practica.nEjercicios);
+  const filas = juntarResultados(nombres(), validos.filter(d => d.practica === practica.id), espacio.nube.filter(d => d.practica === practica.id), practica.nEjercicios);
   if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
   const numeros = Array.from({ length: practica.nEjercicios }, (_, i) => i + 1);
   return `
@@ -242,7 +207,7 @@ function htmlPractica(practica, validos) {
 }
 
 function csvPractica(practica, validos) {
-  const filas = juntarResultados(nombres(), validos.filter(d => d.practica === practica.id), fuente.nube.filter(d => d.practica === practica.id), practica.nEjercicios);
+  const filas = juntarResultados(nombres(), validos.filter(d => d.practica === practica.id), espacio.nube.filter(d => d.practica === practica.id), practica.nEjercicios);
   const numeros = Array.from({ length: practica.nEjercicios }, (_, i) => i + 1);
   const cab = ['N.º', 'Alumno', 'Código', ...numeros.flatMap(n => [`Ej${n} hecho`, `Ej${n} fallos`]), 'Hechos', 'Terminó el', 'Fuente'];
   return [cab, ...filas.map(f => [
@@ -259,7 +224,7 @@ function celdaResumen(p) {
 }
 
 function htmlResumen(practicas, validos) {
-  const filas = juntarResumen(nombres(), validos, fuente.nube, practicas);
+  const filas = juntarResumen(nombres(), validos, espacio.nube, practicas);
   if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
   return `
     <table>
@@ -275,7 +240,7 @@ function htmlResumen(practicas, validos) {
 }
 
 function csvResumen(practicas, validos) {
-  const filas = juntarResumen(nombres(), validos, fuente.nube, practicas);
+  const filas = juntarResumen(nombres(), validos, espacio.nube, practicas);
   const cab = ['N.º', 'Alumno', 'Código', ...practicas.map(p => `${p.nombre.es} (de ${p.nEjercicios})`), 'Prácticas completas'];
   return [cab, ...filas.map(f => [f.indice + 1, f.nombre, codigoVisible(f.indice), ...f.practicas.map(p => p.hechos), f.completas])];
 }
@@ -311,8 +276,8 @@ function cabeceraTarea(t, hoyDia) {
 function htmlTareas(validos, deTareas) {
   const { hoyDia } = opcionesTareas();
   const tareas = tareasDe();
-  if (fuente === espacio && !tareas.length) return '<p class="vacio">Aún no tienes tareas (se crean en «Tareas», arriba).</p>';
-  const filas = juntarTareas(nombres(), deTareas, validos, fuente.nube, tareas, opcionesTareas());
+  if (!tareas.length) return '<p class="vacio">Aún no tienes tareas (se crean en «Tareas», arriba).</p>';
+  const filas = juntarTareas(nombres(), deTareas, validos, espacio.nube, tareas, opcionesTareas());
   if (!filas.length) return '<p class="vacio">Todavía no hay nada: escribe la lista de alumnos, pega códigos o carga la nube.</p>';
   return `
     <table>
@@ -329,12 +294,12 @@ function htmlTareas(validos, deTareas) {
       }).join('')}</tbody>
     </table>
     <p class="pequeno">«Obligatorias»: de las tareas ya publicadas que este alumno tenía que hacer (las que tienen plazo y, de las asignadas, aquellas en las que está marcado), cuántas ha entregado. «Repaso»: cuántas tareas voluntarias ha completado. Las tareas en gris aún no se han publicado (salen en la portada desde el día que dice) y no cuentan en nada.</p>
-    <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. ${fuente === antigua ? 'Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre.' : 'Cada tarea cuenta solo lo hecho dentro de la tarea.'} Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
+    <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. ${tareas.some(t => t.progresoPorPractica) ? 'Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre.' : 'Cada tarea cuenta solo lo hecho dentro de la tarea.'} Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
 }
 
 function csvTareas(validos, deTareas) {
   const tareas = tareasDe();
-  const filas = juntarTareas(nombres(), deTareas, validos, fuente.nube, tareas, opcionesTareas());
+  const filas = juntarTareas(nombres(), deTareas, validos, espacio.nube, tareas, opcionesTareas());
   const cab = ['N.º', 'Alumno', 'Código', ...tareas.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`, `T${t.id} plazo`, `T${t.id} fecha de entrega`, `T${t.id} días de retraso`, `T${t.id} entrega`])];
   return [cab, ...filas.map(f => [
     f.indice + 1, f.nombre, codigoVisible(f.indice),
@@ -349,7 +314,7 @@ function csvTareas(validos, deTareas) {
 /** Los retrasos de los alumnos de la lista (o de todos, si la lista está vacía). */
 function datosRetrasos(validos, deTareas) {
   const hoyDia = opcionesTareas().hoyDia;
-  let filas = juntarTareas(nombres(), deTareas, validos, fuente.nube, tareasDe(), opcionesTareas());
+  let filas = juntarTareas(nombres(), deTareas, validos, espacio.nube, tareasDe(), opcionesTareas());
   if (nombres().some(Boolean)) filas = filas.filter(f => f.nombre);
   return calcularRetrasos(filas, tareasDe(), hoyDia);
 }
@@ -390,7 +355,7 @@ function csvRetrasos(validos, deTareas) {
   const cab = ['N.º', 'Alumno', 'Código', 'Tareas con plazo', 'A tiempo', 'Con retraso', 'Sin entregar', 'Pendientes', 'Días de retraso (total)', 'Media de días (tareas con retraso)', 'Máximo de días'];
   const alumnos = r.alumnos.map(a => [a.indice + 1, a.nombre, codigoVisible(a.indice), a.conPlazo, a.aTiempo, a.conRetraso, a.sinEntregar, a.pendientes, a.dias, a.media ? decimal(a.media) : '', a.maximo || '']);
   // Una fila por alumno y tarea, con las fechas, para decidir el criterio con calma (días lectivos, por ejemplo).
-  const filas = juntarTareas(nombres(), deTareas, validos, fuente.nube, tareasDe(), opcionesTareas()).filter(f => !nombres().some(Boolean) || f.nombre);
+  const filas = juntarTareas(nombres(), deTareas, validos, espacio.nube, tareasDe(), opcionesTareas()).filter(f => !nombres().some(Boolean) || f.nombre);
   const publicadas = new Set(tareasDe().filter(t => tareaPublicada(t, hoyDia)).map(t => t.id));
   const detalle = filas.flatMap(f => f.tareas.filter(c => c.conPlazo && publicadas.has(c.id)).map(c => [f.indice + 1, f.nombre, codigoVisible(f.indice), `T${c.id}`, plazoCsv(c), fechaCsv(c.diaEntrega), c.diasRetraso, c.entrega]));
   return [
@@ -420,7 +385,7 @@ function pedirNombres(practicas) {
     declaracion?.ejercicios?.forEach((e, i) => nombresEjercicio.set(`${p.slug}/${i + 1}`, e.nombre.es));
   })).then(() => {
     if ($('vista').value.startsWith(FALLOS)) pintarResultados();
-    if (fuente.registro.length) pintarRegistro();
+    if (espacio.registro.length) pintarRegistro();
   });
 }
 
@@ -442,7 +407,7 @@ function filasFallos(vista, practicas, validos) {
   const tarea = vista === FALLOS ? null : tareaDe(Number(vista.slice(FALLOS_TAREA.length)));
   const propia = tarea && !tarea.progresoPorPractica;
   const deCodigos = propia ? [] : validos;
-  const deNube = propia ? fuente.nubeTareas.filter(d => d.tarea === tarea.id) : fuente.nube;
+  const deNube = propia ? espacio.nubeTareas.filter(d => d.tarea === tarea.id) : espacio.nube;
   return juntarFallos(nombres(), deCodigos, deNube, ejercicios).map(f => {
     const practica = practicaPorId(f.practica);
     return { ...f, practica, nombre: nombresEjercicio.get(`${practica.slug}/${f.n}`) ?? '', marca: marcas.get(`${f.practica}/${f.n}`) };
@@ -481,7 +446,7 @@ function csvFallos(vista, practicas, validos) {
 function pintarResultados() {
   const { validos, deTareas, invalidos } = pegados();
   $('avisos').innerHTML = invalidos.length
-    ? `<div class="aviso aviso--error">Códigos que <strong>no son válidos</strong> (mal copiados o inventados${fuente === espacio ? ', o de una tarea que no es tuya' : ''}): ${invalidos.map(esc).join(', ')}</div>` : '';
+    ? `<div class="aviso aviso--error">Códigos que <strong>no son válidos</strong> (mal copiados o inventados, o de una tarea que no es tuya): ${invalidos.map(esc).join(', ')}</div>` : '';
   const practicas = practicasVisibles(validos);
   pintarSelector(practicas);
   const vista = $('vista').value;
@@ -523,60 +488,11 @@ async function mensajeDeError(e) {
   return mensaje(e);
 }
 
-/** Entra con la cuenta de Google del profesor (una vez por página). false si no es la suya. */
-async function conectarProfesor(estado) {
-  await obtenerFirebase();
-  if (!firebase.usuario()) await firebase.entrarConGoogle();
-  if (!firebase.esProfesor(firebase.usuario())) {
-    estado.textContent = 'Esa cuenta no es la del profesor.';
-    await firebase.salir();
-    return false;
-  }
-  return true;
-}
-
-/** «Cargar de la nube» del sistema actual: las colecciones enteras, como siempre. */
-async function cargarNubeAntigua() {
-  const estado = $('estado-nube');
-  estado.textContent = 'Conectando…';
-  try {
-    if (!(await conectarProfesor(estado))) return;
-    // Cuatro colecciones: la de todas las prácticas, la antigua de `divisores/`, el progreso de
-    // las tareas v2 y las asignaciones. Si una falla (por ejemplo, una regla sin publicar), se enseñan las otras.
-    const lecturas = [
-      ['practicas', firebase.datos.listarPracticas()],
-      ['divisores', firebase.datos.listarPracticaDivisores()],
-      ['practicas-tareas', firebase.datos.listarPracticasTareas()],
-      ['practicas-asignaciones', firebase.datos.listarAsignaciones()],
-    ];
-    const resultado = await Promise.allSettled(lecturas.map(([, p]) => p));
-    const leidas = Object.fromEntries(lecturas.map(([nombre], i) => [nombre, resultado[i]]));
-    const ok = nombre => (leidas[nombre].status === 'fulfilled' ? leidas[nombre].value : null);
-    antigua.nube = [
-      ...leerDocumentos(ok('practicas') ?? [], 'practicas'),
-      ...leerDocumentos(ok('divisores') ?? [], 'divisores'),
-    ];
-    antigua.nubeTareas = leerDocumentos(ok('practicas-tareas') ?? [], 'practicas-tareas');
-    // Sin leer las asignaciones no se puede guardar nada: se machacaría lo que hubiera.
-    antigua.asignaciones = leerAsignaciones(ok('practicas-asignaciones') ?? []);
-    antigua.asignacionesCargadas = ok('practicas-asignaciones') !== null;
-    const fallos = lecturas.map(([nombre]) => [nombre, leidas[nombre]]).filter(([, r]) => r.status === 'rejected');
-    const textos = await Promise.all(fallos.map(async ([nombre, r]) => ` No se ha podido leer la colección «${nombre}»: ${await mensajeDeError(r.reason)}`));
-    ponerEstado(antigua, 'estado-nube', `Cargados ${antigua.nube.length} registros de práctica y ${antigua.nubeTareas.length} de tareas, de ${new Set([...antigua.nube, ...antigua.nubeTareas].map(d => d.indice)).size} alumnos, y las asignaciones de ${antigua.asignaciones.length} (${new Date().toLocaleTimeString('es')}).` + textos.join(''));
-    pintarResultados();
-    pintarAsignar();
-  } catch (e) {
-    ponerEstado(antigua, 'estado-nube', `No se ha podido cargar: ${await mensajeDeError(e)}`);
-  }
-}
-
-const cargarNube = () => (fuente === espacio ? cargarEspacio() : cargarNubeAntigua());
-
 // --- 3. Fallos, uno a uno (registro de la tarea 39) ------------------------------
 
 /** «N.º 12 · Ana García (ABCD)», o el código solo si no está en la lista. */
 function nombreAlumno(codigo) {
-  const indice = fuente.indiceDe(codigo);
+  const indice = espacio.indiceDe(codigo);
   const nombre = indice === null ? '' : nombres()[indice];
   return indice === null ? verCodigo(codigo) : `${indice + 1}${nombre ? ` · ${nombre}` : ''} (${verCodigo(codigo)})`;
 }
@@ -602,7 +518,7 @@ function filtroTareaRegistro() {
 
 function filtrosRegistro() {
   const lista = nombres();
-  const deLista = new Set(lista.map((n, i) => (n ? fuente.codigoDe(i) : null)).filter(Boolean));
+  const deLista = new Set(lista.map((n, i) => (n ? espacio.codigoDe(i) : null)).filter(Boolean));
   const alumno = $('fallos-alumno').value || undefined;
   return {
     ...filtroTareaRegistro(),
@@ -616,16 +532,16 @@ function filtrosRegistro() {
 
 function pintarSelectoresRegistro() {
   const conservar = (id, html) => { const v = $(id).value; $(id).innerHTML = html; if ([...$(id).options].some(o => o.value === v)) $(id).value = v; };
-  const registro = fuente.registro;
+  const registro = espacio.registro;
   conservar('fallos-tarea', '<option value="">Todas</option><option value="ninguna">Sin tarea (práctica libre)</option>' + tareasDe().map(t => `<option value="${t.id}">Tarea ${t.id}</option>`).join(''));
   const slugs = [...new Set(registro.map(f => f.practica))].sort((a, b) => nombrePractica(a).localeCompare(nombrePractica(b)));
   conservar('fallos-practica', '<option value="">Todas</option>' + slugs.map(s => `<option value="${esc(s)}">${esc(nombrePractica(s))}</option>`).join(''));
-  const codigos = [...new Set(registro.map(f => f.alumno))].sort((a, b) => (fuente.indiceDe(a) ?? 9999) - (fuente.indiceDe(b) ?? 9999));
+  const codigos = [...new Set(registro.map(f => f.alumno))].sort((a, b) => (espacio.indiceDe(a) ?? 9999) - (espacio.indiceDe(b) ?? 9999));
   conservar('fallos-alumno', '<option value="">Todos</option>' + codigos.map(c => `<option value="${esc(c)}">${esc(nombreAlumno(c))}</option>`).join(''));
 }
 
 function pintarRegistro() {
-  const registro = fuente.registro;
+  const registro = espacio.registro;
   if (!registro.length) { $('tabla-fallos').innerHTML = ''; return; }
   pedirNombres([...new Set(registro.map(f => f.practica))].map(practicaPorSlug).filter(Boolean));
   const r = agruparFallos(registro, filtrosRegistro());
@@ -660,32 +576,26 @@ function pintarRegistro() {
 }
 
 function csvRegistro() {
-  const filas = filtrarFallos(fuente.registro, filtrosRegistro());
+  const filas = filtrarFallos(espacio.registro, filtrosRegistro());
   const cab = ['Fecha', 'N.º', 'Alumno', 'Código', 'Práctica', 'Ej.', 'Ejercicio', 'Destrezas de la práctica', 'Error', 'Respuesta', 'Ítem', 'Explicación que vio', 'Idioma', 'Repitiendo un ejercicio ya terminado', 'Tarea'];
   return [cab, ...filas.map(x => {
-    const i = fuente.indiceDe(x.alumno);
+    const i = espacio.indiceDe(x.alumno);
     return [fechaHora(x.t), i === null ? '' : i + 1, i === null ? '' : nombres()[i] ?? '', verCodigo(x.alumno), nombrePractica(x.practica), x.ejercicio, nombreEjercicio(x.practica, x.ejercicio),
       destrezasDe(x.practica), x.error ?? '', x.respuesta ?? '', x.item, x.feedback, x.idioma, x.repeticion ? 'sí' : 'no', x.tarea ?? ''];
   })];
 }
 
 async function cargarRegistro() {
-  const f = fuente;
-  const estado = $('fallos-estado');
-  estado.textContent = 'Conectando…';
+  $('fallos-estado').textContent = 'Conectando…';
   try {
-    if (f === antigua && !(await conectarProfesor(estado))) return;
     const [a, m, d] = ($('fallos-desde').value || '2026-09-01').split('-').map(Number);
     const desde = new Date(a, m - 1, d).getTime();
-    let nuevos = null;
-    if (f === antigua) antigua.registro = await leerFallos(desde, await firebase.usuario().getIdToken());
-    else nuevos = await cargarRegistroEspacio(desde);
-    ponerEstado(f, 'fallos-estado', `Cargados ${f.registro.length} fallos de ${new Set(f.registro.map(x => x.alumno)).size} alumnos desde el ${d}/${m}/${a}${nuevos === null ? '' : ` (${nuevos} pedidos a la nube; los demás estaban en este navegador)`} (${new Date().toLocaleTimeString('es')}).`);
-    if (f !== fuente) return;
+    const nuevos = await cargarRegistroEspacio(desde);
+    ponerEstado('fallos-estado', `Cargados ${espacio.registro.length} fallos de ${new Set(espacio.registro.map(x => x.alumno)).size} alumnos desde el ${d}/${m}/${a} (${nuevos} pedidos a la nube; los demás estaban en este navegador) (${new Date().toLocaleTimeString('es')}).`);
     pintarSelectoresRegistro();
     pintarRegistro();
   } catch (e) {
-    ponerEstado(f, 'fallos-estado', `No se han podido cargar los fallos: ${await mensajeDeError(e)}`);
+    ponerEstado('fallos-estado', `No se han podido cargar los fallos: ${await mensajeDeError(e)}`);
   }
 }
 
@@ -694,25 +604,21 @@ async function cargarRegistro() {
 const marcasAsignar = new Map();   // 'indice|tarea' → bool: lo marcado a mano y aún sin guardar
 
 const asignablesAhora = () => tareasDe().filter(t => t.asignada);
-const guardadas = indice => fuente.asignaciones.find(a => a.indice === indice)?.tareas ?? [];
+const guardadas = indice => espacio.asignaciones.find(a => a.indice === indice)?.tareas ?? [];
 const marcada = (indice, id) => (marcasAsignar.has(`${indice}|${id}`) ? marcasAsignar.get(`${indice}|${id}`) : guardadas(indice).includes(id));
-/** Los alumnos de la lista que se pueden marcar: con nombre y con código (en el sistema nuevo, hay que generarlo antes). */
-const alumnosAsignables = () => nombres().map((nombre, indice) => ({ indice, nombre })).filter(a => a.nombre && fuente.codigoDe(a.indice));
+/** Los alumnos de la lista que se pueden marcar: con nombre y con código (hay que generarlo antes). */
+const alumnosAsignables = () => nombres().map((nombre, indice) => ({ indice, nombre })).filter(a => a.nombre && espacio.codigoDe(a.indice));
 
 function pintarAsignar() {
   const tareas = asignablesAhora();
   const alumnos = alumnosAsignables();
-  $('asignar-guardar').disabled = !fuente.asignacionesCargadas || !tareas.length || !alumnos.length;
+  $('asignar-guardar').disabled = !espacio.asignacionesCargadas || !tareas.length || !alumnos.length;
   if (!tareas.length) {
-    $('tabla-asignar').innerHTML = fuente === antigua
-      ? '<p class="vacio">Ninguna tarea es <code>asignada</code> en <code>practicas/_comun/tareas.js</code> (campo <code>asignada: true</code>): no hay nada que asignar.</p>'
-      : '<p class="vacio">Ninguna de tus tareas es «solo para algunos alumnos» (se marca en «Tareas»): no hay nada que asignar.</p>';
+    $('tabla-asignar').innerHTML = '<p class="vacio">Ninguna de tus tareas es «solo para algunos alumnos» (se marca en «Tareas»): no hay nada que asignar.</p>';
     return;
   }
   if (!alumnos.length) {
-    $('tabla-asignar').innerHTML = fuente === antigua
-      ? '<p class="vacio">Escribe antes la lista de alumnos (arriba).</p>'
-      : '<p class="vacio">Escribe antes la lista de alumnos y genera sus códigos (arriba, en «Mis alumnos»).</p>';
+    $('tabla-asignar').innerHTML = '<p class="vacio">Escribe antes la lista de alumnos y genera sus códigos (arriba, en «Mis alumnos»).</p>';
     return;
   }
   $('tabla-asignar').innerHTML = `
@@ -727,13 +633,10 @@ function pintarAsignar() {
 }
 
 async function guardarAsignaciones() {
-  const f = fuente;
   const estado = $('asignar-estado');
-  if (!f.asignacionesCargadas) { estado.textContent = 'Carga primero la nube (arriba, «Cargar de la nube»): hace falta saber qué hay ya guardado.'; return; }
+  if (!espacio.asignacionesCargadas) { estado.textContent = 'Carga primero la nube (arriba, «Cargar de la nube»): hace falta saber qué hay ya guardado.'; return; }
   estado.textContent = 'Conectando…';
   try {
-    if (f === antigua && !(await conectarProfesor(estado))) return;
-    const escribir = f === antigua ? firebase.datos.guardarAsignacion : firebase.datos.panel.guardarAsignacion;
     const ids = asignablesAhora().map(t => t.id);
     let guardados = 0;
     for (const a of alumnosAsignables()) {
@@ -742,40 +645,21 @@ async function guardarAsignaciones() {
       const igual = nuevas.length === previas.length && nuevas.every((id, i) => id === previas[i]);
       // Sin cambios no se escribe; y a un alumno sin documento y sin nada marcado tampoco se le crea uno.
       if (igual) continue;
-      await escribir(f.codigoDe(a.indice), nuevas);
-      const resto = f.asignaciones.filter(x => x.indice !== a.indice);
-      f.asignaciones = [...resto, { indice: a.indice, tareas: nuevas }];
+      await panelDatos().guardarAsignacion(espacio.codigoDe(a.indice), nuevas);
+      const resto = espacio.asignaciones.filter(x => x.indice !== a.indice);
+      espacio.asignaciones = [...resto, { indice: a.indice, tareas: nuevas }];
       guardados++;
     }
     marcasAsignar.clear();
-    ponerEstado(f, 'asignar-estado', guardados ? `Guardadas las asignaciones de ${guardados} alumno${guardados === 1 ? '' : 's'} (${new Date().toLocaleTimeString('es')}).` : 'No había cambios que guardar.');
-    if (f !== fuente) return;
+    ponerEstado('asignar-estado', guardados ? `Guardadas las asignaciones de ${guardados} alumno${guardados === 1 ? '' : 's'} (${new Date().toLocaleTimeString('es')}).` : 'No había cambios que guardar.');
     pintarAsignar();
     pintarResultados();
   } catch (e) {
-    ponerEstado(f, 'asignar-estado', `No se han podido guardar: ${await mensajeDeError(e)}`);
+    ponerEstado('asignar-estado', `No se han podido guardar: ${await mensajeDeError(e)}`);
   }
 }
 
-// --- Cambiar de sistema -----------------------------------------------------------
-
-/** Lo que es de cada sistema en los elementos compartidos de las vistas. */
-const TEXTOS_POR_SISTEMA = ['estado-nube', 'asignar-estado', 'fallos-estado'];
-
-/** Pone las vistas sobre los datos de `f` (guarda los avisos y los códigos pegados del otro sistema). */
-function usarFuente(f) {
-  if (f !== fuente) {
-    for (const id of TEXTOS_POR_SISTEMA) fuente.textos[id] = $(id).textContent;
-    fuente.textos.pegados = $('pegados').value;
-    fuente = f;
-    for (const id of TEXTOS_POR_SISTEMA) $(id).textContent = f.textos[id] ?? '';
-    $('pegados').value = f.textos.pegados ?? '';
-    marcasAsignar.clear();
-  }
-  $('panel').dataset.modo = f.modo;
-  $('modo').value = f.modo;
-  repintarVistas();
-}
+// --- Qué se ve ---------------------------------------------------------------------
 
 function repintarVistas() {
   pintarResultados();
@@ -784,41 +668,21 @@ function repintarVistas() {
   pintarAsignar();
 }
 
-/** Qué se ve: la pantalla de entrar, uno de los dos sistemas y las vistas comunes. */
-function mostrar({ acceso = false, antiguo = false, nuevo = false } = {}) {
+/** Qué se ve: la pantalla de entrar, o el espacio con las vistas de los resultados. */
+function mostrar({ acceso = false, enEspacio = false } = {}) {
   $('acceso').hidden = !acceso;
-  $('modo-antiguo').hidden = !antiguo;
-  $('modo-nuevo').hidden = !nuevo;
-  $('vistas').hidden = !(antiguo || nuevo);
+  $('espacio').hidden = !enEspacio;
+  $('vistas').hidden = !enEspacio;
 }
 
-/**
- * El sistema con que se abre la página: el último usado en este navegador o, la
- * primera vez, el actual si aquí ya hay una lista del panel antiguo (los
- * navegadores de Juan Luis) y el nuevo si no (los de sus compañeros).
- */
-function modoInicial() {
-  const guardado = leerLocal(CLAVE_MODO);
-  if (guardado === 'antiguo' || guardado === 'nuevo') return guardado;
-  return leerLocal(CLAVE_LISTA) ? 'antiguo' : 'nuevo';
-}
-
-function abrirAntiguo() {
-  escribirLocal(CLAVE_MODO, 'antiguo');
-  $('barra-modo').hidden = false;
-  $('selector-modo').hidden = false;
-  mostrar({ antiguo: true });
-  usarFuente(antigua);
-}
-
-// --- Sistema nuevo: entrar (DISENO.md, A.2) -----------------------------------------
+// --- Entrar (DISENO.md, A.2) ---------------------------------------------------------
 
 const panelDatos = () => firebase.datos.panel;
 
 /** La pantalla de entrar: 'entrar', 'sin-alta', 'baja' o 'error' (con `texto`). */
 function pintarAcceso(caso, texto = '') {
   mostrar({ acceso: true });
-  $('barra-modo').hidden = true;
+  $('barra-cuenta').hidden = true;
   const conCuenta = Boolean(firebase?.usuario());
   const correo = firebase?.usuario()?.email ?? '';
   $('acceso-texto').innerHTML = {
@@ -832,12 +696,10 @@ function pintarAcceso(caso, texto = '') {
     : texto;
   $('acceso-entrar').textContent = conCuenta && caso !== 'entrar' ? 'Volver a comprobar' : 'Entrar con Google';
   $('acceso-salir').hidden = !conCuenta;
-  $('acceso-antiguo').hidden = conCuenta && caso !== 'error';
 }
 
-/** Abre el sistema nuevo: si ya hay sesión, entra; si no, la pantalla de entrar. */
-async function abrirNuevo() {
-  escribirLocal(CLAVE_MODO, 'nuevo');
+/** Al abrir la página: si ya hay sesión, entra; si no, la pantalla de entrar. */
+async function abrirPanel() {
   pintarAcceso('entrar', 'Conectando…');
   $('acceso-entrar').disabled = true;
   try {
@@ -852,7 +714,7 @@ async function abrirNuevo() {
   await comprobarAcceso();
 }
 
-async function entrarNuevo() {
+async function entrarPanel() {
   try {
     await obtenerFirebase();
     if (!firebase.usuario()) await firebase.entrarConGoogle();
@@ -863,11 +725,11 @@ async function entrarNuevo() {
   await comprobarAcceso();
 }
 
-async function salirNuevo() {
+async function salirPanel() {
   try { await firebase?.salir(); } catch { /* ya estaba fuera */ }
   $('cuenta').textContent = '';
   $('salir').hidden = true;
-  if (fuente === espacio || !$('acceso').hidden) pintarAcceso('entrar');
+  pintarAcceso('entrar');
 }
 
 /** Con la sesión abierta: según `estadoProfesor()`, la solicitud de alta, el aviso de baja o el espacio. */
@@ -890,12 +752,11 @@ async function comprobarAcceso() {
   if (estado === 'baja') { pintarAcceso('baja'); return; }
   $('cuenta').textContent = usuario.email ?? '';
   $('salir').hidden = false;
-  $('barra-modo').hidden = false;
-  $('selector-modo').hidden = estado !== 'admin';   // los compañeros solo tienen el sistema nuevo
+  $('barra-cuenta').hidden = false;
   await montarEspacio(usuario, estado === 'admin');
 }
 
-// --- Sistema nuevo: el espacio ------------------------------------------------------
+// --- El espacio ----------------------------------------------------------------------
 
 const claveListaEspacio = uid => `practicas.profesor.${uid}.lista`;
 /** Lo último que se subió o se bajó cifrado: `{ texto, actualizado }`; sirve para saber si hay cambios sin subir o una lista más nueva en la nube. */
@@ -926,7 +787,7 @@ const contexto = {
   get esAdmin() { return espacio.esAdmin; },
   get datos() { return panelDatos(); },
   config: () => espacio.config,
-  cambiarConfig: config => { espacio.config = config; pintarTareasEspacio(); if (fuente === espacio) repintarVistas(); },
+  cambiarConfig: config => { espacio.config = config; pintarTareasEspacio(); repintarVistas(); },
   alumnos: () => filasMisAlumnos(espacio.nombres(), espacio.codigos),
   resultados: () => ({ nube: espacio.nube, nubeTareas: espacio.nubeTareas, asignaciones: espacio.asignaciones, registro: espacio.registro, documentos: espacio.documentos }),
   alCargar: fn => { alCargar.push(fn); },
@@ -936,10 +797,11 @@ const contexto = {
 async function montarEspacio(usuario, esAdmin) {
   const uid = usuario.uid;
   if (espacio.uid !== uid) reiniciarEspacio(uid, esAdmin);
-  mostrar({ nuevo: true });
+  mostrar({ enEspacio: true });
   $('seccion-profesores').hidden = !esAdmin;
   $('lista-espacio').value = leerLocal(claveListaEspacio(uid)) ?? '';
-  usarFuente(espacio);
+  marcasAsignar.clear();
+  repintarVistas();
   pintarMisAlumnos();
   pintarTareasEspacio();
   $('estado-codigos').textContent = 'Abriendo tu espacio…';
@@ -966,30 +828,16 @@ async function montarEspacio(usuario, esAdmin) {
     panelHoy.montar($('panel-hoy'), contexto);
   }
   if (esAdmin) pintarProfesores();
-  $('seccion-migracion').hidden = !esAdmin;
-  if (esAdmin && !migracionMontada) {
-    migracionMontada = true;
-    migracion.montar($('migracion'), contextoMigracion);
+  // La cuenta lectora del informe diario (tarea 70): solo el administrador, en su espacio.
+  $('seccion-lectores').hidden = !esAdmin;
+  if (esAdmin && !lectoresMontado) {
+    lectoresMontado = true;
+    lectores.montar($('lectores'), contexto);
   }
   await cargarEspacio();
 }
 
-// «Pasar al sistema nuevo» (tarea 70): solo el administrador, en su espacio.
-let migracionMontada = false;
-const contextoMigracion = {
-  get uid() { return espacio.uid; },
-  get datos() { return panelDatos(); },
-  token: () => firebase.usuario().getIdToken(),
-  listaAntigua: () => leerLocal(CLAVE_LISTA) ?? $('lista').value,
-  listaEspacio: () => $('lista-espacio').value,
-  ponerListaEspacio: texto => {
-    $('lista-espacio').value = texto;
-    escribirLocal(claveListaEspacio(espacio.uid), texto);
-    alCambiarLista();
-  },
-  cambiarConfig: config => contexto.cambiarConfig(config),
-  recargarTodo: () => cargarEspacio({ todo: true }),
-};
+let lectoresMontado = false;
 
 /** Los códigos del profesor (`listarMisCodigos`): con ellos se sabe de quién es cada documento. */
 function ponerCodigos(codigos) {
@@ -998,7 +846,7 @@ function ponerCodigos(codigos) {
   espacio.indices = indicesDeCodigos(codigos);
   aplicarDocumentos();
   pintarMisAlumnos();
-  if (fuente === espacio) repintarVistas();
+  repintarVistas();
 }
 
 function ponerConfig(leida) {
@@ -1188,7 +1036,7 @@ async function guardarNombres() {
 function alCambiarLista() {
   pintarMisAlumnos();
   pintarEstadoNombres();
-  if (fuente === espacio) repintarVistas();
+  repintarVistas();
 }
 
 // --- «Profesores»: altas y bajas (A.2; solo el administrador) ---
@@ -1300,7 +1148,7 @@ function aplicarDocumentos() {
 let cargando = null;
 
 /**
- * «Cargar de la nube» del sistema nuevo: lo que hay en la caché, al momento, y
+ * «Cargar de la nube»: lo que hay en la caché, al momento, y
  * después solo lo nuevo de la nube (`leerDesde`). Con `todo`, empieza de cero.
  */
 async function cargarEspacio({ todo = false } = {}) {
@@ -1312,17 +1160,17 @@ async function cargarEspacio({ todo = false } = {}) {
   cargando = (async () => {
     const uid = espacio.uid;
     const subcolecciones = ['progreso-libre', 'progreso-tareas', 'asignaciones'];
-    ponerEstado(espacio, 'estado-nube', todo ? 'Leyendo todo de la nube…' : 'Leyendo lo nuevo de la nube…');
+    ponerEstado('estado-nube', todo ? 'Leyendo todo de la nube…' : 'Leyendo lo nuevo de la nube…');
     const db = await cacheDe(uid);
     if (todo) {
       for (const almacen of ALMACENES) await vaciarCache(db, almacen);
       escribirLocal(claveFallosDesde(uid), '');
       espacio.registro = [];
-      ponerEstado(espacio, 'fallos-estado', '');
+      ponerEstado('fallos-estado', '');
     }
     for (const sub of subcolecciones) espacio.documentos[sub] = todo ? [] : await leerCache(db, sub);
     aplicarDocumentos();
-    if (fuente === espacio) repintarVistas();
+    repintarVistas();
     try { ponerCodigos(await panelDatos().listarMisCodigos()); } catch { /* se queda con los que ya tenía */ }
     const leidas = await Promise.allSettled(subcolecciones.map(sub => panelDatos().leerDesde(sub, desdeParaLeer(espacio.documentos[sub]))));
     let nuevos = 0;
@@ -1338,11 +1186,11 @@ async function cargarEspacio({ todo = false } = {}) {
     espacio.asignacionesCargadas = !fallidas.some(([sub]) => sub === 'asignaciones');
     aplicarDocumentos();
     const textos = await Promise.all(fallidas.map(async ([sub, e]) => ` No se ha podido leer «${sub}»: ${await mensajeDeError(e)}`));
-    ponerEstado(espacio, 'estado-nube', `Cargados ${espacio.nube.length} registros de práctica y ${espacio.nubeTareas.length} de tareas, de ${new Set([...espacio.nube, ...espacio.nubeTareas].map(d => d.indice)).size} alumnos, y las asignaciones de ${espacio.asignaciones.length}. De la nube se han pedido ${nuevos} documentos (lo cambiado desde la última lectura y, por si el reloj de algún alumno va atrasado, lo de los dos días anteriores); lo demás estaba en este navegador (${new Date().toLocaleTimeString('es')}).` + textos.join(''));
-    if (fuente === espacio) repintarVistas();
+    ponerEstado('estado-nube', `Cargados ${espacio.nube.length} registros de práctica y ${espacio.nubeTareas.length} de tareas, de ${new Set([...espacio.nube, ...espacio.nubeTareas].map(d => d.indice)).size} alumnos, y las asignaciones de ${espacio.asignaciones.length}. De la nube se han pedido ${nuevos} documentos (lo cambiado desde la última lectura y, por si el reloj de algún alumno va atrasado, lo de los dos días anteriores); lo demás estaba en este navegador (${new Date().toLocaleTimeString('es')}).` + textos.join(''));
+    repintarVistas();
     for (const fn of alCargar) { try { fn(); } catch { /* lo de la 67 o la 68 no rompe el panel */ } }
   })().catch(async e => {
-    ponerEstado(espacio, 'estado-nube', `No se ha podido cargar: ${await mensajeDeError(e)}`);
+    ponerEstado('estado-nube', `No se ha podido cargar: ${await mensajeDeError(e)}`);
   }).finally(() => { cargando = null; });
   return cargando;
 }
@@ -1367,44 +1215,23 @@ async function cargarRegistroEspacio(desde) {
 
 // --- Arranque ------------------------------------------------------------------
 
-try { $('lista').value = localStorage.getItem(CLAVE_LISTA) ?? ''; } catch { /* sin almacén */ }
-$('lista').addEventListener('input', () => {
-  try { localStorage.setItem(CLAVE_LISTA, $('lista').value); } catch { /* sin almacén */ }
-  pintarCodigos();
-  pintarResultados();
-  pintarSelectoresRegistro();
-  pintarRegistro();
-  pintarAsignar();
-});
 $('tabla-asignar').addEventListener('change', ev => {
   const clave = ev.target.dataset?.asignar;
   if (clave) marcasAsignar.set(clave, ev.target.checked);
 });
 $('asignar-guardar').addEventListener('click', guardarAsignaciones);
-$('idioma-enlaces').addEventListener('change', pintarCodigos);
-$('destino-enlaces').addEventListener('change', pintarCodigos);
-pintarTablaTareas(TAREAS, 'destino-enlaces', 'tabla-tareas');
-$('tabla-tareas').addEventListener('click', copiarEnlaceTarea(() => TAREAS));
 $('pegados').addEventListener('input', pintarResultados);
 $('vista').addEventListener('change', pintarResultados);
-$('copiar-codigos').addEventListener('click', async ev => {
-  await navigator.clipboard.writeText(tablaCodigos().map(f => f.join('\t')).join('\n'));
-  ev.target.textContent = '¡Copiada!';
-});
-$('csv-codigos').addEventListener('click', () => descargar('codigos-practicas.csv', tablaCodigos()));
 $('csv-resultados').addEventListener('click', descargarResultados);
-$('nube').addEventListener('click', cargarNube);
+$('nube').addEventListener('click', () => cargarEspacio());
 $('fallos-desde').value = fechaISO(new Date(Date.now() - 7 * 86400000));
 $('fallos-cargar').addEventListener('click', cargarRegistro);
 for (const id of ['fallos-tarea', 'fallos-practica', 'fallos-alumno']) $(id).addEventListener('change', pintarRegistro);
 $('fallos-csv').addEventListener('click', () => descargar('fallos.csv', csvRegistro()));
 
-// Sistema nuevo.
-$('modo').addEventListener('change', () => ($('modo').value === 'nuevo' ? abrirNuevo() : abrirAntiguo()));
-$('ir-antiguo').addEventListener('click', abrirAntiguo);
-$('acceso-entrar').addEventListener('click', entrarNuevo);
-$('acceso-salir').addEventListener('click', salirNuevo);
-$('salir').addEventListener('click', salirNuevo);
+$('acceso-entrar').addEventListener('click', entrarPanel);
+$('acceso-salir').addEventListener('click', salirPanel);
+$('salir').addEventListener('click', salirPanel);
 $('lista-espacio').addEventListener('input', () => {
   if (espacio.uid) escribirLocal(claveListaEspacio(espacio.uid), $('lista-espacio').value);
   alCambiarLista();
@@ -1423,6 +1250,4 @@ $('releer-todo').addEventListener('click', () => cargarEspacio({ todo: true }));
 $('profesores-recargar').addEventListener('click', pintarProfesores);
 for (const id of ['tabla-solicitudes', 'tabla-profesores']) $(id).addEventListener('click', accionProfesor);
 
-pintarCodigos();
-if (modoInicial() === 'nuevo') abrirNuevo();
-else abrirAntiguo();
+abrirPanel();

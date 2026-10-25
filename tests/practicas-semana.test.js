@@ -668,9 +668,8 @@ test('semana.js: pasa el ámbito de la tarea a la base y deja la tarea 1 con el 
 
 // --- Portada y página de la tarea con el código de 8: las tareas del profesor (tarea 65) ----
 
-import { identificar, contextoGuardado, contextoAntiguo } from '../practicas/vista-tareas.js';
+import { identificar, contextoGuardado } from '../practicas/vista-tareas.js';
 import { claveEspacio } from '../practicas/_comun/espacio.js';
-import { leerCodigoAlumno } from '../practicas/_comun/codigos.js';
 import { UNIDADES as UNIDADES_CURSO } from '../practicas/_comun/catalogo.js';
 
 const CODIGO8 = 'K7QMP3XA';
@@ -692,35 +691,28 @@ const resolverA = async codigo => (codigo === CODIGO8
   ? { modo: 'nuevo', profesor: 'uidProfesorA0001', n: 7, config: CONFIG_A, desdeCache: false }
   : { error: 'no-existe' });
 
-test('identificar: un código de 4 del modo antiguo que la nube no conoce es lo de hoy (TAREAS y UNIDADES); registrado, el de su profesor (tarea 72)', async () => {
+test('identificar: un código de 4 calculable que la nube no conoce no existe (tarea 71); registrado, el de su profesor (tarea 72)', async () => {
   const preguntados = [];
-  const antiguo = async codigo => { preguntados.push(codigo); return { modo: 'antiguo', n: leerCodigoAlumno(codigo) }; };
-  const c = await identificar('7npd', { resolver: antiguo });
-  assert.deepEqual(preguntados, ['7NPD'], 'también se pregunta: puede estar registrado');
-  assert.equal(c.modo, 'antiguo');
-  assert.equal(c.codigo, '7NPD');
-  assert.equal(c.profesor, null);
-  assert.equal(c.tareas, TAREAS);
-  assert.equal(c.unidades, UNIDADES_CURSO);
-  assert.equal(c.indice, leerCodigoAlumno('7NPD'));
-  assert.deepEqual(contextoAntiguo(3).codigo, codigoAlumno(3));
-  // El mismo código, ya registrado en el espacio de un profesor: sus tareas y su número de lista.
+  const sinRegistrar = async codigo => { preguntados.push(codigo); return { error: 'no-existe' }; };
+  assert.deepEqual(await identificar('7npd', { resolver: sinRegistrar }), { error: 'no-existe' });
+  assert.deepEqual(preguntados, ['7NPD'], 'se pregunta por el código, como con cualquier otro');
+  // El mismo código, registrado en el espacio de un profesor: sus tareas y su número de lista.
   const r = await identificar('7NPD', { resolver: async () => ({ modo: 'nuevo', profesor: 'uidProfesorA0001', n: 60, config: CONFIG_A, desdeCache: false }) });
-  assert.equal(r.modo, 'nuevo');
   assert.equal(r.codigo, '7NPD');
   assert.equal(r.profesor, 'uidProfesorA0001');
   assert.equal(r.indice, 60);
   assert.deepEqual(r.tareas.map(t => t.id), [1, 2, 3, 4, 5]);
   // Uno de 4 generado al azar (sin la comprobación antigua) es como uno de 8.
   const g = await identificar('K7QM', { resolver: async () => ({ modo: 'nuevo', profesor: 'uidProfesorA0001', n: 3, config: CONFIG_A }) });
-  assert.equal(g.modo, 'nuevo');
   assert.equal(g.codigo, 'K7QM');
+  assert.equal(g.profesor, 'uidProfesorA0001');
+  // Una respuesta sin profesor (lo que daba el modo antiguo) ya no vale como contexto.
+  assert.deepEqual(await identificar('7NPD', { resolver: async () => ({ modo: 'antiguo', n: 59 }) }), { error: 'sin-red' });
 });
 
 test('identificar: con 8 caracteres salen las tareas y las fechas de su profesor (también con guion y en minúsculas)', async () => {
   for (const texto of [CODIGO8, 'K7QM-P3XA', ' k7qm p3xa ']) {
     const c = await identificar(texto, { resolver: resolverA });
-    assert.equal(c.modo, 'nuevo');
     assert.equal(c.codigo, CODIGO8, 'el código se guarda sin guion y en mayúsculas');
     assert.equal(c.profesor, 'uidProfesorA0001');
     assert.equal(c.indice, 7);
@@ -756,9 +748,8 @@ test('portada con la configuración del profesor: qué tareas salen cada día, c
   const [u2, u1] = seccionesPorUnidad('2026-11-09', { tareas: c.tareas, unidades: c.unidades });
   assert.equal(u2.actual, true);
   assert.deepEqual(u1.tareas.map(t => t.id), [1, 2]);
-  // Con las tareas del curso (código de 4) el mismo día sale lo de hoy, no lo del profesor.
-  const antiguo = contextoAntiguo(0);
-  const deHoy = seccionesPorUnidad('2026-10-17', { tareas: antiguo.tareas, unidades: antiguo.unidades });
+  // Con la plantilla del curso (lo que se ve sin código) el mismo día sale lo de hoy, no lo del profesor.
+  const deHoy = seccionesPorUnidad('2026-10-17', { tareas: TAREAS, unidades: UNIDADES_CURSO });
   assert.deepEqual(deHoy.map(s => s.unidad.n), [2, 1]);
   assert.deepEqual(deHoy[1].tareas.map(t => t.id), [11, 12, 13, 14]);
 });
@@ -767,7 +758,7 @@ test('página de la tarea: la tarea se busca entre las del profesor; una que no 
   const c = await identificar(CODIGO8, { resolver: resolverA });
   assert.equal(tareaPorId(3, c.tareas).titulo.es, 'Tarea 3');
   assert.equal(tareaPorId(11, c.tareas), null, 'la tarea 11 del curso no es de este profesor');
-  assert.ok(tareaPorId(11, TAREAS), 'pero con un código de 4 sí');
+  assert.ok(tareaPorId(11, TAREAS), 'pero en la plantilla sí');
   assert.equal(tareaPorId(NaN, c.tareas), null);
 });
 
@@ -785,20 +776,22 @@ test('plazo con las fechas del profesor y asignación del espacio', async () => 
   assert.equal(vistaPlazo(tarea5, sinNada, diaDeFecha('2026-11-10'), asignadaAMi(tarea5, []), t).tipo, 'repaso');
 });
 
-test('la asignación de un código de 8 se lee de las asignaciones de su espacio', async () => {
+test('la asignación se lee de las asignaciones del espacio; sin profesor conocido, solo la copia', async () => {
   const pedidos = [];
   const anterior = globalThis.fetch;
   globalThis.fetch = async url => { pedidos.push(String(url)); return { ok: true, json: async () => ({ fields: { tareas: { arrayValue: { values: [{ integerValue: '5' }] } } } }) }; };
   try {
-    await conAlmacen(async () => {
-      assert.deepEqual(await cargarAsignacion(CODIGO8, { profesor: 'uidProfesorA0001' }), [5]);
-      assert.deepEqual(await cargarAsignacion('7NPD'), [5]);
+    await conAlmacen(async almacen => {
+      const espacio = await cargarAsignacion(CODIGO8, { profesor: 'uidProfesorA0001' });
+      if (pedidos.length) assert.deepEqual(espacio, [5]);   // sin configuración de Firebase en el entorno de pruebas no se llega a pedir nada
+      const antes = pedidos.length;
+      assert.equal(await cargarAsignacion('7NPD'), null, 'sin profesor ni copia, nada (tarea 71: ya no hay practicas-asignaciones)');
+      almacen.set(claveAsignacion('7NPD'), '[3]');
+      assert.deepEqual(await cargarAsignacion('7NPD'), [3], 'con copia, la copia');
+      assert.equal(pedidos.length, antes, 'sin profesor no se pregunta a nadie');
     });
   } finally { globalThis.fetch = anterior; }
-  if (pedidos.length) {   // sin configuración de Firebase en el entorno de pruebas no se llega a pedir nada
-    assert.match(pedidos[0], /\/practicas-espacios\/uidProfesorA0001\/asignaciones\/K7QMP3XA\?/);
-    assert.match(pedidos[1], /\/practicas-asignaciones\/7NPD\?/, 'con 4, la colección de siempre');
-  }
+  if (pedidos.length) assert.match(pedidos[0], /\/practicas-espacios\/uidProfesorA0001\/asignaciones\/K7QMP3XA\?/);
 });
 
 test('sin red se sigue con la copia del navegador; sin copia, las prácticas sin tareas', async () => {
@@ -811,11 +804,11 @@ test('sin red se sigue con la copia del navegador; sin copia, las prácticas sin
     assert.equal(c.desdeCache, true);
     almacen.set(claveEspacio(CODIGO8), '{roto');
     assert.equal(contextoGuardado(CODIGO8), null, 'una copia rota no vale');
-    assert.equal(contextoGuardado('7NPD'), null, 'el modo antiguo no usa copia');
+    assert.equal(contextoGuardado('7NPD'), null, 'sin copia de ese código, nada');
   });
 });
 
-test('portada.js y semana.js: aceptan los dos códigos, mantienen los enlaces del modo antiguo y no tocan la base', () => {
+test('portada.js y semana.js: aceptan códigos de 4 y de 8, mantienen los enlaces de siempre y no tocan la base', () => {
   const semana = readFileSync(new URL('../practicas/semana.js', import.meta.url), 'utf8');
   const portada = readFileSync(new URL('../practicas/portada.js', import.meta.url), 'utf8');
   assert.match(semana, /maxlength="12"/, 'con guion, un código de 8 mide 9');

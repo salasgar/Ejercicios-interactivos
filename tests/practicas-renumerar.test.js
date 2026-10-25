@@ -13,12 +13,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { CATALOGO, practicaPorSlug, adaptarProgreso } from '../practicas/_comun/catalogo.js';
 import { TAREAS, tareaPorId } from '../practicas/_comun/tareas.js';
-import { codigoAlumno } from '../practicas/_comun/codigos.js';
-import { fusionarProgreso, leerNube, escribirNube, subirFusionado, leerDocumentoRest, canonico } from '../practicas/_comun/nube.js';
+import { codigoAlumno, leerCodigoAlumno } from '../practicas/_comun/codigos.js';
+import { fusionarProgreso, leerNube, escribirNube, subirFusionado, leerDocumentoRest, canonico, coleccionEspacio } from '../practicas/_comun/nube.js';
 import { sincronizarGuardado, claveProgreso, progresoGuardado } from '../practicas/_comun/base.js';
 import { leerDocumentos } from '../practicas/resultados.js';
 
 const CONFIG = { apiKey: 'clave', projectId: 'proyecto' };
+// Todo en el espacio de un profesor de prueba (desde la tarea 71 no hay colecciones sin profesor).
+const UID = 'uidA';
+const LIBRE = coleccionEspacio(UID, 'progreso-libre');
 
 /** Un ejercicio como lo guarda la base. */
 const ej = (puntos, { terminado = false, fallos = 0, dia = 0 } = {}) => ({ puntos, objetivo: 10, vidas: 5, racha: 0, aciertos: puntos, fallos, reinicios: 0, terminado, dia });
@@ -107,17 +110,17 @@ function conAlmacen(fn) {
   return Promise.resolve(fn(almacen)).finally(() => { delete globalThis.localStorage; });
 }
 
-test('renumerar: leerNube adapta lo leído y avisa (`adaptado`) para que se reescriba; en el modo antiguo y en un espacio', async () => {
+test('renumerar: leerNube adapta lo leído y avisa (`adaptado`) para que se reescriba, en el progreso libre y en el de una tarea', async () => {
   const nube = nubeFalsa();
-  const op = { fetch: nube.fetch, config: CONFIG };
+  const op = { fetch: nube.fetch, config: CONFIG, coleccion: LIBRE, profesor: UID };
   const c = codigoAlumno(13);
   await escribirNube('fabrica', c, ANTES, 'alterno', op);
   const vieja = await leerNube('fabrica', c, op);
   assert.equal(vieja.estado, 'ok');
   assert.deepEqual(vieja.ej, [CONTAR, DIVISIBLE]);
   assert.equal(vieja.adaptado, true);
-  // En un espacio (progreso libre y de una tarea): igual, porque el slug viaja aparte.
-  for (const [coleccion, id] of [['practicas-espacios/uidA/progreso-libre', `fabrica--${c}`], ['practicas-espacios/uidA/progreso-tareas', `t2--fabrica--${c}`]]) {
+  // Con el id de una tarea (y en otro sitio del espacio): igual, porque el slug viaja aparte.
+  for (const [coleccion, id] of [[LIBRE, `fabrica--${c}`], [coleccionEspacio(UID, 'progreso-tareas'), `t2--fabrica--${c}`]]) {
     await escribirNube('fabrica', c, ANTES, 'alterno', { ...op, coleccion, id });
     const leida = await leerNube('fabrica', c, { ...op, coleccion, id });
     assert.deepEqual(leida.ej, [CONTAR, DIVISIBLE], coleccion);
@@ -134,14 +137,14 @@ test('renumerar: leerNube adapta lo leído y avisa (`adaptado`) para que se rees
 
 test('renumerar: al subir, un documento viejo de la nube se reescribe con 2 aunque la fusión no cambie nada', async () => {
   const nube = nubeFalsa();
-  const op = { fetch: nube.fetch, config: CONFIG };
+  const op = { fetch: nube.fetch, config: CONFIG, coleccion: LIBRE, profesor: UID };
   const c = codigoAlumno(20);
   await escribirNube('fabrica', c, ANTES, 'alterno', op);
   nube.escrituras.length = 0;
   const { ej: enNube } = await subirFusionado('fabrica', c, [CONTAR, DIVISIBLE], 'alterno', op);
   assert.deepEqual(enNube, [CONTAR, DIVISIBLE]);
-  assert.deepEqual(nube.escrituras, [`practicas/fabrica--${c}`]);
-  assert.deepEqual(nube.ejDe(`practicas/fabrica--${c}`), [CONTAR, DIVISIBLE]);
+  assert.deepEqual(nube.escrituras, [`${LIBRE}/fabrica--${c}`]);
+  assert.deepEqual(nube.ejDe(`${LIBRE}/fabrica--${c}`), [CONTAR, DIVISIBLE]);
   // Y la siguiente vez ya no hace falta escribir.
   nube.escrituras.length = 0;
   await subirFusionado('fabrica', c, [CONTAR, DIVISIBLE], 'alterno', op);
@@ -161,7 +164,7 @@ test('renumerar: en el navegador, progresoGuardado lee la lista de 3 como la de 
 
 test('renumerar: sincronizarGuardado (página de la tarea) con lo viejo en los dos sitios deja 2 en los dos', () => conAlmacen(async almacen => {
   const nube = nubeFalsa();
-  const op = { fetch: nube.fetch, config: CONFIG };
+  const op = { fetch: nube.fetch, config: CONFIG, coleccion: LIBRE, profesor: UID };
   const c = codigoAlumno(7);
   await escribirNube('fabrica', c, [null, ej(9), null], 'alterno', op);
   almacen.set(claveProgreso('fabrica', c), JSON.stringify({ ej: ANTES }));
@@ -170,23 +173,24 @@ test('renumerar: sincronizarGuardado (página de la tarea) con lo viejo en los d
   assert.equal(local.length, 2);
   assert.equal(local[0].puntos, 9, 'contar: lo de la nube (el 2 de antes) en el 1');
   assert.deepEqual(local[1], DIVISIBLE);
-  assert.equal(canonico(nube.ejDe(`practicas/fabrica--${c}`)), canonico(local), 'la nube, igual que el navegador');
+  assert.equal(canonico(nube.ejDe(`${LIBRE}/fabrica--${c}`)), canonico(local), 'la nube, igual que el navegador');
 }));
 
 test('renumerar: el panel (leerDocumentos) lee lo viejo con los ejercicios de hoy, en todas las colecciones', () => {
   const c = codigoAlumno(3);
   const estado = JSON.stringify({ v: 1, idioma: 'alterno', ej: ANTES });
-  const [libre] = leerDocumentos([{ id: `fabrica--${c}`, estado, actualizado: 5 }]);
+  const libres = docs => leerDocumentos(docs, 'progreso-libre', leerCodigoAlumno);
+  const [libre] = libres([{ id: `fabrica--${c}`, estado, actualizado: 5 }]);
   assert.deepEqual(libre.ej, [CONTAR, DIVISIBLE]);
   assert.equal(libre.practica, 7);
   assert.equal(libre.actualizado, 5);
-  const [deTarea] = leerDocumentos([{ id: `t2--fabrica--${c}`, estado, actualizado: 5 }], 'practicas-tareas');
+  const [deTarea] = leerDocumentos([{ id: `t2--fabrica--${c}`, estado, actualizado: 5 }], 'progreso-tareas', leerCodigoAlumno);
   assert.deepEqual(deTarea.ej, [CONTAR, DIVISIBLE]);
   assert.equal(deTarea.tarea, 2);
-  const [criba] = leerDocumentos([{ id: `criba--${c}`, estado, actualizado: 5 }]);
+  const [criba] = libres([{ id: `criba--${c}`, estado, actualizado: 5 }]);
   assert.deepEqual(criba.ej, ANTES, 'otra práctica, intacta');
   // Un documento sin `ej` sigue como antes (no se inventa la lista).
-  const [sinEj] = leerDocumentos([{ id: `fabrica--${c}`, estado: JSON.stringify({ v: 1 }), actualizado: 1 }]);
+  const [sinEj] = libres([{ id: `fabrica--${c}`, estado: JSON.stringify({ v: 1 }), actualizado: 1 }]);
   assert.equal('ej' in sinEj, false);
 });
 

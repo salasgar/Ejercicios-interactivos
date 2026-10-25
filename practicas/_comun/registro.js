@@ -1,29 +1,27 @@
 // Registro de cada fallo (tarea 39 del reparto PU2).
 //
 // Cada vez que un alumno con código falla un ítem, la base guarda en Firestore
-// un documento en la colección `fallos` (uno por fallo: decisión de Juan Luis
+// un documento en la colección `fallos` del espacio de su profesor (uno por fallo: decisión de Juan Luis
 // del 16-10-2026) con qué práctica y ejercicio era, el ítem (lo que devolvió
 // `generar`, recortado), el feedback en texto plano (que ya dice qué ha pasado
 // con esos números) y, si la práctica los pasa a `api.responder`, el tipo de
 // `error` y la `respuesta` del alumno; si se hizo desde una tarea, su id
 // (`tarea`, desde la tarea 51). Los aciertos no se registran uno a uno
-// (ya están los recuentos de `practicas/`).
+// (ya están los recuentos del progreso).
 //
 // El alumno solo puede CREAR documentos (regla en `firestore.rules`); leerlos,
-// solo el profesor, desde el panel. El alumno no nota nada: la escritura no se
+// solo el profesor (desde el panel) y sus lectores. El alumno no nota nada: la escritura no se
 // espera, y si falla (sin red) queda en una cola del navegador que se reintenta
 // en el siguiente fallo o al entrar. El id del documento lo pone la app, así que
 // un reintento de algo que sí llegó no lo duplica (Firestore responde 409).
 //
-// Con un código registrado en el sistema nuevo (varios profesores, tareas 64 y
-// 72; de 4 u 8 caracteres) el fallo va al espacio de su profesor,
-// `practicas-espacios/{uid}/fallos`, con los mismos campos. Si al fallar aún no
+// La colección es `practicas-espacios/{uid}/fallos`, la del profesor del código
+// (varios profesores, tareas 64 y 72; de 4 u 8 caracteres). Si al fallar aún no
 // se sabe de qué profesor es el código (sin red al entrar), se queda en la cola
-// hasta que lo diga la copia del navegador que deja `espacio.js`. Con un código
-// del modo antiguo sin profesor conocido, como siempre: `fallos`.
+// hasta que lo diga la copia del navegador que deja `espacio.js`. Desde la tarea
+// 71 no hay colección sin profesor: la `fallos` del modo antiguo ya no existe.
 
 import { firebaseConfig } from '../../src/config.js';
-import { esCodigoAntiguo } from './codigos.js';
 import { claveEspacio } from './espacio.js';
 import { coleccionEspacio } from './nube.js';
 
@@ -191,7 +189,7 @@ export function datosDeDocumento(doc) {
 
 // --- Escritura (alumno) ------------------------------------------------------------------
 
-const urlColeccion = (config = firebaseConfig, coleccion = 'fallos') => (config?.apiKey && config?.projectId
+const urlColeccion = (config, coleccion) => (config?.apiKey && config?.projectId
   ? `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccion}` : null);
 
 /** El profesor de un código secreto según la copia del navegador de `espacio.js`, o null. */
@@ -204,14 +202,13 @@ function profesorGuardado(almacen, codigo) {
 
 /**
  * La colección a la que va un fallo pendiente: la del espacio de su profesor si
- * se sabe cuál es (el del fallo o el de la copia del navegador); si no, `fallos`
- * con un código del modo antiguo, o null con uno del sistema nuevo (se queda en
- * la cola).
+ * se sabe cuál es (el del fallo o el de la copia del navegador); si no, null
+ * (se queda en la cola).
  */
 export function coleccionFallo(pendiente, almacen = null) {
   const alumno = String(pendiente?.datos?.alumno ?? '');
   const profesor = pendiente?.profesor ?? profesorGuardado(almacen, alumno);
-  if (!profesor) return esCodigoAntiguo(alumno) ? 'fallos' : null;
+  if (!profesor) return null;
   try { return coleccionEspacio(profesor, 'fallos'); } catch { return null; }
 }
 
@@ -262,54 +259,12 @@ export function enviarPendientes({ fetch: pedir = globalThis.fetch, config = fir
 
 /**
  * Registra un fallo: lo pone en la cola del navegador y la manda. No hay que
- * esperarlo (devuelve la promesa por si un test quiere hacerlo). Con un código
- * de 8, `profesor` es el uid de su espacio (null si aún no se sabe).
+ * esperarlo (devuelve la promesa por si un test quiere hacerlo). `profesor`
+ * es el uid del espacio del alumno (null si aún no se sabe).
  */
 export function registrarFallo(datos, { profesor = null, ...opciones } = {}) {
   const almacen = opciones.almacen ?? globalThis.localStorage;
   const pendiente = { id: idFallo(datos.alumno, datos.t), datos, ...(profesor && { profesor }) };
   guardarPendientes(almacen, [...leerPendientes(almacen), pendiente]);
   return enviarPendientes({ ...opciones, almacen });
-}
-
-// --- Lectura (panel del profesor) ----------------------------------------------------------
-
-/** Cuerpo de la consulta REST (runQuery): los fallos desde `desde` (ms), los más recientes primero. */
-export function consultaDesde(desde, limite = 20000) {
-  return {
-    structuredQuery: {
-      from: [{ collectionId: 'fallos' }],
-      where: { fieldFilter: { field: { fieldPath: 't' }, op: 'GREATER_THAN_OR_EQUAL', value: { integerValue: String(Math.floor(desde)) } } },
-      orderBy: [{ field: { fieldPath: 't' }, direction: 'DESCENDING' }],
-      limit: limite,
-    },
-  };
-}
-
-/** Respuesta de runQuery → lista de fallos (lo ilegible se descarta). */
-export function leerConsulta(respuesta) {
-  return (Array.isArray(respuesta) ? respuesta : []).map(r => datosDeDocumento(r?.document)).filter(Boolean);
-}
-
-/**
- * Los fallos hechos desde la tarea `tarea` (los que llevan ese campo). Con
- * `tarea` null, todos. Los fallos anteriores a la tarea 51 (17-10-2026) no
- * llevan el campo: no salen en ninguna tarea.
- */
-export function deLaTarea(fallos, tarea = null) {
-  return tarea === null || tarea === undefined ? fallos : fallos.filter(f => f.tarea === tarea);
-}
-
-/**
- * Lee los fallos desde una fecha con el token de la sesión del profesor (el
- * panel ya ha entrado con Google). Con `tarea`, solo los hechos desde esa
- * tarea (se filtra aquí y no en la consulta, que necesitaría un índice
- * compuesto en Firestore). Lanza si la nube lo rechaza.
- */
-export async function leerFallos(desde, token, { fetch: pedir = globalThis.fetch, config = firebaseConfig, tarea = null } = {}) {
-  const url = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents:runQuery`;
-  const r = await pedir(url, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` }, body: JSON.stringify(consultaDesde(desde)) });
-  const json = await r.json();
-  if (!r.ok) throw new Error(json?.error?.message ?? json?.[0]?.error?.message ?? `HTTP ${r.status}`);
-  return deLaTarea(leerConsulta(json), tarea);
 }

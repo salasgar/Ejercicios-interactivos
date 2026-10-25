@@ -49,90 +49,11 @@ service cloud.firestore {
       allow read, write: if esProfesor();
     }
 
-    // Práctica «divisor, múltiplo, divisible» (divisores/): sin cuentas. Cada
-    // alumno guarda su progreso en el documento cuyo id es su código de 4
-    // caracteres; nadie puede leerlos salvo el profesor.
-    match /divisores/{codigo} {
-      allow read: if esProfesor();
-      allow create, update: if codigo.matches('^[A-HJ-NP-Z2-9]{4}$')
-        && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
-        && request.resource.data.estado is string
-        && request.resource.data.estado.size() < 2000
-        && request.resource.data.actualizado is int;
-    }
-
-    // Prácticas de la unidad 2 (practicas/): igual que la anterior, con un
-    // documento por alumno y práctica, de id «<práctica>--<código>». Quien
-    // sabe el código puede leer ESE documento (get, para seguir desde otro
-    // aparato; solo hay números, sin nombres); listar la colección, solo el
-    // profesor.
-    match /practicas/{doc} {
-      allow read: if esProfesor();
-      allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$');
-      allow create, update: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$')
-        && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
-        && request.resource.data.estado is string
-        && request.resource.data.estado.size() < 4000
-        && request.resource.data.actualizado is int;
-    }
-
-    // Tareas de las prácticas, modelo v2 (desde la tarea 2; la tarea 1 sigue en
-    // practicas/): el progreso de una tarea va aparte del de la práctica
-    // libre, un documento por alumno, tarea y práctica, de id
-    // «t<tarea>--<práctica>--<código>», con el mismo formato que los de
-    // practicas/. Mismas reglas: get con el id, listar solo el profesor.
-    match /practicas-tareas/{doc} {
-      allow read: if esProfesor();
-      allow get: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$');
-      allow create, update: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}$')
-        && request.resource.data.keys().hasOnly(['estado', 'actualizado'])
-        && request.resource.data.estado is string
-        && request.resource.data.estado.size() < 4000
-        && request.resource.data.actualizado is int;
-    }
-
-    // Tareas obligatorias solo para algunos alumnos (las «asignada» de
-    // tareas.js): un documento por alumno, con su código como id y la lista de
-    // ids de tarea. Las marca el profesor en el panel; el alumno lee el suyo
-    // (get), nunca la colección. Que la lista sea de enteros lo asegura el
-    // panel (src/firebase.js): las reglas no pueden recorrer una lista.
-    match /practicas-asignaciones/{codigo} {
-      allow get: if codigo.matches('^[A-HJ-NP-Z2-9]{4}$');
-      allow read: if esProfesor();
-      allow write: if esProfesor()
-        && codigo.matches('^[A-HJ-NP-Z2-9]{4}$')
-        && request.resource.data.keys().hasOnly(['tareas', 'actualizado'])
-        && request.resource.data.tareas is list
-        && request.resource.data.tareas.size() <= 1023
-        && request.resource.data.actualizado is int;
-    }
-
-    // Registro de fallos de las prácticas (practicas/_comun/registro.js): un
-    // documento por fallo, de id «<código>-<hora>-<azar>». El alumno solo lo
-    // CREA (ni lo lee, ni lo cambia, ni lo borra); leerlos, solo el profesor.
-    // Topes de los textos con margen: la app ya recorta a 400, 500 y 80
-    // caracteres (LIMITES de registro.js). «tarea» (opcional): el id de la
-    // tarea dentro de la que se falló.
-    match /fallos/{id} {
-      allow read: if esProfesor();
-      allow create: if id.matches('^[A-HJ-NP-Z2-9]{4}-[a-z0-9]{6,12}-[a-z0-9]{4}$')
-        && request.resource.data.keys().hasAll(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion'])
-        && request.resource.data.keys().hasOnly(['v', 'alumno', 'practica', 'ejercicio', 't', 'dia', 'idioma', 'item', 'feedback', 'repeticion', 'respuesta', 'error', 'tarea'])
-        && request.resource.data.v is int
-        && request.resource.data.alumno is string && request.resource.data.alumno.matches('^[A-HJ-NP-Z2-9]{4}$')
-        && id.matches('^' + request.resource.data.alumno + '-.*')
-        && request.resource.data.practica is string && request.resource.data.practica.matches('^[a-z0-9-]{1,30}$')
-        && request.resource.data.ejercicio is int && request.resource.data.ejercicio >= 1 && request.resource.data.ejercicio <= 20
-        && request.resource.data.t is int
-        && request.resource.data.dia is int
-        && request.resource.data.idioma in ['es', 'en']
-        && request.resource.data.item is string && request.resource.data.item.size() <= 1200
-        && request.resource.data.feedback is string && request.resource.data.feedback.size() <= 1500
-        && request.resource.data.repeticion is bool
-        && (!('respuesta' in request.resource.data) || (request.resource.data.respuesta is string && request.resource.data.respuesta.size() <= 240))
-        && (!('error' in request.resource.data) || (request.resource.data.error is string && request.resource.data.error.matches('^[a-z0-9][a-z0-9-]{0,39}$')))
-        && (!('tarea' in request.resource.data) || (request.resource.data.tarea is int && request.resource.data.tarea >= 1 && request.resource.data.tarea <= 1023));
-    }
+    // Las colecciones del modo antiguo de las prácticas (divisores, practicas,
+    // practicas-tareas, practicas-asignaciones y fallos, con los códigos de 4
+    // calculables) ya no tienen reglas: desde la tarea 71 (octubre de 2026)
+    // nadie las lee ni las escribe, porque una colección sin regla se deniega
+    // entera. Todo está en los espacios de los profesores (abajo).
 
     // Tareas: el profesor las gestiona; el alumno ve las de su grupo.
     match /tareas/{tareaId} {
@@ -147,8 +68,8 @@ service cloud.firestore {
     // Sus alumnos entran con un código secreto de 4 u 8 caracteres, al azar, que
     // apunta a su profesor en practicas-alumnos/{código}. El administrador
     // (esAdmin) da altas y bajas, pero no aparece en ningún bloque del espacio:
-    // no lee los alumnos de los demás. Los bloques de arriba (modo antiguo,
-    // códigos de 4) no cambian hasta la migración de Juan Luis.
+    // no lee los alumnos de los demás. Los alumnos de Juan Luis conservan sus
+    // códigos de 4 de siempre, registrados aquí como los demás (tareas 70 y 72).
     //
     // Ninguna subcolección del espacio se llama «progreso»: el comodín
     // {ruta=**}/progreso de arriba (aplicación antigua) dejaría leerla al
@@ -270,8 +191,11 @@ service cloud.firestore {
           && request.resource.data.actualizado is int;
       }
 
-      // Progreso de práctica libre, «<práctica>--<código>»: como practicas/,
-      // con el código secreto, y solo si el código es de este profesor.
+      // Progreso de práctica libre, un documento por alumno y práctica, de id
+      // «<práctica>--<código>». Quien sabe el código puede leer ESE documento
+      // (get, para seguir desde otro aparato; solo hay números, sin nombres) y
+      // escribirlo, solo si el código es de este profesor; listar, el dueño y
+      // sus lectores.
       match /progreso-libre/{doc} {
         allow get: if doc.matches('^[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$');
         allow read: if esDueno(uid) || esLector(uid);
@@ -281,7 +205,8 @@ service cloud.firestore {
           && estadoValido();
       }
 
-      // Progreso por tarea, «t<tarea>--<práctica>--<código>»: como practicas-tareas/.
+      // Progreso por tarea (todas menos las que cuentan la práctica libre),
+      // «t<tarea>--<práctica>--<código>»: mismas reglas que el progreso libre.
       match /progreso-tareas/{doc} {
         allow get: if doc.matches('^t[0-9]{1,4}--[a-z0-9-]+--[A-HJ-NP-Z2-9]{4}([A-HJ-NP-Z2-9]{4})?$');
         allow read: if esDueno(uid) || esLector(uid);
@@ -291,7 +216,10 @@ service cloud.firestore {
           && estadoValido();
       }
 
-      // Tareas asignadas a algunos alumnos: como practicas-asignaciones/.
+      // Tareas obligatorias solo para algunos alumnos: un documento por alumno,
+      // con su código como id y la lista de ids de tarea. Las marca el profesor
+      // en el panel; el alumno lee el suyo (get), nunca la colección. Que la
+      // lista sea de enteros lo asegura el panel: las reglas no pueden recorrerla.
       match /asignaciones/{codigo} {
         allow get: if codigoSecreto(codigo);
         allow read: if esDueno(uid) || esLector(uid);
@@ -303,9 +231,12 @@ service cloud.firestore {
           && request.resource.data.actualizado is int;
       }
 
-      // Registro de fallos: los mismos campos y topes que fallos/ de arriba,
-      // con el código secreto y solo si el alumno es de este profesor. El alumno
-      // solo crea; leen el dueño y sus lectores.
+      // Registro de fallos (practicas/_comun/registro.js): un documento por
+      // fallo, de id «<código>-<hora>-<azar>», solo si el alumno es de este
+      // profesor. El alumno solo lo CREA (ni lo lee, ni lo cambia, ni lo borra);
+      // leen el dueño y sus lectores. Topes de los textos con margen: la app ya
+      // recorta a 400, 500 y 80 caracteres (LIMITES de registro.js). «tarea»
+      // (opcional): el id de la tarea dentro de la que se falló.
       match /fallos/{id} {
         allow read: if esDueno(uid) || esLector(uid);
         allow delete: if esDueno(uid);

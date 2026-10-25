@@ -1,5 +1,5 @@
-// Códigos de las prácticas: el del alumno (4 caracteres, el mismo que en
-// `divisores/`) y el de resultado de una tarea de la semana (20 caracteres).
+// Códigos de las prácticas: el del alumno (4 u 8 caracteres) y el de resultado
+// de una tarea de la semana (20 caracteres).
 // Los antiguos de resultado de `divisores/` tienen 12 y se siguen leyendo. La
 // longitud dice qué es cada uno. (Hubo también un código de resultado por
 // práctica, de 16 caracteres; existió hasta el 2026-10-16 y se eliminó: el
@@ -70,12 +70,12 @@ export function leerCodigoAlumno(texto) {
 
 // --- Código secreto del alumno (varios profesores, tareas 62 y 72) ----------------
 //
-// En el sistema nuevo un código tiene 4 u 8 símbolos de `ALFABETO`; cada profesor
-// elige la longitud de los que genera (por defecto 8). Los 1024 de 4 que pasan
-// la comprobación de `leerCodigoAlumno` son los del modo antiguo («calculables»):
-// los de Juan Luis pasan al sistema nuevo tal cual (tarea 70), así que con un
-// código de 4 ya no se sabe el sistema sin preguntar a la nube (`resolverCodigo`,
-// espacio.js). Aquí solo se mira el formato.
+// Un código tiene 4 u 8 símbolos de `ALFABETO`; cada profesor elige la longitud
+// de los que genera (por defecto 8). Los 1024 de 4 que pasan la comprobación de
+// `leerCodigoAlumno` son los del modo antiguo («calculables»), que ya no existe
+// (tarea 71): los de los alumnos de Juan Luis siguen valiendo porque están
+// registrados en su espacio (tarea 70), y uno sin registrar no existe. De quién
+// es un código lo dice la nube (`resolverCodigo`, espacio.js); aquí solo se mira el formato.
 
 /** Símbolos de un código secreto: 8 por defecto, o 4 si el profesor lo elige. */
 export const LONGITUD_SECRETO = 8;
@@ -107,13 +107,12 @@ export function leerCodigoSecreto(texto) {
 /** Un código para mostrarlo: `K7QM-P3XA` (uno de 4, tal cual: `K7QM`). */
 export const mostrarCodigoSecreto = codigo => agrupar(limpiar(codigo));
 
-/** ¿Es uno de los 1024 códigos del modo antiguo (4 símbolos con su comprobación)? */
+/** ¿Es uno de los 1024 códigos calculables (4 símbolos con la comprobación del modo antiguo)? */
 export const esCodigoAntiguo = texto => leerCodigoAlumno(texto) !== null;
 
 /**
  * Solo el formato de un código tecleado: `'4'`, `'8'` o `null` si no es un código.
- * No dice el sistema: un código de 4 puede ser del modo antiguo o del nuevo, y
- * eso lo decide `resolverCodigo` (espacio.js) preguntando a la nube.
+ * No dice si existe: eso lo decide `resolverCodigo` (espacio.js) preguntando a la nube.
  */
 export function formatoDeCodigo(texto) {
   const t = leerCodigoSecreto(texto);

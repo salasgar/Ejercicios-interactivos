@@ -11,10 +11,7 @@
   <style>
     /* `display: flex` (barra, botonera) anularía el atributo `hidden`. */
     .profesor [hidden] { display: none !important; }
-    /* Lo de un solo sistema (data-solo) se esconde en el otro. */
-    .profesor[data-modo="nuevo"] [data-solo="antiguo"], .profesor[data-modo="antiguo"] [data-solo="nuevo"] { display: none !important; }
-    .profesor .barra-modo { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
-    .profesor .barra-modo select { width: auto; max-width: 100%; margin: 0; }
+    .profesor .barra-cuenta { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; margin-bottom: 1rem; }
     .profesor .contrasenas { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
     .profesor .contrasenas input { width: auto; flex: 1 1 14rem; margin: 0; }
     #tarjetas { display: none; }
@@ -34,21 +31,14 @@
     <span class="cabecera__titulo">Prácticas de Matemáticas · Profesor</span>
     <a class="cabecera__usuario" href="./" style="color:#fff">Ver las prácticas</a>
   </header>
-  <main class="app profesor" id="panel" data-modo="antiguo">
-    <!-- Selector de sistema: solo para Juan Luis (el administrador), hasta su migración. -->
-    <div class="barra-modo" id="barra-modo" hidden>
-      <span class="barra-modo" id="selector-modo" style="margin: 0">
-        <label for="modo">Sistema:</label>
-        <select id="modo">
-          <option value="antiguo">Sistema actual (códigos de 4)</option>
-          <option value="nuevo">Sistema nuevo (mi espacio)</option>
-        </select>
-      </span>
+  <main class="app profesor" id="panel">
+    <!-- Con quién se ha entrado. -->
+    <div class="barra-cuenta" id="barra-cuenta" hidden>
       <span class="pequeno" id="cuenta"></span>
       <button type="button" class="secundario" id="salir" hidden>Salir</button>
     </div>
 
-    <!-- Entrar con Google (sistema nuevo). -->
+    <!-- Entrar con Google. -->
     <section class="tarjeta" id="acceso" hidden>
       <h2>Entrar</h2>
       <p id="acceso-texto">Entra con tu cuenta de Google del centro para ver tus alumnos y sus resultados.</p>
@@ -57,46 +47,10 @@
         <button type="button" class="secundario" id="acceso-salir" hidden>Entrar con otra cuenta</button>
       </div>
       <p class="pequeno" id="acceso-estado"></p>
-      <p class="pequeno" id="acceso-antiguo">Sistema actual, con los códigos de 4 caracteres (solo Juan Luis): <button type="button" class="secundario" id="ir-antiguo">Abrir el sistema actual</button></p>
     </section>
 
-    <!-- ===== Sistema actual (modo antiguo): igual que antes de la tarea 66 ===== -->
-    <div id="modo-antiguo">
-      <div class="aviso">Los nombres que escribas aquí <strong>no salen de este navegador</strong>: se guardan solo en este ordenador.</div>
-
-      <section class="tarjeta">
-        <h2>1. Alumnos y sus códigos</h2>
-        <p class="pequeno">Un alumno por línea. El código depende de la <strong>posición en la lista</strong>: no cambies el orden ni borres líneas una vez repartidos los códigos; los alumnos nuevos, al final. Cada alumno usa <strong>el mismo código en todas las prácticas</strong> (es el que ya tenía en «Divisor, múltiplo, divisible»).</p>
-        <textarea id="lista" placeholder="García López, Ana&#10;Martínez Ruiz, Luis&#10;…" spellcheck="false"></textarea>
-        <div class="selector">
-          <label for="destino-enlaces">Enlaces a:</label>
-          <select id="destino-enlaces"></select>
-        </div>
-        <div class="selector">
-          <label for="idioma-enlaces">Idioma de los enlaces:</label>
-          <select id="idioma-enlaces">
-            <option value="alterno">Alterno (por defecto)</option>
-            <option value="es">Español</option>
-            <option value="en">Inglés</option>
-          </select>
-        </div>
-        <p class="pequeno">Para fijarlo solo a un alumno (dislexia, recién llegado…), copia su enlace y cambia a mano el final por <code>&amp;idioma=es</code> o <code>&amp;idioma=en</code>.</p>
-        <div class="botonera">
-          <button type="button" class="secundario" id="copiar-codigos">Copiar tabla (para pegarla en una hoja de cálculo)</button>
-          <button type="button" class="secundario" id="csv-codigos">Descargar CSV</button>
-        </div>
-        <div class="tabla" id="tabla-codigos"></div>
-      </section>
-
-      <section class="tarjeta">
-        <h2>Tareas de la semana</h2>
-        <p class="pequeno">Cada tarea abre en una página sus ejercicios con ★ y los de elegir, con un marcador; al cumplirla, el profesor lo ve en la nube (el alumno tiene un código de 20 caracteres en un desplegable, de respaldo). El <strong>enlace común</strong> es el que se pega en Classroom: cada alumno escribe su código la primera vez (si ya entró en otra práctica en ese dispositivo, lo recuerda). Para dar el enlace de cada alumno, elige la tarea en «Enlaces a», arriba. Las tareas se cambian a mano en <code>practicas/_comun/tareas.js</code>.</p>
-        <div class="tabla" id="tabla-tareas"></div>
-      </section>
-    </div>
-
-    <!-- ===== Sistema nuevo (el espacio del profesor) ===== -->
-    <div id="modo-nuevo" hidden>
+    <!-- ===== El espacio del profesor ===== -->
+    <div id="espacio" hidden>
       <section class="tarjeta" id="seccion-profesores" hidden>
         <h2>Profesores</h2>
         <p class="pequeno">Solo lo ves tú. Quien entra en el panel sin estar dado de alta deja aquí su solicitud, con su correo y su nombre de Google. «Dar de alta» le abre su espacio; «Dar de baja» le cierra el acceso sin borrar sus datos. Como administrador no ves los alumnos de nadie: solo das altas y bajas.</p>
@@ -108,10 +62,10 @@
         <div class="tabla" id="tabla-profesores"></div>
       </section>
 
-      <!-- Pasar al sistema nuevo con los códigos de siempre (tarea 70): solo el administrador. -->
-      <section class="tarjeta" id="seccion-migracion" hidden>
-        <h2>Pasar al sistema nuevo</h2>
-        <div id="migracion"></div>
+      <!-- La cuenta lectora del informe diario (tarea 70): solo el administrador. -->
+      <section class="tarjeta" id="seccion-lectores" hidden>
+        <h2>Cuenta lectora del informe diario</h2>
+        <div id="lectores"></div>
       </section>
 
       <section class="tarjeta">
@@ -179,18 +133,18 @@
       </section>
     </div>
 
-    <!-- ===== Las vistas de los resultados: las mismas en los dos sistemas ===== -->
+    <!-- ===== Las vistas de los resultados ===== -->
     <div id="vistas">
       <section class="tarjeta">
         <h2>2. Resultados</h2>
         <h3>Códigos de resultado</h3>
-        <p class="pequeno"><strong>Lo normal es «Cargar de la nube» (abajo).</strong> Esto es solo el respaldo para cuando la nube no llega (una red de aula que bloquee Google, por ejemplo): los alumnos tienen su código en un desplegable y solo lo dan si se lo pides. Pega aquí lo que te den, tal cual (correos enteros, la lista de Classroom…), mezclados: se buscan solos los códigos de las tareas de la semana (20 caracteres)<span data-solo="antiguo"> y los antiguos de 12 de «Divisor, múltiplo, divisible»</span>. Cada código dice de quién es y de qué tarea.<span data-solo="antiguo"> Los de 16 caracteres (el código por práctica, que ya no existe) se avisan como no válidos.</span></p>
+        <p class="pequeno"><strong>Lo normal es «Cargar de la nube» (abajo).</strong> Esto es solo el respaldo para cuando la nube no llega (una red de aula que bloquee Google, por ejemplo): los alumnos tienen su código en un desplegable y solo lo dan si se lo pides. Pega aquí lo que te den, tal cual (correos enteros, la lista de Classroom…), mezclados: se buscan solos los códigos de las tareas de la semana (20 caracteres). Cada código dice de quién es y de qué tarea.</p>
         <textarea id="pegados" placeholder="ABCD-EFGH-JKLM-NPQR" spellcheck="false"></textarea>
         <h3>Datos guardados en la nube</h3>
-        <p class="pequeno">Con más detalle (aciertos, lo que le queda a quien va a medias) y sin que el alumno tenga que enviar nada. <span data-solo="antiguo">Hay que entrar con tu cuenta de Google de profesor.</span><span data-solo="nuevo">Lo leído se guarda en este navegador y cada carga pide a la nube solo lo nuevo; «Volver a leer todo» empieza de cero.</span></p>
+        <p class="pequeno">Con más detalle (aciertos, lo que le queda a quien va a medias) y sin que el alumno tenga que enviar nada. Lo leído se guarda en este navegador y cada carga pide a la nube solo lo nuevo; «Volver a leer todo» empieza de cero.</p>
         <div class="botonera">
           <button type="button" id="nube">Cargar de la nube</button>
-          <button type="button" class="secundario" id="releer-todo" data-solo="nuevo">Volver a leer todo</button>
+          <button type="button" class="secundario" id="releer-todo">Volver a leer todo</button>
         </div>
         <p class="pequeno" id="estado-nube"></p>
         <div id="avisos"></div>
@@ -205,7 +159,7 @@
 
       <section class="tarjeta">
         <h2>Asignar tareas</h2>
-        <p class="pequeno">Una tarea <strong>asignada</strong> (<span data-solo="antiguo">campo <code>asignada: true</code> en <code>practicas/_comun/tareas.js</code></span><span data-solo="nuevo">«solo para algunos alumnos», en «Tareas»</span>) es obligatoria solo para los alumnos que marques aquí; para los demás es una tarea de repaso más, sin ninguna marca. Primero pulsa «Cargar de la nube» (arriba, en «2. Resultados»), para ver lo que ya hay guardado; después marca y pulsa «Guardar asignaciones». Se guarda en la nube, no en el repositorio.<span data-solo="antiguo"> Hay que entrar con tu cuenta de Google de profesor.</span></p>
+        <p class="pequeno">Una tarea <strong>asignada</strong> («solo para algunos alumnos», en «Tareas») es obligatoria solo para los alumnos que marques aquí; para los demás es una tarea de repaso más, sin ninguna marca. Primero pulsa «Cargar de la nube» (arriba, en «2. Resultados»), para ver lo que ya hay guardado; después marca y pulsa «Guardar asignaciones». Se guarda en la nube, no en el repositorio.</p>
         <div class="botonera">
           <button type="button" id="asignar-guardar" disabled>Guardar asignaciones</button>
         </div>
@@ -215,7 +169,7 @@
 
       <section class="tarjeta">
         <h2>3. Fallos, uno a uno</h2>
-        <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno.<span data-solo="antiguo"> Hay que entrar con tu cuenta de Google de profesor.</span> Cada carga gasta una lectura por fallo: elige desde qué día.<span data-solo="nuevo"> Los ya leídos se guardan en este navegador y no se vuelven a pedir.</span></p>
+        <p class="pequeno">Cada vez que un alumno con código falla un ítem, se guarda en la nube qué práctica y ejercicio era, el ítem, la explicación que vio y, en las prácticas que lo dan, el tipo de error y lo que contestó. Arriba, los fallos más repetidos con ejemplos reales; abajo, qué le cuesta a cada alumno. Cada carga gasta una lectura por fallo: elige desde qué día. Los ya leídos se guardan en este navegador y no se vuelven a pedir.</p>
         <div class="botonera">
           <label for="fallos-desde">Desde el día</label>
           <input type="date" id="fallos-desde">

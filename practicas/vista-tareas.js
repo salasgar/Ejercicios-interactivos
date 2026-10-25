@@ -12,8 +12,8 @@
 import { CATALOGO, ID_PLANTILLA, UNIDADES, unidadActual, unidadesCon } from './_comun/catalogo.js';
 import { leer, escribir, progresoGuardado } from './_comun/base.js';
 import { leerAsignacion, coleccionEspacio } from './_comun/nube.js';
-import { TAREAS, configDeJSON, diaDeFecha, estadoPlazo, tareasPublicadas } from './_comun/tareas.js';
-import { codigoAlumno, leerCodigoSecreto, MAX_ALUMNOS } from './_comun/codigos.js';
+import { configDeJSON, diaDeFecha, estadoPlazo, tareasPublicadas } from './_comun/tareas.js';
+import { leerCodigoSecreto, MAX_ALUMNOS } from './_comun/codigos.js';
 import { claveEspacio, resolverCodigo } from './_comun/espacio.js';
 
 /** Qué `tareaId` se pasa a la base para leer el progreso: null en la tarea 1 (práctica), el id en las v2. */
@@ -46,8 +46,8 @@ export function asignacionGuardada(codigo, leerClave = leer) {
  * la copia (o null si tampoco hay copia: todas las asignadas salen como repaso).
  */
 export async function cargarAsignacion(codigo, { profesor = null, leerRemota, leerClave = leer, escribirClave = escribir } = {}) {
-  // Con profesor (código de 8), la asignación está en su espacio; sin él, en `practicas-asignaciones`.
-  const leerDeNube = leerRemota ?? (profesor ? c => leerAsignacion(c, { coleccion: coleccionEspacio(profesor, 'asignaciones') }) : leerAsignacion);
+  // La asignación está en el espacio del profesor; sin profesor conocido, solo vale la copia.
+  const leerDeNube = leerRemota ?? (profesor ? c => leerAsignacion(c, { coleccion: coleccionEspacio(profesor, 'asignaciones') }) : async () => null);
   const remota = await leerDeNube(codigo);
   if (remota && Array.isArray(remota.tareas)) {
     escribirClave(claveAsignacion(codigo), JSON.stringify(remota.tareas));
@@ -64,21 +64,16 @@ export const asignadaAMi = (tarea, asignacion) => Boolean(tarea.asignada && asig
 /**
  * Lo que enseñan la portada y la página de la tarea de un alumno (tarea 65):
  *   codigo    el código normalizado (4 o 8 caracteres, mayúsculas, sin guion);
- *   modo      'antiguo' (código de 4 que la nube no conoce) | 'nuevo' (registrado, de 4 u 8);
  *   indice    número de lista (el del código de resultado), o null si no cabe en él;
- *   profesor  uid de su espacio (sistema nuevo) o null;
- *   tareas    las tareas de su profesor (o `TAREAS`, en el modo antiguo);
- *   unidades  las unidades con las fechas de su profesor (o `UNIDADES`);
+ *   profesor  uid de su espacio;
+ *   tareas    las tareas de su profesor;
+ *   unidades  las unidades con las fechas de su profesor;
  *   sinConfig el espacio no ha podido dar las tareas (se sigue sin ellas);
  * o { error: 'no-valido' | 'no-existe' | 'sin-red' }.
  */
-export function contextoAntiguo(indice) {
-  return { codigo: codigoAlumno(indice), modo: 'antiguo', indice, profesor: null, tareas: TAREAS, unidades: UNIDADES, sinConfig: false };
-}
-
 function contextoDeResuelto(codigo, r) {
   return {
-    codigo, modo: 'nuevo', indice: Number.isInteger(r.n) && r.n >= 0 && r.n < MAX_ALUMNOS ? r.n : null,
+    codigo, indice: Number.isInteger(r.n) && r.n >= 0 && r.n < MAX_ALUMNOS ? r.n : null,
     profesor: r.profesor, tareas: r.config.tareas, unidades: unidadesCon(r.config.unidades),
     sinConfig: Boolean(r.sinConfig), desdeCache: Boolean(r.desdeCache),
   };
@@ -97,16 +92,14 @@ export function contextoGuardado(texto, leerClave = leer) {
 
 /**
  * Resuelve un código tecleado o de enlace (4 o 8 caracteres): pregunta a la nube
- * (`resolverCodigo`), también con un código de 4 del modo antiguo, que puede estar
- * ya registrado en el sistema nuevo. Nunca lanza.
+ * (`resolverCodigo`) de qué profesor es. Nunca lanza.
  */
 export async function identificar(texto, { resolver = resolverCodigo } = {}) {
   const codigo = leerCodigoSecreto(texto);
   if (codigo === null) return { error: 'no-valido' };
   const r = await resolver(codigo);
   if (r?.error) return { error: r.error };
-  if (r?.modo === 'antiguo') return contextoAntiguo(r.n);
-  return r?.modo === 'nuevo' ? contextoDeResuelto(codigo, r) : { error: 'sin-red' };
+  return typeof r?.profesor === 'string' && r.config ? contextoDeResuelto(codigo, r) : { error: 'sin-red' };
 }
 
 // --- Plazo y retraso ------------------------------------------------------------------

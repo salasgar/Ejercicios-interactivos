@@ -9,13 +9,18 @@ import { readFileSync } from 'node:fs';
 import { practicaPorSlug } from '../practicas/_comun/catalogo.js';
 import {
   LIMITES, MAX_PENDIENTES, DESTREZAS, recortar, textoPlano, itemTexto, errorValido, idFallo, datosFallo, camposRest, datosDeDocumento,
-  registrarFallo, enviarPendientes, consultaDesde, leerConsulta, tareaValida, deLaTarea, leerFallos, coleccionFallo,
+  registrarFallo, enviarPendientes, tareaValida, coleccionFallo,
 } from '../practicas/_comun/registro.js';
 import { agruparFallos } from '../practicas/resultados.js';
 
 const CONFIG = { apiKey: 'clave', projectId: 'proyecto' };
 const REGLAS = readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8');
-const BLOQUE = REGLAS.slice(REGLAS.indexOf('match /fallos/{id}'), REGLAS.indexOf('match /tareas/'));
+// Desde la tarea 71 la única colección de fallos es la del espacio de cada profesor.
+const BLOQUE = (() => {
+  const desde = REGLAS.indexOf('match /fallos/{id}', REGLAS.indexOf('match /practicas-espacios/{uid}'));
+  return REGLAS.slice(desde, REGLAS.indexOf('\n      }', desde));
+})();
+const UID_A = 'uidProfesorA0001';
 
 function almacenFalso() {
   const m = new Map();
@@ -73,21 +78,20 @@ test('registro: los datos de un fallo, con y sin error y respuesta (una práctic
 
 test('registro: ida y vuelta por el formato de Firestore REST', () => {
   const datos = datosFallo({ ...FALLO, error: 'x' });
-  const doc = { name: 'projects/p/databases/(default)/documents/fallos/KTFN-abc123-zz00', fields: camposRest(datos) };
+  const doc = { name: `projects/p/databases/(default)/documents/practicas-espacios/${UID_A}/fallos/KTFN-abc123-zz00`, fields: camposRest(datos) };
   assert.deepEqual(datosDeDocumento(doc), { ...datos, id: 'KTFN-abc123-zz00' });
   assert.equal(datosDeDocumento({ fields: { alumno: { stringValue: 'X' } } }), null);
-  assert.deepEqual(leerConsulta([{ document: doc }, { readTime: 'x' }]).map(f => f.id), ['KTFN-abc123-zz00']);
-  assert.deepEqual(leerConsulta({ error: 1 }), []);
-  const q = consultaDesde(1000).structuredQuery;
-  assert.deepEqual([q.from[0].collectionId, q.where.fieldFilter.value.integerValue, q.orderBy[0].direction], ['fallos', '1000', 'DESCENDING']);
 });
 
 // --- La regla, frente a lo que manda la app ------------------------------------------------
 
-test('regla: existe, solo deja crear, y acepta lo que manda la app', () => {
-  assert.ok(BLOQUE.includes('allow read: if esProfesor();'));
+test('regla: existe, el alumno solo crea, y acepta lo que manda la app', () => {
+  assert.ok(BLOQUE.includes('allow read: if esDueno(uid) || esLector(uid);'));
+  assert.ok(BLOQUE.includes('allow delete: if esDueno(uid);'));
   assert.ok(BLOQUE.includes('allow create:'));
-  assert.ok(!/allow (update|delete|write|get|list)/.test(BLOQUE), 'el alumno no puede leer, cambiar ni borrar');
+  assert.ok(!/allow (update|write|get|list)/.test(BLOQUE), 'nadie cambia un fallo, y el alumno no puede leerlo');
+  // Fuera del espacio no hay regla de fallos (tarea 71): Firestore la deniega.
+  assert.equal(REGLAS.indexOf('match /fallos/{id}'), REGLAS.indexOf('match /fallos/{id}', REGLAS.indexOf('match /practicas-espacios/{uid}')), 'el único match de fallos es el del espacio');
   // El id que genera la app cumple el patrón de la regla.
   const patron = new RegExp(BLOQUE.match(/id\.matches\('([^']+)'\)/)[1]);
   for (let i = 0; i < 200; i++) assert.match(idFallo('KTFN', Date.now() + i * 1e9, Math.random), patron);
@@ -110,13 +114,14 @@ test('regla: existe, solo deja crear, y acepta lo que manda la app', () => {
 test('cola: lo que llega sale de la cola; sin red se queda y se manda la próxima vez, sin duplicar', async () => {
   const almacen = almacenFalso();
   const nube = nubeFalsa();
-  await registrarFallo(datosFallo(FALLO), { fetch: nube.fetch, config: CONFIG, almacen });
+  const profesor = UID_A;
+  await registrarFallo(datosFallo(FALLO), { profesor, fetch: nube.fetch, config: CONFIG, almacen });
   assert.equal(nube.docs.size, 1);
   assert.deepEqual(pendientes(almacen), []);
   // Sin red: se queda en la cola.
   const sinRed = async () => { throw new TypeError('sin red'); };
-  await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + 1 }), { fetch: sinRed, config: CONFIG, almacen });
-  await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + 2 }), { fetch: sinRed, config: CONFIG, almacen });
+  await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + 1 }), { profesor, fetch: sinRed, config: CONFIG, almacen });
+  await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + 2 }), { profesor, fetch: sinRed, config: CONFIG, almacen });
   assert.equal(pendientes(almacen).length, 2);
   // Vuelve la red: se mandan los dos.
   await enviarPendientes({ fetch: nube.fetch, config: CONFIG, almacen });
@@ -124,7 +129,7 @@ test('cola: lo que llega sale de la cola; sin red se queda y se manda la próxim
   assert.deepEqual(pendientes(almacen), []);
   // Un reintento de algo que ya había llegado (409) no duplica y sale de la cola.
   const id = [...nube.docs.keys()][0];
-  almacen.setItem('practicas.fallos.pendientes', JSON.stringify([{ id, datos: datosFallo(FALLO) }]));
+  almacen.setItem('practicas.fallos.pendientes', JSON.stringify([{ id, datos: datosFallo(FALLO), profesor }]));
   await enviarPendientes({ fetch: nube.fetch, config: CONFIG, almacen });
   assert.equal(nube.docs.size, 3);
   assert.deepEqual(pendientes(almacen), []);
@@ -132,15 +137,16 @@ test('cola: lo que llega sale de la cola; sin red se queda y se manda la próxim
 
 test('cola: lo que la regla rechaza se descarta; un 500 se reintenta; nunca más de MAX_PENDIENTES', async () => {
   const almacen = almacenFalso();
-  await registrarFallo(datosFallo(FALLO), { fetch: nubeFalsa(() => ({ ok: false, status: 403 })).fetch, config: CONFIG, almacen });
+  const profesor = UID_A;
+  await registrarFallo(datosFallo(FALLO), { profesor, fetch: nubeFalsa(() => ({ ok: false, status: 403 })).fetch, config: CONFIG, almacen });
   assert.deepEqual(pendientes(almacen), [], '403 (reglas sin publicar o datos raros): no se reintenta siempre');
-  await registrarFallo(datosFallo(FALLO), { fetch: nubeFalsa(() => ({ ok: false, status: 503 })).fetch, config: CONFIG, almacen });
+  await registrarFallo(datosFallo(FALLO), { profesor, fetch: nubeFalsa(() => ({ ok: false, status: 503 })).fetch, config: CONFIG, almacen });
   assert.equal(pendientes(almacen).length, 1);
   const sinRed = async () => { throw new Error('x'); };
-  for (let i = 0; i < MAX_PENDIENTES + 10; i++) await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + i }), { fetch: sinRed, config: CONFIG, almacen });
+  for (let i = 0; i < MAX_PENDIENTES + 10; i++) await registrarFallo(datosFallo({ ...FALLO, t: FALLO.t + i }), { profesor, fetch: sinRed, config: CONFIG, almacen });
   assert.equal(pendientes(almacen).length, MAX_PENDIENTES);
   // Sin almacén (modo privado bloqueado) no lanza.
-  await registrarFallo(datosFallo(FALLO), { fetch: sinRed, config: CONFIG, almacen: null });
+  await registrarFallo(datosFallo(FALLO), { profesor, fetch: sinRed, config: CONFIG, almacen: null });
 });
 
 // --- Destrezas y panel ---------------------------------------------------------------------
@@ -209,27 +215,10 @@ test('registro: «tarea» viaja en el fallo solo si es un id que la regla acepta
   assert.equal(datosDeDocumento({ name: 'x/KTFN-1-aaaa', fields: camposRest(datos) }).tarea, 2);
 });
 
-test('registro: los fallos se filtran por tarea al leerlos (los de antes, sin tarea, no salen en ninguna)', async () => {
-  const doc = (id, extra) => ({ document: { name: `p/fallos/${id}`, fields: camposRest(datosFallo({ ...FALLO, ...extra })) } });
-  const respuesta = [doc('KTFN-1-aaaa', {}), doc('KTFN-2-bbbb', { tarea: 1 }), doc('KTFN-3-cccc', { tarea: 2 }), doc('KTFN-4-dddd', { tarea: 2 })];
-  const fetch = async () => ({ ok: true, status: 200, json: async () => respuesta });
-  const op = { fetch, config: CONFIG };
-  assert.equal((await leerFallos(0, 'token', op)).length, 4);
-  assert.deepEqual((await leerFallos(0, 'token', { ...op, tarea: 2 })).map(f => f.id), ['KTFN-3-cccc', 'KTFN-4-dddd']);
-  assert.deepEqual((await leerFallos(0, 'token', { ...op, tarea: 1 })).map(f => f.id), ['KTFN-2-bbbb']);
-  const todos = leerConsulta(respuesta);
-  assert.equal(deLaTarea(todos).length, 4);
-  assert.equal(deLaTarea(todos, 3).length, 0);
-});
+// --- Varios profesores: los fallos van al espacio del profesor del código (tarea 64) ---
 
-// --- Varios profesores: los fallos de un código de 8 van al espacio de su profesor (tarea 64) ---
-
-const UID_A = 'uidProfesorA0001';
 const SECRETO = 'K7QMP3XA';   // inventado
-const BLOQUE_ESPACIO = (() => {
-  const desde = REGLAS.indexOf('match /fallos/{id}', REGLAS.indexOf('match /practicas-espacios/{uid}'));
-  return REGLAS.slice(desde, REGLAS.indexOf('\n      }', desde));
-})();
+const BLOQUE_ESPACIO = BLOQUE;
 
 /** Ruta de Firestore de una petición REST (lo que va detrás de /documents/). */
 const rutaDe = url => new URL(url).pathname.split('/documents/')[1];
@@ -260,21 +249,21 @@ test('espacio: un fallo con código de 8 y profesor va a practicas-espacios/{uid
   assert.equal(nube.docs.get(id).tarea.integerValue, '3');
 });
 
-test('espacio: con un código del modo antiguo sin profesor, los fallos van a «fallos» como siempre (aunque haya profesor guardado de otro código)', async () => {
+test('espacio (tarea 71): un código de 4 calculable sin profesor conocido ya no va a «fallos»: espera en la cola (aunque haya profesor guardado de otro código)', async () => {
   const almacen = almacenFalso();
   almacen.setItem(`practicas.v1.espacio.${SECRETO}`, JSON.stringify({ profesor: UID_A, n: 3, json: '{"unidades":[],"tareas":[]}' }));
   const urls = [];
-  const fetch = async (url, op) => { urls.push(`${rutaDe(url)}?${new URL(url).searchParams}`); return nubeFalsa().fetch(url, op); };
+  const fetch = async (url, op) => { urls.push(rutaDe(url)); return nubeFalsa().fetch(url, op); };
   const datos = datosFallo(FALLO);
   await registrarFallo(datos, { fetch, config: CONFIG, almacen });
-  assert.equal(urls.length, 1);
-  assert.match(urls[0], /^fallos\?documentId=KTFN-[a-z0-9]+-[a-z0-9]{4}&key=clave$/);
-  assert.equal(coleccionFallo({ datos }), 'fallos');
+  assert.deepEqual(urls, []);
+  assert.equal(pendientes(almacen).length, 1);
+  assert.equal(coleccionFallo({ datos }), null);
 });
 
-test('espacio (tarea 72): un código de 4 registrado va al espacio de su profesor; uno de 4 del sistema nuevo sin profesor espera', async () => {
+test('espacio (tarea 72): un código de 4 registrado va al espacio de su profesor; uno de 4 sin profesor espera', async () => {
   const almacen = almacenFalso();
-  const antiguo = datosFallo(FALLO);   // KTFN: del modo antiguo
+  const antiguo = datosFallo(FALLO);   // KTFN: de los de 4 calculables (como los de siempre de Juan Luis)
   assert.equal(coleccionFallo({ datos: antiguo, profesor: UID_A }), `practicas-espacios/${UID_A}/fallos`, 'registrado: a su espacio');
   almacen.setItem(`practicas.v1.espacio.${antiguo.alumno}`, JSON.stringify({ profesor: UID_A, n: 60, json: '{"unidades":[],"tareas":[]}' }));
   assert.equal(coleccionFallo({ datos: antiguo }, almacen), `practicas-espacios/${UID_A}/fallos`, 'o por la copia del navegador');
@@ -300,15 +289,15 @@ test('espacio: sin saber el profesor, el fallo espera en la cola; en cuanto el n
   await registrarFallo(datosFallo({ ...FALLO, codigo: SECRETO, t: FALLO.t + 1 }), { profesor: null, fetch, config: CONFIG, almacen });
   assert.deepEqual(urls, [], 'ni a «fallos» ni a ningún espacio');
   assert.equal(pendientes(almacen).length, 2);
-  // Un fallo de un código de 4 en la misma cola sale; los de 8 se quedan.
+  // Un código de 4 sin profesor conocido, en la misma cola, también espera (tarea 71).
   await registrarFallo(datosFallo(FALLO), { fetch, config: CONFIG, almacen });
-  assert.deepEqual(urls, ['fallos']);
-  assert.equal(pendientes(almacen).length, 2);
+  assert.deepEqual(urls, []);
+  assert.equal(pendientes(almacen).length, 3);
   // Vuelve la red: resolverCodigo deja la copia del navegador, y la cola ya sabe adónde ir.
   almacen.setItem(`practicas.v1.espacio.${SECRETO}`, JSON.stringify({ profesor: UID_A, n: 3, json: '{"unidades":[],"tareas":[]}' }));
   await enviarPendientes({ fetch, config: CONFIG, almacen });
-  assert.deepEqual(urls.slice(1), [`practicas-espacios/${UID_A}/fallos`, `practicas-espacios/${UID_A}/fallos`]);
-  assert.deepEqual(pendientes(almacen), []);
+  assert.deepEqual(urls, [`practicas-espacios/${UID_A}/fallos`, `practicas-espacios/${UID_A}/fallos`]);
+  assert.deepEqual(pendientes(almacen).map(p => p.datos.alumno), ['KTFN'], 'el de 4 sigue esperando a saber su profesor');
   // Un uid ilegible no se manda a ninguna parte (se queda, y la cola tiene tope).
   assert.equal(coleccionFallo({ datos: { alumno: SECRETO }, profesor: '../otro' }), null);
 });
