@@ -46,6 +46,7 @@ export const DESTREZAS = {
   divisores: ['U2-1B-01', 'U2-1C-01', 'U2-1C-02'],
   errores: ['U2-4C-01', 'U2-4C-02', 'U2-4C-03'],
   fabrica: ['U2-2C-14', 'U2-3C-02'],   // sin U2-3C-01 desde que se quitó «Construye el divisor» (tarea 76)
+  'fichas-de-pablo': ['U2-2C-11', 'U2-2C-12', 'U2-2C-14', 'U2-3C-01', 'U2-3C-02', 'U2-3C-03', 'U2-3C-04', 'U2-3C-06', 'U2-3C-08'],
   factorizaciones: ['U2-2C-11', 'U2-2C-12', 'U2-2C-14', 'U2-3C-03', 'U2-3C-04'],
   imposibles: ['U2-1A-04', 'U2-3C-10', 'U2-3C-11', 'U2-4C-03'],
   leelo: ['U2-1B-01', 'U2-1B-02', 'U2-1B-05', 'U2-2B-01', 'U2-2B-02', 'U2-2B-03', 'U2-3B-03'],

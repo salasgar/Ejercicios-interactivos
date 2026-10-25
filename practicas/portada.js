@@ -50,6 +50,11 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo', 'divisores'],
   },
+  {
+    unidad: 2,
+    titulo: { es: 'Para toda la unidad · Refuerzo: las fichas de Pablo', en: "For the whole unit · Support: Pablo's counters" },
+    slugs: ['fichas-de-pablo'],
+  },
   // Unidad 3 (PU2, tarea 79): cada práctica sale en su bloque cuando su tarea de la semana la publica.
   {
     unidad: 3,
@@ -93,6 +98,7 @@ export const DESCRIPCION = {
   venn: { es: 'Reparte los factores primos de dos números: lo común es el m.c.d. y todo junto es el m.c.m.', en: 'Sort the prime factors of two numbers: the common part is the GCD and everything together is the LCM.' },
   imposibles: { es: 'Respuestas que no pueden ser: lo que el m.c.d. y el m.c.m. cumplen siempre, y cómo se nombra la respuesta.', en: 'Answers that cannot be right: what the GCD and the LCM always satisfy, and how to name the answer.' },
   'por-primos': { es: 'Toca · 2, : 3… hasta que el número sea múltiplo o divisor del objetivo, y busca el m.c.m. y el m.c.d., o fabrica todos los divisores de un número.', en: 'Tap · 2, : 3… until the number is a multiple or a divisor of the target, and find the LCM and the GCD, or build all the divisors of a number.' },
+  'fichas-de-pablo': { es: 'Cada número es un montón de fichas de colores: multiplicar es juntar, dividir es quitar, el m.c.d. son las fichas que tienen los dos y el m.c.m. es el montón más pequeño que contiene a los dos.', en: 'Every number is a pile of coloured counters: multiplying is putting them together, dividing is taking them away, the GCD is the counters they both have and the LCM is the smallest pile that contains both.' },
   clasificador: { es: 'Lee el problema y decide, sin calcular, si pide el m.c.d. o el m.c.m., y por qué.', en: 'Read the problem and decide, without calculating, if it asks for the GCD or the LCM, and why.' },
   reloj: { es: 'Problemas de coincidencias: cada cuánto coinciden y a qué hora.', en: 'Coincidence problems: how often things coincide and at what time.' },
   baldosas: { es: 'La baldosa más grande que cubre un suelo sin cortar y los trozos de cuerda iguales más largos.', en: 'The biggest tile that covers a floor without cutting and the longest equal pieces of rope.' },

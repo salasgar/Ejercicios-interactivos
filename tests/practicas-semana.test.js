@@ -605,10 +605,11 @@ test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una l
   assert.deepEqual(BLOQUES.filter(b => b.unidad === 2).map(b => b.slugs), [
     ['semaforo', 'rectangulos', 'recta'], ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
     ['venn', 'imposibles', 'por-primos'], ['clasificador', 'reloj', 'baldosas', 'errores'], ['leelo', 'divisores'],
+    ['fichas-de-pablo'],   // refuerzo de la unidad (tarea 97)
   ]);
   const u2 = bloquesPublicados(CATALOGO, 2);
-  assert.equal(u2.length, 5);
-  assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 17);
+  assert.equal(u2.length, 6);
+  assert.equal(u2.reduce((s, b) => s + b.practicas.length, 0), 18);
   assert.ok(u2.every(b => b.titulo));
   const u1 = bloquesPublicados(CATALOGO, 1);
   assert.equal(u1.length, 1);

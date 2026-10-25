@@ -1,0 +1,46 @@
+/* Práctica «Las fichas de Pablo»: aquí va solo lo que no esté ya en ../_comun/estilos.css.
+   Cada ficha es un círculo de su color con el primo escrito dentro (se lee también sin colores). */
+.fp-ficha {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 38px; height: 38px; min-width: 38px; min-height: 38px; padding: 0; margin: 0;
+  border-radius: 50%; border: 2px solid rgba(0, 0, 0, .55);
+  font-size: .95rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums;
+  color: #fff; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .18);
+}
+.fp-ficha--2 { background: #15803d; }
+.fp-ficha--3 { background: #1d4ed8; }
+.fp-ficha--5 { background: #facc15; color: #1f2937; }
+.fp-ficha--7 { background: #dc2626; }
+.fp-ficha--11, .fp-ficha--13 { background: #fff; color: #111827; font-size: .85rem; }
+.fp-ficha--mini { width: 28px; height: 28px; min-width: 28px; min-height: 28px; font-size: .75rem; }
+
+.fp-monton { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .2rem .7rem; max-width: 100%; vertical-align: middle; }
+.fp-grupo { display: inline-flex; flex-wrap: wrap; gap: .2rem; }
+.fp-monton--vacio {
+  padding: .35rem .7rem; border: 2px dashed var(--borde); border-radius: 10px;
+  color: var(--texto-suave); font-size: .9rem;
+}
+.fp-escena { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem 1.2rem; margin: .5rem 0 .9rem; }
+.fp-dos { flex-direction: column; align-items: center; }
+.fp-numero { display: flex; flex-direction: column; align-items: center; gap: .3rem; max-width: 100%; }
+.fp-valor { font-size: 1.05rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.fp-etiqueta { font-size: .85rem; color: var(--texto-suave); }
+.fp-tuyo { display: flex; flex-direction: column; align-items: center; gap: .3rem; margin: .4rem 0 1rem; min-height: 5.5rem; }
+.fp-cuantas { min-width: 1.2rem; text-align: center; margin-left: .25rem; }
+.grupo-pasos.fp-controles { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: none; gap: .5rem; }
+.fp-controles .pasos { gap: 0; padding: .15rem; max-width: 100%; }
+.fp-controles .pasos button { width: 40px; min-width: 40px; height: 40px; min-height: 40px; }
+.fp-controles .pasos__valor { min-width: 2.3rem; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Fichas que se tocan */
+.fp-tocables .fp-ficha { cursor: pointer; transition: transform .1s; }
+.fp-tocables .fp-ficha[aria-pressed="true"] { transform: translateY(-4px); outline: 4px solid var(--primario); outline-offset: 2px; }
+.fp-tocables .fp-ficha:disabled { opacity: 1; cursor: default; }
+.fp-quitando .fp-ficha[aria-pressed="true"] { opacity: .35; outline: 3px dashed var(--error); outline-offset: 2px; transform: none; }
+.fp-pareja { outline: 4px solid var(--correcto); outline-offset: 2px; }
+
+.fp-acciones { display: grid; gap: .6rem; margin: 1rem 0; }
+.fp-atasca { min-height: 48px; background: #fff; color: var(--primario-oscuro); border: 2px solid var(--borde); }
+.fp-opciones .eleccion { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .2rem; min-height: 64px; }
+.fp-texto { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.fp-paso2 { margin-top: 1rem; }

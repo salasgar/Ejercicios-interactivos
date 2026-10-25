@@ -46,6 +46,7 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [17, 'jerarquia', 4], [18, 'exponente', 3], [19, 'raiz', 3], [20, 'division', 4], [21, 'expresion', 3], [22, 'redondeo', 3],
     [23, 'constructor', 3], [24, 'distributiva', 3], [25, 'potencias10', 3], [26, 'dictado', 3], [27, 'mental', 2],
     [28, 'especiales', 2], [29, 'errores1', 4], [30, 'propiedades', 3], [32, 'por-primos', 5],
+    [46, 'fichas-de-pablo', 8],
     // Unidad 3 (tarea 79).
     [33, 'termometro', 5], [34, 'opuestos', 4], [35, 'situaciones', 3], [36, 'saltos', 5], [37, 'dos-signos', 4],
     [38, 'signos-producto', 5], [39, 'potencias-enteros', 4], [40, 'jerarquia-enteros', 4], [41, 'parentesis-enteros', 5],

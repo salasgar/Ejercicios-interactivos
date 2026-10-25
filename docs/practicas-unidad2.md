@@ -435,6 +435,13 @@ portada.
 | toda | `leelo` | 14 | Escúchalo · ¿Cómo se lee? · Completa la frase |
 | toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
 
+**`fichas-de-pablo`** (id 46, tarea 97 de PU2, 2026-10-25) no está en la tabla de arriba: es el refuerzo
+de la unidad 2 («Pablo's counters»), la hoja `hoja-unidad2-fichas-de-pablo` hecha ejercicios para la
+clase. Ocho ejercicios: Lee las fichas · Construye el montón · Multiplicar es juntar · Dividir es quitar ·
+La regla: tantas o más de cada color · Los divisores son elecciones · El m.c.d.: las fichas que tienen los
+dos · El m.c.m.: el montón más pequeño. Cada número es un montón de fichas de colores, una por factor primo
+(verde 2, azul 3, amarilla 5, roja 7, blanca con el número para el 11 y el 13).
+
 `divisores` vive en `divisores/` (su URL de siempre) y desde la tarea 17 está montada sobre
 la base. Las demás, en `practicas/<slug>/`.
 
@@ -517,10 +524,10 @@ expresa.
 | U2-2C-08 | 2 | sí | Descomponer un número con un árbol de factores, o completar un árbol | `arbol` |
 | U2-2C-09 | 2 | sí | Reconocer una factorización sin terminar: no pueden quedar factores compuestos, tampoco los que solo se… | `arbol` |
 | U2-2C-10 | 2 | sí | Descomponer un número con divisiones sucesivas, eligiendo el menor primo con los criterios | `divisiones` |
-| U2-2C-11 | 2 | sí | Escribir la factorización con potencias, las bases de menor a mayor; las potencias de 10 se factorizan solas | `arbol`, `divisiones`, `factorizaciones` |
-| U2-2C-12 | 2 | sí | Comprobar una factorización multiplicando, sin tratar la potencia como un producto | `divisiones`, `factorizaciones` |
+| U2-2C-11 | 2 | sí | Escribir la factorización con potencias, las bases de menor a mayor; las potencias de 10 se factorizan solas | `arbol`, `divisiones`, `factorizaciones`, `fichas-de-pablo` |
+| U2-2C-12 | 2 | sí | Comprobar una factorización multiplicando, sin tratar la potencia como un producto | `divisiones`, `factorizaciones`, `fichas-de-pablo` |
 | U2-2C-13 | 2 |  | Saber que la factorización es única aunque el árbol cambie | `arbol` |
-| U2-2C-14 | 2 |  | Leer la factorización para decidir sin dividir si un número es divisible entre otro | `fabrica`, `factorizaciones` |
+| U2-2C-14 | 2 |  | Leer la factorización para decidir sin dividir si un número es divisible entre otro | `fabrica`, `factorizaciones`, `fichas-de-pablo` |
 | U2-2C-15 | 2 |  | Reconocer un cuadrado perfecto en su factorización: todos los exponentes son pares | — |
 | U2-3A-01 | 3 | sí | Resolver por factorización un problema de m.c.d. (repartir o cortar) con datos que ya no se pueden listar | `baldosas` |
 | U2-3A-02 | 3 | sí | Resolver por factorización un problema de m.c.m. (coincidencia) con datos de dos cifras | — |
@@ -529,14 +536,14 @@ expresa.
 | U2-3B-01 | 3 | sí | Vocabulario de las dos reglas: common prime factors, lowest power, highest power, common and non-common… | `venn` |
 | U2-3B-03 | 3 |  | Leer en voz alta un m.c.d. o un m.c.m. en inglés | `leelo` |
 | U2-3B-04 | 3 |  | Justificar en inglés el método elegido: I chose ... because ... | — |
-| U2-3C-01 | 3 |  | Obtener todos los divisores de un número combinando sus factores primos | — |
-| U2-3C-02 | 3 |  | Contar los divisores a partir de los exponentes: se suma 1 a cada uno y se multiplica | `fabrica` |
-| U2-3C-03 | 3 | sí | Calcular el m.c.d. por factorización (solo los primos comunes, con el menor exponente) y saber por qué | `factorizaciones`, `venn` |
-| U2-3C-04 | 3 | sí | Calcular el m.c.m. por factorización (todos los primos, comunes y no comunes, con el mayor exponente) y… | `factorizaciones`, `venn` |
+| U2-3C-01 | 3 |  | Obtener todos los divisores de un número combinando sus factores primos | `fichas-de-pablo` |
+| U2-3C-02 | 3 |  | Contar los divisores a partir de los exponentes: se suma 1 a cada uno y se multiplica | `fabrica`, `fichas-de-pablo` |
+| U2-3C-03 | 3 | sí | Calcular el m.c.d. por factorización (solo los primos comunes, con el menor exponente) y saber por qué | `factorizaciones`, `fichas-de-pablo`, `venn` |
+| U2-3C-04 | 3 | sí | Calcular el m.c.m. por factorización (todos los primos, comunes y no comunes, con el mayor exponente) y… | `factorizaciones`, `fichas-de-pablo`, `venn` |
 | U2-3C-05 | 3 | sí | No cruzar las dos reglas | `venn` |
-| U2-3C-06 | 3 |  | No calcular el m.c.m. solo con los primos comunes | `venn` |
+| U2-3C-06 | 3 |  | No calcular el m.c.m. solo con los primos comunes | `fichas-de-pablo`, `venn` |
 | U2-3C-07 | 3 |  | Calcular el m.c.d. y el m.c.m. de tres números | — |
-| U2-3C-08 | 3 |  | Caso especial: si uno es divisor del otro, el m.c.d. es el pequeño y el m.c.m. el grande | `venn` |
+| U2-3C-08 | 3 |  | Caso especial: si uno es divisor del otro, el m.c.d. es el pequeño y el m.c.m. el grande | `fichas-de-pablo`, `venn` |
 | U2-3C-10 | 3 | sí | Comprobar con las desigualdades, también en contexto: el m.c.d. no pasa del menor dato y los divide a… | `venn`, `imposibles` |
 | U2-3C-11 | 3 |  | Comprobar con m.c.d. x m.c.m. = a x b, sabiendo que con tres números no vale | `imposibles` |
 | U2-3C-12 | 3 |  | Elegir el método (listas, factorización o a simple vista) | — |
