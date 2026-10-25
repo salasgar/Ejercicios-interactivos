@@ -191,7 +191,7 @@ test('ningún texto de alumno lleva ×, guion como signo, letras de variable ni 
     assert.ok(!/(^|[\s(])-\s?\d|\d\s?-(\s|\d|$)|\s-\s/.test(plano), `guion como signo en: ${plano}`);
     assert.ok(!/=\s*\+\d/.test(plano), `+N como resultado en: ${plano}`);
     // Ninguna letra de variable pegada a un número.
-    assert.ok(!/\b\d+\s?[xyn]\b/.test(plano), plano);
+    assert.ok(!/\d[xn]\b|\b[xn]\s*=|=\s*[xn]\b/.test(plano), plano);
   }
 });
 
