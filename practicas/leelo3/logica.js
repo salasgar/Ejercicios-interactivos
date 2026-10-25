@@ -178,6 +178,9 @@ function mutaciones(a, op, b) {
 
 // ─── Ejercicio 1 · Los enteros ───────────────────────────────────────────────────────
 
+/** Cota creíble de una temperatura ambiente (regla de realismo de la unidad 3): de −30 a 45 °C. */
+export const COTA_TEMPERATURA = { min: -30, max: 45 };
+
 function leerEntero(rng) {
   const n = rng.entero(2, 60);
   const neg = rng.elegir(['negative', 'minus']);
@@ -208,7 +211,8 @@ function leerTemperatura(rng) {
     { texto: `${w(n)} degrees negative`, error: 'calco-del-espanol', por_que: noIngles(`${w(n)} degrees negative`) },
     { texto: `less ${w(n)} degrees`, error: 'calco-del-espanol', por_que: noIngles(`less ${w(n)} degrees`) },
   ];
-  const p = numerosParecidos(n);
+  // El número parecido también es una temperatura: «negative q degrees» con q ≤ 30.
+  const p = numerosParecidos(n).filter(q => -q >= COTA_TEMPERATURA.min);
   if (p.length) { const q = rng.elegir(p); falsas.push({ texto: lec(q), error: 'numero-parecido', por_que: significa(lec(q), `${fmt(-q)} °C`) }); }
   return armar(rng, {
     plantilla: 'leer_temperatura', instruccion: 'leer', notacion: `${fmt(-n)} °C`,
@@ -221,13 +225,15 @@ function leerTemperatura(rng) {
 const CON_PARECIDO = Array.from({ length: 98 }, (_, i) => i + 2).filter(k => numerosParecidos(k).length);
 
 function palabrasAEntero(rng) {
-  const n = rng.elegir(CON_PARECIDO.filter(k => k <= 60));
   const grado = rng.azar() < 0.5;
+  // Con grados, todo lo que se ve es una temperatura (de −30 a 45 °C): n y el número parecido, hasta 30.
+  const cabe = k => !grado || k <= -COTA_TEMPERATURA.min;
+  const n = rng.elegir(CON_PARECIDO.filter(k => k <= 60 && cabe(k) && numerosParecidos(k).some(cabe)));
   const estilo = rng.elegir(['negative', 'minus', 'below']);
   const frase = grado && estilo === 'below' ? `${w(n)} degrees below zero`
     : grado ? `${estilo} ${w(n)} degrees` : estilo === 'below' ? `${w(n)} below zero` : `${estilo} ${w(n)}`;
   const nota = k => (grado ? `${fmt(k)} °C` : fmt(k));
-  const p = rng.elegir(numerosParecidos(n));
+  const p = rng.elegir(numerosParecidos(n).filter(cabe));
   const falsas = [
     { texto: nota(n), error: 'signo-cambiado', por_que: seLee(nota(n), grado ? `${w(n)} degrees` : w(n)) },
     { texto: nota(-p), error: 'numero-parecido', por_que: seLee(nota(-p), grado ? `minus ${w(p)} degrees` : `minus ${w(p)}`) },
@@ -628,11 +634,22 @@ function cambio(rng) {
   });
 }
 
-const CIUDADES = [['Madrid', 'Oslo'], ['Rome', 'Moscow'], ['Cairo', 'Helsinki'], ['Lima', 'Toronto'], ['Athens', 'Warsaw']];
+/**
+ * Parejas de ciudades con la cota de un mismo día de invierno (regla de realismo): la templada o del sur y la fría.
+ * Ni el calor de verano de una ni el frío de invierno de la otra: Lima (hemisferio sur, verano) con Toronto (invierno).
+ */
+export const CIUDADES = [
+  { calida: 'Madrid', fria: 'Oslo', calor: [5, 18], frio: [-15, -1] },
+  { calida: 'Rome', fria: 'Moscow', calor: [5, 18], frio: [-15, -1] },
+  { calida: 'Cairo', fria: 'Helsinki', calor: [12, 25], frio: [-15, -1] },
+  { calida: 'Lima', fria: 'Toronto', calor: [18, 30], frio: [-15, -1] },
+  { calida: 'Athens', fria: 'Warsaw', calor: [5, 18], frio: [-15, -1] },
+];
 
 function cuantoMas(rng) {
-  const frio = rng.entero(-15, -1), calor = rng.entero(1, 30);
-  const [c1, c2] = rng.elegir(CIUDADES);
+  const ciudad = rng.elegir(CIUDADES);
+  const frio = rng.entero(...ciudad.frio), calor = rng.entero(...ciudad.calor);
+  const [c1, c2] = [ciudad.calida, ciudad.fria];
   const caliente = rng.azar() < 0.5;
   const d = calor - frio;
   const g = k => `${fmt(k)} ${grados(k)}`;

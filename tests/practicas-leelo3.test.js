@@ -12,6 +12,7 @@ import {
   numeroAIngles, leerOperacion, leerOperando, numerosParecidos, nombreDe, ESTA_DEFINIDO,
   generarEnteros, generarOperaciones, generarPotencias, generarPalabras,
   PLANTILLAS_ENTEROS, PLANTILLAS_OPERACIONES, PLANTILLAS_POTENCIAS, PLANTILLAS_PALABRAS, claveDe,
+  COTA_TEMPERATURA, CIUDADES,
 } from '../practicas/leelo3/logica.js';
 import { TX } from '../practicas/leelo3/textos.js';
 
@@ -431,6 +432,42 @@ test('Palabras y símbolos: las palabras no matemáticas que deciden la respuest
     if (/\bwithdraw\b/.test(it.frase)) assert.match(it.frase, /withdraw \(retiras\)/);
     if (/\bdeposit\b/.test(it.frase)) assert.match(it.frase, /deposit \(ingresas\)/);
   }
+});
+
+test('Los enteros: toda temperatura que se ve (la buena y las falsas) está entre −30 y 45 °C', () => {
+  const { min, max } = COTA_TEMPERATURA;
+  const enCota = (v, t) => assert.ok(v >= min && v <= max, `${t} (${v} °C) fuera de [${min}, ${max}]`);
+  let conGrados = 0;
+  for (const semilla of [11, 12, 13]) {
+    for (const it of items(generarEnteros, semilla)) {
+      if (it.plantilla === 'leer_temperatura') {
+        conGrados++;
+        enCota(leerEntero(it.notacion.replace(' °C', '')), it.notacion);
+        for (const o of it.opciones) { const v = leerGradosEn(o.texto); if (v !== null) enCota(v, o.texto); }
+      } else if (it.plantilla === 'palabras_a_entero' && /degrees/.test(it.frase)) {
+        conGrados++;
+        for (const o of it.opciones) enCota(Number(o.texto.replace(' °C', '').replace('−', '-')), o.texto);
+        const v = leerGradosEn(it.frase); if (v !== null) enCota(v, it.frase);
+      }
+    }
+  }
+  assert.ok(conGrados > 1000, `ítems con grados: ${conGrados}`);
+});
+
+test('Palabras y símbolos: cada pareja de ciudades se compara en un mismo día, dentro de la cota de cada una', () => {
+  const vistas = new Set();
+  for (const it of items(generarPalabras, 15)) {
+    if (it.plantilla !== 'cuanto_mas') continue;
+    const m = it.frase.match(/(?:warmer|colder) is (\w+) \((−?\d+) °C\) than (\w+) \((−?\d+) °C\)/);
+    const [a, ta, b, tb] = m ? [m[1], +m[2].replace('−', '-'), m[3], +m[4].replace('−', '-')] : [];
+    const c = CIUDADES.find(x => [x.calida, x.fria].includes(a) && [x.calida, x.fria].includes(b));
+    assert.ok(c, it.frase);
+    vistas.add(c.calida);
+    const calor = a === c.calida ? ta : tb, frio = a === c.calida ? tb : ta;
+    assert.ok(calor >= c.calor[0] && calor <= c.calor[1], `${it.frase}: ${c.calida}`);
+    assert.ok(frio >= c.frio[0] && frio <= c.frio[1], `${it.frase}: ${c.fria}`);
+  }
+  assert.equal(vistas.size, CIUDADES.length);
 });
 
 test('Ejercicio 4 de la práctica: nombres de los errores en los dos idiomas', () => {
