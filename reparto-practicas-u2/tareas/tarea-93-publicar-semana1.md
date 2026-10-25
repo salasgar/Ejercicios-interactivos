@@ -113,6 +113,15 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
 - Una reabierta tuya vuelve a ser cogible por una sesión MEDIO; quien la cierre no puede publicarla
   (no toca `catalogo.js`). La publica la tarea de publicación siguiente: díselo a Juan Luis
   si la semana corre prisa.
+- (25-10, s-20261025T073054-518d0701) **Publicar rompía `npm test`**: dos tests de portada de
+  `tests/practicas-semana.test.js` suponían la U3 sin publicar. Ya están cambiados (comprueban «sin
+  publicar» sobre una copia del catálogo); si otro test supone algo parecido, el arreglo es el mismo.
+- La cota de realismo hay que medirla también en los **distractores** (frases y números falsos), no
+  solo en la respuesta: los tests de las prácticas solo miraban los términos. Un script de 3000 ítems
+  que cuente lo que se sale encuentra en un minuto lo que la lectura de diez enunciados no ve.
+- El servidor del puerto 8080 puede ser de otra sesión y caerse a mitad de la prueba: levanta uno
+  propio en otro puerto (`python3 -m http.server 8093`). Chrome headless por CDP con el WebSocket de
+  Node basta (sin dependencias); el driver está en `salidas/89-errores3/capturas/cdp.mjs`.
 
 ## Prohibido (propio de esta tarea)
 
