@@ -30,7 +30,7 @@ function camino(L, [x, y]) {
   if (L === 'es') {
     if (x > 0 && y < 0 && abs(y) < x) return `${c(cuenta2([x, y]))}: partes de ${x} y bajas ${abs(y)}, sin llegar al 0, así que ${cu}.`;
     if (x > 0 && y < 0) return `${c(cuenta2([x, y]))}: bajas ${x} hasta el 0 y todavía bajas ${abs(y) - x} más, así que ${cu}.`;
-    if (x < 0 && y > 0 && y < abs(x)) return `${c(cuenta2([x, y]))}: empiezas debajo del 0 y subes ${y}, pero no llegas al 0 (te faltan ${abs(x) - y}), así que ${cu}.`;
+    if (x < 0 && y > 0 && y < abs(x)) return `${c(cuenta2([x, y]))}: empiezas debajo del 0 y subes ${y}, pero no llegas al 0 (te ${abs(x) - y === 1 ? 'falta' : 'faltan'} ${abs(x) - y}), así que ${cu}.`;
     if (x < 0 && y > 0) return `${c(cuenta2([x, y]))}: subes ${abs(x)} hasta el 0 y todavía subes ${y - abs(x)} más, así que ${cu}.`;
     if (x < 0 && y < 0) return `${c(cuenta2([x, y]))}: ya estás debajo del 0 y bajas ${abs(y)} más; ${abs(x)} y ${abs(y)} se suman hacia abajo, así que ${cu}.`;
     return `${cu}.`;
@@ -88,7 +88,7 @@ function enunciadoProblema(L, item) {
 /** Los verbos a signos, para explicar cómo se escribe la cuenta. */
 const verbos = {
   es: 'Sube, ingresa y «más» se escriben con +; baja, gasta y «menos» se escriben con −.',
-  en: 'Going up, paying in and «more» are written with +; going down, spending and «less» are written with −.',
+  en: 'Going up, paying in and “more” are written with +; going down, spending and “less” are written with −.',
 };
 
 const ES = {
@@ -186,7 +186,7 @@ const EN = {
       <p>Positives: 5 + 8 = 13. Negatives: −6 − 4 − 9 = −19. And now <strong>13 − 19 = −6</strong>.</p>
       <p>If a number and its opposite appear (like 7 and −7), they make 0: you can cross them out.</p>`,
     `<h2>How it works</h2>
-      <p>A diver is at level −12 m (0 is the surface), goes up 5 m and goes down 8 m. The sum is <strong>−12 + 5 − 8</strong>: going up is +, going down is −. The answer is <strong>−15</strong>: he is 15 m below the surface.</p>
+      <p>A diver is at level −12 m (0 is the surface), goes up 5 m and goes down 8 m. The sum is <strong>−12 + 5 − 8</strong>: going up is +, going down is −. The answer is <strong>−15</strong>: the diver is 15 m below the surface.</p>
       <p>In each problem you choose the sum, work it out and choose the answer sentence.</p>`,
   ],
   salto: {

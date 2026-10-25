@@ -214,9 +214,10 @@ export const CONTEXTOS = {
 
 /** Ítem: { contexto, terminos, opciones, correcta, frases, frase }. Tres o cuatro movimientos tras el inicio. */
 export function generarProblema(rng) {
+  // El contexto se elige una vez: si se eligiera en cada reintento, los que rechazan más (el buzo) saldrían menos.
+  const contexto = rng.elegir(Object.keys(CONTEXTOS));
+  const c = CONTEXTOS[contexto];
   for (;;) {
-    const contexto = rng.elegir(Object.keys(CONTEXTOS));
-    const c = CONTEXTOS[contexto];
     const aleatorio = (a, b) => rng.entero(Math.ceil(a / c.paso), Math.floor(b / c.paso)) * c.paso;
     const inicio = aleatorio(c.inicio[0], c.inicio[1]);
     const movimientos = Array.from({ length: rng.entero(3, 4) }, () => aleatorio(c.mueve[0], c.mueve[1]) * (rng.azar() < 0.5 ? -1 : 1));
@@ -224,10 +225,15 @@ export function generarProblema(rng) {
     if (inicio === 0 || fuera(terminos, c.min, c.max) || valorDe(terminos) === 0) continue;
     if (movimientos.every(m => m > 0) || movimientos.every(m => m < 0)) continue;
     const resultado = valorDe(terminos);
+    // Las frases falsas también tienen que ser creíbles en el contexto: solo valen las que caen dentro de su cota
+    // (un buceador no acaba en el nivel +8 m). El último paso mal hecho tiene su propio error típico.
+    const antes = resultado - terminos[terminos.length - 1], ultimo = terminos[terminos.length - 1];
     const falsas = distractores([
       ['signo-cambiado', resultado],
       ['derecha-a-izquierda', textoDe(terminos)],
-    ], resultado);
+      ['suma-valores-absolutos', antes, ultimo],
+      ['signo-del-primero', antes, ultimo],
+    ], resultado).filter(f => f.valor >= c.min && f.valor <= c.max).slice(0, 2);
     if (falsas.length < 2) continue;
     const variantes = variantesDeSigno(terminos);
     if (variantes.length < 3) continue;

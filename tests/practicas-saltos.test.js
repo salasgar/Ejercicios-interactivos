@@ -148,6 +148,8 @@ test('ejercicio 5: todos los pasos dentro de la cota del contexto, y los distrac
     assert.equal(item.frases.length, 3);
     assert.equal(new Set(item.frases).size, 3);
     assert.equal(item.frases[item.frase], r);
+    // Realismo: la buena y las falsas caen dentro de la cota del contexto (regla de Juan Luis del 16-10).
+    assert.ok(item.frases.every(v => v >= cota.min && v <= cota.max), `${contexto}: frases ${item.frases} fuera de [${cota.min}, ${cota.max}]`);
     item.frases.forEach((v, i) => {
       if (i === item.frase) return;
       assert.notEqual(v, r);
@@ -155,6 +157,21 @@ test('ejercicio 5: todos los pasos dentro de la cota del contexto, y los distrac
     });
   }
   assert.deepEqual([...vistos].sort(), Object.keys(L.CONTEXTOS).sort());
+});
+
+test('ejercicio 5: los cuatro contextos salen casi por igual (el filtro de la cota no sesga el reparto)', () => {
+  const cuenta = {};
+  for (const item of generar(L.generarProblema, 99)) cuenta[item.contexto] = (cuenta[item.contexto] ?? 0) + 1;
+  for (const k of Object.keys(L.CONTEXTOS)) assert.ok(cuenta[k] > N * 0.2, `${k}: ${cuenta[k]}`);
+});
+
+test('errata: «te falta 1» en singular, «te faltan 2» en plural; el inglés no lleva comillas españolas ni «he» para el buzo', () => {
+  assert.match(txt('es').salto.explica([-5, 4], null), /te falta 1\b/);
+  assert.match(txt('es').salto.explica([-6, 4], null), /te faltan 2\b/);
+  const en = txt('en');
+  const textosEn = [...en.intro, en.verbos, en.problema.intro ?? ''].join(' ');
+  assert.ok(!/[«»]/.test(textosEn.replace(/<[^>]+>/g, '')), 'comillas españolas en inglés');
+  assert.match(en.intro.join(' '), /the diver is 15 m below the surface/);
 });
 
 test('las cotas de los contextos son creíbles', () => {
