@@ -24,3 +24,11 @@ buceador nivel −40…−1 m (inicio −30…−2, mueve 1-15 m); ascensor piso
 - Ej. 4: «reordenar llevando cada número su signo» (U3-2C-03) se trabaja con las fichas que se reparten; no hay un ejercicio aparte de reordenar.
 - Ej. 5: la frase falsa sale de `signo-cambiado` y `derecha-a-izquierda` (tres frases en total).
 - Ni `catalogo.js` ni nada ajeno se ha tocado; `disponible: false` sigue (lo cambia la 93).
+
+## Reabierta del 25-10 (sesión s-20261025T084314-6fe45057, commit 0794c58)
+- Ej. 5: la buena y las dos frases falsas caen siempre dentro de la cota del contexto. Las falsas salen de un pool de errores típicos (`signo-cambiado`, `derecha-a-izquierda`, `suma-valores-absolutos` y `signo-del-primero` aplicados al último paso) filtrado por la cota; con menos de dos válidas se saca otro ítem. El buzo, que con `signo-cambiado` salía siempre fuera del agua, usa ahora los otros errores.
+- El contexto se elige una vez por ítem (no en cada reintento): si no, el filtro dejaba al buzo en el 10 % de los ítems. Reparto medido (3000 ítems, semilla 99): 722 / 724 / 788 / 766.
+- Erratas: «te falta 1» (singular), comillas inglesas “more”/“less” en `verbos.en`, «the diver is 15 m below the surface».
+- Test: las tres frases de 3000 ítems por contexto, dentro de la cota; reparto de contextos; erratas. 59 propios en verde, `npm test` sin fallos.
+- Prueba en navegador (Chrome headless por CDP, «Probar sin código», 375 px, es y en): ej. 5 completo (cuenta, resultado, frase y fallo), sin desbordamiento ni errores de consola. Capturas en `capturas/`.
+- `catalogo.js` no se toca: la publica la 94.
