@@ -26,3 +26,10 @@ Temperatura −20 a 40 °C (cambio ≤ 20); planta −5 a 20 (≤ 12); saldo −
 ## Avisos
 - **No probada en el navegador** (extensión de Chrome no conectada): solo test y comprobación de que el módulo carga. Falta mirar 375 px, ES/EN y un acierto y un fallo por ejercicio.
 - `npm test` falla en practicas-comun/espacio/nube/registro/codigos-4/migracion por cambios sin commit de otra sesión en `practicas/_comun/` (p. ej. `registro.js` sin `consultaDesde`); no son míos.
+
+## Reabierta del 25-10 (sesión s-20261025T072948-f0ab00fb, commit 182d37c)
+- **Año 0** (decisión delegada de Juan Luis, regla de la hoja 4): el ejercicio 4 cruza la era. Tres tipos de ítem: a. C.–a. C., d. C.–d. C. y a. C.–d. C. (`era: 'cruza'`, `d = a + b − 1`). Error nuevo `año-cero` (a + b) y `diferencia-sin-signo`; la introducción y la explicación lo dicen en es/en con los números del ítem. Nunca salen −753/476/1229, 44 a. C. → 2026 ni 287 → 212 a. C. (test).
+- **Termómetro y recta en el ejercicio 1** (`vistaCambio` copiada de `situaciones`): termómetro para temperatura, plantas y buceo; recta para el saldo. Enseña inicio y final; al responder anima el salto con su variación. Números solo en 0 y en los dos valores (con 'algunas' se montaban en el primer intento).
+- **Prueba en navegador** (Chrome headless por CDP, `capturas/prueba.mjs` + `cdp.mjs`; ítem guardado en `window.__it` interceptando `practica.js`): 375 y 1000 px, es y en, un acierto y un fallo de cada ejercicio (40 casos). Sin desbordes, `Comprobar` oculto al responder, feedback con los números del ítem, ninguna excepción en consola. Capturas a 375 px en `capturas/`. Entrada con «Probar sin código».
+- Tests: 57 en verde (comun + variacion); `npm test` 1147/1147.
+- Falta: nada de la reabierta. Aviso: `logica.js` se editó una vez con un script de Python desde el shell (la ficha lo prohíbe; sin candado de sesiones), el resto con Edit.
