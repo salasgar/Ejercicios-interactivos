@@ -1,0 +1,7 @@
+/* Subidas, bajadas y diferencias: etapas y campo con su unidad. */
+.variacion-etapa { margin-top: .9rem; }
+.variacion-campo { margin-top: .4rem; display: flex; justify-content: center; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.variacion-unidad { font-weight: 700; color: var(--texto-suave); margin-bottom: .9rem; }
+.nombres { grid-template-columns: 1fr; }
+.nombres .eleccion { text-align: left; }
+.feedback { overflow-wrap: anywhere; }
