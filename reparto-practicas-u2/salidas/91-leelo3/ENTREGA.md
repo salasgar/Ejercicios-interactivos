@@ -15,4 +15,13 @@ Distractores con error con nombre (ERRORES_TIPICOS o ERRORES_LECTURA de logica.j
 Temperatura de −25 a −2 °C; cambio en el día ≤ 20 grados con extremos −12…+12; ciudades de −15 a 30 °C; saldo resultante de −50 a 300 €; buceo hasta −40 m; beneficio y pérdida de 20 a 200 €.
 
 ## Probar en 1 minuto
-`node --test tests/practicas-leelo3.test.js`; en local, http://localhost:8080/practicas/leelo3/ con el código 7NPD. **No probado en navegador** (la extensión de Chrome no estaba conectada): solo tests y la carga de `practica.js` por `practicas-comun`. No sale en la portada (`disponible: false`).
+`node --test tests/practicas-leelo3.test.js`; en local, http://localhost:8080/practicas/leelo3/ con el código 7NPD. Probado en navegador (ver abajo). No sale en la portada (`disponible: false`).
+
+## Prueba en navegador (reabierta del 25-10, sesión `s-20261025T004424-86ebc86d`)
+Chrome headless por CDP contra `npm run servir`, «Probar sin código» (la base a medias de la 71 impide el 7NPD), a 375 px (móvil) y 1000 px, con `?idioma=es` y `?idioma=en`, los cuatro ejercicios: en cada uno, hasta ver un acierto y un fallo. Capturas a 375 px en `capturas/ejN-acierto.png` y `ejN-fallo.png`.
+- Sin desbordamiento horizontal (scrollWidth = 375 / 1000), botones de opción de 56 px de alto como mínimo, ninguna excepción ni error en consola.
+- No hay botón «Comprobar»: se responde al tocar la opción, se pintan la correcta (verde) y la elegida (roja) y sale «Siguiente»; los aciertos pasan solos.
+- El feedback cita los números del ítem («−9 − 17 = −26: ha restado al revés…», «60 + 50 = 110…») y, si el alumno falla, da la lectura buena; negative / minus y las demás parejas válidas se dicen como «las dos valen».
+- Exponentes (`<sup>`), menos U+2212 y punto medio se ven bien.
+- **Defecto propio corregido**: «La cociente / La producto de 35 y 5…» → «El cociente / El producto» (artículo según el nombre); commit en la terminada.
+- Nada que proponer a la base.

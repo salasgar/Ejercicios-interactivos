@@ -412,7 +412,7 @@ function nombreResultado(rng) {
   const r = evaluar(`${a} ${NOMBRES_RESULTADO[palabra].op} ${b}`);
   const falsas = Object.keys(NOMBRES_RESULTADO).filter(p => p !== palabra).map(p => ({
     texto: p, error: 'operacion-confundida',
-    por_que: lastima(`La ${NOMBRES_RESULTADO[p].es.split(' = ')[1]} de ${a} y ${b} es ${evaluar(`${a} ${NOMBRES_RESULTADO[p].op} ${b}`)}, no ${r}: ${cuenta(p)}.`,
+    por_que: lastima(`${p === 'sum' || p === 'difference' ? 'La' : 'El'} ${NOMBRES_RESULTADO[p].es.split(' = ')[1]} de ${a} y ${b} es ${evaluar(`${a} ${NOMBRES_RESULTADO[p].op} ${b}`)}, no ${r}: ${cuenta(p)}.`,
       `The ${p} of ${a} and ${b} is ${evaluar(`${a} ${NOMBRES_RESULTADO[p].op} ${b}`)}, not ${r}: ${cuenta(p)}.`),
   }));
   return armar(rng, {
