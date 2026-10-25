@@ -287,12 +287,12 @@ function montarColocar(contenedor, item, api) {
   let abre = null, cierra = null;
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.colocar.instruccion)}</p>
     <div class="objetivo">${fmt(item.objetivo)}</div>
-    <div class="expr" id="expr" role="group">${item.numeros.map((v, i) => `
+    <div class="expr" id="expr" role="group">${item.numeros.map((v, i) => `${i ? '<span class="grupo">' : ''}${i ? `<span class="signo">${SIMBOLO[item.ops[i - 1]]}</span>` : ''}
       <span class="celda">
         <button type="button" class="hueco-p" data-i="${i}" data-lado="abre" aria-label="${tt(TX.colocar.hueco_abre)} ${fmt(v)}"></button>
         <span class="num">${fmt(v)}</span>
         <button type="button" class="hueco-p" data-i="${i}" data-lado="cierra" aria-label="${tt(TX.colocar.hueco_cierra)} ${fmt(v)}"></button>
-      </span>${i < n - 1 ? `<span class="signo">${SIMBOLO[item.ops[i]]}</span>` : ''}`).join('')}</div>
+      </span>${i ? '</span>' : ''}`).join('')}</div>
     <div class="acciones"><button type="button" class="secundario" id="borrar">${tt(TX.colocar.borrar)}</button></div>
     <p class="mensaje mensaje--aviso" id="mensaje" aria-live="polite"></p>
     <button type="button" class="comprobar" id="comprobar">${api.t.comprobar}</button>`;

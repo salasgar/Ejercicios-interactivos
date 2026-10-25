@@ -42,6 +42,7 @@ button.ficha:disabled { opacity: 1; cursor: default; }
 /* El editor del ejercicio 5: cada número con un hueco «(» a la izquierda y «)» a la derecha */
 .expr { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .2rem 0; margin: 0 0 .8rem; font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .celda { display: inline-flex; align-items: center; }
+.grupo { display: inline-flex; align-items: center; white-space: nowrap; }
 .num { padding: 0 .08em; }
 .signo { padding: 0 .1em; color: var(--texto-suave); }
 button.hueco-p {

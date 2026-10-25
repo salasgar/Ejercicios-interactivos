@@ -22,3 +22,10 @@ Ficheros: `practicas/parentesis-enteros/{logica,textos,practica}.js`, `estilos.c
 - Ej. 5 sin potencias ni divisiones; solo el primer número puede ser negativo.
 - No se tocó `catalogo.js` (`disponible: false`): lo pone la 95.
 - `npm test` falla ahora en 15 tests ajenos (base.js, nube.js, espacio.js, registro.js, firestore.rules con cambios sin commit de otra sesión); los míos pasan.
+
+## Prueba en navegador (reabierta del 25-10, sesión s-20261025T004418-e8111850)
+Chrome headless por CDP (extensión desconectada), «Probar sin código». Un ítem acertado y uno fallado de cada ejercicio, a 375 px (es, en, repetido) y a 1000 px (es, en): **sin desbordes horizontales, sin excepciones en consola, «Comprobar» oculto al responder** en todos los casos. El feedback cita los números del ítem.
+Capturas a 375 px en `capturas/` (enunciado, acierto y fallo de cada ejercicio; `ej4-mitad` con el segundo estado).
+- Ej. 4: tocar un paréntesis con otro dentro avisa («empieza por el de más adentro») sin fallo; el ítem acierta/falla bien.
+- **Defecto propio corregido**: en el ej. 5 el signo de operación podía quedarse al final de una línea y su número en la siguiente; ahora cada operador va agrupado con su número (`.grupo`, practica.js y estilos.css).
+- Base (no tocada): «No pierdes puntos (estás en 0)» sale tras un fallo con 0 puntos; es el texto de la base.
