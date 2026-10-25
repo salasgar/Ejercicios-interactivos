@@ -25,3 +25,10 @@ Chrome headless por CDP contra `npm run servir`, «Probar sin código» (la base
 - Exponentes (`<sup>`), menos U+2212 y punto medio se ven bien.
 - **Defecto propio corregido**: «La cociente / La producto de 35 y 5…» → «El cociente / El producto» (artículo según el nombre); commit en la terminada.
 - Nada que proponer a la base.
+
+## Reabierta del 25-10 (sesión s-20261025T084951-ef0df707, commit e23f871)
+- **Ej. 1**: toda temperatura que se ve (la buena y las falsas) queda entre −30 y 45 °C (`COTA_TEMPERATURA`). En `palabras_a_entero` con grados, n ≤ 30 y el número parecido también cabe (se elige n entre los que tienen alguno que quepa); en `leer_temperatura`, la falsa de `numero-parecido` solo si cabe (q ≤ 30). Sin grados (`leer_entero`, `palabras_a_entero` a secas) no cambia nada.
+- **Ej. 4, `cuanto_mas`**: cada pareja de ciudades lleva su cota de un mismo día de invierno (`CIUDADES`): Madrid 5-18 °C con Oslo −15…−1; Rome 5-18 con Moscow −15…−1; Cairo 12-25 con Helsinki −15…−1; Lima 18-30 con Toronto −15…−1; Athens 5-18 con Warsaw −15…−1.
+- Tests: 3 semillas × 3000 ítems, toda temperatura en °C dentro de la cota (más de 1000 ítems con grados comprobados); cada pareja de ciudades dentro de sus dos cotas y las cinco parejas salen. 63 propios en verde, `npm test` 1165/1165.
+- Prueba en navegador (Chrome headless por CDP, «Probar sin código», 375 px): ej. 1 en español con «minus twelve degrees» y fallo; ej. 4 en inglés con «How much warmer is Rome (10 °C) than Moscow (−15 °C)?» y fallo; sin desbordamiento (375) ni errores de consola. Capturas nuevas en `capturas/` (`ej1-grados-es-*`, `ej4-ciudades-en-*`).
+- `catalogo.js` no se toca: la publica la 94.
