@@ -1,6 +1,6 @@
 # Entrega de la tarea 87 · «¿Qué se hace primero? Con enteros» (`jerarquia-enteros`)
 
-Sesión `s-20261025T001742-a650c948`, 2026-10-25. Commit del código: **daeedd5**.
+Sesión `s-20261025T001742-a650c948`, 2026-10-25. Commit del código: **daeedd5** (primera entrega) y el de la reabierta del 25-10 (**5031e17**).
 
 ## Ficheros
 
@@ -11,8 +11,8 @@ Sesión `s-20261025T001742-a650c948`, 2026-10-25. Commit del código: **daeedd5*
 ## Ejercicios y destrezas
 
 1. **¿Qué va primero?** (U3-4A-01): se toca el signo de la operación que va primero; vale cualquiera de las que
-   pueden ir primero (regla del 8-10). Mezcla: 30 % producto/cociente en suma, 25 % potencia en suma, 15 %
-   cadena, 30 % combinada.
+   pueden ir primero (regla del 8-10). Mezcla: 40 % producto/cociente en suma, 35 % potencia en suma, 25 %
+   cadena. **Sin combinadas** (reabierta del 25-10: son de la sesión 13); un test lo comprueba.
 2. **Producto o potencia dentro de una suma** (U3-3A-01, U3-3A-02): paso a paso. Se toca la operación que va
    ahora y se elige su valor entre 3-4 opciones; mitad producto/cociente, mitad potencia (con `−b²` al principio
    y `(−b)²`).
@@ -40,27 +40,39 @@ Resultado final en ±100 y distinto de 0; todo resultado intermedio, en cualquie
 factores de 2 a 9, bases de 2 a 6 (cubos, de 2 a 4); divisiones exactas; en la suma/resta, el segundo término sin
 signo (el signo va en el operador). Ningún paréntesis envuelve una operación salvo el del par.
 
-## Propuestas / avisos para Juan Luis y la 95
+## Para la 95 y la 96
 
-- El **ejercicio 1** incluye combinadas (potencia + producto + suma) porque U3-4A-01 es de la **sesión 13**, pero la
-  ficha publica la práctica en la semana 3 (sesiones 9-12). Si no quiere combinadas antes de la 13, basta quitar
-  la rama `combinadaAzar` de `generarPrimero` (una línea). Lo mismo el **ejercicio 4**, que es entero de la sesión 13:
-  la 95 puede dejarlo fuera de la tarea de la semana 3.
-- `5 − (−7) · (−8)`-tipo (restar un producto con negativos entre paréntesis) aparece en el 2 y el 4; los pasos
-  intermedios pueden ser `6 − (−56)`, que es contenido de la sesión 6 (quitar paréntesis), ya dado.
-- El minimo de 2 falsas por paso obliga a rechazar expresiones con pasos como `2 · 2` (todas las trampas
-  coinciden); no afecta a la variedad.
+- **Ejercicios 1-3 (sesiones 9-12): semana 3, tarea de la 95.** El ejercicio 1 ya no lleva combinadas.
+- **Ejercicio 4 «Combinadas» (U3-4A-02, sesión 13): fuera de la tarea de la semana 3**; lo mete la 96 en la tarea de
+  la semana 4. Se puede publicar la práctica entera en la 95 (un alumno puede entrar al ejercicio 4 por libre).
+- Restar un producto con negativos (`6 − 8 · (−7)`) pasa por un paso intermedio `6 − (−56)`, que es contenido de la
+  sesión 6 (quitar paréntesis), ya dado.
+- El mínimo de 2 falsas por paso hace que `valida` rechace expresiones con pasos como `2 · 2` (todas las
+  trampas coinciden); no afecta a la variedad.
 
 ## Cómo probarlo en 1 minuto
 
-`node --test tests/practicas-jerarquia-enteros.test.js`. En el navegador: `npm run servir` y
+`node --test tests/practicas-jerarquia-enteros.test.js` (19 tests). En el navegador: `npm run servir` y
 http://localhost:8080/practicas/jerarquia-enteros/ con el código 60 (`7NPD`); no sale en la portada.
 
-## Qué NO se ha hecho
+## Prueba en navegador (reabierta del 25-10)
 
-- **Sin prueba visual a 375 px** (la extensión de Chrome no estaba conectada). Sí se ejecutaron los `montar` de verdad en
-  Chrome headless con una base falsa (acertando y fallando en los cuatro ejercicios, español e inglés, y el
-  feedback en el otro idioma): sin excepciones y con los textos bien. Falta mirar el aspecto (zona de toque de los
-  signos y los exponentes, `estilos.css`).
+Chrome headless (la extensión sigue desconectada) con un banco de pruebas fuera del repositorio: un servidor de
+Node que sirve el repo y sustituye `base.js` por una base falsa (así no se escribe nada en Firestore ni hace falta
+código de alumno), y un iframe de **375 px reales** dentro de la ventana (Chrome headless no baja de 500 px).
+
+- Ejecutados los `montar` de verdad, acertando y fallando, en los cuatro ejercicios (también cada tipo de ítem:
+  cadena y par en el 3), en español y en inglés, y el feedback en el otro idioma: **sin excepciones**, sin
+  `undefined`/`NaN`, sin `×` ni guion como menos.
+- **375 px y 900 px: ningún desbordamiento horizontal** (`scrollWidth = clientWidth`), ningún elemento fuera del
+  viewport, **ninguna zona de toque menor de 32 px** (signos, exponentes, botones, opciones).
+- «Comprobar» desaparece al responder (ejercicio 3, pares); el ejercicio 1 y el paso a paso no tienen «Comprobar»
+  (se responde tocando o eligiendo).
+- Capturas a 375 px en `capturas/`: `ej1-fallo-es`, `ej2-opciones-es` (a medias, con las tres opciones),
+  `ej2-fallo-es`, `ej3-par-fallo-en`, `ej4-acierto-es`.
+- **Lo visto**: el feedback cita los números del ítem; los signos tocables y los marcados (rojo el equivocado, borde
+  de puntos los que valían) se leen bien, aunque con las cadenas largas el ejercicio 1 ocupa dos líneas.
+  **No es** una prueba con el entorno real (código 60, base completa): falta, y la base de la 71 está a medias.
+- **Arreglado**: nada de la práctica; lo único tocado en la reabierta es quitar las combinadas del ejercicio 1 y su test.
 - `npm test` completo: fallos solo en ficheros ajenos a medias (`practicas-{codigos-4,espacio,migracion,nube,registro,semana}`),
   por `_comun/` de otra sesión.
