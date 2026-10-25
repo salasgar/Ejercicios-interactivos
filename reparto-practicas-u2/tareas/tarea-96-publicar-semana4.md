@@ -119,6 +119,10 @@ pendiente de toda la unidad (reabiertas sin verificar, propuestas sin decidir) p
 - Una reabierta tuya vuelve a ser cogible por una sesión MEDIO; quien la cierre no puede publicarla
   (no toca `catalogo.js`). La publica la tarea de publicación siguiente, o una tarea nueva que da de alta la coordinadora: díselo a Juan Luis
   si la semana corre prisa.
+- (s-20261025T213350-78771150, 25-10) Al ser la última, las reabiertas de la 94 y de la 96 se quedan **sin publicador**: la lista de
+  pendientes de la terminada tiene que decirlo con su plazo (la de la semana 2 antes que la de la 4).
+- (íd.) Rangos que «no se solapan» no bastan para el realismo de dos ciudades: tienen que ser de **un mismo día** (variacion ej. 2,
+  como leelo3 ej. 4). Al revisar un contexto con dos valores a la vez, leer el enunciado entero, no solo las cotas.
 
 ## Prohibido (propio de esta tarea)
 
