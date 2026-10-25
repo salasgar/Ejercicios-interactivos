@@ -42,10 +42,24 @@ Sesión `s-20261025T000408-848db748`, 2026-10-25. Commit del código: **909e866*
 `node --test tests/practicas-potencias-enteros.test.js`. En el navegador, `npm run servir` y
 http://localhost:8080/practicas/potencias-enteros/ con el código 60 (`7NPD`); no sale en la portada.
 
-## Qué NO se ha hecho
+## Prueba en navegador (reabierta del 25-10)
 
-- **Sin prueba visual a 375 px**: la extensión de Chrome no estaba conectada. Sí se ejecutaron los `montar`
-  de verdad en Chrome headless con una base falsa (60 ítems por ejercicio acertando y fallando, en es/en
-  y con el feedback en el otro idioma): sin excepciones y con los textos bien. Falta mirar el aspecto.
-- `npm test` completo: 15 fallos en `practicas-{codigos-4,espacio,migracion,nube,registro,semana}` y
-  `practicas-comun`, por ficheros de `_comun/` que otra sesión tiene a medias; los 18 tests míos pasan.
+Chrome headless (la extensión sigue desconectada) con un banco de pruebas fuera del repositorio: un servidor de
+Node que sirve el repo y sustituye `base.js` por una base falsa (no se escribe nada en Firestore ni hace falta
+código de alumno), y un iframe de **375 px reales** dentro de la ventana (Chrome headless no baja de 500 px).
+
+- Ejecutados los `montar` de verdad, acertando y fallando, en los cuatro ejercicios (y los tres tipos de ítem del
+  4: cuadrados, √ y √ de negativo), en español y en inglés, y el feedback en el otro idioma: **sin excepciones**,
+  sin `undefined`/`NaN`, sin `×`, sin guion como menos.
+- **375 px y 900 px: ningún desbordamiento horizontal**, ningún elemento fuera del viewport, **ninguna zona de
+  toque menor de 32 px**.
+- «Comprobar» desaparece al responder en los cuatro ejercicios; en el 2 y el 3 el campo del valor aparece al
+  elegir el signo o la base; «No existe» responde al instante.
+- La base resaltada del ejercicio 3 se ve (fondo ámbar con borde) y solo después de responder.
+- Capturas a 375 px en `capturas/`: `ej1-fallo-es`, `ej2-acierto-en`, `ej3-fallo-es`, `ej4-cuadrados-fallo-es`,
+  `ej4-negativa-fallo-en`.
+- **Lo visto**: el feedback cita los números del ítem; los botones de los factores caben en una o dos filas.
+  **No es** una prueba con el entorno real (código 60, base completa): falta, y la base de la 71 está a medias.
+- **Arreglado**: nada. No había defectos propios.
+- `npm test` completo: fallos solo en ficheros ajenos a medias (`practicas-{codigos-4,espacio,migracion,nube,registro,semana}`),
+  por `_comun/` de otra sesión; los 18 tests de la práctica pasan.
