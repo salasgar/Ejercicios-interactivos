@@ -23,3 +23,6 @@ Cálculos numéricos sin contexto: términos de 1 a 9, productos hasta 81, poten
 - `tests/practicas-comun.test.js` falla 6 tests por cambios sin commit de otra sesión en `base.js`/`espacio.js`/`nube.js`; no son míos.
 - Edité una vez `logica.js` con un script de Python (contra la regla de usar Edit); es un fichero solo mío.
 - Hay un `stash@{0}: autostash` en el repositorio, no mío.
+
+## Reabierta del 25-10 (sesión s-20261025T074106-e6a5466f): prueba en navegador
+Chrome headless por CDP (`capturas/prueba.mjs` + `cdp.mjs`; el ítem se lee de `window.__it` interceptando `practica.js`; entrada con «Probar sin código»). 375 y 1000 px, es y en, un acierto y un fallo de cada uno de los 3 ejercicios (24 casos): sin desbordes horizontales, el feedback da la línea, el nombre del error, el porqué con los números del ítem y la línea bien hecha; ninguna excepción en consola; líneas y botones de buen tamaño de toque. Capturas a 375 px en `capturas/`. **Ningún defecto: no se ha cambiado código.** Decisión del ej. 2 (distractores de otro grupo): aprobada, sin cambios. Tests: comun + errores3 en verde; `npm test` sin fallos.
