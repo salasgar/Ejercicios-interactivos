@@ -1,0 +1,20 @@
+/* Sumas y restas con saltos: etapas, zonas de reparto y campos de suma. */
+
+.saltos-etapa { margin-top: .9rem; }
+.saltos-campo { margin-top: .4rem; }
+
+.saltos-zonas { display: grid; gap: .6rem; margin: .6rem 0 1rem; }
+.saltos-zona {
+  border: 2px dashed var(--texto-suave); border-radius: 12px;
+  padding: .4rem .6rem .6rem; min-height: 4.4rem; text-align: left;
+}
+.saltos-zona--pos { border-color: var(--correcto); }
+.saltos-zona--neg { border-color: var(--error); }
+.saltos-zona__titulo { font-size: .8rem; font-weight: 700; color: var(--texto-suave); margin-bottom: .35rem; }
+.saltos-zona__fichas { display: flex; flex-wrap: wrap; gap: .4rem; min-height: 3rem; }
+.saltos-ficha { min-width: 3.4rem; }
+.saltos-ficha--bien { background: var(--correcto); box-shadow: none; }
+.saltos-ficha--mal { background: var(--error); box-shadow: none; }
+
+.saltos-suma { margin: .5rem 0 .2rem; }
+.saltos-suma > span { display: block; font-weight: 700; margin-bottom: .3rem; }
