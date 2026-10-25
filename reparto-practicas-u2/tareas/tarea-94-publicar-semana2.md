@@ -114,6 +114,15 @@ pasa se queda sin publicar y con su reabierta; las demás se publican igual.
 - Una reabierta tuya vuelve a ser cogible por una sesión MEDIO; quien la cierre no puede publicarla
   (no toca `catalogo.js`). La publica la tarea de publicación siguiente: díselo a Juan Luis
   si la semana corre prisa.
+- (s-20261025T210819-a6a5693e, 25-10) **Los tests no ven un botón que no responde al clic.** En `dos-signos` ej. 3, el «Comprobar»
+  del segundo paso estaba enganchado al botón oculto del primero (`zona.querySelector('.comprobar')` encuentra el primero); con Intro
+  sí contestaba. Solo salió en el navegador, y solo **pulsando el botón**: si el script de prueba escribe y manda Intro, no se ve. Al
+  probar en el navegador, cada «Comprobar» con un clic de verdad.
+- (íd.) La base pone «No es correcto.» delante de cada feedback de fallo: si el de la práctica empieza con una función compartida
+  (`mismos…(tt, …)`) escrita en minúscula, sale «No es correcto. los signos…». Se ve leyendo el feedback entero en pantalla, no en los tests.
+- (íd.) Chrome headless por CDP: `Emulation.setDeviceMetricsOverride` vale solo mientras dura la conexión; si cada paso abre una conexión
+  nueva, hay que mandarlo en cada una o la página vuelve a 500 px. Tras un acierto la base pasa sola al ítem siguiente (no hay
+  «Siguiente»). Al acabar, matar el Chrome headless (`pkill -f chrome-perfil`): uno huérfano bloquea el Chrome normal de Juan Luis.
 
 ## Prohibido (propio de esta tarea)
 
