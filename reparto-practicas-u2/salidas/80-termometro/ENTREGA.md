@@ -21,3 +21,10 @@ Headless Chrome a 375 px (CDP, sin la extensión de Chrome, no conectada): cada 
 ## Propuestas
 - `campoEntero` de la base va bien; ningún cambio en `_comun/`.
 - La 93 debe citar los ejercicios con los nombres del catálogo: «Coloca el entero», «¿Qué temperatura marca?», «Mayor o menor», «Ordena», «¿Positivo, negativo o ninguno?».
+
+## Reabierta del 25-10 (sesión s-20261025T083724-d66b2a8e, commit a62343a)
+- Ej. 3: nuevo error propio `compara-positivos` (dos positivos, o el 0 con un positivo; declarado en `ERRORES_PROPIOS` con nombre {es, en}) y texto `TX.ej3.positivos` con los números del ítem. `compara-valor-absoluto` y su texto `absoluto` solo salen con un negativo frente a un positivo o al 0.
+- Ej. 4: el aviso `naturales` usa los dos negativos del ítem (el más cercano y el más lejano del 0).
+- Test: id de error por tipo de pareja (3000 ítems) y casos fijos; 62 propios en verde, `npm test` 1148/1148.
+- Prueba en navegador (Chrome headless por CDP, «Probar sin código», 375 px, es y en): fallo con dos positivos, con negativos y mixto, y ordenar como naturales en el ej. 4; sin desbordamiento ni errores de consola. Capturas en `capturas/`.
+- `catalogo.js` no se toca: la publica la 94.
