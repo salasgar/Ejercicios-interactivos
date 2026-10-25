@@ -12,6 +12,7 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-10-25 00:49Z por s-20261025T004424-86ebc86d al cerrar la reabierta de la 91 (LISTA, commit 452d85a; prueba en navegador hecha con capturas): solo cambia la fila 91 (retoque mínimo, sin regenerar el resto).
 Actualizado 2026-10-25 00:5x UTC por s-20261025T001507-127ad7bf al cerrar la 89 (s-20261025T000448-6c4114be, LISTA, commit 9fb7e24) y la 90 (LISTA, commit fae6a95), encadenadas; solo cambian las filas 89 y 90 (no se ha regenerado el resto: otras sesiones tienen la suya en curso). Ninguna de las dos probada en navegador (extensión desconectada); propuesta del año 0 en la terminada de la 90.
 Actualizado 2026-10-25 00:4x UTC por s-20261025T001231-27e0902e al cerrar la 85 (LISTA, commit 5e01341; encadenada tras la 84): solo cambia la fila 85. `npm test` 1000/1015: 15 fallos de nube/espacio/codigos/registro/semana por la base a medias de otra sesión (nube.js sin `COLECCION_ASIGNACIONES`), no de la 84 ni la 85. Sin probar en navegador.
 Actualizado 2026-10-25 00:16 UTC por s-20261025T000251-aa812b6d al cerrar la 91 (LISTA, commit 2ed0b53; 17 tests propios en verde; sin probar en navegador, extensión desconectada): solo cambia la fila 91 (retoque mínimo, sin regenerar el resto; los demás reclamos, como en la línea siguiente). 93 sigue esperando a 80-90.
