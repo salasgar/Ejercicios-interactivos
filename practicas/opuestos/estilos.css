@@ -1,0 +1,4 @@
+/* «Opuesto y valor absoluto»: las dos filas con hueco del ejercicio 3. Colores de css/estilos.css. */
+.hueco-fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .3rem .8rem; margin: .5rem 0; font-weight: 600; }
+.hueco-fila .campo-entero { margin-bottom: 0; }
+.operacion + #recta { margin-top: .6rem; }
