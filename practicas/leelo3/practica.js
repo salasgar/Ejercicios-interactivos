@@ -1,24 +1,54 @@
-// ESQUELETO de «Léelo en inglés» de la unidad 3 (PU2, tarea 79). Solo existe para que su
-// fila del catálogo cargue (`disponible: false`: no la ve nadie). La tarea 91
-// (`reparto-practicas-u2/tareas/tarea-91-leelo3.md`) sustituye esta carpeta entera,
-// empezando por `logica.js` y su test.
+// Práctica «Léelo en inglés» de la unidad 3 (Integers): cuatro ejercicios de elegir entre
+// opciones, uno por semana. Contrato de la base en `../_comun/base.js` y `../plantilla/practica.js`.
+// La lógica (ítems, distractores y errores) está en `logica.js`.
 
 import { arrancar } from '../_comun/base.js';
+import { elecciones } from '../_comun/piezas.js';
+import { TX } from './textos.js';
+import {
+  generarEnteros, generarOperaciones, generarPotencias, generarPalabras, claveDe,
+} from './logica.js';
 
-const EN_PREPARACION = { es: 'Este ejercicio está en preparación.', en: 'This exercise is not ready yet.' };
-const ejercicio = (es, en) => ({
-  nombre: { es, en },
-  detalle: EN_PREPARACION,
-  generar: () => ({}),
-  montar(contenedor, item, api) { contenedor.innerHTML = `<p class="instruccion">${api.tt(EN_PREPARACION)}</p>`; },
+const enunciado = (item, { tt, esc }) => `
+    <p class="instruccion">${tt(TX.instrucciones[item.instruccion])}</p>
+    ${item.notacion ? `<div class="operacion">${item.notacion}</div>` : ''}
+    ${item.frase ? `<p class="operacion">${esc(item.frase)}</p>` : ''}`;
+
+function montar(contenedor, item, api) {
+  contenedor.innerHTML = `${enunciado(item, api)}<div id="caja-elecciones"></div>`;
+  const botones = elecciones(contenedor.querySelector('#caja-elecciones'), {
+    opciones: item.opciones.map(o => ({ valor: o.texto, html: o.html ?? api.esc(o.texto) })),
+    alElegir(valor) {
+      if (api.respondido()) return;
+      const elegida = item.opciones.find(o => o.texto === valor);
+      const buenas = item.opciones.filter(o => o.correcta).map(o => o.texto);
+      botones.marcar(buenas, valor);
+      api.responder({
+        acierto: elegida.correcta,
+        error: elegida.error ?? undefined,
+        respuesta: elegida.texto,
+        html: ({ tt }) => (elegida.correcta ? '' : `${tt(elegida.por_que)} `) + tt(item.solucion),
+      });
+    },
+  });
+}
+
+const ejercicio = (i, generar) => ({
+  nombre: TX.ejercicios[i].nombre,
+  detalle: TX.ejercicios[i].detalle,
+  introduccion: TX.ejercicios[i].introduccion,
+  generar,
+  clave: claveDe,
+  montar,
+  enunciado,
 });
 
 arrancar({
   slug: 'leelo3',
   ejercicios: [
-    ejercicio('Los enteros', 'Integers'),
-    ejercicio('Sumas, restas y productos', 'Adding, subtracting, multiplying'),
-    ejercicio('Potencias', 'Powers'),
-    ejercicio('Palabras y símbolos', 'Words and symbols'),
+    ejercicio(0, generarEnteros),
+    ejercicio(1, generarOperaciones),
+    ejercicio(2, generarPotencias),
+    ejercicio(3, generarPalabras),
   ],
 });
