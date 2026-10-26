@@ -60,7 +60,7 @@ export const CATALOGO = [
   { id: 29, slug: 'errores1', ruta: 'errores1/', unidad: 1, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 4, disponible: true },
   { id: 30, slug: 'propiedades', ruta: 'propiedades/', unidad: 1, nombre: { es: 'Propiedades de las potencias (ampliación)', en: 'Laws of indices (extension)' }, nEjercicios: 3, disponible: true },
   { id: 32, slug: 'por-primos', ruta: 'por-primos/', unidad: 2, nombre: { es: 'Multiplica y divide por primos', en: 'Multiply and divide by primes' }, nEjercicios: 5, disponible: true },
-  { id: 46, slug: 'fichas-de-pablo', ruta: 'fichas-de-pablo/', unidad: 2, nombre: { es: 'Las fichas de Pablo', en: "Pablo's counters" }, nEjercicios: 8, disponible: true },
+  { id: 46, slug: 'fichas-de-pablo', ruta: 'fichas-de-pablo/', unidad: 2, nombre: { es: 'Las fichas del parchís', en: 'Ludo counters' }, nEjercicios: 8, disponible: true },
   // Unidad 3, Integers (PU2, tareas 80-91; filas puestas por la 79 el 2026-10-25, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (93-96).
   { id: 33, slug: 'termometro', ruta: 'termometro/', unidad: 3, nombre: { es: 'La recta y el termómetro', en: 'The number line and the thermometer' }, nEjercicios: 5, disponible: true },

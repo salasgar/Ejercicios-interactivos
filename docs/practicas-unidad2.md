@@ -436,11 +436,26 @@ portada.
 | toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
 
 **`fichas-de-pablo`** (id 46, tarea 97 de PU2, 2026-10-25) no está en la tabla de arriba: es el refuerzo
-de la unidad 2 («Pablo's counters»), la hoja `hoja-unidad2-fichas-de-pablo` hecha ejercicios para la
-clase. Ocho ejercicios: Lee las fichas · Construye el montón · Multiplicar es juntar · Dividir es quitar ·
-La regla: tantas o más de cada color · Los divisores son elecciones · El m.c.d.: las fichas que tienen los
-dos · El m.c.m.: el montón más pequeño. Cada número es un montón de fichas de colores, una por factor primo
-(verde 2, azul 3, amarilla 5, roja 7, blanca con el número para el 11 y el 13).
+de la unidad 2, **«Las fichas del parchís» / «Ludo counters»** (hasta la tarea 114 se llamaba «Las fichas
+de Pablo»; el slug, el id y la carpeta no cambian porque van en las URL, en el progreso guardado y en las
+tareas; Pablo sigue siendo el niño que juega en los enunciados). Es la hoja `hoja-unidad2-fichas-de-pablo`
+(en papel, «Pablo's counters») hecha ejercicios para la clase. Ocho ejercicios: Lee las fichas · Construye el
+montón · Multiplicar es juntar · Dividir es quitar · La regla: tantas o más de cada color · Los divisores son
+elecciones · El m.c.d.: las fichas que tienen los dos · El m.c.m.: el montón más pequeño. Cada número es un
+montón de fichas de colores, una por factor primo (verde 2, azul 3, amarilla 5, roja 7, blanca con el número
+para el 11 y el 13).
+
+*Ejercicio 6 (rehecho en la tarea 114, 2026-10-26).* Se da un número factorizado con de 4 a 12 divisores y
+valor ≤ 1000 (por ejemplo 847 = 7 · 11²), y debajo una tabla con **una casilla por divisor**: en cada
+casilla están todas las fichas del número, con su multiplicidad, apagadas (grises), y a la derecha el
+producto de las encendidas (1 al empezar). El alumno enciende fichas hasta que las casillas muestran todos
+los divisores, cada uno una vez, en cualquier orden. «Comprobar» marca las casillas que repiten un divisor
+y dice cuántos faltan, sin decir cuáles; se puede volver a pulsar. `api.responder` solo vale una vez por
+ítem, así que las comprobaciones con fallos se cuentan y el ítem se cierra al acertar: un fallo (con el
+error `divisor-repetido`; `faltan-divisores` solo si una casilla no tuviera divisor, que con una casilla por
+divisor no ocurre) más tantas `pistas` como comprobaciones fallidas menos una. Que el número de casillas sea el
+de divisores es una ayuda a propósito: enseña la fórmula (e₁ + 1) · (e₂ + 1)… Con 7 u 11 divisores no sale
+ningún número (exigirían 2⁶ o 2¹⁰, fuera de los topes). Destrezas: U2-3C-01, 3C-02.
 
 `divisores` vive en `divisores/` (su URL de siempre) y desde la tarea 17 está montada sobre
 la base. Las demás, en `practicas/<slug>/`.

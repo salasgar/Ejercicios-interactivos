@@ -1,4 +1,4 @@
-/* Práctica «Las fichas de Pablo»: aquí va solo lo que no esté ya en ../_comun/estilos.css.
+/* Práctica «Las fichas del parchís»: aquí va solo lo que no esté ya en ../_comun/estilos.css.
    Cada ficha es un círculo de su color con el primo escrito dentro (se lee también sin colores). */
 .fp-ficha {
   display: inline-flex; align-items: center; justify-content: center; flex: none;
@@ -38,6 +38,24 @@
 .fp-tocables .fp-ficha:disabled { opacity: 1; cursor: default; }
 .fp-quitando .fp-ficha[aria-pressed="true"] { opacity: .35; outline: 3px dashed var(--error); outline-offset: 2px; transform: none; }
 .fp-pareja { outline: 4px solid var(--correcto); outline-offset: 2px; }
+
+/* Ejercicio 6: la tabla de divisores. Fichas apagadas en gris; encendidas, a su color. */
+.fp-tabla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin: .6rem 0; }
+@media (min-width: 560px) { .fp-tabla { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.fp-casilla {
+  display: flex; align-items: center; justify-content: space-between; gap: .3rem;
+  padding: .35rem .4rem; border: 2px solid var(--borde); border-radius: 10px; background: #fff; min-width: 0;
+}
+.fp-casilla--repetida { border: 2px dashed var(--error); background: #fef2f2; }
+.fp-casilla--bien { border-color: var(--correcto); }
+.fp-casilla__fichas { flex: 1; min-width: 0; }
+.fp-casilla__fichas .fp-escena { margin: 0; justify-content: flex-start; gap: .2rem .4rem; }
+.fp-casilla__producto { flex: none; min-width: 2.4rem; text-align: right; font-size: 1.15rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.fp-casilla .fp-ficha[aria-pressed="false"] { filter: grayscale(1); opacity: .35; }
+.fp-casilla .fp-ficha[aria-pressed="true"] { transform: none; outline-width: 2px; outline-offset: 1px; }
+.fp-casilla .fp-ficha:disabled { opacity: 1; }
+.fp-casilla .fp-ficha[aria-pressed="false"]:disabled { opacity: .35; }
+.fp-aviso { margin: .4rem 0; }
 
 .fp-acciones { display: grid; gap: .6rem; margin: 1rem 0; }
 .fp-atasca { min-height: 48px; background: #fff; color: var(--primario-oscuro); border: 2px solid var(--borde); }

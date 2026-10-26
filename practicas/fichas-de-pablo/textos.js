@@ -1,11 +1,11 @@
-// «Las fichas de Pablo»: textos propios, siempre { es, en }. Los comunes (Comprobar, Siguiente,
+// «Las fichas del parchís» / «Ludo counters»: textos propios, siempre { es, en }. Los comunes (Comprobar, Siguiente,
 // ¡Bien!…) están en `../_comun/textos.js` y llegan a `montar` en `api.t`.
 //
 // Reglas de contenido (reparto-practicas-u2/proyecto.md): «divisor», no «factor», para la relación
 // entre números; producto con «·», nunca «×»; inglés sencillo; los colores siempre en los dos
 // idiomas (verde / green); y el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 
-import { exp, colores, valor, indice, nFichas, quitar, juntar, comunes, montonMinimo, numeroDivisores, deNumero } from './logica.js';
+import { exp, colores, valor, indice, nFichas, quitar, juntar, comunes, montonMinimo, numeroDivisores, deNumero, submontones } from './logica.js';
 import { fichaHtml, montonHtml, colorTxt, desglose, cuentaDe } from './dibujo.js';
 
 const F = fichaHtml;
@@ -52,18 +52,18 @@ export const TX = {
   // ─── 1. Lee las fichas ───────────────────────────────────────────────────────────
   lee: {
     nombre: { es: 'Lee las fichas', en: 'Read the counters' },
-    detalle: { es: 'Escribe el número que forman las fichas de Pablo', en: "Write the number Pablo's counters make" },
+    detalle: { es: 'Escribe el número que forman las fichas', en: 'Write the number the counters make' },
     introduccion: {
-      es: `<h2>Las fichas de Pablo</h2>
+      es: `<h2>Las fichas del parchís</h2>
         <p>Pablo escribe cada número con fichas de parchís. ${LEYENDA.es}</p>
         <p>40 = 2<sup>3</sup> · 5: ${M(M40)} Son tres verdes (green) y una amarilla (yellow).</p>
         <p><strong>El exponente cuenta fichas del mismo color</strong>: 2<sup>3</sup> son tres verdes (green), no 2 · 3.</p>`,
-      en: `<h2>Pablo's counters</h2>
+      en: `<h2>Ludo counters</h2>
         <p>Pablo writes every number with ludo counters. ${LEYENDA.en}</p>
         <p>40 = 2<sup>3</sup> · 5: ${M(M40)} That is three green (verde) and one yellow (amarilla).</p>
         <p><strong>The exponent counts counters of the same colour</strong>: 2<sup>3</sup> is three green (verde) counters, not 2 · 3.</p>`,
     },
-    instruccion: { es: 'Escribe el número que forman las fichas de Pablo.', en: "Write the number Pablo's counters make." },
+    instruccion: { es: 'Escribe el número que forman las fichas.', en: 'Write the number the counters make.' },
     campo: { es: 'Número', en: 'Number' },
     buena: {
       es: m => (nFichas(m) ? `${desglose(m, 'es')}: ${cuenta(cuentaDe(m))}` : `Ninguna ficha es el 1: ${cuenta('1')}`),
@@ -274,59 +274,37 @@ export const TX = {
   // ─── 6. Los divisores son elecciones ─────────────────────────────────────────────
   divisores: {
     nombre: { es: 'Los divisores son elecciones', en: 'Divisors are choices of counters' },
-    detalle: { es: 'Cuenta los divisores y construye uno eligiendo fichas', en: 'Count the divisors and make one by choosing counters' },
+    detalle: { es: 'Enciende fichas para hallar todos los divisores, una vez cada uno', en: 'Switch on counters to find all the divisors, each one once' },
     introduccion: {
       es: `<h2>Un divisor es una elección de fichas</h2>
         <p><strong>Un divisor de un número es cualquier elección de sus fichas</strong>, también ninguna. 28 = 2<sup>2</sup> · 7: ${M({ 2: 2, 7: 1 })}.</p>
         <p>De las verdes (green) puedes coger ninguna, una o dos (3 elecciones); de la roja (red), ninguna o una (2 elecciones): 3 · 2 = <strong>6 divisores</strong>. Ninguna ficha es el 1, que es divisor de todos los números.</p>
-        <p>${M({})} = 1 &nbsp; ${M({ 2: 1 })} = 2 &nbsp; ${M({ 2: 2 })} = 4 &nbsp; ${M({ 7: 1 })} = 7 &nbsp; ${M({ 2: 1, 7: 1 })} = 14 &nbsp; ${M({ 2: 2, 7: 1 })} = 28</p>`,
+        <p>${M({})} = 1 &nbsp; ${M({ 2: 1 })} = 2 &nbsp; ${M({ 2: 2 })} = 4 &nbsp; ${M({ 7: 1 })} = 7 &nbsp; ${M({ 2: 1, 7: 1 })} = 14 &nbsp; ${M({ 2: 2, 7: 1 })} = 28</p>
+        <p>Aquí verás una <strong>casilla por cada divisor</strong>, con todas las fichas del número apagadas. Enciende las que quieras: al lado de la casilla verás su producto (con ninguna encendida, 1). Tienes que conseguir <strong>todos los divisores, cada uno una vez</strong>.</p>`,
       en: `<h2>A divisor is a choice of counters</h2>
         <p><strong>A divisor of a number is any choice of its counters</strong>, also none. 28 = 2<sup>2</sup> · 7: ${M({ 2: 2, 7: 1 })}.</p>
         <p>From the green (verde) counters you can take none, one or two (3 choices); from the red (roja) one, none or one (2 choices): 3 · 2 = <strong>6 divisors</strong>. No counters is the number 1, which is a divisor of every number.</p>
-        <p>${M({})} = 1 &nbsp; ${M({ 2: 1 })} = 2 &nbsp; ${M({ 2: 2 })} = 4 &nbsp; ${M({ 7: 1 })} = 7 &nbsp; ${M({ 2: 1, 7: 1 })} = 14 &nbsp; ${M({ 2: 2, 7: 1 })} = 28</p>`,
+        <p>${M({})} = 1 &nbsp; ${M({ 2: 1 })} = 2 &nbsp; ${M({ 2: 2 })} = 4 &nbsp; ${M({ 7: 1 })} = 7 &nbsp; ${M({ 2: 1, 7: 1 })} = 14 &nbsp; ${M({ 2: 2, 7: 1 })} = 28</p>
+        <p>Here you will see a <strong>box for each divisor</strong>, with all the counters of the number switched off. Switch on the ones you want: next to the box you will see their product (with none switched on, 1). You have to get <strong>all the divisors, each one once</strong>.</p>`,
     },
-    contar: {
-      es: a => `${valor(a)} = ${indice(a)}. ¿Cuántos divisores tiene ${valor(a)}?`,
-      en: a => `${valor(a)} = ${indice(a)}. How many divisors does ${valor(a)} have?`,
+    // Una casilla por divisor, a propósito: el número de casillas enseña la fórmula del número de divisores.
+    instruccion: {
+      es: a => `Halla los divisores de <strong>${valor(a)}</strong> encendiendo las fichas adecuadas: ${valor(a)} = ${indice(a)}. Hay ${numeroDivisores(a)} casillas, una por divisor.`,
+      en: a => `Find the divisors of <strong>${valor(a)}</strong> by switching on (encendiendo) the right counters: ${valor(a)} = ${indice(a)}. There are ${numeroDivisores(a)} boxes, one for each divisor.`,
     },
-    campo: { es: 'Número de divisores', en: 'Number of divisors' },
-    elegir: {
-      es: (a, d) => `${valor(a)} = ${indice(a)}. Toca las fichas que forman el divisor <strong>${valor(d)}</strong>.`,
-      en: (a, d) => `${valor(a)} = ${indice(a)}. Tap the counters that make the divisor <strong>${valor(d)}</strong>.`,
+    casilla: { es: n => `Casilla ${n}: producto de las fichas encendidas`, en: n => `Box ${n}: product of the switched-on counters` },
+    // Comprobación con fallos: solo cuántos faltan, nunca cuáles.
+    parcial: {
+      es: (a, d) => `${valor(a)} tiene ${numeroDivisores(a)} divisores y en tu tabla hay ${d.distintos} ${d.distintos === 1 ? 'distinto' : 'distintos'}:${d.faltan === 1 ? 'falta 1' : `faltan ${d.faltan}`}. Las casillas marcadas repiten un divisor que ya está en otra casilla.`,
+      en: (a, d) => `${valor(a)} has ${numeroDivisores(a)} divisors and your table has ${d.distintos} different ${d.distintos === 1 ? 'one' : 'ones'}:${d.faltan} missing. The marked boxes repeat a divisor that is already in another box.`,
     },
-    ninguna: {
-      es: a => `${valor(a)} = ${indice(a)}. ¿Qué divisor es «no coger ninguna ficha»?`,
-      en: a => `${valor(a)} = ${indice(a)}. Which divisor is “taking no counters”?`,
+    fallos: {
+      es: n => `Has necesitado ${n} ${n === 1 ? 'comprobación' : 'comprobaciones'} con fallos antes de conseguirlos todos.`,
+      en: n => `You needed ${n} ${n === 1 ? 'check' : 'checks'} with mistakes before getting them all.`,
     },
-    buenaContar: {
-      es: a => `${cuenta(`${colores(a).map(p => `(${exp(a, p)} + 1)`).join(' · ')} = ${numeroDivisores(a)}`)}: de cada color se puede coger ninguna ficha o hasta todas, una elección más que el número de fichas.`,
-      en: a => `${cuenta(`${colores(a).map(p => `(${exp(a, p)} + 1)`).join(' · ')} = ${numeroDivisores(a)}`)}: from each colour you can take no counters or up to all of them, one more choice than the number of counters.`,
-    },
-    buenaElegir: {
-      es: d => (nFichas(d) ? `${desglose(d, 'es')}: ${cuenta(cuentaDe(d))}.` : 'Ninguna ficha es el divisor 1.'),
-      en: d => (nFichas(d) ? `${desglose(d, 'en')}: ${cuenta(cuentaDe(d))}.` : 'No counters is the divisor 1.'),
-    },
-    tuyas: {
-      es: (q, d) => `Tus fichas hacen ${cuenta(valor(q))}, no ${valor(d)}. Para el ${valor(d)} hacen falta ${desglose(d, 'es')}.`,
-      en: (q, d) => `Your counters make ${cuenta(valor(q))}, not ${valor(d)}. For ${valor(d)} you need ${desglose(d, 'en')}.`,
-    },
-    buenaNinguna: {
-      es: 'Ninguna ficha es el 1, que es divisor de todos los números (no es el 0).',
-      en: 'No counters is the number 1, which is a divisor of every number (it is not 0).',
-    },
-    nota: {
-      es: (e, a) => ({
-        'sin-el-mas-uno': `Falta contar «ninguna»: de ${exp(a, colores(a)[0])} fichas se puede coger ninguna, una… hasta ${exp(a, colores(a)[0])}, que son ${exp(a, colores(a)[0]) + 1} elecciones.`,
-        'numero-de-fichas': 'Has contado las fichas, no las elecciones: las elecciones de cada color se multiplican.',
-        'suma-de-los-mas-uno': 'Las elecciones de cada color se multiplican, no se suman.',
-        'ninguna-es-cero': 'Ninguna ficha es el 1, no el 0: el 0 no es divisor de ningún número.',
-      })[e] ?? '',
-      en: (e, a) => ({
-        'sin-el-mas-uno': `You forgot “none”: from ${exp(a, colores(a)[0])} counters you can take none, one… up to ${exp(a, colores(a)[0])}, which is ${exp(a, colores(a)[0]) + 1} choices.`,
-        'numero-de-fichas': 'You counted the counters, not the choices: the choices for each colour are multiplied.',
-        'suma-de-los-mas-uno': 'The choices for each colour are multiplied, not added.',
-        'ninguna-es-cero': 'No counters is the number 1, not 0: 0 is not a divisor of any number.',
-      })[e] ?? '',
+    buena: {
+      es: a => `${cuenta(`${colores(a).map(p => `(${exp(a, p)} + 1)`).join(' · ')} = ${numeroDivisores(a)}`)} divisores: ${cuenta(submontones(a).map(valor).sort((x, y) => x - y).join(', '))}.`,
+      en: a => `${cuenta(`${colores(a).map(p => `(${exp(a, p)} + 1)`).join(' · ')} = ${numeroDivisores(a)}`)} divisors: ${cuenta(submontones(a).map(valor).sort((x, y) => x - y).join(', '))}.`,
     },
   },
 

@@ -1,4 +1,4 @@
-// «Las fichas de Pablo»: lógica pura (sin DOM ni red), para probarla con `npm test`.
+// «Las fichas del parchís» (slug fichas-de-pablo): lógica pura (sin DOM ni red), para probarla con `npm test`.
 //
 // Un montón es un objeto { 2: a, 3: b, 5: c, 7: d, 11: e, 13: f } con exponentes enteros > 0
 // (los colores que faltan no están): una ficha por cada factor primo de un número.
@@ -343,38 +343,48 @@ export function diagnosticarColorFalta(item, color) {
 
 // --- Ejercicio 6: los divisores son elecciones ------------------------------------------------------
 
+export const MIN_DIVISORES = 4;
+export const MAX_DIVISORES = 12;
+export const TOPE_TABLA = 1000;
+
 /**
- * Ítem: { tipo: 'contar' | 'elegir' | 'ninguna', a, d? }. a tiene 2 o 3 colores y como mucho 12 divisores.
- * 'elegir': tocar las fichas del divisor d (en un 10 %, d = 1, «ninguna ficha»).
+ * Ítem: { a, n, divisores }. a es un número factorizado (1 a 3 colores, exponentes ≤ 3, el del 2 ≤ 4,
+ * el del 11 y el 13 ≤ 2) de valor ≤ 1000 con de 4 a 12 divisores; en un 35 % lleva una ficha blanca
+ * (11 o 13). `n` es el número de casillas de la tabla (una por divisor, a propósito: enseña la fórmula)
+ * y `divisores` son los montones de todos los divisores, de menor a mayor valor.
  */
-export function generarDivisores(rng) {
-  const a = montonAzar(rng, { colores: [2, 3], fichas: [2, 6], valida: q => numeroDivisores(q) <= 12 });
-  const r = rng.azar();
-  if (r < 0.45) return { tipo: 'contar', a };
-  if (r < 0.9) {
-    if (rng.azar() < 0.1) return { tipo: 'elegir', a, d: {} };
-    return { tipo: 'elegir', a, d: submontonAzar(rng, a, [1, nFichas(a)]) };
-  }
-  return { tipo: 'ninguna', a };
+export function generarTablaDivisores(rng) {
+  const blanca = rng.azar() < 0.35 ? rng.elegir([11, 13]) : null;
+  const primos = blanca ? [...PRIMOS_BASICOS, blanca] : PRIMOS_BASICOS;
+  const a = montonAzar(rng, {
+    primos, colores: [1, 3], fichas: [2, 6], tope: TOPE_TABLA, incluir: blanca,
+    valida: q => numeroDivisores(q) >= MIN_DIVISORES && numeroDivisores(q) <= MAX_DIVISORES,
+  });
+  const divisores = submontones(a).sort((x, y) => valor(x) - valor(y));
+  return { a, n: divisores.length, divisores };
 }
 
-export function diagnosticarContar(item, n) {
-  const a = item.a;
-  if (n === numeroDivisores(a)) return { acierto: true };
-  const es = colores(a).map(p => exp(a, p));
-  if (n === es.reduce((q, e) => q * e, 1)) return { acierto: false, error: 'sin-el-mas-uno' };
-  if (n === es.reduce((s, e) => s + e, 0)) return { acierto: false, error: 'numero-de-fichas' };
-  if (n === es.reduce((s, e) => s + e + 1, 0)) return { acierto: false, error: 'suma-de-los-mas-uno' };
-  return { acierto: false, error: 'cuenta-mal' };
-}
+/** El producto de las fichas encendidas de una casilla (1 si no hay ninguna). */
+export const productoCasilla = encendidas => valor(encendidas);
 
-export function diagnosticarNinguna(n) {
-  if (n === 1) return { acierto: true };
-  return { acierto: false, error: n === 0 ? 'ninguna-es-cero' : 'ninguna-mal' };
-}
-
-export function diagnosticarElige(item, q) {
-  return igual(q, item.d) ? { acierto: true } : { acierto: false, error: 'eleccion-mal' };
+/**
+ * `estado` es una lista de montones: las fichas encendidas de cada casilla (una casilla por divisor).
+ * Devuelve { ok, valores, distintos, faltan, repetidos, error? }:
+ *  - `valores`: el producto de cada casilla; `repetidos`: los valores que salen en más de una casilla;
+ *  - `faltan`: cuántos divisores no aparecen (siempre igual al número de casillas sobrantes);
+ *  - `error`: 'divisor-repetido' si hay algún valor repetido, 'faltan-divisores' si faltan sin repetidos
+ *    (con una casilla por divisor no puede pasar, pero queda por si cambia el ítem).
+ */
+export function diagnosticarTabla(item, estado) {
+  const valores = estado.map(valor);
+  const pedidos = new Set(item.divisores.map(valor));
+  const cuenta = new Map();
+  for (const v of valores) cuenta.set(v, (cuenta.get(v) ?? 0) + 1);
+  const repetidos = [...cuenta].filter(([, c]) => c > 1).map(([v]) => v).sort((x, y) => x - y);
+  const distintos = [...cuenta.keys()].filter(v => pedidos.has(v)).length;
+  const faltan = pedidos.size - distintos;
+  if (!faltan && !repetidos.length && valores.length === pedidos.size) return { ok: true, valores, distintos, faltan: 0, repetidos: [] };
+  return { ok: false, valores, distintos, faltan, repetidos, error: repetidos.length ? 'divisor-repetido' : 'faltan-divisores' };
 }
 
 // --- Ejercicios 7 y 8: parejas de montones --------------------------------------------------------

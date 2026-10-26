@@ -1,4 +1,4 @@
-// «Las fichas de Pablo» (tarea 97 de PU2): la hoja de refuerzo de la unidad 2 como ejercicios
+// «Las fichas del parchís» (tarea 97 de PU2; renombrada y ejercicio 6 rehecho en la 114): la hoja de refuerzo de la unidad 2 como ejercicios
 // interactivos. Cada número es un montón de fichas de colores, una por factor primo; multiplicar
 // es juntar, dividir es quitar, el m.c.d. son las fichas que tienen los dos y el m.c.m. es el
 // montón más pequeño que contiene a los dos.
@@ -17,7 +17,7 @@ import {
   generarLee, diagnosticarLee, generarConstruye, diagnosticarConstruye,
   generarProducto, diagnosticarProducto, diagnosticarAnadir, generarQuita, diagnosticarQuita,
   generarRegla, diagnosticarDivisible, diagnosticarCociente, diagnosticarColorFalta,
-  generarDivisores, diagnosticarContar, diagnosticarNinguna, diagnosticarElige,
+  generarTablaDivisores, productoCasilla, diagnosticarTabla,
   generarMcd, diagnosticarMcd, parejasEn, generarMcm, diagnosticarMcm,
 } from './logica.js';
 
@@ -35,11 +35,11 @@ const numeroConFichas = m => `<div class="fp-numero"><span class="fp-valor">${ig
  * Las fichas de un montón, cada una tocable. Las del mismo color son indistinguibles: la selección
  * es el montón de las fichas pulsadas (cuántas de cada color), nunca cuáles.
  */
-function fichasTocables(contenedor, m, { alCambiar, clase = '' }) {
+function fichasTocables(contenedor, m, { alCambiar, clase = '', clasesFicha = '' }) {
   const caja = document.createElement('div');
   caja.className = unir('fp-escena fp-tocables', clase);
   caja.innerHTML = colores(m).map(p => `<span class="fp-grupo">${
-    Array.from({ length: exp(m, p) }, () => fichaHtml(p, { boton: true, atributos: `data-p="${p}" aria-pressed="false"` })).join('')
+    Array.from({ length: exp(m, p) }, () => fichaHtml(p, { boton: true, clases: clasesFicha, atributos: `data-p="${p}" aria-pressed="false"` })).join('')
   }</span>`).join('');
   contenedor.append(caja);
   const botones = [...caja.querySelectorAll('button')];
@@ -292,55 +292,64 @@ function montarRegla(contenedor, item, api) {
 
 // ─── Ejercicio 6: los divisores son elecciones ───────────────────────────────────────
 
-function enunciadoDivisores(item, { tt }) {
-  const pregunta = item.tipo === 'contar' ? TX.divisores.contar : item.tipo === 'ninguna' ? TX.divisores.ninguna : TX.divisores.elegir;
-  const texto = item.tipo === 'elegir' ? tt(pregunta)(item.a, item.d) : tt(pregunta)(item.a);
-  return `<p class="instruccion">${texto}</p>${item.tipo === 'elegir' ? '' : escena(montonHtml(item.a))}`;
-}
+const enunciadoDivisores = (item, { tt }) => `<p class="instruccion">${tt(TX.divisores.instruccion)(item.a)}</p>`;
 
+/**
+ * La tabla: una casilla por divisor, cada una con todas las fichas del número apagadas y, a la
+ * derecha, el producto de las encendidas (1 al empezar). «Comprobar» marca en rojo las casillas que
+ * repiten un divisor y dice cuántos faltan, sin decir cuáles; se puede volver a pulsar. `api.responder`
+ * solo vale una vez por ítem: cada comprobación con fallos se cuenta y el ítem se cierra, con todos los
+ * fallos (uno como fallo y el resto como `pistas`), al conseguir todos los divisores.
+ */
 function montarDivisores(contenedor, item, api) {
   const { tt } = api;
-  if (item.tipo === 'elegir') return montarEligeDivisor(contenedor, item, api);
-  contenedor.innerHTML = `${enunciadoDivisores(item, api)}<div id="campo"></div><button type="button" class="comprobar">${api.t.comprobar}</button>`;
-  const boton = contenedor.querySelector('.comprobar');
-  const campo = campoNumero(contenedor.querySelector('#campo'), { nombre: tt(TX.divisores.campo), idioma: api.idioma, boton, alEnviar: comprobar });
-  boton.addEventListener('click', () => comprobar(campo.valor()));
-  function comprobar(n) {
-    if (api.respondido() || n === null) return;
-    campo.bloquear();
-    boton.hidden = true;
-    const diag = item.tipo === 'contar' ? diagnosticarContar(item, n) : diagnosticarNinguna(n);
-    terminar(api, diag, {
-      respuesta: String(n),
-      html: ({ tt }) => (item.tipo === 'contar'
-        ? unir(tt(TX.divisores.buenaContar)(item.a), diag.acierto ? '' : tt(TX.divisores.nota)(diag.error, item.a))
-        : unir(tt(TX.divisores.buenaNinguna), diag.acierto ? '' : tt(TX.divisores.nota)(diag.error, item.a))),
+  contenedor.innerHTML = `${enunciadoDivisores(item, api)}
+    <div class="fp-tabla" id="tabla"></div>
+    <div id="aviso" class="fp-aviso" role="status" aria-live="polite"></div>
+    <button type="button" class="comprobar">${api.t.comprobar}</button>`;
+  const tabla = contenedor.querySelector('#tabla'), aviso = contenedor.querySelector('#aviso'), boton = contenedor.querySelector('.comprobar');
+  const casillas = Array.from({ length: item.n }, (_, i) => {
+    const caja = document.createElement('div');
+    caja.className = 'fp-casilla';
+    caja.setAttribute('role', 'group');
+    caja.setAttribute('aria-label', tt(TX.divisores.casilla)(i + 1));
+    caja.innerHTML = '<div class="fp-casilla__fichas"></div><span class="fp-casilla__producto">1</span>';
+    tabla.append(caja);
+    const producto = caja.querySelector('.fp-casilla__producto');
+    const toca = fichasTocables(caja.querySelector('.fp-casilla__fichas'), item.a, {
+      clase: 'fp-casilla__tocables', clasesFicha: 'fp-ficha--mini',
+      alCambiar: () => { producto.textContent = String(productoCasilla(toca.seleccion())); limpiarMarcas(); },
     });
-  }
-}
+    return { caja, toca };
+  });
+  const limpiarMarcas = () => casillas.forEach(c => c.caja.classList.remove('fp-casilla--repetida', 'fp-casilla--bien'));
+  const estado = () => casillas.map(c => c.toca.seleccion());
 
-function montarEligeDivisor(contenedor, item, api) {
-  const { tt } = api;
-  contenedor.innerHTML = `${enunciadoDivisores(item, api)}<div id="fichas"></div>
-    <div class="fp-acciones">
-      <button type="button" class="comprobar" disabled>${api.t.comprobar}</button>
-      <button type="button" class="fp-atasca" id="ninguna">${tt(TX.comun.ninguna)}</button>
-    </div>`;
-  const boton = contenedor.querySelector('.comprobar'), ninguna = contenedor.querySelector('#ninguna');
-  const toca = fichasTocables(contenedor.querySelector('#fichas'), item.a, { alCambiar: () => { boton.disabled = nFichas(toca.seleccion()) === 0; } });
-  const cierra = q => {
+  let fallidas = 0, primerError = null, ultimoEstado = null;
+  boton.addEventListener('click', () => {
     if (api.respondido()) return;
-    toca.bloquear();
+    const st = estado();
+    const diag = diagnosticarTabla(item, st);
+    if (!diag.ok) {
+      fallidas++;
+      primerError ??= diag.error;
+      ultimoEstado = st;
+      casillas.forEach((c, i) => c.caja.classList.toggle('fp-casilla--repetida', diag.repetidos.includes(diag.valores[i])));
+      aviso.innerHTML = `<div class="aviso aviso--error">${tt(TX.divisores.parcial)(item.a, diag)}</div>`;
+      return;
+    }
+    casillas.forEach(c => { c.toca.bloquear(); c.caja.classList.add('fp-casilla--bien'); });
     boton.hidden = true;
-    ninguna.hidden = true;
-    const diag = diagnosticarElige(item, q);
-    terminar(api, diag, {
-      respuesta: nFichas(q) ? textoMonton(q) : '0 fichas',
-      html: ({ tt }) => unir(diag.acierto ? '' : tt(TX.divisores.tuyas)(q, item.d), tt(TX.divisores.buenaElegir)(item.d)),
+    aviso.innerHTML = '';
+    const resumen = ({ tt }) => unir(fallidas ? tt(TX.divisores.fallos)(fallidas) : '', tt(TX.divisores.buena)(item.a));
+    api.responder({
+      acierto: fallidas === 0,
+      pistas: Math.max(0, fallidas - 1),
+      html: resumen,
+      espera: 3500,
+      ...(fallidas ? { error: primerError, respuesta: ultimoEstado.map(m => valor(m)).join(', ') } : {}),
     });
-  };
-  boton.addEventListener('click', () => cierra(toca.seleccion()));
-  ninguna.addEventListener('click', () => cierra({}));
+  });
 }
 
 // ─── Ejercicio 7: el m.c.d. ────────────────────────────────────────────────────────────
@@ -450,7 +459,7 @@ arrancar({
     { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto },
     { nombre: TX.quita.nombre, detalle: TX.quita.detalle, objetivo: 8, introduccion: TX.quita.introduccion, generar: generarQuita, montar: montarQuita, enunciado: enunciadoQuita },
     { nombre: TX.regla.nombre, detalle: TX.regla.detalle, introduccion: TX.regla.introduccion, generar: generarRegla, montar: montarRegla, enunciado: enunciadoRegla },
-    { nombre: TX.divisores.nombre, detalle: TX.divisores.detalle, introduccion: TX.divisores.introduccion, generar: generarDivisores, montar: montarDivisores, enunciado: enunciadoDivisores },
+    { nombre: TX.divisores.nombre, detalle: TX.divisores.detalle, introduccion: TX.divisores.introduccion, generar: generarTablaDivisores, montar: montarDivisores, enunciado: enunciadoDivisores },
     { nombre: TX.mcd.nombre, detalle: TX.mcd.detalle, objetivo: 8, introduccion: TX.mcd.introduccion, generar: generarMcd, montar: montarMcd, enunciado: enunciadoMcd },
     { nombre: TX.mcm.nombre, detalle: TX.mcm.detalle, objetivo: 8, introduccion: TX.mcm.introduccion, generar: generarMcm, montar: montarMcm, enunciado: enunciadoMcm },
   ],

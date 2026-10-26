@@ -1,4 +1,4 @@
-// Práctica «Las fichas de Pablo» (tarea 97 de PU2): fuerza bruta con definiciones independientes
+// Práctica «Las fichas del parchís» (tareas 97 y 114 de PU2): fuerza bruta con definiciones independientes
 // de las de la propia práctica (productos, restos y Euclides de `aritmetica.js`), semillas fijas.
 
 import test from 'node:test';
@@ -13,7 +13,7 @@ import {
   numeroDivisores, indice, productoFichas,
   generarLee, diagnosticarLee, generarConstruye, diagnosticarConstruye, generarProducto, diagnosticarProducto, diagnosticarAnadir,
   generarQuita, diagnosticarQuita, resto, generarRegla, diagnosticarDivisible, diagnosticarCociente, diagnosticarColorFalta,
-  generarDivisores, diagnosticarContar, diagnosticarNinguna, diagnosticarElige, generarMcd, generarMcm, diagnosticarMcd, diagnosticarMcm,
+  generarTablaDivisores, productoCasilla, diagnosticarTabla, MIN_DIVISORES, MAX_DIVISORES, TOPE_TABLA, generarMcd, generarMcm, diagnosticarMcd, diagnosticarMcm,
   parejasEn, CASOS_PAREJA,
 } from '../practicas/fichas-de-pablo/logica.js';
 
@@ -243,35 +243,69 @@ test('ejercicio 5: mitad divisibles; entre las que no, a mayor que d y fichas de
 
 // --- Ejercicio 6 --------------------------------------------------------------------------------
 
-test('ejercicio 6: como mucho 12 divisores; contar, elegir (un 10 % el 1) y «ninguna ficha»', () => {
-  const lista = items(generarDivisores, 6);
+test('ejercicio 6: la tabla de divisores (de 4 a 12, valor ≤ 1000, una casilla por divisor)', () => {
+  const lista = items(generarTablaDivisores, 6);
   for (const it of lista) {
-    assert.ok(colores(it.a).length >= 2 && colores(it.a).length <= 3);
-    assert.ok(valor(it.a) <= TOPE_MONTON);
-    assert.ok(numeroDivisores(it.a) <= 12);
-    assert.equal(numeroDivisores(it.a), contarDivisores(valor(it.a)), 'el número de divisores, contado');
-    if (it.tipo === 'elegir') assert.equal(valor(it.a) % valor(it.d), 0);
+    const v = valor(it.a);
+    assert.ok(v <= TOPE_TABLA && v >= 2);
+    assert.ok(it.n >= MIN_DIVISORES && it.n <= MAX_DIVISORES, `${v}: ${it.n} divisores`);
+    assert.equal(it.n, contarDivisores(v), 'el número de divisores, contado');
+    assert.equal(it.divisores.length, it.n);
+    assert.deepEqual(it.divisores.map(valor), Array.from({ length: v }, (_, i) => i + 1).filter(d => v % d === 0), 'los divisores, uno a uno y ordenados');
+    assert.ok(nFichas(it.a) <= 6);
   }
-  cerca(lista, it => it.tipo === 'contar', 0.45, 'contar');
-  cerca(lista, it => it.tipo === 'elegir', 0.45, 'elegir');
-  cerca(lista, it => it.tipo === 'ninguna', 0.1, 'ninguna');
-  cerca(lista.filter(it => it.tipo === 'elegir'), it => nFichas(it.d) === 0, 0.1, 'd = 1');
-  for (const it of lista.filter(x => x.tipo === 'contar').slice(0, 500)) {
-    const n = contarDivisores(valor(it.a));
-    assert.equal(diagnosticarContar(it, n).acierto, true);
-    assert.equal(diagnosticarContar(it, n + 100).acierto, false);
+  // Salen todos los tamaños posibles de 4 a 12 divisores (7 y 11 exigirían 2^6 y 2^10: fuera de los topes), con y sin 11/13.
+  for (let n = MIN_DIVISORES; n <= MAX_DIVISORES; n++) {
+    if (n === 7 || n === 11) assert.ok(!lista.some(it => it.n === n));
+    else assert.ok(lista.some(it => it.n === n), `ningún ítem con ${n} divisores`);
   }
-  // La elección de fichas se compara por número de fichas de cada color, no por posición.
-  const it = { tipo: 'elegir', a: { 2: 2, 3: 1 }, d: { 2: 1, 3: 1 } };
-  assert.equal(diagnosticarElige(it, deExps([1, 1])).acierto, true);
-  assert.equal(diagnosticarElige(it, deExps([2, 0])).error, 'eleccion-mal');
-  // Errores con nombre.
-  const a = { 2: 2, 3: 1, 5: 1 };   // 3 · 2 · 2 = 12
-  assert.equal(diagnosticarContar({ a }, 2).error, 'sin-el-mas-uno');           // 2 · 1 · 1
-  assert.equal(diagnosticarContar({ a }, 4).error, 'numero-de-fichas');         // 2 + 1 + 1
-  assert.equal(diagnosticarContar({ a }, 7).error, 'suma-de-los-mas-uno');      // 3 + 2 + 2
-  assert.equal(diagnosticarNinguna(1).acierto, true);
-  assert.equal(diagnosticarNinguna(0).error, 'ninguna-es-cero');
+  cerca(lista, it => exp(it.a, 11) > 0 || exp(it.a, 13) > 0, 0.35, '11 o 13');
+  // El producto de una casilla es el producto de sus fichas encendidas; sin ninguna, 1.
+  assert.equal(productoCasilla({}), 1);
+  const a = { 7: 1, 11: 2 };   // 847 = 7 · 11²
+  assert.equal(valor(a), 847);
+  assert.equal(productoCasilla({ 7: 1, 11: 1 }), 77);
+  assert.equal(productoCasilla({ 11: 2 }), 121);
+  assert.equal(productoCasilla(a), 847);
+  for (const m of submontones(a)) assert.equal(productoCasilla(m), producto(m));
+});
+
+test('ejercicio 6: diagnosticarTabla detecta lo que falta, los repetidos y el acierto', () => {
+  const a = { 7: 1, 11: 2 };
+  const item = { a, n: 6, divisores: submontones(a).sort((x, y) => valor(x) - valor(y)) };
+  const todos = submontones(a);
+  // Todos los divisores, en cualquier orden: ok.
+  const rng = crearRng(99);
+  for (let i = 0; i < 50; i++) {
+    const d = diagnosticarTabla(item, rng.barajar(todos));
+    assert.equal(d.ok, true);
+    assert.equal(d.faltan, 0);
+    assert.deepEqual(d.repetidos, []);
+  }
+  // Al principio (ninguna ficha encendida): el 1 seis veces, faltan cinco.
+  let d = diagnosticarTabla(item, Array(6).fill({}));
+  assert.equal(d.ok, false);
+  assert.equal(d.distintos, 1);
+  assert.equal(d.faltan, 5);
+  assert.deepEqual(d.repetidos, [1]);
+  assert.equal(d.error, 'divisor-repetido');
+  // Un divisor repetido en lugar de otro: 77 dos veces y falta el 847.
+  const mal = todos.map(m => (valor(m) === 847 ? { 7: 1, 11: 1 } : m));
+  d = diagnosticarTabla(item, mal);
+  assert.equal(d.ok, false);
+  assert.equal(d.faltan, 1);
+  assert.deepEqual(d.repetidos, [77]);
+  assert.deepEqual(d.valores.filter(v => v === 77).length, 2);
+  // Fuerza bruta: faltan = divisores que no aparecen; ok solo si faltan = 0 y nada se repite.
+  for (const it of items(generarTablaDivisores, 61).slice(0, 300)) {
+    const ms = submontones(it.a);
+    const azar = Array.from({ length: it.n }, () => rng.elegir(ms));
+    const dd = diagnosticarTabla(it, azar);
+    const valores = azar.map(valor);
+    assert.equal(dd.faltan, it.divisores.filter(x => !valores.includes(valor(x))).length);
+    assert.equal(dd.ok, dd.faltan === 0);
+    assert.equal(dd.repetidos.length > 0, !dd.ok, 'con una casilla por divisor, faltar es repetir');
+  }
 });
 
 // --- Ejercicios 7 y 8 ---------------------------------------------------------------------------
@@ -359,7 +393,7 @@ test('ejercicio 8: reparto de casos, m.c.m. ≤ 100 000 igual al de Euclides y d
 
 test('textos: ningún texto de alumno con ×, con «factor» entre números ni con HCF; los exponentes con <sup>', () => {
   const lee = items(generarLee, 1).slice(0, 60), con = items(generarConstruye, 2).slice(0, 60), pr = items(generarProducto, 3).slice(0, 80);
-  const qu = items(generarQuita, 4).slice(0, 80), re = items(generarRegla, 5).slice(0, 80), di = items(generarDivisores, 6).slice(0, 80);
+  const qu = items(generarQuita, 4).slice(0, 80), re = items(generarRegla, 5).slice(0, 80), di = items(generarTablaDivisores, 6).slice(0, 80);
   const m7 = items(generarMcd, 7).slice(0, 60), m8 = items(generarMcm, 8).slice(0, 60);
   const textos = [];
   const todos = (obj, args) => { for (const idioma of ['es', 'en']) textos.push(String(obj[idioma](...args))); };
@@ -386,10 +420,12 @@ test('textos: ningún texto de alumno con ×, con «factor» entre números ni c
     todos(TX.regla.nota, ['cree-que-no-se-puede', it.a, it.d, colores(it.d)[0]]);
   }
   for (const it of di) {
-    if (it.tipo === 'contar') { todos(TX.divisores.contar, [it.a]); todos(TX.divisores.buenaContar, [it.a]); }
-    if (it.tipo === 'ninguna') todos(TX.divisores.ninguna, [it.a]);
-    if (it.tipo === 'elegir') { todos(TX.divisores.elegir, [it.a, it.d]); todos(TX.divisores.buenaElegir, [it.d]); todos(TX.divisores.tuyas, [{ 2: 1 }, it.d]); }
-    for (const e of ['sin-el-mas-uno', 'numero-de-fichas', 'suma-de-los-mas-uno', 'ninguna-es-cero']) todos(TX.divisores.nota, [e, it.a]);
+    todos(TX.divisores.instruccion, [it.a]);
+    todos(TX.divisores.buena, [it.a]);
+    todos(TX.divisores.casilla, [3]);
+    todos(TX.divisores.fallos, [2]);
+    todos(TX.divisores.parcial, [it.a, { distintos: it.n - 1, faltan: 1 }]);
+    todos(TX.divisores.parcial, [it.a, { distintos: 1, faltan: it.n - 1 }]);
   }
   for (const it of m7) {
     todos(TX.mcd.instruccion, [it.a, it.b]); todos(TX.mcd.buena, [it.a, it.b]);

@@ -52,7 +52,7 @@ export const BLOQUES = [
   },
   {
     unidad: 2,
-    titulo: { es: 'Para toda la unidad · Refuerzo: las fichas de Pablo', en: "For the whole unit · Support: Pablo's counters" },
+    titulo: { es: 'Para toda la unidad · Refuerzo: las fichas del parchís', en: 'For the whole unit · Support: Ludo counters' },
     slugs: ['fichas-de-pablo'],
   },
   // Unidad 3 (PU2, tarea 79): cada práctica sale en su bloque cuando su tarea de la semana la publica.
