@@ -13,6 +13,21 @@ const M = montonHtml;
 const cuenta = s => `<span class="cuenta">${s}</span>`;
 /** El primer color de m con más de una ficha (para explicar el exponente). */
 const conPotencia = m => colores(m).find(p => exp(m, p) > 1) ?? colores(m)[0];
+
+/**
+ * Quién juega en cada ítem: Pablo y otros nombres de niño y de niña, elegidos de forma determinista por
+ * los números del ítem (así el enunciado, el feedback y la traducción nombran siempre a la misma persona).
+ * `g` es el género, para los pronombres del inglés.
+ */
+const NOMBRES = [
+  { n: 'Pablo', g: 'm' }, { n: 'Lucía', g: 'f' }, { n: 'Mateo', g: 'm' }, { n: 'Carla', g: 'f' },
+  { n: 'Hugo', g: 'm' }, { n: 'Noa', g: 'f' }, { n: 'Daniel', g: 'm' }, { n: 'Julia', g: 'f' },
+  { n: 'Martín', g: 'm' }, { n: 'Irene', g: 'f' }, { n: 'Leo', g: 'm' }, { n: 'Valeria', g: 'f' },
+  { n: 'Adrián', g: 'm' }, { n: 'Nuria', g: 'f' },
+];
+const numDe = x => (typeof x === 'number' ? x : valor(x));
+export const quien = (...cosas) => NOMBRES[Math.abs(cosas.reduce((h, x) => (h * 31 + numDe(x)) | 0, 7)) % NOMBRES.length];
+const el = p => (p.g === 'f' ? 'she' : 'he');
 const potencia = (p, e) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`);
 
 /** Las líneas de las introducciones: tres ejemplos de la hoja de refuerzo. */
@@ -28,11 +43,11 @@ const LEYENDA = {
 const quedaTxt = {
   es: (a, d) => {
     const r = quitar(a, d);
-    return `Pablo quita ${desglose(d, 'es')}; ${nFichas(r) ? `quedan ${desglose(r, 'es')}` : 'no queda ninguna ficha'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
+    return `${quien(a, d).n} quita ${desglose(d, 'es')}; ${nFichas(r) ? `quedan ${desglose(r, 'es')}` : 'no queda ninguna ficha'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
   },
   en: (a, d) => {
     const r = quitar(a, d);
-    return `Pablo takes away ${desglose(d, 'en')}; ${nFichas(r) ? `what is left is ${desglose(r, 'en')}` : 'no counters are left'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
+    return `${quien(a, d).n} takes away ${desglose(d, 'en')}; ${nFichas(r) ? `what is left is ${desglose(r, 'en')}` : 'no counters are left'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
   },
 };
 
@@ -129,10 +144,10 @@ export const TX = {
     detalle: { es: 'Junta las fichas de dos números para multiplicarlos', en: 'Put the counters of two numbers together to multiply them' },
     introduccion: {
       es: `<h2>Multiplicar es juntar</h2>
-        <p>Para calcular 40 · 490, Pablo junta todas las fichas de 40 ${M(M40)} y todas las de 490 ${M(M490)} en un montón: ${M({ 2: 4, 5: 2, 7: 2 })}.</p>
+        <p>Para calcular 40 · 490, Lucía junta todas las fichas de 40 ${M(M40)} y todas las de 490 ${M(M490)} en un montón: ${M({ 2: 4, 5: 2, 7: 2 })}.</p>
         <p>Así, 40 · 490 = 2<sup>4</sup> · 5<sup>2</sup> · 7<sup>2</sup>. <strong>Juntar fichas es multiplicar, no sumar.</strong></p>`,
       en: `<h2>Multiplying is putting the counters together</h2>
-        <p>To work out 40 · 490, Pablo puts all the counters of 40 ${M(M40)} and all the counters of 490 ${M(M490)} in one pile: ${M({ 2: 4, 5: 2, 7: 2 })}.</p>
+        <p>To work out 40 · 490, Lucía puts all the counters of 40 ${M(M40)} and all the counters of 490 ${M(M490)} in one pile: ${M({ 2: 4, 5: 2, 7: 2 })}.</p>
         <p>So 40 · 490 = 2<sup>4</sup> · 5<sup>2</sup> · 7<sup>2</sup>. <strong>Putting counters together is multiplying, not adding.</strong></p>`,
     },
     instruccion: {
@@ -140,16 +155,16 @@ export const TX = {
       en: (a, b) => `Build the pile for <strong>${a} · ${b}</strong> by putting the counters of both numbers together, <strong>without multiplying</strong>.`,
     },
     instruccionAnadir: {
-      es: (a, k) => `Pablo multiplica <strong>${a}</strong> por <strong>${k}</strong>. ¿Qué fichas añade al montón de ${a}?`,
-      en: (a, k) => `Pablo multiplies <strong>${a}</strong> by <strong>${k}</strong>. Which counters does he add to the pile of ${a}?`,
+      es: (a, k) => `${quien(a, k).n} multiplica <strong>${a}</strong> por <strong>${k}</strong>. ¿Qué fichas añade al montón de ${a}?`,
+      en: (a, k) => `${quien(a, k).n} multiplies <strong>${a}</strong> by <strong>${k}</strong>. Which counters does ${el(quien(a, k))} add to the pile of ${a}?`,
     },
     buena: {
       es: (a, b) => `Se juntan las fichas de ${valor(a)} y de ${valor(b)}: ${cuenta(`${valor(a)} · ${valor(b)} = ${indice(juntar(a, b))} = ${valor(juntar(a, b))}`)}.`,
       en: (a, b) => `Put the counters of ${valor(a)} and ${valor(b)} together: ${cuenta(`${valor(a)} · ${valor(b)} = ${indice(juntar(a, b))} = ${valor(juntar(a, b))}`)}.`,
     },
     buenaAnadir: {
-      es: (a, k) => `${cuenta(cuentaDe(deNumero(k)))}: Pablo añade ${desglose(deNumero(k), 'es')}. ${cuenta(`${valor(a)} · ${k} = ${indice(juntar(a, deNumero(k)))} = ${valor(a) * k}`)}.`,
-      en: (a, k) => `${cuenta(cuentaDe(deNumero(k)))}: Pablo adds ${desglose(deNumero(k), 'en')}. ${cuenta(`${valor(a)} · ${k} = ${indice(juntar(a, deNumero(k)))} = ${valor(a) * k}`)}.`,
+      es: (a, k) => `${cuenta(cuentaDe(deNumero(k)))}: ${quien(valor(a), k).n} añade ${desglose(deNumero(k), 'es')}. ${cuenta(`${valor(a)} · ${k} = ${indice(juntar(a, deNumero(k)))} = ${valor(a) * k}`)}.`,
+      en: (a, k) => `${cuenta(cuentaDe(deNumero(k)))}: ${quien(valor(a), k).n} adds ${desglose(deNumero(k), 'en')}. ${cuenta(`${valor(a)} · ${k} = ${indice(juntar(a, deNumero(k)))} = ${valor(a) * k}`)}.`,
     },
     tuyas: {
       es: st => `Tu montón: ${cuenta(nFichas(st) ? `${indice(st)} = ${valor(st)}` : '1')}.`,
@@ -182,16 +197,16 @@ export const TX = {
     introduccion: {
       es: `<h2>Dividir es quitar</h2>
         <p>9 000 = 2<sup>3</sup> · 3<sup>2</sup> · 5<sup>3</sup>: ${M({ 2: 3, 3: 2, 5: 3 })}.</p>
-        <p>Para dividir 9 000 : 75, Pablo quita las fichas de 75 = 3 · 5<sup>2</sup>, que son una azul (blue) y dos amarillas (yellow), y lee lo que queda: ${M({ 2: 3, 3: 1, 5: 1 })}, es decir, 2<sup>3</sup> · 3 · 5 = 120.</p>
-        <p>Aquí todas las divisiones son <strong>exactas</strong>: Pablo siempre tiene las fichas que quita. Lo que pasa cuando le falta alguna se ve en el ejercicio 5.</p>`,
+        <p>Para dividir 9 000 : 75, Mateo quita las fichas de 75 = 3 · 5<sup>2</sup>, que son una azul (blue) y dos amarillas (yellow), y lee lo que queda: ${M({ 2: 3, 3: 1, 5: 1 })}, es decir, 2<sup>3</sup> · 3 · 5 = 120.</p>
+        <p>Aquí todas las divisiones son <strong>exactas</strong>: siempre tiene las fichas que quita. Lo que pasa cuando le falta alguna se ve en el ejercicio 5.</p>`,
       en: `<h2>Dividing is taking counters away</h2>
         <p>9 000 = 2<sup>3</sup> · 3<sup>2</sup> · 5<sup>3</sup>: ${M({ 2: 3, 3: 2, 5: 3 })}.</p>
-        <p>To divide 9 000 : 75, Pablo takes away the counters of 75 = 3 · 5<sup>2</sup>, which are one blue (azul) and two yellow (amarillas), and reads what is left: ${M({ 2: 3, 3: 1, 5: 1 })}, that is, 2<sup>3</sup> · 3 · 5 = 120.</p>
-        <p>Here every division is <strong>exact</strong>: Pablo always has the counters he takes away. What happens when one is missing comes in exercise 5.</p>`,
+        <p>To divide 9 000 : 75, Mateo takes away the counters of 75 = 3 · 5<sup>2</sup>, which are one blue (azul) and two yellow (amarillas), and reads what is left: ${M({ 2: 3, 3: 1, 5: 1 })}, that is, 2<sup>3</sup> · 3 · 5 = 120.</p>
+        <p>Here every division is <strong>exact</strong>: there are always enough counters to take away. What happens when one is missing comes in exercise 5.</p>`,
     },
     instruccion: {
-      es: (a, d) => `Pablo divide <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} y ${valor(d)} = ${indice(d)}. Toca las fichas de ${valor(a)} que Pablo quita.`,
-      en: (a, d) => `Pablo divides <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} and ${valor(d)} = ${indice(d)}. Tap the counters of ${valor(a)} that Pablo takes away.`,
+      es: (a, d) => `${quien(a, d).n} divide <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} y ${valor(d)} = ${indice(d)}. Toca las fichas de ${valor(a)} que ${quien(a, d).n} quita.`,
+      en: (a, d) => `${quien(a, d).n} divides <strong>${valor(a)} : ${valor(d)}</strong>. ${valor(a)} = ${indice(a)} and ${valor(d)} = ${indice(d)}. Tap the counters of ${valor(a)} that ${quien(a, d).n} takes away.`,
     },
     atasca: { es: 'Pablo se atasca: no se puede', en: "Pablo gets stuck: it can't be done" },
     quienFalta: {
@@ -223,10 +238,10 @@ export const TX = {
     nombre: { es: 'La regla: tantas o más de cada color', en: 'The rule: as many or more of every colour' },
     detalle: { es: 'Decide si un número es divisible mirando solo las fichas', en: 'Decide if a number is divisible by looking only at the counters' },
     introduccion: {
-      es: `<h2>La regla de Pablo</h2>
+      es: `<h2>La regla de las fichas</h2>
         <p><strong>Un número es divisible entre otro cuando tiene tantas o más fichas de cada color.</strong></p>
         <p>Por ejemplo, 1 350 = 2 · 3<sup>3</sup> · 5<sup>2</sup> ${M({ 2: 1, 3: 3, 5: 2 })}. ¿Es divisible entre 20 = 2<sup>2</sup> · 5 ${M({ 2: 2, 5: 1 })}? No: 20 necesita dos verdes (green) y 1 350 solo tiene una. Y entre 135 = 3<sup>3</sup> · 5 sí; el cociente es 2 · 5 = 10.</p>`,
-      en: `<h2>Pablo's rule</h2>
+      en: `<h2>The counters rule</h2>
         <p><strong>A number is divisible by another number when it has as many or more counters of every colour.</strong></p>
         <p>For example, 1 350 = 2 · 3<sup>3</sup> · 5<sup>2</sup> ${M({ 2: 1, 3: 3, 5: 2 })}. Is it divisible by 20 = 2<sup>2</sup> · 5 ${M({ 2: 2, 5: 1 })}? No: 20 needs two green (verde) and 1 350 has only one. And by 135 = 3<sup>3</sup> · 5 it is; the quotient is 2 · 5 = 10.</p>`,
     },
@@ -314,10 +329,10 @@ export const TX = {
     detalle: { es: 'Empareja las fichas iguales de dos números', en: 'Pair up the equal counters of two numbers' },
     introduccion: {
       es: `<h2>El m.c.d. son las fichas que tienen los dos</h2>
-        <p>Pablo pone 40 ${M(M40)} junto a 490 ${M(M490)} y empareja las fichas iguales: una pareja de verdes (green) y una de amarillas (yellow) ${M({ 2: 1, 5: 1 })}.</p>
+        <p>Hugo pone 40 ${M(M40)} junto a 490 ${M(M490)} y empareja las fichas iguales: una pareja de verdes (green) y una de amarillas (yellow) ${M({ 2: 1, 5: 1 })}.</p>
         <p>Las parejas son el m.c.d.: m.c.d.(40, 490) = 2 · 5 = 10. Si no hay ninguna pareja, el m.c.d. es 1 (no 0).</p>`,
       en: `<h2>The GCD is the counters they both have</h2>
-        <p>Pablo puts 40 ${M(M40)} next to 490 ${M(M490)} and pairs up equal counters: one green (verde) pair and one yellow (amarilla) pair ${M({ 2: 1, 5: 1 })}.</p>
+        <p>Hugo puts 40 ${M(M40)} next to 490 ${M(M490)} and pairs up equal counters: one green (verde) pair and one yellow (amarilla) pair ${M({ 2: 1, 5: 1 })}.</p>
         <p>The pairs are the GCD: GCD(40, 490) = 2 · 5 = 10. If there is no pair at all, the GCD is 1 (not 0).</p>`,
     },
     instruccion: {
@@ -365,10 +380,10 @@ export const TX = {
     detalle: { es: 'Construye el montón más pequeño que contiene a los dos números', en: 'Build the smallest pile that contains both numbers' },
     introduccion: {
       es: `<h2>El m.c.m. es el montón más pequeño que contiene a los dos</h2>
-        <p>Pablo quiere un múltiplo de 40 ${M(M40)} <strong>y</strong> de 490 ${M(M490)} con las menos fichas posibles. Para contener a 40 necesita al menos tres verdes (green) y una amarilla (yellow); para contener a 490, al menos una verde (green), una amarilla (yellow) y dos rojas (red).</p>
+        <p>Noa quiere un múltiplo de 40 ${M(M40)} <strong>y</strong> de 490 ${M(M490)} con las menos fichas posibles. Para contener a 40 necesita al menos tres verdes (green) y una amarilla (yellow); para contener a 490, al menos una verde (green), una amarilla (yellow) y dos rojas (red).</p>
         <p>El montón más pequeño es ${M({ 2: 3, 5: 1, 7: 2 })}: m.c.m.(40, 490) = 2<sup>3</sup> · 5 · 7<sup>2</sup> = 1 960. De cada color, el <strong>mayor</strong> número de fichas.</p>`,
       en: `<h2>The LCM is the smallest pile that contains both</h2>
-        <p>Pablo wants a multiple of 40 ${M(M40)} <strong>and</strong> of 490 ${M(M490)} with as few counters as possible. To contain 40 he needs at least three green (verde) and one yellow (amarilla); to contain 490, at least one green (verde), one yellow (amarilla) and two red (roja).</p>
+        <p>Noa wants a multiple of 40 ${M(M40)} <strong>and</strong> of 490 ${M(M490)} with as few counters as possible. To contain 40 she needs at least three green (verde) and one yellow (amarilla); to contain 490, at least one green (verde), one yellow (amarilla) and two red (roja).</p>
         <p>The smallest pile is ${M({ 2: 3, 5: 1, 7: 2 })}: LCM(40, 490) = 2<sup>3</sup> · 5 · 7<sup>2</sup> = 1 960. From each colour, the <strong>largest</strong> number of counters.</p>`,
     },
     instruccion: {
