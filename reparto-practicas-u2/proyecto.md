@@ -432,3 +432,12 @@ desde la semana 1 y potencias de base positiva en la sesión 7** (la base negati
 3. **Semana 2**: 103, 104 → **110** (jueves 17-12).
 4. **Semana 3**: 105, 106, 107 → **111** (martes 22-12; límite jueves 7-1).
 Las tareas de Classroom de cada semana las programa la tarea 29 del reparto de la U4 cuando Juan Luis haya montado la tarea en el panel.
+
+## Tarea 115: publicar las dos reabiertas de la unidad 3 (2026-10-26, s-20261026T114336-7477f785)
+
+Las cuatro tareas de publicación de la U3 (93-96) cerraron dejando dos prácticas reabiertas y **sin publicador**: la 84
+`dos-signos` (semana 2, publicada antes del **jue 19-11**) y la 90 `variacion` (semana 4, antes del **jue 3-12**). Juan Luis
+decidió el 26-10 «arreglar y luego publicar»: primero una sesión MEDIO cierra las dos reabiertas (`PU2 T84+T90 (MEDIO)`,
+como reabiertas, sin tocar `catalogo.js`) y después la **115** (ALTO) las verifica a mano con clics en el navegador, las
+publica y confirma o corrige las propuestas de tarea de las semanas 2 y 4 (`salidas/94-…` y `salidas/96-…`). La 115 toca
+`catalogo.js`: no a la vez que la 98 ni que las 109-111.
