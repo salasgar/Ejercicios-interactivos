@@ -67,44 +67,52 @@ El catálogo de la unidad 4 (diseño de la montadora del 26-10; Juan Luis pidió
 |---|---|---|---|---|---|
 | 47 | `que-fraccion` | ¿Qué fracción es? / What fraction is it? | 4 | 1 | parte de un todo en figuras; escribir y leer en inglés; propia e impropia; «out of» |
 | 48 | `equivalentes` | Fracciones equivalentes / Equivalent fractions | 4 | 1 | ampliar y reducir; el término que falta (□); ¿son equivalentes? (productos cruzados); común denominador |
-| 49 | `simplifica` | Simplifica / Simplify | 3 | 1 | dividir arriba y abajo por el mismo número; irreducible; de una vez con el m.c.d. |
-| 50 | `compara` | Compara y ordena / Compare and order | 4 | 1 | mismo denominador, mismo numerador, común denominador; frente a 1 y a 1/2; ordenar; la recta |
+| 49 | `simplifica` | Simplifica / Simplify | 3 | 1 | dividir arriba y abajo por el mismo número; irreducible; de una vez con el m.c.d.; también una negativa, con el signo delante (`U4-1C-22`) |
+| 50 | `compara` | Compara y ordena / Compare and order | 4 | 1 | mismo denominador, mismo numerador, común denominador; frente a 1 y a 1/2; ordenar; la recta; con alguna negativa (`U4-1C-23`) y la recta con negativas (`U4-1C-24`) |
 | 51 | `fraccion-de` | La fracción de una cantidad / A fraction of a quantity | 4 | 2 | dividir y multiplicar; la fracción que representa una parte; problemas de contexto |
-| 52 | `suma-resta` | Suma y resta / Adding and subtracting | 5 | 2 | igual denominador; distinto denominador paso a paso; con naturales; parte que queda; problemas |
-| 53 | `multiplica-divide` | Multiplica y divide / Multiply and divide | 4 | 3 | producto (simplificar antes o después); fracción de una fracción; la inversa; cociente |
-| 54 | `combinadas-fracciones` | ¿Qué se hace primero? Con fracciones / What comes first? With fractions | 3 | 3 | jerarquía y paréntesis con fracciones, un paso cada vez |
-| 55 | `errores4` | Caza el error / Spot the mistake | 3 | 3 (toda la unidad) | los errores típicos de la unidad como cálculos con un paso mal |
+| 52 | `suma-resta` | Suma y resta / Adding and subtracting | 5 | 2 | igual denominador; distinto denominador paso a paso; con naturales; con negativas, también resultado negativo (`U4-2C-07`); parte que queda; problemas |
+| 53 | `multiplica-divide` | Multiplica y divide / Multiply and divide | 5 | 3 (se publica con la semana 3, mar 22-12; el producto y las potencias son de la sesión 7, jue 7-1, y el cociente de la 9) | producto (simplificar antes o después); fracción de una fracción; **potencias de base positiva** (`U4-2C-12`; ejercicio 5, nuevo el 26-10); la inversa; cociente por los dos métodos; **con negativas** (`U4-3C-10`) |
+| 54 | `combinadas-fracciones` | ¿Qué se hace primero? Con fracciones / What comes first? With fractions | 3 | 3 | jerarquía y paréntesis con fracciones, un paso cada vez; con negativas (`U4-3C-10`) |
+| 55 | `errores4` | Caza el error / Spot the mistake | 3 | 3 (toda la unidad) | los errores típicos de la unidad como cálculos con un paso mal (también los de negativas y potencias) |
 | 56 | `leelo4` | Léelo en inglés / Say it in English | 4 | toda la unidad | vocabulario: numerator, denominator, three fifths, a half, a quarter, equivalent, simplify, lowest terms, common denominator, reciprocal, of, out of, proper / improper |
 
 Sin práctica, a propósito: la lectura en voz alta (va a `leelo4` como «elige la lectura correcta»), y lo que el acta del
-inventario deje fuera (decimales, negativas, mixtos, potencias). Si el inventario aprobado reparte las destrezas de otra
-manera, la tabla del §7 de `docs/practicas-unidad4.md` manda y esta se corrige en la ENTREGA.
+26-10 deja fuera (decimales, números mixtos, potencias de base negativa). La tabla de arriba se corrigió el 26-10 con el
+acta (negativas, potencias, el producto en la sesión 7); si el §7 de `docs/practicas-unidad4.md` la reparte de otra manera,
+el §7 manda y esta se corrige en la ENTREGA.
 
 ## Siguiente paso
 
-1. Lee la ficha de la tarea 79 (`tareas/tarea-79-base-unidad3.md`) y su `salidas/79-base-unidad3/ENTREGA.md`: es el molde exacto (esqueletos, bloques, `DESTREZAS`, docs §7, tests). Lee `practicas/_comun/aritmetica.js` (`mcd`, `mcm`, `factorizar`: no los dupliques) y `practicas/_comun/enteros.js` (`fmt`, `leerEntero`, el evaluador: el de fracciones se apoya en él si el acta mete negativas).
-2. Lee `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv` (o su propuesta, si F0 no está) y `4. Fractions/inventario-unidad4-revision.md` si existe: de ahí salen los ids de cada práctica y qué entra.
+1. Lee la ficha de la tarea 79 (`tareas/tarea-79-base-unidad3.md`) y su `salidas/79-base-unidad3/ENTREGA.md`: es el molde exacto (esqueletos, bloques, `DESTREZAS`, docs §7, tests). Lee `practicas/_comun/aritmetica.js` (`mcd`, `mcm`, `factorizar`: no los dupliques) y `practicas/_comun/enteros.js` (`fmt`, `leerEntero`, el evaluador: el de fracciones se apoya en él, porque el acta mete negativas).
+2. Lee `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv` (aprobado el 26-10) y el acta `4. Fractions/inventario-unidad4-revision.md` (qué entra y los ids que cambiaron: `3C-01` a `3C-04` y `3A-05` son huecos; el producto es `2C-08` a `2C-11`, las potencias `2C-12`, las negativas `1C-22` a `1C-24`, `2C-07` y `3C-10`): de ahí salen los ids de cada práctica.
 3. `git status` y `git log --oneline -3 -- practicas/_comun/ practicas/portada.js`: si hay cambios sin commit en esos ficheros que no son tuyos, no los pises y avisa. Mira `.claude/sesiones/` por si otra sesión tiene reservado `catalogo.js`.
 
 ## Qué hay que hacer
 
 **1. `practicas/_comun/fracciones.js`** (nuevo, puro, sin DOM), con su test `tests/practicas-fracciones.test.js`:
-- Una clase o fábrica `Fraccion(num, den)` **inmutable y siempre con `den > 0`**, con `simplificar()` (usa `mcd` de
-  `aritmetica.js`), `esIrreducible()`, `equals(otra)` (por valor), `comparar(a, b)` (−1, 0, 1), `sumar`, `restar`,
+- Una clase o fábrica `Fraccion(num, den)` **inmutable, siempre con `den > 0` y el signo en el numerador** (las negativas
+  entran desde la semana 1, acta del 26-10: `Fraccion(5, -12)` es `−5/12`), con `simplificar()` (usa `mcd` de
+  `aritmetica.js`; conserva el signo), `esIrreducible()`, `equals(otra)` (por valor), `comparar(a, b)` (−1, 0, 1), `sumar`, `restar`,
   `multiplicar`, `dividir`, `inversa()`, `valor()` (solo para ordenar; nunca para mostrar), `esPropia()`, `deNatural(n)`,
   `de(cantidad)` (la fracción de una cantidad: error si no es exacta), `comunDenominador(a, b)` (con el m.c.m.: devuelve las
-  dos equivalentes y el m.c.m.), `equivalentePor(k)` y `amplificaciones(hasta)`.
+  dos equivalentes y el m.c.m.), `equivalentePor(k)` y `amplificaciones(hasta)`; y, nuevos el 26-10, `opuesta()`,
+  `esNegativa()` y `potencia(n)` (n natural, 2 o 3; base positiva: la usa la práctica 105).
 - `htmlFraccion(f, { compacta })` → `<span class="frac"><span>3</span><span>5</span></span>` (raya horizontal con CSS en
   `css/estilos.css` **no**: el estilo va en un bloque de `practicas/_comun/estilos.css`, que ya existe y es común; si no cabe
-  ahí, en cada práctica); un natural se pinta sin raya; `htmlCuenta(partes)` para `1/2 + 1/3 = 5/6` en línea.
-- `leerFraccion(texto)` → `Fraccion` o `null`: acepta `3/5`, `3 / 5`, `⁄`, naturales, espacios; rechaza decimales, `0` en el
+  ahí, en cada práctica); un natural se pinta sin raya; una negativa lleva el signo delante de la raya, a su altura, nunca
+  dentro; `htmlCuenta(partes)` para `1/2 + 1/3 = 5/6` en línea.
+- `leerFraccion(texto)` → `Fraccion` o `null`: acepta `3/5`, `3 / 5`, `⁄`, naturales, espacios, y las tres escrituras de una
+  negativa (`-5/12`, `(-5)/12`, `5/(-12)`, también con `−`) como el mismo número; rechaza decimales, `0` en el
   denominador, vacío y basura. `leerNumero` de `piezas.js` no se toca.
 - `enPalabras(f, idioma)`: «three fifths», «a half», «a quarter», «three quarters» (y «one half», «one fourth», «three fourths»
-  como variantes válidas: `lecturasValidas(f)` devuelve todas), «tres quintos», «un medio», «un cuarto», «tres cuartos».
+  como variantes válidas: `lecturasValidas(f)` devuelve todas), «tres quintos», «un medio», «un cuarto», «tres cuartos»; una
+  negativa, «minus three fifths» / «menos tres quintos».
 - **Los errores típicos** de la regla 4 de abajo, cada uno como función con nombre que da el cálculo equivocado a partir de
   las fracciones (`sumarArribaYAbajo(a, b)`, `simplificarSoloNumerador(f, k)`, `fraccionDeAlReves(f, n)`,
   `compararSoloNumeradores`, `inversaComoOpuesta`, `soloDenominadorAlReducir`, `invertirLaPrimera`, `noInvertir`,
-  `contarMarcas`…) y una tabla `ERRORES_TIPICOS` con su nombre `{ es, en }` en frase corta; cada función dice cuándo no sirve
+  `contarMarcas`, y los de negativas y potencias, nuevos el 26-10: `signoPerdido` (olvidar el signo al simplificar, sumar o
+  multiplicar una negativa), `ignoraElSigno` (comparar −3/4 y 1/2 por el valor absoluto), `elevarSoloElNumerador(f, n)`,
+  `basePorExponente(f, n)`…) y una tabla `ERRORES_TIPICOS` con su nombre `{ es, en }` en frase corta; cada función dice cuándo no sirve
   (devuelve `null` si da lo mismo que la respuesta correcta).
 - Test: la aritmética contra `fractions.Fraction` de Python no está a mano: contra una tabla de 40 casos calculados a mano y
   contra `BigInt` o aritmética entera propia en 3000 casos aleatorios; `equals` por valor; cada error típico distinto del
@@ -140,15 +148,15 @@ Y una línea de `DESCRIPCION` por práctica, en los dos idiomas, sacada de la fi
 **`docs/practicas-unidad4.md`** con su §7 («Qué práctica cubre qué destreza de la unidad 4», mismas columnas que el de la
 unidad 3, una fila por destreza del inventario, también las que no tienen práctica); cambia `tests/practicas-registro.test.js`
 para que lea también la tabla de la U4. El resto del documento lo escribe la 111; deja los apartados con «por escribir
-(tarea 111)». Si F0 no está firmada al cerrar, marca la tabla «ids provisionales (propuesta de la tarea 01 de la U4)»: la 109
-los coteja con el inventario firmado antes de publicar.
+(tarea 111)». Los ids son los del inventario aprobado el 26-10 (definitivos aunque F0 se firme después); si al cerrar F0
+sigue sin firma, dilo en la ENTREGA y la 109 lo comprueba antes de publicar.
 
 **7. `tests/practicas-comun.test.js`**: la lista del catálogo con las diez filas nuevas (es el test que fija ids, slugs y
 número de ejercicios).
 
 ## Datos de entrada
 
-- El inventario de la unidad 4 (o su propuesta), solo lectura: `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv`; el acta `inventario-unidad4-revision.md` si existe; la secuenciación `secuenciación-unidad4.pdf`.
+- El inventario de la unidad 4 (aprobado el 26-10), solo lectura: `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv`; el acta `inventario-unidad4-revision.md` (léela entera: puntos c, e, i, j y la tabla de ids que cambiaron); la secuenciación `secuenciación-unidad4.pdf`.
 - `reparto-practicas-u2/tareas/tarea-99-…` a `tarea-108-…`: lo que cada práctica va a pedir a `fracciones.js` y a `dibujo-fracciones.js` (léelas por encima antes de fijar la API: la 99 necesita figuras que se tocan, la 50 la recta, la 52 el común denominador paso a paso, la 55 los errores con nombre).
 - `tareas/tarea-79-base-unidad3.md`, `salidas/79-base-unidad3/ENTREGA.md`, `practicas/_comun/enteros.js`, `recta-enteros.js`, `aritmetica.js`, `docs/practicas-unidad3.md`: el molde.
 
@@ -180,17 +188,19 @@ número de ejercicios).
 ## Reglas de contenido de la unidad 4 (copia de `proyecto.md`; lo común no se lee, por eso va aquí)
 
 Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro, feedback, realismo) valen igual.
-La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y, en cuanto exista, el acta
-`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió: decimales, negativas, mixtos).
+La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y el acta
+`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió el 26-10: negativas desde la semana 1, potencias de
+base positiva en la sesión 7, ni decimales ni mixtos, cotas de realismo, ids que cambiaron).
 
 1. **Dos fracciones equivalentes son la misma respuesta.** En cualquier ejercicio de elegir, emparejar o verdadero/falso,
    ninguna opción puede equivaler a otra: el test lo comprueba por valor (`Fraction` de `_comun/fracciones.js`, nunca con
    decimales ni a ojo), y en los de «simplifica» la consigna pide la **fracción irreducible**. Un número mixto y su
    fracción impropia, lo mismo (si entran).
 2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario. Ninguna suma
-   o resta de fracciones antes de la sesión 5, ningún producto o cociente antes de la 9, ninguna combinada antes de la 10.
-   **Mientras el acta no diga otra cosa: ni decimales, ni fracciones negativas, ni números mixtos, ni potencias de
-   fracciones.** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
+   o resta de fracciones antes de la sesión 5, ningún producto ni potencia antes de la 7 (jue 7-1), ningún cociente antes
+   de la 9, ninguna combinada antes de la 10. **Acta del 26-10: ni decimales ni números mixtos; fracciones negativas desde
+   la semana 1 (escritura y signo, simplificar, comparar, recta), en la 2 (sumar y restar, también resultado negativo) y
+   en la 3 (producto, cociente, combinadas); potencias solo de base positiva (sesión 7).** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
 3. **Escritura**: la fracción en pantalla con raya horizontal (`htmlFraccion` de `_comun/fracciones.js`, tarea 98: `<span
    class="frac"><span>3</span><span>5</span></span>`), nunca `3/5` con barra salvo en una frase en inglés hablado («3 out
    of 5»). El alumno puede teclear `3/5`, `3 / 5` o un natural (`leerFraccion`). Producto con `·`, nunca `×`; división
@@ -213,10 +223,11 @@ La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido c
 7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los números que pueda sacar el
    generador, creíbles, con una cota por contexto que el test comprueba. Orientativas (la sesión fija las suyas y las
    escribe en su ENTREGA): una cantidad de la que se toma una fracción es múltiplo del denominador; las partes de un todo
-   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 20-30 alumnos y cada fracción da un entero; una
-   pizza o una tarta tiene de 4 a 12 trozos; una hora se parte en medias, cuartos, tercios, sextos y doceavos; un depósito,
-   de 1 a 500 litros; un recorrido, hasta 50 km; un ahorro, hasta 300 €. Cantera de contextos: los 41 problemas transcritos
-   en la nota de la montadora de la U4 (apartado 4).
+   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 12-36 alumnos y cada fracción da un entero; un
+   instituto, 200-3000; una pizza o una tarta tiene de 3 a 15 trozos; una hora se parte en medias, cuartos, tercios, sextos
+   y doceavos; un depósito, de 1 a 500 litros (el de un coche, 20-90); una botella, hasta 3 L; una garrafa, hasta 50 L; un
+   recorrido, hasta 50 km a pie o en bici y 1000 en coche; un ahorro, hasta 2000 € enteros (cotas aprobadas el 26-10, acta
+   punto j). Cantera de contextos: los 41 problemas transcritos en la nota de la montadora de la U4 (apartado 4).
 8. **Feedback ligado al error**, con los números del ítem («1/2 + 1/3: has sumado arriba y abajo; los sextos: 3/6 + 2/6 =
    5/6»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, dibujos con números) que no copien los de las hojas, los exámenes semanales ni el
@@ -308,6 +319,7 @@ Si paras sin terminar: `$R/hechos/fallos/98--<sid>.md` con hasta dónde llegaste
 - Dependencias nuevas (npm, CDN): la app no tiene build y solo carga KaTeX y Firebase por
   CDN; las prácticas no usan ni siquiera KaTeX (exponentes con `<sup>`).
 - Las reglas de contenido de la unidad 4 (en esta ficha y en `proyecto.md`): `×` en vez de `·`, letras,
-  ecuaciones, porcentajes; decimales, fracciones negativas, números mixtos o potencias de fracciones mientras el
-  acta del inventario no diga que entran; algo de una sesión posterior a la de la destreza; distractores que
+  ecuaciones, porcentajes; decimales y números mixtos (fuera por el acta del 26-10); potencias de base negativa;
+  fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
+  potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.

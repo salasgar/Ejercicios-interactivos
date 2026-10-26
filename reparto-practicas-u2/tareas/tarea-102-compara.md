@@ -61,7 +61,7 @@ Práctica **«Compara y ordena» / «Compare and order»** (`compara`, id 50 del
 **unidad 4, Fractions**, que empieza el lunes 14-12. Semana 1 (sesión 3). Tiene que estar LISTA antes del plazo de la
 tarea de publicación de su semana (semana 1: **jue 10-12**; semana 2: **jue 17-12**; semana 3: **mar 22-12**, límite jue 7-1).
 
-Destrezas (descripción; los ids definitivos, en el inventario tras F0 y en la ENTREGA de la 98): comparar con el mismo denominador, con el mismo numerador y reduciendo a común denominador; comparar con 1 y con 1/2; ordenar; situar fracciones en la recta. El texto exacto
+Destrezas (descripción; los ids definitivos, en el inventario tras F0 y en la ENTREGA de la 98): comparar con el mismo denominador, con el mismo numerador y reduciendo a común denominador; comparar con 1 y con 1/2; ordenar; situar fracciones en la recta; **y con negativas** (acta del 26-10): comparar y ordenar cuando alguna es negativa (`U4-1C-23`) y la recta con negativas (`U4-1C-24`). El texto exacto
 de cada una, su sesión y su nota (errores típicos y riesgos) están en el inventario: léelas antes de escribir nada.
 
 **Es un diseño propuesto por la montadora (26-10) y aprobado en bloque por Juan Luis al pedir el alta; él puede cambiarlo.**
@@ -79,17 +79,19 @@ Modelo de interfaz: `practicas/termometro/` (unidad 3: `<` y `>`, ordenar tarjet
 
 ## Qué hay que hacer
 
-1. **Mayor o menor** · *Greater or less*. Dos fracciones y los botones `<`, `>` (y `=` solo si el acta lo pide): un tercio
-   con el mismo denominador, un tercio con el mismo numerador, un tercio con distinto todo (común denominador). Tras fallar,
-   el feedback enseña el método que tocaba con los números. Error típico: comparar solo numeradores (`1/3 < 2/5`… que es
-   correcto por casualidad: la función del error devuelve `null` y el ítem se regenera).
+1. **Mayor o menor** · *Greater or less*. Dos fracciones y los botones `<`, `>` (sin `=`: las dos son siempre distintas por
+   valor): un tercio con el mismo denominador, un tercio con el mismo numerador, un tercio con distinto todo (común
+   denominador); **un cuarto de los ítems con una negativa o las dos** (`U4-1C-23`; error típico `ignoraElSigno`: comparar
+   por el valor absoluto). Tras fallar, el feedback enseña el método que tocaba con los números. Error típico: comparar solo
+   numeradores (`1/3 < 2/5`… que es correcto por casualidad: la función del error devuelve `null` y el ítem se regenera).
 2. **Frente a 1 y a 1/2** · *Against 1 and 1/2*. Seis fracciones para tres cajas: menor que 1/2, entre 1/2 y 1, mayor que 1
-   (la tercera caja solo si entran impropias; si no, dos cajas y «igual a 1/2» aparte).
+   (las impropias entran: tres cajas; «igual a 1/2» aparte). Sin negativas en este ejercicio.
 3. **Ordena** · *Put in order*. De tres a cinco tarjetas, de menor a mayor o de mayor a menor (la consigna lo resalta),
-   sin equivalentes entre ellas; con las parecidas del Excel (`11/18`, `7/12`, `2/3`, `5/9`). Feedback con el común
-   denominador.
-4. **En la recta** · *On the number line*. Recta de 0 a 1 (o de 0 a 2) con marcas en los múltiplos de 1/d; el alumno toca la
-   marca de la fracción pedida. Error típico: contar marcas en vez de huecos (`contarMarcas`), tocar el simétrico.
+   sin equivalentes entre ellas; con las parecidas del Excel (`11/18`, `7/12`, `2/3`, `5/9`); **en un cuarto de los ítems,
+   una o dos negativas** (`U4-1C-23`). Feedback con el común denominador (y el signo, si lo hay).
+4. **En la recta** · *On the number line*. Recta de 0 a 1, de 0 a 2 o, **en un cuarto de los ítems, de −1 a 1** (`U4-1C-24`),
+   con marcas en los múltiplos de 1/d; el alumno toca la marca de la fracción pedida. Error típico: contar marcas en vez de
+   huecos (`contarMarcas`), tocar el simétrico (en la recta de −1 a 1, el simétrico es el error con nombre `ignoraElSigno`).
 
 **Para todos los ejercicios**: introducción con un ejemplo resuelto en los dos idiomas; el ítem en el idioma que le toque (la
 base alterna); «Comprobar» que se oculta al responder; los cuatro estados tras comprobar donde haya opciones; feedback con
@@ -97,12 +99,12 @@ los números del ítem; cada fallo pasado a `api.responder` con su `error` (el n
 alumno, para el registro de fallos.
 
 **Test** `tests/practicas-compara.test.js` (por fuerza bruta, 3000 ítems por ejercicio con semillas fijas):
-- Ej. 1: reparto de los tres casos ≥ 25 % cada uno; las dos fracciones distintas (no equivalentes).
-- Ej. 2: cada ítem tiene al menos una fracción por caja; ninguna igual a 1/2 salvo en la variante que lo contempla.
-- Ej. 3: sin equivalentes; el orden correcto es único.
-- Ej. 4: la fracción cae en una marca dibujada; d entre 2 y 12.
+- Ej. 1: reparto de los tres casos ≥ 25 % cada uno; las dos fracciones distintas (no equivalentes); ≥ 20 % con alguna negativa y el resultado comprobado con `comparar`.
+- Ej. 2: cada ítem tiene al menos una fracción por caja; ninguna igual a 1/2 salvo en la variante que lo contempla; ninguna negativa.
+- Ej. 3: sin equivalentes; el orden correcto es único (también con negativas).
+- Ej. 4: la fracción cae en una marca dibujada; d entre 2 y 12; en la recta de −1 a 1 la marca pedida es la negativa, no su simétrica.
 - Ningún texto de alumno con `×`, con `/` como fracción fuera de las frases en inglés, con letras de variable, con decimales
-  ni con fracciones negativas o mixtas mientras el acta no las meta (recorre los textos generados en los dos idiomas).
+  ni con números mixtos; las negativas, siempre con el signo delante de la raya (recorre los textos generados en los dos idiomas).
 - Todo distractor distinto de la respuesta correcta **por valor** y sacado de un error típico con nombre; ningún par de
   opciones equivalente.
 
@@ -139,17 +141,19 @@ alumno, para el registro de fallos.
 ## Reglas de contenido de la unidad 4 (copia de `proyecto.md`; lo común no se lee, por eso va aquí)
 
 Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro, feedback, realismo) valen igual.
-La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y, en cuanto exista, el acta
-`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió: decimales, negativas, mixtos).
+La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y el acta
+`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió el 26-10: negativas desde la semana 1, potencias de
+base positiva en la sesión 7, ni decimales ni mixtos, cotas de realismo, ids que cambiaron).
 
 1. **Dos fracciones equivalentes son la misma respuesta.** En cualquier ejercicio de elegir, emparejar o verdadero/falso,
    ninguna opción puede equivaler a otra: el test lo comprueba por valor (`Fraction` de `_comun/fracciones.js`, nunca con
    decimales ni a ojo), y en los de «simplifica» la consigna pide la **fracción irreducible**. Un número mixto y su
    fracción impropia, lo mismo (si entran).
 2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario. Ninguna suma
-   o resta de fracciones antes de la sesión 5, ningún producto o cociente antes de la 9, ninguna combinada antes de la 10.
-   **Mientras el acta no diga otra cosa: ni decimales, ni fracciones negativas, ni números mixtos, ni potencias de
-   fracciones.** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
+   o resta de fracciones antes de la sesión 5, ningún producto ni potencia antes de la 7 (jue 7-1), ningún cociente antes
+   de la 9, ninguna combinada antes de la 10. **Acta del 26-10: ni decimales ni números mixtos; fracciones negativas desde
+   la semana 1 (escritura y signo, simplificar, comparar, recta), en la 2 (sumar y restar, también resultado negativo) y
+   en la 3 (producto, cociente, combinadas); potencias solo de base positiva (sesión 7).** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
 3. **Escritura**: la fracción en pantalla con raya horizontal (`htmlFraccion` de `_comun/fracciones.js`, tarea 98: `<span
    class="frac"><span>3</span><span>5</span></span>`), nunca `3/5` con barra salvo en una frase en inglés hablado («3 out
    of 5»). El alumno puede teclear `3/5`, `3 / 5` o un natural (`leerFraccion`). Producto con `·`, nunca `×`; división
@@ -172,10 +176,11 @@ La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido c
 7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los números que pueda sacar el
    generador, creíbles, con una cota por contexto que el test comprueba. Orientativas (la sesión fija las suyas y las
    escribe en su ENTREGA): una cantidad de la que se toma una fracción es múltiplo del denominador; las partes de un todo
-   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 20-30 alumnos y cada fracción da un entero; una
-   pizza o una tarta tiene de 4 a 12 trozos; una hora se parte en medias, cuartos, tercios, sextos y doceavos; un depósito,
-   de 1 a 500 litros; un recorrido, hasta 50 km; un ahorro, hasta 300 €. Cantera de contextos: los 41 problemas transcritos
-   en la nota de la montadora de la U4 (apartado 4).
+   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 12-36 alumnos y cada fracción da un entero; un
+   instituto, 200-3000; una pizza o una tarta tiene de 3 a 15 trozos; una hora se parte en medias, cuartos, tercios, sextos
+   y doceavos; un depósito, de 1 a 500 litros (el de un coche, 20-90); una botella, hasta 3 L; una garrafa, hasta 50 L; un
+   recorrido, hasta 50 km a pie o en bici y 1000 en coche; un ahorro, hasta 2000 € enteros (cotas aprobadas el 26-10, acta
+   punto j). Cantera de contextos: los 41 problemas transcritos en la nota de la montadora de la U4 (apartado 4).
 8. **Feedback ligado al error**, con los números del ítem («1/2 + 1/3: has sumado arriba y abajo; los sextos: 3/6 + 2/6 =
    5/6»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, dibujos con números) que no copien los de las hojas, los exámenes semanales ni el
@@ -267,6 +272,7 @@ Si paras sin terminar: `$R/hechos/fallos/102--<sid>.md` con hasta dónde llegast
 - Dependencias nuevas (npm, CDN): la app no tiene build y solo carga KaTeX y Firebase por
   CDN; las prácticas no usan ni siquiera KaTeX (exponentes con `<sup>`).
 - Las reglas de contenido de la unidad 4 (en esta ficha y en `proyecto.md`): `×` en vez de `·`, letras,
-  ecuaciones, porcentajes; decimales, fracciones negativas, números mixtos o potencias de fracciones mientras el
-  acta del inventario no diga que entran; algo de una sesión posterior a la de la destreza; distractores que
+  ecuaciones, porcentajes; decimales y números mixtos (fuera por el acta del 26-10); potencias de base negativa;
+  fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
+  potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.

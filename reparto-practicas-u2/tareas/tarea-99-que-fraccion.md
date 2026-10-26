@@ -61,7 +61,7 @@ Práctica **«¿Qué fracción es?» / «What fraction is it?»** (`que-fraccion
 **unidad 4, Fractions**, que empieza el lunes 14-12. Semana 1 (sesión 1). Tiene que estar LISTA antes del plazo de la
 tarea de publicación de su semana (semana 1: **jue 10-12**; semana 2: **jue 17-12**; semana 3: **mar 22-12**, límite jue 7-1).
 
-Destrezas (descripción; los ids definitivos, en el inventario tras F0 y en la ENTREGA de la 98): parte de un todo en una figura (barra, pizza, cuadrícula); escribir una fracción a partir de una situación («18 of the 30 students»); leer y escribir en inglés; propia e impropia (sin número mixto salvo acta). El texto exacto
+Destrezas (descripción; los ids definitivos, en el inventario tras F0 y en la ENTREGA de la 98): parte de un todo en una figura (barra, pizza, cuadrícula); escribir una fracción a partir de una situación («18 of the 30 students»); leer y escribir en inglés; propia e impropia (6/6 es impropia; sin números mixtos: acta del 26-10). El texto exacto
 de cada una, su sesión y su nota (errores típicos y riesgos) están en el inventario: léelas antes de escribir nada.
 
 **Es un diseño propuesto por la montadora (26-10) y aprobado en bloque por Juan Luis al pedir el alta; él puede cambiarlo.**
@@ -88,7 +88,7 @@ Modelo de interfaz: `practicas/rectangulos/` (unidad 2: tocar partes de una figu
    posición. Feedback: cuántas tocaba y por qué.
 3. **De la frase a la fracción** · *From words to fraction*. «In a class of 28 students, 7 wear glasses (gafas). What fraction
    wears glasses?» → elegir entre cuatro fracciones (ninguna equivalente a otra; distractores: `7/21`, `21/28`, `28/7`),
-   o escribirla. Contextos con cota realista (clase 20-30, pizza 4-12 trozos, equipo 11-25, caja de 6-24).
+   o escribirla. Contextos con cota realista (clase 12-36, pizza 3-15 trozos, equipo 11-25, caja de 6-24; cotas del acta del 26-10, punto j).
 4. **Léela** · *Say it*. Una fracción y cuatro lecturas en inglés; solo una correcta («three fifths»; distractores: «three
    fives», «five thirds», «third fives»); nunca enfrentar «three quarters» con «three fourths» ni «a half» con «one half».
    Y al revés: una lectura y cuatro fracciones. Un tercio de los ítems con 1/2, 1/4, 3/4 y sus lecturas especiales.
@@ -99,12 +99,12 @@ los números del ítem; cada fallo pasado a `api.responder` con su `error` (el n
 alumno, para el registro de fallos.
 
 **Test** `tests/practicas-que-fraccion.test.js` (por fuerza bruta, 3000 ítems por ejercicio con semillas fijas):
-- Ej. 1: n entre 2 y 12, 1 ≤ k ≤ n (y k > n solo si el acta mete impropias: por defecto, k < n); la consigna «count the parts» cuando la respuesta tiene que ser la no simplificada.
+- Ej. 1: n entre 2 y 12, 1 ≤ k; k ≥ n en un cuarto de los ítems (las impropias entran, `U4-1C-05`, con varias barras o pizzas; 6/6 es impropia); la consigna «count the parts» cuando la respuesta tiene que ser la no simplificada.
 - Ej. 2: el denominador de la figura es múltiplo del de la fracción; la cantidad de partes a sombrear es entera y menor que el total.
 - Ej. 3: la cantidad total está en la cota del contexto y la parte es menor que el total; las cuatro opciones no equivalentes dos a dos.
 - Ej. 4: la lectura correcta y las tres falsas son distintas; con 1/2, 1/4 y 3/4 ninguna variante válida aparece como distractor.
 - Ningún texto de alumno con `×`, con `/` como fracción fuera de las frases en inglés, con letras de variable, con decimales
-  ni con fracciones negativas o mixtas mientras el acta no las meta (recorre los textos generados en los dos idiomas).
+  ni con fracciones negativas (esta práctica no las lleva) ni mixtas (recorre los textos generados en los dos idiomas).
 - Todo distractor distinto de la respuesta correcta **por valor** y sacado de un error típico con nombre; ningún par de
   opciones equivalente.
 
@@ -141,17 +141,19 @@ alumno, para el registro de fallos.
 ## Reglas de contenido de la unidad 4 (copia de `proyecto.md`; lo común no se lee, por eso va aquí)
 
 Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro, feedback, realismo) valen igual.
-La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y, en cuanto exista, el acta
-`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió: decimales, negativas, mixtos).
+La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido comunes») y el acta
+`4. Fractions/inventario-unidad4-revision.md` (lo que Juan Luis decidió el 26-10: negativas desde la semana 1, potencias de
+base positiva en la sesión 7, ni decimales ni mixtos, cotas de realismo, ids que cambiaron).
 
 1. **Dos fracciones equivalentes son la misma respuesta.** En cualquier ejercicio de elegir, emparejar o verdadero/falso,
    ninguna opción puede equivaler a otra: el test lo comprueba por valor (`Fraction` de `_comun/fracciones.js`, nunca con
    decimales ni a ojo), y en los de «simplifica» la consigna pide la **fracción irreducible**. Un número mixto y su
    fracción impropia, lo mismo (si entran).
 2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario. Ninguna suma
-   o resta de fracciones antes de la sesión 5, ningún producto o cociente antes de la 9, ninguna combinada antes de la 10.
-   **Mientras el acta no diga otra cosa: ni decimales, ni fracciones negativas, ni números mixtos, ni potencias de
-   fracciones.** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
+   o resta de fracciones antes de la sesión 5, ningún producto ni potencia antes de la 7 (jue 7-1), ningún cociente antes
+   de la 9, ninguna combinada antes de la 10. **Acta del 26-10: ni decimales ni números mixtos; fracciones negativas desde
+   la semana 1 (escritura y signo, simplificar, comparar, recta), en la 2 (sumar y restar, también resultado negativo) y
+   en la 3 (producto, cociente, combinadas); potencias solo de base positiva (sesión 7).** Ni letras ni ecuaciones (el término que falta es un hueco `□`), ni porcentajes.
 3. **Escritura**: la fracción en pantalla con raya horizontal (`htmlFraccion` de `_comun/fracciones.js`, tarea 98: `<span
    class="frac"><span>3</span><span>5</span></span>`), nunca `3/5` con barra salvo en una frase en inglés hablado («3 out
    of 5»). El alumno puede teclear `3/5`, `3 / 5` o un natural (`leerFraccion`). Producto con `·`, nunca `×`; división
@@ -174,10 +176,11 @@ La fuente es `4. Fractions/reparto-unidad4/proyecto.md` («Reglas de contenido c
 7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los números que pueda sacar el
    generador, creíbles, con una cota por contexto que el test comprueba. Orientativas (la sesión fija las suyas y las
    escribe en su ENTREGA): una cantidad de la que se toma una fracción es múltiplo del denominador; las partes de un todo
-   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 20-30 alumnos y cada fracción da un entero; una
-   pizza o una tarta tiene de 4 a 12 trozos; una hora se parte en medias, cuartos, tercios, sextos y doceavos; un depósito,
-   de 1 a 500 litros; un recorrido, hasta 50 km; un ahorro, hasta 300 €. Cantera de contextos: los 41 problemas transcritos
-   en la nota de la montadora de la U4 (apartado 4).
+   suman como mucho 1 y «lo que queda» no es negativo; una clase tiene 12-36 alumnos y cada fracción da un entero; un
+   instituto, 200-3000; una pizza o una tarta tiene de 3 a 15 trozos; una hora se parte en medias, cuartos, tercios, sextos
+   y doceavos; un depósito, de 1 a 500 litros (el de un coche, 20-90); una botella, hasta 3 L; una garrafa, hasta 50 L; un
+   recorrido, hasta 50 km a pie o en bici y 1000 en coche; un ahorro, hasta 2000 € enteros (cotas aprobadas el 26-10, acta
+   punto j). Cantera de contextos: los 41 problemas transcritos en la nota de la montadora de la U4 (apartado 4).
 8. **Feedback ligado al error**, con los números del ítem («1/2 + 1/3: has sumado arriba y abajo; los sextos: 3/6 + 2/6 =
    5/6»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, dibujos con números) que no copien los de las hojas, los exámenes semanales ni el
@@ -269,6 +272,7 @@ Si paras sin terminar: `$R/hechos/fallos/99--<sid>.md` con hasta dónde llegaste
 - Dependencias nuevas (npm, CDN): la app no tiene build y solo carga KaTeX y Firebase por
   CDN; las prácticas no usan ni siquiera KaTeX (exponentes con `<sup>`).
 - Las reglas de contenido de la unidad 4 (en esta ficha y en `proyecto.md`): `×` en vez de `·`, letras,
-  ecuaciones, porcentajes; decimales, fracciones negativas, números mixtos o potencias de fracciones mientras el
-  acta del inventario no diga que entran; algo de una sesión posterior a la de la destreza; distractores que
+  ecuaciones, porcentajes; decimales y números mixtos (fuera por el acta del 26-10); potencias de base negativa;
+  fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
+  potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.

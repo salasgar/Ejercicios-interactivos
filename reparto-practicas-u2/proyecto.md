@@ -391,9 +391,16 @@ Las prácticas no dependen unas de otras: con la 79 LISTA pueden ir todas a la v
 Dadas de alta la noche del 25 al 26-10 por la misma sesión que montó el reparto de la unidad 4
 (`apuntes-1eso-bilingue/4. Fractions/reparto-unidad4/`), siguiendo el traspaso de Juan Luis del 25-10 («dar de alta las
 piezas de la app en el reparto del repositorio»). La unidad 4 se da del **lun 14-12 al vie 15-1**, partida por la Navidad;
-sus destrezas se citan con los ids de `4. Fractions/inventario-unidad4.tsv`, **que a 26-10 no existe**: la tarea 01 de aquel
-reparto escribe la propuesta y la 02 la revisa con Juan Luis (firma F0). Por eso las fichas 99-108 citan las destrezas por
-descripción y la 98 pone los ids (provisionales si F0 no está) en `DESTREZAS` y en el §7 de `docs/practicas-unidad4.md`.
+sus destrezas se citan con los ids de `4. Fractions/inventario-unidad4.tsv`, **aprobado el 26-10 al mediodía en la tarea 02 de
+aquel reparto** (73 destrezas, 36 nucleares; acta `4. Fractions/inventario-unidad4-revision.md`; F0 es la firma formal,
+pendiente al escribir esto). Las fichas 99-108 citan las destrezas por descripción y la 98 pone los ids definitivos en
+`DESTREZAS` y en el §7 de `docs/practicas-unidad4.md`. **Lo que el acta cambió para la app (26-10)**: el producto y las
+potencias de base positiva pasan a la sesión 7 (jue 7-1, semana 2; el cociente sigue en la 9); las fracciones negativas entran
+desde la semana 1 (escritura y signo, simplificar, comparar, recta), en la 2 (sumar y restar, también con resultado negativo)
+y en la 3 (producto, cociente, combinadas); ni decimales ni números mixtos; cotas de realismo nuevas (clase 12-36 alumnos,
+pizza 3-15 trozos, ahorros hasta 2000 €, instituto 200-3000, depósito de coche 20-90 L, botella hasta 3 L, garrafa hasta
+50 L, 1000 km en coche); 6/6 es impropia; dividir por los dos métodos. Las fichas 98-112 se corrigieron ese día (sesión
+`s-20261026T114336-7477f785`, la coordinadora de la U4).
 
 - **98** base de la unidad 4 (ALTO): `_comun/fracciones.js` (modelo de fracción inmutable, comparar, operar, `htmlFraccion`,
   `leerFraccion`, `enPalabras`, `ERRORES_TIPICOS`), `_comun/dibujo-fracciones.js` (barras, pizzas, cuadrículas, recta),
@@ -413,13 +420,13 @@ descripción y la 98 pone los ids (provisionales si F0 no está) en `DESTREZAS` 
 
 **Reglas de contenido de la unidad 4**: en cada ficha 98-112 (sección propia) y en `4. Fractions/reparto-unidad4/proyecto.md`.
 La trampa propia de la unidad: **dos fracciones equivalentes son la misma respuesta** (ninguna opción puede equivaler a otra;
-se comprueba por valor, nunca con decimales); y hasta que el acta del inventario lo diga, ni decimales, ni fracciones
-negativas, ni números mixtos, ni potencias de fracciones.
+se comprueba por valor, nunca con decimales); y, por el acta del 26-10, **ni decimales ni números mixtos; fracciones negativas
+desde la semana 1 y potencias de base positiva en la sesión 7** (la base negativa, solo reto en las hojas: no en la app).
 
 ## Orden de prioridad de la unidad 4 (por los plazos de publicación)
 
 0. **114** (fichas del parchís) puede ir ya: no depende de nada, pero no a la vez que la 98.
-1. **98** (base; ALTO) en cuanto exista la propuesta de inventario de la U4 (tarea 01 de aquel reparto; mejor con F0), y, a la
+1. **98** (base; ALTO) con el inventario aprobado el 26-10 (ids definitivos; F0 es la firma formal), y, a la
    vez, **112** (MEDIO; con F0) y **113** (ALTO; con la 71 LISTA).
 2. **Semana 1**: 99, 100, 101, 102, 108 → **109** publica el jueves 10-12.
 3. **Semana 2**: 103, 104 → **110** (jueves 17-12).
