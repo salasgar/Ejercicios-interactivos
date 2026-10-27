@@ -122,6 +122,7 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (Aprendido en la 108.) `eleva-solo-el-numerador` y `base-por-exponente` dan el mismo valor con numerador 1 (1/5 y 2/10): deduplicar por `clave()` antes de ofrecerlos. Los denominadores que se leen en inglés tienen que quedar bajo 100 (un cubo de base 1/9 da 1/729). El CSS global `input[type="text"]` (width 100%) y `button` ganan a una clase suelta: usar `input[type="text"].clase` y `button.clase`. Chrome cachea el CSS de localhost: para verlo cambiado, otro origen o recarga forzada. El código de prueba 7NPD no entra en un origen sin nube: «Probar sin código».
 
 ## Prohibido (propio de esta tarea)
 
