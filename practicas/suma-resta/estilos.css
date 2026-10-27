@@ -1,0 +1,28 @@
+/* «Suma y resta»: solo lo que no está ya en ../_comun/estilos.css. */
+
+/* Una fila con un campo (o una fracción en dos casillas), centrada. */
+.fila-campo { display: flex; align-items: center; justify-content: center; gap: .5rem; margin: 0 0 .8rem; flex-wrap: wrap; }
+
+/* La fracción escrita: «+/−», el menos y las dos casillas sobre la raya. */
+.campo-fr { display: inline-flex; align-items: center; gap: .4rem; }
+.campo-fr__signo { min-width: 3rem; font-size: 1.1rem; font-weight: 700; margin: 0; padding: .5rem .6rem; }
+.campo-fr__menos { font-size: 1.6rem; font-weight: 700; min-width: .6em; text-align: right; }
+.campo-fraccion { text-align: center; margin: 0; }
+
+/* Cada paso del ejercicio 2. */
+.paso-fd { text-align: left; margin: 0 auto .9rem; max-width: 520px; }
+.paso-fd__titulo { font-weight: 700; margin: 0 0 .4rem; color: var(--primario-oscuro); }
+
+/* Los cuatro estados de cada casilla del ejercicio 2 tras comprobar. */
+.campo--bien { border-color: #16a34a !important; background: var(--correcto-claro); }
+.campo--mal { border-color: #dc2626 !important; background: var(--error-claro); }
+
+/* Las tres líneas del ejercicio 5 (botones o solo texto en la traducción). */
+.lineas-caza { display: grid; gap: .6rem; margin: 0 auto .9rem; max-width: 520px; }
+.linea-caza { display: flex; align-items: center; gap: .8rem; text-align: left; padding: .6rem .9rem; border: 2px solid var(--borde); border-radius: 12px; background: #fff; font-size: 1.15rem; }
+.linea-caza__n { font-size: .8rem; font-weight: 700; color: var(--texto-suave); min-width: 4.2rem; }
+button.linea-caza { cursor: pointer; width: 100%; color: var(--texto); }
+button.linea-caza.eleccion--correcta { border-color: #16a34a; background: var(--correcto-claro); opacity: 1; }
+button.linea-caza.eleccion--mal { border-color: #dc2626; background: var(--error-claro); opacity: 1; }
+.eleccion--elegida { border-color: var(--primario); background: var(--primario-claro); }
+#ninguno { display: block; margin: 0 auto .9rem; }
