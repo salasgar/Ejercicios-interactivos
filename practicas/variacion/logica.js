@@ -83,8 +83,9 @@ export function vistaCambio(item) {
 
 /** Pares de valores: un `bajo` y un `alto` con rangos que no se solapan, para que «cuánto más» sea siempre positivo. */
 export const PARES = {
-  'burgos-malaga': { tipo: 'temperatura', bajo: { es: 'Burgos', en: 'Burgos', rango: [-12, 8] }, alto: { es: 'Málaga', en: 'Málaga', rango: [10, 30] } },
-  'moscu-murcia': { tipo: 'temperatura', bajo: { es: 'Moscú', en: 'Moscow', rango: [-25, 3] }, alto: { es: 'Murcia', en: 'Murcia', rango: [8, 35] } },
+  // «Hoy» es un mismo día de invierno en las dos ciudades: rangos que se dan a la vez (regla de realismo del 16-10).
+  'burgos-malaga': { tipo: 'temperatura', bajo: { es: 'Burgos', en: 'Burgos', rango: [-10, 6] }, alto: { es: 'Málaga', en: 'Málaga', rango: [10, 22] } },
+  'moscu-murcia': { tipo: 'temperatura', bajo: { es: 'Moscú', en: 'Moscow', rango: [-25, -1] }, alto: { es: 'Murcia', en: 'Murcia', rango: [6, 22] } },
   planta: { tipo: 'planta', bajo: { rango: [-4, 6] }, alto: { rango: [7, 18] } },
   altura: { tipo: 'altura', bajo: { rango: [-400, 300], paso: 10 }, alto: { rango: [400, 3000], paso: 10 } },
 };

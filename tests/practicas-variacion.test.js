@@ -67,10 +67,19 @@ test('ejercicio 2: el mayor menos el menor, siempre positivo, con cada par en su
   assert.equal(vistos.size, Object.keys(L.PARES).length);
   // Rangos que no se solapan: «cuánto más» no puede ser negativo.
   for (const p of Object.values(L.PARES)) assert.ok(p.bajo.rango[1] < p.alto.rango[0]);
-  // Temperaturas creíbles para esas ciudades.
-  for (const k of ['burgos-malaga', 'moscu-murcia']) for (const lado of ['bajo', 'alto']) {
-    const [a, b] = L.PARES[k][lado].rango;
-    assert.ok(a >= -30 && b <= 45);
+  // Temperaturas creíbles para esas ciudades, de un mismo día de invierno (cotas de la ENTREGA).
+  const COTAS = {
+    'burgos-malaga': { bajo: [-10, 6], alto: [10, 22] },
+    'moscu-murcia': { bajo: [-25, -1], alto: [6, 22] },
+  };
+  for (const k of Object.keys(COTAS)) for (const lado of ['bajo', 'alto']) {
+    assert.deepEqual(L.PARES[k][lado].rango, COTAS[k][lado]);
+  }
+  for (const item of generar(L.generarDiferencia)) {
+    const c = COTAS[item.par];
+    if (!c) continue;
+    assert.ok(item.lo >= c.bajo[0] && item.lo <= c.bajo[1], `${item.par}: ${item.lo}`);
+    assert.ok(item.hi >= c.alto[0] && item.hi <= c.alto[1], `${item.par}: ${item.hi}`);
   }
 });
 
