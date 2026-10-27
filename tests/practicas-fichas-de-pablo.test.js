@@ -5,8 +5,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { mcd, mcm } from '../practicas/_comun/aritmetica.js';
-import { TX } from '../practicas/fichas-de-pablo/textos.js';
-import { fichaHtml, montonHtml, colorTxt, desglose } from '../practicas/fichas-de-pablo/dibujo.js';
+import { TX } from '../practicas/fichas-del-parchis/textos.js';
+import { fichaHtml, montonHtml, colorTxt, desglose } from '../practicas/fichas-del-parchis/dibujo.js';
 import {
   PRIMOS_FICHA, PRIMOS_BASICOS, TOPE_MONTON, TOPE_GRANDE, FACTORES_ANADIR,
   exp, valor, fichas, nFichas, colores, igual, claveMonton, juntar, quitar, comunes, montonMinimo, deNumero, deExps, submontones,
@@ -15,7 +15,7 @@ import {
   generarQuita, diagnosticarQuita, resto, generarRegla, diagnosticarDivisible, diagnosticarCociente, diagnosticarColorFalta,
   generarTablaDivisores, productoCasilla, diagnosticarTabla, MIN_DIVISORES, MAX_DIVISORES, TOPE_TABLA, generarMcd, generarMcm, diagnosticarMcd, diagnosticarMcm,
   parejasEn, CASOS_PAREJA,
-} from '../practicas/fichas-de-pablo/logica.js';
+} from '../practicas/fichas-del-parchis/logica.js';
 
 const N = 3000;
 const items = (generar, j, semilla = 7) => { const rng = crearRng(semilla + j); return Array.from({ length: N }, () => generar(rng)); };

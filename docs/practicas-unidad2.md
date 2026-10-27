@@ -437,8 +437,10 @@ portada.
 
 **`fichas-de-pablo`** (id 46, tarea 97 de PU2, 2026-10-25) no está en la tabla de arriba: es el refuerzo
 de la unidad 2, **«Las fichas del parchís» / «Ludo counters»** (hasta la tarea 114 se llamaba «Las fichas
-de Pablo»; el slug, el id y la carpeta no cambian porque van en las URL, en el progreso guardado y en las
-tareas; Pablo sigue siendo el niño que juega en los enunciados). Es la hoja `hoja-unidad2-fichas-de-pablo`
+de Pablo»; el slug y el id no cambian porque van en el progreso guardado y en las tareas; Pablo sigue siendo
+el niño que juega en los enunciados). **Desde el 2026-10-27 la carpeta y la URL son `practicas/fichas-del-parchis/`**
+(petición de Juan Luis: que la dirección no lleve el nombre de Pablo); `practicas/fichas-de-pablo/` solo
+redirige allí, con el código y los parámetros, para que no se rompan los enlaces viejos. Es la hoja `hoja-unidad2-fichas-de-pablo`
 (en papel, «Pablo's counters») hecha ejercicios para la clase. Ocho ejercicios: Lee las fichas · Construye el
 montón · Multiplicar es juntar · Dividir es quitar · La regla: tantas o más de cada color · Los divisores son
 elecciones · El m.c.d.: las fichas que tienen los dos · El m.c.m.: el montón más pequeño. Cada número es un
