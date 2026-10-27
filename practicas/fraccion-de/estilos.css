@@ -1,0 +1,14 @@
+/* «La fracción de una cantidad»: solo lo que no está ya en ../_comun/estilos.css. */
+
+/* El campo del resultado y su unidad («litros», «alumnos»), en una fila. */
+.fila-campo { display: flex; align-items: center; justify-content: center; gap: .5rem; margin: 0 0 .9rem; }
+.unidad-campo { font-weight: 600; color: var(--texto-suave); }
+
+/* Las dos casillas de la fracción (numerador sobre denominador): la raya la pone .frac. */
+.operacion--campo { background: none; padding: .2rem 0; margin-bottom: .9rem; }
+.campo-fraccion { text-align: center; }
+
+/* Las pistas del ejercicio 1, una debajo de otra. */
+.pistas-fd:empty { display: none; }
+.pista-fd { background: var(--aviso-claro); border-radius: 10px; padding: .5rem .8rem; margin: 0 auto .6rem; max-width: 520px; font-size: 1rem; text-align: left; }
+.secundario { margin-bottom: .6rem; }
