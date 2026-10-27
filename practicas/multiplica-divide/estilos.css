@@ -1,0 +1,17 @@
+/* Estilos propios de «Multiplica y divide» (tarea 105). */
+.campo-fraccion { display: flex; justify-content: center; align-items: center; gap: .6rem; margin: 0 auto .9rem; }
+.campo-fraccion__signo { min-width: 3.2rem; font-size: 1.2rem; font-weight: 700; margin: 0; }
+.campo-fraccion .frac { font-size: 1rem; }
+.campo-fraccion .frac > span { padding: 0; }
+.campo-fraccion .frac > span:first-child { padding-bottom: .25rem; }
+.campo-fraccion .frac > span:last-child { padding-top: .25rem; }
+.campo-fraccion input.campo-numero { margin: 0; }
+
+/* Lo que se tacha al simplificar antes de multiplicar */
+.tachado { display: inline-flex; align-items: flex-start; gap: .1em; }
+.tachado s { color: #b91c1c; text-decoration-thickness: .12em; }
+.tachado b { font-size: .7em; color: #15803d; }
+
+.ayudas { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: 0 0 .9rem; }
+.ayudas button { margin: 0; }
+.paso-ayuda { margin: 0 0 .9rem; text-align: center; }
