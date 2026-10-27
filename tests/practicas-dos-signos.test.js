@@ -224,3 +224,21 @@ test('leerEntero acepta el menos de teclado, el real y el de rayita (el campo de
   assert.equal(leerEntero('3'), 3);
   assert.equal(leerEntero(''), null);
 });
+
+test('ejercicio 1: el feedback de un fallo empieza en mayúscula, en los dos idiomas', () => {
+  for (const u of generarN(generarUnSigno, 5).slice(0, 500)) {
+    for (const idioma of IDIOMAS) {
+      for (const f of [feedbackSigno(u, ctx(idioma)), feedbackUnSigno(u, ctx(idioma), false)]) {
+        const plano = f.replace(/<[^>]+>/g, '');
+        assert.match(plano, /^[A-Z]/, plano);
+      }
+    }
+  }
+});
+
+test('el «Comprobar» del segundo paso es el recién insertado, no uno anterior de la zona (ej. 3)', async () => {
+  const { readFile } = await import('node:fs/promises');
+  const fuente = await readFile(new URL('../practicas/dos-signos/practica.js', import.meta.url), 'utf8');
+  assert.ok(/\[\.\.\.zona\.querySelectorAll\('\.comprobar'\)\]\.pop\(\)/.test(fuente));
+  assert.ok(!/const boton = zona\.querySelector\('\.comprobar'\)/.test(fuente));
+});

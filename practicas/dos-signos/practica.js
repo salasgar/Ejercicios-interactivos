@@ -21,7 +21,8 @@ const cuenta = html => `<span class="cuenta">${html}</span>`;
 /** Segundo paso: un campo para el resultado y «Comprobar». `alComprobar(valor)` se llama una vez. */
 function pedirResultado(zona, api, alComprobar) {
   zona.insertAdjacentHTML('beforeend', `<div id="campo"></div><button type="button" class="comprobar">${api.t.comprobar}</button>`);
-  const boton = zona.querySelector('.comprobar');
+  // El botón recién insertado, no un «Comprobar» anterior de la zona (en el ej. 3, el de los signos, ya oculto).
+  const boton = [...zona.querySelectorAll('.comprobar')].pop();
   const campo = campoEntero(zona.querySelector('#campo'), { nombre: api.tt(TX.resultado), boton, alEnviar: comprobar });
   boton.addEventListener('click', () => comprobar(campo.valor()));
   campo.elemento.focus?.();

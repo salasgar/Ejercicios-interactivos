@@ -93,7 +93,8 @@ export function feedbackSigno(item, ctx) {
 
 /** Ejercicio 1, signo bien y resultado mal (o todo bien). */
 export function feedbackUnSigno(item, { tt }, acierto) {
-  const cab = `${mismosOdistintos(tt, item.op, item.interno)}: ${queda(tt, item.signo)}.`;
+  const razon = mismosOdistintos(tt, item.op, item.interno);
+  const cab = `${razon.charAt(0).toUpperCase()}${razon.slice(1)}: ${queda(tt, item.signo)}.`;
   const cuentaBuena = cuenta(item.solo ? `${item.texto} = ${fmt(item.valor)}` : `${item.texto} = ${item.reescrita} = ${fmt(item.valor)}`);
   return acierto ? `${cuentaBuena}.` : `${cab} ${tt({ es: 'El resultado es', en: 'The result is' })} ${cuentaBuena}.`;
 }
