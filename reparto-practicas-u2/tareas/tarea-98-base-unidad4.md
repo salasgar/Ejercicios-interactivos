@@ -173,6 +173,17 @@ número de ejercicios).
 - `-` y `−`, `/` y `⁄` se parecen: en los tests busca por código.
 - Para probar en el navegador sin dejar nada en el árbol compartido: servir una carpeta del scratchpad con enlaces a `practicas/`, `css/`, `src/`, `divisores/` y `herramientas/` (sin `src/` la base se queda en «Cargando…»); Chrome guarda en caché los módulos: `fetch(url, { cache: 'reload' })`.
 - En zsh una variable con varias rutas no se parte en palabras: `F=(a b c); git add "${F[@]}"`.
+- (98, 27-10) Añadir una unidad a `UNIDADES` rompe dos tests que no están en esta lista: `tareasPorUnidad` en
+  `tests/practicas-editor.test.js` (cuenta las unidades) y `unidadesCon` en `tests/practicas-espacio.test.js` (con las
+  fechas de un profesor, una unidad sin fecha suya conserva la del curso y puede pasar a ser la actual). La próxima base
+  de unidad, que los ponga en «Ficheros que toca».
+- (98) Sin la extensión de Chrome: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new
+  --user-data-dir=<scratchpad>/perfil --screenshot=… --window-size=600,1900 URL` (con perfil propio, para no bloquear el
+  Chrome normal, y matando el proceso al acabar). La ventana headless no baja de unos 500 px: para ver 375, la página de
+  prueba lleva `body { width: 375px }`. `--dump-dom` con `?c=XY4Z` (7NPD ya no existe) enseña el menú de un esqueleto.
+- (98) En este Mac no hay `timeout`: para cortar un proceso, `&`, un bucle con `kill -0` y `kill`.
+- (98) El hueco de escritura de las fracciones: `leerFraccion('3 5')` daría 35 si se quitaran los espacios sin más;
+  se rechaza antes de quitarlos.
 
 ## Prohibido (propio de esta tarea)
 
