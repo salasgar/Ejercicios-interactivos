@@ -151,10 +151,10 @@ test('cola: lo que la regla rechaza se descarta; un 500 se reintenta; nunca más
 
 // --- Destrezas y panel ---------------------------------------------------------------------
 
-test('destrezas: la tabla de registro.js es la del §7 de docs/practicas-unidad2.md y la de docs/practicas-unidad3.md', () => {
+test('destrezas: la tabla de registro.js es la del §7 de docs/practicas-unidad2.md, la de la unidad 3 y la de la unidad 4', () => {
   const deDocs = {};
   const filas = {};
-  for (const [unidad, fichero] of [[2, 'practicas-unidad2.md'], [3, 'practicas-unidad3.md']]) {
+  for (const [unidad, fichero] of [[2, 'practicas-unidad2.md'], [3, 'practicas-unidad3.md'], [4, 'practicas-unidad4.md']]) {
     const docs = readFileSync(new URL(`../docs/${fichero}`, import.meta.url), 'utf8');
     filas[unidad] = 0;
     for (const linea of docs.split('\n')) {
@@ -164,7 +164,7 @@ test('destrezas: la tabla de registro.js es la del §7 de docs/practicas-unidad2
       for (const slug of (c[5].match(/`([a-z0-9-]+)`/g) ?? []).map(x => x.slice(1, -1))) (deDocs[slug] ??= []).push(c[1]);
     }
   }
-  assert.deepEqual(filas, { 2: 78, 3: 81 }, 'una fila por destreza de cada inventario');
+  assert.deepEqual(filas, { 2: 78, 3: 81, 4: 73 }, 'una fila por destreza de cada inventario');
   assert.deepEqual(DESTREZAS, deDocs);
   for (const slug of Object.keys(DESTREZAS)) assert.ok(practicaPorSlug(slug), slug);
 });

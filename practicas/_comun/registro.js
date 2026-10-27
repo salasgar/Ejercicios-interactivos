@@ -34,8 +34,10 @@ export const VERSION = 1;
 
 /**
  * Qué destrezas del inventario trabaja cada práctica: las de la unidad 2, como en el §7 de
- * docs/practicas-unidad2.md, y las de la unidad 3, como en el §7 de docs/practicas-unidad3.md
- * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91). En el orden del inventario.
+ * docs/practicas-unidad2.md, las de la unidad 3, como en el §7 de docs/practicas-unidad3.md
+ * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91), y las de la unidad 4, como en
+ * el §7 de docs/practicas-unidad4.md (tarea 98, fichas 99-108 e inventario aprobado el 26-10).
+ * En el orden del inventario.
  */
 export const DESTREZAS = {
   arbol: ['U2-2B-02', 'U2-2C-08', 'U2-2C-09', 'U2-2C-11', 'U2-2C-13'],
@@ -68,6 +70,17 @@ export const DESTREZAS = {
   situaciones: ['U3-1B-04', 'U3-1C-01', 'U3-1C-16'],
   termometro: ['U3-1C-02', 'U3-1C-03', 'U3-1C-04', 'U3-1C-05', 'U3-1C-06'],
   variacion: ['U3-3C-21', 'U3-4B-02', 'U3-4C-01', 'U3-4C-02', 'U3-4C-03', 'U3-4C-04', 'U3-4C-05', 'U3-4C-07', 'U3-4C-10'],
+  // Unidad 4
+  'combinadas-fracciones': ['U4-3A-01', 'U4-3A-02', 'U4-3C-09', 'U4-3C-10', 'U4-3C-11'],
+  compara: ['U4-1C-17', 'U4-1C-18', 'U4-1C-19', 'U4-1C-20', 'U4-1C-21', 'U4-1C-23', 'U4-1C-24'],
+  equivalentes: ['U4-1C-10', 'U4-1C-11', 'U4-1C-12', 'U4-1C-16'],
+  errores4: ['U4-3C-09', 'U4-3C-11', 'U4-3C-12'],
+  'fraccion-de': ['U4-1A-01', 'U4-1A-02', 'U4-1A-03', 'U4-1C-04', 'U4-1C-08', 'U4-1C-09', 'U4-2A-02', 'U4-2A-03'],
+  leelo4: ['U4-1B-01', 'U4-1B-02', 'U4-1B-03', 'U4-1B-04', 'U4-1B-05', 'U4-1B-06', 'U4-1B-07', 'U4-2B-01', 'U4-2B-02', 'U4-2B-03', 'U4-3B-01', 'U4-3B-02', 'U4-3B-03'],
+  'multiplica-divide': ['U4-2A-06', 'U4-2C-08', 'U4-2C-09', 'U4-2C-10', 'U4-2C-11', 'U4-2C-12', 'U4-3C-05', 'U4-3C-06', 'U4-3C-07', 'U4-3C-10'],
+  'que-fraccion': ['U4-1B-02', 'U4-1B-03', 'U4-1C-01', 'U4-1C-02', 'U4-1C-03', 'U4-1C-04', 'U4-1C-05'],
+  simplifica: ['U4-1C-13', 'U4-1C-14', 'U4-1C-15', 'U4-1C-22'],
+  'suma-resta': ['U4-1C-16', 'U4-2A-01', 'U4-2A-04', 'U4-2C-01', 'U4-2C-02', 'U4-2C-03', 'U4-2C-04', 'U4-2C-07', 'U4-3C-11'],
 };
 
 // --- Qué se guarda -------------------------------------------------------------------

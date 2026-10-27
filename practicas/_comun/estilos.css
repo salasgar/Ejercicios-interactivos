@@ -210,6 +210,17 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
 .traducir { display: block; margin-top: .6rem; }
 .traduccion { margin-top: .6rem; padding: .7rem .9rem; border-radius: 10px; border: 1px dashed var(--borde); background: #fff; }
 
+/* Fracciones de la unidad 4 (htmlFraccion de fracciones.js, tarea 98): raya horizontal,
+   centrada en la línea; el menos de una negativa va delante, a la altura de la raya, y
+   no se separa de la fracción al partir el renglón. .cuenta-frac es una cuenta en línea. */
+.frac { display: inline-flex; flex-direction: column; align-items: stretch; vertical-align: middle; text-align: center; line-height: 1.1; margin: 0 .12em; }
+.frac > span { display: block; padding: 0 .18em; }
+.frac > span:first-child { border-bottom: .09em solid currentColor; padding-bottom: .06em; }
+.frac > span:last-child { padding-top: .06em; }
+.frac--compacta { font-size: .85em; }
+.frac-neg { white-space: nowrap; }
+.cuenta-frac { display: inline-block; max-width: 100%; line-height: 2.4; overflow-wrap: anywhere; }
+
 /* Fin y código de resultado */
 .fin { text-align: center; }
 .fin__icono { font-size: 2.6rem; }

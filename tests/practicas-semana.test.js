@@ -206,10 +206,11 @@ test('estadoPlazo: repaso, obligatoria y obligatoria para ti, con los días de r
 });
 
 test('unidades: la actual es la última cuyo desde ha llegado, y todas las filas del catálogo tienen la suya', () => {
-  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3]);
+  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3, 4]);
   assert.equal(unidadActual('2026-10-15'), 2);
   assert.equal(unidadActual('2026-11-15'), 2);
   assert.equal(unidadActual('2026-11-16'), 3);
+  assert.equal(unidadActual('2026-12-14'), 4);
   assert.equal(unidadActual('2026-09-01'), 1, 'antes del curso: la primera');
   for (const u of UNIDADES) assert.ok(u.titulo.es && u.titulo.en && /^\d{4}-\d{2}-\d{2}$/.test(u.desde));
   assert.deepEqual(CATALOGO.filter(p => p.id <= 15).map(p => p.unidad), Array(16).fill(2));
@@ -601,7 +602,7 @@ test('portada: tareas de la unidad actual, de la más nueva a la más antigua; l
 
 test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
   const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
-  assert.ok(BLOQUES.every(b => b.unidad === 2 || b.unidad === 3), 'ya no hay bloque «Repaso de la unidad 1»');
+  assert.ok(BLOQUES.every(b => b.unidad >= 2 && b.unidad <= 4), 'ya no hay bloque «Repaso de la unidad 1»');
   assert.deepEqual(BLOQUES.filter(b => b.unidad === 2).map(b => b.slugs), [
     ['semaforo', 'rectangulos', 'recta'], ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
     ['venn', 'imposibles', 'por-primos'], ['clasificador', 'reloj', 'baldosas', 'errores'], ['leelo', 'divisores'],
@@ -650,6 +651,36 @@ test('portada: los cinco bloques de la unidad 3 (tarea 79), con las doce prácti
   const bloques = bloquesPublicados(publicadas, 3);
   assert.equal(bloques.length, 5);
   assert.deepEqual(bloques[3].practicas.map(p => p.slug), ['variacion', 'errores3']);
+});
+
+test('portada: los cuatro bloques de la unidad 4 (tarea 98), con las diez prácticas y ninguna publicada todavía', async () => {
+  const { bloquesPublicados, BLOQUES, DESCRIPCION } = await import('../practicas/portada.js');
+  const u4 = BLOQUES.filter(b => b.unidad === 4);
+  assert.deepEqual(u4.map(b => b.titulo.es), [
+    'Semana 1 · Qué es una fracción, equivalentes y comparar', 'Semana 2 · La fracción de una cantidad, sumas y restas',
+    'Semana 3 · Multiplicar, dividir, combinadas y errores', 'Para toda la unidad · Vocabulario',
+  ]);
+  assert.deepEqual(u4.map(b => b.slugs), [
+    ['que-fraccion', 'equivalentes', 'simplifica', 'compara'], ['fraccion-de', 'suma-resta'],
+    ['multiplica-divide', 'combinadas-fracciones', 'errores4'], ['leelo4'],
+  ]);
+  const diez = CATALOGO.filter(p => p.unidad === 4);
+  assert.deepEqual(diez.map(p => p.slug).sort(), u4.flatMap(b => b.slugs).sort());
+  for (const p of diez) {
+    assert.equal(p.disponible, false, `${p.slug}: sin publicar hasta su tarea de la semana (109-111)`);
+    const d = DESCRIPCION[p.slug];
+    assert.ok(d?.es && d?.en, p.slug);
+    assert.ok(!/-\d|×|\d\/\d/.test(d.es + d.en), `${p.slug}: el menos es −, el producto ·, y ninguna fracción con barra`);
+  }
+  assert.deepEqual(bloquesPublicados(CATALOGO, 4), [], 'sin publicadas, la unidad 4 no enseña ninguna');
+  // La unidad 4 es la actual desde el lunes 14-12, y no antes.
+  assert.equal(unidadActual('2026-12-13'), 3);
+  assert.equal(unidadActual('2026-12-14'), 4);
+  // Cuando se publiquen, salen en su bloque y en su orden.
+  const publicadas = CATALOGO.map(p => (p.unidad === 4 ? { ...p, disponible: true } : p));
+  const bloques = bloquesPublicados(publicadas, 4);
+  assert.equal(bloques.length, 4);
+  assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['multiplica-divide', 'combinadas-fracciones', 'errores4']);
 });
 
 test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => conAlmacen(() => {

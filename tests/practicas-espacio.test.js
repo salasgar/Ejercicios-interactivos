@@ -207,7 +207,8 @@ test('erroresConfig: la tarea 1 de un profesor es una más', () => {
 });
 
 test('unidadesCon: títulos comunes y fechas del profesor', () => {
-  const suyas = unidadesCon([{ n: 2, desde: '2026-12-14' }, { n: 3, desde: '2027-02-01' }, { n: 7, desde: '2027-01-01' }]);
+  // La unidad 4 (tarea 98) también se aplaza: si no, su fecha del curso (14-12) la haría la actual el 20-12.
+  const suyas = unidadesCon([{ n: 2, desde: '2026-12-14' }, { n: 3, desde: '2027-02-01' }, { n: 4, desde: '2027-03-01' }, { n: 7, desde: '2027-01-01' }]);
   assert.equal(suyas.length, UNIDADES.length);
   assert.equal(suyas.find(u => u.n === 2).desde, '2026-12-14');
   assert.equal(suyas.find(u => u.n === 1).desde, UNIDADES[0].desde, 'sin fecha suya, la del curso');

@@ -1,6 +1,6 @@
 // Portada de las prácticas: una sección por unidad (la actual arriba y abierta;
 // las anteriores, plegadas), cada una con sus tareas y sus prácticas
-// publicadas (`disponible` en el catálogo). En las unidades 2 y 3 las prácticas
+// publicadas (`disponible` en el catálogo). En las unidades 2, 3 y 4 las prácticas
 // van ordenadas por la semana de la unidad en que tocan. Lleva lo que ha hecho el
 // alumno según lo guardado en este navegador.
 //
@@ -81,6 +81,27 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo3'],
   },
+  // Unidad 4 (PU2, tarea 98): cada práctica sale en su bloque cuando su tarea de la semana la publica (109-111).
+  {
+    unidad: 4,
+    titulo: { es: 'Semana 1 · Qué es una fracción, equivalentes y comparar', en: 'Week 1 · What a fraction is, equivalent fractions and comparing' },
+    slugs: ['que-fraccion', 'equivalentes', 'simplifica', 'compara'],
+  },
+  {
+    unidad: 4,
+    titulo: { es: 'Semana 2 · La fracción de una cantidad, sumas y restas', en: 'Week 2 · Fraction of a quantity, adding and subtracting' },
+    slugs: ['fraccion-de', 'suma-resta'],
+  },
+  {
+    unidad: 4,
+    titulo: { es: 'Semana 3 · Multiplicar, dividir, combinadas y errores', en: 'Week 3 · Multiplying, dividing, mixed operations and mistakes' },
+    slugs: ['multiplica-divide', 'combinadas-fracciones', 'errores4'],
+  },
+  {
+    unidad: 4,
+    titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
+    slugs: ['leelo4'],
+  },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
 
@@ -131,6 +152,16 @@ export const DESCRIPCION = {
   errores3: { es: 'Procedimientos de la unidad 3: dónde está el error, qué error es y qué no es un error.', en: 'Worked answers from unit 3: where the mistake is, which mistake it is and what is not a mistake.' },
   variacion: { es: 'Cuánto ha subido o bajado, diferencias de temperaturas y de alturas, el dato que falta y los años antes de Cristo.', en: 'How much it has risen or fallen, differences of temperatures and heights, the missing piece and years BC.' },
   leelo3: { es: 'Lee en inglés enteros, sumas, productos y potencias con signo, y pasa de las palabras a los símbolos.', en: 'Read integers, sums, products and powers with signs in English, and go from words to symbols.' },
+  'que-fraccion': { es: 'Partes iguales de un todo: lee la fracción de una figura, sombréala, sácala de una frase y dila en inglés.', en: 'Equal parts of a whole: read the fraction in a picture, shade it, find it in a sentence and say it in English.' },
+  equivalentes: { es: 'Amplía y reduce, completa el término que falta, decide si dos fracciones son equivalentes y busca el común denominador.', en: 'Make equivalent fractions, fill in the missing number, decide if two fractions are equivalent and find a common denominator.' },
+  simplifica: { es: 'Simplifica paso a paso o de una vez con el m.c.d. hasta la fracción irreducible, también con negativas.', en: 'Simplify step by step or in one go with the GCD until the fraction is in lowest terms, also with negative fractions.' },
+  compara: { es: 'Compara con el mismo denominador, con el mismo numerador o con común denominador, frente a 1 y a un medio; ordena y sitúa en la recta, también con negativas.', en: 'Compare with the same denominator, the same numerator or a common denominator, against 1 and a half; put in order and place on the number line, also with negative fractions.' },
+  'fraccion-de': { es: 'La fracción de una cantidad, la fracción que es una parte y problemas con contexto.', en: 'A fraction of a quantity, the fraction that a part is, and word problems.' },
+  'suma-resta': { es: 'Suma y resta con el mismo y con distinto denominador, con naturales y con negativas, lo que queda y los errores típicos.', en: 'Add and subtract with the same and with different denominators, with whole numbers and negative fractions, what is left and the common mistakes.' },
+  'multiplica-divide': { es: 'Producto, fracción de una fracción, potencias, la inversa y la división por los dos métodos.', en: 'Multiplying, a fraction of a fraction, powers, the reciprocal and dividing in two ways.' },
+  'combinadas-fracciones': { es: 'Toca la operación que va primero y resuelve paso a paso, con fracciones y paréntesis.', en: 'Tap the operation that comes first and work it out step by step, with fractions and brackets.' },
+  errores4: { es: 'Procedimientos de la unidad 4: si están bien o mal, en qué línea está el error y cómo se arregla.', en: 'Worked answers from unit 4: right or wrong, which line has the mistake and how to fix it.' },
+  leelo4: { es: 'El vocabulario de las fracciones en inglés: empareja, lee fracciones y cuentas, entiende la pregunta y escribe lo que oyes.', en: 'Fraction vocabulary in English: match, read fractions and calculations, understand the question and write what you hear.' },
 };
 
 const PANEL = { es: 'Panel del profesor', en: 'Teacher’s panel' };
