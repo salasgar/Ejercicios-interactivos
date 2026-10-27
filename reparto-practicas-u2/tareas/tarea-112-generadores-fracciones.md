@@ -236,3 +236,8 @@ Si paras sin terminar: `$R/hechos/fallos/112--<sid>.md` con hasta dónde llegast
   fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
   potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.
+
+## Trampas aprendidas (sesión s-20261026T212332-79cc4641)
+- `tests/distractores.test.js` exige que todo error declarado en `errores` pueda salir: al desactivar una forma hay que quitar también sus errores de la tabla.
+- `tests/ejercicios.test.js` exige que el último paso de la solución acabe en `= <correcta>` y que algún paso de cada distractor acabe en su valor (también en los huecos □).
+- Los pools de distractores se barajan por separado (documentados primero, relleno después): `construirOpciones` solo toma tres.
