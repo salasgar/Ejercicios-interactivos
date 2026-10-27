@@ -128,6 +128,8 @@ alumno, para el registro de fallos.
 
 ## Trampas conocidas
 
+- (Vista al cerrar, s-20261027T082835-a51cdb75.) Si el feedback de un error lleva una fracción como «2/1» o «3/5», el test de escritura lo caza: usa `htmlFraccion(f, { conUno: true })`, no la barra. No hay campo de fracción en la base: `practicas/multiplica-divide/campo.js` (dos cuadros con raya). Un 5/1 se escribe dejando el denominador vacío. Sin código no hay red: «Probar sin código».
+
 - `.cuenta` no se parte (`nowrap`): solo cuentas cortas; las frases del feedback van como texto normal o se salen de 375 px.
 - Una fracción con raya ocupa dos líneas de alto: en una lista de opciones a 375 px caben cuatro, no seis; en una cuenta en línea, usa el tamaño compacto de `htmlFraccion`.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
