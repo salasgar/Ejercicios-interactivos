@@ -122,6 +122,8 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (Vista en la 103) En zsh, `git add $P` con `P="a b c"` NO separa las rutas: usa las rutas escritas en la orden. Con el `&&` cortado, las órdenes siguientes del mismo bloque siguen corriendo si van en líneas aparte: comprueba el hash antes de escribir ENTREGA.
+- (Vista en la 103) Los items del ejercicio 4 son datos con `opciones` ya barajadas; las fracciones de los datos (`f1`, `f2`) son `{ n, d }` y no `Fraccion`: pásalas por `F()` antes de operar.
 
 ## Prohibido (propio de esta tarea)
 
