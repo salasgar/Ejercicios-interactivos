@@ -1,0 +1,7 @@
+/* ¿Qué fracción es?: lo que no esté ya en ../_comun/estilos.css (.frac, .elecciones, .comprobar,
+   .campo-numero, .operacion, .instruccion) ni en ../../css/estilos.css. */
+
+/* Los dos campos de la fracción que escribe el alumno: uno sobre la raya y otro bajo ella. */
+.campo-fraccion { display: flex; justify-content: center; margin: 1rem 0 1.2rem; font-size: 1.6rem; }
+.campo-fraccion .frac > span { padding: .15em .2em; }
+.campo-fraccion input.campo-numero { margin-bottom: 0; }
