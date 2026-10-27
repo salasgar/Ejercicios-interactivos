@@ -60,7 +60,7 @@ function cant(ctx, k, idioma) {
   }
 }
 /** Un valor con su unidad: «−3 °C», «la planta −2» (sin unidad), «−20 €», «−12 m». */
-const valor = (ctx, n) => (ctx === 'temperatura' ? `${fmt(n)} °C` : ctx === 'saldo' ? `${fmt(n)} €` : ctx === 'buceo' ? `${fmt(n)} m` : fmt(n));
+const valor = (ctx, n) => (ctx === 'temperatura' ? `${fmt(n)} °C` : ctx === 'saldo' ? `${fmt(n)} €` : ctx === 'buceo' ? `${fmt(n)} m` : fmt(n));
 const sube = (idioma, dir) => L(idioma, dir > 0 || dir === 'sube' ? 'subido' : 'bajado', dir > 0 || dir === 'sube' ? 'up' : 'down');
 const subio = (idioma, dir, ctx) => (ctx === 'saldo' ? L(idioma, dir > 0 ? 'ingresé' : 'gasté', dir > 0 ? 'paid in' : 'spent') : L(idioma, dir > 0 ? 'subió' : 'bajó', dir > 0 ? 'went up' : 'went down'));
 const ERA = { aC: { es: 'a. C.', en: 'BC (a. C.)' }, dC: { es: 'd. C.', en: 'AD (d. C.)' } };
@@ -73,7 +73,7 @@ export function txt(idioma) {
     cambio: {
       orden: L(i18, '¿Qué ha pasado?', 'What happened?'),
       enunciado: ({ ctx, i, f }) => ({
-        temperatura: L(i18, `A las 8:00 la temperatura era de ${valor(ctx, i)} y a las 14:00 es de ${valor(ctx, f)}.`, `At 8:00 the temperature was ${valor(ctx, i)} and at 14:00 it is ${valor(ctx, f)}.`),
+        temperatura: L(i18, `Ayer a mediodía la temperatura era de ${valor(ctx, i)} y hoy a mediodía es de ${valor(ctx, f)}.`, `Yesterday at noon the temperature was ${valor(ctx, i)} and today at noon it is ${valor(ctx, f)}.`),
         planta: L(i18, `El ascensor estaba en la planta ${fmt(i)} y ahora está en la planta ${fmt(f)}.`, `The lift was on floor ${fmt(i)} and now it is on floor ${fmt(f)}.`),
         saldo: L(i18, `Mi saldo era de ${valor(ctx, i)} y ahora es de ${valor(ctx, f)}.`, `My balance (saldo) was ${valor(ctx, i)} and now it is ${valor(ctx, f)}.`),
         buceo: L(i18, `Un buceador estaba a ${valor(ctx, i)} y ahora está a ${valor(ctx, f)}.`, `A diver was at ${valor(ctx, i)} and now is at ${valor(ctx, f)}.`),
@@ -97,7 +97,7 @@ export function txt(idioma) {
           `Today it is ${valor('temperatura', lo)} in ${PARES[par].bajo.en} and ${valor('temperatura', hi)} in ${PARES[par].alto.en}. How much warmer is it in ${PARES[par].alto.en} than in ${PARES[par].bajo.en}? (in degrees)`),
         planta: L(i18, `Un ascensor sube de la planta ${fmt(lo)} a la planta ${hi}. ¿Cuántas plantas sube?`, `A lift goes up from floor ${fmt(lo)} to floor ${hi}. How many floors does it go up?`),
         altura: L(i18, `Un pueblo está a ${fmt(lo)} m y una montaña a ${hi} m (los metros negativos son bajo el nivel del mar). ¿Cuántos metros más alta es la montaña?`,
-          `A village is at ${fmt(lo)} m and a mountain at ${hi} m (negative metres are below sea level (bajo el nivel del mar)). How much higher is the mountain, in metres?`),
+          `A village is at ${fmt(lo)} m and a mountain at ${hi} m. Negative metres are below sea level (bajo el nivel del mar). How much higher is the mountain, in metres?`),
       })[PARES[par].tipo],
       explica: ({ lo, hi, d }) => L(i18, `${hi} − ${fmtPar(lo)} = ${d}. La diferencia es ${d}.`, `${hi} − ${fmtPar(lo)} = ${d}. The difference is ${d}.`),
     },
@@ -106,12 +106,12 @@ export function txt(idioma) {
       enunciado: ({ ctx, subtipo, x, dir, k }) => {
         const c = cant(ctx, k, i18);
         const f = subtipo === 'final' ? {
-          temperatura: L(i18, `A las 8:00 la temperatura era de ${valor(ctx, x)}. Durante el día ${subio(i18, dir, ctx)} ${c}. ¿Qué temperatura hace ahora?`, `At 8:00 the temperature was ${valor(ctx, x)}. During the day it ${subio(i18, dir, ctx)} ${c}. What is the temperature now?`),
+          temperatura: L(i18, `Ayer a mediodía la temperatura era de ${valor(ctx, x)}. Hoy, a la misma hora, ha ${sube(i18, dir)} ${c}. ¿Qué temperatura hace ahora?`, `Yesterday at noon the temperature was ${valor(ctx, x)}. Today, at the same time, it went ${sube(i18, dir)} ${c}. What is the temperature now?`),
           planta: L(i18, `El ascensor estaba en la planta ${fmt(x)}. ${dir > 0 ? 'Sube' : 'Baja'} ${c}. ¿En qué planta está ahora?`, `The lift was on floor ${fmt(x)}. It goes ${dir > 0 ? 'up' : 'down'} ${c}. Which floor is it on now?`),
           saldo: L(i18, `Mi saldo era de ${valor(ctx, x)}. Después ${subio(i18, dir, ctx)} ${c}. ¿Cuál es mi saldo ahora?`, `My balance (saldo) was ${valor(ctx, x)}. Then I ${subio(i18, dir, ctx)} ${c}. What is my balance now?`),
           buceo: L(i18, `Un buceador estaba a ${valor(ctx, x)}. ${dir > 0 ? 'Sube' : 'Baja'} ${c}. ¿A qué altura está ahora?`, `A diver was at ${valor(ctx, x)}. They go ${dir > 0 ? 'up' : 'down'} ${c}. What height are they at now?`),
         } : {
-          temperatura: L(i18, `Durante el día la temperatura ${subio(i18, dir, ctx)} ${c} y ahora es de ${valor(ctx, x)}. ¿Qué temperatura hacía antes?`, `During the day the temperature ${subio(i18, dir, ctx)} ${c} and now it is ${valor(ctx, x)}. What was the temperature before?`),
+          temperatura: L(i18, `Desde ayer a mediodía la temperatura ha ${sube(i18, dir)} ${c} y hoy a mediodía es de ${valor(ctx, x)}. ¿Qué temperatura hacía ayer?`, `Since yesterday at noon the temperature went ${sube(i18, dir)} ${c} and today at noon it is ${valor(ctx, x)}. What was the temperature yesterday?`),
           planta: L(i18, `El ascensor ${subio(i18, dir, ctx)} ${c} y ahora está en la planta ${fmt(x)}. ¿En qué planta estaba antes?`, `The lift ${subio(i18, dir, ctx)} ${c} and now it is on floor ${fmt(x)}. Which floor was it on before?`),
           saldo: L(i18, `${dir > 0 ? 'Ingresé' : 'Gasté'} ${c} y ahora mi saldo es de ${valor(ctx, x)}. ¿Cuál era antes?`, `I ${subio(i18, dir, ctx)} ${c} and now my balance (saldo) is ${valor(ctx, x)}. What was it before?`),
           buceo: L(i18, `Un buceador ${subio(i18, dir, ctx)} ${c} y ahora está a ${valor(ctx, x)}. ¿A qué altura estaba antes?`, `A diver ${subio(i18, dir, ctx)} ${c} and now is at ${valor(ctx, x)}. What height were they at before?`),

@@ -18,7 +18,8 @@ import { fmt, fmtPar, ERRORES_TIPICOS } from '../_comun/enteros.js';
  * saldo de un alumno y profundidad de un buceador (siempre bajo el agua: de −40 a −1 m).
  */
 export const CONTEXTOS = {
-  temperatura: { min: -20, max: 40, maxVar: 20, paso: 1 },
+  // Temperatura a mediodía, de un día al siguiente (ej. 1 y 3): sin horas de la mañana ni de la tarde, así que sube o baja.
+  temperatura: { min: -15, max: 40, maxVar: 15, paso: 1 },
   planta: { min: -5, max: 20, maxVar: 12, paso: 1 },
   saldo: { min: -50, max: 300, maxVar: 120, paso: 5 },
   buceo: { min: -40, max: -1, maxVar: 25, paso: 1 },
@@ -133,6 +134,7 @@ export function errorFalta({ subtipo, x, dir, k, r }, escrito) {
  * y `b` el d. C.; no hubo año 0, así que son `a + b − 1` años (regla de la hoja 4: final − inicial − 1).
  * Nunca salen los casos que los alumnos ven en papel (−753/476/1229; 44 a. C. → 2026; 287 → 212 a. C.).
  */
+export const MONEDA_MAS_ANTIGUA = 600;   // a. C.
 export function generarAnios(rng) {
   const q = rng.azar();
   const era = q < 0.3 ? 'aC' : q < 0.6 ? 'dC' : 'cruza';
@@ -143,7 +145,8 @@ export function generarAnios(rng) {
       return { tipo: 'anios', era, a, b, d: a + b - 1 };
     }
     const max = era === 'aC' ? 2700 : 2026;
-    const x = rng.entero(50, max), y = rng.entero(50, max);
+    // La moneda (`b`) no es anterior al 600 a. C. (las primeras son de Lidia, siglo VII a. C.); la vasija sí puede ser más antigua.
+    const x = rng.entero(50, max), y = rng.entero(50, era === 'aC' ? MONEDA_MAS_ANTIGUA : max);
     if (abs(x - y) < 20 || abs(x - y) === 1229 || [x, y].some(n => n === 753 || n === 476)) continue;
     if (era === 'aC' && [x, y].sort().join() === '212,287') continue;
     // `a` es el año más antiguo: en a. C. el número mayor, en d. C. el menor.

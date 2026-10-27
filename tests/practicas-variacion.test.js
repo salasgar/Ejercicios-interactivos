@@ -231,6 +231,36 @@ test('el inglés aclara las palabras que deciden la respuesta (balance, bajo el 
   assert.match(en.diferencia.enunciado({ par: 'planta', lo: -2, hi: 5 }), /floors/);
 });
 
+test('realismo de la reabierta de la 115: temperatura de mediodía a mediodía (−15…40 °C, cambio ≤ 15), sin horas del día', () => {
+  const c = L.CONTEXTOS.temperatura;
+  assert.deepEqual([c.min, c.max, c.maxVar], [-15, 40, 15]);
+  let nTemp = 0;
+  for (const [fn, enunciado] of [[L.generarCambio, T => T.cambio.enunciado], [L.generarFalta, T => T.falta.enunciado]]) {
+    for (const item of generar(fn)) {
+      if (item.ctx !== 'temperatura') continue;
+      nTemp++;
+      if (item.tipo === 'cambio') assert.ok(L.enCota('temperatura', item.i) && L.enCota('temperatura', item.f) && Math.abs(item.v) <= 15);
+      else assert.ok(L.enCota('temperatura', item.x) && L.enCota('temperatura', item.r) && item.k <= 15);
+      for (const idioma of ['es', 'en']) {
+        const t = enunciado(txt(idioma))(item);
+        assert.doesNotMatch(t, /\d:\d\d|durante el día|during the day|mañana|morning/i, t);
+        assert.match(t, /mediodía|noon/, t);
+      }
+    }
+  }
+  assert.ok(nTemp > 500, `ítems de temperatura: ${nTemp}`);
+});
+
+test('realismo de la reabierta de la 115: la moneda nunca es anterior al 600 a. C. (la vasija sí puede ser más antigua)', () => {
+  let monedasAC = 0;
+  for (const item of generar(L.generarAnios)) {
+    if (item.era === 'aC') { monedasAC++; assert.ok(item.b <= L.MONEDA_MAS_ANTIGUA, `moneda del ${item.b} a. C.`); }
+    if (item.era === 'cruza') assert.ok(item.b >= 2, 'la moneda es d. C.');
+  }
+  assert.ok(monedasAC > N * 0.25);
+  assert.ok(generar(L.generarAnios).some(i => i.era !== 'dC' && i.a > 1500), 'la vasija sí llega a ser antigua');
+});
+
 test('el catálogo declara 5 ejercicios y la práctica los tiene todos', () => {
   assert.equal(CATALOGO.find(f => f.slug === 'variacion').nEjercicios, 5);
   assert.equal(NOMBRES.nombre.length, 5);
