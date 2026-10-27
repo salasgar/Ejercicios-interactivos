@@ -1,0 +1,23 @@
+/* Fracciones equivalentes: lo que no esté ya en ../_comun/estilos.css (.frac, .elecciones, .si-no,
+   .comprobar, .campo-numero, .operacion, .instruccion). */
+
+/* El hueco de una fracción: el campo ocupa el sitio del número que falta. */
+.hueco-eq { display: inline-block; }
+.hueco-eq input.campo-numero { margin: 0; font-size: 1.1rem; }
+.eq-y { color: var(--texto-suave); }
+.eq-dos { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 1.6rem; }
+.eq-dos input.campo-numero { margin: 0; font-size: 1.1rem; }
+
+/* Ejercicio 3: cajas y tarjetas. */
+.eq-cajas { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+.eq-caja, .eq-bandeja { border: 2px dashed var(--primario, #1d4ed8); border-radius: 12px; padding: .4rem; min-height: 4.2rem; background: var(--primario-claro, #eff6ff); }
+.eq-bandeja { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; border-color: #94a3b8; background: #f8fafc; margin-bottom: 1rem; }
+.eq-titulo { margin: 0 0 .3rem; font-size: .85rem; font-weight: 700; color: var(--texto-suave); text-align: center; }
+.eq-fichas { display: flex; flex-wrap: wrap; gap: .4rem; justify-content: center; min-height: 3rem; }
+.eq-ficha { min-width: 3.2rem; min-height: 3.2rem; padding: .25rem .5rem; border: 2px solid #94a3b8; border-radius: 10px; background: #fff; color: var(--texto, #0f172a); font-size: 1.1rem; touch-action: none; cursor: grab; }
+.eq-ficha--elegida { outline: 3px solid #facc15; outline-offset: 2px; }
+.eq-ficha--arrastrando { position: relative; z-index: 10; cursor: grabbing; box-shadow: 0 8px 18px rgba(0, 0, 0, .3); }
+.eq-ficha--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.eq-ficha--mal { border-color: var(--error); background: var(--error-claro); }
+.eq-ficha--falta { border-style: dotted; border-color: var(--correcto); }
+.eq-ficha:disabled { opacity: 1; cursor: default; color: inherit; }
