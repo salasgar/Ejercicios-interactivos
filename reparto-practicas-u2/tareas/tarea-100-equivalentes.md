@@ -125,6 +125,9 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (s-20261027T082738-14ce7cde) Entre dos fracciones mostradas no pongas «·»: se lee como producto. Se usa «y»/«and» (ej. 2) o «;» (ej. 4). El campo de un hueco dentro de `htmlRaya` se crea con `campoNumero` sobre un `<span data-hueco>`; el enunciado traducido lo lleva vacío.
+- Las equipos (ej. 3) usan el mismo arrastre por `pointer` que `venn` (toque = elegir tarjeta y tocar caja). Para probarlo por script: `pointerdown` + `pointerup` sin mover sobre la tarjeta y `click` en la caja.
+- Duración real ≈ 25 min de reloj (estimada 1 h 15 min).
 
 ## Prohibido (propio de esta tarea)
 
