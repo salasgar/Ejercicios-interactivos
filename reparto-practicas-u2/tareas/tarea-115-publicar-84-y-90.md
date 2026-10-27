@@ -117,6 +117,13 @@ sin publicar con su reabierta nueva, y la otra se publica igual.
 - (de la 96) Rangos que «no se solapan» no bastan para el realismo de dos ciudades: tienen que ser de **un mismo día**.
 - Si reabres una de las dos otra vez, se queda **sin publicador** de nuevo: dilo en la terminada con su plazo, para
   que la coordinadora decida.
+- (de la 115) Revisar solo lo que pedía la reabierta no basta: el realismo de **todos** los contextos con hora o con objeto
+  histórico se mide con 3000 ítems, no con la muestra. Una frase con hora («a las 8:00 … a las 14:00», «durante el día») fija el
+  sentido creíble del cambio; un objeto fija su época (no hay monedas antes del 600 a. C.).
+- (de la 115) Clic de verdad en Chrome headless: `Input.dispatchMouseEvent` (moved, pressed, released) en el centro del
+  `getBoundingClientRect()` del botón visible, no `element.click()`. Tras un acierto la base pasa sola al siguiente ítem: el
+  botón «Siguiente» solo sale tras un fallo. El `http.server` de Python 3.9 da `ERR_CONNECTION_RESET` al recargar deprisa: no es
+  de la práctica. En zsh, `set -- $var` no parte por espacios: los bucles con varios argumentos, escritos a mano.
 
 ## Prohibido (propio de esta tarea)
 
