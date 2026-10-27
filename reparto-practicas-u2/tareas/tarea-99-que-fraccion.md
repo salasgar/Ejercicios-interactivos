@@ -127,6 +127,10 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (s-20261027T082738-14ce7cde) `?c=7NPD` no entra: el enlace del código es otro; para probar vale «Probar sin código» (no guarda nada). Si el `http.server` del 8080 de otra sesión se cae, levanta el tuyo en otro puerto y mátalo al acabar.
+- (ídem) El teclado numérico del móvil no tiene «/»: la fracción se escribe en dos campos (`htmlRaya` + `campoNumero`), no con `leerFraccion`. Dos distractores de lectura pueden ser un número (`four` para 1/4 al revés): vale, pero no los pongas junto a una lectura de ese número.
+- (ídem) Sin lector de `zsh`: `git add $VARIABLE_CON_RUTAS` no separa palabras; escribe las rutas.
+- Duración real 11 min de reloj: la estimación de 1 h 15 min de las fichas de la U4 es muy alta para una práctica de 4 ejercicios sobre la base ya hecha.
 
 ## Prohibido (propio de esta tarea)
 
