@@ -36,3 +36,11 @@ Temperatura −20 a 40 °C (cambio ≤ 20); planta −5 a 20 (≤ 12); saldo −
 
 ## Reabierta del 2026-10-25 (sesión `s-20261027T062203-a4d71339`, commit **a14f85c**)
 Ej. 2: las ciudades dan temperaturas de **un mismo día de invierno**. Cotas fijadas (las comprueba un test sobre todos los ítems): Burgos −10…6 con Málaga 10…22; Moscú −25…−1 con Murcia 6…22 (rangos sin solapar, la diferencia sigue siendo siempre positiva; los errores `diferencia-sin-signo` y `suma-sin-signo` siguen saliendo y la explicación lleva los números del ítem). **Probada en navegador** con clics (Chrome headless, 375 px, es y en): «Hoy hay 1 °C en Burgos y 15 °C en Málaga» → ✓ 15 − 1 = 14; «Today it is −7 °C in Burgos and 20 °C in Málaga» → ✓ 20 − (−7) = 27; sin errores en consola. Sin tocar `catalogo.js`.
+
+## Reabierta de la 115 (s-20261027T082912-2939c478), resuelta por s-20261027T155228-3242922d · commit 2055c00
+
+Cotas nuevas (las comprueba `tests/practicas-variacion.test.js`):
+- **Temperatura (ej. 1, 3 y 5)**: −15…40 °C, cambio ≤ 15 grados. Sin horas del día: «Ayer a mediodía … y hoy a mediodía …» (ej. 1) y «Desde ayer a mediodía … ha subido/bajado …» / «Hoy, a la misma hora, …» (ej. 3). Así sube y baja con igual verosimilitud.
+- **Monedas (ej. 4)**: en a. C. la moneda no es anterior al 600 a. C. (`MONEDA_MAS_ANTIGUA`); la vasija sí llega al 2700 a. C. Con eras distintas la moneda es d. C. Siguen sin salir los casos de papel.
+- De paso: espacio de no separación entre número y unidad en `valor()`; en inglés, ej. 2 altura, frase aparte sin paréntesis anidados.
+Probado en navegador con clics (375 px, es y en): ej. 1 (temperatura, fallo), 2 (texto nuevo), 3 (temperatura, fallo) y 4 (acierto); sin errores de consola. Ej. 5 no se tocó.
