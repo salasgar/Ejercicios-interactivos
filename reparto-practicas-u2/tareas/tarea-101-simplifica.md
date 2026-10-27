@@ -128,6 +128,8 @@ alumno, para el registro de fallos.
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
 
+- (Aprendido en la 101) El código de prueba 7NPD no fue aceptado en local; «Probar sin código» no guarda nada y sirve. En el móvil el teclado numérico no tiene «/» ni «−»: fracción = dos campos + botón de signo.
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar otras prácticas, la base (`practicas/_comun/`), `catalogo.js`, `portada.js`, `registro.js`, `tareas.js` o los docs: lo que haga falta ahí es propuesta en la terminada. `disponible: true` lo pone la tarea de publicación de su semana, no esta.
