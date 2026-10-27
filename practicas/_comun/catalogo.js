@@ -67,7 +67,7 @@ export const CATALOGO = [
   { id: 34, slug: 'opuestos', ruta: 'opuestos/', unidad: 3, nombre: { es: 'Opuesto y valor absoluto', en: 'Opposite and absolute value' }, nEjercicios: 4, disponible: true },
   { id: 35, slug: 'situaciones', ruta: 'situaciones/', unidad: 3, nombre: { es: 'Enteros en la vida real', en: 'Integers in real life' }, nEjercicios: 3, disponible: true },
   { id: 36, slug: 'saltos', ruta: 'saltos/', unidad: 3, nombre: { es: 'Sumas y restas con saltos', en: 'Adding and subtracting with jumps' }, nEjercicios: 5, disponible: true },
-  { id: 37, slug: 'dos-signos', ruta: 'dos-signos/', unidad: 3, nombre: { es: 'Dos signos seguidos', en: 'Two signs in a row' }, nEjercicios: 4, disponible: false },
+  { id: 37, slug: 'dos-signos', ruta: 'dos-signos/', unidad: 3, nombre: { es: 'Dos signos seguidos', en: 'Two signs in a row' }, nEjercicios: 4, disponible: true },
   { id: 38, slug: 'signos-producto', ruta: 'signos-producto/', unidad: 3, nombre: { es: 'La regla de los signos', en: 'The rule of signs' }, nEjercicios: 5, disponible: true },
   { id: 39, slug: 'potencias-enteros', ruta: 'potencias-enteros/', unidad: 3, nombre: { es: 'Productos y potencias con signo', en: 'Signs in products and powers' }, nEjercicios: 4, disponible: true },
   { id: 40, slug: 'jerarquia-enteros', ruta: 'jerarquia-enteros/', unidad: 3, nombre: { es: '¿Qué se hace primero? Con enteros', en: 'What comes first? With integers' }, nEjercicios: 4, disponible: true },

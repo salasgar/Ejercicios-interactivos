@@ -123,8 +123,9 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura −20…40 °C, plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 3000 a. C.-2026 |
 | toda | `leelo3` | 44 | 91 | Los enteros · Sumas, restas y productos · Potencias · Palabras y símbolos (cada ejercicio, de una semana) | temperaturas −30…45 °C; parejas de ciudades de un mismo día de invierno |
 
-**Publicadas** (a 2026-10-25): todas salvo `dos-signos` y `variacion`, reabiertas por las
-tareas 94 y 96 (`reparto-practicas-u2/hechos/reabiertas/`). El estado vivo es el campo
+**Publicadas** (a 2026-10-27): todas salvo `variacion`, reabierta por la tarea 96 y otra vez
+por la 115 (realismo de los ej. 1, 3 y 4; `reparto-practicas-u2/hechos/reabiertas/`).
+`dos-signos` se publicó el 27-10 (tarea 115), tras su reabierta. El estado vivo es el campo
 `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 3
