@@ -17,7 +17,9 @@ import { practicaPorSlug } from './_comun/catalogo.js';
 import { codigoTarea, formatoDeCodigo } from './_comun/codigos.js';
 import { leer, escribir, borrar, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
-import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO } from './_comun/tareas.js';
+import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO, configDeJSON } from './_comun/tareas.js';
+import { leerConfig } from './_comun/nube.js';
+import { PROFESOR_UID } from '../src/config.js';
 import { diaDe } from './_comun/contador.js';
 import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, ejercicioFueraDePlazo, esRepasoDeOtraUnidad, identificar } from './vista-tareas.js';
 
@@ -25,8 +27,10 @@ const app = document.querySelector('#app');
 const params = new URLSearchParams(location.search);
 const idTarea = Number(params.get('t'));
 // Con código (4 u 8, registrado), las tareas son las de su profesor (`entrar` las pone); sin código,
-// las de `tareas.js` (la plantilla).
-let tareas = TAREAS;
+// las de Juan Luis (`PROFESOR_UID`, decisión suya del 2026-10-27: por defecto el profesor es él), leídas
+// de su espacio al arrancar; sin red, las de `tareas.js` (la plantilla).
+let tareasSinCodigo = TAREAS;
+let tareas = tareasSinCodigo;
 let tarea = tareaPorId(idTarea, tareas);
 let profesor = null;             // uid del espacio del alumno, o null si aún no se sabe
 let sinConfig = false;           // el espacio no pudo dar las tareas del profesor (sin red y sin copia)
@@ -237,7 +241,7 @@ function pintarTarea() {
     codigo = null;
     indice = null;
     profesor = null;
-    tareas = TAREAS;
+    tareas = tareasSinCodigo;
     sinConfig = false;
     tarea = tareaPorId(idTarea, tareas);
     pintar();
@@ -258,18 +262,35 @@ async function cargarNombres() {
 }
 
 function pintar() {
+  // Sin código, una tarea de la dirección (`?t=`) puede no estar en la plantilla y sí en el espacio del
+  // profesor (las que crea en el panel): se pide el código antes de decir que no existe (2026-10-27, tarea 15).
+  if (codigo === null && (tarea || idTarea)) return pintarEntrada();
   if (!tarea) return pintarSinTarea();
-  if (codigo === null) return pintarEntrada();
   pintarTarea();
 }
 
 // --- Arranque -------------------------------------------------------------------------
 
+/** Sin código: las tareas del profesor por defecto (las de su espacio), o la plantilla si no se pueden leer. */
+async function cargarTareasSinCodigo() {
+  try {
+    const lectura = await leerConfig(PROFESOR_UID);
+    const config = lectura.estado === 'ok' ? configDeJSON(lectura.json) : null;
+    if (config?.tareas?.length) tareasSinCodigo = config.tareas;
+  } catch { /* sin red: la plantilla */ }
+}
+
 const inicial = params.get('c') ?? leer('practicas.codigo') ?? '';
 if (formatoDeCodigo(inicial) === null) {
   aplicarIdioma();
-  pintar();
-  if (tarea) cargarNombres();
+  cabecera(T[idioma].semana_titulo);   // y el «Cargando…» de semana.html mientras llegan las tareas
+  cargarTareasSinCodigo().then(() => {
+    if (codigo !== null) return;   // mientras tanto ha entrado con su código: mandan las de su profesor
+    tareas = tareasSinCodigo;
+    tarea = tareaPorId(idTarea, tareas);
+    pintar();
+    if (tarea) cargarNombres();
+  });
 } else {
   entrar(inicial);
 }
