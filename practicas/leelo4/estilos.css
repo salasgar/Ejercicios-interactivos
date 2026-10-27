@@ -1,0 +1,54 @@
+/* Práctica «Léelo en inglés» (unidad 4): solo lo que no está ya en ../_comun/estilos.css. */
+
+/* Enunciados en inglés (ejercicios 3 y 4). */
+.texto-en { font-size: 1.15rem; line-height: 1.9; margin: .4rem 0 1rem; overflow-wrap: anywhere; }
+
+/* Ejercicio 3: cuatro traducciones largas, siempre en una columna (a 375 px no caben dos). */
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; }
+
+/* Ejercicio 1: dos columnas de botones; la pareja puesta lleva el mismo color y el mismo número. */
+.pares { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: .8rem 0 1rem; }
+.pares__col { display: grid; gap: .5rem; align-content: start; }
+.par {
+  position: relative; display: flex; align-items: center; gap: .4rem;
+  min-height: 52px; padding: .45rem .6rem; border: 2px solid var(--borde); border-radius: var(--radio);
+  background: var(--tarjeta); color: var(--texto); font: inherit; font-size: .98rem; text-align: left; cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.par--elegido { border-color: var(--primario); background: var(--primario-claro); }
+.par__n {
+  flex: none; display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem;
+  border-radius: 50%; background: var(--color-par, var(--primario)); color: #fff; font-size: .85rem;
+}
+.par--puesto { border-color: var(--color-par, var(--primario)); }
+.par--c1 { --color-par: #1d4ed8; }
+.par--c2 { --color-par: #b45309; }
+.par--c3 { --color-par: #7e22ce; }
+.par--c4 { --color-par: #0f766e; }
+.par--c5 { --color-par: #be185d; }
+.par--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.par--bien .par__n { background: var(--correcto); }
+.par--mal { border-color: var(--error); background: var(--error-claro); }
+.par--mal .par__n { background: var(--error); }
+.par:disabled { opacity: 1; cursor: default; }
+.lista-pares { margin: .3rem 0 0; padding-left: 1.2rem; text-align: left; }
+
+/* Ejercicio 4: tres campos, la operación entre los dos primeros y el «=» antes del resultado. */
+.ayuda-dictado { color: var(--texto-suave); font-size: .92rem; margin: .4rem 0; }
+.dictado { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem; margin: .8rem 0 1rem; }
+input[type="text"].campo-fraccion {
+  width: 5.2rem; margin: 0; padding: .55rem .4rem; border: 2px solid var(--borde); border-radius: var(--radio);
+  font: inherit; font-size: 1.15rem; text-align: center; background: var(--tarjeta); color: var(--texto);
+}
+input[type="text"].campo-fraccion--malo { border-color: #d97706; background: var(--aviso-claro); }
+.ops { display: inline-flex; gap: .3rem; }
+button.op {
+  width: 2.6rem; height: 2.6rem; border: 2px solid var(--borde); border-radius: var(--radio);
+  background: var(--tarjeta); color: var(--texto); font: inherit; font-size: 1.25rem; cursor: pointer; padding: 0;
+}
+button.op--elegido { border-color: var(--primario); background: var(--primario-claro); color: var(--primario-oscuro); font-weight: 700; }
+button.op:disabled { opacity: 1; cursor: default; }
+.igual { font-size: 1.3rem; font-weight: 700; }
+.dictado--bien .campo-fraccion, .dictado--bien button.op--elegido { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.dictado--mal .campo-fraccion, .dictado--mal button.op--elegido { border-color: var(--error); background: var(--error-claro); color: var(--error); }
