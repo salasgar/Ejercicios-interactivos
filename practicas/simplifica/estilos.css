@@ -1,0 +1,21 @@
+/* Práctica «Simplifica»: solo lo que no esté ya en ../_comun/estilos.css. */
+
+/* Ejercicio 1: el aviso cuando el paso no vale y el botón de «Es irreducible». */
+.aviso-paso { min-height: 3em; margin: .6rem 0 .8rem; color: var(--error); font-size: 1rem; line-height: 1.4; }
+.elecciones--1 { grid-template-columns: 1fr; margin-bottom: .5rem; }
+
+/* Ejercicio 2: cada casilla es una fracción con raya. */
+.botones-fracciones button { min-width: 72px; min-height: 80px; font-size: 1.3rem; }
+
+/* Ejercicio 3: el m.c.d. a un lado y la fracción (signo + dos campos) al otro. */
+.respuesta-vez { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .8rem 1.6rem; margin: 1rem 0; }
+.respuesta-vez__mcd { display: flex; align-items: center; gap: .5rem; font-weight: 700; font-size: 1.2rem; }
+.respuesta-vez__fraccion { display: flex; align-items: center; gap: .4rem; }
+.respuesta-vez .campo-numero { margin: .15rem auto; }
+.respuesta-vez .frac { font-size: 1rem; }
+.respuesta-vez .frac > span { padding: .15em .25em; }
+.signo-menos { min-width: 48px; min-height: 48px; padding: 0; font-size: 1.6rem; background: #fff; color: var(--texto); border: 2px solid var(--borde); }
+.signo-menos--puesto { background: var(--primario); border-color: var(--primario); color: #fff; }
+.signo-menos:disabled { opacity: .6; }
+.campo-numero.respuesta--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.campo-numero.respuesta--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); }
