@@ -128,6 +128,8 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (Vista en la 104) En un generador con reintentos, decide ANTES del bucle el tipo de ítem (negativo, múltiplo, con error): si se sortea dentro, los casos difíciles se rechazan más y el reparto se sesga.
+- (Vista en la 104) Los ítems llevan las fracciones como { n, d }; en los textos pásalas por F() y, si ya son Fraccion, no las vuelvas a pasar (frItem de textos.js acepta las dos).
 
 ## Prohibido (propio de esta tarea)
 
