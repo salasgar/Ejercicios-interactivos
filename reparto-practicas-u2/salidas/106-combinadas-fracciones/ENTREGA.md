@@ -12,3 +12,8 @@ Probar en 1 minuto: `npm run servir`, http://localhost:8080/practicas/combinadas
 Probado en navegador con clics: acierto y fallo del 1, paso a paso del 2 (toque equivocado y valores), línea y tipo del 3, en ES y EN; sin desbordamiento a 375 px (iframe de 375 px; la ventana no se pudo estrechar).
 
 Arreglado respecto a lo heredado: ejemplos con «=» en textos.js rompían la carga; el tipo de error del ejercicio 3 se sortea una vez por ítem (antes «orden» salía al 15 %); el feedback pinta las operaciones con raya; un test exigía algo falso para «(−x) −».
+
+
+## Reabierta del 28-10 (s-20261028T224655-1b5cd5bb, commit b98d111)
+
+Destrezas con los ids de `registro.js`: U4-3A-01, 3A-02, 3C-09, 3C-10 (el ej. 3 no nombra el error, así que U4-3C-11 sobra). Arreglado: sin la opción «izquierda a derecha» en los pasos del ej. 2 (queda en los ej. 1 y 3); pista de `signo-perdido` en · y : = regla de los signos (`pistaDe`); con un natural en una suma manda `natural-al-numerador`; `derecha-a-izquierda` solo si la operación de la izquierda se podía hacer ya; el natural 1 no va detrás de · o : ni delante de ·; `natural-al-numerador` en restas solo con natural positivo. Probada en Chrome headless con clics (es/en, 375 y 1100 px), sin desbordes. Para Juan Luis: un 8 % de los ítems obliga a un m.c.m. de 49 a 72 (propuesta: cota de pasos a 36 o 48) y negativas en el 31 % de los enunciados. Sospecha no medida: lo mismo de `derecha-a-izquierda` en `jerarquia-enteros/logica.js` ~217.
