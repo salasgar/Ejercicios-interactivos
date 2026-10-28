@@ -116,6 +116,10 @@ alumno, para el registro de fallos.
 - Una fracción con raya ocupa dos líneas de alto: en una lista de opciones a 375 px caben cuatro, no seis; en una cuenta en línea, usa el tamaño compacto de `htmlFraccion`.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
+- **Un nombre de error es opción falsa solo si, aplicado a los números del ítem, no da el valor mostrado** (reabierta del 28-10): `opcionesDeNombre` lo comprueba con `erroresQueExplican` (todo el catálogo de `ERRORES_TIPICOS` sobre las fracciones que se ven); un grupo distinto no basta (`1/3 · 60 = 180` lo explican «multiplica por el denominador» e «invierte la primera»).
+- Un error que explica el cálculo del compañero **no puede llamarse error** si es un método válido: multiplicar los denominadores es un denominador común correcto; lo malo es no ampliar los numeradores.
+- `compara-solo-*` solo con numeradores y denominadores distintos: con un término común mirar el otro basta (U4-1C-17) y «hay que mirar los dos» sería falso.
+- El script de navegador de otras sesiones (`prueba.mjs`) no pulsa «+/−» ni usa `.elecciones` en los ej. 1-2 de esta práctica (los botones están en `.procedimiento--botones`): agrupar por `.eleccion`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
 
 ## Prohibido (propio de esta tarea)

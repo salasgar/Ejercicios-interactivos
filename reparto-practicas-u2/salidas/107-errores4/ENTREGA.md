@@ -10,3 +10,14 @@ Cotas fijadas (sin contexto, de tamaño): operandos propios con denominador 2-8 
 
 Probar en 1 minuto: `npm run servir`, http://localhost:8080/practicas/errores4/ y «Probar sin código» (el código 7NPD no entra sin red/registro); `?ejercicio=1`, `2`, `3`; `?idioma=en`.
 Probado en navegador con clics: ej. 1 (comparación falsa, nombre mal elegido, feedback), ej. 2 (fallo, feedback) y ej. 3 (acierto con casilla natural, en inglés); sin errores de consola. NO probado a 375 px (la ventana no se pudo estrechar) ni el «+/−» de la fracción con dos casillas.
+
+## Reabierta del 28-10 (revisión de la 111): cerrada por s-20261028T224056-926a6873, commit 594484f
+
+Las cinco cosas de `hechos/reabiertas/107--s-20261028T182802-3d6fcf1b-revision.md`, y los retoques de texto:
+1. `suma-multiplicando-denominadores`: la explicación ya no dice que multiplicar los denominadores sea un error; dice que se multiplicaron los denominadores pero los numeradores se sumaron sin ampliarlos (el nombre del catálogo, «Ha multiplicado los denominadores en una suma», es verdad y no se toca: es de `_comun`).
+2. `opcionesDeNombre` descarta todo nombre que, aplicado a los números del ítem, dé el valor mostrado (`erroresQueExplican`, la misma fuerza bruta de la revisión, ahora en `logica.js` y en el test). Cero ofrecidos que expliquen el resultado en 3000 ítems.
+3 y 4. Las comparaciones `compara-solo-numeradores/denominadores` solo con numeradores **y** denominadores distintos (así «hay que mirar los dos términos» es verdad) y solo con pares en los que el error cambia la relación; nunca se muestra «=».
+5. `suma-arriba-y-abajo`: en los ejercicios 1 y 3 la igualdad falsa es el error sobre las fracciones que se ven (`1/3 + 1/2 = 2/5`); en el 2 se conservan las tres líneas (error en el paso 2→3).
+Textos: «una de las 6 partes iguales de 42», «Es el mismo resultado equivocado» / «That is the same wrong result as in the equality», «so it is greater», «the exponent applies to», el detalle del ej. 1 dice «igualdad o comparación», la introducción del ej. 3 usa `5/6 : 10/9` (no `2/3 : 4/5`, que es de un examen semanal), y en el ej. 2 la potencia se ve en la línea 2 (`2 · 2/3`, que es lo que hizo el compañero).
+Pruebas: `node --test tests/practicas-comun.test.js tests/practicas-errores4.test.js` 62/62; `npm test` 1344/1344 (4 tests nuevos de fuerza bruta). Navegador (Chrome headless con clics, es/en, 375 y 1100 px, los tres ejercicios, acierto y fallo): sin desbordes ni errores de consola. Limitación de mi script: no pulsa «+/−», así que las respuestas negativas del ej. 3 no se comprobaron con clics (el campo no cambió).
+Sigue sin publicar (`disponible`): lo hace la tarea de publicación de la semana 3.
