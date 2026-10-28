@@ -112,6 +112,9 @@ otra vez. Es la primera publicación de la unidad: comprueba además que la unid
 - Publicar puede romper tests de portada que suponen una unidad sin publicar (pasó en la 93): el arreglo es comprobar «sin publicar» sobre una copia del catálogo.
 - La cota de realismo hay que medirla también en los **distractores**, no solo en la respuesta.
 - El servidor del puerto 8080 puede ser de otra sesión: levanta uno propio en otro puerto (`python3 -m http.server 8093`). Chrome headless por CDP con el WebSocket de Node basta (driver en `salidas/89-errores3/capturas/cdp.mjs`).
+- (de la 109, 28-10) Cinco prácticas no caben en una revisión secuencial en una hora: se reparten bien en un subagente por práctica (solo lectura, bajo tu sid, con la ficha como criterio y un servidor común en otro puerto), y luego cada defecto se comprueba en el código antes de reabrir. Los subagentes encuentran de más: separa lo que viola una regla (reabre) de lo que es criterio de Juan Luis (hallazgo fuera de criterio).
+- (de la 109) Un feedback falso solo se ve con el error concreto: `compararSoloNumeradores` devuelve **0** (no `null`) con numeradores iguales, y `!== null` lo trata como engaño; un `'otra-respuesta'` compartido entre dos pasos enseña el texto del paso equivocado. Prueba los fallos con el paso anterior bien hecho.
+- (de la 109) Los tests de portada que dicen «ninguna publicada todavía» fallan al publicar la primera de la unidad: se cambian a una copia del catálogo, como el de la U3. Y `DESTREZAS` de `registro.js` va por práctica, no por ejercicio: la destreza de cada ejercicio sale del §7 del doc de la unidad.
 
 ## Prohibido (propio de esta tarea)
 
