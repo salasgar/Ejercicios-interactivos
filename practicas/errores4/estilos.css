@@ -1,0 +1,35 @@
+/* Práctica «Caza el error» (unidad 4): solo lo que no esté ya en ../_comun/estilos.css. */
+
+/* La igualdad a juzgar, grande y centrada. */
+.igualdad { text-align: center; font-size: 1.45rem; margin: .8rem 0 1.1rem; overflow-wrap: anywhere; }
+.igualdad--campo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .6rem; }
+.instruccion--siguiente { margin-top: 1.1rem; }
+
+/* El cálculo del compañero, con las líneas numeradas. */
+.procedimiento {
+  list-style: none; margin: 0 0 1rem; padding: 0; text-align: left;
+  display: grid; gap: .45rem;
+}
+.procedimiento__linea {
+  display: flex; gap: .6rem; align-items: baseline;
+  background: var(--primario-claro); color: var(--primario-oscuro);
+  border-radius: 10px; padding: .55rem .8rem; font-size: 1.15rem; line-height: 1.45;
+  overflow-wrap: anywhere; font-variant-numeric: tabular-nums;
+}
+.procedimiento__n { font-weight: 700; flex: none; opacity: .7; }
+.procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
+.procedimiento--botones .eleccion { text-align: left; font-size: 1.15rem; line-height: 1.45; min-height: 60px; }
+.procedimiento--botones .eleccion .procedimiento__n { margin-right: .5rem; }
+.linea-mala { font-weight: 700; overflow-wrap: anywhere; }
+.feedback { overflow-wrap: anywhere; }
+.si-no { margin-top: .2rem; }
+.nombres { grid-template-columns: 1fr; }
+.nombres .eleccion { text-align: left; }
+
+/* La fracción escrita (ejercicio 3): «+/−», el menos y las dos casillas sobre la raya. */
+.campo-fr { display: inline-flex; align-items: center; gap: .4rem; }
+.campo-fr__signo { min-width: 3rem; font-size: 1.1rem; font-weight: 700; margin: 0; padding: .5rem .6rem; }
+.campo-fr__menos { font-size: 1.6rem; font-weight: 700; min-width: .6em; text-align: right; }
+.campo-fraccion { text-align: center; margin: 0; }
+.campo-numero.respuesta--bien, .campo-fr.respuesta--bien .campo-numero { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.campo-numero.respuesta--mal, .campo-fr.respuesta--mal .campo-numero { border-color: var(--error); background: var(--error-claro); color: var(--error); }
