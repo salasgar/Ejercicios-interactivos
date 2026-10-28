@@ -244,6 +244,33 @@ una, cómo se amplía y qué destreza cubre: [docs/practicas-unidad3.md](docs/pr
 Cada semana tiene su tarea de revisión y publicación (tareas 93-96 del reparto), que deja
 la propuesta de la tarea de la app de esa semana.
 
+## Prácticas de la unidad 4 (`practicas/`)
+
+Diez prácticas más sobre la misma base y el mismo panel, para la unidad 4,
+**Fracciones** (ids 47-56 del catálogo; la portada las enseña por semanas desde el
+lunes 14-12-2026). Dos piezas comunes nuevas: `practicas/_comun/fracciones.js` (la
+fracción inmutable, la raya horizontal, la lectura en los dos idiomas y los **errores
+típicos de la unidad**, de donde salen todos los distractores; dos fracciones
+equivalentes son siempre la misma respuesta) y `practicas/_comun/dibujo-fracciones.js`
+(barras, pizzas, cuadrículas y la recta en SVG). Qué hace cada una, cómo se amplía y qué
+destreza cubre: [docs/practicas-unidad4.md](docs/practicas-unidad4.md).
+
+| Semana | `slug` | Práctica | Destrezas principales |
+|---|---|---|---|
+| 1 | `que-fraccion` | ¿Qué fracción es? | Leer y representar una fracción, la parte de un grupo, leerla en los dos idiomas (U4-1C-01 a 1C-05, 1B-02, 1B-03) |
+| 1 | `equivalentes` | Fracciones equivalentes | Ampliar y reducir, el término que falta, ¿son equivalentes?, común denominador (U4-1C-10 a 1C-12, 1C-16) |
+| 1 | `simplifica` | Simplifica | Paso a paso, de una vez con el m.c.d., ¿irreducible?, con negativas (U4-1C-13 a 1C-15, 1C-22) |
+| 1 | `compara` | Compara y ordena | Comparar con 1, con 1/2 y entre sí, ordenar, la recta, con negativas (U4-1C-17 a 1C-21, 1C-23, 1C-24) |
+| 2 | `fraccion-de` | La fracción de una cantidad | Calcularla, problemas de lo que queda y del total (U4-1C-08, 1C-09, 1A-01 a 1A-03, 2A-02, 2A-03) |
+| 2 | `suma-resta` | Suma y resta | Mismo y distinto denominador, con naturales, con negativas, lo que queda (U4-2C-01 a 2C-03, 2C-07, 2A-01) |
+| 3 | `multiplica-divide` | Multiplica y divide | Producto, fracción de una fracción, inversa, cociente, potencias de base positiva (U4-2C-08 a 2C-12, 3C-05 a 3C-07) |
+| 3 | `combinadas-fracciones` | ¿Qué se hace primero? Con fracciones | Jerarquía y paréntesis con fracciones, también negativas (U4-3A-01, 3A-02, 3C-09, 3C-10) |
+| 3 | `errores4` | Caza el error | Reconocer y nombrar los errores típicos de la unidad (U4-3C-09, 3C-11, 3C-12) |
+| toda | `leelo4` | Léelo en inglés | Vocabulario, leer fracciones y operaciones en inglés, dictado (U4-1B, 2B, 3B) |
+
+Cada semana tiene su tarea de revisión y publicación (tareas 109-111 del reparto), que deja
+la propuesta de la tarea de la app de esa semana.
+
 ## Puesta en marcha de Firebase (una sola vez)
 
 Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el

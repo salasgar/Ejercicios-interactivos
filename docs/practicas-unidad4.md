@@ -2,11 +2,12 @@
 
 Empezado el 2026-10-26 por la tarea 98 del reparto PU2 (`reparto-practicas-u2/`), que deja
 la base de la unidad 4: el catálogo, la portada, los esqueletos, las dos piezas comunes y la
-tabla de destrezas (§7). **El resto de este documento lo escribe la tarea 111**, al cerrar la
+tabla de destrezas (§7). El resto lo escribió la tarea 111 (2026-10-28), al revisar la
 última semana, con el mismo espíritu que [practicas-unidad3.md](practicas-unidad3.md): qué
 hay, cómo se amplía, cómo se leen los resultados y qué destreza del inventario practica cada
 una. La base común, el panel, los dos sistemas de códigos y los varios profesores son los de
-la unidad 2: están en [practicas-unidad2.md](practicas-unidad2.md).
+la unidad 2: están en [practicas-unidad2.md](practicas-unidad2.md), y aquí solo se cuenta lo
+que cambia.
 
 Son diez mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 4, **Fracciones**
 (ids 47-56 del catálogo, tareas 99-108 de PU2), con dos piezas comunes nuevas en
@@ -23,21 +24,72 @@ Son diez mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 4, **Fraccion
 
 ## 1. Qué ve el alumno
 
-Por escribir (tarea 111). Lo que ya está fijado: la portada enseña la unidad 4 desde el lunes
-14-12 (`desde` de la unidad 4 en `UNIDADES`, `catalogo.js`), con cuatro bloques (`BLOQUES` en
-`practicas/portada.js`): semana 1 (`que-fraccion`, `equivalentes`, `simplifica`, `compara`),
-semana 2 (`fraccion-de`, `suma-resta`), semana 3 (`multiplica-divide`,
-`combinadas-fracciones`, `errores4`) y «Para toda la unidad · Vocabulario» (`leelo4`).
+Lo mismo que en la unidad 2 (§1 de [practicas-unidad2.md](practicas-unidad2.md)): código,
+10 puntos por ejercicio con 5 vidas, el idioma de cada ítem sorteado, el feedback con los
+números del ítem y la tarea de la semana. Lo propio de la unidad 4:
+
+1. **La portada enseña la unidad 4 desde el lunes 14-12** (`desde` de la unidad 4 en
+   `UNIDADES`, `catalogo.js`). Antes, una práctica publicada solo se abre por su URL. Las
+   prácticas salen por semanas (`BLOQUES` en `practicas/portada.js`): semana 1 (`que-fraccion`,
+   `equivalentes`, `simplifica`, `compara`), semana 2 (`fraccion-de`, `suma-resta`), semana 3
+   (`multiplica-divide`, `combinadas-fracciones`, `errores4`) y «Para toda la unidad ·
+   Vocabulario» (`leelo4`). La semana 2 cruza la Navidad (lun 21-12 a jue 7-1).
+2. **Las fracciones se ven con raya horizontal** (`htmlFraccion`), nunca con barra, y el menos
+   de las negativas es el de verdad (−, U+2212), delante de la fracción. Para contestar, el
+   alumno escribe **arriba y abajo** en un campo con raya y un botón **+/−** (`campo.js` de
+   `suma-resta`, `multiplica-divide` y `errores4`); con el de abajo vacío vale un natural. Donde
+   se teclea en una línea, `leerFraccion` acepta `3/5`, `3 / 5`, `−3/5`, `3/−5` y un natural.
+3. **Dos fracciones equivalentes son la misma respuesta**: ninguna opción equivale a otra, y
+   cuando la consigna pide la **fracción irreducible** lo dice en el enunciado del ítem, en los
+   dos idiomas; entonces una equivalente sin simplificar cuenta como fallo con su propio aviso
+   («el valor está bien, pero falta simplificar»).
+4. **Los dibujos se tocan**: barras, pizzas y cuadrículas con partes iguales, y la recta con
+   marcas en los múltiplos de 1/d, también con negativas (`dibujo-fracciones.js`). Se usan en
+   `que-fraccion`, `compara` y `multiplica-divide` (la fracción de una fracción).
+5. **Las operaciones se tocan**, como en la unidad 3: en `combinadas-fracciones` el signo de la
+   operación que va primero (vale cualquiera de las que pueden ir primero sin cambiar el valor:
+   regla de Juan Luis del 8-10); en `suma-resta`, `combinadas-fracciones` y `errores4`, la línea
+   del cálculo donde está el error.
+6. **Cada ejercicio empieza con «Cómo se hace»**, un ejemplo resuelto en los dos idiomas, y
+   algunos ítems tienen varios pasos (el m.c.m., los numeradores y el resultado; la inversa y
+   el producto que da 1).
 
 ## 2. Cómo lee el profesor los resultados
 
-Por escribir (tarea 111).
+Igual que en las unidades 2 y 3 (§2 de [practicas-unidad2.md](practicas-unidad2.md)): el panel
+`practicas/profesor.html`, la nube del espacio de cada profesor y la vista «Fallos» con «qué
+falla más». **Cada fallo lleva el id de un error típico** en el campo `error`
+(`api.responder({ error })`), que el panel enseña tal cual:
+
+- los de la tabla de la unidad, en `ERRORES_TIPICOS` de `practicas/_comun/fracciones.js`, cada
+  uno con su nombre `{ es, en }`, un ejemplo y su función (`suma-arriba-y-abajo`,
+  `fraccion-de-al-reves`, `invierte-la-primera`, `eleva-solo-el-numerador`…);
+- los propios de una práctica, en su `logica.js` (`sin-simplificar` en varias,
+  `divide-en-vez-de-multiplicar` y `producto-no-es-uno` en `multiplica-divide`, los de
+  `ERRORES_PROPIOS` de `fraccion-de`…). Como en la unidad 3, el panel no traduce todavía estos
+  ids a su nombre.
 
 ## 3. La base común de la unidad 4
 
-Por escribir (tarea 111). Mientras tanto, la referencia es la cabecera de
-`practicas/_comun/fracciones.js` y de `practicas/_comun/dibujo-fracciones.js`, y la ENTREGA de
-la tarea 98 (`reparto-practicas-u2/salidas/98-base-unidad4/ENTREGA.md`).
+Dos módulos nuevos en `practicas/_comun/` (tarea 98), puros salvo `crearFigura` y
+`crearRectaFracciones`:
+
+| Fichero | Qué pone |
+|---|---|
+| `fracciones.js` | `Fraccion` inmutable (el signo en el numerador; **no se simplifica sola**: `equals` compara por valor y `mismaForma` por forma), `fraccion`, `deNatural`, `aFraccion`. Comparar y ordenar con enteros, nunca con decimales (`comparar`, `sonEquivalentes`, `productosCruzados`, `comunDenominador`, `ordenar`). Escritura: `aTexto`, `htmlRaya`, `htmlFraccion`, `htmlCuenta`; lectura: `leerFraccion`. En palabras: `enPalabras`, `lecturasValidas`, `esLecturaValida` (ordinales en inglés, partitivos en español; las parejas válidas nunca se enfrentan). **Errores típicos**: una función por error que da el valor equivocado con los números del ítem (o null si ese error no cambia nada) y la tabla `ERRORES_TIPICOS` (id → nombre, ejemplo y función); `distractores(candidatos, correcta)` saca de ahí opciones falsas sin repetir y no equivalentes a la buena; `NO_ES_ERROR` lista lo que no es un error (otro denominador común, simplificar antes o después, en cruz al dividir, término a término si es exacto, comparar por denominadores con numeradores iguales). Expresiones: `analizar`, `evaluar`, `html` (con `marcarOperadores`), `pasosPosibles`, `aplicarPaso`, `pasoCanonico`, `valorLiteral`, hermanos de los de `enteros.js` |
+| `dibujo-fracciones.js` | `crearFigura(contenedor, opciones)`: barra, pizza o cuadrícula, con partes que se sombrean, se tocan y se marcan con los cuatro estados; `crearRectaFracciones`: recta de enteros a enteros con marcas en los múltiplos de 1/d (de 2 a 12), puntos y toques. La geometría y «la marca más cercana a un toque» son puras |
+
+Los distractores de la unidad 4 **salen siempre de un error típico con nombre**, calculado
+con los números del ítem (regla 4 de la unidad en `reparto-practicas-u2/proyecto.md`), y el
+`error` que se registra al fallar es el de ese distractor. Cuidado aprendido en la revisión de
+la semana 3 (tarea 111): **dos errores distintos pueden dar el mismo valor con ciertos números**
+(fracción de una cantidad al revés e «invertir la primera»; sumar multiplicando denominadores y
+sumar un natural al numerador cuando un denominador es 1; multiplicar en cruz y dividir en la
+fracción de una fracción). Cuando eso pasa, el nombre o la explicación tienen que valer para
+los dos, o el ítem se descarta; y un nombre ofrecido como falso nunca puede explicar el
+resultado. Se comprueba en el test por fuerza bruta.
+
+Tests: `tests/practicas-fracciones.test.js` (la base de la unidad) y uno por práctica.
 
 ## 4. El contrato de una práctica
 
@@ -45,12 +97,58 @@ El mismo que en la unidad 2 (§4 de [practicas-unidad2.md](practicas-unidad2.md)
 
 ## 5. Cómo se añade una práctica
 
-Por escribir (tarea 111).
+Como en la unidad 2 (§5 de [practicas-unidad2.md](practicas-unidad2.md)): copiar
+`practicas/plantilla/`, fila en `catalogo.js` con `unidad: 4` y `disponible: false`, `logica.js`
+y su test antes que la interfaz, la línea de `DESTREZAS` en `registro.js` y la fila de §7 en el
+mismo commit (lo exige `tests/practicas-registro.test.js`), su `slug` en un bloque de `BLOQUES`
+y, al publicarla, `disponible: true`. Lo propio de la unidad 4:
+
+1. Las fracciones, con `Fraccion` y `htmlFraccion` / `htmlCuenta`; las expresiones, con
+   `analizar` / `html`; nunca a mano con una barra o un guion. Comparar con `equals` (valor) o
+   `mismaForma` (forma), nunca con decimales.
+2. **Cada distractor, de un error típico** de `ERRORES_TIPICOS` (o uno propio con su nombre
+   `{ es, en }`), calculado con los números del ítem, y el mismo id en `api.responder({ error })`.
+   Ninguna opción equivalente a otra, y ningún nombre de error ofrecido como falso que también
+   explique el resultado (§3).
+3. Si se pide la fracción irreducible, **el enunciado de cada ítem lo dice**, en los dos idiomas
+   (la introducción no basta: la tarea 111 reabrió `multiplica-divide` por eso).
+4. Las reglas de contenido de la unidad 4 (en `reparto-practicas-u2/proyecto.md` y en cada
+   ficha): ni decimales ni números mixtos (acta del 26-10); negativas desde la semana 1;
+   productos y potencias de base positiva desde la sesión 7, cocientes desde la 9 y combinadas
+   desde la 10; las parejas válidas que nunca se enfrentan (*three quarters* / *three fourths*,
+   *simplify* / *reduce*, `÷` / `:`…); el **realismo** de los contextos con una cota por
+   contexto que el test comprueba (pizza o tarta de 3 a 15 trozos, clase de 12 a 36…), también
+   en los distractores; y los casos fijos, que no copien las hojas ni los exámenes de la unidad.
+5. Probarla en el navegador **pulsando cada botón con un clic**, a 375 px y en ancho, en los dos
+   idiomas.
 
 ## 6. Las diez prácticas
 
-Por escribir (tarea 111). Mientras tanto, las fichas `reparto-practicas-u2/tareas/tarea-99-…` a
-`tarea-108-…`.
+`id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
+bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
+de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
+
+| Semana | `slug` | id | Tarea | Ejercicios | Cotas |
+|---|---|---|---|---|---|
+| 1 | `que-fraccion` | 47 | 99 | Lee la figura (barra, pizza, cuadrícula) · Sombrea la fracción · De la frase a la fracción · Léela | clase 12-36, tarta 3-15 trozos, equipo 11-25, caja 6-24 |
+| 1 | `equivalentes` | 48 | 100 | El término que falta (hueco □) · ¿Son equivalentes? · Equipos (tarjetas en cajas) · Común denominador (m.c.m. y numeradores) | denominadores ≤ 60, factor 2-6 |
+| 1 | `simplifica` | 49 | 101 | Paso a paso (dividir entre 2, 3, 5 o 7) · ¿Irreducible? · De una vez (entre el m.c.d.) | términos 1-100, m.c.d. 2-25 |
+| 1 | `compara` | 50 | 102 | Mayor o menor · Frente a 1 y a un medio · Ordena · En la recta (de 0 a 1, de 0 a 2 y de −1 a 1) | denominadores 2-12; en la recta, 13 marcas como mucho |
+| 2 | `fraccion-de` | 51 | 103 | Calcula (3/5 de 40) · Con contexto · ¿Qué fracción es? · El problema (lo que queda, el total) | depósito de coche 20-90 L, garrafa 5-50 L, botella hasta 3 L, clase 12-36, instituto 200-3000, pizza 3-15 trozos, ahorro hasta 2000 €, bici hasta 50 km, coche hasta 1000 km |
+| 2 | `suma-resta` | 52 | 104 | Mismo denominador · Distinto denominador, paso a paso · Con naturales · ¿Qué queda? · Caza el error | denominadores 2-12, m.c.m. ≤ 60 |
+| 3 | `multiplica-divide` | 53 | 105 | Multiplica (con «Simplifica antes») · La fracción de una fracción (cuadrícula) · La inversa · Divide (por la inversa o en cruz) · Potencias | términos 1-12; tableta y huerto ≤ 24 trozos, bandeja ≤ 20; potencias de base positiva hasta 9² y 5³ |
+| 3 | `combinadas-fracciones` | 54 | 106 | ¿Cuál primero? · Un paso cada vez · Caza el error (orden o cálculo) | 2-3 operaciones, denominadores 2-12, pasos ≤ 72, final con denominador ≤ 36 |
+| 3 | `errores4` | 55 | 107 | ¿Bien o mal? (y el nombre del error) · La línea mala · Arréglalo | denominadores 2-8, todo número ≤ 600 |
+| toda | `leelo4` | 56 | 108 | Emparejar · La lectura · ¿Qué pide? · Dictado | dinero 20-600 €, pizza 4-12 trozos, clase 12-36, denominadores ≤ 12 |
+
+**Publicadas** (a 2026-10-28): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
+26306eb). Sin publicar, con su reabierta en `reparto-practicas-u2/hechos/reabiertas/`:
+`equivalentes` y `compara` (tarea 109: feedback de un paso que no estaba mal; marcas enteras
+nombradas como −6/6), `fraccion-de` y `suma-resta` (tarea 110: distractores y contextos fuera de
+la cota del acta) y las tres de la semana 3 (tarea 111: el ej. 2 de `multiplica-divide` da por
+mala una fracción sin simplificar que el enunciado no prohíbe; en `combinadas-fracciones` y
+`errores4`, distractores y nombres de errores que dicen algo falso del ítem). El estado vivo es
+el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 
@@ -178,9 +276,21 @@ coordinadora decidan dónde van (propuesta en la ENTREGA de la tarea 98):
 
 ## 8. Dónde está lo demás
 
-Por escribir (tarea 111). El reparto con el que se hacen: `reparto-practicas-u2/` (tareas
-98-111; las reglas de la unidad 4 en `proyecto.md` y en cada ficha). El inventario de la unidad
-(solo lectura, fuera del repositorio): `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv`,
-con el acta de su revisión y la secuenciación por sesiones en la misma carpeta. Tests:
-`tests/practicas-fracciones.test.js` (la base de la unidad) y `tests/practicas-registro.test.js`
-(§7 contra `DESTREZAS`).
+- El reparto con el que se hacen: `reparto-practicas-u2/` (tareas 98-114; las reglas de la
+  unidad 4 en `proyecto.md` y en cada ficha, las fichas en `tareas/`, lo entregado en
+  `salidas/NN-<slug>/ENTREGA.md`). El reparto de la unidad en el material del curso
+  (`4. Fractions/reparto-unidad4/`) no toca la app: su `proyecto.md` lo manda aquí.
+- La revisión y publicación de cada semana, con la **propuesta de la tarea de la app** de esa
+  semana (★ y a elegir, 100 puntos, con la ortografía): `salidas/109-publicar-u4-semana1/`,
+  `110-publicar-u4-semana2/` y `111-publicar-u4-semana3/`. Juan Luis las monta en el panel
+  (editor de tareas); la tarea 29 del reparto de la unidad 4 las programa en Classroom.
+- El inventario de la unidad (solo lectura, fuera del repositorio):
+  `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv`, con el acta
+  de su revisión (`inventario-unidad4-revision.md`, decisiones del 26-10) y la secuenciación
+  por sesiones (`secuenciación-unidad4.pdf`) en la misma carpeta.
+- Los generadores de la aplicación principal al día con el inventario (tarea 112):
+  `src/ejercicios/fracciones_equivalentes.js`, `suma_fracciones.js` y
+  `producto_division_fracciones.js`.
+- Tests: `tests/practicas-fracciones.test.js` (la base de la unidad), `tests/practicas-<slug>.test.js`
+  (uno por práctica), `tests/practicas-registro.test.js` (§7 contra `DESTREZAS`) y
+  `tests/fracciones-items.test.js` (los generadores de la aplicación principal).
