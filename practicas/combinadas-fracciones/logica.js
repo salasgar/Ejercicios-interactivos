@@ -16,7 +16,6 @@ import { mcd } from '../_comun/aritmetica.js';
 import {
   MENOS, ErrorFracciones, analizar, evaluar, aTextoExpresion, pasosPosibles, aplicarPaso,
   pasoCanonico, valorLiteral, nodoEn, reemplazar, num, NIVEL, ERRORES_TIPICOS, distractores,
-  deIzquierdaADerecha,
 } from '../_comun/fracciones.js';
 
 export const MAX_TERMINO_PASO = 72;
@@ -27,9 +26,9 @@ const DENS = [2, 3, 4, 5, 6, 8, 9, 10, 12];
 // ─── Piezas de las expresiones ────────────────────────────────────────────────────
 
 /** Un operando como texto: irreducible, casi siempre propia, a veces impropia o un natural pequeño. */
-function operando(rng) {
+function operando(rng, sinUno = false) {
   const r = rng.azar();
-  if (r < 0.1) return String(rng.entero(1, 4));
+  if (r < 0.1) return String(rng.entero(sinUno ? 2 : 1, 4));
   for (;;) {
     const d = rng.elegir(DENS);
     const n = rng.entero(1, r < 0.25 ? 2 * d - 1 : d - 1);
@@ -61,7 +60,10 @@ const LETRAS = 'ABCD';
  */
 function rellenar(forma, rng, negativo) {
   const fichas = forma.split(' ');
-  const textos = LETRAS.split('').map(() => operando(rng));
+  // El natural 1 no va detrás de · o : ni delante de · (1 · x o x : 1 no enseñan nada).
+  const sinUno = LETRAS.split('').map(l => fichas.some((f, i) => f.replace(/[()]/g, '') === l
+    && (fichas[i - 1] === '·' || fichas[i - 1] === ':' || fichas[i + 1] === '·')));
+  const textos = LETRAS.split('').map((_, k) => operando(rng, sinUno[k]));
   return fichas.map((ficha, i) => {
     const m = /^(\(?)([A-D])(\)?)$/.exec(ficha);
     if (!m) return ficha;
@@ -173,7 +175,10 @@ export function clasificarToque(arbol, ruta) {
   const paso = pasosPosibles(arbol).find(p => p.ruta === ruta);
   if (paso) return { valido: true, paso };
   const nodo = nodoEn(arbol, ruta);
-  const cadena = nodo?.tipo === 'op' && nodo.izq.tipo === 'op' && NIVEL[nodo.izq.op] === NIVEL[nodo.op];
+  // «De derecha a izquierda» solo si la operación de la izquierda, del mismo nivel, se podía hacer ya.
+  const rutaIzq = ruta ? `${ruta}.izq` : 'izq';
+  const cadena = nodo?.tipo === 'op' && nodo.izq.tipo === 'op' && NIVEL[nodo.izq.op] === NIVEL[nodo.op]
+    && pasosPosibles(arbol).some(p => p.ruta === rutaIzq);
   return { valido: false, error: cadena ? 'derecha-a-izquierda' : 'jerarquia-olvidada', canonico: pasoCanonico(arbol) };
 }
 
@@ -196,14 +201,15 @@ function candidatosDe(paso) {
   if (op === '+') {
     const c = [['suma-arriba-y-abajo', a, b], ['en-cruz-al-sumar', a, b], ['suma-multiplicando-denominadores', a, b],
       ['suma-solo-cambia-denominador', a, b, '+'], ['signo-del-primero', a, b, '+']];
-    if (natural(a) && !natural(b)) c.push(['natural-al-numerador', a.num, b, '+']);
-    if (natural(b) && !natural(a)) c.push(['natural-al-numerador', b.num, a, '+']);
+    // Con un natural, «sumar al numerador» y «multiplicar denominadores» dan el mismo valor: manda el natural.
+    if (natural(a) && !natural(b)) c.unshift(['natural-al-numerador', a.num, b, '+']);
+    if (natural(b) && !natural(a)) c.unshift(['natural-al-numerador', b.num, a, '+']);
     return c;
   }
   if (op === '-') {
     const c = [['resta-arriba-y-abajo', a, b], ['en-cruz-al-sumar', a, b], ['suma-solo-cambia-denominador', a, b, '-'],
       ['signo-perdido', valor], ['signo-del-primero', a, b, '-']];
-    if (natural(a) && !natural(b)) c.push(['natural-al-numerador', a.num, b, '-']);
+    if (natural(a) && !natural(b) && a.num > 0) c.push(['natural-al-numerador', a.num, b, '-']);
     return c;
   }
   if (op === '*') {
@@ -231,8 +237,9 @@ const utilizable = f => f && Math.abs(f.num) <= 2000 && f.den <= 2000;
 /**
  * Las opciones al preguntar cuánto vale un paso: { correcta, falsas: [{ valor, error }] } con 2 o
  * 3 falsas, todas irreducibles, distintas de la buena y entre sí POR VALOR, y cada una de un error
- * con nombre. En el último paso, la trampa de toda la expresión (ir de izquierda a derecha) va
- * delante. Determinista (semilla sacada del paso).
+ * con nombre. Determinista (semilla sacada del paso). `original` se conserva por compatibilidad:
+ * la trampa de ir de izquierda a derecha ya no se ofrece como opción de un paso (la app hace
+ * respetar el orden al tocar; la trampa vive en los ejercicios 1 y 3).
  */
 export function opcionesDePaso(arbol, paso, original = null) {
   const correcta = paso.valor;
@@ -246,10 +253,6 @@ export function opcionesDePaso(arbol, paso, original = null) {
     vistas.add(claveDe(valor));
     falsas.push({ valor, error: x.error });
   };
-  if (original && esUltimo(arbol, paso)) {
-    const mal = deIzquierdaADerecha(original);
-    if (mal) meter({ valor: mal, error: 'izquierda-a-derecha' });
-  }
   const resto = [...distractores(candidatosDe(paso), correcta), confusionDe(paso)].filter(Boolean);
   const [signo, ...otras] = [resto.find(x => x.error === 'signo-perdido'), ...resto.filter(x => x.error !== 'signo-perdido')];
   rng.barajar(otras).forEach(meter);

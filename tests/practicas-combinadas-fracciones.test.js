@@ -8,9 +8,9 @@ import { crearRng } from '../practicas/_comun/rng.js';
 import { errorValido } from '../practicas/_comun/registro.js';
 import {
   analizar, evaluar, aTextoExpresion, pasosPosibles, aplicarPaso, valorLiteral, hayEquivalentes,
-  ERRORES_TIPICOS, html,
+  ERRORES_TIPICOS, html, MENOS,
 } from '../practicas/_comun/fracciones.js';
-import { TX } from '../practicas/combinadas-fracciones/textos.js';
+import { TX, pistaDe } from '../practicas/combinadas-fracciones/textos.js';
 import {
   generarPrimero, generarPasos, generarError, valida, clasificarToque, opcionesDePaso, opcionesOrdenadas,
   diagnosticar, cuentaOperaciones, esUltimo, MAX_TERMINO_PASO, MAX_DEN_FINAL,
@@ -142,18 +142,48 @@ test('opciones de un paso: la buena y de 2 a 3 falsas distintas POR VALOR, cada 
   }
 });
 
-test('opciones de un paso: en el último paso sale la trampa de ir de izquierda a derecha, y son deterministas', () => {
+test('opciones de un paso: nunca sale la trampa de izquierda a derecha, y son deterministas', () => {
   const arbol = analizar('1/2 + 1/3 · 3/4');
-  const paso1 = pasosPosibles(arbol)[0];
-  const intermedio = aplicarPaso(arbol, paso1);
+  const intermedio = aplicarPaso(arbol, pasosPosibles(arbol)[0]);
   const ultimo = pasosPosibles(intermedio)[0];
   assert.ok(esUltimo(intermedio, ultimo));
-  const o = opcionesDePaso(intermedio, ultimo, arbol);
-  const trampa = o.falsas.find(f => f.error === 'izquierda-a-derecha');
-  assert.ok(trampa, JSON.stringify(o.falsas));
-  assert.ok(trampa.valor.equals(analizar('5/6 · 3/4') && evaluar('5/6 · 3/4')));   // 5/8
-  for (const { texto } of generarN(generarPasos, 200)) {
-    for (const { arbol: a, paso } of recorrer(texto)) assert.deepEqual(opcionesDePaso(a, paso, null), opcionesDePaso(a, paso, null));
+  assert.ok(!opcionesDePaso(intermedio, ultimo, arbol).falsas.some(f => f.error === 'izquierda-a-derecha'));
+  for (const { texto } of generarN(generarPasos, 300)) {
+    for (const { arbol: a, paso } of recorrer(texto)) {
+      assert.deepEqual(opcionesDePaso(a, paso, analizar(texto)), opcionesDePaso(a, paso, null));
+      assert.ok(!opcionesDePaso(a, paso, null).falsas.some(f => f.error === 'izquierda-a-derecha'));
+    }
+  }
+});
+
+test('la pista de signo-perdido en · y : es la regla de los signos; en + y −, la de restar', () => {
+  assert.equal(pistaDe('signo-perdido', `${MENOS}1 : 3/5`), TX.pista['signo-perdido-producto']);
+  assert.equal(pistaDe('signo-perdido', `1/2 · (${MENOS}3/4)`), TX.pista['signo-perdido-producto']);
+  assert.equal(pistaDe('signo-perdido', '1/4 − 2/3'), TX.pista['signo-perdido']);
+  for (const idioma of ['es', 'en']) assert.ok(!/resta|take away|subtract/.test(TX.pista['signo-perdido-producto'][idioma]));
+});
+
+test('con un natural en una suma, el error es el del natural y no el de multiplicar denominadores', () => {
+  const arbol = analizar('2 + 8/15');
+  const paso = pasosPosibles(arbol)[0];
+  const falsas = opcionesDePaso(arbol, paso).falsas;
+  assert.ok(falsas.some(f => f.error === 'natural-al-numerador' && f.valor.equals(evaluar('10/15'))), JSON.stringify(falsas));
+  assert.ok(!falsas.some(f => f.error === 'suma-multiplicando-denominadores' && f.valor.equals(evaluar('10/15'))));
+});
+
+test('una cadena de pasos: derecha-a-izquierda solo si la de la izquierda se podía hacer; si no, jerarquía', () => {
+  assert.equal(clasificarToque(analizar('2/5 + 4 · 3/10 − 3/5'), '').error, 'jerarquia-olvidada');
+  assert.equal(clasificarToque(analizar('2/5 + 4 · 3/10 − 3/5'), 'izq').valido, false);
+  assert.equal(clasificarToque(analizar('1/2 − 1/3 + 1/4'), '').error, 'derecha-a-izquierda');
+});
+
+test('el natural 1 no va detrás de · o : ni delante de ·', () => {
+  for (const { texto } of [...generarN(generarPrimero, 1500), ...generarN(generarPasos, 1500)]) {
+    const f = texto.split(' ');
+    f.forEach((x, i) => {
+      if (!/^\(*[−]?1\)*$/.test(x)) return;
+      assert.ok(!['·', ':'].includes(f[i - 1]) && f[i + 1] !== '·', texto);
+    });
   }
 });
 

@@ -15,7 +15,7 @@ import {
   generarPrimero, generarPasos, generarError, arbolDe, clasificarToque, primerosPasos, rutasPrimeras,
   opcionesDePaso, opcionesOrdenadas,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, pistaDe } from './textos.js';
 
 const cuenta = texto => `<span class="cuenta">${htmlExp(texto)}</span>`;
 const lineaHtml = (arbol, marcar = false) => htmlExp(arbol, { marcarOperadores: marcar });
@@ -29,7 +29,7 @@ function textoToque(dato, { tt }) {
 function textoFallo(primero, textos) {
   if (!primero) return '';
   if (primero.tipo === 'toque') return `${textoToque(primero, textos)} `;
-  const pista = TX.pista[primero.error];
+  const pista = pistaDe(primero.error, primero.operacion);
   return `${textos.tt(TX.mal_resultado)(primero.operacion, primero.bueno)} ${pista ? `${textos.tt(pista)} ` : ''}`;
 }
 
@@ -221,7 +221,7 @@ function montarError(contenedor, item, api) {
         const queFue = item.tipo === 'orden'
           ? tt(TX.ej3.era_orden)(item.operacion, item.canonica)
           : tt(TX.ej3.era_calculo)(item.operacion, htmlFraccion(leerFraccion(item.valorBueno)));
-        const pista = TX.pista[item.error];
+        const pista = pistaDe(item.error, item.operacion);
         return `${cabeza} ${queFue} ${pista ? tt(pista) : ''}`;
       },
       espera: 3000,

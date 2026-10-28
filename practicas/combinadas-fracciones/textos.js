@@ -50,6 +50,7 @@ export const TX = {
     'natural-al-numerador': { es: 'Un número entero no se suma solo al numerador: primero hay que escribirlo como fracción con el mismo denominador.', en: 'A whole number is not added to the numerator only: first write it as a fraction with the same denominator.' },
     'suma-multiplicando-denominadores': { es: 'Para sumar, las dos fracciones tienen que tener el mismo denominador, y ese denominador no se multiplica: se queda.', en: 'To add, both fractions need the same denominator, and that denominator is not multiplied: it stays.' },
     'signo-perdido': { es: 'Mira otra vez el signo del resultado: si lo que se resta es mayor, sale negativo.', en: 'Look at the sign of the result again: if you take away more than you have, it is negative.' },
+    'signo-perdido-producto': { es: 'Mira otra vez el signo del resultado: signos iguales dan positivo, signos distintos dan negativo.', en: 'Look at the sign of the result again: equal signs give a positive, different signs give a negative.' },
     'signo-del-primero': { es: 'El signo del resultado no es el del primer número: es el del número con mayor valor absoluto.', en: 'The sign of the result is not the sign of the first number: it is the sign of the number with the greater absolute value.' },
     'producto-denominador-comun': { es: 'Al multiplicar no hay denominador común: se multiplican los numeradores y se multiplican los denominadores.', en: 'When multiplying there is no common denominator: multiply the numerators and multiply the denominators.' },
     'multiplica-en-cruz': { es: 'Multiplicar en cruz es para dividir. En un producto se multiplica arriba con arriba y abajo con abajo.', en: 'Cross-multiplying is for dividing. In a product you multiply top by top and bottom by bottom.' },
@@ -126,3 +127,7 @@ export const TX = {
     },
   },
 };
+
+/** La pista de un error; para `signo-perdido` en un producto o un cociente es la regla de los signos. */
+export const pistaDe = (error, operacion = '') => (error === 'signo-perdido' && /\s[·:]\s/.test(String(operacion).replace(/<[^>]*>/g, ''))
+  ? TX.pista['signo-perdido-producto'] : TX.pista[error]);
