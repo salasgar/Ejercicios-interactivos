@@ -55,3 +55,57 @@ Sesión `s-20261027T082912-2939c478`, 2026-10-27. Commit: **ca0cd84**.
 ## Cómo comprobarlo en 1 minuto
 `npm run servir` → http://localhost:8080/practicas/dos-signos/ → «Probar sin código» → Ejercicio 3: pon los signos, «Comprobar los signos»,
 escribe el resultado y **pulsa** «Comprobar» con el ratón: responde y desaparece. `node --test tests/practicas-dos-signos.test.js`.
+
+---
+
+## Reabierta de la 115 (solo `variacion`), sesión `s-20261028T135932-e77025db`, 2026-10-28 · commit **ca3888c**
+
+Reabierta: `hechos/reabiertas/115--s-20261026T114336-7477f785.md` (coordinadora de la U4). La 90 se cerró otra vez el 27-10 (commit 2055c00).
+
+### Resultado
+- **`variacion` (90): PUBLICADA** (`disponible: true`). Sale en la portada de la U3, bloque «Semana 4 · Problemas y errores típicos», junto a
+  `errores3` (comprobado con `bloquesPublicados(CATALOGO, 3)`). Con esto **la unidad 3 está publicada entera**.
+
+### Ficheros (git show --stat ca3888c)
+- `practicas/_comun/catalogo.js`: `disponible: true` de `variacion` (solo ese campo).
+- `docs/practicas-unidad3.md`: la línea de «Publicadas» (a 2026-10-28: todas) y las cotas de la fila de `variacion`, que seguían siendo las
+  de antes de la reabierta (−20…40 °C, 3000 a. C.).
+- `practicas/variacion/textos.js`: **errata de texto** (dos frases del ej. 3 en inglés, temperatura): «Since yesterday at noon the temperature
+  ~~went~~ **has gone** up…» y «Today, at the same time, it ~~went~~ **has gone** down…» («since» pide *present perfect*). Solo texto; los tests no
+  lo miran.
+
+`node --test tests/practicas-comun.test.js tests/practicas-variacion.test.js`: 59/59. `npm test`: 1322/1322.
+
+### Qué se ha revisado y cómo
+- **Lo que pedía la reabierta de la 115, punto por punto, con 3000 ítems por ejercicio** (semilla 7, distinta de la del test; script en el scratchpad):
+  - Ej. 1, temperatura (748 ítems): siempre «Ayer a mediodía … y hoy a mediodía …», sin horas de la mañana ni de la tarde; valores −15…40 °C,
+    cambio 1…15 grados (350 suben, 398 bajan: de mediodía a mediodía las dos cosas son creíbles). 0 ítems sin «mediodía»/«noon».
+  - Ej. 3, temperatura (759 ítems): igual; dato y resultado −15…40 °C, cambio ≤ 15. «Durante el día» ya no aparece. Cuentas: 0 mal en 3000.
+  - Ej. 4: en a. C. (854 ítems) la moneda va del 50 al **600 a. C.** como mucho; la vasija, hasta el 2699 a. C.; con eras distintas (1197) la moneda
+    es d. C. Ningún caso de papel (753, 476, 44 a. C. → 2026, 287 → 212 a. C.); `d = a + b − 1` al cruzar, en todos.
+  - Espacio de no separación ante °C, € y m en `valor()`: comprobado (U+00A0 en los tres). Paréntesis anidados del inglés en el ej. 2: quitados.
+- **Regla de oro**: en el ej. 1, 0 ítems de 3000 con más de una frase verdadera (las otras dos son siempre el sentido contrario o un número que no
+  es la variación); en el ej. 5 ningún distractor da el valor bueno (filtrado en la lógica; visto en la muestra). Los ej. 2-4 son de escribir.
+- **Leídos 10 enunciados enteros** de los ej. 1, 3 y 4 en español y en inglés (de ahí sale la errata).
+- **Navegador con clics de ratón** (Chrome headless por CDP, `Input.dispatchMouseEvent`; «Probar sin código»; 375 y 1100 px; es y en): un
+  acierto y un fallo de cada uno de los cinco ejercicios en las cuatro pasadas. El feedback dice qué ha pasado con los números del ítem
+  («−4 − (−13) = 9. The change is positive: it went up 9 degrees»; «Del 991 a. C. al 1 a. C. hay 990 años…: 1040 años»); nada se desborda; sin
+  excepciones (un `ERR_CONNECTION_RESET` del `http.server` de Python al recargar deprisa, la trampa conocida).
+
+### Propuesta de la semana 4, al día
+**La de la 96 (`salidas/96-publicar-semana4/ENTREGA.md`) vale tal cual**: `variacion` mantiene sus cinco ejercicios con la misma numeración, y
+ahora los cinco de la tabla marcados «tras la reabierta» están publicados. Tarea del **lun 7-12** (`desde '2026-12-07'`, `hasta '2026-12-10'`;
+en la práctica del mié 9 al jue 10): ★ `['ortografia', 4]`, `['errores3', 1]`, `['errores3', 2]`, `['variacion', 1]`, `['variacion', 5]`; a
+elegir 5 de `['jerarquia-enteros', 4]`, `['parentesis-enteros', 3]`, `['parentesis-enteros', 4]`, `['parentesis-enteros', 5]`, `['errores3', 3]`,
+`['variacion', 2]`, `['variacion', 3]`, `['variacion', 4]`, `['leelo3', 4]`. **El plan B ya no hace falta.** La de la semana 2 sigue como se dijo el
+27-10 (vale tal cual). Juan Luis las monta en el panel.
+
+### Hallazgo fuera de criterio (no bloquea; decide Juan Luis)
+- **Ej. 5, temperatura por horas**: «La temperatura sube/baja 5 grados cada hora durante 4 horas» (`PRODUCTO.temperatura`: 1-5 °C por hora,
+  2-6 horas, ≤ 20 en total). En 3000 ítems, 50 de los 323 de temperatura van a 5 °C/h y 100 a 4 o 5 °C/h sostenidos durante 3-4 horas (15-20 grados).
+  No es imposible (un frente frío, una mañana de verano en el interior), pero es raro; lo normal son 1-3 °C por hora. Si lo quiere más creíble, el
+  cambio es una línea de `logica.js` (`d: [1, 3]`) y una reabierta MEDIO corta de la 90; no lo he tocado porque esta tarea no corrige código.
+
+### Cómo comprobarlo en 1 minuto
+`npm run servir` → http://localhost:8080/practicas/variacion/?idioma=en → «Try without a code» → Exercise 3 hasta que salga una temperatura:
+«Since yesterday at noon the temperature has gone…». En la portada, la U3 → bloque «Semana 4».

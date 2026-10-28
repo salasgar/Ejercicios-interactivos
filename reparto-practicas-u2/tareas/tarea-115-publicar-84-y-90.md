@@ -124,6 +124,10 @@ sin publicar con su reabierta nueva, y la otra se publica igual.
   `getBoundingClientRect()` del botón visible, no `element.click()`. Tras un acierto la base pasa sola al siguiente ítem: el
   botón «Siguiente» solo sale tras un fallo. El `http.server` de Python 3.9 da `ERR_CONNECTION_RESET` al recargar deprisa: no es
   de la práctica. En zsh, `set -- $var` no parte por espacios: los bucles con varios argumentos, escritos a mano.
+- (de la reabierta de la 115, 28-10) Un guion CDP que resuelve el ítem leyendo el enunciado con expresiones regulares se queda viejo cuando
+  cambian los textos: tras la 90, el ej. 3 dice «ha subido / has gone up» y «¿Qué temperatura hacía ayer?» (sin «antes»). Si el guion
+  calcula mal la respuesta, el «acierto» sale como fallo: antes de sacar conclusiones, mira el enunciado que imprime. Leer los enunciados
+  enteros en inglés sirve también para la gramática («Since … went up» era una errata).
 
 ## Prohibido (propio de esta tarea)
 
