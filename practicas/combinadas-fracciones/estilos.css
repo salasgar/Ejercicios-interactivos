@@ -1,0 +1,37 @@
+/* ¿Qué se hace primero? Con fracciones: lo común está en ../_comun/estilos.css. */
+
+/* Las operaciones que se tocan: el signo con una zona de toque generosa. */
+.frac-op {
+  display: inline-block; min-width: 1.6em; padding: .1em .3em; margin: 0 .05em;
+  border-radius: 8px; background: #fff; border: 2px solid var(--primario);
+  color: var(--primario-oscuro); cursor: pointer; touch-action: manipulation; text-align: center;
+}
+.frac-op--quieto { cursor: default; }
+.frac-op--bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
+.frac-op--mal { background: var(--error-claro); border-color: var(--error); color: var(--error); text-decoration: line-through; }
+.frac-op--falta { background: #fff; border: 2px dashed var(--correcto); color: var(--correcto); }
+.cf-linea--fin .frac-op { all: unset; }
+
+/* La expresión en curso y el historial de líneas ya hechas. */
+.cf-historial { margin-bottom: .6rem; }
+.cf-hist { font-size: 1.05rem; color: var(--texto-suave); margin-bottom: .3rem; }
+.cf-linea { max-width: 100%; }
+.cf-pregunta { margin-top: .8rem; }
+.cf-aviso { min-height: 1.4em; margin: .6rem 0 0; font-size: .95rem; color: var(--error); }
+.cf-cadena { overflow-wrap: anywhere; }
+
+/* Caza el error: las líneas del procedimiento, cada una un botón grande. */
+.cf-lineas { display: grid; gap: .5rem; margin-bottom: .8rem; }
+.cf-fila {
+  display: flex; align-items: center; gap: .6rem; width: 100%; text-align: left;
+  padding: .35rem .6rem; border-radius: 10px; border: 2px solid var(--borde, #cbd5e1);
+  background: #fff; color: inherit; font: inherit; cursor: pointer; touch-action: manipulation;
+}
+.cf-fila--inicial { cursor: default; background: transparent; border-color: transparent; }
+.cf-fila__n { flex: none; min-width: 1.4em; font-weight: 700; color: var(--texto-suave); }
+.cf-fila--elegida { border-color: var(--primario); background: #eff6ff; }
+.cf-fila--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.cf-fila--mal { border-color: var(--error); background: var(--error-claro); }
+.cf-fila--falta { border: 2px dashed var(--correcto); }
+.cf-fila:disabled { cursor: default; opacity: 1; }
+.cf-tipos .eleccion { text-align: left; }
