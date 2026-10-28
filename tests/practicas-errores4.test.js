@@ -266,3 +266,46 @@ test('claveItem distingue los ítems y el catálogo declara 3 ejercicios', () =>
   assert.notEqual(L.claveItem(a), L.claveItem({ ...b, params: [...b.params, 1] }));
   assert.equal(CATALOGO.find(f => f.slug === 'errores4').nEjercicios, 3);
 });
+
+test('ejercicio 1: ningún nombre ofrecido como falso explica el resultado con los números del ítem (fuerza bruta)', () => {
+  let falsas = 0;
+  for (const item of generar(L.generarBienMal, 101)) {
+    if (item.verdadera || L.COMPARACION_POR_ID[item.plantilla]) continue;
+    falsas++;
+    const explican = L.erroresQueExplican(item.plantilla, item.params, val(item.der));
+    for (const id of item.opciones) {
+      if (id !== item.error) assert.ok(!explican.has(id), `${item.izq} = ${item.der}: «${id}» también lo explica`);
+    }
+  }
+  assert.ok(falsas > 1000);
+  // La función de fuerza bruta detecta el caso que falló: 1/3 · 60 = 180 lo explican dos nombres.
+  const e = L.erroresQueExplican('multiplica-por-el-denominador', [1, 3, 60], fraccion(180, 1));
+  assert.ok(e.has('multiplica-por-el-denominador') && e.has('invierte-la-primera'));
+});
+
+test('suma arriba y abajo: la igualdad que se ve (ejercicios 1 y 3) es el error sobre esas fracciones', () => {
+  const ve = [...generar(L.generarBienMal, 5), ...generar(L.generarArregla, 6)].filter(i => i.plantilla === 'suma-arriba-y-abajo' && i.verdadera !== true);
+  assert.ok(ve.length > 100);
+  for (const item of ve) {
+    const [p, q, r, s] = item.params;
+    assert.ok(val(item.der).equals(fraccion(p + r, q + s)), `${item.izq} = ${item.der}`);
+  }
+});
+
+test('comparaciones falsas: nunca «=» mostrado y, en las de numeradores o denominadores, ningún término compartido', () => {
+  for (const item of generar(L.generarBienMal, 31)) {
+    if (!L.COMPARACION_POR_ID[item.plantilla]) continue;
+    if (!item.verdadera) assert.notEqual(item.rel, '=', `${item.izq} ${item.rel} ${item.der}`);
+    if (/^compara-solo/.test(item.plantilla)) {
+      const [p, q, r, s] = item.params;
+      assert.ok(p !== r && q !== s, `${item.izq} ${item.rel} ${item.der}`);
+    }
+  }
+});
+
+test('ejercicio 2: el error de la potencia está en la línea 2 y se ve (el numerador repetido)', () => {
+  for (const item of generar(L.generarLinea, 8).filter(i => i.plantilla === 'eleva-solo-el-numerador')) {
+    assert.equal(item.falsa, 1);
+    assert.match(item.lineas[1], /^\d+( · \d+)+\/\d+$/);
+  }
+});

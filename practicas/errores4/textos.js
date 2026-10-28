@@ -11,7 +11,7 @@ export const TX = {
     arregla: { es: 'Arréglalo', en: 'Fix it' },
   },
   detalle: {
-    bienmal: { es: 'Una igualdad: ¿es verdadera o falsa? Si es falsa, di qué error es', en: 'An equality: is it true or false? If it is false, name the mistake' },
+    bienmal: { es: 'Una igualdad o una comparación: ¿es verdadera o falsa? Si es falsa, di qué error es', en: 'An equality or a comparison: is it true or false? If it is false, name the mistake' },
     linea: { es: 'Un cálculo con un solo paso mal: toca la línea mala', en: 'A calculation with one wrong step: tap the wrong line' },
     arregla: { es: 'Una igualdad falsa: escribe el resultado bien, irreducible', en: 'A false equality: write the right result in lowest terms' },
   },
@@ -33,8 +33,8 @@ export const TX = {
       en: `<p>You will see a student's calculation, with numbered lines. Each line has to be worth the same as the line before. One is not.</p><p><strong>Example:</strong><br>1. ${ex('12/18')}<br>2. = ${ex('6/18')}<br>3. = ${ex('1/3')}</p><p>The mistake is in <strong>line 2</strong>: only the numerator was divided, and the fraction changed. The right way: ${ex('6/9')}.</p><p>Tap the line where the mistake is.</p>`,
     },
     arregla: {
-      es: `<p>Ya sabes cazar errores; ahora toca <strong>arreglarlos</strong>. Verás una igualdad falsa y escribirás el resultado bien.</p><p><strong>Ejemplo:</strong> ${ex('2/3 : 4/5')} = ${ex('8/15')} es falsa (no se ha invertido la segunda fracción). Bien hecho: ${ex('2/3 · 5/4')} = ${ex('10/12')} = ${ex('5/6')}. Escribe 5 arriba y 6 abajo.</p><p>El resultado tiene que ser una fracción irreducible. Si es negativo, pulsa «+/−».</p>`,
-      en: `<p>You can already spot mistakes; now you have to <strong>fix</strong> them. You will see a false equality and you will write the right result.</p><p><strong>Example:</strong> ${ex('2/3 : 4/5')} = ${ex('8/15')} is false (the second fraction was not turned upside down). The right way: ${ex('2/3 · 5/4')} = ${ex('10/12')} = ${ex('5/6')}. Write 5 on top and 6 on the bottom.</p><p>The result has to be a fraction in lowest terms. If it is negative, press «+/−».</p>`,
+      es: `<p>Ya sabes cazar errores; ahora toca <strong>arreglarlos</strong>. Verás una igualdad falsa y escribirás el resultado bien.</p><p><strong>Ejemplo:</strong> ${ex('5/6 : 10/9')} = ${ex('25/27')} es falsa (no se ha invertido la segunda fracción). Bien hecho: ${ex('5/6 · 9/10')} = ${ex('45/60')} = ${ex('3/4')}. Escribe 3 arriba y 4 abajo.</p><p>El resultado tiene que ser una fracción irreducible. Si es negativo, pulsa «+/−».</p>`,
+      en: `<p>You can already spot mistakes; now you have to <strong>fix</strong> them. You will see a false equality and you will write the right result.</p><p><strong>Example:</strong> ${ex('5/6 : 10/9')} = ${ex('25/27')} is false (the second fraction was not turned upside down). The right way: ${ex('5/6 · 9/10')} = ${ex('45/60')} = ${ex('3/4')}. Write 3 on top and 4 on the bottom.</p><p>The result has to be a fraction in lowest terms. If it is negative, press «+/−».</p>`,
     },
   },
   verdadera: { es: 'Verdadera', en: 'True' },
@@ -46,7 +46,7 @@ export const TX = {
   bien_es: { es: 'Bien hecho es:', en: 'The right way is:' },
   es_irreducible: { es: 'Es lo mismo, pero hay que simplificarla hasta la irreducible:', en: 'It is the same value, but it has to be simplified to lowest terms:' },
   tu_resultado: { es: 'Has escrito', en: 'You wrote' },
-  repite: { es: 'Es el resultado del error de la igualdad.', en: 'That is the wrong result of the equality.' },
+  repite: { es: 'Es el mismo resultado equivocado.', en: 'That is the same wrong result as in the equality.' },
   nombre_arriba: { es: 'Numerador', en: 'Numerator' },
   nombre_abajo: { es: 'Denominador', en: 'Denominator' },
   nombre_resultado: { es: 'Resultado', en: 'Result' },

@@ -73,18 +73,26 @@ export const PLANTILLAS = [
   // — Sumas y restas —
   {
     id: 'suma-arriba-y-abajo', error: 'suma-arriba-y-abajo',
-    numeros(rng) { const d = dosDistintas(rng); return d && noEntera(d.a.sumar(d.b).simplificar()) ? [d.a.num, d.a.den, d.b.num, d.b.den] : null; },
+    numeros(rng) {
+      const d = dosDistintas(rng);
+      return d && noEntera(d.a.sumar(d.b).simplificar()) && err('suma-arriba-y-abajo', d.a, d.b) ? [d.a.num, d.a.den, d.b.num, d.b.den] : null;
+    },
     l0: ([p, q, r, s]) => `${p}/${q} + ${r}/${s}`,
     bien: ([p, q, r, s]) => f(p, q).sumar(f(r, s)).simplificar(),
+    // El alumno que ve solo la igualdad (ejercicios 1 y 3) ve el error sobre las fracciones que se ven
+    // (`visible`); en el ejercicio 2, con las tres líneas, el error está en el paso de la línea 2 a la 3.
     mala([p, q, r, s]) {
       const m = mcm(q, s), A = p * (m / q), B = r * (m / s);
-      return { lineas: [`${p}/${q} + ${r}/${s}`, `${A}/${m} + ${B}/${m}`, txt(err('suma-arriba-y-abajo', f(A, m), f(B, m)))], falsa: 2 };
+      return {
+        lineas: [`${p}/${q} + ${r}/${s}`, `${A}/${m} + ${B}/${m}`, txt(err('suma-arriba-y-abajo', f(A, m), f(B, m)))], falsa: 2,
+        visible: txt(err('suma-arriba-y-abajo', f(p, q), f(r, s))),
+      };
     },
     corregida: p => txt(PLANTILLAS[0].bien(p)),
     porque([p, q, r, s]) {
       const m = mcm(q, s), A = p * (m / q), B = r * (m / s);
-      return L(`${ex(`${A}/${m} + ${B}/${m}`)}: con el mismo denominador, el denominador no se suma, se queda en ${m}. Se suman solo los numeradores, ${A} + ${B} = ${A + B}, y sale ${ex(txt(f(A + B, m).simplificar()))}.`,
-        `${ex(`${A}/${m} + ${B}/${m}`)}: with the same denominator, the denominators are not added; the denominator stays ${m}. Only the numerators are added, ${A} + ${B} = ${A + B}, and the result is ${ex(txt(f(A + B, m).simplificar()))}.`);
+      return L(`${ex(`${p}/${q} + ${r}/${s}`)}: no se suma arriba con arriba y abajo con abajo. Se ponen con el mismo denominador, ${ex(`${A}/${m} + ${B}/${m}`)}; el denominador no se suma, se queda en ${m}. Se suman solo los numeradores, ${A} + ${B} = ${A + B}, y sale ${ex(txt(f(A + B, m).simplificar()))}.`,
+        `${ex(`${p}/${q} + ${r}/${s}`)}: you do not add top with top and bottom with bottom. Write them with the same denominator, ${ex(`${A}/${m} + ${B}/${m}`)}; the denominator is not added, it stays ${m}. Only the numerators are added, ${A} + ${B} = ${A + B}, and the result is ${ex(txt(f(A + B, m).simplificar()))}.`);
     },
   },
   {
@@ -123,8 +131,9 @@ export const PLANTILLAS = [
     corregida([p, q, r, s]) { const m = mcm(q, s); return `${p * (m / q)}/${m} + ${r * (m / s)}/${m}`; },
     porque([p, q, r, s]) {
       const m = mcm(q, s), A = p * (m / q), B = r * (m / s);
-      return L(`${ex(`${p}/${q} + ${r}/${s}`)}: los denominadores no se multiplican. Hay que ponerlos iguales, con denominador ${m}: ${ex(`${A}/${m} + ${B}/${m}`)} = ${ex(txt(f(p, q).sumar(f(r, s)).simplificar()))}.`,
-        `${ex(`${p}/${q} + ${r}/${s}`)}: the denominators are not multiplied. They have to be made equal, with denominator ${m}: ${ex(`${A}/${m} + ${B}/${m}`)} = ${ex(txt(f(p, q).sumar(f(r, s)).simplificar()))}.`);
+      const bien = ex(txt(f(p, q).sumar(f(r, s)).simplificar()));
+      return L(`${ex(`${p}/${q} + ${r}/${s}`)}: se han multiplicado los denominadores (${q} · ${s} = ${q * s}), pero los numeradores se han sumado sin ampliarlos. Al cambiar el denominador hay que ampliar también el numerador. Con denominador ${m}: ${ex(`${A}/${m} + ${B}/${m}`)} = ${bien}.`,
+        `${ex(`${p}/${q} + ${r}/${s}`)}: the denominators were multiplied (${q} · ${s} = ${q * s}), but the numerators were added without being multiplied too. When the denominator changes, the numerator has to change as well. With denominator ${m}: ${ex(`${A}/${m} + ${B}/${m}`)} = ${bien}.`);
     },
   },
 
@@ -157,8 +166,8 @@ export const PLANTILLAS = [
     bien: ([p, d, n]) => f(p, d).multiplicar(n).simplificar(),
     mala([p, d, n]) { return { lineas: [`${p}/${d} · ${n}`, `${n} · ${d}`, `${n * d}`], falsa: 1 }; },
     corregida: ([, d, n]) => `${n} : ${d}`,
-    porque: ([, d, n]) => L(`${ex(`1/${d} · ${n}`)}: una parte de ${d} iguales de ${n} es ${n} : ${d} = ${n / d}. Multiplicar por ${d} daría más que el total (${n * d}).`,
-      `${ex(`1/${d} · ${n}`)}: one part out of ${d} equal parts of ${n} is ${n} : ${d} = ${n / d}. Multiplying by ${d} would give more than the whole (${n * d}).`),
+    porque: ([, d, n]) => L(`${ex(`1/${d} · ${n}`)}: una de las ${d} partes iguales de ${n} es ${n} : ${d} = ${n / d}. Multiplicar por ${d} daría más que el total (${n * d}).`,
+      `${ex(`1/${d} · ${n}`)}: one of the ${d} equal parts of ${n} is ${n} : ${d} = ${n / d}. Multiplying by ${d} would give more than the whole (${n * d}).`),
   },
   {
     id: 'fraccion-de-al-reves', error: 'fraccion-de-al-reves', natural: true,
@@ -196,10 +205,10 @@ export const PLANTILLAS = [
     },
     l0: ([p, q, n]) => `(${p}/${q})^${n}`,
     bien: ([p, q, n]) => f(p, q).potencia(n),
-    mala([p, q, n]) { return { lineas: [`(${p}/${q})^${n}`, Array(n).fill(`${p}/${q}`).join(' · '), txt(err('eleva-solo-el-numerador', f(p, q), n))], falsa: 2 }; },
+    mala([p, q, n]) { return { lineas: [`(${p}/${q})^${n}`, `${Array(n).fill(p).join(' · ')}/${q}`, txt(err('eleva-solo-el-numerador', f(p, q), n))], falsa: 1 }; },
     corregida: p => txt(PLANTILLAS.find(t => t.id === 'eleva-solo-el-numerador').bien(p)),
     porque: ([p, q, n]) => L(`${ex(`(${p}/${q})^${n}`)}: el exponente afecta al numerador y al denominador: ${ex(Array(n).fill(`${p}/${q}`).join(' · '))} = ${ex(`${p ** n}/${q ** n}`)}. Elevar solo el numerador da ${ex(`${p ** n}/${q}`)}.`,
-      `${ex(`(${p}/${q})^${n}`)}: the power affects the numerator and the denominator: ${ex(Array(n).fill(`${p}/${q}`).join(' · '))} = ${ex(`${p ** n}/${q ** n}`)}. Raising only the numerator gives ${ex(`${p ** n}/${q}`)}.`),
+      `${ex(`(${p}/${q})^${n}`)}: the exponent applies to the numerator and to the denominator: ${ex(Array(n).fill(`${p}/${q}`).join(' · '))} = ${ex(`${p ** n}/${q ** n}`)}. Raising only the numerator gives ${ex(`${p ** n}/${q}`)}.`),
   },
 ];
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
@@ -259,18 +268,33 @@ function division(id, malo, lineaUno, porque) {
 // ─── Comparaciones (solo ejercicio 1) ──────────────────────────────────────────
 
 export const COMPARACIONES = [
-  { id: 'compara-solo-numeradores', numeros(rng) { return par2(rng, [3, 4, 5, 6, 7, 8], false); } },
-  { id: 'compara-solo-denominadores', numeros(rng) { return par2(rng, [3, 4, 5, 6, 7, 8], false); } },
+  { id: 'compara-solo-numeradores', numeros(rng) { return par2(rng, [3, 4, 5, 6, 7, 8], false, true); } },
+  { id: 'compara-solo-denominadores', numeros(rng) { return par2(rng, [3, 4, 5, 6, 7, 8], false, true); } },
   { id: 'ignora-el-signo', numeros(rng) { return par2(rng, [3, 4, 5, 6, 7], true); } },
-].map(c => ({ ...c, error: c.id, comparacion: true }));
+].map(c => ({
+  ...c, error: c.id, comparacion: true,
+  // Solo pares donde el error se nota: si da la misma relación que la buena, no hay nada que cazar.
+  numeros(rng) {
+    for (let i = 0; i < 60; i++) {
+      const params = c.numeros(rng);
+      if (params && relacionMala(c.id, params) !== null) return params;
+    }
+    return null;
+  },
+}));
 export const COMPARACION_POR_ID = Object.fromEntries(COMPARACIONES.map(c => [c.id, c]));
 const REL = { '-1': '<', '0': '=', '1': '>' };
 const relDe = c => REL[String(c)];
 
-/** Dos fracciones propias [p, q, r, s] (negativas las dos si `neg`) que no valen lo mismo. */
-function par2(rng, dens, neg) {
+/**
+ * Dos fracciones propias [p, q, r, s] (negativas las dos si `neg`) que no valen lo mismo. Con
+ * `distintos`, ni el numerador ni el denominador coinciden: si comparten un término, mirar el otro
+ * basta (U4-1C-17) y «hay que mirar los dos términos» sería falso.
+ */
+function par2(rng, dens, neg, distintos = false) {
   const a = propia(rng, dens), b = propia(rng, dens);
   if (!a || !b || a.equals(b)) return null;
+  if (distintos && (a.num === b.num || a.den === b.den)) return null;
   return neg ? [-a.num, a.den, -b.num, b.den] : [a.num, a.den, b.num, b.den];
 }
 const cmpFr = ([p, q, r, s]) => [f(p, q), f(r, s)];
@@ -293,7 +317,7 @@ export function porqueComparacion(id, params) {
   const enComun = comun ? ex(`${A}/${comun}`) + ' ' + relDe(bien).replace('<', '&lt;').replace('>', '&gt;') + ' ' + ex(`${B}/${comun}`) : '';
   if (id === 'ignora-el-signo') {
     return L(`${T(a)} y ${T(b)} son negativas: ${T(gana)} está más cerca del 0, así que es la mayor. ${enComun ? `Con el mismo denominador: ${enComun}.` : ''}`,
-      `${T(a)} and ${T(b)} are negative: ${T(gana)} is closer to 0, so it is the greater. ${enComun ? `With the same denominator: ${enComun}.` : ''}`);
+      `${T(a)} and ${T(b)} are negative: ${T(gana)} is closer to 0, so it is greater. ${enComun ? `With the same denominator: ${enComun}.` : ''}`);
   }
   return L(`${T(a)} y ${T(b)}: para comparar hay que mirar los dos términos, no solo uno. ${enComun ? `Con el mismo denominador: ${enComun}.` : ''}`,
     `${T(a)} and ${T(b)}: to compare you have to look at both terms, not only one. ${enComun ? `With the same denominator: ${enComun}.` : ''}`);
@@ -310,11 +334,50 @@ function conParams(plantilla, rng) {
 }
 
 /** El último resultado de la línea mala (lo que ve el alumno en la igualdad falsa). */
-const ultima = lineas => lineas.at(-1);
+const ultima = mala => mala.visible ?? mala.lineas.at(-1);
 
-/** Tres nombres de error: el bueno y dos de otros grupos. */
-export function opcionesDeNombre(rng, error) {
-  const posibles = Object.values(GRUPOS).flat().filter(id => GRUPO_DE[id] !== GRUPO_DE[error]);
+/**
+ * Argumentos con los que probar los errores del catálogo sobre un ítem de la plantilla `id`:
+ * cada error se aplica a las fracciones que se ven, en todas las formas razonables.
+ */
+function argumentosDe(id, p) {
+  if (GRUPO_DE[id] === 'suma' || GRUPO_DE[id] === 'signo' || GRUPO_DE[id] === 'division') {
+    const a = f(p[0], p[1]), b = f(p[2], p[3]);
+    return [[a, b], [a, b.opuesta()], [a, b, '-'], [b, a]];
+  }
+  if (GRUPO_DE[id] === 'simplificar') return [[f(p[0], p[1]), p[2]], [f(p[0], p[1]), 2], [f(p[0], p[1]), 3], [f(p[0], p[1])]];
+  if (GRUPO_DE[id] === 'deCantidad') return [[f(p[0], p[1]), p[2]], [p[2], f(p[0], p[1])], [f(p[0], p[1]), f(p[2], 1)]];
+  if (GRUPO_DE[id] === 'potencia') return [[f(p[0], p[1]), p[2]]];
+  return [];
+}
+
+/**
+ * Los errores del catálogo que, aplicados a los números de este ítem, dan el valor mostrado
+ * `mostrado` (una Fraccion). Esos nombres explican el resultado y no pueden ser opción falsa.
+ */
+export function erroresQueExplican(plantilla, params, mostrado) {
+  const explican = new Set();
+  for (const [id, e] of Object.entries(E)) {
+    if (e.devuelve === 'comparacion') continue;
+    const listas = id === 'signo-perdido' ? [[PLANTILLA_POR_ID['signo-perdido'].bien(params)]] : argumentosDe(plantilla, params);
+    for (const args of listas) {
+      let r;
+      try { r = e.fn(...args); } catch { r = null; }
+      if (r === null || r === undefined) continue;
+      const v = typeof r === 'number' ? f(r, 1) : r;
+      if (v.equals && v.equals(mostrado)) explican.add(id);
+    }
+  }
+  return explican;
+}
+
+/**
+ * Tres nombres de error: el bueno y dos de otros grupos. Con `item` ({ plantilla, params, mostrado }),
+ * se descarta todo nombre que explique también el resultado mostrado con esos números.
+ */
+export function opcionesDeNombre(rng, error, item = null) {
+  const explican = item ? erroresQueExplican(item.plantilla, item.params, item.mostrado) : new Set();
+  const posibles = Object.values(GRUPOS).flat().filter(id => GRUPO_DE[id] !== GRUPO_DE[error] && !explican.has(id));
   return rng.barajar([error, ...rng.barajar(posibles).slice(0, 2)]);
 }
 
@@ -342,8 +405,9 @@ export function generarBienMal(rng) {
   const mala = p.mala(params);
   return {
     tipo: 'bien-mal', plantilla: p.id, params, izq: p.l0(params), rel: '=',
-    der: verdadera ? txt(p.bien(params)) : ultima(mala.lineas), verdadera,
-    error: verdadera ? null : p.error, opciones: verdadera ? null : opcionesDeNombre(rng, p.error),
+    der: verdadera ? txt(p.bien(params)) : ultima(mala), verdadera,
+    error: verdadera ? null : p.error,
+    opciones: verdadera ? null : opcionesDeNombre(rng, p.error, { plantilla: p.id, params, mostrado: evaluar(analizar(ultima(mala))) }),
     solucion: verdadera ? 'verdadera' : p.error,
   };
 }
@@ -363,7 +427,7 @@ export function generarArregla(rng) {
   const mala = p.mala(params);
   const bien = p.bien(params);
   return {
-    tipo: 'arregla', plantilla: p.id, params, izq: p.l0(params), der: ultima(mala.lineas),
+    tipo: 'arregla', plantilla: p.id, params, izq: p.l0(params), der: ultima(mala),
     bien: { num: bien.num, den: bien.den }, natural: Boolean(p.natural), error: p.error,
   };
 }
