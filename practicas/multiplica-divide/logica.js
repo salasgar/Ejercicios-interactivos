@@ -26,9 +26,9 @@ export const F = ([n, d]) => fraccion(n, d);
 export const par = f => [f.num, f.den];
 
 /** Fracción irreducible de numerador 1 a `maxNum` y denominador 2 a `maxDen`. */
-function fraccionIrreducible(rng, maxNum = 12, maxDen = 12) {
+function fraccionIrreducible(rng, maxNum = 12, maxDen = 12, minNum = 1) {
   for (;;) {
-    const n = rng.entero(1, maxNum), d = rng.entero(2, maxDen);
+    const n = rng.entero(minNum, maxNum), d = rng.entero(2, maxDen);
     if (mcd(n, d) === 1) return [n, d];
   }
 }
@@ -213,11 +213,11 @@ export function errorDeDivide(item, r) {
 
 // ─── Ejercicio 5: potencias ────────────────────────────────────────────────────
 
-/** `(2/3)²`, `(1/2)³`, `(3/5)²`: base positiva e irreducible, exponente 2 o 3 (término hasta 9, o hasta 5 con el 3). */
+/** `(2/3)²`, `(1/2)³`, `(3/5)²`: base positiva e irreducible, exponente 2 o 3 (término hasta 9, o hasta 5 con el 3); numerador ≥ 2, para que «elevar solo el numerador» y «base por exponente» no den el mismo valor. */
 export function generarPotencia(rng) {
   const exp = rng.azar() < 0.65 ? 2 : 3;
   const tope = exp === 2 ? 9 : 5;
-  const base = fraccionIrreducible(rng, tope, tope);
+  const base = fraccionIrreducible(rng, tope, tope, 2);
   return { tipo: 'potencia', base, exp, valor: par(F(base).potencia(exp)) };
 }
 

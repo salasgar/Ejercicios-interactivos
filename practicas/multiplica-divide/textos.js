@@ -48,7 +48,7 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>«De» entre dos fracciones significa <strong>multiplicar</strong>. La mitad de ${fr([1, 3])} es ${cuenta([1, 2], '·', [1, 3], '=', [1, 6])}.</p>
         <p>En el dibujo: el todo se parte en filas y columnas; la primera fracción pinta unas columnas, y la segunda toma unas filas de esas columnas.</p>
-        <p>Escribe la fracción <strong>de todo</strong> y simplifícala.</p>`,
+        <p>Escribe la fracción <strong>del todo</strong> y simplifícala.</p>`,
       en: `<h2>How it works</h2>
         <p>“Of” between two fractions means <strong>multiply</strong>. Half of ${fr([1, 3])} is ${cuenta([1, 2], '·', [1, 3], '=', [1, 6])}.</p>
         <p>In the drawing: the whole is split into rows and columns; the first fraction colours some columns, and the second takes some rows of those columns.</p>
@@ -56,35 +56,35 @@ export const TX = {
     },
     inversa: {
       es: `<h2>Cómo se hace</h2>
-        <p>La <strong>inversa</strong> de una fracción es la que se obtiene dándole la vuelta: la inversa de ${fr([3, 5])} es ${fr([5, 3])}.</p>
-        <p>Un natural es una fracción con 1 abajo: la inversa de 4 es ${fr([1, 4])}.</p>
+        <p>La <strong>inversa</strong> de una fracción es la que se obtiene dándole la vuelta: la inversa de ${fr([2, 7])} es ${fr([7, 2])}.</p>
+        <p>Un natural es una fracción con 1 abajo: la inversa de 6 es ${fr([1, 6])}.</p>
         <p>La inversa de una negativa también es negativa: la inversa de ${fr(fraccion(-3, 4))} es ${fr(fraccion(-4, 3))}. No la confundas con la <em>opuesta</em>, que cambia el signo.</p>
-        <p>Una fracción por su inversa siempre da 1: ${cuenta([3, 5], '·', [5, 3], '=', 1)}.</p>`,
+        <p>Una fracción por su inversa siempre da 1: ${cuenta([2, 7], '·', [7, 2], '=', 1)}.</p>`,
       en: `<h2>How it works</h2>
-        <p>The <strong>reciprocal</strong> of a fraction is what you get by turning it upside down: the reciprocal of ${fr([3, 5])} is ${fr([5, 3])}.</p>
-        <p>A whole number is a fraction with 1 at the bottom: the reciprocal of 4 is ${fr([1, 4])}.</p>
+        <p>The <strong>reciprocal</strong> of a fraction is what you get by turning it upside down: the reciprocal of ${fr([2, 7])} is ${fr([7, 2])}.</p>
+        <p>A whole number is a fraction with 1 at the bottom: the reciprocal of 6 is ${fr([1, 6])}.</p>
         <p>The reciprocal of a negative fraction is also negative: the reciprocal of ${fr(fraccion(-3, 4))} is ${fr(fraccion(-4, 3))}. Do not mix it up with the <em>opposite</em>, which changes the sign.</p>
-        <p>A fraction times its reciprocal is always 1: ${cuenta([3, 5], '·', [5, 3], '=', 1)}.</p>`,
+        <p>A fraction times its reciprocal is always 1: ${cuenta([2, 7], '·', [7, 2], '=', 1)}.</p>`,
     },
     divide: {
       es: `<h2>Cómo se hace</h2>
         <p>Dividir es multiplicar por la <strong>inversa del segundo</strong>:</p>
-        <p>${cuenta([2, 3], ':', [4, 5], '=', [2, 3], '·', [5, 4], '=', fraccion(10, 12), '=', [5, 6])}</p>
+        <p>${cuenta([3, 4], ':', [5, 6], '=', [3, 4], '·', [6, 5], '=', fraccion(18, 20), '=', [9, 10])}</p>
         <p>Hay otro método, <strong>en cruz</strong>, que da lo mismo: arriba, el primer numerador por el segundo denominador; abajo, el primer denominador por el segundo numerador. Los dos métodos valen: elige el que prefieras.</p>
         <p>Un natural es una fracción con 1 abajo. Y con una fracción negativa, los signos funcionan como en los enteros.</p>`,
       en: `<h2>How it works</h2>
         <p>To divide, multiply by the <strong>reciprocal of the second one</strong>:</p>
-        <p>${cuenta([2, 3], ':', [4, 5], '=', [2, 3], '·', [5, 4], '=', fraccion(10, 12), '=', [5, 6])}</p>
+        <p>${cuenta([3, 4], ':', [5, 6], '=', [3, 4], '·', [6, 5], '=', fraccion(18, 20), '=', [9, 10])}</p>
         <p>There is another method, <strong>cross-multiplying</strong>, that gives the same result: on top, the first numerator times the second denominator; at the bottom, the first denominator times the second numerator. Both methods are good: choose the one you prefer.</p>
         <p>A whole number is a fraction with 1 at the bottom. And with a negative fraction, the signs work as with integers.</p>`,
     },
     potencia: {
       es: `<h2>Cómo se hace</h2>
         <p>El exponente dice cuántas veces se multiplica la base por sí misma. Con una fracción, se elevan <strong>el numerador y el denominador</strong>:</p>
-        <p>${cuenta([2, 3], '·', [2, 3], '=', [4, 9])}, es decir, <span class="cuenta-frac">(${fr([2, 3])})${sup(2)} = ${fr([4, 9])}</span>.</p>`,
+        <p>${cuenta([3, 4], '·', [3, 4], '=', [9, 16])}, es decir, <span class="cuenta-frac">(${fr([3, 4])})${sup(2)} = ${fr([9, 16])}</span>.</p>`,
       en: `<h2>How it works</h2>
         <p>The exponent says how many times the base is multiplied by itself. With a fraction, you raise <strong>the numerator and the denominator</strong>:</p>
-        <p>${cuenta([2, 3], '·', [2, 3], '=', [4, 9])}, that is, <span class="cuenta-frac">(${fr([2, 3])})${sup(2)} = ${fr([4, 9])}</span>.</p>`,
+        <p>${cuenta([3, 4], '·', [3, 4], '=', [9, 16])}, that is, <span class="cuenta-frac">(${fr([3, 4])})${sup(2)} = ${fr([9, 16])}</span>.</p>`,
     },
   },
   enunciado: {
@@ -106,16 +106,16 @@ export const TX = {
 
 const FRASES_PARTE = {
   tableta: {
-    es: item => `Las almendras cubren ${fr(item.c)} de la tableta de chocolate. Te comes ${fr(item.a)} de esa parte. ¿Qué fracción de toda la tableta te comes?`,
-    en: item => `Almonds cover ${fr(item.c)} of the chocolate bar. You eat ${fr(item.a)} of that part. What fraction of the whole bar do you eat?`,
+    es: item => `Las almendras cubren ${fr(item.c)} de la tableta de chocolate. Te comes ${fr(item.a)} de esa parte. ¿Qué fracción de toda la tableta te comes? Escríbela como fracción irreducible.`,
+    en: item => `Almonds cover ${fr(item.c)} of the chocolate bar. You eat ${fr(item.a)} of that part. What fraction of the whole bar do you eat? Write it in its simplest form.`,
   },
   bandeja: {
-    es: item => `Los brownies con nueces ocupan ${fr(item.c)} de la bandeja. Te llevas ${fr(item.a)} de esa parte. ¿Qué fracción de toda la bandeja te llevas?`,
-    en: item => `The brownies with walnuts take up ${fr(item.c)} of the tray. You take ${fr(item.a)} of that part. What fraction of the whole tray do you take?`,
+    es: item => `Los brownies con nueces ocupan ${fr(item.c)} de la bandeja. Te llevas ${fr(item.a)} de esa parte. ¿Qué fracción de toda la bandeja te llevas? Escríbela como fracción irreducible.`,
+    en: item => `The brownies with walnuts take up ${fr(item.c)} of the tray. You take ${fr(item.a)} of that part. What fraction of the whole tray do you take? Write it in its simplest form.`,
   },
   huerto: {
-    es: item => `Las lechugas ocupan ${fr(item.c)} del huerto. Hoy riegas ${fr(item.a)} de esa parte. ¿Qué fracción de todo el huerto riegas?`,
-    en: item => `Lettuces take up ${fr(item.c)} of the garden. Today you water ${fr(item.a)} of that part. What fraction of the whole garden do you water?`,
+    es: item => `Las lechugas ocupan ${fr(item.c)} del huerto. Hoy riegas ${fr(item.a)} de esa parte. ¿Qué fracción de todo el huerto riegas? Escríbela como fracción irreducible.`,
+    en: item => `Lettuces take up ${fr(item.c)} of the garden. Today you water ${fr(item.a)} of that part. What fraction of the whole garden do you water? Write it in its simplest form.`,
   },
 };
 
@@ -158,9 +158,6 @@ const signosDistintos = (item, tt) => ((item.a[0] < 0) !== (item.b[0] < 0)
   ? tt({ es: `Los signos son distintos, así que el resultado es negativo.`, en: `The signs are different, so the result is negative.` })
   : tt({ es: `Los signos son iguales, así que el resultado es positivo.`, en: `The signs are the same, so the result is positive.` }));
 
-const esNeg = f => f[0] < 0;
-const haySigno = item => esNeg(item.a) || esNeg(item.b);
-
 /** Ejercicio 1. */
 export function feedbackMultiplica(item, { tt }, error) {
   const a = F(item.a), b = F(item.b), bruto = a.multiplicar(b), buena = F(item.valor);
@@ -171,12 +168,12 @@ export function feedbackMultiplica(item, { tt }, error) {
     'multiplica-en-cruz': { es: 'Has multiplicado en cruz. Al multiplicar fracciones se hace arriba por arriba y abajo por abajo.', en: 'You multiplied crosswise. To multiply fractions, multiply top by top and bottom by bottom.' },
     'multiplica-sumando-denominadores': { es: 'Los denominadores se multiplican, no se suman.', en: 'The denominators are multiplied, not added.' },
     'suma-en-vez-de-multiplicar': { es: 'Aquí hay que multiplicar, no sumar.', en: 'Here you have to multiply, not add.' },
-    'natural-por-ambos': { es: 'El natural es una fracción con 1 abajo: multiplica solo el numerador y el denominador se queda.', en: 'The whole number is a fraction with 1 at the bottom: it multiplies only the numerator and the denominator stays the same.' },
+    'natural-por-ambos': { es: 'El natural es una fracción con 1 abajo: multiplica solo el numerador y el denominador se queda.', en: 'The whole number is a fraction with 1 at the bottom: multiply only the numerator; the denominator stays the same.' },
     'producto-denominador-comun': { es: 'Los denominadores también se multiplican: no se quedan como están.', en: 'The denominators are also multiplied: they do not stay the same.' },
     'signo-perdido': { es: signosDistintos(item, (o) => o.es), en: signosDistintos(item, (o) => o.en) },
     [ERROR_SIN_SIMPLIFICAR]: { es: 'El valor está bien, pero falta simplificar.', en: 'The value is right, but you have to simplify.' },
   }[error];
-  const frase = aviso ? `${tt(aviso)} ` : (haySigno(item) && error ? `${signosDistintos(item, tt)} ` : '');
+  const frase = aviso ? `${tt(aviso)} ` : '';
   return `${frase}${cuentaBuena}.`;
 }
 
@@ -187,14 +184,15 @@ export function feedbackParte(item, { tt }, error) {
   const cuentaBuena = bruto.mismaForma(buena)
     ? cuenta(a, '·', c, '=', buena)
     : cuenta(a, '·', c, '=', bruto, '=', buena);
+  const huerto = item.contexto === 'huerto';
   const dibujo = tt({
-    es: `En el dibujo: ${trozos} trozos de ${total}.`,
-    en: `In the drawing: ${trozos} pieces out of ${total}.`,
+    es: `En el dibujo: ${trozos} ${trozos === 1 ? (huerto ? 'parcela' : 'trozo') : (huerto ? 'parcelas' : 'trozos')} de ${total}.`,
+    en: `In the drawing: ${trozos} ${huerto ? (trozos === 1 ? 'plot' : 'plots') : (trozos === 1 ? 'piece' : 'pieces')} out of ${total}.`,
   });
   const aviso = {
-    [ERROR_DIVIDE_EN_VEZ_DE_MULTIPLICAR]: { es: 'La fracción «de» otra fracción se multiplica, no se divide.', en: 'A fraction “of” another fraction is multiplied, not divided.' },
+    [ERROR_DIVIDE_EN_VEZ_DE_MULTIPLICAR]: { es: 'La fracción «de» otra fracción se multiplica: arriba por arriba y abajo por abajo.', en: 'A fraction “of” another fraction is multiplied: top by top and bottom by bottom.' },
     'suma-en-vez-de-multiplicar': { es: 'La fracción «de» otra fracción se multiplica, no se suma.', en: 'A fraction “of” another fraction is multiplied, not added.' },
-    'multiplica-en-cruz': { es: 'Se multiplica arriba por arriba y abajo por abajo, no en cruz.', en: 'Multiply top by top and bottom by bottom, not crosswise.' },
+    'multiplica-en-cruz': { es: 'La fracción «de» otra fracción se multiplica: arriba por arriba y abajo por abajo.', en: 'A fraction “of” another fraction is multiplied: top by top and bottom by bottom.' },
     'multiplica-sumando-denominadores': { es: 'Los denominadores se multiplican, no se suman.', en: 'The denominators are multiplied, not added.' },
     [ERROR_SIN_SIMPLIFICAR]: { es: 'El valor está bien, pero falta simplificar.', en: 'The value is right, but you have to simplify.' },
   }[error];

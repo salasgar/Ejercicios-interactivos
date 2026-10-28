@@ -163,6 +163,28 @@ test('ejercicio 2: la frase sale en los dos idiomas con las dos fracciones y sin
   }
 });
 
+test('ejercicio 2: el enunciado pide la irreducible y 2/12 en un valor 1/6 dice «falta simplificar»', () => {
+  const pide = { es: /irreducible/, en: /simplest form/ };
+  for (const item of generarN(generarParte, 5).slice(0, 300)) {
+    for (const idioma of IDIOMAS) assert.match(fraseParte(item, ctx(idioma)), pide[idioma]);
+    const bruto = F(item.a).multiplicar(F(item.c));
+    if (!bruto.esIrreducible()) {
+      assert.equal(errorDeParte(item, bruto), ERROR_SIN_SIMPLIFICAR);
+      for (const idioma of IDIOMAS) assert.match(feedbackParte(item, ctx(idioma), ERROR_SIN_SIMPLIFICAR), /simplif/);
+    }
+  }
+  const item = { tipo: 'parte', contexto: 'bandeja', a: [2, 3], c: [1, 4], filas: 3, columnas: 4, valor: [1, 6] };
+  assert.equal(errorDeParte(item, fraccion(2, 12)), ERROR_SIN_SIMPLIFICAR);
+});
+
+test('ejercicio 2: concordancia con 1 trozo y parcelas en el huerto', () => {
+  const base = { tipo: 'parte', a: [1, 3], c: [1, 5], filas: 3, columnas: 5, valor: [1, 15] };
+  assert.match(feedbackParte({ ...base, contexto: 'tableta' }, ctx('es'), undefined), /1 trozo de 15/);
+  assert.match(feedbackParte({ ...base, contexto: 'tableta' }, ctx('en'), undefined), /1 piece out of 15/);
+  assert.match(feedbackParte({ ...base, contexto: 'huerto' }, ctx('es'), undefined), /1 parcela de 15/);
+  assert.match(feedbackParte({ ...base, contexto: 'huerto', a: [2, 3] }, ctx('en'), undefined), /2 plots out of 15/);
+});
+
 // ─── Ejercicio 3 ───────────────────────────────────────────────────────────────
 
 test('ejercicio 3: la inversa y el producto = 1; naturales y negativas', () => {
@@ -264,19 +286,18 @@ test('ejercicio 5: base positiva e irreducible, exponente 2 o 3, valor = potenci
     exps.add(item.exp);
     assert.ok(item.exp === 2 || item.exp === 3);
     const [n, d] = item.base;
-    assert.ok(n >= 1 && d >= 2 && irreducible(item.base));
+    assert.ok(n >= 2 && d >= 2 && irreducible(item.base));
     assert.ok(n <= (item.exp === 2 ? 9 : 5) && d <= (item.exp === 2 ? 9 : 5));
     assert.deepEqual(item.valor, [n ** item.exp, d ** item.exp]);
     assert.ok(irreducible(item.valor));
     const buena = F(item.valor);
     const ds = distractoresPotencia(item);
-    assert.ok(ds.length >= 1 && ds.length <= 2, 'con base 1/d los dos errores coinciden');
+    assert.equal(ds.length, 2, 'con numerador ≥ 2 los dos errores dan valores distintos');
     assert.ok(!hayEquivalentes([buena, ...ds.map(x => x.valor)]));
     for (const x of ds) {
       assert.ok(!x.valor.equals(buena));
       assert.equal(errorDePotencia(item, x.valor), x.error);
     }
-    if (n > 1) assert.equal(ds.length, 2);
     assert.equal(errorDePotencia(item, buena), null);
   }
   assert.deepEqual([...exps].sort(), [2, 3]);
