@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-26
 Precondición: 105, 106 y 107 LISTAS · 110 LISTA · Disparo: MANUAL (sesión atendida)
-Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 1 h (real, 16 min con tres revisiones en paralelo; tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/111-publicar-u4-semana3/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de `multiplica-divide`, `combinadas-fracciones`, `errores4`), `docs/practicas-unidad4.md` (el resto del documento), `README.md` (la fila de la U4)
 
@@ -112,6 +112,10 @@ otra vez. Cierra además la documentación de la unidad (`docs/practicas-unidad4
 - Publicar puede romper tests de portada que suponen una unidad sin publicar (pasó en la 93): el arreglo es comprobar «sin publicar» sobre una copia del catálogo.
 - La cota de realismo hay que medirla también en los **distractores**, no solo en la respuesta.
 - El servidor del puerto 8080 puede ser de otra sesión: levanta uno propio en otro puerto (`python3 -m http.server 8093`). Chrome headless por CDP con el WebSocket de Node basta (driver en `salidas/89-errores3/capturas/cdp.mjs`).
+- (2026-10-28, s-20261028T182802-3d6fcf1b) **Lo que más se escapa en esta unidad: dos errores con nombre que dan el mismo valor con ciertos números** (fracción de una cantidad al revés e «invertir la primera»; sumar multiplicando denominadores y natural al numerador con un denominador 1; en cruz y dividir en la fracción de una fracción). Al revisar, calcula **todos** los errores del catálogo con los números de cada ítem y mira si un nombre ofrecido como falso, o el feedback que se da, también explica lo que escribió el alumno. Y busca textos de feedback que digan algo falso del ítem (una pista de restar en una división; «los denominadores no se multiplican» cuando multiplicarlos es un denominador común válido).
+- (2026-10-28) La consigna de «fracción irreducible» tiene que estar en el **enunciado del ítem**, no solo en la introducción: si no, la equivalente sin simplificar se da por mala sin aviso.
+- (2026-10-28) Para el navegador, el truco de `salidas/89-errores3/capturas/prueba.mjs` (servir un `practica.js` parcheado que guarda el ítem en `window.__it`) y, para los ejercicios por pasos, importar en la página el `logica.js` de la práctica (`await import('/practicas/<slug>/logica.js')`) y calcular la respuesta buena con sus funciones. El guion de esta tarea, que responde bien y mal cada ejercicio de las tres prácticas de la semana 3 en es/en y a 375/1100 px: `salidas/111-publicar-u4-semana3/capturas/prueba.mjs` (servidor en el 8111; `node prueba.mjs [slug…]`).
+- (2026-10-28) Al reabrir en la última publicación de una unidad no queda quien publique: dilo en la terminada y en el tablón, para que la coordinadora dé de alta otra.
 
 ## Prohibido (propio de esta tarea)
 
