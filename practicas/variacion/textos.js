@@ -106,12 +106,12 @@ export function txt(idioma) {
       enunciado: ({ ctx, subtipo, x, dir, k }) => {
         const c = cant(ctx, k, i18);
         const f = subtipo === 'final' ? {
-          temperatura: L(i18, `Ayer a mediodía la temperatura era de ${valor(ctx, x)}. Hoy, a la misma hora, ha ${sube(i18, dir)} ${c}. ¿Qué temperatura hace ahora?`, `Yesterday at noon the temperature was ${valor(ctx, x)}. Today, at the same time, it went ${sube(i18, dir)} ${c}. What is the temperature now?`),
+          temperatura: L(i18, `Ayer a mediodía la temperatura era de ${valor(ctx, x)}. Hoy, a la misma hora, ha ${sube(i18, dir)} ${c}. ¿Qué temperatura hace ahora?`, `Yesterday at noon the temperature was ${valor(ctx, x)}. Today, at the same time, it has gone ${sube(i18, dir)} ${c}. What is the temperature now?`),
           planta: L(i18, `El ascensor estaba en la planta ${fmt(x)}. ${dir > 0 ? 'Sube' : 'Baja'} ${c}. ¿En qué planta está ahora?`, `The lift was on floor ${fmt(x)}. It goes ${dir > 0 ? 'up' : 'down'} ${c}. Which floor is it on now?`),
           saldo: L(i18, `Mi saldo era de ${valor(ctx, x)}. Después ${subio(i18, dir, ctx)} ${c}. ¿Cuál es mi saldo ahora?`, `My balance (saldo) was ${valor(ctx, x)}. Then I ${subio(i18, dir, ctx)} ${c}. What is my balance now?`),
           buceo: L(i18, `Un buceador estaba a ${valor(ctx, x)}. ${dir > 0 ? 'Sube' : 'Baja'} ${c}. ¿A qué altura está ahora?`, `A diver was at ${valor(ctx, x)}. They go ${dir > 0 ? 'up' : 'down'} ${c}. What height are they at now?`),
         } : {
-          temperatura: L(i18, `Desde ayer a mediodía la temperatura ha ${sube(i18, dir)} ${c} y hoy a mediodía es de ${valor(ctx, x)}. ¿Qué temperatura hacía ayer?`, `Since yesterday at noon the temperature went ${sube(i18, dir)} ${c} and today at noon it is ${valor(ctx, x)}. What was the temperature yesterday?`),
+          temperatura: L(i18, `Desde ayer a mediodía la temperatura ha ${sube(i18, dir)} ${c} y hoy a mediodía es de ${valor(ctx, x)}. ¿Qué temperatura hacía ayer?`, `Since yesterday at noon the temperature has gone ${sube(i18, dir)} ${c} and today at noon it is ${valor(ctx, x)}. What was the temperature yesterday?`),
           planta: L(i18, `El ascensor ${subio(i18, dir, ctx)} ${c} y ahora está en la planta ${fmt(x)}. ¿En qué planta estaba antes?`, `The lift ${subio(i18, dir, ctx)} ${c} and now it is on floor ${fmt(x)}. Which floor was it on before?`),
           saldo: L(i18, `${dir > 0 ? 'Ingresé' : 'Gasté'} ${c} y ahora mi saldo es de ${valor(ctx, x)}. ¿Cuál era antes?`, `I ${subio(i18, dir, ctx)} ${c} and now my balance (saldo) is ${valor(ctx, x)}. What was it before?`),
           buceo: L(i18, `Un buceador ${subio(i18, dir, ctx)} ${c} y ahora está a ${valor(ctx, x)}. ¿A qué altura estaba antes?`, `A diver ${subio(i18, dir, ctx)} ${c} and now is at ${valor(ctx, x)}. What height were they at before?`),

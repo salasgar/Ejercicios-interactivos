@@ -120,12 +120,12 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 3-4 | `jerarquia-enteros` | 40 | 87 | ¿Qué va primero? · Producto o potencia dentro de una suma · Cadenas de · y : (y el par `30 : (−5) · 2` / `30 : (−5 · 2)`) · Combinadas (sesión 13) | final ±100, pasos ±200 y nunca 0 |
 | 3-4 | `parentesis-enteros` | 41 | 88 | Quita el paréntesis · Calcula (operando dentro o quitando) · ¿Al paréntesis o al número? · De dentro afuera (corchetes) · Coloca los paréntesis (ej. 3-5, sesión 13) | todo valor ±200 |
 | 4 | `errores3` | 42 | 89 | ¿Dónde está el error? · ¿Qué error es? (distractores de otro grupo de errores) · ¿Error o no? (parejas válidas) | términos 1-9, todo ≤ 300 |
-| 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura −20…40 °C, plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 3000 a. C.-2026 |
+| 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura de mediodía a mediodía −15…40 °C (cambio ≤ 15), plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 2700 a. C.-2026, ninguna moneda anterior al 600 a. C. |
 | toda | `leelo3` | 44 | 91 | Los enteros · Sumas, restas y productos · Potencias · Palabras y símbolos (cada ejercicio, de una semana) | temperaturas −30…45 °C; parejas de ciudades de un mismo día de invierno |
 
-**Publicadas** (a 2026-10-27): todas salvo `variacion`, reabierta por la tarea 96 y otra vez
-por la 115 (realismo de los ej. 1, 3 y 4; `reparto-practicas-u2/hechos/reabiertas/`).
-`dos-signos` se publicó el 27-10 (tarea 115), tras su reabierta. El estado vivo es el campo
+**Publicadas** (a 2026-10-28): todas. `dos-signos` se publicó el 27-10 (tarea 115), tras su
+reabierta; `variacion`, el 28-10 (reabierta de la 115), tras las reabiertas de la 96 y la 115
+(realismo de los ej. 1-4; `reparto-practicas-u2/hechos/reabiertas/`). El estado vivo es el campo
 `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 3

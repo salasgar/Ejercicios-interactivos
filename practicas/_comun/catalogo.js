@@ -74,7 +74,7 @@ export const CATALOGO = [
   { id: 40, slug: 'jerarquia-enteros', ruta: 'jerarquia-enteros/', unidad: 3, nombre: { es: '¿Qué se hace primero? Con enteros', en: 'What comes first? With integers' }, nEjercicios: 4, disponible: true },
   { id: 41, slug: 'parentesis-enteros', ruta: 'parentesis-enteros/', unidad: 3, nombre: { es: 'Paréntesis y corchetes', en: 'Brackets' }, nEjercicios: 5, disponible: true },
   { id: 42, slug: 'errores3', ruta: 'errores3/', unidad: 3, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
-  { id: 43, slug: 'variacion', ruta: 'variacion/', unidad: 3, nombre: { es: 'Subidas, bajadas y diferencias', en: 'Rises, falls and differences' }, nEjercicios: 5, disponible: false },
+  { id: 43, slug: 'variacion', ruta: 'variacion/', unidad: 3, nombre: { es: 'Subidas, bajadas y diferencias', en: 'Rises, falls and differences' }, nEjercicios: 5, disponible: true },
   { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Ortografía española (2026-10-23): no es de Matemáticas. Un ejercicio ★ en cada tarea
   // semanal desde la U3 (decisión de Juan Luis; el reparto por semanas, en
