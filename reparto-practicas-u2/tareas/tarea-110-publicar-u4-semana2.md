@@ -111,6 +111,14 @@ otra vez. La tarea de esta semana cruza la Navidad (lun 21-12 → jue 7-1): en l
 - Publicar puede romper tests de portada que suponen una unidad sin publicar (pasó en la 93): el arreglo es comprobar «sin publicar» sobre una copia del catálogo.
 - La cota de realismo hay que medirla también en los **distractores**, no solo en la respuesta.
 - El servidor del puerto 8080 puede ser de otra sesión: levanta uno propio en otro puerto (`python3 -m http.server 8093`). Chrome headless por CDP con el WebSocket de Node basta (driver en `salidas/89-errores3/capturas/cdp.mjs`).
+- (s-20261028T175638-13228212, 28-10) **«Dentro de la cota» no es «≤ max»**: cuando la pregunta es el total (hallar el todo desde una parte), los
+  distractores tienen que estar también por encima del **mínimo** del contexto y del propio dato; un filtro `x >= 2 && x <= max` deja pasar
+  «una clase de 3 alumnos». Mídelo con un script que compare cada opción con `[min, max]` del escenario según qué se pregunta.
+- Las cotas del acta del 26-10 (punto j) no son solo rangos: la **botella** tiene una lista de tamaños y la **hora** una lista de
+  denominadores. Léelas en `inventario-unidad4-revision.md` (líneas 52-67), no en la ficha, que las resume.
+- Los casos reservados para el examen están en `RESERVADOS_ANTERIORES` de `4. Fractions/hojas-de-ejercicios/comprobar-semana3.py`
+  (los de las hojas 1 y 2 juntos): cuéntalos en 3000 ítems de cada generador.
+- En zsh, `echo =====` falla («= not found»): es la expansión `=cmd`. Para separar salidas, `echo "-----"`.
 
 ## Prohibido (propio de esta tarea)
 
