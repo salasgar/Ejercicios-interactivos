@@ -46,7 +46,7 @@ export const TX = {
           <p>No hay que calcular: elige la pregunta, en español, que hace el enunciado.</p>`,
         en: `<h3>What does the problem ask?</h3>
           <p><em>Ana has 30 euros and spends ${H(2, 5)} of the money. How much money is left?</em></p>
-          <p><strong>Left</strong> means what remains; <strong>the rest</strong> is what remains of the whole; <strong>shaded</strong> means coloured in; <strong>out of</strong>: 3 out of 5 is ${H(3, 5)}; <strong>of</strong>: ${H(2, 5)} of 30 means ${H(2, 5)} · 30. Here it asks for the money that is <strong>left</strong>, not the money spent.</p>
+          <p><strong>Left</strong> means what remains; <strong>the rest</strong> is what remains of the whole; <strong>shaded</strong> means coloured in; <strong>out of</strong>: 3 out of 5 is ${H(3, 5)}; <strong>of</strong> = de: ${H(2, 5)} of 30 is ${H(2, 5)} de 30. Here it asks for the money that is <strong>left</strong>, not the money spent.</p>
           <p>You do not have to calculate: choose the question, in Spanish, that the problem asks.</p>`,
       },
     },

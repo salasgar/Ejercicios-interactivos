@@ -667,12 +667,15 @@ test('portada: los cuatro bloques de la unidad 4 (tarea 98), con las diez práct
   const diez = CATALOGO.filter(p => p.unidad === 4);
   assert.deepEqual(diez.map(p => p.slug).sort(), u4.flatMap(b => b.slugs).sort());
   for (const p of diez) {
-    assert.equal(p.disponible, false, `${p.slug}: sin publicar hasta su tarea de la semana (109-111)`);
     const d = DESCRIPCION[p.slug];
     assert.ok(d?.es && d?.en, p.slug);
     assert.ok(!/-\d|×|\d\/\d/.test(d.es + d.en), `${p.slug}: el menos es −, el producto ·, y ninguna fracción con barra`);
   }
-  assert.deepEqual(bloquesPublicados(CATALOGO, 4), [], 'sin publicadas, la unidad 4 no enseña ninguna');
+  // Cada una se publica en su tarea de la semana (109-111): la portada enseña justo las publicadas.
+  assert.deepEqual(bloquesPublicados(CATALOGO, 4).flatMap(b => b.practicas.map(p => p.slug)).sort(),
+    CATALOGO.filter(p => p.unidad === 4 && p.disponible).map(p => p.slug).sort());
+  const sinPublicar = CATALOGO.map(p => (p.unidad === 4 ? { ...p, disponible: false } : p));
+  assert.deepEqual(bloquesPublicados(sinPublicar, 4), [], 'sin publicadas, la unidad 4 no enseña ninguna');
   // La unidad 4 es la actual desde el lunes 14-12, y no antes.
   assert.equal(unidadActual('2026-12-13'), 3);
   assert.equal(unidadActual('2026-12-14'), 4);

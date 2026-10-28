@@ -141,7 +141,7 @@ export const CONTEXTOS = [
   },
   {
     id: 'tarta', min: 3, max: 15, frac: [0.1, 0.9],
-    es: (n, k) => `Una tarta está cortada en ${n} trozos iguales. Se han comido ${k}.`,
+    es: (n, k) => `Una tarta está cortada en ${n} trozos iguales. Se ${k === 1 ? 'ha' : 'han'} comido ${k}.`,
     en: (n, k) => `A cake is cut into ${n} equal slices. ${k} ${k === 1 ? 'has' : 'have'} been eaten.`,
     pregunta: { es: '¿Qué fracción de la tarta se ha comido?', en: 'What fraction of the cake has been eaten?' },
   },
@@ -153,7 +153,7 @@ export const CONTEXTOS = [
   },
   {
     id: 'caja', min: 6, max: 24, frac: [0.15, 0.85],
-    es: (n, k) => `Una caja tiene ${n} bombones y ${k} son de chocolate negro.`,
+    es: (n, k) => `Una caja tiene ${n} bombones y ${k} ${k === 1 ? 'es' : 'son'} de chocolate negro.`,
     en: (n, k) => `A box has ${n} chocolates and ${k} ${k === 1 ? 'is' : 'are'} dark (negro).`,
     pregunta: { es: '¿Qué fracción de los bombones es de chocolate negro?', en: 'What fraction of the chocolates is dark?' },
   },
@@ -236,7 +236,7 @@ function candidatosLectura(n, d, idioma) {
   ];
   if (idioma === 'en') {
     // «third fives»: el ordinal en el numerador y el número en el denominador.
-    lista.push({ texto: `${ordinalIngles(n)} ${cardinal(d, 'en')}s`, valor: null, error: 'ordinal-en-el-numerador' });
+    lista.push({ texto: `${ordinalIngles(n)} ${cardinal(d, 'en')}${d === 6 ? 'es' : 's'}`, valor: null, error: 'ordinal-en-el-numerador' });
   }
   for (const dd of [d + 1, d - 1]) {
     if (dd >= 2 && dd <= PARTES_MAX) lista.push({ texto: enPalabras(fraccion(n, dd), idioma), valor: fraccion(n, dd), error: 'otro-denominador' });

@@ -84,16 +84,16 @@ export const CATALOGO = [
   { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 11, disponible: true },
   // Unidad 4, Fractions (PU2, tareas 99-108; filas puestas por la 98 el 2026-10-26, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (109-111).
-  { id: 47, slug: 'que-fraccion', ruta: 'que-fraccion/', unidad: 4, nombre: { es: '¿Qué fracción es?', en: 'What fraction is it?' }, nEjercicios: 4, disponible: false },
+  { id: 47, slug: 'que-fraccion', ruta: 'que-fraccion/', unidad: 4, nombre: { es: '¿Qué fracción es?', en: 'What fraction is it?' }, nEjercicios: 4, disponible: true },
   { id: 48, slug: 'equivalentes', ruta: 'equivalentes/', unidad: 4, nombre: { es: 'Fracciones equivalentes', en: 'Equivalent fractions' }, nEjercicios: 4, disponible: false },
-  { id: 49, slug: 'simplifica', ruta: 'simplifica/', unidad: 4, nombre: { es: 'Simplifica', en: 'Simplify' }, nEjercicios: 3, disponible: false },
+  { id: 49, slug: 'simplifica', ruta: 'simplifica/', unidad: 4, nombre: { es: 'Simplifica', en: 'Simplify' }, nEjercicios: 3, disponible: true },
   { id: 50, slug: 'compara', ruta: 'compara/', unidad: 4, nombre: { es: 'Compara y ordena', en: 'Compare and order' }, nEjercicios: 4, disponible: false },
   { id: 51, slug: 'fraccion-de', ruta: 'fraccion-de/', unidad: 4, nombre: { es: 'La fracción de una cantidad', en: 'A fraction of a quantity' }, nEjercicios: 4, disponible: false },
   { id: 52, slug: 'suma-resta', ruta: 'suma-resta/', unidad: 4, nombre: { es: 'Suma y resta', en: 'Adding and subtracting' }, nEjercicios: 5, disponible: false },
   { id: 53, slug: 'multiplica-divide', ruta: 'multiplica-divide/', unidad: 4, nombre: { es: 'Multiplica y divide', en: 'Multiply and divide' }, nEjercicios: 5, disponible: false },
   { id: 54, slug: 'combinadas-fracciones', ruta: 'combinadas-fracciones/', unidad: 4, nombre: { es: '¿Qué se hace primero? Con fracciones', en: 'What comes first? With fractions' }, nEjercicios: 3, disponible: false },
   { id: 55, slug: 'errores4', ruta: 'errores4/', unidad: 4, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
-  { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
+  { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];

@@ -50,12 +50,12 @@ export const TX = {
     abajo: { es: 'Denominador (abajo)', en: 'Denominator (bottom)' },
     nombreFigura: { es: 'Figura con partes sombreadas', en: 'Figure with shaded parts' },
     correcto: {
-      es: item => `Correcto: ${item.figuras > 1 ? `cada figura tiene ${item.den} partes y hay ${item.num} sombreadas` : `hay ${item.den} partes y ${item.num} sombreadas`}: ${h(item.num, item.den)}.`,
-      en: item => `Correct: ${item.figuras > 1 ? `each figure has ${item.den} parts and ${item.num} are shaded` : `there are ${item.den} parts and ${item.num} are shaded`}: ${h(item.num, item.den)}.`,
+      es: item => `Correcto: ${item.figuras > 1 ? `cada figura tiene ${item.den} partes y hay ${item.num} ${item.num === 1 ? 'sombreada' : 'sombreadas'}` : `hay ${item.den} partes y ${item.num} ${item.num === 1 ? 'sombreada' : 'sombreadas'}`}: ${h(item.num, item.den)}.`,
+      en: item => `Correct: ${item.figuras > 1 ? `each figure has ${item.den} parts and ${item.num} ${item.num === 1 ? 'is' : 'are'} shaded` : `there are ${item.den} parts and ${item.num} ${item.num === 1 ? 'is' : 'are'} shaded`}: ${h(item.num, item.den)}.`,
     },
     solucion: {
-      es: item => `${item.figuras > 1 ? `Cada figura tiene ${item.den} partes iguales y hay ${item.num} sombreadas en total` : `La figura tiene ${item.den} partes iguales y hay ${item.num} sombreadas`}: abajo ${item.den}, arriba ${item.num}, es ${h(item.num, item.den)}.`,
-      en: item => `${item.figuras > 1 ? `Each figure has ${item.den} equal parts and ${item.num} are shaded in all` : `The figure has ${item.den} equal parts and ${item.num} are shaded`}: ${item.den} at the bottom, ${item.num} on top, so it is ${h(item.num, item.den)}.`,
+      es: item => `${item.figuras > 1 ? `Cada figura tiene ${item.den} partes iguales y hay ${item.num} ${item.num === 1 ? 'sombreada' : 'sombreadas'} en total` : `La figura tiene ${item.den} partes iguales y hay ${item.num} ${item.num === 1 ? 'sombreada' : 'sombreadas'}`}: abajo ${item.den}, arriba ${item.num}, es ${h(item.num, item.den)}.`,
+      en: item => `${item.figuras > 1 ? `Each figure has ${item.den} equal parts and ${item.num} ${item.num === 1 ? 'is' : 'are'} shaded in all` : `The figure has ${item.den} equal parts and ${item.num} ${item.num === 1 ? 'is' : 'are'} shaded`}: ${item.den} at the bottom, ${item.num} on top, so it is ${h(item.num, item.den)}.`,
     },
     por_que: {
       'simplificada-sin-pedirlo': {
@@ -75,8 +75,8 @@ export const TX = {
         en: item => `You counted the parts of both figures (${item.den * item.figuras}); the bottom number is for one figure, ${item.den}. `,
       },
       'otra-fraccion': {
-        es: item => `Vuelve a contar: ${item.den} partes en cada figura y ${item.num} sombreadas. `,
-        en: item => `Count again: ${item.den} parts in each figure and ${item.num} shaded. `,
+        es: item => `Vuelve a contar: ${item.den} partes${item.figuras > 1 ? ' en cada figura' : ''} y ${item.num} ${item.num === 1 ? 'sombreada' : 'sombreadas'}. `,
+        en: item => `Count again: ${item.den} parts${item.figuras > 1 ? ' in each figure' : ''} and ${item.num} shaded. `,
       },
     },
   },
@@ -141,12 +141,12 @@ export const TX = {
         <p>La fracción de un grupo se escribe con <strong>los que cumplen</strong> arriba y <strong>el total del grupo</strong> abajo.</p>
         <p>Ejemplo: en una clase de 25 alumnos, 9 tienen un perro: ${h(9, 25)}. No es ${h(9, 16)} (eso compara con los que no tienen):
         abajo van <em>todos</em> los alumnos.</p>
-        <p>Esta semana no se simplifica: deja la fracción tal como sale de contar.</p>`,
+        <p>Aquí no se simplifica: deja la fracción tal como sale de contar.</p>`,
       en: `<h2>How it works</h2>
         <p>The fraction of a group has <strong>those who do</strong> on top and <strong>the whole group</strong> at the bottom.</p>
         <p>Example: in a class of 25 students, 9 have a dog: ${h(9, 25)}. It is not ${h(9, 16)} (that compares with those who do not):
         the bottom number is <em>all</em> the students.</p>
-        <p>This week we do not simplify: leave the fraction as it comes out of counting.</p>`,
+        <p>Here we do not simplify: leave the fraction as it comes out of counting.</p>`,
     },
     escribe: { es: 'Escribe la fracción sin simplificar.', en: 'Write the fraction without simplifying.' },
     elige: { es: 'Elige la fracción.', en: 'Choose the fraction.' },
