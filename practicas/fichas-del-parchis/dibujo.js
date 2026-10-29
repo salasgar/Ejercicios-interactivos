@@ -11,6 +11,8 @@ const blanca = p => p > 7;
 
 /** «verde (green)» o «green (verde)»: un color, en los dos idiomas, para decir «de color …». */
 export function colorTxt(p, idioma) {
+  // Las notas de feedback se arman todas a la vez; en los errores sin color llega `undefined`.
+  if (!(p in EN) && !blanca(p)) return '';
   if (blanca(p)) return idioma === 'en' ? 'white (blanco)' : 'blanco (white)';
   return idioma === 'en' ? `${EN[p]} (${ES[p][2]})` : `${ES[p][2]} (${EN[p]})`;
 }

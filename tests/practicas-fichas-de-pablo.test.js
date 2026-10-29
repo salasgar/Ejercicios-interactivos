@@ -435,6 +435,15 @@ test('textos: ningún texto de alumno con ×, con «factor» entre números ni c
     todos(TX.mcm.instruccion, [it.a, it.b]); todos(TX.mcm.buena, [it.a, it.b]);
     for (const e of ['solo-comunes', 'junta-todo', 'menor-exponente', 'falta-color', 'fichas-mal']) todos(TX.mcm.nota, [e, it.a, it.b, colores(it.a)[0]]);
   }
+  // La práctica llama a las notas sin color en los errores que no lo traen: no pueden lanzar
+  // (el 29-10-2026 dejaban parado al alumno en los ejercicios 3 y 8).
+  const sinColor = (obj, args) => { for (const idioma of ['es', 'en']) assert.doesNotThrow(() => obj[idioma](...args), `${args[0]} sin color`); };
+  for (const { m } of con) for (const e of ['potencia-como-producto', 'faltan-fichas', 'sobran-fichas', 'monton-equivocado']) sinColor(TX.construye.nota, [e, m, undefined]);
+  for (const it of pr) if (it.tipo !== 'anadir') for (const e of ['monton-mayor', 'solo-comunes', 'suma-en-vez-de-producto', 'fichas-mal']) sinColor(TX.producto.nota, [e, it.a, it.b, undefined]);
+  for (const it of qu) for (const e of ['se-atasca-sin-motivo', 'quita-de-mas', 'quita-de-menos', 'divide-lo-indivisible', 'color-equivocado']) sinColor(TX.quita.nota, [e, it.a, it.d, undefined]);
+  for (const it of re) for (const e of ['mayor-es-divisible', 'mira-solo-un-color', 'ninguna-ficha-de-ese-color', 'cree-que-no-se-puede']) sinColor(TX.regla.nota, [e, it.a, it.d, undefined]);
+  for (const it of m7) for (const e of ['incluye-no-comunes', 'coge-el-mayor', 'olvida-pareja', 'mcd-cero', 'parejas-mal']) sinColor(TX.mcd.nota, [e, it.a, it.b, undefined]);
+  for (const it of m8) for (const e of ['solo-comunes', 'junta-todo', 'menor-exponente', 'falta-color', 'fichas-mal']) sinColor(TX.mcm.nota, [e, it.a, it.b, undefined]);
   assert.ok(textos.length > 2000);
   for (const t of textos) {
     assert.ok(!t.includes('×'), `× en: ${t}`);

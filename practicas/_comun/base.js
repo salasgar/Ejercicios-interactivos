@@ -759,7 +759,10 @@ export function arrancar(practica) {
         // `html` puede ser una función de los textos de un idioma: entonces el
         // feedback se puede traducir (botón «See in English» / «Ver en español»).
         actual.feedback = typeof html === 'function' ? html : null;
-        const texto = actual.feedback ? actual.feedback(textosDe(idi)) : html;
+        // Un texto de feedback que falle no puede dejar al alumno parado sin corrección ni botón.
+        let texto = '';
+        try { texto = actual.feedback ? actual.feedback(textosDe(idi)) : html; }
+        catch (e) { console.error(e); actual.feedback = null; }
         registrar(Boolean(acierto), Math.max(0, Math.floor(pistas) || 0));
         mostrarFeedback(Boolean(acierto), texto, espera);
         if (!acierto) anotarFallo({ html: texto, error, respuesta });
