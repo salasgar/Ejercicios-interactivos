@@ -68,3 +68,4 @@ El repo es público y GitHub Pages sirve la rama main entera. Ningún archivo ve
 identificadores ni correos de alumnos reales: se usan **inventados**. Lo que lleve nombres
 vive en «Curso 2026-2027/» de los apuntes, fuera de git. El 2026-10-29 hubo que quitar
 de `tests/corrector.test.js` cinco nombres reales que llevaban un mes publicados.
+Lo comprueba `tests/sin-nombres-de-alumnos.test.js` con la lista de la carpeta de datos; se salta si la carpeta no está.
