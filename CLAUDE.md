@@ -60,3 +60,11 @@ La app, los cuestionarios tipo test semanales y las hojas de ejercicios de cada 
 se coordinan por un inventario único de destrezas con identificadores. Está explicado en
 [docs/coordinacion-unidad1.md](docs/coordinacion-unidad1.md); léelo antes de añadir o
 cambiar generadores de la unidad 1.
+
+## Nombres de alumnos: nunca en el repo
+
+El repo es público y GitHub Pages sirve la rama main entera. Ningún archivo versionado
+(tests, ejemplos, comentarios, notas de reparto, capturas) lleva nombres, apellidos,
+identificadores ni correos de alumnos reales: se usan **inventados**. Lo que lleve nombres
+vive en «Curso 2026-2027/» de los apuntes, fuera de git. El 2026-10-29 hubo que quitar
+de `tests/corrector.test.js` cinco nombres reales que llevaban un mes publicados.
