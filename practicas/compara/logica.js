@@ -140,10 +140,13 @@ export function fallosCajas(item, puestas) {
   return item.fracs.flatMap((f, i) => (puestas[i] === cajaDe(f) ? [] : [{ i, puesto: puestas[i], correcta: cajaDe(f) }]));
 }
 
-/** 'compara-solo-numeradores' si alguna fracción mal puesta engaña por el numerador (4/9 «es mayor que 1/2 porque 4 > 1»); si no, 'caja-mal'. */
+/**
+ * 'compara-solo-numeradores' si alguna fracción mal puesta engaña por el numerador (4/9 «es mayor que 1/2 porque 4 > 1»);
+ * si no, 'caja-mal'. Con numerador 1 (1/d) el numerador no engaña: es el mismo que el de 1/2.
+ */
 export function errorCajas(item, fallos) {
   const mitad = fraccion(1, 2);
-  const engana = fallos.some(({ i, correcta }) => correcta === 'menor' && compararSoloNumeradores(aFr(item.fracs[i]), mitad) !== null);
+  const engana = fallos.some(({ i, correcta }) => correcta === 'menor' && compararSoloNumeradores(aFr(item.fracs[i]), mitad) === 1);
   return engana ? 'compara-solo-numeradores' : 'caja-mal';
 }
 
@@ -259,6 +262,9 @@ export function errorRecta(item, toque) {
   return 'marca-mal';
 }
 
+/** Una marca de la recta tal como se ve en ella: el entero si lo es («−1», «1», «0») y, si no, la fracción. */
+const marcaTocada = t => (t.num % t.den === 0 ? String(t.num / t.den).replace('-', '−') : H(t));
+
 /** Feedback del ejercicio 4: cuántos huecos desde el 0 (y el error cometido). */
 export function explicarRecta(item, toque, idioma) {
   const f = fraccionRecta(item);
@@ -266,7 +272,7 @@ export function explicarRecta(item, toque, idioma) {
   const bien = x.bien[idioma](H(f), item.den, abs(item.num), item.num < 0);
   const error = toque ? errorRecta(item, toque) : null;
   if (!error) return bien;
-  const arg = error === 'marca-mal' ? H(toque) : H(f);
+  const arg = error === 'marca-mal' ? marcaTocada(toque) : H(f);
   return `${x.errores[error][idioma](arg)} ${bien}`;
 }
 

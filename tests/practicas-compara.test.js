@@ -226,3 +226,44 @@ test('textos: todo texto propio existe en español y en inglés', () => {
   };
   revisa(TX, 'TX');
 });
+
+// --- Reabierta del 28-10 ------------------------------------------------------------
+
+test('cajas: una 1/d mal puesta no dice que el numerador engaña (es el mismo que el de 1/2); 4/9 y similares sí', () => {
+  let unos = 0, otros = 0;
+  for (const item of generarN(generarCajas, 77)) {
+    item.fracs.forEach((fr, i) => {
+      if (cajaDe(fr) !== 'menor') return;
+      const fallos = [{ i, puesto: 'medio', correcta: 'menor' }];
+      if (fr.num === 1) { unos++; assert.equal(errorCajas(item, fallos), 'caja-mal', `${fr.num}/${fr.den}`); }
+      else { otros++; assert.equal(errorCajas(item, fallos), 'compara-solo-numeradores', `${fr.num}/${fr.den}`); }
+    });
+  }
+  assert.ok(unos > 100 && otros > 100, `${unos} / ${otros}`);
+  for (const idioma of ['es', 'en']) {
+    const item = { fracs: [{ num: 1, den: 7 }, { num: 3, den: 4 }, { num: 5, den: 3 }, { num: 2, den: 9 }, { num: 3, den: 7 }, { num: 4, den: 3 }] };
+    assert.ok(!/numera/i.test(sinEtiquetas(explicarCajas(item, [{ i: 0, puesto: 'medio', correcta: 'menor' }], idioma))), idioma);
+  }
+});
+
+test('recta: una marca entera tocada se nombra como entero («−1», «1», «0»), no como −6/6', () => {
+  let casos = 0;
+  for (const item of generarN(generarRecta, 78)) {
+    for (let m = item.min; m <= item.max; m++) {
+      const toque = fraccion(m * item.den, item.den);
+      if (errorRecta(item, toque) !== 'marca-mal') continue;
+      casos++;
+      for (const idioma of ['es', 'en']) {
+        const t = sinEtiquetas(explicarRecta(item, toque, idioma)).replace(/\s+/g, ' ');
+        const nombre = String(m).replace('-', '−');
+        assert.ok(t.startsWith(`Has tocado ${nombre},`) || t.startsWith(`You tapped ${nombre},`), t);
+      }
+    }
+  }
+  assert.ok(casos > 500, `casos: ${casos}`);
+});
+
+test('textos: «½» y «1 and a half» no aparecen en los textos de alumno', () => {
+  const todo = JSON.stringify(TX) + [explicarCajas({ fracs: [{ num: 4, den: 9 }, { num: 1, den: 3 }, { num: 5, den: 8 }, { num: 7, den: 5 }, { num: 8, den: 7 }, { num: 3, den: 7 }] }, [{ i: 0, puesto: 'medio', correcta: 'menor' }], 'es')].join('');
+  assert.ok(!todo.includes('½') && !/1 and a half/.test(todo));
+});

@@ -56,7 +56,7 @@ export const TX = {
     },
   },
   cajas: {
-    nombre: { es: 'Frente a 1 y a un medio', en: 'Against 1 and a half' },
+    nombre: { es: 'Frente a 1 y a un medio', en: 'Compared with 1 and with a half' },
     detalle: { es: 'Coloca cada fracción en su caja', en: 'Put each fraction in its box' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
@@ -95,8 +95,8 @@ export const TX = {
       },
     },
     solo_num: {
-      es: 'Ojo: tener el numerador mayor que el de ½ no basta; hay que doblar el numerador y mirar el denominador.',
-      en: 'Careful: having a numerator bigger than the numerator of ½ is not enough; double the numerator and look at the denominator.',
+      es: `Ojo: tener el numerador mayor que el de ${f(1, 2)} no basta; hay que doblar el numerador y mirar el denominador.`,
+      en: `Careful: having a numerator bigger than the numerator of ${f(1, 2)} is not enough; double the numerator and look at the denominator.`,
     },
     bien: { es: 'Todas están en su caja.', en: 'They are all in the right box.' },
   },
