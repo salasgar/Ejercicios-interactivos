@@ -16,10 +16,10 @@ import json
 import sys
 from pathlib import Path
 
-APUNTES = Path(
-    "/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/"
-    "1º ESO/apuntes-1eso-bilingue"
-)
+_CFG = Path.home() / ".config" / "docencia" / "rutas.json"
+if not _CFG.exists():
+    sys.exit("Falta ~/.config/docencia/rutas.json: créalo con las claves apuntes, datos_curso y app (ver comun/rutas.py en los apuntes)")
+APUNTES = Path(json.loads(_CFG.read_text(encoding="utf-8"))["apuntes"]).expanduser()
 EXAMENES = APUNTES / "1. Natural numbers, powers and roots/exámenes-semanales"
 
 

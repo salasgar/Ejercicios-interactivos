@@ -7,6 +7,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 // index.js primero: los generadores importan de él y el ciclo solo se resuelve así.
 import { TIPOS, crearRng } from '../src/ejercicios/index.js';
 import { errores as erroresEq, SUBTIPOS as subEq } from '../src/ejercicios/fracciones_equivalentes.js';
@@ -17,7 +19,13 @@ const TIPOS_FRACCIONES = ['fracciones_equivalentes', 'suma_fracciones', 'product
 const ERRORES = { fracciones_equivalentes: erroresEq, suma_fracciones: erroresSuma, producto_division_fracciones: erroresProd };
 const ID_U4 = /^U4-[1-3][ABC]-\d{2}$/;
 const SEMILLAS = 3000;
-const INVENTARIO = '/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/4. Fractions/inventario-unidad4.tsv';
+const INVENTARIO = (() => {
+  // Ruta de los apuntes según ~/.config/docencia/rutas.json; sin él, el test se salta.
+  try {
+    const cfg = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.config', 'docencia', 'rutas.json'), 'utf8'));
+    return path.join(cfg.apuntes, '4. Fractions', 'inventario-unidad4.tsv');
+  } catch (e) { return null; }
+})();
 // La única excepción a «ningún distractor equivale a la correcta» (inventario, U4-1C-13 y U4-1C-14):
 // una equivalente a medio simplificar, en un enunciado que pide la irreducible.
 const EXCEPCION = 'simplificar_a_medias';
@@ -106,7 +114,7 @@ for (const id of TIPOS_FRACCIONES) {
     assert.deepEqual(tipo.items, [...new Set(tipo.subtipos.flatMap(s => s.items))].sort());
   });
 
-  test(`${id}: todos los ids existen en el inventario de la unidad 4 (si está el fichero)`, { skip: !fs.existsSync(INVENTARIO) && 'sin el inventario (carpeta de iCloud)' }, () => {
+  test(`${id}: todos los ids existen en el inventario de la unidad 4 (si está el fichero)`, { skip: !(INVENTARIO && fs.existsSync(INVENTARIO)) && 'sin el inventario (carpeta de iCloud)' }, () => {
     const filas = fs.readFileSync(INVENTARIO, 'utf8').normalize('NFC').split('\n').slice(1);
     const existentes = new Set(filas.map(f => f.split('\t')[0]).filter(Boolean));
     for (const it of tipo.items) assert.ok(existentes.has(it), `${it} no está en el inventario`);
