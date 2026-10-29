@@ -28,3 +28,10 @@ Denominadores de 2 a 12 (ej. 3: hasta 36 antes de simplificar, común denominado
 
 ## Propuestas
 - En el ej. 1 aparece alguna vez 2/2 (= 1) o una impropia: es válido, pero si Juan Luis prefiere solo propias se cambia el rango en `generarComparar`.
+
+## Reabierta del 28-10 (sesión `s-20261028T223951-1b094c4a`, commit c2573cf)
+Cerrada punto por punto contra `hechos/reabiertas/102--s-20261028T135932-e77025db-revision.md`:
+1. Ej. 2: `errorCajas` usa `=== 1` (el numerador solo engaña cuando la comparación solo por numeradores diría «mayor»); una 1/d mal puesta da `caja-mal` con su razón y sin «Ojo: …numerador…». Test con todas las 1/d y las demás «menor» de 3000 ítems.
+2. Ej. 4: una marca entera tocada se nombra como entero («Has tocado −1», «1», «0»), no «−6/6». Test en 3000 ítems, ES y EN.
+3. Erratas: «Compared with 1 and with a half» (antes «Against 1 and a half»); el «½» de `solo_num` es ahora la fracción con raya; test de que no quedan.
+Probado en navegador con clics: ej. 4 (tocar el 1, «You tapped 1, which is not…») y ej. 2 (1/6 mal puesta: solo «1/6 is less than 1/2»). Sin probar a 375 px.
