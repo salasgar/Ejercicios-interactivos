@@ -238,7 +238,7 @@ function montarComun(contenedor, item, api) {
         acierto: error === null,
         error: error ?? undefined,
         respuesta: `${item.mcm}; ${n1}, ${n2}`,
-        html: ({ tt }) => (error === null ? tt(TX.ej4.correcto)(item) : tt(TX.ej4.por_que[error])(item) + tt(TX.ej4.solucion2)(item)),
+        html: ({ tt }) => (error === null ? tt(TX.ej4.correcto)(item) : tt(TX.ej4.por_que[error])(item, { n1, n2 }) + tt(TX.ej4.solucion2)(item)),
         espera: 3200,
       });
     }

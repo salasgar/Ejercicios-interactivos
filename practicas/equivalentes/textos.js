@@ -9,6 +9,10 @@ import { htmlFraccion } from '../_comun/fracciones.js';
 
 const h = (num, den) => htmlFraccion({ num, den }, { compacta: true });
 const hf = f => h(f.num, f.den);
+/** Fracciones del ítem 4 cuyo denominador cambia al pasar al m.c.m. [fracción, equivalente]. */
+const cambian = item => [[item.a, item.ea], [item.b, item.eb]].filter(([x]) => x.den !== item.mcm);
+/** Fracciones cuyo numerador escrito no es el bueno: [fracción, equivalente, lo escrito]. */
+const malos = (item, { n1, n2 }) => [[item.a, item.ea, n1], [item.b, item.eb, n2]].filter(([, e, n]) => n !== e.num);
 /** Una cuenta corta que no se parte. */
 const c = t => `<span class="cuenta">${t}</span>`;
 
@@ -59,8 +63,14 @@ export const TX = {
     },
     por_que: {
       'suma-la-diferencia': {
-        es: (item, v) => `Has ${item.direccion === 'ampliar' ? 'sumado' : 'restado'} la misma cantidad a los dos términos (${v}), pero lo que hay que hacer es ${item.direccion === 'ampliar' ? 'multiplicar' : 'dividir'}: así cambia el aspecto sin cambiar el valor. `,
-        en: (item, v) => `You ${item.direccion === 'ampliar' ? 'added' : 'subtracted'} the same amount to both terms (${v}), but you must ${item.direccion === 'ampliar' ? 'multiply' : 'divide'}: that changes the look without changing the value. `,
+        es: (item, v) => {
+          const base = item.izq[item.hueco], cantidad = Math.abs(v - base), suma = item.direccion === 'ampliar';
+          return `Has ${suma ? 'sumado' : 'restado'} la misma cantidad a los dos términos (${c(`${base} ${suma ? '+' : '−'} ${cantidad} = ${v}`)}), pero lo que hay que hacer es ${suma ? 'multiplicar' : 'dividir'}: así cambia el aspecto sin cambiar el valor. `;
+        },
+        en: (item, v) => {
+          const base = item.izq[item.hueco], cantidad = Math.abs(v - base), suma = item.direccion === 'ampliar';
+          return `You ${suma ? 'added the same amount to' : 'subtracted the same amount from'} both terms (${c(`${base} ${suma ? '+' : '−'} ${cantidad} = ${v}`)}), but you must ${suma ? 'multiply' : 'divide'}: that changes the look without changing the value. `;
+        },
       },
       'no-cambia-el-termino': {
         es: (item, v) => `Has dejado el ${v} como estaba, pero este término también cambia: arriba y abajo se hace lo mismo. `,
@@ -107,8 +117,8 @@ export const TX = {
         en: item => `The same numerator is not enough: ${hf(item.a)} and ${hf(item.b)} have parts of different size. `,
       },
       'no-ve-el-factor': {
-        es: item => `Sí son equivalentes: ${hf(item.a)} y ${hf(item.b)} salen una de la otra multiplicando arriba y abajo por el mismo número. `,
-        en: item => `They are equivalent: ${hf(item.a)} and ${hf(item.b)} come from each other by multiplying top and bottom by the same number. `,
+        es: item => `Sí son equivalentes: ${hf(item.a)} y ${hf(item.b)} valen lo mismo (las dos se simplifican a la misma fracción). `,
+        en: item => `They are equivalent: ${hf(item.a)} and ${hf(item.b)} have the same value (both simplify to the same fraction). `,
       },
     },
   },
@@ -164,14 +174,14 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>Para que dos fracciones tengan el mismo denominador, buscamos el <strong>m.c.m.</strong> (el menor múltiplo común) de los dos denominadores.
         Después ampliamos cada fracción hasta ese denominador.</p>
-        <p>Ejemplo: ${h(1, 4)} y ${h(5, 6)}. El m.c.m. de 4 y 6 es 12. ${c('4 · 3 = 12')} y ${c('6 · 2 = 12')}, así que
-        ${h(1, 4)} = ${h(3, 12)} y ${h(5, 6)} = ${h(10, 12)}.</p>
+        <p>Ejemplo: ${h(3, 4)} y ${h(1, 10)}. El m.c.m. de 4 y 10 es 20. ${c('4 · 5 = 20')} y ${c('10 · 2 = 20')}, así que
+        ${h(3, 4)} = ${h(15, 20)} y ${h(1, 10)} = ${h(2, 20)}.</p>
         <p>Hay dos pasos: primero el denominador común, después los numeradores.</p>`,
       en: `<h2>How it works</h2>
         <p>To give two fractions the same denominator, find the <strong>LCM</strong> (lowest common multiple) of the two denominators.
         Then enlarge each fraction to that denominator.</p>
-        <p>Example: ${h(1, 4)} and ${h(5, 6)}. The LCM of 4 and 6 is 12. ${c('4 · 3 = 12')} and ${c('6 · 2 = 12')}, so
-        ${h(1, 4)} = ${h(3, 12)} and ${h(5, 6)} = ${h(10, 12)}.</p>
+        <p>Example: ${h(3, 4)} and ${h(1, 10)}. The LCM of 4 and 10 is 20. ${c('4 · 5 = 20')} and ${c('10 · 2 = 20')}, so
+        ${h(3, 4)} = ${h(15, 20)} and ${h(1, 10)} = ${h(2, 20)}.</p>
         <p>There are two steps: first the common denominator, then the numerators.</p>`,
     },
     paso1: {
@@ -212,8 +222,18 @@ export const TX = {
         en: item => `That is not the LCM of ${item.a.den} and ${item.b.den}. `,
       },
       'solo-cambia-el-denominador': {
-        es: item => `Has cambiado solo el denominador: ${hf(item.a)} no es ${h(item.a.num, item.mcm)}. Arriba también se multiplica por ${item.mcm / item.a.den}. `,
-        en: item => `You changed only the denominator: ${hf(item.a)} is not ${h(item.a.num, item.mcm)}. The top is also multiplied by ${item.mcm / item.a.den}. `,
+        es: item => {
+          const f = cambian(item).map(([x, e]) => `${hf(x)} no es ${h(x.num, item.mcm)}. Arriba también se multiplica por ${item.mcm / x.den}`);
+          return `Has cambiado solo el denominador: ${f.join('; ')}. `;
+        },
+        en: item => {
+          const f = cambian(item).map(([x]) => `${hf(x)} is not ${h(x.num, item.mcm)}. The top is also multiplied by ${item.mcm / x.den}`);
+          return `You changed only the denominator: ${f.join('; ')}. `;
+        },
+      },
+      'numerador-mal': {
+        es: (item, v) => `El denominador ${item.mcm} está bien, pero ${malos(item, v).map(([x, e, n]) => `arriba de ${hf(x)} no va ${n}: ${c(`${x.num} · ${item.mcm / x.den} = ${e.num}`)}`).join('; ')}. `,
+        en: (item, v) => `The denominator ${item.mcm} is right, but ${malos(item, v).map(([x, e, n]) => `the top of ${hf(x)} is not ${n}: ${c(`${x.num} · ${item.mcm / x.den} = ${e.num}`)}`).join('; ')}. `,
       },
     },
   },

@@ -138,7 +138,7 @@ test('textos de alumno sin ×, letras, decimales, negativas ni mixtos; todos los
       textos.push(TX.ej3.instruccion[idioma](c), TX.ej3.solucion[idioma](c), TX.ej3.caja[idioma](1),
         ...Object.values(TX.ej3.por_que).map(p => p[idioma](c.tarjetas.slice(0, 2))));
       textos.push(TX.ej4.paso1[idioma], TX.ej4.paso2[idioma](d), TX.ej4.correcto[idioma](d), TX.ej4.solucion1[idioma](d), TX.ej4.solucion2[idioma](d),
-        ...Object.values(TX.ej4.por_que).map(p => p[idioma](d)));
+        ...Object.values(TX.ej4.por_que).map(p => p[idioma](d, { n1: d.ea.num + 1, n2: d.eb.num + 2 })));
     }
   }
   for (const g of [TX.ej1, TX.ej2, TX.ej3, TX.ej4]) for (const campo of ['nombre', 'detalle', 'introduccion']) textos.push(g[campo].es, g[campo].en);
@@ -151,4 +151,48 @@ test('textos de alumno sin ×, letras, decimales, negativas ni mixtos; todos los
     assert.ok(!/\bundefined\b|NaN|\[object/.test(l), `valor roto en «${l}»`);
   }
   for (const [id, e] of Object.entries(ERRORES_PROPIOS)) { assert.ok(e.nombre.es && e.nombre.en, id); assert.ok(/^[a-z-]+$/.test(id)); }
+});
+
+test('ej. 4: un numerador mal con el m.c.m. bien es un error del paso 2, y «solo cambia el denominador» habla de las fracciones que cambian', () => {
+  for (const it of lote(generarComun, 4806)) {
+    assert.equal(errorNumeradores(it, it.ea.num + 1, it.eb.num), 'numerador-mal');
+    assert.equal(errorNumeradores(it, it.ea.num, it.eb.num + 1), 'numerador-mal');
+    const malo = TX.ej4.por_que[errorNumeradores(it, it.ea.num + 1, it.eb.num)].es(it, { n1: it.ea.num + 1, n2: it.eb.num });
+    assert.ok(!/m\.c\.m\./.test(sinHtml(malo)), `habla del m.c.m. en «${sinHtml(malo)}»`);
+    for (const idioma of ['es', 'en']) {
+      const t = sinHtml(TX.ej4.por_que['solo-cambia-el-denominador'][idioma](it));
+      for (const [x, e] of [[it.a, it.ea], [it.b, it.eb]]) {
+        // una fracción que ya tiene el m.c.m. no puede aparecer como «no es» ella misma
+        if (x.den === it.mcm) assert.ok(!t.includes(`${x.num}${x.den} is not`) && !t.includes(`${x.num}${x.den} no es`), t);
+      }
+    }
+  }
+});
+
+test('casos de la hoja y del examen de la semana 1 (comprobar-semana1.py): no salen en los ej. 1, 2 y 4', () => {
+  const sinOrden = (a, b) => [`${a.num}/${a.den}`, `${b.num}/${b.den}`].sort().join(' y ');
+  const reservadas = ['6/9 y 10/15', '8/10 y 9/12', '1/4 y 5/6', '1/6 y 4/9', '5/12 y 7/8', '2/3 y 5/8', '3/10 y 4/15'];
+  for (const it of lote(generarSonEquivalentes, 4807)) assert.ok(!reservadas.includes(sinOrden(it.a, it.b)), claveDe(it));
+  for (const it of lote(generarComun, 4808)) assert.ok(!reservadas.includes(sinOrden(it.a, it.b)), claveDe(it));
+  const huecos = ['5/8=*/48', '7/9=28/*', '2/9=*/27', '5/6=35/*', '4/11=*/44', '21/56=*/8'];
+  for (const it of lote(generarTermino, 4809)) {
+    const clave = `${it.izq.num}/${it.izq.den}=${it.der.num ?? '*'}/${it.der.den ?? '*'}`;
+    assert.ok(!huecos.includes(clave), clave);
+  }
+});
+
+test('ej. 1: el feedback de «suma la diferencia» pone la cuenta que hizo el alumno', () => {
+  const rng = crearRng(4810);
+  let vistos = 0;
+  for (let i = 0; i < N; i++) {
+    const it = generarTermino(rng);
+    const base = it.izq[it.hueco], otro = it.hueco === 'num' ? 'den' : 'num';
+    const v = base + (it.der[otro] - it.izq[otro]);
+    if (v <= 0 || v === it.respuesta || errorTermino(it, v) !== 'suma-la-diferencia') continue;
+    vistos++;
+    const cuenta = `${base} ${it.direccion === 'ampliar' ? '+' : '−'} ${Math.abs(v - base)} = ${v}`;
+    assert.ok(sinHtml(TX.ej1.por_que['suma-la-diferencia'].es(it, v)).includes(cuenta));
+    if (it.direccion === 'reducir') assert.ok(TX.ej1.por_que['suma-la-diferencia'].en(it, v).includes('subtracted the same amount from'));
+  }
+  assert.ok(vistos > 100, `casos: ${vistos}`);
 });

@@ -30,13 +30,22 @@ export const ERRORES_PROPIOS = {
   'producto-de-denominadores': { nombre: { es: 'Ha multiplicado los denominadores en vez de buscar el m.c.m.', en: 'Multiplied the denominators instead of finding the LCM' } },
   'suma-de-denominadores': { nombre: { es: 'Ha sumado los denominadores', en: 'Added the denominators' } },
   'toma-el-mayor-denominador': { nombre: { es: 'Ha tomado el mayor de los denominadores', en: 'Took the larger denominator' } },
+  'numerador-mal': { nombre: { es: 'Ha puesto mal un numerador (con el denominador común ya bien)', en: 'Got a numerator wrong (with the common denominator right)' } },
   'solo-cambia-el-denominador': { nombre: { es: 'Ha cambiado solo el denominador y ha dejado los numeradores', en: 'Changed only the denominator and left the numerators' } },
 };
 
 export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? null;
 
 // Casos que se dejan libres para la hoja y los exámenes de la semana 1 (RESERVADOS en comprobar-semana1.py).
-const RESERVADOS = new Set(['5/8=*/48', '7/9=28/*']);
+// Las claves de un ítem del ej. 1 son `izq=der` con `*` en el hueco; las parejas de los ej. 2 y 4, sin orden.
+const RESERVADOS = new Set(['5/8=*/48', '7/9=28/*', '2/9=*/27', '5/6=35/*', '4/11=*/44', '21/56=*/8']);
+const pareja = (a, b) => [`${a.num}/${a.den}`, `${b.num}/${b.den}`].sort().join(' y ');
+const PAREJAS_RESERVADAS = new Set([
+  // ej. 2 de la hoja (7a, 7b) y del examen
+  '6/9 y 10/15', '8/10 y 9/12',
+  // ej. 4: la hoja (9a-9d, por parejas) y comprobar-semana1.py (2/3 y 5/8; 3/10 y 4/15)
+  '1/4 y 5/6', '1/6 y 4/9', '5/12 y 7/8', '1/2 y 3/5', '1/2 y 7/10', '3/5 y 7/10', '2/3 y 5/8', '3/10 y 4/15',
+]);
 
 // ─── Ejercicio 1: el término que falta ──────────────────────────────────────────────
 
@@ -95,7 +104,7 @@ export function generarSonEquivalentes(rng) {
         b = rng.azar() < 0.5 ? par(a.num * m, a.den) : par(a.num, a.den * m);
       } else b = par(a.num, a.den + rng.entero(1, 3));
     }
-    if (Math.max(a.den, b.den) > DEN_MAX) continue;
+    if (Math.max(a.den, b.den) > DEN_MAX || PAREJAS_RESERVADAS.has(pareja(a, b))) continue;
     const equivalentes = fr(a).equals(fr(b));
     if (equivalentes !== (error === null)) continue;
     return rng.azar() < 0.5 ? { ejercicio: 2, a, b, equivalentes, error } : { ejercicio: 2, a: b, b: a, equivalentes, error };
@@ -188,6 +197,7 @@ export function generarComun(rng) {
     const n1 = rng.entero(1, d1 - 1), n2 = rng.entero(1, d2 - 1);
     if (!irreducible(n1, d1) || !irreducible(n2, d2)) continue;
     const a = par(n1, d1), b = par(n2, d2);
+    if (PAREJAS_RESERVADAS.has(pareja(a, b))) continue;
     return { ejercicio: 4, a, b, mcm: m, ea: par(n1 * (m / d1), m), eb: par(n2 * (m / d2), m) };
   }
 }
@@ -202,11 +212,16 @@ export function errorMcm(item, valor) {
   return 'otra-respuesta';
 }
 
-/** Error típico de los dos numeradores escritos (null si son los buenos). */
+/**
+ * Error típico de los dos numeradores escritos (null si son los buenos). «Solo cambia el denominador»:
+ * toda fracción cuyo denominador cambia conserva su numerador (y al menos una cambia); si no, es un
+ * numerador mal puesto, del paso 2, que no tiene que ver con el m.c.m.
+ */
 export function errorNumeradores(item, n1, n2) {
   if (n1 === item.ea.num && n2 === item.eb.num) return null;
-  if (n1 === item.a.num && n2 === item.b.num) return 'solo-cambia-el-denominador';
-  return 'otra-respuesta';
+  const sinCambiar = [[item.a, n1], [item.b, n2]].filter(([x]) => x.den !== item.mcm);
+  if (sinCambiar.length && sinCambiar.every(([x, n]) => n === x.num)) return 'solo-cambia-el-denominador';
+  return 'numerador-mal';
 }
 
 export function claveDe(item) {
