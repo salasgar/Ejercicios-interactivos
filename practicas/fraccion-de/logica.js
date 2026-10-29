@@ -23,6 +23,35 @@ const DEN_DOS = [2, 3, 4, 5, 6, 8, 10, 12];
 const mcd = (a, b) => (b === 0 ? a : mcd(b, a % b));
 const mcm = (a, b) => (a / mcd(a, b)) * b;
 
+/**
+ * Casos que las hojas de la unidad 4 ya han dado a los alumnos y se guardan para el examen
+ * (regla 9 del reparto; `RESERVADOS_ANTERIORES` de `comprobar-semana3.py`): la práctica no
+ * los saca nunca. Fracción de una cantidad: [numerador, denominador, cantidad].
+ */
+export const RESERVADOS = {
+  fraccionDe: [[3, 4, 44], [5, 8, 56], [4, 9, 72]],
+  parte: [[15, 27]],
+  // Ejercicio 4: «5/8 de un depósito son 35 L», «5/12 y 21 L» y «1/5 y 3/10 de 150».
+  problema: [
+    { f: [5, 8], dato: 35 },
+    { f: [5, 12], dato: 21 },
+    { f: [1, 5], g: [3, 10], total: 150 },
+  ],
+};
+
+const esReservadoFraccionDe = (n, d, total) => RESERVADOS.fraccionDe.some(([a, b, c]) => a === n && b === d && c === total);
+const mismaFraccion = (x, [a, b]) => x.n * b === x.d * a;
+
+/** ¿Es el ítem del ejercicio 4 uno de los casos reservados? */
+export function esReservadoProblema(item) {
+  if (esReservadoFraccionDe(item.f1.n, item.f1.d, item.total)) return true;
+  if (item.f2 && esReservadoFraccionDe(item.f2.n, item.f2.d, item.total)) return true;
+  return RESERVADOS.problema.some(r => {
+    if (r.g) return item.f2 && item.total === r.total && ((mismaFraccion(item.f1, r.f) && mismaFraccion(item.f2, r.g)) || (mismaFraccion(item.f1, r.g) && mismaFraccion(item.f2, r.f)));
+    return item.dato !== undefined && item.dato === r.dato && mismaFraccion(item.f1, r.f);
+  });
+}
+
 /** La fracción de un ítem ({ n, d } → Fraccion). */
 export const F = x => fraccion(x.n, x.d);
 
@@ -46,8 +75,14 @@ export const ERRORES_PROPIOS = {
   'olvida-restar-la-segunda': {
     nombre: { es: 'Ha olvidado restar la segunda parte', en: 'Forgot to subtract the second part' },
   },
-  'se-queda-en-la-unitaria-del-dato': {
-    nombre: { es: 'Se ha quedado en lo que vale una parte (1/d)', en: 'Stopped at the value of one part (1/d)' },
+  'cuenta-una-parte-de-menos': {
+    nombre: { es: 'Ha contado una parte de menos', en: 'Counted one part too few' },
+  },
+  'cuenta-una-parte-de-mas': {
+    nombre: { es: 'Ha contado una parte de más', en: 'Counted one part too many' },
+  },
+  'duplica-el-dato': {
+    nombre: { es: 'Ha doblado el dato, como si fuera la mitad', en: 'Doubled the given amount, as if it were half' },
   },
   'multiplica-el-dato-por-el-denominador': {
     nombre: { es: 'Ha multiplicado el dato por el denominador', en: 'Multiplied the given amount by the denominator' },
@@ -70,11 +105,17 @@ export const errorConNombre = id => id in ERRORES_TIPICOS || id in ERRORES_PROPI
 
 /** Ítem: { n, d, total, resultado }. 1/4 de las veces unitaria; total ≤ 200, múltiplo de d. */
 export function generarCalculo(rng) {
-  const d = rng.elegir(DENOMINADORES);
-  const n = rng.azar() < 0.25 ? 1 : rng.entero(1, d - 1);
-  const k = rng.entero(2, Math.min(20, Math.floor(200 / d)));
-  return { n, d, total: d * k, resultado: n * k };
+  for (;;) {
+    const d = rng.elegir(DENOMINADORES);
+    const n = rng.azar() < 0.25 ? 1 : rng.entero(1, d - 1);
+    const k = rng.entero(2, Math.min(20, Math.floor(200 / d)));
+    if (esReservadoFraccionDe(n, d, d * k)) continue;
+    return { n, d, total: d * k, resultado: n * k };
+  }
 }
+
+/** Un numerador de 1 a d − 1 primo con d: la fracción del enunciado sale irreducible. */
+const numeradorIrreducible = (rng, d) => rng.elegir(Array.from({ length: d - 1 }, (_, i) => i + 1).filter(n => mcd(n, d) === 1));
 
 /** El paso a paso de la cuenta: { k: lo que vale 1/d, resultado }. */
 export const pasos = item => ({ k: item.total / item.d, resultado: item.resultado });
@@ -101,28 +142,31 @@ export function errorDeCalculo(item, v) {
  * denominadores que admite y la unidad en que se pide. Acta del 26-10, punto j: depósito
  * de coche 20-90 L; garrafa hasta 50 L; botella hasta 3 L; clase 12-36; instituto
  * 200-3000; pizza 3-15 trozos; ahorro hasta 2000 €; a pie o en bici hasta 50 km, en
- * coche hasta 1000 km; una hora son 60 minutos.
+ * coche hasta 1000 km; una hora son 60 minutos, en medias, cuartos, tercios, sextos y
+ * doceavos. Si un contexto lleva `totales`, solo vale una cantidad de esa lista (la
+ * botella: 1/5, 1/4, 2/5, 1/2, 3/4, 1, 3/2, 2, 5/2 y 3 L, en mililitros).
  */
 export const CONTEXTOS = {
   deposito: { min: 20, max: 90, paso: 1, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'litros', en: 'litres' } },
   garrafa: { min: 5, max: 50, paso: 1, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'litros', en: 'litres' } },
-  botella: { min: 300, max: 3000, paso: 50, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'mililitros', en: 'millilitres' } },
+  botella: { min: 200, max: 3000, paso: 50, totales: [200, 250, 400, 500, 750, 1000, 1500, 2000, 2500, 3000], dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'mililitros', en: 'millilitres' } },
   clase: { min: 12, max: 36, paso: 1, dens: DENOMINADORES, unidad: { es: 'alumnos', en: 'students' } },
   instituto: { min: 200, max: 3000, paso: 1, dens: DENOMINADORES, unidad: { es: 'alumnos', en: 'students' } },
   pizza: { min: 3, max: 15, paso: 1, dens: [2, 3, 4, 5, 6], unidad: { es: 'trozos', en: 'slices' } },
   ahorro: { min: 100, max: 2000, paso: 10, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'euros', en: 'euros' } },
   bici: { min: 10, max: 50, paso: 1, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'kilómetros', en: 'kilometres' } },
   coche: { min: 100, max: 1000, paso: 10, dens: [2, 3, 4, 5, 6, 8, 10], unidad: { es: 'kilómetros', en: 'kilometres' } },
-  hora: { min: 60, max: 60, paso: 1, dens: [2, 3, 4, 5, 6, 10, 12], unidad: { es: 'minutos', en: 'minutes' } },
+  hora: { min: 60, max: 60, paso: 1, dens: [2, 3, 4, 6, 12], unidad: { es: 'minutos', en: 'minutes' } },
 };
 export const IDS_CONTEXTO = Object.keys(CONTEXTOS);
 
 /** ¿Es `total` una cantidad creíble en ese contexto (entera, dentro de la cota, en su paso)? */
-export const enCota = (cfg, total) => Number.isInteger(total) && total >= cfg.min && total <= cfg.max && total % cfg.paso === 0;
+export const enCota = (cfg, total) => Number.isInteger(total) && total >= cfg.min && total <= cfg.max && total % cfg.paso === 0 && (!cfg.totales || cfg.totales.includes(total));
 
 /** Las cantidades de la cota que son múltiplo de `d` (y de `mult`, si se pide). */
 export function totalesPosibles(cfg, d, mult = 1) {
   const paso = mcm(cfg.paso, mcm(d, mult));
+  if (cfg.totales) return cfg.totales.filter(t => t % paso === 0);
   const lista = [];
   for (let t = Math.ceil(cfg.min / paso) * paso; t <= cfg.max; t += paso) lista.push(t);
   return lista;
@@ -137,7 +181,8 @@ export function generarContexto(rng) {
     const posibles = totalesPosibles(cfg, d);
     if (!posibles.length) continue;
     const total = rng.elegir(posibles);
-    const n = rng.azar() < 0.25 ? 1 : rng.entero(1, d - 1);
+    const n = rng.azar() < 0.25 ? 1 : numeradorIrreducible(rng, d);
+    if (esReservadoFraccionDe(n, d, total)) continue;
     return { ctx, n, d, total, resultado: (total / d) * n };
   }
   throw new Error('generarContexto: sin ítem posible');
@@ -170,12 +215,15 @@ export function generarParte(rng) {
   const ctx = rng.elegir(IDS_GRUPO);
   const g = GRUPOS[ctx];
   const simplificable = rng.azar() < 0.85;
-  let parte = 1, total = g.min;
-  for (let intento = 0; intento < 200; intento++) {
+  // La parte (y la otra parte, si se da) son siempre ≥ 2: con 1 el plural del enunciado no concuerda.
+  let parte = 2, total = g.min;
+  for (let intento = 0; intento < 500; intento++) {
     total = rng.entero(g.min, g.max);
-    parte = rng.entero(1, total - 1);
+    parte = rng.entero(2, total - (g.tipo === 'partes' ? 2 : 1));
+    if (RESERVADOS.parte.some(([p, t]) => p === parte && t === total)) continue;
     if ((mcd(parte, total) > 1) === simplificable) break;
   }
+  if (RESERVADOS.parte.some(([p, t]) => p === parte && t === total)) return generarParte(rng);
   return g.tipo === 'partes' ? { ctx, tipo: 'partes', parte, otra: total - parte, total } : { ctx, tipo: 'total', parte, total };
 }
 
@@ -265,7 +313,7 @@ function problemaQueda(rng) {
   const posibles = totalesPosibles(cfg, d);
   if (!posibles.length) return null;
   const total = rng.elegir(posibles);
-  const n = rng.entero(1, d - 1);
+  const n = numeradorIrreducible(rng, d);
   const f = fraccion(n, d), q = fraccion(d - n, d);
   const parte = (total / d) * n, queda = total - parte;
   if (queda < 2) return null;
@@ -288,7 +336,7 @@ function problemaDos(rng) {
   const posibles = totalesPosibles(cfg, mcm(d1, d2));
   if (!posibles.length) return null;
   const total = rng.elegir(posibles);
-  const f1 = fraccion(rng.entero(1, d1 - 1), d1), f2 = fraccion(rng.entero(1, d2 - 1), d2);
+  const f1 = fraccion(numeradorIrreducible(rng, d1), d1), f2 = fraccion(numeradorIrreducible(rng, d2), d2);
   const suma = f1.sumar(f2);
   if (suma.num >= suma.den) return null;
   const a = entero(f1.multiplicar(total)), b = entero(f2.multiplicar(total));
@@ -315,25 +363,26 @@ function problemaTotal(rng, variante) {
   if (!posibles.length) return null;
   const total = rng.elegir(posibles);
   const k = total / d;
-  const n = rng.entero(1, d - 1);
+  const n = numeradorIrreducible(rng, d);
   const f = fraccion(n, d);
   const dato = variante === 'parte' ? n * k : (d - n) * k;
   if (dato < 2) return null;
-  const tope = cfg.max;
+  // Se pregunta por el total: toda opción de cantidad está dentro de la cota del escenario y
+  // es mayor que el dato (el total es siempre mayor que cualquiera de sus partes).
+  const valida = o => o.v >= cfg.min && o.v <= cfg.max && o.v > dato && Number.isInteger(o.v);
+  // Los errores que dan menos que el dato (aplicar la fracción al dato, quedarse en una parte)
+  // no valen como opción: «3 alumnos» para el total de una clase no se cree nadie. Los que
+  // quedan son totales posibles: de más, de menos o de otra forma de contar.
+  const comunes = [
+    cantidad(dato * d, 'multiplica-el-dato-por-el-denominador'),
+    cantidad(total - k, 'cuenta-una-parte-de-menos'),
+    cantidad(total + k, 'cuenta-una-parte-de-mas'),
+    cantidad(dato * 2, 'duplica-el-dato'),
+  ];
   const pool = variante === 'parte'
-    ? [
-      cantidad(entero(ERRORES_TIPICOS['fraccion-del-dato'].fn(f, dato)), 'fraccion-del-dato'),
-      cantidad(k, 'se-queda-en-la-unitaria-del-dato'),
-      cantidad(dato * d, 'multiplica-el-dato-por-el-denominador'),
-      cantidad(k * (d - n), 'da-el-resto'),
-    ]
-    : [
-      cantidad(entero(ERRORES_TIPICOS['fraccion-del-dato'].fn(f, dato)), 'fraccion-del-dato'),
-      cantidad(k, 'se-queda-en-la-unitaria-del-dato'),
-      cantidad(k * n, 'da-la-parte-ya-hecha'),
-      cantidad(dato * d, 'multiplica-el-dato-por-el-denominador'),
-    ];
-  const opciones = conOpciones(rng, cantidad(total, null), pool.filter(o => valido(o.v, tope)));
+    ? [cantidad(k * (d - n), 'da-el-resto'), ...comunes]
+    : [cantidad(k * n, 'da-la-parte-ya-hecha'), ...comunes];
+  const opciones = conOpciones(rng, cantidad(total, null), pool.filter(o => o.v !== null && valida(o)));
   return opciones && { variante, esc, total, f1: { n, d }, dato, opciones };
 }
 
@@ -342,7 +391,7 @@ export function generarProblema(rng) {
   for (let intento = 0; intento < 1000; intento++) {
     const variante = rng.elegir(VARIANTES);
     const item = variante === 'queda' ? problemaQueda(rng) : variante === 'dos' ? problemaDos(rng) : problemaTotal(rng, variante);
-    if (item) return item;
+    if (item && !esReservadoProblema(item)) return item;
   }
   throw new Error('generarProblema: sin ítem posible');
 }

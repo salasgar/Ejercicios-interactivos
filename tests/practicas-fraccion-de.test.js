@@ -10,7 +10,7 @@ import { crearRng } from '../practicas/_comun/rng.js';
 import { errorValido } from '../practicas/_comun/registro.js';
 import { fraccion, hayEquivalentes, ERRORES_TIPICOS, htmlFraccion } from '../practicas/_comun/fracciones.js';
 import {
-  F, CONTEXTOS, IDS_CONTEXTO, GRUPOS, IDS_GRUPO, ESCENARIOS, VARIANTES, ERRORES_PROPIOS,
+  F, RESERVADOS, esReservadoProblema, CONTEXTOS, IDS_CONTEXTO, GRUPOS, IDS_GRUPO, ESCENARIOS, VARIANTES, ERRORES_PROPIOS,
   enCota, totalesPosibles, errorConNombre, generarCalculo, generarContexto, generarParte, generarProblema,
   errorDeCalculo, errorDeParte, respuestaParte, respuestaProblema, cotaDe,
 } from '../practicas/fraccion-de/logica.js';
@@ -63,6 +63,8 @@ test('cada contexto tiene cota, unidad y frases en los dos idiomas, y las cotas 
   assert.ok(CONTEXTOS.bici.max <= 50);
   assert.ok(CONTEXTOS.coche.max <= 1000);
   cota('hora', 60, 60);
+  assert.deepEqual(CONTEXTOS.hora.dens, [2, 3, 4, 6, 12]);   // medias, tercios, cuartos, sextos y doceavos (no quintos ni décimos)
+  assert.deepEqual(CONTEXTOS.botella.totales, [200, 250, 400, 500, 750, 1000, 1500, 2000, 2500, 3000]);   // acta del 26-10, punto j
   for (const [variante, esc] of Object.entries(ESCENARIOS)) {
     for (const [id, c] of Object.entries(esc)) {
       assert.ok(c.min <= c.max && c.unidad.es && c.unidad.en, `${variante}.${id}`);
@@ -151,6 +153,33 @@ test('ejercicio 2: cada ítem cabe en la cota de su contexto y da un resultado e
   assert.ok(items.every(it => it.ctx !== 'hora' || it.total === 60));
   assert.ok(items.every(it => it.ctx !== 'pizza' || (it.total >= 3 && it.total <= 15)));
   assert.ok(items.every(it => it.ctx !== 'deposito' || (it.total >= 20 && it.total <= 90)));
+  // La botella solo tiene los tamaños del acta; la hora solo las fracciones de hora de uso corriente.
+  const botellas = items.filter(it => it.ctx === 'botella');
+  assert.ok(botellas.length > 100 && botellas.every(it => CONTEXTOS.botella.totales.includes(it.total)));
+  assert.ok(items.filter(it => it.ctx === 'hora').every(it => [2, 3, 4, 6, 12].includes(it.d)));
+  // En un problema la fracción del enunciado es irreducible.
+  assert.ok(items.every(it => F(it).esIrreducible()), 'fracción sin simplificar en el ejercicio 2');
+});
+
+// --- Casos reservados para el examen (regla 9) ---------------------------------------
+
+test('los casos reservados para el examen no salen nunca (ejercicios 1-4)', () => {
+  const [a, b, c] = RESERVADOS.fraccionDe;
+  assert.deepEqual([a, b, c], [[3, 4, 44], [5, 8, 56], [4, 9, 72]]);
+  const reservado = it => RESERVADOS.fraccionDe.some(([n, d, t]) => it.n === n && it.d === d && it.total === t);
+  for (const [i, fn] of [generarCalculo, generarContexto].entries()) {
+    assert.ok(generar(fn, 103020 + i).every(it => !reservado(it)));
+  }
+  assert.ok(generar(generarParte, 103022).every(it => !(it.parte === 15 && it.total === 27)));
+  assert.ok(generar(generarProblema, 103023).every(it => !esReservadoProblema(it)));
+  // El detector reconoce los siete casos reservados con las formas con que podrían salir.
+  const base = { esc: 'x', opciones: [] };
+  assert.ok(esReservadoProblema({ ...base, variante: 'parte', total: 56, f1: { n: 5, d: 8 }, dato: 35 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'restante', total: 36, f1: { n: 5, d: 12 }, dato: 21 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'dos', total: 150, f1: { n: 1, d: 5 }, f2: { n: 3, d: 10 } }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'dos', total: 150, f1: { n: 3, d: 10 }, f2: { n: 1, d: 5 } }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'queda', total: 44, f1: { n: 3, d: 4 } }));
+  assert.ok(!esReservadoProblema({ ...base, variante: 'queda', total: 40, f1: { n: 3, d: 4 } }));
 });
 
 // --- Ejercicio 3: ¿qué fracción es? --------------------------------------------------
@@ -164,6 +193,8 @@ test('ejercicio 3: la parte es menor que el total, dentro de la cota del grupo, 
     assert.ok(it.parte >= 1 && it.parte < it.total, JSON.stringify(it));
     assert.ok(it.total >= g.min && it.total <= g.max, JSON.stringify(it));
     if (it.tipo === 'partes') assert.equal(it.parte + it.otra, it.total);
+    // Nunca 1 de nada: con 1 el plural del enunciado («1 pegatinas», «1 chicas») no concuerda.
+    assert.ok(it.parte >= 2 && (it.tipo !== 'partes' || it.otra >= 2), JSON.stringify(it));
     const r = respuestaParte(it);
     assert.ok(r.esIrreducible() && r.equals(fraccion(it.parte, it.total)));
     if (mcd(it.parte, it.total) > 1) simplificables++;
@@ -244,8 +275,14 @@ test('ejercicio 4: el total en la cota, todo entero ≥ 2, partes de un todo que
       if (o.tipo !== 'cantidad') continue;
       assert.ok(Number.isInteger(o.v) && o.v >= 2, `opción ${o.v}`);
       if (it.variante === 'queda' || it.variante === 'dos') assert.ok(o.v < it.total, `una opción de «lo que queda» no puede pasar del total: ${o.v} ≥ ${it.total}`);
-      else assert.ok(o.v <= cfg.max, `una opción de «el total» fuera de la cota: ${o.v} > ${cfg.max}`);
+      else {
+        // Se pregunta por el total: toda opción dentro de la cota del escenario y mayor que el dato.
+        assert.ok(o.v >= cfg.min && o.v <= cfg.max, `${it.variante}.${it.esc}: opción de «el total» fuera de la cota ${cfg.min}-${cfg.max}: ${o.v}`);
+        assert.ok(o.v > it.dato, `${it.variante}.${it.esc}: la opción ${o.v} no supera al dato ${it.dato}`);
+      }
     }
+    // En un problema la fracción del enunciado va irreducible.
+    assert.ok(F(it.f1).esIrreducible() && (!it.f2 || F(it.f2).esIrreducible()), JSON.stringify(it));
   }
 });
 
@@ -269,8 +306,9 @@ test('ejercicio 4: los distractores son los errores que dicen los inventarios, c
         case 'resta-el-numerador': assert.equal(o.v, T - n); break;
         case 'olvida-restar-la-primera': assert.equal(o.v, T - (T / it.f2.d) * it.f2.n); break;
         case 'olvida-restar-la-segunda': assert.equal(o.v, T - k * n); break;
-        case 'fraccion-del-dato': assert.equal(o.v, F(it.f1).multiplicar(it.dato).aEntero()); break;
-        case 'se-queda-en-la-unitaria-del-dato': assert.equal(o.v, k); break;
+        case 'cuenta-una-parte-de-menos': assert.equal(o.v, T - k); break;
+        case 'cuenta-una-parte-de-mas': assert.equal(o.v, T + k); break;
+        case 'duplica-el-dato': assert.equal(o.v, 2 * it.dato); break;
         case 'multiplica-el-dato-por-el-denominador': assert.equal(o.v, it.dato * d); break;
         case 'da-el-resto': assert.equal(o.v, k * (d - n)); break;
         case 'da-la-parte-ya-hecha': assert.equal(o.v, k * n); break;

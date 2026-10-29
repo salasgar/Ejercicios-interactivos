@@ -27,7 +27,7 @@ export const FRASES = {
   },
   garrafa: {
     es: { texto: (T, F) => `Una garrafa tiene ${T} litros de agua y se han usado ${F} de esa agua.`, pregunta: () => '¿Cuántos litros se han usado?' },
-    en: { texto: (T, F) => `A jug (garrafa) has ${T} litres of water and ${F} of the water has been used.`, pregunta: () => 'How many litres have been used?' },
+    en: { texto: (T, F) => `A large water container (garrafa) has ${T} litres of water and ${F} of the water has been used.`, pregunta: () => 'How many litres have been used?' },
   },
   botella: {
     es: { texto: (T, F) => `Una botella de ${T} mililitros está llena hasta ${F} de su capacidad.`, pregunta: () => '¿Cuántos mililitros hay?' },
@@ -219,7 +219,8 @@ export function explicaOpcion(item, opcion, idioma) {
   const F1 = frItem(item.f1);
   switch (opcion.error) {
     case 'gastado-como-queda':
-      return es ? `${v} es lo que ya se ha usado, no lo que queda.` : `${v} is what has already been used, not what is left.`;
+      if (item.variante === 'dos') return es ? `${v} es lo que suman las dos partes del enunciado, no lo que queda.` : `${v} is what the two parts in the problem add up to, not what is left.`;
+      return es ? `${v} es la parte que dice el enunciado, no lo que queda.` : `${v} is the part in the problem, not what is left.`;
     case 'se-queda-en-la-unitaria':
       return es ? `${x.T} : ${x.d} = ${v} es solo una de las ${x.d} partes; lo que queda son ${x.d - x.n} partes.` : `${x.T} : ${x.d} = ${v} is only one of the ${x.d} parts; what is left is ${x.d - x.n} parts.`;
     case 'resta-el-numerador':
@@ -230,10 +231,12 @@ export function explicaOpcion(item, opcion, idioma) {
       return es ? `${v} = ${x.T} − ${x.b}: has olvidado restar la primera parte (${x.a}).` : `${v} = ${x.T} − ${x.b}: you forgot to subtract the first part (${x.a}).`;
     case 'olvida-restar-la-segunda':
       return es ? `${v} = ${x.T} − ${x.a}: has olvidado restar la segunda parte (${x.b}).` : `${v} = ${x.T} − ${x.a}: you forgot to subtract the second part (${x.b}).`;
-    case 'fraccion-del-dato':
-      return es ? `${v} es ${F1} de ${x.dato}: la fracción se aplica al total, y el total es lo que se pide, mayor que ${x.dato}.` : `${v} is ${F1} of ${x.dato}: the fraction applies to the whole, and the whole is what is asked, bigger than ${x.dato}.`;
-    case 'se-queda-en-la-unitaria-del-dato':
-      return es ? `${v} es lo que vale una sola parte de las ${x.d}: el total son las ${x.d} partes.` : `${v} is what one single part of the ${x.d} is worth: the whole is all ${x.d} parts.`;
+    case 'cuenta-una-parte-de-menos':
+      return es ? `${v} son ${x.d - 1} partes de ${x.k}: el total tiene las ${x.d} partes.` : `${v} is ${x.d - 1} parts of ${x.k}: the whole has all ${x.d} parts.`;
+    case 'cuenta-una-parte-de-mas':
+      return es ? `${v} son ${x.d + 1} partes de ${x.k}, y el total tiene solo ${x.d} partes.` : `${v} is ${x.d + 1} parts of ${x.k}, and the whole has only ${x.d} parts.`;
+    case 'duplica-el-dato':
+      return es ? `${v} = 2 · ${x.dato} solo valdría si ${x.dato} fuera la mitad del total; aquí ${x.dato} son ${x.m} partes de ${x.d}.` : `${v} = 2 · ${x.dato} would only work if ${x.dato} were half of the whole; here ${x.dato} is ${x.m} parts out of ${x.d}.`;
     case 'multiplica-el-dato-por-el-denominador':
       return es ? `${x.dato} son ${x.m} partes de ${x.d}, no una: primero se divide ${x.dato} : ${x.m} = ${x.k}.` : `${x.dato} is ${x.m} parts out of ${x.d}, not one: first divide ${x.dato} : ${x.m} = ${x.k}.`;
     case 'da-el-resto':
