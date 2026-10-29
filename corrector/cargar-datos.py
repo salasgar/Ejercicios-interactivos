@@ -13,14 +13,15 @@ oficial, y un id distinto deja huérfanos los registros.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
 _CFG = Path.home() / ".config" / "docencia" / "rutas.json"
 if not _CFG.exists():
     sys.exit("Falta ~/.config/docencia/rutas.json: créalo con las claves apuntes, datos_curso y app (ver comun/rutas.py en los apuntes)")
-APUNTES = Path(json.loads(_CFG.read_text(encoding="utf-8"))["apuntes"]).expanduser()
-EXAMENES = APUNTES / "1. Natural numbers, powers and roots/exámenes-semanales"
+_CURSO = Path(json.loads(_CFG.read_text(encoding="utf-8"))["datos_curso"]).expanduser()
+EXAMENES = _CURSO / "Exámenes"
 
 
 def id_clave(unidad, semana):
@@ -41,9 +42,14 @@ def migrar(datos):
     return {"alumnos": datos["alumnos"], "claves": claves, "registros": registros}
 
 
+def _orden_copia(p):
+    """Por la fecha del nombre (corrector-copia-AAAA-MM-DD[ (n)].json); a igualdad, la modificada después."""
+    m = re.search(r"(\d{4}-\d{2}-\d{2})(?: \((\d+)\))?\.json$", p.name)
+    return (m.group(1) if m else "", int(m.group(2) or 0) if m else 0, p.stat().st_mtime)
+
+
 def copia_mas_reciente():
-    copias = sorted(EXAMENES.glob("semana-*/corrector-copia-*.json"),
-                    key=lambda p: p.stat().st_mtime)
+    copias = sorted(EXAMENES.glob("**/corrector-copia-*.json"), key=_orden_copia)
     if not copias:
         sys.exit(f"No hay ninguna corrector-copia-*.json bajo {EXAMENES}")
     return copias[-1]
