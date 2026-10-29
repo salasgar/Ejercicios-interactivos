@@ -12,7 +12,7 @@ import { fraccion, hayEquivalentes, ERRORES_TIPICOS } from '../practicas/_comun/
 import {
   F, ERRORES_PROPIOS, errorConNombre, generarMismo, generarPasos, generarNaturales, generarQueda, generarCaza,
   resultadoMismo, errorDeMismo, equivalentes, resultadoPasos, corregirPasos, terminosNat, resultadoNat, errorDeNat,
-  respuestaQueda, lineaCorrecta,
+  respuestaQueda, lineaCorrecta, RESERVADOS, MAX_TROZOS_PIZZA, esReservadoMismo, esReservadoPasos, esReservadoQueda,
 } from '../practicas/suma-resta/logica.js';
 import {
   TX, cuentaMismo, solucionMismo, cuentaPasos, solucionPasos, cuentaNat, solucionNat, enunciadoQueda,
@@ -296,4 +296,49 @@ test('textos: cada error que puede salir tiene su frase en los dos idiomas', () 
     for (const campo of ['nombre', 'detalle', 'introduccion']) assert.ok(typeof ej[campo].es === 'string' && typeof ej[campo].en === 'string');
   }
   assert.deepEqual([TX.mismo, TX.pasos, TX.nat, TX.queda, TX.caza].map(e => e.nombre.es), ['Mismo denominador', 'Distinto denominador, paso a paso', 'Con naturales', '¿Qué queda?', 'Caza el error']);
+});
+
+// --- Realismo de la pizza (acta del 26-10, punto j: 3-15 trozos) ----------------------
+
+test('ejercicio 4: una pizza solo con partes que caben en 12 trozos iguales como mucho', () => {
+  const items = generar(generarQueda, 104031);
+  const pizzas = items.filter(it => it.ctx === 'pizza');
+  assert.ok(pizzas.length > 300, `casi no sale la pizza: ${pizzas.length}`);
+  assert.equal(MAX_TROZOS_PIZZA, 12);
+  for (const it of pizzas) {
+    const trozos = mcm(it.a.d, it.b.d);
+    assert.ok(trozos >= 3 && trozos <= MAX_TROZOS_PIZZA, `pizza de ${trozos} trozos: ${JSON.stringify(it)}`);
+  }
+  // Los demás contextos siguen usando todos los denominadores (un m.c.m. grande es creíble con dinero, litros o km).
+  assert.ok(items.some(it => it.ctx !== 'pizza' && mcm(it.a.d, it.b.d) > 15));
+});
+
+// --- Casos reservados para el examen (regla 9) ---------------------------------------
+
+test('los casos reservados para el examen no salen nunca (ejercicios 1, 2 y 4)', () => {
+  assert.ok(generar(generarMismo, 104032).every(it => !esReservadoMismo(it)));
+  assert.ok(generar(generarPasos, 104033).every(it => !esReservadoPasos(it)));
+  assert.ok(generar(generarQueda, 104034).every(it => !esReservadoQueda(it)));
+  // El detector reconoce los casos con las formas con que podrían salir.
+  const f = (n, d) => ({ n, d });
+  assert.ok(esReservadoPasos({ fracs: [f(3, 10), f(5, 8)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(5, 8), f(3, 10)], ops: ['+'] }));
+  assert.ok(!esReservadoPasos({ fracs: [f(3, 10), f(5, 8)], ops: ['-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(5, 9), f(2, 15)], ops: ['-'] }));
+  assert.ok(!esReservadoPasos({ fracs: [f(2, 15), f(5, 9)], ops: ['-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(1, 12), f(5, 18), f(1, 4)], ops: ['+', '-'] }));
+  assert.ok(esReservadoMismo({ a: f(4, 15), b: f(7, 15), op: '+' }));
+  assert.ok(esReservadoMismo({ a: f(17, 20), b: f(9, 20), op: '-' }));
+  assert.ok(esReservadoQueda({ a: f(5, 12), b: f(1, 3) }));
+  assert.ok(!esReservadoQueda({ a: f(1, 3), b: f(1, 4) }));
+  assert.equal(RESERVADOS.pasos.length, 4);
+});
+
+test('ejercicio 4: si lo que queda no es irreducible, el paso a paso lo simplifica', () => {
+  const it = { ctx: 'dinero', pregunta: 'queda', a: { n: 1, d: 4 }, b: { n: 1, d: 4 + 0 }, opciones: [] };
+  const item = { ...it, a: { n: 1, d: 5 }, b: { n: 3, d: 10 } };   // 1 − 1/2 = 1/2: 10/10 − 5/10 = 5/10 = 1/2
+  for (const idioma of IDIOMAS) {
+    const t = solucionQueda(item, idioma).replace(/<[^>]*>/g, '');
+    assert.ok(/5\s*10\s*=\s*1\s*2/.test(t.replace(/\s+/g, ' ')), `sin el paso de simplificar: ${t}`);
+  }
 });

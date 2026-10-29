@@ -119,10 +119,12 @@ export function solucionQueda(item, idioma) {
   const juntas = `${frItem(a)} + ${frItem(b)} = ${fr(an, m)} + ${fr(bn, m)} = ${fr(an + bn, m)}`;
   const buena = frItem(respuestaQueda(item));
   if (item.pregunta === 'gastan') return es ? `Se suman las partes con denominador común (${m}): ${juntas}. La respuesta es ${cuenta(buena)}.` : `Add the parts with a common denominator (${m}): ${juntas}. The answer is ${cuenta(buena)}.`;
-  const resta = `1 − ${fr(an + bn, m)} = ${fr(m, m)} − ${fr(an + bn, m)} = ${fr(q.num, q.den)}`;
+  const qs = q.simplificar();
+  const simpl = qs.equals(q) && qs.den === q.den ? '' : ` = ${fr(qs.num, qs.den)}`;
+  const resta = `1 − ${fr(an + bn, m)} = ${fr(m, m)} − ${fr(an + bn, m)} = ${fr(q.num, q.den)}${simpl}`;
   return es
-    ? `Primero lo que se gasta, con denominador común (${m}): ${juntas}. Lo que queda es lo que falta hasta 1: ${resta}. La respuesta es ${cuenta(buena)}.`
-    : `First what is spent, with a common denominator (${m}): ${juntas}. What is left is what is missing up to 1: ${resta}. The answer is ${cuenta(buena)}.`;
+    ? `Primero lo que suman las dos partes, con denominador común (${m}): ${juntas}. Lo que queda es lo que falta hasta 1: ${resta}. La respuesta es ${cuenta(buena)}.`
+    : `First what the two parts make together, with a common denominator (${m}): ${juntas}. What is left is what is missing up to 1: ${resta}. The answer is ${cuenta(buena)}.`;
 }
 
 /** Por qué está mal una opción del ejercicio 4. */
@@ -131,9 +133,9 @@ export function explicaOpcion(item, o, idioma) {
   const v = frItem(o);
   switch (o.error) {
     case 'gastado-como-queda':
-      return es ? `${v} es lo que ya se ha gastado, no lo que queda.` : `${v} is what has already been spent, not what is left.`;
+      return es ? `${v} es lo que suman las dos partes, no lo que queda.` : `${v} is what the two parts make together, not what is left.`;
     case 'queda-como-gastado':
-      return es ? `${v} es lo que queda; la pregunta es por lo que se gasta en total.` : `${v} is what is left; the question is about what is spent in total.`;
+      return es ? `${v} es lo que queda; la pregunta es por lo que suman las dos partes.` : `${v} is what is left; the question asks what the two parts make together.`;
     case 'suma-arriba-y-abajo':
       return es ? 'Al sumar las partes has sumado también los denominadores. Primero hay que poner el mismo denominador y después se suman solo los numeradores.' : 'When adding the parts you also added the denominators. First you need the same denominator, and then you add only the numerators.';
     case 'olvida-restar-la-primera':

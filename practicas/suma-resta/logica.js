@@ -18,6 +18,35 @@ import { fraccion, ERRORES_TIPICOS } from '../_comun/fracciones.js';
 const mcd = (a, b) => (b === 0 ? Math.abs(a) : mcd(b, a % b));
 const mcm = (a, b) => (a / mcd(a, b)) * b;
 
+/**
+ * Casos que las hojas de la unidad 4 ya han dado a los alumnos y se guardan para el examen
+ * (regla 9 del reparto; `RESERVADOS_ANTERIORES` de `comprobar-semana3.py`). Cada caso es la
+ * lista de sus fracciones «n/d» en el orden en que se escriben, con las operaciones entre ellas
+ * (la suma vale en cualquier orden de dos términos). Los que llevan negativas o un natural no
+ * pueden salir de esta práctica (sus fracciones son propias y positivas) y no se listan.
+ */
+export const RESERVADOS = {
+  mismo: [['7/15', '+', '4/15'], ['17/20', '-', '9/20']],
+  pasos: [['3/10', '+', '5/8'], ['5/9', '-', '2/15'], ['1/12', '+', '5/18', '-', '1/4'], ['7/24', '+', '5/36', '-', '1/8']],
+  queda: [['1/3', '5/12']],   // la pizza de la hoja 2 (en cualquier orden)
+};
+
+const clave = (fracs, ops) => fracs.flatMap((f, i) => (i ? [ops[i - 1], `${f.n}/${f.d}`] : [`${f.n}/${f.d}`])).join(' ');
+const reservadoEn = (lista, fracs, ops) => {
+  const k = clave(fracs, ops);
+  const k2 = fracs.length === 2 && ops[0] === '+' ? clave([fracs[1], fracs[0]], ops) : k;
+  return lista.some(r => { const kr = r.join(' '); return kr === k || kr === k2; });
+};
+/** ¿Es el ítem del ejercicio 1 un caso reservado? */
+export const esReservadoMismo = item => reservadoEn(RESERVADOS.mismo, [item.a, item.b], [item.op]);
+/** ¿Es el ítem del ejercicio 2 un caso reservado? */
+export const esReservadoPasos = item => reservadoEn(RESERVADOS.pasos, item.fracs, item.ops);
+/** ¿Es el ítem del ejercicio 4 un caso reservado (las dos partes, en cualquier orden)? */
+export const esReservadoQueda = item => RESERVADOS.queda.some(([x, y]) => {
+  const k = [`${item.a.n}/${item.a.d}`, `${item.b.n}/${item.b.d}`];
+  return (k[0] === x && k[1] === y) || (k[0] === y && k[1] === x);
+});
+
 /** La fracción de un ítem ({ n, d } → Fraccion). */
 export const F = x => fraccion(x.n, x.d);
 const dato = f => ({ n: f.num, d: f.den });
@@ -71,7 +100,9 @@ export function generarMismo(rng) {
     const total = op === '+' ? n1 + n2 : n1 - n2;
     if (total % d === 0) continue;
     if (neg && total > 0 && n1 > 0) continue;
-    return { a: { n: n1, d }, b: { n: n2, d }, op, neg, irred: rng.azar() < 0.5 };
+    const item = { a: { n: n1, d }, b: { n: n2, d }, op, neg, irred: rng.azar() < 0.5 };
+    if (esReservadoMismo(item)) continue;
+    return item;
   }
   throw new Error('generarMismo: sin ítem posible');
 }
@@ -124,7 +155,7 @@ export function generarPasos(rng) {
     const ops = fracs.slice(1).map(() => (rng.azar() < 0.5 ? '+' : '-'));
     const item = { fracs, ops, m, irred: rng.azar() < 0.5 };
     const r = resultadoPasos(item);
-    if (r.num <= 0 || r.simplificar().esEntera()) continue;
+    if (r.num <= 0 || r.simplificar().esEntera() || esReservadoPasos(item)) continue;
     return item;
   }
   throw new Error('generarPasos: sin ítem posible');
@@ -214,6 +245,10 @@ export function errorDeNat(item, v) {
 // ─── Ejercicio 4: ¿qué queda? ──────────────────────────────────────────────────
 
 export const CONTEXTOS_QUEDA = ['dinero', 'pizza', 'deposito', 'libro', 'ruta'];
+// Una pizza se corta en 3-15 trozos (acta del 26-10, punto j): con las dos partes hay que poder
+// partirla en trozos iguales, o sea, el m.c.m. de los denominadores no pasa de 12. Los demás
+// contextos son continuos (dinero, depósito, libro, ruta) y no tienen tope.
+export const MAX_TROZOS_PIZZA = 12;
 const DENS_QUEDA = [2, 3, 4, 5, 6, 8, 10, 12];
 
 const propia = f => f.num > 0 && f.num < f.den;
@@ -243,8 +278,9 @@ function tresOpciones(rng, buena, pool) {
  */
 export function generarQueda(rng) {
   for (let intento = 0; intento < 2000; intento++) {
+    const ctx = rng.elegir(CONTEXTOS_QUEDA);
     const [da, db] = [rng.elegir(DENS_QUEDA), rng.elegir(DENS_QUEDA)];
-    if (da === db) continue;
+    if (da === db || (ctx === 'pizza' && mcm(da, db) > MAX_TROZOS_PIZZA)) continue;
     const a = fraccion(rng.entero(1, da - 1), da), b = fraccion(rng.entero(1, db - 1), db);
     if (!a.esIrreducible() || !b.esIrreducible()) continue;
     const suma = a.sumar(b);
@@ -270,7 +306,9 @@ export function generarQueda(rng) {
       ];
     const opciones = tresOpciones(rng, (pregunta === 'queda' ? queda : suma).simplificar(), pool.map(o => (o.valor === undefined ? { ...o, valor: null } : o)));
     if (!opciones) continue;
-    return { ctx: rng.elegir(CONTEXTOS_QUEDA), pregunta, a: dato(a), b: dato(b), opciones };
+    const item = { ctx, pregunta, a: dato(a), b: dato(b), opciones };
+    if (esReservadoQueda(item)) continue;
+    return item;
   }
   throw new Error('generarQueda: sin ítem posible');
 }

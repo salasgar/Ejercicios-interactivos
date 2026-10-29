@@ -26,3 +26,7 @@ button.linea-caza.eleccion--correcta { border-color: #16a34a; background: var(--
 button.linea-caza.eleccion--mal { border-color: #dc2626; background: var(--error-claro); opacity: 1; }
 .eleccion--elegida { border-color: var(--primario); background: var(--primario-claro); }
 #ninguno { display: block; margin: 0 auto .9rem; }
+
+/* Las razones del ejercicio 5: la palabra no se parte y, en móvil, una opción por fila. */
+#razones .eleccion { overflow-wrap: normal; hyphens: manual; }
+@media (max-width: 480px) { #razones .elecciones--2 { grid-template-columns: 1fr; } }
