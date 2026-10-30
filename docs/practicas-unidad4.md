@@ -143,9 +143,10 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 
 **Publicadas** (a 2026-10-28): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
 26306eb). Sin publicar, con su reabierta en `reparto-practicas-u2/hechos/reabiertas/`:
-`equivalentes` y `compara` (tarea 109: feedback de un paso que no estaba mal; marcas enteras
-nombradas como −6/6), `fraccion-de` y `suma-resta` (tarea 110: distractores y contextos fuera de
-la cota del acta) y las tres de la semana 3 (tarea 111: el ej. 2 de `multiplica-divide` da por
+`equivalentes`, `compara`, `fraccion-de` y `suma-resta` (tarea 117, 30-10: lo que pidieron las
+tareas 109 y 110 está arreglado, pero sacan casos de las hojas y de los exámenes semanales y
+final, que se escribieron después; los de examen se excluyen por su huella, nunca en claro) y
+las tres de la semana 3 (tarea 111: el ej. 2 de `multiplica-divide` da por
 mala una fracción sin simplificar que el enunciado no prohíbe; en `combinadas-fracciones` y
 `errores4`, distractores y nombres de errores que dicen algo falso del ítem). El estado vivo es
 el campo `disponible` de `catalogo.js`.
