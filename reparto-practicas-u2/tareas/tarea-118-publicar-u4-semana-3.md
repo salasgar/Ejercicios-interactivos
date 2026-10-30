@@ -103,6 +103,13 @@ línea). La que no pase se queda sin publicar con su reabierta nueva, y las dem�
 - Las de la 117 (léelas en su ficha y en su ENTREGA antes de empezar): clic de verdad por CDP, guiones que se quedan viejos,
   equivalentes por valor con 3000 ítems.
 - Si reabres una, se queda **sin publicador** otra vez: dilo en la terminada con su plazo.
+- (de la 118, 30-10) Las de la 117 valen aquí tal cual: compara con los **casos de examen de verdad** (TSV de las semanas 2 y 3, los tres
+  modelos del final) y nunca los escribas en claro en el repo, **tampoco de pasada** («es un paso del 2d del modelo 1» ya dice qué hay en el
+  examen). Cuando un ejercicio tiene pocos ítems posibles (potencias: 48), quitar los de las hojas lo vacía: se quitan los de examen y se
+  pregunta lo demás.
+- (de la 118) En `combinadas-fracciones` los operadores son `.frac-op` con `data-ruta` (no botones); un toque malo aplica el paso bueno y
+  sigue, así que tocar siempre el primero recorre la cadena hasta el final. En `multiplica-divide`, el campo de fracción son
+  `.campo-fraccion__arriba` y `__abajo`, con el botón `+/−` aparte.
 
 ## Prohibido (propio de esta tarea)
 
