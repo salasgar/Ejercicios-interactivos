@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-30 (alta de la coordinadora s-20261030T074933-c1fcc2b1, por encargo de Juan Luis del 30-10: «vamos con las cuatro tareas de la U3»)
 Precondición: 93, 94, 95, 96 y 115 LISTAS (lo están: las doce prácticas de la U3 publicadas) · **Juan Luis delante**, con Chrome abierto, la extensión de Claude conectada y su sesión de Google iniciada en el panel · Disparo: MANUAL (sesión atendida) · **Plazo: sáb 14-11** (la tarea 30 del reparto de la U3 programa Classroom con estas tareas; la primera sale el lun 16-11 a las 8:00)
-Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 1 h (tiempo de sesión, no de persona; la real, el 30-10: unos 10 min) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/116-tareas-u3-panel/` (solo `ENTREGA.md` y su marcador)
 Ficheros que toca: **ninguno del repositorio**. Las tareas se crean en la nube (colección `practicas-tareas` del espacio de Juan Luis) desde el editor de tareas del panel, con su cuenta; esta tarea no edita código ni `practicas/_comun/tareas.js`.
 
@@ -122,6 +122,14 @@ manejas el navegador con las herramientas de Claude en Chrome (`mcp__claude-in-c
   ENTREGA y el calendario de ortografía de `comun/CALENDARIO-CURSO-2026-27.md`).
 - Las fechas del editor son días naturales `AAAA-MM-DD`; «hasta» es el jueves (plazo 23:59), no el viernes del examen.
 - El panel enseña nombres de alumnos: ni uno en la ENTREGA, en `hechos/` ni en el chat más allá de lo imprescindible.
+- (2026-10-30, s-20261030T081530-dafbb0c4) El editor funcionó a la primera. Lo rápido y seguro: rellenar por `javascript_tool`
+  (valor + evento `input` en `#f-es`, `#f-en`, `#f-desde`, `#f-hasta`, cada `[data-ej="slug/n"]` y `#f-nelegir`), releer el
+  formulario, y pulsar «Guardar» con un clic de verdad tras la confirmación. Para comprobar tras recargar: «Editar» + «Cancelar».
+- El editor guarda los ejercicios en el **orden del catálogo**, no en el de la propuesta (la ortografía sale la última de los ★).
+- `innerText` no enseña el valor de los `<input>`: no deduzcas de él que un campo de fecha está vacío.
+- Los códigos de prueba 60 y 61 (7NPD, KTFN) dan «Ese código no existe» en el sistema nuevo, y 62-63 son del profesor de prueba A:
+  no hay código de prueba de Claude en el espacio de Juan Luis para ver sus tareas desde la portada.
+- `_ESTADO.md` puede estar con candado de otra sesión al cerrar: no se espera; la terminada en `hechos/` basta.
 
 ## Prohibido (propio de esta tarea)
 
