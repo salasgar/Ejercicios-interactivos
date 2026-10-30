@@ -457,3 +457,17 @@ Dadas de alta el 30-10 por encargo de Juan Luis («vamos con las cuatro tareas d
   (semana 3, antes del mar 22-12). En serie porque comparten `catalogo.js` y `docs/practicas-unidad4.md`. Cada una deja al día la
   propuesta de la tarea de la app de su semana, que Juan Luis monta en el panel (como la 116 con la U3). Publicar antes del 14-12 no
   enseña nada a los alumnos: la portada oculta la U4 hasta esa fecha (`UNIDADES`).
+
+
+## Tareas 119-121: segunda publicación de la U4 y sus tareas en el panel (2026-10-30, s-20261030T074933-c1fcc2b1)
+
+La 117 y la 118 (30-10) revisaron las siete prácticas de la U4 y **no publicaron ninguna**: todas sacaban casos de las hojas o de los
+exámenes de la U4 (regla 6), escritos después de la revisión de la 109. Dejaron siete reabiertas (MEDIO, carpetas disjuntas: caben a la
+vez) con una regla nueva: **los casos de examen no se escriben en claro en el repositorio** (público); se excluyen por huella FNV-1a
+calculada fuera del repo. Detrás de ellas:
+
+- **119 → 120** (ALTO, en cadena por `catalogo.js`): la segunda publicación, semanas 1-2 y semana 3, con la comprobación de la exclusión
+  (recuentos en la ENTREGA, nunca los casos) y las propuestas de tarea al día (plan A o B).
+- **121** (ALTO, MANUAL, con Juan Luis delante): montar las tres tareas de la U4 en el panel, calcada de la 116, cuando la 119 y la 120
+  digan qué prácticas quedan publicadas. Desbloquea la 29 del reparto de la U4 (F10 firmada). La 116 dejó dicho que los códigos de prueba
+  60 y 61 no existen en el sistema nuevo: hace falta uno en el espacio de Juan Luis para probar sus tareas como alumno.
