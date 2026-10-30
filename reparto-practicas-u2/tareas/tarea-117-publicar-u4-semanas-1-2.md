@@ -115,6 +115,15 @@ igual.
 - (de la U4) Dos fracciones equivalentes entre las opciones es el fallo típico de esta unidad y los tests lo buscan por valor: si una
   reabierta pedía ese filtro, comprueba con 3000 ítems que no queda ningún par equivalente.
 - Si reabres una, se queda **sin publicador** otra vez: dilo en la terminada con su plazo, para que la coordinadora decida.
+- (de la 117, 30-10) **Los exámenes se escriben después que las prácticas**: la regla 6 no se mide solo con los `RESERVADOS` de
+  `comprobar-semanaN.py`, sino con los casos de verdad, `exámenes-semanales/semana-N/casos-examen-semanaN.tsv` (columna `enunciado_tex`)
+  y los `.tex` del examen final. Un barrido de 20000 ítems por ejercicio con la clave «misma tarea, mismos datos» los encuentra en
+  minutos. **Nunca escribas un caso de examen en claro en el repositorio** (código, tests, ENTREGA, hechos, mensaje de commit): es
+  público y Pages sirve también `reparto-practicas-u2/`. Di dónde está y cuántos salen; en el código, por su huella.
+- (de la 117) Un conjunto de claves escrito a mano tiene que normalizarse con la **misma función** que la clave del ítem: `pareja()`
+  ordena cadenas y `'10/15' < '6/9'`, así que «6/9 y 10/15» no filtraba nada, y el test, con la misma lista, pasaba en verde.
+- (de la 117) En el menú de una práctica, `[data-ejercicio]` empieza en **0**. Para leer el ítem en pantalla, `.operacion .frac` y sus
+  dos `span`; el signo de una negativa está en el `.frac-neg` padre. Los puntos de la recta son `.fd-toque` con `aria-label` («0», «−1», «3/5»).
 
 ## Prohibido (propio de esta tarea)
 
