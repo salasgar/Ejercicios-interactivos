@@ -441,3 +441,19 @@ decidió el 26-10 «arreglar y luego publicar»: primero una sesión MEDIO cierr
 como reabiertas, sin tocar `catalogo.js`) y después la **115** (ALTO) las verifica a mano con clics en el navegador, las
 publica y confirma o corrige las propuestas de tarea de las semanas 2 y 4 (`salidas/94-…` y `salidas/96-…`). La 115 toca
 `catalogo.js`: no a la vez que la 98 ni que las 109-111.
+
+
+## Tareas 116-118: las tareas de la U3 en el panel y las siete prácticas de la U4 sin publicador (2026-10-30, s-20261030T074933-c1fcc2b1)
+
+Dadas de alta el 30-10 por encargo de Juan Luis («vamos con las cuatro tareas de la U3 … dame las frases de arranque»).
+
+- **116** (ALTO, MANUAL, con Juan Luis delante): montar en el panel, con Claude en Chrome y su sesión de Google iniciada, las cuatro
+  tareas semanales de la U3 que proponen las ENTREGA de 93-96 (confirmadas por la 115). Las tareas viven en la nube
+  (`practicas-tareas` de su espacio); no hay script que las cree y no se tocan ni `tareas.js` ni el código. Desbloquea la tarea 30 del
+  reparto de la U3 (Classroom; plazo sáb 14-11). Si el editor de la 67 falla, reabierta de la 67 y plan B (él teclea, la sesión dicta).
+- **117 → 118** (ALTO, en cadena): las publicaciones 109-111 cerraron con siete prácticas reabiertas y sin publicador; las reabiertas
+  están cerradas desde el 29-10. La 117 revisa a mano y publica `equivalentes` y `compara` (semana 1, antes del jue 10-12) y
+  `fraccion-de` y `suma-resta` (semana 2, antes del jue 17-12); la 118, `multiplica-divide`, `combinadas-fracciones` y `errores4`
+  (semana 3, antes del mar 22-12). En serie porque comparten `catalogo.js` y `docs/practicas-unidad4.md`. Cada una deja al día la
+  propuesta de la tarea de la app de su semana, que Juan Luis monta en el panel (como la 116 con la U3). Publicar antes del 14-12 no
+  enseña nada a los alumnos: la portada oculta la U4 hasta esa fecha (`UNIDADES`).
