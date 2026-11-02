@@ -23,6 +23,47 @@ const SIGNO = c => (c < 0 ? '&lt;' : '&gt;');
 const aFr = ({ num, den }) => fraccion(num, den);
 const par = (num, den) => ({ num, den });
 
+// Casos que se dejan libres para la hoja (en claro: los alumnos ya la tienen) y para los exámenes
+// (semanales y final), por huella, nunca en claro: el repositorio y GitHub Pages son públicos. Ver
+// hechos/reabiertas/102--s-20261030T081542-dab2aa98-revision.md. Las claves no dependen del orden
+// en que se generen las fracciones ni, en el ej. 3, del orden de la tarjeta ni de si el ítem pide
+// creciente o decreciente: es la misma pareja o el mismo conjunto de valores en cualquier caso.
+const parejaFracciones = (a, b) => [`${a.num}/${a.den}`, `${b.num}/${b.den}`].sort().join(' y ');
+const claveConjunto = fracs => fracs.map(f => `${f.num}/${f.den}`).slice().sort().join(',');
+
+// ej. 1, hoja 1 (ej. 10 y 12a) y hoja 2 (ej. 1b); los ejemplos de los recuadros «Recuerda» no hacen falta
+const PAREJAS_RESERVADAS = new Set([
+  [par(4, 9), par(7, 9)], [par(5, 6), par(5, 8)], [par(5, 6), par(7, 9)], [par(5, 11), par(1, 2)], [par(-5, 6), par(-1, 6)],
+  [par(7, 12), par(1, 2)], [par(3, 5), par(5, 8)], [par(-2, 7), par(1, 9)], [par(-3, 5), par(-3, 4)],
+  [par(7, 15), par(4, 9)], [par(-3, 5), par(-4, 7)],
+].map(([a, b]) => parejaFracciones(a, b)));
+
+// ej. 3, hoja 1 (ej. 11)
+const CONJUNTOS_RESERVADOS = new Set([
+  [par(4, 5), par(7, 10), par(3, 4), par(13, 20)],
+  [par(5, 9), par(1, 2), par(2, 3), par(7, 18)],
+].map(claveConjunto));
+
+// FNV-1a de 32 bits: igual que en practicas/equivalentes/logica.js.
+export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+
+// ej. 1: U4-1C-17 y U4-1C-19 de las semanas 1 y 2, y el apartado 1d del modelo 2 del examen final
+const HUELLAS_EXAMEN_PAREJAS = new Set([
+  '1lekmsq', 'x1dmvt', '1ttfdjj', '16nftms', '1v021so', '113h667',
+  'ddk42d', '17y1zcs', '1h0ahj4', '1qqu3k', '1m6muz', '1uts6if',
+  'vb0eaj', '1oh2ne2', '1purhs1', '1edpo85', '1fsh9vg', '7lqa0r',
+  '1xhma6c', '102l2d6',
+]);
+// ej. 3: U4-1C-20 de las semanas 1 y 3, y el apartado 1b de los tres modelos del examen final
+const HUELLAS_EXAMEN_CONJUNTOS = new Set([
+  '1r32c52', '16kru26', '1f47iar', 'kcab53', '18f1rnq', '9kbpld',
+  'bdhps1', '1fs22hv', '1grz457', '6rvqvo', '1uucg5t', 'cuw351',
+  '1kcnn72', 'o3sspn', '1ntbp3c',
+]);
+
+export const esParejaReservada = (a, b) => { const c = parejaFracciones(a, b); return PAREJAS_RESERVADAS.has(c) || HUELLAS_EXAMEN_PAREJAS.has(huella(c)); };
+export const esConjuntoReservado = fracs => { const c = claveConjunto(fracs); return CONJUNTOS_RESERVADOS.has(c) || HUELLAS_EXAMEN_CONJUNTOS.has(huella(c)); };
+
 // --- Ejercicio 1: mayor o menor ---------------------------------------------------
 
 const CASOS = ['mismo-den', 'mismo-num', 'distinto'];
@@ -57,6 +98,7 @@ export function generarComparar(rng) {
       if (ignoraElSigno(aFr(a), aFr(b)) === null) continue;
     } else if (caso === 'distinto' && compararSoloNumeradores(x, y) === null) continue;
     else if (caso === 'mismo-num' && compararSoloDenominadores(x, y) === null) continue;
+    if (esParejaReservada(a, b)) continue;
     return { a, b, caso };
   }
 }
@@ -184,6 +226,7 @@ export function generarOrden(rng) {
       const cuantas = rng.elegir([1, 1, 2]);
       for (const i of rng.barajar(lista.map((_, j) => j)).slice(0, cuantas)) lista[i] = par(-lista[i].num, lista[i].den);
     }
+    if (esConjuntoReservado(lista)) continue;
     return { fracs: rng.barajar(lista), creciente: rng.azar() < 0.5 };
   }
 }

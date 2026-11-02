@@ -11,6 +11,7 @@ import {
   generarCajas, cajaDe, fallosCajas, errorCajas, explicarCajas,
   generarOrden, ordenCorrecto, ordenBien, errorOrden, explicarOrden,
   generarRecta, fraccionRecta, errorRecta, explicarRecta,
+  esParejaReservada, esConjuntoReservado, huella,
 } from '../practicas/compara/logica.js';
 import { marcasRecta } from '../practicas/_comun/dibujo-fracciones.js';
 import { TX } from '../practicas/compara/textos.js';
@@ -261,6 +262,23 @@ test('recta: una marca entera tocada se nombra como entero («−1», «1», «0
     }
   }
   assert.ok(casos > 500, `casos: ${casos}`);
+});
+
+// --- Reabierta del 30-10 -------------------------------------------------------------
+
+test('casos de la hoja (en claro) y del examen (por huella): no salen en los ej. 1 y 3', () => {
+  // Regresión: las parejas y los conjuntos reservados se construyen con la misma función que
+  // los compara, así que el orden de denominadores con distinto número de cifras no puede
+  // desincronizar la clave (como pasó en equivalentes). Comprobado en los dos sentidos.
+  assert.ok(esParejaReservada({ num: 5, den: 6 }, { num: 5, den: 8 }));
+  assert.ok(esParejaReservada({ num: 5, den: 8 }, { num: 5, den: 6 }));
+  assert.ok(esConjuntoReservado([{ num: 5, den: 9 }, { num: 1, den: 2 }, { num: 2, den: 3 }, { num: 7, den: 18 }]));
+  assert.ok(esConjuntoReservado([{ num: 7, den: 18 }, { num: 5, den: 9 }, { num: 2, den: 3 }, { num: 1, den: 2 }]));
+  // `huella` es determinista; los casos de examen reales no se escriben en claro en este test:
+  // solo viven, por huella, en HUELLAS_EXAMEN_PAREJAS y HUELLAS_EXAMEN_CONJUNTOS de logica.js.
+  assert.equal(huella('5/6 y 5/8'), huella('5/6 y 5/8'));
+  for (const it of generarN(generarComparar, 4811, 20000)) assert.ok(!esParejaReservada(it.a, it.b), `${it.a.num}/${it.a.den} y ${it.b.num}/${it.b.den}`);
+  for (const it of generarN(generarOrden, 4812, 20000)) assert.ok(!esConjuntoReservado(it.fracs), it.fracs.map(f => `${f.num}/${f.den}`).join(','));
 });
 
 test('textos: «½» y «1 and a half» no aparecen en los textos de alumno', () => {
