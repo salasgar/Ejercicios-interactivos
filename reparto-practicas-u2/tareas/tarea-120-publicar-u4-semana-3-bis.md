@@ -127,6 +127,15 @@ línea). La que no pase se queda sin publicar con su reabierta nueva, y las dem�
   con un caso cuyo orden de cadena no sea el natural.
 - (de la 117 y la 118) Los casos de las **hojas** sí van en claro (los alumnos ya las tienen): compáralos con los ejercicios de
   `4. Fractions/hojas-de-ejercicios/hoja-unidad4-semana*.tex`, por valor y por los dos huecos posibles de una igualdad.
+- (de la 120, 2-11) Mira también las trampas que dejó la 119 en su ficha (2-11): **claves sin orden** (las sesiones que cierran las
+  reabiertas filtran cada caso en el orden del papel) y **cada caso contra todos los ejercicios** que puedan generar sus datos.
+- (de la 120) **U4-3C-11** («tres son correctas, ¿cuál está mal?»): la respuesta, en la columna `correcta` del TSV, es una cuenta mal
+  hecha; si la práctica pide esa cuenta, su solución da la respuesta. Se cruza con todos los ejercicios de cálculo (`multiplica-divide`,
+  `suma-resta`, `errores4`…), no solo con «caza el error».
+- (de la 120) Expresiones combinadas: compáralas por **números, operaciones y valor**, que encuentra cualquier reordenación sin escribir un
+  analizador de expresiones con conmutatividad. Al leer el TSV, quita los dos puntos de «Work out:» y el `{\small(…)}` final, o se leen como
+  división y paréntesis.
+- (de la 120) Con un perfil de Chrome nuevo la primera carga de la portada pasa de 30 s (Firebase por CDN): reutiliza un perfil ya usado.
 
 ## Prohibido (propio de esta tarea)
 
