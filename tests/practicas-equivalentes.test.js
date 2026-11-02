@@ -11,6 +11,7 @@ import { mcm } from '../practicas/_comun/aritmetica.js';
 import {
   fr, generarTermino, generarSonEquivalentes, generarEquipos, generarComun, errorTermino, errorEquivalentes,
   evaluarEquipos, errorMcm, errorNumeradores, cruzados, nombreDe, ERRORES_PROPIOS, DEN_MAX, claveDe,
+  esParejaReservada, esTerminoReservado, huella,
 } from '../practicas/equivalentes/logica.js';
 import { TX } from '../practicas/equivalentes/textos.js';
 
@@ -169,15 +170,24 @@ test('ej. 4: un numerador mal con el m.c.m. bien es un error del paso 2, y «sol
   }
 });
 
-test('casos de la hoja y del examen de la semana 1 (comprobar-semana1.py): no salen en los ej. 1, 2 y 4', () => {
-  const sinOrden = (a, b) => [`${a.num}/${a.den}`, `${b.num}/${b.den}`].sort().join(' y ');
-  const reservadas = ['6/9 y 10/15', '8/10 y 9/12', '1/4 y 5/6', '1/6 y 4/9', '5/12 y 7/8', '2/3 y 5/8', '3/10 y 4/15'];
-  for (const it of lote(generarSonEquivalentes, 4807)) assert.ok(!reservadas.includes(sinOrden(it.a, it.b)), claveDe(it));
-  for (const it of lote(generarComun, 4808)) assert.ok(!reservadas.includes(sinOrden(it.a, it.b)), claveDe(it));
-  const huecos = ['5/8=*/48', '7/9=28/*', '2/9=*/27', '5/6=35/*', '4/11=*/44', '21/56=*/8'];
+test('casos de la hoja (en claro) y del examen (por huella): no salen en los ej. 1, 2 y 4', () => {
+  // Regresión del bug del 30-10: `pareja()` ordena como cadenas, y con denominadores de distinto número
+  // de cifras ('10/15' antes que '6/9') la pareja escrita a mano en el orden «natural» no coincidía con
+  // la que de verdad construye la función. Comprobado en los dos sentidos.
+  assert.ok(esParejaReservada({ num: 6, den: 9 }, { num: 10, den: 15 }));
+  assert.ok(esParejaReservada({ num: 10, den: 15 }, { num: 6, den: 9 }));
+  // El hueco de un término puede estar en cualquiera de las dos fracciones de la pareja: la exclusión
+  // no depende de cuál de las dos tiene el hueco ni de qué término es.
+  assert.ok(esTerminoReservado({ num: 2, den: 9 }, { num: 6, den: 27 }));
+  assert.ok(esTerminoReservado({ num: 6, den: 27 }, { num: 2, den: 9 }));
+  // `huella` es determinista (misma cadena, mismo hash) y no se usa aquí sobre casos reales de examen:
+  // esos solo viven, por huella, en HUELLAS_EXAMEN (logica.js), calculados fuera del repositorio.
+  assert.equal(huella('3/10 y 4/15'), huella('3/10 y 4/15'));
+  for (const it of lote(generarSonEquivalentes, 4807)) assert.ok(!esParejaReservada(it.a, it.b), claveDe(it));
+  for (const it of lote(generarComun, 4808)) assert.ok(!esParejaReservada(it.a, it.b), claveDe(it));
   for (const it of lote(generarTermino, 4809)) {
-    const clave = `${it.izq.num}/${it.izq.den}=${it.der.num ?? '*'}/${it.der.den ?? '*'}`;
-    assert.ok(!huecos.includes(clave), clave);
+    const completa = { ...it.der, [it.hueco]: it.respuesta };
+    assert.ok(!esTerminoReservado(it.izq, completa), claveDe(it));
   }
 });
 

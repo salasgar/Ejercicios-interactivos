@@ -36,16 +36,42 @@ export const ERRORES_PROPIOS = {
 
 export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? null;
 
-// Casos que se dejan libres para la hoja y los exámenes de la semana 1 (RESERVADOS en comprobar-semana1.py).
-// Las claves de un ítem del ej. 1 son `izq=der` con `*` en el hueco; las parejas de los ej. 2 y 4, sin orden.
-const RESERVADOS = new Set(['5/8=*/48', '7/9=28/*', '2/9=*/27', '5/6=35/*', '4/11=*/44', '21/56=*/8']);
+// Casos que se dejan libres para la hoja (en claro: los alumnos ya la tienen) y para los exámenes
+// (por huella, nunca en claro: el repositorio y GitHub Pages son públicos). La clave de un ítem del
+// ej. 1 es la pareja sin orden de la fracción reducida y su equivalente completa, sin importar cuál
+// de las dos tiene el hueco ni qué término es (así cubre los dos huecos de una misma pareja); la de
+// los ej. 2 y 4, la pareja sin orden de las dos fracciones. `pareja()` siempre construye la clave con
+// el mismo orden (alfabético de las dos cadenas), así que los conjuntos se escriben con la función,
+// nunca a mano: una pareja escrita a mano en el orden «natural» puede no coincidir con la que ordena
+// `.sort()` cuando los denominadores tienen distinto número de cifras (p. ej. «10/15» ordena antes que
+// «6/9»), y entonces la exclusión no reconoce esa pareja.
 const pareja = (a, b) => [`${a.num}/${a.den}`, `${b.num}/${b.den}`].sort().join(' y ');
-const PAREJAS_RESERVADAS = new Set([
-  // ej. 2 de la hoja (7a, 7b) y del examen
-  '6/9 y 10/15', '8/10 y 9/12',
-  // ej. 4: la hoja (9a-9d, por parejas) y comprobar-semana1.py (2/3 y 5/8; 3/10 y 4/15)
-  '1/4 y 5/6', '1/6 y 4/9', '5/12 y 7/8', '1/2 y 3/5', '1/2 y 7/10', '3/5 y 7/10', '2/3 y 5/8', '3/10 y 4/15',
+const comoParejas = pares => new Set(pares.map(([a, b]) => pareja(a, b)));
+
+// ej. 1 (hoja: ej. 6a-6d, por parejas)
+const RESERVADOS_TERMINO = comoParejas([
+  [par(5, 8), par(30, 48)], [par(7, 9), par(28, 36)], [par(2, 9), par(6, 27)],
+  [par(5, 6), par(35, 42)], [par(4, 11), par(16, 44)], [par(21, 56), par(3, 8)],
 ]);
+// ej. 2 de la hoja (7a, 7b) y ej. 4 de la hoja (9a-9d, por parejas)
+const PAREJAS_RESERVADAS = comoParejas([
+  [par(6, 9), par(10, 15)], [par(8, 10), par(9, 12)],
+  [par(1, 4), par(5, 6)], [par(1, 6), par(4, 9)], [par(5, 12), par(7, 8)], [par(1, 2), par(3, 5)],
+  [par(1, 2), par(7, 10)], [par(3, 5), par(7, 10)], [par(2, 3), par(5, 8)], [par(3, 10), par(4, 15)],
+]);
+
+// FNV-1a de 32 bits de la pareja: los casos de examen no se escriben en claro en el código publicado
+// (hechos/reabiertas/100--s-20261030T081542-dab2aa98-revision.md). Huellas calculadas fuera del repo,
+// de los casos de examen de la semana 1 y 2 (U4-1C-12, U4-1C-16) y de los apartados 1c/1d de los tres
+// modelos del examen final.
+export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+const HUELLAS_EXAMEN = new Set([
+  '6vt7oe', '1dv8pi4', '12d1mvx', '178c0u2', 'mb251n', '1gmoeu1', 'puauo3', '1u7lcdn', '4cpeuf',
+  '1wufmym', '16sz8ti', '1cftfqt', '95ob0c', 'ujw7gv', 'ouenv3', 'z7yqcb',
+]);
+
+export const esTerminoReservado = (izq, completa) => { const c = pareja(izq, completa); return RESERVADOS_TERMINO.has(c) || HUELLAS_EXAMEN.has(huella(c)); };
+export const esParejaReservada = (a, b) => { const c = pareja(a, b); return PAREJAS_RESERVADAS.has(c) || HUELLAS_EXAMEN.has(huella(c)); };
 
 // ─── Ejercicio 1: el término que falta ──────────────────────────────────────────────
 
@@ -63,8 +89,7 @@ export function generarTermino(rng) {
     const chica = par(p, q), grande = par(p * k, q * k);
     const izq = direccion === 'ampliar' ? chica : grande;
     const completa = direccion === 'ampliar' ? grande : chica;
-    const clave = `${izq.num}/${izq.den}=${hueco === 'num' ? '*' : completa.num}/${hueco === 'den' ? '*' : completa.den}`;
-    if (RESERVADOS.has(clave)) continue;
+    if (esTerminoReservado(izq, completa)) continue;
     return { ejercicio: 1, izq, der: { ...completa, [hueco]: null }, hueco, respuesta: completa[hueco], k, direccion };
   }
 }
@@ -104,7 +129,7 @@ export function generarSonEquivalentes(rng) {
         b = rng.azar() < 0.5 ? par(a.num * m, a.den) : par(a.num, a.den * m);
       } else b = par(a.num, a.den + rng.entero(1, 3));
     }
-    if (Math.max(a.den, b.den) > DEN_MAX || PAREJAS_RESERVADAS.has(pareja(a, b))) continue;
+    if (Math.max(a.den, b.den) > DEN_MAX || esParejaReservada(a, b)) continue;
     const equivalentes = fr(a).equals(fr(b));
     if (equivalentes !== (error === null)) continue;
     return rng.azar() < 0.5 ? { ejercicio: 2, a, b, equivalentes, error } : { ejercicio: 2, a: b, b: a, equivalentes, error };
@@ -197,7 +222,7 @@ export function generarComun(rng) {
     const n1 = rng.entero(1, d1 - 1), n2 = rng.entero(1, d2 - 1);
     if (!irreducible(n1, d1) || !irreducible(n2, d2)) continue;
     const a = par(n1, d1), b = par(n2, d2);
-    if (PAREJAS_RESERVADAS.has(pareja(a, b))) continue;
+    if (esParejaReservada(a, b)) continue;
     return { ejercicio: 4, a, b, mcm: m, ea: par(n1 * (m / d1), m), eb: par(n2 * (m / d2), m) };
   }
 }

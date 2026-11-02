@@ -77,8 +77,8 @@ export const TX = {
         en: (item, v) => `You left ${v} as it was, but this term changes too: you do the same to top and bottom. `,
       },
       'otra-respuesta': {
-        es: (item, v) => `${v} no es: `,
-        en: (item, v) => `${v} is not it: `,
+        es: (item, v) => `${v} no es la respuesta. `,
+        en: (item, v) => `${v} is not it. `,
       },
     },
   },
