@@ -14,6 +14,7 @@ import { TX, pistaDe } from '../practicas/combinadas-fracciones/textos.js';
 import {
   generarPrimero, generarPasos, generarError, valida, clasificarToque, opcionesDePaso, opcionesOrdenadas,
   diagnosticar, cuentaOperaciones, esUltimo, MAX_TERMINO_PASO, MAX_DEN_FINAL,
+  EXPRESIONES_HOJA, HUELLAS_EXAMEN_COMBINADAS, huellaExpresion,
 } from '../practicas/combinadas-fracciones/logica.js';
 
 const N = 3000;
@@ -57,9 +58,30 @@ for (const [nombre, gen] of [['ej. 1', generarPrimero], ['ej. 2', generarPasos]]
         // el paso que acepta la práctica no cambia el valor de la expresión
         assert.ok(evaluar(aplicarPaso(arbol, paso)).equals(final), `${texto}: ${paso.operacion}`);
       }
+      assert.ok(!EXPRESIONES_HOJA.has(texto), `caso de la hoja: ${texto}`);
+      assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto)), `caso de examen: ${texto}`);
     }
   });
 }
+
+test('las huellas de examen y la lista de la hoja no están vacías y detectan de verdad', () => {
+  assert.equal(EXPRESIONES_HOJA.size, 3);
+  assert.equal(HUELLAS_EXAMEN_COMBINADAS.size, 23);
+  // Hoja 3, ej. 8a: 1/3 + 2/3 · 3/4.
+  assert.ok(EXPRESIONES_HOJA.has('1/3 + 2/3 · 3/4'));
+  // U4-3A-01, variante 1 del examen de la semana 3: 1/4 + 3/8 · 1/9.
+  assert.ok(HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion('1/4 + 3/8 · 1/9')));
+  // Una expresión cualquiera que no está en ninguna lista no se marca.
+  assert.ok(!EXPRESIONES_HOJA.has('1/5 + 1/4 · 1/3'));
+  assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion('1/5 + 1/4 · 1/3')));
+});
+
+test('ej. 3 (Caza el error): la primera línea nunca es un caso de examen o de la hoja', () => {
+  for (const item of generarN(generarError, 1500, 13)) {
+    assert.ok(!EXPRESIONES_HOJA.has(item.lineas[0]), `caso de la hoja: ${item.lineas[0]}`);
+    assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(item.lineas[0])), `caso de examen: ${item.lineas[0]}`);
+  }
+});
 
 test('ej. 1-2: al menos una cuarta parte lleva una fracción negativa; los negativos solo van primero, tras · o : o abriendo un paréntesis', () => {
   for (const gen of [generarPrimero, generarPasos]) {

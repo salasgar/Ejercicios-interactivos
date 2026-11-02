@@ -23,6 +23,33 @@ export const MAX_DEN_FINAL = 36;
 
 const DENS = [2, 3, 4, 5, 6, 8, 9, 10, 12];
 
+// Hoja 3, ej. 8a, 8e y 12d (en claro: los alumnos ya las tienen en papel). Reabierta del 30-10
+// (`hechos/reabiertas/106--s-20261030T084305-921ac985-revision.md`). El texto es exactamente el
+// que produce `rellenar`: operandos irreducibles, espacio simple, MENOS delante del primero.
+export const EXPRESIONES_HOJA = new Set([
+  '1/3 + 2/3 · 3/4',
+  `${MENOS}1/2 + 2/3 · 3/8`,
+  '1/3 + 1/2 · 2/5',
+]);
+
+// Exámenes semanales y examen final (por huella: no se escriben en claro, el repo es público).
+// La huella es sobre el texto tal cual lo produce `rellenar` (coincide con `aTextoExpresion`:
+// comprobado con un guion de scratchpad, que no se comitea). «Revisa también» de la misma
+// reabierta: U4-3A-01 y U4-3A-02 de la semana 3, y los apartados 3a/3b y las dos cajas de «Find
+// the mistake» (5b) de los tres modelos del examen final.
+const huella = s => {
+  let h = 0x811c9dc5;
+  for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+};
+export const huellaExpresion = texto => huella(texto);
+export const HUELLAS_EXAMEN_COMBINADAS = new Set([
+  'zyqjw2', '1vfcihd', '1sss5t5', 'b1d396', 'qt5s13', '1c9vd1h',
+  'snxq0l', '15ibpdd', 'up0xfk', 'v0yv4s', '9zdhky', '1hl0nxe',
+  'sqzwqk', 'addtep', '1r9mrou', 'z0w58u', '1esxve7',
+  'xo067s', '58ennd', '19g2xo6', '1f5rmrv', '1t9u2fu', '10zshvv',
+]);
+
 // ─── Piezas de las expresiones ────────────────────────────────────────────────────
 
 /** Un operando como texto: irreducible, casi siempre propia, a veces impropia o un natural pequeño. */
@@ -136,6 +163,7 @@ export function cuentaOperaciones(x) {
 function hastaQueValga(rng, hacer, opciones) {
   for (let i = 0; i < 5000; i++) {
     const texto = hacer(rng);
+    if (EXPRESIONES_HOJA.has(texto) || HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto))) continue;
     if (valida(texto, opciones)) return texto;
   }
   throw new Error('No se encuentra una expresión válida');
