@@ -29,15 +29,56 @@ const mcm = (a, b) => (a / mcd(a, b)) * b;
  * los saca nunca. Fracción de una cantidad: [numerador, denominador, cantidad].
  */
 export const RESERVADOS = {
-  fraccionDe: [[3, 4, 44], [5, 8, 56], [4, 9, 72]],
-  parte: [[15, 27]],
-  // Ejercicio 4: «5/8 de un depósito son 35 L», «5/12 y 21 L» y «1/5 y 3/10 de 150».
+  fraccionDe: [
+    [3, 4, 44], [5, 8, 56], [4, 9, 72],
+    [1, 3, 27], [1, 4, 52], [2, 3, 27], [5, 6, 42], [3, 8, 64], [7, 10, 90], [3, 7, 28],
+  ],
+  parte: [[15, 27], [6, 20], [14, 20]],
+  // Ejercicio 4: casos de las hojas (numerador/denominador y el dato de cantidad).
   problema: [
     { f: [5, 8], dato: 35 },
     { f: [5, 12], dato: 21 },
     { f: [1, 5], g: [3, 10], total: 150 },
+    { f: [3, 7], dato: 96 },
+    { f: [5, 9], dato: 12 },
+    { f: [2, 3], dato: 18 },
+    { f: [3, 7], dato: 36 },
+    { f: [2, 9], g: [1, 6], total: 180 },
   ],
 };
+
+/**
+ * Los casos de examen NO se escriben en claro en el repositorio (público): se excluyen por
+ * su huella (FNV-1a de 32 bits de la clave del ítem), calculadas fuera del repo con un guion
+ * de scratchpad que lee `exámenes-semanales/` y `examen-final/` de la carpeta de la unidad.
+ */
+const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+
+/** Clave de un ítem de los ejercicios 1 y 2: la fracción y el total. */
+const claveCalculo = (n, d, total) => `${n}/${d} de ${total}`;
+/** Clave de un ítem del ejercicio 3: la pareja (parte, otra parte) sin importar el orden. */
+const claveParte = (p, q) => { const a = Math.min(p, q), b = Math.max(p, q); return `${a}/${b}`; };
+/** Clave de un ítem del ejercicio 4: la fracción y el dato ('parte'/'restante'), o las dos fracciones y el total ('dos'). */
+const claveProblema = item => {
+  if (item.variante === 'dos') {
+    const a = `${item.f1.n}/${item.f1.d}`, b = `${item.f2.n}/${item.f2.d}`;
+    const [x, y] = [a, b].sort();
+    return `${x},${y}|${item.total}`;
+  }
+  if (item.variante === 'queda') return `${item.f1.n}/${item.f1.d}|${item.total}`;
+  return `${item.f1.n}/${item.f1.d}|${item.dato}`;
+};
+
+const HUELLAS_EJ1 = new Set(["1wz398h","xeq9ne","rwptgl","spv52v","12thsdl","k047pq","xd5png","f5fjky","jcl2bf","1q4purv","nyrqxy","jr8r6p","1171lrz","1kjb3vs"]);
+const HUELLAS_EJ3 = new Set(["1t2u34d","1xxmt48","12qzocl","sb9hjg","1ef04bq","3dx1ce","38jwnw","18fnnbp","jiarnq"]);
+const HUELLAS_EJ4 = new Set(["btyyk8","1m8cryi","170hiy5","1jbt7d7","ybrv1h","1qo4gwl","1mn9n1s","kzxouh","1i2cfjz","1tft5av","suobzu","1q6lyxk","197lva6","10psh5l","o9q8ak","1mbhofz","zz75hj","10vtxqt","6pbibv","13ho8wh","1grj2xp","jxvauu","3nhrwz","150ccvg","628l7r"]);
+
+/** ¿Es `n/d de total` un caso de examen (ejercicios 1 y 2)? */
+export const esCasoExamenCalculo = (n, d, total) => HUELLAS_EJ1.has(huella(claveCalculo(n, d, total)));
+/** ¿Es la pareja (parte, otra) un caso de examen (ejercicio 3)? */
+export const esCasoExamenParte = (p, q) => HUELLAS_EJ3.has(huella(claveParte(p, q)));
+/** ¿Es el ítem un caso de examen (ejercicio 4)? */
+export const esCasoExamenProblema = item => HUELLAS_EJ4.has(huella(claveProblema(item)));
 
 const esReservadoFraccionDe = (n, d, total) => RESERVADOS.fraccionDe.some(([a, b, c]) => a === n && b === d && c === total);
 const mismaFraccion = (x, [a, b]) => x.n * b === x.d * a;
@@ -109,7 +150,7 @@ export function generarCalculo(rng) {
     const d = rng.elegir(DENOMINADORES);
     const n = rng.azar() < 0.25 ? 1 : rng.entero(1, d - 1);
     const k = rng.entero(2, Math.min(20, Math.floor(200 / d)));
-    if (esReservadoFraccionDe(n, d, d * k)) continue;
+    if (esReservadoFraccionDe(n, d, d * k) || esCasoExamenCalculo(n, d, d * k)) continue;
     return { n, d, total: d * k, resultado: n * k };
   }
 }
@@ -182,7 +223,7 @@ export function generarContexto(rng) {
     if (!posibles.length) continue;
     const total = rng.elegir(posibles);
     const n = rng.azar() < 0.25 ? 1 : numeradorIrreducible(rng, d);
-    if (esReservadoFraccionDe(n, d, total)) continue;
+    if (esReservadoFraccionDe(n, d, total) || esCasoExamenCalculo(n, d, total)) continue;
     return { ctx, n, d, total, resultado: (total / d) * n };
   }
   throw new Error('generarContexto: sin ítem posible');
@@ -220,10 +261,12 @@ export function generarParte(rng) {
   for (let intento = 0; intento < 500; intento++) {
     total = rng.entero(g.min, g.max);
     parte = rng.entero(2, total - (g.tipo === 'partes' ? 2 : 1));
+    const otra = total - parte;
     if (RESERVADOS.parte.some(([p, t]) => p === parte && t === total)) continue;
+    if (esCasoExamenParte(parte, otra)) continue;
     if ((mcd(parte, total) > 1) === simplificable) break;
   }
-  if (RESERVADOS.parte.some(([p, t]) => p === parte && t === total)) return generarParte(rng);
+  if (RESERVADOS.parte.some(([p, t]) => p === parte && t === total) || esCasoExamenParte(parte, total - parte)) return generarParte(rng);
   return g.tipo === 'partes' ? { ctx, tipo: 'partes', parte, otra: total - parte, total } : { ctx, tipo: 'total', parte, total };
 }
 
@@ -282,7 +325,8 @@ export const cotaDe = item => ESCENARIOS[item.variante][item.esc];
 
 /** Una opción de cantidad con su error (null si es la buena). */
 const cantidad = (v, error) => ({ tipo: 'cantidad', v, error });
-const comoFraccion = (f, error) => ({ tipo: 'fraccion', n: f.num, d: f.den, error });
+// Siempre irreducible: es una opción de respuesta, como las fracciones del enunciado (hallazgo de la reabierta del 30-10).
+const comoFraccion = (f, error) => { const s = f.simplificar(); return { tipo: 'fraccion', n: s.num, d: s.den, error }; };
 
 /** Un número de cantidad válido como opción: entero, ≥ 2, dentro de `tope` y distinto del bueno. */
 const valido = (x, tope) => Number.isInteger(x) && x >= 2 && x <= tope;
@@ -391,7 +435,7 @@ export function generarProblema(rng) {
   for (let intento = 0; intento < 1000; intento++) {
     const variante = rng.elegir(VARIANTES);
     const item = variante === 'queda' ? problemaQueda(rng) : variante === 'dos' ? problemaDos(rng) : problemaTotal(rng, variante);
-    if (item && !esReservadoProblema(item)) return item;
+    if (item && !esReservadoProblema(item) && !esCasoExamenProblema(item)) return item;
   }
   throw new Error('generarProblema: sin ítem posible');
 }

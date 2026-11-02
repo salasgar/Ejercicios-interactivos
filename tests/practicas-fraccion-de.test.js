@@ -13,6 +13,7 @@ import {
   F, RESERVADOS, esReservadoProblema, CONTEXTOS, IDS_CONTEXTO, GRUPOS, IDS_GRUPO, ESCENARIOS, VARIANTES, ERRORES_PROPIOS,
   enCota, totalesPosibles, errorConNombre, generarCalculo, generarContexto, generarParte, generarProblema,
   errorDeCalculo, errorDeParte, respuestaParte, respuestaProblema, cotaDe,
+  esCasoExamenCalculo, esCasoExamenParte, esCasoExamenProblema,
 } from '../practicas/fraccion-de/logica.js';
 import {
   TX, FRASES, GRUPOS_TX, PROBLEMAS, enunciadoContexto, enunciadoParte, enunciadoProblema,
@@ -164,15 +165,20 @@ test('ejercicio 2: cada ítem cabe en la cota de su contexto y da un resultado e
 // --- Casos reservados para el examen (regla 9) ---------------------------------------
 
 test('los casos reservados para el examen no salen nunca (ejercicios 1-4)', () => {
-  const [a, b, c] = RESERVADOS.fraccionDe;
-  assert.deepEqual([a, b, c], [[3, 4, 44], [5, 8, 56], [4, 9, 72]]);
+  // Las hojas de la unidad (en claro): las tres de siempre y las que añadió la reabierta del 30-10.
+  for (const caso of [[3, 4, 44], [5, 8, 56], [4, 9, 72], [1, 3, 27], [1, 4, 52], [2, 3, 27], [5, 6, 42], [3, 8, 64], [7, 10, 90], [3, 7, 28]]) {
+    assert.ok(RESERVADOS.fraccionDe.some(r => r.join() === caso.join()), `falta ${caso} en RESERVADOS.fraccionDe`);
+  }
+  for (const caso of [[15, 27], [6, 20], [14, 20]]) {
+    assert.ok(RESERVADOS.parte.some(r => r.join() === caso.join()), `falta ${caso} en RESERVADOS.parte`);
+  }
   const reservado = it => RESERVADOS.fraccionDe.some(([n, d, t]) => it.n === n && it.d === d && it.total === t);
   for (const [i, fn] of [generarCalculo, generarContexto].entries()) {
     assert.ok(generar(fn, 103020 + i).every(it => !reservado(it)));
   }
-  assert.ok(generar(generarParte, 103022).every(it => !(it.parte === 15 && it.total === 27)));
+  assert.ok(generar(generarParte, 103022).every(it => !RESERVADOS.parte.some(([p, t]) => it.parte === p && it.total === t)));
   assert.ok(generar(generarProblema, 103023).every(it => !esReservadoProblema(it)));
-  // El detector reconoce los siete casos reservados con las formas con que podrían salir.
+  // El detector reconoce los casos reservados con las formas con que podrían salir.
   const base = { esc: 'x', opciones: [] };
   assert.ok(esReservadoProblema({ ...base, variante: 'parte', total: 56, f1: { n: 5, d: 8 }, dato: 35 }));
   assert.ok(esReservadoProblema({ ...base, variante: 'restante', total: 36, f1: { n: 5, d: 12 }, dato: 21 }));
@@ -180,6 +186,30 @@ test('los casos reservados para el examen no salen nunca (ejercicios 1-4)', () =
   assert.ok(esReservadoProblema({ ...base, variante: 'dos', total: 150, f1: { n: 3, d: 10 }, f2: { n: 1, d: 5 } }));
   assert.ok(esReservadoProblema({ ...base, variante: 'queda', total: 44, f1: { n: 3, d: 4 } }));
   assert.ok(!esReservadoProblema({ ...base, variante: 'queda', total: 40, f1: { n: 3, d: 4 } }));
+  // Casos nuevos de las hojas (ejercicio 4): 3/7 y 96, 5/9 y 12, 2/3 y 18, 3/7 y 36, y 2/9+1/6 de 180.
+  assert.ok(esReservadoProblema({ ...base, variante: 'parte', total: 224, f1: { n: 3, d: 7 }, dato: 96 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'restante', total: 27, f1: { n: 5, d: 9 }, dato: 12 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'parte', total: 27, f1: { n: 2, d: 3 }, dato: 18 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'restante', total: 84, f1: { n: 3, d: 7 }, dato: 36 }));
+  assert.ok(esReservadoProblema({ ...base, variante: 'dos', total: 180, f1: { n: 2, d: 9 }, f2: { n: 1, d: 6 } }));
+});
+
+// --- Casos de examen (huella FNV-1a; regla nueva de la reabierta del 30-10) -----------
+
+test('los casos de examen no salen nunca (por huella), y la detección no depende del orden', () => {
+  for (const [i, fn] of [generarCalculo, generarContexto].entries()) {
+    assert.ok(generar(fn, 103900 + i).every(it => !esCasoExamenCalculo(it.n, it.d, it.total)), `ejercicio ${i === 0 ? 1 : 2}`);
+  }
+  assert.ok(generar(generarParte, 103902).every(it => !esCasoExamenParte(it.parte, it.tipo === 'partes' ? it.otra : it.total - it.parte)));
+  assert.ok(generar(generarProblema, 103903).every(it => !esCasoExamenProblema(it)));
+  // Ejercicio 3: la huella no depende de qué parte se dé primero (pareja sin orden natural).
+  assert.equal(esCasoExamenParte(3, 17), esCasoExamenParte(17, 3));
+  assert.equal(esCasoExamenParte(17, 3), esCasoExamenParte(17, 3));
+  // Ejercicio 4, variante 'dos': no depende del orden en que se dan las dos fracciones.
+  const base = { esc: 'x', opciones: [] };
+  const a = { ...base, variante: 'dos', total: 999, f1: { n: 1, d: 3 }, f2: { n: 1, d: 4 } };
+  const b = { ...base, variante: 'dos', total: 999, f1: { n: 1, d: 4 }, f2: { n: 1, d: 3 } };
+  assert.equal(esCasoExamenProblema(a), esCasoExamenProblema(b));
 });
 
 // --- Ejercicio 3: ¿qué fracción es? --------------------------------------------------
@@ -317,6 +347,31 @@ test('ejercicio 4: los distractores son los errores que dicen los inventarios, c
     }
   }
   assert.ok(vistos.size >= 8, `solo salen ${[...vistos]}`);
+});
+
+test('ejercicio 4: el feedback usa el singular con m o n = 1, y «de … cada una» sin ambigüedad', () => {
+  const vistosUno = new Set();
+  for (const idioma of IDIOMAS) {
+    for (const it of generar(generarProblema, 103008)) {
+      for (const o of it.opciones) {
+        if (o.error === null) continue;
+        const exp = explicaOpcion(it, o, idioma);
+        // Nunca «1 partes»/«1 parts», ni «fueran 1 <unidad-s»/«were 1 <unidad-s» (reabierta del 30-10, puntos 3-4).
+        assert.ok(!/\b1 partes\b/.test(exp), `«1 partes» en ${o.error}: ${exp}`);
+        assert.ok(!/\b1 parts\b/.test(exp), `«1 parts» en ${o.error}: ${exp}`);
+        assert.ok(!/fuera(n|) 1 [a-záéíóúñ]+s\b/i.test(exp), `plural tras «1» en ${o.error}: ${exp}`);
+        assert.ok(!/were 1 [a-z]+s\b/i.test(exp), `plural tras «1» en ${o.error}: ${exp}`);
+        if (['cuenta-una-parte-de-menos', 'cuenta-una-parte-de-mas', 'da-la-parte-ya-hecha'].includes(o.error)) {
+          assert.ok(/cada una|each\b/.test(exp), `sin «cada una»/«each» en ${o.error}: ${exp}`);
+        }
+        if (o.error === 'duplica-el-dato' && it.dato !== undefined) {
+          const m = it.variante === 'parte' ? it.f1.n : it.f1.d - it.f1.n;
+          if (m === 1) vistosUno.add(idioma);
+        }
+      }
+    }
+  }
+  assert.ok(vistosUno.has('es') && vistosUno.has('en'), 'el caso m = 1 de duplica-el-dato no salió en los 3000 ítems');
 });
 
 // --- Textos --------------------------------------------------------------------------

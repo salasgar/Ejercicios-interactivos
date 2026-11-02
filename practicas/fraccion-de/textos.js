@@ -13,6 +13,9 @@ import { CONTEXTOS, ESCENARIOS, F } from './logica.js';
 const fr = (n, d) => htmlFraccion(fraccion(n, d));
 const frItem = x => fr(x.n, x.d);
 const cuenta = c => `<span class="cuenta">${c}</span>`;
+/** Singular cuando `m` es 1 (reabierta del 30-10: «1 partes», «1 litros»). */
+const partes = (m, es) => (m === 1 ? (es ? 'parte' : 'part') : (es ? 'partes' : 'parts'));
+const singular = (palabra, m) => (m === 1 ? palabra.slice(0, -1) : palabra);
 
 /** «T : d · n = r» (o «T : d = r» si el numerador es 1), para el paso a paso. */
 export const cuentaDe = (total, n, d) => (n === 1 ? `${total} : ${d} = ${total / d}` : `${total} : ${d} · ${n} = ${(total / d) * n}`);
@@ -223,26 +226,32 @@ export function explicaOpcion(item, opcion, idioma) {
       return es ? `${v} es la parte que dice el enunciado, no lo que queda.` : `${v} is the part in the problem, not what is left.`;
     case 'se-queda-en-la-unitaria':
       return es ? `${x.T} : ${x.d} = ${v} es solo una de las ${x.d} partes; lo que queda son ${x.d - x.n} partes.` : `${x.T} : ${x.d} = ${v} is only one of the ${x.d} parts; what is left is ${x.d - x.n} parts.`;
-    case 'resta-el-numerador':
-      return es ? `${x.T} − ${x.n} resta el ${x.n} del numerador como si fueran ${x.n} ${unidad}; hay que restar ${F1} de ${x.T}, que son ${x.s}.` : `${x.T} − ${x.n} subtracts the numerator ${x.n} as if it were ${x.n} ${unidad}; you have to subtract ${F1} of ${x.T}, which is ${x.s}.`;
+    case 'resta-el-numerador': {
+      const u = singular(unidad, x.n);
+      return es ? `${x.T} − ${x.n} resta el ${x.n} del numerador como si fuera${x.n === 1 ? '' : 'n'} ${x.n} ${u}; hay que restar ${F1} de ${x.T}, que son ${x.s}.` : `${x.T} − ${x.n} subtracts the numerator ${x.n} as if it were ${x.n} ${u}; you have to subtract ${F1} of ${x.T}, which is ${x.s}.`;
+    }
     case 'da-la-fraccion-en-vez-de-la-cantidad':
       return es ? `Eso es la fracción que queda, y la pregunta pide cuántos ${unidad} son.` : `That is the fraction that is left, and the question asks how many ${unidad} it is.`;
     case 'olvida-restar-la-primera':
       return es ? `${v} = ${x.T} − ${x.b}: has olvidado restar la primera parte (${x.a}).` : `${v} = ${x.T} − ${x.b}: you forgot to subtract the first part (${x.a}).`;
     case 'olvida-restar-la-segunda':
       return es ? `${v} = ${x.T} − ${x.a}: has olvidado restar la segunda parte (${x.b}).` : `${v} = ${x.T} − ${x.a}: you forgot to subtract the second part (${x.b}).`;
-    case 'cuenta-una-parte-de-menos':
-      return es ? `${v} son ${x.d - 1} partes de ${x.k}: el total tiene las ${x.d} partes.` : `${v} is ${x.d - 1} parts of ${x.k}: the whole has all ${x.d} parts.`;
-    case 'cuenta-una-parte-de-mas':
-      return es ? `${v} son ${x.d + 1} partes de ${x.k}, y el total tiene solo ${x.d} partes.` : `${v} is ${x.d + 1} parts of ${x.k}, and the whole has only ${x.d} parts.`;
+    case 'cuenta-una-parte-de-menos': {
+      const m = x.d - 1;
+      return es ? `${v} son ${m} ${partes(m, es)} de ${x.k} cada una: el total tiene las ${x.d} partes.` : `${v} is ${m} ${partes(m, es)} of ${x.k} each: the whole has all ${x.d} parts.`;
+    }
+    case 'cuenta-una-parte-de-mas': {
+      const m = x.d + 1;
+      return es ? `${v} son ${m} ${partes(m, es)} de ${x.k} cada una, y el total tiene solo ${x.d} partes.` : `${v} is ${m} ${partes(m, es)} of ${x.k} each, and the whole has only ${x.d} parts.`;
+    }
     case 'duplica-el-dato':
-      return es ? `${v} = 2 · ${x.dato} solo valdría si ${x.dato} fuera la mitad del total; aquí ${x.dato} son ${x.m} partes de ${x.d}.` : `${v} = 2 · ${x.dato} would only work if ${x.dato} were half of the whole; here ${x.dato} is ${x.m} parts out of ${x.d}.`;
+      return es ? `${v} = 2 · ${x.dato} solo valdría si ${x.dato} fuera la mitad del total; aquí ${x.dato} es ${x.m} ${partes(x.m, es)} de ${x.d}.` : `${v} = 2 · ${x.dato} would only work if ${x.dato} were half of the whole; here ${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}.`;
     case 'multiplica-el-dato-por-el-denominador':
-      return es ? `${x.dato} son ${x.m} partes de ${x.d}, no una: primero se divide ${x.dato} : ${x.m} = ${x.k}.` : `${x.dato} is ${x.m} parts out of ${x.d}, not one: first divide ${x.dato} : ${x.m} = ${x.k}.`;
+      return es ? `${x.dato} es ${x.m} ${partes(x.m, es)} de ${x.d}, no una: primero se divide ${x.dato} : ${x.m} = ${x.k}.` : `${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}, not one: first divide ${x.dato} : ${x.m} = ${x.k}.`;
     case 'da-el-resto':
       return es ? `${v} es lo que falta (lo que no es esa parte), no el total.` : `${v} is what is missing (what is not that part), not the whole.`;
     case 'da-la-parte-ya-hecha':
-      return es ? `${v} es lo que ya hay (${x.n} partes de ${x.k}), no el total.` : `${v} is what is already there (${x.n} parts of ${x.k}), not the whole.`;
+      return es ? `${v} es lo que ya hay (${x.n} ${partes(x.n, es)} de ${x.k} cada una), no el total.` : `${v} is what is already there (${x.n} ${partes(x.n, es)} of ${x.k} each), not the whole.`;
     default:
       return '';
   }
