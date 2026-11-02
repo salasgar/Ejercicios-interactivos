@@ -39,3 +39,18 @@ examen, sobre 3000 ítems con semilla fija).
 http://localhost:8080/practicas/suma-resta/ → «Probar sin código»): ejercicio 3 con un ítem
 acertado (3 − 1/4 = 11/4, 4 + 3/4 = 19/4) y ejercicio 4 fallando a propósito (1/2 y 2/5: queda
 1/10, se comprobó la opción «9/10»).
+
+## Segunda reabierta (2-11, sesión `s-20261102T151801-c080c1cd`; commit **c013a46**)
+Reabierta de la 119 (`hechos/reabiertas/104--s-20261102T141053-b5277421-revision.md`, con el añadido de la 120): el filtro comparaba
+los casos de la hoja 2 solo en el orden escrito. Ahora `reservadoEn` y `esReservadoNaturales` usan una **clave sin orden** (los términos con
+su signo, ordenados: «a + b» = «b + a», «n − a» = «−a + n», «a − b + c» = «c + a − b»; para los naturales, `nat+f` = `f+nat`).
+`RESERVADOS` gana, en claro (la hoja ya la tienen los alumnos): ej. 1, 13/16 − 5/16 y 11/14 − 3/14; ej. 2, 7/8 + 1/12, 7/10 − 4/15, 4/9 − 1/6,
+3/5 + 1/3, 5/6 + 1/3 − 1/4, 7/15 + 3/10 − 1/6, 11/18 − 5/12 + 2/9, 9/20 + 7/30 − 5/12, 4/6 + 6/10 y 15/20 − 8/12; ej. 3, 5/6 + 1 y 2 − 5/6.
+Los de los ejercicios 1 y 2 se comprueban contra las dos listas. Los casos de examen entran **por huella** (`HUELLAS_SUMAS`, 32, FNV-1a de la
+clave sin orden, calculadas fuera del repo): las sumas y restas de dos fracciones que muestran los exámenes semanales en U4-1A-01, 2A-02,
+2A-04, 2B-01, 2B-02, 3A-02, 3C-09 y 3C-11 (la de U4-3C-11 que pedía la 120 incluida). Se comprueban en los ej. 1 y 2. Test nuevo: conmutadas y
+barrido de 3 × 2000 ítems en los ej. 1-3; `RESERVADOS.pasos.length` pasa de 9 a 19.
+Barrido independiente (guion de scratchpad, 3 × 20000 ítems por ejercicio contra la hoja 2, extraída del .tex, y las sumas de los tres
+`casos-examen-semanaN.tsv`): 0 coincidencias con la hoja y 0 con las sumas de examen, salvo 206 con subexpresiones de U4-3A-01 («a + b · c»:
+la suma no es una cuenta aparte; no cuenta). Ej. 4: la pizza de la hoja 2 sigue reservada en cualquier orden. Tests propios 60/60 y
+`npm test` 1368/1368. Sin probar en navegador: el cambio es solo el filtro de ítems. No se tocó `catalogo.js`.

@@ -38,3 +38,14 @@ http://localhost:8080/practicas/fraccion-de/ → «Probar sin código»; el cód
 decir «no existe» en esta máquina): ejercicio 4 a 375 px, ES y EN, fallando a propósito
 `resta-el-numerador` con n = 1 («… como si fuera 1 trozo» / «as if it were 1 slice», singular) y
 `duplica-el-dato` («aquí 250 es 5 partes de 12»); ejercicio 3 con dos ítems acertados.
+
+## Segunda reabierta (2-11, sesión `s-20261102T151801-c080c1cd`; commit **b4fbd71**)
+Reabierta de la 119 (`hechos/reabiertas/103--s-20261102T141053-b5277421-revision.md`): el ej. 4 se filtraba con
+`claveProblema`, que en `queda` es `n/d|total`, y sus huellas no incluían los casos de U4-1A-01. Ahora `HUELLAS_EJ4`
+lleva, para U4-1A-01, U4-2A-02 y U4-3A-04 de los tres exámenes semanales (extras incluidas), cada fracción y cada pareja
+con cada cantidad del enunciado, con las claves de `queda` y `dos`: 25 → 61 huellas (ninguno de los casos en claro). Sobre-excluye a
+propósito (un paso del mismo problema también cuenta, como en la 117). Test nuevo: 3000 ítems de `generarProblema`
+(tres semillas) sin ningún caso de examen. Barrido independiente aparte (guion de scratchpad, 60000 ítems de ej. 4 contra
+los tres `casos-examen-semanaN.tsv`, misma fracción y mismo total en `queda`/`dos`): 0 coincidencias, salvo las de
+U4-1C-08 (sin contexto: «n/d de T», no cuenta, como dice la reabierta). Tests propios 63/63 y `npm test` 1365/1365.
+Sin probar en navegador: el cambio es solo un conjunto de huellas. No se tocó `catalogo.js`.
