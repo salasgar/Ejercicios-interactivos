@@ -30,3 +30,35 @@ Cuentas: numeradores 1-12, denominadores 2-12, naturales 2-12. Ejercicio 2: `max
 Ej. 2: cada frase pide la irreducible (es/en); 1 trozo/parcela en singular; «parcelas» en el huerto; aviso de «en cruz» y de «dividir» unificado (dan el mismo valor). Ej. 5: numerador ≥ 2 en la base (con 1, los dos errores coincidían). Ej. 1: sin frase de signos si el error no es de signo. Casos fijos de las introducciones cambiados (inversa de 2/7 y de 6; 3/4 : 5/6; (3/4)²). Test nuevo del ej. 2. Pendientes que no son de esta práctica: `naturalPorAmbos` de la base pierde el signo con natural negativo; el ej. 1 con negativas es de las sesiones 9-10.
 
 Probada en Chrome headless con clics (acierto y fallo de los 5 ejercicios, es/en, 375 y 1100 px): sin desbordes ni errores de consola.
+
+## Reabierta del 30-10 (s-20261102T092222-c4bdab3c, commit 3fb9856)
+
+Casos de los exámenes semanales 2 y 3, del examen final y de las hojas 2 y 3 que podían salir en
+los ejercicios 1, 4 y 5 (`hechos/reabiertas/105--s-20261030T084305-921ac985-revision.md`).
+
+**Exámenes (excluidos por huella, nunca en claro):** 15 huellas en el ejercicio 1 (U4-2C-08 y
+U4-2C-09 de la semana 2, los seis casos de cada una; y los apartados 2a de los modelos 1 y de
+recuperación y 2e del modelo 2 del examen final), 21 en el ejercicio 4 (U4-3C-06, U4-3C-07 y
+U4-3C-10 de la semana 3, los seis casos de cada una; y el 2b de los tres modelos del final) y 6 en
+el ejercicio 5 (U4-2C-12 de la semana 3, los seis casos). Clave: en el 1, los dos factores sin
+orden; en el 4, dividendo y divisor con orden; en el 5, base y exponente. Huellas calculadas con
+un guion de scratchpad (no se comitea) a partir de los TSV de casos y los `.tex` del final;
+`huellaMultiplica`/`huellaDivide`/`huellaPotencia` y los tres `HUELLAS_EXAMEN_*` quedan exportados
+de `logica.js` para que el test las recorra.
+
+**Hojas y banco (en claro, los alumnos ya los tienen en papel):** ejercicio 1, hoja 3 ej. 1a, 7b y
+7d, banco B11b (4 parejas); ejercicio 4, hoja 3 ej. 3a/3d/3e/3f, 4a/4b/4c/4e/4f, 5b/5b2/5b3, 6e y
+7c2, banco B11a y B11c (16 parejas, con orden); ejercicio 2, hoja 2 ej. 12c (1/3 de 3/5; las demás
+parejas de las hojas tienen denominador fuera de la cota de esta práctica y no podían salir).
+
+**Se arregla de paso:** el ejemplo de la introducción del ejercicio 5 pasa de `(3/4)² = 9/16`
+(coincidía con el recuadro «Recuerda» de la hoja 2) a `(2/3)² = 4/9`.
+
+`node --test tests/practicas-comun.test.js tests/practicas-multiplica-divide.test.js`: 65/65. `npm
+test`: 1357/1357. Probado en `npm run servir` con Chrome (vía claude-in-chrome), código de prueba
+7NPD sin red disponible en este entorno así que se usó «Probar sin código»: ejercicios 1, 4 y 5, un
+acierto y un fallo, ES y EN, 375×700 px.
+
+Propuesta pendiente (no se decide aquí): el ejercicio 5 saca 11 de sus 48 potencias posibles en las
+hojas 2 y 3 (acertado, no bloquea, según la reabierta); si Juan Luis quiere quitarlas también, hace
+falta ampliar antes las bases o los exponentes del ejercicio.
