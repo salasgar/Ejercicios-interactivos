@@ -141,12 +141,13 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 3 | `errores4` | 55 | 107 | ¿Bien o mal? (y el nombre del error) · La línea mala · Arréglalo | denominadores 2-8, todo número ≤ 600 |
 | toda | `leelo4` | 56 | 108 | Emparejar · La lectura · ¿Qué pide? · Dictado | dinero 20-600 €, pizza 4-12 trozos, clase 12-36, denominadores ≤ 12 |
 
-**Publicadas** (a 2026-10-28): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
-26306eb). Sin publicar, con su reabierta en `reparto-practicas-u2/hechos/reabiertas/`:
-`equivalentes`, `compara`, `fraccion-de` y `suma-resta` (tarea 117, 30-10: lo que pidieron las
-tareas 109 y 110 está arreglado, pero sacan casos de las hojas y de los exámenes semanales y
-final, que se escribieron después; los de examen se excluyen por su huella, nunca en claro) y
-las tres de la semana 3, `multiplica-divide`, `combinadas-fracciones` y `errores4` (tarea 118,
+**Publicadas** (a 2026-11-02): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
+26306eb), y `equivalentes` y `compara` (tarea 119, tras sus reabiertas del 30-10, cerradas el
+2-11). Sin publicar, con su reabierta en `reparto-practicas-u2/hechos/reabiertas/`:
+`fraccion-de` y `suma-resta` (tarea 119, 2-11: lo que pidieron las reabiertas del 30-10 está
+hecho, pero `fraccion-de` saca en el ej. 4 casos de un examen semanal que solo se excluían en los
+ej. 1 y 2, y `suma-resta` saca ejercicios de la hoja 2, tal cual o en otro orden; los casos de examen se
+excluyen por su huella, nunca en claro) y las tres de la semana 3, `multiplica-divide`, `combinadas-fracciones` y `errores4` (tarea 118,
 30-10: lo que pidió la tarea 111 está arreglado; quedan casos de las hojas 2 y 3 y de los
 exámenes). El estado vivo es el campo `disponible` de `catalogo.js`.
 

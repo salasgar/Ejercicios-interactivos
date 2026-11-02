@@ -85,9 +85,9 @@ export const CATALOGO = [
   // Unidad 4, Fractions (PU2, tareas 99-108; filas puestas por la 98 el 2026-10-26, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (109-111).
   { id: 47, slug: 'que-fraccion', ruta: 'que-fraccion/', unidad: 4, nombre: { es: '¿Qué fracción es?', en: 'What fraction is it?' }, nEjercicios: 4, disponible: true },
-  { id: 48, slug: 'equivalentes', ruta: 'equivalentes/', unidad: 4, nombre: { es: 'Fracciones equivalentes', en: 'Equivalent fractions' }, nEjercicios: 4, disponible: false },
+  { id: 48, slug: 'equivalentes', ruta: 'equivalentes/', unidad: 4, nombre: { es: 'Fracciones equivalentes', en: 'Equivalent fractions' }, nEjercicios: 4, disponible: true },
   { id: 49, slug: 'simplifica', ruta: 'simplifica/', unidad: 4, nombre: { es: 'Simplifica', en: 'Simplify' }, nEjercicios: 3, disponible: true },
-  { id: 50, slug: 'compara', ruta: 'compara/', unidad: 4, nombre: { es: 'Compara y ordena', en: 'Compare and order' }, nEjercicios: 4, disponible: false },
+  { id: 50, slug: 'compara', ruta: 'compara/', unidad: 4, nombre: { es: 'Compara y ordena', en: 'Compare and order' }, nEjercicios: 4, disponible: true },
   { id: 51, slug: 'fraccion-de', ruta: 'fraccion-de/', unidad: 4, nombre: { es: 'La fracción de una cantidad', en: 'A fraction of a quantity' }, nEjercicios: 4, disponible: false },
   { id: 52, slug: 'suma-resta', ruta: 'suma-resta/', unidad: 4, nombre: { es: 'Suma y resta', en: 'Adding and subtracting' }, nEjercicios: 5, disponible: false },
   { id: 53, slug: 'multiplica-divide', ruta: 'multiplica-divide/', unidad: 4, nombre: { es: 'Multiplica y divide', en: 'Multiply and divide' }, nEjercicios: 5, disponible: false },

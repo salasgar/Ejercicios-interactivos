@@ -85,7 +85,7 @@ const dato = f => ({ n: f.num, d: f.den });
 /** Errores típicos propios de la práctica (los demás vienen de `_comun/fracciones.js`). */
 export const ERRORES_PROPIOS = {
   'sin-simplificar': { nombre: { es: 'El resultado es el bueno, pero no está simplificado', en: 'The result is right, but it is not in its simplest form' } },
-  'mcm-equivocado': { nombre: { es: 'Se ha equivocado con el m.c.m. de los denominadores', en: 'Got the l.c.m. of the denominators wrong' } },
+  'mcm-equivocado': { nombre: { es: 'Se ha equivocado con el m.c.m. de los denominadores', en: 'Got the LCM of the denominators wrong' } },
   'equivalente-equivocada': { nombre: { es: 'Ha escrito mal una fracción equivalente', en: 'Wrote an equivalent fraction wrongly' } },
   'queda-como-gastado': { nombre: { es: 'Ha dado lo que queda en vez de lo que se gasta', en: 'Gave what is left instead of what is spent' } },
   'linea-equivocada': { nombre: { es: 'Ha señalado una línea que estaba bien', en: 'Pointed at a line that was right' } },

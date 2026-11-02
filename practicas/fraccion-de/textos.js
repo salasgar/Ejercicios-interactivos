@@ -245,9 +245,9 @@ export function explicaOpcion(item, opcion, idioma) {
       return es ? `${v} son ${m} ${partes(m, es)} de ${x.k} cada una, y el total tiene solo ${x.d} partes.` : `${v} is ${m} ${partes(m, es)} of ${x.k} each, and the whole has only ${x.d} parts.`;
     }
     case 'duplica-el-dato':
-      return es ? `${v} = 2 · ${x.dato} solo valdría si ${x.dato} fuera la mitad del total; aquí ${x.dato} es ${x.m} ${partes(x.m, es)} de ${x.d}.` : `${v} = 2 · ${x.dato} would only work if ${x.dato} were half of the whole; here ${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}.`;
+      return es ? `${v} = 2 · ${x.dato} solo valdría si ${x.dato} fuera la mitad del total; aquí ${x.dato} ${x.m === 1 ? 'es' : 'son'} ${x.m} ${partes(x.m, es)} de ${x.d}.` : `${v} = 2 · ${x.dato} would only work if ${x.dato} were half of the whole; here ${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}.`;
     case 'multiplica-el-dato-por-el-denominador':
-      return es ? `${x.dato} es ${x.m} ${partes(x.m, es)} de ${x.d}, no una: primero se divide ${x.dato} : ${x.m} = ${x.k}.` : `${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}, not one: first divide ${x.dato} : ${x.m} = ${x.k}.`;
+      return es ? `${x.dato} ${x.m === 1 ? 'es' : 'son'} ${x.m} ${partes(x.m, es)} de ${x.d}, no una: primero se divide ${x.dato} : ${x.m} = ${x.k}.` : `${x.dato} is ${x.m} ${partes(x.m, es)} out of ${x.d}, not one: first divide ${x.dato} : ${x.m} = ${x.k}.`;
     case 'da-el-resto':
       return es ? `${v} es lo que falta (lo que no es esa parte), no el total.` : `${v} is what is missing (what is not that part), not the whole.`;
     case 'da-la-parte-ya-hecha':
