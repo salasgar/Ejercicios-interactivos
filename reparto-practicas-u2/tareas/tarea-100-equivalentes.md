@@ -128,6 +128,8 @@ alumno, para el registro de fallos.
 - (s-20261027T082738-14ce7cde) Entre dos fracciones mostradas no pongas «·»: se lee como producto. Se usa «y»/«and» (ej. 2) o «;» (ej. 4). El campo de un hueco dentro de `htmlRaya` se crea con `campoNumero` sobre un `<span data-hueco>`; el enunciado traducido lo lleva vacío.
 - Las equipos (ej. 3) usan el mismo arrastre por `pointer` que `venn` (toque = elegir tarjeta y tocar caja). Para probarlo por script: `pointerdown` + `pointerup` sin mover sobre la tarjeta y `click` en la caja.
 - Duración real ≈ 25 min de reloj (estimada 1 h 15 min).
+- (s-20261102T092044-3fc8b4e5) Un conjunto de parejas reservadas (`PAREJAS_RESERVADAS`, `RESERVADOS_TERMINO`) nunca se escribe como strings a mano: `pareja(a, b)` ordena las dos fracciones como **cadenas**, y con denominadores de distinto número de cifras el orden «natural» que escribirías a mano no es el que produce la función (`'10/15' < '6/9'`). Constrúyelo siempre con `comoParejas([[a, b], …])`, que llama a `pareja()` sobre cada par. Dos revisiones (28 y 30-10) escribieron el conjunto a mano y el bug sobrevivió a las dos.
+- Los casos de examen se excluyen por **huella** (FNV-1a de 32 bits, `huella()` en `logica.js`), nunca con la fracción en claro: el repositorio y GitHub Pages son públicos. Calcula las huellas en un guion del scratchpad (no lo comitees) y pega solo los hashes en `HUELLAS_EXAMEN`.
 
 ## Prohibido (propio de esta tarea)
 
