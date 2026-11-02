@@ -40,3 +40,16 @@ no se comitea, pasando cada caso por el analizador real de la base para no adivi
 que la primera línea del ejercicio 3 nunca es uno de los casos). `npm test`: 1362/1362. Probado en
 `npm run servir` con Chrome (vía claude-in-chrome), «Probar sin código»: ejercicios 1 y 3, un
 acierto cada uno, ES y EN.
+
+## Reabierta del 2-11 (s-20261102T141053-b5277421; cierra s-20261102T152008-77e362a1, commit 7b5c1e7)
+
+`hechos/reabiertas/106--s-20261102T141053-b5277421-revision.md`. Dos casos de examen (una caja del 5b del final y un U4-3A-01) salían con
+los factores o los sumandos cambiados de sitio. La clave de exclusión pasa a ser **sin orden**: el conjunto de números, el de operaciones y
+el valor de la expresión (`claveSinOrden`, sobre el árbol de `analizar`). Las 23 huellas de `HUELLAS_EXAMEN_COMBINADAS` se recalculan con
+ella (mismo número: 23; U4-3A-01 y U4-3A-02 de la semana 3, 12 casos, y 3a/3b y las dos cajas 5b de los modelos 1 y 2 y la recuperación del
+final, menos la 3a del modelo 2, que lleva una potencia; el adaptado-A repite los del modelo 1); la lista de la hoja 3 (en claro) se compara
+también por esa clave. Nunca en claro: solo huellas. `esCasoReservado` es el único punto de comprobación (no falla con ÷ 0).
+**De paso:** el test heredado escribía en claro un caso de U4-3A-01 de la semana 3 (en un comentario y en un `assert`); quitado en este
+commit, pero **sigue en el historial de git** (commit 68297e6): decide Juan Luis si hace falta reescribirlo.
+`node --test tests/practicas-comun.test.js tests/practicas-combinadas-fracciones.test.js`: 66/66. `npm test`: 1366/1366. Sin tocar
+`catalogo.js`. Sin publicar (sin publicador, mar 22-12).
