@@ -127,6 +127,8 @@ alumno, para el registro de fallos.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
 - Puede haber hasta diez sesiones a la vez en este árbol (las prácticas 99-108 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
 - El test compara fracciones **por valor** (`Fraccion.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
+- (s-20261102T093031-d95013ff) La numeración por letra de `\ap` en el examen final cuenta cada apartado del tipo `\ap`, no solo los de `\cajaop`: la pregunta de ordenar fracciones (el \ap antes de los c)/d) con `\cajaop`) es la «b)», no una pregunta aparte sin letra.
+- (s-20261102T093031-d95013ff) Los casos de examen se excluyen por **huella** (FNV-1a de 32 bits, `huella()` en `logica.js`, igual que en `practicas/equivalentes/`), nunca con la fracción en claro: el repositorio y GitHub Pages son públicos. Calcula las huellas en un guion del scratchpad (no lo comitees) y pega solo los hashes en `HUELLAS_EXAMEN_PAREJAS`/`HUELLAS_EXAMEN_CONJUNTOS`.
 
 ## Prohibido (propio de esta tarea)
 

@@ -35,3 +35,13 @@ Cerrada punto por punto contra `hechos/reabiertas/102--s-20261028T135932-e77025d
 2. Ej. 4: una marca entera tocada se nombra como entero («Has tocado −1», «1», «0»), no «−6/6». Test en 3000 ítems, ES y EN.
 3. Erratas: «Compared with 1 and with a half» (antes «Against 1 and a half»); el «½» de `solo_num` es ahora la fracción con raya; test de que no quedan.
 Probado en navegador con clics: ej. 4 (tocar el 1, «You tapped 1, which is not…») y ej. 2 (1/6 mal puesta: solo «1/6 is less than 1/2»). Sin probar a 375 px.
+
+## Reabierta del 30-10 (sesión `s-20261102T093031-d95013ff`, commit dc9df94, encadenada tras la 100)
+Cerrada contra `hechos/reabiertas/102--s-20261030T081542-dab2aa98-revision.md`. No probado en navegador (cambio puramente de lógica de generación, sin tocar `practica.js`, `index.html` ni `textos.js`): `node --test` y `npm test` cubren el resultado.
+
+1. **Ej. 1 (mayor o menor)**: nuevas parejas reservadas de la hoja (hoja 1, ej. 10 y 12a, y hoja 2, ej. 1b) y huellas de examen (U4-1C-17 y U4-1C-19 de las semanas 1 y 2, y el apartado 1b del examen final modelo 2; la numeración por letra de `\ap` hace que la pregunta de ordenar sea «b)», no la de `\cajaop`; «d)» es la de `<`/`>`). Los ejemplos de los recuadros «Recuerda» se quedan, como pedía la reabierta.
+2. **Ej. 3 (ordena)**: conjuntos reservados de la hoja (hoja 1, ej. 11) y huellas de examen (U4-1C-20 de las semanas 1 y 3, y el apartado 1b de los tres modelos del examen final, incluido el que lleva una negativa).
+3. **Mecanismo**: nuevas `parejaFracciones`/`claveConjunto` y `huella` (FNV-1a de 32 bits, el mismo algoritmo que en `practicas/equivalentes/logica.js`, exportado), calculadas sobre el valor con signo de las fracciones, nunca sobre el orden en que el generador las produce ni sobre `creciente`. Las huellas de examen se calcularon en un guion del scratchpad (no comiteado); el código publicado no lleva ninguna fracción de examen en claro.
+4. Comprobado con un barrido de 20000 ítems por ejercicio (semilla 117, como pide la reabierta): 0 coincidencias en el ej. 1 y el ej. 3. El ej. 4 no necesita exclusión, como ya decía la reabierta.
+
+No se ha tocado `catalogo.js`.
