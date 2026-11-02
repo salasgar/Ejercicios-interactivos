@@ -58,7 +58,8 @@ const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointA
 const claveCalculo = (n, d, total) => `${n}/${d} de ${total}`;
 /** Clave de un ítem del ejercicio 3: la pareja (parte, otra parte) sin importar el orden. */
 const claveParte = (p, q) => { const a = Math.min(p, q), b = Math.max(p, q); return `${a}/${b}`; };
-/** Clave de un ítem del ejercicio 4: la fracción y el dato ('parte'/'restante'), o las dos fracciones y el total ('dos'). */
+/** Clave de un ítem del ejercicio 4: la fracción y el dato ('parte'/'restante'), la fracción y el total ('queda'), o las dos fracciones y el total ('dos').
+ *  Las huellas de los exámenes cubren, para U4-1A-01, U4-2A-02 y U4-3A-04, cada fracción y cada pareja con cada cantidad del enunciado (de más a menos: si el examen pregunta un paso del mismo problema, también cuenta). */
 const claveProblema = item => {
   if (item.variante === 'dos') {
     const a = `${item.f1.n}/${item.f1.d}`, b = `${item.f2.n}/${item.f2.d}`;
@@ -71,7 +72,7 @@ const claveProblema = item => {
 
 const HUELLAS_EJ1 = new Set(["1wz398h","xeq9ne","rwptgl","spv52v","12thsdl","k047pq","xd5png","f5fjky","jcl2bf","1q4purv","nyrqxy","jr8r6p","1171lrz","1kjb3vs"]);
 const HUELLAS_EJ3 = new Set(["1t2u34d","1xxmt48","12qzocl","sb9hjg","1ef04bq","3dx1ce","38jwnw","18fnnbp","jiarnq"]);
-const HUELLAS_EJ4 = new Set(["btyyk8","1m8cryi","170hiy5","1jbt7d7","ybrv1h","1qo4gwl","1mn9n1s","kzxouh","1i2cfjz","1tft5av","suobzu","1q6lyxk","197lva6","10psh5l","o9q8ak","1mbhofz","zz75hj","10vtxqt","6pbibv","13ho8wh","1grj2xp","jxvauu","3nhrwz","150ccvg","628l7r"]);
+const HUELLAS_EJ4 = new Set(["btyyk8","1m8cryi","170hiy5","1jbt7d7","ybrv1h","1qo4gwl","1mn9n1s","kzxouh","1i2cfjz","1tft5av","suobzu","1q6lyxk","197lva6","10psh5l","o9q8ak","1mbhofz","zz75hj","10vtxqt","6pbibv","13ho8wh","1grj2xp","jxvauu","3nhrwz","150ccvg","628l7r","33exud","532r3v","c0w1c0","1imzjni","tdgsnf","owdv1c","12nnu13","14zq3pa","154mymg","15vj63f","16bx7bv","17n7nys","1by64a9","1h4f3rc","1id81zh","1lr5ny7","1p8uhit","1q9xmqp","1qj283","1qwv96m","1rmxhqa","1rq9rfk","1udqwwb","1w94clk","251fd2","5lp7u4","9qsvwj","bacvfu","djj877","dpg677","dqb7cz","eswmwa","fsi9mn","j5qby8","kcbs35","o1zmh4","p841ro","pp5b4x","rynz3c","v33hk9","vxbqmd","y2ecg1"]);
 
 /** ¿Es `n/d de total` un caso de examen (ejercicios 1 y 2)? */
 export const esCasoExamenCalculo = (n, d, total) => HUELLAS_EJ1.has(huella(claveCalculo(n, d, total)));

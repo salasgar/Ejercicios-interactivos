@@ -202,6 +202,12 @@ test('los casos de examen no salen nunca (por huella), y la detección no depend
   }
   assert.ok(generar(generarParte, 103902).every(it => !esCasoExamenParte(it.parte, it.tipo === 'partes' ? it.otra : it.total - it.parte)));
   assert.ok(generar(generarProblema, 103903).every(it => !esCasoExamenProblema(it)));
+  // Ejercicio 4 (reabierta del 2-11): 3000 ítems de cualquier variante, en tres semillas; ninguno es caso de examen
+  // (las seis huellas de U4-1A-01 con la clave de `queda` incluidas: el examen pregunta la parte y la práctica lo que queda).
+  for (const semilla of [103910, 103911, 103912]) {
+    const rng = crearRng(semilla);
+    for (let i = 0; i < 1000; i++) assert.ok(!esCasoExamenProblema(generarProblema(rng)), `ítem ${i}, semilla ${semilla}`);
+  }
   // Ejercicio 3: la huella no depende de qué parte se dé primero (pareja sin orden natural).
   assert.equal(esCasoExamenParte(3, 17), esCasoExamenParte(17, 3));
   assert.equal(esCasoExamenParte(17, 3), esCasoExamenParte(17, 3));
