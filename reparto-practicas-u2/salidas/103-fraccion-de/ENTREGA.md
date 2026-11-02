@@ -1,17 +1,40 @@
 # Entrega de la tarea 103 · La fracción de una cantidad (fraccion-de)
 
-Sesión `s-20261027T082817-350699e7`, 2026-10-27. Commit del código: **0f5a9e8**.
+Sesión `s-20261102T092216-fe590005`, 2026-11-02. Corrige la reabierta del 30-10
+(`hechos/reabiertas/103--s-20261030T081542-dab2aa98-revision.md`). Commit del código: **92df0dd**.
+
+## Qué corrige
+
+1. **Casos de examen por huella (regla nueva de la reabierta): `huella` (FNV-1a de 32 bits) sobre
+   la clave del ítem** — `n/d de T` (ej. 1-2), la pareja (parte, otra parte) sin orden (ej. 3) y
+   la fracción (o las dos, sin orden) con el dato o el total (ej. 4) — comparada contra tres
+   `Set` de huellas (`HUELLAS_EJ1`, `HUELLAS_EJ3`, `HUELLAS_EJ4` en `logica.js`). Las huellas se
+   calcularon con un guion de scratchpad (no comiteado) que leyó `casos-examen-semanaN.tsv` de
+   las tres semanas y los tres `.tex` del examen final de `4. Fractions/`; **ningún caso en claro
+   entra en el repositorio**. Cubre `U4-1C-08`, `U4-1A-01`, `U4-1A-03`, `U4-1A-02`, `U4-2A-02`
+   (semanas 2 y 3) y `U4-2A-03`, más las fracciones derivadas de los «5a» de los tres modelos del
+   examen final.
+2. **Casos de las hojas (en claro) añadidos a `RESERVADOS`**: `fraccionDe` (1/3 de 27, 1/4 de 52,
+   2/3 de 27, 5/6 de 42, 3/8 de 64, 7/10 de 90, 3/7 de 28), `parte` ([6,20], [14,20]) y `problema`
+   (3/7+96, 5/9+12, 2/3+18, 3/7+36, 2/9 y 1/6 de 180).
+3. **`duplica-el-dato` y `multiplica-el-dato-por-el-denominador` en singular cuando la fracción
+   vale 1 parte**, y **`resta-el-numerador` en singular cuando el numerador es 1** (textos.js,
+   helper `singular`/`partes`).
+4. **`cuenta-una-parte-de-menos`/`-de-mas` y `da-la-parte-ya-hecha` con «de … cada una»/«… each»**:
+   «11 partes de 3» se leía como «11 de cada 3» (fracción), no como «11 trozos de tamaño 3».
+5. **`comoFraccion` simplifica siempre**: la opción «ha dado la fracción en vez de la cantidad»
+   podía salir sin simplificar (`da-la-fraccion-en-vez-de-la-cantidad`); ahora es irreducible,
+   como las fracciones del enunciado.
 
 ## Ficheros
-`practicas/fraccion-de/{index.html,practica.js,logica.js,textos.js,estilos.css}` y `tests/practicas-fraccion-de.test.js` (14 tests, 3000 ítems por ejercicio).
-
-## Ejercicios y destrezas
-1. **Calcula** (U4-1C-08, 1C-09): «3/5 de 40», resultado escrito; botón Pista (1.º dividir, 2.º multiplicar; cuentan como ayuda). Errores: fraccion-de-al-reves, se-queda-en-la-unitaria, multiplica-por-el-denominador, multiplica-sin-dividir.
-2. **Con contexto** (U4-1A-01): diez contextos con cota (depósito de coche 20-90 L, garrafa 5-50 L, botella 300-3000 ml, clase 12-36, instituto 200-3000, pizza 3-15 trozos, ahorro 100-2000 € de 10 en 10, bici 10-50 km, coche 100-1000 km, hora = 60 min).
-3. **¿Qué fracción es?** (U4-1C-04, **1A-03**): dos casillas (numerador sobre denominador), respuesta irreducible; cinco grupos con total y dos con las dos partes. Errores: parte-entre-el-resto, sin-simplificar (propio).
-4. **El problema** (U4-1A-01, **1A-02**, 2A-02, **2A-03**): cuatro variantes (lo que queda/NO, dos fracciones y el resto, hallar el total desde la parte, hallar el total desde lo que falta), cuatro opciones; distractores de errores con nombre (los de fracciones.js y los propios de ERRORES_PROPIOS), todos dentro de la cota y distintos por valor.
-
-No hay práctica para U4-3A-03/3A-04 (propuesta de la 98 sigue pendiente).
+`practicas/fraccion-de/{logica.js,textos.js}` (no se tocó `index.html`, `practica.js` ni
+`estilos.css`) y `tests/practicas-fraccion-de.test.js` (65 tests; dos nuevos: huellas y
+singular/«cada una» del ejercicio 4, sobre 3000 ítems con semilla fija).
 
 ## Probarlo en 1 minuto
-`npm run servir` → http://localhost:8080/practicas/fraccion-de/ → «Probar sin código» (el código 7NPD no se aceptó en esta máquina: «no existe»). `node --test tests/practicas-fraccion-de.test.js`.
+`node --test tests/practicas-comun.test.js tests/practicas-fraccion-de.test.js` (65/65) y
+`npm test` (1359/1359). En el navegador (`npm run servir` →
+http://localhost:8080/practicas/fraccion-de/ → «Probar sin código»; el código 7NPD volvió a
+decir «no existe» en esta máquina): ejercicio 4 a 375 px, ES y EN, fallando a propósito
+`resta-el-numerador` con n = 1 («… como si fuera 1 trozo» / «as if it were 1 slice», singular) y
+`duplica-el-dato` («aquí 250 es 5 partes de 12»); ejercicio 3 con dos ítems acertados.
