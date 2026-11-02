@@ -23,32 +23,62 @@ export const MAX_DEN_FINAL = 36;
 
 const DENS = [2, 3, 4, 5, 6, 8, 9, 10, 12];
 
-// Hoja 3, ej. 8a, 8e y 12d (en claro: los alumnos ya las tienen en papel). Reabierta del 30-10
-// (`hechos/reabiertas/106--s-20261030T084305-921ac985-revision.md`). El texto es exactamente el
-// que produce `rellenar`: operandos irreducibles, espacio simple, MENOS delante del primero.
+// Casos que no se pueden repetir (reabiertas del 30-10 y del 2-11): los de la hoja 3, en claro (los
+// alumnos ya los tienen en papel), y los de los exámenes semanales y del final, por huella (el
+// repositorio es público: el enunciado de un examen no se escribe en claro).
+//
+// La clave NO depende del orden de los sumandos ni de los factores: es el conjunto de números, el
+// de operaciones y el valor de la expresión. Así `1/4 + 2/3 · 5/6` y `2/3 · 5/6 + 1/4`, o
+// `3/4 · 1/3` y `1/3 · 3/4`, cuentan como el mismo caso (la reabierta del 2-11 encontró dos casos
+// de examen que salían con los factores o los sumandos cambiados de sitio).
+const operandosDe = x => {
+  switch (x.tipo) {
+    case 'num': return [{ num: x.valor.clave() }];
+    case 'op': return [...operandosDe(x.izq), { op: x.op }, ...operandosDe(x.der)];
+    case 'neg': return [{ op: 'neg' }, ...operandosDe(x.arg)];
+    case 'pos': return [{ op: 'pos' }, ...operandosDe(x.arg)];
+    case 'par': return operandosDe(x.arg);
+    case 'pot': return [{ op: '^' }, ...operandosDe(x.base), { num: String(x.exp) }];
+    default: throw new Error(`nodo desconocido: ${x.tipo}`);
+  }
+};
+/** Clave sin orden de una expresión (texto): números ordenados # operaciones ordenadas # valor. */
+export const claveSinOrden = texto => {
+  const arbol = analizar(texto);
+  const partes = operandosDe(arbol);
+  const numeros = partes.filter(p => p.num !== undefined).map(p => p.num).sort();
+  const operaciones = partes.filter(p => p.op !== undefined).map(p => p.op).sort();
+  return `${numeros.join(',')}#${operaciones.join(',')}#${evaluar(arbol).clave()}`;
+};
+
+// Hoja 3, ej. 8a, 8e y 12d. Operandos irreducibles, espacio simple, MENOS delante del primero.
 export const EXPRESIONES_HOJA = new Set([
   '1/3 + 2/3 · 3/4',
   `${MENOS}1/2 + 2/3 · 3/8`,
   '1/3 + 1/2 · 2/5',
 ]);
+const CLAVES_HOJA = new Set([...EXPRESIONES_HOJA].map(claveSinOrden));
 
-// Exámenes semanales y examen final (por huella: no se escriben en claro, el repo es público).
-// La huella es sobre el texto tal cual lo produce `rellenar` (coincide con `aTextoExpresion`:
-// comprobado con un guion de scratchpad, que no se comitea). «Revisa también» de la misma
-// reabierta: U4-3A-01 y U4-3A-02 de la semana 3, y los apartados 3a/3b y las dos cajas de «Find
-// the mistake» (5b) de los tres modelos del examen final.
 const huella = s => {
   let h = 0x811c9dc5;
   for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
   return h.toString(36);
 };
-export const huellaExpresion = texto => huella(texto);
+/** Huella de una expresión: de su clave sin orden, no de su texto. */
+export const huellaExpresion = texto => huella(claveSinOrden(texto));
+// U4-3A-01 y U4-3A-02 de la semana 3 (los seis casos de cada una); apartados 3a y 3b y las dos cajas
+// de «Find the mistake» (5b) de los modelos 1 y 2 y de la recuperación del examen final (el
+// adaptado-A repite los del modelo 1). La 3a del modelo 2 lleva una potencia y no puede salir.
 export const HUELLAS_EXAMEN_COMBINADAS = new Set([
-  'zyqjw2', '1vfcihd', '1sss5t5', 'b1d396', 'qt5s13', '1c9vd1h',
-  'snxq0l', '15ibpdd', 'up0xfk', 'v0yv4s', '9zdhky', '1hl0nxe',
-  'sqzwqk', 'addtep', '1r9mrou', 'z0w58u', '1esxve7',
-  'xo067s', '58ennd', '19g2xo6', '1f5rmrv', '1t9u2fu', '10zshvv',
+  'gz18zf', 'smxfcy', 's9v0jp', 'xk144e', 'x2ciy3', '7mhaem', 'qaedgm', '1qt0m4t',
+  '1gankhw', 'q49imx', '1ywg0me', '1abrdwc', 'lz7t47', 'kx5wep', '6zb7xf', '6u5yg1',
+  '34a63k', '1axjxio', '1yujj6a', '1vdce6l', '13xq3ds', 'j74a5l', '1e9faaj',
 ]);
+/** ¿Es la expresión un caso de la hoja o de un examen (en cualquier orden de sumandos y factores)? Una que no se puede calcular (÷ 0) no lo es: `valida` ya la rechaza. */
+export function esCasoReservado(texto) {
+  try { return CLAVES_HOJA.has(claveSinOrden(texto)) || HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto)); }
+  catch (e) { if (e instanceof ErrorFracciones) return false; throw e; }
+}
 
 // ─── Piezas de las expresiones ────────────────────────────────────────────────────
 
@@ -163,7 +193,7 @@ export function cuentaOperaciones(x) {
 function hastaQueValga(rng, hacer, opciones) {
   for (let i = 0; i < 5000; i++) {
     const texto = hacer(rng);
-    if (EXPRESIONES_HOJA.has(texto) || HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto))) continue;
+    if (esCasoReservado(texto)) continue;
     if (valida(texto, opciones)) return texto;
   }
   throw new Error('No se encuentra una expresión válida');

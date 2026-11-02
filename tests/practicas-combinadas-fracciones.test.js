@@ -14,7 +14,7 @@ import { TX, pistaDe } from '../practicas/combinadas-fracciones/textos.js';
 import {
   generarPrimero, generarPasos, generarError, valida, clasificarToque, opcionesDePaso, opcionesOrdenadas,
   diagnosticar, cuentaOperaciones, esUltimo, MAX_TERMINO_PASO, MAX_DEN_FINAL,
-  EXPRESIONES_HOJA, HUELLAS_EXAMEN_COMBINADAS, huellaExpresion,
+  EXPRESIONES_HOJA, HUELLAS_EXAMEN_COMBINADAS, huellaExpresion, esCasoReservado, claveSinOrden,
 } from '../practicas/combinadas-fracciones/logica.js';
 
 const N = 3000;
@@ -58,8 +58,7 @@ for (const [nombre, gen] of [['ej. 1', generarPrimero], ['ej. 2', generarPasos]]
         // el paso que acepta la práctica no cambia el valor de la expresión
         assert.ok(evaluar(aplicarPaso(arbol, paso)).equals(final), `${texto}: ${paso.operacion}`);
       }
-      assert.ok(!EXPRESIONES_HOJA.has(texto), `caso de la hoja: ${texto}`);
-      assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto)), `caso de examen: ${texto}`);
+      assert.ok(!esCasoReservado(texto), `caso de la hoja o de examen: ${texto}`);
     }
   });
 }
@@ -69,17 +68,30 @@ test('las huellas de examen y la lista de la hoja no están vacías y detectan d
   assert.equal(HUELLAS_EXAMEN_COMBINADAS.size, 23);
   // Hoja 3, ej. 8a: 1/3 + 2/3 · 3/4.
   assert.ok(EXPRESIONES_HOJA.has('1/3 + 2/3 · 3/4'));
-  // U4-3A-01, variante 1 del examen de la semana 3: 1/4 + 3/8 · 1/9.
-  assert.ok(HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion('1/4 + 3/8 · 1/9')));
+  assert.ok(esCasoReservado('1/3 + 2/3 · 3/4'));
+  // Los casos de examen no se escriben en claro (el repositorio es público): solo se comprueba que
+  // las huellas no son cadenas vacías ni repetidas y que cada una es una cadena en base 36.
+  for (const h of HUELLAS_EXAMEN_COMBINADAS) assert.match(h, /^[0-9a-z]{4,7}$/);
   // Una expresión cualquiera que no está en ninguna lista no se marca.
   assert.ok(!EXPRESIONES_HOJA.has('1/5 + 1/4 · 1/3'));
-  assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion('1/5 + 1/4 · 1/3')));
+  assert.ok(!esCasoReservado('1/5 + 1/4 · 1/3'));
+});
+
+test('la clave no depende del orden de los sumandos ni de los factores (reabierta del 2-11)', () => {
+  // Hoja 3, ej. 8a y 8e: la misma expresión con los términos cambiados de sitio sigue siendo el caso.
+  for (const t of ['2/3 · 3/4 + 1/3', '3/4 · 2/3 + 1/3', '1/3 + 3/4 · 2/3']) {
+    assert.ok(esCasoReservado(t), t);
+  }
+  // Otro valor, otra operación u otros números: no es el mismo caso.
+  for (const t of ['1/3 + 2/3 : 3/4', '1/3 − 2/3 · 3/4', '1/3 + 2/3 · 3/5']) assert.ok(!esCasoReservado(t), t);
+  assert.equal(claveSinOrden('1/2 + 1/3 · 2/5'), claveSinOrden('2/5 · 1/3 + 1/2'));
+  assert.equal(claveSinOrden('(1/2 + 1/3) · 2/5'), claveSinOrden('2/5 · (1/3 + 1/2)'));
+  assert.notEqual(claveSinOrden('1/2 + 1/3 · 2/5'), claveSinOrden('(1/2 + 1/3) · 2/5'));
 });
 
 test('ej. 3 (Caza el error): la primera línea nunca es un caso de examen o de la hoja', () => {
   for (const item of generarN(generarError, 1500, 13)) {
-    assert.ok(!EXPRESIONES_HOJA.has(item.lineas[0]), `caso de la hoja: ${item.lineas[0]}`);
-    assert.ok(!HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(item.lineas[0])), `caso de examen: ${item.lineas[0]}`);
+    assert.ok(!esCasoReservado(item.lineas[0]), `caso de la hoja o de examen: ${item.lineas[0]}`);
   }
 });
 
