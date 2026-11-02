@@ -147,9 +147,11 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 `fraccion-de` y `suma-resta` (tarea 119, 2-11: lo que pidieron las reabiertas del 30-10 está
 hecho, pero `fraccion-de` saca en el ej. 4 casos de un examen semanal que solo se excluían en los
 ej. 1 y 2, y `suma-resta` saca ejercicios de la hoja 2, tal cual o en otro orden; los casos de examen se
-excluyen por su huella, nunca en claro) y las tres de la semana 3, `multiplica-divide`, `combinadas-fracciones` y `errores4` (tarea 118,
-30-10: lo que pidió la tarea 111 está arreglado; quedan casos de las hojas 2 y 3 y de los
-exámenes). El estado vivo es el campo `disponible` de `catalogo.js`.
+excluyen por su huella, nunca en claro) y las tres de la semana 3, `multiplica-divide`,
+`combinadas-fracciones` y `errores4` (tarea 120, 2-11: lo que pidieron las reabiertas del 30-10
+está hecho en el orden en que están escritos los casos, pero salen casos de las hojas 2 y 3 y de
+los exámenes con los sumandos o los factores en otro orden, y a `multiplica-divide` le falta la
+hoja 2). El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 
