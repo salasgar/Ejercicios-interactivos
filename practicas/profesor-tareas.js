@@ -88,9 +88,19 @@ export function tareasPorUnidad(config) {
   return UNIDADES.map(u => ({ unidad: u, tareas: config.tareas.filter(t => t.unidad === u.n) }));
 }
 
-/** Los ejercicios del catálogo de una unidad: [{ slug, n, practica }] (sin la plantilla ni las no disponibles). */
+/**
+ * Las prácticas disponibles que se pueden poner en una tarea de esa unidad: las suyas y, detrás, las
+ * transversales de otras unidades (la ortografía, un ★ en cada tarea semanal), en el orden del catálogo.
+ */
+export function practicasDeUnidad(unidad) {
+  if (unidad === null) return [];
+  const disponibles = CATALOGO.filter(p => p.disponible);
+  return [...disponibles.filter(p => p.unidad === unidad), ...disponibles.filter(p => p.transversal && p.unidad !== unidad)];
+}
+
+/** Los ejercicios de `practicasDeUnidad`: [{ slug, n, practica }] (sin la plantilla ni las no disponibles). */
 export function ejerciciosDeUnidad(unidad) {
-  return CATALOGO.filter(p => unidad !== null && p.unidad === unidad && p.disponible)
+  return practicasDeUnidad(unidad)
     .flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ slug: p.slug, n: i + 1, practica: p })));
 }
 
@@ -156,7 +166,7 @@ export function montar(contenedor, contexto) {
 
   async function cargarNombres(unidad) {
     const { declaracionDe } = await import('./_comun/base.js');
-    await Promise.all(CATALOGO.filter(p => p.unidad === unidad && p.disponible).map(async p => {
+    await Promise.all(practicasDeUnidad(unidad).map(async p => {
       const d = await declaracionDe(p);
       d?.ejercicios?.forEach((e, i) => nombres.set(`${p.slug}/${i + 1}`, e.nombre));
     }));

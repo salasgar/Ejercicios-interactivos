@@ -102,14 +102,31 @@ test('tareasPorUnidad sigue el orden de UNIDADES y deja vacías las que no tiene
   assert.deepEqual(g.map(x => x.tareas.length), [1, 1, 0, 0]);
 });
 
-test('ejerciciosDeUnidad: solo prácticas disponibles de esa unidad, todos sus ejercicios, sin la plantilla', () => {
+test('ejerciciosDeUnidad: las prácticas disponibles de esa unidad y, detrás, las transversales; sin la plantilla', () => {
+  const transversales = CATALOGO.filter(p => p.transversal && p.disponible);
+  assert.ok(transversales.some(p => p.slug === 'ortografia'));
   for (const u of UNIDADES) {
     const lista = ejerciciosDeUnidad(u.n);
-    const esperados = CATALOGO.filter(p => p.unidad === u.n && p.disponible).reduce((s, p) => s + p.nEjercicios, 0);
-    assert.equal(lista.length, esperados);
-    assert.ok(lista.every(e => e.practica.unidad === u.n && e.slug !== 'plantilla'));
+    const propias = CATALOGO.filter(p => p.unidad === u.n && p.disponible);
+    const ajenas = transversales.filter(p => p.unidad !== u.n);
+    assert.equal(lista.length, [...propias, ...ajenas].reduce((s, p) => s + p.nEjercicios, 0));
+    assert.ok(lista.every(e => (e.practica.unidad === u.n || e.practica.transversal) && e.slug !== 'plantilla'));
+    // Cada ejercicio una sola vez, y las transversales de otra unidad al final.
+    assert.equal(new Set(lista.map(e => `${e.slug}/${e.n}`)).size, lista.length);
+    const primeraAjena = lista.findIndex(e => e.practica.unidad !== u.n);
+    if (primeraAjena >= 0) assert.ok(lista.slice(primeraAjena).every(e => e.practica.transversal));
   }
+  // La ortografía, en una tarea de la U4 (el ★ semanal de la tarea 121).
+  assert.ok(ejerciciosDeUnidad(4).some(e => e.slug === 'ortografia' && e.n === 5));
   assert.equal(ejerciciosDeUnidad(null).length, 0);
+});
+
+test('una tarea de la U4 con la ortografía como ★ se guarda sin avisos', () => {
+  const t = {
+    id: 20, unidad: 4, titulo: { es: 'U4 · Semana 1', en: 'U4 · Week 1' }, desde: '2026-12-14', hasta: '2026-12-17',
+    estrella: [['que-fraccion', 1], ['ortografia', 5]], elegir: [['que-fraccion', 2], ['que-fraccion', 3]], nElegir: 1,
+  };
+  assert.deepEqual(avisosDeTarea(vacia(), t), []);
 });
 
 test('tareaDeFormulario separa ★ y a elegir, recorta el título y acota nElegir', () => {
