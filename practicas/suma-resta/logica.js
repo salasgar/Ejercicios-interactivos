@@ -26,14 +26,18 @@ const mcm = (a, b) => (a / mcd(a, b)) * b;
  * pueden salir de esta práctica (sus fracciones son propias y positivas) y no se listan.
  */
 export const RESERVADOS = {
-  mismo: [['7/15', '+', '4/15'], ['17/20', '-', '9/20'], ['3/11', '+', '5/11'], ['3/10', '+', '9/10']],
+  mismo: [['7/15', '+', '4/15'], ['17/20', '-', '9/20'], ['3/11', '+', '5/11'], ['3/10', '+', '9/10'], ['13/16', '-', '5/16'], ['11/14', '-', '3/14']],
   pasos: [
     ['3/10', '+', '5/8'], ['5/9', '-', '2/15'], ['1/12', '+', '5/18', '-', '1/4'], ['7/24', '+', '5/36', '-', '1/8'],
     ['2/5', '+', '1/4'], ['1/2', '+', '2/7'], ['4/5', '-', '1/6'], ['3/4', '+', '5/6'], ['9/10', '-', '2/5'],
+    // Hoja 2 (reabierta del 2-11): los ejercicios que la revisión del 30-10 no listaba. Se comparan sin orden.
+    ['7/8', '+', '1/12'], ['7/10', '-', '4/15'], ['4/9', '-', '1/6'], ['3/5', '+', '1/3'],
+    ['5/6', '+', '1/3', '-', '1/4'], ['7/15', '+', '3/10', '-', '1/6'], ['11/18', '-', '5/12', '+', '2/9'], ['9/20', '+', '7/30', '-', '5/12'],
+    ['4/6', '+', '6/10'], ['15/20', '-', '8/12'],
   ],
   queda: [['1/3', '5/12']],   // la pizza de la hoja 2 (en cualquier orden)
   // Ejercicio 3 (con naturales): [tipo, natural, 'n/d'] de la hoja 2 (en claro).
-  naturales: [['nat+f', 2, '3/5'], ['nat-f', 1, '4/7'], ['f-nat', 1, '2/9']],
+  naturales: [['nat+f', 2, '3/5'], ['nat-f', 1, '4/7'], ['f-nat', 1, '2/9'], ['f+nat', 1, '5/6'], ['nat-f', 2, '5/6']],
 };
 
 /**
@@ -60,18 +64,32 @@ export const esCasoExamenNaturales = item => HUELLAS_EJ3.has(huella(claveNat(ite
 /** ¿Es el ítem del ejercicio 4 un caso de examen? */
 export const esCasoExamenQueda = item => HUELLAS_EJ4.has(huella(claveQueda(item)));
 /** ¿Es el ítem del ejercicio 3 un caso de la hoja 2 (en claro)? */
-export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, nat, f]) => tipo === item.tipo && nat === item.nat && f === `${item.f.n}/${item.f.d}`);
+export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, nat, f]) => claveSinOrden(terminosDeNat(tipo, nat, f)) === claveSinOrden(terminosDeNat(item.tipo, item.nat, `${item.f.n}/${item.f.d}`)));
 
-const clave = (fracs, ops) => fracs.flatMap((f, i) => (i ? [ops[i - 1], `${f.n}/${f.d}`] : [`${f.n}/${f.d}`])).join(' ');
+/**
+ * Clave de una suma o resta SIN orden (reabierta del 2-11): los términos con su signo, ordenados.
+ * «a + b» = «b + a», «n − a» = «−a + n» y «a − b + c» = «c + a − b»: la hoja da una cuenta y sale
+ * con los términos cambiados de sitio, que es la misma cuenta.
+ */
+const claveSinOrden = terminos => [...terminos].sort().join(' ');
+const terminosCuenta = (fracs, ops) => fracs.map((f, i) => `${i === 0 || ops[i - 1] === '+' ? '+' : '-'}${f.n}/${f.d}`);
+const terminosDeNat = (tipo, nat, f) => ({
+  'nat+f': [`+${nat}`, `+${f}`], 'f+nat': [`+${nat}`, `+${f}`], 'nat-f': [`+${nat}`, `-${f}`], 'f-nat': [`+${f}`, `-${nat}`],
+})[tipo];
+const aFrac = x => { const [n, d] = x.split('/'); return { n, d }; };
 const reservadoEn = (lista, fracs, ops) => {
-  const k = clave(fracs, ops);
-  const k2 = fracs.length === 2 && ops[0] === '+' ? clave([fracs[1], fracs[0]], ops) : k;
-  return lista.some(r => { const kr = r.join(' '); return kr === k || kr === k2; });
+  const k = claveSinOrden(terminosCuenta(fracs, ops));
+  return lista.some(r => claveSinOrden(terminosCuenta(r.filter((_, i) => i % 2 === 0).map(aFrac), r.filter((_, i) => i % 2 === 1))) === k);
 };
+// Sumas y restas de dos fracciones que los exámenes semanales muestran (U4-1A-01, 2A-02, 2A-04, 2B-01, 2B-02, 3A-02, 3C-09 y 3C-11),
+// por huella de la clave sin orden: el examen pregunta otro paso de la misma cuenta (criterio de la 117).
+const HUELLAS_SUMAS = new Set(["11lm8in","12av30i","16cwupy","16g78mj","19olc0o","1d71buw","1dw2qz","1e3tuzc","1i2knun","1k58uos","1linyd","1ncw7mg","1vae38i","1xh35n8","2o5na0","3qgez4","3w7h8f","8sjsox","9iwx64","a6ylw6","am9n68","fmc2rq","g9pty","ilacu2","jabk73","kjxf3d","ldm7pe","mkt71j","qv48q4","ulbfzh","v8fs1t","x0s36z"]);
+const esCasoExamenSuma = (fracs, ops) => HUELLAS_SUMAS.has(huella(claveSinOrden(terminosCuenta(fracs, ops))));
+
 /** ¿Es el ítem del ejercicio 1 un caso reservado? */
-export const esReservadoMismo = item => reservadoEn(RESERVADOS.mismo, [item.a, item.b], [item.op]);
+export const esReservadoMismo = item => reservadoEn(RESERVADOS.mismo.concat(RESERVADOS.pasos), [item.a, item.b], [item.op]) || esCasoExamenSuma([item.a, item.b], [item.op]);
 /** ¿Es el ítem del ejercicio 2 un caso reservado? */
-export const esReservadoPasos = item => reservadoEn(RESERVADOS.pasos, item.fracs, item.ops);
+export const esReservadoPasos = item => reservadoEn(RESERVADOS.pasos.concat(RESERVADOS.mismo), item.fracs, item.ops) || esCasoExamenSuma(item.fracs, item.ops);
 /** ¿Es el ítem del ejercicio 4 un caso reservado (las dos partes, en cualquier orden)? */
 export const esReservadoQueda = item => RESERVADOS.queda.some(([x, y]) => {
   const k = [`${item.a.n}/${item.a.d}`, `${item.b.n}/${item.b.d}`];

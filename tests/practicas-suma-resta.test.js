@@ -332,7 +332,7 @@ test('los casos reservados para el examen no salen nunca (ejercicios 1, 2 y 4)',
   assert.ok(esReservadoMismo({ a: f(17, 20), b: f(9, 20), op: '-' }));
   assert.ok(esReservadoQueda({ a: f(5, 12), b: f(1, 3) }));
   assert.ok(!esReservadoQueda({ a: f(1, 3), b: f(1, 4) }));
-  assert.equal(RESERVADOS.pasos.length, 9);
+  assert.equal(RESERVADOS.pasos.length, 19);
   // Casos de la hoja 2 añadidos por la reabierta del 30-10.
   assert.ok(esReservadoMismo({ a: f(3, 11), b: f(5, 11), op: '+' }));
   assert.ok(esReservadoMismo({ a: f(3, 10), b: f(9, 10), op: '+' }));
@@ -345,6 +345,39 @@ test('los casos reservados para el examen no salen nunca (ejercicios 1, 2 y 4)',
   assert.ok(esReservadoNaturales({ tipo: 'nat-f', nat: 1, f: f(4, 7) }));
   assert.ok(esReservadoNaturales({ tipo: 'f-nat', nat: 1, f: f(2, 9) }));
   assert.ok(generar(generarNaturales, 104038).every(it => !esReservadoNaturales(it)));
+});
+
+test('los casos reservados se comparan SIN orden (reabierta del 2-11): la cuenta conmutada es la misma cuenta', () => {
+  const f = (n, d) => ({ n, d });
+  // Hoja 2: «5/6 + 1» y «−5/6 + 2» salían como «1 + 5/6» y «2 − 5/6».
+  assert.ok(esReservadoNaturales({ tipo: 'f+nat', nat: 1, f: f(5, 6) }));
+  assert.ok(esReservadoNaturales({ tipo: 'nat+f', nat: 1, f: f(5, 6) }));
+  assert.ok(esReservadoNaturales({ tipo: 'nat-f', nat: 2, f: f(5, 6) }));
+  assert.ok(esReservadoNaturales({ tipo: 'f+nat', nat: 2, f: f(3, 5) }));   // «2 + 3/5» como «3/5 + 2»
+  assert.ok(!esReservadoNaturales({ tipo: 'f-nat', nat: 2, f: f(5, 6) }));  // 5/6 − 2 no es 2 − 5/6
+  // Ejercicio 2: «4/9 − 1/6» es «−1/6 + 4/9»; «7/8 + 1/12» en los dos órdenes; la de tres términos, en cualquier orden.
+  assert.ok(esReservadoPasos({ fracs: [f(4, 9), f(1, 6)], ops: ['-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(7, 8), f(1, 12)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(1, 12), f(7, 8)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(5, 6), f(1, 3), f(1, 4)], ops: ['+', '-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(1, 3), f(5, 6), f(1, 4)], ops: ['+', '-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(5, 6), f(1, 4), f(1, 3)], ops: ['-', '+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(6, 10), f(4, 6)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(3, 5), f(1, 3)], ops: ['+'] }));
+  assert.ok(!esReservadoPasos({ fracs: [f(3, 5), f(1, 3)], ops: ['-'] }));
+  // Los de misma denominador y los de la hoja entran en las dos listas.
+  assert.ok(esReservadoMismo({ a: f(5, 16), b: f(13, 16), op: '-' }) === false);
+  assert.ok(esReservadoMismo({ a: f(13, 16), b: f(5, 16), op: '-' }));
+  assert.ok(esReservadoMismo({ a: f(3, 14), b: f(11, 14), op: '+' }) === false);
+  // Barrido: tres semillas de 2000 ítems en cada ejercicio, y ninguno es un caso reservado (ni conmutado).
+  for (const semilla of [104050, 104051, 104052]) {
+    const rng = crearRng(semilla);
+    for (let i = 0; i < 2000; i++) {
+      assert.ok(!esReservadoMismo(generarMismo(rng)), `mismo ${i}`);
+      assert.ok(!esReservadoPasos(generarPasos(rng)), `pasos ${i}`);
+      assert.ok(!esReservadoNaturales(generarNaturales(rng)), `naturales ${i}`);
+    }
+  }
 });
 
 // --- Casos de examen (huella FNV-1a; regla nueva de la reabierta del 30-10) -----------
