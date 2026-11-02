@@ -50,7 +50,7 @@ test('el catálogo declara 5 ejercicios para multiplica-divide', () => {
 });
 
 test('las huellas de examen no están vacías y detectan de verdad (sin orden en multiplica, con orden en divide)', () => {
-  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.size === 15 && HUELLAS_EXAMEN_DIVIDE.size === 21 && HUELLAS_EXAMEN_POTENCIA.size === 6);
+  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.size === 15 && HUELLAS_EXAMEN_DIVIDE.size === 23 && HUELLAS_EXAMEN_POTENCIA.size === 7);
   // U4-2C-08 variante 1 del examen de la semana 2 (6 · 2/11), en cualquier orden de los factores.
   assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([6, 1], [2, 11])));
   assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([2, 11], [6, 1])));
@@ -60,6 +60,14 @@ test('las huellas de examen no están vacías y detectan de verdad (sin orden en
   // Una fracción cualquiera que no está en ninguna lista no se marca.
   assert.ok(!HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([1, 2], [1, 3])));
   assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [1, 2], [1, 3]));
+});
+
+test('la hoja 2, ej. 11 (a-h), está en la lista de productos reservados, en los dos órdenes', () => {
+  const hoja2 = [[[5, 1], [3, 8]], [[2, 1], [7, 12]], [[5, 8], [3, 7]], [[2, 3], [9, 10]], [[4, 5], [3, 5]], [[10, 21], [14, 15]], [[8, 9], [3, 4]], [[2, 5], [4, 7]]];
+  for (const [a, b] of hoja2) {
+    assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, a, b), JSON.stringify([a, b]));
+    assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, b, a), JSON.stringify([b, a]));
+  }
 });
 
 // ─── Ejercicio 1 ───────────────────────────────────────────────────────────────

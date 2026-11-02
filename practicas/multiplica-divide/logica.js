@@ -53,9 +53,13 @@ export const HUELLAS_EXAMEN_DIVIDE = new Set([
   '112he92', '16a5pk', '1toafhw', '6mvy0n', '1oijkgn', '1ylk3n9',
   '1jqnq46', '1pcmr41', '1jmwt3q', '15nj2kd', 'grsx23', '478mdr',
   'x0orou', '1axchh6', '48b8l1',
+  // U4-3C-11 del examen semanal 3: la cuenta mal hecha es una división (2 variantes).
+  '198yej7', '1c01os',
 ]);
 export const HUELLAS_EXAMEN_POTENCIA = new Set([
   '4ip7sn', 'x8sfeg', '1808zrt', '11rn67e', 'quac4a', '18hpam4',
+  // U4-3C-11 del examen semanal 3: la cuenta mal hecha es una potencia (1 variante).
+  'ze6aby',
 ]);
 
 // Los de las hojas y del banco, en claro: los alumnos ya los tienen en papel.
@@ -65,9 +69,12 @@ const esParejaHoja = (pool, a, b) => pool.some(([x, y]) => (igual(a, x) && igual
 /** ¿(a,b) es una de las parejas de `pool`, con el mismo orden (dividendo, divisor)? */
 const coincideDivide = (pool, a, b) => pool.some(([x, y]) => igual(a, x) && igual(b, y));
 
-// Hoja 3, ej. 1a (4/9·3/10), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4).
+// Hoja 3, ej. 1a (4/9·3/10), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4);
+// hoja 2, ej. 11 (apartado «For after the class on Thursday 7 January»), de la a a la h.
 export const PAREJAS_HOJA_MULTIPLICA = [
   [[4, 9], [3, 10]], [[1, 10], [3, 4]], [[6, 1], [2, 5]], [[4, 5], [3, 4]],
+  [[5, 1], [3, 8]], [[2, 1], [7, 12]], [[5, 8], [3, 7]], [[2, 3], [9, 10]],
+  [[4, 5], [3, 5]], [[10, 21], [14, 15]], [[8, 9], [3, 4]], [[2, 5], [4, 7]],
 ];
 // Hoja 3, ej. 3a, 3d, 3e, 3f; 4a, 4b, 4c, 4e, 4f; 5b, 5b2, 5b3; 6e; 7c2; banco B11a y B11c.
 export const PAREJAS_HOJA_DIVIDE = [
