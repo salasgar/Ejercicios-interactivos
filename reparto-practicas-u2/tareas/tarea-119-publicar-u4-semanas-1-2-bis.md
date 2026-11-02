@@ -142,6 +142,21 @@ igual.
   con un caso cuyo orden de cadena no sea el natural.
 - (de la 117) Los casos de las **hojas** sí van en claro (los alumnos ya las tienen): compáralos con los ejercicios de
   `4. Fractions/hojas-de-ejercicios/hoja-unidad4-semana*.tex`, por valor y por los dos huecos posibles de una igualdad.
+- (de la 119, 2-11) **No compruebes la exclusión con la clave de la práctica, sino con una tuya, sacada de los datos**: fracciones con
+  signo, operación y orden, y las sumas **sin orden** («a + b» = «b + a», «−a + n» = «n − a»). Las sesiones que cierran las reabiertas
+  filtran cada caso en el orden en que está escrito, y `suma-resta` sacaba «1 + 5/6» de la hoja 2 aunque «5/6 + 1» estuviera filtrado.
+- (de la 119) **Un caso excluido en un ejercicio puede salir en otro con otra clave**: `fraccion-de` excluía los casos de U4-1A-01 en los
+  ej. 1 y 2 (`n/d de total`) y el ej. 4 los sacaba en su variante `queda` (`n/d|total`). Cruza cada destreza con todos los ejercicios que
+  puedan generar sus datos, no solo con el que la cita.
+- (de la 119) En los casos de opción múltiple (U4-1C-17 y 1C-19), la columna `enunciado_tex` del TSV solo dice «Which one is true?»: la
+  pareja buena está en `correcta` y las demás en las `\opciones` de `examen-semanaN.tex`. Y en `examen-final/` hay un
+  `examen-final-unidad4-adaptado-A.tex` (30-10) que también cuenta.
+- (de la 119) Comparar «por conjuntos de números» da cientos de falsos positivos (mismos números, otra tarea): restringe cada clave a su
+  destreza (la de la fila del TSV o el `% U4-…` que precede a la línea del `.tex`) y quita los recuadros `apoyo` de las hojas.
+- (de la 119) Guion de clics: pulsa en el **título** de una caja (`.eq-titulo`, `.caja__titulo`), no en su centro, que puede caer sobre
+  una tarjeta ya colocada; los puntos de la recta (`.fd-toque`) son SVG y no tienen `offsetParent`; el «Comprobar» activo es el último
+  sin `disabled` (el ej. 4 de `equivalentes` tiene uno por paso). La portada tarda en salir por Firebase: espera a `#probar` hasta 30 s, y
+  no lances más de dos Chrome a la vez. Una pasada de 17 ejercicios en una combinación tarda unos 15-20 min.
 
 ## Prohibido (propio de esta tarea)
 
