@@ -62,3 +62,13 @@ acierto y un fallo, ES y EN, 375×700 px.
 Propuesta pendiente (no se decide aquí): el ejercicio 5 saca 11 de sus 48 potencias posibles en las
 hojas 2 y 3 (acertado, no bloquea, según la reabierta); si Juan Luis quiere quitarlas también, hace
 falta ampliar antes las bases o los exponentes del ejercicio.
+
+## Reabierta del 2-11 (s-20261102T141053-b5277421; cierra s-20261102T151807-d87a1a7a, commit d5106a2)
+
+`hechos/reabiertas/105--s-20261102T141053-b5277421-revision.md`. **Hoja 2, ej. 11** (a-h, productos): las ocho parejas pasan a
+`PAREJAS_HOJA_MULTIPLICA` (en claro; sin orden). **U4-3C-11 del examen semanal 3**: de las seis variantes, tres piden como «cuenta mal
+hecha» una división (2 huellas nuevas en `HUELLAS_EXAMEN_DIVIDE`, 21 → 23) y una una potencia (1 en `HUELLAS_EXAMEN_POTENCIA`, 6 → 7);
+las otras tres son suma o comparación y no pueden salir en esta práctica. Nunca en claro: solo las huellas. Las claves de producto no
+dependen del orden (`huellaMultiplica` ordena; `esParejaHoja` mira los dos órdenes); test nuevo con la hoja 2 en los dos órdenes.
+`node --test tests/practicas-comun.test.js tests/practicas-multiplica-divide.test.js`: 66/66. `npm test`: 1365/1365. Sin tocar
+`catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).
