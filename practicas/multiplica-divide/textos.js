@@ -81,10 +81,10 @@ export const TX = {
     potencia: {
       es: `<h2>Cómo se hace</h2>
         <p>El exponente dice cuántas veces se multiplica la base por sí misma. Con una fracción, se elevan <strong>el numerador y el denominador</strong>:</p>
-        <p>${cuenta([3, 4], '·', [3, 4], '=', [9, 16])}, es decir, <span class="cuenta-frac">(${fr([3, 4])})${sup(2)} = ${fr([9, 16])}</span>.</p>`,
+        <p>${cuenta([2, 3], '·', [2, 3], '=', [4, 9])}, es decir, <span class="cuenta-frac">(${fr([2, 3])})${sup(2)} = ${fr([4, 9])}</span>.</p>`,
       en: `<h2>How it works</h2>
         <p>The exponent says how many times the base is multiplied by itself. With a fraction, you raise <strong>the numerator and the denominator</strong>:</p>
-        <p>${cuenta([3, 4], '·', [3, 4], '=', [9, 16])}, that is, <span class="cuenta-frac">(${fr([3, 4])})${sup(2)} = ${fr([9, 16])}</span>.</p>`,
+        <p>${cuenta([2, 3], '·', [2, 3], '=', [4, 9])}, that is, <span class="cuenta-frac">(${fr([2, 3])})${sup(2)} = ${fr([4, 9])}</span>.</p>`,
     },
   },
   enunciado: {

@@ -14,6 +14,8 @@ import {
   errorDeMultiplica, errorDeParte, errorDeInversa, errorDeProductoInversa, errorDeDivide, errorDePotencia,
   distractoresPotencia, tachado, cancelaciones, pasosDivide, partesDeLaParte, contextoDe, CONTEXTOS_PARTE,
   dividirEnVezDeMultiplicar, ERROR_OTRO, ERROR_SIN_SIMPLIFICAR, ERROR_DIVIDE_EN_VEZ_DE_MULTIPLICAR, ERROR_PRODUCTO_NO_ES_UNO,
+  huellaMultiplica, huellaDivide, huellaPotencia, HUELLAS_EXAMEN_MULTIPLICA, HUELLAS_EXAMEN_DIVIDE, HUELLAS_EXAMEN_POTENCIA,
+  PAREJAS_HOJA_MULTIPLICA, PAREJAS_HOJA_DIVIDE, PAREJAS_HOJA_PARTE,
 } from '../practicas/multiplica-divide/logica.js';
 import {
   TX, fraseParte, htmlTachado, htmlPorLaInversa, htmlEnCruz,
@@ -27,6 +29,9 @@ const IDIOMAS = ['es', 'en'];
 const conocidos = new Set([...Object.keys(ERRORES_TIPICOS), ERROR_OTRO, ERROR_SIN_SIMPLIFICAR, ERROR_DIVIDE_EN_VEZ_DE_MULTIPLICAR, ERROR_PRODUCTO_NO_ES_UNO]);
 const irreducible = ([n, d]) => mcd(Math.abs(n), d) === 1;
 const sinEtiquetas = html => html.replace(/<[^>]*>/g, ' ');
+const igualPar = (p, q) => p[0] === q[0] && p[1] === q[1];
+const enListaSinOrden = (pool, a, b) => pool.some(([x, y]) => (igualPar(a, x) && igualPar(b, y)) || (igualPar(a, y) && igualPar(b, x)));
+const enListaConOrden = (pool, a, b) => pool.some(([x, y]) => igualPar(a, x) && igualPar(b, y));
 
 /** Reglas de escritura de los textos para el alumno (en los dos idiomas). */
 function comprobarTexto(html, donde) {
@@ -42,6 +47,19 @@ function comprobarTexto(html, donde) {
 
 test('el catálogo declara 5 ejercicios para multiplica-divide', () => {
   assert.equal(CATALOGO.find(p => p.slug === 'multiplica-divide').nEjercicios, 5);
+});
+
+test('las huellas de examen no están vacías y detectan de verdad (sin orden en multiplica, con orden en divide)', () => {
+  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.size === 15 && HUELLAS_EXAMEN_DIVIDE.size === 21 && HUELLAS_EXAMEN_POTENCIA.size === 6);
+  // U4-2C-08 variante 1 del examen de la semana 2 (6 · 2/11), en cualquier orden de los factores.
+  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([6, 1], [2, 11])));
+  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([2, 11], [6, 1])));
+  // U4-3C-06 variante 1 del examen de la semana 3 (3/8 : 5/9): con orden, el cambiado no cuenta.
+  assert.ok(HUELLAS_EXAMEN_DIVIDE.has(huellaDivide([3, 8], [5, 9])));
+  assert.ok(!HUELLAS_EXAMEN_DIVIDE.has(huellaDivide([5, 9], [3, 8])));
+  // Una fracción cualquiera que no está en ninguna lista no se marca.
+  assert.ok(!HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([1, 2], [1, 3])));
+  assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [1, 2], [1, 3]));
 });
 
 // ─── Ejercicio 1 ───────────────────────────────────────────────────────────────
@@ -68,6 +86,8 @@ test('ejercicio 1: términos de 1 a 12, operandos irreducibles, valor = producto
     const t = tachado(item);
     const nn = t.a[0] * t.b[0], dd = t.a[1] * t.b[1];
     assert.deepEqual([nn, dd], item.valor, JSON.stringify(item));
+    assert.ok(!HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica(item.a, item.b)), `caso de examen: ${JSON.stringify(item)}`);
+    assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, item.a, item.b), `caso de la hoja o el banco: ${JSON.stringify(item)}`);
   }
   assert.ok(negativos / N >= 0.2, `negativas ${negativos / N}`);
   assert.ok(naturales > 0.2 * N * 0.5);
@@ -127,6 +147,7 @@ test('ejercicio 2: cuadrícula b × d dentro de la cota del contexto; valor = (a
     assert.ok(y.every(i => x.includes(i)));
     assert.ok(F([y.length, total]).equals(F(item.valor)), 'el dibujo da la misma fracción');
     assert.ok(Math.max(...x) < total);
+    assert.ok(!enListaSinOrden(PAREJAS_HOJA_PARTE, item.a, item.c), `caso de la hoja: ${JSON.stringify(item)}`);
   }
   assert.equal(usados.size, CONTEXTOS_PARTE.length);
   // Cotas de realismo: nada que no sea un reparto en trozos creíbles.
@@ -240,6 +261,8 @@ test('ejercicio 4: valor irreducible; los dos métodos dan el mismo resultado; n
     const cruz = fraccion((p.cruz.negativo ? -1 : 1) * p.cruz.arriba[0] * p.cruz.arriba[1], p.cruz.abajo[0] * p.cruz.abajo[1]);
     assert.ok(cruz.equals(buena), `${JSON.stringify(item)} en cruz`);
     assert.ok(cruz.mismaForma(F(p.producto)));
+    assert.ok(!HUELLAS_EXAMEN_DIVIDE.has(huellaDivide(item.a, item.b)), `caso de examen: ${JSON.stringify(item)}`);
+    assert.ok(!enListaConOrden(PAREJAS_HOJA_DIVIDE, item.a, item.b), `caso de la hoja o el banco: ${JSON.stringify(item)}`);
   }
   assert.ok(negativos / N >= 0.2, `negativas ${negativos / N}`);
 });
@@ -299,6 +322,7 @@ test('ejercicio 5: base positiva e irreducible, exponente 2 o 3, valor = potenci
       assert.equal(errorDePotencia(item, x.valor), x.error);
     }
     assert.equal(errorDePotencia(item, buena), null);
+    assert.ok(!HUELLAS_EXAMEN_POTENCIA.has(huellaPotencia(item.base, item.exp)), `caso de examen: ${JSON.stringify(item)}`);
   }
   assert.deepEqual([...exps].sort(), [2, 3]);
   assert.equal(errorDePotencia({ base: [2, 3], exp: 2, valor: [4, 9] }, fraccion(4, 3)), 'eleva-solo-el-numerador');

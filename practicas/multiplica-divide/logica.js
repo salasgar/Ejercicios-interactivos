@@ -25,6 +25,62 @@ export const ERROR_PRODUCTO_NO_ES_UNO = 'producto-no-es-uno';
 export const F = ([n, d]) => fraccion(n, d);
 export const par = f => [f.num, f.den];
 
+// ─── Casos que no se pueden repetir (regla de oro de contenido, punto 9) ──────
+// Los de examen (exámenes semanales 2 y 3, examen final), por su huella: el repositorio y la
+// web son públicos, y el enunciado de un examen no se puede leer en el código publicado. Las
+// huellas se calcularon con un guion en el scratchpad (no se comitea) a partir de los TSV de
+// casos y de los tres modelos del examen final; aquí solo queda el hash FNV-1a de 32 bits.
+export const huella = s => {
+  let h = 0x811c9dc5;
+  for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+};
+const fr = ([n, d]) => `${n}/${d}`;
+/** Ej. 1 (multiplica): clave sin orden, los dos factores. */
+export const huellaMultiplica = (a, b) => huella([fr(a), fr(b)].sort().join('|'));
+/** Ej. 4 (divide): clave con orden, dividendo y divisor. */
+export const huellaDivide = (a, b) => huella(`${fr(a)}|${fr(b)}`);
+/** Ej. 5 (potencias): clave la base y el exponente. */
+export const huellaPotencia = (base, exp) => huella(`${fr(base)}^${exp}`);
+
+export const HUELLAS_EXAMEN_MULTIPLICA = new Set([
+  '1meqt56', 'mpz6jq', '19s3037', 'wdwvgy', '1gu07eo', '16eocbl',
+  '1bhimha', 'g4g4su', 'egd2fc', '128ybmq', '1c1y0wo', '1hm4q4v',
+  'euj67f', '1ls6rik', '1orygr3',
+]);
+export const HUELLAS_EXAMEN_DIVIDE = new Set([
+  '1g38li2', '1kkydqf', 'iro6pn', 'rg9we5', '1nb1b47', '1nhacnt',
+  '112he92', '16a5pk', '1toafhw', '6mvy0n', '1oijkgn', '1ylk3n9',
+  '1jqnq46', '1pcmr41', '1jmwt3q', '15nj2kd', 'grsx23', '478mdr',
+  'x0orou', '1axchh6', '48b8l1',
+]);
+export const HUELLAS_EXAMEN_POTENCIA = new Set([
+  '4ip7sn', 'x8sfeg', '1808zrt', '11rn67e', 'quac4a', '18hpam4',
+]);
+
+// Los de las hojas y del banco, en claro: los alumnos ya los tienen en papel.
+const igual = (p, q) => p[0] === q[0] && p[1] === q[1];
+/** ¿(a,b) es una de las parejas de `pool`, en cualquier orden? */
+const esParejaHoja = (pool, a, b) => pool.some(([x, y]) => (igual(a, x) && igual(b, y)) || (igual(a, y) && igual(b, x)));
+/** ¿(a,b) es una de las parejas de `pool`, con el mismo orden (dividendo, divisor)? */
+const coincideDivide = (pool, a, b) => pool.some(([x, y]) => igual(a, x) && igual(b, y));
+
+// Hoja 3, ej. 1a (4/9·3/10), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4).
+export const PAREJAS_HOJA_MULTIPLICA = [
+  [[4, 9], [3, 10]], [[1, 10], [3, 4]], [[6, 1], [2, 5]], [[4, 5], [3, 4]],
+];
+// Hoja 3, ej. 3a, 3d, 3e, 3f; 4a, 4b, 4c, 4e, 4f; 5b, 5b2, 5b3; 6e; 7c2; banco B11a y B11c.
+export const PAREJAS_HOJA_DIVIDE = [
+  [[3, 5], [2, 7]], [[7, 8], [7, 4]], [[2, 9], [5, 6]], [[9, 10], [3, 5]],
+  [[5, 1], [2, 3]], [[8, 1], [4, 5]], [[12, 1], [3, 4]], [[2, 7], [4, 1]], [[6, 11], [3, 1]],
+  [[7, 2], [7, 4]], [[3, 5], [9, 10]], [[5, 6], [10, 1]],
+  [[6, 1], [-3, 5]],
+  [[5, 6], [1, 3]],
+  [[9, 1], [3, 4]], [[6, 1], [2, 5]],
+];
+// Hoja 2, ej. 12c: 1/3 de los que juegan un instrumento (3/5), sin importar el orden.
+export const PAREJAS_HOJA_PARTE = [[[1, 3], [3, 5]]];
+
 /** Fracción irreducible de numerador 1 a `maxNum` y denominador 2 a `maxDen`. */
 function fraccionIrreducible(rng, maxNum = 12, maxDen = 12, minNum = 1) {
   for (;;) {
@@ -62,6 +118,7 @@ export function generarMultiplica(rng) {
     else { a = fraccionIrreducible(rng); b = fraccionIrreducible(rng); }
     if (quiereTachar && intento < 40 && !cancelaciones(a, b).hay) continue;
     if (neg) { if (queNegativo === 0) a = negativa(a); else b = negativa(b); }
+    if (HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica(a, b)) || esParejaHoja(PAREJAS_HOJA_MULTIPLICA, a, b)) continue;
     const valor = par(F(a).multiplicar(F(b)).simplificar());
     return { tipo: 'multiplica', a, b, valor };
   }
@@ -113,6 +170,8 @@ export function generarParte(rng) {
     const dos = [fraccion(a, b).simplificar(), fraccion(c, d).simplificar()];
     // Las dos fracciones se escriben irreducibles (2/4 no sale: la cuadrícula tendría otra forma).
     if (!dos[0].mismaForma(fraccion(a, b)) || !dos[1].mismaForma(fraccion(c, d))) continue;
+    // Hoja 2, ej. 12c: 1/3 de los que juegan un instrumento (3/5), en cualquier orden.
+    if (esParejaHoja(PAREJAS_HOJA_PARTE, [a, b], [c, d])) continue;
     const valor = par(fraccion(a * c, b * d).simplificar());
     return { tipo: 'parte', contexto: contexto.id, a: [a, b], c: [c, d], filas: b, columnas: d, valor };
   }
@@ -181,12 +240,15 @@ export function generarDivide(rng) {
   const forma = rng.azar();
   const neg = rng.azar() < 0.25;
   const queNegativo = rng.azar() < 0.5 ? 0 : 1;
-  let a, b;
-  if (forma < 0.2) { a = natural(rng); b = fraccionIrreducible(rng); }
-  else if (forma < 0.4) { a = fraccionIrreducible(rng); b = natural(rng); }
-  else { a = fraccionIrreducible(rng); b = fraccionIrreducible(rng); }
-  if (neg) { if (queNegativo === 0) a = negativa(a); else b = negativa(b); }
-  return { tipo: 'divide', a, b, valor: par(F(a).dividir(F(b)).simplificar()) };
+  for (;;) {
+    let a, b;
+    if (forma < 0.2) { a = natural(rng); b = fraccionIrreducible(rng); }
+    else if (forma < 0.4) { a = fraccionIrreducible(rng); b = natural(rng); }
+    else { a = fraccionIrreducible(rng); b = fraccionIrreducible(rng); }
+    if (neg) { if (queNegativo === 0) a = negativa(a); else b = negativa(b); }
+    if (HUELLAS_EXAMEN_DIVIDE.has(huellaDivide(a, b)) || coincideDivide(PAREJAS_HOJA_DIVIDE, a, b)) continue;
+    return { tipo: 'divide', a, b, valor: par(F(a).dividir(F(b)).simplificar()) };
+  }
 }
 
 /**
@@ -215,10 +277,13 @@ export function errorDeDivide(item, r) {
 
 /** `(2/3)²`, `(1/2)³`, `(3/5)²`: base positiva e irreducible, exponente 2 o 3 (término hasta 9, o hasta 5 con el 3); numerador ≥ 2, para que «elevar solo el numerador» y «base por exponente» no den el mismo valor. */
 export function generarPotencia(rng) {
-  const exp = rng.azar() < 0.65 ? 2 : 3;
-  const tope = exp === 2 ? 9 : 5;
-  const base = fraccionIrreducible(rng, tope, tope, 2);
-  return { tipo: 'potencia', base, exp, valor: par(F(base).potencia(exp)) };
+  for (;;) {
+    const exp = rng.azar() < 0.65 ? 2 : 3;
+    const tope = exp === 2 ? 9 : 5;
+    const base = fraccionIrreducible(rng, tope, tope, 2);
+    if (HUELLAS_EXAMEN_POTENCIA.has(huellaPotencia(base, exp))) continue;
+    return { tipo: 'potencia', base, exp, valor: par(F(base).potencia(exp)) };
+  }
 }
 
 /** Los dos errores del ejercicio, con su valor (distintos entre sí y de la respuesta correcta). */
