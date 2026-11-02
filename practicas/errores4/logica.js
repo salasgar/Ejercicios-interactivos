@@ -22,6 +22,36 @@ const f = fraccion;
 const E = ERRORES_TIPICOS;
 const err = (id, ...args) => E[id].fn(...args);
 
+// ─── Casos que no se pueden repetir (regla de oro de contenido, punto 9) ──────
+// Reabierta del 30-10 (`hechos/reabiertas/107--s-20261030T084305-921ac985-revision.md`): la
+// clave es la plantilla y sus parámetros (los mismos en los tres ejercicios, porque todos pasan
+// por `conParams`), no el texto: así una sola comprobación cubre ej. 1, 2 y 3 a la vez.
+const huella = s => {
+  let h = 0x811c9dc5;
+  for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(36);
+};
+export const claveParams = (id, params) => `${id}|${params.join(',')}`;
+
+// Hoja 2 (en claro: los alumnos ya la tienen en papel). Ej. 8 («Does it make sense?»): 3/5 + 1/3
+// = 4/8 y 2/3 + 3/4 = 5/7. Ej. 3 (la respuesta de Ana): 2/5 + 1/4 = 3/9.
+export const PARAMS_HOJA = new Set([
+  claveParams('suma-arriba-y-abajo', [3, 5, 1, 3]),
+  claveParams('suma-arriba-y-abajo', [2, 3, 3, 4]),
+  claveParams('suma-arriba-y-abajo', [2, 5, 1, 4]),
+]);
+
+// Examen final, modelo 1, caja 5b de Sara (por huella: no en claro): el paso intermedio
+// `1/4 + 2/3 = 3/7` es exactamente el error «suma-arriba-y-abajo». Las de U4-2C-06 y U4-3C-11
+// que pedía revisar la reabierta no se incluyen: sus denominadores (9 a 12) quedan fuera del
+// rango de esta práctica (2, 3, 4, 5, 6 u 8) y no se pueden producir; comprobado a mano.
+export const HUELLAS_EXAMEN = new Set([
+  huella(claveParams('suma-arriba-y-abajo', [1, 4, 2, 3])),
+]);
+export { huella };
+
+const prohibido = (id, params) => PARAMS_HOJA.has(claveParams(id, params)) || HUELLAS_EXAMEN.has(huella(claveParams(id, params)));
+
 /** HTML de una expresión («1/2 + 1/3»), con raya de fracción. */
 export const ex = e => htmlExpr(analizar(e));
 /** HTML de una fracción suelta. */
@@ -328,7 +358,7 @@ export function porqueComparacion(id, params) {
 function conParams(plantilla, rng) {
   for (let i = 0; i < 400; i++) {
     const params = plantilla.numeros(rng);
-    if (params) return params;
+    if (params && !prohibido(plantilla.id, params)) return params;
   }
   throw new Error(`La plantilla «${plantilla.id}» no encuentra números`);
 }
