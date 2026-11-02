@@ -51,3 +51,14 @@ nuevos: que las listas detectan de verdad un caso conocido y no marcan uno cualq
 3000 ítems de cada uno de los tres ejercicios no repiten ningún caso). `npm test`: 1364/1364.
 Probado en `npm run servir` con Chrome (vía claude-in-chrome), «Probar sin código»: ejercicio 1,
 una comparación falsa acertada, ES.
+
+## Reabierta del 2-11 (s-20261102T141053-b5277421; cierra s-20261102T152304-2a463f3b, commit 8fda62a)
+
+`hechos/reabiertas/107--s-20261102T141053-b5277421-revision.md`. Los casos de la hoja 2 (8a, 8b y la respuesta de Ana del ej. 3) salían con los
+sumandos en el otro orden. `claveParams` ordena ahora las dos fracciones de las plantillas de suma (`suma-*`, 4 parámetros); `PARAMS_HOJA` y
+`HUELLAS_EXAMEN` se construyen con ella (3 claves de hoja y 1 huella, como antes). Las que no son sumas conservan el orden. Barrido: 60000
+ítems (20000 por ejercicio, semilla 2026) sin ninguna coincidencia; el test (3000 por ejercicio) comprueba los casos de la hoja en los dos
+órdenes. **Casos de examen en claro quitados** del código: el comentario y la llamada `huella(claveParams(..., [...]))` del examen final
+escribían la cuenta; ahora es solo la huella. Esa cuenta (y, en `combinadas-fracciones`, un U4-3A-01) **siguen en el historial de git**
+(commits de las reabiertas del 28 y 30-10): decide Juan Luis si hace falta reescribirlo. `node --test tests/practicas-comun.test.js
+tests/practicas-errores4.test.js`: 64/64. `npm test`: 1368/1368. Sin tocar `catalogo.js`. Sin publicar (sin publicador, mar 22-12).
