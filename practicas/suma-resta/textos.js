@@ -51,7 +51,7 @@ export function solucionPasos(item, idioma) {
   const simp = r.mismaForma(s) ? '' : (es ? ` Simplificando: ${frItem(r)} = ${frItem(s)}.` : ` Simplifying: ${frItem(r)} = ${frItem(s)}.`);
   return es
     ? `m.c.m.(${dens}) = ${item.m}. Equivalentes: ${lista}. Se opera con los numeradores: ${nums} = ${total}, es decir ${frItem(r)}.${simp} La respuesta es ${cuenta(frItem(s))}.`
-    : `l.c.m.(${dens}) = ${item.m}. Equivalent fractions: ${lista}. You work with the numerators: ${nums} = ${total}, that is ${frItem(r)}.${simp} The answer is ${cuenta(frItem(s))}.`;
+    : `LCM(${dens}) = ${item.m}. Equivalent fractions: ${lista}. You work with the numerators: ${nums} = ${total}, that is ${frItem(r)}.${simp} The answer is ${cuenta(frItem(s))}.`;
 }
 
 // ─── Ejercicio 3: con naturales ────────────────────────────────────────────────
@@ -216,25 +216,25 @@ export const TX = {
 
   pasos: {
     nombre: { es: 'Distinto denominador, paso a paso', en: 'Different denominators, step by step' },
-    detalle: { es: 'Con el m.c.m.: equivalentes, cuenta y simplificar', en: 'With the l.c.m.: equivalents, sum and simplify' },
+    detalle: { es: 'Con el m.c.m.: equivalentes, cuenta y simplificar', en: 'With the LCM: equivalents, sum and simplify' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Con distinto denominador, primero hace falta un <strong>denominador común</strong>: el <strong>m.c.m.</strong> de los denominadores. Son tres pasos:</p>
         <p><strong>1.</strong> El m.c.m.; <strong>2.</strong> cada fracción pasada a ese denominador (se multiplica arriba y abajo por lo mismo); <strong>3.</strong> el resultado (con los numeradores) y, si toca, simplificado.</p>
         <p>Por ejemplo: ${htmlCuenta([fraccion(1, 4), '+', fraccion(2, 3), '='])} m.c.m.(4, 3) = <strong>12</strong>; ${fr(1, 4)} = ${fr(3, 12)} y ${fr(2, 3)} = ${fr(8, 12)}; 3 + 8 = 11, así que <strong>${fr(11, 12)}</strong>.</p>`,
       en: `<h2>How it works</h2>
-        <p>With different denominators you first need a <strong>common denominator</strong>: the <strong>l.c.m.</strong> of the denominators. There are three steps:</p>
-        <p><strong>1.</strong> The l.c.m.; <strong>2.</strong> each fraction changed to that denominator (multiply top and bottom by the same number); <strong>3.</strong> the result (with the numerators) and, if needed, simplified.</p>
-        <p>For example: ${htmlCuenta([fraccion(1, 4), '+', fraccion(2, 3), '='])} l.c.m.(4, 3) = <strong>12</strong>; ${fr(1, 4)} = ${fr(3, 12)} and ${fr(2, 3)} = ${fr(8, 12)}; 3 + 8 = 11, so <strong>${fr(11, 12)}</strong>.</p>`,
+        <p>With different denominators you first need a <strong>common denominator</strong>: the <strong>LCM</strong> of the denominators. There are three steps:</p>
+        <p><strong>1.</strong> The LCM; <strong>2.</strong> each fraction changed to that denominator (multiply top and bottom by the same number); <strong>3.</strong> the result (with the numerators) and, if needed, simplified.</p>
+        <p>For example: ${htmlCuenta([fraccion(1, 4), '+', fraccion(2, 3), '='])} LCM(4, 3) = <strong>12</strong>; ${fr(1, 4)} = ${fr(3, 12)} and ${fr(2, 3)} = ${fr(8, 12)}; 3 + 8 = 11, so <strong>${fr(11, 12)}</strong>.</p>`,
     },
     instruccion: {
       es: irred => `Rellena los tres pasos. ${irred ? 'El resultado, simplificado al máximo.' : 'El resultado vale sin simplificar.'}`,
       en: irred => `Fill in the three steps. ${irred ? 'The result in its simplest form.' : 'The result does not have to be simplified.'}`,
     },
-    paso1: { es: dens => `1. m.c.m. de ${dens}`, en: dens => `1. l.c.m. of ${dens}` },
+    paso1: { es: dens => `1. m.c.m. de ${dens}`, en: dens => `1. LCM of ${dens}` },
     paso2: { es: '2. Fracciones equivalentes con ese denominador', en: '2. Equivalent fractions with that denominator' },
     paso3: { es: '3. Resultado', en: '3. Result' },
-    nombre_mcm: { es: 'm.c.m.', en: 'l.c.m.' },
+    nombre_mcm: { es: 'm.c.m.', en: 'LCM' },
     nombre_equiv: { es: n => `Numerador de la fracción ${n}`, en: n => `Numerator of fraction ${n}` },
     escribio: { es: f => `Has escrito ${f}.`, en: f => `You wrote ${f}.` },
     coherente: {
@@ -242,7 +242,7 @@ export const TX = {
       en: 'Your result is consistent with your equivalent fractions: the mistake is in an earlier step.',
     },
     fallo: {
-      'mcm-equivocado': { es: item => `El m.c.m. de ${item.fracs.map(f => f.d).join(', ')} es ${item.m}: el menor número que es múltiplo de todos los denominadores.`, en: item => `The l.c.m. of ${item.fracs.map(f => f.d).join(', ')} is ${item.m}: the smallest number that is a multiple of all the denominators.` },
+      'mcm-equivocado': { es: item => `El m.c.m. de ${item.fracs.map(f => f.d).join(', ')} es ${item.m}: el menor número que es múltiplo de todos los denominadores.`, en: item => `The LCM of ${item.fracs.map(f => f.d).join(', ')} is ${item.m}: the smallest number that is a multiple of all the denominators.` },
       'amplia-solo-denominador': { es: item => `Al pasar a denominador ${item.m} hay que multiplicar también el numerador por el mismo número que el denominador.`, en: item => `To change to denominator ${item.m} you also have to multiply the numerator by the same number as the denominator.` },
       'equivalente-equivocada': { es: item => `Una fracción equivalente se obtiene multiplicando arriba y abajo por el mismo número: (${item.m} : denominador) veces el numerador.`, en: item => `An equivalent fraction comes from multiplying top and bottom by the same number: (${item.m} : denominator) times the numerator.` },
       'suma-arriba-y-abajo': { es: () => 'Has sumado los numeradores y también los denominadores. Primero se pone el mismo denominador y después se suman solo los numeradores.', en: () => 'You added the numerators and also the denominators. First you write the same denominator and then you add only the numerators.' },

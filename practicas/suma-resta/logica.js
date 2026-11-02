@@ -26,10 +26,41 @@ const mcm = (a, b) => (a / mcd(a, b)) * b;
  * pueden salir de esta práctica (sus fracciones son propias y positivas) y no se listan.
  */
 export const RESERVADOS = {
-  mismo: [['7/15', '+', '4/15'], ['17/20', '-', '9/20']],
-  pasos: [['3/10', '+', '5/8'], ['5/9', '-', '2/15'], ['1/12', '+', '5/18', '-', '1/4'], ['7/24', '+', '5/36', '-', '1/8']],
+  mismo: [['7/15', '+', '4/15'], ['17/20', '-', '9/20'], ['3/11', '+', '5/11'], ['3/10', '+', '9/10']],
+  pasos: [
+    ['3/10', '+', '5/8'], ['5/9', '-', '2/15'], ['1/12', '+', '5/18', '-', '1/4'], ['7/24', '+', '5/36', '-', '1/8'],
+    ['2/5', '+', '1/4'], ['1/2', '+', '2/7'], ['4/5', '-', '1/6'], ['3/4', '+', '5/6'], ['9/10', '-', '2/5'],
+  ],
   queda: [['1/3', '5/12']],   // la pizza de la hoja 2 (en cualquier orden)
+  // Ejercicio 3 (con naturales): [tipo, natural, 'n/d'] de la hoja 2 (en claro).
+  naturales: [['nat+f', 2, '3/5'], ['nat-f', 1, '4/7'], ['f-nat', 1, '2/9']],
 };
+
+/**
+ * Los casos de examen NO se escriben en claro en el repositorio (público): se excluyen por su
+ * huella (FNV-1a de 32 bits de la clave del ítem), calculadas fuera del repo con un guion de
+ * scratchpad que lee `exámenes-semanales/` y `examen-final/` de la carpeta de la unidad.
+ */
+const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
+
+/** Clave de un ítem del ejercicio 3: el tipo, el natural y la fracción. */
+const claveNat = item => `${item.tipo}|${item.nat}|${item.f.n}/${item.f.d}`;
+/** Clave de un ítem del ejercicio 4: las dos fracciones, sin importar el orden. */
+const claveQueda = item => {
+  const a = `${item.a.n}/${item.a.d}`, b = `${item.b.n}/${item.b.d}`;
+  const [x, y] = [a, b].sort();
+  return `${x},${y}`;
+};
+
+const HUELLAS_EJ3 = new Set(["2wsxa","xjvwq7","gicd31","10s45jx","vtui8y","4gzm4h","1g50dtq","1y6psru"]);
+const HUELLAS_EJ4 = new Set(["1co2dfl","1kuegfl","1nrq6uo","h5yra7","18g9afl","jq1cgq","ysz8fe","1lww4fk","1maryny","14cepy1","y3c7tu","149fzq1","2xf2wr","1thxfbl","1rxk899","1o6dqxo","1abtcqp","w9pc3s","a9fnyh","1bm8j4w","elhxns","1n2i51e","1vf64ut","1i1b2cr"]);
+
+/** ¿Es el ítem del ejercicio 3 un caso de examen? */
+export const esCasoExamenNaturales = item => HUELLAS_EJ3.has(huella(claveNat(item)));
+/** ¿Es el ítem del ejercicio 4 un caso de examen? */
+export const esCasoExamenQueda = item => HUELLAS_EJ4.has(huella(claveQueda(item)));
+/** ¿Es el ítem del ejercicio 3 un caso de la hoja 2 (en claro)? */
+export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, nat, f]) => tipo === item.tipo && nat === item.nat && f === `${item.f.n}/${item.f.d}`);
 
 const clave = (fracs, ops) => fracs.flatMap((f, i) => (i ? [ops[i - 1], `${f.n}/${f.d}`] : [`${f.n}/${f.d}`])).join(' ');
 const reservadoEn = (lista, fracs, ops) => {
@@ -215,11 +246,15 @@ export const TIPOS_NAT = ['nat+f', 'nat-f', 'f+nat', 'f-nat'];
  * ya sale irreducible (nat·d ± n sobre d).
  */
 export function generarNaturales(rng) {
-  const d = rng.entero(2, 12);
-  let n = rng.entero(1, d - 1);
-  while (mcd(n, d) !== 1) n = rng.entero(1, d - 1);
-  const tipo = rng.azar() < 0.25 ? 'f-nat' : rng.elegir(['nat+f', 'nat-f', 'f+nat']);
-  return { tipo, nat: rng.entero(1, 5), f: { n, d } };
+  for (;;) {
+    const d = rng.entero(2, 12);
+    let n = rng.entero(1, d - 1);
+    while (mcd(n, d) !== 1) n = rng.entero(1, d - 1);
+    const tipo = rng.azar() < 0.25 ? 'f-nat' : rng.elegir(['nat+f', 'nat-f', 'f+nat']);
+    const item = { tipo, nat: rng.entero(1, 5), f: { n, d } };
+    if (esReservadoNaturales(item) || esCasoExamenNaturales(item)) continue;
+    return item;
+  }
 }
 
 /** Los dos términos y la operación, en el orden en que se escriben: { x, op, y } (Fraccion). */
@@ -307,7 +342,7 @@ export function generarQueda(rng) {
     const opciones = tresOpciones(rng, (pregunta === 'queda' ? queda : suma).simplificar(), pool.map(o => (o.valor === undefined ? { ...o, valor: null } : o)));
     if (!opciones) continue;
     const item = { ctx, pregunta, a: dato(a), b: dato(b), opciones };
-    if (esReservadoQueda(item)) continue;
+    if (esReservadoQueda(item) || esCasoExamenQueda(item)) continue;
     return item;
   }
   throw new Error('generarQueda: sin ítem posible');

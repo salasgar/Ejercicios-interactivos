@@ -13,6 +13,7 @@ import {
   F, ERRORES_PROPIOS, errorConNombre, generarMismo, generarPasos, generarNaturales, generarQueda, generarCaza,
   resultadoMismo, errorDeMismo, equivalentes, resultadoPasos, corregirPasos, terminosNat, resultadoNat, errorDeNat,
   respuestaQueda, lineaCorrecta, RESERVADOS, MAX_TROZOS_PIZZA, esReservadoMismo, esReservadoPasos, esReservadoQueda,
+  esReservadoNaturales, esCasoExamenNaturales, esCasoExamenQueda,
 } from '../practicas/suma-resta/logica.js';
 import {
   TX, cuentaMismo, solucionMismo, cuentaPasos, solucionPasos, cuentaNat, solucionNat, enunciadoQueda,
@@ -331,7 +332,28 @@ test('los casos reservados para el examen no salen nunca (ejercicios 1, 2 y 4)',
   assert.ok(esReservadoMismo({ a: f(17, 20), b: f(9, 20), op: '-' }));
   assert.ok(esReservadoQueda({ a: f(5, 12), b: f(1, 3) }));
   assert.ok(!esReservadoQueda({ a: f(1, 3), b: f(1, 4) }));
-  assert.equal(RESERVADOS.pasos.length, 4);
+  assert.equal(RESERVADOS.pasos.length, 9);
+  // Casos de la hoja 2 añadidos por la reabierta del 30-10.
+  assert.ok(esReservadoMismo({ a: f(3, 11), b: f(5, 11), op: '+' }));
+  assert.ok(esReservadoMismo({ a: f(3, 10), b: f(9, 10), op: '+' }));
+  assert.ok(esReservadoPasos({ fracs: [f(2, 5), f(1, 4)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(1, 2), f(2, 7)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(4, 5), f(1, 6)], ops: ['-'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(3, 4), f(5, 6)], ops: ['+'] }));
+  assert.ok(esReservadoPasos({ fracs: [f(9, 10), f(2, 5)], ops: ['-'] }));
+  assert.ok(esReservadoNaturales({ tipo: 'nat+f', nat: 2, f: f(3, 5) }));
+  assert.ok(esReservadoNaturales({ tipo: 'nat-f', nat: 1, f: f(4, 7) }));
+  assert.ok(esReservadoNaturales({ tipo: 'f-nat', nat: 1, f: f(2, 9) }));
+  assert.ok(generar(generarNaturales, 104038).every(it => !esReservadoNaturales(it)));
+});
+
+// --- Casos de examen (huella FNV-1a; regla nueva de la reabierta del 30-10) -----------
+
+test('los casos de examen no salen nunca (por huella), y la detección no depende del orden', () => {
+  assert.ok(generar(generarNaturales, 104910).every(it => !esCasoExamenNaturales(it)));
+  assert.ok(generar(generarQueda, 104911).every(it => !esCasoExamenQueda(it)));
+  const f = (n, d) => ({ n, d });
+  assert.equal(esCasoExamenQueda({ a: f(1, 3), b: f(1, 7) }), esCasoExamenQueda({ a: f(1, 7), b: f(1, 3) }));
 });
 
 test('ejercicio 4: si lo que queda no es irreducible, el paso a paso lo simplifica', () => {
