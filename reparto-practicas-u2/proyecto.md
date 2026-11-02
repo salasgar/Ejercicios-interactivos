@@ -471,3 +471,48 @@ calculada fuera del repo. Detrás de ellas:
 - **121** (ALTO, MANUAL, con Juan Luis delante): montar las tres tareas de la U4 en el panel, calcada de la 116, cuando la 119 y la 120
   digan qué prácticas quedan publicadas. Desbloquea la 29 del reparto de la U4 (F10 firmada). La 116 dejó dicho que los códigos de prueba
   60 y 61 no existen en el sistema nuevo: hace falta uno en el espacio de Juan Luis para probar sus tareas como alumno.
+
+
+## Tareas 122-133: la unidad 5 (Decimals) en la app (2026-11-02, s-20261102T100120-6a6afb84)
+
+Dadas de alta el 2-11 por la misma sesión que montó el reparto de la unidad 5
+(`apuntes-1eso-bilingue/5. Decimals/reparto-unidad5/`), por decisión de Juan Luis («las piezas de la app se dan de alta como fichas
+en `reparto-practicas-u2/`, no aquí»). La unidad 5 se da del **lun 18-1 al jue 28-1** (7 clases, dos semanas; prueba tipo test vie
+22-1; examen final **jueves 28-1**, el 29 es festivo). Sus destrezas se citan con los ids de `5. Decimals/inventario-unidad5.tsv`,
+**que aún no existe**: lo propone la tarea 01 de aquel reparto y lo aprueba la 02 con Juan Luis (firma F0; acta
+`5. Decimals/inventario-unidad5-revision.md`). Las fichas 123-129 citan las destrezas por descripción y la 122 pone los ids
+definitivos en `DESTREZAS` y en el §7 de `docs/practicas-unidad5.md`. **Hasta el acta no entran** los decimales periódicos, los
+negativos, los cambios de unidad, las potencias ni las raíces de decimales (son puntos a decidir de la 02); si entran, se añaden
+como ejercicio a la práctica que toque (propuesta en la ENTREGA), no como práctica nueva.
+
+- **122** base de la unidad 5 (ALTO): `_comun/decimales.js` (decimal como **entero escalado**, inmutable; `deTexto` con coma o punto en
+  los dos idiomas, `aTexto` por idioma, `enPalabras` y `lecturasValidas`, `comparar`, operar, `redondear`, `porPotenciaDe10`,
+  `aFraccion`/`deFraccion` sobre `fracciones.js`, `ERRORES_TIPICOS`), `_comun/recta-decimales.js` (recta con décimas y centésimas),
+  catálogo (ids **57-63**, `disponible: false`; `UNIDADES` con la U5 desde el 18-1), portada, `DESTREZAS`, esqueletos, tests (también
+  `practicas-editor` y `practicas-espacio`, que cuentan unidades: lección de la 98).
+- **123-129** las siete prácticas (MEDIO; carpetas disjuntas; todas en paralelo con la 122 LISTA): 123 `lee-decimales`, 124
+  `compara-decimales`, 125 `suma-resta-decimales` (semana 1); 126 `multiplica-divide-decimales`, 127 `fraccion-decimal`, 128
+  `errores5` (semana 2); 129 `leelo5` (toda la unidad). **Mejor con la hoja y el examen de su semana ya cerrados** en el reparto de
+  la U5 (lección de la U4: las siete prácticas se reabrieron dos veces por copiar casos del papel escrito después): si existen,
+  excluyen sus casos desde el principio (hoja en claro; examen por huella FNV-1a, nunca en claro).
+- **130 → 131** revisión con clics y publicación por semana (ALTO, en cadena por `catalogo.js`), con el cotejo contra la hoja y los
+  exámenes de la U5 y la propuesta de la tarea semanal (★ de ortografía: ejercicios 8 y 9; la de la semana 2 con entrega el **mié 27-1**):
+  antes del **jue 14-1** y del **jue 21-1** (ideal, antes de Navidad; la portada no enseña la U5 hasta el 18-1).
+- **132** las dos tareas de la U5 en el panel, con Juan Luis delante (ALTO, MANUAL), calcada de la 116 y la 121: desbloquea la tarea 24
+  del reparto de la U5 (Classroom, firma F7).
+- **133** el generador `src/ejercicios/decimales.js` de la app principal al día con el inventario (MEDIO; con F0), como la 112 con
+  `fracciones_*`.
+
+**Reglas de contenido de la unidad 5**: en cada ficha 122-133 (sección propia) y en `5. Decimals/reparto-unidad5/proyecto.md`. La
+trampa propia de la unidad, heredera de la de las fracciones equivalentes: **un mismo número tiene muchas escrituras y todas son la
+misma respuesta** (0,5 = 0,50 = 1/2; ninguna opción puede equivaler a otra por valor; aritmética en enteros escalados, nunca en
+coma flotante); la coma en español y el punto en inglés (`three point seven five`); ni porcentajes ni proporcionalidad.
+
+## Orden de prioridad de la unidad 5 (por los plazos de publicación)
+
+1. **122** (base; ALTO) con la propuesta de inventario de la 01 de la U5 (con F0 firmada, mejor: ids definitivos), y a la vez **133**
+   (MEDIO; con F0).
+2. **Semana 1**: 123, 124, 125, 129 → **130** publica antes del jue 14-1.
+3. **Semana 2**: 126, 127, 128 → **131** (jue 21-1).
+4. **132** con Juan Luis, cuando la 130 y la 131 digan qué queda publicado.
+Las tareas de Classroom de cada semana las programa la tarea 24 del reparto de la U5 cuando la 132 las haya montado.
