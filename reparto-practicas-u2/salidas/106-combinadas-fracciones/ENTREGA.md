@@ -17,3 +17,26 @@ Arreglado respecto a lo heredado: ejemplos con «=» en textos.js rompían la ca
 ## Reabierta del 28-10 (s-20261028T224655-1b5cd5bb, commit b98d111)
 
 Destrezas con los ids de `registro.js`: U4-3A-01, 3A-02, 3C-09, 3C-10 (el ej. 3 no nombra el error, así que U4-3C-11 sobra). Arreglado: sin la opción «izquierda a derecha» en los pasos del ej. 2 (queda en los ej. 1 y 3); pista de `signo-perdido` en · y : = regla de los signos (`pistaDe`); con un natural en una suma manda `natural-al-numerador`; `derecha-a-izquierda` solo si la operación de la izquierda se podía hacer ya; el natural 1 no va detrás de · o : ni delante de ·; `natural-al-numerador` en restas solo con natural positivo. Probada en Chrome headless con clics (es/en, 375 y 1100 px), sin desbordes. Para Juan Luis: un 8 % de los ítems obliga a un m.c.m. de 49 a 72 (propuesta: cota de pasos a 36 o 48) y negativas en el 31 % de los enunciados. Sospecha no medida: lo mismo de `derecha-a-izquierda` en `jerarquia-enteros/logica.js` ~217.
+
+## Reabierta del 30-10 (s-20261102T093616-593b8de1, commit 68297e6)
+
+Tres casos de la hoja 3 que podían salir en cualquiera de los tres ejercicios (comparten la
+primera línea de la expresión), según `hechos/reabiertas/106--s-20261030T084305-921ac985-revision.md`:
+ej. 8a (1/3 + 2/3 · 3/4), ej. 8e (−1/2 + 2/3 · 3/8) y ej. 12d (1/3 + 1/2 · 2/5). Se excluyen en
+claro, comparando el texto exacto que produce `rellenar` (`EXPRESIONES_HOJA`), en el único punto
+por el que pasan los tres ejercicios (`hastaQueValga`).
+
+De paso, y aunque la reabierta decía «hoy no sale ninguno», también se excluyen por huella (nunca
+en claro) las 23 expresiones de examen que pedía revisar: U4-3A-01 y U4-3A-02 de
+`exámenes-semanales/semana-3/casos-examen-semana3.tsv` (los seis casos de cada una) y, de los tres
+modelos del examen final, los apartados 3a/3b («Step by step») y las dos cajas de «Find the
+mistake» (Leo/Sara, Pablo/Marta, Hugo/Nora; la 3a del modelo 2 lleva una potencia y no puede salir
+en esta práctica, así que no se incluyó). La huella es sobre el texto canónico de la expresión
+(`aTextoExpresion`, igual que la clave que usa `valida`): comprobado con un guion de scratchpad que
+no se comitea, pasando cada caso por el analizador real de la base para no adivinar el formato.
+
+`node --test tests/practicas-comun.test.js tests/practicas-combinadas-fracciones.test.js`: 65/65
+(dos tests nuevos: que las listas detectan de verdad un caso conocido y no marcan uno cualquiera, y
+que la primera línea del ejercicio 3 nunca es uno de los casos). `npm test`: 1362/1362. Probado en
+`npm run servir` con Chrome (vía claude-in-chrome), «Probar sin código»: ejercicios 1 y 3, un
+acierto cada uno, ES y EN.
