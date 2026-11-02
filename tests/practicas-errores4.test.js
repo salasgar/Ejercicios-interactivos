@@ -267,16 +267,25 @@ test('claveItem distingue los ítems y el catálogo declara 3 ejercicios', () =>
   assert.equal(CATALOGO.find(f => f.slug === 'errores4').nEjercicios, 3);
 });
 
-test('las listas de la hoja y de examen no están vacías y detectan de verdad', () => {
+test('las listas de la hoja y de examen no están vacías y detectan de verdad, sin orden de sumandos', () => {
   assert.equal(L.PARAMS_HOJA.size, 3);
   assert.equal(L.HUELLAS_EXAMEN.size, 1);
-  // Hoja 2, ej. 8: 3/5 + 1/3 = 4/8.
+  // Hoja 2, ej. 8: 3/5 + 1/3 = 4/8 y, con los sumandos cambiados, 1/3 + 3/5.
   assert.ok(L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [3, 5, 1, 3])));
-  // Examen final, modelo 1, 5b (Sara): 1/4 + 2/3 = 3/7.
-  assert.ok(L.HUELLAS_EXAMEN.has(L.huella(L.claveParams('suma-arriba-y-abajo', [1, 4, 2, 3]))));
-  // Una pareja cualquiera que no está en ninguna lista no se marca.
+  assert.ok(L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [1, 3, 3, 5])));
+  // Hoja 2, ej. 8b y ej. 3 (Ana), también en el otro orden.
+  assert.ok(L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [3, 4, 2, 3])));
+  assert.ok(L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [2, 5, 1, 4])));
+  assert.ok(L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [1, 4, 2, 5])));
+  // Los casos de examen no se escriben en claro (el repositorio es público): solo se mira que la
+  // huella tiene forma de huella.
+  for (const h of L.HUELLAS_EXAMEN) assert.match(h, /^[0-9a-z]{4,7}$/);
+  // Una pareja cualquiera que no está en ninguna lista no se marca; otra plantilla, tampoco.
   assert.ok(!L.PARAMS_HOJA.has(L.claveParams('suma-arriba-y-abajo', [1, 2, 1, 3])));
   assert.ok(!L.HUELLAS_EXAMEN.has(L.huella(L.claveParams('suma-arriba-y-abajo', [1, 2, 1, 3]))));
+  assert.ok(!L.PARAMS_HOJA.has(L.claveParams('suma-multiplicando-denominadores', [3, 5, 1, 3])));
+  // Las que no son sumas conservan el orden (a : b no es b : a).
+  assert.notEqual(L.claveParams('divide', [3, 5, 1, 3]), L.claveParams('divide', [1, 3, 3, 5]));
 });
 
 test('ningún ítem, en ninguno de los tres ejercicios, repite un caso de la hoja o de examen', () => {

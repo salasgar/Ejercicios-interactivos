@@ -31,7 +31,19 @@ const huella = s => {
   for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; }
   return h.toString(36);
 };
-export const claveParams = (id, params) => `${id}|${params.join(',')}`;
+/**
+ * Clave de una plantilla con sus parámetros. En las sumas (`a/b + c/d`) no importa el orden de los
+ * sumandos: se ordenan las dos fracciones, y `3/5 + 1/3` y `1/3 + 3/5` son la misma clave (reabierta
+ * del 2-11: los casos de la hoja salían con los sumandos cambiados de sitio).
+ */
+export const claveParams = (id, params) => {
+  let p = params;
+  if (id.startsWith('suma-') && params.length === 4) {
+    const [a, b] = [[params[0], params[1]], [params[2], params[3]]].sort((x, y) => x[0] - y[0] || x[1] - y[1]);
+    p = [...a, ...b];
+  }
+  return `${id}|${p.join(',')}`;
+};
 
 // Hoja 2 (en claro: los alumnos ya la tienen en papel). Ej. 8 («Does it make sense?»): 3/5 + 1/3
 // = 4/8 y 2/3 + 3/4 = 5/7. Ej. 3 (la respuesta de Ana): 2/5 + 1/4 = 3/9.
@@ -41,12 +53,13 @@ export const PARAMS_HOJA = new Set([
   claveParams('suma-arriba-y-abajo', [2, 5, 1, 4]),
 ]);
 
-// Examen final, modelo 1, caja 5b de Sara (por huella: no en claro): el paso intermedio
-// `1/4 + 2/3 = 3/7` es exactamente el error «suma-arriba-y-abajo». Las de U4-2C-06 y U4-3C-11
-// que pedía revisar la reabierta no se incluyen: sus denominadores (9 a 12) quedan fuera del
-// rango de esta práctica (2, 3, 4, 5, 6 u 8) y no se pueden producir; comprobado a mano.
+// Examen final, modelo 1, caja 5b (por huella: los casos de examen no se escriben en claro, tampoco
+// en un comentario): uno de sus pasos es exactamente el error «suma-arriba-y-abajo». Las demás
+// cajas del 5b y las de U4-2C-06 y U4-3C-11 no se incluyen: sus denominadores (9 a 12) quedan fuera
+// del rango de esta práctica (2, 3, 4, 5, 6 u 8) y no se pueden producir; comprobado a mano.
+// La huella es de `claveParams` (sumandos ordenados).
 export const HUELLAS_EXAMEN = new Set([
-  huella(claveParams('suma-arriba-y-abajo', [1, 4, 2, 3])),
+  '1d6bp07',
 ]);
 export { huella };
 
