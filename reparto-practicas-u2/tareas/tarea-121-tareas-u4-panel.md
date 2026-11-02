@@ -120,6 +120,16 @@ de Google de Juan Luis: por eso esta tarea es **con él delante**. Tú manejas e
   Juan Luis. La portada de alumno no enseña una tarea hasta su `desde`: lo esperado, no un fallo.
 - Claude en Chrome: si una herramienta falla dos o tres veces seguidas, para y díselo a Juan Luis. Classroom no se toca desde el navegador.
 - El panel enseña nombres de alumnos: ni uno en la ENTREGA, en `hechos/` ni en el chat más allá de lo imprescindible.
+- (de la 121, 2-11) **La semana 1 ya está montada: tarea 20.** Quien vuelva a reclamar la 121 hace solo las semanas 2 y 3, cuando 103-107 estén
+  publicadas (mirar `disponible: true` en el `catalogo.js` publicado, no solo en el árbol).
+- (de la 121, 2-11) Hasta el commit 57aaa46 el editor no listaba la ortografía en tareas de la U4 (solo las prácticas de la propia unidad). Ya
+  está arreglado (`practicasDeUnidad`): la ortografía sale **al final** de la lista. Si después de un cambio del editor el panel no lo enseña,
+  es la caché: recarga forzada (cmd+shift+R); `location.reload()` no basta para los módulos.
+- (de la 121, 2-11) Para rellenar el formulario sin clics uno a uno: `#editor-tareas`, campos `#f-es`, `#f-en`, `#f-desde`, `#f-hasta`,
+  `#f-nelegir` y un `select[data-ej="slug/n"]` por ejercicio (valores `estrella` / `elegir`), lanzando un evento `input` tras cada cambio.
+  Al leer el DOM, no listar todos los `input`/`textarea` de la página: el panel tiene la lista de alumnos en un `textarea` y saldrían los nombres.
+- (de la 121, 2-11) El Chrome de Juan Luis tiene abierta la sesión de alumno de AJJN: `semana.html?t=<id>` se puede **mirar** con ella, pero no se
+  empieza ningún ejercicio.
 
 ## Prohibido (propio de esta tarea)
 
