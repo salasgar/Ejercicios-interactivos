@@ -516,3 +516,162 @@ coma flotante); la coma en español y el punto en inglés (`three point seven fi
 3. **Semana 2**: 126, 127, 128 → **131** (jue 21-1).
 4. **132** con Juan Luis, cuando la 130 y la 131 digan qué queda publicado.
 Las tareas de Classroom de cada semana las programa la tarea 24 del reparto de la U5 cuando la 132 las haya montado.
+
+## Tareas 134-143: la ortografía en bloques, con niveles adaptables (2026-11-03, s-20261103T110729-ca61fe3e)
+
+Dadas de alta el 3-11 por encargo de Juan Luis: «Da de alta las tareas que sean necesarias para ampliar la sección de
+ejercicios de ortografía. Que cubran todos los aspectos de la ortografía que deban dominar los alumnos de 1.º de ESO», con
+cuatro preguntas de diseño hechas sobre la marcha y respondidas así (la coordinadora decide lo técnico y lo explica; lo de
+aula es de él y puede cambiarlo):
+
+1. **¿Dificultad creciente?** Sí, en dos planos. Dentro de cada bloque, los ejercicios van de más fácil a más difícil. Y
+   dentro de cada ejercicio, **tres niveles** elegidos según cómo vaya el alumno (punto 3). En la secuencia de ★ semanales
+   manda la urgencia (lo que más falla primero) y después la dificultad.
+2. **¿Más allá de 1.º ESO para los avanzados?** Sí: el **nivel 3 de cada ejercicio** es «más allá de 1.º» (excepciones,
+   cultismos, reglas finas) y solo llega a él quien va bien; y hay un **bloque de ampliación** entero (las cuatro formas de
+   porque, formas verbales, siglas y prefijos, puntuación avanzada) que nunca es ★ y se ofrece aparte (la 142 propone cómo).
+3. **¿Nivel adaptable?** Sí, y sale casi gratis: la base ya pasa a cada generador `sesion = { puntos, vidas, … }`. Con 0-2
+   puntos, nivel 1; con 3-6, nivel 2; con 7 o más, nivel 3; y un tope por vidas (con 3 vidas, como mucho nivel 2; con 2 o
+   menos, nivel 1). Quien falla no sube y no se desespera; quien acierta ve los tres últimos ítems del nivel 3 y no se aburre.
+   Sin estado nuevo, sin tocar la base: `practicas/_comun/nivel.js` (tarea 134). Un alumno que falla cinco veces vuelve a
+   empezar el ejercicio en el nivel 1, como hasta ahora.
+4. **¿Subsecciones?** Sí, como **prácticas separadas** («bloques») bajo una sección «Ortografía» de la portada, y no como
+   grupos del menú de una sola práctica: el progreso se guarda por posición y las tareas citan `['ortografia', n]`, así que en
+   una práctica un ejercicio nuevo solo puede ir al final; con bloques, cada bloque se ordena por dificultad, un ejercicio
+   futuro entra en el bloque que le toca, los menús son cortos y las tareas de contenido tocan carpetas disjuntas (caben a la
+   vez). La práctica actual `ortografia` (45) no se toca: pasa a llamarse «Ortografía: lo más frecuente» y es el primer bloque.
+
+### Los bloques
+
+| id | slug | Bloque | Ejercicios (en orden de dificultad) | Tarea |
+|---|---|---|---|---|
+| 45 | `ortografia` | Ortografía: lo más frecuente | los 11 de siempre (a/ha, e/he, echo/hecho, ¿está bien escrita?, porque/por qué, vocativo, comas de significado, interrogativos, diacrítica, ¿? ¡! y espacios, sujeto-verbo) | hecha; niveles en la 143 |
+| 64 | `ortografia-tildes` | Ortografía: las tildes | 1 la sílaba tónica (aguda, llana, esdrújula) · 2 ¿lleva tilde? (reglas generales) · 3 diptongos e hiatos · 4 las palabras de Matemáticas | 135 |
+| 65 | `ortografia-letras` | Ortografía: las letras | 1 hay/ahí/ay, a ver/haber (y repaso de la h) · 2 b o v · 3 g o j y la diéresis · 4 otras letras (ll/y, mp/mb, r/rr, c/z/qu, -d/-z, cc, x/s) | 136 |
+| 66 | `ortografia-puntuacion` | Ortografía: puntuación y mayúsculas | 1 mayúsculas · 2 el punto y la coma · 3 dos puntos, puntos suspensivos y el saludo · 4 el correo al profesor (y asunto/cuerpo) | 137 |
+| 67 | `ortografia-palabras` | Ortografía: palabras que se confunden | 1 ¿junto o separado? · 2 suenan igual, se escriben distinto · 3 números y símbolos | 138 |
+| 68 | `ortografia-ampliacion` | Ortografía: ampliación (más allá de 1.º; nunca ★) | 1 porque, por qué, porqué, por que · 2 formas verbales mal escritas · 3 siglas, abreviaturas y prefijos · 4 puntuación avanzada | 139 |
+
+Los ids 57-63 son de la unidad 5 (tarea 122). Todos los bloques: `unidad: 3, transversal: true, seccion: 'ortografia'`,
+`idioma: 'es'`, nombre y detalle en los dos idiomas.
+
+### Qué aspecto de la ortografía de 1.º ESO se trabaja dónde
+
+Inventario hecho con los saberes básicos de Lengua Castellana del Real Decreto 217/2022 (corrección ortográfica en la
+producción escrita; reflexión sobre la lengua) y del Decreto 235/2022 de la Región de Murcia, tal como los despliegan los
+libros de texto de 1.º ESO, más los errores que Juan Luis ha ido apuntando en los textos de sus alumnos (memoria «Ejercicio
+de ortografía», 23 y 25-10). El texto literal de los decretos no se consultó: la búsqueda del 3-11 no dio el párrafo exacto.
+
+| Aspecto | Dónde | Nivel 3 (más allá de 1.º) |
+|---|---|---|
+| Sílaba tónica; agudas, llanas y esdrújulas | tildes 1 | sobresdrújulas, compuestos, cuatro sílabas con diptongo |
+| Reglas generales de acentuación | tildes 2 | monosílabos sin tilde (fue, dio, ti), -y y -s tras consonante, adverbios en -mente, mayúsculas con tilde |
+| Diptongos, triptongos e hiatos | tildes 3 | hiatos con h, triptongos, ui/iu, aún/aun en frase |
+| Tilde diacrítica | ortografia 9 (hecho) | — |
+| Interrogativos y exclamativos | ortografia 8 (hecho) | — |
+| Vocabulario de Matemáticas y numerales con tilde | tildes 4 | raíz, isósceles, algoritmo, decimotercero… |
+| La h: hay/ahí/ay, a ver/haber; a/ha, e/he, echo/hecho | letras 1; ortografia 1-4 (hecho) | habría/abría, repaso con frases difíciles |
+| b/v | letras 2 | excepciones (árabe, hervir, movilidad) y homófonos |
+| g/j, gue/gui, güe/güi | letras 3 | diéresis, excepciones (tejer, crujir), palabras «de memoria» |
+| ll/y, m ante p y b, r/rr, c/z/qu, -d/-z final, cc, x/s | letras 4 | -d/-z final, cc/c, x/s |
+| Mayúsculas | puntuación 1 | cargos, genéricos geográficos, instituciones, títulos de obras, tras los dos puntos del saludo |
+| Punto, coma en enumeraciones, coma con pero/aunque y conectores | puntuación 2 (vocativo: ortografia 6; significado: 7; sujeto-verbo: 11) | etc., conectores en medio, punto fuera del paréntesis |
+| Dos puntos, puntos suspensivos, saludo de carta y correo | puntuación 3 | punto y coma, raya de diálogo, signos fuera de las comillas |
+| ¿? ¡! y espacios | ortografia 10 (hecho) | — |
+| Escritura digital: del chat al correo; asunto y cuerpo | puntuación 4 | registro, despedida, asunto/cuerpo |
+| porque / por qué | ortografia 5 (hecho) | porqué y por que: ampliación 1 |
+| Palabras juntas y separadas | palabras 1 | conque/con que/con qué, por que, a sí mismo, sinfín |
+| Homófonos | palabras 2 | bienes/vienes, sabia/savia, grabar/gravar… |
+| Numerales en letras, apócopes, ordinales, símbolos de unidades | palabras 3 | símbolos (kg, km, h, min, s), €, compuestos con tilde |
+| Formas verbales que se escriben mal | ampliación 2 | impersonales de haber |
+| Siglas, abreviaturas, prefijos | ampliación 3 | guion ante mayúscula o cifra, currículums |
+| Punto y coma, raya, comillas, paréntesis | ampliación 4 | inciso del narrador, dos puntos frente a punto y coma |
+
+**Fuera**: la gramática (leísmo, dequeísmo, concordancia, «si tendría»), salvo las impersonales de haber en la ampliación;
+la separación silábica a final de línea; los extranjerismos y los latinismos. Si Juan Luis quiere alguno, es un ejercicio más
+en el bloque que toque (al final del bloque), no un bloque nuevo.
+
+### Plan de ★ semanales (propuesta; la fecha la fija la tarea del panel de cada unidad con la ENTREGA de la publicación)
+
+Sigue al calendario del 25-10 (`apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md`), que llega hasta `ortografia` 11
+en la U6 · 2. Orden: primero lo que más falla y lo más fácil; la ampliación nunca.
+
+| Semana | ★ | Lo publica |
+|---|---|---|
+| U6 · 3 (lun 15-2) | `['ortografia-puntuacion', 1]` Mayúsculas | 140 (jue 11-2) |
+| U6 · 4 (lun 22-2) | `['ortografia-letras', 1]` hay, ahí, ay; a ver, haber | 140 |
+| U7 · 1 (lun 1-3) | `['ortografia-tildes', 1]` La sílaba tónica | 141 (jue 25-2) |
+| U7 · 2 (lun 8-3) | `['ortografia-tildes', 2]` ¿Lleva tilde? | 141 |
+| U7 · 3 (15-3 o tras Semana Santa) | `['ortografia-tildes', 3]` Diptongos e hiatos | 141 |
+| U7 · 4 (lun 12-4) | `['ortografia-tildes', 4]` Las palabras de Matemáticas | 141 |
+| U7 · 5 (lun 19-4) | `['ortografia-palabras', 1]` ¿Junto o separado? | 142 (jue 15-4) |
+| U8 · 1 (lun 26-4) | `['ortografia-letras', 2]` b o v | 140 |
+| U8 · 2 (mar 4-5) | `['ortografia-letras', 3]` g o j | 140 |
+| U8 · 3 (lun 10-5) | `['ortografia-letras', 4]` Otras letras | 140 |
+| U8 · 4 (lun 17-5) | `['ortografia-puntuacion', 2]` El punto y la coma | 140 |
+| U8 · 5 (lun 24-5) | `['ortografia-puntuacion', 3]` Dos puntos, puntos suspensivos y el saludo | 140 |
+| U8 · 6 (lun 31-5) | `['ortografia-palabras', 2]` Suenan igual, se escriben distinto | 142 |
+| Junio · 1 (lun 14-6) | `['ortografia-palabras', 3]` Números y símbolos | 142 |
+| Junio · 2 (lun 21-6) | `['ortografia-puntuacion', 4]` El correo al profesor | 140 |
+
+La tabla del calendario en los apuntes **no se edita desde este reparto** (condición de `autorizaciones.md`): la actualiza
+Juan Luis o una sesión de los apuntes con las ENTREGA de 140-142.
+
+### Las tareas
+
+- **134** base (ALTO, 2 h; no en paralelo con 122, 130, 131): catálogo (64-68, `seccion`, nombre de la 45), sección
+  «Ortografía» de la portada, `_comun/nivel.js` (umbrales, tope por vidas, `?nivel=` en «Probar sin código», `elegirDeNivel`,
+  `etiquetaNivel`), `_comun/ortografia.js` (hueco, elegir, tocar, dos pasos), esqueletos, `docs/practicas-ortografia.md`, tests.
+- **135-139** los cinco bloques (carpetas disjuntas; todas en paralelo con la 134 LISTA): 135 tildes (MEDIO), 136 letras
+  (MEDIO), 137 puntuación (MEDIO), 138 palabras (**ALTO**: es donde más dobles formas válidas hay), 139 ampliación (**ALTO**,
+  última en prioridad). Bancos con `nivel` en cada ítem, ≥ 16 por nivel, equilibrados, nunca por encima del nivel; cada
+  ficha trae el reparto de ítems por nivel y sus trampas de la RAE.
+- **140 → 141 → 142** revisión con clics, **lectura de todos los ítems** y publicación (ALTO, en cadena por `catalogo.js`),
+  con la propuesta de ★ de su tramo y, en la 142, cómo ofrecer la ampliación.
+- **143** niveles en los 11 ejercicios de la 45 (MEDIO, sin plazo, última): solo `nivel` en los ítems aprobados y frases
+  nuevas donde un nivel quede corto; nada aprobado se toca.
+
+### Reglas de contenido de la ortografía
+
+Valen las comunes 4, 8 y 9. Y además (copiadas en cada ficha 135-143):
+
+1. **Solo español**: `idioma: 'es'`; nombre y detalle en `{ es, en }` («Spanish spelling: …»).
+2. **Regla de oro, versión ortografía**: ninguna opción puede ser también correcta; nunca como hueco ni como distractor dos
+   formas que la RAE admita (lista de abajo); si la forma depende del sentido, la frase fuerza una sola lectura o se
+   descarta (o va como «¿qué frase dice esto?»).
+3. **Tres niveles por ejercicio** (1: lo que todo alumno de 1.º debe dominar y lo que más falla; 2: el resto de 1.º; 3: más
+   allá), ≥ 16 ítems por nivel (≥ 12 si es de tocar o de tres opciones), equilibrados (≤ 60 % por botón), y el generador
+   nunca da un ítem por encima del nivel de `nivelDe(sesion)`; el test lo comprueba por fuerza bruta.
+4. **Frases cortas de la vida del instituto y de casa**, nombres inventados, nada ofensivo; realismo.
+5. **Feedback ligado al ítem**: la regla aplicada a esa palabra o frase, con la buena en `<b>` y a la vista tras el fallo.
+6. **`error` estable por confusión** (`v-por-b`, `sin-tilde-llana`), `^[a-z0-9-]{1,40}$`; `respuesta`, lo que puso el alumno.
+7. **Palabras de uso en 1.º ESO**; las de Matemáticas, del vocabulario del curso.
+8. **Dudas en `dle.rae.es`, `rae.es/dpd/` y `fundeu.es`** (solo lectura): lo que la RAE admita de dos maneras, fuera; lo dudoso,
+   fuera; lo que un libro viejo diga distinto de la Ortografía de 2010, fuera.
+9. **Nada de gramática** salvo lo que la ficha de la ampliación nombre; nada de división silábica a final de línea.
+
+### Lo que nunca es distractor (dos formas válidas, o recomendación y no regla)
+
+solo / sólo · este, ese, aquel con y sin tilde · aún / aun fuera de contexto · guion, truhan, hui, fie, rio, frio, Sion, Ruan
+(monosílabos sin tilde desde 2010) · período / periodo, vídeo / video, cardíaco / cardiaco, olimpíada / olimpiada, alvéolo /
+alveolo, policíaco / policiaco, fútbol / futbol, chófer / chofer, icono / ícono, élite / elite · kilómetro / quilómetro,
+octógono / octágono, cinc / zinc, biznieto / bisnieto · enseguida / en seguida, deprisa / de prisa, aprisa / a prisa, enfrente /
+en frente, asimismo / así mismo (como «también»), adonde / a donde, entretanto / entre tanto, bocabajo / boca abajo, sobremanera
+/ sobre manera · treintaiuno / treinta y uno (y todos los 31-99) · undécimo / decimoprimero, duodécimo / decimosegundo,
+decimotercero / décimo tercero (13.º-29.º), onceavo y doceavo como ordinales (el DLE los recoge) · imprimido / impreso, freído /
+frito, proveído / provisto, iros / idos, los imperativos con -ros · posguerra / postguerra, clubs / clubes, OVNI / ovni, los
+extranjerismos (wasap / WhatsApp, güisqui / whisky) · l / L (litro), 5 % / 5%, 5 € / 5€, 1.º / 1º, n.º / nº, 12 000 / 12.000
+(la RAE pide espacio; los materiales del curso llevan punto) · veintiún alumnas / veintiuna alumnas, la primer vez · comillas
+inglesas / latinas · coma / punto y coma en frases cortas · casa / caza, cocer / coser y todo par que solo sea homófono con
+seseo (en Murcia se distinguen) · «Mar Menor» (el genérico es parte del nombre) · Sol / sol, Luna / luna, Tierra / tierra,
+Internet / internet, Ayuntamiento / ayuntamiento, Estado / estado, Iglesia / iglesia (dependen del sentido) · «examen de
+Matemáticas» / «las matemáticas» (asignatura frente a ciencia: solo contextos inequívocos de asignatura).
+
+## Orden de prioridad de la ortografía (por los plazos de publicación)
+
+1. **134** (base; ALTO; LIBRE desde el 3-11; plazo mar 1-12). Mientras, nada más puede empezar.
+2. Con la 134 LISTA, **a la vez**: 136 y 137 (MEDIO; plazo mar 26-1), 135 (MEDIO; mar 9-2), 138 y 139 (ALTO; mar 23-3) y 143
+   (MEDIO; sin plazo). Caben seis sesiones sin estorbarse (carpetas disjuntas); por plazos, primero 137 y 136.
+3. **140** (jue 11-2) → **141** (jue 25-2) → **142** (jue 15-4), en cadena por `catalogo.js`.
+4. La tarea del panel de cada unidad (U6, U7, U8: las dan de alta sus montadoras en este reparto) monta los ★ con las ENTREGA
+   de 140-142; la tabla del calendario de los apuntes la actualiza Juan Luis o una sesión de los apuntes.
