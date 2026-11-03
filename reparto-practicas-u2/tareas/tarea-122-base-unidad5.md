@@ -1,6 +1,6 @@
 # Tarea 122 · Base de la unidad 5: catálogo, portada, destrezas, `_comun/decimales.js` y `_comun/recta-decimales.js`
 
-Actualizado: 2026-11-02 (alta de la montadora del reparto de la unidad 5, s-20261102T100120-6a6afb84)
+Actualizado: 2026-11-03 (corregida con el acta de la tarea 02 de la U5 por la coordinadora de la U5, s-20261103T150058-71204ffa; alta del 2-11 por s-20261102T100120-6a6afb84)
 Precondición: tarea 01 del reparto de la unidad 5 LISTA (existe la propuesta de inventario `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/5. Decimals/inventario-unidad5.tsv`; con F0 firmada, mejor: ids definitivos) · no en paralelo con otra tarea que toque `catalogo.js`, `portada.js` o `registro.js` (119, 120 si siguen EN CURSO) · Disparo: MANUAL (sesión atendida) · **Plazo: mar 1-12 (las siete prácticas van detrás y la semana 1 se publica antes del jue 14-1)**
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/122-base-unidad5/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -66,15 +66,18 @@ El catálogo de la unidad 5 (diseño de la montadora del 2-11; Juan Luis puede c
 |---|---|---|---|---|---|
 | 57 | `lee-decimales` | Lee y escribe decimales / Read and write decimals | 4 | 1 | órdenes de unidades (units, tenths, hundredths, thousandths); el valor de cada cifra y la descomposición; leer en inglés (*three point seven five*) y escribir desde la lectura; la fracción decimal (3,75 = 375/100); la recta |
 | 58 | `compara-decimales` | Compara, ordena y redondea / Compare, order and round | 4 | 1 | comparar (la trampa 3,9 frente a 3,10); ordenar; intercalar un decimal entre dos; redondear a la unidad, a la décima y a la centésima; estimar |
-| 59 | `suma-resta-decimales` | Suma y resta decimales / Add and subtract decimals | 4 | 1 | alinear la coma; con naturales; dinero (total y cambio) y medidas; multiplicar y dividir por 10, 100 y 1000 (mover la coma; si el acta lo pasa a la semana 2, va a la 60) |
+| 59 | `suma-resta-decimales` | Suma y resta decimales / Add and subtract decimals | 4 | 1 | alinear la coma; con naturales; dinero (total y cambio) y medidas; multiplicar y dividir por 10, 100 y 1000 (mover la coma; el acta lo deja en la sesión 3) |
 | 60 | `multiplica-divide-decimales` | Multiplica y divide decimales / Multiply and divide decimals | 5 | 2 | colocar la coma en el producto; dividir entre un natural hasta las centésimas; dividir entre un decimal (mover la coma en los dos); la comprobación (cociente · divisor + resto); problemas (precio por kilo, reparto) |
-| 61 | `fraccion-decimal` | De fracción a decimal y vuelta / Fractions and decimals | 4 | 2 | de fracción a decimal dividiendo (exactos); de decimal a fracción irreducible; los pares de memoria (1/2 = 0,5…); comparar una fracción con un decimal |
+| 61 | `fraccion-decimal` | De fracción a decimal y vuelta / Fractions and decimals | 4 | 2 | de fracción a decimal dividiendo (exactos; reconocer un periódico, sin arco); de decimal a fracción irreducible (las impropias se quedan impropias); los pares de memoria (1/2 = 0,5…); comparar una fracción con un decimal |
 | 62 | `errores5` | Caza el error / Spot the mistake | 3 | 2 (toda la unidad) | los errores típicos de la unidad como cálculos con un paso mal (la coma, el redondeo, la comparación, la división) |
 | 63 | `leelo5` | Léelo en inglés / Say it in English | 4 | toda la unidad | vocabulario: decimal point, tenths, hundredths, thousandths, round to the nearest, decimal places, estimate, nought, change, per litre; la lectura de decimales y de dinero |
 
 Sin práctica, a propósito: la lectura en voz alta (va a `leelo5` como «elige la lectura correcta»), la estimación como destreza
-suelta (va dentro de `compara-decimales`), y lo que el acta deje fuera (periódicos, negativos, cambios de unidad, potencias:
-si entran, se proponen en la ENTREGA como ejercicio extra de la práctica que toque, no como práctica nueva). Si el §7 de
+suelta (va dentro de `compara-decimales`), y, aunque el acta del 3-11 los admite, **ninguno nuclear**: negativos (`U5-1C-17`, `U5-1C-18`, `U5-2C-16`), cambios de
+unidad (`U5-1A-04`, solo los cinco pares), periódicos (`U5-2C-11`) y cuadrado y cubo (`U5-2C-13`). Como decía el alta, se
+proponen en la ENTREGA como ejercicio extra o ítems de la práctica que toque (negativos → 58, 59 y 60; cambios de unidad → 59;
+periódicos → 61; cuadrado y cubo → 60), no como práctica nueva, y sin cambiar `nEjercicios` sin el visto bueno de Juan Luis.
+Las raíces no entran en la app (en las hojas, solo de reto). Si el §7 de
 `docs/practicas-unidad5.md` reparte las destrezas de otra manera, el §7 manda y esta tabla se corrige en la ENTREGA.
 
 ## Siguiente paso
@@ -85,7 +88,7 @@ si entran, se proponen en la ENTREGA como ejercicio extra de la práctica que to
 
 ## Qué hay que hacer
 
-1. **`practicas/_comun/decimales.js`** (nuevo, puro, sin DOM), con su test `tests/practicas-decimales.test.js`: una fábrica `Decimal(mantisa, cifras)` **inmutable, como entero escalado** (`{m, k}` = m / 10^k, con `m` entero seguro y `k` ≥ 0; nunca un `Number` con coma flotante por dentro), con `normalizar()` (quita ceros finales), `equals(otro)` (por valor), `comparar(a, b)`, `ordenar(lista)`, `sumar`, `restar`, `multiplicar`, `dividir(a, b, cifras)` (exacta si termina; si no, devuelve el cociente truncado a `cifras` y el resto, para la comprobación), `porPotenciaDe10(d, n)` (n entero, negativo para dividir), `redondear(d, cifras)`, `truncar(d, cifras)`, `cifrasDecimales(d)`, `descomponer(d)` (unidades, décimas, centésimas, milésimas: para «el valor de la cifra»), `aFraccion(d)` (devuelve una `Fraccion` de `fracciones.js`, irreducible) y `deFraccion(f)` (solo si el decimal es exacto; si no, `null`), `entreDos(a, b)` (un decimal estrictamente entre dos: para intercalar), `deTexto(texto, idioma)` → `Decimal` o `null` (acepta `3,75` y `3.75` **en los dos idiomas**, naturales, un cero inicial opcional en inglés (`.5`), espacios; rechaza puntos de millares, dos separadores, vacío, basura; nunca `Number(texto)`), `aTexto(d, idioma, cifras?)` (coma en español, punto en inglés; con `cifras`, ceros finales fijos: dinero con dos), `enPalabras(d, idioma)` (inglés: *three point seven five*, *nought point five*; español: *tres coma setenta y cinco*) y `lecturasValidas(d, idioma)` (todas las que valen: *nought* / *zero* / *point five*; *tres coma setenta y cinco* / *tres unidades y setenta y cinco centésimas*), `dinero(d)` (texto con dos decimales y €; *three euros seventy-five* en inglés). **Los errores típicos** de la regla 4, cada uno como función con nombre que da el cálculo equivocado (`compararPorCifras`, `alinearDerecha`, `comaMalPuesta(a, b, desplazamiento)`, `porDiezAnadiendoCero`, `entreDiezQuitandoCero`, `redondearTruncando`, `redondearEnCadena`, `olvidarComaCociente`, `decimasPorCentesimas`, `fraccionAlReves`, `denominadorEquivocado`, `centimosPorEuros`…) y una tabla `ERRORES_TIPICOS` con su nombre `{ es, en }` en frase corta; cada función devuelve `null` si da lo mismo que la respuesta correcta.
+1. **`practicas/_comun/decimales.js`** (nuevo, puro, sin DOM), con su test `tests/practicas-decimales.test.js`: una fábrica `Decimal(mantisa, cifras)` **inmutable, como entero escalado** (`{m, k}` = m / 10^k, con `m` entero seguro, también negativo (el acta admite negativos), y `k` ≥ 0; nunca un `Number` con coma flotante por dentro), con `normalizar()` (quita ceros finales), `equals(otro)` (por valor), `comparar(a, b)`, `ordenar(lista)`, `sumar`, `restar`, `multiplicar`, `dividir(a, b, cifras)` (exacta si termina; si no, devuelve el cociente **cortado** a `cifras`, sin redondear, y **el resto de la división original**, para la comprobación: 6,384 : 0,49 → 13,02 y resto 0,0042, de modo que 0,49 · 13,02 + 0,0042 = 6,384; acta del 3-11, punto d), `porPotenciaDe10(d, n)` (n entero, negativo para dividir), `redondear(d, cifras)`, `truncar(d, cifras)`, `cifrasDecimales(d)`, `descomponer(d)` (unidades, décimas, centésimas, milésimas: para «el valor de la cifra»), `aFraccion(d)` (devuelve una `Fraccion` de `fracciones.js`, irreducible) y `deFraccion(f)` (solo si el decimal es exacto; si no, `null`), `entreDos(a, b)` (un decimal estrictamente entre dos: para intercalar), `deTexto(texto, idioma)` → `Decimal` o `null` (acepta `3,75` y `3.75` **en los dos idiomas**, naturales, un cero inicial opcional en inglés (`.5`), espacios; rechaza puntos de millares, dos separadores, vacío, basura; nunca `Number(texto)`), `aTexto(d, idioma, cifras?)` (coma en español, punto en inglés; con `cifras`, ceros finales fijos: dinero con dos), `enPalabras(d, idioma)` (inglés: *three point seven five*, *nought point five*; español: *tres coma setenta y cinco*) y `lecturasValidas(d, idioma)` (todas las que valen: *nought* / *zero* / *point five*; *tres coma setenta y cinco* / *tres unidades y setenta y cinco centésimas*), `dinero(d)` (texto con dos decimales y €; *three euros seventy-five* en inglés). **Los errores típicos** de la regla 4, cada uno como función con nombre que da el cálculo equivocado (`compararPorCifras`, `alinearDerecha`, `comaMalPuesta(a, b, desplazamiento)`, `porDiezAnadiendoCero`, `entreDiezQuitandoCero`, `redondearTruncando`, `redondearEnCadena`, `olvidarComaCociente`, `restoSinDeshacer` (da como resto el de la división sin coma: 0,42 en vez de 0,0042), `periodicoPorRedondeo` (0,33 por 1/3), `decimasPorCentesimas`, `fraccionAlReves`, `denominadorEquivocado`, `centimosPorEuros`…) y una tabla `ERRORES_TIPICOS` con su nombre `{ es, en }` en frase corta; cada función devuelve `null` si da lo mismo que la respuesta correcta.
 2. **Test** de `decimales.js`: contra una tabla de 40 casos calculados a mano y contra `BigInt` en 3000 casos aleatorios (suma, resta, producto, comparación, redondeo, ×/÷ por potencias de 10); `equals` por valor (0,5 = 0,50); `deTexto` y `enPalabras` con tabla (los dos idiomas, coma y punto, `.5`, rechazos); `aFraccion`/`deFraccion` contra `Fraccion`; cada error típico distinto del correcto cuando no devuelve `null`.
 3. **`practicas/_comun/recta-decimales.js`** (nuevo, con DOM, SVG): una recta de `a` a `b` (naturales consecutivos, o décimas consecutivas) con marcas en las décimas o en las centésimas, puntos con etiqueta y marcas que se pueden tocar (`alTocar(i)`); se ve bien a 375 px con hasta 10 marcas grandes y 10 pequeñas entre cada dos. Parte de `practicas/_comun/recta-enteros.js` (misma idea, otros valores); la parte pura (qué marca está más cerca de un toque, posición de cada marca, valor de la marca i como `Decimal`) va en funciones exportadas con su test, en `tests/practicas-decimales.test.js`. **En un SVG, lo que se dibuja encima se queda el clic**: capas con `pointer-events: none` (lección de la 79).
 4. **Catálogo** (`practicas/_comun/catalogo.js`): las siete filas de la tabla de arriba, `unidad: 5`, **`disponible: false`**, en ese orden, después de la fila 56 (`leelo4`) y antes de la plantilla; los ids 57-63 están libres. Y en `UNIDADES`, `{ n: 5, desde: '2027-01-18', titulo: { es: 'Números decimales', en: 'Decimals' } }`. **Añadir una unidad rompe dos tests más** (lección de la 98): `tareasPorUnidad` en `tests/practicas-editor.test.js` y `unidadesCon` en `tests/practicas-espacio.test.js`: ajústalos.
@@ -128,50 +131,88 @@ si entran, se proponen en la ENTREGA como ejercicio extra de la práctica que to
 
 ## Reglas de contenido de la unidad 5 (copia de `proyecto.md` de su reparto; lo común no se lee, por eso va aquí)
 
-Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro, feedback, realismo) valen igual.
-La fuente es `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/5. Decimals/reparto-unidad5/proyecto.md` («Reglas de contenido comunes») y, cuando exista, el acta
-`/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/5. Decimals/inventario-unidad5-revision.md` (lo que Juan Luis decida en la tarea 02 de aquel reparto: periódicos, negativos,
-cambios de unidad, potencias de decimales, calculadora, cotas de realismo, ids). **Hasta el acta, nada de eso entra.**
+Corregidas el 2026-11-03 con el acta de la tarea 02 de aquel reparto (F0 firmada ese día) por la coordinadora de la U5,
+s-20261103T150058-71204ffa. Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro,
+feedback, realismo) valen igual. La fuente es `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/5. Decimals/reparto-unidad5/proyecto.md` («Reglas de contenido comunes»)
+y, por encima de ella, **el acta** `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/5. Decimals/inventario-unidad5-revision.md` (léela entera: si esta copia
+y el acta discrepan, manda el acta). Ids: 54 destrezas, 27 nucleares (13 + 14); ninguna cambió de id en la revisión.
 
 1. **Un mismo número tiene muchas escrituras, y todas son la misma respuesta.** 0,5 = 0,50 = 1/2 = 5/10; 2 = 2,0; 1,75 = 7/4.
    En cualquier ejercicio de elegir, emparejar o verdadero/falso, ninguna opción puede equivaler a otra: el test lo comprueba
    **por valor** con la aritmética exacta de `_comun/decimales.js` (enteros escalados, nunca `Number` con coma flotante ni
-   `toFixed` para comparar). Solo si el ejercicio evalúa la forma escrita («¿cuántas cifras decimales tiene?») cuenta la
-   escritura, y el enunciado lo dice. Cuando la respuesta tiene un número fijo de cifras («round to 2 decimal places», dinero),
-   el enunciado lo dice y la corrección lo exige.
-2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario (semana 1:
-   leer y escribir, órdenes, fracción decimal, recta, comparar, redondear, sumar y restar, ×/÷ por 10-100-1000; semana 2:
-   multiplicar, dividir, fracción ↔ decimal, combinadas, problemas). **Ni porcentajes** («0,5 = 50 %» está prohibido hasta la
-   U7), ni letras ni ecuaciones (hueco `□`), ni proporcionalidad; periódicos, negativos, cambios de unidad, potencias y
-   raíces de decimales solo si el acta los admite y en la sesión que diga.
+   `toFixed` para comparar). Cuando la respuesta tiene un número fijo de cifras («round to 2 decimal places», dinero), el
+   enunciado lo dice y la corrección lo exige. **Excepciones del acta (punto k)**: en las de redondear, 0,5 y 0,50 nunca
+   juntas; en «¿qué ceros cambian el valor?» (`U5-1C-05`) la escritura es justo lo que se pregunta; y **en «as a fraction in
+   its simplest form» (`U5-2C-10`) la fracción a medio simplificar (75/100 para 0,75) vale como distractor**, solo con ese
+   enunciado, como en la U4.
+2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario. Semana 1
+   (sesiones 1-3): leer y escribir, órdenes, fracción decimal, recta, comparar y ordenar (también negativos), redondear,
+   sumar y restar (también con negativos), ×/÷ por 10, 100 y 1000 y los cambios de unidad (sesión 3). Semana 2: multiplicar
+   (y ×/÷ por 0,1, 0,01 y 0,001), dividir, la división con prueba y **fracción → decimal (sesión 5)**; **decimal → fracción,
+   periódicos, cuadrado y cubo, combinadas y problemas de varios pasos (sesión 6)**. **Ni porcentajes** («0,5 = 50 %» está
+   prohibido hasta la U7), ni letras ni ecuaciones (hueco `□`), ni proporcionalidad. Lo que decidió el acta:
+   - **Negativos: sí**, en todas las operaciones, con la regla de los signos de la U3, **nunca nucleares** (`U5-1C-17` comparar,
+     ordenar y la recta; `U5-1C-18` sumar y restar, también con resultado negativo; `U5-2C-16` multiplicar, dividir y
+     combinadas); sin paréntesis al empezar (−3,5 + 1,25, nunca (−3,5) + (+1,25)).
+   - **Cambios de unidad: sí** (`U5-1A-04`, no nuclear), como aplicación de ×/÷ por 10, 100 y 1000, **solo km-m, m-cm, kg-g,
+     L-mL y euros-céntimos**, de una unidad a la principal o a la contigua; sin superficie, volumen, hectáreas, dam, hg, dal ni
+     horas.
+   - **Periódicos**: solo reconocerlos al pasar de fracción a decimal (1/3 = 0,333…, «el 3 se repite siempre»), con puntos
+     suspensivos, **sin arco**, sin clasificarlos en puros y mixtos y sin operar con ellos (`U5-2C-11`, no nuclear, `cuidado`:
+     0,33 no es 1/3, es su redondeo).
+   - **Potencias**: cuadrado y cubo de un decimal dentro de las combinadas (`U5-2C-13`, no nuclear); **raíces cuadradas solo
+     exactas y solo como reto en las hojas**: en la app, no.
+   - **Fracción ↔ decimal**: de fracción a decimal, cualquier fracción dividiendo; decimal exacto hasta las milésimas (3/4,
+     7/20, 7/8, 9/4), o se reconoce como periódico, o se para en las centésimas. De decimal a fracción, solo exactos, hasta la
+     irreducible, y **las impropias se quedan impropias** (1,25 = 5/4, sin mixtos). Pares de memoria: 1/2, 1/4, 3/4, 1/5,
+     1/10 y 1/100.
+   - **Redondeo**: a la unidad, a la décima y a la centésima (no a las milésimas ni a las decenas); el 9 que arrastra (2,96 →
+     3,0) es `U5-1C-11`, no nuclear. **Estimar** (`U5-1C-12`) es destreza de hoja (`tipo_test = no`): solo para comprobar una
+     suma, una resta o dónde va la coma.
+   - **La división con dos decimales en el cociente y su prueba** (`U5-2C-07`, nuclear, `tipo_test = no`): dos cifras
+     decimales **cortando**, sin redondear (cuando se quiera redondear, el enunciado dice *round*); **el resto es el de la
+     división original** y la prueba se hace con los números originales: 6,384 : 0,49 → se hace 638,4 : 49 = 13,02, resto
+     0,42 en esa división; el resto de la original es 0,42 : 100 = **0,0042**; prueba **0,49 · 13,02 + 0,0042 = 6,384**. Si
+     el divisor ya es natural (7 : 4), no hay nada que deshacer.
+   - **Calculadora: ninguna.** Desde la U5, precios con céntimos y medidas con decimales valen en cualquier enunciado.
 3. **La coma y el punto**: en español, coma (`3,75`); en inglés, punto (`3.75`) y la lectura con *point* y las cifras una a
    una (*three point seven five*; *nought* y *zero* valen). `fmtDecimal` y `leerDecimal` de `_comun/decimales.js` lo hacen por
-   idioma (el alumno puede teclear coma o punto en los dos idiomas: la base lo acepta). Nunca un punto de millares.
-   Producto con `·`, nunca `×`; división con `:` (en inglés también `÷`).
+   idioma (el alumno puede teclear coma o punto en los dos idiomas: la base lo acepta). Nunca un punto de millares; **la coma
+   de millares inglesa (40,800,013.9) solo en `U5-1B-01` y `U5-1B-05`**; en todo lo demás, números de hasta cuatro cifras
+   enteras. Producto con `·`, nunca `×`; división con `:` también en inglés (`÷` solo en el vocabulario). Periódicos con
+   puntos suspensivos.
 4. **Regla de oro**: todo distractor, inequívocamente falso, y cada distractor sale de un **error típico** de la columna
    `nota` del inventario, calculado con los números del ítem y comprobado en el test (nunca un número al azar): comparar
    por el número de cifras (3,9 < 3,10); sumar o restar alineando a la derecha; colocar mal la coma al multiplicar (1,2 · 0,3
-   = 3,6); ×10 añadiendo un cero (2,5 · 10 = 2,50); ÷10 quitando un cero; redondear truncando o en cadena; olvidar la coma
-   del cociente; décimas por centésimas; 3/4 = 1,33; 0,75 = 75/10; «0,5 €» por 5 céntimos. Los generadores de estos valores
-   están en `_comun/decimales.js` (`ERRORES_TIPICOS`): úsalos, y **cada función dice cuándo no sirve** (devuelve `null`
-   cuando el error da lo mismo que la respuesta). **Lo que no es un error**: 2,50 € por 2,5 € (en dinero, la clave admite las
-   dos), ni una escritura con ceros finales.
+   = 3,6); ×10 añadiendo un cero (2,5 · 10 = 2,50); ÷10 quitando un cero; redondear truncando o en cadena (3,649 → 3,65 →
+   3,7, el que se nombra); olvidar la coma del cociente; **en la división con prueba, dar como resto el de la división sin
+   coma** (0,42 en vez de 0,0042); tomar 0,33 por 1/3; décimas por centésimas; 3/4 = 1,33; 0,75 = 75/10; «0,5 €» por 5
+   céntimos. Los generadores de estos valores están en `_comun/decimales.js` (`ERRORES_TIPICOS`): úsalos, y **cada función
+   dice cuándo no sirve** (devuelve `null` cuando el error da lo mismo que la respuesta). **Lo que no es un error**: 2,50 € por
+   2,5 € (en dinero, la clave admite las dos), ni una escritura con ceros finales.
 5. **Parejas válidas, que nunca se enfrentan**: *nought point five* / *zero point five* / *point five*; *round to one decimal
    place* / *round to the nearest tenth*; *decimal places* / *digits after the decimal point*; `÷` / `:`; *times* /
-   *multiplied by*; un decimal y su fracción; un decimal con y sin ceros finales; *metres* / *meters*. Y lo que se oye en la
-   calle no es distractor limpio: *three point seventy-five* y *three seventy-five* (precios) no se enfrentan a *three point
-   seven five*; la lectura se evalúa con opciones claramente falsas (*thirty-seven point five*, *seven point three five*).
+   *multiplied by*; *proof* / *test* (la prueba de la división); un decimal y su fracción; un decimal con y sin ceros finales;
+   *metres* / *meters*. Y lo que se oye en la calle no es distractor limpio: *three point seventy-five* y *three seventy-five*
+   (precios) no se enfrentan a *three point seven five*; la lectura se evalúa con opciones claramente falsas (*thirty-seven
+   point five*, *seven point three five*).
 6. **Inglés sencillo**; la palabra no matemática que decide la respuesta se aclara entre paréntesis (*change* (la vuelta),
    *per litre* (por litro), *nearest* (más cercano), *weighs* (pesa)), salvo que sea justo lo que se evalúa. Unidades en inglés
    británico (*metres, litres, kilograms, euros, cents*).
 7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los números que pueda sacar el
-   generador, creíbles, con una cota por contexto que el test comprueba. Orientativas hasta el acta (la sesión fija las suyas y
-   las escribe en su ENTREGA): precios en euros con dos decimales (un producto del supermercado 0,20-30 €; una prenda 5-120 €;
-   una entrada 3-60 €; gasolina 1,20-2,00 €/L, depósitos 5-70 L; el cambio nunca negativo); pesos (una pieza de fruta 0,08-0,5
-   kg; una bolsa 0,5-5 kg; un paquete 0,1-30 kg; un recién nacido 2,5-4,5 kg; una persona 30-120 kg); longitudes (una persona
-   1,20-2,10 m; una habitación 2-10 m; un folio 21 × 29,7 cm); distancias (a pie o en bici hasta 50 km, en coche hasta 1000 km);
-   tiempos (100 m lisos 9,58-20,00 s); temperaturas (−10 a 45 °C con una decimal; el cuerpo 35,0-42,0; negativas solo si el acta
-   las admite); capacidades (un vaso 0,2-0,33 L; una botella 0,33-2 L); notas de 0 a 10 con una decimal.
+   generador, creíbles, con una cota por contexto que el test comprueba (`assert` por contexto, como
+   `src/ejercicios/contextos_mcd_mcm.js`). **Cotas aprobadas en el acta (punto l), enteras**: un producto de supermercado o
+   papelería 0,20-30 €; fruta al peso 0,80-6 € el kilo, de 0,5 a 5 kg; una prenda 5-120 €, un móvil 80-1200 €, una entrada
+   3-60 €; gasolina 1,20-2,00 € el litro, de 5 a 70 L; pagar con un billete de 5, 10, 20 o 50 € que cubra el total, la vuelta
+   nunca negativa; una cena a partes iguales 10-200 €, entre 2 y 30 personas, exacto al céntimo o el enunciado dice que se
+   redondea; un listón o una tabla 1-3 m, lo que queda nunca negativo; una persona 1,20-2,10 m y 30-120 kg, un recién nacido
+   2,5-4,5 kg; una carrera de 100 m 9,58-20,00 s, **una vuelta a la pista 90-200 s**; botellas de 0,25, 0,33, 0,5, 0,75, 1, 1,5
+   o 2 L, garrafas hasta 50 L, cuántas se llenan: un número entero; temperaturas de −10 a 45 °C con una decimal, el cuerpo
+   35,0-42,0 °C; notas de 0 a 10 con una decimal; distancias a pie o en bici hasta 50 km, en coche hasta 1000 km. Y además:
+   un vaso 0,2-0,33 L; una bañera 100-300 L; una habitación 2-10 m; un folio 21 × 29,7 cm; una piscina 25 o 50 m; una pieza de
+   fruta 0,08-0,5 kg; una bolsa 0,5-5 kg; un paquete 0,1-30 kg; nunca horas con decimales salvo que el enunciado lo explique.
+   El dinero, siempre con dos decimales en el enunciado. **Para la app se reservan los contextos de supermercado al peso y de
+   gasolina**; la vuelta (del cambio), la cena y las botellas son del papel.
 8. **Feedback ligado al error**, con los números del ítem («2,5 + 1,25: has alineado a la derecha; alinea las comas: 2,50 +
    1,25 = 3,75»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, números) que no copien los de las hojas, los exámenes semanales ni el examen final de la
@@ -180,9 +221,9 @@ cambios de unidad, potencias de decimales, calculadora, cotas de realismo, ids).
    claro** (regla de PU2 del 30-10; modelo: `practicas/equivalentes/logica.js` y `tests/practicas-equivalentes.test.js` tras el
    commit b0e4cfd, y la reabierta `hechos/reabiertas/100--s-20261030T081542-dab2aa98-revision.md`). Si al reclamar la hoja o el
    examen de tu semana no existen aún, dilo en la ENTREGA: la tarea de publicación de tu semana coteja y reabre si hace falta.
-10. **Aritmética exacta**: los decimales se representan como enteros escalados (`{m, k}` = m / 10^k) o céntimos/milésimas;
-    nunca se suma, compara ni muestra con `Number` en coma flotante (0,1 + 0,2 ≠ 0,3). Los tests lo comprueban contra `BigInt`
-    o aritmética entera propia.
+10. **Aritmética exacta**: los decimales se representan como enteros escalados (`{m, k}` = m / 10^k, con `m` también negativo)
+    o céntimos/milésimas; nunca se suma, compara ni muestra con `Number` en coma flotante (0,1 + 0,2 ≠ 0,3). Los tests lo
+    comprueban contra `BigInt` o aritmética entera propia.
 
 ## Si la sesión se alarga
 
@@ -270,7 +311,8 @@ Si paras sin terminar: `$R/hechos/fallos/122--<sid>.md` con hasta dónde llegast
 - Dependencias nuevas (npm, CDN): la app no tiene build y solo carga KaTeX y Firebase por
   CDN; las prácticas no usan ni siquiera KaTeX (exponentes con `<sup>`).
 - Las reglas de contenido de la unidad 5 (en esta ficha y en `proyecto.md` de su reparto): `×` en vez de `·`, letras,
-  ecuaciones, porcentajes, proporcionalidad; aritmética en coma flotante; lo que el acta deje fuera (periódicos, negativos,
-  cambios de unidad, potencias, raíces) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
+  ecuaciones, porcentajes, proporcionalidad; aritmética en coma flotante; lo que el acta del 3-11 deja fuera (el arco de los
+  periódicos, clasificarlos u operar con ellos; raíces en la app; cambios de unidad fuera de km-m, m-cm, kg-g, L-mL y
+  euros-céntimos; números mixtos) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones con el mismo valor** (0,5 y 0,50; 0,25 y 1/4), que son dos respuestas correctas;
   casos de examen en claro en el repositorio.
