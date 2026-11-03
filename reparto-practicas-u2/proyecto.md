@@ -675,3 +675,68 @@ Matemáticas» / «las matemáticas» (asignatura frente a ciencia: solo context
 3. **140** (jue 11-2) → **141** (jue 25-2) → **142** (jue 15-4), en cadena por `catalogo.js`.
 4. La tarea del panel de cada unidad (U6, U7, U8: las dan de alta sus montadoras en este reparto) monta los ★ con las ENTREGA
    de 140-142; la tabla del calendario de los apuntes la actualiza Juan Luis o una sesión de los apuntes.
+
+## Tareas 144-161: la unidad 6 (Algebra) en la app (2026-11-03, s-20261103T140356-12629e13)
+
+Dadas de alta el 3-11 por la misma sesión que montó el reparto de la unidad 6
+(`apuntes-1eso-bilingue/6. Algebra/reparto-unidad6/`), por la regla de Juan Luis del 2-11 («las piezas de la app se dan de alta
+como fichas en `reparto-practicas-u2/`, no en el reparto de la unidad»). La unidad 6 se da del **lun 1-2 al vie 26-2** (16 clases,
+cuatro semanas; pruebas tipo test los viernes 5-2, 12-2 y 19-2; tipo test 4 sin día; examen final el **viernes 26-2**). Es la
+primera unidad con letras. Sus destrezas se citan con los ids de `6. Algebra/inventario-unidad6.tsv`, **que aún no existe**: lo
+propone la tarea 01 de aquel reparto y lo aprueba la 02 con Juan Luis (firma F0; acta `6. Algebra/inventario-unidad6-revision.md`).
+Las fichas 145-155 citan las destrezas por descripción y la 144 pone los ids definitivos en `DESTREZAS` y en el §7 de
+`docs/practicas-unidad6.md`. **Hasta el acta no entran** `x²`, las sucesiones, los casos `ax = b` sin solución o con infinitas, `x`
+en el denominador ni los denominadores con paréntesis (son puntos a decidir de la 02); si entran, se añaden como ejercicio a la
+práctica que toque (propuesta en la ENTREGA), no como práctica nueva. Los números 134-143 y los ids 64-68 son de la ampliación de
+la ortografía (otra coordinadora, el mismo día; acordado por mensaje): su tarea 140 publica los ★ de ortografía de las semanas 3 y
+4 de la U6.
+
+| id | slug | nombre (es / en) | nEjercicios | semana (bloque de la portada) | destrezas (descripción; ids tras F0) |
+|---|---|---|---|---|---|
+| 69 | `traduce` | Del enunciado al álgebra / From words to algebra | 4 | 1 | traducir una frase a una expresión (el doble, la mitad, tres más que, tres menos que, el siguiente, consecutivos) y una expresión a una frase; situaciones (un plan de 5 € al mes más 2 € por giga: `5 + 2g`); si el acta las admite, sucesiones (`2n + 1`) |
+| 70 | `valor-numerico` | Valor numérico / Evaluate | 3 | 1 | sustituir un valor (natural, entero, fracción sencilla según el acta) en `ax + b`, `a(x ± b)` y, si el acta lo admite, `x² ± c`; completar una tabla de valores; «¿para qué valor vale…?» (tanteo, preludio de la ecuación, solo si el acta lo admite) |
+| 71 | `terminos-semejantes` | Términos semejantes / Like terms | 4 | 1 | ¿son semejantes?; reducir (`5x + 2x − 3x`, `7x + 2y − 3x + y`); coeficiente y parte literal; cazar el error (`3x + 2 = 5x`, `x · x = 2x`) |
+| 72 | `es-solucion` | ¿Es solución? / Is it a solution? | 4 | 2 | comprobar sustituyendo; ¿qué ecuación tiene solución 5? (opciones con soluciones distintas); identidad o ecuación (si el acta); escribe una ecuación con solución dada (campo libre: cualquier ecuación válida) |
+| 73 | `transposicion` | Pasa al otro lado / Move it across | 5 | 2 | los cuatro niveles del guión con números (`3 + 2 = 5 → 3 = 5 − □`; `3 · 2 = 6 → 3 = 6 : □`; bidireccional; con jerarquía); ecuaciones de una operación; de dos operaciones paso a paso; `3x = 12` frente a `12x = 3` (fracción irreducible) |
+| 74 | `resuelve` | Resuelve / Solve it | 4 | 3 | `x` en los dos miembros sin paréntesis ni denominadores: elegir el paso siguiente correcto; escribir la solución (negativa o fracción); ¿cuál es el primer paso?; comprobar |
+| 75 | `parentesis-algebra` | Paréntesis / Brackets | 4 | 3 | quitar paréntesis (`3(x − 2)`, `−(x − 2)`, `−2(3 − x)` con enteros); elegir el desarrollo correcto; resolver con paréntesis; cazar el error (`3(x − 2) = 3x − 2`) |
+| 76 | `denominadores` | Quita denominadores / Clear the fractions | 4 | 3 | el m.c.m. por el que hay que multiplicar; elegir la ecuación equivalente sin denominadores; resolver `x/2 + x/3 = 5`; `x/7 = 24/7` |
+| 77 | `problemas-ecuaciones` | Problemas con ecuaciones / Word problems | 5 | 4 | qué es `x`; qué ecuación plantea el problema (opciones no equivalentes); resolver y contestar (campo); interpretar (¿qué pide: la edad de la hermana, no `x`?); ¿tiene sentido la solución? (7,5 personas) |
+| 78 | `errores6` | Caza el error / Spot the mistake | 3 | 4 (toda la unidad) | los errores típicos de la unidad como resoluciones con un paso mal (el signo al transponer, el factor que pasa restando, la distributiva, el m.c.m., los términos no semejantes) |
+| 79 | `leelo6` | Léelo en inglés / Say it in English | 4 | toda la unidad | vocabulario: unknown, like terms, coefficient, solve for x, both sides, twice, three more than, consecutive, equation, solution, check, brackets, expand; leer `2x + 3` (*two x plus three*) y `x/2` (*x over two*); las consignas de examen |
+
+- **144** base de la unidad 6 (ALTO): `_comun/algebra.js` (expresión lineal `a·x + b` y ecuación con **fracciones exactas** de
+  `fracciones.js`; `deTexto` sin `eval` para lo que teclea el alumno; `aTexto`/`aHtml` con la notación del acta; `enPalabras` y
+  `lecturasValidas` en los dos idiomas; `expandir`, `reducir`, `resolver`, `esSolucion`, `pasos`, `sinDenominadores`;
+  `ERRORES_TIPICOS`; `FRASES` del hilo de traducción), catálogo (ids **69-79**, `disponible: false`; `UNIDADES` con la U6 desde el
+  1-2), portada (cinco bloques), `DESTREZAS`, esqueletos, tests (también `practicas-editor` y `practicas-espacio`, que cuentan
+  unidades: lección de la 98).
+- **145-155** las once prácticas (MEDIO; carpetas disjuntas; todas en paralelo con la 144 LISTA): 145 `traduce`, 146
+  `valor-numerico`, 147 `terminos-semejantes` (semana 1); 148 `es-solucion`, 149 `transposicion` (semana 2); 150 `resuelve`, 151
+  `parentesis-algebra`, 152 `denominadores` (semana 3); 153 `problemas-ecuaciones` (semana 4); 154 `errores6`, 155 `leelo6` (toda la
+  unidad). **Mejor con la hoja y el examen de su semana ya cerrados** en el reparto de la U6 (lección de la U4): si existen, excluyen
+  sus casos desde el principio (hoja en claro; examen por huella FNV-1a de la forma canónica, nunca en claro).
+- **156 → 157 → 158 → 159** revisión con clics y publicación por semana (ALTO, en cadena por `catalogo.js`), con el cotejo contra la
+  hoja y los exámenes de la U6 y la propuesta de la tarea semanal (★ de ortografía: `['ortografia', 10]` y `['ortografia', 11]` en
+  las semanas 1 y 2; `['ortografia-puntuacion', 1]` y `['ortografia-letras', 1]` en las 3 y 4, de la ENTREGA de la 140): antes del
+  **mié 27-1**, **jue 4-2**, **jue 11-2** y **jue 18-2** (la portada no enseña la U6 hasta el 1-2).
+- **160** las cuatro tareas de la U6 en el panel, con Juan Luis delante (ALTO, MANUAL), calcada de la 116, la 121 y la 132; se puede
+  montar por semanas; desbloquea la tarea 34 del reparto de la U6 (Classroom, firma F11).
+- **161** los generadores `src/ejercicios/expresiones_algebraicas.js` y `ecuaciones_primer_grado.js` de la app principal al día con
+  el inventario (MEDIO; con F0), como la 112 con `fracciones_*` y la 133 con `decimales.js`: `items`, distractores de errores típicos,
+  nunca opciones equivalentes, fracciones exactas en vez de `redondear`.
+
+**Reglas de contenido de la unidad 6**: en cada ficha 144-161 (sección propia) y en `6. Algebra/reparto-unidad6/proyecto.md`. La
+trampa propia de la unidad, heredera de la de las fracciones equivalentes y las escrituras de un decimal: **dos expresiones
+equivalentes son la misma respuesta, y dos ecuaciones con la misma solución también** (`2x + 3` y `3 + 2x`; `x/2` y `½x`; forma
+canónica con fracciones exactas, nunca coma flotante ni `eval`); la notación del acta (`3x`, `x/2` como fracción, `·` solo entre
+números); ni porcentajes, ni segundo grado, ni sistemas, ni dos incógnitas.
+
+## Orden de prioridad de la unidad 6 (por los plazos de publicación)
+
+1. **144** (base; ALTO) con la propuesta de inventario de la 01 de la U6 (con F0 firmada, mejor: ids definitivos), y a la vez **161**
+   (MEDIO; con F0).
+2. **Semana 1**: 145, 146, 147, 155 → **156** publica antes del mié 27-1.
+3. **Semana 2**: 148, 149 → **157** (jue 4-2). **Semana 3**: 150, 151, 152 → **158** (jue 11-2). **Semana 4**: 153, 154 → **159** (jue 18-2).
+4. **160** con Juan Luis, por semanas, cuando cada publicación diga qué queda publicado (la semana 1 antes del mié 27-1).
+Las tareas de Classroom de cada semana las programa la tarea 34 del reparto de la U6 cuando la 160 las haya montado.
