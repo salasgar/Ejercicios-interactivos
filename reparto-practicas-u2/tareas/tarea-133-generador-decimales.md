@@ -85,6 +85,9 @@ Lee `src/ejercicios/decimales.js` entero, `docs/coordinacion-unidad1.md` (el cam
 
 - `construirOpciones` se planta en tres distractores: barajar el pool (`rng.barajar(pool).slice(0, 3)`), como dice `CLAUDE.md`; `tests/distractores.test.js` lo detecta.
 - Un generador que compare con `Number` puede dejar pasar `0.1 + 0.2` como distinto de `0.3`: enteros escalados.
+- (s-20261105T221026-1e864583, 5-11) `_comun/decimales.js` (tarea 122) no existía al hacer esta tarea, y la app principal no importa de `practicas/`: `decimales.js` lleva su propia aritmética `{ m, k }`. La clave de cada opción es su valor como fracción reducida (`claveFraccion(m, 10^k)`): así `construirOpciones` descarta solo 0,5 / 0,50 / 1/2. La excepción «a medias» de U5-2C-10 necesita una clave propia, o el motor la descarta por valer lo mismo que la correcta.
+- (ídem) `tests/ejercicios.test.js` exige que los pasos acaben en «= valor»; el redondeo acaba en «\approx valor», y por eso el módulo declara `pasosLibres: true` (como `raices`). El test propio sí exige que acaben en «=» o «\approx».
+- (ídem) La notación inglesa de la app (`aplicarNotacion`, `src/i18n/index.js`) pinta `\cdot` como `×` y `\div` como `÷`: no es de esta tarea (propuesta en la ENTREGA).
 
 ## Prohibido (propio de esta tarea)
 
