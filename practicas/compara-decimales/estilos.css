@@ -1,0 +1,14 @@
+/* Práctica «Compara, ordena y redondea» (unidad 5): fichas de decimal para ordenar y el campo de
+   respuesta. Mismo aspecto que `compara/`. Colores de css/estilos.css. */
+.fichas { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: .6rem 0; min-height: 3rem; }
+.fichas-titulo { margin: .8rem 0 0; font-weight: 600; text-align: center; }
+.ficha { min-width: 3.2rem; min-height: 3.4rem; padding: .3rem .7rem; border: 2px solid var(--primario, #1d4ed8); border-radius: .7rem; background: var(--tarjeta, #fff); color: var(--texto, #1f2933); font: 700 1.25rem system-ui, sans-serif; font-variant-numeric: tabular-nums; cursor: pointer; }
+.ficha:disabled { opacity: .45; cursor: default; }
+.ficha--puesta { cursor: default; }
+.ficha--bien { border-color: var(--correcto, #15803d); background: var(--correcto-claro, #dcfce7); opacity: 1; }
+.ficha--mal { border-color: var(--error, #b91c1c); background: var(--error-claro, #fee2e2); opacity: 1; text-decoration: line-through; }
+.acciones { display: flex; gap: .6rem; justify-content: center; flex-wrap: wrap; }
+.operacion + .elecciones { margin-top: .9rem; }
+.hueco-signo { display: inline-block; min-width: 1.4em; text-align: center; }
+.fila-campo { display: flex; align-items: center; justify-content: center; gap: .5rem; margin: 0 0 .9rem; }
+.formato { display: block; margin-top: .4rem; font-size: .95rem; font-weight: 600; color: var(--texto-suave); }
