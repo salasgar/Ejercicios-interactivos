@@ -1,0 +1,17 @@
+/* Práctica «Lee y escribe decimales» (unidad 5): solo lo que no está ya en ../_comun/estilos.css. */
+
+/* Ejercicio 1: la lectura que se oye («cifras»). */
+.lectura-dicha { font-size: 1.2rem; line-height: 1.6; margin: .4rem 0 1rem; overflow-wrap: anywhere; }
+
+/* Opciones largas (lecturas, sumas): una columna, alineadas a la izquierda. */
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; }
+
+/* Ejercicio 2: la cifra por la que se pregunta. */
+.cifra-marcada {
+  display: inline-block; padding: 0 .12em; border-radius: .2em;
+  background: var(--primario-claro); color: var(--primario-oscuro); box-shadow: 0 0 0 2px var(--primario);
+}
+
+/* Ejercicio 4: el campo del decimal que se escribe, centrado bajo la recta. */
+input.campo-numero--decimal { display: block; margin: .4rem auto 1rem; --cifras: 7; }
