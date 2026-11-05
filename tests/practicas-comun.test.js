@@ -52,6 +52,9 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [38, 'signos-producto', 5], [39, 'potencias-enteros', 4], [40, 'jerarquia-enteros', 4], [41, 'parentesis-enteros', 5],
     [42, 'errores3', 3], [43, 'variacion', 5], [44, 'leelo3', 4],
     [45, 'ortografia', 11],
+    // Ortografía en bloques (tarea 134): sección propia de la portada.
+    [64, 'ortografia-tildes', 4], [65, 'ortografia-letras', 4], [66, 'ortografia-puntuacion', 4],
+    [67, 'ortografia-palabras', 3], [68, 'ortografia-ampliacion', 4],
     // Unidad 4 (tarea 98).
     [47, 'que-fraccion', 4], [48, 'equivalentes', 4], [49, 'simplifica', 3], [50, 'compara', 4], [51, 'fraccion-de', 4],
     [52, 'suma-resta', 5], [53, 'multiplica-divide', 5], [54, 'combinadas-fracciones', 3], [55, 'errores4', 3], [56, 'leelo4', 4],

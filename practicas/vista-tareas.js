@@ -9,7 +9,7 @@
 //  - quien no está asignado a una tarea `asignada` la ve como un repaso más, sin
 //    ninguna marca de que otros la tienen obligatoria.
 
-import { CATALOGO, ID_PLANTILLA, UNIDADES, unidadActual, unidadesCon } from './_comun/catalogo.js';
+import { CATALOGO, ID_PLANTILLA, SECCIONES, UNIDADES, unidadActual, unidadesCon } from './_comun/catalogo.js';
 import { leer, escribir, progresoGuardado } from './_comun/base.js';
 import { leerAsignacion, coleccionEspacio } from './_comun/nube.js';
 import { configDeJSON, diaDeFecha, estadoPlazo, tareasPublicadas } from './_comun/tareas.js';
@@ -142,7 +142,8 @@ export const esRepasoDeOtraUnidad = (ficha, tarea) => Boolean(ficha?.unidad) && 
  */
 export function seccionesPorUnidad(hoy, { catalogo = CATALOGO, tareas, unidades = UNIDADES } = {}) {
   const actual = unidadActual(hoy, unidades);
-  const publicadas = catalogo.filter(p => p.disponible && p.id !== ID_PLANTILLA && p.unidad);
+  // Las de una sección propia (la ortografía) no salen en la de su unidad: tienen la suya (`seccionesPropias`).
+  const publicadas = catalogo.filter(p => p.disponible && p.id !== ID_PLANTILLA && p.unidad && !p.seccion);
   const secciones = unidades.filter(u => u.n <= actual).map(u => ({
     unidad: u,
     actual: u.n === actual,
@@ -152,9 +153,20 @@ export function seccionesPorUnidad(hoy, { catalogo = CATALOGO, tareas, unidades 
   return [...secciones.filter(s => s.actual), ...secciones.filter(s => !s.actual).sort((a, b) => b.unidad.n - a.unidad.n)];
 }
 
+/**
+ * Las secciones de la portada que no son una unidad (`SECCIONES` del catálogo), con sus
+ * prácticas publicadas en el orden del catálogo. No dependen del día: una sección sale en
+ * cuanto tiene algo publicado, y si no tiene nada, no sale.
+ */
+export function seccionesPropias({ catalogo = CATALOGO, secciones = SECCIONES } = {}) {
+  return secciones
+    .map(s => ({ seccion: s, practicas: catalogo.filter(p => p.disponible && p.id !== ID_PLANTILLA && p.seccion === s.id) }))
+    .filter(s => s.practicas.length);
+}
+
 export const CLAVE_ABIERTAS = 'practicas.portada.abiertas';
 
-/** Qué unidades plegables dejó abiertas el alumno: { '1': true }. */
+/** Qué unidades plegables dejó abiertas el alumno: { '1': true }. Las secciones propias van por su id: { ortografia: true }. */
 export function unidadesAbiertas(leerClave = leer) {
   try {
     const v = JSON.parse(leerClave(CLAVE_ABIERTAS));

@@ -78,10 +78,23 @@ export const CATALOGO = [
   { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Ortografía española (2026-10-23): no es de Matemáticas. Un ejercicio ★ en cada tarea
   // semanal desde la U3 (decisión de Juan Luis; el reparto por semanas, en
-  // apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md). `unidad: 3` solo decide la
-  // sección de la portada; `transversal` hace que en las tareas de otras unidades no salga
+  // apuntes-1eso-bilingue/comun/CALENDARIO-CURSO-2026-27.md). `unidad: 3` ya no decide nada en
+  // la portada (manda `seccion`); `transversal` hace que en las tareas de otras unidades no salga
   // como «repaso U3». El 45 porque del 33 al 44 son de la unidad 3 (PU2, tareas 79-91).
-  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, nombre: { es: 'Ortografía', en: 'Spanish spelling' }, nEjercicios: 11, disponible: true },
+  //
+  // `seccion` (opcional; desde el 2026-11-03, tarea 134): la práctica no sale en la sección de su
+  // unidad sino en una sección propia de la portada (ver SECCIONES, más abajo). La ortografía son
+  // seis prácticas («bloques»): la 45, «lo más frecuente», y las 64-68, una por tema. Son bloques
+  // separados y no ejercicios nuevos de la 45 porque el progreso se guarda por posición y las
+  // tareas citan `['ortografia', n]`: en una práctica, lo nuevo solo podría ir al final.
+  { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: lo más frecuente', en: 'Spanish spelling: the most frequent slips' }, nEjercicios: 11, disponible: true },
+  // Los bloques nuevos (PU2, tareas 135-139; filas y esqueletos puestos por la 134). Cada uno pone
+  // su `disponible: true` cuando lo publique su tarea de revisión (140-142).
+  { id: 64, slug: 'ortografia-tildes', ruta: 'ortografia-tildes/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las tildes', en: 'Spanish spelling: accents' }, nEjercicios: 4, disponible: false },
+  { id: 65, slug: 'ortografia-letras', ruta: 'ortografia-letras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las letras', en: 'Spanish spelling: letters' }, nEjercicios: 4, disponible: false },
+  { id: 66, slug: 'ortografia-puntuacion', ruta: 'ortografia-puntuacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: puntuación y mayúsculas', en: 'Spanish spelling: punctuation and capitals' }, nEjercicios: 4, disponible: false },
+  { id: 67, slug: 'ortografia-palabras', ruta: 'ortografia-palabras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: palabras que se confunden', en: 'Spanish spelling: confusable words' }, nEjercicios: 3, disponible: false },
+  { id: 68, slug: 'ortografia-ampliacion', ruta: 'ortografia-ampliacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: ampliación', en: 'Spanish spelling: going further' }, nEjercicios: 4, disponible: false },
   // Unidad 4, Fractions (PU2, tareas 99-108; filas puestas por la 98 el 2026-10-26, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (109-111).
   { id: 47, slug: 'que-fraccion', ruta: 'que-fraccion/', unidad: 4, nombre: { es: '¿Qué fracción es?', en: 'What fraction is it?' }, nEjercicios: 4, disponible: true },
@@ -112,6 +125,15 @@ export const UNIDADES = [
   { n: 2, desde: '2026-10-13', titulo: { es: 'Divisibilidad', en: 'Divisibility' } },
   { n: 3, desde: '2026-11-16', titulo: { es: 'Números enteros', en: 'Integers' } },
   { n: 4, desde: '2026-12-14', titulo: { es: 'Fracciones', en: 'Fractions' } },
+];
+
+/**
+ * Las secciones de la portada que no son una unidad (las prácticas con `seccion`). Salen debajo
+ * de la unidad actual, plegadas: el alumno llega a sus ejercicios por la tarea semanal, y la
+ * sección es para practicar por su cuenta.
+ */
+export const SECCIONES = [
+  { id: 'ortografia', titulo: { es: 'Ortografía', en: 'Spanish spelling' } },
 ];
 
 /** La unidad actual el día `hoy` ('AAAA-MM-DD'): la última cuyo `desde` ya ha llegado (o la primera, antes de empezar el curso). */

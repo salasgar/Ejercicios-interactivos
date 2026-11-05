@@ -271,6 +271,16 @@ destreza cubre: [docs/practicas-unidad4.md](docs/practicas-unidad4.md).
 Cada semana tiene su tarea de revisión y publicación (tareas 109-111 del reparto), que deja
 la propuesta de la tarea de la app de esa semana.
 
+## Ortografía (`practicas/`, sección propia)
+
+La ortografía española tiene su propia sección en la portada, «Ortografía», con seis
+bloques: `ortografia` (id 45, «lo más frecuente») y `ortografia-tildes`, `-letras`,
+`-puntuacion`, `-palabras` y `-ampliacion` (ids 64-68, en construcción). Cada ejercicio
+de un bloque tiene tres niveles que se eligen según cómo vaya el alumno
+(`practicas/_comun/nivel.js`), y los bloques comparten sus piezas
+(`practicas/_comun/ortografia.js`). Qué hay, los niveles y cómo se escribe un ejercicio:
+[docs/practicas-ortografia.md](docs/practicas-ortografia.md).
+
 ## Puesta en marcha de Firebase (una sola vez)
 
 Los resultados se guardan en Firebase (plan gratuito Spark). Hay que crear el

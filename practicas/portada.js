@@ -2,7 +2,8 @@
 // las anteriores, plegadas), cada una con sus tareas y sus prácticas
 // publicadas (`disponible` en el catálogo). En las unidades 2, 3 y 4 las prácticas
 // van ordenadas por la semana de la unidad en que tocan. Lleva lo que ha hecho el
-// alumno según lo guardado en este navegador.
+// alumno según lo guardado en este navegador. Debajo de la unidad actual, plegadas,
+// las secciones que no son de una unidad (la «Ortografía», desde la tarea 134).
 //
 // El enlace que reparte el profesor es `practicas/?c=ABCD`: la portada guarda
 // el código y todas las prácticas lo encuentran. «Cerrar sesión» lo olvida
@@ -17,7 +18,7 @@ import { leer, escribir, borrar, cerrarSesion, progresoGuardado } from './_comun
 import { T, esc } from './_comun/textos.js';
 import { TAREAS, estadoTarea, fechaISO } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
-import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, unidadesAbiertas, recordarUnidad, contextoGuardado, identificar } from './vista-tareas.js';
+import { progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, seccionesPorUnidad, seccionesPropias, unidadesAbiertas, recordarUnidad, contextoGuardado, identificar } from './vista-tareas.js';
 
 // El orden de la portada no es el del catálogo (que no se puede renumerar):
 // es el de la unidad. Cada bloque es de una unidad (`unidad`); las unidades sin
@@ -162,6 +163,13 @@ export const DESCRIPCION = {
   'combinadas-fracciones': { es: 'Toca la operación que va primero y resuelve paso a paso, con fracciones y paréntesis.', en: 'Tap the operation that comes first and work it out step by step, with fractions and brackets.' },
   errores4: { es: 'Procedimientos de la unidad 4: si están bien o mal, en qué línea está el error y cómo se arregla.', en: 'Worked answers from unit 4: right or wrong, which line has the mistake and how to fix it.' },
   leelo4: { es: 'El vocabulario de las fracciones en inglés: empareja, lee fracciones y cuentas, entiende la pregunta y escribe lo que oyes.', en: 'Fraction vocabulary in English: match, read fractions and calculations, understand the question and write what you hear.' },
+  // La sección «Ortografía» (tarea 134): las prácticas van solo en español; la descripción, en los dos idiomas.
+  ortografia: { es: 'Lo que más se escribe mal: a o ha, e o he, echo o hecho, porque o por qué, las comas, los signos ¿ ¡ y las tildes de qué, cómo, tú, él…', en: 'The most common slips in Spanish: a or ha, e or he, echo or hecho, porque or por qué, commas, ¿ ¡ and the accents on qué, cómo, tú, él…' },
+  'ortografia-tildes': { es: 'La sílaba tónica, cuándo lleva tilde una palabra, diptongos e hiatos, y las palabras de Matemáticas.', en: 'The stressed syllable, when a word takes an accent, diphthongs and hiatus, and maths words.' },
+  'ortografia-letras': { es: 'Hay, ahí o ay; a ver o haber; b o v; g o j; y las demás letras que se confunden.', en: 'Hay, ahí or ay; a ver or haber; b or v; g or j; and the other letters that get mixed up.' },
+  'ortografia-puntuacion': { es: 'Las mayúsculas, el punto y la coma, los dos puntos y los puntos suspensivos, y cómo se escribe un correo al profesor.', en: 'Capital letters, full stops and commas, colons and ellipses, and how to write an email to your teacher.' },
+  'ortografia-palabras': { es: 'Palabras juntas o separadas, palabras que suenan igual y se escriben distinto, y los números y los símbolos.', en: 'Words written together or apart, words that sound the same but are spelt differently, and numbers and symbols.' },
+  'ortografia-ampliacion': { es: 'Para ir más allá de 1.º: porque, por qué, porqué y por que; formas verbales; siglas y prefijos; y la puntuación avanzada.', en: 'Going further: porque, por qué, porqué and por que; verb forms; acronyms and prefixes; and advanced punctuation.' },
 };
 
 const PANEL = { es: 'Panel del profesor', en: 'Teacher’s panel' };
@@ -251,9 +259,13 @@ function htmlTareas(t, tareas, actual) {
       <ul class="lista">${ordenTareas(tareas, actual).map(fila).join('')}</ul>`;
 }
 
+/** Una sección propia (la ortografía) se pliega y solo sale abierta si el alumno la abrió (se recuerda por su id). */
+export const seccionSaleAbierta = (id, abiertas = {}) => Boolean(abiertas[id]);
+
 /** Una sección de unidad: sus tareas y sus prácticas (con subtítulos si la unidad tiene bloques). */
 function htmlUnidad(t, seccion, filaPractica) {
-  const grupos = bloquesPublicados(CATALOGO, seccion.unidad.n);
+  // Las de una sección propia (`seccion` en el catálogo) salen en la suya, no en la de su unidad.
+  const grupos = bloquesPublicados(CATALOGO.filter(p => !p.seccion), seccion.unidad.n);
   const practicas = grupos.map(b => `
       ${b.titulo ? `<h4 class="portada__subbloque">${b.titulo[idioma]}</h4>` : ''}
       <ul class="lista">${b.practicas.map(filaPractica).join('')}</ul>`).join('');
@@ -282,11 +294,18 @@ function pintar() {
   };
   // Todas las unidades se pliegan. La actual sale siempre abierta; las anteriores, plegadas salvo las que abrió el alumno (se recuerda).
   const abiertas = unidadesAbiertas();
-  const secciones = seccionesPorUnidad(fechaISO(new Date()), { tareas, unidades }).map(s => {
+  const porUnidad = seccionesPorUnidad(fechaISO(new Date()), { tareas, unidades });
+  const deUnidades = porUnidad.map(s => {
     const titulo = t.unidad_titulo(s.unidad.n, s.unidad.titulo[idioma]);
     return `<details class="portada__unidad" data-unidad="${s.unidad.n}" data-actual="${Boolean(s.actual)}"${unidadSaleAbierta(s, abiertas) ? ' open' : ''}>
           <summary><h2 class="portada__titulo-unidad">${titulo}</h2></summary>${htmlUnidad(t, s, fila)}</details>`;
-  }).join('');
+  });
+  const propias = seccionesPropias().map(({ seccion, practicas }) => `<details class="portada__unidad" data-seccion="${seccion.id}"${seccionSaleAbierta(seccion.id, abiertas) ? ' open' : ''}>
+          <summary><h2 class="portada__titulo-unidad">${seccion.titulo[idioma]}</h2></summary>
+          <ul class="lista">${practicas.map(fila).join('')}</ul></details>`);
+  // Las secciones propias, debajo de la unidad actual y encima de las anteriores (arriba del todo si la actual no sale).
+  const hayActual = Boolean(porUnidad[0]?.actual);
+  const secciones = [...deUnidades.slice(0, hayActual ? 1 : 0), ...propias, ...deUnidades.slice(hayActual ? 1 : 0)].join('');
   const frase = { 'no-existe': t.entrada_no_existe, 'sin-red': t.espacio_sin_red, 'sin-tareas': t.espacio_sin_tareas }[avisoEspacio];
   app.innerHTML = `
     <section>
@@ -298,6 +317,9 @@ function pintar() {
     </section>`;
   for (const d of app.querySelectorAll('details[data-unidad]:not([data-actual="true"])')) {
     d.addEventListener('toggle', () => recordarUnidad(d.dataset.unidad, d.open));
+  }
+  for (const d of app.querySelectorAll('details[data-seccion]')) {
+    d.addEventListener('toggle', () => recordarUnidad(d.dataset.seccion, d.open));
   }
   app.querySelector('#cerrar-sesion')?.addEventListener('click', () => {
     cerrarSesion();
