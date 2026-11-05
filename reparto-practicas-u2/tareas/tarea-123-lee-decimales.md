@@ -113,6 +113,11 @@ Modelo de interfaz: `practicas/leelo4/` (elegir la lectura) y `practicas/que-fra
 - El test compara decimales **por valor** (`Decimal.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
 - (U4) Las prácticas se reabrieron en bloque el 28-10 y el 30-10 por copiar casos de las hojas y de los exámenes escritos después: excluye lo que exista al escribirla y deja la huella de examen lista para que la publicación solo tenga que cotejar.
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min.
+- (Cierre de la 123, 5-11) Duración real ~35 min. Un distractor «tres coma setenta y cinco» como *lectura en español* vale (hay dos lecturas válidas): el generador solo pone «coma» en las falsas y una de las dos lecturas en la buena; con parte entera 0, `lecturasValidas` da «cero unidades y…», que suena raro: se filtra.
+- Las candidatas a distractor de un decimal se barajan y se dedupen **por valor** contra la buena y entre sí; con `lee-sin-coma` y `coma-a-la-derecha` de un decimal con 1 cifra salen el mismo valor (37): hacen falta candidatas de sobra o el ítem se queda en 2 falsas (el generador reintenta).
+- Para `a-decimal` (463/100 → 4,63) hay que permitir 3 saltos a la izquierda de la coma (−3…+2); con solo ±2 y tope de 3 cifras las fracciones con denominador 1000 nunca tenían 3 distractores y el generador no terminaba.
+- La recta guarda los extremos con las cifras de la marca (7,0): para el feedback, `normalizar()` (2,2 y no 2,20).
+- El `toque` de la recta se simula en las pruebas con `dispatchEvent(new MouseEvent('click', { bubbles: true }))` sobre `.rd-toque`.
 
 ## Prohibido (propio de esta tarea)
 
