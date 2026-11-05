@@ -117,6 +117,15 @@ Las raíces no entran en la app (en las hojas, solo de reto). Si el §7 de
 - Para probar en el navegador sin dejar nada en el árbol compartido: servir una carpeta del scratchpad con enlaces a `practicas/`, `css/`, `src/`, `divisores/` y `herramientas/`; Chrome guarda en caché los módulos: `fetch(url, { cache: 'reload' })`. Sin la extensión: Chrome headless con perfil propio (`--user-data-dir=<scratchpad>/perfil`), matando el proceso al acabar (un headless huérfano bloquea el Chrome normal). En este Mac no hay `timeout`.
 - En zsh una variable con varias rutas no se parte en palabras: `F=(a b c); git add "${F[@]}"`.
 - Duración real de la 98 en la U4: ~30 min de la estimación de 1 h 45 min.
+- **Hecha el 2026-11-05 (commit 7b5f2bb) en 17 min de sesión**, con un subagente que leyó las siete fichas y el
+  inventario para el §7 mientras se escribía `decimales.js`. Lo aprendido:
+  - El esqueleto dice «La práctica «x» no está en practicas/_comun/catalogo.js» si el navegador tiene el catálogo viejo
+    en caché: `fetch('/practicas/_comun/catalogo.js', { cache: 'reload' })` (y lo mismo con el `practica.js`) antes de
+    recargar.
+  - En un test, «media unidad» con BigInt se calcula multiplicando y no dividiendo: `(da * dr) / (2n * 10n ** c)` da
+    0n cuando c = 0 y el test del empate salta en falso.
+  - El §7 sale bien encargándolo a un subagente con el formato exacto del de la U4 (recorte de «Qué es» a 103
+    caracteres con «…»); hay que revisar sus asignaciones dudosas, que las deja razonadas.
 
 ## Prohibido (propio de esta tarea)
 
