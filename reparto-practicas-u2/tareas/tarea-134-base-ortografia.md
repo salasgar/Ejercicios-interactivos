@@ -210,6 +210,15 @@ fallado una vez como mucho. Los umbrales son constantes en `nivel.js` con su por
   y eso también vale (un alumno con código que escriba `?nivel=3` a mano solo se perjudica a sí mismo). Decide y anótalo.
 - Caché de módulos ES: tras un cambio, recarga forzada; `location.reload()` no basta.
 - Duración real de la base de la U4 (98) y de la U3 (79): 1 h-1 h 30 de sesión cada una; esta tiene más piezas.
+- **Hecha (2026-11-05, commit 43a2c00), duración real ~80 min de sesión** en dos (la caída del 3-11 escribió el código en
+  ~70 min; el relevo, tests, doc y navegador en 9). Lo aprendido, por si hay que repetir algo parecido:
+  - En el shell de Claude Code (zsh) una variable con varias rutas (`R="a b c"; git add $R`) **no se parte**: el
+    `git add`/`commit` falla con «pathspec did not match». Usa un array: `R=(a b c); git add "${R[@]}"`.
+  - `resize_window` de Claude in Chrome no estrecha una ventana maximizada (sigue a 1414 px). Para mirar a 375 px,
+    un `<iframe style="width:375px">` con la página dentro, desde `javascript_tool`.
+  - Las piezas de `_comun/ortografia.js` se prueban con clics sin ejercicio de demostración: en el iframe de un
+    esqueleto, `import('/practicas/_comun/ortografia.js')` y llamar a `montarHueco` etc. con un `api` de mentira
+    (`{ esc, respondido, responder }`) que apunte las llamadas.
 
 ## Prohibido (propio de esta tarea)
 
