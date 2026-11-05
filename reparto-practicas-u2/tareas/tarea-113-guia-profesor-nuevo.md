@@ -94,6 +94,18 @@ no funciona o no se entiende como reabierta de la tarea que corresponda o como p
 
 - Las cuentas A y B y sus contraseñas no se escriben en ningún fichero ni en `hechos/`.
 - El informe diario (rutina de las 21:30) es solo de Juan Luis: la guía no lo promete a los compañeros.
+- (s-20261105T221100-40dab58f, 5-11) **Las cuentas A y B no entran en el panel**: son de correo y contraseña, y
+  el panel solo tiene «Entrar con Google». El alta de un profesor nuevo se probó con el Gmail personal de Juan
+  Luis en un **perfil de invitado** de Chrome (menú del perfil → «Abrir perfil de invitado»); cerrar esa ventana
+  y abrir otra es «otro ordenador» (prueba de «Descifrar»). El Gmail quedó de baja.
+- **El banco REST (`probar-reglas.mjs`) borra al limpiar `config/tareas`, `privado/nombres` y el documento del
+  espacio REALES de A**, también lo que había antes: tras pasarlo, los códigos de prueba 62 y 63 se quedan sin
+  tareas.
+- La cuenta de murciaeduca del Chrome de Juan Luis no ve la lista de usuarios de Authentication en la consola
+  («pídele a un propietario»): los correos de A y B no se sacan de ahí; los sabe él.
+- GitHub Pages sirve los `.md` sin formato: el enlace del panel a la guía va a la vista de GitHub (`/blob/main/…`).
+- Para leer el estado de la nube con la sesión de Juan Luis, `javascript_tool` en la pestaña de su panel:
+  `iniciarFirebase()` de `/Ejercicios-interactivos/src/firebase.js` y REST con `getIdToken()` (solo lecturas).
 
 ## Prohibido (propio de esta tarea)
 
