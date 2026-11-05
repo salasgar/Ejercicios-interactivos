@@ -112,7 +112,8 @@ Modelo de interfaz: `practicas/equivalentes/` y `practicas/simplifica/` de la U4
 - Puede haber varias sesiones a la vez en este árbol (las prácticas 123-129 van en paralelo): no metas en tu commit nada que no sea tuyo, y nada de `git stash`. Si el `http.server` del 8080 de otra sesión se cae, levanta el tuyo en otro puerto y mátalo al acabar.
 - El test compara decimales **por valor** (`Decimal.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
 - (U4) Las prácticas se reabrieron en bloque el 28-10 y el 30-10 por copiar casos de las hojas y de los exámenes escritos después: excluye lo que exista al escribirla y deja la huella de examen lista para que la publicación solo tenga que cotejar.
-- Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min.
+- Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min (la 127: 16 min).
+- (127) La base ya escribe «¡Bien!» / «Correct!» delante de tu feedback: no empieces el tuyo con «Correcto:». Los distractores de `dividir(…, 2)` salen con ceros (5,00): pásalos por `.normalizar()` antes de enseñarlos. No menciones «números mixtos» a los alumnos aunque el acta los deje fuera: es introducirles algo que no se ha dado.
 
 ## Prohibido (propio de esta tarea)
 
