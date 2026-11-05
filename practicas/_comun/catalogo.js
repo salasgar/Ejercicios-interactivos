@@ -107,6 +107,15 @@ export const CATALOGO = [
   { id: 54, slug: 'combinadas-fracciones', ruta: 'combinadas-fracciones/', unidad: 4, nombre: { es: '¿Qué se hace primero? Con fracciones', en: 'What comes first? With fractions' }, nEjercicios: 3, disponible: false },
   { id: 55, slug: 'errores4', ruta: 'errores4/', unidad: 4, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
   { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
+  // Unidad 5, Decimals (PU2, tareas 123-129; filas puestas por la 122 el 2026-11-05, con un esqueleto en
+  // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (130-131).
+  { id: 57, slug: 'lee-decimales', ruta: 'lee-decimales/', unidad: 5, nombre: { es: 'Lee y escribe decimales', en: 'Read and write decimals' }, nEjercicios: 4, disponible: false },
+  { id: 58, slug: 'compara-decimales', ruta: 'compara-decimales/', unidad: 5, nombre: { es: 'Compara, ordena y redondea', en: 'Compare, order and round' }, nEjercicios: 4, disponible: false },
+  { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: false },
+  { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 5, disponible: false },
+  { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: false },
+  { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
+  { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];
@@ -117,7 +126,7 @@ export const ID_PLANTILLA = 31;
 /**
  * Las unidades del curso. `desde` ('AAAA-MM-DD') es el día en que la portada
  * pasa a tenerla por unidad actual. Las fechas de la 1 y la 2 son de relleno
- * (importan las de las unidades 3 y 4: el 16-11 y el 14-12 la portada cambia sola). Una
+ * (importan las de las unidades 3, 4 y 5: el 16-11, el 14-12 y el 18-1 la portada cambia sola). Una
  * unidad sin prácticas ni tareas publicadas no sale.
  */
 export const UNIDADES = [
@@ -125,6 +134,7 @@ export const UNIDADES = [
   { n: 2, desde: '2026-10-13', titulo: { es: 'Divisibilidad', en: 'Divisibility' } },
   { n: 3, desde: '2026-11-16', titulo: { es: 'Números enteros', en: 'Integers' } },
   { n: 4, desde: '2026-12-14', titulo: { es: 'Fracciones', en: 'Fractions' } },
+  { n: 5, desde: '2027-01-18', titulo: { es: 'Números decimales', en: 'Decimals' } },
 ];
 
 /**

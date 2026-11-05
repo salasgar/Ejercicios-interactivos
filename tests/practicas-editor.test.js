@@ -99,7 +99,7 @@ test('la plantilla: sin tareas las sustituye; con tareas las añade con ids nuev
 test('tareasPorUnidad sigue el orden de UNIDADES y deja vacías las que no tienen tareas', () => {
   const g = tareasPorUnidad({ ...vacia(), tareas: [bien({ id: 1, unidad: 2 }), bien({ id: 2, unidad: 1 })] });
   assert.deepEqual(g.map(x => x.unidad.n), UNIDADES.map(u => u.n));
-  assert.deepEqual(g.map(x => x.tareas.length), [1, 1, 0, 0]);
+  assert.deepEqual(g.map(x => x.tareas.length), [1, 1, 0, 0, 0]);
 });
 
 test('ejerciciosDeUnidad: las prácticas disponibles de esa unidad y, detrás, las transversales; sin la plantilla', () => {

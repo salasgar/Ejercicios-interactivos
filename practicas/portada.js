@@ -103,6 +103,22 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo4'],
   },
+  // Unidad 5 (PU2, tarea 122): cada práctica sale en su bloque cuando su tarea de la semana la publica (130-131).
+  {
+    unidad: 5,
+    titulo: { es: 'Semana 1 · Leer, comparar, redondear, sumar y restar', en: 'Week 1 · Reading, comparing, rounding, adding and subtracting' },
+    slugs: ['lee-decimales', 'compara-decimales', 'suma-resta-decimales'],
+  },
+  {
+    unidad: 5,
+    titulo: { es: 'Semana 2 · Multiplicar, dividir, fracciones y decimales, errores', en: 'Week 2 · Multiplying, dividing, fractions and decimals, mistakes' },
+    slugs: ['multiplica-divide-decimales', 'fraccion-decimal', 'errores5'],
+  },
+  {
+    unidad: 5,
+    titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
+    slugs: ['leelo5'],
+  },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
 
@@ -163,6 +179,14 @@ export const DESCRIPCION = {
   'combinadas-fracciones': { es: 'Toca la operación que va primero y resuelve paso a paso, con fracciones y paréntesis.', en: 'Tap the operation that comes first and work it out step by step, with fractions and brackets.' },
   errores4: { es: 'Procedimientos de la unidad 4: si están bien o mal, en qué línea está el error y cómo se arregla.', en: 'Worked answers from unit 4: right or wrong, which line has the mistake and how to fix it.' },
   leelo4: { es: 'El vocabulario de las fracciones en inglés: empareja, lee fracciones y cuentas, entiende la pregunta y escribe lo que oyes.', en: 'Fraction vocabulary in English: match, read fractions and calculations, understand the question and write what you hear.' },
+  // Unidad 5 (tarea 122), sacadas de las fichas 123-129.
+  'lee-decimales': { es: 'Lee y escribe decimales en inglés, di cuánto vale cada cifra, pásalos a fracción decimal y sitúalos en la recta.', en: 'Read and write decimals in English, say what each digit is worth, write them as decimal fractions and place them on the number line.' },
+  'compara-decimales': { es: 'Compara sin caer en la trampa de las cifras, ordena, busca un decimal entre dos y redondea a la unidad, a la décima y a la centésima.', en: 'Compare without falling for the number of digits, put decimals in order, find one in between and round to the nearest whole number, tenth and hundredth.' },
+  'suma-resta-decimales': { es: 'Suma y resta con las comas en columna, también con naturales, problemas de compras y de medidas, y multiplica y divide por 10, 100 y 1000.', en: 'Add and subtract lining up the decimal points, also with whole numbers, shopping and measurement problems, and multiply and divide by 10, 100 and 1000.' },
+  'multiplica-divide-decimales': { es: 'Coloca la coma en el producto, divide entre un natural y entre un decimal, comprueba una división con su resto y resuelve problemas de precios y repartos.', en: 'Place the point in a product, divide by a whole number and by a decimal, check a division with its remainder and solve price and sharing problems.' },
+  'fraccion-decimal': { es: 'De fracción a decimal dividiendo, exacto o periódico, de decimal a fracción irreducible, los pares que hay que saberse y una fracción frente a un decimal.', en: 'Fractions to decimals by dividing, terminating or recurring, decimals to fractions in their simplest form, the pairs to learn by heart and a fraction against a decimal.' },
+  errores5: { es: 'Cálculos con decimales de la unidad 5: si están bien o mal, en qué paso está el error, qué error es y cómo se arregla.', en: 'Worked calculations with decimals from unit 5: right or wrong, which step has the mistake, what the mistake is and how to fix it.' },
+  leelo5: { es: 'El vocabulario de los decimales en inglés: la palabra, lee decimales y cantidades de dinero, entiende la consigna y completa la frase.', en: 'Decimal vocabulary in English: learn the words, read decimals and amounts of money, understand the instruction and fill in the sentence.' },
   // La sección «Ortografía» (tarea 134): las prácticas van solo en español; la descripción, en los dos idiomas.
   ortografia: { es: 'Lo que más se escribe mal: a o ha, e o he, echo o hecho, porque o por qué, las comas, los signos ¿ ¡ y las tildes de qué, cómo, tú, él…', en: 'The most common slips in Spanish: a or ha, e or he, echo or hecho, porque or por qué, commas, ¿ ¡ and the accents on qué, cómo, tú, él…' },
   'ortografia-tildes': { es: 'La sílaba tónica, cuándo lleva tilde una palabra, diptongos e hiatos, y las palabras de Matemáticas.', en: 'The stressed syllable, when a word takes an accent, diphthongs and hiatus, and maths words.' },

@@ -35,9 +35,10 @@ export const VERSION = 1;
 /**
  * Qué destrezas del inventario trabaja cada práctica: las de la unidad 2, como en el §7 de
  * docs/practicas-unidad2.md, las de la unidad 3, como en el §7 de docs/practicas-unidad3.md
- * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91), y las de la unidad 4, como en
- * el §7 de docs/practicas-unidad4.md (tarea 98, fichas 99-108 e inventario aprobado el 26-10).
- * En el orden del inventario.
+ * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91), las de la unidad 4, como en
+ * el §7 de docs/practicas-unidad4.md (tarea 98, fichas 99-108 e inventario aprobado el 26-10), y
+ * las de la unidad 5, como en el §7 de docs/practicas-unidad5.md (tarea 122, fichas 123-129 e
+ * inventario aprobado el 3-11). En el orden del inventario.
  */
 export const DESTREZAS = {
   arbol: ['U2-2B-02', 'U2-2C-08', 'U2-2C-09', 'U2-2C-11', 'U2-2C-13'],
@@ -81,6 +82,14 @@ export const DESTREZAS = {
   'que-fraccion': ['U4-1B-02', 'U4-1B-03', 'U4-1C-01', 'U4-1C-02', 'U4-1C-03', 'U4-1C-04', 'U4-1C-05'],
   simplifica: ['U4-1C-13', 'U4-1C-14', 'U4-1C-15', 'U4-1C-22'],
   'suma-resta': ['U4-1C-16', 'U4-2A-01', 'U4-2A-04', 'U4-2C-01', 'U4-2C-02', 'U4-2C-03', 'U4-2C-04', 'U4-2C-07', 'U4-3C-11'],
+  // Unidad 5
+  'compara-decimales': ['U5-1C-05', 'U5-1C-07', 'U5-1C-08', 'U5-1C-09', 'U5-1C-10', 'U5-1C-11'],
+  errores5: ['U5-2C-17', 'U5-2C-18'],
+  'fraccion-decimal': ['U5-2C-08', 'U5-2C-09', 'U5-2C-10', 'U5-2C-11', 'U5-2C-12'],
+  'lee-decimales': ['U5-1B-01', 'U5-1B-02', 'U5-1B-03', 'U5-1B-04', 'U5-1C-01', 'U5-1C-03', 'U5-1C-04', 'U5-1C-06'],
+  leelo5: ['U5-1B-01', 'U5-1B-02', 'U5-1B-03', 'U5-1B-04', 'U5-1B-05', 'U5-1B-06', 'U5-1B-07', 'U5-2B-01', 'U5-2B-02', 'U5-2B-03'],
+  'multiplica-divide-decimales': ['U5-2A-01', 'U5-2A-02', 'U5-2A-03', 'U5-2C-01', 'U5-2C-02', 'U5-2C-03', 'U5-2C-04', 'U5-2C-05', 'U5-2C-06', 'U5-2C-07', 'U5-2C-17'],
+  'suma-resta-decimales': ['U5-1A-01', 'U5-1A-02', 'U5-1C-13', 'U5-1C-14', 'U5-1C-15', 'U5-1C-16'],
 };
 
 // --- Qué se guarda -------------------------------------------------------------------
