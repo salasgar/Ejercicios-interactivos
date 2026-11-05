@@ -1,0 +1,41 @@
+/* Práctica «De fracción a decimal y vuelta» (unidad 5): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+/* Campo del decimal que se escribe (ejercicio 1), centrado bajo la fracción. */
+input.campo-numero--decimal { display: block; margin: .4rem auto 1rem; --cifras: 7; }
+
+/* El hueco de una cuenta (□ o el signo que se elige). */
+.hueco-fd {
+  display: inline-block; min-width: 1.6em; padding: 0 .25em; margin: 0 .15em; text-align: center;
+  border-bottom: 3px solid var(--primario); color: var(--primario-oscuro); font-weight: 700;
+}
+
+/* Ejercicio 2: los campos de numerador y denominador van dentro de la raya. */
+.frac input.campo-numero { margin: 0 auto; font-size: 1.1rem; --cifras: 4; }
+
+/* Ejercicio 4: los tres signos, grandes y en fila. */
+.elecciones--signos .eleccion { font-size: 1.6rem; min-height: 64px; }
+
+/* Ejercicio 3: dos columnas de fichas; las parejas comparten color. */
+.parejas { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; margin-bottom: 1rem; }
+.parejas__titulo { color: var(--texto-suave); font-size: .9rem; margin: 0 0 .4rem; text-align: center; }
+.parejas__col > div { display: grid; gap: .5rem; }
+.pareja-ficha {
+  background: #fff; color: var(--texto); border: 3px solid var(--borde); min-height: 58px;
+  font-size: 1.25rem; font-variant-numeric: tabular-nums; padding: .3rem .5rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.pareja-ficha .frac { font-size: 1.1rem; }
+.pareja-ficha--elegida { border-color: var(--primario); background: var(--primario-claro); box-shadow: 0 0 0 3px var(--primario-claro); }
+.pareja-ficha--c0 { border-color: #1d4ed8; background: #dbeafe; }
+.pareja-ficha--c1 { border-color: #b45309; background: #fef3c7; }
+.pareja-ficha--c2 { border-color: #7e22ce; background: #f3e8ff; }
+.pareja-ficha--c3 { border-color: #0f766e; background: #ccfbf1; }
+.pareja-ficha--c4 { border-color: #be185d; background: #fce7f3; }
+.pareja-ficha--c5 { border-color: #4d7c0f; background: #ecfccb; }
+.pareja-ficha--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); opacity: 1 !important; }
+.pareja-ficha--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); text-decoration: line-through; opacity: 1 !important; }
+.pareja-ficha:disabled { opacity: .85; }
