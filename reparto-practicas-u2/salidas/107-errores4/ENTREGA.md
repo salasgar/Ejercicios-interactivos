@@ -18,7 +18,7 @@ Las cinco cosas de `hechos/reabiertas/107--s-20261028T182802-3d6fcf1b-revision.m
 2. `opcionesDeNombre` descarta todo nombre que, aplicado a los números del ítem, dé el valor mostrado (`erroresQueExplican`, la misma fuerza bruta de la revisión, ahora en `logica.js` y en el test). Cero ofrecidos que expliquen el resultado en 3000 ítems.
 3 y 4. Las comparaciones `compara-solo-numeradores/denominadores` solo con numeradores **y** denominadores distintos (así «hay que mirar los dos términos» es verdad) y solo con pares en los que el error cambia la relación; nunca se muestra «=».
 5. `suma-arriba-y-abajo`: en los ejercicios 1 y 3 la igualdad falsa es el error sobre las fracciones que se ven (`1/3 + 1/2 = 2/5`); en el 2 se conservan las tres líneas (error en el paso 2→3).
-Textos: «una de las 6 partes iguales de 42», «Es el mismo resultado equivocado» / «That is the same wrong result as in the equality», «so it is greater», «the exponent applies to», el detalle del ej. 1 dice «igualdad o comparación», la introducción del ej. 3 usa `5/6 : 10/9` (no `2/3 : 4/5`, que es de un examen semanal), y en el ej. 2 la potencia se ve en la línea 2 (`2 · 2/3`, que es lo que hizo el compañero).
+Textos: «una de las 6 partes iguales de 42», «Es el mismo resultado equivocado» / «That is the same wrong result as in the equality», «so it is greater», «the exponent applies to», el detalle del ej. 1 dice «igualdad o comparación», la introducción del ej. 3 usa `5/6 : 10/9` (no el ejemplo anterior, que era de un examen semanal), y en el ej. 2 la potencia se ve en la línea 2 (`2 · 2/3`, que es lo que hizo el compañero).
 Pruebas: `node --test tests/practicas-comun.test.js tests/practicas-errores4.test.js` 62/62; `npm test` 1344/1344 (4 tests nuevos de fuerza bruta). Navegador (Chrome headless con clics, es/en, 375 y 1100 px, los tres ejercicios, acierto y fallo): sin desbordes ni errores de consola. Limitación de mi script: no pulsa «+/−», así que las respuestas negativas del ej. 3 no se comprobaron con clics (el campo no cambió).
 Sigue sin publicar (`disponible`): lo hace la tarea de publicación de la semana 3.
 
@@ -35,8 +35,8 @@ origen común: la pareja (plantilla, parámetros) que produce `conParams`, de la
 igualdades `3/5 + 1/3 = 4/8` y `2/3 + 3/4 = 5/7`; ej. 3 (la respuesta de Ana), `2/5 + 1/4 = 3/9`.
 Las tres son la plantilla `suma-arriba-y-abajo` con sus parámetros exactos (`PARAMS_HOJA`).
 
-**Examen final (por huella, nunca en claro):** el paso intermedio de la caja 5b de Sara, modelo 1
-(`1/4 + 2/3 = 3/7`, también `suma-arriba-y-abajo`), una huella en `HUELLAS_EXAMEN`. Revisadas y
+**Examen final (por huella, nunca en claro):** un paso intermedio de una caja «Find the mistake» del modelo 1
+(también `suma-arriba-y-abajo`), una huella en `HUELLAS_EXAMEN`. Revisadas y
 descartadas por no poder producirse con las cotas actuales (denominador 2-8 para las sumas, 3-6
 para las potencias): U4-2C-06 (seis variantes, denominadores 9 a 12) y U4-3C-11 (los seis casos:
 dos de `suma-arriba-y-abajo` con denominadores 9-11; dos de división, sin plantilla en esta

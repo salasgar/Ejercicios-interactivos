@@ -740,3 +740,16 @@ números); ni porcentajes, ni segundo grado, ni sistemas, ni dos incógnitas.
 3. **Semana 2**: 148, 149 → **157** (jue 4-2). **Semana 3**: 150, 151, 152 → **158** (jue 11-2). **Semana 4**: 153, 154 → **159** (jue 18-2).
 4. **160** con Juan Luis, por semanas, cuando cada publicación diga qué queda publicado (la semana 1 antes del mié 27-1).
 Las tareas de Classroom de cada semana las programa la tarea 34 del reparto de la U6 cuando la 160 las haya montado.
+
+## Tareas 162-163: tercera publicación de la U4, las cinco prácticas sin publicador (2026-11-05, s-20261105T221931-c3838727)
+
+Dadas de alta el 5-11 por encargo de Juan Luis («PU2: tarea de publicación. Dala de alta.»). La 119 y la 120 (2-11) publicaron
+`equivalentes` y `compara` y reabrieron otra vez las cinco prácticas de las semanas 2 y 3 de la U4; las cinco reabiertas se cerraron ese
+mismo día (LISTAS, sin publicar) y ninguna tarea las publicaba. Sin publicarlas no avanzan la 121 (semanas 2 y 3 en el panel) ni la tarea
+29 del reparto de la U4 (Classroom).
+
+- **162 → 163** (ALTO, en cadena por `catalogo.js` y `docs/practicas-unidad4.md`, como 119 → 120): la 162 publica `fraccion-de` y
+  `suma-resta` (semana 2; antes del jue 17-12) y la 163 `multiplica-divide`, `combinadas-fracciones` y `errores4` (semana 3; antes del mar
+  22-12, límite jue 7-1), mejor las dos antes del mar 8-12 (plazo de la 121). Cada una deja al día la propuesta de la tarea de su semana,
+  que la 121 monta con Juan Luis. **No van a la vez que la 122** (base de la U5, EN CURSO desde el 5-11 a las 22:20Z), que también toca
+  `catalogo.js`: la 162 se coge cuando la 122 esté LISTA (la 134, que tenía `catalogo.js` sin commitear, cerró el 5-11, 43a2c00).

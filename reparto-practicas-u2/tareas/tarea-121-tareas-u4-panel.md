@@ -1,7 +1,7 @@
 # Tarea 121 · Montar en el panel de la app las tres tareas semanales de la unidad 4, con Juan Luis delante (Claude en Chrome)
 
-Actualizado: 2026-10-30 (alta de la coordinadora s-20261030T074933-c1fcc2b1; calcada de la 116, que montó las de la U3 el 30-10 sin incidencias)
-Precondición: **119 y 120 LISTAS** (las propuestas de tarea dependen de qué prácticas quedan publicadas: plan A o plan B de cada semana) · **Juan Luis delante**, con Chrome abierto, la extensión de Claude conectada y su sesión de Google iniciada en el panel · Disparo: MANUAL (sesión atendida) · **Plazo: mar 8-12** (la tarea 29 del reparto de la U4 programa Classroom con estas tareas; la primera sale el lun 14-12 a las 8:00)
+Actualizado: 2026-11-05 (coordinadora s-20261105T221931-c3838727: las semanas 2 y 3 esperan ahora a las publicaciones 162 y 163, dadas de alta ese día); alta el 2026-10-30 (coordinadora s-20261030T074933-c1fcc2b1; calcada de la 116, que montó las de la U3 el 30-10 sin incidencias)
+Precondición: **semana 1 HECHA el 2-11 (tarea 20 del panel)** · **semana 2: 162 LISTA** (publica `fraccion-de` y `suma-resta` y deja al día la propuesta de la semana 2) · **semana 3: 163 LISTA** (publica `multiplica-divide`, `combinadas-fracciones` y `errores4` y deja al día la de la semana 3) · las dos semanas se pueden montar en una sola sesión si las dos están LISTAS, o la 2 sola en cuanto lo esté la 162 (las propuestas de tarea dependen de qué prácticas quedan publicadas: plan A o plan B de cada semana) · **Juan Luis delante**, con Chrome abierto, la extensión de Claude conectada y su sesión de Google iniciada en el panel · Disparo: MANUAL (sesión atendida) · **Plazo: mar 8-12** (la tarea 29 del reparto de la U4 programa Classroom con estas tareas; la primera sale el lun 14-12 a las 8:00)
 Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/121-tareas-u4-panel/` (solo `ENTREGA.md` y su marcador)
 Ficheros que toca: **ninguno del repositorio**. Las tareas se crean en la nube (`config/tareas` del espacio de Juan Luis) desde el editor de tareas del panel, con su cuenta; esta tarea no edita código ni `practicas/_comun/tareas.js`.
@@ -122,6 +122,10 @@ de Google de Juan Luis: por eso esta tarea es **con él delante**. Tú manejas e
 - El panel enseña nombres de alumnos: ni uno en la ENTREGA, en `hechos/` ni en el chat más allá de lo imprescindible.
 - (de la 121, 2-11) **La semana 1 ya está montada: tarea 20.** Quien vuelva a reclamar la 121 hace solo las semanas 2 y 3, cuando 103-107 estén
   publicadas (mirar `disponible: true` en el `catalogo.js` publicado, no solo en el árbol).
+- (de la coordinadora, 5-11) Las publican la **162** (semana 2: `fraccion-de`, `suma-resta`) y la **163** (semana 3: `multiplica-divide`,
+  `combinadas-fracciones`, `errores4`). La propuesta que vale es la de **sus** ENTREGA (`$R/salidas/162-publicar-u4-semana-2-ter/ENTREGA.md`
+  y `$R/salidas/163-publicar-u4-semana-3-ter/ENTREGA.md`), que corrigen las de la 110 y la 111; lo que digan la 119 y la 120 de esas semanas
+  ya está superado.
 - (de la 121, 2-11) Hasta el commit 57aaa46 el editor no listaba la ortografía en tareas de la U4 (solo las prácticas de la propia unidad). Ya
   está arreglado (`practicasDeUnidad`): la ortografía sale **al final** de la lista. Si después de un cambio del editor el panel no lo enseña,
   es la caché: recarga forzada (cmd+shift+R); `location.reload()` no basta para los módulos.

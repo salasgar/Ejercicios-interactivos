@@ -26,7 +26,7 @@ la coordinadora la da de alta cuando cierren las siete reabiertas, o antes con �
   raya y +/− bien a 375 px, sin desbordes ni errores de consola. Lo vio también el navegador: «En el dibujo: 1 trozos de 15» y el aviso de
   signos a quien había puesto bien el signo (`multiplica-divide`).
 - **Ninguna práctica copia un caso con número de las hojas o del examen final**, salvo los ejemplos de las introducciones de
-  `multiplica-divide` (y `2/3 : 4/5` en la de `errores4`), que coinciden con la propuesta del examen semanal 3
+  `multiplica-divide` (y uno en la de `errores4`), que coinciden con la propuesta del examen semanal 3
   (`exámenes-semanales/semana-3/destrezas-semana3.md`, sin firmar). Se arreglan en las reabiertas.
 
 ## Sesión mínima de cada ejercicio (para la tarea de la semana)

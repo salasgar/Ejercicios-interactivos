@@ -1,6 +1,6 @@
 # Tarea 144 · Base de la unidad 6: catálogo, portada, destrezas y `_comun/algebra.js` (expresiones lineales y ecuaciones con fracciones exactas, lecturas, errores típicos)
 
-Actualizado: 2026-11-03 (alta de la montadora del reparto de la unidad 6, s-20261103T140356-12629e13)
+Actualizado: 2026-11-05 (alta el 2026-11-03 por la montadora del reparto de la unidad 6, s-20261103T140356-12629e13; retoque con el acta de la U5, `5. Decimals/inventario-unidad5-revision.md`, F0 de la U5 firmada el 3-11, por la coordinadora de la U6 s-20261105T221639-799dd639: lo que se sabe de la U5 (negativos, cambios de unidad), las cotas de dinero y medidas aprobadas allí, la notación del dinero, y el estado de `decimales.js`; si discrepan, manda aquella acta)
 Precondición: tarea 01 del reparto de la unidad 6 LISTA (existe la propuesta de inventario `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6.tsv`; con F0 firmada, mejor: ids definitivos) · no en paralelo con otra tarea que toque `catalogo.js`, `portada.js` o `registro.js` (122 de la U5, 134 de la ortografía, 119/120 si siguen EN CURSO) · Disparo: MANUAL (sesión atendida) · **Plazo: mar 8-12 (ideal; las once prácticas van detrás y la semana 1 se publica antes del mié 27-1); límite vie 8-1**
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/144-base-unidad6/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -101,7 +101,7 @@ denominador: si entran, se proponen en la ENTREGA como ejercicio extra de la pr�
 
 - El inventario de la unidad 6 (propuesta de la 01 o aprobado tras la 02), solo lectura: `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6.tsv`; el acta `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6-revision.md` (léela entera si existe); la secuenciación `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/secuenciación-unidad6.pdf`; `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/reparto-unidad6/proyecto.md` (reglas de contenido, notación y cotas).
 - `reparto-practicas-u2/tareas/tarea-145-…` a `tarea-155-…`: lo que cada práctica va a pedir a `algebra.js` (léelas por encima antes de fijar la API).
-- `tareas/tarea-98-base-unidad4.md`, `salidas/98-base-unidad4/ENTREGA.md`, `tareas/tarea-122-base-unidad5.md` y su ENTREGA si existe, `practicas/_comun/fracciones.js`, `aritmetica.js`, `docs/practicas-unidad4.md`: el molde. Si la 122 dejó `_comun/decimales.js`, reutilízalo para el dinero en los problemas (no lo reescribas).
+- `tareas/tarea-98-base-unidad4.md`, `salidas/98-base-unidad4/ENTREGA.md`, `tareas/tarea-122-base-unidad5.md` y su ENTREGA si existe, `practicas/_comun/fracciones.js`, `aritmetica.js`, `docs/practicas-unidad4.md`: el molde. Si la 122 dejó `_comun/decimales.js`, reutilízalo para el dinero en los problemas (no lo reescribas). A 5-11 la 122 no se ha reclamado y `decimales.js` no existe (su ficha ya recoge el acta de la U5: negativos, resto original, cotas); si al reclamar la 144 sigue sin existir, dilo en la ENTREGA.
 
 ## Cómo saber que ha terminado
 
@@ -150,10 +150,12 @@ denominadores, los problemas, la notación, las cotas de realismo, los ids). **H
    proporcionalidad** (U7), ni geometría con fórmula (U8), ni segundo grado, sistemas, inecuaciones ni dos incógnitas (2.º ESO);
    `x²`, las sucesiones, los casos `ax = b` con `a` o `b` nulos, los denominadores con paréntesis y `x` en el denominador solo si el
    acta los admite y en la sesión que diga. Se saben la jerarquía (U1), el m.c.m. (U2), los enteros (U3), las fracciones (U4) y los
-   decimales (U5).
+   decimales (U5; según su acta del 3-11, también los negativos, en todas las operaciones, y los cambios de unidad km-m, m-cm,
+   kg-g, L-mL y euros-céntimos: se pueden usar en los problemas). `0,33` no es `1/3` (es su redondeo): nunca equivalen.
 3. **Notación**: coeficiente delante y pegado (`3x`, `−2x`), `x` por `1x`, `·` solo entre números, la división con letras como
    fracción (`htmlFraccion` de `fracciones.js` con `x` en el numerador; en texto, `x/2`), `3(x − 2)` sin punto; en inglés `2x` se lee
-   *two x* (o *twice x*), `x/2` *x over two* o *half of x*; *solve for x*, *both sides*, *like terms*, *expand the brackets*. El
+   *two x* (o *twice x*), `x/2` *x over two* o *half of x*; *solve for x*, *both sides*, *like terms*, *expand the brackets*. El dinero,
+   con coma en español y punto en inglés, sin separador de millares (acta de la U5, punto m); las impropias, sin mixtos (punto g). El
    alumno puede teclear `2x+3`, `3+2x`, `2·x + 3`, `2*x+3` o `x/2`: `deTexto` los acepta todos; nunca `eval`.
 4. **Regla de oro**: todo distractor, inequívocamente falso, y cada distractor sale de un **error típico** de la columna `nota`
    del inventario, calculado con los números del ítem y comprobado en el test (nunca un número al azar): sumar términos no
@@ -175,7 +177,11 @@ denominadores, los problemas, la notación, las cotas de realismo, los ids). **H
    generador, creíbles, con una cota por contexto que el test comprueba. Orientativas hasta el acta (la sesión fija las suyas y
    las escribe en su ENTREGA): edades de 1 a 100 (un alumno 6-18, un padre o una madre 25-60, un abuelo 55-95; la diferencia
    padre-hijo entre 18 y 50; «dentro de n años» y «hace n años» con n de 1 a 20 y nadie con edad negativa); dinero (la paga 1-50 €;
-   precios como en la U5; ahorros hasta 2000 €; con dos decimales si no es entero; un reparto que salga exacto); cantidades de
+   ahorros hasta 2000 €; los precios y las medidas, con las **cotas aprobadas en la U5**, copiadas en la regla 6 de `proyecto.md`
+   de la U6: un producto 0,20-30 €, fruta 0,80-6 €/kg, una prenda 5-120 €, un móvil 80-1200 €, una entrada 3-60 €, gasolina
+   1,20-2,00 €/L, pagar con un billete de 5, 10, 20 o 50 € que cubra el total, temperaturas −10 a 45 °C con una decimal,
+   distancias a pie o en bici hasta 50 km y en coche hasta 1000 km…; con dos decimales si no es entero —la U5 los pone
+   siempre: lo decide la 02 de la U6—; un reparto que salga exacto); cantidades de
    cosas (caramelos, canicas, cromos: 1-200; una clase 12-36 personas; un equipo 5-25); números («pienso un número», consecutivos:
    enteros de −50 a 200); perímetros con palabras (lados de 1 a 50; nunca con fórmula ni áreas). **La solución de un problema es un
    natural (o dinero con dos decimales)**: nunca una edad fraccionaria ni un número negativo de personas. Los personajes llevan
