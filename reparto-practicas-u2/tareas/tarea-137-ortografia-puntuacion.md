@@ -190,6 +190,10 @@ sujeto y verbo) **no se repite aquí**: se cita en las explicaciones si hace fal
 - `\n` en los correos: el `montar` los pinta como saltos de línea (`white-space: pre-line` en la opción), no como texto.
 - Los nombres de los saludos, inventados (Marta, Lucía, Pablo, Marcos) o el del profesor (Juan Luis): nada de alumnos.
 - Duración real de una práctica numérica de 4 ejercicios en la U4: 11-30 min; esta tiene bancos de prosa: cuenta con más.
+  **Real (6-11): ~35 min** con los bancos escritos de una vez.
+- Hecho por las malas: la frase corregida ya acaba en punto; al añadirle otro en la explicación salía «Murcia..».
+- El navegador guarda los módulos ES: tras cambiar `logica.js`, `fetch(url, {cache:'reload'})` de cada módulo y recargar.
+- Tras acertar, la base avanza sola; «Siguiente» solo sale tras un fallo (hay que esperar a que se active).
 
 ## Prohibido (propio de esta tarea)
 
