@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-06 (alta de la coordinadora s-20261106T125246-dae3dde3, pedida por Juan Luis el 6-11; nota `hechos/notas/s-20261106T125246-dae3dde3-altas-164-168.md`)
 Precondición: ninguna tarea · **no en paralelo** con otra que toque `herramientas/probar-reglas.mjs` o `firestore.rules` · Disparo: MANUAL (con Juan Luis delante para la ejecución de verdad) · **Plazo: antes del lun 14-12 (se vuelven a usar los códigos de prueba 62 y 63)**
-Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 45 min (real ~35 min) (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/167-banco-rest-sin-borrar-a/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `herramientas/probar-reglas.mjs` (y su documentación, si la tiene en el propio fichero o en `docs/`; dilo en la terminada)
 
@@ -75,6 +75,7 @@ Comprobación barata: `grep -n "restaur" herramientas/probar-reglas.mjs` (si ya 
 ## Trampas conocidas
 
 - Las cuentas de prueba son profe-a-prueba@example.com y profe-b-prueba@example.com; las contraseñas solo con `read -s`.
+- (167) `process.exit` dentro de un `try` salta el `finally`: el banco devuelve `{quedan, codigos}` desde `main()` y sale desde fuera, tras restaurar. Una restauración de Firestore REST es un PATCH **sin** máscara (reemplaza el documento entero); con máscara se quedarían campos de prueba. Para probar esto sin nube basta un `fetch` simulado cargado con `node --import`.
 
 ## Prohibido (propio de esta tarea)
 
