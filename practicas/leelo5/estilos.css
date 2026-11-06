@@ -1,0 +1,8 @@
+/* Práctica «Léelo en inglés» (unidad 5): solo lo que no está ya en ../_comun/estilos.css. */
+
+/* Frases y términos en inglés (o en español) que hay que leer. */
+.texto-en { font-size: 1.15rem; line-height: 1.9; margin: .4rem 0 1rem; overflow-wrap: anywhere; }
+
+/* Cuatro opciones largas (lecturas, traducciones): siempre en una columna (a 375 px no caben dos). */
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; overflow-wrap: anywhere; }
