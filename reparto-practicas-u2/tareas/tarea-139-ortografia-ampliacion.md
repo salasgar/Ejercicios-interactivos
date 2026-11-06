@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-03 (alta de la coordinadora s-20261103T110729-ca61fe3e)
 Precondición: **134 LISTA** (lee su ENTREGA) · Disparo: MANUAL (sesión atendida) · **Plazo: mar 23-3** (la 142 lo publica con el bloque de palabras si está LISTA; si no, lo publica una tarea nueva de la coordinadora). No bloquea ningún ★: es la última en prioridad
-Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 1 h 30 min (tiempo de sesión, no de persona; la real fue ~2 h 10 min, con 40 de cotejo en el DPD) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/139-ortografia-ampliacion/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/ortografia-ampliacion/*` (sustituye el esqueleto de la 134), `tests/practicas-ortografia-ampliacion.test.js` (nuevo)
 
@@ -167,6 +167,20 @@ maneras, fuera; lo dudoso, fuera), y cada ítem se coteja.
   como ampliación; nada más de gramática.
 - Los diálogos con raya a 375 px: frases cortas (≤ 10 palabras) para que caben las tres versiones sin partir.
 - Duración real de una práctica numérica en la U4: 11-30 min; esta exige cotejar con la RAE ítem a ítem: cuenta con más.
+- (s-20261106T125545-5612b77b, 2026-11-06) **rae.es devuelve 403 a WebFetch y a los subagentes**: el DPD se lee desde
+  Chrome. Lo rápido: abrir una entrada cualquiera (`https://www.rae.es/dpd/fregar`) y, desde esa pestaña, `fetch('/dpd/'
+  + encodeURIComponent(voz))` con DOMParser y recortar el texto entre «2.ª edición» y «Real Academia Española y
+  Asociación». Devuelve trozos cortos: la herramienta corta la salida hacia los 1000 caracteres y bloquea lo que parezca
+  una URL con parámetros. fundeu.es no se deja leer.
+- (íd.) **El DPD 2.ª ed. admite «porque» y «por que» con sentido final** (= para que) tras verbos que rigen «por»:
+  preocuparse, esforzarse, luchar, rogar… («porque», 3). La lista de la ficha (preocuparse, esforzarse, votar) no vale:
+  «por que» solo tras verbos de elegir (optar, inclinarse, decidirse, decantarse, apostar) y caracterizarse/distinguirse.
+- (íd.) «sin embargo» entre comas es **recomendación** del DPD: ni la coma de menos detrás ni la coma por punto y coma
+  delante sirven de mala; sí el punto y coma detrás del conector y la falta de todo signo delante.
+- (íd.) Un espacio de más se esconde en un salto de línea a 375 px («las ocho (» al final de línea): las malas de
+  «espacio dentro» llevan los dos espacios, para que al menos uno se vea.
+- (íd.) En JavaScript, `\b` no sirve con «ú» (`/\btú\b/` falla): usar `(^|[\s¿¡])tú\s`.
+- (íd.) La 138 usa «Estudié mucho; _, el examen me salió mal.» (sin embargo): el test de frases repetidas la caza.
 
 ## Prohibido (propio de esta tarea)
 
