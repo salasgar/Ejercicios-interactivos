@@ -82,6 +82,8 @@ Comprobación barata: `grep -n "maximo" practicas/_comun/tareas.js` (si ya dice 
 - `comun/gestion/calificar_classroom.py` (carpeta de apuntes, fuera del repo) no usa `maximo` ni `puntos` (comprobado el
   6-11): no hay nada que cambiar allí. Si encuentras otro consumidor fuera del repo, dilo en la ENTREGA; no lo toques.
 
+- (166, 6-11) Otros tests fijan el máximo de una tarea de 4 ejercicios: `tests/practicas-nube.test.js` («panel: los puntos de la tarea…», 28 → 70 y 40 → 100). Con `npm test` entero salen todos.
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar los puntos de un ejercicio por dentro (contador, vidas, objetivo) o lo que se guarda en la nube: el cambio es
