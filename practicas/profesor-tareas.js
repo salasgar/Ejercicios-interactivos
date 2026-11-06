@@ -104,6 +104,11 @@ export function ejerciciosDeUnidad(unidad) {
     .flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ slug: p.slug, n: i + 1, practica: p })));
 }
 
+/** El enlace «probar» de un ejercicio: abre ese ejercicio en modo de prueba (sin código, sin guardar nada). Relativo a `practicas/`. */
+export function enlaceProbar(practica, n) {
+  return `${practica.ruta}?probar=1&ejercicio=${n}`;
+}
+
 /**
  * La tarea que resulta de las marcas del formulario. `marcas` es una lista de
  * `{ slug, n, tipo }` con `tipo` 'estrella' | 'elegir' | '' (sin marcar), en el orden del catálogo.
@@ -242,7 +247,7 @@ export function montar(contenedor, contexto) {
     const ejercicios = ejerciciosDeUnidad(tarea.unidad);
     const tipoDe = (slug, n) => tarea.estrella.some(([s, k]) => s === slug && k === n) ? 'estrella' : tarea.elegir.some(([s, k]) => s === slug && k === n) ? 'elegir' : '';
     const filas = ejercicios.map(e => `
-      <tr><td>${esc(e.practica.nombre.es)}</td><td>${e.n}. ${esc(nombreDe(e.slug, e.n))}</td>
+      <tr><td>${esc(e.practica.nombre.es)}</td><td>${e.n}. ${esc(nombreDe(e.slug, e.n))} <a class="pequeno" href="${esc(enlaceProbar(e.practica, e.n))}" target="_blank" rel="noopener">probar · <i>try it</i></a></td>
         <td><select data-ej="${e.slug}/${e.n}" ${bloqueada ? 'disabled' : ''}>
           ${[['', '—'], ['estrella', '★ obligatorio'], ['elegir', 'a elegir']].map(([v, r]) => `<option value="${v}" ${tipoDe(e.slug, e.n) === v ? 'selected' : ''}>${r}</option>`).join('')}
         </select></td></tr>`).join('');

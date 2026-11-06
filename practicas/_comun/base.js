@@ -179,6 +179,11 @@ export function borrar(clave) {
   try { localStorage.removeItem(clave); } catch { /* nada */ }
 }
 
+/** ¿La dirección pide el modo de prueba (`?probar=1`)? Sin código, sin leer ni guardar nada. */
+export function modoPrueba(busqueda) {
+  return new URLSearchParams(busqueda).get('probar') === '1';
+}
+
 /** La misma dirección sin el código del alumno (`?c=`), y sin `?` si no queda nada. */
 export function sinCodigo(href) {
   const url = new URL(href);
@@ -513,15 +518,18 @@ export function arrancar(practica) {
       if (formatoDeCodigo(texto) === null) return pintarEntrada('formato');
       entrar(texto);
     });
-    app.querySelector('#probar').addEventListener('click', () => {
-      estado.codigo = null;
-      estado.indice = null;
-      estado.espacio = null;
-      fijarAmbito(TAREAS);
-      estado.ej = nuevos();
-      aplicarIdiomaFijo();
-      pintarInicio();
-    });
+    app.querySelector('#probar').addEventListener('click', entrarSinCodigo);
+  }
+
+  /** «Probar sin código»: no lee ni guarda nada, ni aquí ni en la nube (sin código no hay dónde). */
+  function entrarSinCodigo() {
+    estado.codigo = null;
+    estado.indice = null;
+    estado.espacio = null;
+    fijarAmbito(TAREAS);
+    estado.ej = nuevos();
+    aplicarIdiomaFijo();
+    pintarInicio();
   }
 
   /**
@@ -922,6 +930,9 @@ export function arrancar(practica) {
   estado.idiomaFijo = modoIdioma(location.search, null);
   pintarCabecera();
   // El código puede venir en el enlace (…/?c=ABCD o ?c=K7QMP3XA) o estar recordado de otra práctica.
+  // Con `?probar=1` (el enlace «probar» del editor de tareas) se entra directo sin código, aunque haya
+  // uno en la dirección o recordado: ni se lee, ni se usa, ni se borra.
   const inicial = new URLSearchParams(location.search).get('c') ?? leer('practicas.codigo') ?? '';
-  if (formatoDeCodigo(inicial) === null) pintarEntrada(); else entrar(inicial);
+  if (modoPrueba(location.search)) entrarSinCodigo();
+  else if (formatoDeCodigo(inicial) === null) pintarEntrada(); else entrar(inicial);
 }
