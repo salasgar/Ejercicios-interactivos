@@ -1,2 +1,5 @@
 /* Ortografía: ampliación. Las frases, los huecos y las piezas ya tienen sus estilos
    (../_comun/ortografia.js los pone en la página): aquí, solo lo propio del bloque. */
+
+/* El aviso de las introducciones: «esto es más de lo que se pide en 1.º». */
+.aviso-ampliacion { background: var(--primario-claro); color: var(--primario-oscuro); border-radius: 10px; padding: .5rem .8rem; }
