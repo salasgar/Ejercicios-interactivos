@@ -131,6 +131,8 @@ alumno, para el registro de fallos.
 - (Vista en la 104) En un generador con reintentos, decide ANTES del bucle el tipo de ítem (negativo, múltiplo, con error): si se sortea dentro, los casos difíciles se rechazan más y el reparto se sesga.
 - (Vista en la 104) Los ítems llevan las fracciones como { n, d }; en los textos pásalas por F() y, si ya son Fraccion, no las vuelvas a pasar (frItem de textos.js acepta las dos).
 
+- (Vista en la reabierta del 6-11) Una exclusión de casos de examen o de hoja tiene que ser **una sola función, sin orden** (términos con signo) y llamarse desde los CINCO generadores: la clave con el tipo (`f+nat` ≠ `nat+f`) y el ejercicio que «no mira» la lista dejaban pasar el caso. Tras tocarla, un barrido con un guion de scratchpad que lea las cadenas de 2-3 términos de los .tex/.tsv de exámenes, finales y hojas contra 8 × 20000 ítems por ejercicio; lo que salga entra en `RESERVADOS` (hojas, en claro) o por huella (exámenes).
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar otras prácticas, la base (`practicas/_comun/`), `catalogo.js`, `portada.js`, `registro.js`, `tareas.js` o los docs: lo que haga falta ahí es propuesta en la terminada. `disponible: true` lo pone la tarea de publicación de su semana, no esta.

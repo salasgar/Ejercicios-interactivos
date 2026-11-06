@@ -54,3 +54,21 @@ Barrido independiente (guion de scratchpad, 3 × 20000 ítems por ejercicio cont
 `casos-examen-semanaN.tsv`): 0 coincidencias con la hoja y 0 con las sumas de examen, salvo 206 con subexpresiones de U4-3A-01 («a + b · c»:
 la suma no es una cuenta aparte; no cuenta). Ej. 4: la pizza de la hoja 2 sigue reservada en cualquier orden. Tests propios 60/60 y
 `npm test` 1368/1368. Sin probar en navegador: el cambio es solo el filtro de ítems. No se tocó `catalogo.js`.
+
+## Reabierta del 6-11 (sesión `s-20261106T144258-b4b550f9`, commit **4309164**)
+
+Corrige `hechos/reabiertas/104--s-20261106T124028-694d9f2a-revision.md`. Una sola exclusión **sin orden** (términos con signo; el signo de una
+fracción negativa se combina con el de la operación) aplicada en los **cinco** ejercicios:
+- **Ej. 3**: `HUELLAS_EJ3` recalculadas con la clave sin orden (la de antes llevaba el tipo, y «f + n» pasaba aunque el examen escribía «n + f»); +3
+  cuentas del final (`−a + n`). Un test comprueba que la huella no depende del orden.
+- **Ej. 4**: la pareja {a, b} se mira como suma contra `RESERVADOS` y `HUELLAS_SUMAS` (además de las huellas de contexto de antes).
+- **Ej. 5**: `generarCaza` descarta `esReservadoCaza` (nuevo).
+- **Ej. 1 y 2**: igual que antes, con `RESERVADOS` ampliado.
+- `RESERVADOS` (en claro; las hojas ya las tienen los alumnos): +25 sumas de las hojas 2 y 3 (`pasos`, que también vale para el ej. 1) y +5 naturales (`naturales`).
+- `HUELLAS_SUMAS` +18: cuentas de los tres modelos del final y la recuperación, el error de U4-3C-11 del modelo 1, los problemas y las opciones de
+  U4-2A-04 y U4-3C-11 que halló el barrido. Los casos de examen no están en claro.
+- Lo de U4-3C-11 (trampa de la 120) queda cruzado con los ej. 1, 2, 3 y 5.
+
+Barrido independiente (guion de scratchpad, fuera del repo): todas las cadenas de 2-3 términos con una fracción de `casos-examen*.tsv`, `examen-semana*.tex`,
+los cuatro finales y las hojas 2 y 3, contra 8 × 20000 ítems en cada ejercicio: **0 coincidencias**. Tests propios 62/62, `npm test` 1613/1613.
+Sin probar en navegador: la interfaz no cambia, solo qué ítems se descartan. No se tocó `catalogo.js`.
