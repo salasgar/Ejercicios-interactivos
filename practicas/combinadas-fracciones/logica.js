@@ -51,11 +51,20 @@ export const claveSinOrden = texto => {
   return `${numeros.join(',')}#${operaciones.join(',')}#${evaluar(arbol).clave()}`;
 };
 
-// Hoja 3, ej. 8a, 8e y 12d. Operandos irreducibles, espacio simple, MENOS delante del primero.
+// Hoja 3, ej. 8a-8e, 9a-9d y 12d; hoja 2, U4-2C-04 (5/6 + 1/3 − 1/4). Operandos irreducibles,
+// espacio simple, MENOS delante del primero.
 export const EXPRESIONES_HOJA = new Set([
   '1/3 + 2/3 · 3/4',
+  `9/10 ${MENOS} 1/4 : 5/6`,
+  `2 ${MENOS} 5/6 · 3/10`,
+  '3/8 · 4/9 + 1/4',
   `${MENOS}1/2 + 2/3 · 3/8`,
+  '(1/2 + 1/4) · 4/9',
+  '5/8 : (1/3 + 1/6)',
+  `1 + 2/3 : (3/4 ${MENOS} 1/6)`,
+  `1/2 + 1/3 : (${MENOS}3/4 + 2)`,
   '1/3 + 1/2 · 2/5',
+  `5/6 + 1/3 ${MENOS} 1/4`,
 ]);
 const CLAVES_HOJA = new Set([...EXPRESIONES_HOJA].map(claveSinOrden));
 
@@ -74,6 +83,20 @@ export const HUELLAS_EXAMEN_COMBINADAS = new Set([
   '1gankhw', 'q49imx', '1ywg0me', '1abrdwc', 'lz7t47', 'kx5wep', '6zb7xf', '6u5yg1',
   '34a63k', '1axjxio', '1yujj6a', '1vdce6l', '13xq3ds', 'j74a5l', '1e9faaj',
 ]);
+// Pasos «línea k → línea k+1» de las cajas «Find the mistake» (5b) de los modelos 1 y 2 y de la
+// recuperación del examen final (el adaptado-A repite la de Leo): el paso mal hecho es el caso que
+// hay que encontrar, y no puede salir como línea de la caja del ejercicio 3. Solo huellas.
+export const HUELLAS_PASOS_EXAMEN = new Set([
+  '1e1bmcb', '4b6ogl', 'kcsk9f', 'hemtov', 'csbf62', '1txm2mn', '22cfjr',
+  '9ctdgs', '4w1g09', '1miwm0m', '1juv2j9', 'fhsf4e', '1t5dq0c', '14c91dl',
+]);
+/** Huella de un paso de un procedimiento: la expresión de la línea k (clave sin orden) y el valor de la k+1. */
+export const huellaPaso = (antes, despues) => huella(`${claveSinOrden(antes)}>${evaluar(analizar(despues)).clave()}`);
+/** ¿Es el paso `antes → despues` uno de los pasos de las cajas «Find the mistake» del examen final? */
+export function esPasoReservado(antes, despues) {
+  try { return HUELLAS_PASOS_EXAMEN.has(huellaPaso(antes, despues)); }
+  catch (e) { if (e instanceof ErrorFracciones) return false; throw e; }
+}
 /** ¿Es la expresión un caso de la hoja o de un examen (en cualquier orden de sumandos y factores)? Una que no se puede calcular (÷ 0) no lo es: `valida` ya la rechaza. */
 export function esCasoReservado(texto) {
   try { return CLAVES_HOJA.has(claveSinOrden(texto)) || HUELLAS_EXAMEN_COMBINADAS.has(huellaExpresion(texto)); }
@@ -397,6 +420,8 @@ export function generarError(rng) {
     const estados = [...buenos.slice(0, k + 1), ...resto];
     const lineas = estados.map(e => aTextoExpresion(e));
     if (new Set(lineas).size !== lineas.length) continue;
+    if (lineas.some((l, i) => (cuentaOperaciones(l) >= 2 && esCasoReservado(l))
+      || (i + 1 < lineas.length && esPasoReservado(l, lineas[i + 1])))) continue;
     return {
       lineas, linea: k + 1, tipo: malo.tipo, error: malo.error, operacion: malo.operacion,
       bueno: aTextoExpresion(buenos[k + 1]), canonica: canonico.operacion, valorBueno: canonico.valor.clave(),

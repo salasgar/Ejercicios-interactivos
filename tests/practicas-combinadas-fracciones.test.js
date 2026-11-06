@@ -14,7 +14,7 @@ import { TX, pistaDe } from '../practicas/combinadas-fracciones/textos.js';
 import {
   generarPrimero, generarPasos, generarError, valida, clasificarToque, opcionesDePaso, opcionesOrdenadas,
   diagnosticar, cuentaOperaciones, esUltimo, MAX_TERMINO_PASO, MAX_DEN_FINAL,
-  EXPRESIONES_HOJA, HUELLAS_EXAMEN_COMBINADAS, huellaExpresion, esCasoReservado, claveSinOrden,
+  EXPRESIONES_HOJA, HUELLAS_EXAMEN_COMBINADAS, HUELLAS_PASOS_EXAMEN, huellaExpresion, esCasoReservado, esPasoReservado, claveSinOrden,
 } from '../practicas/combinadas-fracciones/logica.js';
 
 const N = 3000;
@@ -64,7 +64,8 @@ for (const [nombre, gen] of [['ej. 1', generarPrimero], ['ej. 2', generarPasos]]
 }
 
 test('las huellas de examen y la lista de la hoja no están vacías y detectan de verdad', () => {
-  assert.equal(EXPRESIONES_HOJA.size, 3);
+  assert.equal(EXPRESIONES_HOJA.size, 11);
+  assert.equal(HUELLAS_PASOS_EXAMEN.size, 14);
   assert.equal(HUELLAS_EXAMEN_COMBINADAS.size, 23);
   // Hoja 3, ej. 8a: 1/3 + 2/3 · 3/4.
   assert.ok(EXPRESIONES_HOJA.has('1/3 + 2/3 · 3/4'));
@@ -89,9 +90,24 @@ test('la clave no depende del orden de los sumandos ni de los factores (reabiert
   assert.notEqual(claveSinOrden('1/2 + 1/3 · 2/5'), claveSinOrden('(1/2 + 1/3) · 2/5'));
 });
 
-test('ej. 3 (Caza el error): la primera línea nunca es un caso de examen o de la hoja', () => {
-  for (const item of generarN(generarError, 1500, 13)) {
+test('la hoja 3 (ej. 8 y 9) y la hoja 2 (U4-2C-04) están reservadas, también con los términos cambiados de sitio', () => {
+  for (const t of [
+    `9/10 ${MENOS} 1/4 : 5/6`, `2 ${MENOS} 5/6 · 3/10`, '3/8 · 4/9 + 1/4', '4/9 · 3/8 + 1/4', '(1/2 + 1/4) · 4/9', '4/9 · (1/4 + 1/2)',
+    '5/8 : (1/3 + 1/6)', `1 + 2/3 : (3/4 ${MENOS} 1/6)`, `1/2 + 1/3 : (${MENOS}3/4 + 2)`, `5/6 + 1/3 ${MENOS} 1/4`, `5/6 ${MENOS} 1/4 + 1/3`,
+  ]) assert.ok(esCasoReservado(t), t);
+});
+
+test('el paso mal hecho de una caja del examen final está reservado; un paso cualquiera, no', () => {
+  assert.ok(!esPasoReservado('1/5 + 1/4 · 1/3', '1/5 + 1/12'));
+});
+
+test('ej. 3 (Caza el error): ninguna línea con dos o más operaciones es un caso de examen o de la hoja, ni ningún paso uno de las cajas', () => {
+  for (const item of generarN(generarError, 3000, 13)) {
     assert.ok(!esCasoReservado(item.lineas[0]), `caso de la hoja o de examen: ${item.lineas[0]}`);
+    item.lineas.forEach((l, i) => {
+      if (cuentaOperaciones(l) >= 2) assert.ok(!esCasoReservado(l), `línea ${i} reservada: ${l}`);
+      if (i + 1 < item.lineas.length) assert.ok(!esPasoReservado(l, item.lineas[i + 1]), `paso reservado: ${l} → ${item.lineas[i + 1]}`);
+    });
   }
 });
 
