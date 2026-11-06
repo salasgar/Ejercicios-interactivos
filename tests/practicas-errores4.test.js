@@ -299,6 +299,35 @@ test('ningún ítem, en ninguno de los tres ejercicios, repite un caso de la hoj
   }
 });
 
+test('la clave de lo que se ve no depende de la plantilla ni, en + y ·, del orden; sí en − y :', () => {
+  assert.equal(L.claveVista('1/6 + 2/3'), L.claveVista('2/3 + 1/6'));
+  assert.notEqual(L.claveVista('1/3 − 5/6'), L.claveVista('5/6 − 1/3'));
+  assert.notEqual(L.claveVista('4/5 : 2/3'), L.claveVista('2/3 : 4/5'));
+  assert.equal(L.claveVista('(2/5)^2'), 'P|2/5|2');
+  assert.notEqual(L.claveVista('(2/5)^2'), L.claveVista('(2/5)^3'));
+  assert.equal(L.CLAVES_HOJA.size, 13);
+  assert.equal(L.HUELLAS_VISTA_EXAMEN.size, 18);
+  for (const h of L.HUELLAS_VISTA_EXAMEN) assert.match(h, /^[0-9a-z]{4,7}$/);
+  // Las tres plantillas de «fracción de una cantidad» escriben lo mismo y comparten clave.
+  for (const id of ['se-queda-en-la-unitaria', 'multiplica-por-el-denominador', 'fraccion-de-al-reves']) {
+    assert.equal(L.claveVista(L.PLANTILLA_POR_ID[id].l0([1, 3, 27])), 'F|1/3|27');
+  }
+});
+
+test('ningún ítem, en los tres ejercicios, es un caso de las hojas o de los exámenes por lo que VE el alumno (3000 por ejercicio, 3 semillas)', () => {
+  for (const semilla of [163, 7, 11]) {
+    for (const fn of [L.generarBienMal, L.generarLinea, L.generarArregla]) {
+      for (const item of generar(fn, semilla)) {
+        if (L.COMPARACION_POR_ID[item.plantilla]) continue;
+        const k = L.claveVista(L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
+        if (k === null) continue;
+        assert.ok(!L.CLAVES_HOJA.has(k), `caso de la hoja: ${k}`);
+        assert.ok(!L.HUELLAS_VISTA_EXAMEN.has(L.huella(k)), `caso de examen (huella ${L.huella(k)}) en la plantilla ${item.plantilla}`);
+      }
+    }
+  }
+});
+
 test('ejercicio 1: ningún nombre ofrecido como falso explica el resultado con los números del ítem (fuerza bruta)', () => {
   let falsas = 0;
   for (const item of generar(L.generarBienMal, 101)) {

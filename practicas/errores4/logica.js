@@ -63,7 +63,49 @@ export const HUELLAS_EXAMEN = new Set([
 ]);
 export { huella };
 
-const prohibido = (id, params) => PARAMS_HOJA.has(claveParams(id, params)) || HUELLAS_EXAMEN.has(huella(claveParams(id, params)));
+/**
+ * Clave de lo que VE el alumno (reabierta del 6-11), no del id de la plantilla: tres plantillas
+ * escriben `p/d · n`, y un caso excluido lo está en todas. Suma y producto sin orden; resta y
+ * cociente con orden; potencia por base y exponente.
+ */
+export const claveVista = l0 => {
+  const t = l0.split(' ');
+  const fr = s => s.split('/').map(Number);
+  if (t.length === 3 && t[1] === '·') return `F|${t[0]}|${t[2]}`;
+  const pot = l0.match(/^\((\d+)\/(\d+)\)\^(\d+)$/);
+  if (pot) return `P|${pot[1]}/${pot[2]}|${pot[3]}`;
+  if (t.length === 3 && ['+', '−', ':'].includes(t[1])) {
+    const [a, b] = [t[0], t[2]];
+    if (t[1] === '+') return `S|${[a, b].sort((x, y) => fr(x)[0] - fr(y)[0] || fr(x)[1] - fr(y)[1]).join('|')}`;
+    return `${t[1] === '−' ? 'R' : 'D'}|${a}|${b}`;
+  }
+  return null;
+};
+
+// Hoja 1 (ej. 5), hoja 2 (ej. 4e, 5a, 9a, 10a, 12c, 13b) y hoja 3 (ej. 12f y «Write in words»), en claro.
+export const CLAVES_HOJA = new Set([
+  'F|1/3|27', 'F|2/3|27', 'F|5/6|42', 'F|3/8|64', 'F|7/10|90', 'F|3/5|30', 'F|1/3|12',
+  'S|3/4|5/6', 'R|1/3|5/6', 'S|1/6|2/3', 'P|2/5|2', 'S|1/4|5/6', 'D|4/5|2/3',
+]);
+
+// Exámenes semanales 1 y 3, por huella FNV-1a de `claveVista` (los casos de examen no se escriben en
+// claro): todas las variantes de U4-1C-08, U4-1A-01 (fracción y cantidad) y U4-2C-12 (potencia).
+export const HUELLAS_VISTA_EXAMEN = new Set([
+  '1xhtren', 'za2kwd', 'st3v5i', '1cahdx0', '18kn9fh', '1fzi20y', '81b0bk', '1hqlanv', 'hdepv8', '1hj5fi0', 'm6s49q', '1ncmpir',
+  '14s2omh', '1frxyhy', '1t8ktnr', '198awos', 'dbb1ns', 'da4zuu',
+]);
+
+const prohibidoVista = l0 => {
+  const k = claveVista(l0);
+  return k !== null && (CLAVES_HOJA.has(k) || HUELLAS_VISTA_EXAMEN.has(huella(k)));
+};
+
+const prohibido = (id, params) => {
+  const k = claveParams(id, params);
+  if (PARAMS_HOJA.has(k) || HUELLAS_EXAMEN.has(huella(k))) return true;
+  const p = PLANTILLA_POR_ID[id];
+  return Boolean(p) && prohibidoVista(p.l0(params));
+};
 
 /** HTML de una expresión («1/2 + 1/3»), con raya de fracción. */
 export const ex = e => htmlExpr(analizar(e));
