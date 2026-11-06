@@ -21,8 +21,8 @@ const mcm = (a, b) => (a / mcd(a, b)) * b;
 /**
  * Casos que las hojas de la unidad 4 ya han dado a los alumnos y se guardan para el examen
  * (regla 9 del reparto; `RESERVADOS_ANTERIORES` de `comprobar-semana3.py`). Cada caso es la
- * lista de sus fracciones «n/d» en el orden en que se escriben, con las operaciones entre ellas
- * (la suma vale en cualquier orden de dos términos). Los que llevan negativas o un natural no
+ * lista de sus fracciones «n/d» en el orden en que se escriben, con las operaciones entre ellas.
+ * Se comparan SIN orden (`claveSinOrden`): «a + b» = «b + a» y «a − b» = «−b + a». Los que llevan negativas o un natural no
  * pueden salir de esta práctica (sus fracciones son propias y positivas) y no se listan.
  */
 export const RESERVADOS = {
@@ -34,10 +34,20 @@ export const RESERVADOS = {
     ['7/8', '+', '1/12'], ['7/10', '-', '4/15'], ['4/9', '-', '1/6'], ['3/5', '+', '1/3'],
     ['5/6', '+', '1/3', '-', '1/4'], ['7/15', '+', '3/10', '-', '1/6'], ['11/18', '-', '5/12', '+', '2/9'], ['9/20', '+', '7/30', '-', '5/12'],
     ['4/6', '+', '6/10'], ['15/20', '-', '8/12'],
+    // Hoja 2, los demás ejercicios (reabierta del 6-11): «¿Tiene sentido?», «en palabras», «con números» y los cuatro alumnos.
+    ['2/3', '+', '3/4'], ['5/9', '-', '1/4'], ['7/8', '-', '1/6'],
+    ['1/6', '+', '2/3'], ['5/7', '-', '1/2'], ['2/3', '+', '1/9'], ['5/6', '-', '3/10'], ['3/4', '-', '2/5'], ['2/5', '+', '1/4'],
+    // Hoja 3: «¿Bien o mal?», «mismos números, otras reglas» y los paréntesis de las combinadas paso a paso.
+    ['1/8', '+', '5/8'], ['5/6', '+', '1/4'], ['2/11', '+', '5/11'], ['1/10', '+', '3/4'], ['5/6', '-', '1/3'],
+    ['1/2', '+', '1/4'], ['1/3', '+', '1/6'], ['3/4', '-', '1/6'], ['1/2', '+', '1/3'], ['1/5', '+', '1/5'], ['9/12', '-', '2/12'],
+    // Pasos intermedios de los ejemplos de las hojas 2 y 3 (los encontró el barrido de la reabierta del 6-11).
+    ['3/8', '+', '2/8'], ['2/10', '-', '5/10'], ['5/6', '-', '3/8'],
+    ['1/4', '+', '3/10', '-', '1/6'],
   ],
   queda: [['1/3', '5/12']],   // la pizza de la hoja 2 (en cualquier orden)
   // Ejercicio 3 (con naturales): [tipo, natural, 'n/d'] de la hoja 2 (en claro).
-  naturales: [['nat+f', 2, '3/5'], ['nat-f', 1, '4/7'], ['f-nat', 1, '2/9'], ['f+nat', 1, '5/6'], ['nat-f', 2, '5/6']],
+  // Hoja 3: «6 + 2/5» (fuera de la cota del natural, por si cambia) y el paréntesis «−3/4 + 2».
+  naturales: [['nat+f', 2, '3/5'], ['nat-f', 1, '4/7'], ['f-nat', 1, '2/9'], ['f+nat', 1, '5/6'], ['nat-f', 2, '5/6'], ['nat+f', 6, '2/5'], ['nat-f', 2, '3/4'], ['nat-f', 1, '5/8'], ['nat-f', 1, '4/11'], ['f+nat', 3, '1/4']],
 };
 
 /**
@@ -47,8 +57,6 @@ export const RESERVADOS = {
  */
 const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
 
-/** Clave de un ítem del ejercicio 3: el tipo, el natural y la fracción. */
-const claveNat = item => `${item.tipo}|${item.nat}|${item.f.n}/${item.f.d}`;
 /** Clave de un ítem del ejercicio 4: las dos fracciones, sin importar el orden. */
 const claveQueda = item => {
   const a = `${item.a.n}/${item.a.d}`, b = `${item.b.n}/${item.b.d}`;
@@ -56,15 +64,17 @@ const claveQueda = item => {
   return `${x},${y}`;
 };
 
-const HUELLAS_EJ3 = new Set(["2wsxa","xjvwq7","gicd31","10s45jx","vtui8y","4gzm4h","1g50dtq","1y6psru"]);
+// Ejercicio 3: cuentas de un natural y una fracción de los exámenes (semanales y final), por huella de la clave SIN orden
+// (reabierta del 6-11: con el tipo en la clave, «n + f» del examen dejaba pasar «f + n»).
+const HUELLAS_EJ3 = new Set(["1vbm7k8","ckbnuv","1hf82dz","5neee","1hjkp8l","cpx1xf","15delas","1jjccs8","1ucivt5","idy3se","1mnvhb1"]);
 const HUELLAS_EJ4 = new Set(["1co2dfl","1kuegfl","1nrq6uo","h5yra7","18g9afl","jq1cgq","ysz8fe","1lww4fk","1maryny","14cepy1","y3c7tu","149fzq1","2xf2wr","1thxfbl","1rxk899","1o6dqxo","1abtcqp","w9pc3s","a9fnyh","1bm8j4w","elhxns","1n2i51e","1vf64ut","1i1b2cr"]);
 
 /** ¿Es el ítem del ejercicio 3 un caso de examen? */
-export const esCasoExamenNaturales = item => HUELLAS_EJ3.has(huella(claveNat(item)));
-/** ¿Es el ítem del ejercicio 4 un caso de examen? */
-export const esCasoExamenQueda = item => HUELLAS_EJ4.has(huella(claveQueda(item)));
+export const esCasoExamenNaturales = item => HUELLAS_EJ3.has(huella(claveSinOrden(terminosDeNatItem(item))));
+/** ¿Es el ítem del ejercicio 4 un caso de examen? (el contexto del examen, o su pareja de partes como suma) */
+export const esCasoExamenQueda = item => HUELLAS_EJ4.has(huella(claveQueda(item))) || esCasoExamenSuma([item.a, item.b], ['+']);
 /** ¿Es el ítem del ejercicio 3 un caso de la hoja 2 (en claro)? */
-export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, nat, f]) => claveSinOrden(terminosDeNat(tipo, nat, f)) === claveSinOrden(terminosDeNat(item.tipo, item.nat, `${item.f.n}/${item.f.d}`)));
+export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, nat, f]) => claveSinOrden(terminosDeNat(tipo, nat, f)) === claveSinOrden(terminosDeNatItem(item)));
 
 /**
  * Clave de una suma o resta SIN orden (reabierta del 2-11): los términos con su signo, ordenados.
@@ -72,10 +82,12 @@ export const esReservadoNaturales = item => RESERVADOS.naturales.some(([tipo, na
  * con los términos cambiados de sitio, que es la misma cuenta.
  */
 const claveSinOrden = terminos => [...terminos].sort().join(' ');
-const terminosCuenta = (fracs, ops) => fracs.map((f, i) => `${i === 0 || ops[i - 1] === '+' ? '+' : '-'}${f.n}/${f.d}`);
+// Términos con signo; el signo de la fracción (n < 0) se combina con el de la operación: «a − (−b)» = «a + b».
+const terminosCuenta = (fracs, ops) => fracs.map((f, i) => `${(Number(f.n) < 0) !== (i > 0 && ops[i - 1] === '-') ? '-' : '+'}${Math.abs(Number(f.n))}/${f.d}`);
 const terminosDeNat = (tipo, nat, f) => ({
   'nat+f': [`+${nat}`, `+${f}`], 'f+nat': [`+${nat}`, `+${f}`], 'nat-f': [`+${nat}`, `-${f}`], 'f-nat': [`+${f}`, `-${nat}`],
 })[tipo];
+const terminosDeNatItem = item => terminosDeNat(item.tipo, item.nat, `${item.f.n}/${item.f.d}`);
 const aFrac = x => { const [n, d] = x.split('/'); return { n, d }; };
 const reservadoEn = (lista, fracs, ops) => {
   const k = claveSinOrden(terminosCuenta(fracs, ops));
@@ -83,7 +95,11 @@ const reservadoEn = (lista, fracs, ops) => {
 };
 // Sumas y restas de dos fracciones que los exámenes semanales muestran (U4-1A-01, 2A-02, 2A-04, 2B-01, 2B-02, 3A-02, 3C-09 y 3C-11),
 // por huella de la clave sin orden: el examen pregunta otro paso de la misma cuenta (criterio de la 117).
-const HUELLAS_SUMAS = new Set(["11lm8in","12av30i","16cwupy","16g78mj","19olc0o","1d71buw","1dw2qz","1e3tuzc","1i2knun","1k58uos","1linyd","1ncw7mg","1vae38i","1xh35n8","2o5na0","3qgez4","3w7h8f","8sjsox","9iwx64","a6ylw6","am9n68","fmc2rq","g9pty","ilacu2","jabk73","kjxf3d","ldm7pe","mkt71j","qv48q4","ulbfzh","v8fs1t","x0s36z"]);
+const HUELLAS_SUMAS = new Set(["11lm8in","12av30i","16cwupy","16g78mj","19olc0o","1d71buw","1dw2qz","1e3tuzc","1i2knun","1k58uos","1linyd","1ncw7mg","1vae38i","1xh35n8","2o5na0","3qgez4","3w7h8f","8sjsox","9iwx64","a6ylw6","am9n68","fmc2rq","g9pty","ilacu2","jabk73","kjxf3d","ldm7pe","mkt71j","qv48q4","ulbfzh","v8fs1t","x0s36z",
+  // Examen final (reabierta del 6-11): sumas de los tres modelos y la recuperación (cuentas, errores a encontrar y problemas).
+  "1qgleqn","1kvkybb","1bq2o66","18vr4ap","1pwjkse","vfiy8r","1us8piu","1d73rr1","5sz4o6","1ldeqpk","62yqd5",
+  // Opciones de las preguntas de sumas de los semanales 2 y 3 (U4-2A-04, U4-3C-11) que la reabierta del 6-11 encontró por barrido.
+  "c94exp","123vcfl","1kzqfcq","3iirz2","13ethse","1yx5xp7","iqmcys"]);
 const esCasoExamenSuma = (fracs, ops) => HUELLAS_SUMAS.has(huella(claveSinOrden(terminosCuenta(fracs, ops))));
 
 /** ¿Es el ítem del ejercicio 1 un caso reservado? */
@@ -94,7 +110,9 @@ export const esReservadoPasos = item => reservadoEn(RESERVADOS.pasos.concat(RESE
 export const esReservadoQueda = item => RESERVADOS.queda.some(([x, y]) => {
   const k = [`${item.a.n}/${item.a.d}`, `${item.b.n}/${item.b.d}`];
   return (k[0] === x && k[1] === y) || (k[0] === y && k[1] === x);
-});
+}) || esReservadoMismo({ a: item.a, b: item.b, op: '+' });
+/** ¿Es el ítem del ejercicio 5 (a + b) un caso reservado o de examen? */
+export const esReservadoCaza = item => esReservadoMismo({ a: item.a, b: item.b, op: '+' });
 
 /** La fracción de un ítem ({ n, d } → Fraccion). */
 export const F = x => fraccion(x.n, x.d);
@@ -399,6 +417,7 @@ export function generarCaza(rng) {
     if (m > 60 || (mala === 0 && m === d1)) continue;   // para equivocar la 1.ª equivalente hace falta que cambie (k1 > 1)
     const a = fraccion(rng.entero(1, d1 - 1), d1), b = fraccion(rng.entero(1, d2 - 1), d2);
     if (!a.esIrreducible() || !b.esIrreducible() || !propia(a.sumar(b))) continue;
+    if (esReservadoCaza({ a: dato(a), b: dato(b) })) continue;
     const k1 = m / d1, k2 = m / d2;
     let x = a.num * k1, y = b.num * k2;
     if (mala === 0) x = a.num;                                  // amplia-solo-denominador: 2/3 = 2/6

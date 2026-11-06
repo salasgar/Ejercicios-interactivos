@@ -13,7 +13,7 @@ import {
   F, ERRORES_PROPIOS, errorConNombre, generarMismo, generarPasos, generarNaturales, generarQueda, generarCaza,
   resultadoMismo, errorDeMismo, equivalentes, resultadoPasos, corregirPasos, terminosNat, resultadoNat, errorDeNat,
   respuestaQueda, lineaCorrecta, RESERVADOS, MAX_TROZOS_PIZZA, esReservadoMismo, esReservadoPasos, esReservadoQueda,
-  esReservadoNaturales, esCasoExamenNaturales, esCasoExamenQueda,
+  esReservadoNaturales, esCasoExamenNaturales, esCasoExamenQueda, esReservadoCaza,
 } from '../practicas/suma-resta/logica.js';
 import {
   TX, cuentaMismo, solucionMismo, cuentaPasos, solucionPasos, cuentaNat, solucionNat, enunciadoQueda,
@@ -331,8 +331,8 @@ test('los casos reservados para el examen no salen nunca (ejercicios 1, 2 y 4)',
   assert.ok(esReservadoMismo({ a: f(4, 15), b: f(7, 15), op: '+' }));
   assert.ok(esReservadoMismo({ a: f(17, 20), b: f(9, 20), op: '-' }));
   assert.ok(esReservadoQueda({ a: f(5, 12), b: f(1, 3) }));
-  assert.ok(!esReservadoQueda({ a: f(1, 3), b: f(1, 4) }));
-  assert.equal(RESERVADOS.pasos.length, 19);
+  assert.ok(!esReservadoQueda({ a: f(1, 3), b: f(1, 8) }));
+  assert.equal(RESERVADOS.pasos.length, 43);
   // Casos de la hoja 2 añadidos por la reabierta del 30-10.
   assert.ok(esReservadoMismo({ a: f(3, 11), b: f(5, 11), op: '+' }));
   assert.ok(esReservadoMismo({ a: f(3, 10), b: f(9, 10), op: '+' }));
@@ -387,6 +387,53 @@ test('los casos de examen no salen nunca (por huella), y la detección no depend
   assert.ok(generar(generarQueda, 104911).every(it => !esCasoExamenQueda(it)));
   const f = (n, d) => ({ n, d });
   assert.equal(esCasoExamenQueda({ a: f(1, 3), b: f(1, 7) }), esCasoExamenQueda({ a: f(1, 7), b: f(1, 3) }));
+});
+
+// --- Reabierta del 6-11: una sola exclusión, sin orden, en los CINCO ejercicios ---------------------
+
+test('hojas 2 y 3: sus cuentas no salen en ningún ejercicio, en ningún orden (3000 ítems cada uno)', () => {
+  const f = (n, d) => ({ n, d });
+  // Hoja 2 (ej. 2, 4 y 5 las sacaban) y hoja 3 (ej. 1, 2, 4 y 5): tal cual y conmutadas.
+  const sumas = [[2, 3, 3, 4, '+'], [5, 9, 1, 4, '-'], [7, 8, 1, 6, '-'], [1, 6, 2, 3, '+'], [5, 7, 1, 2, '-'], [2, 3, 1, 9, '+'],
+    [5, 6, 3, 10, '-'], [3, 4, 2, 5, '-'], [2, 5, 1, 4, '+'], [7, 8, 1, 12, '+'], [1, 8, 5, 8, '+'], [5, 6, 1, 4, '+'],
+    [2, 11, 5, 11, '+'], [1, 10, 3, 4, '+'], [5, 6, 1, 3, '-'], [1, 2, 1, 4, '+'], [1, 3, 1, 6, '+'], [3, 4, 1, 6, '-']];
+  for (const [n1, d1, n2, d2, op] of sumas) {
+    const [a, b] = [f(n1, d1), f(n2, d2)];
+    assert.ok(esReservadoMismo({ a, b, op }), `ej1 ${n1}/${d1} ${op} ${n2}/${d2}`);
+    assert.ok(esReservadoPasos({ fracs: [a, b], ops: [op] }), `ej2 ${n1}/${d1} ${op} ${n2}/${d2}`);
+    // Conmutada: «a − b» es «−b + a» y «a + b» es «b + a».
+    const conmutada = op === '+' ? { a: b, b: a, op } : { a: f(-n2, d2), b: a, op: '+' };
+    assert.ok(esReservadoMismo(conmutada), `ej1 conmutada ${n1}/${d1} ${op} ${n2}/${d2}`);
+    assert.ok(esReservadoCaza({ a, b }) === (op === '+'), `ej5 ${n1}/${d1} ${op} ${n2}/${d2}`);
+    if (op === '+') assert.ok(esReservadoQueda({ a, b }) && esReservadoQueda({ a: b, b: a }), `ej4 ${n1}/${d1} + ${n2}/${d2}`);
+  }
+  // Ejercicio 3: los paréntesis «−3/4 + 2» y «6 + 2/5» de la hoja 3, en los dos órdenes.
+  assert.ok(esReservadoNaturales({ tipo: 'nat-f', nat: 2, f: f(3, 4) }));
+  assert.ok(esReservadoNaturales({ tipo: 'nat+f', nat: 6, f: f(2, 5) }) && esReservadoNaturales({ tipo: 'f+nat', nat: 6, f: f(2, 5) }));
+  for (const semilla of [104060, 104061, 104062]) {
+    const rng = crearRng(semilla);
+    for (let i = 0; i < 1000; i++) {
+      assert.ok(!esReservadoMismo(generarMismo(rng)), `mismo ${i}`);
+      assert.ok(!esReservadoPasos(generarPasos(rng)), `pasos ${i}`);
+      const nat = generarNaturales(rng);
+      assert.ok(!esReservadoNaturales(nat) && !esCasoExamenNaturales(nat), `naturales ${i}`);
+      const queda = generarQueda(rng);
+      assert.ok(!esReservadoQueda(queda) && !esCasoExamenQueda(queda), `queda ${i}`);
+      const caza = generarCaza(rng);
+      assert.ok(!esReservadoCaza(caza), `caza ${i}`);
+    }
+  }
+});
+
+test('casos de examen del ejercicio 3: la huella no depende del orden de los términos', () => {
+  const f = (n, d) => ({ n, d });
+  let hay = 0;
+  for (let nat = 1; nat <= 6; nat++) for (let d = 2; d <= 12; d++) for (let n = 1; n < d; n++) {
+    const [a, b] = [esCasoExamenNaturales({ tipo: 'nat+f', nat, f: f(n, d) }), esCasoExamenNaturales({ tipo: 'f+nat', nat, f: f(n, d) })];
+    assert.equal(a, b, `nat+f y f+nat de ${nat} y ${n}/${d} no coinciden`);
+    if (a) hay++;
+  }
+  assert.ok(hay >= 3, `casi no hay huellas de «natural + fracción»: ${hay}`);
 });
 
 test('ejercicio 4: si lo que queda no es irreducible, el paso a paso lo simplifica', () => {
