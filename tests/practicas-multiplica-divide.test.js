@@ -30,8 +30,13 @@ const conocidos = new Set([...Object.keys(ERRORES_TIPICOS), ERROR_OTRO, ERROR_SI
 const irreducible = ([n, d]) => mcd(Math.abs(n), d) === 1;
 const sinEtiquetas = html => html.replace(/<[^>]*>/g, ' ');
 const igualPar = (p, q) => p[0] === q[0] && p[1] === q[1];
-const enListaSinOrden = (pool, a, b) => pool.some(([x, y]) => (igualPar(a, x) && igualPar(b, y)) || (igualPar(a, y) && igualPar(b, x)));
-const enListaConOrden = (pool, a, b) => pool.some(([x, y]) => igualPar(a, x) && igualPar(b, y));
+// Independiente del código: valores absolutos y signo del resultado (el sitio del menos no cuenta).
+const absPar = p => [Math.abs(p[0]), p[1]];
+const signo = (a, b) => Math.sign(a[0]) * Math.sign(b[0]);
+const enListaSinOrden = (pool, a, b) => pool.some(([x, y]) => signo(a, b) === signo(x, y)
+  && ((igualPar(absPar(a), absPar(x)) && igualPar(absPar(b), absPar(y))) || (igualPar(absPar(a), absPar(y)) && igualPar(absPar(b), absPar(x)))));
+const enListaConOrden = (pool, a, b) => pool.some(([x, y]) => signo(a, b) === signo(x, y)
+  && igualPar(absPar(a), absPar(x)) && igualPar(absPar(b), absPar(y)));
 
 /** Reglas de escritura de los textos para el alumno (en los dos idiomas). */
 function comprobarTexto(html, donde) {
@@ -67,6 +72,29 @@ test('la hoja 2, ej. 11 (a-h), está en la lista de productos reservados, en los
   for (const [a, b] of hoja2) {
     assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, a, b), JSON.stringify([a, b]));
     assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, b, a), JSON.stringify([b, a]));
+  }
+});
+
+test('el sitio del signo no cambia el caso: las huellas y las listas lo ignoran', () => {
+  // Producto: el menos en un factor o en el otro es la misma cuenta; el signo contrario del resultado, no.
+  assert.equal(huellaMultiplica([3, 8], [-4, 9]), huellaMultiplica([-3, 8], [4, 9]));
+  assert.equal(huellaMultiplica([-3, 8], [4, 9]), huellaMultiplica([4, 9], [-3, 8]));
+  assert.notEqual(huellaMultiplica([3, 8], [-4, 9]), huellaMultiplica([3, 8], [4, 9]));
+  assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [-3, 8], [4, 9]), 'hoja 3, 6b con el menos en el otro factor');
+  assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [3, 8], [4, 9]));
+  // Cociente: «−a : b» y «a : (−b)» son lo mismo; el orden sí cuenta.
+  assert.equal(huellaDivide([-3, 8], [5, 9]), huellaDivide([3, 8], [-5, 9]));
+  assert.notEqual(huellaDivide([3, 8], [5, 9]), huellaDivide([3, 8], [-5, 9]));
+  assert.ok(HUELLAS_EXAMEN_DIVIDE.has(huellaDivide([3, 8], [5, 9])));
+  assert.ok(enListaConOrden(PAREJAS_HOJA_DIVIDE, [-6, 1], [3, 5]), 'hoja 3, 6e como −6 : 3/5');
+  assert.ok(enListaConOrden(PAREJAS_HOJA_DIVIDE, [6, 1], [-3, 5]));
+  assert.ok(!enListaConOrden(PAREJAS_HOJA_DIVIDE, [3, 5], [-6, 1]));
+  // Hoja 3: 3b, 3c, 6c y 12b del cociente; 6b y 7a del producto.
+  for (const [a, b] of [[[5, 6], [10, 9]], [[4, 9], [2, 5]], [[-5, 6], [10, 3]], [[5, 6], [-10, 3]], [[3, 5], [4, 7]]]) {
+    assert.ok(enListaConOrden(PAREJAS_HOJA_DIVIDE, a, b), JSON.stringify([a, b]));
+  }
+  for (const [a, b] of [[[3, 8], [-4, 9]], [[2, 11], [5, 11]]]) {
+    assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, a, b), JSON.stringify([a, b]));
   }
 });
 

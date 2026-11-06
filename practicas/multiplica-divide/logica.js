@@ -36,25 +36,23 @@ export const huella = s => {
   return h.toString(36);
 };
 const fr = ([n, d]) => `${n}/${d}`;
-/** Ej. 1 (multiplica): clave sin orden, los dos factores. */
-export const huellaMultiplica = (a, b) => huella([fr(a), fr(b)].sort().join('|'));
-/** Ej. 4 (divide): clave con orden, dividendo y divisor. */
-export const huellaDivide = (a, b) => huella(`${fr(a)}|${fr(b)}`);
+const valorAbs = ([n, d]) => `${Math.abs(n)}/${d}`;
+const signoDe = (a, b) => Math.sign(a[0]) * Math.sign(b[0]);
+/** Ej. 1 (multiplica): clave sin orden y sin el sitio del signo: (|a|, |b|) y signo del producto. */
+export const huellaMultiplica = (a, b) => huella(`${[valorAbs(a), valorAbs(b)].sort().join('|')}|${signoDe(a, b)}`);
+/** Ej. 4 (divide): clave con orden y sin el sitio del signo: (|a|, |b|) y signo del cociente. */
+export const huellaDivide = (a, b) => huella(`${valorAbs(a)}|${valorAbs(b)}|${signoDe(a, b)}`);
 /** Ej. 5 (potencias): clave la base y el exponente. */
 export const huellaPotencia = (base, exp) => huella(`${fr(base)}^${exp}`);
 
 export const HUELLAS_EXAMEN_MULTIPLICA = new Set([
-  '1meqt56', 'mpz6jq', '19s3037', 'wdwvgy', '1gu07eo', '16eocbl',
-  '1bhimha', 'g4g4su', 'egd2fc', '128ybmq', '1c1y0wo', '1hm4q4v',
-  'euj67f', '1ls6rik', '1orygr3',
+  'zzw14b', '1tfuajb', 'g62pu9', 'dedpbb', 'f7oy2t', 'zvyrqg', '2nl8qt', '16mdwuh',
+  '1u3nv9g', '1felgiw', '8v0ap', 'llrdzg', '1a859pb', '1dvw5n1', 'yh1yci',
 ]);
 export const HUELLAS_EXAMEN_DIVIDE = new Set([
-  '1g38li2', '1kkydqf', 'iro6pn', 'rg9we5', '1nb1b47', '1nhacnt',
-  '112he92', '16a5pk', '1toafhw', '6mvy0n', '1oijkgn', '1ylk3n9',
-  '1jqnq46', '1pcmr41', '1jmwt3q', '15nj2kd', 'grsx23', '478mdr',
-  'x0orou', '1axchh6', '48b8l1',
-  // U4-3C-11 del examen semanal 3: la cuenta mal hecha es una división (2 variantes).
-  '198yej7', '1c01os',
+  'egip4f', 'ga31l8', '1pmlz6k', 'j6l89j', '1xto2fa', '1uddy7s', '155fuck', '6i7s2h',
+  '1twfyos', '1bo0vnq', '17859kg', 'itht34', 'rcthdf', '1a707nu', '1wnx085', '16bzgc9',
+  'wiwxc', '40p480', '10yro6m', 'gq7ign', '13iwn0r', 'ptscgd', 'qh6fvy',
 ]);
 export const HUELLAS_EXAMEN_POTENCIA = new Set([
   '4ip7sn', 'x8sfeg', '1808zrt', '11rn67e', 'quac4a', '18hpam4',
@@ -63,20 +61,24 @@ export const HUELLAS_EXAMEN_POTENCIA = new Set([
 ]);
 
 // Los de las hojas y del banco, en claro: los alumnos ya los tienen en papel.
+// Se comparan por valores absolutos y signo del resultado: el menos en el otro operando es la misma cuenta.
 const igual = (p, q) => p[0] === q[0] && p[1] === q[1];
+const igualAbs = (p, q) => Math.abs(p[0]) === Math.abs(q[0]) && p[1] === q[1];
 /** ¿(a,b) es una de las parejas de `pool`, en cualquier orden? */
-const esParejaHoja = (pool, a, b) => pool.some(([x, y]) => (igual(a, x) && igual(b, y)) || (igual(a, y) && igual(b, x)));
+const esParejaHoja = (pool, a, b) => pool.some(([x, y]) => signoDe(a, b) === signoDe(x, y)
+  && ((igualAbs(a, x) && igualAbs(b, y)) || (igualAbs(a, y) && igualAbs(b, x))));
 /** ¿(a,b) es una de las parejas de `pool`, con el mismo orden (dividendo, divisor)? */
-const coincideDivide = (pool, a, b) => pool.some(([x, y]) => igual(a, x) && igual(b, y));
+const coincideDivide = (pool, a, b) => pool.some(([x, y]) => signoDe(a, b) === signoDe(x, y) && igualAbs(a, x) && igualAbs(b, y));
 
-// Hoja 3, ej. 1a (4/9·3/10), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4);
+// Hoja 3, ej. 1a (4/9·3/10), 6b (3/8·(−4/9)), 7a (2/11·5/11), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4);
 // hoja 2, ej. 11 (apartado «For after the class on Thursday 7 January»), de la a a la h.
 export const PAREJAS_HOJA_MULTIPLICA = [
   [[4, 9], [3, 10]], [[1, 10], [3, 4]], [[6, 1], [2, 5]], [[4, 5], [3, 4]],
   [[5, 1], [3, 8]], [[2, 1], [7, 12]], [[5, 8], [3, 7]], [[2, 3], [9, 10]],
   [[4, 5], [3, 5]], [[10, 21], [14, 15]], [[8, 9], [3, 4]], [[2, 5], [4, 7]],
+  [[3, 8], [-4, 9]], [[2, 11], [5, 11]],
 ];
-// Hoja 3, ej. 3a, 3d, 3e, 3f; 4a, 4b, 4c, 4e, 4f; 5b, 5b2, 5b3; 6e; 7c2; banco B11a y B11c.
+// Hoja 3, ej. 3a-3f; 4a, 4b, 4c, 4e, 4f; 5b, 5b2, 5b3; 6c, 6e; 7c2; 12b; banco B11a y B11c.
 export const PAREJAS_HOJA_DIVIDE = [
   [[3, 5], [2, 7]], [[7, 8], [7, 4]], [[2, 9], [5, 6]], [[9, 10], [3, 5]],
   [[5, 1], [2, 3]], [[8, 1], [4, 5]], [[12, 1], [3, 4]], [[2, 7], [4, 1]], [[6, 11], [3, 1]],
@@ -84,6 +86,7 @@ export const PAREJAS_HOJA_DIVIDE = [
   [[6, 1], [-3, 5]],
   [[5, 6], [1, 3]],
   [[9, 1], [3, 4]], [[6, 1], [2, 5]],
+  [[5, 6], [10, 9]], [[4, 9], [2, 5]], [[-5, 6], [10, 3]], [[3, 5], [4, 7]],
 ];
 // Hoja 2, ej. 12c: 1/3 de los que juegan un instrumento (3/5), sin importar el orden.
 export const PAREJAS_HOJA_PARTE = [[[1, 3], [3, 5]]];
