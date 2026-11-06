@@ -88,7 +88,11 @@ Comprobación barata: `ls $R/hechos/terminadas/ | grep '^143--'` (tiene que esta
 
 ## Trampas conocidas
 
-- (vacío)
+- (s-20261106T144157-a6fa2e7c) Son **47** ítems, no ~45 ni 57: los 3 pares de comas cuentan uno cada uno. Duración real ~10 min.
+- El fallo que más se escapa no es la tilde sino **la frase que solo necesita una coma para valer con la otra palabra**
+  («Mira, sí está abierta»): léela también en voz alta con la otra palabra y una pausa.
+- Una «buena» de signos puede no serlo sin discusión aunque el espacio esté bien (la enumeración anunciada pide dos puntos):
+  cambiarla por otra frase que evalúe el mismo espacio, no tocar las malas por separado.
 
 ## Prohibido (propio de esta tarea)
 
