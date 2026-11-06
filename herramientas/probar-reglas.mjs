@@ -20,6 +20,18 @@
 //   --dejar  no borra al final los datos de prueba (para mirarlos en la consola)
 //   --baja   B está de baja (activo: false en la consola): solo comprueba que
 //            un profesor de baja no entra en su espacio
+//   --seco   no escribe nada en la nube: dice qué documentos de A tocaría el
+//            banco y qué guardaría de ellos. Sin variables de entorno no hace
+//            ninguna petición; con ellas, lee (solo lee) esos tres documentos
+//
+// Los datos reales de A (tarea 167): el banco necesita escribir en el espacio de
+// A (el documento del espacio, config/tareas y privado/nombres). Antes de la
+// primera escritura guarda lo que A tiene en esos tres documentos (en memoria y
+// en una copia 0600 en la carpeta temporal del sistema, nunca en el repositorio)
+// y al final lo restaura, también si una prueba falla o se interrumpe (Ctrl-C):
+// lo que existía vuelve a quedar igual y lo que no existía se borra. Después
+// vuelve a leerlos y comprueba que son idénticos (el updateTime sí cambia). Con
+// --dejar tampoco se dejan los tres documentos de prueba: se restauran igual.
 //
 // Además crea por REST una tercera cuenta desechable, «sin alta», y la borra al
 // terminar. Los datos de prueba llevan códigos inventados de 8 caracteres que
@@ -30,7 +42,9 @@
 // No imprime uids, correos ni contraseñas. Termina con código 1 si alguna
 // comprobación no da lo esperado.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, unlinkSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { webcrypto } from 'node:crypto';
 import { firebaseConfig } from '../src/config.js';
 import { leerCodigoAlumno } from '../practicas/_comun/codigos.js';
@@ -41,6 +55,7 @@ const BASE = `https://firestore.googleapis.com/v1/projects/${projectId}/database
 const AUTH = 'https://identitytoolkit.googleapis.com/v1/accounts';
 const DEJAR = process.argv.includes('--dejar');
 const BAJA = process.argv.includes('--baja');
+const SECO = process.argv.includes('--seco');
 
 // --- Utilidades ----------------------------------------------------------------------
 
@@ -178,12 +193,95 @@ function estaticas() {
   ok('sin reglas para las colecciones del modo antiguo', !viejas.length, viejas.length ? `quedan: ${viejas.join(', ')}` : '');
 }
 
+// --- Los datos reales de A: guardar al empezar, restaurar al final (tarea 167) --------
+
+/** Los documentos del espacio de A que el banco sobrescribe, en el orden de restauración (los hijos, antes que el espacio). */
+const docsDeA = uid => [`practicas-espacios/${uid}/privado/nombres`, `practicas-espacios/${uid}/config/tareas`, `practicas-espacios/${uid}`];
+/** Para mostrar: sin el uid. */
+const nombreCorto = ruta => ruta.replace(/^practicas-espacios\/[^/]+/, 'espacio de A');
+/** JSON con las claves ordenadas, para comparar documentos sin depender del orden en que los devuelva Firestore. */
+const canonico = v => JSON.stringify(v, (_, x) => (x && typeof x === 'object' && !Array.isArray(x)
+  ? Object.fromEntries(Object.entries(x).sort(([a], [b]) => (a < b ? -1 : 1))) : x));
+
+/** Lee cada documento: { ruta, existia, fields }. Si alguno da algo que no sea 200 o 404, lanza: no se escribe sin saber qué había. */
+async function guardarDatos(rutas, quien) {
+  const copia = [];
+  for (const ruta of rutas) {
+    const r = await leer(ruta, quien);
+    if (r.status === 200) copia.push({ ruta, existia: true, fields: r.json?.fields ?? {} });
+    else if (r.status === 404) copia.push({ ruta, existia: false });
+    else throw new Error(`no se pudo leer «${nombreCorto(ruta)}» antes de escribir (${r.status}): no se ha escrito nada`);
+  }
+  return copia;
+}
+
+/** Lo que hay que restaurar si el banco se interrumpe o falla: { copia, quien, archivo }. */
+let pendiente = null;
+
+/** Devuelve la copia a la nube y comprueba que ha quedado igual. true si todo ha quedado como estaba. */
+async function restaurarPendiente() {
+  if (!pendiente) return true;
+  const { copia, quien, archivo } = pendiente;
+  pendiente = null;
+  titulo('Restauración de los datos de A (tarea 167)');
+  let bien = true;
+  for (const d of copia) {
+    const n = nombreCorto(d.ruta);
+    const hecho = d.existia
+      ? await comprobar(`restaura ${n}`, 200, () => peticion('PATCH', d.ruta, { quien, cuerpo: { fields: d.fields } }))
+      : await comprobar(`borra ${n} (no existía)`, 200, () => borrar(d.ruta, quien));
+    const igual = await comprobar(`${n} queda como estaba`, d.existia ? 200 : 404, () => leer(d.ruta, quien),
+      r => (!d.existia ? 'no existe, como antes'
+        : canonico(r.json?.fields ?? {}) === canonico(d.fields) ? 'contenido idéntico' : { fallo: 'el contenido no coincide con el guardado' }));
+    bien = bien && hecho && igual;
+  }
+  if (bien) { try { unlinkSync(archivo); } catch { /* ya no está */ } }
+  else console.error(`\n¡Los datos de A no han quedado como estaban! La copia está en ${archivo} (formato de Firestore REST; solo la lee su dueño).`);
+  return bien;
+}
+
+/** Ctrl-C a mitad del banco: antes de salir, se restaura. Un segundo Ctrl-C lo corta sin más. */
+for (const senal of ['SIGINT', 'SIGTERM']) {
+  process.once(senal, async () => {
+    console.error(`\nInterrumpido (${senal}): restaurando los datos de A antes de salir…`);
+    await restaurarPendiente();
+    imprimir();
+    process.exit(130);
+  });
+}
+
+/** --seco: qué tocaría el banco y qué guardaría, sin escribir nada. env: las variables de entorno, o null si faltan. */
+async function seco(env) {
+  console.log('\n## Modo seco: no se escribe nada en la nube\n');
+  console.log('El banco sobrescribe estos documentos del espacio de A y los restaura al final:');
+  for (const r of docsDeA('<uid de A>')) console.log(`- ${nombreCorto(r)}`);
+  console.log('Lo demás que escribe son documentos de prueba con códigos inventados (ZZ…), que borra su dueño al terminar;');
+  console.log('B solo escribe códigos de prueba suyos (ZZ…) y nada en su espacio.');
+  if (!env) {
+    console.log('\nSin variables de entorno no se consulta la nube: no se sabe qué hay hoy en esos documentos.');
+    return;
+  }
+  const A = await entrar(env.PROFE_A_EMAIL, env.PROFE_A_CLAVE);
+  const copia = await guardarDatos(docsDeA(A.uid), A);
+  console.log('\nQué guardaría hoy (solo lectura; sin contenido):');
+  for (const d of copia) {
+    const campos = d.existia ? Object.keys(d.fields) : [];
+    console.log(`- ${nombreCorto(d.ruta)}: ${d.existia ? `existe, ${campos.length} campo(s)${campos.length ? ` (${campos.join(', ')})` : ''}, ${canonico(d.fields).length} caracteres` : 'no existe (al final se borraría lo que cree el banco)'}`);
+  }
+}
+
 // --- Comprobaciones por REST ----------------------------------------------------------
 
+/** Devuelve { quedan, codigos } para `terminar`: así la restauración de A ocurre antes de salir, pase lo que pase. */
 async function main() {
   estaticas();
   const env = process.env;
   const faltan = ['PROFE_A_EMAIL', 'PROFE_A_CLAVE', 'PROFE_B_EMAIL', 'PROFE_B_CLAVE'].filter(k => !env[k]);
+  if (SECO) {
+    imprimir();
+    await seco(faltan.length ? null : env);
+    return { seco: true };
+  }
   if (faltan.length) {
     imprimir();
     console.error(`\nFaltan variables de entorno: ${faltan.join(', ')}. Solo se han hecho las comprobaciones sin red.`);
@@ -204,7 +302,7 @@ async function main() {
     await comprobar('B escribe su configuración', 403, () => escribir(`${esp(B.uid)}/config/tareas`, { json: '{}', actualizado: ahora }, B));
     await comprobar('B lista su progreso libre', 403, () => listar(`${esp(B.uid)}/progreso-libre`, B));
     await comprobar('B lista sus códigos (consulta)', 403, () => consultarCodigos(B.uid, B));
-    return terminar([]);
+    return { quedan: [] };
   }
 
   // Códigos inventados: dos de A, uno de B, uno que no existe.
@@ -245,6 +343,13 @@ async function main() {
     console.error('\nA o B no están dados de alta: crea practicas-profesores/<uid> con activo: true (booleano) y alta: 1 (número) en la consola.');
     process.exit(1);
   }
+  // Tarea 167: a partir de aquí el banco puede escribir en el espacio de A. Se guarda lo que hay (en
+  // memoria y en una copia 0600 fuera del repositorio) y se restaura al final, ocurra lo que ocurra.
+  const copia = await guardarDatos(docsDeA(A.uid), A);
+  const archivo = join(tmpdir(), `probar-reglas-copia-${Date.now()}.json`);
+  writeFileSync(archivo, JSON.stringify({ copia }), { mode: 0o600 });
+  pendiente = { copia, quien: A, archivo };
+  console.log(`Copia de los datos de A hecha (${copia.filter(d => d.existia).length} de ${copia.length} documentos existen): ${archivo}`);
   await comprobar('A lee el alta de B', 403, () => leer(`practicas-profesores/${B.uid}`, A));
   await comprobar('A lista practicas-profesores', 403, () => listar('practicas-profesores', A));
   await comprobar('sin cuenta: lee el alta de A', 403, () => leer(`practicas-profesores/${A.uid}`, anon));
@@ -448,7 +553,7 @@ async function main() {
   const quedan = [];
   if (antiguoRegistrado) quedan.push(`practicas-alumnos/${ANTIGUO_PRUEBA} en el espacio de A (no se pudo borrar: bórralo en la consola)`);
   if (DEJAR) {
-    quedan.push(`practicas-alumnos/{${cA1}, ${cA2}, ${cB1}, ${cA4}, ${cA4b}, ${cB4}}`, `practicas-espacios/<uid de A> con config/tareas, privado/nombres, progreso-libre/semaforo--{${cA1}, ${cA4}}, progreso-tareas/t2--semaforo--{${cA1}, ${cA4}}, asignaciones/{${cA1}, ${cA4}}, fallos/{${[idBueno, ...idsF4].join(', ')}}`);
+    quedan.push(`practicas-alumnos/{${cA1}, ${cA2}, ${cB1}, ${cA4}, ${cA4b}, ${cB4}}`, `practicas-espacios/<uid de A> con progreso-libre/semaforo--{${cA1}, ${cA4}}, progreso-tareas/t2--semaforo--{${cA1}, ${cA4}}, asignaciones/{${cA1}, ${cA4}}, fallos/{${[idBueno, ...idsF4].join(', ')}} (el espacio, config/tareas y privado/nombres de A sí se restauran)`);
   } else {
     titulo('Limpieza (el dueño borra lo suyo)');
     await comprobar('A borra el fallo', 200, () => borrar(`${fallos}/${idBueno}`, A));
@@ -467,9 +572,8 @@ async function main() {
       return rs.find(r => r.status !== 200) ?? rs[0];
     });
     await comprobar('B borra su código de 4', 200, () => borrar(`practicas-alumnos/${cB4}`, B));
-    await comprobar('A borra su lista de nombres', 200, () => borrar(`${esp(A.uid)}/privado/nombres`, A));
-    await comprobar('A borra sus tareas', 200, () => borrar(`${esp(A.uid)}/config/tareas`, A));
-    await comprobar('A borra su espacio', 200, () => borrar(esp(A.uid), A));
+    // La lista de nombres, las tareas y el documento del espacio de A no se borran aquí: los restaura
+    // restaurarPendiente() (tarea 167), que deja lo que había y borra solo lo que no existía.
     await comprobar('A borra sus códigos', 200, async () => {
       const r1 = await borrar(`practicas-alumnos/${cA1}`, A);
       const r2 = await borrar(`practicas-alumnos/${cA2}`, A);
@@ -482,7 +586,7 @@ async function main() {
     const ok = await borrarCuenta(C);
     if (!ok) quedan.push('la cuenta desechable zz-sin-alta-…@example.com en Authentication (no se pudo borrar)');
   }
-  return terminar(quedan, [cA1, cA2, cB1, cX, cA4, cA4b, cB4]);
+  return { quedan, codigos: [cA1, cA2, cB1, cX, cA4, cA4b, cB4] };
 }
 
 function terminar(quedan, codigos = []) {
@@ -495,4 +599,10 @@ function terminar(quedan, codigos = []) {
   process.exit(fallan.length ? 1 : 0);
 }
 
-main().catch(err => { console.error(err.message); process.exit(1); });
+// La restauración de A va en el finally: también si main() lanza. (process.exit dentro de main solo se
+// llama antes de guardar la copia.)
+let resultado = null, fallo = null;
+try { resultado = await main(); } catch (err) { fallo = err; } finally { await restaurarPendiente(); }
+if (fallo) { imprimir(); console.error(fallo.message); process.exit(1); }
+if (resultado.seco) process.exit(filas.some(f => !f.ok) ? 1 : 0);
+terminar(resultado.quedan, resultado.codigos);
