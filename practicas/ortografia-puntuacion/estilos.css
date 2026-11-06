@@ -1,2 +1,5 @@
 /* Ortografía: puntuación y mayúsculas. Las frases, los huecos y las piezas ya tienen sus
    estilos (../_comun/ortografia.js los pone en la página): aquí, solo lo propio del bloque. */
+
+/* Los correos son de dos o tres líneas: el salto de línea del texto se respeta y no se parten palabras. */
+.frases .eleccion { white-space: pre-line; overflow-wrap: break-word; }
