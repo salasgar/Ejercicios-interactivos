@@ -53,3 +53,13 @@ también por esa clave. Nunca en claro: solo huellas. `esCasoReservado` es el ú
 commit, pero **sigue en el historial de git** (commit 68297e6): decide Juan Luis si hace falta reescribirlo.
 `node --test tests/practicas-comun.test.js tests/practicas-combinadas-fracciones.test.js`: 66/66. `npm test`: 1366/1366. Sin tocar
 `catalogo.js`. Sin publicar (sin publicador, mar 22-12).
+
+## Reabierta del 6-11 (s-20261106T144236-e32305eb; cierra s-20261106T160018-570bb569, commit 373d35d)
+
+`hechos/reabiertas/106--s-20261106T144236-e32305eb-revision.md`. `EXPRESIONES_HOJA` pasa de 3 a 11: hoja 3 ej. 8a-8e y 9a-9d, 12d y la cadena de la hoja 2 (U4-2C-04), con la clave sin orden.
+En el ej. 3, `generarError` descarta el ítem si **cualquier línea con 2 o más operaciones** es un caso reservado (antes solo miraba `lineas[0]`) o si algún paso
+«línea k → línea k+1» es uno de las cajas «Find the mistake» (5b) de los modelos 1 y 2 y de la recuperación del final (el adaptado-A repite la de Leo). Nuevas
+`esPasoReservado`, `huellaPaso` y `HUELLAS_PASOS_EXAMEN` (14 huellas de la clave sin orden de la línea k + valor de la k+1, calculadas con un guion de scratchpad desde los cuatro
+`.tex`; nunca en claro). Barrido: 5 semillas × 20000 ítems del ej. 3 (y 100000 de los ej. 1 y 2): 0 líneas, 0 pasos, 0 expresiones reservadas.
+`node --test tests/practicas-comun.test.js tests/practicas-combinadas-fracciones.test.js`: 68/68. `npm test`: 1644/1644. Sin navegador (solo cambia la exclusión de ítems, no la interfaz).
+Sin tocar `catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).

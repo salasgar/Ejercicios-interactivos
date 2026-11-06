@@ -72,3 +72,14 @@ las otras tres son suma o comparación y no pueden salir en esta práctica. Nunc
 dependen del orden (`huellaMultiplica` ordena; `esParejaHoja` mira los dos órdenes); test nuevo con la hoja 2 en los dos órdenes.
 `node --test tests/practicas-comun.test.js tests/practicas-multiplica-divide.test.js`: 66/66. `npm test`: 1365/1365. Sin tocar
 `catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).
+
+## Reabierta del 6-11 (s-20261106T144236-e32305eb; cierra s-20261106T155741-13a7f159, commit 9c7d5c6)
+
+`hechos/reabiertas/105--s-20261106T144236-e32305eb-revision.md`. **Las claves ya no dependen del sitio del signo:** `huellaMultiplica` =
+(|a|, |b| sin orden, signo del producto) y `huellaDivide` = (|a|, |b| con orden, signo del cociente); `esParejaHoja` y `coincideDivide`
+comparan igual. Los dos `HUELLAS_EXAMEN_*` (15 y 23) se recalcularon invirtiendo las huellas viejas por fuerza bruta sobre todas las
+fracciones de numerador ±30 y denominador 30 (las 15 y las 23 se invirtieron; ninguna quedó sin pareja), sin tocar los TSV ni escribir nada en claro.
+Hoja 3 añadida en claro: 3b, 3c, 6c y 12b al cociente; 6b y 7a al producto. Test nuevo del sitio del signo.
+Barrido independiente con las huellas VIEJAS de `HEAD`: 5 semillas × 20000 ítems por ejercicio, con el menos en cualquier operando: 0 coincidencias.
+`node --test tests/practicas-comun.test.js tests/practicas-multiplica-divide.test.js`: 67/67. `npm test`: 1640/1640. Sin navegador (solo cambia
+lógica de exclusión, no la interfaz). Sin tocar `catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).
