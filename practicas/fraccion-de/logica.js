@@ -74,12 +74,18 @@ const HUELLAS_EJ1 = new Set(["1wz398h","xeq9ne","rwptgl","spv52v","12thsdl","k04
 const HUELLAS_EJ3 = new Set(["1t2u34d","1xxmt48","12qzocl","sb9hjg","1ef04bq","3dx1ce","38jwnw","18fnnbp","jiarnq"]);
 const HUELLAS_EJ4 = new Set(["btyyk8","1m8cryi","170hiy5","1jbt7d7","ybrv1h","1qo4gwl","1mn9n1s","kzxouh","1i2cfjz","1tft5av","suobzu","1q6lyxk","197lva6","10psh5l","o9q8ak","1mbhofz","zz75hj","10vtxqt","6pbibv","13ho8wh","1grj2xp","jxvauu","3nhrwz","150ccvg","628l7r","33exud","532r3v","c0w1c0","1imzjni","tdgsnf","owdv1c","12nnu13","14zq3pa","154mymg","15vj63f","16bx7bv","17n7nys","1by64a9","1h4f3rc","1id81zh","1lr5ny7","1p8uhit","1q9xmqp","1qj283","1qwv96m","1rmxhqa","1rq9rfk","1udqwwb","1w94clk","251fd2","5lp7u4","9qsvwj","bacvfu","djj877","dpg677","dqb7cz","eswmwa","fsi9mn","j5qby8","kcbs35","o1zmh4","p841ro","pp5b4x","rynz3c","v33hk9","vxbqmd","y2ecg1"]);
 
-/** ¿Es `n/d de total` un caso de examen (ejercicios 1 y 2)? */
-export const esCasoExamenCalculo = (n, d, total) => HUELLAS_EJ1.has(huella(claveCalculo(n, d, total)));
+/** ¿Esta fracción suelta con este total es un caso (o un paso de un caso) de los problemas de examen? Misma clave que `queda`. */
+const esFraccionDeExamen = (n, d, total) => HUELLAS_EJ4.has(huella(`${n}/${d}|${total}`));
+
+/** ¿Es `n/d de total` un caso de examen (ejercicios 1 y 2)? También cuenta si es un paso de un problema de examen (U4-1A-01, 2A-02, 3A-04). */
+export const esCasoExamenCalculo = (n, d, total) => HUELLAS_EJ1.has(huella(claveCalculo(n, d, total))) || esFraccionDeExamen(n, d, total);
 /** ¿Es la pareja (parte, otra) un caso de examen (ejercicio 3)? */
 export const esCasoExamenParte = (p, q) => HUELLAS_EJ3.has(huella(claveParte(p, q)));
 /** ¿Es el ítem un caso de examen (ejercicio 4)? */
-export const esCasoExamenProblema = item => HUELLAS_EJ4.has(huella(claveProblema(item)));
+export const esCasoExamenProblema = item =>
+  HUELLAS_EJ4.has(huella(claveProblema(item)))
+  // Sobre-excluye a propósito: en `dos`, cada fracción suelta con su total (el primer paso del examen).
+  || (item.variante === 'dos' && (esFraccionDeExamen(item.f1.n, item.f1.d, item.total) || esFraccionDeExamen(item.f2.n, item.f2.d, item.total)));
 
 const esReservadoFraccionDe = (n, d, total) => RESERVADOS.fraccionDe.some(([a, b, c]) => a === n && b === d && c === total);
 const mismaFraccion = (x, [a, b]) => x.n * b === x.d * a;
@@ -293,20 +299,22 @@ export function errorDeParte(item, v) {
  * Escenarios de cada variante, con su cota (`min`–`max`, `paso`). Variantes:
  *   queda      una fracción del total; se pregunta por lo que NO es esa parte
  *   dos        dos fracciones del total; se pregunta por el resto
+ * `gastoMax`: lo más que puede costar cada compra del escenario (el regalo y la ropa de `ahorro`:
+ * con ahorros de 100 a 2000 €, 1/3 de 1440 € en un regalo no se lo cree nadie).
  *   parte      una fracción del total vale `dato`; se pregunta por el total (U4-1A-02)
  *   restante   se ha hecho una fracción y faltan `dato`; se pregunta por el total (U4-2A-03)
  */
 export const ESCENARIOS = {
   queda: {
     clase: { min: 12, max: 36, paso: 1, unidad: { es: 'alumnos', en: 'students' } },
-    ahorro: { min: 100, max: 2000, paso: 10, unidad: { es: 'euros', en: 'euros' } },
+    ahorro: { min: 100, max: 2000, paso: 10, gastoMax: 250, unidad: { es: 'euros', en: 'euros' } },
     deposito: { min: 20, max: 90, paso: 1, unidad: { es: 'litros', en: 'litres' } },
     viaje: { min: 100, max: 1000, paso: 10, unidad: { es: 'kilómetros', en: 'kilometres' } },
     pizza: { min: 6, max: 15, paso: 1, unidad: { es: 'trozos', en: 'slices' } },
   },
   dos: {
     clase: { min: 12, max: 36, paso: 1, unidad: { es: 'alumnos', en: 'students' } },
-    ahorro: { min: 100, max: 2000, paso: 10, unidad: { es: 'euros', en: 'euros' } },
+    ahorro: { min: 100, max: 2000, paso: 10, gastoMax: 250, unidad: { es: 'euros', en: 'euros' } },
     viaje: { min: 100, max: 1000, paso: 10, unidad: { es: 'kilómetros', en: 'kilometres' } },
   },
   parte: {
@@ -320,6 +328,9 @@ export const ESCENARIOS = {
   },
 };
 export const VARIANTES = Object.keys(ESCENARIOS);
+
+/** Lo que se gasta en cada compra de un ítem `queda` o `dos` (para comprobar `gastoMax`). */
+export const gastosDe = item => [item.f1, item.f2].filter(Boolean).map(f => (item.total / f.d) * f.n);
 
 /** La cota del escenario de un ítem del ejercicio 4. */
 export const cotaDe = item => ESCENARIOS[item.variante][item.esc];
@@ -361,7 +372,7 @@ function problemaQueda(rng) {
   const n = numeradorIrreducible(rng, d);
   const f = fraccion(n, d), q = fraccion(d - n, d);
   const parte = (total / d) * n, queda = total - parte;
-  if (queda < 2) return null;
+  if (queda < 2 || (cfg.gastoMax && parte > cfg.gastoMax)) return null;
   const tope = total - 1;
   const pool = [
     cantidad(entero(ERRORES_TIPICOS['gastado-como-queda'].fn(f)?.multiplicar(total)), 'gastado-como-queda'),
@@ -386,7 +397,7 @@ function problemaDos(rng) {
   if (suma.num >= suma.den) return null;
   const a = entero(f1.multiplicar(total)), b = entero(f2.multiplicar(total));
   const queda = total - a - b;
-  if (queda < 2) return null;
+  if (queda < 2 || (cfg.gastoMax && (a > cfg.gastoMax || b > cfg.gastoMax))) return null;
   const q = fraccion(1, 1).restar(suma);
   const tope = total - 1;
   const pool = [

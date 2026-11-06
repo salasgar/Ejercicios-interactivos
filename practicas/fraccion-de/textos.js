@@ -132,8 +132,8 @@ export const PROBLEMAS = {
       en: { texto: (T, F1, F2) => `In a class of ${T} students, ${F1} go to school by bus and ${F2} ride a bike. The rest (los demás) walk.`, pregunta: () => 'How many students walk?' },
     },
     ahorro: {
-      es: { texto: (T, F1, F2) => `Irene gasta ${F1} de sus ${T} € en un libro y ${F2} en un regalo. El resto lo guarda en el banco.`, pregunta: () => '¿Cuántos euros guarda en el banco?' },
-      en: { texto: (T, F1, F2) => `Irene spends ${F1} of her €${T} on a book and ${F2} on a present. She puts the rest (el resto) in the bank.`, pregunta: () => 'How many euros does she put in the bank?' },
+      es: { texto: (T, F1, F2) => `Irene gasta ${F1} de sus ${T} € en ropa y ${F2} en un regalo. El resto lo guarda en el banco.`, pregunta: () => '¿Cuántos euros guarda en el banco?' },
+      en: { texto: (T, F1, F2) => `Irene spends ${F1} of her €${T} on clothes (ropa) and ${F2} on a present. She puts the rest (el resto) in the bank.`, pregunta: () => 'How many euros does she put in the bank?' },
     },
     viaje: {
       es: { texto: (T, F1, F2) => `Un camión tiene que recorrer ${T} km. Por la mañana hace ${F1} del camino y por la tarde, ${F2}.`, pregunta: () => '¿Cuántos kilómetros le faltan?' },

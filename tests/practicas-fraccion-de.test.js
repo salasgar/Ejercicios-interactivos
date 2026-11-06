@@ -12,7 +12,7 @@ import { fraccion, hayEquivalentes, ERRORES_TIPICOS, htmlFraccion } from '../pra
 import {
   F, RESERVADOS, esReservadoProblema, CONTEXTOS, IDS_CONTEXTO, GRUPOS, IDS_GRUPO, ESCENARIOS, VARIANTES, ERRORES_PROPIOS,
   enCota, totalesPosibles, errorConNombre, generarCalculo, generarContexto, generarParte, generarProblema,
-  errorDeCalculo, errorDeParte, respuestaParte, respuestaProblema, cotaDe,
+  errorDeCalculo, errorDeParte, respuestaParte, respuestaProblema, cotaDe, gastosDe,
   esCasoExamenCalculo, esCasoExamenParte, esCasoExamenProblema,
 } from '../practicas/fraccion-de/logica.js';
 import {
@@ -216,6 +216,48 @@ test('los casos de examen no salen nunca (por huella), y la detección no depend
   const a = { ...base, variante: 'dos', total: 999, f1: { n: 1, d: 3 }, f2: { n: 1, d: 4 } };
   const b = { ...base, variante: 'dos', total: 999, f1: { n: 1, d: 4 }, f2: { n: 1, d: 3 } };
   assert.equal(esCasoExamenProblema(a), esCasoExamenProblema(b));
+});
+
+// Reabierta del 6-11: cada fracción SUELTA con su total cuenta (el primer paso de un problema de examen), en los
+// ejercicios 1, 2 y 4 `dos`; y el ahorro del ejercicio 4 gasta cantidades creíbles.
+test('ejercicios 1, 2 y 4: una fracción suelta con su total, si es de un problema de examen, tampoco sale (3000 ítems por ejercicio)', () => {
+  // La detección no expone casos: lo que es caso en `queda` (fracción|total) lo es también en `dos`, en cualquier posición,
+  // y en los ejercicios 1 y 2 (que sobre-excluyen a propósito).
+  const base = { esc: 'x', opciones: [] };
+  let hay = 0;
+  for (let d = 2; d <= 12; d++) for (let n = 1; n < d; n++) for (let total = 2; total <= 3000; total++) {
+    if (!esCasoExamenProblema({ ...base, variante: 'queda', total, f1: { n, d } })) continue;
+    hay++;
+    assert.ok(esCasoExamenProblema({ ...base, variante: 'dos', total, f1: { n, d }, f2: { n: 1, d: 99 } }), `dos, primera: ${n}/${d} ${total}`);
+    assert.ok(esCasoExamenProblema({ ...base, variante: 'dos', total, f1: { n: 1, d: 99 }, f2: { n, d } }), `dos, segunda: ${n}/${d} ${total}`);
+    assert.ok(esCasoExamenCalculo(n, d, total), `ejercicio 1-2: ${n}/${d} ${total}`);
+  }
+  assert.ok(hay >= 6, `el filtro tiene que conocer los casos de U4-1A-01, 2A-02 y 3A-04 (${hay})`);
+  for (const semilla of [106030, 106031, 106032]) {
+    for (const it of generar(generarCalculo, semilla)) assert.ok(!esCasoExamenCalculo(it.n, it.d, it.total));
+    for (const it of generar(generarContexto, semilla)) assert.ok(!esCasoExamenCalculo(it.n, it.d, it.total));
+    for (const it of generar(generarProblema, semilla)) {
+      assert.ok(!esCasoExamenProblema(it));
+      if (it.variante === 'dos') for (const f of [it.f1, it.f2]) assert.ok(!esCasoExamenProblema({ ...base, variante: 'queda', total: it.total, f1: f }), JSON.stringify(it));
+    }
+  }
+});
+
+test('ejercicio 4, ahorro: cada compra cabe en su gasto máximo (regalo y ropa, nunca cientos de euros)', () => {
+  for (const v of ['queda', 'dos']) assert.ok(ESCENARIOS[v].ahorro.gastoMax <= 250, `${v}.ahorro sin gastoMax creíble`);
+  let vistos = 0;
+  for (const semilla of [106040, 106041, 106042]) {
+    for (const it of generar(generarProblema, semilla)) {
+      if (it.esc !== 'ahorro' || (it.variante !== 'queda' && it.variante !== 'dos')) continue;
+      vistos++;
+      for (const g of gastosDe(it)) assert.ok(g >= 1 && g <= ESCENARIOS[it.variante].ahorro.gastoMax, `${it.variante}.ahorro gasta ${g} € de ${it.total}: ${JSON.stringify(it)}`);
+    }
+  }
+  assert.ok(vistos > 200, `salen pocos ítems de ahorro (${vistos})`);
+  for (const v of ['queda', 'dos']) {
+    const textos = [PROBLEMAS[v].ahorro.es.texto(500, '1/5', '1/4'), PROBLEMAS[v].ahorro.en.texto(500, '1/5', '1/4')].join(' ');
+    assert.ok(!/libro|book/i.test(textos), 'el libro de cientos de euros vuelve');
+  }
 });
 
 // --- Ejercicio 3: ¿qué fracción es? --------------------------------------------------
