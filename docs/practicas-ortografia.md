@@ -232,7 +232,8 @@ no se consigue, la frase se descarta o va como «¿qué frase dice esto?».
 - kilómetro / quilómetro, octógono / octágono, cinc / zinc, biznieto / bisnieto
 - enseguida / en seguida, deprisa / de prisa, aprisa / a prisa, enfrente / en frente,
   asimismo / así mismo (como «también»), adonde / a donde, entretanto / entre tanto,
-  bocabajo / boca abajo, sobremanera / sobre manera
+  bocabajo / boca abajo, sobremanera / sobre manera, alrededor / al rededor, en medio / enmedio
+  (estas dos, desde el 6-11: propuesta de la 138, DPD 2.ª ed.)
 - treintaiuno / treinta y uno (y todos los 31-99)
 - undécimo / decimoprimero, duodécimo / decimosegundo, decimotercero / décimo tercero
   (13.º-29.º), onceavo y doceavo como ordinales (el DLE los recoge)

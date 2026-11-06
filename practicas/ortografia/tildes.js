@@ -119,8 +119,8 @@ export const DIACRITICAS = [
   // Nivel 3: «si» que pregunta…
   ['No sé _ vendrá mañana.', 'si', null, 3],
   ['Me preguntó _ tenía hambre.', 'si', null, 3],
-  ['No me acuerdo _ cerré la puerta.', 'si', null, 3],
-  ['Mira _ está abierta la tienda.', 'si', null, 3],
+  ['No recuerdo _ cerré la puerta.', 'si', null, 3],
+  ['Comprueba _ está abierta la tienda.', 'si', null, 3],
   // … y el contraste con «sí» y «mí».
   ['Ayer no vino, pero hoy _ ha venido.', 'sí', null, 3],
   ['Tú dices que no, pero él _ quiere ir.', 'sí', null, 3],

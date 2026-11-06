@@ -45,7 +45,7 @@ export const SIGNOS = [
   { nivel: 2, bien: 'Ven aquí. ¡Corre!', malas: [['Ven aquí. Corre!', FALTA_ABRE_E], ['Ven aquí.¡Corre!', SIN_ESPACIO]] },
   // Nivel 3:
   { nivel: 3, bien: 'Mira, mamá, ¡qué grande es!', malas: [['Mira, mamá, qué grande es!', FALTA_ABRE_E], ['Mira,mamá, ¡qué grande es!', SIN_ESPACIO]] },
-  { nivel: 3, bien: 'Tengo dos hermanos, Pablo y Marta.', malas: [['Tengo dos hermanos,Pablo y Marta.', SIN_ESPACIO], ['Tengo dos hermanos , Pablo y Marta.', ESPACIO_ANTES]] },
+  { nivel: 3, bien: 'Tengo un hermano, una hermana y un perro.', malas: [['Tengo un hermano,una hermana y un perro.', SIN_ESPACIO], ['Tengo un hermano , una hermana y un perro.', ESPACIO_ANTES]] },
   { nivel: 3, bien: 'Hoy hay examen. ¿Has estudiado?', malas: [['Hoy hay examen. Has estudiado?', FALTA_ABRE_P], ['Hoy hay examen .¿Has estudiado?', 'el espacio está en el lado equivocado: va detrás del punto, no delante']] },
 ];
 
