@@ -178,6 +178,17 @@ avanzar la 121 para la semana 3 (la tarea en el panel), ni, detrás, la tarea 29
   reservado, no esperes razonando: latido y vuelve a mirar en 10 min.
 - (de la 109) Si `npm test` falla por el `disponible`, mira cómo lo resolvió la 109 (26306eb: el test de la portada trabaja sobre una copia
   del catálogo); si aun así falla un test que no es de tus ficheros, no lo arregles: dilo en la terminada.
+- (de la 163, 6-11) **Comprueba tu lector antes de fiarte de un cero**: pasa por tu clave las listas que la práctica ya excluye
+  (`PAREJAS_HOJA_*`, `EXPRESIONES_HOJA`) y mira que estén entre las claves del papel. El de la 163 veía 1 de 31: el `a)` de
+  `\mbox{a) …}` y los `\esp{(…)}` dejaban paréntesis sueltos, y los apartados «X and Y» iban en un solo trozo. Con el lector arreglado
+  salieron los casos de la hoja 3 que las listas no tenían.
+- (de la 163) Una clave «números (sin signo), operaciones y valor» encuentra a la vez las reordenaciones y el **signo en el otro
+  operando** («−a : b» y «a : (−b)» son la misma cuenta). Y en un ítem que enseña varias líneas (`combinadas` ej. 3, `errores4` ej. 2),
+  barre **todas** las líneas, y las parejas «línea → línea siguiente» contra las cajas «Find the mistake» del final.
+- (de la 163) En `errores4` mira también las cuentas de **una sola operación** (potencias, `p/d · n`): los barridos anteriores solo
+  comparaban igualdades y expresiones de dos o más operaciones, y por ahí se escapaban U4-2C-12 y U4-1C-08.
+- (de la 163) El 8080 suele estar ocupado por el servidor de otra sesión: levanta el tuyo en otro puerto
+  (`python3 -m http.server 81NN` desde la raíz) y copia un perfil de Chrome ya usado (borra sus `Singleton*`).
 
 ## Prohibido (propio de esta tarea)
 
