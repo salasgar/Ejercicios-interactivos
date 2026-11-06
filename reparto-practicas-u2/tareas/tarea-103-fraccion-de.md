@@ -273,3 +273,4 @@ Si paras sin terminar: `$R/hechos/fallos/103--<sid>.md` con hasta dónde llegast
   fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
   potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.
+- (Vista en la tercera reabierta, 6-11) Cruza cada caso de examen con **cada fracción suelta** del ítem y su total, no solo con la clave completa del ejercicio (en `dos` la clave es la pareja y se escapaba el primer paso); y un contexto de compra lleva su `gastoMax`, no solo la cota del total (1/3 de 1440 € en un libro).

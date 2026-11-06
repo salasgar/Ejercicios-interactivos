@@ -49,3 +49,20 @@ propósito (un paso del mismo problema también cuenta, como en la 117). Test nu
 los tres `casos-examen-semanaN.tsv`, misma fracción y mismo total en `queda`/`dos`): 0 coincidencias, salvo las de
 U4-1C-08 (sin contexto: «n/d de T», no cuenta, como dice la reabierta). Tests propios 63/63 y `npm test` 1365/1365.
 Sin probar en navegador: el cambio es solo un conjunto de huellas. No se tocó `catalogo.js`.
+
+## Tercera reabierta (6-11, sesión `s-20261106T144247-865eb0fb`; commit **b91b092**)
+Reabierta de la 162 (`hechos/reabiertas/103--s-20261106T124028-694d9f2a-revision.md`). Tres cosas, ninguna en claro:
+1. **Fracción suelta con su total contra `HUELLAS_EJ4`** (misma clave `n/d|total` que `queda`): en el ej. 4 `dos`
+   (`esCasoExamenProblema`, cada una de las dos fracciones) y en los ej. 1 y 2 (`esCasoExamenCalculo`, además de `HUELLAS_EJ1`).
+   Sobre-excluye a propósito: también cuenta un paso del problema de examen.
+2. **Ahorro creíble** (`queda` y `dos`): nueva cota `gastoMax: 250` € por compra en `ESCENARIOS.*.ahorro`; el ítem que la
+   pasa se descarta. En `dos`, «un libro» pasa a «ropa» / «clothes (ropa)» (el regalo se queda). `gastosDe(item)` expone los gastos para el test.
+3. **Tests** (`tests/practicas-fraccion-de.test.js`, 67 en total): (a) todo lo que es caso en `queda` lo es en `dos` en cualquier
+   posición y en los ej. 1-2 (barrido de n/d y total sin exponer casos), y 3 semillas × 3000 ítems de ej. 1, 2 y 4 sin ninguno;
+   (b) 3 × 3000 ítems de ej. 4: cada compra de ahorro ≤ 250 € y el libro ya no está en los textos.
+Barrido independiente (guion de scratchpad, casos de U4-1A-01, 2A-02 y 3A-04 de los tres `casos-examen-semanaN.tsv`, cada fracción
+con cada cantidad del enunciado, 120000 ítems por ejercicio): ej. 1 y 2: **0**; ej. 4 `queda` y `dos`: **0** (antes, 257 y 118 por
+cada 100000). Quedan 683 coincidencias en las variantes inversas `parte` (517) y `restante` (166): son el hallazgo 1 de la 162
+(la cantidad del examen es el total de la práctica; no es la misma tarea ni un paso), que no se excluye porque la reabierta no lo
+pedía; lo decide Juan Luis o la coordinadora.
+Sin probar en navegador (cambia una cota, huellas y una palabra del texto). No se tocó `catalogo.js`. Sigue **sin publicar**; plazo jue 17-12.
