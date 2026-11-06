@@ -133,6 +133,8 @@ que se evalúa, pero el ejercicio tiene que seguir llamándose igual, en la mism
 - La cabecera de cada fichero lleva las reglas de las frases (sin «había», sin «a ver», «e» solo ante i-/hi- + consonante,
   el hueco nunca al principio…): las frases nuevas las cumplen y el test antiguo las recorre.
 
+- (Aprendido en la ejecución, 2026-11-06) Los tests antiguos llaman `generar(rng)` sin `sesion`: `elegirNivel` (en `logica.js`) trata eso como «sin nivel» y da cualquier ítem. Con `sesion`, los pares y las preguntas de sí o no (8 y 9) son de nivel 3 y solo salen en el 3. Un ítem nuevo va al FINAL de su lista (la clave es la posición). Las tareas 135-139 pueden reutilizar `elegirNivel`.
+
 ## Prohibido (propio de esta tarea)
 
 - Quitar o reescribir una frase aprobada; cambiar nombres, orden, `clave` o `idError` de los ejercicios; tocar `practicas/_comun/*`.
