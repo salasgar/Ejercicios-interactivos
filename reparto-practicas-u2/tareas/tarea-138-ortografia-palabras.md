@@ -168,6 +168,18 @@ con dos respuestas defendibles en un ★ semanal es una reclamación segura.
   frases donde «también» sea imposible («Se mira a sí mismo en el espejo»).
 - «sobretodo» es un abrigo (válido): la frase tiene que forzar «sobre todo» (= especialmente).
 - Duración real de una práctica numérica en la U4: 11-30 min; esta exige cotejar con la RAE ítem a ítem: cuenta con más.
+- **Hecha en ~27 min (2026-11-06, s-20261105T234513-7aac9da7, commit 353aaf8).** Lo aprendido por las malas:
+  - **El DPD 2.ª ed. admite «al rededor» (prefiere «alrededor») y «enmedio» («también válida»)**: esta ficha los daba
+    como faltas. No te fíes de la lista de la ficha: coteja cada mala.
+  - `rae.es` y `dle.rae.es` devuelven 403 a WebFetch y a los subagentes; con Claude in Chrome sí cargan. Lo rápido:
+    abrir una entrada del DPD y, desde la consola de esa pestaña, `fetch('/dpd/<palabra>')` de muchas a la vez y
+    quedarse con el texto entre «2.ª edición» y «Real Academia Española y Asociación». El filtro de la extensión
+    bloquea las salidas con `?`, `&` o `=`: quítalos antes de devolver el texto. En el DLE, una forma inexistente
+    redirige a otra entrada: mira el título («aveces» → avezar, «osea» → osear, «asique» → asicar).
+  - «los demás» con el nombre sobrentendido no vale: «deja los de más» (los que sobran) también se lee.
+  - Dos frases coincidían con las de la 136 (savia/sabia): el test importa su `logica.js` y las compara.
+  - Las hojas del curso escriben los millares con espacio fino (`1\,350`), no con punto.
+  - La ventana de Chrome no se deja estrechar con `resize_window`: para ver los 375 px, un iframe de 375 px.
 
 ## Prohibido (propio de esta tarea)
 
