@@ -14,7 +14,7 @@ Son 31 mini-aplicaciones sin cuentas para 1.º ESO bilingüe: 16 de la unidad 2
 
 **Un solo sistema**: un espacio por profesor (códigos registrados en la nube, nombres
 cifrados, tareas en la nube), descrito en §9; los compañeros empiezan con la guía
-[practicas-como-empezar.md](practicas-como-empezar.md). Historia: del 2026-10-17 al 2026-10-25
+[practicas-guia-profesor.md](practicas-guia-profesor.md). Historia: del 2026-10-17 al 2026-10-25
 convivió con el **modo antiguo** (códigos de 4 calculables y las colecciones `practicas`,
 `practicas-tareas`, `practicas-asignaciones`, `fallos` y `divisores`). Juan Luis pasó a su
 espacio el 18-10 con sus códigos de 4 de siempre (tarea 70 de PU2) y la tarea 71 quitó el modo
@@ -626,7 +626,7 @@ entrega). Cada profesor entra en el panel con su cuenta de Google y tiene un **e
 en la nube con sus alumnos, sus tareas, sus fechas y sus resultados. **Un profesor no puede leer
 nada de los alumnos de otro**, ni desde el panel ni sabiendo programar (lo comprueban las reglas
 y su banco de pruebas). La guía para los compañeros, en llano, es
-[practicas-como-empezar.md](practicas-como-empezar.md).
+[practicas-guia-profesor.md](practicas-guia-profesor.md).
 
 ### 9.1 Quién es profesor
 
@@ -736,7 +736,7 @@ lista, resultados (con lo que tecleó el alumno al fallar) y esa lista cifrada.
 
 ### 9.7 Dar de alta a un compañero
 
-1. Mándale [practicas-como-empezar.md](practicas-como-empezar.md) y el enlace del panel.
+1. Mándale [practicas-guia-profesor.md](practicas-guia-profesor.md) y el enlace del panel.
 2. Él entra con Google: su solicitud aparece en tu panel, «Profesores → Solicitudes», con su
    nombre y su correo. **Comprueba el correo** (cualquiera con la `apiKey` puede crear una
    cuenta y dejar una solicitud) y pulsa «Dar de alta». Si no es de nadie que conozcas,

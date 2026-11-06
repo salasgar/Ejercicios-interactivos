@@ -180,7 +180,7 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
   colecciones `practicas`, `practicas-tareas`, `practicas-asignaciones`, `fallos` y
   `divisores`, que ya no tienen regla y se borran). Detalle en
   [docs/practicas-unidad2.md](docs/practicas-unidad2.md), §9; guía para los
-  compañeros en [docs/practicas-como-empezar.md](docs/practicas-como-empezar.md).
+  compañeros en [docs/practicas-guia-profesor.md](docs/practicas-guia-profesor.md).
 - El alumno entra en todas con **el mismo código** (4 u 8 caracteres, registrado en
   el espacio de su profesor; el enlace que reparte el panel es `practicas/?c=ABCD`).
   Un código que la nube no conoce da «Ese código no existe». Lo normal es que
@@ -356,7 +356,7 @@ colección → «Eliminar colección»), con copia antes y fuera del repositorio
 
 **Dar de alta a un compañero.** No hay que tocar las reglas ni el repositorio:
 
-1. Mándale [docs/practicas-como-empezar.md](docs/practicas-como-empezar.md) y el
+1. Mándale [docs/practicas-guia-profesor.md](docs/practicas-guia-profesor.md) y el
    enlace del panel (`…/practicas/profesor.html`).
 2. Entra con su cuenta de Google y le sale «Aún no tienes acceso»; su solicitud te
    aparece en tu panel, sección **«Profesores»**, con su nombre y su correo.
