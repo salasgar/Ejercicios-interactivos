@@ -194,6 +194,8 @@ junto a a/e/o forman diptongo; dos abiertas o una cerrada tónica junto a otra v
 - (U4) Duración real de una práctica de 4 ejercicios numéricos sobre la base ya hecha: 11-30 min. Esta tiene bancos de prosa:
   cuenta con más.
 
+- (Real, 6-11) Duración real ~35 min con la base hecha. «río» y «frío» (nombrados en el nivel 1 del ej. 3) chocan con la lista de «rio»/«frio»: no entran. En el ej. 3 se toca la letra y no la sílaba (si no, la partición ya dice si hay hiato). `'ei'.includes(undefined ?? '')` es true: ojo al detectar la u muda de «gue/gui» al final de sílaba («án-gu-lo»).
+
 ## Prohibido (propio de esta tarea)
 
 - Tocar `practicas/ortografia/*`, `practicas/_comun/*`, `catalogo.js`, `portada.js`, `tareas.js` o los docs: lo que haga
