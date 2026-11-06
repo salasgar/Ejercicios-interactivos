@@ -62,3 +62,18 @@ sumandos en el otro orden. `claveParams` ordena ahora las dos fracciones de las 
 escribían la cuenta; ahora es solo la huella. Esa cuenta (y, en `combinadas-fracciones`, un U4-3A-01) **siguen en el historial de git**
 (commits de las reabiertas del 28 y 30-10): decide Juan Luis si hace falta reescribirlo. `node --test tests/practicas-comun.test.js
 tests/practicas-errores4.test.js`: 64/64. `npm test`: 1368/1368. Sin tocar `catalogo.js`. Sin publicar (sin publicador, mar 22-12).
+
+## Reabierta del 6-11 (s-20261106T144236-e32305eb; cierra s-20261106T155734-dd5fe362, commit 8d8d9ba)
+
+`hechos/reabiertas/107--s-20261106T144236-e32305eb-revision.md`. La exclusión pasa de la plantilla y sus parámetros a **lo que ve el alumno**
+(`claveVista(l0)`): suma y producto sin orden, resta y cociente con orden, potencia por base y exponente. Así un caso excluido lo está en las
+tres plantillas de «la fracción de una cantidad» (`p/d · n`) y en las sumas, restas y cocientes que escriban lo mismo.
+- **Hojas (en claro, `CLAVES_HOJA`, 13 claves):** hoja 1 ej. 5 (cinco cantidades), hoja 2 (4e, 5a, 9a, 10a, 12c, 13b) y hoja 3 (12f y el «Write in words» del cociente).
+- **Exámenes (por huella FNV-1a de `claveVista`, `HUELLAS_VISTA_EXAMEN`, 18 huellas; nunca en claro):** todas las variantes, extras incluidas, de U4-1C-08 (6),
+  U4-1A-01 (6) y U4-2C-12 (6). Calculadas fuera del repo leyendo los TSV de los exámenes semanales 1 y 3. Se conservan `PARAMS_HOJA` y `HUELLAS_EXAMEN` anteriores.
+- **Test nuevo:** 3000 ítems por ejercicio con las semillas 163, 7 y 11 (27000 en total) sin ninguna coincidencia; y un test de la clave. Sin el filtro habría salido una
+  coincidencia en 1877 de 37812 números generados (comprobado: el filtro no es vacuo).
+- `node --test tests/practicas-comun.test.js tests/practicas-errores4.test.js`: 66/66. `npm test`: 1642/1642. Sin tocar `catalogo.js`. **No probada de nuevo en el navegador:**
+  el cambio es solo del filtro de números en `logica.js`; la interfaz no se ha tocado. Sin publicar (sin publicador, mar 22-12).
+- **No cuentan (como en la 162):** sumas que son el segundo paso de una combinada de la hoja 3; simplificar −24/30 (la práctica da 24/30); las tres potencias que son un paso de una cuenta del examen final (decide Juan Luis).
+- **Aviso:** como en las reabiertas anteriores, los casos de examen escritos en claro en commits antiguos siguen en el historial público de git.

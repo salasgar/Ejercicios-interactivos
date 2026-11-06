@@ -112,6 +112,7 @@ alumno, para el registro de fallos.
 
 ## Trampas conocidas
 
+- La exclusión de casos de hoja y examen va por la expresión que VE el alumno (`claveVista(l0)`), no por el id de plantilla: varias plantillas comparten enunciado. Los casos de examen solo como huellas FNV-1a, nunca en claro.
 - `.cuenta` no se parte (`nowrap`): solo cuentas cortas; las frases del feedback van como texto normal o se salen de 375 px.
 - Una fracción con raya ocupa dos líneas de alto: en una lista de opciones a 375 px caben cuatro, no seis; en una cuenta en línea, usa el tamaño compacto de `htmlFraccion`.
 - `t(null)` no usa el valor por defecto: la barra va en el idioma del ítem (T60, `idiomaBarra()`).
