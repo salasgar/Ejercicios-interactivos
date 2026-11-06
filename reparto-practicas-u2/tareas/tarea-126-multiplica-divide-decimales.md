@@ -1,10 +1,10 @@
 # Tarea 126 · Práctica de la unidad 5 «Multiplica y divide decimales» (multiplica-divide-decimales)
 
-Actualizado: 2026-11-03 (corregida con el acta de la tarea 02 de la U5 por la coordinadora de la U5, s-20261103T150058-71204ffa; alta del 2-11 por s-20261102T100120-6a6afb84)
-Precondición: 122 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U5 (semana 1: tareas 06 y 10; semana 2: 07 y 13; toda la unidad: las dos): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu semana · Disparo: MANUAL (sesión atendida) · **Plazo: mar 22-12**
-Duración esperada: 1 h 15 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Actualizado: 2026-11-06 (ejercicio 6 «Combinadas» y problemas solo de fruta al peso y gasolina: coordinadora s-20261106T125246-dae3dde3); 2026-11-03 (corregida con el acta de la tarea 02 de la U5 por la coordinadora de la U5, s-20261103T150058-71204ffa; alta del 2-11 por s-20261102T100120-6a6afb84)
+Precondición: 122 LISTA · **no en paralelo con ninguna tarea que toque `catalogo.js` o `tests/practicas-comun.test.js`** (162, 163, 130, 131, 140, 141, 144, 156-159; mira los reclamos vivos: el 6-11 la 162 lo tiene en uso, y la 163 va detrás) · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U5 (semana 1: tareas 06 y 10; semana 2: 07 y 13; toda la unidad: las dos): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu semana · Disparo: MANUAL (sesión atendida) · **Plazo: mar 22-12**
+Duración esperada: 1 h 30 min (tiempo de sesión, no de persona; 1 h 15 min antes del ejercicio 6) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/126-multiplica-divide-decimales/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
-Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/multiplica-divide-decimales/*` (sustituye el esqueleto que deja la 122: desde que la 122 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-multiplica-divide-decimales.test.js` (nuevo)
+Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (**solo `nEjercicios` de la fila 60, de 5 a 6**: ejercicio 6 nuevo, decisión del 6-11) y `tests/practicas-comun.test.js` (las dos aserciones que fijan ese número: la lista de `nEjercicios` y el total de la U5, 28 → 29), `practicas/multiplica-divide-decimales/*` (sustituye el esqueleto que deja la 122: desde que la 122 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-multiplica-divide-decimales.test.js` (nuevo)
 
 La duración esperada no es informativa: de ella sale la caducidad del reclamo (2 ×, mínimo
 45 min), el plazo tras el cual otra sesión puede relevarte si te cortas. **Este fichero es
@@ -26,7 +26,7 @@ Todas las rutas son relativas a la raíz del repositorio
 3. Abre tu reclamo generando el sid **en el mismo comando** (probado en este Mac):
    ```bash
    R=reparto-practicas-u2; sid="s-$(date -u +%Y%m%dT%H%M%S)-$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-   caduca=$(date -u -d '+MINUTOS minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+MINUTOSM +%Y-%m-%dT%H:%M:%SZ)
+   caduca=$(date -u -d '+180 minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+180M +%Y-%m-%dT%H:%M:%SZ)
    printf 'sesión: %s\ntarea: 126\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/126--$sid.md; echo $sid
    ```
    donde MINUTOS = 2 × la duración esperada de arriba en minutos (mínimo 45). A partir
@@ -83,14 +83,16 @@ Modelo de interfaz: `practicas/multiplica-divide/` de la U4 y `practicas/divisio
 2. **Divide entre un natural** · *Divide by a whole number*. 7 : 4, 9.6 : 8, 5 : 8: el alumno escribe el cociente exacto (termina en a lo sumo 3 cifras); feedback con los pasos («añado un cero y bajo»). Error típico: olvidar la coma del cociente (7 : 4 = 175); parar en el resto.
 3. **Divide entre un decimal** · *Divide by a decimal*. 7.5 : 0.25, 3 : 0.5: primero elegir la división equivalente sin coma en el divisor (750 : 25; distractores: 75 : 25, 7.5 : 25, 750 : 2.5) y luego el resultado. Error típico: mover la coma solo en el divisor.
 4. **¿Está bien?** · *Is it right?* Una división hecha (dividendo, divisor, cociente con dos decimales y resto): comprobar con cociente · divisor + resto = dividendo (verdadero/falso con explicación, o encontrar el error); dos decimales en el cociente, **cortando** (sin redondear), y **el resto de la división original** con la prueba sobre los números originales (acta del 3-11, punto d: 6.384 : 0.49 → 638.4 : 49 = 13.02 y resto 0.42 en esa división; el de la original es 0.42 : 100 = 0.0042; prueba 0.49 · 13.02 + 0.0042 = 6.384). El ítem falso que más vale es el que da como resto el de la división sin coma (0.42, `restoSinDeshacer`); su feedback explica que ese resto se divide entre el mismo 10, 100 o 1000 por el que se multiplicaron dividendo y divisor. Si el divisor ya es natural, no hay nada que deshacer. Casos distintos del ejemplo del acta (está en el inventario y la secuenciación).
-5. **Problemas** · *Problems*. Precio por kilo o por litro con la cantidad (1.5 kg a 2.40 €/kg), reparto a partes iguales (una cuenta de 37.50 € entre 3), precio unitario (6 botellas por 4.50 €): cotas de la regla 7, un paso o dos; dinero con dos decimales.
-6. **Para todos los ejercicios**: introducción con un ejemplo resuelto en los dos idiomas; el ítem en el idioma que le toque (la base alterna; en español coma, en inglés punto); «Comprobar» que se oculta al responder; los cuatro estados tras comprobar donde haya opciones; feedback con los números del ítem; cada fallo pasado a `api.responder` con su `error` (el nombre del error típico) y la `respuesta` del alumno, para el registro de fallos. Los campos de respuesta con `inputmode="decimal"` y lectura con `deTexto` (coma o punto).
-7. **Test** `tests/practicas-multiplica-divide-decimales.test.js` (por fuerza bruta, 3000 ítems por ejercicio con semillas fijas): 
+5. **Problemas** · *Problems*. Solo **fruta al peso y gasolina** (regla 7; decisión del 6-11): el importe con el precio por kilo o por litro y la cantidad (1.5 kg a 2.40 €/kg; 32 L a 1.55 €/L), el precio del kilo o del litro a partir del importe (2.5 kg por 6.25 €), cuántos litros se echan con un importe (exacto, o el enunciado dice que se redondea a la décima) y el gasto de gasolina de un viaje a partes iguales entre 2 y 5 personas (exacto al céntimo, o el enunciado dice que se redondea); un paso o dos; dinero con dos decimales. Nada de cenas ni botellas: son del papel.
+6. **Combinadas** · *Order of operations*. **Decisión de Juan Luis del 6-11**: la opción (b) del punto 1 de «Lo provisional» de `$R/salidas/122-base-unidad5/ENTREGA.md` (las combinadas de la U5 no las recogía ninguna práctica). Cálculo con decimales y la jerarquía de siempre (la saben de las unidades 1, 3 y 4): U5-2C-14 sin paréntesis (2.5 + 1.2 · 3) y U5-2C-15 con un paréntesis ((2.5 + 1.5) · 0.3), sesión 6; dos o tres operaciones; si hay una división, exacta y entre un natural o entre 0.5, 0.25, 0.2 o 0.1; resultado con a lo sumo 3 cifras decimales y nunca negativo. Lo que diga el acta de la U5 y `inventario-unidad5.tsv` para esas dos destrezas manda sobre este párrafo. El alumno escribe el resultado; distractores en los ítems de elegir: operar de izquierda a derecha, quitar el paréntesis, perder la coma. Feedback con los pasos.
+7. **Para todos los ejercicios**: introducción con un ejemplo resuelto en los dos idiomas; el ítem en el idioma que le toque (la base alterna; en español coma, en inglés punto); «Comprobar» que se oculta al responder; los cuatro estados tras comprobar donde haya opciones; feedback con los números del ítem; cada fallo pasado a `api.responder` con su `error` (el nombre del error típico) y la `respuesta` del alumno, para el registro de fallos. Los campos de respuesta con `inputmode="decimal"` y lectura con `deTexto` (coma o punto).
+8. **Test** `tests/practicas-multiplica-divide-decimales.test.js` (por fuerza bruta, 3000 ítems por ejercicio con semillas fijas): 
 - Ej. 1: los factores con 1-2 cifras decimales; las cuatro posiciones de la coma distintas por valor; el producto de enteros correcto.
 - Ej. 2: el cociente termina en ≤ 3 cifras (divisores 2, 4, 5, 8, 10, 16, 20, 25, 40, 50, 80, 100…); nunca periódico (el acta los deja para reconocerlos en la 61, sesión 6).
 - Ej. 3: la división equivalente y los distractores distintos; el resultado exacto o con las cifras que diga la consigna.
 - Ej. 4: la comprobación cuadra en los ítems verdaderos y no en los falsos (por valor exacto).
-- Ej. 5: números dentro de las cotas de su contexto; resultados en céntimos enteros.
+- Ej. 5: números dentro de las cotas de su contexto (fruta al peso o gasolina, nunca otro); resultados en céntimos enteros (o redondeados si el enunciado lo dice).
+- Ej. 6: el resultado sale de la jerarquía y es distinto del de izquierda a derecha en la mayoría de los ítems; división exacta; ≤ 3 cifras decimales; nunca negativo.
 - Ningún texto de alumno con `×`, con letras de variable, con porcentajes, con un punto de millares, con coma en una frase en inglés ni punto en una frase en español (recorre los textos generados en los dos idiomas), ni con lo que el acta deje fuera.
 - Todo distractor distinto de la respuesta correcta **por valor** y sacado de un error típico con nombre; ningún par de opciones del mismo valor (0,5 y 0,50; 0,25 y 1/4).
 - Los casos de la hoja de la semana (en claro) y los del examen (por huella FNV-1a calculada fuera del repo) no salen nunca (si existen al escribirla).
@@ -118,7 +120,7 @@ Modelo de interfaz: `practicas/multiplica-divide/` de la U4 y `practicas/divisio
 
 ## Prohibido (propio de esta tarea)
 
-- Tocar otras prácticas, la base (`practicas/_comun/`), `catalogo.js`, `portada.js`, `registro.js`, `tareas.js` o los docs: lo que haga falta ahí es propuesta en la terminada. `disponible: true` lo pone la tarea de publicación de su semana, no esta.
+- Tocar otras prácticas, la base (`practicas/_comun/`), `catalogo.js` (salvo `nEjercicios` de la fila 60), `portada.js`, `registro.js`, `tareas.js` o los docs: lo que haga falta ahí es propuesta en la terminada. `disponible: true` lo pone la tarea de publicación de su semana, no esta.
 - Meter la práctica en una tarea semanal.
 - Escribir casos de examen en claro en el repositorio (ni en tests, ni en comentarios, ni en la ENTREGA).
 
@@ -210,7 +212,9 @@ y el acta discrepan, manda el acta). Ids: 54 destrezas, 27 nucleares (13 + 14); 
    un vaso 0,2-0,33 L; una bañera 100-300 L; una habitación 2-10 m; un folio 21 × 29,7 cm; una piscina 25 o 50 m; una pieza de
    fruta 0,08-0,5 kg; una bolsa 0,5-5 kg; un paquete 0,1-30 kg; nunca horas con decimales salvo que el enunciado lo explique.
    El dinero, siempre con dos decimales en el enunciado. **Para la app se reservan los contextos de supermercado al peso y de
-   gasolina**; la vuelta (del cambio), la cena y las botellas son del papel.
+   gasolina**; la cena y las botellas son del papel. **La vuelta** (decisión del 6-11, que Juan Luis dejó a la coordinadora
+   s-20261106T125246-dae3dde3): entra en la app, porque U5-1A-01 es nuclear, pero **solo dentro de esos dos contextos** (pagar con un
+   billete la fruta al peso o el repostaje); la vuelta de una tienda de varios artículos, como en el papel, no.
 8. **Feedback ligado al error**, con los números del ítem («2,5 + 1,25: has alineado a la derecha; alinea las comas: 2,50 +
    1,25 = 3,75»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, números) que no copien los de las hojas, los exámenes semanales ni el examen final de la

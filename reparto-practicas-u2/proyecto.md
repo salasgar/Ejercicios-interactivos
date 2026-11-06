@@ -657,7 +657,7 @@ solo / sólo · este, ese, aquel con y sin tilde · aún / aun fuera de contexto
 alveolo, policíaco / policiaco, fútbol / futbol, chófer / chofer, icono / ícono, élite / elite · kilómetro / quilómetro,
 octógono / octágono, cinc / zinc, biznieto / bisnieto · enseguida / en seguida, deprisa / de prisa, aprisa / a prisa, enfrente /
 en frente, asimismo / así mismo (como «también»), adonde / a donde, entretanto / entre tanto, bocabajo / boca abajo, sobremanera
-/ sobre manera · treintaiuno / treinta y uno (y todos los 31-99) · undécimo / decimoprimero, duodécimo / decimosegundo,
+/ sobre manera, alrededor / al rededor, en medio / enmedio (estas dos, desde el 6-11: propuesta de la 138, DPD 2.ª ed.) · treintaiuno / treinta y uno (y todos los 31-99) · undécimo / decimoprimero, duodécimo / decimosegundo,
 decimotercero / décimo tercero (13.º-29.º), onceavo y doceavo como ordinales (el DLE los recoge) · imprimido / impreso, freído /
 frito, proveído / provisto, iros / idos, los imperativos con -ros · posguerra / postguerra, clubs / clubes, OVNI / ovni, los
 extranjerismos (wasap / WhatsApp, güisqui / whisky) · l / L (litro), 5 % / 5%, 5 € / 5€, 1.º / 1º, n.º / nº, 12 000 / 12.000
@@ -753,3 +753,27 @@ mismo día (LISTAS, sin publicar) y ninguna tarea las publicaba. Sin publicarlas
   22-12, límite jue 7-1), mejor las dos antes del mar 8-12 (plazo de la 121). Cada una deja al día la propuesta de la tarea de su semana,
   que la 121 monta con Juan Luis. **No van a la vez que la 122** (base de la U5, EN CURSO desde el 5-11 a las 22:20Z), que también toca
   `catalogo.js`: la 162 se coge cuando la 122 esté LISTA (la 134, que tenía `catalogo.js` sin commitear, cerró el 5-11, 43a2c00).
+
+## Tareas 164-168: lo que Juan Luis decidió el 6-11 sobre las propuestas pendientes (2026-11-06, s-20261106T125246-dae3dde3)
+
+Dadas de alta el 6-11 por la coordinadora s-20261106T125246-dae3dde3, con Juan Luis respondiendo a la lista de decisiones pendientes de todos
+los repartos («Hazlo tú», «Resuélvelo», «Decide tú»). Detalle y porqués en `hechos/notas/s-20261106T125246-dae3dde3-altas-164-168.md`.
+
+- **164** (MEDIO, 45 min) enlace «probar» por ejercicio en el editor de tareas, y **165** (MEDIO, 25 min)
+  `docs/practicas-como-empezar.md` en una línea: las propuestas 1 y 2 de la 113, aprobadas el 6-11; antes del lun 14-12.
+  Encadenables (ficheros disjuntos); la 165 no va a la vez que la 140 o la 141 (`README.md`).
+- **166** (MEDIO, 1 h) **toda tarea puntúa sobre 100** (decisión de Juan Luis: «Las tareas deben puntuarse sobre 100»): cada
+  ejercicio que cuenta pesa 100 / (★ + `nElegir`); las de 6 ★ + 4 no cambian de nota.
+- **167** (MEDIO, 45 min, con Juan Luis para la ejecución) el banco REST (`herramientas/probar-reglas.mjs`) guarda y restaura lo
+  que encuentra en la cuenta de prueba A, en vez de borrarlo (propuesta 10 de la 113).
+- **168** (ALTO, 50 min) revisar los ~45 ítems nuevos de la 143 (Juan Luis: «resuélvelo tú de manera autónoma») y poner
+  alrededor / en medio en el §6 de `docs/practicas-ortografia.md`. La 140 la espera por ese fichero.
+
+Decisiones del 6-11 que cambian fichas existentes (sin tarea nueva):
+- **126**: ejercicio 6 «Combinadas» (opción (b) de la ENTREGA de la 122, punto 1; Juan Luis), `nEjercicios` 5 → 6 en
+  `catalogo.js` y el total de la U5 en `tests/practicas-comun.test.js` lo cambia la propia 126, que por eso **no va a la vez
+  que la 162 ni la 163** (ni ninguna otra con `catalogo.js`).
+- **125 y 126, contextos** (Juan Luis lo dejó a la coordinadora): la cena y las botellas, solo en el papel; **la vuelta entra en la
+  app solo dentro de la fruta al peso y la gasolina**, porque U5-1A-01 es nuclear y sin ella la app no la practicaría, y así los
+  contextos del papel (tienda de varios artículos, cena, botellas) siguen sin verse antes del examen.
+

@@ -1,7 +1,7 @@
 # Tarea 140 · Revisión con clics y lectura de todos los ítems, y publicación de los bloques «Puntuación y mayúsculas» (66) y «Las letras» (65); propuesta de los ★ de la U6 (semanas 3 y 4)
 
 Actualizado: 2026-11-03 (alta de la coordinadora s-20261103T110729-ca61fe3e)
-Precondición: **136 y 137 LISTAS** · 134 LISTA · **no en paralelo con nada que toque `catalogo.js`** (122, 130, 131, 141, 142 y lo que la U6 dé de alta: mira los reclamos vivos) · Disparo: MANUAL (sesión atendida) · **Plazo: jue 11-2** (el ★ «Mayúsculas» es el lun 15-2 y la tarea del panel de la U6 se monta la semana anterior)
+Precondición: **136 y 137 LISTAS** · 134 LISTA · **168 LISTA o sin reclamo vivo** (toca el §6 de `docs/practicas-ortografia.md`, que también es tuyo; alta del 6-11) · **y no a la vez que la 162, la 163 ni la 126** (`catalogo.js`) · **no en paralelo con nada que toque `catalogo.js`** (122, 130, 131, 141, 142 y lo que la U6 dé de alta: mira los reclamos vivos) · Disparo: MANUAL (sesión atendida) · **Plazo: jue 11-2** (el ★ «Mayúsculas» es el lun 15-2 y la tarea del panel de la U6 se monta la semana anterior)
 Duración esperada: 1 h 30 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: 141 (después, si la 135 está LISTA)
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/140-publicar-ortografia-1/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de las filas 65 y 66), `docs/practicas-ortografia.md` (§7), `README.md` (filas de la tabla de prácticas); y, solo para recortes de ≤ 5 ítems, `practicas/ortografia-puntuacion/logica.js` y `practicas/ortografia-letras/logica.js` (declarándolo)

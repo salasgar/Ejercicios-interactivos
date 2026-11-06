@@ -1,6 +1,6 @@
 # Tarea 125 · Práctica de la unidad 5 «Suma y resta decimales» (suma-resta-decimales)
 
-Actualizado: 2026-11-03 (corregida con el acta de la tarea 02 de la U5 por la coordinadora de la U5, s-20261103T150058-71204ffa; alta del 2-11 por s-20261102T100120-6a6afb84)
+Actualizado: 2026-11-06 (la vuelta, solo en fruta al peso y gasolina: coordinadora s-20261106T125246-dae3dde3); 2026-11-03 (corregida con el acta de la tarea 02 de la U5 por la coordinadora de la U5, s-20261103T150058-71204ffa; alta del 2-11 por s-20261102T100120-6a6afb84)
 Precondición: 122 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U5 (semana 1: tareas 06 y 10; semana 2: 07 y 13; toda la unidad: las dos): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu semana · Disparo: MANUAL (sesión atendida) · **Plazo: mar 15-12**
 Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/125-suma-resta-decimales/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -26,7 +26,7 @@ Todas las rutas son relativas a la raíz del repositorio
 3. Abre tu reclamo generando el sid **en el mismo comando** (probado en este Mac):
    ```bash
    R=reparto-practicas-u2; sid="s-$(date -u +%Y%m%dT%H%M%S)-$(head -c4 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-   caduca=$(date -u -d '+MINUTOS minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+MINUTOSM +%Y-%m-%dT%H:%M:%SZ)
+   caduca=$(date -u -d '+120 minutes' +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date -u -v+120M +%Y-%m-%dT%H:%M:%SZ)
    printf 'sesión: %s\ntarea: 125\nabierto: %s\ncaduca: %s\nlatidos:\n- %s reclamo abierto\n' "$sid" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$caduca" "$(date -u +%H:%M:%SZ)" > $R/hechos/reclamos/125--$sid.md; echo $sid
    ```
    donde MINUTOS = 2 × la duración esperada de arriba en minutos (mínimo 45). A partir
@@ -80,7 +80,7 @@ Modelo de interfaz: `practicas/suma-resta/` de la U4 (paso a paso) y `practicas/
 ## Qué hay que hacer
 
 1. **Alinea la coma** · *Line up the points*. Una suma o resta de dos decimales (uno puede ser natural; distinto número de cifras: 2.5 + 1.25, 7 − 0.35); el alumno escribe el resultado; distractores en los ítems de elegir: alinear a la derecha (2.5 + 1.25 = 1.50), olvidar la coma, sumar la parte entera y la decimal por separado sin llevar. Feedback con la cuenta colocada.
-2. **En la tienda** · *At the shop*. Dos o tres precios con dos decimales (cotas de la regla 7) y la pregunta del total, o del cambio al pagar con un billete (5, 10, 20, 50 €); el alumno escribe el importe (dos decimales obligatorios en la respuesta: 3.5 y 3.50 valen, el feedback enseña 3.50). Error típico: el cambio al revés; sumar euros y céntimos como naturales.
+2. **En el súper** · *At the supermarket*. Dos o tres compras **al peso** (fruta o verdura, con el importe de cada una ya calculado y dos decimales) o un repostaje de **gasolina** (cotas de la regla 7), y la pregunta del total, o de la vuelta al pagar con un billete (5, 10, 20, 50 €) que lo cubra (decisión del 6-11: la vuelta, solo en estos dos contextos; nada de tiendas de varios artículos); el alumno escribe el importe (dos decimales obligatorios en la respuesta: 3.5 y 3.50 valen, el feedback enseña 3.50). Error típico: el cambio al revés; sumar euros y céntimos como naturales.
 3. **Medidas** · *Measures*. Longitudes, pesos o capacidades con decimales (una persona 1,20-2,10 m; un paquete 0,1-30 kg; una botella 0,33-2 L), un paso o dos (cuánto falta, cuánto más); unidades iguales en los dos datos. El acta admite los cambios de unidad (`U5-1A-04`, no nuclear, sesión 3: solo km-m, m-cm, kg-g, L-mL y euros-céntimos, a la principal o a la contigua): proponlos en la ENTREGA como ítems del ejercicio 4 («Mueve la coma»: 2.5 km = ? m), y sumar y restar con negativos (`U5-1C-18`) como ítems del ejercicio 1, sin cambiar el número de ejercicios.
 4. **Mueve la coma** · *Move the point*. ×10, ×100, ×1000, ÷10, ÷100, ÷1000 de un decimal; elegir o escribir; distractores: añadir un cero (2.5 · 10 = 2.50), mover la coma al revés, mover una cifra de menos. El acta lo deja en la semana 1 (sesión 3): se queda aquí.
 5. **Para todos los ejercicios**: introducción con un ejemplo resuelto en los dos idiomas; el ítem en el idioma que le toque (la base alterna; en español coma, en inglés punto); «Comprobar» que se oculta al responder; los cuatro estados tras comprobar donde haya opciones; feedback con los números del ítem; cada fallo pasado a `api.responder` con su `error` (el nombre del error típico) y la `respuesta` del alumno, para el registro de fallos. Los campos de respuesta con `inputmode="decimal"` y lectura con `deTexto` (coma o punto).
@@ -208,7 +208,9 @@ y el acta discrepan, manda el acta). Ids: 54 destrezas, 27 nucleares (13 + 14); 
    un vaso 0,2-0,33 L; una bañera 100-300 L; una habitación 2-10 m; un folio 21 × 29,7 cm; una piscina 25 o 50 m; una pieza de
    fruta 0,08-0,5 kg; una bolsa 0,5-5 kg; un paquete 0,1-30 kg; nunca horas con decimales salvo que el enunciado lo explique.
    El dinero, siempre con dos decimales en el enunciado. **Para la app se reservan los contextos de supermercado al peso y de
-   gasolina**; la vuelta (del cambio), la cena y las botellas son del papel.
+   gasolina**; la cena y las botellas son del papel. **La vuelta** (decisión del 6-11, que Juan Luis dejó a la coordinadora
+   s-20261106T125246-dae3dde3): entra en la app, porque U5-1A-01 es nuclear, pero **solo dentro de esos dos contextos** (pagar con un
+   billete la fruta al peso o el repostaje); la vuelta de una tienda de varios artículos, como en el papel, no.
 8. **Feedback ligado al error**, con los números del ítem («2,5 + 1,25: has alineado a la derecha; alinea las comas: 2,50 +
    1,25 = 3,75»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, números) que no copien los de las hojas, los exámenes semanales ni el examen final de la
