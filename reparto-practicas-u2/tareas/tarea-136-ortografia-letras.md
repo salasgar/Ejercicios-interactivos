@@ -155,6 +155,7 @@ final, cc, x/s). Cuatro ejercicios, de más fácil a más difícil, con tres niv
 - cinc/zinc, biznieto/bisnieto, kilómetro/quilómetro: dobles grafías válidas; fuera.
 - La rr solo va entre vocales; tras n, l o s va r simple aunque suene fuerte (Enrique, alrededor, Israel).
 - Nombres de persona inventados; «Villanueva» y «Madrid» son topónimos, no alumnos.
+- (Aprendido en la 136) Antes de poner un ítem, comprobar que la letra mala NO forma otra palabra: descartados cena/quena, queso/ceso, quitar/citar, quien/cien, barrio/bario, pollo/poyo, grave/grabe. Un hueco de «ay» no puede empezar frase (saldría en minúscula). El navegador cachea los módulos: recargar con fetch(..., {cache:'reload'}).
 - Duración real de una práctica numérica de 4 ejercicios en la U4: 11-30 min; esta tiene bancos de prosa: cuenta con más.
 
 ## Prohibido (propio de esta tarea)
