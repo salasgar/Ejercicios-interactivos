@@ -16,34 +16,45 @@
 // de una persona: «Lucía, mi mejor amiga está en 1.º C», con una coma, se puede
 // leer como vocativo y sería correcta.
 
-/** «sujeto»: [sujeto, el resto de la frase (empieza por el verbo)]. */
+// Niveles (tarea 143, 2026-11-06): cada ítem lleva su `nivel` (1-3) como último elemento.
+// En «sujeto», por la longitud del sujeto (1, corto; 2, con una oración o un infinitivo;
+// 3, el más largo). En «inciso», 1 si el inciso es un «que» corto; 2, un «que» más largo; 3,
+// si el inciso no empieza por «que» («la capital de España», «como ya sabéis»). Lo nuevo va
+// al FINAL de cada lista (la clave del ítem es la posición).
+
+import { elegirNivel } from './logica.js';
+
+/** «sujeto»: [sujeto, el resto de la frase (empieza por el verbo), nivel]. */
 export const SUJETOS = [
-  ['El lápiz que te dejé', 'era rojo.'],
-  ['Los alumnos que terminen el examen', 'pueden salir al patio.'],
-  ['La chica que se sienta a mi lado', 'se llama Lucía.'],
-  ['El libro que me regalaste por mi cumpleaños', 'me ha encantado.'],
-  ['Todos los alumnos de 1.º A', 'van a la excursión.'],
-  ['El perro de mis vecinos del tercero', 'ladra toda la noche.'],
-  ['Lo que más me gusta de las Matemáticas', 'son los problemas.'],
-  ['Ir en bici al instituto', 'es más rápido que ir andando.'],
-  ['Los ejercicios que no terminéis en clase', 'son para casa.'],
-  ['La profesora de Inglés que tuvimos el año pasado', 'se ha ido a otro instituto.'],
-  ['El equipo que gane el torneo', 'recibirá una copa.'],
-  ['Las fotos que hicimos en la excursión', 'han salido muy bien.'],
+  ['El lápiz que te dejé', 'era rojo.', 1],
+  ['Los alumnos que terminen el examen', 'pueden salir al patio.', 2],
+  ['La chica que se sienta a mi lado', 'se llama Lucía.', 1],
+  ['El libro que me regalaste por mi cumpleaños', 'me ha encantado.', 3],
+  ['Todos los alumnos de 1.º A', 'van a la excursión.', 1],
+  ['El perro de mis vecinos del tercero', 'ladra toda la noche.', 3],
+  ['Lo que más me gusta de las Matemáticas', 'son los problemas.', 3],
+  ['Ir en bici al instituto', 'es más rápido que ir andando.', 2],
+  ['Los ejercicios que no terminéis en clase', 'son para casa.', 2],
+  ['La profesora de Inglés que tuvimos el año pasado', 'se ha ido a otro instituto.', 3],
+  ['El equipo que gane el torneo', 'recibirá una copa.', 1],
+  ['Las fotos que hicimos en la excursión', 'han salido muy bien.', 2],
 ];
 
-/** «inciso»: [lo de antes, el inciso, lo de después (empieza por el verbo)]. */
+/** «inciso»: [lo de antes, el inciso, lo de después (empieza por el verbo), nivel]. */
 export const INCISOS = [
-  ['Aquel lápiz', 'el que yo te dejé', 'era rojo.'],
-  ['Mi hermano', 'que tiene quince años', 'juega al baloncesto.'],
-  ['Madrid', 'la capital de España', 'tiene más de tres millones de habitantes.'],
-  ['El Teide', 'que está en Tenerife', 'es la montaña más alta de España.'],
-  ['Mi abuela', 'que vive en Murcia', 'viene a comer los domingos.'],
-  ['La Luna', 'que gira alrededor de la Tierra', 'no tiene luz propia.'],
-  ['Nuestro perro', 'un labrador muy grande', 'se llama Rayo.'],
-  ['La biblioteca', 'que está en la planta baja', 'abre a las ocho y media.'],
-  ['El examen', 'como ya sabéis', 'es el viernes.'],
-  ['Mi padre', 'que es cocinero', 'hace unas croquetas buenísimas.'],
+  ['Aquel lápiz', 'el que yo te dejé', 'era rojo.', 3],
+  ['Mi hermano', 'que tiene quince años', 'juega al baloncesto.', 1],
+  ['Madrid', 'la capital de España', 'tiene más de tres millones de habitantes.', 3],
+  ['El Teide', 'que está en Tenerife', 'es la montaña más alta de España.', 1],
+  ['Mi abuela', 'que vive en Murcia', 'viene a comer los domingos.', 1],
+  ['La Luna', 'que gira alrededor de la Tierra', 'no tiene luz propia.', 2],
+  ['Nuestro perro', 'un labrador muy grande', 'se llama Rayo.', 3],
+  ['La biblioteca', 'que está en la planta baja', 'abre a las ocho y media.', 2],
+  ['El examen', 'como ya sabéis', 'es el viernes.', 3],
+  ['Mi padre', 'que es cocinero', 'hace unas croquetas buenísimas.', 1],
+  // Añadidas en la tarea 143 (nivel 2).
+  ['Mi prima', 'que estudia en Madrid', 'vendrá por Navidad.', 2],
+  ['El gato de mi vecina', 'que se llama Nube', 'duerme todo el día.', 2],
 ];
 
 /** Las frases de un ítem: [buena, ...malas], cada una con lo que le falla. */
@@ -60,11 +71,12 @@ export function frases(item) {
   ];
 }
 
-/** Ítem: { tipo, i, orden } (0 = la buena). */
-export function generarSujeto(rng) {
+/** Ítem: { tipo, i, orden, nivel } (0 = la buena). Mitad «sujeto» y mitad «inciso»; dentro de cada una, por niveles. */
+export function generarSujeto(rng, sesion) {
   const tipo = rng.azar() < 0.5 ? 'sujeto' : 'inciso';
-  const i = rng.entero(0, (tipo === 'sujeto' ? SUJETOS : INCISOS).length - 1);
-  return { tipo, i, orden: rng.barajar(tipo === 'sujeto' ? [0, 1] : [0, 1, 2]) };
+  const lista = tipo === 'sujeto' ? SUJETOS : INCISOS;
+  const { item, nivel } = elegirNivel(rng, lista.map((f, i) => ({ i, nivel: f.at(-1) })), sesion);
+  return { tipo, i: item.i, orden: rng.barajar(tipo === 'sujeto' ? [0, 1] : [0, 1, 2]), nivel };
 }
 
 /** Las frases del ítem en el orden en que salen: [{ k, texto }]. */

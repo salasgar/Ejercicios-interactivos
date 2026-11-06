@@ -17,12 +17,23 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
+import { etiquetaNivel } from '../_comun/nivel.js';
 import { TX, explicacion } from './textos.js';
 import { PAREJAS, partes, otra, generadorHueco, generarRevision, estaBien, idError } from './logica.js';
 import { frase, alPrincipio, mayuscula, generadorTilde, explicacionTilde, idErrorTilde, PARES, PREGUNTAS, explicacionExtra, idErrorExtra } from './tildes.js';
 import { generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from './signos.js';
 import { generarSujeto, opcionesSujeto, explicacionSujeto, idErrorSujeto } from './sujeto.js';
 import { grupo, generarVocativo, generarComas, opciones, buena as opcionBuena, explicacionComa, idErrorComa } from './comas.js';
+
+/**
+ * Pone «Nivel 2 · ●●○» en la esquina de arriba del ítem (tarea 143). Es lo único que los
+ * niveles añaden a lo que se pinta: el `montar` de cada ejercicio no cambia.
+ */
+const conNivel = montar => (contenedor, item, api) => {
+  montar(contenedor, item, api);
+  const etiqueta = etiquetaNivel(item.nivel, api.esc);
+  if (etiqueta) contenedor.insertAdjacentHTML('afterbegin', `<div class="esquina-nivel" style="text-align:right;font-size:.85rem;margin-bottom:.4rem">${etiqueta}</div>`);
+};
 
 // --- Ejercicios 1-3: ¿qué palabra va en el hueco? ----------------------------------
 
@@ -237,7 +248,7 @@ const ejercicioHueco = pareja => ({
   introduccion: TX[pareja].introduccion,
   generar: generadorHueco(pareja),
   clave: item => `${item.pareja}/${item.n}`,
-  montar: montarHueco,
+  montar: conNivel(montarHueco),
   enunciado: enunciadoHueco,
 });
 
@@ -253,7 +264,7 @@ arrancar({
       detalle: TX.revision.detalle,
       generar: generarRevision,
       clave: item => `${item.pareja}/${item.n}`,
-      montar: montarRevision,
+      montar: conNivel(montarRevision),
       enunciado: enunciadoRevision,
     },
     ejercicioHueco('porque'),
@@ -263,7 +274,7 @@ arrancar({
       introduccion: TX.vocativo.introduccion,
       generar: generarVocativo,
       clave: item => `${item.tipo}/${item.grupo ?? ''}/${item.i}`,
-      montar: montarComa,
+      montar: conNivel(montarComa),
       enunciado: enunciadoComa,
     },
     {
@@ -272,7 +283,7 @@ arrancar({
       introduccion: TX.comas.introduccion,
       generar: generarComas,
       clave: item => `${item.grupo}/${item.i}`,
-      montar: montarComa,
+      montar: conNivel(montarComa),
       enunciado: enunciadoComa,
     },
     ...['interrogativos', 'diacriticas'].map(g => ({
@@ -281,7 +292,7 @@ arrancar({
       introduccion: TX[g].introduccion,
       generar: generadorTilde(g),
       clave: item => `${item.tipo}/${item.grupo}/${item.n ?? item.i}`,
-      montar: montarTilde,
+      montar: conNivel(montarTilde),
       enunciado: enunciadoTilde,
     })),
     {
@@ -290,7 +301,7 @@ arrancar({
       introduccion: TX.signos.introduccion,
       generar: generarSignos,
       clave: item => String(item.i),
-      montar: montarEscrita({ opciones: opcionesSignos, explicacion: explicacionSignos, idError: idErrorSignos }),
+      montar: conNivel(montarEscrita({ opciones: opcionesSignos, explicacion: explicacionSignos, idError: idErrorSignos })),
       enunciado: enunciadoEscrita,
     },
     {
@@ -299,7 +310,7 @@ arrancar({
       introduccion: TX.sujeto.introduccion,
       generar: generarSujeto,
       clave: item => `${item.tipo}/${item.i}`,
-      montar: montarEscrita({ opciones: opcionesSujeto, explicacion: explicacionSujeto, idError: idErrorSujeto }),
+      montar: conNivel(montarEscrita({ opciones: opcionesSujeto, explicacion: explicacionSujeto, idError: idErrorSujeto })),
       enunciado: enunciadoEscrita,
     },
   ],

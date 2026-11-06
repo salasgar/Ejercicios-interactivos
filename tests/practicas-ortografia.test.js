@@ -360,3 +360,150 @@ test('tildes: las explicaciones nuevas usan la frase del ejercicio', () => {
   const si = listaDe('diacriticas').findIndex(f => f[0] === '_ ha hecho los deberes; no le suspendas.');
   assert.match(explicacionTilde('diacriticas', si), /Va <b>Sí<\/b>/);
 });
+
+// --- Niveles adaptables (tarea 143) ---------------------------------------------------
+// Los once ejercicios eligen sus ítems según `sesion` con `elegirDeNivel` (../_comun/nivel.js).
+// Los ítems aprobados no han cambiado: solo llevan además su `nivel`.
+
+import { nivelDe } from '../practicas/_comun/nivel.js';
+import { DIACRITICAS } from '../practicas/ortografia/tildes.js';
+
+// Un alumno de cada nivel (con las 5 vidas de siempre): 0 puntos → 1; 4 → 2; 8 → 3.
+const SESION_DE = { 1: { puntos: 0, vidas: 5 }, 2: { puntos: 4, vidas: 5 }, 3: { puntos: 8, vidas: 5 } };
+
+const hueco = pareja => PAREJAS[pareja].frases.map(f => f[2]);
+
+// Cada ejercicio: su generador, el nivel del ítem que ha salido y los niveles de su banco
+// (una unidad por ítem distinto que se puede preguntar: un par de «significado» da dos).
+const EJERCICIOS = [
+  { nombre: '1 a/ha', generar: generadorHueco('a_ha'), de: it => partes(it.pareja, it.n).nivel, banco: hueco('a_ha') },
+  { nombre: '2 e/he', generar: generadorHueco('e_he'), de: it => partes(it.pareja, it.n).nivel, banco: hueco('e_he') },
+  { nombre: '3 echo/hecho', generar: generadorHueco('echo_hecho'), de: it => partes(it.pareja, it.n).nivel, banco: hueco('echo_hecho') },
+  { nombre: '4 ¿bien escrita?', generar: generarRevision, de: it => partes(it.pareja, it.n).nivel, banco: PAREJAS_REVISION_NIVELES() },
+  { nombre: '5 porque', generar: generadorHueco('porque'), de: it => partes(it.pareja, it.n).nivel, banco: hueco('porque') },
+  {
+    nombre: '6 vocativo',
+    generar: generarVocativo,
+    de: it => (it.tipo === 'escrita' ? VOCATIVO_ESCRITA[it.i].nivel : VOCATIVO_SIGNIFICADO[it.i].nivel),
+    banco: [...VOCATIVO_ESCRITA.map(p => p.nivel), ...VOCATIVO_SIGNIFICADO.flatMap(p => [p.nivel, p.nivel])],
+  },
+  { nombre: '7 comas', generar: generarComas, de: it => COMAS_SIGNIFICADO[it.i].nivel, banco: COMAS_SIGNIFICADO.flatMap(p => [p.nivel, p.nivel]) },
+  {
+    nombre: '8 interrogativos',
+    generar: generadorTilde('interrogativos'),
+    de: it => (it.tipo === 'hueco' ? frase('interrogativos', it.n).nivel : 3),
+    banco: [...INTERROGATIVOS.map(f => f[3]), ...PARES.interrogativos.flatMap(() => [3, 3])],
+  },
+  {
+    nombre: '9 diacríticas',
+    generar: generadorTilde('diacriticas'),
+    de: it => (it.tipo === 'hueco' ? frase('diacriticas', it.n).nivel : 3),
+    banco: [...DIACRITICAS.map(f => f[3]), ...PARES.diacriticas.flatMap(() => [3, 3]), ...PREGUNTAS.flatMap(() => [3, 3])],
+  },
+  { nombre: '10 signos', generar: generarSignos, de: it => SIGNOS[it.i].nivel, banco: SIGNOS.map(s => s.nivel) },
+  {
+    nombre: '11 sujeto',
+    generar: generarSujeto,
+    de: it => (it.tipo === 'sujeto' ? SUJETOS : INCISOS)[it.i].at(-1),
+    banco: [...SUJETOS.map(f => f.at(-1)), ...INCISOS.map(f => f.at(-1))],
+  },
+];
+
+// El ejercicio 4 mezcla las tres primeras parejas.
+function PAREJAS_REVISION_NIVELES() {
+  return ['a_ha', 'e_he', 'echo_hecho'].flatMap(hueco);
+}
+
+test('niveles: los alumnos simulados están en los niveles 1, 2 y 3', () => {
+  for (const n of [1, 2, 3]) assert.equal(nivelDe(SESION_DE[n]), n);
+});
+
+test('niveles: cada ítem de cada banco tiene nivel 1-3 y hay al menos 8 de cada nivel en cada ejercicio', () => {
+  for (const { nombre, banco } of EJERCICIOS) {
+    for (const n of banco) assert.ok([1, 2, 3].includes(n), `${nombre}: nivel ${n}`);
+    for (const nivel of [1, 2, 3]) assert.ok(banco.filter(x => x === nivel).length >= 8, `${nombre}: nivel ${nivel} con ${banco.filter(x => x === nivel).length}`);
+  }
+});
+
+test('niveles: por fuerza bruta, un alumno nunca recibe un ítem de nivel superior al suyo y el nivel que se enseña es el suyo', () => {
+  for (const { nombre, generar, de } of EJERCICIOS) {
+    for (const nivel of [1, 2, 3]) {
+      const rng = crearRng(100 + nivel);
+      let delSuyo = 0;
+      for (let i = 0; i < 3000; i++) {
+        const it = generar(rng, SESION_DE[nivel]);
+        assert.ok(de(it) <= nivel, `${nombre}: ítem de nivel ${de(it)} para un alumno del ${nivel}`);
+        assert.equal(it.nivel, nivel, `${nombre}: etiqueta`);
+        if (de(it) === nivel) delSuyo++;
+      }
+      // La mayoría (≈ 70 %) es de su nivel; en el nivel 1 todos.
+      assert.ok(delSuyo > 3000 * (nivel === 1 ? 0.99 : 0.55), `${nombre}, nivel ${nivel}: ${delSuyo} de 3000 de su nivel`);
+    }
+  }
+});
+
+test('niveles: dentro de cada nivel ningún botón acierta más del 60 % de las veces (hueco, bien/mal, con o sin tilde)', () => {
+  const dentro = (valor, total) => assert.ok(valor > total * 0.4 && valor < total * 0.6, `${valor} de ${total}`);
+  for (const nivel of [1, 2, 3]) {
+    const rng = crearRng(200 + nivel);
+    for (const pareja of ['a_ha', 'e_he', 'echo_hecho', 'porque']) {
+      const generar = generadorHueco(pareja);
+      let con = 0;
+      for (let i = 0; i < 3000; i++) if (partes(pareja, generar(rng, SESION_DE[nivel]).n).buena === PAREJAS[pareja].con) con++;
+      dentro(con, 3000);
+    }
+    let bien = 0;
+    for (let i = 0; i < 3000; i++) if (estaBien(generarRevision(rng, SESION_DE[nivel]))) bien++;
+    dentro(bien, 3000);
+    for (const grupo of ['interrogativos', 'diacriticas']) {
+      const generar = generadorTilde(grupo);
+      let huecos = 0;
+      let con = 0;
+      for (let i = 0; i < 4000; i++) {
+        const it = generar(rng, SESION_DE[nivel]);
+        if (it.tipo !== 'hueco') continue;
+        huecos++;
+        if (frase(grupo, it.n).buena === frase(grupo, it.n).opciones[1]) con++;
+      }
+      dentro(con, huecos);
+    }
+  }
+});
+
+test('niveles: las proporciones de los tipos se mantienen en cada nivel', () => {
+  for (const nivel of [1, 2, 3]) {
+    const rng = crearRng(300 + nivel);
+    const cuenta = (generar, clave) => {
+      const c = {};
+      for (let i = 0; i < 4000; i++) { const k = clave(generar(rng, SESION_DE[nivel])); c[k] = (c[k] ?? 0) + 1; }
+      return c;
+    };
+    // Ejercicio 6: mitad «escrita», mitad «significado».
+    const voc = cuenta(generarVocativo, it => it.tipo);
+    assert.ok(voc.escrita > 1700 && voc.significado > 1700, JSON.stringify(voc));
+    // Ejercicio 11: mitad «sujeto», mitad «inciso».
+    const suj = cuenta(generarSujeto, it => it.tipo);
+    assert.ok(suj.sujeto > 1700 && suj.inciso > 1700, JSON.stringify(suj));
+    // Ejercicios 8 y 9: los pares y las preguntas (nivel 3) son uno de cada cuatro en el nivel 3 y no salen antes.
+    for (const grupo of ['interrogativos', 'diacriticas']) {
+      const t = cuenta(generadorTilde(grupo), it => (it.tipo === 'hueco' ? 'hueco' : 'extra'));
+      if (nivel < 3) assert.equal(t.extra ?? 0, 0, `${grupo}, nivel ${nivel}: sin pares ni preguntas`);
+      else assert.ok(t.extra > 4000 * 0.2 && t.extra < 4000 * 0.3, `${grupo}: ${t.extra} de 4000 son pares o preguntas`);
+    }
+  }
+});
+
+test('niveles: los ítems llevan el mismo nombre y la misma clave de siempre (el registro del panel no cambia)', () => {
+  const rng = crearRng(7);
+  const it = generadorHueco('a_ha')(rng, SESION_DE[3]);
+  assert.deepEqual(Object.keys(it).sort(), ['n', 'nivel', 'pareja']);
+  assert.equal(typeof it.n, 'number');
+  const t = generadorTilde('interrogativos')(rng, SESION_DE[1]);
+  assert.deepEqual(Object.keys(t).sort(), ['grupo', 'n', 'nivel', 'tipo']);
+  // Los ítems de antes siguen en su posición: las 28 frases de interrogativos y las 27 de diacríticas.
+  assert.equal(INTERROGATIVOS[0][0], '¿_ hora es?');
+  assert.equal(INTERROGATIVOS[27][0], 'Hazlo _ quieras.');
+  assert.equal(DIACRITICAS[0][0], 'Yo no _ nadar.');
+  assert.equal(DIACRITICAS[26][0], 'Hoy tengo _ deberes que ayer.');
+  assert.equal(PAREJAS.a_ha.frases[39][0], 'Llamé _ mi tía por su cumpleaños.');
+});
