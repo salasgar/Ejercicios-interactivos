@@ -35,8 +35,10 @@
 //   elegir    los de elegir, igual. Como mucho 15.
 //   nElegir   cuántos de `elegir` hay que terminar (como mucho, todos).
 //
-// Cada ejercicio vale 10 puntos (`PUNTOS_POR_EJERCICIO`): con 6 ★ y 4 a
-// elegir, la tarea son 100 puntos. `npm test` (tests/practicas-semana.test.js)
+// Toda tarea vale 100 puntos (`PUNTOS_TAREA`), tenga los ejercicios que tenga:
+// cada ejercicio que cuenta (los ★ y los `nElegir` mejores de elegir) pesa lo
+// mismo. Por dentro cada ejercicio sigue contando 10 (`PUNTOS_POR_EJERCICIO`);
+// con 6 ★ y 4 a elegir, los puntos son los de siempre. `npm test` (tests/practicas-semana.test.js)
 // comprueba que todo [slug, n] existe en el catálogo, que no hay repetidos
 // dentro de una tarea y los topes de arriba.
 //
@@ -134,6 +136,17 @@ export const TAREAS = [
 ];
 
 export const PUNTOS_POR_EJERCICIO = 10;
+/** Lo que vale toda tarea, con los ejercicios que tenga. */
+export const PUNTOS_TAREA = 100;
+
+/**
+ * Pasa la suma de puntos por ejercicio (10 cada uno) de una tarea de `n`
+ * ejercicios que cuentan a su valor sobre `PUNTOS_TAREA`. Entre 0 y 100.
+ */
+export function puntosSobreCien(suma, n) {
+  if (!(n > 0)) return 0;
+  return Math.max(0, Math.min(PUNTOS_TAREA, Math.round(PUNTOS_TAREA * suma / (PUNTOS_POR_EJERCICIO * n))));
+}
 /** Topes que impone el código de resultado de la tarea (10 y 15 bits). */
 export const MAX_ESTRELLA = 10;
 export const MAX_ELEGIR = 15;
@@ -198,8 +211,9 @@ export function fechaISO(fecha) {
  * devuelve el ejercicio n (empezando en 1) de esa práctica tal como lo guarda la
  * base ({ puntos, objetivo, fallos, terminado, dia… }) o null si no lo ha empezado.
  *
- * Cada ejercicio vale PUNTOS_POR_EJERCICIO: los 10 si está terminado y, si va a
- * medias, la parte proporcional de sus puntos (sin llegar a 10). De los de
+ * Cada ejercicio cuenta PUNTOS_POR_EJERCICIO: los 10 si está terminado y, si va a
+ * medias, la parte proporcional de sus puntos (sin llegar a 10); el total se pasa
+ * a `PUNTOS_TAREA` (100) con `puntosSobreCien`. De los de
  * elegir cuentan los `nElegir` que mejor lleve. La tarea está cumplida cuando
  * están terminados todos los ★ y al menos `nElegir` de los de elegir. Un
  * ejercicio terminado antes de que existiera la tarea cuenta igual.
@@ -235,8 +249,8 @@ export function estadoTarea(tarea, progresoDe) {
     cumplida,
     diaEntrega,
     empezada: todos.some(e => e.empezado),
-    puntos: estrella.reduce((s, e) => s + e.puntos, 0) + mejores.reduce((s, p) => s + p, 0),
-    maximo: PUNTOS_POR_EJERCICIO * (estrella.length + tarea.nElegir),
+    puntos: puntosSobreCien(estrella.reduce((s, e) => s + e.puntos, 0) + mejores.reduce((s, p) => s + p, 0), estrella.length + tarea.nElegir),
+    maximo: PUNTOS_TAREA,
     fallos: todos.reduce((s, e) => s + (e.ej?.fallos ?? 0), 0),
     dia: Math.max(0, ...todos.filter(e => e.terminado).map(e => e.ej.dia ?? 0)),
   };

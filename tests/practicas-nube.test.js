@@ -311,10 +311,11 @@ test('panel: los puntos de la tarea son los mismos que ve el alumno en su marcad
     { practica: practicaPorSlug('recta').id, indice: 0, ej: [{ terminado: true, puntos: 10, objetivo: 10, fallos: 0 }, { terminado: false, puntos: 5, objetivo: 10, aciertos: 5, fallos: 0 }] },
     { practica: practicaPorSlug('semaforo').id, indice: 0, ej: [{ terminado: false, puntos: 3, objetivo: 10, aciertos: 3, fallos: 0 }, null, { terminado: true, puntos: 10, objetivo: 10, fallos: 2 }] },
   ];
-  assert.equal(juntarTareas(['Ana'], [], [], nube, [tarea])[0].tareas[0].puntos, 28);
+  // Son 4 ejercicios que cuentan: 28 puntos internos de 40 = 70 sobre 100 (tarea 166).
+  assert.equal(juntarTareas(['Ana'], [], [], nube, [tarea])[0].tareas[0].puntos, 70);
   // Un código de la tarea que dice «terminado» cuenta 10 aunque la nube no lo sepa.
   const conCodigo = juntarTareas(['Ana'], [{ tarea: 1, indice: 0, estrella: [true, true], elegir: [true, false, true], fallos: 0, tope: false, dia: 50 }], [], nube, [tarea]);
-  assert.equal(conCodigo[0].tareas[0].puntos, 40);
+  assert.equal(conCodigo[0].tareas[0].puntos, 100);
 });
 
 test('panel: «qué falla más», una fila por ejercicio, de más a menos fallos por alumno', () => {

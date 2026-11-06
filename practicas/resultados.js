@@ -80,9 +80,9 @@ export function juntarResumen(nombres, deCodigos, deNube, practicas) {
  * @param deCodigosTarea  [{ tarea, indice, estrella: [bool], elegir: [bool], fallos, tope, dia }]
  * @param deCodigos       [{ practica, indice, ejercicios: [{ terminado, fallos }], dia }]
  * @param deNube          [{ practica, indice, ej }]
- * Los puntos de cada tarea (sobre `maximo`, 100 en las de 6 ★ + 4) salen de
- * `estadoTarea`, la misma función del marcador del alumno: 10 por ejercicio
- * terminado y, a medias, la parte proporcional (eso solo lo sabe la nube).
+ * Los puntos de cada tarea (siempre sobre `maximo`, 100) salen de
+ * `estadoTarea`, la misma función del marcador del alumno: cada ejercicio que
+ * cuenta pesa lo mismo y, a medias, la parte proporcional (eso solo lo sabe la nube).
  *
  * @param tareas          las columnas, en orden (de `_comun/tareas.js`)
  * @param opciones        { deNubeTareas: [{ tarea, practica, indice, ej }] (colección `progreso-tareas`, modelo v2),

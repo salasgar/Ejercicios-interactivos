@@ -11,7 +11,7 @@
 import {
   agregar, sinAlumnosDePrueba, tareaVigente, fechaMadrid, textoEntrega, documentosAMapa, asignacionesAMapa,
 } from '../herramientas/informe-actividad.mjs';
-import { PUNTOS_POR_EJERCICIO } from './_comun/tareas.js';
+import { PUNTOS_TAREA } from './_comun/tareas.js';
 
 export const HORAS = [24, 48, 72];
 
@@ -70,7 +70,7 @@ function pintar(contenedor, hoy) {
   contenedor.append(lista(r.alertas.length ? '⚠ Alertas' : 'Sin alertas', r.alertas, 'Todo dentro de los umbrales.'));
 
   const completas = r.alumnos.filter(f => f.completa).length;
-  const maximo = PUNTOS_POR_EJERCICIO * (tarea.estrella.length + tarea.nElegir);
+  const maximo = PUNTOS_TAREA;
   const pct = (a, b) => (b ? `${Math.round((100 * a) / b)} %` : '—');
   const resumen = [
     `Han entrado alguna vez: ${r.hanEntrado} de ${r.total} (${pct(r.hanEntrado, r.total)}).`,

@@ -65,8 +65,9 @@ para una semana:
 
 Lo que conviene saber:
 
-- **Cada ejercicio vale 10 puntos.** Una tarea de 3 ★ y 1 a elegir son 40 puntos; si quieres
-  que sean 100, pon 10 ejercicios en total (por ejemplo 6 ★ y 4 a elegir).
+- **Toda tarea vale 100 puntos**, tenga los ejercicios que tenga: cada ejercicio que cuenta (los
+  ★ y los que hay que hacer de los de elegir) pesa lo mismo. Una tarea de 3 ★ y 1 a elegir da
+  25 puntos por ejercicio; una de 6 ★ y 4 a elegir, 10.
 - **Para ver en qué consiste un ejercicio** antes de ponerlo: en el panel, arriba, **«Ver las
   prácticas»** abre lo que ven los alumnos. Entra en la práctica y en el ejercicio: empieza con
   un recuadro «Cómo se hace» y luego salen ítems que puedes probar. En tu ordenador, sin código

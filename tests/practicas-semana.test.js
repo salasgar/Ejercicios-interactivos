@@ -15,7 +15,7 @@ import {
   codigoAlumno, leerCodigoResultado, codigoTarea, leerCodigoTarea, leerCualquierCodigo, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import {
-  TAREAS, PUNTOS_POR_EJERCICIO, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, estadoPlazo, diaDeFecha, erroresTareas, enlaceEjercicio, fechaISO,
+  TAREAS, PUNTOS_POR_EJERCICIO, PUNTOS_TAREA, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, estadoPlazo, diaDeFecha, erroresTareas, enlaceEjercicio, fechaISO,
 } from '../practicas/_comun/tareas.js';
 import { declaracionDe, progresoGuardado, claveProgreso, urlSemana } from '../practicas/_comun/base.js';
 import { leerNumero } from '../practicas/_comun/piezas.js';
@@ -132,12 +132,12 @@ const con = mapa => (slug, n) => mapa[`${slug}/${n}`] ?? null;
 
 test('estado: sin nada, a medias, cumplida justo y con elegidos de sobra', () => {
   const nada = estadoTarea(TAREA, con({}));
-  assert.deepEqual([nada.cumplida, nada.empezada, nada.puntos, nada.maximo, nada.fallos, nada.dia], [false, false, 0, 40, 0, 0]);
+  assert.deepEqual([nada.cumplida, nada.empezada, nada.puntos, nada.maximo, nada.fallos, nada.dia], [false, false, 0, 100, 0, 0]);
 
   // Todos los de elegir terminados pero falta un ★: no está cumplida.
   const sinEstrella = estadoTarea(TAREA, con({ 'recta/1': hecho(), 'semaforo/1': hecho(), 'semaforo/2': hecho(), 'semaforo/3': hecho() }));
   assert.equal(sinEstrella.cumplida, false);
-  assert.equal(sinEstrella.puntos, 30, 'los de elegir de sobra no suman más de nElegir × 10');
+  assert.equal(sinEstrella.puntos, 75, 'los de elegir de sobra no suman más de nElegir: 3 de los 4 que cuentan = 75 de 100');
 
   // Los ★ terminados y uno de elegir menos de los que hacen falta.
   const casi = estadoTarea(TAREA, con({ 'recta/1': hecho(), 'recta/2': hecho(2), 'semaforo/3': hecho(1, 44) }));
@@ -145,7 +145,7 @@ test('estado: sin nada, a medias, cumplida justo y con elegidos de sobra', () =>
 
   // Justo: los ★ y exactamente nElegir.
   const justo = estadoTarea(TAREA, con({ 'recta/1': hecho(), 'recta/2': hecho(), 'semaforo/1': hecho(), 'semaforo/3': hecho() }));
-  assert.deepEqual([justo.cumplida, justo.puntos], [true, 40]);
+  assert.deepEqual([justo.cumplida, justo.puntos], [true, 100]);
 
   // Con nElegir 0 basta con los ★; sin ★, basta con los de elegir.
   assert.equal(estadoTarea({ ...TAREA, nElegir: 0 }, con({ 'recta/1': hecho(), 'recta/2': hecho() })).cumplida, true);
@@ -233,16 +233,55 @@ test('catálogo: los nombres no llevan la coletilla «repaso de la unidad 1», s
 
 test('estado: los puntos de un ejercicio a medias son proporcionales y nunca llegan a 10', () => {
   const p = mapa => estadoTarea(TAREA, con(mapa)).puntos;
-  assert.equal(p({ 'recta/1': medias(5) }), 5);
-  assert.equal(p({ 'recta/1': medias(9) }), 9);
-  assert.equal(p({ 'recta/1': medias(10) }), 9, 'diez puntos sin «terminado» (no debería pasar) no cuentan como terminado');
-  assert.equal(p({ 'recta/1': medias(3, 6) }), 5, 'objetivo distinto de 10 (el árbol pide 6)');
+  // TAREA cuenta 4 ejercicios (2 ★ + 2 a elegir): cada punto interno vale 2,5 sobre 100.
+  assert.equal(p({ 'recta/1': medias(5) }), 13);
+  assert.equal(p({ 'recta/1': medias(9) }), 23);
+  assert.equal(p({ 'recta/1': medias(10) }), 23, 'diez puntos sin «terminado» (no debería pasar) no cuentan como terminado');
+  assert.equal(p({ 'recta/1': medias(3, 6) }), 13, 'objetivo distinto de 10 (el árbol pide 6)');
   assert.equal(p({ 'recta/1': medias(0, 10, 4) }), 0);
   // De los de elegir cuentan los nElegir mejores, terminados o no.
-  assert.equal(p({ 'semaforo/1': medias(2), 'semaforo/2': medias(7), 'semaforo/3': hecho() }), 17);
+  assert.equal(p({ 'semaforo/1': medias(2), 'semaforo/2': medias(7), 'semaforo/3': hecho() }), 43);
   const empezado = estadoTarea(TAREA, con({ 'semaforo/2': medias(0, 10, 1) }));
   assert.deepEqual([empezado.empezada, empezado.puntos, empezado.elegir[1].empezado], [true, 0, true], 'con un fallo y 0 puntos ya está empezado');
   assert.equal(PUNTOS_POR_EJERCICIO, 10);
+});
+
+test('puntos: toda tarea vale 100, con cualquier número de ejercicios', () => {
+  assert.equal(PUNTOS_TAREA, 100);
+  // Terminada entera da 100 exactos con 1 … MAX_ESTRELLA + MAX_ELEGIR ejercicios que cuentan.
+  for (let n = 1; n <= MAX_ESTRELLA + MAX_ELEGIR; n++) {
+    for (const nEstrella of [0, Math.floor(n / 2), n]) {
+      if (nEstrella > MAX_ESTRELLA || n - nEstrella > MAX_ELEGIR) continue;
+      const estrella = Array.from({ length: nEstrella }, (_, i) => ['recta', i + 1]);
+      const elegir = Array.from({ length: n - nEstrella + 2 }, (_, i) => ['semaforo', i + 1]);
+      const tarea = { id: 51, titulo: { es: 'x', en: 'x' }, estrella, elegir, nElegir: n - nEstrella };
+      const todo = estadoTarea(tarea, () => hecho());
+      assert.deepEqual([todo.puntos, todo.maximo, todo.cumplida], [100, 100, true], `${nEstrella} ★ + ${n - nEstrella} a elegir`);
+      assert.equal(estadoTarea(tarea, () => null).puntos, 0);
+      // A medias: nunca fuera de 0-100, ni 100 sin terminar, y sube con lo que se avanza.
+      let anterior = -1;
+      for (const pts of [0, 1, 5, 9]) {
+        const medio = estadoTarea(tarea, () => medias(pts)).puntos;
+        assert.ok(medio >= 0 && medio <= 100 && medio >= anterior);
+        if (pts < 9) assert.ok(medio < 100);
+        anterior = medio;
+      }
+    }
+  }
+});
+
+test('puntos: en una tarea de 10 ejercicios son los mismos que antes (10 por ejercicio)', () => {
+  const tarea = { id: 52, titulo: { es: 'x', en: 'x' },
+    estrella: Array.from({ length: 6 }, (_, i) => ['recta', i + 1]), elegir: Array.from({ length: 6 }, (_, i) => ['semaforo', i + 1]), nElegir: 4 };
+  const antes = mapa => { // la fórmula de antes de la tarea 166
+    const v = e => (e?.terminado ? 10 : e?.puntos > 0 ? Math.min(9, Math.floor(10 * e.puntos / e.objetivo)) : 0);
+    const est = tarea.estrella.reduce((s, [sl, n]) => s + v(mapa[`${sl}/${n}`]), 0);
+    return est + tarea.elegir.map(([sl, n]) => v(mapa[`${sl}/${n}`])).sort((a, b) => b - a).slice(0, 4).reduce((s, x) => s + x, 0);
+  };
+  const casos = [{}, { 'recta/1': hecho() }, { 'recta/1': medias(5), 'recta/2': medias(9, 10), 'semaforo/1': medias(3, 6) },
+    { 'semaforo/1': hecho(), 'semaforo/2': hecho(), 'semaforo/3': medias(7), 'semaforo/4': medias(2), 'semaforo/5': hecho(), 'semaforo/6': hecho(), 'recta/6': medias(4) }];
+  for (const c of casos) assert.equal(estadoTarea(tarea, con(c)).puntos, antes(c));
+  assert.equal(estadoTarea(tarea, con(casos[3])).maximo, 100);
 });
 
 // --- El código de resultado de la tarea ------------------------------------------------------
