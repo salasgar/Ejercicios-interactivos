@@ -150,10 +150,13 @@ de problemas de examen en el ej. 2, y gastos poco creíbles en el ahorro de `dos
 saca casos de examen conmutados en el ej. 3, no excluye nada en el ej. 5 y le faltan casos de
 las hojas 2 y 3 y del examen final; los casos de examen se excluyen por su huella, nunca en
 claro) y las tres de la semana 3, `multiplica-divide`,
-`combinadas-fracciones` y `errores4` (tarea 120, 2-11: lo que pidieron las reabiertas del 30-10
-está hecho en el orden en que están escritos los casos, pero salen casos de las hojas 2 y 3 y de
-los exámenes con los sumandos o los factores en otro orden, y a `multiplica-divide` le falta la
-hoja 2). El estado vivo es el campo `disponible` de `catalogo.js`.
+`combinadas-fracciones` y `errores4` (tarea 163, 6-11, tercera vez: lo que pidieron las
+reabiertas del 2-11 está hecho, pero `multiplica-divide` saca casos de la hoja 3 que no lista y
+tres casos de examen con el signo en el otro operando; `combinadas-fracciones`, expresiones de la
+hoja 3 que no lista y, en el ej. 3, líneas de en medio que son casos de la hoja o el paso malo de
+una caja del final; y `errores4`, potencias y fracciones de una cantidad de los exámenes semanales 1
+y 3 y casos de las hojas 1, 2 y 3, porque filtra por plantilla y no por la expresión que se ve).
+El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 
