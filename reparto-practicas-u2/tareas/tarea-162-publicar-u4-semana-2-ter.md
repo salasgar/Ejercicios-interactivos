@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-05 (alta de la coordinadora s-20261105T221931-c3838727, pedida por Juan Luis: «PU2: tarea de publicación. Dala de alta.»; la 119 reabrió las dos el 2-11 y las dejó sin publicador)
 Precondición: las **reabiertas del 2-11** de 103 y 104 (`hechos/reabiertas/10[34]--s-20261102T141053-b5277421-revision.md`) cerradas con terminada nueva (lo están: `hechos/terminadas/10[34]--s-20261102T151801-c080c1cd.md`) · 134 LISTA (lo está desde el 5-11, commit 43a2c00: dejó de tener `catalogo.js` sin commitear) · **no en paralelo con la 122**, EN CURSO desde el 5-11 a las 22:20Z (toca `catalogo.js`: hasta que esté LISTA, un commit tuyo de ese fichero se llevaría su trabajo a medias), ni con la 163 ni con ninguna otra que toque `catalogo.js` o `docs/practicas-unidad4.md` (130, 131, 140-142, 144, 156-159; mira los reclamos vivos) · Disparo: MANUAL · **Plazo: publicadas antes del jue 17-12; mejor antes del mar 8-12**, que es el plazo de la 121 (Juan Luis monta la tarea de la semana 2 en el panel con esta ENTREGA, y la tarea 29 del reparto de la U4 la programa en Classroom para el lun 21-12). La portada no enseña la U4 hasta el 14-12: publicar antes no las pone delante de nadie.
-Duración esperada: 40 min (tiempo de sesión, no de persona; la 119 publicó dos y reabrió dos en ~40 min) · Banda de modelo: ALTO · Encadenable con: 163
+Duración esperada: 40 min (tiempo de sesión, no de persona; la 119 publicó dos y reabrió dos en ~40 min; la 162 tardó ~2 h, con 24 min de npm test y la regeneración entera del tablón) · Banda de modelo: ALTO · Encadenable con: 163
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/162-publicar-u4-semana-2-ter/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de las filas 51 `fraccion-de` y 52 `suma-resta`), `docs/practicas-unidad4.md` (la línea «**Publicadas** (a …)» y las menciones de las reabiertas, §6); y, solo para una errata de texto de una línea, `practicas/fraccion-de/textos.js` o `practicas/suma-resta/{textos,logica}.js` (declarándolo en la terminada, como la 119)
 
@@ -162,6 +162,16 @@ igual. Sin esta publicación no puede avanzar la 121 (la tarea de la semana 2 en
   dos `span`; el signo de una negativa está en el `.frac-neg` padre. La portada tarda en salir por Firebase: espera a `#probar` hasta 30 s,
   y no lances más de dos Chrome a la vez.
 - (de la 120) Con un perfil de Chrome nuevo la primera carga de la portada pasa de 30 s (Firebase por CDN): reutiliza un perfil ya usado.
+- (de la 162, 6-11) **Las reabiertas arreglan lo que se les dice y nada más**: la del 2-11 cerró `queda` y dejó `dos` (una fracción suelta
+  del ítem con su total), el ej. 2 (pasos de U4-2A-02) y el ej. 5 de `suma-resta` (sin ninguna exclusión). El barrido tiene que mirar cada
+  fracción **suelta** de cada ítem y los **cinco** ejercicios, no la clave completa de cada uno.
+- (de la 162) Un barrido «todos los números del ítem están en el trozo de papel» da miles de falsos positivos si el trozo es una línea:
+  corta el `.tex` por `\item`, `\ap`, `\pregunta`, `\huecoabajo`, `a)`… y quita las `\opciones`. Aun así, cada coincidencia hay que leerla
+  en su contexto (un paréntesis de una combinada, una línea de un «encuentra el error», una opción que está bien).
+- (de la 162) Las huellas del ej. 3 de `suma-resta` (`claveNat`) llevan el tipo, o sea el orden: «n + f» no excluye «f + n». Y las
+  hojas 2 y 3 tienen sumas escritas **en palabras** («the sum of two thirds and one ninth») que ningún barrido de números ve.
+- (de la 162) `npm test` con otras sesiones en la máquina tardó 24 min: estira la caducidad **antes** de lanzarlo (a esta sesión se le
+  pasó). Y el `timeout` de GNU no existe en este Mac.
 - (de la coordinadora, 5-11) **Hay ENTREGA antiguas con casos de examen en claro** (la de la 107 y la de la 111; avisado a Juan Luis el
   5-11): no copies a tu ENTREGA frases de ENTREGA anteriores sin leerlas, y no las cites literalmente.
 - (de la coordinadora, 5-11) `catalogo.js` lo comparten muchas tareas (la base de cada unidad, la ortografía, cada publicación): el
