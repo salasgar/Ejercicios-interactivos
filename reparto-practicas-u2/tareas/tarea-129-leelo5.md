@@ -112,6 +112,7 @@ Modelo de interfaz: `practicas/leelo4/` (la U4, el más reciente).
 - El test compara decimales **por valor** (`Decimal.equals`): dos opciones con el mismo valor y distinta escritura son un fallo del test, no un caso raro.
 - (U4) Las prácticas se reabrieron en bloque el 28-10 y el 30-10 por copiar casos de las hojas y de los exámenes escritos después: excluye lo que exista al escribirla y deja la huella de examen lista para que la publicación solo tenga que cotejar.
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min.
+- (Hecha el 6-11, s-20261106T125516-ac96224e: ~124 min en total, con un diseño de seis familias de ítem y lectores de inglés y español en el test.) `elegirFalsas` de leelo4 no sirve tal cual si la falsa lleva un valor: dedupe por valor (`clave()`) además de por texto. Un término con `contrario` hay que meterlo en el set de familias antes de rellenar con azar, o sale repetido y el ítem queda con dos falsas (ItemPobre). `lecturasDinero` ya trae «three euros seventy-five cents»: una falsa «… cents» puede ser válida. `ORDENES[-k]` solo existe de 1 a 3: al correr la coma queda `undefined`. Los filtros de salida del navegador bloquean el texto devuelto por JS con ciertas cadenas: para mirar una pantalla, captura. Las cotas van en enteros (céntimos, décimas de kg), no `1.2 * 100`.
 
 ## Prohibido (propio de esta tarea)
 
