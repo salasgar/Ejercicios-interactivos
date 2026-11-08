@@ -1,0 +1,14 @@
+/* Práctica «Multiplica y divide decimales» (unidad 5): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+/* Campo del decimal que se escribe, centrado bajo la cuenta. */
+input.campo-numero--decimal { display: block; margin: .4rem auto 1rem; --cifras: 7; }
+
+/* El hueco de una cuenta (el «?» del resultado). */
+.hueco-fd {
+  display: inline-block; min-width: 1.6em; padding: 0 .25em; margin: 0 .15em; text-align: center;
+  border-bottom: 3px solid var(--primario); color: var(--primario-oscuro); font-weight: 700;
+}
