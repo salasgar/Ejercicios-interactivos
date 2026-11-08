@@ -117,6 +117,17 @@ denominador: si entran, se proponen en la ENTREGA como ejercicio extra de la pr�
 - Para probar en el navegador sin dejar nada en el árbol compartido: servir una carpeta del scratchpad con enlaces a `practicas/`, `css/`, `src/`, `divisores/` y `herramientas/`; Chrome guarda en caché los módulos: `fetch(url, { cache: 'reload' })`. Sin la extensión: Chrome headless con perfil propio (`--user-data-dir=<scratchpad>/perfil`), matando el proceso al acabar (un headless huérfano bloquea el Chrome normal). En este Mac no hay `timeout`.
 - En zsh una variable con varias rutas no se parte en palabras: `F=(a b c); git add "${F[@]}"`.
 - Duración real de la 98 en la U4: ~30 min de la estimación de 1 h 45 min.
+- **Duración real de la 144: ~20 min** (8-11, s-20261108T104950-2488e1d7), con F0 sin firmar: los ids son los de la propuesta.
+- **La ecuación se guarda como términos, no como dos `Lineal`**: si se reduce al construirla, `x/2 + x/3 = 5` se convierte en
+  `5x/6 = 5` y ya no se puede enseñar «quitar denominadores» ni el paso equivocado de `mcm-solo-denominadores`. Por lo mismo, el
+  lector guarda la fracción tal como se escribió (`6/4`): si la simplifica, `x = 12/8` se trata como `x = 3/2` y `pasos()` se
+  inventa un «quitar denominadores» en una ecuación ya resuelta (el test de los pasos lo pilló).
+- **Una ecuación equivocada y un número son el mismo valor si la solución coincide** (`distractores` compara ecuaciones por
+  solución en el mismo espacio que los números): si no, `x = 13` y `13` salen como dos distractores distintos.
+- El test de `practicas-espacio` no hizo falta tocarlo (como en la 122); los que sí cambian al añadir una unidad son
+  `practicas-editor` (`tareasPorUnidad`) y `practicas-semana` (`UNIDADES` y el test de los bloques).
+- En Chrome headless, `--screenshot` sale antes de que cargue la base (se ve «Cargando…»); para ver un esqueleto,
+  `--virtual-time-budget=15000 --dump-dom "…/practicas/<slug>/?probar=1"`.
 
 ## Prohibido (propio de esta tarea)
 
