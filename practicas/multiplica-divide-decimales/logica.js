@@ -51,14 +51,15 @@ export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? ERRORES_BASE[id]?.n
 // La hoja de la semana 2 está en papel y se excluye en claro (con los ejemplos de su recuadro y los del
 // inventario); los casos del examen de la semana 2 y del final, por huella FNV-1a calculada fuera del
 // repositorio (el repositorio y GitHub Pages son públicos). `HUELLAS_EXAMEN` lleva
-// los 42 casos de productos, divisiones y combinadas del examen de la semana 2; el final de la U5 aún no existe.
+// los 42 casos de productos, divisiones y combinadas del examen de la semana 2 y los del examen final de la U5 (43 más).
 // Claves con prefijo: «p:» un producto (sin importar el orden), «m:» un ×/÷ por 0,1…, «q:» una división,
 // «c:» una combinada escrita con punto decimal.
 
 export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
 export const HUELLAS_EXAMEN = new Set([
-  '1n6g2ga', 'qbuh7y', '1omcidn', '182ts7w', 'jawd1x', 'gahi7r', '13p1wzx', '12wty3q', '1w2wq22', 'pt4uoe', '1rjozct', '8fh8x9', 'wyqch', '1xfuydy', '15mj9b7', '11oxb27', '1hizosu', 'di4wdp', 't0op8n', 'z1qn9u', '1qgijyv', '102343', 'beywd5', '1046wts', '1kjo9r4', '14g0o53', '1tu4nu5', '1we2vby', '4khqjo', '237gjr', 'ugxqul', '15w0zvy', 'vw7qev', 'fsj79s', '1jumy80', '173a1df', 'bzmy3i', '1yfyre9', '17zhe7d', 'u8ibbo', 'zi3fu2', '1bpvo1u',
-]);   // examen de la semana 2 (casos-examen-semana2.tsv, 2-11-2026); falta el examen final de la U5
+  '1n6g2ga', 'qbuh7y', '1omcidn', '182ts7w', 'jawd1x', 'gahi7r', '13p1wzx', '12wty3q', '1w2wq22', 'pt4uoe', '1rjozct', '8fh8x9', 'wyqch', '1xfuydy', '15mj9b7', '11oxb27', '1hizosu', 'di4wdp', 't0op8n', 'z1qn9u', '1qgijyv', '102343', 'beywd5', '1046wts', '1kjo9r4', '14g0o53', '1tu4nu5', '1we2vby', '4khqjo', '237gjr', 'ugxqul', '15w0zvy', 'vw7qev', 'fsj79s', '1jumy80', '173a1df', 'bzmy3i', '1yfyre9', '17zhe7d', 'u8ibbo', 'zi3fu2', '1bpvo1u',,
+  '1yj0g9n', '1jruhue', '2x4s26', 'd0mbhm', 'a75h19', 'fnrkui', '1ke62zj', '1f997cm', '1y0pxrh', '1u1qlq5', '1yiqsqs', 'vmrgtc', '161ry4m', 'iu8g56', '17y5uin', '9dchta', '1u05tsz', 'm20mcl', 'ebzzae', '1i0wphp', '64og3h', '1jxj7zp', '1u97leb', '17cpjz', 'o0gwc4', '1ypx48c', 'htwpbt', 'mhe30q', '1ql8ayo', '1q7ohx4', '1ba42zr', '13gv24p', '1l05muo', 'mauskw', '1fqp9y', '1aa5wwx', '1281rb5', '1extfyx', 'nvx3y0', 'qkh4gv', '1ybr0up', '15cfpnr', '1rddkbl',
+]);   // examen de la semana 2 (2-11-2026) y examen final (5 .tex: productos, divisiones y combinadas)
 
 const clave = (prefijo, texto) => `${prefijo}:${texto}`;
 const claveProducto = (a, b) => clave('p', [claveDec(a), claveDec(b)].sort().join('*'));

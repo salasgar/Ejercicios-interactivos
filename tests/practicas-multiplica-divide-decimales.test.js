@@ -63,7 +63,7 @@ const sinParentesis = e => e.flatMap((x, i) => (i % 2 === 0 && Array.isArray(x) 
 test('la huella de examen reserva y se puede añadir sin tocar el código', () => {
   assert.equal(huella('q:7.5:0.25'), huella('q:7.5:0.25'));
   assert.notEqual(huella('q:7.5:0.25'), huella('q:7.5:0.5'));
-  assert.ok(HUELLAS_EXAMEN instanceof Set && HUELLAS_EXAMEN.size === 42);
+  assert.ok(HUELLAS_EXAMEN instanceof Set && HUELLAS_EXAMEN.size === 86);
   assert.ok(esReservada('p:4*8.35') && esReservada('c:(7.5 − 1.3) · 4') && esReservada('q:9.66:3'));
   assert.ok(!esReservada('p:4*8.36'));
 });
@@ -85,6 +85,22 @@ test('la hoja de la semana 2 y los ejemplos del inventario no salen nunca', () =
     if (it.ejercicio === 4) assert.ok(!esReservada(`q:${canon(it.a)}:${canon(it.b)}`) || true);
   }
   assert.ok(!vistos.has('2.5 + 1.2 · 3') && !vistos.has('(2.5 + 1.5) · 0.3'));
+});
+
+test('ningún ítem sale reservado por la huella del examen ni de la hoja (productos, divisiones y combinadas)', () => {
+  const en = d => aTexto(D(d).normalizar(), 'en');
+  const claves = it => {
+    switch (it.ejercicio) {
+      case 1: return it.forma === 'producto' ? [`p:${[en(it.a), en(it.b)].sort().join('*')}`] : [];
+      case 2: return [`q:${en(it.dividendo)}:${en(typeof it.divisor === 'number' ? natural(it.divisor) : it.divisor)}`];
+      case 3: return [`q:${en(it.dividendo)}:${en(it.divisor)}`];
+      case 4: return [`q:${en(it.a)}:${en(it.b)}`];
+      case 6: return [`c:${textoExpresion(it.expresion, 'en')}`];
+      default: return [];
+    }
+  };
+  const lotes = [lote(generarComa, 21), lote(generarEntre, 22), lote(generarDecimal, 23), lote(generarCombinada, 25)];
+  for (const it of lotes.flat()) for (const k of claves(it)) assert.ok(!esReservada(k), `reservado: ${huella(k)}`);
 });
 
 // ─── Piezas comunes de los ejercicios con opciones ───────────────────────────────────────
