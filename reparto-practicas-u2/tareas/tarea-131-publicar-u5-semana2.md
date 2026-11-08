@@ -83,6 +83,13 @@ Las tres prácticas con `disponible: true` (o reabiertas), `npm test` en verde, 
 
 - El examen final tiene dos modelos: los casos de los dos se excluyen (el ejemplo lo ven el vie 22-1 y el examen es el jue 28-1).
 - Lo demás, en las trampas de la 130.
+- (131, 2026-11-08) El examen 2 tiene una posición, U5-2C-17 («¿cuál está mal?»), cuya respuesta es un cálculo con un resultado falso: los
+  operandos son casos para `multiplica-divide-decimales` y `errores5` aunque no estén en el enunciado. El cotejo por operación
+  (`/tmp/pu2-130/papel2.py` + `preciso2.mjs`: mismos números sin orden y misma operación) es el que lo vio.
+- **Las reabiertas se cierran en minutos**: el lanzador abre una sesión por cada reabierta nueva que ve en el árbol, aunque no esté
+  comiteada. Escribe la reabierta entera de una vez (con todo lo del examen 2, las hojas y los clics) antes de soltarla, o la sesión que la coja
+  trabajará con la mitad (pasó con la de la 124). Y entonces la propia tarea de publicación puede recotejar y publicar lo que ya está cerrado.
+- `Edit` sobre `catalogo.js`: «Spot the mistake» está en dos filas (`errores4` y `errores5`); el texto a sustituir tiene que llevar el `slug`.
 
 ## Prohibido (propio de esta tarea)
 
