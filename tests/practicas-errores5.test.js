@@ -251,11 +251,17 @@ test('los casos de la hoja de la semana (en claro) y los del examen (por huella)
   assert.ok(L.HOJA.has(L.claveCaso('division', ['9', '2'])));
   assert.ok(!L.HOJA.has(L.claveCaso('suma−', ['3,6', '1,25'])));
   assert.ok(L.HUELLAS_EXAMEN instanceof Set);
+  assert.equal(L.HUELLAS_EXAMEN.size, 146);
   for (const fn of [L.generarDonde, L.generarQue, L.generarCorrige]) {
     for (const item of generar(fn, 23)) {
       const clave = L.PLANTILLA_POR_ID[item.plantilla].caso(item.params);
       assert.ok(!L.HOJA.has(clave), `caso de la hoja: ${clave}`);
       assert.ok(!L.HUELLAS_EXAMEN.has(L.huella(clave)), `caso del examen: ${clave}`);
+      const primera = L.PLANTILLA_POR_ID[item.plantilla].casoPrimera;
+      if (primera) {
+        const c2 = primera(item.params);
+        assert.ok(!L.HOJA.has(c2) && !L.HUELLAS_EXAMEN.has(L.huella(c2)), `primera línea prohibida: ${c2}`);
+      }
     }
   }
 });

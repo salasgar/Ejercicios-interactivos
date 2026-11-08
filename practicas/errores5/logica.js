@@ -68,11 +68,12 @@ const HOJA = new Set([
     ['2,08', '2,8'], ['0,509', '0,51'], ['5,8', '5,79'], ['5,8', '5,093'], ['5,8', '5,791'], ['5,79', '5,791']].map(c => claveCaso('compara', c, true)),
 ]);
 
-/** Huellas (FNV-1a de `claveCaso`) de los casos del examen. Al escribirla no existía aún ninguno (no hay `casos-examen*.tsv`): la tarea de publicación lo cotejará. */
-export const HUELLAS_EXAMEN = new Set([]);
+/** Huellas (FNV-1a de `claveCaso`) de los casos de los exámenes 1 y 2 y del final de la unidad 5. */
+export const HUELLAS_EXAMEN = new Set(["1qm50tk","47nn6w","e2i56g","qk3wj4","znke80","2zrvpe","13sbsxw","1h4baqg","pgzn7","1wjpzkz","cqm24p","1l1rqhw","4nzf4x","6e3i1q","1vaece3","a1qjzo","b77gnn","1df64ac","11iulqa","1tq2npa","2g901g","pfenks","em9bow","585ysb","1t3wp7s","1ixktzy","xegl6t","1jhrt1k","1hgygf8","1pujpfe","1cp7rhi","lumgtk","idsxrv","2v0uv8","1vuehdb","19irqnf","qyrnm7","195esx3","14re1uc","1dk1l4g","1b7jvh0","1af7slm","78w26i","en8xun","1dgp45q","vtolxo","1k1cbtl","sjrip2","11l6qjd","fn3asl","ypqvci","9ptbwe","1l3e8xb","yf0scm","sfybs6","ei817d","zt7y9v","iqexj7","bfwm1","6ggiro","pewuzb","16bmj58","1hi5bra","14edfet","m6lagw","1w56vl2","1ni210","1qgq9id","et3hy5","p2e0df","1tr864i","1oazo6z","1gb3835","12a2dg7","diqp60","14lseex","rgusbf","zaex84","1q8joh6","pjx5tb","iqoiui","1cv3bd8","1d5cheg","96105a","rqsivq","sr3gfv","glawqr","1k0wj6y","1c0329x","ouaq24","p5j6co","1its2ud","1y1m6sf","14111yf","xqvymu","1f4y1nd","nfuoy5","w2xc6k","w0wn9i","1oz9r88","1nqzmls","qcpre1","pr65ud","14zpxty","pzk9at","1av3ftf","amqbi6","e7lezx","k3ymzv","1yco5j8","1aacpme","ox37vw","1vdqnkc","eqakds","1gkqofa","1mn32ep","1qsu5ba","gwida","l1wdyf","1ehjcc6","6ghjsh","1vzyg1p","262ol2","1civpx","10f67xs","1xs7pp2","uqjjcj","1l8qbsy","nvitwk","1db21eb","1xhi5s","nqa16z","fvyipr","1i0uoio","1fgd7xi","lsn636","124a1me","7vay9s","125nnzx","fymzzc","1fsjqo0","149s6ok","18f52gy","uwz70","v0hg2w","1fon1pp"]);
 export { huella, HOJA };
 
-const prohibido = clave => HOJA.has(clave) || HUELLAS_EXAMEN.has(huella(clave));
+const prohibida = clave => HOJA.has(clave) || HUELLAS_EXAMEN.has(huella(clave));
+const prohibido = (plantilla, params) => prohibida(plantilla.caso(params)) || (plantilla.casoPrimera && prohibida(plantilla.casoPrimera(params)));
 
 // ─── Ayudas para los números ───────────────────────────────────────────────────
 
@@ -209,6 +210,7 @@ function redondeo(id) {
       return b.m > 0 && b.m % 10 !== 0 ? [tx(a), tx(b), c] : null;
     },
     caso: p => claveCaso('redondeo', [tx(sumar(p[0], p[1]))]),
+    casoPrimera: p => claveCaso('suma+', [p[0], p[1]], true),
     cadena(p, mal) {
       const [a, b, c] = [D(p[0]), D(p[1]), p[2]], s = sumar(a, b);
       const l3 = r => ['≈ ', sd(r), ' (', ORDEN[c], ')'];
@@ -458,7 +460,7 @@ export function opcionesDeNombre(rng, plantilla, params) {
 function conParams(plantilla, rng) {
   for (let i = 0; i < 600; i++) {
     const params = plantilla.params(rng);
-    if (params && !prohibido(plantilla.caso(params))) return params;
+    if (params && !prohibido(plantilla, params)) return params;
   }
   throw new Error(`La plantilla «${plantilla.id}» no encuentra números`);
 }
