@@ -15,8 +15,8 @@
 // aritmética exacta de `decimales.js`, nunca con Number).
 //
 // Los números nunca son los de la hoja de la unidad (en claro: `RESERVADOS_HOJA`) ni los del
-// examen semanal (por huella FNV-1a calculada fuera del repositorio: `HUELLAS_EXAMEN`, vacío al
-// escribirla porque los casos de examen aún no existían; la tarea de publicación coteja).
+// examen semanal (por huella FNV-1a calculada fuera del repositorio: `HUELLAS_EXAMEN`; la tarea de
+// publicación de la semana 2 coteja el resto).
 //
 // `sesion` es la primera sesión de la unidad en la que el ítem tiene sentido (inventario: 1B-01…1B-05
 // en la 1, 1B-07 en la 2, 1B-06 en la 3, 2B-01 en la 5, 2B-02 y 2B-03 en la 5-6). Esta práctica es de
@@ -78,8 +78,8 @@ const minus = s => s.charAt(0).toLowerCase() + s.slice(1);
 
 /** FNV-1a de 32 bits (base 36): los casos de examen no se escriben en claro en el código publicado. */
 export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
-/** Huellas de `aTexto(normalizado, 'en')` de los decimales de los exámenes semanales. Vacío: al escribirla, los casos de examen aún no existían. */
-export const HUELLAS_EXAMEN = new Set([]);
+/** Huellas de `aTexto(normalizado, 'en')` de los decimales de un solo valor de los exámenes semanales 1 y 2 y del final (60). */
+export const HUELLAS_EXAMEN = new Set(["1kfyr0v","ad121r","8jo1lp","10he2ti","qw1ls2","15100ji","14iyva9","iyx1u7","ms9w10","1q9n93b","1y8w6mx","d5wduu","147talk","1ata0jh","1b65xl6","o0tqbc","1b3cotw","yqznr7","15g7hwv","mkvgwe","1kflphe","1g4e7f3","1r2vszr","qga3s1","1et2127","1qhjj8g","1i63a1t","1fsk7dm","9o6p3d","1xs1m16","khz6fy","1aam1sg","1t3kc5f","csnlf9","12jd62a","by18bs","1uresta","1wffkh3","dc2eam","z4ky8h","1oemsf4","1c3m5vy","1hn5pz8","10cbsoz","1whu9q1","y5czx","1ymkpgn","dk4y9i","19feh0v","1sik2qy","124erqn","1oryhub","oxra4h","1pcfobw","cgbrr6","ibgecm","1igldxc","ns1bn0","15gvs0g","11c6j3m"]);
 
 // Todos los decimales que aparecen en las hojas de las semanas 1 y 2 (alumnos y soluciones): ninguno sale como caso.
 const DECIMALES_DE_LA_HOJA = `0.001 0.003 0.004 0.0049 0.006 0.008 0.01 0.012 0.027 0.03 0.04 0.042 0.045 0.05 0.052 0.059 0.06 0.07 0.072
@@ -91,7 +91,7 @@ const DECIMALES_DE_LA_HOJA = `0.001 0.003 0.004 0.0049 0.006 0.008 0.01 0.012 0.
 3.85 3.9 31.2 32.9 4.0 4.1 4.10 4.12 4.2 4.25 4.3 4.37 4.5 4.50 4.6 4.7 4.726 4.8 4.98 41.4 45.6 5.0 5.00 5.07 5.093
 5.16 5.2 5.3 5.6 5.60 5.7 5.79 5.791 5.8 5.847 5.85 5.9 5.97 56.2 6.03 6.1 6.2 6.25 6.28 6.3 6.30 6.300 6.318 6.349
 6.35 6.4 6.5 6.65 6.7 6.8 6.82 6.9 60.3 7.050 7.2 7.206 7.35 7.354 7.4 7.5 7.64 7.75 74.40 8.03 8.033 8.12 8.15 8.19
-8.263 8.3 8.31 8.6 8.60 8.602 8.62 8.7 8.70 81.9 9.05 9.1 9.153 9.2 9.25 9.3 9.304 9.6 9.8 15.06 2.005 0.2 0.20`;
+8.263 8.3 8.31 8.6 8.60 8.602 8.62 8.7 8.70 81.9 9.05 9.1 9.153 9.2 9.25 9.3 9.304 9.6 9.8 15.06 2.005 0.2 0.20 0.007 4.08 0.009`;
 export const RESERVADOS_HOJA = new Set(DECIMALES_DE_LA_HOJA.split(/\s+/).map(t => deTexto(t).clave()));
 
 // Fracciones de las hojas (dfrac): no salen en la consigna de convertir.

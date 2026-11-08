@@ -529,12 +529,13 @@ test('ej. 4: ninguna palabra falsa es una forma válida de la buena', () => {
 
 // ─── Reservados ──────────────────────────────────────────────────────────────────────────
 
-test('los casos reservados: la hoja en claro, el examen por huella (vacío al escribirla)', () => {
+test('los casos reservados: la hoja en claro, el examen por huella (60)', () => {
   assert.ok(RESERVADOS_HOJA.size > 200);
   for (const t of ['6.28', '0.07', '12.5', '9.304', '15.06', '2.005', '6.318', '4.726', '0.15']) assert.ok(esReservado(deTexto(t)), t);
   for (const t of ['6.280', '6.2800']) assert.ok(esReservado(deTexto(t)), `${t} vale lo mismo que un caso de la hoja`);
   for (const t of ['3.75', '4.07', '0.543']) assert.ok(!esReservado(deTexto(t)), t);
-  assert.equal(HUELLAS_EXAMEN.size, 0, 'al escribirla no existían los exámenes: si ya hay huellas, cuéntalas en la ENTREGA');
+  assert.equal(HUELLAS_EXAMEN.size, 60);
+  for (const t of ['0.007', '4.08', '0.009']) assert.ok(esReservado(deTexto(t)), t);
   assert.equal(huella('3.75'), huella('3.75'));
   assert.notEqual(huella('3.75'), huella('3.76'));
 });
@@ -554,6 +555,22 @@ test('ningún ítem de ningún ejercicio lleva un caso de la hoja (notación y o
     }
   }
   assert.ok(revisados > 5000, `solo se han revisado ${revisados} números`);
+});
+
+test('3000 ítems de cada ejercicio con otras semillas: ningún decimal reservado en el enunciado ni en la opción buena', () => {
+  let revisados = 0;
+  for (const [generar, semilla] of [[generarLeelo, 2], [generarConsigna, 3], [generarCompleta, 4]]) {
+    const rng = crearRng(910000 + semilla);
+    for (let i = 0; i < 3000; i++) {
+      const it = generar(rng, { idioma: i % 2 ? 'en' : 'es' });
+      if (it.plantilla.startsWith('leer_cuenta') || it.plantilla === 'completa_separador_millares' || it.plantilla === 'completa_tipo') continue;
+      for (const tok of `${plano(it.notacion)} ${plano(correcta(it).texto)}`.match(/\d+[.,]\d+/g) ?? []) {
+        revisados++;
+        assert.ok(!esReservado(deTexto(tok).normalizar()), `${it.plantilla}: «${tok}»`);
+      }
+    }
+  }
+  assert.ok(revisados > 3000, `solo se han revisado ${revisados} números`);
 });
 
 test('los nombres de los errores propios están en los dos idiomas y no se pisan con los de la base', () => {
