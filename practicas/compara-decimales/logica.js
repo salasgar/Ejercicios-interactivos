@@ -28,8 +28,7 @@
 // redondeo-mal.
 //
 // Casos que no salen nunca: los de la hoja 1 de la unidad 5 (en claro, abajo) y los del examen de la
-// semana 1 (por huella FNV-1a: ver HUELLAS_*; el 6-11 el examen aún no tenía fichero de casos, así que
-// las listas están vacías y la tarea de publicación de la semana coteja).
+// semana 1 y del examen final (por huella FNV-1a: ver HUELLAS_*).
 
 import {
   decimal, aTexto, deTexto, comparar, redondear, truncar, sumar, mismoValor, hayIguales,
@@ -66,17 +65,20 @@ const GRUPOS_HOJA = [
   ['5.8', '5.79', '5.093', '5.791'], ['4.12', '4.7'], ['-1.7', '-1.07'], ['0.04', '-0.4'],
   ['8.3', '8.03', '8.31', '8.033'], ['0.61', '0.6', '0.059', '0.65', '0.601'],
   ['15.2', '15.08', '15.19', '14.9'], ['-3.5', '-3.05', '0.5', '-3.45'],
+  ['6.3', '6.30', '6.03', '6.300', '60.3'], ['5.07', '5.7'],
 ].map(g => new Set(g.map(kv)));
 const ENTRE_HOJA = new Set([['6.8', '6.9'], ['0.4', '0.41']].map(p => p.map(kv).sort().join(' y ')));
 const REDONDEO_HOJA = new Set(['4.726', '9.153', '12.849', '5.97', '0.996', '6.349'].map(kv));
 
-// Examen de la semana 1 (por huella; vacío hasta que exista su fichero de casos). Claves: pareja = los dos
+// Examen de la semana 1 y examen final (por huella; los redondeos, a las tres cifras 0, 1 y 2). Claves: pareja = los dos
 // valores canónicos ordenados y unidos con ' y '; conjunto = valores canónicos ordenados y unidos con ',';
 // entre = como la pareja; redondeo = valor canónico + '@' + cifras.
-const HUELLAS_PAREJAS = new Set([]);
-const HUELLAS_CONJUNTOS = new Set([]);
+const HUELLAS_PAREJAS = new Set(["11f3rr4","dumi8s","1mhvmu4","dr6zqk","1im3f2m","10iuz4c","1b5bvx6","6cf002","1sebtx5","af1vwt","15l5iw1","17777ns","1t6q9eq","1dhr05f","1g068be","178yb2o","1olnrbp","giipty","bgi17j","1713pig","1mnpzxe","1i21bqg","br1r9s","1ty5z5e","cyv824","15qx9sr"]);
+const HUELLAS_CONJUNTOS = new Set(["1ax1shq","31kpnq","4fgwq6","ks1mzm","bfx3l0","wihbvl","1af2wva","9k9rp","o5hd0t"]);
 const HUELLAS_ENTRE = new Set([]);
-const HUELLAS_REDONDEO = new Set([]);
+const HUELLAS_REDONDEO = new Set(["ahtc7","i7n8","uh0q5","16u8sa8","1748dz7","17e7zo6","1bbnfll","1b1ntwm","1aro87n","1glkl6","1ql6a5","wmd78","1yjw37l","1y9whim","1xzwvtn","1t0sumi","1tasgbh","1sgtn8k","1x474hy","1xe6q6x","1wk7x40","1ehfjf4","1erf543","1f1eqt2","ralhb0","rkl2zz","rukooy","18m14u8","18w0qj7","1960c86","igs182","iqrmx1","hwstu4"]);
+
+export const TAMANOS_HUELLAS = { parejas: HUELLAS_PAREJAS.size, conjuntos: HUELLAS_CONJUNTOS.size, redondeo: HUELLAS_REDONDEO.size };
 
 const clavePareja = (a, b) => [clave(a), clave(b)].sort().join(' y ');
 const claveConjunto = lista => lista.map(clave).sort().join(',');

@@ -11,7 +11,7 @@ import {
   generarOrden, ordenCorrecto, ordenBien, errorOrden, explicarOrden,
   generarEntre, estaEntre, errorEntre, errorEntreOpcion, explicarEntre,
   generarRedondeo, redondeoBueno, errorRedondeo, explicarRedondeo, consignaRedondeo, distractoresRedondeo,
-  haceArrastre, esParejaReservada, esConjuntoReservado, esEntreReservado, esRedondeoReservado, clave, huella,
+  haceArrastre, esParejaReservada, esConjuntoReservado, esEntreReservado, esRedondeoReservado, TAMANOS_HUELLAS, clave, huella,
 } from '../practicas/compara-decimales/logica.js';
 import { TX } from '../practicas/compara-decimales/textos.js';
 
@@ -318,6 +318,19 @@ test('casos reservados: los de la hoja 1 no salen nunca (ni por parejas, ni por 
   for (const { vals } of generarN(generarOrden, 7)) assert.equal(esConjuntoReservado(vals), false);
   for (const { a, b } of generarN(generarEntre, 7)) assert.equal(esEntreReservado(a, b), false);
   for (const { d, c } of generarN(generarRedondeo, 7)) assert.equal(esRedondeoReservado(d, c), false);
+});
+
+test('casos reservados de los exámenes: tamaños de las huellas y 3000 ítems de cada ejercicio sin ningún reservado', () => {
+  assert.deepEqual(TAMANOS_HUELLAS, { parejas: 26, conjuntos: 9, redondeo: 33 });
+  const v = s => deTexto(s);
+  assert.equal(esParejaReservada(v('6.3'), v('6.03')), true);
+  assert.equal(esParejaReservada(v('6.30'), v('6.3')), true);
+  assert.equal(esParejaReservada(v('5.07'), v('5.7')), true);
+  assert.equal(esConjuntoReservado(['6.3', '6.30', '6.03'].map(v)), true);
+  for (const { a, b } of generarN(generarComparar, 130001, 3000)) assert.equal(esParejaReservada(a, b), false);
+  for (const { vals } of generarN(generarOrden, 130002, 3000)) assert.equal(esConjuntoReservado(vals), false);
+  for (const { a, b } of generarN(generarEntre, 130003, 3000)) assert.equal(esEntreReservado(a, b), false);
+  for (const { d, c } of generarN(generarRedondeo, 130004, 3000)) assert.equal(esRedondeoReservado(d, c), false);
 });
 
 test('la huella de examen es FNV-1a de 32 bits y la clave de un caso no depende de la escritura', () => {
