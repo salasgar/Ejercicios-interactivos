@@ -2,8 +2,9 @@
 
 Empezado el 2026-11-05 por la tarea 122 del reparto PU2 (`reparto-practicas-u2/`), que deja
 la base de la unidad 5: el catálogo, la portada, los esqueletos, las dos piezas comunes y la
-tabla de destrezas (§7). El resto lo escribe la tarea 131, al revisar la última semana, con el
-mismo espíritu que [practicas-unidad4.md](practicas-unidad4.md). La base común, el panel, los
+tabla de destrezas (§7). Los apartados 1-6 y 8 los escribió la tarea 130 (2026-11-08), al
+revisar la semana 1, y la tarea 131 completa lo de la semana 2, con el mismo espíritu que
+[practicas-unidad4.md](practicas-unidad4.md). La base común, el panel, los
 dos sistemas de códigos y los varios profesores son los de la unidad 2: están en
 [practicas-unidad2.md](practicas-unidad2.md), y aquí solo se cuenta lo que cambia.
 
@@ -26,16 +27,78 @@ lunes 18-1-2027), con dos piezas comunes nuevas en `practicas/_comun/`:
 
 ## 1. Qué ve el alumno
 
-Por escribir (tarea 131).
+Lo mismo que en la unidad 2 (§1 de [practicas-unidad2.md](practicas-unidad2.md)): código,
+10 puntos por ejercicio con 5 vidas, el idioma de cada ítem sorteado, el feedback con los
+números del ítem y la tarea de la semana. Lo propio de la unidad 5:
+
+1. **La portada enseña la unidad 5 desde el lunes 18-1** (`desde` de la unidad 5 en
+   `UNIDADES`, `catalogo.js`). Antes, una práctica publicada solo se abre por su URL. Las
+   prácticas salen por semanas (`BLOQUES` en `practicas/portada.js`): semana 1
+   (`lee-decimales`, `compara-decimales`, `suma-resta-decimales`), semana 2
+   (`multiplica-divide-decimales`, `fraccion-decimal`, `errores5`) y «Para toda la unidad»
+   (`leelo5`).
+2. **La coma y el punto van con el idioma del ítem**: en español, `3,75`; en inglés, `3.75`, y
+   la lectura con *point* y las cifras de una en una (*three point seven five*; *nought* y
+   *zero* valen los dos). Para contestar, el alumno puede **teclear coma o punto en los dos
+   idiomas** (`deTexto` de `decimales.js`); nunca hay punto de millares, y la coma de millares
+   inglesa solo sale donde se enseña a leerla (`leelo5`).
+3. **Un mismo número escrito de dos maneras es la misma respuesta**: 0,5 = 0,50 = 1/2. Ninguna
+   opción vale lo mismo que otra (los tests lo comprueban por valor, con enteros escalados), y
+   2,50 € por 2,5 € no es un fallo. Cuando la respuesta pide un número fijo de cifras
+   (*round to two decimal places*), el enunciado lo dice y la corrección lo exige, con su
+   propio aviso.
+4. **La recta se toca** (`recta-decimales.js`): en `lee-decimales` 4 se toca la marca de un
+   decimal, entre dos naturales en décimas o entre dos décimas en centésimas, y se pulsa
+   «Comprobar»; o se escribe el decimal que marca un punto.
+5. **El dinero va siempre con dos decimales** y los contextos son los de la app según el acta
+   de la unidad: fruta al peso y gasolina (la vuelta, la cena y las botellas son del papel);
+   las medidas, en km-m, m-cm, kg-g y L-mL.
+6. **Cada ejercicio empieza con su introducción**, en los dos idiomas, y el feedback de un
+   fallo nombra el error con los números del ítem («has alineado a la derecha; alinea las
+   comas: 2,50 + 1,25 = 3,75»).
 
 ## 2. Cómo lee el profesor los resultados
 
-Por escribir (tarea 131).
+Igual que en las unidades 2, 3 y 4 (§2 de [practicas-unidad2.md](practicas-unidad2.md)): el
+panel `practicas/profesor.html`, la nube del espacio de cada profesor y la vista «Fallos» con
+«qué falla más». **Cada fallo lleva el id de un error típico** en el campo `error`
+(`api.responder({ error })`), que el panel enseña tal cual:
+
+- los de la tabla de la unidad, en `ERRORES_TIPICOS` de `practicas/_comun/decimales.js`, cada
+  uno con su nombre `{ es, en }`, un ejemplo y su función (`compara-por-cifras`,
+  `alinea-a-la-derecha`, `coma-mal-puesta`, `redondea-en-cadena`, `resto-sin-deshacer`…), y
+  `APLICA_A`, que dice a qué cálculo se aplica cada uno;
+- los propios de una práctica, en su `logica.js` (`ERRORES` de `lee-decimales`,
+  `ERRORES_PROPIOS` de `suma-resta-decimales`, `ERRORES_LEELO` de `leelo5`…). Como en las
+  unidades 3 y 4, el panel no traduce todavía estos ids a su nombre.
 
 ## 3. La base común de la unidad 5
 
-Por escribir (tarea 131). Mientras, la API de `decimales.js` y de `recta-decimales.js` está en
-la cabecera de cada fichero y en `reparto-practicas-u2/salidas/122-base-unidad5/ENTREGA.md`.
+Dos módulos nuevos en `practicas/_comun/` (tarea 122), puros salvo `crearRectaDecimales`:
+
+| Fichero | Qué pone |
+|---|---|
+| `decimales.js` | `Decimal` inmutable (`{ m, k }` = m / 10^k, `m` entero seguro, también negativo; **no se normaliza solo**: `equals` compara por valor y `mismaForma` por escritura), `decimal`, `aDecimal`. Operar en columna: `sumar`, `restar`, `multiplicar`, `dividir(a, b, cifras)` (cociente **cortado** y **resto de la división original**: 6,384 : 0,49 → 13,02, resto 0,0042), `porPotenciaDe10`, `redondear`, `truncar`. Comparar y ordenar, exacto y también contra una `Fraccion` (`comparar`, `ordenar`, `entreDos`). Las cifras: `cifrasDecimales`, `descomponer`, `ORDENES`. Fracción: `aFraccionDecimal` (sin simplificar), `aFraccion` (irreducible, sin mixtos), `deFraccion`, `aTextoPeriodico` (0,333…, sin arco). Escritura y lectura: `aTexto` / `fmtDecimal` (coma o punto según el idioma, menos U+2212), `deTexto` / `leerDecimal` (coma o punto en los dos idiomas; null con dos separadores). En palabras: `enPalabras`, `lecturasValidas`, `esLecturaValida`, `dinero`, `dineroEnPalabras`, `lecturasDinero` (ninguna lectura válida puede ser distractor). **Errores típicos**: `ERRORES_TIPICOS` (18; cada función da el valor equivocado con los números del ítem, o null si ese error no cambia nada), `APLICA_A`, `distractores(candidatos, correcta)` (sin null, sin la buena y sin dos del mismo valor), `mismoValor`, `hayIguales`, `NO_ES_ERROR` |
+| `recta-decimales.js` | `crearRectaDecimales(contenedor, opciones)`: la recta entre dos naturales o dos décimas, con marcas finas en las décimas, centésimas o milésimas y gruesas con número, puntos con etiqueta y marcas que se tocan (`alTocar` recibe un Decimal con las cifras de la marca: 3,40, no 3,4), con los cuatro estados. Como mucho 101 marcas; con más de 21, solo se tocan las gruesas. La geometría y «la marca más cercana a un toque» son puras |
+
+Los distractores de la unidad 5 **salen siempre de un error típico con nombre**, calculado con
+los números del ítem (regla 4 de la unidad en cada ficha), y el `error` que se registra al
+fallar es el de ese distractor. Lo aprendido en la revisión de la semana 1 (tarea 130):
+
+- **Los casos de examen se excluyen por huella, y la huella tiene que tener la forma de la
+  tarea.** Las prácticas se escribieron antes que los exámenes semanales y dejaron sus huellas
+  vacías y preparadas; al cotejarlas, las cuatro de la semana 1 sacaban casos del examen 1
+  (los mismos decimales para leer, las mismas parejas para comparar, la misma botella con los
+  mismos dos vasos, los mismos movimientos de la coma), y se reabrieron. Cada práctica tiene su
+  clave: el valor del decimal, la pareja o el conjunto ordenados, el decimal con las cifras del
+  redondeo (`2.718@0`), el cálculo sin orden de los sumandos (`s:`) o el movimiento de la coma
+  (`m:`).
+- **Los casos de la hoja escritos con palabras también son casos**: «siete milésimas» y
+  «cuatro unidades y ocho centésimas» de la hoja 1 no estaban en las listas en claro porque no
+  están entre `$…$`.
+
+Tests: `tests/practicas-decimales.test.js` (la base de la unidad y la parte pura de la recta)
+y uno por práctica.
 
 ## 4. El contrato de una práctica
 
@@ -43,11 +106,57 @@ El de siempre: [practicas-unidad2.md](practicas-unidad2.md) y `practicas/plantil
 
 ## 5. Cómo se añade una práctica
 
-Por escribir (tarea 131).
+Como en la unidad 2 (§5 de [practicas-unidad2.md](practicas-unidad2.md)): copiar
+`practicas/plantilla/`, fila en `catalogo.js` con `unidad: 5` y `disponible: false`, `logica.js`
+y su test antes que la interfaz, la línea de `DESTREZAS` en `registro.js` y la fila de §7 en el
+mismo commit (lo exige `tests/practicas-registro.test.js`), su `slug` en un bloque de `BLOQUES`
+y, al publicarla, `disponible: true`. Lo propio de la unidad 5:
+
+1. Los decimales, con `Decimal` de `decimales.js`: sumar, comparar y escribir con enteros
+   escalados, **nunca con `Number` en coma flotante ni con `toFixed`** (0,1 + 0,2 ≠ 0,3); en
+   pantalla, con `aTexto(d, idioma)`; lo que teclea el alumno, con `deTexto`. Los tests
+   comprueban la aritmética contra `BigInt` o enteros propios, aparte del generador.
+2. **Cada distractor, de un error típico** de `ERRORES_TIPICOS` (o uno propio con su nombre
+   `{ es, en }`), calculado con los números del ítem, y el mismo id en `api.responder({ error })`.
+   Ninguna opción del mismo valor que otra (`hayIguales`), y ninguna lectura válida como
+   distractor (*nought* / *zero*, *point five*; *three point seventy-five* es la lectura de un
+   precio, y no se enfrenta a *three point seven five*).
+3. Las reglas de contenido de la unidad 5 (en cada ficha 122-133 y, por encima, el acta de la
+   unidad del 3-11): cada ejercicio respeta la `sesion` de sus destrezas; ni porcentajes, ni
+   letras, ni ecuaciones, ni números mixtos; negativos sí, nunca nucleares; cambios de unidad
+   solo km-m, m-cm, kg-g, L-mL y euros-céntimos; periódicos solo al pasar de fracción a decimal,
+   con puntos suspensivos; el **realismo** con una cota por contexto que el test comprueba (fruta
+   0,80-6 € el kilo, gasolina 1,20-2,00 € el litro, una persona 1,20-2,10 m…).
+4. **Los casos fijos no copian las hojas ni los exámenes** de la unidad: los de las hojas, en
+   claro (también los que la hoja escribe con palabras); los de los exámenes semanales y del
+   final, por huella FNV-1a con la clave de la tarea (§3), calculada fuera del repositorio.
+5. Probarla en el navegador **pulsando cada botón con un clic**, a 375 px y en ancho, en los dos
+   idiomas.
 
 ## 6. Las siete prácticas
 
-Por escribir (tarea 131).
+`id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
+bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
+de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`). Las filas de la semana 2 las completa
+la tarea 131.
+
+| Semana | `slug` | id | Tarea | Ejercicios | Cotas |
+|---|---|---|---|---|---|
+| 1 | `lee-decimales` | 57 | 123 | Léelo (de decimal a lectura y al revés, en el idioma del ítem) · ¿Qué vale esta cifra? (y la descomposición) · La fracción decimal (sin simplificar) · En la recta (tocar o leer, en décimas o centésimas) | 1-3 cifras decimales sin 0 final; parte entera 0-99; recta entre 0 y 30 en décimas y entre 0,1 y 9 en centésimas |
+| 1 | `compara-decimales` | 58 | 124 | ¿Cuál es mayor? (`<`, `=`, `>`; la trampa de las cifras, ceros, iguales, negativos) · Ordena (4-5 decimales) · Entre dos (escribir o elegir) · Redondea (a la unidad, la décima o la centésima; el 9 que arrastra) | parte entera 0-20, hasta 3 cifras decimales, negativos hasta −20 |
+| 1 | `suma-resta-decimales` | 59 | 125 | Alinea la coma (dos o tres términos, también con naturales) · En el súper (fruta al peso y gasolina; total o la vuelta) · Medidas (listón, botella y vasos, estaturas, paquetes) · Mueve la coma (·/: por 10, 100 y 1000) | fruta 0,50-15,00 € cada importe y 40 € en total; repostaje 6-48 €; billete de 5, 10, 20 o 50 € que cubre el total; listón 1-3 m; botella 1-2 L y vasos 0,20-0,33 L; persona 1,20-2,10 m; paquete 0,1-30 kg |
+| 2 | `multiplica-divide-decimales` | 60 | 126 | Seis ejercicios (coma del producto, entre un natural, entre un decimal, comprobar, problemas, combinadas): la tarea 131 | fruta 0,80-6,00 €/kg y 0,5-5 kg; gasolina 1,20-2,00 €/L y 5-70 L |
+| 2 | `fraccion-decimal` | 61 | 127 | La tarea 131 | — |
+| 2 | `errores5` | 62 | 128 | La tarea 131 | sin contextos; hasta cuatro cifras enteras |
+| toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
+
+**Publicadas** (a 2026-11-08): ninguna. La revisión de la semana 1 (tarea 130, 8-11) reabrió
+las cuatro (`lee-decimales`, `compara-decimales`, `suma-resta-decimales` y `leelo5`;
+`reparto-practicas-u2/hechos/reabiertas/`): las cuatro sacaban casos del examen 1 porque sus
+huellas seguían vacías, y `lee-decimales`, `compara-decimales` y `leelo5`, algún caso de la hoja
+1 que no tenían en su lista. **`leelo5` se publica con la semana 2**, no con la 1: lleva
+vocabulario y cuentas de las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*, *simplest
+form*). El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 5
 
