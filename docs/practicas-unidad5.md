@@ -137,26 +137,30 @@ y, al publicarla, `disponible: true`. Lo propio de la unidad 5:
 
 `id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
 bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
-de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`). Las filas de la semana 2 las completa
-la tarea 131.
+de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 
 | Semana | `slug` | id | Tarea | Ejercicios | Cotas |
 |---|---|---|---|---|---|
 | 1 | `lee-decimales` | 57 | 123 | Léelo (de decimal a lectura y al revés, en el idioma del ítem) · ¿Qué vale esta cifra? (y la descomposición) · La fracción decimal (sin simplificar) · En la recta (tocar o leer, en décimas o centésimas) | 1-3 cifras decimales sin 0 final; parte entera 0-99; recta entre 0 y 30 en décimas y entre 0,1 y 9 en centésimas |
 | 1 | `compara-decimales` | 58 | 124 | ¿Cuál es mayor? (`<`, `=`, `>`; la trampa de las cifras, ceros, iguales, negativos) · Ordena (4-5 decimales) · Entre dos (escribir o elegir) · Redondea (a la unidad, la décima o la centésima; el 9 que arrastra) | parte entera 0-20, hasta 3 cifras decimales, negativos hasta −20 |
 | 1 | `suma-resta-decimales` | 59 | 125 | Alinea la coma (dos o tres términos, también con naturales) · En el súper (fruta al peso y gasolina; total o la vuelta) · Medidas (listón, botella y vasos, estaturas, paquetes) · Mueve la coma (·/: por 10, 100 y 1000) | fruta 0,50-15,00 € cada importe y 40 € en total; repostaje 6-48 €; billete de 5, 10, 20 o 50 € que cubre el total; listón 1-3 m; botella 1-2 L y vasos 0,20-0,33 L; persona 1,20-2,10 m; paquete 0,1-30 kg |
-| 2 | `multiplica-divide-decimales` | 60 | 126 | Seis ejercicios (coma del producto, entre un natural, entre un decimal, comprobar, problemas, combinadas): la tarea 131 | fruta 0,80-6,00 €/kg y 0,5-5 kg; gasolina 1,20-2,00 €/L y 5-70 L |
-| 2 | `fraccion-decimal` | 61 | 127 | La tarea 131 | — |
-| 2 | `errores5` | 62 | 128 | La tarea 131 | sin contextos; hasta cuatro cifras enteras |
+| 2 | `multiplica-divide-decimales` | 60 | 126 | Coloca la coma (el producto y ·/: por 0,1, 0,01 y 0,001) · Divide hasta el final (entre un natural) · Entre un decimal (o la división equivalente) · ¿Está bien hecha? (cociente con dos decimales, resto y prueba) · Problemas (fruta al peso, gasolina, gasolina de un viaje entre varios) · Combinadas (2-3 operaciones, con y sin paréntesis) | fruta 0,80-6,00 €/kg y 0,5-5 kg; gasolina 1,20-2,00 €/L y 5-70 L; viaje 15-60 L entre 2 y 5 personas |
+| 2 | `fraccion-decimal` | 61 | 127 | De fracción a decimal (exacto o periódico, con «…») · De decimal a fracción (irreducible; las impropias, impropias) · Los que hay que saberse (los pares de memoria) · ¿Fracción o decimal? (`<`, `=`, `>`) | sin contextos; fracción ≤ 3, denominadores ≤ 1000 |
+| 2 | `errores5` | 62 | 128 | ¿Dónde está el error? (la línea mala o «todo bien») · ¿Qué error es? (cuatro nombres, uno verdadero) · Corrígelo (el resultado bueno) | sin contextos; hasta cuatro cifras enteras |
 | toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
 
-**Publicadas** (a 2026-11-08): ninguna. La revisión de la semana 1 (tarea 130, 8-11) reabrió
-las cuatro (`lee-decimales`, `compara-decimales`, `suma-resta-decimales` y `leelo5`;
-`reparto-practicas-u2/hechos/reabiertas/`): las cuatro sacaban casos del examen 1 porque sus
-huellas seguían vacías, y `lee-decimales`, `compara-decimales` y `leelo5`, algún caso de la hoja
-1 que no tenían en su lista. **`leelo5` se publica con la semana 2**, no con la 1: lleva
-vocabulario y cuentas de las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*, *simplest
-form*). El estado vivo es el campo `disponible` de `catalogo.js`.
+**Publicadas** (a 2026-11-08): `leelo5` (tarea 131, tras su reabierta del 8-11). **`leelo5` va con
+la semana 2**, no con la 1: lleva vocabulario y cuentas de las sesiones 5 y 6 (*quotient*,
+*remainder*, *recurring*, *simplest form*); la portada la enseña desde el 18-1 en «Para toda la
+unidad». Sin publicar y **sin publicador** (hace falta una tarea de publicación nueva), por casos
+de examen que sus generadores producían porque se escribieron antes que los exámenes:
+- semana 1 (tarea 130, 8-11): `lee-decimales`, `suma-resta-decimales` (reabiertas ya cerradas)
+  y `compara-decimales` (una segunda reabierta abierta: el examen 2, la hoja 2 y dos erratas de
+  feedback);
+- semana 2 (tarea 131, 8-11): `multiplica-divide-decimales` (le faltaban U5-2C-17 y el final),
+  `fraccion-decimal` y `errores5` (los exámenes 1 y 2 y el final).
+Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el campo
+`disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 5
 
