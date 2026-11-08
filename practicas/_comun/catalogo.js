@@ -114,7 +114,7 @@ export const CATALOGO = [
   { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: false },
   { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 6, disponible: false },
   { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: true },
-  { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
+  { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
