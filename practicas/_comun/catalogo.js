@@ -116,6 +116,19 @@ export const CATALOGO = [
   { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: true },
   { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
+  // Unidad 6, Algebra (PU2, tareas 145-155; filas puestas por la 144 el 2026-11-08, con un esqueleto en
+  // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (156-159).
+  { id: 69, slug: 'traduce', ruta: 'traduce/', unidad: 6, nombre: { es: 'Del enunciado al álgebra', en: 'From words to algebra' }, nEjercicios: 4, disponible: false },
+  { id: 70, slug: 'valor-numerico', ruta: 'valor-numerico/', unidad: 6, nombre: { es: 'Valor numérico', en: 'Evaluate' }, nEjercicios: 3, disponible: false },
+  { id: 71, slug: 'terminos-semejantes', ruta: 'terminos-semejantes/', unidad: 6, nombre: { es: 'Términos semejantes', en: 'Like terms' }, nEjercicios: 4, disponible: false },
+  { id: 72, slug: 'es-solucion', ruta: 'es-solucion/', unidad: 6, nombre: { es: '¿Es solución?', en: 'Is it a solution?' }, nEjercicios: 4, disponible: false },
+  { id: 73, slug: 'transposicion', ruta: 'transposicion/', unidad: 6, nombre: { es: 'Pasa al otro lado', en: 'Move it across' }, nEjercicios: 5, disponible: false },
+  { id: 74, slug: 'resuelve', ruta: 'resuelve/', unidad: 6, nombre: { es: 'Resuelve', en: 'Solve it' }, nEjercicios: 4, disponible: false },
+  { id: 75, slug: 'parentesis-algebra', ruta: 'parentesis-algebra/', unidad: 6, nombre: { es: 'Paréntesis', en: 'Brackets' }, nEjercicios: 4, disponible: false },
+  { id: 76, slug: 'denominadores', ruta: 'denominadores/', unidad: 6, nombre: { es: 'Quita denominadores', en: 'Clear the fractions' }, nEjercicios: 4, disponible: false },
+  { id: 77, slug: 'problemas-ecuaciones', ruta: 'problemas-ecuaciones/', unidad: 6, nombre: { es: 'Problemas con ecuaciones', en: 'Word problems' }, nEjercicios: 5, disponible: false },
+  { id: 78, slug: 'errores6', ruta: 'errores6/', unidad: 6, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
+  { id: 79, slug: 'leelo6', ruta: 'leelo6/', unidad: 6, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];
@@ -126,7 +139,7 @@ export const ID_PLANTILLA = 31;
 /**
  * Las unidades del curso. `desde` ('AAAA-MM-DD') es el día en que la portada
  * pasa a tenerla por unidad actual. Las fechas de la 1 y la 2 son de relleno
- * (importan las de las unidades 3, 4 y 5: el 16-11, el 14-12 y el 18-1 la portada cambia sola). Una
+ * (importan las de las unidades 3 a 6: el 16-11, el 14-12, el 18-1 y el 1-2 la portada cambia sola). Una
  * unidad sin prácticas ni tareas publicadas no sale.
  */
 export const UNIDADES = [
@@ -135,6 +148,7 @@ export const UNIDADES = [
   { n: 3, desde: '2026-11-16', titulo: { es: 'Números enteros', en: 'Integers' } },
   { n: 4, desde: '2026-12-14', titulo: { es: 'Fracciones', en: 'Fractions' } },
   { n: 5, desde: '2027-01-18', titulo: { es: 'Números decimales', en: 'Decimals' } },
+  { n: 6, desde: '2027-02-01', titulo: { es: 'Álgebra', en: 'Algebra' } },
 ];
 
 /**

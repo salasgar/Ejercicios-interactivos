@@ -36,9 +36,11 @@ export const VERSION = 1;
  * Qué destrezas del inventario trabaja cada práctica: las de la unidad 2, como en el §7 de
  * docs/practicas-unidad2.md, las de la unidad 3, como en el §7 de docs/practicas-unidad3.md
  * (puestas por la tarea 79 de PU2 a partir de las fichas 80-91), las de la unidad 4, como en
- * el §7 de docs/practicas-unidad4.md (tarea 98, fichas 99-108 e inventario aprobado el 26-10), y
+ * el §7 de docs/practicas-unidad4.md (tarea 98, fichas 99-108 e inventario aprobado el 26-10),
  * las de la unidad 5, como en el §7 de docs/practicas-unidad5.md (tarea 122, fichas 123-129 e
- * inventario aprobado el 3-11). En el orden del inventario.
+ * inventario aprobado el 3-11), y las de la unidad 6, como en el §7 de docs/practicas-unidad6.md
+ * (tarea 144, fichas 145-155 e inventario PROPUESTO el 6-11, sin F0: la 156 los comprueba antes de
+ * publicar). En el orden del inventario.
  */
 export const DESTREZAS = {
   arbol: ['U2-2B-02', 'U2-2C-08', 'U2-2C-09', 'U2-2C-11', 'U2-2C-13'],
@@ -90,6 +92,18 @@ export const DESTREZAS = {
   leelo5: ['U5-1B-01', 'U5-1B-02', 'U5-1B-03', 'U5-1B-04', 'U5-1B-05', 'U5-1B-06', 'U5-1B-07', 'U5-2B-01', 'U5-2B-02', 'U5-2B-03'],
   'multiplica-divide-decimales': ['U5-2A-01', 'U5-2A-02', 'U5-2A-03', 'U5-2C-01', 'U5-2C-02', 'U5-2C-03', 'U5-2C-04', 'U5-2C-05', 'U5-2C-06', 'U5-2C-07', 'U5-2C-17'],
   'suma-resta-decimales': ['U5-1A-01', 'U5-1A-02', 'U5-1C-13', 'U5-1C-14', 'U5-1C-15', 'U5-1C-16'],
+  // Unidad 6
+  denominadores: ['U6-3C-11', 'U6-3C-12', 'U6-3C-13'],
+  errores6: ['U6-1C-15', 'U6-3C-05'],
+  'es-solucion': ['U6-2C-01', 'U6-2C-02', 'U6-2C-03', 'U6-2C-04'],
+  leelo6: ['U6-1B-01', 'U6-1B-02', 'U6-1B-03', 'U6-1B-04', 'U6-1C-03', 'U6-2B-01', 'U6-2B-02', 'U6-2B-03', 'U6-3B-01', 'U6-3B-02', 'U6-4B-01'],
+  'parentesis-algebra': ['U6-3C-06', 'U6-3C-07', 'U6-3C-08', 'U6-3C-09', 'U6-3C-10'],
+  'problemas-ecuaciones': ['U6-2A-01', 'U6-2A-02', 'U6-2A-03', 'U6-3A-01', 'U6-3A-03', 'U6-4A-01', 'U6-4A-02', 'U6-4A-03', 'U6-4A-04', 'U6-4A-05', 'U6-4A-08', 'U6-4A-09', 'U6-4C-01'],
+  resuelve: ['U6-2C-12', 'U6-3C-01', 'U6-3C-02', 'U6-3C-03', 'U6-3C-05'],
+  'terminos-semejantes': ['U6-1C-01', 'U6-1C-04', 'U6-1C-12', 'U6-1C-13', 'U6-1C-14', 'U6-1C-15', 'U6-1C-16'],
+  traduce: ['U6-1A-01', 'U6-1A-02', 'U6-1A-03', 'U6-1A-04', 'U6-1A-05', 'U6-1B-02', 'U6-1C-03', 'U6-1C-10'],
+  transposicion: ['U6-2C-06', 'U6-2C-07', 'U6-2C-08', 'U6-2C-09', 'U6-2C-10', 'U6-2C-11'],
+  'valor-numerico': ['U6-1C-05', 'U6-1C-06', 'U6-1C-07', 'U6-1C-09'],
 };
 
 // --- Qué se guarda -------------------------------------------------------------------

@@ -206,13 +206,15 @@ test('estadoPlazo: repaso, obligatoria y obligatoria para ti, con los días de r
 });
 
 test('unidades: la actual es la última cuyo desde ha llegado, y todas las filas del catálogo tienen la suya', () => {
-  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3, 4, 5]);
+  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3, 4, 5, 6]);
   assert.equal(unidadActual('2026-10-15'), 2);
   assert.equal(unidadActual('2026-11-15'), 2);
   assert.equal(unidadActual('2026-11-16'), 3);
   assert.equal(unidadActual('2026-12-14'), 4);
   assert.equal(unidadActual('2027-01-17'), 4);
   assert.equal(unidadActual('2027-01-18'), 5);
+  assert.equal(unidadActual('2027-01-31'), 5);
+  assert.equal(unidadActual('2027-02-01'), 6);
   assert.equal(unidadActual('2026-09-01'), 1, 'antes del curso: la primera');
   for (const u of UNIDADES) assert.ok(u.titulo.es && u.titulo.en && /^\d{4}-\d{2}-\d{2}$/.test(u.desde));
   assert.deepEqual(CATALOGO.filter(p => p.id <= 15).map(p => p.unidad), Array(16).fill(2));
@@ -643,7 +645,7 @@ test('portada: tareas de la unidad actual, de la más nueva a la más antigua; l
 
 test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
   const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
-  assert.ok(BLOQUES.every(b => b.unidad >= 2 && b.unidad <= 5), 'ya no hay bloque «Repaso de la unidad 1»');
+  assert.ok(BLOQUES.every(b => b.unidad >= 2 && b.unidad <= 6), 'ya no hay bloque «Repaso de la unidad 1»');
   assert.deepEqual(BLOQUES.filter(b => b.unidad === 2).map(b => b.slugs), [
     ['semaforo', 'rectangulos', 'recta'], ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
     ['venn', 'imposibles', 'por-primos'], ['clasificador', 'reloj', 'baldosas', 'errores'], ['leelo', 'divisores'],
@@ -753,6 +755,35 @@ test('portada: los tres bloques de la unidad 5 (tarea 122), con las siete práct
   const bloques = bloquesPublicados(publicadas, 5);
   assert.equal(bloques.length, 3);
   assert.deepEqual(bloques[1].practicas.map(p => p.slug), ['multiplica-divide-decimales', 'fraccion-decimal', 'errores5']);
+});
+
+test('portada: los cinco bloques de la unidad 6 (tarea 144), con las once prácticas, ninguna publicada todavía', async () => {
+  const { bloquesPublicados, BLOQUES, DESCRIPCION } = await import('../practicas/portada.js');
+  const u6 = BLOQUES.filter(b => b.unidad === 6);
+  assert.deepEqual(u6.map(b => b.titulo.es), [
+    'Semana 1 · El lenguaje algebraico', 'Semana 2 · Las ecuaciones', 'Semana 3 · Ecuaciones con paréntesis y denominadores',
+    'Semana 4 · Problemas', 'Para toda la unidad · Errores y vocabulario',
+  ]);
+  assert.deepEqual(u6.map(b => b.slugs), [
+    ['traduce', 'valor-numerico', 'terminos-semejantes'], ['es-solucion', 'transposicion'], ['resuelve', 'parentesis-algebra', 'denominadores'],
+    ['problemas-ecuaciones'], ['errores6', 'leelo6'],
+  ]);
+  const once = CATALOGO.filter(p => p.unidad === 6);
+  assert.deepEqual(once.map(p => p.slug).sort(), u6.flatMap(b => b.slugs).sort());
+  for (const p of once) {
+    const d = DESCRIPCION[p.slug];
+    assert.ok(d?.es && d?.en, p.slug);
+    assert.ok(!/-\d|×|\d\/\d|%|\^|²/.test(d.es + d.en), `${p.slug}: el menos es −, el producto ·, ninguna fracción con barra, potencia ni porcentaje`);
+  }
+  // Cada una se publica en su tarea de la semana (156-159): la portada enseña justo las publicadas.
+  assert.deepEqual(bloquesPublicados(CATALOGO, 6).flatMap(b => b.practicas.map(p => p.slug)).sort(),
+    CATALOGO.filter(p => p.unidad === 6 && p.disponible).map(p => p.slug).sort());
+  const sinPublicar = CATALOGO.map(p => (p.unidad === 6 ? { ...p, disponible: false } : p));
+  assert.deepEqual(bloquesPublicados(sinPublicar, 6), [], 'sin publicadas, la unidad 6 no enseña ninguna');
+  const publicadas = CATALOGO.map(p => (p.unidad === 6 ? { ...p, disponible: true } : p));
+  const bloques = bloquesPublicados(publicadas, 6);
+  assert.equal(bloques.length, 5);
+  assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['resuelve', 'parentesis-algebra', 'denominadores']);
 });
 
 test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => conAlmacen(() => {

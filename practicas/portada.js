@@ -119,6 +119,32 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Vocabulario', en: 'For the whole unit · Vocabulary' },
     slugs: ['leelo5'],
   },
+  // Unidad 6 (PU2, tarea 144): cada práctica sale en su bloque cuando su tarea de la semana la publica (156-159).
+  {
+    unidad: 6,
+    titulo: { es: 'Semana 1 · El lenguaje algebraico', en: 'Week 1 · Algebraic language' },
+    slugs: ['traduce', 'valor-numerico', 'terminos-semejantes'],
+  },
+  {
+    unidad: 6,
+    titulo: { es: 'Semana 2 · Las ecuaciones', en: 'Week 2 · Equations' },
+    slugs: ['es-solucion', 'transposicion'],
+  },
+  {
+    unidad: 6,
+    titulo: { es: 'Semana 3 · Ecuaciones con paréntesis y denominadores', en: 'Week 3 · Brackets and fractions' },
+    slugs: ['resuelve', 'parentesis-algebra', 'denominadores'],
+  },
+  {
+    unidad: 6,
+    titulo: { es: 'Semana 4 · Problemas', en: 'Week 4 · Word problems' },
+    slugs: ['problemas-ecuaciones'],
+  },
+  {
+    unidad: 6,
+    titulo: { es: 'Para toda la unidad · Errores y vocabulario', en: 'For the whole unit · Mistakes and vocabulary' },
+    slugs: ['errores6', 'leelo6'],
+  },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
 
@@ -187,6 +213,18 @@ export const DESCRIPCION = {
   'fraccion-decimal': { es: 'De fracción a decimal dividiendo, exacto o periódico, de decimal a fracción irreducible, los pares que hay que saberse y una fracción frente a un decimal.', en: 'Fractions to decimals by dividing, terminating or recurring, decimals to fractions in their simplest form, the pairs to learn by heart and a fraction against a decimal.' },
   errores5: { es: 'Cálculos con decimales de la unidad 5: si están bien o mal, en qué paso está el error, qué error es y cómo se arregla.', en: 'Worked calculations with decimals from unit 5: right or wrong, which step has the mistake, what the mistake is and how to fix it.' },
   leelo5: { es: 'El vocabulario de los decimales en inglés: la palabra, lee decimales y cantidades de dinero, entiende la consigna y completa la frase.', en: 'Decimal vocabulary in English: learn the words, read decimals and amounts of money, understand the instruction and fill in the sentence.' },
+  // Unidad 6 (tarea 144), sacadas de las fichas 145-155.
+  traduce: { es: 'Pasa frases como «el doble de un número» o «tres menos que un número» a una expresión con letras, y al revés, también en situaciones de precios.', en: 'Turn phrases like «twice a number» or «three less than a number» into an expression with a letter, and back again, also with prices.' },
+  'valor-numerico': { es: 'Sustituye la letra por un número, también negativo, respetando la jerarquía, completa tablas de valores y busca para qué valor sale un resultado.', en: 'Replace the letter with a number, also a negative one, following the order of operations, fill in tables of values and find which value gives a result.' },
+  'terminos-semejantes': { es: 'Reconoce los términos semejantes, el coeficiente y la parte literal, reduce expresiones y caza los errores al sumar términos que no se pueden sumar.', en: 'Spot like terms, the coefficient and the variable part, simplify expressions and catch the mistakes made when adding terms that cannot be added.' },
+  'es-solucion': { es: 'Comprueba si un número es solución sustituyendo en los dos miembros, elige la ecuación que tiene una solución dada e inventa la tuya.', en: 'Check whether a number is a solution by substituting on both sides, choose the equation with a given solution and make up your own.' },
+  transposicion: { es: 'Lo que suma pasa restando y lo que multiplica pasa dividiendo: primero con números y después en ecuaciones de una y de dos operaciones.', en: 'What is added moves across subtracting and what multiplies moves across dividing: first with numbers, then in one-step and two-step equations.' },
+  resuelve: { es: 'Ecuaciones con la x en los dos miembros: el primer paso, la resolución paso a paso, la solución entera, negativa o en fracción, y el paso que está mal.', en: 'Equations with x on both sides: the first step, solving step by step, a whole, negative or fraction solution, and the step that is wrong.' },
+  'parentesis-algebra': { es: 'Quita paréntesis con un número o un signo menos delante, elige el desarrollo correcto y resuelve ecuaciones con paréntesis.', en: 'Expand brackets with a number or a minus sign in front, choose the right expansion and solve equations with brackets.' },
+  denominadores: { es: 'Busca el m.c.m. de los denominadores, multiplica todos los términos por él y resuelve la ecuación que queda.', en: 'Find the LCM of the denominators, multiply every term by it and solve the equation that is left.' },
+  'problemas-ecuaciones': { es: 'Problemas de números, consecutivos, repartos y edades: qué es la x, qué ecuación los plantea, la respuesta a lo que se pregunta y si tiene sentido.', en: 'Problems about numbers, consecutive numbers, sharing and ages: what x is, which equation fits, the answer to the question and whether it makes sense.' },
+  errores6: { es: 'Resoluciones de la unidad 6 con un paso mal: dónde está el error, qué error es y cómo se corrige.', en: 'Worked solutions from unit 6 with one wrong step: where the mistake is, what the mistake is and how to fix it.' },
+  leelo6: { es: 'El vocabulario del álgebra en inglés: la palabra, lee expresiones y ecuaciones, entiende la consigna y completa la frase.', en: 'Algebra vocabulary in English: learn the words, read expressions and equations, understand the instruction and fill in the sentence.' },
   // La sección «Ortografía» (tarea 134): las prácticas van solo en español; la descripción, en los dos idiomas.
   ortografia: { es: 'Lo que más se escribe mal: a o ha, e o he, echo o hecho, porque o por qué, las comas, los signos ¿ ¡ y las tildes de qué, cómo, tú, él…', en: 'The most common slips in Spanish: a or ha, e or he, echo or hecho, porque or por qué, commas, ¿ ¡ and the accents on qué, cómo, tú, él…' },
   'ortografia-tildes': { es: 'La sílaba tónica, cuándo lleva tilde una palabra, diptongos e hiatos, y las palabras de Matemáticas.', en: 'The stressed syllable, when a word takes an accent, diphthongs and hiatus, and maths words.' },
