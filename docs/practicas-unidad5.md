@@ -149,16 +149,16 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 2 | `errores5` | 62 | 128 | ¿Dónde está el error? (la línea mala o «todo bien») · ¿Qué error es? (cuatro nombres, uno verdadero) · Corrígelo (el resultado bueno) | sin contextos; hasta cuatro cifras enteras |
 | toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
 
-**Publicadas** (a 2026-11-08): `leelo5` (tarea 131, tras su reabierta del 8-11). **`leelo5` va con
-la semana 2**, no con la 1: lleva vocabulario y cuentas de las sesiones 5 y 6 (*quotient*,
-*remainder*, *recurring*, *simplest form*); la portada la enseña desde el 18-1 en «Para toda la
-unidad». Sin publicar y **sin publicador** (hace falta una tarea de publicación nueva), por casos
-de examen que sus generadores producían porque se escribieron antes que los exámenes:
-- semana 1 (tarea 130, 8-11): `lee-decimales`, `suma-resta-decimales` (reabiertas ya cerradas)
-  y `compara-decimales` (una segunda reabierta abierta: el examen 2, la hoja 2 y dos erratas de
-  feedback);
-- semana 2 (tarea 131, 8-11): `multiplica-divide-decimales` (le faltaban U5-2C-17 y el final),
-  `fraccion-decimal` y `errores5` (los exámenes 1 y 2 y el final).
+**Publicadas** (a 2026-11-08): `leelo5`, `fraccion-decimal` y `errores5` (tarea 131, tras sus
+reabiertas del 8-11). **`leelo5` va con la semana 2**, no con la 1: lleva vocabulario y cuentas de
+las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*, *simplest form*); la portada la enseña
+desde el 18-1 en «Para toda la unidad». Sin publicar y **sin publicador** (hace falta una tarea de
+publicación nueva), por casos de examen que sus generadores producían porque se escribieron antes
+que los exámenes:
+- semana 1 (tarea 130, 8-11): `lee-decimales` y `suma-resta-decimales` (reabiertas ya cerradas:
+  solo falta publicarlas) y `compara-decimales` (una segunda reabierta abierta: el examen 2, la
+  hoja 2 y dos erratas de feedback);
+- semana 2 (tarea 131, 8-11): `multiplica-divide-decimales` (le faltan U5-2C-17 y el final).
 Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el campo
 `disponible` de `catalogo.js`.
 
