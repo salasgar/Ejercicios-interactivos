@@ -54,7 +54,8 @@ test('casos reservados: los de la hoja salen como reservados por valor, y los de
   assert.ok(esReservado(deTexto('6.318')));
   assert.ok(esReservado(deTexto('6,30')), '6,3 y 6,30 son el mismo caso');
   assert.ok(!esReservado(deTexto('3.75')));
-  assert.equal(HUELLAS_EXAMEN.size, 0, 'el 5-11 no había fichero de casos del examen de la semana 1: la publicación coteja');
+  assert.equal(HUELLAS_EXAMEN.size, 31, 'examen 1 (24) y final (7), por huella');
+  assert.ok(esReservado(deTexto('0,007')) && esReservado(deTexto('4.08')), 'dos de la hoja 1 escritos con palabras');
   const h = huella('3.75');
   HUELLAS_EXAMEN.add(h);
   assert.ok(esReservado(deTexto('3,750')), 'una huella de examen reserva el decimal por valor');
@@ -70,6 +71,17 @@ test('ningún ejercicio saca un decimal de la hoja', () => {
     ...items(generarRecta, 14).map(i => [i.valor]),
   ].flat();
   for (const p of todos) assert.ok(!esReservado(D(p)), `sale un caso reservado: ${textoDe(p, 'es')}`);
+});
+
+test('ningún ejercicio saca un caso del examen 1, del final ni de la hoja (otras semillas)', () => {
+  const todos = [
+    ...items(generarLeelo, 1101).map(i => i.d),
+    ...items(generarCifra, 1201).map(i => i.d),
+    ...items(generarFraccionDecimal, 1301).map(i => i.d),
+    ...items(generarRecta, 1401).map(i => i.valor),
+  ];
+  assert.ok(todos.length >= 4 * N);
+  for (const p of todos) assert.ok(!esReservado(D(p)), 'sale un caso reservado');
 });
 
 // ─── Ejercicio 1 · Léelo ─────────────────────────────────────────────────────────────────

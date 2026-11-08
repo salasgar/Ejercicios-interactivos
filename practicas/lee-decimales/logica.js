@@ -36,13 +36,18 @@ export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.cod
 const DE_LA_HOJA = [
   '8.263', '6.318', '0.04', '6.28', '0.07', '12.5', '9.304', '15.06', '2.005', '7.206', '6.25', '4.18', '0.7', '8.4', '0.06',
   '4.63', '0.009', '3.1', '0.17', '0.003', '5.2', '1.04', '6.3', '6.35', '0.9', '9.1', '7.2', '7.4', '7.6', '7.75', '7.9',
+  '0.007', '4.08',
 ];
 
 /** Valor canónico (sin ceros finales, punto inglés): la clave de un caso reservado. */
 const clave = d => aTexto(d.normalizar(), 'en');
 export const CASOS_DE_LA_HOJA = new Set(DE_LA_HOJA.map(t => clave(deTexto(t))));
-/** Huellas (huella(clave del decimal)) de los casos del examen de la semana 1. Vacío mientras no exista su fichero de casos. */
-export const HUELLAS_EXAMEN = new Set([]);
+/** Huellas (huella(clave del decimal)) de los casos del examen de la semana 1. 31 huellas (examen 1: 24 de U5-1B-01, 1B-03, 1C-01 y 1C-04; final: 7). */
+export const HUELLAS_EXAMEN = new Set([
+  '1kfyr0v', 'ad121r', '8jo1lp', '10he2ti', 'qw1ls2', '15100ji', '14iyva9', 'iyx1u7', 'ms9w10', '1q9n93b', '1y8w6mx', 'd5wduu',
+  '147talk', '1ata0jh', '1b65xl6', 'o0tqbc', '1b3cotw', 'yqznr7', '15g7hwv', 'mkvgwe', '1kflphe', '1g4e7f3', '1r2vszr', 'qga3s1',
+  '19feh0v', '1sik2qy', '124erqn', '1oryhub', 'oxra4h', '1pcfobw', 'cgbrr6',
+]);
 
 /** ¿Es un caso de la hoja o del examen? Por valor: 6,3 y 6,30 son el mismo caso. */
 export const esReservado = d => CASOS_DE_LA_HOJA.has(clave(d)) || HUELLAS_EXAMEN.has(huella(clave(d)));
