@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-08T10:20:47Z por s-20261108T101857-7dc7aa3b al cerrar la reabierta de la 124 (LISTA, commit d2ec184; huellas 26/9/33 y dos grupos de la hoja 1 en `compara-decimales`; tests propios en verde, `npm test` 1659/1659): la 124 vuelve a LISTA, sin publicar (sin publicador, mar 15-12). Retoque, no regeneración completa.
+
 Actualizado 2026-11-08T10:01Z por s-20261108T095958-d9654cd4 al reclamar la 130 (cadena 130→131; relistado `hechos/` con `git fetch`: ningún reclamo vivo sin cerrar; 123-129 LISTAS, 06/07/10/13/16 de la U5 terminadas): **130 EN CURSO** (caduca 12:29:58Z); la 131 ya solo espera a la 130. Retoque, no regeneración completa: hay otras sesiones en el árbol.
 
 Actualizado 2026-11-06T16:05Z por s-20261106T160018-570bb569 al cerrar las reabiertas de la 105 (s-20261106T155741-13a7f159, LISTA, commit 9c7d5c6) y la 106 (LISTA, commit 373d35d): claves sin el sitio del signo y hoja 3 en `multiplica-divide`; hoja 3 (ej. 8 y 9), líneas de en medio y pasos de las cajas del final en `combinadas-fracciones`; `npm test` 1644/1644; barridos de 100000 ítems sin coincidencias; sin navegador. Solo cambian las filas 105 y 106. Retoque, no regeneración completa: hay otras sesiones en el árbol. Ambas siguen **sin publicar y sin publicador** (mar 22-12). Duración real ~4 min la 105 y ~5 min la 106 (estimadas 1 h 15 min y 1 h 30 min).
