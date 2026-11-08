@@ -11,7 +11,7 @@ import { aTexto } from '../practicas/_comun/decimales.js';
 import { TX, enunciadoSuper, enunciadoMedidas, calculoAlinea, calculoMueve } from '../practicas/suma-resta-decimales/textos.js';
 import {
   candidatosAlinea, candidatosSuper, candidatosMedidas, candidatosMueve,
-  D, ERRORES_PROPIOS, nombreDe, huella, HUELLAS_EXAMEN, esCalculoReservado, esMovimientoReservado,
+  D, claveCalculo, ERRORES_PROPIOS, nombreDe, huella, HUELLAS_EXAMEN, esCalculoReservado, esMovimientoReservado,
   generarAlinea, generarSuper, generarMedidas, generarMueve,
   errorDeAlinea, errorDeSuper, errorDeMedidas, errorDeMueve,
   CONTEXTOS_SUPER, CONTEXTOS_MEDIDAS, BILLETES, FRUTAS, claveDe,
@@ -58,7 +58,7 @@ const centimos = c => ({ m: c, k: 2 });
 // ─── Los casos que no pueden salir ───────────────────────────────────────────────────────
 
 test('la huella de examen reserva por valor y se puede añadir sin tocar el código', () => {
-  assert.equal(HUELLAS_EXAMEN.size, 0, 'al escribirla no existían los casos del examen');
+  assert.equal(HUELLAS_EXAMEN.size, 64, 'las huellas de los exámenes 1, 2 y final');
   const terminos = [{ m: 123, k: 2 }, { m: 4, k: 1 }];
   assert.ok(!esCalculoReservado(terminos, ['+']));
   const h = huella('s:0.4+1.23-');   // la clave: lo que se suma, ordenado, «-» y lo que se resta, ordenado
@@ -89,10 +89,23 @@ test('ningún ejercicio saca un caso de la hoja', () => {
     const ops = it.forma === 'resto2' ? ['−', '−'] : it.forma === 'diferencia' ? ['−'] : ['+'];
     assert.ok(!HOJA.has(clave(orden, ops)), enunciadoMedidas(it, 'es'));
   }
-  const movimientosHoja = ['6.82*10', '0.072*100', '1.6*1000', '23.8*100', '38:10', '4.6:100', '275:1000', '0.9:10', '46:100', '0.07*1000', '5.7*100',
+  const movimientosHoja = ['6.82*10', '0.072*100', '1.6*1000', '23.8*100', '38:10', '4.6:100', '275:1000', '0.9:10', '46:100', '0.46*100', '0.07*1000', '5.7*100',
     '0.58*10', '5.3*100', '6.3:10', '52:1000', '3.4*10', '3.2*1000', '4500:1000', '0.8*1000', '6.35*100', '2.4*100', '85:100'];
   const claves = new Set(movimientosHoja.map(s => { const [a, b] = s.split(/[*:]/); return `${s.includes('*') ? 'por' : 'entre'}|${canon(dec(a))}|${b}`; }));
   for (const it of lote(generarMueve, 24)) assert.ok(!claves.has(`${it.op}|${canon(it.d)}|${10 ** it.n}`), calculoMueve(it, 'es'));
+});
+
+test('ningún ejercicio saca un caso de examen (por huella) en 3000 ítems cada uno', () => {
+  const sumas = (terminos, ops) => HUELLAS_EXAMEN.has(huella(`s:${claveCalculo(terminos.map(D), ops)}`));
+  const mueve = it => HUELLAS_EXAMEN.has(huella(`m:${D(it.d).normalizar().toString().replace(',', '.')}${it.op === 'por' ? '*' : ':'}${10 ** it.n}`));
+  const rng = (generar, semilla) => { const r = crearRng(semilla); return Array.from({ length: 3000 }, () => generar(r)); };
+  for (const it of rng(generarAlinea, 201)) assert.ok(!(it.tipo === 'tres' ? sumas(it.terminos, it.ops) : sumas([it.a, it.b], [it.op])));
+  for (const it of rng(generarSuper, 202)) assert.ok(!sumas(it.importes.map(centimos), it.importes.slice(1).map(() => '+')));
+  for (const it of rng(generarMedidas, 203)) {
+    const orden = it.forma === 'diferencia' ? [it.datos[1], it.datos[0]] : it.datos;
+    assert.ok(!sumas(orden, it.forma === 'resto2' ? ['−', '−'] : it.forma === 'diferencia' ? ['−'] : ['+']));
+  }
+  for (const it of rng(generarMueve, 204)) assert.ok(!mueve(it), calculoMueve(it, 'es'));
 });
 
 // ─── Ejercicio 1 ─────────────────────────────────────────────────────────────────────────

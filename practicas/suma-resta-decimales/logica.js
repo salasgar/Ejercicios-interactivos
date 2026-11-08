@@ -46,12 +46,11 @@ export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? ERRORES_BASE[id]?.n
 // ─── Casos que no pueden salir ───────────────────────────────────────────────────────────────
 // La hoja de la semana 1 está en papel y se excluye en claro; los casos del examen de la semana 1 y del
 // final, por huella FNV-1a calculada fuera del repositorio (el repositorio y GitHub Pages son públicos).
-// Al escribir esto no existían los casos de examen (no hay `casos-examen-semana1.tsv`): `HUELLAS_EXAMEN`
-// está vacío y la tarea de publicación coteja. Claves con prefijo: «s:» un cálculo de sumas y restas,
+// 64 huellas (exámenes semanales 1 y 2 y final, calculadas por la tarea de publicación). Claves con prefijo: «s:» un cálculo de sumas y restas,
 // «m:» un movimiento de la coma.
 
 export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
-export const HUELLAS_EXAMEN = new Set([]);
+export const HUELLAS_EXAMEN = new Set(["k0bwlg","118uug2","1lny68q","1yb61bo","1fk4mik","117u0b","mivt2p","4wm0il","1r34960","z8w0c2","1m08jrx","1o6vci8","1bys59s","1ghhwhi","1fmrpy7","vfa0j8","oygecq","10fhg9g","t9yy3a","ehgfbx","v5f99g","7s7wy1","e352ub","fge1rc","v593ba","1snfb3","38n0fa","7jpmkl","l4pzmh","paa6ph","1hmezys","1lthmiy","1213j3e","h470i0","1qk2slt","1xkvdq0","oo0s0m","132j0x4","ydqkm","1di1lbf","5jyuhh","dhijhs","zl81h6","1vrord4","1eb23s6","142wzfr","18mk3d0","137com","cwrfzd","1b95mmm","koefro","pkhl3j","1elfauz","1a3ai8b","1yyfnbf","1c4f6ij","i4s5e6","fcbuug","yea7fl","gr2y15","6ebkxg","19t9asm","12qjsd8","1wiunvm"]);
 
 /** Clave de un cálculo con sumas y restas, sin importar el orden de lo que se suma ni el de lo que se resta. */
 export function claveCalculo(terminos, ops) {
@@ -72,11 +71,12 @@ function calculoDe(texto) {
 const CALCULOS_HOJA = new Set([
   '4.7+3.25', '12.6+0.84', '9.05-3.8', '15.2-7.64', '8-0.46', '15+0.7+4.25', '20-3.85-6.5',
   '8.6+2.75', '20-7.35', '14.6+8.3', '31.2-9.8', '3.65+2.1+1.2', '2.8-0.85-0.9',
+  '6.7+2.85', '12-4.37', '0.9-0.36',
 ].map(t => { const c = calculoDe(t); return claveCalculo(c.terminos, c.ops); }));
 
 // ej. 4 (hoja: los de multiplicar y dividir, los huecos, los ejemplos del recuadro y los cambios de unidad)
 const MOVIMIENTOS_HOJA = new Set([
-  '6.82*10', '0.072*100', '1.6*1000', '23.8*100', '38:10', '4.6:100', '275:1000', '0.9:10', '46:100', '0.07*1000', '5.7*100',
+  '6.82*10', '0.072*100', '1.6*1000', '23.8*100', '38:10', '4.6:100', '275:1000', '0.9:10', '46:100', '0.46*100', '0.07*1000', '5.7*100',
   '0.58*10', '5.3*100', '6.3:10', '52:1000', '3.4*10',
   '3.2*1000', '4500:1000', '0.8*1000', '6.35*100', '2.4*100', '85:100',
 ]);
