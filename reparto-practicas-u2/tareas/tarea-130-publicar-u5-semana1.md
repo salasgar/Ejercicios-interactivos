@@ -87,6 +87,17 @@ Las cuatro prácticas con `disponible: true` (o reabiertas, con su fichero), `np
 - (U4, 117/118) Publicar sin cotejar contra las hojas y los exámenes escritos después obligó a reabrir las siete prácticas de la U4 y a una segunda publicación (119/120): aquí la precondición exige la hoja y el examen cerrados.
 - `catalogo.js` lo tocan varias tareas de publicación (120, 131): nunca a la vez; mira `.claude/sesiones/` y `git log -3 -- practicas/_comun/catalogo.js`.
 - La portada oculta la U5 hasta el 18-1 (`UNIDADES.desde`): para verla, fecha de prueba en `unidadActual`.
+- (130, 2026-11-08) **Las cuatro prácticas se escribieron antes que los exámenes** y dejaron sus huellas vacías: las cuatro sacaban casos del
+  examen 1 y se reabrieron. El cotejo que las encontró es un barrido propio fuera del repositorio (`/tmp/pu2-130/`: `extraer.py` lee los casos
+  y la hoja, `preciso.mjs` genera 20000 ítems por ejercicio y busca **la misma tarea con los mismos datos por familias** —decimal suelto, pareja,
+  conjunto, redondeo, cálculo sin orden, compra, medida, movimiento de la coma—; `huellas.mjs` calcula las huellas con la clave de cada práctica).
+  Un barrido «por bolsa de números» sin familia da cientos de falsos positivos (el 2,6 de un listón no es el 2,6 de un cambio de unidad).
+- **El examen semanal 2 repasa la semana 1** (U5-1C-08, 1C-10, 1C-13, 1C-16): hay que cotejarlo también para las prácticas de la semana 1.
+- **La hoja escribe casos con palabras** («siete milésimas») y la recta con flechas en TikZ: fuera de `$…$`, se escapan a quien extrae números.
+- **Un ejemplo inventado puede ser un caso de examen**: antes de comitear la ENTREGA, las reabiertas o los docs, buscar en ellos todos los
+  decimales de los casos (pasó tres veces en esta tarea).
+- Navegador: el 8080 puede estar ocupado por otra sesión (servidor propio en otro puerto); tras «Probar sin código» hay que pulsar «Empezar»;
+  `#salir` («← Ejercicios») recarga el menú si un selector genérico lo pulsa; en zsh, `for s in "a 4"` no parte en palabras.
 
 ## Prohibido (propio de esta tarea)
 
