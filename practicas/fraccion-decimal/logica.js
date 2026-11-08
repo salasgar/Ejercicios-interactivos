@@ -47,17 +47,20 @@ export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? ERRORES_BASE[id]?.n
 // La hoja de la semana 2 está en papel y se excluye en claro; los casos del examen final, por
 // huella FNV-1a calculada fuera del repositorio (el repositorio y GitHub Pages son públicos). Las
 // claves llevan prefijo: «f:» la fracción del ej. 1 (irreducible, 'num/den'), «d:» el decimal del
-// ej. 2 (su fracción irreducible). Nada de los exámenes semanales: no existen todavía.
+// ej. 2 (su fracción irreducible). Los exámenes semanales 1 y 2 y el final también van por huella.
 
 export const huella = s => { let h = 0x811c9dc5; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(36); };
-export const HUELLAS_EXAMEN = new Set(['8meqnf', 'cgh07s', '11rwipd', '1e4nfr5', '1q73dd2']);
+export const HUELLAS_EXAMEN = new Set(['8meqnf', 'cgh07s', '11rwipd', '1e4nfr5', '1q73dd2',
+  'k3hf52', '77m4v3', '118ivi5', 'ak5yf1', '1p1ldyc', '194chqz', '1pwl8ap', '1mjgumr', '100mhky', '6yb4ee', 'yq1bns', '1x8lb1a', '19gmpzo', 'v22hrf',
+  'iup1ts', '1m0jt15', 'ukfkw3', 'ovtx2n', '165ippw', '1q886o', '16juw89', '1ymr5ls', '6at4ip', '85ke', 'ocszd4', 's4lyro']);
+export const HUELLAS_PAREJAS_EXAMEN = new Set(['1i3sc7z']);
 
 // ej. 1 (hoja: ej. 1a, 2a y los ejemplos del recuadro de apoyo)
 const FRACCIONES_HOJA = new Set(['2/5', '7/25', '19/20', '11/8', '9/40', '1/8', '4/9', '5/3', '1/6']);
 // ej. 2 (hoja: ej. 5, y los ejemplos del recuadro de apoyo), por valor
-const DECIMALES_HOJA = new Set(['0.15', '0.24', '0.004', '1.8', '4.5', '0.08', '0.36', '2.2']);
+const DECIMALES_HOJA = new Set(['0.15', '0.24', '0.004', '1.8', '4.5', '0.08', '0.36', '2.2', '0.17', '0.003']);
 // ej. 4 (hoja: ej. 2b y 2c), por pareja fracción|decimal
-const PAREJAS_HOJA = new Set(['3/4|0.82', '3/4|0.78', '4/5|0.82', '4/5|0.78', '4/9|0.44']);
+const PAREJAS_HOJA = new Set(['3/4|0.82', '3/4|0.78', '4/5|0.82', '4/5|0.78', '4/9|0.44', '1/4|0.4']);
 
 const claveFracc = f => { const x = Fr(f).simplificar(); return `${x.num}/${x.den}`; };
 const claveDec = d => String(D(d).normalizar().toString()).replace(',', '.');
@@ -67,7 +70,10 @@ export const esDecimalReservado = d => {
   const f = decimalAFraccion(D(d));
   return DECIMALES_HOJA.has(claveDec(d)) || HUELLAS_EXAMEN.has(huella(`d:${f.num}/${f.den}`));
 };
-export const esParejaReservada = (f, d) => PAREJAS_HOJA.has(`${claveFracc(f)}|${claveDec(d)}`);
+export const esParejaReservada = (f, d) => {
+  const k = `${claveFracc(f)}|${claveDec(d)}`;
+  return PAREJAS_HOJA.has(k) || HUELLAS_PAREJAS_EXAMEN.has(huella(`p:${k}`));
+};
 
 // ─── Fracciones y decimales de las listas ────────────────────────────────────────────────────
 

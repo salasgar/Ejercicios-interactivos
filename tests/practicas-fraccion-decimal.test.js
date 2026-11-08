@@ -19,7 +19,7 @@ import {
 } from '../practicas/fraccion-decimal/logica.js';
 
 const N = 3000;
-const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => generar(rng)); };
+const lote = (generar, semilla, n = N) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => generar(rng)); };
 const sinHtml = t => t.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ');
 
 // ─── Comprobaciones independientes del generador ─────────────────────────────────────────
@@ -58,9 +58,18 @@ test('la huella de examen reserva por valor y se puede añadir sin tocar el cód
   assert.ok(esParejaReservada({ num: 6, den: 8 }, { m: 780, k: 3 }), 'por valor: 6/8 y 0,780');
 });
 
+test('las huellas de examen y la hoja 1 y 2 están cargadas', () => {
+  assert.ok(HUELLAS_EXAMEN.size >= 31);
+  assert.ok(esDecimalReservado({ m: 17, k: 2 }) && esDecimalReservado({ m: 3, k: 3 }));
+  assert.ok(esParejaReservada({ num: 1, den: 4 }, { m: 4, k: 1 }));
+});
+
 test('ningún ejercicio saca un caso de la hoja ni de los exámenes', () => {
   for (const it of lote(generarFraccionADecimal, 21)) assert.ok(!esFraccionReservada(it.f), `${it.f.num}/${it.f.den}`);
   for (const it of lote(generarDecimalAFraccion, 22)) assert.ok(!esDecimalReservado(it.d), txt(it.d, 'es'));
+  for (const it of lote(generarFraccionADecimal, 31, 3000)) assert.ok(!esFraccionReservada(it.f));
+  for (const it of lote(generarDecimalAFraccion, 32, 3000)) assert.ok(!esDecimalReservado(it.d));
+  for (const it of lote(generarFraccionODecimal, 33, 3000)) assert.ok(!esParejaReservada(it.f, it.d));
   for (const it of lote(generarFraccionODecimal, 23)) assert.ok(!esParejaReservada(it.f, it.d), `${it.f.num}/${it.f.den} y ${txt(it.d, 'es')}`);
 });
 
