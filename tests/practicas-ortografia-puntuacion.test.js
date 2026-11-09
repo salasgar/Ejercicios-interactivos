@@ -87,7 +87,7 @@ test('puntuación: mayúsculas, el nombre de una asignatura solo aparece en cont
 
 test('puntuación: «Mar Menor» y los genéricos geográficos: el genérico va en minúscula y el nombre propio con mayúscula', () => {
   for (const f of MAYUSCULAS.filter(x => x.tipos.includes('mayuscula-en-generico-geografico'))) {
-    assert.match(f.correcto, /\b(río|mar|monte|isla)( de)? \p{Lu}/u, f.correcto);
+    assert.match(f.correcto, /\b(río|mar|monte|isla|sierra)( de)? \p{Lu}/u, f.correcto);
   }
 });
 

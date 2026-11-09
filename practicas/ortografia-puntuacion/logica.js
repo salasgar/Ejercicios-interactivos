@@ -34,11 +34,10 @@ export const REGLAS_MAYUSCULAS = {
   'mayuscula-en-gentilicio': c => `«${c}» dice de dónde es alguien o es un idioma: va con minúscula.`,
   'minuscula-en-asignatura': c => `«${c}» es aquí una asignatura, una materia que se estudia: va con mayúscula.`,
   'minuscula-en-festividad': c => `«${c}» forma parte del nombre de una fiesta: va con mayúscula.`,
-  'mayuscula-en-cargo': c => `«${c}» es un cargo: los cargos van con minúscula cuando no van con un nombre propio.`,
+  'mayuscula-en-profesion': c => `«${c}» es una profesión: los nombres de profesiones van con minúscula.`,
   'mayuscula-en-generico-geografico': c => `«${c}» dice qué clase de lugar es (río, mar, monte, isla): va con minúscula; el nombre propio que lo sigue, con mayúscula.`,
   'minuscula-en-institucion': c => `«${c}» forma parte del nombre de una institución: lleva mayúscula.`,
   'mayuscula-en-titulo': c => `«${c}» está dentro del título de una obra: solo la primera palabra del título lleva mayúscula (y los nombres propios).`,
-  'minuscula-tras-saludo': c => `«${c}» empieza el texto después de los dos puntos del saludo: va con mayúscula.`,
   'mayuscula-en-yo': c => `«${c}» se escribe siempre con minúscula en español (no es el «I» del inglés).`,
 };
 
@@ -79,24 +78,26 @@ export const MAYUSCULAS = [
   may(2, 'En Otoño las hojas caen.', 'En otoño las hojas caen.', 'mayuscula-en-estacion'),
   may(2, 'el sábado llega mi prima italiana.', 'El sábado llega mi prima italiana.', 'minuscula-tras-punto'),
   may(2, 'Mi vecino es Alemán, pero habla Español.', 'Mi vecino es alemán, pero habla español.', 'mayuscula-en-gentilicio', 'mayuscula-en-gentilicio'),
-  // Nivel 3: cargos, genéricos geográficos, instituciones, títulos de obras, saludo, «yo».
-  may(3, 'El Rey visitó la ciudad.', 'El rey visitó la ciudad.', 'mayuscula-en-cargo'),
-  may(3, 'La Directora del instituto es muy amable.', 'La directora del instituto es muy amable.', 'mayuscula-en-cargo'),
-  may(3, 'La presidenta saludó al Papa.', 'La presidenta saludó al papa.', 'mayuscula-en-cargo'),
+  // Nivel 3: profesiones, genéricos geográficos, instituciones, títulos de obras, «yo».
   may(3, 'Cruzamos el Río Segura en bici.', 'Cruzamos el río Segura en bici.', 'mayuscula-en-generico-geografico'),
   may(3, 'Nos bañamos en el Mar Mediterráneo.', 'Nos bañamos en el mar Mediterráneo.', 'mayuscula-en-generico-geografico'),
   may(3, 'El Monte Teide está en Tenerife.', 'El monte Teide está en Tenerife.', 'mayuscula-en-generico-geografico'),
   may(3, 'La Isla de Tabarca queda cerca de Alicante.', 'La isla de Tabarca queda cerca de Alicante.', 'mayuscula-en-generico-geografico'),
-  may(3, 'estudió en la universidad de Murcia.', 'Estudió en la Universidad de Murcia.', 'minuscula-tras-punto', 'minuscula-en-institucion'),
   may(3, 'Mi hermana trabaja en el ministerio de educación.', 'Mi hermana trabaja en el Ministerio de Educación.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
-  may(3, 'Mi hermano estudia en el instituto salvador sandoval.', 'Mi hermano estudia en el Instituto Salvador Sandoval.', 'minuscula-en-institucion', 'minuscula-en-institucion', 'minuscula-en-institucion'),
-  may(3, 'Leí El Principito en verano.', 'Leí El principito en verano.', 'mayuscula-en-titulo'),
   may(3, 'Mi libro favorito es Cien Años de Soledad.', 'Mi libro favorito es Cien años de soledad.', 'mayuscula-en-titulo', 'mayuscula-en-titulo'),
-  may(3, 'Hola, Marta: te escribo para pedirte ayuda.', 'Hola, Marta: Te escribo para pedirte ayuda.', 'minuscula-tras-saludo'),
-  may(3, 'Querido Pablo: hoy he visto a tu hermano.', 'Querido Pablo: Hoy he visto a tu hermano.', 'minuscula-tras-saludo'),
   may(3, 'Cuando Yo llegué, ya se habían ido.', 'Cuando yo llegué, ya se habían ido.', 'mayuscula-en-yo'),
-  may(3, 'El Alcalde inauguró el parque.', 'El alcalde inauguró el parque.', 'mayuscula-en-cargo'),
-  may(3, 'La Ministra visitó Cartagena.', 'La ministra visitó Cartagena.', 'mayuscula-en-cargo'),
+  may(3, 'Mañana Yo preparo la cena.', 'Mañana yo preparo la cena.', 'mayuscula-en-yo'),
+  may(3, 'Mi tía es Enfermera.', 'Mi tía es enfermera.', 'mayuscula-en-profesion'),
+  may(3, 'Su padre trabaja de Cocinero.', 'Su padre trabaja de cocinero.', 'mayuscula-en-profesion'),
+  may(3, 'Lucía quiere ser Veterinaria.', 'Lucía quiere ser veterinaria.', 'mayuscula-en-profesion'),
+  may(3, 'Subimos a la Sierra de Espuña.', 'Subimos a la sierra de Espuña.', 'mayuscula-en-generico-geografico'),
+  may(3, 'Navegamos por el Río Guadalquivir.', 'Navegamos por el río Guadalquivir.', 'mayuscula-en-generico-geografico'),
+  may(3, 'Mi tío trabaja en el ministerio de sanidad.', 'Mi tío trabaja en el Ministerio de Sanidad.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
+  may(3, 'Mi padre trabaja en el congreso de los diputados.', 'Mi padre trabaja en el Congreso de los Diputados.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
+  may(3, 'Mi madre es voluntaria de cruz roja.', 'Mi madre es voluntaria de Cruz Roja.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
+  may(3, 'Mi tío trabaja en el tribunal supremo.', 'Mi tío trabaja en el Tribunal Supremo.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
+  may(3, 'Leí La Isla del Tesoro en verano.', 'Leí La isla del tesoro en verano.', 'mayuscula-en-titulo', 'mayuscula-en-titulo'),
+  may(3, 'Mi libro favorito es Harry Potter y la Piedra Filosofal.', 'Mi libro favorito es Harry Potter y la piedra filosofal.', 'mayuscula-en-titulo', 'mayuscula-en-titulo'),
 ];
 
 /** Las palabras de la frase, como piezas para tocar. */
@@ -158,7 +159,6 @@ export const MOTIVOS = {
   'dos-puntos-mal-puestos': 'los dos puntos van justo después de lo que anuncia la lista o la cita, no en medio de la frase',
   'punto-y-coma-por-dos-puntos': 'para anunciar una lista o una cita se usan dos puntos, no punto y coma',
   'puntos-suspensivos-mal': 'los puntos suspensivos son exactamente tres y van pegados a la palabra anterior',
-  'minuscula-tras-suspensivos': 'si los puntos suspensivos cierran la frase, la siguiente empieza con mayúscula',
   'etc-con-puntos-suspensivos': '«etc.» ya significa «y lo demás»: nunca lleva puntos suspensivos detrás',
   'sin-punto-y-coma-lista': 'cuando cada elemento de la lista lleva comas dentro, los elementos se separan con punto y coma',
   'punto-y-coma-mal-puesto': 'el punto y coma separa un elemento de otro, no cada nombre de su explicación',
@@ -174,7 +174,6 @@ export const MOTIVOS = {
   'sin-signo-apertura': 'falta el signo de apertura (¿ o ¡): en español se abre y se cierra',
   'sin-tilde-correo': 'faltan tildes: «qué», «cuándo», «explicación»… se escriben con ellas',
   'sin-saludo-dos-puntos': 'tras el saludo de un correo van dos puntos, no coma',
-  'despedida-sin-coma': 'la despedida lleva coma detrás y el nombre va debajo, en una línea aparte',
 };
 
 /** Una mala: [texto, idError]. */
@@ -207,7 +206,6 @@ export const PUNTO_COMA = [
   ps(2, 'Por ejemplo, el seis es par.', ['Por ejemplo el seis es par.', 'sin-coma-conector'], ['Por ejemplo, el seis, es par.', 'coma-criminal']),
   ps(2, 'Es decir, hay que repetirlo.', ['Es decir hay que repetirlo.', 'sin-coma-conector'], ['Es decir, hay, que repetirlo.', 'coma-de-mas']),
   ps(2, 'Por último, cierra la puerta.', ['Por último cierra la puerta.', 'sin-coma-conector'], ['Por último, cierra, la puerta.', 'coma-de-mas']),
-  ps(2, 'Sí, voy contigo.', ['Sí voy contigo.', 'sin-coma-respuesta'], ['Sí, voy, contigo.', 'coma-de-mas']),
   ps(2, 'No, no he terminado.', ['No no he terminado.', 'sin-coma-respuesta'], ['No no, he terminado.', 'coma-de-mas']),
   ps(2, 'No quiero agua, sino zumo.', ['No quiero agua sino zumo.', 'sin-coma-pero'], ['No quiero, agua sino zumo.', 'coma-de-mas']),
   ps(2, 'No es lunes, sino martes.', ['No es lunes sino martes.', 'sin-coma-pero'], ['No es, lunes sino martes.', 'coma-de-mas']),
@@ -216,7 +214,7 @@ export const PUNTO_COMA = [
   ps(2, 'En primer lugar, abre el libro.', ['En primer lugar abre el libro.', 'sin-coma-conector'], ['En primer lugar, abre, el libro.', 'coma-de-mas']),
   ps(2, 'En resumen, hay que practicar más.', ['En resumen hay que practicar más.', 'sin-coma-conector'], ['En resumen, hay que, practicar más.', 'coma-de-mas']),
   ps(2, 'En cambio, mi hermana prefiere el té.', ['En cambio mi hermana prefiere el té.', 'sin-coma-conector'], ['En cambio, mi hermana, prefiere el té.', 'coma-criminal']),
-  ps(2, 'Marta, mi prima, vive en Lorca.', ['Marta, mi prima vive en Lorca.', 'coma-inciso-incompleta'], ['Marta mi prima, vive en Lorca.', 'coma-inciso-incompleta']),
+  ps(2, 'Mi vecina, la del tercero, trabaja en Lorca.', ['Mi vecina, la del tercero trabaja en Lorca.', 'coma-inciso-incompleta'], ['Mi vecina la del tercero, trabaja en Lorca.', 'coma-inciso-incompleta']),
   ps(2, 'Mi profesor, el de Lengua, es de Cartagena.', ['Mi profesor, el de Lengua es de Cartagena.', 'coma-inciso-incompleta'], ['Mi profesor el de Lengua, es de Cartagena.', 'coma-inciso-incompleta']),
   // Nivel 3: «etc.», conectores en medio, el punto fuera del paréntesis, la coma delante de la «y» que abre otra idea.
   ps(3, 'En el estuche llevo lápices, gomas, etc.', ['En el estuche llevo lápices, gomas etc.', 'sin-coma-etc'], ['En el estuche llevo lápices, gomas, etc', 'etc-sin-punto']),
@@ -265,15 +263,15 @@ export const DOS_PUNTOS = [
   ps(2, 'Ingredientes: harina, huevos y azúcar.', ['Ingredientes; harina, huevos y azúcar.', 'punto-y-coma-por-dos-puntos'], ['Ingredientes harina: huevos y azúcar.', 'dos-puntos-mal-puestos']),
   ps(2, 'En la mochila llevo tres cosas: libro, estuche y agenda.', ['En la mochila llevo tres cosas; libro, estuche y agenda.', 'punto-y-coma-por-dos-puntos'], ['En la mochila llevo: tres cosas libro, estuche y agenda.', 'dos-puntos-mal-puestos']),
   ps(2, 'Marta dijo: «Mañana no hay clase».', ['Marta dijo; «Mañana no hay clase».', 'punto-y-coma-por-dos-puntos'], ['Marta: dijo «Mañana no hay clase».', 'dos-puntos-mal-puestos']),
-  ps(2, 'El profesor gritó: «¡Silencio!»', ['El profesor gritó; «¡Silencio!»', 'punto-y-coma-por-dos-puntos'], ['El profesor: gritó «¡Silencio!»', 'dos-puntos-mal-puestos']),
-  ps(2, 'Mi madre me preguntó: «¿Has comido?»', ['Mi madre me preguntó; «¿Has comido?»', 'punto-y-coma-por-dos-puntos'], ['Mi madre: me preguntó «¿Has comido?»', 'dos-puntos-mal-puestos']),
+  ps(2, 'El profesor gritó: «¡Silencio!».', ['El profesor gritó; «¡Silencio!».', 'punto-y-coma-por-dos-puntos'], ['El profesor: gritó «¡Silencio!».', 'dos-puntos-mal-puestos']),
+  ps(2, 'Mi madre me preguntó: «¿Has comido?».', ['Mi madre me preguntó; «¿Has comido?».', 'punto-y-coma-por-dos-puntos'], ['Mi madre: me preguntó «¿Has comido?».', 'dos-puntos-mal-puestos']),
   ps(2, 'No sé qué decir...', ['No sé qué decir..', 'puntos-suspensivos-mal'], ['No sé qué decir....', 'puntos-suspensivos-mal']),
   ps(2, 'Pues... no lo sé.', ['Pues.. no lo sé.', 'puntos-suspensivos-mal'], ['Pues .... no lo sé.', 'puntos-suspensivos-mal']),
   ps(2, 'Quizá... pero no estoy seguro.', ['Quizá.... pero no estoy seguro.', 'puntos-suspensivos-mal'], ['Quizá .. pero no estoy seguro.', 'puntos-suspensivos-mal']),
   ps(2, 'Me dijo que sí... y luego se fue.', ['Me dijo que sí.. y luego se fue.', 'puntos-suspensivos-mal'], ['Me dijo que sí .... y luego se fue.', 'puntos-suspensivos-mal']),
   ps(2, 'Si es que... bueno, da igual.', ['Si es que.. bueno, da igual.', 'puntos-suspensivos-mal'], ['Si es que .... bueno, da igual.', 'puntos-suspensivos-mal']),
-  ps(2, 'Llegué a casa... Estaba todo oscuro.', ['Llegué a casa... estaba todo oscuro.', 'minuscula-tras-suspensivos'], ['Llegué a casa.. Estaba todo oscuro.', 'puntos-suspensivos-mal']),
-  ps(2, 'Se oyó un ruido... Nadie se movió.', ['Se oyó un ruido... nadie se movió.', 'minuscula-tras-suspensivos'], ['Se oyó un ruido.. Nadie se movió.', 'puntos-suspensivos-mal']),
+  ps(2, 'Llegué a casa... Estaba todo oscuro.', ['Llegué a casa.... Estaba todo oscuro.', 'puntos-suspensivos-mal'], ['Llegué a casa.. Estaba todo oscuro.', 'puntos-suspensivos-mal']),
+  ps(2, 'Se oyó un ruido... Nadie se movió.', ['Se oyó un ruido .... Nadie se movió.', 'puntos-suspensivos-mal'], ['Se oyó un ruido.. Nadie se movió.', 'puntos-suspensivos-mal']),
   ps(2, 'Hay frutas, verduras, legumbres, etc.', ['Hay frutas, verduras, legumbres, etc...', 'etc-con-puntos-suspensivos'], ['Hay frutas, verduras, legumbres, etc....', 'etc-con-puntos-suspensivos']),
   ps(2, 'Lleva abrigo, bufanda, guantes, etc.', ['Lleva abrigo, bufanda, guantes, etc...', 'etc-con-puntos-suspensivos'], ['Lleva abrigo, bufanda, guantes, etc....', 'etc-con-puntos-suspensivos']),
   // Nivel 3: punto y coma en listas con comas dentro, raya de diálogo, coma fuera de las comillas.
@@ -336,7 +334,10 @@ const CUERPOS = [
   'Hemos quedado para estudiar el jueves. ¿Podemos usar el aula?',
 ];
 // Qué dos fallos lleva cada correo del nivel 3 (por turnos, sin repetir id en el mismo correo).
-const FALLOS = [['saludo', 'despedida'], ['saludo', 'firma'], ['despedida', 'mayuscula'], ['saludo', 'mayuscula'], ['firma', 'mayuscula'], ['saludo', 'despedida']];
+// Solo fallos inequívocos: la puntuación de la despedida y de la firma no se regula, así que no se usa.
+const FALLOS = [['saludo', 'tilde'], ['saludo', 'mayuscula'], ['mayuscula', 'tilde'], ['saludo', 'mayuscula'], ['saludo', 'tilde'], ['mayuscula', 'tilde'], ['saludo', 'tilde'], ['mayuscula', 'apertura'],
+  ['saludo', 'apertura'], ['saludo', 'tilde'], ['mayuscula', 'apertura'], ['saludo', 'mayuscula'], ['saludo', 'tilde'], ['mayuscula', 'apertura'], ['saludo', 'tilde'], ['saludo', 'apertura']];
+const sinAcentos = t => t.replace(/[áéíóú]/g, c => ({ á: 'a', é: 'e', í: 'i', ó: 'o', ú: 'u' }[c]));
 const minusculaInicial = t => t.replace(/\p{L}/u, c => c.toLowerCase());
 
 function correoNivel3(i) {
@@ -347,8 +348,8 @@ function correoNivel3(i) {
   const correo = ({ saludo = bienSaludo, texto = cuerpo, cierre = `${despedida}\n${firma}` } = {}) => `${saludo}\n${texto}\n${cierre}`;
   const fallo = {
     saludo: [correo({ saludo: malSaludo }), 'sin-saludo-dos-puntos'],
-    despedida: [correo({ cierre: `${despedida.slice(0, -1)}\n${firma}` }), 'despedida-sin-coma'],
-    firma: [correo({ cierre: `${despedida.slice(0, -1)} ${firma}` }), 'despedida-sin-coma'],
+    tilde: [correo({ texto: sinAcentos(cuerpo) }), TILDE],
+    apertura: [correo({ texto: cuerpo.replace('¿', '') }), APERT],
     mayuscula: [correo({ texto: minusculaInicial(cuerpo) }), MAYUS],
   };
   return ps(3, correo(), ...FALLOS[i % FALLOS.length].map(k => fallo[k]));
@@ -397,7 +398,7 @@ const ac = (texto, donde) => ({ nivel: 3, tipo: 'ac', texto, donde });
 
 export const ASUNTO_CUERPO = [
   ac('Tarea de la semana 3', 'asunto'),
-  ac('Hola, no puedo entregar la tarea porque estoy enfermo.', 'cuerpo'),
+  ac('No puedo entregar la tarea porque estoy enfermo.', 'cuerpo'),
   ac('Duda del ejercicio 4', 'asunto'),
   ac('¿Puede decirme la nota del examen?', 'cuerpo'),
   ac('Examen del viernes', 'asunto'),
@@ -411,7 +412,7 @@ export const ASUNTO_CUERPO = [
   ac('Cambio de tutoría', 'asunto'),
   ac('Quería preguntarle cuándo es la recuperación.', 'cuerpo'),
   ac('Entrega de la tarea 5', 'asunto'),
-  ac('Buenos días: no sé en qué página está el ejercicio.', 'cuerpo'),
+  ac('No sé en qué página está el ejercicio.', 'cuerpo'),
 ];
 
 /** Los dos ejercicios del correo, en un solo banco: los correos y los ítems asunto / cuerpo. */
