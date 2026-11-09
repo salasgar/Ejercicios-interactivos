@@ -1,0 +1,23 @@
+/* Práctica «Pasa al otro lado» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+/* La ecuación y la resolución, bien grandes. */
+.expresion-destacada { text-align: center; font-size: 1.7rem; margin: .6rem 0 1rem; font-variant-numeric: tabular-nums; }
+.resolucion { text-align: center; font-size: 1.3rem; margin: 0 0 1rem; color: var(--primario-oscuro); font-variant-numeric: tabular-nums; }
+.expresion-destacada .frac, .resolucion .frac { vertical-align: middle; }
+input.campo-numero--valor { display: block; margin: .4rem auto 1rem; --cifras: 6; }
+.aviso-campo { text-align: center; margin: 0 0 .6rem; color: #b45309; }
+.aviso-campo[hidden] { display: none; }
+
+/* Las igualdades del ejercicio 1: una debajo de otra, con la flecha entre las dos. */
+.igualdad { text-align: center; font-size: 1.6rem; margin: .2rem 0; font-variant-numeric: tabular-nums; }
+.flecha { text-align: center; font-size: 1.4rem; margin: 0; color: var(--primario-oscuro); }
+.hueco-fd {
+  display: inline-block; min-width: 1.6em; padding: 0 .25em; text-align: center;
+  border-bottom: 3px solid var(--primario); color: var(--primario-oscuro); font-weight: 700;
+}
+.elecciones--operaciones { margin-top: 1rem; }
+.elecciones--operaciones .eleccion { font-size: 1.6rem; }
