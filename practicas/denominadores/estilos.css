@@ -1,0 +1,25 @@
+/* Práctica «Quita denominadores» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.frase { font-size: 1.25rem; line-height: 1.7; margin: .4rem 0 1rem; overflow-wrap: anywhere; }
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; }
+
+.campo-expresion {
+  display: block; width: 100%; box-sizing: border-box; margin: .6rem 0; padding: .7rem .8rem;
+  border: 2px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); color: var(--texto);
+  font: inherit; font-size: 1.15rem;
+}
+.campo-expresion:focus-visible { border-color: var(--primario); outline: none; }
+.campo-expresion--malo { border-color: var(--error); }
+.campo-expresion--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.campo-expresion--mal { border-color: var(--error); background: var(--error-claro); }
+.aviso-campo { color: var(--error); font-size: .92rem; min-height: 1.3rem; margin: 0 0 .4rem; }
+
+.paso-etiqueta { display: block; margin: .8rem 0 0; font-weight: 600; }
+.paso-campo .campo-expresion { margin: .25rem 0; }
+.paso-campo .aviso-campo { min-height: 1.1rem; }
