@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-03 (alta de la montadora del reparto de la unidad 6, s-20261103T140356-12629e13)
 Precondición: 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6 (semana 1: tareas 06 y 12): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella de la forma canónica); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu semana · Disparo: MANUAL (sesión atendida) · **Plazo: mar 22-12 (ideal); límite vie 15-1**
-Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 20 min (real 14 min el 9-11; antes 45) (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/146-valor-numerico/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/valor-numerico/*` (sustituye el esqueleto que deja la 144: desde que la 144 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-valor-numerico.test.js` (nuevo)
 
@@ -111,6 +111,13 @@ Modelo de interfaz: `practicas/jerarquia-enteros/` de la U3 (calcular paso a pas
 - El test compara **por forma canónica** (`Lineal.equals`) y por solución (`Ecuacion.equivalente`): dos opciones equivalentes con distinta escritura son un fallo del test, no un caso raro.
 - (U4) Las prácticas se reabrieron en bloque el 28-10 y el 30-10 por copiar casos de las hojas y de los exámenes escritos después: excluye lo que exista al escribirla y deja la huella de examen lista para que la publicación solo tenga que cotejar.
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min.
+- (T146) En zsh `git add $F` no separa palabras: usa un array `F=(ruta1 ruta2)` y `"${F[@]}"`.
+- (T146) Chrome headless cachea los módulos: tras corregir, `Network.setCacheDisabled` o ves el fallo viejo.
+- (T146) `numTexto` quiere `{num, den}` (Fraccion), no un número suelto: con un número falla y el ejercicio «no se puede mostrar».
+- (T146) El menos de las soluciones es `−` (U+2212): usa `numTexto`, no `String(n)`; el test busca el guion ASCII.
+- (T146) Una tabla con inputs se sale a 375 px: reduce padding, fuente y ancho del input (313 px de 314 disponibles).
+- (T146) `deTexto` devuelve un `Lineal`: el número es `.esConstante()` / `.b`.
+- (T146) Diseño del ej. 3 elegido: «con x = v, ¿qué expresión vale N?» con falsas por error típico nombrado; sin ecuaciones (versión de tanteo para otra semana).
 
 ## Prohibido (propio de esta tarea)
 
