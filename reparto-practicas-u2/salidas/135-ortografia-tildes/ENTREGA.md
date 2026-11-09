@@ -48,3 +48,26 @@ sin errores; a 375 px sin desbordar.
 - Los nombres «Luis», «Lucía», «María», «Ángel», «Óscar» y «Úrsula» están en los bancos: `sin-nombres-de-alumnos` en verde, pero si un
   alumno real se llama así, que lo decida Juan Luis (son nombres corrientes).
 - La 141 debería leer **todas las frases del ejercicio 4** (48) y las particiones silábicas; el motor no las puede juzgar.
+
+## Reabierta del 9-11 (sesión `s-20261109T104904-d4069022`, commit d553c8a)
+
+Lo hizo la 135 por la reabierta de la 141 (`hechos/reabiertas/135--s-20261109T101428-e1825b21.md`). **Lo publica la 142** (o una tarea
+de publicación nueva): al publicar, la 64 sale con 4 ej. × 3 niveles, sin ítems quitados (todos los bancos siguen con ≥ 16 por nivel).
+
+**Quitado y cambiado por palabras cuya forma sin tilde no es otra palabra:**
+- Ej. 1: médico → plátano, música → lámpara, cantará → vivirá, cantó → dormirán, órdenes → rápido, vehículo → próximo.
+  Además, por el mismo motivo (no estaban en la lista de la 141): libro (*libró*) → cama.
+- Ej. 2: música → plátano.
+- Ej. 3: peine → treinta, aire (*airé*) → cuatro, cuídate (voseo *cuidate*) → destruí, descuido → buitre, vehículo → caída;
+  «Lucía aún está en clase» → «Son las tres y Lucía aún no ha salido de clase.».
+- Ej. 4: «El 7 de 0,7 es una décima» (falso) → «Un euro son cien céntimos.»; paralelogramo (variante *paralelógramo*) → cubo
+  («Un dado tiene forma de cubo.», mala *cúbo*).
+
+**Textos:** «TÉ-le-fo-no» → «te-LÉ-fo-no» (es y en); «mú-si-ca» → «MÚ-si-ca»; en la introducción del ej. 3, «cuí-da-te» → «des-truí».
+`explicacionTonica1` y el paso 2 del ej. 1 ya no escriben la palabra sin tilde: usan `item.escrita` y `silabasMarcadas` («MÉ-di-co»).
+
+**Test nuevo:** `HOMOGRAFAS_SIN_TILDE` (médico, música, cantará…, libro, aire, décima, paralelogramo…): falla si alguna vuelve a un banco.
+Tests propios 75/75 con `practicas-comun`; `npm test` 1741/1741. Sin repetir los clics en el navegador (los `montar` no cambian salvo
+la pregunta del paso 2 del ej. 1, que ahora usa `silabasMarcadas`; `node --check` en verde).
+
+**Pendiente de revisión a mano por la 142:** las 8 palabras nuevas del ej. 1 y las dos de las frases del ej. 4 (céntimos, cubo).
