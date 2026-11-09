@@ -42,7 +42,7 @@ export function vocalesDe(silaba) {
 /** Las vocales de una sílaba como texto («cion» → «io», «ia» → «ia», «qui» → «i»). */
 export const nucleo = silaba => vocalesDe(silaba).map(i => silaba[i].toLowerCase()).join('');
 
-/** Una sílaba tiene un solo núcleo: una vocal, un diptongo (cerrada con abierta, o dos cerradas) o un triptongo (cerrada, abierta, cerrada). */
+/** Una sílaba tiene un solo núcleo: una vocal, un diptongo (una abierta y una cerrada, en cualquier orden, o dos cerradas) o un triptongo (cerrada, abierta, cerrada). */
 export function nucleoValido(silaba) {
   const v = nucleo(silaba);
   if (v.length === 1) return true;
@@ -182,7 +182,7 @@ const CRUDO_TONICA = {
   1: [
     "re-'loj", "pa-'pel", "ca-'lor", "ver-'dad", "ca-'fé", // agudas
     "'ca-sa", "'me-sa", "ven-'ta-na", "co-'ci-na", "'ca-ma", // llanas
-    "'sá-ba-do", "'plá-ta-no", "'lám-pa-ra", "te-'lé-fo-no", "'pá-ja-ro", "'cá-ma-ra", // esdrújulas
+    "'sá-ba-do", "'plá-ta-no", "pi-'rá-mi-de", "te-'lé-fo-no", "'pá-ja-ro", "'cá-ma-ra", // esdrújulas
   ],
   2: [
     "vi-vi-'rá", "dor-mi-'rán", "es-cri-'bir", "de-ci-'mal", "hos-pi-'tal",
@@ -190,10 +190,10 @@ const CRUDO_TONICA = {
     "e-'xá-me-nes", "'jó-ve-nes", "i-'má-ge-nes", "vo-'lú-me-nes", "'rá-pi-do", "re-'sú-me-nes",
   ],
   3: [
-    "ba-lom-'pié", "a-de-'más", "es-ta-bi-li-'dad", "res-pon-sa-bi-li-'dad", // agudas
-    "ciu-da-'da-no", "cui-da-'do-so", "pa-'ra-guas", "an-'ti-guo", // llanas
+    "ba-lom-'pié", "ciem-'piés", "es-ta-bi-li-'dad", "res-pon-sa-bi-li-'dad", // agudas
+    "ciu-da-'da-no", "cui-da-'do-so", "pa-'ra-guas", "len-'gua-je", // llanas
     "mur-'cié-la-go", "de-ci-mo-'sép-ti-mo", "ma-te-'má-ti-ca", "'pró-xi-mo", // esdrújulas
-    "de-'vuél-ve-me-lo", "'cuén-ta-me-lo", "'có-me-te-lo", "ex-'plí-ca-se-lo", // sobresdrújulas
+    "de-'vuél-ve-me-lo", "'cuén-ta-me-lo", "'mués-tra-se-lo", "'dí-ga-me-lo", // sobresdrújulas
   ],
 };
 
@@ -204,7 +204,7 @@ export const TONICA = banco(CRUDO_TONICA, p => ({ clase: clase(p.silabas, p.toni
 
 const CRUDO_TILDE = {
   1: [
-    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "ja-'más", "a-de-'más", "'plá-ta-no", "'sá-ba-do", // con tilde
+    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "ja-'más", "ra-'tón", "'plá-ta-no", "'sá-ba-do", // con tilde
     "re-'loj", "pa-'red", "ver-'dad", "can-'tar", "a-'zul", "fe-'liz", "e-'xa-men", "'lu-nes", // sin tilde
   ],
   2: [
@@ -232,7 +232,7 @@ const CRUDO_VOCALES = {
     "po-'e-ta", "to-'a-lla", "te-'a-tro", "ca-'no-a", "mu-'se-o", "i-'de-a", "'cie-lo", "'tiem-po", // sin tilde
   ],
   3: [
-    "pro-'hí-be", "'bú-ho", "ca-'í-da", "a-'hín-co", "re-'hén", "es-tu-'diáis", "cam-'biéis", "a-ve-ri-'guáis", // con tilde
+    "pro-'hí-be", "'bú-ho", "ca-'í-da", "re-'hén", "es-tu-'diáis", "cam-'biéis", "a-ve-ri-'guáis", // con tilde
     "'hui-da", "je-'sui-ta", "cons-'trui-do", "'viu-da", "'bui-tre", "'sua-ve", "'cuo-ta", // sin tilde
   ],
 };
@@ -286,9 +286,9 @@ const CRUDO_MATES = {
     { raw: "'fór-mu-la", antes: 'Aprendimos la ', despues: ' del área del rectángulo.' },
     { raw: "frac-'ción", antes: 'La mitad de una pizza es una ', despues: '.' },
     { raw: "frac-'cio-nes", mal: 'fracciónes', antes: '1/2 y 3/4 son ', despues: '.' },
-    { raw: "de-'ce-nas", mal: 'decénas', antes: 'En 356 hay 5 ', despues: '.' },
-    { raw: "cen-'te-nas", mal: 'centénas', antes: 'En 356 hay 3 ', despues: '.' },
-    { raw: "u-ni-'da-des", mal: 'unidádes', antes: 'En 356 hay 6 ', despues: '.' },
+    { raw: "de-'ce-nas", mal: 'decénas', antes: '748 son 7 centenas, 4 ', despues: ' y 8 unidades.' },
+    { raw: "cen-'te-nas", mal: 'centénas', antes: '356 son 3 ', despues: ', 5 decenas y 6 unidades.' },
+    { raw: "u-ni-'da-des", mal: 'unidádes', antes: '295 son 2 centenas, 9 decenas y 5 ', despues: '.' },
     { raw: "pa-ra-'le-las", mal: 'paralélas', antes: 'Dos rectas que nunca se cortan son ', despues: '.' },
     { raw: "dia-go-'nal", mal: 'diagonál', antes: 'La ', despues: ' de un cuadrado va de una esquina a la opuesta.' },
     { raw: "seg-'men-to", mal: 'ségmento', antes: 'Un ', despues: ' es la parte de una recta entre dos puntos.' },
@@ -388,7 +388,7 @@ export function explicacionTonica2(item) {
 export function explicacionTilde(item) {
   const r = razonDe(item);
   const palabra = `<b>${item.escrita}</b> (${silabasMarcadas(item)})`;
-  const mayuscula = /^[A-ZÁÉÍÓÚ]/.test(item.escrita) && r.lleva ? ' Las mayúsculas también llevan tilde.' : '';
+  const mayuscula = letraConTilde(item) === 0 && /^[A-ZÁÉÍÓÚ]/.test(item.escrita) ? ' Las mayúsculas también llevan tilde.' : '';
   if (item.mente) {
     const adjetivo = item.escrita.slice(0, -'mente'.length);
     return r.lleva
@@ -397,7 +397,7 @@ export function explicacionTilde(item) {
   }
   const fin = finDe(item);
   switch (r.motivo) {
-    case 'monosilaba': return `<b>${item.escrita}</b> tiene una sola sílaba: las palabras de una sílaba no llevan tilde.`;
+    case 'monosilaba': return `<b>${item.escrita}</b> tiene una sola sílaba y no lleva tilde: las palabras de una sílaba solo la llevan para distinguirse de otra que se escribe igual (tú / tu).`;
     case 'hiato': return `${palabra}: la ${item.silabas[item.tonica].toLowerCase().includes('u') ? 'u' : 'i'} es tónica y va junto a otra vocal, así que son dos sílabas (hiato): el hiato con i o u tónica siempre lleva tilde.`;
     case 'aguda-con': return `${palabra} es aguda y acaba ${fin}: las agudas acabadas en vocal, n o s llevan tilde.${mayuscula}`;
     case 'aguda-sin': return `${palabra} es aguda y acaba ${fin}: las agudas solo llevan tilde si acaban en vocal, n o s. No lleva tilde.`;
@@ -413,6 +413,8 @@ export function explicacionVocales(item) {
   const palabra = `<b>${item.escrita}</b> (${silabasMarcadas(item)})`;
   const reglas = r.motivo === 'monosilaba'
     ? 'tiene una sola sílaba y no lleva tilde'
+    : r.clase === 'esdrujula' || r.clase === 'sobresdrujula'
+    ? `es ${nombreClase(r.clase)}, y las ${nombreClase(r.clase)}s llevan tilde siempre`
     : `es ${nombreClase(r.clase)} y acaba ${finDe(item)}: ${r.lleva ? 'lleva' : 'no lleva'} tilde`;
   const frase = reglas.charAt(0).toUpperCase() + reglas.slice(1);
   switch (item.union) {
@@ -435,7 +437,7 @@ export function explicacionAun(item) {
 export function explicacionMates(item) {
   const r = razon(item.silabas, item.tonica);
   const palabra = `<b>${item.escrita}</b> (${silabasMarcadas(item)})`;
-  const mayuscula = /^[A-Z]/.test(item.escrita) ? ' Las mayúsculas también llevan tilde.' : '';
+  const mayuscula = letraConTilde(item) === 0 && /^[A-ZÁÉÍÓÚ]/.test(item.escrita) ? ' Las mayúsculas también llevan tilde.' : '';
   switch (r.motivo) {
     case 'aguda-con': return `${palabra} es aguda y acaba ${finDe(item)}: lleva tilde.`;
     case 'llana-con': return `${palabra} es llana y acaba ${finDe(item)}: lleva tilde.`;

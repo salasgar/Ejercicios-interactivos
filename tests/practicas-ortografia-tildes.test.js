@@ -34,14 +34,20 @@ const porNivel = (banco, n) => banco.filter(it => it.nivel === n);
 
 // Palabras que no pueden estar en ningún banco porque su forma sin tilde (la que se enseña en los ejercicios 1 a 3) es otra
 // palabra, con la tónica en otro sitio (reabierta del 9-11): medicó/medico, musica, cantara, canto, ordenes, vehiculo,
-// peiné, descuidó, cuidate (voseo), libró, airé, paralelógramo (variante chilena) y décima (el 7 de 0,7 son siete décimas).
-const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'cuidate', 'libro', 'aire', 'paralelogramo', 'decima'];
+// peiné, descuidó, libró, airé, paralelógramo (variante chilena) y décima (el 7 de 0,7 son siete décimas). Segunda
+// reabierta del 9-11 (cotejadas en el DLE): lampara (lampar), ahincó (ahincar), antiguó (antiguar) y ademas (adema).
+const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'libro', 'aire', 'paralelogramo', 'decima',
+  'lampara', 'ahinco', 'antiguo', 'ademas'];
+// La misma palabra con otra tónica en voseo (cuidate, comételo, explicáselo): tampoco. Sí valen las que en voseo cambian de
+// letras (devuélvemelo / devolvémelo, muéstraselo / mostráselo) y las de usted (dígamelo).
+const VOSEO = ['cuidate', 'cometelo', 'explicaselo'];
 
-test('ninguna palabra de los bancos es una de las que sin tilde son otra palabra', () => {
+test('ninguna palabra de los bancos es una de las que sin tilde son otra palabra (ni la misma en voseo)', () => {
   for (const { nombre, banco } of ejercicios) {
     for (const it of palabrasDe(banco)) {
       for (const f of [it.palabra, it.escrita, it.mala].filter(Boolean)) {
         assert.ok(!HOMOGRAFAS_SIN_TILDE.includes(sinTildes(f).toLowerCase()), `${nombre}: ${f}`);
+        assert.ok(!VOSEO.includes(sinTildes(f).toLowerCase()), `${nombre}, voseo: ${f}`);
       }
     }
   }
@@ -284,6 +290,15 @@ test('explicaciones: la regla aplicada a esa palabra', () => {
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'destruí')), /segunda vocal/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'poeta')), /dos vocales abiertas/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'estudiáis')), /triptongo/);
+  // Segunda reabierta del 9-11: las reglas, bien dichas.
+  assert.match(explicacionTilde(de(TILDE, 'fue')), /solo la llevan para distinguirse/);
+  assert.ok(!/no llevan tilde\./.test(explicacionTilde(de(TILDE, 'fue'))), 'no dice que los monosílabos nunca llevan tilde');
+  assert.ok(!explicacionMates(de(MATES, 'Matemáticas')).includes('mayúsculas'), 'la tilde de Matemáticas no va en la mayúscula');
+  for (const v of ['náutico', 'aéreo', 'héroe']) {
+    assert.match(explicacionVocales(de(VOCALES_BANCO, v)), /esdrújulas llevan tilde siempre/, v);
+    assert.ok(!/acaba en/.test(explicacionVocales(de(VOCALES_BANCO, v))), `${v}: la terminación no importa`);
+  }
+  assert.ok(MATES.every(it => !/^En \d+ hay \d+ $/.test(it.antes)), 'en 356 hay 35 decenas: la frase dice la descomposición');
 });
 
 test('idError: el patrón de siempre y estable por confusión (no por palabra)', () => {

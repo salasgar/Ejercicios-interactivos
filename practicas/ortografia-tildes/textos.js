@@ -30,7 +30,7 @@ export const TX = {
     nombre: { es: 'Diptongos e hiatos', en: 'Spanish spelling: diphthongs and hiatuses' },
     detalle: { es: 'día, ruido, también, poeta: dos vocales juntas', en: 'día, ruido, también, poeta: two vowels together' },
     introduccion: mismo(`<p>Las vocales <b>a, e, o</b> son abiertas; <b>i, u</b>, cerradas.</p>
-      <p><b>Diptongo</b>: cerrada + abierta (o dos cerradas) en la <b>misma</b> sílaba: <i>ruido, cuidado, tam-bién</i>. Se acentúa con las reglas de siempre, y la tilde va en la vocal abierta (o en la segunda de dos cerradas: <i>des-truí</i>).</p>
+      <p><b>Diptongo</b>: una abierta y una cerrada, en cualquier orden, o dos cerradas, en la <b>misma</b> sílaba: <i>ruido, cuidado, tam-bién</i>. Se acentúa con las reglas de siempre, y la tilde va en la vocal abierta (o en la segunda de dos cerradas: <i>des-truí</i>).</p>
       <p><b>Hiato</b>: dos vocales que se separan. Si una <b>i o u tónica</b> va junto a una abierta, la tilde se pone <b>siempre</b> en ella: <i>dí-a, ra-íz, bú-ho</i>. Dos abiertas (<i>po-e-ta</i>) siguen las reglas de siempre.</p>
       <p>Toca la letra que lleva la tilde. Si no la lleva, toca «Ninguna».</p>`),
     instruccion: 'Toca la vocal que lleva la tilde. Si la palabra no lleva tilde, toca «Ninguna».',
