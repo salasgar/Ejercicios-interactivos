@@ -66,17 +66,18 @@ const GRUPOS_HOJA = [
   ['8.3', '8.03', '8.31', '8.033'], ['0.61', '0.6', '0.059', '0.65', '0.601'],
   ['15.2', '15.08', '15.19', '14.9'], ['-3.5', '-3.05', '0.5', '-3.45'],
   ['6.3', '6.30', '6.03', '6.300', '60.3'], ['5.07', '5.7'],
+  ['2.08', '2.8'], ['0.509', '0.51'], ['3.70', '3.7'],
 ].map(g => new Set(g.map(kv)));
 const ENTRE_HOJA = new Set([['6.8', '6.9'], ['0.4', '0.41']].map(p => p.map(kv).sort().join(' y ')));
-const REDONDEO_HOJA = new Set(['4.726', '9.153', '12.849', '5.97', '0.996', '6.349'].map(kv));
+const REDONDEO_HOJA = new Set(['4.726', '9.153', '12.849', '5.97', '0.996', '6.349', '7.354', '15.996'].map(kv));
 
 // Examen de la semana 1 y examen final (por huella; los redondeos, a las tres cifras 0, 1 y 2). Claves: pareja = los dos
 // valores canónicos ordenados y unidos con ' y '; conjunto = valores canónicos ordenados y unidos con ',';
 // entre = como la pareja; redondeo = valor canónico + '@' + cifras.
 const HUELLAS_PAREJAS = new Set(["11f3rr4","dumi8s","1mhvmu4","dr6zqk","1im3f2m","10iuz4c","1b5bvx6","6cf002","1sebtx5","af1vwt","15l5iw1","17777ns","1t6q9eq","1dhr05f","1g068be","178yb2o","1olnrbp","giipty","bgi17j","1713pig","1mnpzxe","1i21bqg","br1r9s","1ty5z5e","cyv824","15qx9sr"]);
-const HUELLAS_CONJUNTOS = new Set(["1ax1shq","31kpnq","4fgwq6","ks1mzm","bfx3l0","wihbvl","1af2wva","9k9rp","o5hd0t"]);
+const HUELLAS_CONJUNTOS = new Set(["1ax1shq","31kpnq","4fgwq6","ks1mzm","bfx3l0","wihbvl","1fen4ar","jb77gn","1h692jr","6uuj4f","19pas35","185137j","1af2wva","9k9rp","o5hd0t"]);
 const HUELLAS_ENTRE = new Set([]);
-const HUELLAS_REDONDEO = new Set(["ahtc7","i7n8","uh0q5","16u8sa8","1748dz7","17e7zo6","1bbnfll","1b1ntwm","1aro87n","1glkl6","1ql6a5","wmd78","1yjw37l","1y9whim","1xzwvtn","1t0sumi","1tasgbh","1sgtn8k","1x474hy","1xe6q6x","1wk7x40","1ehfjf4","1erf543","1f1eqt2","ralhb0","rkl2zz","rukooy","18m14u8","18w0qj7","1960c86","igs182","iqrmx1","hwstu4"]);
+const HUELLAS_REDONDEO = new Set(["ahtc7","i7n8","uh0q5","16u8sa8","1748dz7","17e7zo6","1bbnfll","1b1ntwm","1aro87n","1glkl6","1ql6a5","wmd78","1yjw37l","1y9whim","1xzwvtn","1t0sumi","1tasgbh","1sgtn8k","1kutewk","1l4t0lj","1lesmai","8h6nzf","8772ag","915vdd","1p86npt","1oy720u","1oo7gbv","9fsflx","95stwy","8vt87z","tcq0cv","t2qenw","twp7qt","7tg62e","83frrd","79gyog","1x474hy","1xe6q6x","1wk7x40","1ehfjf4","1erf543","1f1eqt2","ralhb0","rkl2zz","rukooy","18m14u8","18w0qj7","1960c86","igs182","iqrmx1","hwstu4"]);
 
 export const TAMANOS_HUELLAS = { parejas: HUELLAS_PAREJAS.size, conjuntos: HUELLAS_CONJUNTOS.size, redondeo: HUELLAS_REDONDEO.size };
 
@@ -175,8 +176,7 @@ export function explicarComparar(item, elegido, idioma) {
   let metodo;
   if (real === 0) metodo = t.metodo.iguales[idioma](A, B);
   else if (item.caso === 'ceros') {
-    const k = Math.max(a.k, b.k);
-    metodo = t.metodo.ceros[idioma](A, B, aTexto(a, idioma, k), aTexto(b, idioma, k), s);
+    metodo = t.metodo.ceros[idioma](igualadas(a, b, idioma), A, s, B);
   } else if (a.m < 0 && b.m < 0) {
     metodo = t.metodo.negativos[idioma](aTexto(a.abs(), idioma), H(simbolo(comparar(a.abs(), b.abs()))), aTexto(b.abs(), idioma), A, s, B);
   } else if (a.m < 0 || b.m < 0) {
@@ -440,7 +440,8 @@ export function explicarRedondeo(item, error, idioma) {
   const d = D(item.d), c = item.c;
   const R = aTexto(redondeoBueno(item), idioma);
   const sig = cifraSiguiente(d, c);
-  const orden = ORDENES[-(c + 1)].singular[idioma];
+  const o = ORDENES[-(c + 1)];
+  const orden = idioma === 'es' ? o.es : o.singular.en;
   let texto = t.metodo[idioma](aTexto(d, idioma), sig, orden, sig >= 5, R);
   if (haceArrastre(item.d, c)) texto += ` ${t.acarreo[idioma](aTexto(truncar(d, c), idioma), R)}`;
   return error ? `${t.errores[error][idioma]} ${texto}` : texto;

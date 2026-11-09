@@ -321,7 +321,7 @@ test('casos reservados: los de la hoja 1 no salen nunca (ni por parejas, ni por 
 });
 
 test('casos reservados de los exámenes: tamaños de las huellas y 3000 ítems de cada ejercicio sin ningún reservado', () => {
-  assert.deepEqual(TAMANOS_HUELLAS, { parejas: 26, conjuntos: 9, redondeo: 33 });
+  assert.deepEqual(TAMANOS_HUELLAS, { parejas: 26, conjuntos: 15, redondeo: 51 });
   const v = s => deTexto(s);
   assert.equal(esParejaReservada(v('6.3'), v('6.03')), true);
   assert.equal(esParejaReservada(v('6.30'), v('6.3')), true);
@@ -337,4 +337,22 @@ test('la huella de examen es FNV-1a de 32 bits y la clave de un caso no depende 
   assert.equal(huella(''), (0x811c9dc5).toString(36));
   assert.equal(clave(deTexto('3.50')), clave(deTexto('3.5')));
   assert.equal(clave(deTexto('-0.40')), clave(deTexto('-0,4')));
+});
+
+test('feedback: el caso «ceros» lleva los dos números y el símbolo; el redondeo en español no dice «las milésima»', () => {
+  const item = { a: { m: 605, k: 2 }, b: { m: 67, k: 1 }, caso: 'ceros' };
+  for (const idioma of ['es', 'en']) {
+    const t = sinEtiquetas(explicarComparar(item, '>', idioma));
+    assert.match(t, new RegExp(`${aTexto(D(item.a), idioma)} < ${aTexto(D(item.b), idioma)}`.replace(/[.]/g, '\\.')), t);
+  }
+  for (const it of generarN(generarRedondeo, 7, 400)) {
+    assert.doesNotMatch(explicarRedondeo(it, null, 'es'), /las (unidad|decena|centena|décima|centésima|milésima) /, 'orden en singular');
+  }
+});
+
+test('la hoja 2 repasa la semana 1: sus casos no salen', () => {
+  assert.equal(esParejaReservada(deTexto('3.70'), deTexto('3.7')), true);
+  assert.equal(esParejaReservada(deTexto('2.08'), deTexto('2.8')), true);
+  assert.equal(esRedondeoReservado(deTexto('7.354'), -1), true);
+  assert.equal(esRedondeoReservado(deTexto('15.996'), -2), true);
 });
