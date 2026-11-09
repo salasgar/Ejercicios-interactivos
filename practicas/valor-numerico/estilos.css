@@ -1,0 +1,26 @@
+/* Práctica «Valor numérico» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+/* La expresión y el valor de x, bien grandes. */
+.expresion-destacada { text-align: center; font-size: 1.7rem; margin: .6rem 0 1rem; font-variant-numeric: tabular-nums; }
+.expresion-destacada .con-x { display: block; font-size: 1.2rem; margin-top: .2rem; color: var(--primario-oscuro); }
+input.campo-numero--valor { display: block; margin: .4rem auto 1rem; --cifras: 6; }
+
+/* El hueco de una cuenta. */
+.hueco-fd {
+  display: inline-block; min-width: 1.6em; padding: 0 .25em; text-align: center;
+  border-bottom: 3px solid var(--primario); color: var(--primario-oscuro); font-weight: 700;
+}
+
+/* La tabla de valores. */
+.tabla-valores-envoltura { overflow-x: auto; margin: 0 auto 1rem; max-width: 100%; }
+.tabla-valores { border-collapse: collapse; margin: 0 auto; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.tabla-valores th, .tabla-valores td { border: 2px solid var(--borde); padding: .3rem .25rem; text-align: center; background: #fff; }
+.tabla-valores th[scope=row] { padding: .3rem .45rem; }
+.tabla-valores th { background: #eef2ff; white-space: nowrap; }
+input.campo-tabla { width: 3.1rem; max-width: 100%; padding: .25rem .1rem; text-align: center; font-size: 1.05rem; }
+input.campo-tabla--bien { border-color: #16a34a; background: #f0fdf4; }
+input.campo-tabla--mal { border-color: #dc2626; background: #fef2f2; }
