@@ -71,3 +71,38 @@ Tests propios 75/75 con `practicas-comun`; `npm test` 1741/1741. Sin repetir los
 la pregunta del paso 2 del ej. 1, que ahora usa `silabasMarcadas`; `node --check` en verde).
 
 **Pendiente de revisión a mano por la 142:** las 8 palabras nuevas del ej. 1 y las dos de las frases del ej. 4 (céntimos, cubo).
+
+## Reabierta 2 del 9-11 (sesión `s-20261109T114919-4bdd2b23`, commit b8965f3)
+
+Por la segunda reabierta, la de la 142 (`hechos/reabiertas/135--s-20261109T105938-1997ca78.md`). **No se publica aquí**: lo hace la
+tarea de publicación nueva que propone la terminada de la 142 (64, 67 y 68). `catalogo.js` sin tocar.
+
+**Cotejadas en el DLE** (Chrome, dle.rae.es, 9-11): *ahincar*, *antiguar* (desusado) y *adema* (= ademe) están, así que *ahínco*,
+*antiguo* y *además* salen. La búsqueda del DLE lematiza (*lampara* → lampar, *musica* → musicar, *ahinco* → ahincar), y con ella se
+comprobaron los sustitutos: *piramide*, *ciempies*, *lenguaje*, *raton* y *miercoles* solo dan su propio lema; *muestraselo* da
+mostrar y *digamelo*, decir (la misma palabra).
+
+**Quitado y cambiado:**
+- Ej. 1, N1: lámpara (*lampara*, de lampar) → **pirámide**.
+- Ej. 1, N3: además (*ademas*) → **ciempiés** (aguda); antiguo (*antiguó*) → **lenguaje** (llana); cómetelo y explícaselo (voseo
+  *comételo*, *explicáselo*) → **muéstraselo** (voseo *mostráselo*, otras letras) y **dígamelo** (de usted). Siguen 4 por clase.
+- Ej. 2, N1: además → **ratón** (aguda con tilde; el nivel sigue 8 con / 8 sin).
+- Ej. 3, N3: ahínco (*ahincó*) fuera, sin sustituto: 14 de tocar (7 con, 7 sin) + 4 de aún.
+- Ej. 4, N2: las tres frases «En 356 hay 5 / 3 / 6 ___» (en 356 hay 35 decenas y 356 unidades) → «748 son 7 centenas, 4 ___ y 8
+  unidades.», «356 son 3 ___, 5 decenas y 6 unidades.», «295 son 2 centenas, 9 decenas y 5 ___.».
+
+**Reglas que ve el alumno:**
+- Monosílabos (ej. 2): «*fue* tiene una sola sílaba y no lleva tilde: las palabras de una sílaba solo la llevan para distinguirse de
+  otra que se escribe igual (tú / tu).»
+- Diptongo (introducción del ej. 3, y el comentario de `nucleoValido`): «una abierta y una cerrada, en cualquier orden, o dos cerradas».
+- «Las mayúsculas también llevan tilde» solo cuando la tilde va en la mayúscula (`letraConTilde(item) === 0`): sale en Ángel, África,
+  Óscar y Úrsula, ya no en Matemáticas (ej. 2 y ej. 4).
+- Ej. 3, esdrújulas (náutico, aéreo, héroe): «Es esdrújula, y las esdrújulas llevan tilde siempre», sin «acaba en vocal».
+
+**Recuento:** ej. 1 16/16/16 · ej. 2 16/16/16 · ej. 3 16/16/14 (+4 de aún) · ej. 4 16/16/16. Motor sin tocar.
+
+**Test:** `HOMOGRAFAS_SIN_TILDE` con lampara, ahinco, antiguo y ademas; lista propia `VOSEO` (cuidate, cometelo, explicaselo); y
+asertos nuevos para las cuatro reglas y para que ninguna frase del ej. 4 sea «En N hay N ___». Propios 75/75 con `practicas-comun`;
+`npm test` 1791/1791. Sin clics en el navegador (solo cambian palabras y textos; `node --check` en verde).
+
+**Sin cambiar, como decidió la 142:** casa, cocina, causa, idea (en voseo dan *otra* palabra).
