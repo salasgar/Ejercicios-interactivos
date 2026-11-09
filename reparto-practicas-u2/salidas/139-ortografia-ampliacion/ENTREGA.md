@@ -77,3 +77,16 @@ salen siempre con «tú» delante, y el test lo comprueba.
 ## Propuestas (no hechas)
 
 - Lo del hallazgo 1 (arreglar la 137) y lo del 2 (la lista del §6).
+
+## Reabierta del 9-11 (sesión s-20261109T112903-1732e1f0; reabierta `hechos/reabiertas/139--s-20261109T105938-1997ca78.md`)
+
+**Quitado o cambiado (ítems 1-7):**
+1. Ej. 1 N3 «cuadrado»: ahora «Un cuadrado se caracteriza _ tiene cuatro lados iguales y cuatro ángulos rectos.» (el rombo ya no cabe).
+2. Ej. 1 N3 «números primos se distinguen»: «distinguirse» sale; «Los números primos se caracterizan _ solo tienen dos divisores.» (`caracterizan` entra en `RIGEN_POR` y `RIGEN_CON_INDICATIVO`; `distinguen` sale).
+3. Ej. 1 N1: «Mi hermano pequeño quiere saber _ la luna cambia de forma.»
+4-6. Ej. 4 N3: «Te voy a decir la verdad» cambia su mala por «Te voy a decir: la verdad no he estudiado.»; en «Solo te hago una pregunta» y «Pasó lo que temíamos» se quita la mala con punto y coma (ya tenían la de los dos puntos mal puestos). «Solo quiero una cosa; que aprobéis todos.» se queda.
+7. Ej. 3 N1: «avda.» en minúscula en la buena y en la mala.
+
+**Motivos (8-10):** ids nuevos `espacio-ante-cifra` (sub 16, sub 21, sub 12, sub 18, anti OTAN) y `guion-ante-varias-palabras` (ex-primer ministro, ex-alto cargo, pro-derechos humanos, anti-pena de muerte); `plural-mal` se parte en `plural-curriculum`, `plural-comic`, `plural-album` y `plural-album-n` (regla concreta en cada uno); «siempre» fuera de `abreviatura-sin-punto` y de la mala de «una cosa/la verdad»; `explicacionPorque` decide directa/indirecta por el verbo de `MARCAS_INDIRECTA` y no por `¿` (sin «¿?.»); `STE` y `ERRORES.yendo` reescritos como pedía la reabierta.
+
+**Test:** el caso `plural-mal` pasa a `/^plural-(curriculum|comic|album)/`. Mínimos por nivel y equilibrio del ej. 1 intactos (no se ha quitado ningún ítem, solo malas). Propios 57/57 con `practicas-comun`; `npm test` 1790/1791: el fallo es de `ortografia-palabras` (138, «ninguna frase del ejercicio 3 caduca con el año»), no mío. Sin navegador (solo texto, `node --check`).

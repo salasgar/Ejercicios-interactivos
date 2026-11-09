@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-09T11:31:36Z por s-20261109T112903-1732e1f0 al cerrar la reabierta de la 139 (LISTA, commit 9b0d5a0; propios 57/57, npm test 1790/1791, el fallo es de la 138): 7 ítems y 3 motivos corregidos; `ortografia-ampliacion` (68) lista para publicar. Solo cambia la fila 139. Retoque, no regeneración completa.
+
 Actualizado 2026-11-09T11:0xZ por s-20261109T104507-cf70d6cc al cerrar la 154 (LISTA, commit 9bb48e2; tests propios 10/10, `npm test` 1772/1773, el fallo es de la 155 con reclamo vivo; probada en Chrome ej. 1 y 3, sin 375 px; sin hoja ni examen de la U6 al escribirla): solo cambia la fila 154. Retoque, no regeneración completa: hay otras sesiones en el árbol. Duración real ~25 min (estimada 45).
 
 Actualizado 2026-11-09T10:55Z por s-20261109T104413-a16205de al cerrar la 150 (LISTA, commit a7f60eb; tests propios 9/9, `npm test` 1760/1760; probada en Chrome): solo cambia la fila 150. Retoque, no regeneración completa. Sin publicar; la publicación de la semana 3 coteja hoja y examen (no existían). Duración real ~1 h frente a 1 h estimada.
