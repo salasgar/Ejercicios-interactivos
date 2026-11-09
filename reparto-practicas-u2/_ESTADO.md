@@ -518,7 +518,7 @@ Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · hash del commit · fic
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
-LISTA · tarea 135 (2.ª reabierta) · 2026-11-09 12:1x · s-20261109T114919-4bdd2b23 · b8965f3 · practicas/ortografia-tildes/{logica,textos}.js, tests/practicas-ortografia-tildes.test.js; propios 75/75, `npm test` 1791/1791 · ~25 min (estimada ~40).
+LISTA · tarea 135 (2.ª reabierta) · 2026-11-09 11:53 · s-20261109T114919-4bdd2b23 · b8965f3 · practicas/ortografia-tildes/{logica,textos}.js, tests/practicas-ortografia-tildes.test.js; propios 75/75, `npm test` 1791/1791 · ~25 min (estimada ~40).
 LISTA · tarea 141 · 2026-11-09 10:48 · s-20261109T101428-e1825b21 · 9d51347 · practicas/_comun/catalogo.js, practicas/ortografia-puntuacion/logica.js, tests/practicas-ortografia-comun.test.js, docs/practicas-ortografia.md, README.md · ~35 min (estimada 1 h 15 min)
 LISTA · tarea 146 · 2026-11-09 10:08 · s-20261109T095414-f8f190e6 · a0ebb74 · practicas/valor-numerico/{index.html,practica.js,logica.js,textos.js,estilos.css}, tests/practicas-valor-numerico.test.js; tests propios 15/15, `npm test` 1699/1699; probada en Chrome (375 px y ancho, ES y EN); ~14 min (estimada 45). Propuestas en salidas/146-valor-numerico/ENTREGA.md (sin x², ej. 3 sin ecuaciones, 1A-05 a `traduce`; sin hoja/examen U6 que excluir: la 156 debe cotejar).
 LISTA · tarea 148 · 2026-11-09 · s-20261109T103909-41cfcd6a · 3327fcd · practicas/es-solucion/{practica.js,logica.js,textos.js,estilos.css}, tests/practicas-es-solucion.test.js; tests propios 12/12, `npm test` 1727/1727; NO probada en navegador (sesión sin supervisión); ejercicio 3 (identidad) pendiente del punto (f) de F0
