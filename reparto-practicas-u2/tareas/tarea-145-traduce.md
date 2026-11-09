@@ -280,3 +280,7 @@ Si paras sin terminar: `$R/hechos/fallos/145--<sid>.md` con hasta dónde llegast
   casos sin solución, `x` en el denominador) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+
+## Trampas conocidas (145)
+- Con parte fija = precio por unidad, `f·g` y `g + p` coinciden con la buena: forzar f ≠ p y comprobar equivalentes por forma canónica.
+- Duración real: ≈ 40 min de reloj (09:53Z a 10:35Z aprox.), sobre la base de la 144.
