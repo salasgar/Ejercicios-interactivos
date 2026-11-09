@@ -1,0 +1,19 @@
+/* Práctica «Del enunciado al álgebra» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.frase { font-size: 1.15rem; line-height: 1.7; margin: .4rem 0 1rem; overflow-wrap: anywhere; }
+.glosa { color: var(--texto-suave); font-size: .92rem; margin: -.4rem 0 1rem; }
+
+/* Frases largas en las opciones: una columna a 375 px. */
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; }
+
+.campo-expresion {
+  display: block; width: 100%; box-sizing: border-box; margin: .6rem 0; padding: .7rem .8rem;
+  border: 2px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); color: var(--texto);
+  font: inherit; font-size: 1.15rem;
+}
+.campo-expresion:focus-visible { border-color: var(--primario); outline: none; }
+.campo-expresion--malo { border-color: var(--error); }
+.campo-expresion--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.campo-expresion--mal { border-color: var(--error); background: var(--error-claro); }
+.aviso-campo { color: var(--error); font-size: .92rem; min-height: 1.3rem; margin: 0 0 .4rem; }
