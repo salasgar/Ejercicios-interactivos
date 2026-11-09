@@ -667,6 +667,11 @@ seseo (en Murcia se distinguen) · «Mar Menor» (el genérico es parte del nomb
 Internet / internet, Ayuntamiento / ayuntamiento, Estado / estado, Iglesia / iglesia (dependen del sentido) · «examen de
 Matemáticas» / «las matemáticas» (asignatura frente a ciencia: solo contextos inequívocos de asignatura).
 
+**Voseo, criterio estricto** (decisión de Juan Luis del 9-11, a propuesta de la 142): un ítem de tildes se quita solo si en
+voseo es **la misma palabra con otra tónica** (*cuídate* / cuidate, *cómetelo* / comételo, *explícaselo* / explicáselo). Las
+palabras que en voseo dan **otra** palabra, una forma verbal, se quedan: *casa* (casá), *cocina* (cociná), *causa* (causá),
+*idea* (ideá). Vale para todos los ítems de tildes de la ortografía y para la 2.ª reabierta de la 135.
+
 ## Orden de prioridad de la ortografía (por los plazos de publicación)
 
 1. **134** (base; ALTO; LIBRE desde el 3-11; plazo mar 1-12). Mientras, nada más puede empezar.
