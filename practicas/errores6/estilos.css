@@ -1,0 +1,25 @@
+/* Práctica «Caza el error» (unidad 6): solo lo que no esté ya en ../_comun/estilos.css. */
+
+/* La resolución del compañero, con las líneas numeradas. */
+.procedimiento {
+  list-style: none; margin: 0 0 1rem; padding: 0; text-align: left;
+  display: grid; gap: .45rem;
+}
+.procedimiento__linea {
+  display: flex; gap: .6rem; align-items: center;
+  background: var(--primario-claro); color: var(--primario-oscuro);
+  border-radius: 10px; padding: .55rem .8rem; font-size: 1.15rem; line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.procedimiento__n { font-weight: 700; flex: none; opacity: .7; }
+.procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
+.procedimiento--botones .eleccion { text-align: left; font-size: 1.15rem; line-height: 1.6; min-height: 60px; display: flex; gap: .6rem; align-items: center; }
+.procedimiento--botones .eleccion .procedimiento__n { margin-right: .2rem; }
+.procedimiento--botones .eleccion--todo { justify-content: center; text-align: center; font-weight: 700; }
+.linea-mala { font-weight: 700; overflow-wrap: anywhere; }
+.feedback { overflow-wrap: anywhere; }
+.nombres { grid-template-columns: 1fr; }
+.nombres .eleccion { text-align: left; }
+.igualdad--campo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .6rem; margin: .8rem 0 1.1rem; font-size: 1.15rem; }
+.campo-numero.respuesta--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.campo-numero.respuesta--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); }
