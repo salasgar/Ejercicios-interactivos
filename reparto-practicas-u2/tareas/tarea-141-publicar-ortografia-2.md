@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-03 (alta de la coordinadora s-20261103T110729-ca61fe3e)
 Precondición: **135 LISTA · 140 LISTA** (misma `catalogo.js`; en cadena) · **no en paralelo con nada que toque `catalogo.js`** · Disparo: MANUAL (sesión atendida) · **Plazo: jue 25-2** (el primer ★ de las tildes es el lun 1-3, U7 · paquete 1)
-Duración esperada: 1 h 15 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: 140 (antes)
+Duración esperada: 1 h 15 min (tiempo de sesión, no de persona; real el 9-11: ~35 min) · Banda de modelo: ALTO · Encadenable con: 140 (antes)
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/141-publicar-ortografia-2/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/_comun/catalogo.js` (solo `disponible` de la fila 64 y de los bloques que la 140 dejara reabiertos y hayan cerrado), `docs/practicas-ortografia.md` (§7), `README.md` (filas); y, solo para recortes de ≤ 5 ítems, `practicas/ortografia-tildes/logica.js` (declarándolo)
 
@@ -134,6 +134,20 @@ carácter/caracteres, fácilmente, Ángel).
   el 15-3 o en el 6-4 según cómo lo monte la U7. La propuesta nombra **paquetes**, no fechas, y lo advierte.
 - Dobles acentuaciones válidas (período/periodo, vídeo/video, fútbol/futbol…) y monosílabos ortográficos de 2010 (guion,
   truhan…): si alguno se coló, fuera.
+- (141, 9-11) **Palabra enseñada sin tilde y sin frase = homógrafo posible.** Los ej. 1-3 de las tildes enseñan «me-di-co»; si la forma
+  sin tilde, o con la tónica en otro sitio, es otra palabra (medico/medicó, canto/cantó, cantara, ordenes, peiné, descuidó, musica de
+  musicar, vehiculo de vehicular), hay dos respuestas. Conjuga mentalmente cada palabra del banco como verbo antes de darla por buena.
+- (141) **Mira también los textos del menú** (`detalle` de `textos.js`): «TÉ-le-fo-no» estaba en el detalle, no en el banco, y el test
+  no lo ve.
+- (141) **El DLE recoge variantes regionales con tilde distinta** («paralelógramo, Chile»): mira la línea «Variante» de cada palabra del
+  ej. 4. Con un Chrome sin ventana se lee bien el DLE (con el `userAgent` de un Chrome normal); `WebFetch` da 403.
+- (141) **Sin Claude in Chrome**: Chrome sin ventana con `--remote-debugging-port` y `--user-data-dir` en `/tmp` (no estorba al Chrome
+  normal), y un `WebSocket` de Node 26 contra el protocolo de depuración: navegar, `Runtime.evaluate` para tocar botones, capturas con
+  `Page.captureScreenshot` y `Emulation.setDeviceMetricsOverride` para los 375 px. Mátalo al acabar.
+- (141) **zsh no parte `$F` en palabras**: `F="a b"; git add $F` falla. Usa un array (`F=(a b)`) o escribe las rutas.
+- (141) Una reabierta cerrada sin navegador y en minutos: lee su diff entero y saca con un script todas las opciones generadas (los
+  correos del nivel 3 de la puntuación se montan por código: hay que verlos montados).
+- (141) GitHub Pages tarda 3-5 min en desplegar (`gh run list`), no 1-2.
 
 ## Prohibido (propio de esta tarea)
 
