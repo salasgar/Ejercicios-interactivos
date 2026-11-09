@@ -1,0 +1,15 @@
+/* Resuelve: lo que no esté ya en ../_comun/estilos.css (.operacion, .cuenta, .elecciones, .comprobar, .campo-numero). */
+
+.alg-lineas { display: flex; flex-direction: column; align-items: center; margin-bottom: .6rem; }
+
+/* Una línea con huecos: «[ ] x = [ ]» o «x = [ ]». */
+.alg-hueco { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .6rem; margin: .5rem 0; font-size: 1.4rem; font-weight: 700; }
+.alg-hueco input.campo-numero { margin: 0; font-size: 1.3rem; }
+.alg-x { color: var(--primario-oscuro); }
+input.campo-alg--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+input.campo-alg--mal { border-color: var(--error); background: var(--error-claro); }
+input.campo-alg:disabled { opacity: 1; color: inherit; }
+
+/* Ejercicio 4: «Paso 2» delante de la ecuación, dentro del botón. */
+.alg-paso { display: block; font-size: .8rem; font-weight: 700; color: var(--texto-suave); margin-bottom: .1rem; }
+.eleccion--correcta .alg-paso, .eleccion--mal .alg-paso { color: inherit; }
