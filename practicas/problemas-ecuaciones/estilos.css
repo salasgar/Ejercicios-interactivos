@@ -1,0 +1,24 @@
+/* Práctica «Problemas con ecuaciones» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.problema { font-size: 1.15rem; line-height: 1.55; margin: .4rem 0 .6rem; overflow-wrap: anywhere; }
+.pregunta { font-size: 1.1rem; font-weight: 600; margin: 0 0 1rem; }
+.trabajo { margin: .2rem 0 1rem; padding: .7rem .9rem; border: 2px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); line-height: 1.9; }
+.trabajo p { margin: 0; }
+
+.elecciones--1 { grid-template-columns: 1fr; }
+.elecciones--1 .eleccion { text-align: left; line-height: 1.35; }
+
+.fases { margin: .4rem 0 0; padding-left: 1.3rem; line-height: 1.8; }
+.fases .desarrollo { margin: .2rem 0; padding-left: 1rem; list-style: none; line-height: 1.8; }
+
+.campo-expresion {
+  display: block; width: 100%; max-width: 12rem; box-sizing: border-box; margin: .6rem 0; padding: .7rem .8rem;
+  border: 2px solid var(--borde); border-radius: var(--radio); background: var(--tarjeta); color: var(--texto);
+  font: inherit; font-size: 1.15rem;
+}
+.campo-expresion:focus-visible { border-color: var(--primario); outline: none; }
+.campo-expresion--malo { border-color: var(--error); }
+.campo-expresion--bien { border-color: var(--correcto); background: var(--correcto-claro); }
+.campo-expresion--mal { border-color: var(--error); background: var(--error-claro); }
+.aviso-campo { color: var(--error); font-size: .92rem; min-height: 1.3rem; margin: 0 0 .4rem; }
+
