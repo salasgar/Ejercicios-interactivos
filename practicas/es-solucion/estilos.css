@@ -1,0 +1,14 @@
+/* Práctica «¿Es solución?» (unidad 6): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+/* `display: block` anula el atributo `hidden`: sin esto, `boton.hidden = true` no lo esconde. */
+.comprobar[hidden] { display: none; }
+
+.expresion-destacada { text-align: center; font-size: 1.7rem; margin: .6rem 0 1rem; font-variant-numeric: tabular-nums; }
+
+input.campo-ecuacion {
+  display: block; width: 100%; max-width: 20rem; margin: .4rem auto .4rem; padding: .5rem .6rem;
+  font-size: 1.3rem; text-align: center; border: 2px solid var(--borde); border-radius: .5rem;
+}
+input.campo-ecuacion.campo-numero--malo { border-color: #dc2626; background: #fef2f2; }
+.aviso-campo { min-height: 1.4em; margin: 0 0 .6rem; text-align: center; color: #b91c1c; font-size: .95rem; }
