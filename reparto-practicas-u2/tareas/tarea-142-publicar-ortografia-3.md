@@ -146,6 +146,16 @@ U8; (c) solo en la portada, sin puntos. La decisión es suya; hasta que la tome,
 - El lunes 3-5 es festivo: el paquete 2 de la U8 empieza el martes 4-5; la propuesta nombra paquetes.
 - Si Juan Luis elige (a) para la ampliación, la tarea `asignada` la monta él en el editor del panel (como la 116 y la 121, con
   Claude en Chrome si lo pide): no es cosa de esta tarea, y los nombres de los alumnos marcados no van a ningún fichero.
+- (s-20261109T105938-1997ca78, 9-11) **Sin Claude in Chrome, el DLE y el DPD no se abren**: WebFetch da 403 y un Chrome sin ventana
+  se queda en la verificación de Cloudflare. Lo dudoso que no se pueda cotejar va a la reabierta marcado «comprobar», no se da por bueno.
+- (ídem) Tres revisores en paralelo (uno por bloque, solo lectura, con las reglas y la lista negra en el encargo) leen ~500 ítems en
+  ~6 min; cada marca se verifica después a mano en el código antes de llevarla a la reabierta.
+- (ídem) Lo que más se escapa a quien escribe los bancos: **frases que caducan** («Estamos en el año 2026»), **datos falsos en
+  frases de ortografía** (el cuadrado «se caracteriza» por sus cuatro lados iguales), **explicaciones compartidas** (un `MOTIVOS` que
+  vale para la mayoría de las malas y contradice a la buena en las demás) y **verbos raros del DLE** detrás de la forma sin tilde.
+- (ídem) La prueba con clics con el bot genérico (primer o último botón) da «0 aciertos» en los ejercicios de dos pasos: el bot
+  falla el paso 1; no es un fallo de la práctica.
+- Duración real: ~25 min para revisar tres bloques sin publicar ninguno (estimada 1 h 30 min para dos).
 
 ## Prohibido (propio de esta tarea)
 
