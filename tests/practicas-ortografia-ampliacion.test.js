@@ -206,7 +206,7 @@ test('ortografia-ampliacion: ejercicios 3 y 4, cada mala es la buena con el camb
       // Separado, el prefijo deja la palabra con su r de siempre («auto retrato»): también vale una r menos.
       if (id === 'r-simple-tras-prefijo' || (id === 'prefijo-separado' && /rr/.test(it.bien) && m !== b)) assert.ok(sinUna(b, 'r').includes(m), `«${mala}» no es «${it.bien}» con una r menos`);
       else if (id === 'plural-en-sigla') assert.ok(sinUna(m, 's').includes(b), `«${mala}» no es «${it.bien}» con una s de más`);
-      else if (id === 'plural-mal') {
+      else if (/^plural-(curriculum|comic|album)/.test(id)) {
         const pb = it.bien.split(' '), pm = mala.split(' ');
         assert.equal(pb.length, pm.length, mala);
         assert.equal(pb.filter((p, i) => p !== pm[i]).length, 1, `«${mala}»: una sola palabra distinta`);

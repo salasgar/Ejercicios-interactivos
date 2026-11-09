@@ -13,7 +13,8 @@
 //   - «porque» final (= para que) con subjuntivo admite también «por que» (DPD «porque», 1b y 3):
 //     tras preocuparse, esforzarse, luchar, votar, rogar o abogar valen las dos. Por eso «por que»
 //     solo sale tras verbos de elegir (optar, inclinarse, decidirse, decantarse, apostar) y tras
-//     «caracterizarse» y «distinguirse» (DPD «porque», 2b: «se caracterizan por que…»).
+//     «caracterizarse» (DPD «porque», 2b: «se caracterizan por que…»). «Distinguirse» sale: también va sin
+//     complemento («se distinguen porque…») y entonces cabe el «porque» causal.
 //   - Las formas con -stes (dijistes) son voseo etimológico «con valoración negativa» (DPD
 //     «voseo»): en el ejercicio 2 salen siempre con «tú» delante.
 //   - «sin embargo» entre comas es una recomendación (DPD «sin embargo»): ninguna mala es la
@@ -86,10 +87,10 @@ export const MARCAS_INDIRECTA = ['pregunto', 'pregunta', 'preguntes', 'preguntó
 /** Lo que rige «por» y, con «que» detrás, se escribe «por que»: el texto de la explicación. */
 export const RIGEN_POR = {
   optó: 'optar', optaron: 'optar', inclina: 'inclinarse', inclinan: 'inclinarse', decidimos: 'decidirse',
-  decantó: 'decantarse', apuesta: 'apostar', apostamos: 'apostar', caracteriza: 'caracterizarse', distinguen: 'distinguirse',
+  decantó: 'decantarse', apuesta: 'apostar', apostamos: 'apostar', caracteriza: 'caracterizarse', caracterizan: 'caracterizarse',
 };
 /** De esos, los que admiten el indicativo detrás («se caracteriza por que tiene…»): los demás, subjuntivo. */
-export const RIGEN_CON_INDICATIVO = ['caracteriza', 'distinguen'];
+export const RIGEN_CON_INDICATIVO = ['caracteriza', 'caracterizan'];
 /** Los subjuntivos que siguen a «por que» en el banco (lo comprueba el test). */
 export const SUBJUNTIVOS = ['fuera', 'estudiara', 'juegue', 'hagamos', 'ganara', 'celebremos', 'haga'];
 
@@ -104,7 +105,7 @@ export const PORQUES = [
   pq(1, 'Me resbalé en el patio _ el suelo estaba mojado.', 'porque'),
   pq(1, 'Oye, ¿_ llevas paraguas si hace sol?', 'por qué'),
   pq(1, 'Me pregunto _ Lucía no ha venido hoy a clase.', 'por qué'),
-  pq(1, 'Mi hermano pequeño siempre pregunta _ la luna cambia de forma.', 'por qué'),
+  pq(1, 'Mi hermano pequeño quiere saber _ la luna cambia de forma.', 'por qué'),
   pq(1, 'Nadie sabe _ el gato duerme siempre en mi mochila.', 'por qué'),
   pq(1, '¿Y vosotros _ habéis llegado tan tarde?', 'por qué'),
   pq(1, 'El profesor nos explicó el _ de la regla.', 'porqué'),
@@ -142,8 +143,8 @@ export const PORQUES = [
   pq(3, 'Habrá algún _, digo yo.', 'porqué'),
   pq(3, 'No le encuentro el _ a este ejercicio.', 'porqué'),
   pq(3, 'Los científicos buscan el _ de los terremotos.', 'porqué'),
-  pq(3, 'Un cuadrado se caracteriza _ tiene sus cuatro lados iguales.', 'por que'),
-  pq(3, 'Los números primos se distinguen _ solo tienen dos divisores.', 'por que'),
+  pq(3, 'Un cuadrado se caracteriza _ tiene cuatro lados iguales y cuatro ángulos rectos.', 'por que'),
+  pq(3, 'Los números primos se caracterizan _ solo tienen dos divisores.', 'por que'),
   pq(3, 'Mis abuelos se inclinan _ celebremos la Navidad en su casa.', 'por que'),
   pq(3, 'Al final, el equipo optó _ Elena fuera la capitana.', 'por que'),
   pq(3, 'Todos apostamos _ el concierto se haga en el patio.', 'por que'),
@@ -166,9 +167,9 @@ export function explicacionPorque(item) {
   const previa = anterior(item.frase);
   const regla = {
     porque: '<b>porque</b>, junto y sin tilde, da la causa: es la respuesta a «¿por qué?».',
-    'por qué': antes.includes('¿')
+    'por qué': antes.includes('¿') && !MARCAS_INDIRECTA.includes(previa)
       ? '<b>por qué</b>, separado y con tilde, pregunta por la causa: aquí, en una pregunta directa.'
-      : '<b>por qué</b>, separado y con tilde, pregunta por la causa: aquí es una pregunta indirecta, aunque no lleve ¿?. Se puede cambiar por «por qué motivo».',
+      : '<b>por qué</b>, separado y con tilde, pregunta por la causa: aquí es una pregunta indirecta (depende de «' + previa + '»; no lleva sus propios signos ¿?). Se puede cambiar por «por qué motivo».',
     porqué: `<b>porqué</b>, junto y con tilde, es un nombre, «el motivo»: lleva delante «${previa}».`,
     'por que': `<b>por que</b>, separado y sin tilde, es la preposición «por» que pide «${RIGEN_POR[previa]}» («${RIGEN_POR[previa]} por algo») y la palabra «que».`,
   }[item.buena];
@@ -180,7 +181,7 @@ export const idErrorPorque = (item, puso) => `${ID_FORMA[puso]}-por-${ID_FORMA[i
 
 // --- 2. Formas verbales mal escritas -------------------------------------------------
 
-const STE = 'con «tú», el pretérito acaba en -ste, sin -s al final: tú dijiste, tú comiste (la -s va en el presente: tú dices).';
+const STE = 'con «tú», el pretérito acaba en -ste, sin -s al final: tú dijiste, tú comiste (la -s va en los demás tiempos: tú dices, tú decías; en el pretérito, no).';
 const PARTICIPIO = (verbo, buena) => `el participio de «${verbo}» es irregular: he ${buena}, nunca con -ido.`;
 const DUCIR = 'los verbos en -ducir (conducir, traducir, producir) hacen el pretérito con j: conduje, tradujo, produjo.';
 const JERON = 'detrás de j, el pretérito acaba en -jeron, sin i: dijeron, trajeron, tradujeron.';
@@ -237,7 +238,7 @@ export const ERRORES = {
   satisfaras: { buena: 'satisfarás', mala: 'satisfacerás', regla: '«satisfacer» se conjuga como «hacer»: satisfizo como hizo, satisfarás como harás.' },
   deshizo: { buena: 'deshizo', mala: 'deshació', regla: '«deshacer» se conjuga como «hacer»: deshizo como hizo.' },
   cabran: { buena: 'cabrán', mala: 'caberán', regla: '«caber» es irregular también en el futuro: cabré, cabrás, cabrán.' },
-  yendo: { buena: 'yendo', mala: 'llendo', regla: 'el gerundio de «ir» es yendo, con y: viene de «ir», que no tiene ll.' },
+  yendo: { buena: 'yendo', mala: 'llendo', regla: 'el gerundio de «ir» es yendo, con y: se escribe con y, como cayendo o leyendo.' },
   ve: { buena: 've', mala: 'vé', regla: 'el imperativo de «ir» con «tú» es ve: es de una sílaba y no lleva tilde (como «da» o «fue»).' },
 };
 
@@ -325,15 +326,20 @@ export const MOTIVOS = {
   'puntos-en-sigla': 'sobran los puntos: las siglas se escriben sin puntos ni espacios (DNI, ONG, ESO)',
   'sigla-en-minuscula': 'la sigla va en mayúsculas: cada letra es la inicial de una palabra',
   'plural-en-sigla': 'la sigla no lleva -s (ni \'s) en plural: el plural lo dice el artículo (las ONG, los DVD)',
-  'abreviatura-sin-punto': 'a la abreviatura le falta su punto: las abreviaturas acaban siempre en punto',
+  'abreviatura-sin-punto': 'a la abreviatura le falta su punto: las abreviaturas acaban en punto',
   'abreviatura-sin-tilde': 'a la abreviatura le falta la tilde: la abreviatura conserva la de la palabra (página → pág.)',
   'etc-con-puntos-suspensivos': '«etc.» ya quiere decir «y lo demás»: nunca lleva puntos suspensivos detrás',
   'prefijo-separado': 'el prefijo va pegado a la palabra: no se separa con un espacio',
   'prefijo-con-guion': 'el prefijo va pegado a la palabra: no lleva guion delante de una palabra en minúscula',
+  'guion-ante-varias-palabras': 'ante dos o más palabras el prefijo va separado y sin guion (ex primer ministro)',
+  'espacio-ante-cifra': 'delante de una cifra o de una mayúscula, el prefijo va con guion y no con un espacio (sub-16, anti-OTAN)',
   'prefijo-pegado-a-dos-palabras': 'el prefijo va separado cuando afecta a dos o más palabras que forman una unidad (ex primer ministro)',
   'sin-guion-ante-cifra': 'delante de una cifra o de una mayúscula, el prefijo lleva guion (sub-21, anti-OTAN)',
   'r-simple-tras-prefijo': 'cuando el prefijo acaba en vocal y la palabra empieza por r, se escribe rr para que suene fuerte',
-  'plural-mal': 'el plural está mal formado',
+  'plural-curriculum': 'el plural de «currículum» es currículums (o currículos), no «currícula»',
+  'plural-comic': 'falta el plural: cómic → cómics',
+  'plural-album': 'falta el plural: álbum → álbumes',
+  'plural-album-n': 'el plural de «álbum» es álbumes, con m como en el singular',
   // 4. Puntuación avanzada
   'guion-por-raya': 'el diálogo se escribe con raya (—), que es más larga que el guion (-)',
   'espacio-tras-raya': 'la raya con la que empieza el diálogo va pegada a la primera palabra, sin espacio',
@@ -349,7 +355,7 @@ export const MOTIVOS = {
   'coma-dentro-comillas': 'la coma va fuera de las comillas, no dentro',
   'espacio-dentro-comillas': 'las comillas van pegadas a la primera y a la última palabra que encierran, sin espacios',
   'sin-punto-tras-comillas': 'falta el punto final: va detrás de las comillas de cierre aunque dentro haya ? o !',
-  'punto-y-coma-por-dos-puntos': 'para anunciar lo que viene después («una cosa», «la verdad», «lo siguiente») se usan dos puntos, no punto y coma',
+  'punto-y-coma-por-dos-puntos': 'para anunciar lo que viene después («una cosa», «lo siguiente») se usan dos puntos, no punto y coma',
   'dos-puntos-mal-puestos': 'los dos puntos van justo detrás de lo que anuncian, no en medio',
   'punto-y-coma-tras-conector': 'el punto y coma va delante del conector («sin embargo», «no obstante», «por tanto»), no detrás',
   'sin-signo-antes-del-conector': 'son dos frases: delante del conector que las une tiene que ir un punto y coma (o un punto)',
@@ -373,7 +379,7 @@ export const SIGLAS = [
   el(1, 'Lee el resumen de la pág. 40.', ['Lee el resumen de la pag. 40.', 'abreviatura-sin-tilde'], ['Lee el resumen de la pág 40.', 'abreviatura-sin-punto']),
   el(1, 'La carta es para el Sr. Martínez.', ['La carta es para el Sr Martínez.', 'abreviatura-sin-punto']),
   el(1, 'La Sra. López es la nueva directora.', ['La Sra López es la nueva directora.', 'abreviatura-sin-punto']),
-  el(1, 'Mi tía vive en la Avda. de la Libertad.', ['Mi tía vive en la Avda de la Libertad.', 'abreviatura-sin-punto']),
+  el(1, 'Mi tía vive en la avda. de la Libertad.', ['Mi tía vive en la avda de la Libertad.', 'abreviatura-sin-punto']),
   el(1, 'Mi madre trabaja en el dpto. de ventas.', ['Mi madre trabaja en el dpto de ventas.', 'abreviatura-sin-punto']),
   el(1, 'En el armario hay balones, conos, petos, etc.', ['En el armario hay balones, conos, petos, etc...', 'etc-con-puntos-suspensivos'], ['En el armario hay balones, conos, petos, etc', 'abreviatura-sin-punto']),
   el(1, 'Trae lápices, gomas, tijeras, etc.', ['Trae lápices, gomas, tijeras, etc....', 'etc-con-puntos-suspensivos'], ['Trae lápices, gomas, tijeras, etc', 'abreviatura-sin-punto']),
@@ -392,15 +398,15 @@ export const SIGLAS = [
   el(2, 'Fuimos de compras al hipermercado.', ['Fuimos de compras al hiper mercado.', 'prefijo-separado'], ['Fuimos de compras al hiper-mercado.', 'prefijo-con-guion']),
   el(2, 'Mañana empieza el torneo interescolar.', ['Mañana empieza el torneo inter-escolar.', 'prefijo-con-guion'], ['Mañana empieza el torneo inter escolar.', 'prefijo-separado']),
   el(2, 'Mi hermana tiene la autoestima por las nubes.', ['Mi hermana tiene la auto estima por las nubes.', 'prefijo-separado'], ['Mi hermana tiene la auto-estima por las nubes.', 'prefijo-con-guion']),
-  el(2, 'Vino a la charla un ex primer ministro.', ['Vino a la charla un exprimer ministro.', 'prefijo-pegado-a-dos-palabras'], ['Vino a la charla un ex-primer ministro.', 'prefijo-con-guion']),
-  el(2, 'En la reunión había un ex alto cargo.', ['En la reunión había un exalto cargo.', 'prefijo-pegado-a-dos-palabras'], ['En la reunión había un ex-alto cargo.', 'prefijo-con-guion']),
-  el(2, 'Hicimos carteles pro derechos humanos.', ['Hicimos carteles proderechos humanos.', 'prefijo-pegado-a-dos-palabras'], ['Hicimos carteles pro-derechos humanos.', 'prefijo-con-guion']),
+  el(2, 'Vino a la charla un ex primer ministro.', ['Vino a la charla un exprimer ministro.', 'prefijo-pegado-a-dos-palabras'], ['Vino a la charla un ex-primer ministro.', 'guion-ante-varias-palabras']),
+  el(2, 'En la reunión había un ex alto cargo.', ['En la reunión había un exalto cargo.', 'prefijo-pegado-a-dos-palabras'], ['En la reunión había un ex-alto cargo.', 'guion-ante-varias-palabras']),
+  el(2, 'Hicimos carteles pro derechos humanos.', ['Hicimos carteles proderechos humanos.', 'prefijo-pegado-a-dos-palabras'], ['Hicimos carteles pro-derechos humanos.', 'guion-ante-varias-palabras']),
   // --- Nivel 3: guion ante cifra o mayúscula, rr tras prefijo, plurales difíciles, prefijo y complemento.
-  el(3, 'Mi primo juega en el equipo sub-16.', ['Mi primo juega en el equipo sub16.', 'sin-guion-ante-cifra'], ['Mi primo juega en el equipo sub 16.', 'prefijo-separado']),
-  el(3, 'La selección sub-21 ganó la final.', ['La selección sub 21 ganó la final.', 'prefijo-separado'], ['La selección sub21 ganó la final.', 'sin-guion-ante-cifra']),
-  el(3, 'El torneo es para la categoría sub-12.', ['El torneo es para la categoría sub12.', 'sin-guion-ante-cifra'], ['El torneo es para la categoría sub 12.', 'prefijo-separado']),
-  el(3, 'Mi hermana juega en la liga sub-18 de balonmano.', ['Mi hermana juega en la liga sub 18 de balonmano.', 'prefijo-separado'], ['Mi hermana juega en la liga sub18 de balonmano.', 'sin-guion-ante-cifra']),
-  el(3, 'En los años ochenta hubo marchas anti-OTAN.', ['En los años ochenta hubo marchas antiOTAN.', 'sin-guion-ante-cifra'], ['En los años ochenta hubo marchas anti OTAN.', 'prefijo-separado']),
+  el(3, 'Mi primo juega en el equipo sub-16.', ['Mi primo juega en el equipo sub16.', 'sin-guion-ante-cifra'], ['Mi primo juega en el equipo sub 16.', 'espacio-ante-cifra']),
+  el(3, 'La selección sub-21 ganó la final.', ['La selección sub 21 ganó la final.', 'espacio-ante-cifra'], ['La selección sub21 ganó la final.', 'sin-guion-ante-cifra']),
+  el(3, 'El torneo es para la categoría sub-12.', ['El torneo es para la categoría sub12.', 'sin-guion-ante-cifra'], ['El torneo es para la categoría sub 12.', 'espacio-ante-cifra']),
+  el(3, 'Mi hermana juega en la liga sub-18 de balonmano.', ['Mi hermana juega en la liga sub 18 de balonmano.', 'espacio-ante-cifra'], ['Mi hermana juega en la liga sub18 de balonmano.', 'sin-guion-ante-cifra']),
+  el(3, 'En los años ochenta hubo marchas anti-OTAN.', ['En los años ochenta hubo marchas antiOTAN.', 'sin-guion-ante-cifra'], ['En los años ochenta hubo marchas anti OTAN.', 'espacio-ante-cifra']),
   el(3, 'Lucía se hizo un autorretrato en Plástica.', ['Lucía se hizo un autoretrato en Plástica.', 'r-simple-tras-prefijo'], ['Lucía se hizo un auto retrato en Plástica.', 'prefijo-separado']),
   el(3, 'El coche de mi tía tiene alarma antirrobo.', ['El coche de mi tía tiene alarma antirobo.', 'r-simple-tras-prefijo'], ['El coche de mi tía tiene alarma anti robo.', 'prefijo-separado']),
   el(3, 'Han puesto ventanas antirruido en la biblioteca.', ['Han puesto ventanas anti ruido en la biblioteca.', 'prefijo-separado'], ['Han puesto ventanas antiruido en la biblioteca.', 'r-simple-tras-prefijo']),
@@ -408,10 +414,10 @@ export const SIGLAS = [
   el(3, 'El mando de la tele funciona con infrarrojos.', ['El mando de la tele funciona con infra rojos.', 'prefijo-separado'], ['El mando de la tele funciona con infrarojos.', 'r-simple-tras-prefijo']),
   el(3, 'Hoy visita el instituto el vicerrector de la universidad.', ['Hoy visita el instituto el vicerector de la universidad.', 'r-simple-tras-prefijo'], ['Hoy visita el instituto el vice rector de la universidad.', 'prefijo-separado']),
   el(3, 'Vino a vernos una exjugadora de la selección.', ['Vino a vernos una ex jugadora de la selección.', 'prefijo-separado'], ['Vino a vernos una ex-jugadora de la selección.', 'prefijo-con-guion']),
-  el(3, 'Firmaron un manifiesto anti pena de muerte.', ['Firmaron un manifiesto antipena de muerte.', 'prefijo-pegado-a-dos-palabras'], ['Firmaron un manifiesto anti-pena de muerte.', 'prefijo-con-guion']),
-  el(3, 'Mi madre ha enviado tres currículums esta semana.', ['Mi madre ha enviado tres currícula esta semana.', 'plural-mal']),
-  el(3, 'En mi casa hay muchos cómics de aventuras.', ['En mi casa hay muchos cómic de aventuras.', 'plural-mal']),
-  el(3, 'Tengo dos álbumes de cromos.', ['Tengo dos álbunes de cromos.', 'plural-mal'], ['Tengo dos álbum de cromos.', 'plural-mal']),
+  el(3, 'Firmaron un manifiesto anti pena de muerte.', ['Firmaron un manifiesto antipena de muerte.', 'prefijo-pegado-a-dos-palabras'], ['Firmaron un manifiesto anti-pena de muerte.', 'guion-ante-varias-palabras']),
+  el(3, 'Mi madre ha enviado tres currículums esta semana.', ['Mi madre ha enviado tres currícula esta semana.', 'plural-curriculum']),
+  el(3, 'En mi casa hay muchos cómics de aventuras.', ['En mi casa hay muchos cómic de aventuras.', 'plural-comic']),
+  el(3, 'Tengo dos álbumes de cromos.', ['Tengo dos álbunes de cromos.', 'plural-album-n'], ['Tengo dos álbum de cromos.', 'plural-album']),
 ];
 
 export const AVANZADA = [
@@ -458,9 +464,9 @@ export const AVANZADA = [
   el(3, '—No tengo hambre —dijo Lucía—. Cenaré luego.', ['—No tengo hambre. —dijo Lucía—. Cenaré luego.', 'punto-antes-de-raya'], ['—No tengo hambre —dijo Lucía. Cenaré luego.', 'inciso-narrador-mal']),
   el(3, '—¡Qué frío! —exclamó Hugo—. Cierra la ventana.', ['—¡Qué frío! —Exclamó Hugo—. Cierra la ventana.', 'mayuscula-tras-raya'], ['—¡Qué frío! —exclamó Hugo. Cierra la ventana.', 'inciso-narrador-mal']),
   el(3, 'Solo quiero una cosa: que aprobéis todos.', ['Solo quiero una cosa; que aprobéis todos.', 'punto-y-coma-por-dos-puntos'], ['Solo quiero: una cosa que aprobéis todos.', 'dos-puntos-mal-puestos']),
-  el(3, 'Te voy a decir la verdad: no he estudiado.', ['Te voy a decir la verdad; no he estudiado.', 'punto-y-coma-por-dos-puntos']),
-  el(3, 'Solo te hago una pregunta: ¿vienes o no?', ['Solo te hago una pregunta; ¿vienes o no?', 'punto-y-coma-por-dos-puntos'], ['Solo te hago: una pregunta ¿vienes o no?', 'dos-puntos-mal-puestos']),
-  el(3, 'Pasó lo que temíamos: se suspendió la excursión.', ['Pasó lo que temíamos; se suspendió la excursión.', 'punto-y-coma-por-dos-puntos'], ['Pasó: lo que temíamos se suspendió la excursión.', 'dos-puntos-mal-puestos']),
+  el(3, 'Te voy a decir la verdad: no he estudiado.', ['Te voy a decir: la verdad no he estudiado.', 'dos-puntos-mal-puestos']),
+  el(3, 'Solo te hago una pregunta: ¿vienes o no?', ['Solo te hago: una pregunta ¿vienes o no?', 'dos-puntos-mal-puestos']),
+  el(3, 'Pasó lo que temíamos: se suspendió la excursión.', ['Pasó: lo que temíamos se suspendió la excursión.', 'dos-puntos-mal-puestos']),
   el(3, 'Repasé toda la tarde; sin embargo, el examen me salió mal.', ['Repasé toda la tarde, sin embargo; el examen me salió mal.', 'punto-y-coma-tras-conector'], ['Repasé toda la tarde sin embargo, el examen me salió mal.', 'sin-signo-antes-del-conector']),
   el(3, 'Llovía a cántaros; no obstante, salimos al patio.', ['Llovía a cántaros no obstante, salimos al patio.', 'sin-signo-antes-del-conector'], ['Llovía a cántaros, no obstante; salimos al patio.', 'punto-y-coma-tras-conector']),
   el(3, 'No me gusta el brócoli; por tanto, no lo pido.', ['No me gusta el brócoli, por tanto; no lo pido.', 'punto-y-coma-tras-conector'], ['No me gusta el brócoli por tanto, no lo pido.', 'sin-signo-antes-del-conector']),
