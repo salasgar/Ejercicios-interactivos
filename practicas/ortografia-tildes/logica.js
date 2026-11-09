@@ -181,18 +181,18 @@ const banco = (porNivel, extra = () => ({})) =>
 const CRUDO_TONICA = {
   1: [
     "re-'loj", "pa-'pel", "ca-'lor", "ver-'dad", "ca-'fé", // agudas
-    "'ca-sa", "'me-sa", "ven-'ta-na", "co-'ci-na", "'li-bro", // llanas
-    "'sá-ba-do", "'mé-di-co", "'mú-si-ca", "te-'lé-fo-no", "'pá-ja-ro", "'cá-ma-ra", // esdrújulas
+    "'ca-sa", "'me-sa", "ven-'ta-na", "co-'ci-na", "'ca-ma", // llanas
+    "'sá-ba-do", "'plá-ta-no", "'lám-pa-ra", "te-'lé-fo-no", "'pá-ja-ro", "'cá-ma-ra", // esdrújulas
   ],
   2: [
-    "can-ta-'rá", "can-'tó", "es-cri-'bir", "de-ci-'mal", "hos-pi-'tal",
+    "vi-vi-'rá", "dor-mi-'rán", "es-cri-'bir", "de-ci-'mal", "hos-pi-'tal",
     "can-'ta-ba", "e-'xa-men", "ca-'rác-ter", "ca-rac-'te-res", "i-'ma-gen",
-    "e-'xá-me-nes", "'jó-ve-nes", "i-'má-ge-nes", "vo-'lú-me-nes", "'ór-de-nes", "re-'sú-me-nes",
+    "e-'xá-me-nes", "'jó-ve-nes", "i-'má-ge-nes", "vo-'lú-me-nes", "'rá-pi-do", "re-'sú-me-nes",
   ],
   3: [
     "ba-lom-'pié", "a-de-'más", "es-ta-bi-li-'dad", "res-pon-sa-bi-li-'dad", // agudas
     "ciu-da-'da-no", "cui-da-'do-so", "pa-'ra-guas", "an-'ti-guo", // llanas
-    "mur-'cié-la-go", "de-ci-mo-'sép-ti-mo", "ma-te-'má-ti-ca", "ve-'hí-cu-lo", // esdrújulas
+    "mur-'cié-la-go", "de-ci-mo-'sép-ti-mo", "ma-te-'má-ti-ca", "'pró-xi-mo", // esdrújulas
     "de-'vuél-ve-me-lo", "'cuén-ta-me-lo", "'có-me-te-lo", "ex-'plí-ca-se-lo", // sobresdrújulas
   ],
 };
@@ -204,7 +204,7 @@ export const TONICA = banco(CRUDO_TONICA, p => ({ clase: clase(p.silabas, p.toni
 
 const CRUDO_TILDE = {
   1: [
-    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "ja-'más", "a-de-'más", "'mú-si-ca", "'sá-ba-do", // con tilde
+    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "ja-'más", "a-de-'más", "'plá-ta-no", "'sá-ba-do", // con tilde
     "re-'loj", "pa-'red", "ver-'dad", "can-'tar", "a-'zul", "fe-'liz", "e-'xa-men", "'lu-nes", // sin tilde
   ],
   2: [
@@ -225,22 +225,22 @@ export const TILDE = banco(CRUDO_TILDE);
 const CRUDO_VOCALES = {
   1: [
     "'dí-a", "'tí-a", "pa-'ís", "ra-'íz", "ma-'íz", "o-'ír", "ba-'úl", "Ma-'rí-a", // hiatos con tilde
-    "'Luis", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'ai-re", "'cau-sa", "'pei-ne", // diptongos sin tilde
+    "'Luis", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'cua-tro", "'cau-sa", "'trein-ta", // diptongos sin tilde
   ],
   2: [
-    "tam-'bién", "des-'pués", "'náu-ti-co", "'hués-ped", "'cuí-da-te", "le-'ón", "a-'é-re-o", "'hé-ro-e", // con tilde
+    "tam-'bién", "des-'pués", "'náu-ti-co", "'hués-ped", "des-'truí", "le-'ón", "a-'é-re-o", "'hé-ro-e", // con tilde
     "po-'e-ta", "to-'a-lla", "te-'a-tro", "ca-'no-a", "mu-'se-o", "i-'de-a", "'cie-lo", "'tiem-po", // sin tilde
   ],
   3: [
-    "pro-'hí-be", "'bú-ho", "ve-'hí-cu-lo", "a-'hín-co", "re-'hén", "es-tu-'diáis", "cam-'biéis", "a-ve-ri-'guáis", // con tilde
-    "'hui-da", "je-'sui-ta", "cons-'trui-do", "'viu-da", "des-'cui-do", "'sua-ve", "'cuo-ta", // sin tilde
+    "pro-'hí-be", "'bú-ho", "ca-'í-da", "a-'hín-co", "re-'hén", "es-tu-'diáis", "cam-'biéis", "a-ve-ri-'guáis", // con tilde
+    "'hui-da", "je-'sui-ta", "cons-'trui-do", "'viu-da", "'bui-tre", "'sua-ve", "'cuo-ta", // sin tilde
   ],
 };
 
 /** «aún» o «aun», solo en frase: la frase fuerza una sola lectura. */
 const AUN = [
   { antes: 'Son las nueve y ', despues: ' no ha llegado el autobús.', buena: 'aún', otra: 'aun', razon: 'todavia' },
-  { antes: 'Lucía ', despues: ' está en clase.', buena: 'aún', otra: 'aun', razon: 'todavia' },
+  { antes: 'Son las tres y Lucía ', despues: ' no ha salido de clase.', buena: 'aún', otra: 'aun', razon: 'todavia' },
   { antes: '', despues: ' así, aprobó el examen.', buena: 'Aun', otra: 'Aún', razon: 'incluso' },
   { antes: '', despues: ' los más pequeños pueden hacerlo.', buena: 'Aun', otra: 'Aún', razon: 'incluso' },
 ];
@@ -282,7 +282,7 @@ const CRUDO_MATES = {
     { raw: "rec-'tán-gu-lo", antes: 'Un cuadrado es un ', despues: ' con los cuatro lados iguales.' },
     { raw: "pe-'rí-me-tro", antes: 'El ', despues: ' es la suma de todos los lados.' },
     { raw: "ki-'ló-me-tro", antes: 'De casa al instituto hay un ', despues: '.' },
-    { raw: "'dé-ci-ma", antes: 'El 7 de 0,7 es una ', despues: '.' },
+    { raw: "'cén-ti-mos", antes: 'Un euro son cien ', despues: '.' },
     { raw: "'fór-mu-la", antes: 'Aprendimos la ', despues: ' del área del rectángulo.' },
     { raw: "frac-'ción", antes: 'La mitad de una pizza es una ', despues: '.' },
     { raw: "frac-'cio-nes", mal: 'fracciónes', antes: '1/2 y 3/4 son ', despues: '.' },
@@ -307,7 +307,7 @@ const CRUDO_MATES = {
     { raw: "de-ci-mo-ter-'ce-ro", mal: 'décimotercero', antes: 'Mi hermano quedó ', despues: ' en la carrera.' },
     { raw: "de-ci-mo-'quin-to", mal: 'décimoquinto', antes: 'El 15.º lugar es el ', despues: '.' },
     { raw: "he-xa-go-'nal", mal: 'hexagonál', antes: 'Un prisma con base de seis lados es ', despues: '.' },
-    { raw: "pa-ra-le-lo-'gra-mo", mal: 'paralelógramo', antes: 'Un cuadrilátero con lados paralelos dos a dos es un ', despues: '.' },
+    { raw: "'cu-bo", mal: 'cúbo', antes: 'Un dado tiene forma de ', despues: '.' },
     { raw: "tra-'pe-cio", mal: 'trapécio', antes: 'Un cuadrilátero con solo dos lados paralelos es un ', despues: '.' },
     { raw: "pro-por-cio-'nal", mal: 'proporciónal', antes: 'Si una cantidad se duplica y la otra también, la relación es directamente ', despues: '.' },
     { raw: "ci-'lin-dro", mal: 'cílindro', antes: 'Una lata de refresco tiene forma de ', despues: '.' },
@@ -375,8 +375,8 @@ function finDe(item) {
 
 /** Paso 1 del ejercicio 1: «La sílaba que más se oye de papel es “pel”: pa-PEL». */
 export function explicacionTonica1(item) {
-  const partida = item.silabas.map((s, i) => (i === item.tonica ? s.toUpperCase() : s)).join('-');
-  return `En <b>${item.palabra}</b> la sílaba que más se oye es «${item.silabas[item.tonica]}»: ${partida}.`;
+  const tonica = acentuarSilabas(item.mente ? item.silabas.slice(0, -2) : item.silabas, item.tonica)[item.tonica];
+  return `En <b>${item.escrita}</b> la sílaba que más se oye es «${tonica}»: ${silabasMarcadas(item)}.`;
 }
 
 /** Paso 2 del ejercicio 1. */

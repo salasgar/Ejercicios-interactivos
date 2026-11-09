@@ -12,7 +12,7 @@ import {
   acentuar, clase, razon, nucleoValido, nucleo, tipoUnion, sinTildes, parsear, escritaDe, llevaTilde, letraConTilde,
   TONICA, TILDE, VOCALES_BANCO, MATES,
   generarTonica, generarTilde, generarVocales, generarMates, clasesDe, nombreClase,
-  explicacionTonica1, explicacionTonica2, explicacionTilde, explicacionVocales, explicacionAun, explicacionMates,
+  silabasMarcadas, explicacionTonica1, explicacionTonica2, explicacionTilde, explicacionVocales, explicacionAun, explicacionMates,
   idErrorTonica1, idErrorTonica2, idErrorTilde, idErrorVocales, idErrorAun, idErrorMates,
 } from '../practicas/ortografia-tildes/logica.js';
 
@@ -31,6 +31,21 @@ const ejercicios = [
 ];
 const palabrasDe = banco => banco.filter(it => it.tipo !== 'aun');
 const porNivel = (banco, n) => banco.filter(it => it.nivel === n);
+
+// Palabras que no pueden estar en ningún banco porque su forma sin tilde (la que se enseña en los ejercicios 1 a 3) es otra
+// palabra, con la tónica en otro sitio (reabierta del 9-11): medicó/medico, musica, cantara, canto, ordenes, vehiculo,
+// peiné, descuidó, cuidate (voseo), libró, airé, paralelógramo (variante chilena) y décima (el 7 de 0,7 son siete décimas).
+const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'cuidate', 'libro', 'aire', 'paralelogramo', 'decima'];
+
+test('ninguna palabra de los bancos es una de las que sin tilde son otra palabra', () => {
+  for (const { nombre, banco } of ejercicios) {
+    for (const it of palabrasDe(banco)) {
+      for (const f of [it.palabra, it.escrita, it.mala].filter(Boolean)) {
+        assert.ok(!HOMOGRAFAS_SIN_TILDE.includes(sinTildes(f).toLowerCase()), `${nombre}: ${f}`);
+      }
+    }
+  }
+});
 
 test('acentuar: una tabla hecha aparte de los bancos (reglas generales, hiatos, monosílabos, mayúsculas)', () => {
   const tabla = [
@@ -237,8 +252,9 @@ test('generadores: con pocas vidas no suben, y el orden de los botones varía', 
 
 test('explicaciones: llevan la palabra bien escrita en negrita y su regla', () => {
   for (const it of TONICA) {
-    assert.ok(explicacionTonica1(it).includes(`<b>${it.palabra}</b>`), it.escrita);
-    assert.ok(explicacionTonica1(it).includes(`«${it.silabas[it.tonica]}»`), it.escrita);
+    assert.ok(explicacionTonica1(it).includes(`<b>${it.escrita}</b>`), it.escrita);
+    assert.ok(explicacionTonica1(it).includes(`«${silabasMarcadas(it).split('-')[it.tonica].toLowerCase()}»`), it.escrita);
+    assert.ok(!explicacionTonica1(it).includes(`<b>${it.palabra}</b>`) || it.palabra === it.escrita, 'nunca la palabra sin su tilde');
     assert.ok(explicacionTonica2(it).includes(`<b>${it.escrita}</b>`), it.escrita);
     assert.ok(explicacionTonica2(it).includes(nombreClase(it.clase)), it.escrita);
   }
@@ -255,7 +271,7 @@ test('explicaciones: la regla aplicada a esa palabra', () => {
   assert.match(explicacionTilde(de(TILDE, 'lápiz')), /llana y acaba en z, que no es vocal, n ni s: las llanas llevan tilde/);
   assert.match(explicacionTilde(de(TILDE, 'reloj')), /aguda y acaba en j.*No lleva tilde/);
   assert.match(explicacionTilde(de(TILDE, 'camión')), /aguda y acaba en n/);
-  assert.match(explicacionTilde(de(TILDE, 'música')), /esdrújulas siempre llevan tilde/);
+  assert.match(explicacionTilde(de(TILDE, 'plátano')), /esdrújulas siempre llevan tilde/);
   assert.match(explicacionTilde(de(TILDE, 'bíceps')), /s detrás de otra consonante/);
   assert.match(explicacionTilde(de(TILDE, 'jersey')), /y, que cuenta como consonante/);
   assert.match(explicacionTilde(de(TILDE, 'dio')), /una sola sílaba/);
@@ -265,7 +281,7 @@ test('explicaciones: la regla aplicada a esa palabra', () => {
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'día')), /hiato.*siempre lleva tilde/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'ruido')), /diptongo.*no lleva tilde/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'también')), /diptongo.*en la vocal abierta/);
-  assert.match(explicacionVocales(de(VOCALES_BANCO, 'cuídate')), /segunda vocal/);
+  assert.match(explicacionVocales(de(VOCALES_BANCO, 'destruí')), /segunda vocal/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'poeta')), /dos vocales abiertas/);
   assert.match(explicacionVocales(de(VOCALES_BANCO, 'estudiáis')), /triptongo/);
 });

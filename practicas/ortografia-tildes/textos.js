@@ -9,9 +9,9 @@ const mismo = texto => ({ es: texto, en: texto });
 export const TX = {
   tonica: {
     nombre: { es: 'La sílaba tónica', en: 'Spanish spelling: the stressed syllable' },
-    detalle: { es: 'pa-PEL, CA-sa, TÉ-le-fo-no: aguda, llana o esdrújula', en: 'pa-PEL, CA-sa, TÉ-le-fo-no: aguda, llana or esdrújula' },
+    detalle: { es: 'pa-PEL, CA-sa, te-LÉ-fo-no: aguda, llana o esdrújula', en: 'pa-PEL, CA-sa, te-LÉ-fo-no: aguda, llana or esdrújula' },
     introduccion: mismo(`<p>Toda palabra tiene una sílaba que se pronuncia con más fuerza: la <b>tónica</b>. Según dónde esté, la palabra es:</p>
-      <p><b>aguda</b> (la última): <i>pa-PEL, ca-LOR</i> · <b>llana</b> (la penúltima): <i>CA-sa, ven-TA-na</i> · <b>esdrújula</b> (la antepenúltima): <i>SÁ-ba-do, mú-si-ca</i>.</p>
+      <p><b>aguda</b> (la última): <i>pa-PEL, ca-LOR</i> · <b>llana</b> (la penúltima): <i>CA-sa, ven-TA-na</i> · <b>esdrújula</b> (la antepenúltima): <i>SÁ-ba-do, MÚ-si-ca</i>.</p>
       <p>Primero toca la sílaba que más se oye; si aciertas, di cómo es la palabra. Saber cuál es la tónica es lo que luego decide si lleva tilde.</p>`),
     paso1: 'Toca la sílaba tónica, la que más se oye.',
     paso2: '¿Cómo es la palabra?',
@@ -30,7 +30,7 @@ export const TX = {
     nombre: { es: 'Diptongos e hiatos', en: 'Spanish spelling: diphthongs and hiatuses' },
     detalle: { es: 'día, ruido, también, poeta: dos vocales juntas', en: 'día, ruido, también, poeta: two vowels together' },
     introduccion: mismo(`<p>Las vocales <b>a, e, o</b> son abiertas; <b>i, u</b>, cerradas.</p>
-      <p><b>Diptongo</b>: cerrada + abierta (o dos cerradas) en la <b>misma</b> sílaba: <i>ruido, cuidado, tam-bién</i>. Se acentúa con las reglas de siempre, y la tilde va en la vocal abierta (o en la segunda de dos cerradas: <i>cuí-da-te</i>).</p>
+      <p><b>Diptongo</b>: cerrada + abierta (o dos cerradas) en la <b>misma</b> sílaba: <i>ruido, cuidado, tam-bién</i>. Se acentúa con las reglas de siempre, y la tilde va en la vocal abierta (o en la segunda de dos cerradas: <i>des-truí</i>).</p>
       <p><b>Hiato</b>: dos vocales que se separan. Si una <b>i o u tónica</b> va junto a una abierta, la tilde se pone <b>siempre</b> en ella: <i>dí-a, ra-íz, bú-ho</i>. Dos abiertas (<i>po-e-ta</i>) siguen las reglas de siempre.</p>
       <p>Toca la letra que lleva la tilde. Si no la lleva, toca «Ninguna».</p>`),
     instruccion: 'Toca la vocal que lleva la tilde. Si la palabra no lleva tilde, toca «Ninguna».',

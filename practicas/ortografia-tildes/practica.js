@@ -17,7 +17,7 @@ import {
   TONICA, TILDE, VOCALES_BANCO, MATES,
   generarTonica, generarTilde, generarVocales, generarMates,
   clasesDe, nombreClase, llevaTilde, letraConTilde,
-  explicacionTonica1, explicacionTonica2, explicacionTilde, explicacionVocales, explicacionAun, explicacionMates,
+  silabasMarcadas, explicacionTonica1, explicacionTonica2, explicacionTilde, explicacionVocales, explicacionAun, explicacionMates,
   idErrorTonica1, idErrorTonica2, idErrorTilde, idErrorVocales, idErrorAun, idErrorMates,
 } from './logica.js';
 
@@ -25,7 +25,7 @@ import {
 
 function montarTonica(contenedor, item, api) {
   const it = TONICA[item.i];
-  const marcada = it.silabas.map((s, i) => (i === it.tonica ? `<b>${api.esc(s.toUpperCase())}</b>` : api.esc(s))).join('-');
+  const marcada = silabasMarcadas(it).split('-').map((s, i) => (i === it.tonica ? `<b>${api.esc(s)}</b>` : api.esc(s))).join('-');
   montarDosPasos(contenedor, api, {
     etiqueta: etiquetaNivel(item.nivel, api.esc),
     paso1: {
