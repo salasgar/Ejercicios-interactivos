@@ -88,3 +88,11 @@ los tres ejercicios. Probado así en los tres niveles (un acierto y un fallo en 
   2.ª ed.), y avisar a las tareas 136, 137 y 139 por si las usan como malas.
 - La ficha 138 dice que las hojas del curso escriben los millares con punto; las de `apuntes-1eso-bilingue` usan espacio
   fino (`1\,350`). No cambia nada aquí (el separador está fuera), pero conviene corregirlo en las fichas.
+
+## Reabierta del 9-11 (sesión s-20261109T112906-85f368be, commit 05221aa)
+
+Quitado: ej. 1 N3 «Oye, ¿_ has pintado el mural, con témperas?» (conque también abre preguntas) y ej. 1 N3 «Un enunciado _ lleva a una respuesta equivocada.» («malentender» existe: «malentendido» vale como participio).
+Reescrito (frases que caducaban o eran inexactas): «Este año es el _.» → «Mi prima nació en el año _.» (dos mil diez); «Estamos en el año _.» → «La biblioteca del barrio se inauguró en _.» (2008); «Este año, febrero tiene _ días.» → «Si el año no es bisiesto, febrero…»; «La media maratón tiene _ kilómetros.» → «…algo más de _ kilómetros.»
+Reglas: introducción del ej. 3 (cien/ciento, «salvo delante de mil y de millones»); `cien-por-ciento` sin el «solo»; «cualquier» sale de `sin-apocope` a un error propio `cualquier-sin-apocope`; `simbolo-con-punto` («no llevan punto detrás») y `SIGNIFICADOS.huso` («en huso horario…»).
+Test nuevo: ninguna frase del ej. 3 lleva «estamos en», «este año es», «este año, febrero» ni un año 2026-29. `npm test` 1791/1791. Sin navegador. DLE/DPD sin cotejar (Cloudflare).
+Sin publicar: la 64, 67 y 68 esperan una tarea de publicación.
