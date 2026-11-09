@@ -276,7 +276,7 @@ la propuesta de la tarea de la app de esa semana.
 La ortografía española tiene su propia sección en la portada, «Ortografía», con seis
 bloques: `ortografia` (id 45, «lo más frecuente») y `ortografia-tildes`, `-letras`,
 `-puntuacion`, `-palabras` y `-ampliacion` (ids 64-68). Publicados: la 45 y, desde el
-9-11-2026, `ortografia-letras` (65); los demás siguen en construcción. Cada ejercicio
+9-11-2026, `ortografia-letras` (65) y `ortografia-puntuacion` (66); los demás siguen en construcción. Cada ejercicio
 de un bloque tiene tres niveles que se eligen según cómo vaya el alumno
 (`practicas/_comun/nivel.js`), y los bloques comparten sus piezas
 (`practicas/_comun/ortografia.js`). Qué hay, los niveles y cómo se escribe un ejercicio:

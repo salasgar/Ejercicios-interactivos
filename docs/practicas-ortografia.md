@@ -264,11 +264,20 @@ Este apartado lo rellenan las tareas 140, 141 y 142 al publicar.
 |---|---|---|---|
 | `ortografia` (45), lo más frecuente | antes de la sección | los 11 de siempre | niveles de la 143 |
 | `ortografia-letras` (65), las letras | 9-11-2026 (tarea 140) | 1 hay, ahí, ay; a ver, haber · 2 b o v · 3 g o j y la diéresis · 4 otras letras | 1: 18 / 19 / 23 · 2: 25 / 46 / 29 · 3: 20 / 37 / 35 · 4: 43 / 22 / 38 |
-| `ortografia-puntuacion` (66), puntuación y mayúsculas | **no** (tarea 140: reabierta la 137) | — | — |
-| `ortografia-tildes` (64), `-palabras` (67), `-ampliacion` (68) | no (tareas 141 y 142) | — | — |
+| `ortografia-puntuacion` (66), puntuación y mayúsculas | 9-11-2026 (tarea 141, tras la reabierta de la 137) | 1 mayúsculas · 2 el punto y la coma · 3 dos puntos, puntos suspensivos y el saludo · 4 el correo al profesor | 1: 15 / 16 / 18 · 2: 16 / 16 / 17 · 3: 16 / 17 / 17 · 4: 16 / 16 / 32 (16 correos y 16 asunto o cuerpo) |
+| `ortografia-tildes` (64), las tildes | **no** (tarea 141: reabierta la 135) | — | — |
+| `ortografia-palabras` (67), `-ampliacion` (68) | no (tarea 142) | — | — |
 
 La 140 quitó cinco ítems de `ortografia-letras` antes de publicarla (lista y motivos en
 `reparto-practicas-u2/salidas/140-publicar-ortografia-1/ENTREGA.md`). `ortografia-puntuacion`
 no se publica: tiene más de cinco ítems dudosos (cargos sin nombre, saludo con dos puntos en
 la misma línea, punto tras comillas que cierran con ? o !, puntos suspensivos con minúscula,
 despedidas del correo…), y la reabierta de la 137 dice cuáles.
+
+La reabierta de la 137 (9-11) quitó esos 29 ítems y escribió otros; la 141 la revisó y publicó
+`ortografia-puntuacion` quitando uno más («Subimos a la Sierra de Espuña.»: en Murcia el nombre
+es «Sierra Espuña» y el genérico funciona como parte del nombre, como en «Mar Menor»).
+`ortografia-tildes` no se publica: enseña la palabra sin tildes y sin frase, y varias de esas
+formas son otra palabra (*medico*, *canto*, *cantara*, *ordenes*, *peiné*, *descuidó*…); además,
+«El 7 de 0,7 es una décima», la variante *paralelógramo* y «TÉ-le-fo-no» en el menú. Lista en
+`reparto-practicas-u2/hechos/reabiertas/135--s-20261109T101428-e1825b21.md`.

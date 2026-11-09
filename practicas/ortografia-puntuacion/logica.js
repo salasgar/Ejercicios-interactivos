@@ -90,7 +90,6 @@ export const MAYUSCULAS = [
   may(3, 'Mi tía es Enfermera.', 'Mi tía es enfermera.', 'mayuscula-en-profesion'),
   may(3, 'Su padre trabaja de Cocinero.', 'Su padre trabaja de cocinero.', 'mayuscula-en-profesion'),
   may(3, 'Lucía quiere ser Veterinaria.', 'Lucía quiere ser veterinaria.', 'mayuscula-en-profesion'),
-  may(3, 'Subimos a la Sierra de Espuña.', 'Subimos a la sierra de Espuña.', 'mayuscula-en-generico-geografico'),
   may(3, 'Navegamos por el Río Guadalquivir.', 'Navegamos por el río Guadalquivir.', 'mayuscula-en-generico-geografico'),
   may(3, 'Mi tío trabaja en el ministerio de sanidad.', 'Mi tío trabaja en el Ministerio de Sanidad.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
   may(3, 'Mi padre trabaja en el congreso de los diputados.', 'Mi padre trabaja en el Congreso de los Diputados.', 'minuscula-en-institucion', 'minuscula-en-institucion'),
