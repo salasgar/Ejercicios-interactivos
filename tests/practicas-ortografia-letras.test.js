@@ -293,7 +293,7 @@ test('ortografía-letras: idError con el patrón y estable por confusión', () =
   assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'lápiz'), 'd'), 'd-final-por-z');
   assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'yo'), 'll'), 'll-por-y');
   assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'cielo'), 'z'), 'z-por-c');
-  assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'acción'), 'c'), 'c-por-cc');
+  assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'dirección'), 'c'), 'c-por-cc');
   assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'afición'), 'cc'), 'cc-por-c');
   assert.equal(idErrorLetras(OTRAS.find(i => i.palabra === 'extraño'), 's'), 's-por-x');
   assert.equal(idErrorHaches(HACHES.find(i => i.buena === 'hay'), 'ahí'), 'ahi-por-hay');
@@ -332,7 +332,7 @@ test('ortografía-letras: la diéresis solo sobre la u de güe/güi; el resto de
 
 test('ortografía-letras: las excepciones de b/v y de g/j se explican en el nivel 3, nunca antes', () => {
   for (const it of [...BV, ...GJ].filter(i => ['exc-bv', 'exc-gj', 'homofono-bv'].includes(i.regla))) assert.equal(it.nivel, 3, it.palabra);
-  for (const p of ['árabe', 'hervir', 'servir', 'vivir', 'movilidad', 'civilidad', 'tejer', 'crujir']) {
+  for (const p of ['árabe', 'hervir', 'servir', 'movilidad', 'civilidad', 'tejer', 'crujir']) {
     assert.equal([...BV, ...GJ].find(i => i.palabra === p)?.nivel, 3, p);
   }
 });

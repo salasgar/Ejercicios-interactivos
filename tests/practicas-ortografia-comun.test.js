@@ -80,7 +80,9 @@ test('ortografía común: las seis prácticas de la sección, y cada esqueleto d
   for (const p of seccion) assert.equal(p.transversal, true, p.slug);
   for (const [slugBloque, tarea] of Object.entries(BLOQUES)) {
     const ficha = seccion.find(p => p.slug === slugBloque);
-    assert.equal(ficha.disponible, false, `${slugBloque} no se publica hasta su revisión (140-142)`);
+    // Los publicados tras su revisión (140-142); los demás, no hasta entonces.
+    const PUBLICADOS = ['ortografia-letras']; // 140, 9-11-2026
+    assert.equal(ficha.disponible, PUBLICADOS.includes(slugBloque), `${slugBloque}: se publica solo tras su revisión (140-142)`);
     assert.equal(ficha.ruta, `${slugBloque}/`);
     assert.match(ficha.nombre.es, /^Ortografía: /);
     assert.match(ficha.nombre.en, /^Spanish spelling: /);

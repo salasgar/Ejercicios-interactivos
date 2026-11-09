@@ -258,6 +258,17 @@ lo que un libro de texto viejo diga distinto que la Ortografía de 2010, fuera.
 
 ## 7. Qué hay publicado
 
-Hasta ahora, solo la 45 («lo más frecuente», 11 ejercicios, sin niveles todavía). Los
-bloques 64-68 están en el catálogo con `disponible: false` y son esqueletos «En
-construcción». Este apartado lo rellenan las tareas 140, 141 y 142 al publicar.
+Este apartado lo rellenan las tareas 140, 141 y 142 al publicar.
+
+| Bloque | Publicado | Ejercicios | Ítems por nivel (1 / 2 / 3) |
+|---|---|---|---|
+| `ortografia` (45), lo más frecuente | antes de la sección | los 11 de siempre | niveles de la 143 |
+| `ortografia-letras` (65), las letras | 9-11-2026 (tarea 140) | 1 hay, ahí, ay; a ver, haber · 2 b o v · 3 g o j y la diéresis · 4 otras letras | 1: 18 / 19 / 23 · 2: 25 / 46 / 29 · 3: 20 / 37 / 35 · 4: 43 / 22 / 38 |
+| `ortografia-puntuacion` (66), puntuación y mayúsculas | **no** (tarea 140: reabierta la 137) | — | — |
+| `ortografia-tildes` (64), `-palabras` (67), `-ampliacion` (68) | no (tareas 141 y 142) | — | — |
+
+La 140 quitó cinco ítems de `ortografia-letras` antes de publicarla (lista y motivos en
+`reparto-practicas-u2/salidas/140-publicar-ortografia-1/ENTREGA.md`). `ortografia-puntuacion`
+no se publica: tiene más de cinco ítems dudosos (cargos sin nombre, saludo con dos puntos en
+la misma línea, punto tras comillas que cierran con ? o !, puntos suspensivos con minúscula,
+despedidas del correo…), y la reabierta de la 137 dice cuáles.
