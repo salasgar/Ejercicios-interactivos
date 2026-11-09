@@ -137,6 +137,17 @@ ser una forma que la RAE admite, y un ítem así en un ★ semanal es una reclam
 - Las reabiertas de la U4 (28-10 y 30-10) fueron por casos copiados del papel; aquí el riesgo es otro: una forma admitida por la
   RAE como «mala». La lista negra de `proyecto.md` es el mínimo, no el máximo.
 - (de la 116) Para ver una tarea como alumno hace falta un código de prueba del espacio de Juan Luis; para revisar la práctica, «Probar sin código» basta.
+- (de la 140, 9-11) **Publicar obliga a tocar `tests/practicas-ortografia-comun.test.js`**: el test de la 134 exigía `disponible: false` en todos
+  los bloques. Ahora lleva la lista `PUBLICADOS`; la 141 y la 142 le añaden sus bloques (y lo declaran, porque no está en su lista de ficheros).
+- (de la 140) Un recorte puede romper el test del propio bloque (el de letras busca palabras concretas: «vivir», «acción»): mira con `grep`
+  si la palabra quitada sale en el test antes de dar el recorte por hecho.
+- (de la 140) El DPD (rae.es da 403 a WebFetch) se lee desde Chrome con `fetch('/dpd/<voz>')` dentro de una pestaña de rae.es; las secciones
+  que importan para la puntuación: «mayúsculas» 5.1.3 (la mayúscula de respeto es recomendación, no regla), «dos puntos» 2.9 (tras el saludo,
+  mayúscula **en línea aparte**), «comillas» 2.d (punto tras las comillas aunque cierren con ? o !), «puntos suspensivos» 1 (minúscula si el
+  enunciado sigue). La despedida de una carta no la regula.
+- (de la 140) La ventana de Chrome no se deja estrechar a 375 px: se prueba metiendo la práctica en un `<iframe>` de 375 px desde otra página
+  del mismo servidor. Y la base **no** escribe `error`/`respuesta` en la consola.
+- (de la 140) En el Chrome de este Mac la portada publicada abre con la sesión de AJJN guardada: para mirar que carga, no empieces ningún ejercicio.
 
 ## Prohibido (propio de esta tarea)
 
