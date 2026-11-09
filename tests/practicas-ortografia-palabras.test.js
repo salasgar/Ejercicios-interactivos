@@ -220,3 +220,10 @@ test('ortografia-palabras: ninguna frase repite las de la 45 (ortografia) ni las
   const llenas = new Set([...ajenas]);
   for (const it of HOMOFONOS) assert.ok(!llenas.has(rellenar(it.frase, it.buena)), it.frase);
 });
+
+test('ortografia-palabras: ninguna frase del ejercicio 3 caduca con el año (estamos en, este año es, el año en curso)', () => {
+  for (const it of NUMEROS) {
+    assert.ok(!/estamos en|este año es|este año, febrero/i.test(it.frase), it.frase);
+    assert.ok(!/\b202[6-9]\b/.test(`${it.frase} ${it.buena}`) && !/dos mil veinti/.test(it.buena), it.frase);
+  }
+});

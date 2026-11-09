@@ -241,7 +241,6 @@ export const JUNTAS = [
     ['Está lloviendo mucho, _ coge el paraguas.', 'conque'],
     ['Basta _ lo digas una vez.', 'con que'],
     ['Me conformo _ apruebes todas.', 'con que'],
-    ['Oye, ¿_ has pintado el mural, con témperas?', 'con qué'],
     ['No sé _ pegar esta pieza rota.', 'con qué'],
   ]),
   ...par(3, ['sinfín', 'sin fin'], {
@@ -266,7 +265,6 @@ export const JUNTAS = [
   }, [
     ['Todo fue un _: nadie quería ofenderte.', 'malentendido'],
     ['Perdona, ha sido un _ por mi culpa.', 'malentendido'],
-    ['Un enunciado _ lleva a una respuesta equivocada.', 'mal entendido'],
   ]),
   ...par(3, ['porvenir', 'por venir'], {
     porvenir: '<b>porvenir</b>, junto, es un nombre: el futuro.',
@@ -339,7 +337,7 @@ export const SIGNIFICADOS = {
   vello: 'el pelo fino que sale en el cuerpo',
   honda: 'profunda, o la tira con la que se lanzan piedras',
   onda: 'cada una de las ondulaciones del agua, o la forma en que viajan el sonido y la luz',
-  huso: 'cada franja de la Tierra con la misma hora (huso horario)',
+  huso: 'en «huso horario», cada franja de la Tierra con la misma hora',
   uso: 'la acción de usar algo',
   deshecho: 'del verbo deshacer, o muy cansado',
   desecho: 'lo que se tira, un residuo',
@@ -557,7 +555,7 @@ export const ERRORES = {
       && (m.replace(' ', '') === b || { quinientos: 'cincocientos', setecientos: 'sietecientos', novecientas: 'nuevecientas', novecientos: 'nuevecientos' }[b] === m),
   },
   'cien-por-ciento': {
-    regla: '«cien» solo va delante de un nombre o de «mil» y «millones»; delante de otro número se escribe «ciento» (ciento veinte).',
+    regla: 'delante de otro número más pequeño (veinte, tres…) se escribe «ciento»: ciento veinte.',
     comprueba: (b, m) => b === 'ciento' && m === 'cien',
   },
   'ciento-por-cien': {
@@ -573,9 +571,13 @@ export const ERRORES = {
     comprueba: (b, m) => b.includes('mil ') && m === b.replace('mil ', 'mil y '),
   },
   'sin-apocope': {
-    regla: 'delante de un nombre masculino se escribe la forma corta: primer, tercer, algún, ningún, veintiún, cualquier.',
-    comprueba: (b, m) => ['primer', 'tercer', 'algún', 'ningún', 'veintiún', 'cualquier'].includes(b)
-      && sinTildes(m) === `${sinTildes(b)}${b === 'cualquier' ? 'a' : 'o'}`,
+    regla: 'delante de un nombre masculino se escribe la forma corta: primer, tercer, algún, ningún, veintiún.',
+    comprueba: (b, m) => ['primer', 'tercer', 'algún', 'ningún', 'veintiún'].includes(b)
+      && sinTildes(m) === `${sinTildes(b)}o`,
+  },
+  'cualquier-sin-apocope': {
+    regla: 'delante de un nombre, masculino o femenino, se escribe «cualquier»: cualquier día, cualquier persona.',
+    comprueba: (b, m) => b === 'cualquier' && m === 'cualquiera',
   },
   'millon-sin-plural': {
     regla: 'con dos o más, «millones», en plural.',
@@ -602,7 +604,7 @@ export const ERRORES = {
     comprueba: (b, m) => m !== b && m.toLowerCase() === b,
   },
   'simbolo-con-punto': {
-    regla: 'los símbolos nunca llevan punto: no son abreviaturas.',
+    regla: 'los símbolos no llevan punto detrás (solo el punto con que acaba la frase): no son abreviaturas.',
     comprueba: (b, m) => m === `${b}.`,
   },
   'simbolo-mal': {
@@ -626,7 +628,7 @@ export const NUMEROS = [
   ...num(1, 'numeral-separado', [
     ['Mi hermano mayor tiene _ años.', 'dieciséis', 'diez y seis'],
     ['En mi clase somos _ alumnos.', 'veinticinco', 'veinte y cinco'],
-    ['Este año, febrero tiene _ días.', 'veintiocho', 'veinte y ocho'],
+    ['Si el año no es bisiesto, febrero tiene _ días.', 'veintiocho', 'veinte y ocho'],
     ['El autobús tarda _ minutos en llegar.', 'diecisiete', 'diez y siete'],
     ['Mi prima cumple _ años en mayo.', 'dieciocho', 'diez y ocho'],
     ['El libro de aventuras tiene _ capítulos.', 'diecinueve', 'diez y nueve'],
@@ -659,22 +661,24 @@ export const NUMEROS = [
     ['En la carrera popular corrieron tres _ personas.', 'mil', 'miles'],
   ]),
   ...num(1, 'y-tras-mil', [
-    ['Este año es el _.', 'dos mil veintiséis', 'dos mil y veintiséis'],
+    ['Mi prima nació en el año _.', 'dos mil diez', 'dos mil y diez'],
     ['Mi hermano nació en el _.', 'dos mil quince', 'dos mil y quince'],
   ]),
   // --- Nivel 2: apócopes, millones, porcentajes y años -------------------------------------
   ...num(2, 'sin-apocope', [
     ['En el equipo de fútbol hay _ jugadores.', 'veintiún', 'veintiuno'],
-    ['La media maratón tiene _ kilómetros.', 'veintiún', 'veintiuno'],
+    ['La media maratón tiene algo más de _ kilómetros.', 'veintiún', 'veintiuno'],
     ['Me gustaría ir a Japón _ día.', 'algún', 'alguno'],
     ['¿Tienes _ lápiz que me prestes?', 'algún', 'alguno'],
     ['No hay _ problema: te ayudo yo.', 'ningún', 'ninguno'],
     ['Hoy no he cometido _ error.', 'ningún', 'ninguno'],
-    ['Puedes venir a casa _ día de la semana.', 'cualquier', 'cualquiera'],
     ['Hoy es el _ día de clase.', 'primer', 'primero'],
     ['Mi amiga ganó el _ premio del concurso.', 'primer', 'primero'],
     ['Vivimos en el _ piso.', 'tercer', 'tercero'],
     ['El _ capítulo es el más divertido.', 'tercer', 'tercero'],
+  ]),
+  ...num(2, 'cualquier-sin-apocope', [
+    ['Puedes venir a casa _ día de la semana.', 'cualquier', 'cualquiera'],
   ]),
   ...num(2, 'millon-sin-plural', [
     ['En Madrid viven más de tres _ de personas.', 'millones', 'millón'],
@@ -694,7 +698,7 @@ export const NUMEROS = [
     ['El ser humano llegó a la Luna en _.', '1969', '1.969'],
     ['Mi madre nació en _.', '1985', '1.985'],
     ['Mi hermana pequeña nació en _.', '2019', '2.019'],
-    ['Estamos en el año _.', '2026', '2.026'],
+    ['La biblioteca del barrio se inauguró en _.', '2008', '2.008'],
   ]),
 ];
 

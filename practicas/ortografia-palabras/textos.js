@@ -26,7 +26,7 @@ export const TX = {
     nombre: { es: 'Números y símbolos', en: 'Spanish spelling: numbers and symbols' },
     detalle: { es: 'veinticinco, cien / ciento, 5 kg, 2026…', en: 'veinticinco, cien / ciento, 5 kg, 2026…' },
     introduccion: mismo(`<p>Del 16 al 29, los números se escriben en <b>una sola palabra</b>: <i>dieciséis, veinticinco</i>. Las centenas, también: <i>doscientos, quinientos</i>.</p>
-      <p>Delante de un nombre se dice <b>cien</b> (<i>cien euros</i>), y delante de otro número, <b>ciento</b> (<i>ciento veinte</i>). Los años van <b>sin punto</b>: <i>2026</i>.</p>
+      <p>Delante de un nombre se dice <b>cien</b> (<i>cien euros</i>), y delante de otro número, <b>ciento</b> (<i>ciento veinte</i>), salvo delante de <i>mil</i> y de <i>millones</i> (<i>cien mil</i>). Los años van <b>sin punto</b>: <i>2026</i>.</p>
       <p>Los <b>símbolos</b> no llevan punto ni plural y van detrás del número: <i>5 kg, 30 min, 3 €</i>.</p>`),
   },
 };
