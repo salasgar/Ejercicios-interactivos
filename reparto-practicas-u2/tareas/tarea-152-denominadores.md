@@ -280,3 +280,8 @@ Si paras sin terminar: `$R/hechos/fallos/152--<sid>.md` con hasta dónde llegast
   casos sin solución, `x` en el denominador) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+
+## Trampas encontradas (s-20261109T144439-82cd7321)
+- `explicaSiHace` añade «. » tras la explicación del error: si el texto ya acaba en punto («m.c.m.»), sale doble punto; se quita el punto final antes.
+- Con un solo denominador el feedback decía «los denominadores son 10»: usar singular.
+- Con denominadores primos entre sí, 2·m.c.m. coincide con el producto: un test que exija un id de error concreto falla; basta uno de los permitidos.
