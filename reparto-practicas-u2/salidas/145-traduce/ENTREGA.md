@@ -20,3 +20,8 @@ Cotas por contexto en `COTAS` (parte fija, precio, cantidad, tope), comprobadas 
 - El ejercicio 4 mezcla sesión 1 (expresión, cantidad) y sesión 2 (valor): el campo `sesion` del ítem lo marca.
 - No he podido probar la interfaz en navegador (sin herramienta en esta sesión): `node --check` y tests de lógica en verde, pero falta mirar 375 px y ES/EN a ojo.
 - `npm test`: el único fallo es de `ortografia-letras` (tareas 140-142, de otra sesión).
+
+## Reabierta del 10-11 (acta de la U6)
+- Dinero con dos decimales (`4,00 €` / `€4.00`) en enunciados, opciones y feedback del ejercicio 4; `frases` {es,en} en las opciones de valor; test de 3000 ítems.
+- «cuatro veces más» pasa a «el cuádruple» (test: ningún texto español con «veces más»).
+- Sucesiones (U6-1C-10) siguen fuera: las quita la reabierta de la 144. Sin probar en navegador.
