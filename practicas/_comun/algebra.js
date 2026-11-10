@@ -818,7 +818,7 @@ export const NO_ES_ERROR = {
   'x-por-numero': { es: 'Escribir x · 3 en vez de 3x', en: 'Writing x · 3 instead of 3x' },
   'uno-x': { es: 'Escribir 1x en vez de x', en: 'Writing 1x instead of x' },
   'otro-orden': { es: 'Escribir los términos en otro orden (3 + 2x es 2x + 3)', en: 'Writing the terms in another order (3 + 2x is 2x + 3)' },
-  'sin-simplificar': { es: 'Dar la solución sin simplificar cuando no se pide la irreducible', en: 'Giving the solution unsimplified when the simplest form is not asked for' },
+  'sin-simplificar': { es: 'Dar la solución sin simplificar (la clave la admite; mejor simplificada)', en: 'Giving the solution unsimplified (accepted; simplest form is better)' },
   'otro-camino': { es: 'Resolver con otros pasos que también valen (pasar antes la x o el número; multiplicar por un múltiplo del m.c.m.)', en: 'Solving with other valid steps (moving x or the number first; multiplying by a multiple of the LCM)' },
   'punto-con-parentesis': { es: 'Escribir 3 · (x − 2) en vez de 3(x − 2)', en: 'Writing 3 · (x − 2) instead of 3(x − 2)' },
 };

@@ -81,14 +81,14 @@ la semana (156-159) pone al día esta tabla y `DESTREZAS` a la vez.**
 | U6-1C-06 | 1 | sí | Calcular el valor numérico con un número negativo, poniéndolo entre paréntesis al sustituir | `valor-numerico` |
 | U6-1C-07 | 1 |  | Calcular el valor numérico con una fracción o un decimal sencillos | `valor-numerico` |
 | U6-1C-08 | 1 |  | Calcular el valor numérico de una expresión con dos letras | — |
-| U6-1C-09 | 1 |  | Calcular el valor numérico de una expresión con x² | `valor-numerico` |
-| U6-1C-10 | 1 |  | Calcular los términos de una sucesión dada por su término general | `traduce` |
+| U6-1C-09 | 1 |  | Calcular el valor numérico de una expresión con x² | — |
+| U6-1C-10 | 1 |  | Calcular los términos de una sucesión dada por su término general | — |
 | U6-1C-11 | 1 |  | Hallar el término general de una sucesión o de un patrón de figuras que crece siempre lo mismo | — |
 | U6-1C-12 | 1 | sí | Reconocer términos semejantes: los que tienen la misma parte literal | `terminos-semejantes` |
 | U6-1C-13 | 1 | sí | Sumar y restar términos semejantes con x | `terminos-semejantes` |
 | U6-1C-14 | 1 | sí | Reducir una expresión con términos con x y términos sin x | `terminos-semejantes` |
 | U6-1C-15 | 1 | sí | Saber qué no se puede reducir: 3x + 2 no es 5x, 3x + 2y no se reduce, x + x no es x², x · x no es 2x | `terminos-semejantes`, `errores6` |
-| U6-1C-16 | 1 |  | Multiplicar y dividir un término con x por un número | `terminos-semejantes` |
+| U6-1C-16 | 1 |  | Multiplicar y dividir un término con x por un número | — |
 | U6-1C-17 | 1 |  | Reconocer expresiones equivalentes y comprobar una reducción sustituyendo un valor | — |
 | U6-2A-01 | 2 | sí | Traducir un enunciado a una ecuación | `problemas-ecuaciones` |
 | U6-2A-02 | 2 | sí | Resolver un problema de «pienso un número» de dos pasos y comprobar la solución en el enunciado | `problemas-ecuaciones` |
@@ -112,7 +112,7 @@ la semana (156-159) pone al día esta tabla y `DESTREZAS` a la vez.**
 | U6-2C-13 | 2 |  | Escribir la resolución paso a paso, una operación por línea, con la solución «x = …» y la comprobaci… | — |
 | U6-3A-01 | 3 |  | Traducir y resolver un problema de números con la incógnita en los dos miembros | `problemas-ecuaciones` |
 | U6-3A-02 | 3 |  | Traducir frases con paréntesis: el doble de la suma de un número y cinco frente al doble de un númer… | — |
-| U6-3A-03 | 3 |  | Resolver un problema con la mitad, la tercera o la cuarta parte de un número | `problemas-ecuaciones` |
+| U6-3A-03 | 3 |  | Resolver un problema con la mitad, la tercera o la cuarta parte de un número | — |
 | U6-3B-01 | 3 |  | Vocabulario de los paréntesis y los denominadores: brackets, expand the brackets, denominator, lowes… | `leelo6` |
 | U6-3B-02 | 3 |  | Decir en inglés y en español cuántas soluciones tiene una ecuación | `leelo6` |
 | U6-3C-01 | 3 | sí | Resolver ecuaciones con la x en los dos miembros, sin paréntesis ni denominadores | `resuelve` |
@@ -127,7 +127,7 @@ la semana (156-159) pone al día esta tabla y `DESTREZAS` a la vez.**
 | U6-3C-10 | 3 |  | Resolver ecuaciones con paréntesis en los dos miembros y un signo menos delante | `parentesis-algebra` |
 | U6-3C-11 | 3 | sí | Resolver ecuaciones con un denominador, multiplicando los dos miembros por él | `denominadores` |
 | U6-3C-12 | 3 | sí | Resolver ecuaciones con varios denominadores, multiplicando todos los términos por el m.c.m. | `denominadores` |
-| U6-3C-13 | 3 |  | Resolver ecuaciones con denominadores en los dos miembros y fracciones sin x | `denominadores` |
+| U6-3C-13 | 3 |  | Resolver ecuaciones con denominadores en los dos miembros y fracciones sin x | — |
 | U6-3C-14 | 3 |  | Resolver ecuaciones con denominadores y numeradores con paréntesis | — |
 | U6-3C-15 | 3 |  | Resolver ecuaciones con coeficientes decimales sencillos | — |
 | U6-4A-01 | 4 | sí | Seguir las fases de un problema: decir qué es x, escribir los datos con x, plantear la ecuación, res… | `problemas-ecuaciones` |
@@ -148,12 +148,10 @@ Las fichas 145-155 citan las destrezas por descripción; estas son las que la ta
 que la ficha las nombre del todo, y dónde encajan sin cambiar el número de ejercicios:
 
 - `traduce`: **U6-1A-05** (el valor de una tarifa en contexto) en el ejercicio 4, «Situaciones»
-  (además de escribir `5 + 2g`, «¿cuánto pagas con 3 gigas?»); **U6-1C-10** (los términos de `2n + 1`)
-  solo si F0 admite las sucesiones, como dice la ficha.
-- `valor-numerico`: **U6-1C-09** (`x²`) solo si F0 lo admite (punto d de la propuesta: sí, solo en el
-  valor numérico).
-- `terminos-semejantes`: **U6-1C-01** (3x es 3 · x, x es 1x, −x es −1x) en el ejercicio 2, y **U6-1C-16**
-  (multiplicar un término por un número, `2x · 3 = 6x`) en el 4, que ya trae ese error.
+  (además de escribir `5 + 2g`, «¿cuánto pagas con 3 gigas?»).
+  **U6-1C-10** (sucesiones) queda sin práctica: la 145 no las tiene (acta del 10-11).
+- `valor-numerico`: **U6-1C-09** (`x²`) sin práctica: la 146 no tiene x² (opcional según el acta).
+- `terminos-semejantes`: **U6-1C-01** (3x es 3 · x, x es 1x, −x es −1x) en el ejercicio 2. **U6-1C-16** queda sin práctica.
 - `es-solucion`: **U6-2C-01** (reconocer una ecuación y sus miembros) en el ejercicio 3.
 - `resuelve`: **U6-3C-03** (la solución `x = 0`) como un caso más de los ejercicios 2 y 3.
 - `leelo6`: **U6-3B-02** (decir cuántas soluciones tiene) solo si F0 admite los casos sin solución.
