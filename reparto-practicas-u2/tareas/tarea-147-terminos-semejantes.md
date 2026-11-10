@@ -1,6 +1,6 @@
 # Tarea 147 · Práctica de la unidad 6 «Términos semejantes» (terminos-semejantes)
 
-Actualizado: 2026-11-03 (alta de la montadora del reparto de la unidad 6, s-20261103T140356-12629e13)
+Actualizado: 2026-11-10 (coordinadora de la U6 s-20261110T084200-3c26de2f, con el acta de la 02 de la U6, `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6-revision.md`, F0 aún sin firmar ese día: «Reglas de contenido de la unidad 6» puestas al día con lo decidido —ningún id cambió; dos filas nuevas, `U6-2C-14` y `U6-3C-16`—, y lo que el acta resuelve de esta ficha: los pares con `x²` en «¿semejantes?» **no** (nunca `x²` al reducir; `x · x = x²` solo se nombra, `U6-1C-15`); «`x + x = x²`» sí vale como error que se caza). Antes: 2026-11-03 (alta de la montadora del reparto de la unidad 6, s-20261103T140356-12629e13)
 Precondición: 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6 (semana 1: tareas 06 y 12): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella de la forma canónica); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu semana · Disparo: MANUAL (sesión atendida) · **Plazo: mar 22-12 (ideal); límite vie 15-1**
 Duración esperada: 1 h (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/147-terminos-semejantes/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
@@ -89,7 +89,7 @@ Modelo de interfaz: `practicas/suma-resta/` de la U4 (paso a paso) y `practicas/
 - Ej. 2: coeficiente y parte literal exactos (`x` → 1, `−x` → −1).
 - Ej. 3: se acepta cualquier escritura equivalente de la forma reducida; la expresión de partida no está reducida.
 - Ej. 4: el paso marcado da un resultado distinto del correcto; solo una frase describe el error.
-- Ningún texto de alumno con `×`, con porcentajes, con `x²` fuera de lo que el acta admita, con dos letras en una ecuación, con `1x` ni con `+ −` (recorre los textos generados en los dos idiomas), ni con lo que el acta deje fuera.
+- Ningún texto de alumno con `×`, con porcentajes, con `x²` fuera del valor numérico y de «¿es … solución?», con dos letras en una ecuación (salvo una propiedad con las mismas letras en los dos miembros), con `1x` ni con `+ −` (recorre los textos generados en los dos idiomas), ni con lo que el acta deja fuera (regla 2).
 - Todo distractor distinto de la respuesta correcta **por forma canónica o por solución** y sacado de un error típico con nombre; ningún par de opciones equivalentes.
 - Los casos de la hoja de la semana (en claro) y los del examen (por huella FNV-1a de la forma canónica, calculada fuera del repo) no salen nunca (si existen al escribirla).
 
@@ -128,28 +128,60 @@ Modelo de interfaz: `practicas/suma-resta/` de la U4 (paso a paso) y `practicas/
 ## Reglas de contenido de la unidad 6 (copia de `proyecto.md` de su reparto; lo común no se lee, por eso va aquí)
 
 Las reglas 2-4 y 8-9 de la lista de la unidad 2 (signos `·` y `:`, inglés, regla de oro, feedback, realismo) valen igual.
-La fuente es `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/reparto-unidad6/proyecto.md` («Reglas de contenido comunes») y, cuando exista, el acta
-`/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6-revision.md` (lo que Juan Luis decida en la tarea 02 de aquel reparto: las letras, las sucesiones,
-las potencias de letras, el método —balanza o transposición—, los casos sin solución, hasta dónde los paréntesis y los
-denominadores, los problemas, la notación, las cotas de realismo, los ids). **Hasta el acta, nada de eso entra.**
+La fuente es `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/reparto-unidad6/proyecto.md` («Reglas de contenido comunes») y el acta
+`/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ESO/apuntes-1eso-bilingue/6. Algebra/inventario-unidad6-revision.md` (la tarea 02 de aquel reparto, **cerrada el 9/10-11-2026**:
+lo que Juan Luis decidió de las letras, las sucesiones, las potencias de letras, el método, los casos sin solución, los
+paréntesis, los denominadores, los problemas, la notación, las cotas y los ids; su apartado «Lo que cambia fuera de estos
+ficheros», punto 12, es el de la app). **Si esta copia y el acta discrepan, manda el acta.** Copia puesta al día con el acta el
+2026-11-10 por la coordinadora de la U6 `s-20261110T084200-3c26de2f` (F0 aún sin firmar ese día; **ningún id cambió** respecto a
+la propuesta de la 01: hay dos filas nuevas, `U6-2C-14` y `U6-3C-16`, las dos `tipo_test = no`).
 
 1. **Dos expresiones equivalentes son la misma respuesta, y dos ecuaciones con la misma solución también.** `2x + 3` y `3 + 2x`;
-   `x/2`, `½x` y `0,5x`; `3 · x` y `3x`; `x + x` y `2x`; `2(x + 1)` y `2x + 2`; `x + 3 = 10` y `2x + 6 = 20`; y una solución `3/2`,
+   `x/2`, `0,5x` y `x : 2`; `3 · x` y `3x`; `x + x` y `2x`; `2(x + 1)` y `2x + 2`; `x + 3 = 10` y `2x + 6 = 20`; y una solución `3/2`,
    `1,5` o `6/4`. En cualquier ejercicio de elegir, emparejar o verdadero/falso, ninguna opción puede equivaler a otra: el test lo
    comprueba **por forma canónica** (`a·x + b` con las fracciones exactas de `_comun/algebra.js`, nunca `Number` en coma flotante)
-   y **por solución**. Solo si el ejercicio evalúa la forma escrita («¿cuál está reducida?», «la fracción irreducible») cuenta la
-   escritura, y el enunciado lo dice. Lo que teclea el alumno se lee con `deTexto` y se compara por forma canónica: `3 + 2x` vale
-   como `2x + 3`, y `6/4` vale como `3/2` salvo que la consigna pida la irreducible.
-2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario (semana 1: traducir,
-   la letra, valor numérico, términos semejantes; semana 2: ecuación y solución, transposición, una y dos operaciones, `12x = 3`,
-   negativas; semana 3: `x` en los dos miembros, paréntesis, denominadores; semana 4: problemas). **Ni porcentajes ni
-   proporcionalidad** (U7), ni geometría con fórmula (U8), ni segundo grado, sistemas, inecuaciones ni dos incógnitas (2.º ESO);
-   `x²`, las sucesiones, los casos `ax = b` con `a` o `b` nulos, los denominadores con paréntesis y `x` en el denominador solo si el
-   acta los admite y en la sesión que diga. Se saben la jerarquía (U1), el m.c.m. (U2), los enteros (U3), las fracciones (U4) y los
-   decimales (U5).
-3. **Notación**: coeficiente delante y pegado (`3x`, `−2x`), `x` por `1x`, `·` solo entre números, la división con letras como
-   fracción (`htmlFraccion` de `fracciones.js` con `x` en el numerador; en texto, `x/2`), `3(x − 2)` sin punto; en inglés `2x` se lee
-   *two x* (o *twice x*), `x/2` *x over two* o *half of x*; *solve for x*, *both sides*, *like terms*, *expand the brackets*. El
+   y **por solución**. Solo si el ejercicio evalúa la forma escrita («¿cuál está reducida?», «la fracción irreducible», «escribe sin
+   paréntesis») cuenta la escritura, y el enunciado lo dice; y en «¿es `x = 4` solución?» la ecuación es una sola (acta, n). Lo que
+   teclea el alumno se lee con `deTexto` y se compara por forma canónica: `3 + 2x` vale como `2x + 3`.
+   **Soluciones** (acta, g): la solución simplificada vale **como fracción irreducible o como su decimal exacto, las dos
+   correctas** (`x = −3/2` o `x = −1,5`; `x = 1/4` o `x = 0,25`): el campo de respuesta acepta las dos; **una fracción sin
+   simplificar** (`x = −21/14`) **la admite la clave** en la app (en el examen final, en cambio, resta una parte: no es cosa de la
+   app); **un periódico con puntos suspensivos, nunca** (`x = 1/3`, no `0,333…`; ni como solución que se muestra ni como opción);
+   y en un ejercicio de elegir, **nunca dos opciones con el mismo valor** (`1/4`, `3/12` y `0,25` son la misma respuesta): **no
+   simplificar nunca es un distractor** (`U6-2C-11`). `0,33` no es `1/3` (es su redondeo): nunca equivalen.
+2. **Nada que no se haya dado**: cada ejercicio respeta la columna `sesion` de sus destrezas en el inventario aprobado (semana 1:
+   traducir, la letra, valor numérico, sucesiones, términos semejantes; semana 2: ecuación y solución, identidad, la balanza, la
+   transposición, una y dos operaciones, `12x = 3`, negativas, problemas de dos pasos desde la sesión 7; semana 3: `x` en los dos
+   miembros, solución 0, ninguna o infinitas, paréntesis, denominadores, coeficientes decimales; semana 4: problemas). **Ni
+   porcentajes ni proporcionalidad** (U7), ni geometría con fórmula ni áreas (U8), **ni ecuaciones de segundo grado que haya que
+   resolver, sistemas, inecuaciones ni dos incógnitas** (la `y` nunca como segunda incógnita), **ni sacar factor común** (2.º ESO),
+   ni el producto de dos paréntesis, ni `x` en el denominador, ni `½x` como coeficiente (los fraccionarios, solo `x/2` o `3x/4`).
+   Lo que la 02 decidió (acta, puntos c, d, f, h, i, j):
+   - **`x²` solo en el valor numérico** (`U6-1C-09`: `2x²` con `x = 3` es 18) **y en «¿es … solución?»** (`U6-2C-02`: ¿es `x = −3`
+     solución de `x² + x = 6`?). **Nunca** una ecuación de segundo grado que resolver, nunca `x²` al reducir. `x · x = x²` se
+     nombra (`U6-1C-15`) sin operar con `x²`. Es opcional: una práctica sin `x²` cumple.
+   - **La raíz de `x² = 16`** (`U6-2C-14`): se explica en clase, **no es ejercicio de la app** (ni de ningún examen).
+   - **Sucesiones**: los términos de `2n + 1` (`U6-1C-10`), «¿qué término vale 31?» como ecuación (`U6-2A-04`); el término
+     general de un patrón, solo como reto (`U6-1C-11`). Sin hoja de cálculo.
+   - **`ax = b` con `a` o `b` nulos**: sí, desde la sesión 9, no nucleares: solución 0 (`U6-3C-03`), sin solución e infinitas
+     (`U6-3C-04`), con *this equation has no solution* / *it has infinitely many solutions* (`U6-3B-02`).
+   - **Paréntesis**: con un número delante, también negativo; con un signo menos delante; en los dos miembros; con dos términos con
+     `x` dentro. **Paréntesis dentro de paréntesis, solo si es reto** (`U6-3C-16`: `2[x − (3 − x)] = 10`, `x = 4`), marcado como tal.
+   - **Denominadores**: hasta tres fracciones con numerador `x` o `ax`, y fracciones sin `x`, en uno o en los dos miembros, con el
+     m.c.m. de dos o tres números hasta 30. **Numeradores con paréntesis, solo como reto** (`U6-3C-14`).
+   - **Soluciones y coeficientes**: negativas desde la sesión 6; fraccionarias desde la 7; coeficientes enteros negativos desde
+     la 6 (`−2x = 8`, `−x = 7`); decimales de una cifra solo en `U6-3C-15` (sesión 11, no nuclear: `1,2x − 4 = −0,8x`).
+   Se saben la jerarquía (U1), el m.c.m. (U2), los enteros (U3), las fracciones (U4) y los decimales (U5). De la U5, en la U6
+   (acta, a): los céntimos en los problemas de dinero; euros-céntimos en el de monedas; los decimales negativos, solo como
+   coeficientes, nunca en un problema; los demás cambios de unidad, en ninguno.
+3. **Notación** (acta, p): coeficiente delante y pegado (`3x`, `−2x`), `x` por `1x`, `·` solo entre números, la división con
+   letras como fracción (`htmlFraccion` de `fracciones.js` con `x` en el numerador; en texto, `x/2`); **`x : 2 = 5` solo una vez,
+   en la sesión 6, como lo mismo que `x/2 = 5`: en la app, mejor nunca, y jamás enfrentados en las opciones**; `3(x − 2)` sin
+   punto; la solución «`x = 7`», nunca «`7 = x`»; en inglés `2x` se lee *two x* (o *twice x*), `x/2` *x over two* o *half of x*;
+   *solve for x*, *both sides*, *like terms*, *expand the brackets*, *clear the fractions*, *check*. Las soluciones explicadas
+   nombran las dos ideas («restamos 3 en los dos miembros; es decir, el 3 pasa restando»; *subtract 3 from both sides*; acta, e).
+   Letras (acta, b): `x` casi siempre; `n` en las sucesiones; otra letra solo cuando el enunciado la define (`2a + 3b`). El dinero,
+   con coma en español y punto en inglés, sin separador de millares (acta de la U5, punto m); las impropias, sin mixtos (punto g). El
    alumno puede teclear `2x+3`, `3+2x`, `2·x + 3`, `2*x+3` o `x/2`: `deTexto` los acepta todos; nunca `eval`.
 4. **Regla de oro**: todo distractor, inequívocamente falso, y cada distractor sale de un **error típico** de la columna `nota`
    del inventario, calculado con los números del ítem y comprobado en el test (nunca un número al azar): sumar términos no
@@ -159,23 +191,32 @@ denominadores, los problemas, la notación, las cotas de realismo, los ids). **H
    por el m.c.m. solo los términos con denominador; contestar `x` cuando el problema pide otra cosa; traducir «tres menos que un
    número» como `3 − x`. Los generadores de estos valores están en `_comun/algebra.js` (`ERRORES_TIPICOS`): úsalos, y **cada
    función dice cuándo no sirve** (devuelve `null` cuando el error da lo mismo que la respuesta). **Lo que no es un error**: `x · 3`
-   por `3x`, `1x` por `x`, una solución sin simplificar cuando no se pide la irreducible.
+   por `3x`, `1x` por `x`, el decimal exacto por la fracción irreducible, una solución sin simplificar (regla 1).
 5. **Parejas válidas, que nunca se enfrentan**: *brackets* / *parentheses*; *solve* / *work out*; *twice* / *double*; *like terms* /
-   *similar terms*; *both sides* / *each side*; `x : 2` / `x/2` (si el acta admite las dos); una fracción irreducible y su decimal
-   exacto; una expresión y cualquier reordenación suya; dos ecuaciones equivalentes.
+   *similar terms*; *both sides* / *each side*; `x : 2` / `x/2`; una fracción irreducible y su decimal exacto; una expresión y
+   cualquier reordenación suya; dos ecuaciones equivalentes. «Cinco veces más que» no se usa (es ambiguo); en inglés, *five times as
+   many as* (acta, o).
 6. **Inglés sencillo**; la palabra no matemática que decide la respuesta se aclara entre paréntesis (*twice* (el doble), *three less
    than* (tres menos que), *consecutive* (seguidos), *altogether* (en total), *each* (cada uno), *in three years' time* (dentro de tres
    años)), salvo que sea justo lo que se evalúa. **El enunciado en inglés no puede ser ambiguo**: *twice a number, plus five*
    (`2x + 5`) frente a *twice the sum of a number and five* (`2(x + 5)`).
 7. **Realismo** (regla de Juan Luis del 16-10): la situación tiene que ser posible y **todos** los números que pueda sacar el
-   generador, creíbles, con una cota por contexto que el test comprueba. Orientativas hasta el acta (la sesión fija las suyas y
-   las escribe en su ENTREGA): edades de 1 a 100 (un alumno 6-18, un padre o una madre 25-60, un abuelo 55-95; la diferencia
-   padre-hijo entre 18 y 50; «dentro de n años» y «hace n años» con n de 1 a 20 y nadie con edad negativa); dinero (la paga 1-50 €;
-   precios como en la U5; ahorros hasta 2000 €; con dos decimales si no es entero; un reparto que salga exacto); cantidades de
-   cosas (caramelos, canicas, cromos: 1-200; una clase 12-36 personas; un equipo 5-25); números («pienso un número», consecutivos:
-   enteros de −50 a 200); perímetros con palabras (lados de 1 a 50; nunca con fórmula ni áreas). **La solución de un problema es un
-   natural (o dinero con dos decimales)**: nunca una edad fraccionaria ni un número negativo de personas. Los personajes llevan
-   nombres inventados (no de alumnos reales).
+   generador, creíbles, con **una cota por contexto que el test comprueba** (un `assert` en cada generador, como
+   `src/ejercicios/contextos_mcd_mcm.js`). **Cotas aprobadas en la 02** (acta, «Cotas de realismo aprobadas»; si discrepan, manda el
+   acta): edades de 1 a 100 (un alumno 6-18, un padre o una madre 25-60, un abuelo 55-95; la diferencia padre-hijo entre 18 y 50;
+   «dentro de n años» y «hace n años» con n de 1 a 20 y nadie con edad negativa); números («pienso un número», consecutivos, un
+   número y su doble: enteros de −50 a 200; en «pares consecutivos», `x` par); cantidades de cosas (caramelos, canicas, cromos,
+   lápices, pulseras: 1-200; una clase 12-36 personas; un instituto 200-3000; un equipo 5-25); monedas (de 1 céntimo a 2 €, hasta
+   50 monedas); dinero (la paga 1-50 €; ahorros hasta 2000 €; un producto 0,20-30 €, fruta 0,80-6 €/kg, una prenda 5-120 €, un
+   móvil 80-1200 €, una entrada 3-60 €, gasolina 1,20-2,00 €/L, pagar con un billete de 5, 10, 20 o 50 € que cubra el total, una
+   cena 10-200 € entre 2 y 30 personas que salga exacta…); perímetros descritos con palabras (lados de 1 a 50; nunca con fórmula ni
+   áreas). **El dinero, siempre con dos decimales en el enunciado** (`12,00 €`; en inglés `12.00`), y en la respuesta del alumno
+   valen `12` y `12,00` (acta, o); nunca céntimos en un reparto que no salga exacto. **La solución de un problema es un natural
+   (o dinero con dos decimales)**: nunca una edad fraccionaria, un número negativo de personas ni 7,5 caramelos. **Contextos de la
+   app** (acta, o): «pienso un número», consecutivos, repartos «el doble y n más» y edades de un paso, generados eligiendo primero
+   la solución (como su Excel); los de edades con tabla, monedas, cabezas y patas, «cuántos tiene que darle» y el jardín son del
+   papel. Sin mezclas ni movimiento, sin fracciones de una cantidad de más de un paso. Los personajes llevan nombres inventados (no
+   de alumnos reales).
 8. **Feedback ligado al error**, con los números del ítem («`x + 3 = 10`: al pasar el 3 al otro lado cambia de signo: `x = 10 − 3 =
    7`»), no una regla genérica. Frase sencilla antes que caso límite.
 9. **Casos fijos** (frases, contextos, números) que no copien los de las hojas, los exámenes semanales ni el examen final de la
@@ -277,8 +318,7 @@ Si paras sin terminar: `$R/hechos/fallos/147--<sid>.md` con hasta dónde llegast
   CDN; las prácticas no usan ni siquiera KaTeX (exponentes con `<sup>`; las fracciones con
   `htmlFraccion`).
 - Las reglas de contenido de la unidad 6 (en esta ficha y en `proyecto.md` de su reparto): `×` en vez de `·`, porcentajes,
-  proporcionalidad, segundo grado, sistemas, dos incógnitas; `eval` o coma flotante; lo que el acta deje fuera (`x²`, sucesiones,
-  casos sin solución, `x` en el denominador) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
+  proporcionalidad, segundo grado, sistemas, dos incógnitas; `eval` o coma flotante; lo que el acta deja fuera (`x²` en una ecuación que resolver o al reducir, `U6-2C-14`, `x` en el denominador, sacar factor común, el producto de dos paréntesis, un reto fuera de un ítem marcado como reto) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
 
