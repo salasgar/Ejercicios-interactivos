@@ -18,7 +18,7 @@
 // hoja ni el examen de la unidad 6, así que ambas están vacías: la tarea de publicación coteja.
 
 import {
-  Ecuacion, termino, lineal, aEcuacion, aLineal, ERRORES_TIPICOS as E, huellaCanonica,
+  Ecuacion, termino, lineal, aEcuacion, aLineal, ERRORES_TIPICOS as E, huellaCanonica, leerExpresion,
 } from '../_comun/algebra.js';
 import { Fraccion, fraccion, aTexto as fracATexto } from '../_comun/fracciones.js';
 
@@ -387,6 +387,12 @@ export const resultadoMalo = item => { const pl = PLANTILLA_POR_ID[item.plantill
  * Corrige lo que escribe el alumno (una Fraccion). { acierto, error }: 'repite-el-error' si pone lo mismo que el
  * cálculo malo, 'otro-resultado' en el resto.
  */
+/** Lo que escribe el alumno en «Corrígelo»: entero, fracción o decimal exacto («3», «-5/2», «-0,125»). Fraccion o null. */
+export function leerResultado(texto) {
+  const r = leerExpresion(String(texto ?? '').replace(/^\s*x\s*=\s*/i, ''));
+  return r.ok && r.valor.esConstante() && r.valor.b instanceof Fraccion ? r.valor.b : null;
+}
+
 export function corregirCorrige(item, escrito) {
   if (escrito.equals(resultadoBueno(item))) return { acierto: true, error: null };
   const mal = resultadoMalo(item);

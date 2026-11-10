@@ -151,6 +151,28 @@ test('ejercicio 3: la solución buena se acepta en cualquier escritura; el resul
   }
 });
 
+test('ejercicio 3: el decimal exacto se acepta igual que la fracción; el redondeo de 1/3 no', () => {
+  let exactos = 0;
+  const its = generar(L.generarCorrige, 64);
+  for (const it of its) {
+    const bien = L.resultadoBueno(it);
+    let d = bien.den;
+    while (d % 2 === 0) d /= 2;
+    while (d % 5 === 0) d /= 5;
+    if (d !== 1 || bien.den === 1) continue;
+    exactos++;
+    const dec = String(bien.num / bien.den);
+    for (const t of [dec, dec.replace('.', ','), `x = ${dec.replace('.', ',')}`]) {
+      const v = L.leerResultado(t);
+      assert.ok(v, `no se lee ${t}`);
+      assert.equal(L.corregirCorrige(it, v).acierto, true, `${t} debería valer en ${L.claveItem(it)}`);
+    }
+  }
+  assert.ok(exactos > 0, 'ningún ítem con solución decimal exacta');
+  assert.equal(L.corregirCorrige(its[0], L.leerResultado('0,33')).acierto, false);
+  assert.equal(L.leerResultado('abc'), null);
+});
+
 test('las líneas se leen de vuelta y se escriben igual; solo el enunciado lleva paréntesis', () => {
   for (const [fn, sem] of [[L.generarDonde, 61], [L.generarQue, 62], [L.generarCorrige, 63]]) {
     for (const it of generar(fn, sem)) {

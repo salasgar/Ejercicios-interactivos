@@ -4,10 +4,10 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { ERRORES_TIPICOS } from '../_comun/algebra.js';
-import { leerFraccion, aTexto as fracATexto } from '../_comun/fracciones.js';
+import { aTexto as fracATexto } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
 import {
-  generarDonde, generarQue, generarCorrige, claveItem, htmlLinea, lineaBuena, porque, resultadoBueno, corregirCorrige,
+  generarDonde, generarQue, generarCorrige, claveItem, htmlLinea, lineaBuena, porque, resultadoBueno, corregirCorrige, leerResultado,
 } from './logica.js';
 
 const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
@@ -102,7 +102,7 @@ function montarCorrige(contenedor, item, api) {
   campo.setAttribute('aria-label', tt(TX.nombre_resultado));
   contenedor.querySelector('#campo').append(campo);
 
-  const valor = () => leerFraccion(campo.value);
+  const valor = () => leerResultado(campo.value);
   const actualizar = () => {
     const v = valor(), malo = v === null && campo.value.trim() !== '';
     campo.classList.toggle('campo-numero--malo', malo);
