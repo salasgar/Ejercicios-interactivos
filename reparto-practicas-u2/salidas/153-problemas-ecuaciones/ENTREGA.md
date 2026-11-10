@@ -29,3 +29,9 @@ Consecutivos: menor 5-120 (≤ 200); reparto «veces»: 3-40 cada uno, total ≤
 
 ## Probarlo en 1 minuto
 `npm run servir` → http://localhost:8080/practicas/problemas-ecuaciones/ → «Probar sin código». Probado con Chrome (ES y EN, un ítem fallado por ejercicio; corregido un choque con la clase `.pasos` de la base). **No probado a 375 px** (la ventana no se redimensionó). `disponible: false` sigue; la publica la 159.
+
+## Reabierta del 10-11 (acta de la U6)
+- `eurosDe` siempre con dos decimales (`7,00 €` / `€7.00`) en enunciados, opciones, feedback y respuestas modelo; `leerCantidad` sigue aceptando `12` y `12,00`.
+- «cuántas veces más» pasa a «por cuánto hay que multiplicar lo de A para tener lo de B» (reparto-veces y reparto-tres); test: ningún texto con «veces más».
+- Fuera el jardín (`SITIOS`; quedan patio y póster) y fuera `edades-futuro` entera (relacionaba dos edades en el futuro: es de papel), con `EDADES_FUTURO`, `PADRES`, `paren` y los tres mensajes de error de edades. Cotas y `assert` del resto, como estaban.
+- Test nuevo de 3000 ítems: sin «veces más», sin jardín, todo euro con dos decimales. Sin probar en navegador. `catalogo.js` sin tocar.
