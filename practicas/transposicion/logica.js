@@ -29,6 +29,11 @@ export const solTexto = p => { const f = F(p).simplificar(); return f.den === 1 
 /** Lo que escribe el alumno como solución: «7», «x = 7», «−5», «x=−5», «3/12». Null si no es un número. */
 export function leerSolucion(texto, leer) {
   const t = String(texto ?? '').replace(/^\s*[xX]\s*=\s*/, '');
+  const d = /^\s*([-−–]?)\s*(\d+)[.,](\d{1,6})\s*$/.exec(t);
+  if (d) {
+    const den = 10 ** d[3].length, num = Number(d[2] + d[3]) * (d[1] ? -1 : 1);
+    return new Fraccion(num, den).simplificar();
+  }
   return leer(t);
 }
 

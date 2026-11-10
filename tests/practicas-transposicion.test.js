@@ -102,6 +102,32 @@ test('leerSolucion: «7», «x = 7», «x=−5», «3/12», «−1/4»; null con
   for (const malo of ['', 'x', 'x =', 'abc', '3 5', '2x']) assert.equal(v(malo), null, malo);
 });
 
+test('leerSolucion: decimal exacto con coma o punto, con o sin «x =»; 0,33 no es 1/3', () => {
+  const v = t => leerSolucion(t, leerFraccion);
+  assert.ok(v('2,75').equals(F({ num: 11, den: 4 })));
+  assert.ok(v('x = 2.75').equals(F({ num: 11, den: 4 })));
+  assert.ok(v('−0,5').equals(F({ num: -1, den: 2 })));
+  assert.ok(!v('0,33').equals(F({ num: 1, den: 3 })));
+  for (const malo of ['2,', ',5', '2,7,5']) assert.equal(v(malo), null, malo);
+});
+
+test('ej. 4: el decimal exacto y la fracción sin simplificar se dan por buenos', () => {
+  let conDecimal = 0;
+  for (const item of lote(generarFrente, 53, 1500)) {
+    if (item.tipo !== 'escribir') continue;
+    const s = F(item.solucion);
+    assert.equal(errorDeFrente(item, leerSolucion(`${s.num}/${s.den}`.replace('-', '−'), leerFraccion)), null);
+    if ([2, 4, 5, 8, 10, 20, 25].some(d => s.den === d || s.den === 1) && s.den !== 1) {
+      conDecimal++;
+      const txt = String(s.num / s.den).replace('.', ',');
+      assert.equal(errorDeFrente(item, leerSolucion(txt, leerFraccion)), null, `${txt} para ${solTexto(item.solucion)}`);
+    }
+    const k = F({ num: s.num * 2, den: s.den * 2 });
+    assert.equal(errorDeFrente(item, leerSolucion(`${k.num}/${k.den}`, leerFraccion)), null);
+  }
+  assert.ok(conDecimal > 50, String(conDecimal));
+});
+
 // ─── Ejercicio 1 ──────────────────────────────────────────────────────────────────────────────
 
 const lados = t => t.split(' = ').map(p => evaluar(p));

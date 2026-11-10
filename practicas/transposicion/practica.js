@@ -174,7 +174,7 @@ function montar4(contenedor, item, api) {
   const caja = contenedor.querySelector('#respuesta');
   const responder = (error, texto, v) => api.responder({
     acierto: error === null, error: error ?? undefined, respuesta: texto, espera: 3600,
-    html: ({ tt: t2 }) => (error === null ? t2(TX.ej4.correcto)(item) : t2(TX.ej4.por_que)(item, error, v) + t2(TX.ej4.solucion)(item)),
+    html: ({ tt: t2 }) => (error === null ? t2(TX.ej4.correcto)(item) + (v.den !== 1 && !v.esIrreducible() ? ` ${t2(TX.simplifica)(solTexto(item.solucion))}` : '') : t2(TX.ej4.por_que)(item, error, v) + t2(TX.ej4.solucion)(item)),
   });
   if (item.tipo === 'elegir') {
     const botones = elecciones(caja, {
@@ -190,8 +190,6 @@ function montar4(contenedor, item, api) {
   }
   campoYBoton(caja, api, {
     id: 'campo', nombre: api.esc(tt(TX.campos.solucionFraccion)), leer: leerSol,
-    // Si pide la irreducible, una fracción sin simplificar no gasta intento: se avisa y se espera.
-    aviso: v => (v.den !== 1 && !v.esIrreducible() ? tt(TX.simplifica)(`${v.num < 0 ? '−' : ''}${Math.abs(v.num)}/${Math.abs(v.den)}`) : null),
     alComprobar: (v, texto) => responder(errorDeFrente(item, v), texto, v),
   });
 }

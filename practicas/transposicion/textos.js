@@ -174,9 +174,9 @@ export const TX = {
   campos: {
     resultado: { es: 'Número que falta', en: 'Missing number' },
     solucion: { es: 'Valor de x', en: 'Value of x' },
-    solucionFraccion: { es: 'Valor de x (número o fracción irreducible)', en: 'Value of x (number or simplest fraction)' },
+    solucionFraccion: { es: 'Valor de x (número, decimal o fracción)', en: 'Value of x (number, decimal or fraction)' },
   },
-  simplifica: bi((i, f) => (i === 'es' ? `Simplifica la fracción: ${f} se puede escribir con números más pequeños.` : `Simplify the fraction: ${f} can be written with smaller numbers.`)),
+  simplifica: bi((i, f) => (i === 'es' ? `Bien; mejor simplificada: ${f}.` : `Correct; better in its simplest form: ${f}.`)),
   noNumero: { es: 'Escribe un número, por ejemplo 7, −5 o 3/4.', en: 'Write a number, for example 7, −5 or 3/4.' },
 
   // ─── Ejercicio 1 ───────────────────────────────────────────────────────────────────────────
