@@ -6,7 +6,7 @@
 // UNA letra (x); hasta tres términos con x y denominador natural (x/2, 3x/4), con o sin un número suelto en el
 // primer miembro; el segundo miembro es un número. Sin x en el denominador, sin paréntesis, sin x² y sin x en
 // los dos miembros (eso es 3C-13, que el inventario deja como propuesta). Cotas: denominadores de 2 a 12 con
-// m.c.m. ≤ 36, numeradores de 1 a 5, números sueltos de 1 a 9, solución entera de −30 a 60, segundo miembro
+// m.c.m. ≤ 30, numeradores de 1 a 5, números sueltos de 1 a 9, solución entera de −30 a 60, segundo miembro
 // entero, distinto de 0 y de valor absoluto ≤ 150.
 
 import {
@@ -76,7 +76,7 @@ function denominadoresPara(rng, k) {
       const d = rng.elegir(DEN);
       if (!ds.includes(d)) ds.push(d);
     }
-    if (mcm(...ds) <= 36) return ds;
+    if (mcm(...ds) <= 30) return ds;
   }
   throw new Error('denominadoresPara');
 }

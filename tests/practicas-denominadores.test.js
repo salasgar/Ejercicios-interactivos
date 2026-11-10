@@ -26,7 +26,7 @@ const sol = q => q.resolver();
 const mismaSolucion = (a, b) => { const x = sol(a), y = sol(b); return x instanceof Fraccion && y instanceof Fraccion && x.equals(y); };
 const sinDenominadores = q => [...q.terminosIzq, ...q.terminosDer].every(t => t.coef.simplificar().den === 1);
 
-test('los enunciados: una letra, denominadores de 2 a 12, m.c.m. ≤ 36, solución entera, sin lo que el acta deja fuera', () => {
+test('los enunciados: una letra, denominadores de 2 a 12, m.c.m. ≤ 30, solución entera, sin lo que el acta deja fuera', () => {
   for (const [generar, semilla] of [[generarMcm, 11], [generarSin, 12], [generarResuelve, 13], [generarPasos, 14]]) {
     const plantillas = new Set();
     for (const it of items(generar, semilla)) {
@@ -36,7 +36,7 @@ test('los enunciados: una letra, denominadores de 2 a 12, m.c.m. ≤ 36, soluci�
       assert.ok(!/\)|\(/.test(it.origen), it.origen);
       const dens = denominadoresDe(q);
       assert.ok(dens.length >= 1 && dens.every(d => d >= 2 && d <= 12), it.origen);
-      assert.ok(q.mcmDenominadores() <= 36, it.origen);
+      assert.ok(q.mcmDenominadores() <= 30, it.origen);
       const s = sol(q);
       assert.ok(s instanceof Fraccion && s.den === 1 && s.num !== 0 && s.num >= -30 && s.num <= 60, `${it.origen}: ${s}`);
       assert.equal(q.terminosDer.length, 1);
