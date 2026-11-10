@@ -46,10 +46,10 @@ export const TX = {
       detalle: { es: 'Edades, precios y tarifas con una letra', en: 'Ages, prices and charges with a letter' },
       introduccion: {
         es: `<h3>Situaciones</h3>
-          <p>Un taxi cobra 3 € por empezar y 2 € por cada kilómetro. Con <strong>k</strong> kilómetros se paga <span class="cuenta">3 + 2k</span>: la parte fija (3) y 2 por cada kilómetro (2k).</p>
+          <p>Un taxi cobra 3,00 € por empezar y 2,00 € por cada kilómetro. Con <strong>k</strong> kilómetros se paga <span class="cuenta">3 + 2k</span>: la parte fija (3) y 2 por cada kilómetro (2k).</p>
           <p>Con 5 kilómetros: <span class="cuenta">3 + 2 · 5 = 3 + 10 = 13</span>. Primero se multiplica, después se suma.</p>`,
         en: `<h3>Real-life situations</h3>
-          <p>A taxi charges €3 to start and €2 for each kilometre. With <strong>k</strong> kilometres you pay <span class="cuenta">3 + 2k</span>: the fixed part (3) and 2 for each kilometre (2k).</p>
+          <p>A taxi charges €3.00 to start and €2.00 for each kilometre. With <strong>k</strong> kilometres you pay <span class="cuenta">3 + 2k</span>: the fixed part (3) and 2 for each kilometre (2k).</p>
           <p>With 5 kilometres: <span class="cuenta">3 + 2 · 5 = 3 + 10 = 13</span>. First multiply, then add.</p>`,
       },
     },

@@ -118,3 +118,28 @@ test('frases: sin ambigüedad en lo que lleva dos operaciones', () => {
   assert.equal(fraseDe({ k: '2', n: 3, op: '+' }, 'en'), 'twice a number, plus three');
   assert.equal(fraseDe({ k: '1', n: 5, op: 'n-' }, 'es'), 'cinco menos un número');
 });
+
+test('situaciones: el dinero siempre con dos decimales y sin «veces más»', () => {
+  const its = items(generarSituacion, 21);
+  const euros = /(\d+)[,.](\d+) ?€|€(\d+)\.(\d+)/;
+  let vistos = 0;
+  for (const it of its) {
+    const textos = [it.enunciado, it.pregunta, it.solucion].filter(Boolean);
+    for (const t of textos) assert.ok(!/veces más/.test(t.es), claveItem(it));
+    if (it.tipo === 'cantidad') continue;
+    if (it.tipo === 'valor') {
+      for (const o of it.opciones) {
+        assert.match(o.frases.es, /^\d+,\d\d €$/);
+        assert.match(o.frases.en, /^€\d+\.\d\d$/);
+        if (!o.correcta) { assert.match(o.por_que.es, /\d+,\d\d/); assert.match(o.por_que.en, /\d+\.\d\d/); }
+      }
+      assert.match(it.solucion.es, /\d+,\d\d \+ \d+,\d\d · \d+ = \d+,\d\d \+ \d+,\d\d = \d+,\d\d/);
+    }
+    const intro = it.enunciado;
+    assert.match(intro.es, /\d+,\d\d €/, claveItem(it));
+    assert.match(intro.en, /€\d+\.\d\d/, claveItem(it));
+    assert.ok(euros.test(intro.es + intro.en));
+    vistos++;
+  }
+  assert.ok(vistos > 1000);
+});

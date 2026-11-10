@@ -49,7 +49,7 @@ function montarElegir(contenedor, item, api, enunciado, htmlOpcion) {
 
 const montarExpresion = (c, item, api) => montarElegir(c, item, api, enunciadoFrase, o => o.html);
 const montarFrase = (c, item, api) => montarElegir(c, item, api, enunciadoExpresion, (o, a) => a.esc(a.tt(o.frases)));
-const montarSituacion = (c, item, api) => montarElegir(c, item, api, enunciadoSituacion, o => o.html);
+const montarSituacion = (c, item, api) => montarElegir(c, item, api, enunciadoSituacion, (o, a) => (item.tipo === 'valor' ? a.esc(a.tt(o.frases)) : o.html));
 
 function montarEscribe(contenedor, item, api) {
   const { tt, esc } = api;

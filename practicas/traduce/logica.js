@@ -318,7 +318,8 @@ export function generarFrase(rng) {
 
 // ─── Ejercicio 4 · Situaciones (U6-1A-03, 1A-05) ──────────────────────────────────────────
 
-const eur = n => ({ es: `${n} €`, en: `€${n}` });
+const dos = (n, idioma) => (idioma === 'es' ? n.toFixed(2).replace('.', ',') : n.toFixed(2));
+const eur = n => ({ es: `${dos(n, 'es')} €`, en: `€${dos(n, 'en')}` });
 
 /**
  * Cotas de realismo de cada contexto (regla de Juan Luis del 16-10): lo que puede salir en `f` (parte
@@ -362,10 +363,10 @@ const CONTEXTOS = {
 
 const unaFrase = (a, b) => ({ es: `${a.es} ${b.es}`, en: `${a.en} ${b.en}` });
 const opcionNumero = (v, error, cuentaTexto) => ({
-  valor: String(v), texto: String(v), html: `<span class="cuenta">${v}</span>`, numero: v, correcta: error === null, error,
+  valor: String(v), texto: String(v), html: `<span class="cuenta">${dos(v, 'es')}</span>`, frases: eur(v), numero: v, correcta: error === null, error,
   por_que: error === null ? null : {
-    es: `<span class="cuenta">${cuentaTexto}</span>: ${explicaError(error, 'es')}.`,
-    en: `<span class="cuenta">${cuentaTexto}</span>: ${explicaError(error, 'en')}.`,
+    es: `<span class="cuenta">${cuentaTexto('es')}</span>: ${explicaError(error, 'es')}.`,
+    en: `<span class="cuenta">${cuentaTexto('en')}</span>: ${explicaError(error, 'en')}.`,
   },
 });
 
@@ -404,12 +405,13 @@ function generarTarifaValor(rng, id, cot) {
   const ctx = CONTEXTOS[id];
   const L = cot.letra;
   const buena = f + p * c;
+  const d = (v, i) => dos(v, i);
   const pool = [
-    [(f + p) * c, 'jerarquia-al-sustituir', `(${f} + ${p}) · ${c} = ${(f + p) * c}`],
-    [f + num(`${p}${c}`), 'yuxtaponer-al-sustituir', `${f} + ${p}${c} = ${f + num(`${p}${c}`)}`],
-    [p * c, 'solo-lo-variable', `${p} · ${c} = ${p * c}`],
-    [f + p + c, 'suma-todo', `${f} + ${p} + ${c} = ${f + p + c}`],
-    [p + f * c, 'fijo-y-variable-al-reves', `${p} + ${f} · ${c} = ${p + f * c}`],
+    [(f + p) * c, 'jerarquia-al-sustituir', i => `(${d(f, i)} + ${d(p, i)}) · ${c} = ${d((f + p) * c, i)}`],
+    [f + num(`${p}${c}`), 'yuxtaponer-al-sustituir', i => `${d(f, i)} + ${p}${c} = ${d(f + num(`${p}${c}`), i)}`],
+    [p * c, 'solo-lo-variable', i => `${d(p, i)} · ${c} = ${d(p * c, i)}`],
+    [f + p + c, 'suma-todo', i => `${d(f, i)} + ${d(p, i)} + ${c} = ${d(f + p + c, i)}`],
+    [p + f * c, 'fijo-y-variable-al-reves', i => `${d(p, i)} + ${d(f, i)} · ${c} = ${d(p + f * c, i)}`],
   ];
   const vistos = new Set([buena]);
   const falsasN = [];
@@ -423,8 +425,8 @@ function generarTarifaValor(rng, id, cot) {
   return {
     expr, plantilla: `valor-${id}`, clave: `valor|${id}|${f}|${p}|${c}`, tipo: 'valor', instruccion: 'situacion-valor', glosa: ctx.glosa,
     enunciado: unaFrase(ctx.intro(f, p), { es: '', en: '' }), letra: L,
-    pregunta: ctx.pregunta(c), opciones: rng.barajar([opcionNumero(buena, null, ''), ...falsasN]),
-    solucion: { es: `<span class="cuenta">${f} + ${p} · ${c} = ${f} + ${p * c} = ${buena}</span>.`, en: `<span class="cuenta">${f} + ${p} · ${c} = ${f} + ${p * c} = ${buena}</span>.` },
+    pregunta: ctx.pregunta(c), opciones: rng.barajar([opcionNumero(buena, null, () => ''), ...falsasN]),
+    solucion: ['es', 'en'].reduce((o, i) => ({ ...o, [i]: `<span class="cuenta">${d(f, i)} + ${d(p, i)} · ${c} = ${d(f, i)} + ${d(p * c, i)} = ${d(buena, i)}</span>.` }), {}),
     sesion: 2,
   };
 }
@@ -453,7 +455,7 @@ const CANTIDADES = [
     glosa: null, correcta: n => x(n), paso: n => `${n} cuadernos de x euros: ${n}x`, paso_en: n => `${n} notebooks at x euros each: ${n}x`,
     falsas: n => [[x(1, n), 'por-como-mas'], [x(fraccion(1, n)), 'multiplicar-como-dividir'], [x(1, -n), 'multiplicar-como-restar']] },
   { id: 'caramelos', n: [2, 4],
-    es: n => `Emilio tiene x caramelos y José tiene ${n === 2 ? 'el doble' : n === 3 ? 'el triple' : 'cuatro veces más'}. ¿Cuántos caramelos tienen entre los dos?`,
+    es: n => `Emilio tiene x caramelos y José tiene ${n === 2 ? 'el doble' : n === 3 ? 'el triple' : 'el cuádruple'}. ¿Cuántos caramelos tienen entre los dos?`,
     en: n => `Emilio has x sweets and José has ${n === 2 ? 'twice as many' : n === 3 ? 'three times as many' : 'four times as many'}. How many sweets do they have altogether?`,
     glosa: 'altogether (en total)', correcta: n => x(n + 1), paso: n => `José: ${n}x; entre los dos: x + ${n}x = ${n + 1}x`, paso_en: n => `José: ${n}x; both: x + ${n}x = ${n + 1}x`,
     falsas: n => [[x(n), 'solo-uno'], [x(1, n), 'por-como-mas'], [x(1), 'solo-uno']] },
