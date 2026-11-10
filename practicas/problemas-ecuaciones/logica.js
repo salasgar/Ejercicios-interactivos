@@ -34,9 +34,6 @@ export const ERRORES_PROPIOS = {
   'dos-lados': bi('Ha sumado solo dos lados', 'Added only two sides'),
   'olvidar-n': bi('Ha olvidado lo que mide de más', 'Forgot the extra length'),
   'sumar-n-una-vez': bi('Ha sumado lo que mide de más una sola vez', 'Added the extra length only once'),
-  'anos-a-uno': bi('Ha sumado los años solo a una de las edades', 'Added the years to only one of the ages'),
-  'anos-sin-parentesis': bi('Ha sumado los años solo a una persona', 'Added the years to one person only'),
-  'olvidar-sumar-anos': bi('Ha olvidado sumar los años a una de las edades', 'Forgot to add the years to one of the ages'),
   'contestar-x': bi('Ha contestado x, pero se pregunta otra cantidad', 'Answered x, but the question asks for another quantity'),
   'otra-cantidad': bi('Ha contestado otra cantidad del problema', 'Answered another quantity of the problem'),
   'otra-respuesta': bi('Otra respuesta', 'Another answer'),
@@ -71,9 +68,9 @@ export const decimalDe = (c, idioma) => {
   const e = Math.trunc(c / 100), r = c % 100;
   return `${e}${idioma === 'es' ? ',' : '.'}${String(r).padStart(2, '0')}`;
 };
-/** Céntimos → «2,50 €» / «€2.50» (con los céntimos solo si no son una cantidad entera de euros). */
+/** Céntimos → «2,50 €» / «€2.50» (siempre con dos decimales). */
 export const eurosDe = (c, idioma) => {
-  const s = c % 100 === 0 ? String(c / 100) : decimalDe(c, idioma);
+  const s = decimalDe(c, idioma);
   return idioma === 'es' ? `${s} €` : `€${s}`;
 };
 const euroCorto = (c, idioma) => eurosDe(c, idioma);
@@ -102,7 +99,6 @@ const MULT = {
 const PAREJAS = [['Jim', 'Kate'], ['Hugo', 'Nora'], ['Ivo', 'Lena'], ['Teo', 'Greta']];
 const HERMANOS = [['Eva', 'Leo'], ['Nora', 'Teo'], ['Lena', 'Bruno'], ['Greta', 'Ivo']];
 const TRIOS = [['Sandra', 'Alberto', 'Carmen'], ['Olivia', 'Bruno', 'Greta'], ['Mara', 'Hugo', 'Lena']];
-const PADRES = ['Hugo', 'Teo', 'Ivo', 'Bruno', 'Leo'];
 
 // ─── Los problemas ─────────────────────────────────────────────────────────────────────────────
 //
@@ -162,7 +158,7 @@ PLANTILLAS['reparto-veces'] = rng => {
     xDef: bi(`los ${c.es} que ha comprado ${A}`, `the number of ${c.en} ${A} bought`),
     datos: [
       bi(`los ${c.es} que han comprado los dos juntos (${T})`, `the number of ${c.en} they bought altogether (${T})`),
-      bi(`cuántas veces más ${c.es} compró ${B} (${k})`, `how many times as many ${c.en} ${B} bought (${k})`),
+      bi(`por cuánto hay que multiplicar los ${c.es} de ${A} para tener los de ${B} (${k})`, `how many times as many ${c.en} ${B} bought (${k})`),
       bi(`los ${c.es} que ha comprado ${B} más los de ${A}, sin contar nada más (${T})`, `the ${c.en} ${B} bought plus the ${c.en} ${A} bought (${T})`),
     ],
     eq: Q(`x + ${k}x = ${T}`, `x + ${k}x = ${T}`),
@@ -196,7 +192,7 @@ PLANTILLAS['reparto-tres'] = rng => {
     datos: [
       bi(`las ${c.es} que han hecho los tres juntos (${T})`, `the number of ${c.en} the three of them made (${T})`),
       bi(`cuántas ${c.es} más que ${B} ha hecho ${C} (${n})`, `how many more ${c.en} ${C} made than ${B} (${n})`),
-      bi(`cuántas veces más ${c.es} hizo ${B} que ${A} (2)`, `how many times as many ${c.en} ${B} made as ${A} (2)`),
+      bi(`por cuánto hay que multiplicar las ${c.es} de ${A} para tener las de ${B} (2)`, `how many times as many ${c.en} ${B} made as ${A} (2)`),
     ],
     eq: Q(`x + 2x + 2x + ${n} = ${T}`, `x + 2x + (2x + ${n}) = ${T}`),
     errores: [
@@ -242,47 +238,6 @@ PLANTILLAS['edades-diferencia'] = rng => {
     ],
     cantidades: [cant(bi(`la edad de ${m}`, `${m}'s age`), L), cant(bi(`la edad de ${M}`, `${M}'s age`), L + n),
       cant(bi('la suma de las dos edades', 'the sum of the two ages'), S), cant(bi('los años de diferencia', 'the years between them'), n)],
-  };
-};
-
-/** (a, b, hijo) con la edad del padre entre 25 y 60, la del hijo entre 7 y 18 y los años entre 1 y 20. */
-export const EDADES_FUTURO = (() => {
-  const l = [];
-  for (const [a, b] of [[3, 2], [4, 2], [4, 3]]) {
-    for (let h = 7; h <= 18; h++) {
-      const n = (h * (a - b)) / (b - 1);
-      if (Number.isInteger(n) && n >= 1 && n <= 20 && a * h >= 25 && a * h <= 60) l.push({ a, b, h, n });
-    }
-  }
-  return l;
-})();
-
-PLANTILLAS['edades-futuro'] = rng => {
-  const { a, b, h, n } = rng.elegir(EDADES_FUTURO), H = rng.elegir(PADRES);
-  return {
-    x: h, escala: 1, cota: { min: 1, max: 100 }, paren: true,
-    enun: bi(`El padre de ${H} tiene ${MULT.es[a]} de la edad de ${H}. Dentro de ${n} años tendrá ${MULT.es[b]} de la edad que tenga ${H} entonces.`,
-      `${H}'s father is ${MULT.en[a]} as old as ${H}. In ${n} years' time (dentro de ${n} años) he will be ${MULT.en[b]} as old as ${H} will be then.`),
-    xDef: bi(`la edad actual de ${H}`, `${H}'s age now`),
-    datos: [
-      bi(`los años que pasarán hasta el futuro del problema (${n})`, `the number of years until the time in the problem (${n})`),
-      bi(`cuántas veces la edad de ${H} tiene ahora su padre (${a})`, `how many times ${H}'s age his father is now (${a})`),
-      bi(`cuántas veces la edad de ${H} tendrá su padre en el futuro (${b})`, `how many times ${H}'s age his father will be in the future (${b})`),
-    ],
-    eq: Q(`${a}x + ${n} = ${b}x + ${b * n}`, `${a}x + ${n} = ${b}(x + ${n})`),
-    errores: [
-      { id: 'anos-a-uno', ...Q(`${a}x + ${n} = ${b}x + ${n}`, `${a}x + ${n} = ${b}x + ${n}`) },
-      { id: 'olvidar-sumar-anos', ...Q(`${a}x = ${b}x + ${b * n}`, `${a}x = ${b}(x + ${n})`) },
-      { id: 'anos-sin-parentesis', ...Q(`${a}x + ${a * n} = ${b}x + ${b * n}`, `${a}(x + ${n}) = ${b}(x + ${n})`) },
-    ],
-    pedidos: [
-      pedido('padre', bi(`¿Cuántos años tiene ahora el padre de ${H}?`, `How old is ${H}'s father now?`), bi(`la edad actual del padre de ${H}`, `${H}'s father's age now`), a * h,
-        v => bi(`El padre de ${H} tiene ahora ${v} años.`, `${H}'s father is ${v} years old now.`)),
-      pedido('hijo', bi(`¿Cuántos años tiene ahora ${H}?`, `How old is ${H} now?`), bi(`la edad actual de ${H}`, `${H}'s age now`), h,
-        v => bi(`${H} tiene ahora ${v} años.`, `${H} is ${v} years old now.`), true),
-    ],
-    cantidades: [cant(bi(`la edad actual de ${H}`, `${H}'s age now`), h), cant(bi('la edad actual de su padre', "his father's age now"), a * h),
-      cant(bi('la edad de su padre en el futuro', "his father's age in the future"), a * h + n), cant(bi(`la edad de ${H} en el futuro`, `${H}'s age in the future`), h + n)],
   };
 };
 
@@ -358,7 +313,6 @@ PLANTILLAS.cuadernos = rng => {
 };
 
 const SITIOS = [
-  { es: 'Un jardín rectangular', en: 'A rectangular garden', una_es: 'el jardín', una_en: 'the garden', largo: 'm', borde_es: 'su valla', borde_en: 'its fence', min: 4, max: 35, n: [2, 15] },
   { es: 'Un patio rectangular', en: 'A rectangular playground', una_es: 'el patio', una_en: 'the playground', largo: 'm', borde_es: 'su valla', borde_en: 'its fence', min: 8, max: 35, n: [3, 15] },
   { es: 'Un póster rectangular', en: 'A rectangular poster', una_es: 'el póster', una_en: 'the poster', largo: 'cm', borde_es: 'su marco', borde_en: 'its frame', min: 15, max: 35, n: [5, 15] },
 ];
@@ -475,7 +429,7 @@ export function resolucion(P, idioma) {
   if (P.pasosMano) return P.pasosMano(idioma);
   const q = deEcuacion(P.eq.parse);
   const lineas = q.pasos().map(p => p.ecuacion.aTexto(idioma));
-  return P.paren ? [deEcuacion(P.eq.parse).aTexto(idioma), ...lineas] : lineas;
+  return lineas;
 }
 
 const resolucionHtml = (P, idioma) => `<ul class="desarrollo">${resolucion(P, idioma).map(l => `<li>${cuentaHtml(l)}</li>`).join('')}</ul>`;

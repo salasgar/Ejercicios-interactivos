@@ -8,7 +8,7 @@ import { huellaCanonica, deEcuacion } from '../practicas/_comun/algebra.js';
 import {
   generarIncognita, generarEcuacion, generarResuelve, generarPide, generarSentido, corregirResuelve, leerCantidad,
   feedbackResuelve, solucionSentido, solucionPide, solucionEcuacion, solucionIncognita, porQueEcuacion, porQuePide,
-  ESTA_DEFINIDO, claveItem, CASOS_HOJA, HUELLAS_EXAMEN, reservado, solucionDe, razonable, TIPOS, EDADES_FUTURO,
+  ESTA_DEFINIDO, claveItem, CASOS_HOJA, HUELLAS_EXAMEN, reservado, solucionDe, razonable, TIPOS,
   problema, decimalDe, eurosDe, errorDeSentido, OPCIONES_SENTIDO,
 } from '../practicas/problemas-ecuaciones/logica.js';
 import { TX } from '../practicas/problemas-ecuaciones/textos.js';
@@ -189,10 +189,6 @@ test('la opción «el enunciado está mal» nunca es la buena', () => {
 });
 
 test('cotas de realismo por contexto', () => {
-  for (const { a, b, h, n } of EDADES_FUTURO) {
-    assert.ok(a * h >= 25 && a * h <= 60 && h >= 7 && h <= 18 && n >= 1 && n <= 20, `${a} ${b} ${h} ${n}`);
-    assert.equal(a * h + n, b * (h + n));
-  }
   const rng = crearRng(37);
   for (let i = 0; i < N; i++) {
     const P = problema(rng);
@@ -215,9 +211,28 @@ test('dinero: se escribe con dos decimales (coma o punto) y sin €€', () => {
   assert.equal(decimalDe(250, 'es'), '2,50');
   assert.equal(decimalDe(250, 'en'), '2.50');
   assert.equal(decimalDe(5, 'es'), '0,05');
-  assert.equal(eurosDe(700, 'es'), '7 €');
-  assert.equal(eurosDe(700, 'en'), '€7');
+  assert.equal(eurosDe(700, 'es'), '7,00 €');
+  assert.equal(eurosDe(700, 'en'), '€7.00');
   assert.equal(eurosDe(1250, 'en'), '€12.50');
+});
+
+test('acta U6: sin «veces más», sin jardín ni edades futuras, y todo euro con dos decimales', () => {
+  assert.ok(!TIPOS.includes('edades-futuro'));
+  const rng = crearRng(39);
+  for (let i = 0; i < N; i++) {
+    const P = problema(rng);
+    const todos = [P.enun, P.xDef, ...P.datos, P.eq.txt, ...P.pedidos.map(p => p.frase), ...P.cantidades.map(c => c.nombre)];
+    for (const t of todos) {
+      assert.ok(!/veces más|jard[ií]n/i.test(t.es) && !/garden/i.test(t.en), t.es);
+      for (const m of t.es.matchAll(/(\d+(?:,\d+)?) €/g)) assert.match(m[1], /^\d+,\d\d$/, t.es);
+      for (const m of t.en.matchAll(/€(\d+(?:\.\d+)?)/g)) assert.match(m[1], /^\d+\.\d\d$/, t.en);
+    }
+    for (const p of P.pedidos) for (const idioma of IDIOMAS) {
+      const r = p.resp(p.valor)[idioma];
+      for (const m of r.matchAll(/(\d+(?:,\d+)?) €/g)) assert.match(m[1], /^\d+,\d\d$/, r);
+      for (const m of r.matchAll(/€(\d+(?:\.\d+)?)/g)) assert.match(m[1], /^\d+\.\d\d$/, r);
+    }
+  }
 });
 
 test('ningún texto de alumno con ×, porcentajes ni x² (enunciados, ecuaciones y textos fijos, en los dos idiomas)', () => {
