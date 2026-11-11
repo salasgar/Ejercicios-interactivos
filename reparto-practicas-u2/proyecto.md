@@ -782,3 +782,31 @@ Decisiones del 6-11 que cambian fichas existentes (sin tarea nueva):
   app solo dentro de la fruta al peso y la gasolina**, porque U5-1A-01 es nuclear y sin ella la app no la practicaría, y así los
   contextos del papel (tienda de varios artículos, cena, botellas) siguen sin verse antes del examen.
 
+
+## Tareas 169-170: cuarta publicación de la U4, las cinco prácticas otra vez sin publicador (2026-11-11, s-20261111T215225-39c1f4f5)
+
+Dadas de alta el 11-11 por encargo de Juan Luis («Da de alta las tareas que las publiquen, con la propuesta de la tarea semanal al día y la
+121 como siguiente paso. Usa como modelo las fichas de la 162 y la 163. El plazo es antes del martes 8-12»). La 162 y la 163 (6-11) **no
+publicaron nada**: reabrieron por tercera vez `fraccion-de`, `suma-resta`, `multiplica-divide`, `combinadas-fracciones` y `errores4`, y las
+cinco reabiertas cerraron ese mismo día (LISTAS, sin publicar, sin publicador). Sin publicarlas, la 121 no puede montar las semanas 2 y 3 en
+el panel ni la tarea 29 del reparto de la U4 programarlas en Classroom.
+
+- **169 → 170** (ALTO, 1 h cada una, en cadena por `catalogo.js` y `docs/practicas-unidad4.md`, como 162 → 163): la 169 publica
+  `fraccion-de` y `suma-resta` (semana 2) y la 170 `multiplica-divide`, `combinadas-fracciones` y `errores4` (semana 3), las dos **antes del
+  mar 8-12** (plazo de la 121). Cada una deja al día la propuesta de la tarea de su semana, que la 121 monta con Juan Luis.
+- **Criterio de reapertura** (decisión de la coordinadora del 11-11, que Juan Luis puede cambiar): es la quinta revisión y cada una ha
+  encontrado algo que la anterior no miraba. Se reabre solo por un caso del papel que la práctica **pregunta** con los mismos datos (en
+  cualquier orden y con el signo en cualquier operando), por la regla de oro, el realismo o un fallo en pantalla. **No** por lo que las
+  publicaciones anteriores dejaron «fuera de criterio» y nadie decidió desde el 30-10 (inversos, opciones que están bien de un U4-3C-11,
+  pasos compartidos que el ítem no pregunta, líneas de una sola operación, variantes sin signo, potencias de las hojas): ver los mismos
+  números en otra tarea no enseña la respuesta del examen. Las dos fichas lo copian.
+- **Si reabren una, no se queda sin publicador**: la terminada empieza por `PARCIAL:` (como la de la 121) y la misma tarea se vuelve a
+  reclamar cuando cierre la reabierta, para revisar solo lo reabierto.
+- El 9-11 se renombraron los `.tex` de los exámenes semanales de la U4 (`examen-u4-semanaN*.tex`; commit eeed01f de la carpeta de apuntes):
+  solo cambió una línea de cabecera; un barrido con los nombres viejos no lee ningún examen. Está en las trampas de las dos fichas.
+- Siguen **sin publicador**, fuera de este encargo: `lee-decimales`, `compara-decimales`, `suma-resta-decimales` y
+  `multiplica-divide-decimales` (U5; la 132 espera), y `ortografia-tildes`, `ortografia-palabras` y `ortografia-ampliacion` (propuesta 1 de la
+  142). Los dos lo dicen en el tablón; los da de alta la coordinadora cuando Juan Luis lo pida.
+- **El tablón, más corto**: el 11-11 la coordinadora lo regeneró entero (pesaba unos 110 000 tokens y ninguna sesión podía leerlo   «entero») y movió el historial de líneas «Actualizado» a `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md`. El guion que
+  lo regenera desde `hechos/` está en `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py`
+  (`python3 -I <guion> reparto-practicas-u2 > /tmp/x && mv`, ver su cabecera): úsalo en vez de rehacer las filas a mano.
