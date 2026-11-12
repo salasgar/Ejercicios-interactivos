@@ -1,4 +1,24 @@
-# ENTREGA · Tarea 121 · Las tareas semanales de la U4 en el panel — **semanas 1 y 2** (la 3, pendiente)
+# ENTREGA · Tarea 121 · Las tareas semanales de la U4 en el panel — **las tres semanas** (tareas 20, 21 y 22)
+
+## Tercera pasada (2026-11-12, la misma sesión): la semana 3, tarea 22
+
+Sesión `s-20261112T183110-92d9d858`, reclamo `121--s-20261112T183110-92d9d858-b.md`. Mientras Juan Luis confirmaba la semana 2, la 170 cerró
+LISTA (46524bd: publicadas `multiplica-divide` y `errores4`; `combinadas-fracciones` ya lo estaba). Comprobado en el `catalogo.js` de
+`origin/main` (53-55 `disponible: true`) y en el editor publicado, que ya lista las tres. Propuesta: la de
+`salidas/170-publicar-u4-semana-3-cuater/ENTREGA.md` (su tercera pasada), que es el plan A de la 111 tal cual.
+
+| Id | Título (ES / EN) | `desde` → `hasta` | ★ | A elegir | `nElegir` | Puntos | Plan |
+|---|---|---|---|---|---|---|---|
+| **22** | U4 · Semana 3 · Multiplicar, dividir y combinadas / U4 · Week 3 · Multiplying, dividing and mixed operations | 2027-01-11 → 2027-01-14 | 7 | 6 | 3 | 100 | A |
+
+Unidad 4, obligatoria con plazo. Juan Luis confirmó el resumen antes de guardar. Ejercicios guardados (releídos tras recargar):
+
+- ★ `multiplica-divide` 1, 2, 3, 4 · `combinadas-fracciones` 1, 2 · `ortografia` 7
+- a elegir `suma-resta` 4 · `multiplica-divide` 5 · `combinadas-fracciones` 3 · `errores4` 1, 2, 3
+
+Desviaciones: **ninguna de contenido**; solo el orden del catálogo. Comprobación: el panel recargado enseña «Tarea 22 · … · 7 ★ + 3 de 6 ·
+desde 11-01 · plazo 14-01» y las tareas 1-4 y 11-21 sin tocar; `semana.html?t=22` enseña «Obligatoria · Plazo: jueves 14-01», «Termina los 7
+ejercicios con ★ y 3 más… Son 100 puntos», los 7 ★ y «Elige 3» (solo mirada; nada empezado).
 
 ## Segunda pasada (2026-11-12): la semana 2, tarea 21
 
@@ -76,15 +96,15 @@ también para las semanas 2 y 3 de la U4 y para la 132 de la U5.
 
 ## Para la tarea 29 del reparto de la U4 (Classroom)
 
-Precondición externa cumplida **para las semanas 1 y 2** (actualizado el 12-11):
+Precondición externa cumplida **para las tres semanas** (actualizado el 12-11):
 
 | Semana | Id | Enlace | Visible en la portada desde | Plazo |
 |---|---|---|---|---|
 | 1 | 20 | `https://salasgar.github.io/Ejercicios-interactivos/practicas/semana.html?t=20` | lun 14-12 | jue 17-12 23:59 |
 | 2 | 21 | `https://salasgar.github.io/Ejercicios-interactivos/practicas/semana.html?t=21` | lun 21-12 | jue 7-1 23:59 |
-| 3 | — | pendiente (105-107 sin publicar: la 170 cerró PARCIAL y está en su segunda pasada) | lun 11-1 | jue 14-1 |
+| 3 | 22 | `https://salasgar.github.io/Ejercicios-interactivos/practicas/semana.html?t=22` | lun 11-1 | jue 14-1 23:59 |
 
-Recuentos para la descripción: semana 1, 6 ★ + 4 de 10 a elegir; semana 2, 7 ★ + 3 de 6 a elegir; las dos, 100 puntos. Estas tareas **no están en `tareas.js`**: el script de Classroom tiene que
+Recuentos para la descripción: semana 1, 6 ★ + 4 de 10 a elegir; semanas 2 y 3, 7 ★ + 3 de 6 a elegir; las tres, 100 puntos. Estas tareas **no están en `tareas.js`**: el script de Classroom tiene que
 tomar los datos de esta tabla.
 
 ## Comprobación
