@@ -12,16 +12,24 @@ export function explicaMcm(item, { idioma, tt }) {
   return `${REGLA[idioma]} ${tt(item.solucion)} ${respuesta(idioma, cuenta(String(item.mcm)))}`;
 }
 
+// Revisión 191: con un solo denominador, «El m.c.m. de 7 es 7» se dice «El único denominador es 7».
+const unSoloDenominador = html => html
+  .replace(/^El m\.c\.m\. de (\d+) es \1\./, 'El único denominador es $1.')
+  .replace(/^The LCM of (\d+) is \1\./, 'The only denominator is $1.');
+
+// Revisión 191: el «✓» de la comprobación cierra la frase antes de «La respuesta es…».
+const conPunto = html => html.replace(/✓$/, '✓.');
+
 export function explicaSin(item, { idioma, tt }) {
   const buena = item.opciones.find(o => o.correcta);
-  return `${REGLA[idioma]} ${tt(item.solucion)} ${respuesta(idioma, cuenta(buena.html))}`;
+  return `${REGLA[idioma]} ${unSoloDenominador(tt(item.solucion))} ${respuesta(idioma, cuenta(buena.html))}`;
 }
 
 export function explicaResuelve(item, { idioma, tt }) {
   const regla = idioma === 'es'
     ? 'Primero se quitan los denominadores multiplicando todos los términos por el m.c.m.; después se resuelve como siempre.'
     : 'First clear the denominators by multiplying every term by the LCM; then solve as usual.';
-  return `${regla} ${tt(item.explicacion)} ${respuesta(idioma, cuenta(`<i>x</i> = ${item.solucion}`))}`;
+  return `${regla} ${conPunto(tt(item.explicacion))} ${respuesta(idioma, cuenta(`<i>x</i> = ${item.solucion}`))}`;
 }
 
 export function explicaPasos(item, { idioma, tt }) {
@@ -29,5 +37,5 @@ export function explicaPasos(item, { idioma, tt }) {
   const tres = es
     ? `${cuenta(String(item.mcm))} (m.c.m.), ${cuenta(item.cerrada)} y ${cuenta(`<i>x</i> = ${item.solucion}`)}`
     : `${cuenta(String(item.mcm))} (LCM), ${cuenta(item.cerrada)} and ${cuenta(`<i>x</i> = ${item.solucion}`)}`;
-  return `${REGLA[idioma]} ${tt(item.explicacion)} ${respuesta(idioma, tres)}`;
+  return `${REGLA[idioma]} ${conPunto(tt(item.explicacion))} ${respuesta(idioma, tres)}`;
 }

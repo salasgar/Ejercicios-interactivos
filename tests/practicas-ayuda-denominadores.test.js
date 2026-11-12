@@ -33,6 +33,8 @@ test('denominadores ej. 2: la explicación lleva la ecuación correcta', () => {
     for (const item of items(L.generarSin, 2)) {
       const html = A.explicaSin(item, ctx(idioma));
       sinRestos(html, 'ej2');
+      // Con un solo denominador no se habla de «el m.c.m. de 7» (revisión 191).
+      assert.doesNotMatch(html, /m\.c\.m\. de (\d+) es \1\b|LCM of (\d+) is \2\b/, `ej2: ${html}`);
       lleva(html, `${resp(idioma)} <span class="cuenta">${item.opciones.find(o => o.correcta).html}</span>.`, 'ej2');
     }
   }
