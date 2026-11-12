@@ -5,6 +5,7 @@
 //         errorTipico: { h, m } | null }
 
 import { mcm } from '../_comun/aritmetica.js';
+import { TX, horaTexto } from './textos.js';
 
 // ─── Ejercicio 1: predecir la coincidencia en la línea de tiempo (0-60) ───────
 // Pares (a, b) con 2 ≤ a < b ≤ 12 y m.c.m. ≤ 60 (cabe en la línea 0-60).
@@ -122,4 +123,32 @@ export function generarTresOMultiplo(rng) {
 
 export function comprobarTresOMultiplo(item, respuesta) {
   return respuesta === item.solucion;
+}
+
+// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final.
+export function explicaLinea(item, idioma) {
+  const x = TX.linea, y = TX.ayuda;
+  const [a, b] = item.periodos;
+  const listas = `${x.lista(x.azul[idioma], multiplosHasta(a, 60))[idioma]}<br>${x.lista(x.naranja[idioma], multiplosHasta(b, 60))[idioma]}`;
+  return `<p>${listas}</p><p>${y.primero_comun(item.solucion)[idioma]}</p><p>${y.respuesta[idioma]}: <strong>${y.segundo(item.solucion)[idioma]}</strong>. ${y.consejo[idioma]}</p>`;
+}
+
+export function explicaHora(item, idioma) {
+  const [a, b] = item.periodos;
+  const hExtra = Math.floor(item.solucion / 60), mExtra = item.solucion % 60;
+  const intermedia = sumarMinutos(item.inicio.h, item.inicio.m, hExtra * 60);
+  const cuenta = TX.hora.descomposicion(a, b, item.solucion, hExtra, mExtra, item.inicio, intermedia, item.horaSolucion)[idioma];
+  const y = TX.ayuda;
+  return `<p>${cuenta}</p><p>${y.respuesta[idioma]}: <strong>${horaTexto(item.horaSolucion.h, item.horaSolucion.m)}</strong>.</p>`;
+}
+
+export function explicaTres(item, idioma) {
+  const x = TX.tres, y = TX.ayuda;
+  const resp = `<p>${y.respuesta[idioma]}: <strong>${item.solucion}</strong>.</p>`;
+  if (item.tipo === 'tres') {
+    const [p1, p2, p3] = item.periodos;
+    return `<p>${x.cuenta_tres(p1, p2, p3, multiplosHasta(p3, item.solucion), item.solucion)[idioma]}</p>${resp}`;
+  }
+  const [p1, p2] = item.periodos;
+  return `<p>${x.pista_multiplo(Math.min(p1, p2), Math.max(p1, p2))[idioma]}</p>${resp}`;
 }

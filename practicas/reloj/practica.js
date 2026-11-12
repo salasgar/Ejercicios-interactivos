@@ -10,6 +10,7 @@ import {
   generarHora, comprobarHora, sumarMinutos,
   MAX_DECENAS, MAX_UNIDADES, minutosDeContadores, multiplosHasta,
   generarTresOMultiplo, comprobarTresOMultiplo,
+  explicaLinea, explicaHora, explicaTres,
 } from './logica.js';
 
 // ─── Ejercicio 1: predice la coincidencia (línea de tiempo tocable) ──────────
@@ -195,6 +196,8 @@ function montarTres(contenedor, item, api) {
 
 // ─── La práctica ──────────────────────────────────────────────────────────────
 
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
 arrancar({
   slug: 'reloj',
   ejercicios: [
@@ -204,6 +207,8 @@ arrancar({
       generar: generarLinea,
       montar: montarLinea,
       enunciado: enunciadoLinea,
+      explicacion: (item, { idioma }) => explicaLinea(item, idioma),
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.hora.nombre,
@@ -211,6 +216,8 @@ arrancar({
       generar: generarHora,
       montar: montarHora,
       enunciado: enunciadoHora,
+      explicacion: (item, { idioma }) => explicaHora(item, idioma),
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.tres.nombre,
@@ -218,6 +225,8 @@ arrancar({
       generar: generarTresOMultiplo,
       montar: montarTres,
       enunciado: enunciadoTres,
+      explicacion: (item, { idioma }) => explicaTres(item, idioma),
+      noLoSe: NO_LO_SE,
     },
   ],
 });

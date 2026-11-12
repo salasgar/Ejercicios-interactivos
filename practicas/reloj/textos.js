@@ -81,6 +81,18 @@ export const TX = {
     }),
     respuesta_label: { es: 'Días', en: 'Days' },
   },
+  ayuda: {
+    respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    segundo: n => ({ es: `el segundo ${n}`, en: `second ${n}` }),
+    primero_comun: n => ({
+      es: `El primer número que está en las dos listas es el ${n}.`,
+      en: `The first number that is in both lists is ${n}.`,
+    }),
+    consejo: {
+      es: 'Coinciden en el m.c.m. de los dos números.',
+      en: 'They coincide at the LCM of the two numbers.',
+    },
+  },
 };
 
 /** «9:05» con los minutos siempre a dos cifras. */
