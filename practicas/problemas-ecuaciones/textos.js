@@ -1,6 +1,7 @@
 // Práctica «Problemas con ecuaciones» (unidad 6): textos propios, siempre { es, en }.
 
 import { solucionIncognita, solucionEcuacion, feedbackResuelve, solucionPide, solucionSentido } from './logica.js';
+import { fraccion, htmlFraccion } from '../_comun/fracciones.js';
 
 const c = h =>`<span class="cuenta">${h}</span>`;
 const x = '<i>x</i>';
@@ -100,17 +101,19 @@ const consejo = (ctx, o) => `<p>${ctx.tt({ es: `Consejo: ${o.es}`, en: `Tip: ${o
 
 /** Ejercicio 1. */
 export function explicaIncognita(item, ctx) {
+  // Revisión 191: «lo que te piden calcular» no siempre es la x (el ejercicio 4 enseña justo eso).
   return regla(ctx, {
-    es: 'La x es lo que no sabes y te piden calcular. Lo que el enunciado ya dice con un número no puede ser la x.',
-    en: 'x is what you do not know and are asked to find. A number the statement already gives cannot be x.',
+    es: 'La x tiene que ser algo que todavía no sabes: lo que el enunciado ya dice con un número no puede ser la x.',
+    en: 'x must be something you do not know yet: a number the statement already gives cannot be x.',
   }) + `<p>${solucionIncognita(item)[ctx.idioma]}</p>`;
 }
 
 /** Ejercicio 2. */
 export function explicaEcuacion(item, ctx) {
+  // Revisión 191: «palabra por palabra» y «menos es −» fallan con «menos que»; la regla habla de cantidades.
   return regla(ctx, {
-    es: 'Escribe cada frase con la x, palabra por palabra: «el doble» es 2x, «más» es +, «menos» es −, «en total» es el igual.',
-    en: 'Write each sentence using x, word by word: “twice” is 2x, “more” is +, “less” is −, “altogether” is the equals sign.',
+    es: 'Escribe con la x cada cantidad del enunciado («el doble» es 2x, «5 más» es + 5…); el resultado que da el problema va al otro lado del igual.',
+    en: 'Write each amount in the problem using x (“twice” is 2x, “5 more” is + 5…); the result the problem gives goes on the other side of the equals sign.',
   }) + `<p>${solucionEcuacion(item)[ctx.idioma]}</p>`;
 }
 
@@ -133,8 +136,11 @@ export function explicaPide(item, ctx) {
 
 /** Ejercicio 5. */
 export function explicaSentido(item, ctx) {
+  // Revisión 191: «personas con decimales» no cuadra con pulseras o cromos; y la fracción, con raya (el feedback pone «322/3»).
   return regla(ctx, {
-    es: 'Mira si el valor de la x es posible en el problema (nada de personas con decimales ni edades negativas). Si no lo es, hay un error: en la ecuación o al resolverla.',
-    en: 'Check whether the value of x is possible in the problem (no people with decimals, no negative ages). If it is not, there is a mistake: in the equation or when solving it.',
-  }) + `<p>${solucionSentido(item, ctx.idioma)}</p>`;
+    es: 'Mira si el valor de la x es posible en el problema (nada de cosas que se cuentan con decimales ni edades negativas). Si no lo es, hay un error: en la ecuación o al resolverla.',
+    en: 'Check whether the value of x is possible in the problem (no decimals for things you count, no negative ages). If it is not, there is a mistake: in the equation or when solving it.',
+  }) + `<p>${conRaya(solucionSentido(item, ctx.idioma))}</p>`;
 }
+
+const conRaya = html => html.replace(/(−?)(\d+)\/(\d+)/g, (_, menos, n, d) => htmlFraccion(fraccion(menos ? -Number(n) : Number(n), Number(d))));

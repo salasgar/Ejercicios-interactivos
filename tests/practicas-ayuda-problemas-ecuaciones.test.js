@@ -64,7 +64,10 @@ test('problemas-ecuaciones · ejercicio 5: la explicación dice si tiene sentido
       assert.equal(html.includes(si), item.correcta === 'bien');
       assert.equal(html.includes(no), item.correcta !== 'bien');
       if (item.donde === 'ecuacion') assert.ok(html.includes(item.eqTxt[idioma].replace(/x/g, '<i>x</i>')), 'la ecuación buena');
-      if (item.donde === 'resolucion') assert.ok(html.includes(item.linea[idioma].replace(/x/g, '<i>x</i>')), 'la línea mala');
+      // La línea mala, con la fracción ya con raya (revisión 191): en texto plano, «322/3» queda «3223».
+      const plano = h => h.replace(/<[^>]+>/g, '');
+      if (item.donde === 'resolucion') assert.ok(plano(html).includes(plano(item.linea[idioma]).replace(/(\d)\/(\d)/g, '$1$2')), 'la línea mala');
+      assert.doesNotMatch(plano(html), /\d\/\d/, `fracción con barra — ${plano(html)}`);
     }
   }
 });
