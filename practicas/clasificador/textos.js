@@ -216,4 +216,11 @@ export const TX = {
     datos_pequenos: { es: 'porque los datos son pequeños', en: 'because the numbers are small' },
     dos_datos: { es: 'porque hay dos datos', en: 'because there are two numbers' },
   },
+  ayuda: {
+    respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    consejo: {
+      es: 'Consejo: no te dejes llevar por una palabra suelta. Pregúntate si se reparte o se corta en partes iguales (m.c.d.) o si algo vuelve a coincidir (m.c.m.).',
+      en: 'Tip: do not trust a single word. Ask yourself whether things are shared or cut into equal parts (GCD) or whether something coincides again (LCM).',
+    },
+  },
 };

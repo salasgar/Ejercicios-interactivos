@@ -2,7 +2,7 @@
 // calcula nada: los ítems solo se clasifican según el enunciado, nunca contra
 // el valor real de un m.c.d. o un m.c.m.
 
-import { BANCO } from './textos.js';
+import { BANCO, TX } from './textos.js';
 
 export { BANCO };
 
@@ -47,4 +47,21 @@ export function generarJustificar(rng) {
     opciones,
     solucion: correcta,
   };
+}
+
+// «No lo sé»: el porqué del banco (con los números del ítem) y la solución al final.
+function explica(item, idioma, respuesta) {
+  const razon = BANCO[item.plantilla].razon(...item.numeros)[idioma];
+  const x = TX.ayuda;
+  return `<p>${razon}</p><p>${x.respuesta[idioma]}: ${respuesta}</p><p>${x.consejo[idioma]}</p>`;
+}
+
+/** Ejercicios 1 y 2: elegir m.c.d. o m.c.m. */
+export function explicaClasificar(item, idioma) {
+  return explica(item, idioma, `<strong>${TX.boton[item.clase][idioma]}</strong>`);
+}
+
+/** Ejercicio 3: la razón correcta de la clase que ya viene puesta. */
+export function explicaJustificar(item, idioma) {
+  return explica(item, idioma, `<strong>${TX.boton[item.clase][idioma]}</strong>, ${TX.justificacion[item.solucion][idioma]}.`);
 }

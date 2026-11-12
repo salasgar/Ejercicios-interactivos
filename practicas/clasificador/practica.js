@@ -8,7 +8,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { BANCO, TX } from './textos.js';
-import { generarLimpio, generarTrampa, generarJustificar } from './logica.js';
+import { generarLimpio, generarTrampa, generarJustificar, explicaClasificar, explicaJustificar } from './logica.js';
 
 // El problema (y, en «justificar», la pregunta): sale también en la traducción.
 const enunciadoClasificar = (item, { tt }) => `<p class="enunciado">${tt(BANCO[item.plantilla])(...item.numeros)}</p>`;
@@ -69,6 +69,7 @@ arrancar({
       generar: generarLimpio,
       montar: montarClasificar,
       enunciado: enunciadoClasificar,
+      explicacion: (item, { idioma }) => explicaClasificar(item, idioma),
     },
     {
       nombre: TX.nombre.trampa,
@@ -76,6 +77,7 @@ arrancar({
       generar: generarTrampa,
       montar: montarClasificar,
       enunciado: enunciadoClasificar,
+      explicacion: (item, { idioma }) => explicaClasificar(item, idioma),
     },
     {
       nombre: TX.nombre.justificar,
@@ -83,6 +85,7 @@ arrancar({
       generar: generarJustificar,
       montar: montarJustificar,
       enunciado: enunciadoJustificar,
+      explicacion: (item, { idioma }) => explicaJustificar(item, idioma),
     },
   ],
 });
