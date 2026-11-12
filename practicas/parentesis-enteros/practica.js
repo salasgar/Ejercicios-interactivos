@@ -3,7 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { campoEntero, html as htmlExpr, aTexto, analizar, evaluar, fmt, nodoEn, MENOS } from '../_comun/enteros.js';
-import { TX } from './textos.js';
+import { TX, explicaQuita, explicaCalcula, explicaPotencia, explicaColocar } from './textos.js';
 import {
   generar, arbolQuita, signosBuenos, reescritura, errorQuita,
   operandoDentro, quitandoParentesis, erroresCalcula, errorDe,
@@ -351,6 +351,14 @@ const MONTAR = [montarQuita, montarCalcula, montarPotencia, montarCorchetes, mon
 const ENUNCIADO = [enunciadoQuita, enunciadoCalcula, enunciadoPotencia, enunciadoCorchetes, enunciadoColocar];
 // Los ejercicios con ítems largos (dos cuentas, o varios pasos) piden menos aciertos.
 const OBJETIVO = [undefined, undefined, 8, 6, undefined];
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const AYUDA = [
+  { explicacion: explicaQuita, noLoSe: NO_SE_HACERLO },
+  { explicacion: explicaCalcula, noLoSe: NO_SE_HACERLO },
+  { explicacion: explicaPotencia, noLoSe: NO_SE_HACERLO },
+  { sinAyuda: 'Se hace por pasos: cada paso ya dice qué paréntesis toca y el último fallo enseña toda la resolución.' },
+  { explicacion: explicaColocar },
+];
 
 arrancar({
   slug: 'parentesis-enteros',
@@ -363,5 +371,6 @@ arrancar({
     generar: rng => generar(i + 1, rng),
     montar: MONTAR[i],
     enunciado: ENUNCIADO[i],
+    ...AYUDA[i],
   })),
 });

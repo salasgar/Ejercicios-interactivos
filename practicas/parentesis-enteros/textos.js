@@ -6,6 +6,9 @@
 // paréntesis de agrupación; y el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 // Los ejemplos de las introducciones no son los de las hojas ni los de los exámenes.
 
+import { html as htmlExpr, fmt, evaluar } from '../_comun/enteros.js';
+import { arbolQuita, reescritura, signosBuenos, operandoDentro, quitandoParentesis, cadenaHtml, buenas } from './logica.js';
+
 export const TX = {
   ejercicios: [
     {
@@ -185,3 +188,42 @@ export const TX = {
     sin_paren: { es: 'Sin paréntesis', en: 'Without brackets' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (docs/no-lo-se.md) ───────────
+
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuesta = (tt, h) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${h}.</p>`;
+
+/** Ejercicio 1: la regla del signo de delante y la cuenta reescrita. */
+export function explicaQuita(item, { tt }) {
+  const bien = reescritura(item, signosBuenos(item));
+  const regla = tt(item.signoPar > 0 ? TX.quita.razon_mas : TX.quita.razon_menos);
+  return `<p>${regla}</p><p>${cuenta(`${htmlExpr(arbolQuita(item))} = ${htmlExpr(bien)}`)}</p>${respuesta(tt, cuenta(htmlExpr(bien)))}`;
+}
+
+/** Ejercicio 2: primero lo de dentro de cada paréntesis y después, de izquierda a derecha. */
+export function explicaCalcula(item, { tt }) {
+  const valor = evaluar(item.expr);
+  const dentro = operandoDentro(item);
+  return `${pasos([
+    `${tt({ es: 'Calculo lo de dentro de cada paréntesis', en: 'Work out the inside of each pair of brackets' })}: ${cuenta(`${htmlExpr(item.expr)} = ${htmlExpr(dentro)}`)}.`,
+    `${tt({ es: 'Sumo y resto de izquierda a derecha', en: 'Add and subtract from left to right' })}: ${cuenta(`${htmlExpr(dentro)} = ${fmt(valor)}`)}.`,
+  ])}${respuesta(tt, cuenta(fmt(valor)))}`;
+}
+
+/** Ejercicio 3: cada cuenta resuelta de dentro afuera y la nota de dónde está el exponente. */
+export function explicaPotencia(item, { tt }) {
+  const pareja = item.exprs.length === 2;
+  const lineas = item.exprs.map((e, i) => `${pareja ? `${i ? 'B' : 'A'}: ` : ''}${cuenta(cadenaHtml(e))}.`);
+  const nota = item.tipo === 'par-pot' ? `<p>${tt(TX.potencia.nota_par_pot)(item.meta)}</p>`
+    : item.tipo === 'prod-neg' ? `<p>${tt(TX.potencia.nota_prod_neg)(item.meta)}</p>` : '';
+  const final = pareja ? `A = ${fmt(item.valores[0])}; B = ${fmt(item.valores[1])}` : fmt(item.valores[0]);
+  return `${pasos(lineas)}${nota}${respuesta(tt, cuenta(final))}`;
+}
+
+/** Ejercicio 5: una colocación que sirve, resuelta de dentro afuera. */
+export function explicaColocar(item, { tt }) {
+  const buena = buenas(item)[0];
+  return `<p>${tt({ es: 'Prueba a poner el paréntesis en distintos sitios y calcula primero lo de dentro. Una colocación que sirve', en: 'Try the brackets in different places and work out the inside first. One place that works' })}:</p>${respuesta(tt, cuenta(cadenaHtml(buena.texto)))}`;
+}
