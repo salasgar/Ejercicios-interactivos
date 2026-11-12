@@ -149,13 +149,14 @@ no sacan pasos de problemas de examen y el ahorro tiene gastos creíbles; `suma-
 orden en sus cinco ejercicios los casos de las hojas 2 y 3, de los semanales y del final; los
 casos de examen se excluyen por su huella, nunca en claro). Sin publicar, con su reabierta en
 `reparto-practicas-u2/hechos/reabiertas/`: las tres de la semana 3, `multiplica-divide`,
-`combinadas-fracciones` y `errores4` (tarea 163, 6-11, tercera vez: lo que pidieron las
-reabiertas del 2-11 está hecho, pero `multiplica-divide` saca casos de la hoja 3 que no lista y
-tres casos de examen con el signo en el otro operando; `combinadas-fracciones`, expresiones de la
-hoja 3 que no lista y, en el ej. 3, líneas de en medio que son casos de la hoja o el paso malo de
-una caja del final; y `errores4`, potencias y fracciones de una cantidad de los exámenes semanales 1
-y 3 y casos de las hojas 1, 2 y 3, porque filtra por plantilla y no por la expresión que se ve).
-El estado vivo es el campo `disponible` de `catalogo.js`.
+`combinadas-fracciones` y `errores4` (tarea 170, 12-11, cuarta vez: lo que pidieron las
+reabiertas del 6-11 está hecho, y la regla de oro y la prueba con clics, en verde; pero
+`multiplica-divide` pide productos y un cociente que son la cuenta entera de casos de examen que
+nadie había mirado; `combinadas-fracciones` distingue un menos de restar de uno de signo, y saca
+casos de la hoja 3 y del final con el menos en otro sitio; y `errores4` excluye un paso de una caja
+del final en una sola plantilla y le faltan un caso de la hoja 1 en palabras, las simplificaciones
+de las hojas y una comparación de examen). La 170 se vuelve a reclamar cuando cierren, para
+revisar solo eso y publicarlas. El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 
