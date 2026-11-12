@@ -90,4 +90,12 @@ export const TX = {
     pista_total_coherente: { es: (t, porCuerda, total) => `Con tu trozo de ${t} dm la suma está bien hecha (${porCuerda.join(' + ')} = ${total}); el fallo está en el trozo, que no es el más largo.`, en: (t, porCuerda, total) => `With your ${t} dm piece the addition is right (${porCuerda.join(' + ')} = ${total}); the mistake is the piece, which is not the longest.` },
     pista_total_mal: { es: (porCuerda, total) => `Aquí sí se suman, porque son cuerdas distintas: ${porCuerda.join(' + ')} = ${total} trozos.`, en: (porCuerda, total) => `Here you do add them up, because they are different ropes: ${porCuerda.join(' + ')} = ${total} pieces.` },
   },
+  ayuda: {
+    respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    divisores: { es: (n, lista) => `Divisores de ${n}: ${lista.join(', ')}.`, en: (n, lista) => `Divisors of ${n}: ${lista.join(', ')}.` },
+    comunes: { es: (lista, g) => `Los lados que dividen a los dos: ${lista.join(', ')}. El mayor es ${g}.`, en: (lista, g) => `The sides that divide both: ${lista.join(', ')}. The biggest is ${g}.` },
+    baldosa_respuesta: { es: g => `lado ${g} dm`, en: g => `side ${g} dm` },
+    cuantas_respuesta: { es: n => `${n} baldosas`, en: n => `${n} tiles` },
+    cuerdas_respuesta: { es: (g, t) => `trozos de ${g} dm, ${t} trozos en total`, en: (g, t) => `pieces of ${g} dm, ${t} pieces in total` },
+  },
 };

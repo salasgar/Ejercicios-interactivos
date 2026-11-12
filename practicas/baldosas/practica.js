@@ -16,6 +16,7 @@ import {
   generarBaldosa, esLaMasGrande, cabeEnLado,
   generarCuantas, esNumeroDeBaldosas,
   generarCuerdas, esCorteDeCuerdas,
+  explicaBaldosa, explicaCuantas, explicaCuerdas,
 } from './logica.js';
 
 // La cuadrícula no se dibuja celda a celda: un SVG con un <pattern> que se
@@ -252,6 +253,8 @@ function montarCuerdas(contenedor, item, api) {
 
 // ─── La práctica ────────────────────────────────────────────────────────────────
 
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
 arrancar({
   slug: 'baldosas',
   ejercicios: [
@@ -263,6 +266,8 @@ arrancar({
       clave: item => `${item.a}x${item.b}`,
       montar: montarBaldosa,
       enunciado: enunciadoBaldosa,
+      explicacion: (item, { idioma }) => explicaBaldosa(item, idioma),
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.cuantas.nombre,
@@ -272,6 +277,8 @@ arrancar({
       clave: item => `${item.a}x${item.b}`,
       montar: montarCuantas,
       enunciado: enunciadoCuantas,
+      explicacion: (item, { idioma }) => explicaCuantas(item, idioma),
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.cuerdas.nombre,
@@ -281,6 +288,8 @@ arrancar({
       clave: item => item.longitudes.join(','),
       montar: montarCuerdas,
       enunciado: enunciadoCuerdas,
+      explicacion: (item, { idioma }) => explicaCuerdas(item, idioma),
+      noLoSe: NO_LO_SE,
     },
   ],
 });

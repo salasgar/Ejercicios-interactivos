@@ -8,6 +8,7 @@
 // en total (se suman los trozos de cada cuerda, porque son cuerdas distintas).
 
 import { mcd, divisores } from '../_comun/aritmetica.js';
+import { TX } from './textos.js';
 
 const rango = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
@@ -116,3 +117,25 @@ export function esCorteDeCuerdas(item, trozo, totalTrozos) {
 }
 
 export { rango };
+
+// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final.
+const ayudaResp = (idioma, texto) => `<p>${TX.ayuda.respuesta[idioma]}: <strong>${texto}</strong>.</p>`;
+
+export function explicaBaldosa(item, idioma) {
+  const { a, b, g } = item;
+  const x = TX.ayuda;
+  const comunes = divisores(g);
+  return `<p>${x.divisores[idioma](a, divisores(a))}<br>${x.divisores[idioma](b, divisores(b))}</p>`
+    + `<p>${x.comunes[idioma](comunes, g)}</p>`
+    + ayudaResp(idioma, x.baldosa_respuesta[idioma](g));
+}
+
+export function explicaCuantas(item, idioma) {
+  const { a, b, g, cuantas } = item;
+  return `<p>${TX.cuantas.cuenta[idioma](a, b, g, a / g, b / g, cuantas)}</p>${ayudaResp(idioma, TX.ayuda.cuantas_respuesta[idioma](cuantas))}`;
+}
+
+export function explicaCuerdas(item, idioma) {
+  return `<p>${TX.cuerdas.cuenta[idioma](item.longitudes, item.g, item.porCuerda, item.trozosTotal)}</p>`
+    + ayudaResp(idioma, TX.ayuda.cuerdas_respuesta[idioma](item.g, item.trozosTotal));
+}
