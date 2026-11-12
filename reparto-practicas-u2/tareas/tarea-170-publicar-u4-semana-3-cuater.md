@@ -229,6 +229,20 @@ Es la quinta revisión de estas prácticas y cada una ha encontrado algo que la 
   coincidencias sin avisar: comprueba que tu lector abre todos los ficheros que esperas (cuenta los casos que lee de cada uno).
 - (de la coordinadora, 11-11) Hay terminadas **sin línea `CERRADA`** en su reclamo y un reclamo de la 152 sin commitear (incidencia
   `hechos/incidencias/s-20261111T215225-39c1f4f5.md`): no son tuyos; no los toques ni los comitees.
+- (de la 170, 12-11) **Las cuentas en palabras no las ve un lector de `\dfrac`**: «a quarter of 52», «seven halves divided by seven
+  quarters», «the quotient of A and B», «divide A by B». Conviértelas en el lector (número + ordinal → fracción; «of» tras una fracción → ·;
+  «divided by» → :) y comprueba con las listas de la práctica que las ve. Y las cajas «Find the mistake» del adaptado-A van en un
+  `array`, no en `calculo`.
+- (de la 170) **Problemas cuya cuenta entera es un producto o un cociente** (U4-2A-06 la fracción de una fracción, U4-1A-02 el total a
+  partir de una parte): el ítem pelado con esas dos cantidades da la respuesta del examen. Cruza las parejas de números de cada problema
+  con los ejercicios de cálculo, como la 103 con los U4-1A-01.
+- (de la 170) Trampas del propio barrido: (1) una ventana de tokens que empieza por un «+» o un «−» **binario** se lee como expresión
+  entera con signo y da coincidencias falsas; (2) con fracciones reducidas en la clave, una fracción suelta casa con cualquier equivalente
+  («12/16» con «54/72»): las simplificaciones, con la clave en crudo; (3) para separar «el signo en otro operando» (criterio) de «dos menos
+  más o menos» (fuera de criterio), cuenta los menos de cada lado.
+- (de la 170) Guion de clics con el idioma fijado por URL (`?idioma=es|en`) y el ítem leído de la pantalla con la lógica de la propia
+  práctica (`analizar` sobre el texto de la línea, `diagnosticar`, `PLANTILLAS`): en `combinadas` ej. 2 hay que repetir «tocar → elegir»
+  hasta el final; en `errores4` ej. 1, el nombre del error se saca probando las plantillas con los números de la igualdad.
 
 ## Prohibido (propio de esta tarea)
 
