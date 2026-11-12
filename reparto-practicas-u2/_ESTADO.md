@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-12T23:12Z por s-20261112T230552-18e515b5 al cerrar la 175 (LISTA, commit db8016b; npm test 1938/1938): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-12T23:10Z por s-20261112T230552-3432045f al cerrar la 177 (LISTA, commit 85e1e21; npm test 1923/1923): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T22:52Z por s-20261112T224156-5e5700d3 al cerrar la 173 (LISTA, commit adca3cc; npm test 1882/1882): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-12T21:36Z por s-20261112T183110-92d9d858 al reclamar otra ve
 Actualizado 2026-11-12T21:35Z por s-20261112T183110-92d9d858 al cerrar la 121 (PARCIAL: semana 2 montada en el panel, tarea 21; la semana 3 espera a la 170, EN CURSO; sin commit de código; con Chrome en el panel de Juan Luis): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T21:15Z por s-20261112T210628-91ff0a16 al cerrar la 170, tercera pasada (LISTA, commit 46524bd: publicadas multiplica-divide y errores4; con combinadas-fracciones, las tres de la semana 3 y las diez de la U4; npm test 1810/1810; regresión con clics a 375 y 1100 px, ES y EN). La 121 ya puede montar la semana 3 (plan A de la 111): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-12T21:07Z por s-20261112T210628-91ff0a16 al reclamar la 170 (tercera pasada: solo lo reabierto el 12-11 en 105 y 107, cerrado en 27b2c38 y 56f048b): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -308,7 +308,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 172 | Botón «No lo sé» en `suma-resta`, `combinadas-fracciones`, `errores4`, `leelo4` (unidad 4): la explicación de cada ejercicio | tareas/tarea-172-no-lo-se-u4-suma-resta.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/172-no-lo-se-u4-suma-resta/ | LISTA | terminada 22:49Z (12-nov) · commit 6600388 |
 | 173 | Botón «No lo sé» en `lee-decimales`, `compara-decimales`, `suma-resta-decimales`, `leelo5` (unidad 5): la explicación de cada ejercicio | tareas/tarea-173-no-lo-se-u5-lee-decimales.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/173-no-lo-se-u5-lee-decimales/ | LISTA | terminada 22:52Z (12-nov) · commit adca3cc |
 | 174 | Botón «No lo sé» en `multiplica-divide-decimales`, `fraccion-decimal`, `errores5` (unidad 5): la explicación de cada ejercicio | tareas/tarea-174-no-lo-se-u5-multiplica-divide-decimales.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/174-no-lo-se-u5-multiplica-divide-decimales/ | LISTA | terminada 22:47Z (12-nov) · commit c6ee7d1 |
-| 175 | Botón «No lo sé» en `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion` (unidad 6): la explicación de cada ejercicio | tareas/tarea-175-no-lo-se-u6-traduce.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/175-no-lo-se-u6-traduce/ | EN CURSO | s-20261112T230552-18e515b5 · caduca 02:05:52Z (13-nov) |
+| 175 | Botón «No lo sé» en `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion` (unidad 6): la explicación de cada ejercicio | tareas/tarea-175-no-lo-se-u6-traduce.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/175-no-lo-se-u6-traduce/ | LISTA | terminada 23:12Z (12-nov) · commit 9ecff5e |
 | 176 | Botón «No lo sé» en `transposicion`, `resuelve`, `parentesis-algebra`, `denominadores` (unidad 6): la explicación de cada ejercicio | tareas/tarea-176-no-lo-se-u6-transposicion.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/176-no-lo-se-u6-transposicion/ | EN CURSO | s-20261112T230548-46a75b0f · caduca 02:05:48Z (13-nov) |
 | 177 | Botón «No lo sé» en `problemas-ecuaciones`, `errores6`, `leelo6` (unidad 6): la explicación de cada ejercicio | tareas/tarea-177-no-lo-se-u6-problemas-ecuaciones.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/177-no-lo-se-u6-problemas-ecuaciones/ | LISTA | terminada 23:10Z (12-nov) · commit 1d8a755 |
 | 178 | Botón «No lo sé» en `termometro`, `opuestos`, `situaciones`, `saltos` (unidad 3): la explicación de cada ejercicio | tareas/tarea-178-no-lo-se-u3-termometro.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/178-no-lo-se-u3-termometro/ | PENDIENTE | — |
@@ -324,7 +324,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 188 | Botón «No lo sé» en `expresion`, `redondeo`, `constructor`, `distributiva`, `potencias10` (unidad 1): la explicación de cada ejercicio | tareas/tarea-188-no-lo-se-u1-expresion.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/188-no-lo-se-u1-expresion/ | PENDIENTE | — |
 | 189 | Botón «No lo sé» en `dictado`, `mental`, `especiales`, `errores1`, `propiedades` (unidad 1): la explicación de cada ejercicio | tareas/tarea-189-no-lo-se-u1-dictado.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/189-no-lo-se-u1-dictado/ | PENDIENTE | — |
 | 190 | Revisión del «No lo sé» de las unidades 4 y 5: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-190-revision-no-lo-se.md | 171-174 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/190-revision-no-lo-se/ | BLOQUEADA | espera a 171 |
-| 191 | Revisión del «No lo sé» de la unidad 6: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-191-revision-no-lo-se.md | 175-177 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/191-revision-no-lo-se/ | BLOQUEADA | espera a 175, 176 |
+| 191 | Revisión del «No lo sé» de la unidad 6: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-191-revision-no-lo-se.md | 175-177 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/191-revision-no-lo-se/ | BLOQUEADA | espera a 176 |
 | 192 | Revisión del «No lo sé» de la unidad 3 (con la ortografía): leer las explicaciones, probarlas con clics y corregir | tareas/tarea-192-revision-no-lo-se.md | 178-182 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/192-revision-no-lo-se/ | BLOQUEADA | espera a 178, 179, 180, 181, 182 |
 | 193 | Revisión del «No lo sé» de las unidades 1 y 2: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-193-revision-no-lo-se.md | 183-189 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/193-revision-no-lo-se/ | BLOQUEADA | espera a 183, 184, 185, 186, 187, 188, 189 |
 | 194 | Enseñar en el panel del profesor cuántas veces ha pulsado «No lo sé» cada alumno en cada ejercicio | tareas/tarea-194-ayudas-en-el-panel.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/194-ayudas-en-el-panel/ | PENDIENTE | — |
@@ -332,7 +332,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-12 23:10Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 3 (171, 175, 176) · LISTA 167 · PENDIENTE 13 (178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
+**Foto a 2026-11-12 23:12Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 2 (171, 176) · LISTA 168 · PENDIENTE 13 (178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -371,12 +371,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (278), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (279), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 175 · 2026-11-12 23:12 · s-20261112T230552-18e515b5 · 9ecff5e (traduce), 2a65bff (valor-numerico), c536… · practicas/{traduce,valor-numerico,terminos-semejantes,es-solucion}/{practica,te… · 6 min (el reloj de la sesión; con contexto compac…
 LISTA · tarea 177 · 2026-11-12 23:10 · s-20261112T230552-3432045f · 1d8a755 y 01edccd (leelo6), 8a5fffe (errores6), 8… · practicas/{leelo6,errores6,problemas-ecuaciones}/{practica,textos}.js y tests/p… · de 23:05:52Z a 23:10:31Z (unos 25 min frente a 1…
 LISTA · tarea 173 · 2026-11-12 22:52 · s-20261112T224156-5e5700d3 · adca3cc · 4 ayuda.js nuevos, 4 practica.js, 2 textos.js, 4 tests/practicas-ayuda-*.test.js · de 22:41Z a 22:52Z (estimada 1 h 30 min)
 LISTA · tarea 172 · 2026-11-12 22:49 · s-20261112T224145-3ba6f835 · 6600388 (suma-resta), 90c636e (combinadas-fraccio… · practicas/{suma-resta,combinadas-fracciones,errores4,leelo4}/{practica,textos}.… · de 22:41:45Z a 22:49:03Z (unos 10 min frente a 1…
@@ -665,6 +666,7 @@ minutos reales frente a estimaciones de 30 minutos a 2 horas y media.
 
 Derivado de `hechos/incidencias/`: una línea por fichero, más reciente arriba.
 
+- `s-20261112T230552-18e515b5.md`: - Edición de código con heredoc (traduce/textos.js y el final de es-solucion/textos.js) en vez de Edit/Write. Contenido revisado, probado y comiteado. · - El servidor local `python3 -m http.server 8175` fue denegado por el modo automático: no se hizo la prueb…
 - `s-20261111T215225-39c1f4f5.md`: 2026-11-11T22:01:28Z · s-20261111T215225-39c1f4f5 (coordinadora, sin reclamo) · tarea 152 · reclamo suelto sin commitear y caducado: hechos/reclamos/152--s-20261109T104442-6bacb3fc.md · Qué hay: el reclamo de la 152 de la sesión s-20261109T104442-6bacb3fc (ab…
 - `s-20261105T221032-77dcff9f.md`: 2026-11-05T22:19:47Z · s-20261105T221032-77dcff9f · tarea 134 · relevo con trabajo sin commitear heredado · El reclamo hechos/reclamos/134--s-20261103T150013-c62ef816.md caducó el 2026-11-04T01:28:58Z sin línea de cierre ni relevo (su último latido, 22:28:58Z…
 - `s-20261008T175319-8ec41ac6.md`: escrito: 2026-10-08T18:03:10Z · asunto: un `git pull --rebase --autostash` se llevó trabajo SIN COMITEAR de varias sesiones · A las 17:58:24Z la sesión s-20261008T175617-aa2c36f9 (cierre de la 28) ejecutó · `git pull -q --rebase --autostash origin main`. En u…
