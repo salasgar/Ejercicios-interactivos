@@ -89,6 +89,7 @@ Propio de la unidad 5: Decimales con coma en español y con punto en inglés, co
   y `aciertos` de 0 a 9; si tu `generar` necesita algo más, la explicación tiene que aguantar cualquier ítem que salga.
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
+- (173, 12-11) En zsh, una lista de rutas en una variable no se separa: usar un array (`F=(a b); git add "${F[@]}"`). El título de la tarjeta en inglés es «This is how you do it:» (no «Así se hace»), y el botón en ítems en inglés es «I don’t know»: al probar en el navegador hay que buscar los dos. `compara-decimales` no exporta `D` desde `logica.js`.
 
 ## Prohibido (propio de esta tarea)
 
