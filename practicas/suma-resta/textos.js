@@ -182,6 +182,50 @@ export function explicaCaza(item, idioma) {
   }
 }
 
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+
+/** Ejercicio 1: la regla en una frase y la cuenta del ítem. */
+export function explicaMismo(item, ctx) {
+  const regla = ctx.idioma === 'es'
+    ? 'Con el mismo denominador, se suman o se restan los numeradores y el denominador se queda igual.'
+    : 'With the same denominator, add or subtract the numerators and keep the denominator.';
+  return sinEspacios(`${regla} ${solucionMismo(item, ctx.idioma)}`);
+}
+
+/** Ejercicio 2: los tres pasos (m.c.m., equivalentes, resultado). */
+export function explicaPasos(item, ctx) {
+  const regla = ctx.idioma === 'es'
+    ? 'Con distinto denominador hacen falta tres pasos: el m.c.m. de los denominadores, cada fracción pasada a ese denominador y, por último, la cuenta con los numeradores.'
+    : 'With different denominators you need three steps: the LCM of the denominators, each fraction changed to that denominator, and finally the calculation with the numerators.';
+  return sinEspacios(`${regla} ${solucionPasos(item, ctx.idioma)}`);
+}
+
+/** Ejercicio 3: el natural pasa a fracción (la solución ya lo explica). */
+export function explicaNat(item, ctx) {
+  const regla = ctx.idioma === 'es'
+    ? 'Un número natural es una fracción con un 1 abajo; se pasa al denominador de la otra fracción para poder sumar o restar.'
+    : 'A whole number is a fraction with 1 at the bottom; change it to the denominator of the other fraction so you can add or subtract.';
+  return sinEspacios(`${regla} ${solucionNat(item, ctx.idioma)}`);
+}
+
+/** Ejercicio 4: lo que suman las partes y, si se pide lo que queda, lo que falta hasta 1. */
+export function explicaQueda(item, ctx) {
+  const regla = ctx.idioma === 'es'
+    ? 'Las partes se suman; lo que queda es lo que falta hasta 1 (el todo).'
+    : 'The parts are added; what is left is what is missing up to 1 (the whole).';
+  return sinEspacios(`${regla} ${solucionQueda(item, ctx.idioma)}`);
+}
+
+/** Ejercicio 5: dónde está el error (o que no hay ninguno) y cómo queda bien. */
+export function explicaCazaAyuda(item, ctx) {
+  const es = ctx.idioma === 'es';
+  const donde = item.mala === null
+    ? (es ? 'La respuesta es «No hay error».' : 'The answer is “No mistake”.')
+    : (es ? `La línea con el error es la ${item.mala + 1}.` : `The line with the mistake is line ${item.mala + 1}.`);
+  const consejo = es ? 'Repasa cada línea con la anterior: ¿se ha hecho lo que toca en ese paso?' : 'Check each line against the one before it: was the right thing done in that step?';
+  return sinEspacios(`${consejo} ${explicaCaza(item, ctx.idioma)} ${donde}`);
+}
+
 // ─── Los textos de los cinco ejercicios ────────────────────────────────────────
 
 export const TX = {

@@ -17,7 +17,10 @@ import {
 import {
   TX, nombreError, cuentaMismo, solucionMismo, cuentaPasos, solucionPasos, cuentaNat, solucionNat,
   enunciadoQueda, solucionQueda, explicaOpcion, lineasCaza, explicaCaza,
+  explicaMismo, explicaPasos, explicaNat, explicaQueda, explicaCazaAyuda,
 } from './textos.js';
+
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const frItem = x => htmlFraccion(F(x));
 
@@ -247,6 +250,8 @@ arrancar({
       clave: item => `${clave(item.a)}${item.op}${clave(item.b)}`,
       montar: montarMismo,
       enunciado: enunciadoMismo,
+      explicacion: explicaMismo,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.pasos.nombre,
@@ -256,6 +261,8 @@ arrancar({
       clave: item => item.fracs.map(clave).join(item.ops.join('')),
       montar: montarPasos,
       enunciado: enunciadoPasos,
+      explicacion: explicaPasos,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.nat.nombre,
@@ -265,6 +272,8 @@ arrancar({
       clave: item => `${item.tipo}:${item.nat}:${clave(item.f)}`,
       montar: montarNat,
       enunciado: enunciadoNat,
+      explicacion: explicaNat,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.queda.nombre,
@@ -274,6 +283,7 @@ arrancar({
       clave: item => `${item.ctx}:${item.pregunta}:${clave(item.a)}:${clave(item.b)}`,
       montar: montarQueda,
       enunciado: enunciadoQuedaHtml,
+      explicacion: explicaQueda,
     },
     {
       nombre: TX.caza.nombre,
@@ -283,6 +293,7 @@ arrancar({
       clave: item => `${clave(item.a)}+${clave(item.b)}:${item.mala}`,
       montar: montarCaza,
       enunciado: enunciadoCaza,
+      explicacion: explicaCazaAyuda,
     },
   ],
 });
