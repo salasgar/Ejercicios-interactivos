@@ -9,6 +9,7 @@ import { aTexto, enPalabras } from '../_comun/decimales.js';
 import { crearRectaDecimales } from '../_comun/recta-decimales.js';
 import { htmlFraccion } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
+import { explicaLeelo, explicaCifra, explicaFraccion, explicaRecta } from './ayuda.js';
 import {
   generarLeelo, generarCifra, generarFraccionDecimal, generarRecta, claveItem,
   D, Fr, cifrasDe, ordenDe, leerCampo, corregirToque, corregirLeido, pasoDeRecta,
@@ -212,9 +213,9 @@ function montarRecta(contenedor, item, api) {
 arrancar({
   slug: 'lee-decimales',
   ejercicios: [
-    ejercicio(0, { generar: generarLeelo, montar: montarLeelo, enunciado: enunciadoLeelo }),
-    ejercicio(1, { generar: generarCifra, montar: montarCifra, enunciado: enunciadoCifra }),
-    ejercicio(2, { generar: generarFraccionDecimal, montar: montarFraccion, enunciado: enunciadoFraccion }),
-    ejercicio(3, { generar: generarRecta, montar: montarRecta, enunciado: enunciadoRecta }),
+    ejercicio(0, { generar: generarLeelo, montar: montarLeelo, enunciado: enunciadoLeelo, explicacion: explicaLeelo }),
+    ejercicio(1, { generar: generarCifra, montar: montarCifra, enunciado: enunciadoCifra, explicacion: explicaCifra }),
+    ejercicio(2, { generar: generarFraccionDecimal, montar: montarFraccion, enunciado: enunciadoFraccion, explicacion: explicaFraccion }),
+    ejercicio(3, { generar: generarRecta, montar: montarRecta, enunciado: enunciadoRecta, explicacion: explicaRecta, noLoSe: TX.no_se_hacerlo }),
   ],
 });

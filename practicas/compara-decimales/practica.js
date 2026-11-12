@@ -12,8 +12,9 @@ import {
   generarRedondeo, redondeoBueno, errorRedondeo, explicarRedondeo, consignaRedondeo,
 } from './logica.js';
 import { TX } from './textos.js';
+import { explicaComparar, explicaOrden, explicaEntre, explicaRedondeo } from './ayuda.js';
 
-const D = ({ m, k }) => decimal(m, k);
+const D =({ m, k }) => decimal(m, k);
 const T = (d, idioma) => aTexto(D(d), idioma);
 
 /** Campo para escribir un decimal (coma o punto en los dos idiomas); valida con `deTexto`. */
@@ -236,18 +237,22 @@ arrancar({
     {
       nombre: TX.comp.nombre, detalle: TX.comp.detalle, introduccion: TX.comp.introduccion,
       generar: generarComparar, clave: i => `${claveDe(i.a)}:${claveDe(i.b)}`, montar: montarComparar, enunciado: enunciadoComparar,
+      explicacion: explicaComparar,
     },
     {
       nombre: TX.orden.nombre, detalle: TX.orden.detalle, introduccion: TX.orden.introduccion,
       generar: generarOrden, clave: i => `${i.creciente}:${i.vals.map(claveDe).join(',')}`, montar: montarOrden, enunciado: enunciadoOrden,
+      explicacion: explicaOrden, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.entre.nombre, detalle: TX.entre.detalle, introduccion: TX.entre.introduccion,
       generar: generarEntre, clave: i => `${i.modo}:${claveDe(i.a)}:${claveDe(i.b)}`, montar: montarEntre, enunciado: enunciadoEntre,
+      explicacion: explicaEntre, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.red.nombre, detalle: TX.red.detalle, introduccion: TX.red.introduccion,
       generar: generarRedondeo, clave: i => `${i.modo}:${claveDe(i.d)}:${i.c}`, montar: montarRedondeo, enunciado: enunciadoRedondeo,
+      explicacion: explicaRedondeo, noLoSe: TX.no_se_hacerlo,
     },
   ],
 });

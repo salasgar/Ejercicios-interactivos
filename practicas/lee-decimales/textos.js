@@ -124,5 +124,6 @@ export const TX = {
     escribiste: { es: n => `Has escrito ${n}.`, en: n => `You wrote ${n}.` },
     cuenta_marcas: { es: 'Has contado marcas en vez de huecos: la marca de salida es el hueco 0.', en: 'You counted marks instead of gaps: the starting mark is gap 0.' },
   },
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
   sin_elegir: { es: 'Toca una marca de la recta', en: 'Touch a mark on the number line' },
 };

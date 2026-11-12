@@ -7,6 +7,7 @@ const LT = '&lt;';
 const GT = '&gt;';
 
 export const TX = {
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
   comp: {
     nombre: { es: '¿Cuál es mayor?', en: 'Which is bigger?' },
     detalle: { es: 'Elige <, = o > entre dos decimales', en: 'Choose <, = or > between two decimals' },

@@ -8,6 +8,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { aTexto, deTexto } from '../_comun/decimales.js';
+import { explicaAlinea, explicaSuper, explicaMedidas, explicaMueve } from './ayuda.js';
 import { TX, calculoAlinea, calculoMueve, enunciadoSuper, enunciadoMedidas } from './textos.js';
 import {
   D, claveDe, generarAlinea, generarSuper, generarMedidas, generarMueve,
@@ -97,16 +98,19 @@ const montarDe = (enunciado, TXej, corregir, nombreCampo = TX.campos.resultado) 
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const NO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const ejercicio = (tx, generar, montar, enunciado, explicacion) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, noLoSe: NO_SE,
 });
 
 arrancar({
   slug: 'suma-resta-decimales',
   ejercicios: [
-    ejercicio(TX.ej1, generarAlinea, montarDe(enunciado1, TX.ej1, errorDeAlinea), enunciado1),
-    ejercicio(TX.ej2, generarSuper, montarDe(enunciado2, TX.ej2, errorDeSuper, TX.campos.importe), enunciado2),
-    ejercicio(TX.ej3, generarMedidas, montarDe(enunciado3, TX.ej3, errorDeMedidas), enunciado3),
-    ejercicio(TX.ej4, generarMueve, montarDe(enunciado4, TX.ej4, errorDeMueve), enunciado4),
+    ejercicio(TX.ej1, generarAlinea, montarDe(enunciado1, TX.ej1, errorDeAlinea), enunciado1, explicaAlinea),
+    ejercicio(TX.ej2, generarSuper, montarDe(enunciado2, TX.ej2, errorDeSuper, TX.campos.importe), enunciado2, explicaSuper),
+    ejercicio(TX.ej3, generarMedidas, montarDe(enunciado3, TX.ej3, errorDeMedidas), enunciado3, explicaMedidas),
+    ejercicio(TX.ej4, generarMueve, montarDe(enunciado4, TX.ej4, errorDeMueve), enunciado4, explicaMueve),
   ],
 });

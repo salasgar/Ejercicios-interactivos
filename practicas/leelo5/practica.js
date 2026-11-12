@@ -6,6 +6,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX } from './textos.js';
+import { explicaPalabra, explicaLeelo, explicaConsigna, explicaCompleta } from './ayuda.js';
 import { generarPalabra, generarLeelo, generarConsigna, generarCompleta, claveItem } from './logica.js';
 
 const enunciadoElegir = (item, { tt }) => `
@@ -33,19 +34,19 @@ function montarElegir(contenedor, item, api) {
   });
 }
 
-const ejercicio = (i, generar) => ({
+const ejercicio = (i, generar, explicacion) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave: claveItem, montar: montarElegir, enunciado: enunciadoElegir,
+  generar, clave: claveItem, montar: montarElegir, enunciado: enunciadoElegir, explicacion,
 });
 
 arrancar({
   slug: 'leelo5',
   ejercicios: [
-    ejercicio(0, generarPalabra),
-    ejercicio(1, generarLeelo),
-    ejercicio(2, generarConsigna),
-    ejercicio(3, generarCompleta),
+    ejercicio(0, generarPalabra, explicaPalabra),
+    ejercicio(1, generarLeelo, explicaLeelo),
+    ejercicio(2, generarConsigna, explicaConsigna),
+    ejercicio(3, generarCompleta, explicaCompleta),
   ],
 });
