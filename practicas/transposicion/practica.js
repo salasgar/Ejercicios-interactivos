@@ -8,7 +8,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones, leerNumero } from '../_comun/piezas.js';
 import { deEcuacion } from '../_comun/algebra.js';
 import { leerFraccion } from '../_comun/fracciones.js';
-import { TX, solHtml, llegadaCon } from './textos.js';
+import { TX, solHtml, llegadaCon, explicaConNumeros, explicaUnaOperacion, explicaDosOperaciones, explicaFrente, explicaComprueba } from './textos.js';
 import {
   F, solTexto, plano, ital, leerSolucion, textoEcuacion, OPS, HUECO,
   claveDe, generarConNumeros, generarUnaOperacion, generarDosOperaciones, generarFrente, generarComprueba,
@@ -243,17 +243,19 @@ function montar5(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
-  nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+const NO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
+  nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe: NO_SE } : {}),
 });
 
 arrancar({
   slug: 'transposicion',
   ejercicios: [
-    ejercicio(TX.ej1, generarConNumeros, montar1, enunciado1),
-    ejercicio(TX.ej2, generarUnaOperacion, montar2, enunciado2),
-    ejercicio(TX.ej3, generarDosOperaciones, montar3, enunciado3),
-    ejercicio(TX.ej4, generarFrente, montar4, enunciado4),
-    ejercicio(TX.ej5, generarComprueba, montar5, enunciado5),
+    ejercicio(TX.ej1, generarConNumeros, montar1, enunciado1, explicaConNumeros, true),
+    ejercicio(TX.ej2, generarUnaOperacion, montar2, enunciado2, explicaUnaOperacion, true),
+    ejercicio(TX.ej3, generarDosOperaciones, montar3, enunciado3, explicaDosOperaciones, true),
+    ejercicio(TX.ej4, generarFrente, montar4, enunciado4, explicaFrente, true),
+    ejercicio(TX.ej5, generarComprueba, montar5, enunciado5, explicaComprueba, false),
   ],
 });

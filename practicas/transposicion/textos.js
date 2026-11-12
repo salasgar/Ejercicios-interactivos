@@ -328,3 +328,61 @@ function frente(i, item) {
 }
 
 export { ec };
+
+// ─── «No lo sé»: la explicación de cada ejercicio, con los números del ítem ───────────────────
+
+const pasosAyuda = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuesta = (i, t) => (i === 'es' ? `La respuesta es ${t}.` : `The answer is ${t}.`);
+
+/** Ejercicio 1: el operador contrario (elegir) o el número que cambia de lado (hueco). */
+export function explicaConNumeros(item, { idioma }) {
+  if (item.tipo === 'operador') {
+    const dice = frase1.operador.correcto[idioma](item);
+    const donde = idioma === 'es'
+      ? `Partimos de ${c(item.partida)} y pasamos el ${item.bnum} al otro lado. `
+      : `We start from ${c(item.partida)} and move the ${item.bnum} across. `;
+    return `${donde}${dice} ${respuesta(idioma, c(item.respuesta))}`;
+  }
+  const { l } = loQueDa(item, item.respuesta);
+  const es = idioma === 'es';
+  const pasos = [es
+    ? `Mira qué números han cambiado de lado: el que falta es el ${c(item.respuesta)}, que se pasa con la operación contraria.`
+    : `See which numbers changed sides: the missing one is ${c(item.respuesta)}, which is moved with the opposite operation.`,
+  es
+    ? `Pon ${item.respuesta} en el hueco: ${c(llegadaCon(item, item.respuesta))}. Los dos lados valen ${val(l)}.`
+    : `Put ${item.respuesta} in the gap: ${c(llegadaCon(item, item.respuesta))}. Both sides are ${val(l)}.`];
+  return `${pasosAyuda(pasos)}${respuesta(idioma, c(item.respuesta))}`;
+}
+
+const solucionFinal = (i, p) => respuesta(i, `<i>x</i> = ${solHtml(p)}`);
+
+/** Ejercicios 2 y 4 (una operación): la regla, la cuenta, la comprobación y la solución. */
+export function explicaUnaOperacion(item, { idioma }) {
+  return `${bien(idioma, item)} ${solucionFinal(idioma, item.solucion)}`;
+}
+
+/** Ejercicio 3: dos pasos, primero lo que suma o resta y después lo que multiplica o divide. */
+export function explicaDosOperaciones(item, { idioma }) {
+  const es = idioma === 'es';
+  const b = Math.abs(item.b);
+  const pasos = [es
+    ? `Pasa primero el ${b}, que ${item.b > 0 ? 'suma, restando' : 'resta, sumando'}: ${cx(pasoBueno(item))}.`
+    : `First move the ${b}, which is ${item.b > 0 ? 'added, as a subtraction' : 'subtracted, as an addition'}: ${cx(pasoBueno(item))}.`,
+  es
+    ? `Después pasa el ${item.cociente ? item.n : item.a}, que ${item.cociente ? 'divide, multiplicando' : 'multiplica, dividiendo'}: ${cl(ital(linea(segundoPaso(item))))}.`
+    : `Then move the ${item.cociente ? item.n : item.a}, which ${item.cociente ? 'divides, as a multiplication' : 'multiplies, as a division'}: ${cl(ital(linea(segundoPaso(item))))}.`];
+  const comprueba = `${es ? 'Comprobación' : 'Check'}: ${c(comprobacion3(item))} ✓.`;
+  return `${pasosAyuda(pasos)}${comprueba} ${solucionFinal(idioma, item.solucion)}`;
+}
+
+/** Ejercicio 4: el número de la derecha entre el que multiplica a la x, y la fracción simplificada. */
+export function explicaFrente(item, { idioma }) {
+  return `${frente(idioma, item)} ${solucionFinal(idioma, item.solucion)}`;
+}
+
+/** Ejercicio 5: si la resolución estaba bien o mal, y cómo queda bien hecha. */
+export function explicaComprueba(item, { idioma }) {
+  const es = idioma === 'es';
+  if (item.buena) return `${es ? 'Estaba bien' : 'It was right'}: ${bien(idioma, item)} ${respuesta(idioma, es ? 'sí, está bien' : 'yes, it is right')}`;
+  return `${es ? 'Estaba mal' : 'It was wrong'}: ${porQueDe(idioma, item, item.error, F(item.mostrada))}${bien(idioma, item)} ${respuesta(idioma, es ? `no; la solución correcta es ${x_} = ${solHtml(item.solucion)}` : `no; the correct solution is ${x_} = ${solHtml(item.solucion)}`)}`;
+}
