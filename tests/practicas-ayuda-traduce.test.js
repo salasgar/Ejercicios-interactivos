@@ -27,7 +27,9 @@ for (const [nombre, generar, semilla] of casos) {
         const ctx = textosDe(idioma);
         const html = explicaTraduce(item, ctx);
         const que = `${nombre} ${idioma} ${item.clave}: ${plano(html)}`;
-        assert.ok(html.includes(item.solucion[idioma]), `la solución del ítem — ${que}`);
+        // Parejas y cantidades: el paso sin la expresión repetida delante o detrás (revisión 191).
+        const paso = item.solucion[idioma].replace(/^<span class="cuenta">.*?<\/span>: /, '').replace(/: <span class="cuenta">(?:(?!<span).)*<\/span>\.$/, '.');
+        assert.ok(html.includes(item.solucion[idioma]) || plano(html).toLowerCase().includes(plano(paso).toLowerCase()), `la solución del ítem — ${que}`);
         const buena = item.opciones?.find(o => o.correcta);
         if (buena) {
           assert.equal(item.opciones.filter(o => o.correcta).length, 1, que);
@@ -36,6 +38,10 @@ for (const [nombre, generar, semilla] of casos) {
           assert.ok(corregirEscribe(item, item.correcta).acierto, `lo que se da por bueno — ${que}`);
           assert.ok(html.endsWith(`<span class="cuenta">${item.correcta}</span>.`), `la respuesta al final — ${que}`);
         }
+        // «de izquierda a derecha» es falso en «n menos que un número» (revisión 191).
+        assert.doesNotMatch(html, /izquierda a derecha|left to right/, que);
+        if (item.plantilla === 'menos-que') assert.match(plano(html), /x − \d+, (no|not) \d+ − x/, `el aviso de «menos que» — ${que}`);
+        assert.doesNotMatch(plano(html), /(x [+−] \d+|\dx): \1/, `la expresión repetida — ${que}`);
         assert.doesNotMatch(html, /undefined|NaN|\[object|×/, que);
       }
     }

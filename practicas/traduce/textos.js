@@ -73,39 +73,74 @@ export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const REGLA = {
   elige: {
-    es: 'Traduce la frase por partes, de izquierda a derecha, y compara con las opciones.',
-    en: 'Translate the phrase in parts, from left to right, and compare with the options.',
+    es: 'Traduce la frase por partes y compara con las opciones.',
+    en: 'Translate the phrase in parts and compare with the options.',
   },
   escribe: {
-    es: 'Traduce la frase por partes, de izquierda a derecha, usando la letra x.',
-    en: 'Translate the phrase in parts, from left to right, using the letter x.',
+    es: 'Traduce la frase por partes; «un número» es x.',
+    en: 'Translate the phrase in parts; “a number” is x.',
+  },
+  pareja: {
+    es: 'El número que te dan es x; escribe el otro a partir de x.',
+    en: 'The number you are given is x; write the other one from x.',
   },
   frase: {
-    es: 'Lee la expresión por partes y fíjate en qué va primero: «menos que» resta al número, «menos» resta del primero.',
-    en: 'Read the expression in parts and look at what comes first: “less than” takes away from the number, “minus” takes away from the first one.',
+    es: 'Lee la expresión por partes: primero lo que se hace a x (el doble, la mitad…) y después lo que se suma o se resta.',
+    en: 'Read the expression in parts: first what is done to x (twice, half…), then what is added or taken away.',
   },
   'situacion-expresion': {
     es: 'Separa lo que no cambia (la parte fija) de lo que depende de la letra.',
     en: 'Separate what never changes (the fixed part) from what depends on the letter.',
   },
   'situacion-valor': {
-    es: 'Sustituye la letra por el número; primero se multiplica y después se suma.',
-    en: 'Replace the letter with the number; first multiply, then add.',
+    es: 'Se paga la parte fija más el precio de cada uno por cuántos hay; primero se multiplica y después se suma.',
+    en: 'You pay the fixed part plus the price of each one times how many; first multiply, then add.',
   },
   'situacion-cantidad': {
-    es: 'Llama x a lo que no sabes y construye las demás cantidades a partir de x.',
-    en: 'Call x what you do not know and build the other amounts from x.',
+    es: 'Parte de lo que es x y construye con x lo que te preguntan.',
+    en: 'Start from what x is and use x to build what you are asked for.',
   },
 };
+
+// «n menos que un número» se dice al revés de como se escribe: es la trampa de esa frase.
+const OJO_MENOS_QUE = {
+  es: n => `Ojo: «menos que» le quita ${n} al número, así que la x va delante: x − ${n}, no ${n} − x.`,
+  en: n => `Careful: “less than” takes ${n} away from the number, so x goes first: x − ${n}, not ${n} − x.`,
+};
+const OJO_FRASE = {
+  '-': {
+    es: n => `En x − ${n}, al número se le quitan ${n}: eso se dice con «menos que».`,
+    en: n => `In x − ${n}, ${n} is taken away from the number: you say that with “less than”.`,
+  },
+  'n-': {
+    es: n => `En ${n} − x, a ${n} se le quita el número: se dice «menos un número», sin «que».`,
+    en: n => `In ${n} − x, the number is taken away from ${n}: you say “minus a number”, without “than”.`,
+  },
+};
+
+// El paso ya termina en la expresión: no se repite delante («x + 2: … hay 2: x + 2») ni detrás («Sara: x; 5 más: x + 5: x + 5»).
+const UNA_CUENTA = '<span class="cuenta">(?:(?!<span class="cuenta">).)*</span>';
+const sinRepetir = texto => texto.replace(new RegExp(`^${UNA_CUENTA}: `), '').replace(new RegExp(`: ${UNA_CUENTA}\\.$`), '.');
+const mayuscula = texto => texto.charAt(0).toUpperCase() + texto.slice(1);
 
 export const comillas = (texto, idioma) => (idioma === 'es' ? `«${texto}»` : `“${texto}”`);
 
 /** «No lo sé» de los cuatro ejercicios: la regla del tipo, la solución del ítem y la respuesta al final. */
 export function explicaTraduce(item, { idioma, tt }) {
   const buena = item.opciones?.find(o => o.correcta);
+  const tecleada = !buena && item.correcta.includes('/');
   const respuesta = !buena
     ? `<span class="cuenta">${item.correcta}</span>`
     : buena.frases ? comillas(tt(buena.frases), idioma) : buena.html;
-  const fin = tt({ es: 'La respuesta es', en: 'The answer is' });
-  return `${tt(REGLA[item.instruccion])} ${tt(item.solucion)} ${fin} ${respuesta}.`;
+  const fin = tecleada
+    ? tt({ es: 'En el teclado, la respuesta se escribe', en: 'On the keyboard, the answer is typed' })
+    : tt({ es: 'La respuesta es', en: 'The answer is' });
+  const pareja = item.plantilla.startsWith('pareja-');
+  const solucion = pareja || item.instruccion === 'situacion-cantidad' ? mayuscula(sinRepetir(tt(item.solucion))) : tt(item.solucion);
+  // En «Elige la frase», x − n y n − x llevan su propia regla en lugar de la general.
+  const [k, n, op] = item.instruccion === 'frase' ? item.clave.split('|') : [];
+  const reglaFrase = k === '1' && OJO_FRASE[op] ? OJO_FRASE[op][idioma](n) : null;
+  const regla = reglaFrase ?? tt(REGLA[pareja ? 'pareja' : item.instruccion]);
+  const ojo = item.plantilla === 'menos-que' ? ` ${OJO_MENOS_QUE[idioma](item.clave.split('|')[1])}` : '';
+  return `${regla} ${solucion}${ojo} ${fin} ${respuesta}.`;
 }
