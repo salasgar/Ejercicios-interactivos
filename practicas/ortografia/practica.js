@@ -19,6 +19,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { etiquetaNivel } from '../_comun/nivel.js';
 import { TX, explicacion } from './textos.js';
+import { ayudaHueco, ayudaRevision, ayudaComa, ayudaTilde, ayudaSignos, ayudaSujeto } from './ayuda.js';
 import { PAREJAS, partes, otra, generadorHueco, generarRevision, estaBien, idError } from './logica.js';
 import { frase, alPrincipio, mayuscula, generadorTilde, explicacionTilde, idErrorTilde, PARES, PREGUNTAS, explicacionExtra, idErrorExtra } from './tildes.js';
 import { generarSignos, opcionesSignos, explicacionSignos, idErrorSignos } from './signos.js';
@@ -248,6 +249,7 @@ const ejercicioHueco = pareja => ({
   introduccion: TX[pareja].introduccion,
   generar: generadorHueco(pareja),
   clave: item => `${item.pareja}/${item.n}`,
+  explicacion: ayudaHueco,
   montar: conNivel(montarHueco),
   enunciado: enunciadoHueco,
 });
@@ -264,6 +266,7 @@ arrancar({
       detalle: TX.revision.detalle,
       generar: generarRevision,
       clave: item => `${item.pareja}/${item.n}`,
+      explicacion: ayudaRevision,
       montar: conNivel(montarRevision),
       enunciado: enunciadoRevision,
     },
@@ -274,6 +277,7 @@ arrancar({
       introduccion: TX.vocativo.introduccion,
       generar: generarVocativo,
       clave: item => `${item.tipo}/${item.grupo ?? ''}/${item.i}`,
+      explicacion: ayudaComa,
       montar: conNivel(montarComa),
       enunciado: enunciadoComa,
     },
@@ -283,6 +287,7 @@ arrancar({
       introduccion: TX.comas.introduccion,
       generar: generarComas,
       clave: item => `${item.grupo}/${item.i}`,
+      explicacion: ayudaComa,
       montar: conNivel(montarComa),
       enunciado: enunciadoComa,
     },
@@ -292,6 +297,7 @@ arrancar({
       introduccion: TX[g].introduccion,
       generar: generadorTilde(g),
       clave: item => `${item.tipo}/${item.grupo}/${item.n ?? item.i}`,
+      explicacion: ayudaTilde,
       montar: conNivel(montarTilde),
       enunciado: enunciadoTilde,
     })),
@@ -301,6 +307,7 @@ arrancar({
       introduccion: TX.signos.introduccion,
       generar: generarSignos,
       clave: item => String(item.i),
+      explicacion: ayudaSignos,
       montar: conNivel(montarEscrita({ opciones: opcionesSignos, explicacion: explicacionSignos, idError: idErrorSignos })),
       enunciado: enunciadoEscrita,
     },
@@ -310,6 +317,7 @@ arrancar({
       introduccion: TX.sujeto.introduccion,
       generar: generarSujeto,
       clave: item => `${item.tipo}/${item.i}`,
+      explicacion: ayudaSujeto,
       montar: conNivel(montarEscrita({ opciones: opcionesSujeto, explicacion: explicacionSujeto, idError: idErrorSujeto })),
       enunciado: enunciadoEscrita,
     },
