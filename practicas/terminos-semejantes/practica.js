@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, NO_SE_HACERLO, explicaSemejantes, explicaCoeficiente, explicaReduce, explicaErrores } from './textos.js';
 import {
   generarSemejantes, generarCoeficiente, generarReducir, generarErrores, corregirReducir, claveItem,
   explicaError, OPCIONES_ERROR,
@@ -133,19 +133,20 @@ function montarReduce(contenedor, item, api) {
   actualizar();
 }
 
-const ejercicio = (i, { generar, montar, enunciado }) => ({
+const ejercicio = (i, { generar, montar, enunciado, explicacion, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave: claveItem, montar, enunciado,
+  generar, clave: claveItem, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe: NO_SE_HACERLO } : {}),
 });
 
 arrancar({
   slug: 'terminos-semejantes',
   ejercicios: [
-    ejercicio(0, { generar: generarSemejantes, montar: montarSemejantes, enunciado: enunciadoSemejantes }),
-    ejercicio(1, { generar: generarCoeficiente, montar: montarCoeficiente, enunciado: enunciadoCoeficiente }),
-    ejercicio(2, { generar: generarReducir, montar: montarReduce, enunciado: enunciadoReduce }),
-    ejercicio(3, { generar: generarErrores, montar: montarErrores, enunciado: enunciadoErrores }),
+    ejercicio(0, { generar: generarSemejantes, montar: montarSemejantes, enunciado: enunciadoSemejantes, explicacion: explicaSemejantes }),
+    ejercicio(1, { generar: generarCoeficiente, montar: montarCoeficiente, enunciado: enunciadoCoeficiente, explicacion: explicaCoeficiente }),
+    ejercicio(2, { generar: generarReducir, montar: montarReduce, enunciado: enunciadoReduce, explicacion: explicaReduce, noLoSe: true }),
+    ejercicio(3, { generar: generarErrores, montar: montarErrores, enunciado: enunciadoErrores, explicacion: explicaErrores }),
   ],
 });

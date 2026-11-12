@@ -1,5 +1,7 @@
 // Práctica «Términos semejantes» (unidad 6): textos propios, siempre { es, en }.
 
+import { leerExpresion } from '../_comun/algebra.js';
+
 export const TX = {
   ejercicios: [
     {
@@ -84,3 +86,54 @@ export const TX = {
     noHayError: { es: 'No hay ningún error.', en: 'There is no mistake.' },
   },
 };
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const LA_RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cuentaH = h => `<span class="cuenta">${h}</span>`;
+
+const REGLAS = {
+  semejantes: {
+    es: 'Dos términos son semejantes si tienen la misma parte literal (la misma letra), o si los dos son números sin letra. El número no importa.',
+    en: 'Two terms are like terms if they have the same variable part (the same letter), or if both are numbers with no letter. The number does not matter.',
+  },
+  coeficiente: {
+    es: 'El coeficiente es el número que acompaña a la letra, con su signo; si no se ve ninguno, es 1 (o −1 si lleva un menos).',
+    en: 'The coefficient is the number next to the letter, with its sign; if you cannot see one, it is 1 (or −1 if there is a minus).',
+  },
+  literal: {
+    es: 'La parte literal es la letra del término, sin el número.',
+    en: 'The variable part is the letter of the term, without the number.',
+  },
+  reduce: {
+    es: 'Junta los términos semejantes: suma sus coeficientes y deja la parte literal igual.',
+    en: 'Put the like terms together: add their coefficients and keep the variable part.',
+  },
+  errores: {
+    es: 'Calcula tú la reducción, término a término, y compárala con la que te dan.',
+    en: 'Work out the simplification yourself, term by term, and compare it with the one you are given.',
+  },
+};
+
+/** «No lo sé» del ejercicio 1: la regla, el porqué de este par y el sí o el no al final. */
+export function explicaSemejantes(item, { tt }) {
+  return `${tt(REGLAS.semejantes)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${cuentaH(tt(TX.semejantes[item.correcta]))}.`;
+}
+
+/** «No lo sé» del ejercicio 2: coeficiente o parte literal, según lo que pida el ítem. */
+export function explicaCoeficiente(item, { tt }) {
+  const buena = item.opciones.find(o => o.correcta);
+  return `${tt(REGLAS[item.pregunta])} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${buena.html}.`;
+}
+
+/** «No lo sé» del ejercicio 3: el paso a paso de reducir y el resultado al final. */
+export function explicaReduce(item, { tt }) {
+  const resultado = leerExpresion(item.correcta, { variasLetras: true }).valor;
+  return `${tt(REGLAS.reduce)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${cuentaH(resultado.aHtml())}.`;
+}
+
+/** «No lo sé» del ejercicio 4: dónde está el error (o que no lo hay) y la reducción bien hecha. */
+export function explicaErrores(item, { idioma, tt }) {
+  const opcion = tt(TX.errores[item.correcta]);
+  return `${tt(REGLAS.errores)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${idioma === 'es' ? `«${opcion}»` : `“${opcion}”`}.`;
+}
