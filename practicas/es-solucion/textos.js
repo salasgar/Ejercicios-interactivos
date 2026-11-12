@@ -218,3 +218,53 @@ function explica3(item, idioma) {
     ? `${con(v1, k1)} ${con(v2, k2)} Solo se cumple con ${xIgual(item.solucion, idioma)}: es una ecuación. `
     : `${con(v1, k1)} ${con(v2, k2)} It is true only when ${xIgual(item.solucion, idioma)}: it is an equation. `;
 }
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const LA_RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const sinEspacioFinal = t => t.trim();
+
+const REGLAS = {
+  comprueba: {
+    es: 'Sustituye la x por el número en cada miembro y calcula. Si los dos miembros valen lo mismo, es solución; si no, no.',
+    en: 'Substitute the x by the number in each side and work it out. If both sides are equal, it is a solution; if not, it is not.',
+  },
+  queEcuacion: {
+    es: 'Sustituye la x por ese valor en la ecuación buena y comprueba que los dos miembros valen lo mismo; en las otras no pasa.',
+    en: 'Substitute the x by that value in the right equation and check that both sides are equal; in the others they are not.',
+  },
+  identidad: {
+    es: 'Prueba con dos valores de x. Si los dos miembros coinciden siempre, es una identidad; si solo coinciden con uno, es una ecuación.',
+    en: 'Try two values of x. If both sides always match, it is an identity; if they match for only one, it is an equation.',
+  },
+  inventa: {
+    es: 'Elige una operación con la x, calcula cuánto da con la solución, y eso es el segundo miembro.',
+    en: 'Choose an operation with the x, work out what it gives with the solution, and that is the right-hand side.',
+  },
+};
+
+/** «No lo sé» del ejercicio 1: la sustitución en los dos miembros y el sí o el no. */
+export function explicaComprueba(item, { idioma, tt }) {
+  const k = comprobacion(ecuacionDe(item), item.v, idioma);
+  return `${tt(REGLAS.comprueba)} ${k.texto}. ${tt(LA_RESPUESTA)} ${c(tt(item.esSolucion ? SI : NO))}.`;
+}
+
+/** «No lo sé» del ejercicio 2: la comprobación de la ecuación buena. */
+export function explicaQueEcuacion(item, { idioma, tt }) {
+  const b = item.opciones.find(o => o.correcta).e;
+  return `${tt(REGLAS.queEcuacion)} ${htmlDe(b)}: ${comprobacion(ecuacionDe(b), item.s, idioma).texto}. ${tt(LA_RESPUESTA)} ${htmlDe(b)}.`;
+}
+
+/** «No lo sé» del ejercicio 3: los dos valores de prueba y lo que concluyen. */
+export function explicaIdentidad(item, { idioma, tt }) {
+  const respuesta = tt(item.tipo === 'identidad' ? { es: 'Identidad', en: 'Identity' } : { es: 'Ecuación', en: 'Equation' });
+  return `${tt(REGLAS.identidad)} ${sinEspacioFinal(explica3(item, idioma))} ${tt(LA_RESPUESTA)} ${c(respuesta)}.`;
+}
+
+/** «No lo sé» del ejercicio 4: la regla y una ecuación buena, comprobada con la solución. */
+export function explicaInventa(item, { idioma, tt }) {
+  const e = ecuacionesConSolucion(item.s).find(o => o.a >= 2 && o.b > 0 && !o.delante);
+  const k = comprobacion(ecuacionDe(e), item.s, idioma);
+  const una = idioma === 'es' ? 'Una ecuación que sirve es' : 'An equation that works is';
+  return `${tt(REGLAS.inventa)} ${idioma === 'es' ? 'Con' : 'When'} ${xIgual(item.s, idioma)}: ${k.texto}. ${una} ${htmlDe(e)}.`;
+}

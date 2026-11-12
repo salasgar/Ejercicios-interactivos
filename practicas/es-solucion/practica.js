@@ -10,7 +10,7 @@ import {
   ecuacionDe, htmlDe, ecuacion3, claveDe, generarComprueba, generarQueEcuacion, generarIdentidad, generarInventa,
   errorDeComprueba, errorDeIdentidad, validar, errorDeInventa, textoDe, numTexto,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, NO_SE_HACERLO, explicaComprueba, explicaQueEcuacion, explicaIdentidad, explicaInventa } from './textos.js';
 
 const xIgual = (v, idioma) => `<i>x</i> = ${numTexto(v, idioma)}`;
 
@@ -114,16 +114,17 @@ function montar4(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, ...(noLoSe ? { noLoSe: NO_SE_HACERLO } : {}),
 });
 
 arrancar({
   slug: 'es-solucion',
   ejercicios: [
-    ejercicio(TX.ej1, generarComprueba, montar1, enunciado1),
-    ejercicio(TX.ej2, generarQueEcuacion, montar2, enunciado2),
-    ejercicio(TX.ej3, generarIdentidad, montar3, enunciado3),
-    ejercicio(TX.ej4, generarInventa, montar4, enunciado4),
+    ejercicio(TX.ej1, generarComprueba, montar1, enunciado1, explicaComprueba),
+    ejercicio(TX.ej2, generarQueEcuacion, montar2, enunciado2, explicaQueEcuacion),
+    ejercicio(TX.ej3, generarIdentidad, montar3, enunciado3, explicaIdentidad),
+    ejercicio(TX.ej4, generarInventa, montar4, enunciado4, explicaInventa, true),
   ],
 });
