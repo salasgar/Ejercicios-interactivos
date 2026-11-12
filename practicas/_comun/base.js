@@ -787,7 +787,8 @@ export function arrancar(practica) {
     };
     try {
       defs[actual.n].montar(app.querySelector('#item'), actual.item, api);
-      pintarBotonAyuda();
+      // El botón de ayuda nunca puede estropear el ítem (por ejemplo, con un textos.js antiguo en la caché).
+      try { pintarBotonAyuda(); } catch (e) { console.error(e); app.querySelector('#ayuda').innerHTML = ''; }
     } catch (e) {
       // Un fallo de la práctica no debe dejar al alumno atascado ni penalizarle.
       console.error(e);
@@ -804,8 +805,8 @@ export function arrancar(practica) {
    */
   function pintarBotonAyuda() {
     const def = defs[actual.n];
-    if (!def.explicacion || actual.respondido) return;
     const idi = actual.idioma;
+    if (!def.explicacion || actual.respondido || typeof t(idi).ayuda_pagada !== 'function') return;
     const zona = app.querySelector('#ayuda');
     zona.innerHTML = `
       <button type="button" class="discreto" id="no-lo-se">${tt(def.noLoSe ?? { es: T.es.no_lo_se, en: T.en.no_lo_se }, idi)}</button>
