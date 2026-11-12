@@ -305,8 +305,17 @@ test('la clave de lo que se ve no depende de la plantilla ni, en + y ·, del ord
   assert.notEqual(L.claveVista('4/5 : 2/3'), L.claveVista('2/3 : 4/5'));
   assert.equal(L.claveVista('(2/5)^2'), 'P|2/5|2');
   assert.notEqual(L.claveVista('(2/5)^2'), L.claveVista('(2/5)^3'));
-  assert.equal(L.CLAVES_HOJA.size, 13);
-  assert.equal(L.HUELLAS_VISTA_EXAMEN.size, 18);
+  assert.equal(L.CLAVES_HOJA.size, 17);
+  assert.equal(L.HUELLAS_VISTA_EXAMEN.size, 35);
+  assert.equal(L.HUELLAS_COMPARACION.size, 9);
+  for (const h of L.HUELLAS_COMPARACION) assert.match(h, /^[0-9a-z]{4,7}$/);
+  // Fracción suelta (simplificar): sin reducir, y la clave no depende de la plantilla.
+  assert.equal(L.claveVista('60/84'), 'N|60/84');
+  assert.equal(L.claveVista(L.PLANTILLA_POR_ID['simplifica-solo-numerador'].l0([60, 84, 2])), L.claveVista(L.PLANTILLA_POR_ID['simplifica-solo-denominador'].l0([60, 84, 2])));
+  assert.equal(L.claveVista('1/4 · 52'), 'F|1/4|52');
+  // Comparación: sin orden, con signo.
+  assert.equal(L.claveComparacion([2, 5, 4, 9]), L.claveComparacion([4, 9, 2, 5]));
+  assert.notEqual(L.claveComparacion([2, 5, 4, 9]), L.claveComparacion([-2, 5, -4, 9]));
   for (const h of L.HUELLAS_VISTA_EXAMEN) assert.match(h, /^[0-9a-z]{4,7}$/);
   // Las tres plantillas de «fracción de una cantidad» escriben lo mismo y comparten clave.
   for (const id of ['se-queda-en-la-unitaria', 'multiplica-por-el-denominador', 'fraccion-de-al-reves']) {
@@ -318,7 +327,10 @@ test('ningún ítem, en los tres ejercicios, es un caso de las hojas o de los ex
   for (const semilla of [163, 7, 11]) {
     for (const fn of [L.generarBienMal, L.generarLinea, L.generarArregla]) {
       for (const item of generar(fn, semilla)) {
-        if (L.COMPARACION_POR_ID[item.plantilla]) continue;
+        if (L.COMPARACION_POR_ID[item.plantilla]) {
+          assert.ok(!L.HUELLAS_COMPARACION.has(L.huella(L.claveComparacion(item.params))), `comparación de examen en ${item.plantilla}`);
+          continue;
+        }
         const k = L.claveVista(L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
         if (k === null) continue;
         assert.ok(!L.CLAVES_HOJA.has(k), `caso de la hoja: ${k}`);

@@ -71,6 +71,7 @@ export { huella };
 export const claveVista = l0 => {
   const t = l0.split(' ');
   const fr = s => s.split('/').map(Number);
+  if (/^\d+\/\d+$/.test(l0)) return `N|${l0}`;
   if (t.length === 3 && t[1] === '·') return `F|${t[0]}|${t[2]}`;
   const pot = l0.match(/^\((\d+)\/(\d+)\)\^(\d+)$/);
   if (pot) return `P|${pot[1]}/${pot[2]}|${pot[3]}`;
@@ -86,6 +87,8 @@ export const claveVista = l0 => {
 export const CLAVES_HOJA = new Set([
   'F|1/3|27', 'F|2/3|27', 'F|5/6|42', 'F|3/8|64', 'F|7/10|90', 'F|3/5|30', 'F|1/3|12',
   'S|3/4|5/6', 'R|1/3|5/6', 'S|1/6|2/3', 'P|2/5|2', 'S|1/4|5/6', 'D|4/5|2/3',
+  // Reabierta del 12-11: hoja 1 ej. 5b («a quarter of 52», en palabras) y ej. 8e; hoja 2 ej. 1a y 11b (simplificar).
+  'F|1/4|52', 'N|60/84', 'N|24/30', 'N|8/12',
 ]);
 
 // Exámenes semanales 1 y 3, por huella FNV-1a de `claveVista` (los casos de examen no se escriben en
@@ -93,6 +96,23 @@ export const CLAVES_HOJA = new Set([
 export const HUELLAS_VISTA_EXAMEN = new Set([
   '1xhtren', 'za2kwd', 'st3v5i', '1cahdx0', '18kn9fh', '1fzi20y', '81b0bk', '1hqlanv', 'hdepv8', '1hj5fi0', 'm6s49q', '1ncmpir',
   '14s2omh', '1frxyhy', '1t8ktnr', '198awos', 'dbb1ns', 'da4zuu',
+  // Reabierta del 12-11: las sumas, restas, cocientes, productos, fracciones sueltas y potencias de los exámenes finales (modelos 1
+  // y 2, recuperación, adaptado-A) y de los semanales 1-3 que la práctica puede escribir, leídas del papel con un guion fuera del repo.
+  'wllvt8', '1idgaxm', '3lwuul', '12p71o1', '1f728yz', '1jcztig', '18apfs9', 'zafiy8', '1a6ewl0',
+  '1etoz1e', '18uon67', 'j0yeaw', '1bqd02w', '1jy2wk5', 'n3y441', 'wmillk', '17wjsdc',
+]);
+
+/**
+ * Comparaciones: la pareja sin orden y con signo (`C|a|b`, la más pequeña primero por valor absoluto), la misma para
+ * todas las plantillas de comparación. Huellas de las comparaciones de U4-1C-17 y U4-1C-19 de los exámenes semanales
+ * (`correcta` y `\opciones`).
+ */
+export const claveComparacion = ([p, q, r, s]) => {
+  const t = (n, d) => `${n < 0 ? '−' : ''}${Math.abs(n)}/${d}`;
+  return `C|${[[p, q], [r, s]].sort((x, y) => Math.abs(x[0]) - Math.abs(y[0]) || x[1] - y[1]).map(x => t(...x)).join('|')}`;
+};
+export const HUELLAS_COMPARACION = new Set([
+  'fl3bqi', '1d4v11i', '1nw6tc4', '1bua6xn', 'ajdrod', 'a9e5ze', '1g63y1', '19cn1bk', 'wa9uqy',
 ]);
 
 const prohibidoVista = l0 => {
@@ -101,6 +121,7 @@ const prohibidoVista = l0 => {
 };
 
 const prohibido = (id, params) => {
+  if (COMPARACION_POR_ID[id]) return HUELLAS_COMPARACION.has(huella(claveComparacion(params)));
   const k = claveParams(id, params);
   if (PARAMS_HOJA.has(k) || HUELLAS_EXAMEN.has(huella(k))) return true;
   const p = PLANTILLA_POR_ID[id];
