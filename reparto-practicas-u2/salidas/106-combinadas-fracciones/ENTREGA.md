@@ -63,3 +63,6 @@ En el ej. 3, `generarError` descarta el ítem si **cualquier línea con 2 o más
 `.tex`; nunca en claro). Barrido: 5 semillas × 20000 ítems del ej. 3 (y 100000 de los ej. 1 y 2): 0 líneas, 0 pasos, 0 expresiones reservadas.
 `node --test tests/practicas-comun.test.js tests/practicas-combinadas-fracciones.test.js`: 68/68. `npm test`: 1644/1644. Sin navegador (solo cambia la exclusión de ítems, no la interfaz).
 Sin tocar `catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).
+
+## Reabierta del 12-11 (sesión s-20261112T013540-0664f9cd, commit 37f998d)
+`claveSinOrden` nueva: términos de la suma con su signo y sin orden; en cada producto o cociente, el producto de los signos y los factores sin signo y sin orden; más el número de menos y el valor. `a − b·c`, `−c·b + a` y `a + b·(−c)` son la misma clave; `a − b·(−c)` (dos menos) es otra. CLAVES_HOJA sale solo de EXPRESIONES_HOJA; HUELLAS_EXAMEN_COMBINADAS (23) y HUELLAS_PASOS_EXAMEN (14) recalculadas desde el papel con un guion del scratchpad, comprobando primero que con la clave vieja reproducía exactamente los dos conjuntos anteriores. Barrido 3×34000 ítems por ejercicio (ej. 1, 2, 3 y pasos): 0 casos reservados. Test nuevo del sitio del menos. Tests propios 23/23, npm test 1808/1808.
