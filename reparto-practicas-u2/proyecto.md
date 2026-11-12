@@ -810,3 +810,38 @@ el panel ni la tarea 29 del reparto de la U4 programarlas en Classroom.
 - **El tablón, más corto**: el 11-11 la coordinadora lo regeneró entero (pesaba unos 110 000 tokens y ninguna sesión podía leerlo   «entero») y movió el historial de líneas «Actualizado» a `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md`. El guion que
   lo regenera desde `hechos/` está en `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py`
   (`python3 -I <guion> reparto-practicas-u2 > /tmp/x && mv`, ver su cabecera): úsalo en vez de rehacer las filas a mano.
+
+## Tareas 171-194: el botón «No lo sé» en todas las prácticas (2026-11-12, s-20261112T221031-a65e0c81)
+
+Juan Luis propuso el 12-11 un botón «No lo sé» / «I don't know» en los ejercicios: al pulsarlo, el alumno ve cómo se hace ese ítem y cuál
+es la solución; cada 3 pulsaciones pierde 1 punto. Aprobó las reglas (no es fallo, no quita vida, corta la racha, las ayudas se cuentan
+aparte en `ayudas`, el ítem siguiente es otro, «No sé hacerlo» en los ejercicios de procedimiento) y, tras probar la muestra, pidió:
+«Publícalo y hazlo extensivo a todos los ejercicios interactivos desde la unidad 1. Si es necesario, usa la skill reparto».
+
+- **Hecho por la coordinadora antes del alta** (commits 1b74b06, 5d1dda1 y los dos siguientes de `main`): la base común
+  (`contador.js`, `nube.js`, `base.js`, `textos.js`, `estilos.css`), el contrato en `plantilla/`, `fraccion-de` y
+  `multiplica-divide` como modelos, `docs/no-lo-se.md` (la especificación que leen todas las fichas) y
+  `tests/practicas-no-lo-se.test.js`, que carga **cada** práctica del catálogo sin navegador y prueba sus explicaciones. Ese test y
+  `practicas/_comun/` no los toca ninguna tarea (salvo la última revisión, una línea).
+- **171-189 (MEDIO, 1 h 30 min, todas independientes entre sí)**: escribir la `explicacion` (o `sinAyuda`) de cada ejercicio, por
+  grupos de 3-5 prácticas de la misma unidad. Cada una toca solo las carpetas de sus prácticas y un test nuevo por práctica
+  (`tests/practicas-ayuda-<slug>.test.js`), así que no comparten ningún fichero. U4: 171, 172 · U5: 173, 174 · U6: 175-177 ·
+  U3: 178-180 y la ortografía 181, 182 · U2: 183-186 · U1: 187-189.
+- **190-193 (ALTO, 1 h 30 min)**: revisión con criterio de profesor (leer 20 explicaciones por ejercicio e idioma, clics, corregir).
+  190 = U4 y U5 (tras 171-174; incluye las dos prácticas modelo) · 191 = U6 (tras 175-177) · 192 = U3 (tras 178-182) · 193 = U1 y U2
+  (tras 183-189). La última en cerrar quita del test genérico la línea que salta las prácticas sin empezar.
+- **194 (MEDIO, 1 h, independiente)**: enseñar `ayudas` en el panel del profesor (`resultados.js`, `profesor.js`,
+  `profesor-hoy.js`), sin tocar el CSV.
+- **Orden de prioridad**: primero la unidad en curso y las que vienen (171, 172, luego 173-177), después el repaso (178-189). La 194,
+  cuando haya una sesión MEDIO libre.
+- **Lo empujado se ve**: las prácticas publicadas enseñan el botón en cuanto su commit llega a `main`. Por eso cada tarea lee a mano
+  sus explicaciones antes de empujar, y no se espera a la revisión para publicar (decisión de la coordinadora: una explicación con la
+  solución comprobada por test y leída por quien la escribe vale más que ningún botón durante semanas; Juan Luis puede cambiarla).
+- **`sinAyuda`**: solo «es un juego» o «va por pasos» (`sesion.aciertos` como número de paso). Cualquier otro caso no lo decide una
+  tarea MEDIO: `sinAyuda: 'Pendiente de decisión: …'` y hallazgo; lo resuelve la revisión o Juan Luis.
+- **Fuera de este encargo**: la app principal (`src/ejercicios/`, `index.html`), que tiene otro motor y otro contador; la serpiente
+  y los demás juegos sueltos. Si Juan Luis lo quiere también ahí, es un alta nueva.
+- **Cuántas sesiones a la vez**: las 19 de escritura y la 194 no comparten ficheros; el límite es la máquina (`npm test` tarda ~20 s y
+  cada sesión abre su servidor en un puerto propio, 81NN). Recomendado: hasta 4 a la vez.
+- Otra sesión, ajena al reparto, hacía el 12-11 arreglos sueltos en `division` y `factorizaciones` sin comitear: las fichas mandan
+  mirar `git status --short` de cada carpeta antes de tocarla.
