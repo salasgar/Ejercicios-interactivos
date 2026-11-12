@@ -42,6 +42,13 @@ for (const [n, nombre, generar, explica] of [
         const html = explica(item, ctx(idioma));
         sinRestos(html, `ej${n} ${idioma}`);
         termina(html, `${idioma === 'es' ? 'La respuesta es' : 'The answer is'} x = ${fraccionPlano(item.solucion)}.`, `ej${n}`);
+        // Fracciones con raya, nunca con barra (revisión 191: el ej. 3 decía «x/3» y el 4, «−3/7»).
+        assert.doesNotMatch(plano(html), /\d\/\d|x\//, `ej${n}: fracción con barra — ${plano(html)}`);
+        // El ej. 3 hace la cuenta del primer paso antes del segundo.
+        if (n === 3) {
+          const r = L.segundoPaso(item).c;
+          assert.match(plano(html), new RegExp(`${idioma === 'es' ? 'o sea' : 'that is'}, [^.]*= ${L.num(r)}\\.`), `ej3 cuenta — ${plano(html)}`);
+        }
       }
     }
   });
@@ -52,6 +59,8 @@ test('transposicion ej. 5: dice si estaba bien y, si no, la solución correcta',
     for (const item of items(L.generarComprueba, 25)) {
       const html = X.explicaComprueba(item, ctx(idioma));
       sinRestos(html, `ej5 ${idioma}`);
+      // El feedback de «signo-cambiado» dice «es positivo» aunque sea negativo: la tarjeta no lo repite (revisión 191).
+      assert.doesNotMatch(plano(html), /es positivo \(−|is positive \(−|es negativo \((?!−)|is negative \((?!−)/, `ej5 signo — ${plano(html)}`);
       if (item.buena) termina(html, idioma === 'es' ? 'La respuesta es sí, está bien.' : 'The answer is yes, it is right.', 'ej5');
       else termina(html, `x = ${fraccionPlano(item.solucion)}.`, 'ej5');
     }

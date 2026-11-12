@@ -6,6 +6,7 @@
 // «:» ; cada explicación habla de LOS NÚMEROS DE ESE ÍTEM; ni porcentajes ni lo de semanas siguientes.
 
 import { Fraccion, htmlFraccion } from '../_comun/fracciones.js';
+import { deEcuacion } from '../_comun/algebra.js';
 import {
   F, num, sub, solTexto, plano, ital, textoEcuacion, linea, comprobacion, solucionDe, calcular,
   segundoPaso, pasoBueno, HUECO,
@@ -16,6 +17,7 @@ const bi = f => ({ es: (...a) => f('es', ...a), en: (...a) => f('en', ...a) });
 const c = t => `<span class="cuenta">${t}</span>`;
 const cl = t => `<span class="cuenta-frac">${t}</span>`;
 const cx = t => c(ital(t));
+const ecHtml = texto => c(deEcuacion(texto).aHtml());
 const x_ = '<i>x</i>';
 
 /** Un número o una fracción en HTML (con raya si es fracción). */
@@ -365,9 +367,11 @@ export function explicaUnaOperacion(item, { idioma }) {
 export function explicaDosOperaciones(item, { idioma }) {
   const es = idioma === 'es';
   const b = Math.abs(item.b);
+  // Revisión 191: el paso con raya (no «x/3») y la cuenta hecha antes del segundo paso.
+  const primero = `${ecHtml(pasoBueno(item))}; ${es ? 'o sea' : 'that is'}, ${ecHtml(textoEcuacion(segundoPaso(item)))}`;
   const pasos = [es
-    ? `Pasa primero el ${b}, que ${item.b > 0 ? 'suma, restando' : 'resta, sumando'}: ${cx(pasoBueno(item))}.`
-    : `First move the ${b}, which is ${item.b > 0 ? 'added, as a subtraction' : 'subtracted, as an addition'}: ${cx(pasoBueno(item))}.`,
+    ? `Pasa primero el ${b}, que ${item.b > 0 ? 'suma, restando' : 'resta, sumando'}: ${primero}.`
+    : `First move the ${b}, which is ${item.b > 0 ? 'added, as a subtraction' : 'subtracted, as an addition'}: ${primero}.`,
   es
     ? `Después pasa el ${item.cociente ? item.n : item.a}, que ${item.cociente ? 'divide, multiplicando' : 'multiplica, dividiendo'}: ${cl(ital(linea(segundoPaso(item))))}.`
     : `Then move the ${item.cociente ? item.n : item.a}, which ${item.cociente ? 'divides, as a multiplication' : 'multiplies, as a division'}: ${cl(ital(linea(segundoPaso(item))))}.`];
@@ -377,12 +381,21 @@ export function explicaDosOperaciones(item, { idioma }) {
 
 /** Ejercicio 4: el número de la derecha entre el que multiplica a la x, y la fracción simplificada. */
 export function explicaFrente(item, { idioma }) {
-  return `${frente(idioma, item)} ${solucionFinal(idioma, item.solucion)}`;
+  return `${conRaya(frente(idioma, item))} ${solucionFinal(idioma, item.solucion)}`;
 }
+
+// Revisión 191: el feedback de este ejercicio escribe las fracciones con barra («−3/7»); en la tarjeta, con raya.
+const conRaya = html => html.replace(/(−?)(\d+)\/(\d+)/g, (_, menos, n, d) => htmlFraccion(new Fraccion(menos ? -Number(n) : Number(n), Number(d))));
 
 /** Ejercicio 5: si la resolución estaba bien o mal, y cómo queda bien hecha. */
 export function explicaComprueba(item, { idioma }) {
   const es = idioma === 'es';
-  if (item.buena) return `${es ? 'Estaba bien' : 'It was right'}: ${bien(idioma, item)} ${respuesta(idioma, es ? 'sí, está bien' : 'yes, it is right')}`;
-  return `${es ? 'Estaba mal' : 'It was wrong'}: ${porQueDe(idioma, item, item.error, F(item.mostrada))}${bien(idioma, item)} ${respuesta(idioma, es ? `no; la solución correcta es ${x_} = ${solHtml(item.solucion)}` : `no; the correct solution is ${x_} = ${solHtml(item.solucion)}`)}`;
+  if (item.buena) return `${es ? 'Estaba bien' : 'It was right'}. ${bien(idioma, item)} ${respuesta(idioma, es ? 'sí, está bien' : 'yes, it is right')}`;
+  // Revisión 191: en «producto», el feedback de «signo-cambiado» dice «es positivo» aunque la solución sea negativa
+  // (hallazgo en la ENTREGA); aquí se dice sin el signo de la solución, que ya enseña la línea buena de detrás.
+  const signo = item.error === 'signo-cambiado' || item.error === 'signo-de-la-solucion';
+  const porQue = signo
+    ? `${val(F(item.mostrada))} ${es ? 'tiene el signo cambiado' : 'has the wrong sign'}. `
+    : porQueDe(idioma, item, item.error, F(item.mostrada));
+  return `${es ? 'Estaba mal' : 'It was wrong'}. ${porQue}${bien(idioma, item)} ${respuesta(idioma, es ? `no; la solución correcta es ${x_} = ${solHtml(item.solucion)}` : `no; the correct solution is ${x_} = ${solHtml(item.solucion)}`)}`;
 }
