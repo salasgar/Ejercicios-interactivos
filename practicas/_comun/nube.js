@@ -23,7 +23,7 @@ import { adaptarProgreso } from './catalogo.js';
 export const ESPERA_LECTURA = 4000;
 
 /** Campos que se acumulan: en la fusión, el máximo de los dos. */
-const ACUMULADOS = ['fallos', 'reinicios', 'repeticiones', 'rapidos', 'en_aciertos', 'en_fallos'];
+const ACUMULADOS = ['fallos', 'reinicios', 'repeticiones', 'rapidos', 'en_aciertos', 'en_fallos', 'ayudas'];
 
 const esObjeto = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const numero = x => (Number.isFinite(x) ? x : 0);

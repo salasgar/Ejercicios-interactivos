@@ -213,6 +213,52 @@ export function solucionProblema(item, idioma) {
     : `${previo}${parte} is ${x.dato}. ${divide}The whole: ${x.k} · ${x.d} = ${cuenta(x.T)}.`;
 }
 
+// ─── «No lo sé»: la explicación de cada ejercicio, con los números del ítem ────
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+
+/** Ejercicios 1 y 2: dividir entre el denominador y multiplicar por el numerador. */
+export function explicaCalculo(item, idioma) {
+  const es = idioma === 'es';
+  const una = item.total / item.d;
+  const unidad = item.ctx ? ` ${enunciadoContexto(item, idioma).unidad}` : '';
+  const quePiden = item.ctx
+    ? (es ? `Hay que calcular ${frItem(item)} de ${item.total}. ` : `You have to work out ${frItem(item)} of ${item.total}. `)
+    : '';
+  const lista = [es
+    ? `Divide entre el denominador: ${cuenta(`${item.total} : ${item.d} = ${una}`)}. Eso vale una de las ${item.d} partes.`
+    : `Divide by the denominator: ${cuenta(`${item.total} : ${item.d} = ${una}`)}. That is one of the ${item.d} parts.`];
+  if (item.n > 1) {
+    lista.push(es
+      ? `Multiplica por el numerador: ${cuenta(`${una} · ${item.n} = ${item.resultado}`)}. Son las ${item.n} partes que te piden.`
+      : `Multiply by the numerator: ${cuenta(`${una} · ${item.n} = ${item.resultado}`)}. Those are the ${item.n} parts you need.`);
+  }
+  const fin = es ? `La respuesta es ${cuenta(`${item.resultado}${unidad}`)}.` : `The answer is ${cuenta(`${item.resultado}${unidad}`)}.`;
+  const consejo = item.n > 1
+    ? (es ? ' Consejo: divide siempre primero; así los números son más pequeños.' : ' Tip: always divide first; the numbers are smaller that way.')
+    : (es ? ' Con un 1 arriba, basta con dividir.' : ' With a 1 on top, you only have to divide.');
+  return `${quePiden}${pasos(lista)}${fin}${consejo}`;
+}
+
+/** Ejercicio 3: la parte arriba, el total abajo, y simplificar. */
+export function explicaParte(item, { tt }) {
+  const regla = tt({
+    es: 'Arriba se escribe la parte y abajo, el total. Después se simplifica.',
+    en: 'Write the part on top and the whole at the bottom. Then simplify.',
+  });
+  return `${regla} ${tt(TX.parte.razon)(item)}`;
+}
+
+/** Ejercicio 4: el paso a paso del problema. */
+export function explicaProblema(item, idioma) {
+  const es = idioma === 'es';
+  const d = item.f1.d;
+  const consejo = item.variante === 'dos'
+    ? (es ? 'Consejo: calcula cada parte por separado y después resta.' : 'Tip: work out each part separately and then subtract.')
+    : (es ? `Consejo: dibuja una barra partida en ${d} partes iguales y marca lo que dice el enunciado.` : `Tip: draw a bar divided into ${d} equal parts and mark what the problem says.`);
+  return `${solucionProblema(item, idioma)} ${consejo}`;
+}
+
 /** Por qué está mal una opción del ejercicio 4 (con los números del ítem), en un idioma. */
 export function explicaOpcion(item, opcion, idioma) {
   const es = idioma === 'es';
@@ -261,6 +307,8 @@ export function explicaOpcion(item, opcion, idioma) {
 
 export const TX = {
   pista: { es: 'Pista', en: 'Hint' },
+  // El botón «No lo sé» de la base, con el texto de un ejercicio de procedimiento.
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
 
   calculo: {
     nombre: { es: 'Calcula', en: 'Work it out' },

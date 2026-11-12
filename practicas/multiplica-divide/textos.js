@@ -266,4 +266,59 @@ export function feedbackPotencia(item, { tt }, error) {
   return `${aviso ? `${tt(aviso)} ` : ''}${cadena}.`;
 }
 
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+
+const esNatural = p => p[1] === 1;
+const hayNegativa = (...pares) => pares.some(p => p[0] < 0);
+
+/** Ejercicio 1. */
+export function explicaMultiplica(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt({ es: 'Se multiplica arriba por arriba y abajo por abajo.', en: 'Multiply top by top and bottom by bottom.' });
+  const natural = [item.a, item.b].some(esNatural)
+    ? ` ${tt({ es: 'El número natural es una fracción con un 1 abajo.', en: 'The whole number is a fraction with 1 at the bottom.' })}`
+    : '';
+  const signo = hayNegativa(item.a, item.b) ? ` ${signosDistintos(item, tt)}` : '';
+  const fin = tt({ es: 'Si se puede, el resultado se simplifica.', en: 'If you can, simplify the result.' });
+  return `${regla}${natural}${signo} ${feedbackMultiplica(item, ctx)} ${fin}`;
+}
+
+/** Ejercicio 2. */
+export function explicaParte(item, ctx) {
+  const regla = ctx.tt({
+    es: 'La fracción «de» otra fracción es un producto: arriba por arriba y abajo por abajo.',
+    en: 'A fraction “of” another fraction is a product: top by top and bottom by bottom.',
+  });
+  return `${regla} ${feedbackParte(item, ctx)}`;
+}
+
+/** Ejercicio 3 (los dos pasos). */
+export function explicaInversa(item, ctx) {
+  const regla = ctx.tt({
+    es: 'Para la inversa se da la vuelta a la fracción: lo de arriba pasa abajo y lo de abajo, arriba. El signo no cambia.',
+    en: 'For the reciprocal, turn the fraction upside down: the top goes to the bottom and the bottom goes to the top. The sign does not change.',
+  });
+  return `${regla} ${feedbackInversa(item, ctx)} ${feedbackProductoInversa(item, ctx)}`;
+}
+
+/** Ejercicio 4. */
+export function explicaDivide(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt({
+    es: 'Dividir entre una fracción es multiplicar por su inversa: la primera se queda igual y a la segunda se le da la vuelta.',
+    en: 'To divide by a fraction, multiply by its reciprocal: the first one stays the same and you turn the second one upside down.',
+  });
+  const signo = hayNegativa(item.a, item.b) ? ` ${signosDistintos(item, tt)}` : '';
+  return `${regla}${signo} ${feedbackDivide(item, ctx)}`;
+}
+
+/** Ejercicio 5. */
+export function explicaPotencia(item, ctx) {
+  const regla = ctx.tt({
+    es: `El exponente dice cuántas veces se multiplica la fracción por sí misma: aquí, ${item.exp}. Se eleva el numerador y también el denominador.`,
+    en: `The exponent tells you how many times to multiply the fraction by itself: here, ${item.exp}. Raise the numerator and also the denominator.`,
+  });
+  return `${regla} ${feedbackPotencia(item, ctx)}`;
+}
+
 export { par, CONTEXTOS_PARTE };

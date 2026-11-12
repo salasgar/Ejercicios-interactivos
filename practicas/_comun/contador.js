@@ -8,6 +8,11 @@
 //   - Cada fallo quita PENALIZACION puntos (nunca por debajo de 0) y una vida.
 //     Sin vidas, el ejercicio vuelve a empezar: puntos a 0 y vidas nuevas.
 //     Los fallos acumulados se conservan: son lo que ve el profesor.
+//   - «No lo sé» (decisión del 2026-11-12): el alumno puede pedir la explicación
+//     de un ítem en vez de contestarlo. No es un fallo: no quita vida ni se suma
+//     a `fallos`. Corta la racha, y cada AYUDAS_POR_PUNTO ayudas quitan 1 punto
+//     (nunca por debajo de 0). Las ayudas se cuentan aparte, en `ayudas`, que
+//     solo existe cuando se ha pedido alguna.
 //
 // Los valores están aquí, en un solo sitio, para ajustarlos cuando se vea
 // cómo reaccionan los alumnos. Un ejercicio puede declarar su propio
@@ -17,6 +22,7 @@ export const PENALIZACION = 1;
 export const VIDAS = 5;
 export const RACHA = 5;
 export const EXTRA = 1;
+export const AYUDAS_POR_PUNTO = 3;
 
 /**
  * `aciertos` son los del intento en curso (vuelven a 0 al perder las vidas:
@@ -53,6 +59,21 @@ export function anotar(ej, acierto, dia = 0, { penalizacion = PENALIZACION, vida
   }
   return sig;
 }
+
+/**
+ * Anota un «No lo sé» y devuelve el ejercicio nuevo (el de entrada no se toca):
+ * una ayuda más, la racha a 0 y, cada `cada` ayudas, 1 punto menos. Ni vidas
+ * ni fallos. `ayudas` es acumulado, como `fallos`: no vuelve a 0 al perder las vidas.
+ */
+export function ayudar(ej, { cada = AYUDAS_POR_PUNTO } = {}) {
+  if (ej.terminado) return ej;
+  const sig = { ...ej, ayudas: (ej.ayudas ?? 0) + 1, racha: 0 };
+  if (cada > 0 && sig.ayudas % cada === 0) sig.puntos = Math.max(0, sig.puntos - 1);
+  return sig;
+}
+
+/** Cuántas ayudas lleva gastadas del grupo en curso: 0, 1… `cada` − 1 (a la siguiente de `cada` − 1 se paga). */
+export const ayudasDelGrupo = (ej, cada = AYUDAS_POR_PUNTO) => (cada > 0 ? (ej.ayudas ?? 0) % cada : 0);
 
 /**
  * Qué ha pasado entre dos estados seguidos del contador, para el feedback:

@@ -14,6 +14,7 @@ import {
 } from './logica.js';
 import {
   TX, enunciadoContexto, enunciadoParte, enunciadoProblema, solucionProblema, explicaOpcion,
+  explicaCalculo, explicaParte, explicaProblema,
 } from './textos.js';
 
 const frItem = x => htmlFraccion(fraccion(x.n, x.d));
@@ -191,6 +192,8 @@ arrancar({
       clave: item => `${item.n}/${item.d}:${item.total}`,
       montar: montarCalculo,
       enunciado: enunciadoCalculo,
+      explicacion: (item, { idioma }) => explicaCalculo(item, idioma),
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.contexto.nombre,
@@ -200,6 +203,8 @@ arrancar({
       clave: item => `${item.ctx}:${item.n}/${item.d}:${item.total}`,
       montar: montarContexto,
       enunciado: enunciadoCon,
+      explicacion: (item, { idioma }) => explicaCalculo(item, idioma),
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.parte.nombre,
@@ -209,6 +214,8 @@ arrancar({
       clave: item => `${item.ctx}:${item.parte}/${item.total}`,
       montar: montarParte,
       enunciado: enunciadoParteHtml,
+      explicacion: explicaParte,
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.problema.nombre,
@@ -218,6 +225,8 @@ arrancar({
       clave: item => `${item.variante}:${item.esc}:${item.total}:${item.f1.n}/${item.f1.d}:${item.f2 ? `${item.f2.n}/${item.f2.d}` : ''}`,
       montar: montarProblema,
       enunciado: enunciadoProblemaHtml,
+      explicacion: (item, { idioma }) => explicaProblema(item, idioma),
+      noLoSe: TX.no_se_hacerlo,
     },
   ],
 });

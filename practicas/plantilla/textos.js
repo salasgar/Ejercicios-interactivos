@@ -40,5 +40,11 @@ export const TX = {
     exponente_de: { es: p => `Exponente de ${p}`, en: p => `Exponent of ${p}` },
     no_da: { es: 'y no', en: 'not' },
     correcta: { es: 'La factorización es', en: 'The prime factorisation is' },
+    // «No lo sé» (la `explicacion` del ejercicio) y el texto propio de su botón.
+    como: {
+      es: 'Divide entre el primo más pequeño que puedas, una vez y otra, hasta llegar a 1:',
+      en: 'Divide by the smallest prime you can, again and again, until you get 1:',
+    },
+    no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
   },
 };

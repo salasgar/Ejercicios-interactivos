@@ -199,6 +199,14 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
 .ejercicio .feedback strong { display: inline; margin: 0; }
 .feedback--bien { background: var(--correcto-claro); color: #14532d; }
 .feedback--mal { background: var(--error-claro); color: #7f1d1d; }
+/* «No lo sé» (base.js): el botón con su cuenta de ayudas, y la explicación, que no es ni acierto ni fallo. */
+.feedback--ayuda { background: var(--aviso-claro); color: #713f12; }
+.zona-ayuda { margin-top: 1.1rem; text-align: center; }
+.zona-ayuda .nota-ayuda { margin: .35rem 0 0; font-size: .85rem; color: var(--texto-suave, #6b7280); }
+.item--ayudado { opacity: .55; }
+.feedback--ayuda .animo { color: inherit; }
+.pasos-ayuda { margin: .4rem 0 .3rem; padding-left: 1.4rem; }
+.pasos-ayuda li { margin: .25rem 0; }
 /* Un bloque en línea: si cabe en el renglón, entera; si no, pasa entera al
    siguiente; y solo si no cabe en ninguno se parte (antes «nowrap», que
    ensanchaba la página en 375 px cuando una práctica metía una frase entera). */

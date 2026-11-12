@@ -14,6 +14,7 @@ import { campoFraccion } from './campo.js';
 import {
   TX, fr, fraseParte, htmlTachado, htmlPorLaInversa, htmlEnCruz,
   feedbackMultiplica, feedbackParte, feedbackInversa, feedbackProductoInversa, feedbackDivide, feedbackPotencia,
+  explicaMultiplica, explicaParte, explicaInversa, explicaDivide, explicaPotencia,
 } from './textos.js';
 import {
   F, generarMultiplica, generarParte, generarInversa, generarDivide, generarPotencia,
@@ -143,14 +144,16 @@ function montarPotencia(contenedor, item, api) {
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
 const clavePar = p => `${p[0]}/${p[1]}`;
+// El botón «No lo sé» de la base, con el texto de un ejercicio de procedimiento.
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 arrancar({
   slug: 'multiplica-divide',
   ejercicios: [
-    { nombre: TX.nombres.multiplica, detalle: TX.detalles.multiplica, introduccion: TX.introduccion.multiplica, generar: generarMultiplica, clave: i => `${clavePar(i.a)}·${clavePar(i.b)}`, montar: montarMultiplica, enunciado: enunciadoMultiplica },
-    { nombre: TX.nombres.parte, detalle: TX.detalles.parte, introduccion: TX.introduccion.parte, generar: generarParte, clave: i => `${i.contexto}${clavePar(i.a)}${clavePar(i.c)}`, montar: montarParte, enunciado: enunciadoParte },
-    { nombre: TX.nombres.inversa, detalle: TX.detalles.inversa, introduccion: TX.introduccion.inversa, generar: generarInversa, clave: i => clavePar(i.f), montar: montarInversa, enunciado: enunciadoInversa },
-    { nombre: TX.nombres.divide, detalle: TX.detalles.divide, introduccion: TX.introduccion.divide, generar: generarDivide, clave: i => `${clavePar(i.a)}:${clavePar(i.b)}`, montar: montarDivide, enunciado: enunciadoDivide },
-    { nombre: TX.nombres.potencia, detalle: TX.detalles.potencia, introduccion: TX.introduccion.potencia, generar: generarPotencia, clave: i => `${clavePar(i.base)}^${i.exp}`, montar: montarPotencia, enunciado: enunciadoPotencia },
+    { nombre: TX.nombres.multiplica, detalle: TX.detalles.multiplica, introduccion: TX.introduccion.multiplica, generar: generarMultiplica, clave: i => `${clavePar(i.a)}·${clavePar(i.b)}`, montar: montarMultiplica, enunciado: enunciadoMultiplica, explicacion: explicaMultiplica, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.nombres.parte, detalle: TX.detalles.parte, introduccion: TX.introduccion.parte, generar: generarParte, clave: i => `${i.contexto}${clavePar(i.a)}${clavePar(i.c)}`, montar: montarParte, enunciado: enunciadoParte, explicacion: explicaParte, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.nombres.inversa, detalle: TX.detalles.inversa, introduccion: TX.introduccion.inversa, generar: generarInversa, clave: i => clavePar(i.f), montar: montarInversa, enunciado: enunciadoInversa, explicacion: explicaInversa, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.nombres.divide, detalle: TX.detalles.divide, introduccion: TX.introduccion.divide, generar: generarDivide, clave: i => `${clavePar(i.a)}:${clavePar(i.b)}`, montar: montarDivide, enunciado: enunciadoDivide, explicacion: explicaDivide, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.nombres.potencia, detalle: TX.detalles.potencia, introduccion: TX.introduccion.potencia, generar: generarPotencia, clave: i => `${clavePar(i.base)}^${i.exp}`, montar: montarPotencia, enunciado: enunciadoPotencia, explicacion: explicaPotencia, noLoSe: NO_SE_HACERLO },
   ],
 });

@@ -55,6 +55,17 @@
 //                         (la orden, el problema…) en ese idioma, con las mismas
 //                         clases que en `montar`. Sale en la traducción, encima
 //                         del feedback. Solo el texto: nada de botones ni casillas.
+//     explicacion(item, { idioma, t, tt, esc })  opcional: con ella, la base pone
+//                         debajo del ítem el botón «No lo sé» / «I don't know». Al
+//                         pulsarlo, el ítem se cierra sin contestar y sale este HTML:
+//                         CÓMO SE HACE ESE ÍTEM, con sus números, paso a paso y con la
+//                         solución al final (tres o cuatro líneas; nada de teoría
+//                         general). No es un fallo: ni vida ni `fallos`; corta la racha
+//                         y cada 3 ayudas quitan 1 punto (`ayudar`, en contador.js; se
+//                         cuentan en `ayudas`). El siguiente ítem es otro. No la
+//                         declares en un ejercicio por pasos ni en un juego.
+//     noLoSe              opcional, { es, en }: otro texto para ese botón, p. ej.
+//                         «No sé hacerlo» en un ejercicio de procedimiento.
 //
 // ─── api (lo que recibe `montar`) ──────────────────────────────────────────────
 //
@@ -232,6 +243,16 @@ function montarFactorizacion(contenedor, item, api) {
   });
 }
 
+/** «No sé hacerlo»: las divisiones entre primos, una a una, y la factorización. */
+function explicacionFactorizacion(item, { tt }) {
+  const pasosDados = [];
+  let resto = item.n;
+  for (const [p, e] of factorizar(item.n)) {
+    for (let i = 0; i < e; i++) { pasosDados.push(`${resto} : ${p} = ${resto / p}`); resto /= p; }
+  }
+  return `${tt(TX.fact.como)} <span class="cuenta">${pasosDados.join('</span>, <span class="cuenta">')}</span>. ${tt(TX.fact.correcta)} <span class="cuenta">${item.n} = ${htmlFact(factorizar(item.n))}</span>.`;
+}
+
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
 arrancar({
@@ -244,6 +265,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarPrimo,
       enunciado: enunciadoPrimo,
+      // Con `explicacion` sale el botón «No lo sé»: aquí vale la misma que da el feedback.
+      explicacion: (item, textos) => explicacionPrimo(item.n, textos),
     },
     {
       nombre: TX.fact.nombre,
@@ -255,6 +278,8 @@ arrancar({
       generar: generarFactorizacion,
       montar: montarFactorizacion,
       enunciado: enunciadoFactorizacion,
+      explicacion: explicacionFactorizacion,
+      noLoSe: TX.fact.no_se_hacerlo,
     },
   ],
 });

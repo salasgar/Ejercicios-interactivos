@@ -28,7 +28,7 @@
 
 import { practicaPorSlug, adaptarProgreso } from './catalogo.js';
 import { leerCodigoSecreto, formatoDeCodigo } from './codigos.js';
-import { ejercicioNuevo, anotar, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA } from './contador.js';
+import { ejercicioNuevo, anotar, ayudar, ayudasDelGrupo, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA, AYUDAS_POR_PUNTO } from './contador.js';
 import { resolverCodigo } from './espacio.js';
 import {
   leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico,
@@ -64,6 +64,9 @@ export function validarPractica(practica) {
       if (typeof e[fn] !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: falta la función «${fn}»`);
     }
     if (e.enunciado !== undefined && typeof e.enunciado !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «enunciado» tiene que ser una función (item, { idioma, t, tt, esc })`);
+    if (e.explicacion !== undefined && typeof e.explicacion !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «explicacion» tiene que ser una función (item, { idioma, t, tt, esc })`);
+    if (e.noLoSe !== undefined && !esBilingue(e.noLoSe)) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «noLoSe» tiene que ser { es, en }`);
+    if (e.noLoSe !== undefined && e.explicacion === undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «noLoSe» sin «explicacion» no hace nada`);
     for (const viejo of ['inicial', 'maximo']) {
       if (e[viejo] !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «${viejo}» ya no existe; el contador es por puntos («objetivo», «penalizacion», «vidas»)`);
     }
@@ -633,6 +636,9 @@ export function arrancar(practica) {
     return iguales ? t().menu_regla(p.objetivo, p.penalizacion, p.vidas, RACHA, EXTRA) : t().menu_regla_varia(RACHA, EXTRA);
   }
 
+  /** La frase del «No lo sé», si algún ejercicio de la práctica lo tiene. */
+  const htmlReglaAyuda = () => (defs.some(d => d.explicacion) ? `<p>${t().menu_ayuda(AYUDAS_POR_PUNTO)}</p>` : '');
+
   function pintarMenu() {
     turno++;
     actual = null;
@@ -657,6 +663,7 @@ export function arrancar(practica) {
       <section>
         <h2>${t().menu_titulo}</h2>
         <p>${regla}</p>
+        ${htmlReglaAyuda()}
         ${estado.codigo ? '' : `<div class="aviso">${t().sin_codigo}</div>`}
         <ul class="lista">${filas}</ul>
         ${cajaResultado()}
@@ -751,6 +758,7 @@ export function arrancar(practica) {
         ${cabeceraEjercicio()}
         <div class="tarjeta ejercicio">
           <div id="item"></div>
+          <div id="ayuda" class="zona-ayuda"></div>
           <div id="feedback" aria-live="polite"></div>
         </div>
       </section>`;
@@ -771,6 +779,7 @@ export function arrancar(practica) {
         let texto = '';
         try { texto = actual.feedback ? actual.feedback(textosDe(idi)) : html; }
         catch (e) { console.error(e); actual.feedback = null; }
+        app.querySelector('#ayuda').innerHTML = '';
         registrar(Boolean(acierto), Math.max(0, Math.floor(pistas) || 0));
         mostrarFeedback(Boolean(acierto), texto, espera);
         if (!acierto) anotarFallo({ html: texto, error, respuesta });
@@ -778,6 +787,7 @@ export function arrancar(practica) {
     };
     try {
       defs[actual.n].montar(app.querySelector('#item'), actual.item, api);
+      pintarBotonAyuda();
     } catch (e) {
       // Un fallo de la práctica no debe dejar al alumno atascado ni penalizarle.
       console.error(e);
@@ -786,6 +796,70 @@ export function arrancar(practica) {
       app.querySelector('#feedback').innerHTML = `<div class="aviso aviso--error">${t(idi).error_item}</div><button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
       app.querySelector('#siguiente').addEventListener('click', siguiente);
     }
+  }
+
+  /**
+   * El botón «No lo sé», debajo del ítem, con la cuenta de ayudas. Solo en los
+   * ejercicios que declaran `explicacion`. Se quita en cuanto se responde.
+   */
+  function pintarBotonAyuda() {
+    const def = defs[actual.n];
+    if (!def.explicacion || actual.respondido) return;
+    const idi = actual.idioma;
+    const zona = app.querySelector('#ayuda');
+    zona.innerHTML = `
+      <button type="button" class="discreto" id="no-lo-se">${tt(def.noLoSe ?? { es: T.es.no_lo_se, en: T.en.no_lo_se }, idi)}</button>
+      <p class="nota-ayuda">${t(idi).ayuda_nota(ayudasDelGrupo(actual.sesion), AYUDAS_POR_PUNTO)}</p>`;
+    const miTurno = turno;
+    zona.querySelector('#no-lo-se').addEventListener('click', () => { if (miTurno === turno) pedirAyuda(); });
+  }
+
+  /**
+   * «No lo sé»: el ítem se da por cerrado sin contestar (ni acierto ni fallo),
+   * se enseña la explicación de la práctica con sus números y se anota la
+   * ayuda (contador.js, `ayudar`). El ítem queda a la vista, apagado, para
+   * leer la explicación mirándolo; el siguiente es otro ítem.
+   */
+  function pedirAyuda() {
+    if (actual.respondido) return;
+    const def = defs[actual.n];
+    const idi = actual.idioma;
+    const { item } = actual;
+    const explicacion = textos => def.explicacion(item, textos);
+    let texto;
+    try { texto = explicacion(textosDe(idi)); }
+    catch (e) {
+      // Una explicación que falla no le cuesta nada al alumno: se queda sin botón y contesta como siempre.
+      console.error(e);
+      app.querySelector('#ayuda').innerHTML = '';
+      return;
+    }
+    actual.respondido = true;
+    actual.feedback = explicacion;
+    const zonaItem = app.querySelector('#item');
+    zonaItem.inert = true;
+    zonaItem.classList.add('item--ayudado');
+    app.querySelector('#ayuda').innerHTML = '';
+    const antes = actual.sesion;
+    actual.sesion = ayudar(actual.sesion);
+    guardarSesion(antes);
+    const pagada = ayudasDelGrupo(actual.sesion) === 0;
+    const usadas = ayudasDelGrupo(actual.sesion);
+    const perdidos = actual.cambio.perdidos;
+    const tarjeta = (i, html) => `
+      <div class="feedback feedback--ayuda"><strong>${t(i).ayuda_titulo}</strong> ${html}
+        <p class="penalizacion">${pagada ? t(i).ayuda_pagada(AYUDAS_POR_PUNTO, perdidos) : t(i).ayuda_gratis(usadas, AYUDAS_POR_PUNTO)}</p>
+        <p class="animo">${t(i).ayuda_lee}</p>
+      </div>`;
+    const caja = app.querySelector('#feedback');
+    caja.innerHTML = `
+      ${tarjeta(idi, texto)}
+      ${botonTraduccion()}
+      <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
+    activarTraduccion(tarjeta);
+    const boton = caja.querySelector('#siguiente');
+    boton.addEventListener('click', siguiente);
+    boton.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
   /** Anota la respuesta en el contador y lo guarda. */
@@ -799,6 +873,11 @@ export function arrancar(practica) {
       actual.sesion.en_aciertos = (actual.sesion.en_aciertos ?? 0) + (acierto ? 1 : 0);
       actual.sesion.en_fallos = (actual.sesion.en_fallos ?? 0) + (acierto ? 0 : 1);
     }
+    guardarSesion(antes);
+  }
+
+  /** Guarda la sesión que acaba de cambiar (respuesta o ayuda), la sube cuando toca y repinta el contador. */
+  function guardarSesion(antes) {
     if (actual.practica) {
       if (actual.sesion.terminado) { estado.ej[actual.n].repeticiones++; guardar(); subir(); }
     } else {
