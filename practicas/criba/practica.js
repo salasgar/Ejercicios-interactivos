@@ -3,31 +3,15 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { factorizar, criterio, CRITERIOS, esPrimo } from '../_comun/aritmetica.js';
-import { TX } from './textos.js';
+import { esPrimo } from '../_comun/aritmetica.js';
+import { TX, explicarClase, explicaFlashcard, explicaRaiz } from './textos.js';
 import {
   generarCriba, aciertaTachar, PRIMOS_HASTA_100,
-  generarFlashcard, claseDe, primosAProbar,
+  generarFlashcard, claseDe,
   generarRaiz, datosExplicacionRaiz,
 } from './logica.js';
 
 const PRIMOS_HASTA_100_SET = new Set(PRIMOS_HASTA_100);
-
-/** Texto común a los ejercicios 2 y 3: por qué un número es primo o compuesto. */
-function explicarClase(n, clase, api) {
-  const { tt } = api;
-  if (clase === 'ninguno') return tt(TX.flash.uno);
-  if (clase === 'compuesto') {
-    const p = factorizar(n)[0][0];
-    const cuenta = `<span class="cuenta">${n} = ${p} · ${n / p}</span>`;
-    const pista = CRITERIOS.includes(p) ? ` ${api.t.fijate} ${tt(criterio(n, p).razon)}.` : '';
-    return `${tt(TX.flash.es_compuesto)(n)}: ${cuenta}.${pista}`;
-  }
-  if (n === 2) return tt(TX.flash.dos);
-  const { probados, siguiente } = primosAProbar(n);
-  if (!probados.length) return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.solo_dos)(n)}.`;
-  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(probados.map(String))}, ${tt(TX.flash.se_pasa)(n, siguiente)}.`;
-}
 
 // ─── Ejercicio 1: la criba, paso a paso ─────────────────────────────────────────
 
@@ -264,6 +248,7 @@ arrancar({
       generar: generarCriba,
       montar: montarCriba,
       enunciado: enunciadoCriba,
+      sinAyuda: 'Va por pasos: su generar usa sesion.aciertos como número de paso, y cada fallo ya enseña qué celdas faltaban.',
     },
     {
       nombre: TX.flash.nombre,
@@ -272,6 +257,7 @@ arrancar({
       clave: item => String(item.n),
       montar: montarFlashcard,
       enunciado: enunciadoFlashcard,
+      explicacion: explicaFlashcard,
     },
     {
       nombre: TX.raiz.nombre,
@@ -279,6 +265,7 @@ arrancar({
       generar: generarRaiz,
       montar: montarRaiz,
       enunciado: enunciadoRaiz,
+      explicacion: explicaRaiz,
     },
   ],
 });

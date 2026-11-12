@@ -6,6 +6,9 @@
 // «factor»; producto con «·», nunca «×»; inglés sencillo; el feedback dice
 // qué pasa con los números de ese ítem; el 1 no es primo ni compuesto.
 
+import { factorizar, criterio, CRITERIOS } from '../_comun/aritmetica.js';
+import { claseDe, primosAProbar, listaHastaRaiz, datosExplicacionRaiz } from './logica.js';
+
 export const TX = {
   criba: {
     nombre: { es: 'La criba de Eratóstenes', en: 'The sieve of Eratosthenes' },
@@ -110,3 +113,49 @@ export const TX = {
     },
   },
 };
+
+// ─── Explicaciones del botón «No lo sé» (tarea 184) ─────────────────────────────
+
+const RESPUESTA = {
+  es: x => `La respuesta es <strong>${x}</strong>.`,
+  en: x => `The answer is <strong>${x}</strong>.`,
+};
+const REGLA_PRIMO = {
+  es: 'Para ver si un número es primo, pruébalo con los primos 2, 3, 5, 7… y para cuando <span class="cuenta">p · p</span> pase de ese número.',
+  en: 'To check if a number is prime, try the primes 2, 3, 5, 7… and stop when <span class="cuenta">p · p</span> is more than that number.',
+};
+
+/** Por qué un número es primo, compuesto o ninguno (lo usan el feedback y la explicación). */
+export function explicarClase(n, clase, { tt, t }) {
+  if (clase === 'ninguno') return tt(TX.flash.uno);
+  if (clase === 'compuesto') {
+    const p = factorizar(n)[0][0];
+    const cuenta = `<span class="cuenta">${n} = ${p} · ${n / p}</span>`;
+    const pista = CRITERIOS.includes(p) ? ` ${t.fijate} ${tt(criterio(n, p).razon)}.` : '';
+    return `${tt(TX.flash.es_compuesto)(n)}: ${cuenta}.${pista}`;
+  }
+  if (n === 2) return tt(TX.flash.dos);
+  const { probados, siguiente } = primosAProbar(n);
+  if (!probados.length) return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.solo_dos)(n)}.`;
+  return `${tt(TX.flash.es_primo)(n)}: ${tt(TX.flash.no_divisible)(probados.map(String))}, ${tt(TX.flash.se_pasa)(n, siguiente)}.`;
+}
+
+/** Ejercicio 2: la regla, el caso del ítem y la clase que el ejercicio da por buena. */
+export function explicaFlashcard(item, ctx) {
+  const { tt } = ctx;
+  const clase = claseDe(item.n);
+  const regla = clase === 'ninguno' ? '' : `<p>${tt(REGLA_PRIMO)}</p>`;
+  return `${regla}<p>${explicarClase(item.n, clase, ctx)}</p><p>${tt(RESPUESTA)(tt(TX.flash.opcion[clase]))}</p>`;
+}
+
+/** Ejercicio 3: por qué basta llegar a la raíz, la lista buena y, si el número es compuesto, su divisor. */
+export function explicaRaiz(item, ctx) {
+  const { tt } = ctx;
+  const { r, ultimo, siguiente } = datosExplicacionRaiz(item.n);
+  const lista = listaHastaRaiz(item.n).join(', ');
+  const paso1 = `<p>${tt(REGLA_PRIMO)} ${tt(TX.raiz.explicacion)(item.n, r, siguiente, ultimo)}</p>`;
+  const segundo = item.compuesto
+    ? `<p>${tt(TX.raiz.primo_pregunta)} ${explicarClase(item.n, 'compuesto', ctx)} ${tt({ es: 'No es primo.', en: 'It is not prime.' })}</p>`
+    : '';
+  return `${paso1}${segundo}<p>${tt(RESPUESTA)(lista)}</p>`;
+}
