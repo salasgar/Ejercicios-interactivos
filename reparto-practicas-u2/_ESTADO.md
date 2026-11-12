@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-12T23:22Z por s-20261112T231544-7202b303 al cerrar la 180 (LISTA, commit 528a821; npm test 2003/2003): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-12T23:22Z por s-20261112T231547-05d8a0e0 al cerrar la 179 (LISTA, commit f37db32; npm test 2003/2003): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T23:21Z por s-20261112T231544-5daa433b cierre 178: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-12T22:42Z por s-20261112T224145-3ba6f835 al reclamar la 172 
 Actualizado 2026-11-12T22:42Z por s-20261112T224136-1ca1b79e al reclamar la 171 (EN CURSO; botón «No lo sé» en las cuatro prácticas de la U4 de la semana 1): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T22:11Z por s-20261112T221031-a65e0c81 al dar de alta las tareas 171-194 (botón «No lo sé» en todas las prácticas: 171-189 escritura MEDIO, 190-193 revisión ALTO, 194 panel MEDIO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-12T21:39Z por s-20261112T183110-92d9d858 al cerrar la 121 (LISTA: semanas 2 y 3 montadas en el panel, tareas 21 y 22; con la 20 de la semana 1, las tres; sin commit de código; con Chrome en el panel de Juan Luis): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -313,7 +313,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 177 | Botón «No lo sé» en `problemas-ecuaciones`, `errores6`, `leelo6` (unidad 6): la explicación de cada ejercicio | tareas/tarea-177-no-lo-se-u6-problemas-ecuaciones.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/177-no-lo-se-u6-problemas-ecuaciones/ | LISTA | terminada 23:10Z (12-nov) · commit 1d8a755 |
 | 178 | Botón «No lo sé» en `termometro`, `opuestos`, `situaciones`, `saltos` (unidad 3): la explicación de cada ejercicio | tareas/tarea-178-no-lo-se-u3-termometro.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/178-no-lo-se-u3-termometro/ | LISTA | terminada 23:15Z (12-nov) |
 | 179 | Botón «No lo sé» en `dos-signos`, `signos-producto`, `potencias-enteros`, `jerarquia-enteros` (unidad 3): la explicación de cada ejercicio | tareas/tarea-179-no-lo-se-u3-dos-signos.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/179-no-lo-se-u3-dos-signos/ | EN CURSO | s-20261112T231547-05d8a0e0 · caduca 02:15:47Z (13-nov) |
-| 180 | Botón «No lo sé» en `parentesis-enteros`, `errores3`, `variacion`, `leelo3` (unidad 3): la explicación de cada ejercicio | tareas/tarea-180-no-lo-se-u3-parentesis-enteros.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/180-no-lo-se-u3-parentesis-enteros/ | EN CURSO | s-20261112T231544-7202b303 · caduca 02:15:44Z (13-nov) |
+| 180 | Botón «No lo sé» en `parentesis-enteros`, `errores3`, `variacion`, `leelo3` (unidad 3): la explicación de cada ejercicio | tareas/tarea-180-no-lo-se-u3-parentesis-enteros.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/180-no-lo-se-u3-parentesis-enteros/ | LISTA | terminada 23:22Z (12-nov) · commit ce99c7c |
 | 181 | Botón «No lo sé» en `ortografia`, `ortografia-letras`, `ortografia-puntuacion` (unidad 3): la explicación de cada ejercicio | tareas/tarea-181-no-lo-se-u3-ortografia.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/181-no-lo-se-u3-ortografia/ | PENDIENTE | — |
 | 182 | Botón «No lo sé» en `ortografia-tildes`, `ortografia-palabras`, `ortografia-ampliacion` (unidad 3): la explicación de cada ejercicio | tareas/tarea-182-no-lo-se-u3-ortografia-tildes.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/182-no-lo-se-u3-ortografia-tildes/ | PENDIENTE | — |
 | 183 | Botón «No lo sé» en `divisores`, `semaforo`, `rectangulos`, `recta` (unidad 2): la explicación de cada ejercicio | tareas/tarea-183-no-lo-se-u2-divisores.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/183-no-lo-se-u2-divisores/ | PENDIENTE | — |
@@ -325,14 +325,14 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 189 | Botón «No lo sé» en `dictado`, `mental`, `especiales`, `errores1`, `propiedades` (unidad 1): la explicación de cada ejercicio | tareas/tarea-189-no-lo-se-u1-dictado.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h 30 min | MEDIO | ninguna (es larga) | reparto-practicas-u2/salidas/189-no-lo-se-u1-dictado/ | PENDIENTE | — |
 | 190 | Revisión del «No lo sé» de las unidades 4 y 5: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-190-revision-no-lo-se.md | 171-174 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/190-revision-no-lo-se/ | BLOQUEADA | espera a 171 |
 | 191 | Revisión del «No lo sé» de la unidad 6: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-191-revision-no-lo-se.md | 175-177 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/191-revision-no-lo-se/ | BLOQUEADA | espera a 176 |
-| 192 | Revisión del «No lo sé» de la unidad 3 (con la ortografía): leer las explicaciones, probarlas con clics y corregir | tareas/tarea-192-revision-no-lo-se.md | 178-182 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/192-revision-no-lo-se/ | BLOQUEADA | espera a 179, 180, 181, 182 |
+| 192 | Revisión del «No lo sé» de la unidad 3 (con la ortografía): leer las explicaciones, probarlas con clics y corregir | tareas/tarea-192-revision-no-lo-se.md | 178-182 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/192-revision-no-lo-se/ | BLOQUEADA | espera a 179, 181, 182 |
 | 193 | Revisión del «No lo sé» de las unidades 1 y 2: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-193-revision-no-lo-se.md | 183-189 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/193-revision-no-lo-se/ | BLOQUEADA | espera a 183, 184, 185, 186, 187, 188, 189 |
 | 194 | Enseñar en el panel del profesor cuántas veces ha pulsado «No lo sé» cada alumno en cada ejercicio | tareas/tarea-194-ayudas-en-el-panel.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/194-ayudas-en-el-panel/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-12 23:22Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 4 (171, 176, 179, 180) · LISTA 169 · PENDIENTE 10 (181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
+**Foto a 2026-11-12 23:22Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 3 (171, 176, 179) · LISTA 170 · PENDIENTE 10 (181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -371,12 +371,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (282), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (283), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 180 · 2026-11-12 23:22 · s-20261112T231544-7202b303 · ce99c7c f56eaf4 3dab1de 528a821 · practicas/{errores3,leelo3,variacion,parentesis-enteros}/{practica,textos}.js,… · abierto 2026-11-12T23:15:44Z, cerrado 2026-11-12T…
 LISTA · tarea 179 · 2026-11-12 23:22 · s-20261112T231547-05d8a0e0 · 6d10477, e98e8e9, a2f022f, f37db32 · practicas/{dos-signos,signos-producto,potencias-enteros,jerarquia-enteros}/{tex… · abierto 2026-11-12T23:15:47Z
 LISTA · tarea 178 · 2026-11-12 23:15 · s-20261112T231544-5daa433b · — · — · de 23:15 a 23:23 UTC (estimada: 2 h)
 LISTA · tarea 176 · 2026-11-12 23:12 · s-20261112T230548-46a75b0f · e00af69 (transposicion), d9a2186 (resuelve), 88da… · practicas/{transposicion,resuelve,parentesis-algebra,denominadores}/{practica,t… · de 23:05:48Z a 23:12:13Z

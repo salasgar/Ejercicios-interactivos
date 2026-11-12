@@ -89,6 +89,12 @@ Propio de la unidad 3: Enteros sin paréntesis que no hagan falta (5 − 3, −5
   y `aciertos` de 0 a 9; si tu `generar` necesita algo más, la explicación tiene que aguantar cualquier ítem que salga.
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
+- (s-20261112T231544-7202b303) Los heredocs `cat >> fichero <<EOF` también se saltan el candado de Edit/Write: para añadir
+  un bloque al final de un `textos.js`, usa Edit sobre su última línea, no `>>`.
+- (s-20261112T231544-7202b303) Si `textos.js` ya importa de `logica.js` no hay ciclo (logica no importa textos); así las
+  explicaciones pueden llamar a `cadenaHtml`, `reescritura`, `buenas`… sin duplicar la aritmética.
+- (s-20261112T231544-7202b303) La duración real fue ≈ 10 min de reloj para 4 prácticas (estimada 1 h 30 min); las fichas 171-194 que
+  queden se pueden recalibrar a la baja.
 
 ## Prohibido (propio de esta tarea)
 
