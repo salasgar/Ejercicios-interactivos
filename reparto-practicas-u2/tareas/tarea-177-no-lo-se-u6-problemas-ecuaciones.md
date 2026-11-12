@@ -90,6 +90,8 @@ Propio de la unidad 6: Aquí sí hay letras y ecuaciones. Las prácticas de la u
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
 
+- (de la 177, 2026-11-12) Hecha en unos 25 min, no en 1 h 30. Si la práctica ya tiene una función `explicacion` local en `practica.js` (errores6), se mueve a `textos.js` y se reutiliza; los `solucion*`/`feedback*` de `logica.js` bastan para las demás. Los tests de la explicación no deben comparar con un texto al que el generador añade puntuación final.
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar generadores, opciones, comprobaciones o el feedback que ya existe; tocar `disponible` en `catalogo.js`.
