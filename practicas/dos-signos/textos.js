@@ -144,3 +144,65 @@ export function feedbackBien(item, { tt }, elegida) {
     en: `${cuenta(elegida)} has two signs in a row, without brackets. Written correctly: ${buena}.`,
   });
 }
+
+// ─── «No lo sé»: la explicación de cada ejercicio (docs/no-lo-se.md) ───────────
+
+TX.no_se_hacerlo = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuesta = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
+const mayus = s => `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
+
+/** Ejercicio 1: el signo que queda y el resultado. */
+export function explicaUnSigno(item, { tt }) {
+  const razon = mayus(mismosOdistintos(tt, item.op, item.interno));
+  const paso1 = `${cuenta(item.texto)}: ${razon}, ${queda(tt, item.signo)}.`;
+  const paso2 = item.solo
+    ? `${cuenta(`${item.texto} = ${item.reescrita}`)}.`
+    : `${cuenta(`${item.texto} = ${item.reescrita} = ${fmt(item.valor)}`)}.`;
+  return `${pasos([paso1, paso2])}${respuesta(tt, tt({
+    es: `el signo ${ver(item.signo)} y el resultado ${cuenta(fmt(item.valor))}`,
+    en: `the sign ${ver(item.signo)} and the result ${cuenta(fmt(item.valor))}`,
+  }))}`;
+}
+
+/** Ejercicio 2: la reescritura y el resultado. */
+export function explicaNegativo(item, { tt }) {
+  const regla = item.op === '+'
+    ? tt({ es: `Sumar ${MENOS}${item.b} es restar ${item.b}`, en: `Adding ${MENOS}${item.b} is subtracting ${item.b}` })
+    : tt({ es: `Restar ${MENOS}${item.b} es sumar ${item.b}`, en: `Subtracting ${MENOS}${item.b} is adding ${item.b}` });
+  return `${pasos([
+    `${regla}: ${cuenta(`${item.texto} = ${item.reescrita}`)}.`,
+    `${tt({ es: 'Calcula', en: 'Work it out' })}: ${cuenta(`${item.reescrita} = ${fmt(item.valor)}`)}.`,
+  ])}${respuesta(tt, tt({
+    es: `${cuenta(item.reescrita)}, que da ${cuenta(fmt(item.valor))}`,
+    en: `${cuenta(item.reescrita)}, which gives ${cuenta(fmt(item.valor))}`,
+  }))}`;
+}
+
+/** Ejercicio 3: los signos de cada término y el resultado. */
+export function explicaQuita(item, { tt }) {
+  const trozos = item.terminos.map((t, i) => {
+    const trozo = i === 0 ? `(${ver(t.interno)}${t.mag})` : `${ver(t.op)} (${ver(t.interno)}${t.mag})`;
+    const quedaT = i === 0 ? `${t.signo === '-' ? MENOS : ''}${t.mag}` : `${ver(t.signo)} ${t.mag}`;
+    return cuenta(`${trozo} → ${quedaT}`);
+  }).join('; ');
+  return `${pasos([
+    tt({
+      es: `Cada número con su signo: signos iguales dan +, distintos dan ${MENOS}. El primero se queda con el suyo: ${trozos}.`,
+      en: `Each number with its sign: same signs give +, different signs give ${MENOS}. The first one keeps its own: ${trozos}.`,
+    }),
+    `${tt({ es: 'Calcula', en: 'Work it out' })}: ${cuenta(`${item.reescrita} = ${fmt(item.valor)}`)}.`,
+  ])}${respuesta(tt, tt({
+    es: `${cuenta(item.reescrita)}, que da ${cuenta(fmt(item.valor))}`,
+    en: `${cuenta(item.reescrita)}, which gives ${cuenta(fmt(item.valor))}`,
+  }))}`;
+}
+
+/** Ejercicio 4: la cuenta bien escrita. */
+export function explicaBien(item, { tt }) {
+  return `<p>${tt({
+    es: 'Dos signos nunca van seguidos sin paréntesis: el segundo signo va con su número, entre paréntesis.',
+    en: 'Two signs never go together without brackets: the second sign goes with its number, inside brackets.',
+  })}</p>${respuesta(tt, cuenta(item.buena))}`;
+}

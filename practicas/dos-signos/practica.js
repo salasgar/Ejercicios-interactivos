@@ -9,7 +9,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { fmt, campoEntero } from '../_comun/enteros.js';
-import { TX, feedbackSigno, feedbackUnSigno, feedbackNegativo, feedbackValorNegativo, feedbackQuita, feedbackValorQuita, feedbackBien } from './textos.js';
+import { TX, feedbackSigno, feedbackUnSigno, feedbackNegativo, feedbackValorNegativo, feedbackQuita, feedbackValorQuita, feedbackBien, explicaUnSigno, explicaNegativo, explicaQuita, explicaBien } from './textos.js';
 import {
   generarUnSigno, generarNegativo, generarQuita, generarBienEscrita,
   SIGNOS_OPCION, ver, errorDeSigno, errorDeValor, errorDeNegativo, errorDeValorNegativo,
@@ -188,18 +188,22 @@ arrancar({
     {
       nombre: TX.nombres.unsigno, detalle: TX.detalles.unsigno, introduccion: TX.introduccion.unsigno,
       generar: generarUnSigno, clave: item => item.texto, montar: montarUnSigno, enunciado: enunciadoUnSigno,
+      explicacion: explicaUnSigno, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.nombres.negativo, detalle: TX.detalles.negativo, introduccion: TX.introduccion.negativo,
       generar: generarNegativo, clave: item => item.texto, montar: montarNegativo, enunciado: enunciadoNegativo,
+      explicacion: explicaNegativo, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.nombres.quita, detalle: TX.detalles.quita, introduccion: TX.introduccion.quita,
       generar: generarQuita, clave: item => item.texto, montar: montarQuita, enunciado: enunciadoQuita,
+      explicacion: explicaQuita, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.nombres.bien, detalle: TX.detalles.bien, introduccion: TX.introduccion.bien,
       generar: generarBienEscrita, clave: item => item.buena, montar: montarBien, enunciado: enunciadoBien,
+      explicacion: explicaBien,
     },
   ],
 });
