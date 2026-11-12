@@ -448,6 +448,38 @@ export function explicacionMates(item) {
   }
 }
 
+// --- «No lo sé»: la explicación de cada ejercicio (regla delante, la de acierto detrás, solución al final) ---
+
+const silabaTonica = item => acentuarSilabas(item.mente ? item.silabas.slice(0, -2) : item.silabas, item.tonica)[item.tonica];
+
+export function ayudaTonica(item) {
+  return `<ol class="pasos-ayuda">
+    <li>Dila en voz alta, alargando cada sílaba: la que suena con más fuerza es la tónica. ${explicacionTonica1(item)}</li>
+    <li>Cuenta desde el final: la última es aguda; la penúltima, llana; la antepenúltima, esdrújula. ${explicacionTonica2(item)}</li>
+  </ol><p>La respuesta es: tónica «${silabaTonica(item)}», palabra <b>${nombreClase(item.clase)}</b>.</p>`;
+}
+
+export function ayudaTilde(item) {
+  const respuesta = llevaTilde(item) ? `tocar «${silabaTonica(item)}», la sílaba de la tilde: <b>${escritaDe(item)}</b>` : 'tocar «Ninguna»: no lleva tilde';
+  return `<p>Busca la sílaba tónica, mira si es aguda, llana o esdrújula y cómo acaba la palabra.</p>
+    <p>${explicacionTilde(item)}</p><p>La respuesta es ${respuesta}.</p>`;
+}
+
+export function ayudaVocales(item) {
+  if (item.tipo === 'aun') {
+    return `<p>Prueba a cambiarlo por «todavía» y por «incluso».</p><p>${explicacionAun(item)}</p><p>La respuesta es <b>${item.buena}</b>.</p>`;
+  }
+  const pos = letraConTilde(item);
+  const respuesta = pos === null ? 'tocar «Ninguna»: no lleva tilde' : `tocar la «${item.escrita[pos]}»: <b>${item.escrita}</b>`;
+  return `<p>Mira qué vocales van juntas: ¿van en la misma sílaba (diptongo) o se separan (hiato)? Luego aplica las reglas de siempre.</p>
+    <p>${explicacionVocales(item)}</p><p>La respuesta es ${respuesta}.</p>`;
+}
+
+export function ayudaMates(item) {
+  return `<p>Busca la sílaba tónica y aplica la regla de las agudas, las llanas o las esdrújulas.</p>
+    <p>${explicacionMates(item)}</p><p>La respuesta es <b>${item.escrita}</b>.</p>`;
+}
+
 // --- idError (estable por confusión, ^[a-z0-9-]{1,40}$) -----------------------------------------------
 
 export const idErrorTonica1 = () => 'tonica-mal';

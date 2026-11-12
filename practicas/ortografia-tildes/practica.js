@@ -17,6 +17,7 @@ import {
   TONICA, TILDE, VOCALES_BANCO, MATES,
   generarTonica, generarTilde, generarVocales, generarMates,
   clasesDe, nombreClase, llevaTilde, letraConTilde,
+  ayudaTonica, ayudaTilde, ayudaVocales, ayudaMates,
   silabasMarcadas, explicacionTonica1, explicacionTonica2, explicacionTilde, explicacionVocales, explicacionAun, explicacionMates,
   idErrorTonica1, idErrorTonica2, idErrorTilde, idErrorVocales, idErrorAun, idErrorMates,
 } from './logica.js';
@@ -127,9 +128,9 @@ arrancar({
   slug: 'ortografia-tildes',
   idioma: 'es',
   ejercicios: [
-    { nombre: TX.tonica.nombre, detalle: TX.tonica.detalle, introduccion: TX.tonica.introduccion, generar: generarTonica, clave: item => String(item.i), montar: montarTonica, enunciado: enunciadoTonica },
-    { nombre: TX.tilde.nombre, detalle: TX.tilde.detalle, introduccion: TX.tilde.introduccion, generar: generarTilde, clave: item => String(item.i), montar: montarTilde, enunciado: enunciadoTilde },
-    { nombre: TX.vocales.nombre, detalle: TX.vocales.detalle, introduccion: TX.vocales.introduccion, generar: generarVocales, clave: item => String(item.i), montar: montarVocales, enunciado: enunciadoVocales },
-    { nombre: TX.mates.nombre, detalle: TX.mates.detalle, introduccion: TX.mates.introduccion, generar: generarMates, clave: item => String(item.i), montar: montarMates, enunciado: enunciadoMates },
+    { nombre: TX.tonica.nombre, detalle: TX.tonica.detalle, introduccion: TX.tonica.introduccion, generar: generarTonica, clave: item => String(item.i), montar: montarTonica, enunciado: enunciadoTonica, explicacion: item => ayudaTonica(TONICA[item.i]) },
+    { nombre: TX.tilde.nombre, detalle: TX.tilde.detalle, introduccion: TX.tilde.introduccion, generar: generarTilde, clave: item => String(item.i), montar: montarTilde, enunciado: enunciadoTilde, explicacion: item => ayudaTilde(TILDE[item.i]) },
+    { nombre: TX.vocales.nombre, detalle: TX.vocales.detalle, introduccion: TX.vocales.introduccion, generar: generarVocales, clave: item => String(item.i), montar: montarVocales, enunciado: enunciadoVocales, explicacion: item => ayudaVocales(VOCALES_BANCO[item.i]) },
+    { nombre: TX.mates.nombre, detalle: TX.mates.detalle, introduccion: TX.mates.introduccion, generar: generarMates, clave: item => String(item.i), montar: montarMates, enunciado: enunciadoMates, explicacion: item => ayudaMates(MATES[item.i]) },
   ],
 });
