@@ -135,6 +135,10 @@ de Google de Juan Luis: por eso esta tarea es **con él delante**. Tú manejas e
 - (de la 121, 2-11) Para rellenar el formulario sin clics uno a uno: `#editor-tareas`, campos `#f-es`, `#f-en`, `#f-desde`, `#f-hasta`,
   `#f-nelegir` y un `select[data-ej="slug/n"]` por ejercicio (valores `estrella` / `elegir`), lanzando un evento `input` tras cada cambio.
   Al leer el DOM, no listar todos los `input`/`textarea` de la página: el panel tiene la lista de alumnos en un `textarea` y saldrían los nombres.
+- (de la 121, 12-11) **La semana 2 ya está montada: tarea 21** (plan A de la 169, 7 ★ + 3 de 6; Juan Luis eligió 3 a elegir, no la variante
+  de Navidad con 5). Quien vuelva a reclamar la 121 hace solo la semana 3, con la propuesta de la ENTREGA de la 170 cuando esta cierre LISTA.
+  Funcionó igual que el 2-11: «Nueva tarea en la unidad 4», rellenar por JS (`input` + `change`), «Guardar», recargar, «Editar» → la lista de
+  tareas se oculta mientras el editor está abierto (buscar `li` de «Tarea NN» con el editor abierto devuelve vacío: no es un fallo).
 - (de la 121, 2-11) El Chrome de Juan Luis tiene abierta la sesión de alumno de AJJN: `semana.html?t=<id>` se puede **mirar** con ella, pero no se
   empieza ningún ejercicio.
 

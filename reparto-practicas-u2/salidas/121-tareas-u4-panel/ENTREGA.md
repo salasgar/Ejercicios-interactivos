@@ -1,4 +1,33 @@
-# ENTREGA · Tarea 121 · Las tareas semanales de la U4 en el panel — **solo la semana 1**
+# ENTREGA · Tarea 121 · Las tareas semanales de la U4 en el panel — **semanas 1 y 2** (la 3, pendiente)
+
+## Segunda pasada (2026-11-12): la semana 2, tarea 21
+
+Sesión `s-20261112T183110-92d9d858` (Opus 5.5, esfuerzo Alto), 2026-11-12, con Claude en Chrome en el panel de Juan Luis (su cuenta, su
+espacio). Alcance: la **semana 2**, con la propuesta de `salidas/169-publicar-u4-semana-2-cuater/ENTREGA.md` (la 169 publicó `fraccion-de` y
+`suma-resta` en a9216a1; comprobado en el `catalogo.js` de `origin/main`: 45, 47-52 y 56 `disponible: true`, 53-55 `false`). La **semana 3
+no se monta**: la 170 cerró `PARCIAL` (no publicó nada) y su segunda pasada tiene reclamo vivo (s-20261112T183052-98cf3c42) mientras escribo.
+
+| Id | Título (ES / EN) | `desde` → `hasta` | ★ | A elegir | `nElegir` | Puntos | Plan |
+|---|---|---|---|---|---|---|---|
+| **21** | U4 · Semana 2 · Sumar y restar fracciones / U4 · Week 2 · Adding and subtracting fractions | 2026-12-21 → 2027-01-07 | 7 | 6 | 3 | 100 | A |
+
+Unidad 4, obligatoria con plazo (no «asignada»). Juan Luis confirmó el resumen antes de guardar y eligió **3 a elegir** (no la variante
+«larga» de Navidad con 5 que proponía la 110).
+
+Ejercicios guardados (releídos del panel tras recargar, con «Editar» y «Cancelar»):
+
+- ★ `fraccion-de` 1, 4 · `suma-resta` 1, 2, 3, 4 · `ortografia` 6
+- a elegir `equivalentes` 4 · `simplifica` 3 · `compara` 1 · `fraccion-de` 2, 3 · `suma-resta` 5
+
+Desviaciones: **ninguna de contenido**; solo el orden, el del catálogo (la ortografía, la última de los ★). El editor solo listaba prácticas
+publicadas (no salían `multiplica-divide`, `combinadas-fracciones` ni `errores4`).
+
+Comprobación: tras recargar, «Tarea 21 · U4 · Semana 2 · Sumar y restar fracciones · 7 ★ + 3 de 6 · desde 21-12 · plazo 07-01»; las tareas
+1-4 y 11-20 siguen ahí, sin tocar. `semana.html?t=21` enseña «Obligatoria · Plazo: jueves 07-01», «Termina los 7 ejercicios con ★ y 3 más…
+Son 100 puntos», los 7 ★ y «Elige 3». Solo se miró la página (sesión de alumno ficticio abierta en ese Chrome); no se empezó nada. Sigue sin
+haber un código de prueba de Claude en su espacio.
+
+## Primera pasada (2026-11-02): la semana 1, tarea 20
 
 Sesión `s-20261102T151837-424f3a7d` (Opus 5.5, esfuerzo Alto), 2026-11-02, con Juan Luis delante y Claude en Chrome en su panel
 (`https://salasgar.github.io/Ejercicios-interactivos/practicas/profesor.html`, su cuenta, su espacio).
@@ -47,15 +76,15 @@ también para las semanas 2 y 3 de la U4 y para la 132 de la U5.
 
 ## Para la tarea 29 del reparto de la U4 (Classroom)
 
-Precondición externa cumplida **para la semana 1**:
+Precondición externa cumplida **para las semanas 1 y 2** (actualizado el 12-11):
 
 | Semana | Id | Enlace | Visible en la portada desde | Plazo |
 |---|---|---|---|---|
 | 1 | 20 | `https://salasgar.github.io/Ejercicios-interactivos/practicas/semana.html?t=20` | lun 14-12 | jue 17-12 23:59 |
-| 2 | — | pendiente (103 y 104 sin publicar) | lun 21-12 | jue 7-1 |
-| 3 | — | pendiente (105-107 sin publicar) | lun 11-1 | jue 14-1 |
+| 2 | 21 | `https://salasgar.github.io/Ejercicios-interactivos/practicas/semana.html?t=21` | lun 21-12 | jue 7-1 23:59 |
+| 3 | — | pendiente (105-107 sin publicar: la 170 cerró PARCIAL y está en su segunda pasada) | lun 11-1 | jue 14-1 |
 
-Recuentos para la descripción: 6 ★ + 4 de 10 a elegir, 100 puntos. Estas tareas **no están en `tareas.js`**: el script de Classroom tiene que
+Recuentos para la descripción: semana 1, 6 ★ + 4 de 10 a elegir; semana 2, 7 ★ + 3 de 6 a elegir; las dos, 100 puntos. Estas tareas **no están en `tareas.js`**: el script de Classroom tiene que
 tomar los datos de esta tabla.
 
 ## Comprobación

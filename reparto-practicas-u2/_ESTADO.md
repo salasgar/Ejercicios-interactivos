@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-12T21:35Z por s-20261112T183110-92d9d858 al cerrar la 121 (PARCIAL: semana 2 montada en el panel, tarea 21; la semana 3 espera a la 170, EN CURSO; sin commit de código; con Chrome en el panel de Juan Luis): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-12T21:15Z por s-20261112T210628-91ff0a16 al cerrar la 170, tercera pasada (LISTA, commit 46524bd: publicadas multiplica-divide y errores4; con combinadas-fracciones, las tres de la semana 3 y las diez de la U4; npm test 1810/1810; regresión con clics a 375 y 1100 px, ES y EN). La 121 ya puede montar la semana 3 (plan A de la 111): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T21:07Z por s-20261112T210628-91ff0a16 al reclamar la 170 (tercera pasada: solo lo reabierto el 12-11 en 105 y 107, cerrado en 27b2c38 y 56f048b): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-12T01:31Z por s-20261112T010355-f006a9a8 al cerrar la 170 (P
 Actualizado 2026-11-12T01:04Z por s-20261112T010355-f006a9a8 al reclamar la 170 (EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T00:55Z por s-20261112T003355-40db956b al cerrar la 169 (LISTA, commit a9216a1: publicadas fraccion-de y suma-resta; tests propios 81/81, npm test 1807/1807; clics en Chrome a 375 y 1100 px, ES y EN). Pasan de BLOQUEADA a PENDIENTE: la 170; la 121 ya puede montar la semana 2: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-12T00:34Z por s-20261112T003355-40db956b al reclamar la 169 como relevo de s-20261111T220846-49bbdc87 (caducado a las 00:08:46Z sin cierre ni commit propio): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -254,7 +254,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 118 | Revisión a mano (con clics) y publicación de `multiplica-divide` (105), `combinadas-fracciones` (106) y `errores4` (107), y la propuesta de tarea de la semana 3 de la U4 al día | tareas/tarea-118-publicar-u4-semana-3.md | 105, 106 y 107 LISTAS · 117 LISTA (comparten catalogo.js y docs/practicas-unidad4.md) · plazo mar 22-12 (límite jue 7-1) | 1 h 15 min | ALTO | 117 (antes) | catalogo.js (solo `disponible` de las tres), docs/practicas-unidad4.md; salidas/118-publicar-u4-semana-3/ | LISTA | terminada 08:51Z (30-oct) · commit f4c927b |
 | 119 | Segunda publicación de `equivalentes` (100), `compara` (102), `fraccion-de` (103) y `suma-resta` (104), tras las reabiertas del 30-10, y las propuestas de las semanas 1 y 2 de la U4 al día | tareas/tarea-119-publicar-u4-semanas-1-2-bis.md | reabiertas del 30-10 de 100, 102, 103 y 104 cerradas · no en paralelo con nada que toque catalogo.js · plazo: 100 y 102 antes del jue 10-12; 103 y 10… | 1 h 30 min | ALTO | 120 | salidas/119-publicar-u4-semanas-1-2-bis/ | LISTA | terminada 14:51Z (2-nov) · commit 4bac7a2 |
 | 120 | Segunda publicación de `multiplica-divide` (105), `combinadas-fracciones` (106) y `errores4` (107), tras las reabiertas del 30-10, y la propuesta de la semana 3 de la U4 al día | tareas/tarea-120-publicar-u4-semana-3-bis.md | reabiertas del 30-10 de 105, 106 y 107 cerradas · 119 LISTA (comparten catalogo.js y docs/practicas-unidad4.md) · plazo mar 22-12 (límite jue 7-1) | 1 h 15 min | ALTO | 119 (antes) | salidas/120-publicar-u4-semana-3-bis/ | LISTA | terminada 15:03Z (2-nov) · commit 5e13b10 |
-| 121 | Montar en el panel de la app las tres tareas semanales de la U4 (con Juan Luis delante, Claude en Chrome); desbloquea la tarea 29 del reparto de la U4 | tareas/tarea-121-tareas-u4-panel.md | semana 1 hecha el 2-11 (tarea 20 del panel) · semana 2: **169 LISTA** · semana 3: **170 LISTA** · Juan Luis delante con el panel abierto · plazo mar 8-12 | 1 h | ALTO | — | salidas/121-tareas-u4-panel/ | RELEVABLE | s-20261112T183110-92d9d858 · caducó 20:31Z (12-nov) sin cierre |
+| 121 | Montar en el panel de la app las tres tareas semanales de la U4 (con Juan Luis delante, Claude en Chrome); desbloquea la tarea 29 del reparto de la U4 | tareas/tarea-121-tareas-u4-panel.md | semana 1 hecha el 2-11 (tarea 20 del panel) · semana 2: **169 LISTA** · semana 3: **170 LISTA** · Juan Luis delante con el panel abierto · plazo mar 8-12 | 1 h | ALTO | — | salidas/121-tareas-u4-panel/ | PARCIAL | PARCIAL: SEMANAS 1 Y 2 LISTAS · tarea 121 · 2026-11-12T21:35:43Z · s-20261112T183110-92d9d858 · sin commit de código propio (las tareas viven en la nube del es… |
 | 122 | Base de la unidad 5 (Decimals): `_comun/decimales.js` (entero escalado, coma y punto, lecturas, errores típicos), `_comun/recta-decimales.js`, catálogo (ids 57-63, `disponible: false`, `UNIDADES` con la U5 desde el 18-1), portada, `DESTREZAS`, esqueletos, docs §7, tests | tareas/tarea-122-base-unidad5.md | 01 del reparto de la U5 LISTA (propuesta de inventario; con F0 mejor) · no en paralelo con nada que toque catalogo.js, portada.js o registro.js · pla… | 1 h 30 min | ALTO | — | practicas/_comun/decimales.js y recta-decimales.js (nuevos), catalogo.js, portada.js, registro.js, practicas/… | LISTA | terminada 22:38Z (5-nov) · commit 7b5f2bb |
 | 123 | Práctica `lee-decimales` (57; 4 ej.; semana 1 de la U5): órdenes, lectura en inglés, fracción decimal, recta | tareas/tarea-123-lee-decimales.md | 122 LISTA · mejor con la hoja 1 y el examen 1 de la U5 cerrados (cotejo) · plazo mar 15-12 | 1 h | MEDIO | — | practicas/lee-decimales/*, tests/practicas-lee-decimales.test.js; salidas/123-lee-decimales/ | LISTA | terminada 10:21Z (8-nov) · commit 2cbe78f · **sin publicar** (`lee-decimales`): **sin publicador** |
 | 124 | Práctica `compara-decimales` (58; 4 ej.; semana 1): comparar, ordenar, intercalar, redondear y estimar | tareas/tarea-124-compara-decimales.md | 122 LISTA · ídem · plazo mar 15-12 | 1 h | MEDIO | — | practicas/compara-decimales/*, tests/practicas-compara-decimales.test.js; salidas/124-compara-decimales/ | LISTA | terminada 09:55Z (9-nov) · commit 9398b98 · **sin publicar** (`compara-decimales`): **sin publicador** |
@@ -308,7 +308,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-12 21:15Z**: BLOQUEADA 7 (132, 156, 157, 158, 159, 160, 161) · LISTA 162 · RELEVABLE 1 (121).
+**Foto a 2026-11-12 21:35Z**: BLOQUEADA 7 (132, 156, 157, 158, 159, 160, 161) · LISTA 162 · PARCIAL 1 (121).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -347,12 +347,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (272), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (273), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+PARCIAL · tarea 121 · 2026-11-12 21:35 · s-20261112T183110-92d9d858 · a9216a1 · salidas/121-tareas-u4-panel/ENTREGA.md (sección nueva de la semana 2 y tabla pa… · 184 min (18:31Z → 21:35Z); estimada 1 h para las…
 LISTA · tarea 170 · 2026-11-12 21:15 · s-20261112T210628-91ff0a16 · 46524bd · docs/practicas-unidad4.md (16 +++++++---------), practicas/_comun/catalogo.js (… · de 21:06:28Z a 21:15:45Z (unos 10 min; estimada 1…
 LISTA · tarea 105 · 2026-11-12 18:58 · s-20261112T185535-aaf63b78 · 27b2c38 · practicas/multiplica-divide/logica.js, tests/practicas-multiplica-divide.test.js · —
 LISTA · tarea 107 · 2026-11-12 18:58 · s-20261112T185537-9b7e5524 · 56f048b · practicas/errores4/logica.js, tests/practicas-errores4.test.js · —
