@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-12T18:58Z por s-20261112T185537-9b7e5524 al cerrar la reabierta de la 107 (LISTA, commit 56f048b: 11 claves de potencias de las hojas 2 y 3; tests propios 67/67, npm test 1809/1810 con el fallo ajeno de la 105; sin navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-12T18:50Z por s-20261112T183052-98cf3c42 al cerrar la 170, segunda pasada (PARCIAL: publicada combinadas-fracciones, commit 25d833d; reabiertas 105 y 107 por casos de la hoja 2 en palabras; npm test 1808/1808): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T18:31Z por s-20261112T183110-92d9d858 al reclamar la 121 (EN CURSO; semana 2 con la propuesta de la 169; la semana 3 espera a la 170, EN CURSO por s-20261112T183052-98cf3c42): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-12T00:34Z por s-20261112T003355-40db956b al reclamar la 169 
 Actualizado 2026-11-11T22:09Z por s-20261111T220846-49bbdc87 al reclamar la 169 (EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-11T22:03Z por s-20261111T215225-39c1f4f5 (coordinadora, sin reclamo) al dar de alta las tareas 169 y 170: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-10T09:12Z por s-20261110T090639-f1cc55fe al cerrar la reabierta de la 154 (LISTA, commit af84b7e; tests propios 11/11, `npm test` 1807/1807; sin navegador): solo cambia la fila 154. Retoque, no regeneración completa: hay otras sesiones en el árbol.
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -238,9 +238,9 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 102 | Práctica U4 «Compara y ordena» (`compara`, id 50, S1) | tareas/tarea-102-compara.md | 98 LISTA | 1 h 15 min | MEDIO | — | practicas/compara/*, tests/practicas-compara.test.js; salidas/102-compara/ | LISTA | terminada 09:40Z (2-nov) · commit dc9df94 |
 | 103 | Práctica U4 «La fracción de una cantidad» (`fraccion-de`, id 51, S2) | tareas/tarea-103-fraccion-de.md | 98 LISTA | 1 h 15 min | MEDIO | 104 (misma banda, independientes) | practicas/fraccion-de/*, tests/practicas-fraccion-de.test.js; salidas/103-fraccion-de/ | LISTA | terminada 14:50Z (6-nov) · commit b91b092 |
 | 104 | Práctica U4 «Suma y resta» (`suma-resta`, id 52, S2) | tareas/tarea-104-suma-resta.md | 98 LISTA | 1 h 30 min | MEDIO | 103 (misma banda, independientes) | practicas/suma-resta/*, tests/practicas-suma-resta.test.js; salidas/104-suma-resta/ | LISTA | terminada 14:56Z (6-nov) · commit 4309164 |
-| 105 | Práctica U4 «Multiplica y divide» (`multiplica-divide`, id 53, S3) | tareas/tarea-105-multiplica-divide.md | 98 LISTA | 1 h 15 min | MEDIO | 106 (misma banda, cortas, independientes) | practicas/multiplica-divide/*, tests/practicas-multiplica-divide.test.js; salidas/105-multiplica-divide/ | REABIERTA | reabierta 18:46Z (12-nov): `hechos/reabiertas/105--s-20261112T183052-98cf3c42-revision.md` |
+| 105 | Práctica U4 «Multiplica y divide» (`multiplica-divide`, id 53, S3) | tareas/tarea-105-multiplica-divide.md | 98 LISTA | 1 h 15 min | MEDIO | 106 (misma banda, cortas, independientes) | practicas/multiplica-divide/*, tests/practicas-multiplica-divide.test.js; salidas/105-multiplica-divide/ | LISTA | terminada 18:58Z (12-nov) · commit 27b2c38 · **sin publicar** (`multiplica-divide`): la publica la 170 (PARCIAL) |
 | 106 | Práctica U4 «¿Qué se hace primero? Con fracciones» (`combinadas-fracciones`, id 54, S3) | tareas/tarea-106-combinadas-fracciones.md | 98 LISTA | 1 h 30 min | MEDIO | 105 (misma banda, independientes) | practicas/combinadas-fracciones/*, tests/practicas-combinadas-fracciones.test.js; salidas/106-combinadas-frac… | LISTA | terminada 01:39Z (12-nov) · commit 37f998d |
-| 107 | Práctica U4 «Caza el error» (`errores4`, id 55, S3) | tareas/tarea-107-errores4.md | 98 LISTA | 1 h | MEDIO | 108 (misma banda, independientes) | practicas/errores4/*, tests/practicas-errores4.test.js; salidas/107-errores4/ | REABIERTA | reabierta 18:46Z (12-nov): `hechos/reabiertas/107--s-20261112T183052-98cf3c42-revision.md` |
+| 107 | Práctica U4 «Caza el error» (`errores4`, id 55, S3) | tareas/tarea-107-errores4.md | 98 LISTA | 1 h | MEDIO | 108 (misma banda, independientes) | practicas/errores4/*, tests/practicas-errores4.test.js; salidas/107-errores4/ | LISTA | terminada 18:58Z (12-nov) · commit 56f048b · **sin publicar** (`errores4`): la publica la 170 (PARCIAL) |
 | 108 | Práctica U4 «Léelo en inglés» (`leelo4`, id 56, toda la unidad) | tareas/tarea-108-leelo4.md | 98 LISTA | 1 h 15 min | MEDIO | 107 (misma banda, independientes) | practicas/leelo4/*, tests/practicas-leelo4.test.js; salidas/108-leelo4/ | LISTA | terminada 15:57Z (27-oct) · commit 23c181b |
 | 109 | Revisión a mano y publicación de las prácticas de la semana 1 de la U4, y propuesta de su tarea (antes del jue 10-12) | tareas/tarea-109-publicar-u4-semana1.md | 99, 100, 101, 102 y 108 LISTAS · 98 LISTA · F0 de la U4 | 1 h | ALTO | — | catalogo.js (solo `disponible`); salidas/109-publicar-u4-semana1/ | LISTA | terminada 14:32Z (28-oct) · commit 26306eb |
 | 110 | Revisión a mano y publicación de las prácticas de la semana 2 de la U4, y propuesta de su tarea (antes del jue 17-12) | tareas/tarea-110-publicar-u4-semana2.md | 103 y 104 LISTAS · 109 LISTA | 1 h | ALTO | — | catalogo.js (solo `disponible`); salidas/110-publicar-u4-semana2/ | LISTA | terminada 18:12Z (28-oct) |
@@ -303,12 +303,12 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 167 | El banco REST guarda y restaura los datos de la cuenta de prueba A (propuesta 10 de la 113) | tareas/tarea-167-banco-rest-sin-borrar-a.md | ninguna · **Juan Luis delante** para la ejecución con contraseñas · plazo lun 14-12 | 45 min | MEDIO | — | herramientas/probar-reglas.mjs; salidas/167-banco-rest-sin-borrar-a/ | LISTA | terminada 14:48Z (6-nov) · commit 356addc |
 | 168 | Revisar los ~45 ítems nuevos de la 143 y poner alrededor / en medio en el §6 de la ortografía | tareas/tarea-168-revision-items-ortografia-143.md | 143 LISTA · no a la vez que la 140/141 ni otra con practicas/ortografia/ · plazo lun 16-11 | 50 min | ALTO | — | practicas/ortografia/*.js (solo ítems de la 143), tests/practicas-ortografia.test.js, docs/practicas-ortograf… | LISTA | terminada 14:52Z (6-nov) · commit ac96790 |
 | 169 | Publicar `fraccion-de` y `suma-resta` tras sus reabiertas del 6-11, con la propuesta de la semana 2 de la U4 al día (cuarta publicación) | tareas/tarea-169-publicar-u4-semana-2-cuater.md | 103 y 104 LISTAS (reabiertas del 6-11 cerradas) · no en paralelo con la 170 ni con nada que toque catalogo.js o docs/practicas-unidad4.md · plazo mar 8-12 | 1 h | ALTO | 170 | catalogo.js (solo `disponible` de 51-52), docs/practicas-unidad4.md; salidas/169-publicar-u4-semana-2-cuater/ | LISTA | terminada 00:54Z (12-nov) · commit a9216a1 |
-| 170 | Publicar `multiplica-divide`, `combinadas-fracciones` y `errores4` tras sus reabiertas del 6-11, con la propuesta de la semana 3 de la U4 al día (cuarta publicación) | tareas/tarea-170-publicar-u4-semana-3-cuater.md | 105, 106 y 107 LISTAS (reabiertas del 6-11 cerradas) · **169 LISTA** (o PARCIAL) · no en paralelo con nada que toque catalogo.js o docs/practicas-unidad4.md · plazo mar 8-12 | 1 h | ALTO | 169 (antes) | catalogo.js (solo `disponible` de 53-55), docs/practicas-unidad4.md; salidas/170-publicar-u4-semana-3-cuater/ | PARCIAL | PARCIAL: se publica combinadas-fracciones; multiplica-divide y errores4 vuelven a reabrirse (dos casos de la hoja 2 en palabras cada una), MEDIO y cortas, ante… · lo que falta: espera a 105, 107 |
+| 170 | Publicar `multiplica-divide`, `combinadas-fracciones` y `errores4` tras sus reabiertas del 6-11, con la propuesta de la semana 3 de la U4 al día (cuarta publicación) | tareas/tarea-170-publicar-u4-semana-3-cuater.md | 105, 106 y 107 LISTAS (reabiertas del 6-11 cerradas) · **169 LISTA** (o PARCIAL) · no en paralelo con nada que toque catalogo.js o docs/practicas-unidad4.md · plazo mar 8-12 | 1 h | ALTO | 169 (antes) | catalogo.js (solo `disponible` de 53-55), docs/practicas-unidad4.md; salidas/170-publicar-u4-semana-3-cuater/ | PARCIAL | PARCIAL: se publica combinadas-fracciones; multiplica-divide y errores4 vuelven a reabrirse (dos casos de la hoja 2 en palabras cada una), MEDIO y cortas, ante… |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-12 18:50Z**: BLOQUEADA 7 (132, 156, 157, 158, 159, 160, 161) · EN CURSO 1 (121) · LISTA 159 · PARCIAL 1 (170) · REABIERTA 2 (105, 107).
+**Foto a 2026-11-12 18:58Z**: BLOQUEADA 7 (132, 156, 157, 158, 159, 160, 161) · EN CURSO 1 (121) · LISTA 161 · PARCIAL 1 (170).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -329,8 +329,8 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 - `ortografia-tildes` (tarea 135, LISTA): **sin publicador** (lo intentaron: 141)
 - `ortografia-palabras` (tarea 138, LISTA): **sin publicador** (lo intentaron: 142)
 - `ortografia-ampliacion` (tarea 139, LISTA): **sin publicador** (lo intentaron: 142)
-- `multiplica-divide` (tarea 105, REABIERTA): la publica la 170 (PARCIAL)
-- `errores4` (tarea 107, REABIERTA): la publica la 170 (PARCIAL)
+- `multiplica-divide` (tarea 105, LISTA): la publica la 170 (PARCIAL)
+- `errores4` (tarea 107, LISTA): la publica la 170 (PARCIAL)
 - `lee-decimales` (tarea 123, LISTA): **sin publicador** (lo intentaron: 130)
 - `compara-decimales` (tarea 124, LISTA): **sin publicador** (lo intentaron: 130)
 - `suma-resta-decimales` (tarea 125, LISTA): **sin publicador** (lo intentaron: 130)
@@ -349,12 +349,14 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (269), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (271), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 105 · 2026-11-12 18:58 · s-20261112T185535-aaf63b78 · 27b2c38 · practicas/multiplica-divide/logica.js, tests/practicas-multiplica-divide.test.js · —
+LISTA · tarea 107 · 2026-11-12 18:58 · s-20261112T185537-9b7e5524 · 56f048b · practicas/errores4/logica.js, tests/practicas-errores4.test.js · —
 PARCIAL · tarea 170 · 2026-11-12 18:49 · s-20261112T183052-98cf3c42 · 25d833d · practicas/_comun/catalogo.js (solo disponible de la fila 54) y docs/practicas-u… · 19 min (estimada 1 h)
 LISTA · tarea 106 · 2026-11-12 01:39 · s-20261112T013540-0664f9cd · 37f998d · practicas/combinadas-fracciones/logica.js, tests/practicas-combinadas-fraccione… · ~20 min
 LISTA · tarea 107 · 2026-11-12 01:37 · s-20261112T013340-1542cdde · 65595c6 · practicas/errores4/logica.js, tests/practicas-errores4.test.js · —
