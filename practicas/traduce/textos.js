@@ -68,3 +68,44 @@ export const TX = {
     glosa: { es: 'Vocabulario', en: 'Vocabulary' },
   },
 };
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const REGLA = {
+  elige: {
+    es: 'Traduce la frase por partes, de izquierda a derecha, y compara con las opciones.',
+    en: 'Translate the phrase in parts, from left to right, and compare with the options.',
+  },
+  escribe: {
+    es: 'Traduce la frase por partes, de izquierda a derecha, usando la letra x.',
+    en: 'Translate the phrase in parts, from left to right, using the letter x.',
+  },
+  frase: {
+    es: 'Lee la expresión por partes y fíjate en qué va primero: «menos que» resta al número, «menos» resta del primero.',
+    en: 'Read the expression in parts and look at what comes first: “less than” takes away from the number, “minus” takes away from the first one.',
+  },
+  'situacion-expresion': {
+    es: 'Separa lo que no cambia (la parte fija) de lo que depende de la letra.',
+    en: 'Separate what never changes (the fixed part) from what depends on the letter.',
+  },
+  'situacion-valor': {
+    es: 'Sustituye la letra por el número; primero se multiplica y después se suma.',
+    en: 'Replace the letter with the number; first multiply, then add.',
+  },
+  'situacion-cantidad': {
+    es: 'Llama x a lo que no sabes y construye las demás cantidades a partir de x.',
+    en: 'Call x what you do not know and build the other amounts from x.',
+  },
+};
+
+export const comillas = (texto, idioma) => (idioma === 'es' ? `«${texto}»` : `“${texto}”`);
+
+/** «No lo sé» de los cuatro ejercicios: la regla del tipo, la solución del ítem y la respuesta al final. */
+export function explicaTraduce(item, { idioma, tt }) {
+  const buena = item.opciones?.find(o => o.correcta);
+  const respuesta = !buena
+    ? `<span class="cuenta">${item.correcta}</span>`
+    : buena.frases ? comillas(tt(buena.frases), idioma) : buena.html;
+  const fin = tt({ es: 'La respuesta es', en: 'The answer is' });
+  return `${tt(REGLA[item.instruccion])} ${tt(item.solucion)} ${fin} ${respuesta}.`;
+}

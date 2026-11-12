@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaTraduce, NO_SE_HACERLO } from './textos.js';
 import {
   generarElige, generarEscribe, generarFrase, generarSituacion, corregirEscribe, claveItem, nombreDe,
 } from './logica.js';
@@ -95,18 +95,20 @@ function montarEscribe(contenedor, item, api) {
   actualizar();
 }
 
-const ejercicio = (i, { generar, montar, enunciado }) => ({
+const ejercicio = (i, { generar, montar, enunciado, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
   generar, clave: claveItem, montar, enunciado,
+  explicacion: explicaTraduce,
+  ...(noLoSe ? { noLoSe: NO_SE_HACERLO } : {}),
 });
 
 arrancar({
   slug: 'traduce',
   ejercicios: [
     ejercicio(0, { generar: generarElige, montar: montarExpresion, enunciado: enunciadoFrase }),
-    ejercicio(1, { generar: generarEscribe, montar: montarEscribe, enunciado: enunciadoFrase }),
+    ejercicio(1, { generar: generarEscribe, montar: montarEscribe, enunciado: enunciadoFrase, noLoSe: true }),
     ejercicio(2, { generar: generarFrase, montar: montarFrase, enunciado: enunciadoExpresion }),
     ejercicio(3, { generar: generarSituacion, montar: montarSituacion, enunciado: enunciadoSituacion }),
   ],
