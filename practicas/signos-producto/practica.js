@@ -10,6 +10,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { fmt, campoEntero } from '../_comun/enteros.js';
 import {
   TX, feedbackMultiplica, feedbackDivide, feedbackFalta, feedbackClase, feedbackValorSumaProducto, feedbackBien,
+  explicaMultiplica, explicaDivide, explicaFalta, explicaMezcla, explicaBien,
 } from './textos.js';
 import {
   generarMultiplica, generarDivide, generarFalta, generarSumaOProducto, generarBienEscrito,
@@ -148,10 +149,10 @@ function montarBien(contenedor, item, api) {
 arrancar({
   slug: 'signos-producto',
   ejercicios: [
-    { nombre: TX.nombres.multiplica, detalle: TX.detalles.multiplica, introduccion: TX.introduccion.multiplica, generar: generarMultiplica, clave: i => i.texto, montar: montarMultiplica, enunciado: enunciadoMultiplica },
-    { nombre: TX.nombres.divide, detalle: TX.detalles.divide, introduccion: TX.introduccion.divide, generar: generarDivide, clave: i => i.texto, montar: montarDivide, enunciado: enunciadoDivide },
-    { nombre: TX.nombres.falta, detalle: TX.detalles.falta, introduccion: TX.introduccion.falta, generar: generarFalta, clave: i => i.texto, montar: montarFalta, enunciado: enunciadoFalta },
-    { nombre: TX.nombres.mezcla, detalle: TX.detalles.mezcla, introduccion: TX.introduccion.mezcla, generar: generarSumaOProducto, clave: i => i.texto, montar: montarMezcla, enunciado: enunciadoMezcla },
-    { nombre: TX.nombres.bien, detalle: TX.detalles.bien, introduccion: TX.introduccion.bien, generar: generarBienEscrito, clave: i => i.buena, montar: montarBien, enunciado: enunciadoBien },
+    { nombre: TX.nombres.multiplica, detalle: TX.detalles.multiplica, introduccion: TX.introduccion.multiplica, generar: generarMultiplica, clave: i => i.texto, montar: montarMultiplica, enunciado: enunciadoMultiplica, explicacion: explicaMultiplica, noLoSe: TX.no_se_hacerlo },
+    { nombre: TX.nombres.divide, detalle: TX.detalles.divide, introduccion: TX.introduccion.divide, generar: generarDivide, clave: i => i.texto, montar: montarDivide, enunciado: enunciadoDivide, explicacion: explicaDivide, noLoSe: TX.no_se_hacerlo },
+    { nombre: TX.nombres.falta, detalle: TX.detalles.falta, introduccion: TX.introduccion.falta, generar: generarFalta, clave: i => i.texto, montar: montarFalta, enunciado: enunciadoFalta, explicacion: explicaFalta, noLoSe: TX.no_se_hacerlo },
+    { nombre: TX.nombres.mezcla, detalle: TX.detalles.mezcla, introduccion: TX.introduccion.mezcla, generar: generarSumaOProducto, clave: i => i.texto, montar: montarMezcla, enunciado: enunciadoMezcla, explicacion: explicaMezcla, noLoSe: TX.no_se_hacerlo },
+    { nombre: TX.nombres.bien, detalle: TX.detalles.bien, introduccion: TX.introduccion.bien, generar: generarBienEscrito, clave: i => i.buena, montar: montarBien, enunciado: enunciadoBien, explicacion: explicaBien },
   ],
 });

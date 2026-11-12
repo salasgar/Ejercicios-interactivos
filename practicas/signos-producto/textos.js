@@ -150,3 +150,78 @@ export function feedbackBien(item, { tt }, elegida) {
 }
 
 export { ver };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (docs/no-lo-se.md) ───────────
+
+TX.no_se_hacerlo = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuesta = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
+const abs = Math.abs;
+
+/** Ejercicio 1: el signo del producto y su valor. */
+export function explicaMultiplica(item, { tt }) {
+  const cuentaBuena = cuenta(`${item.texto} = ${fmt(item.valor)}`);
+  return `${pasos([
+    `${mismos(tt, item.a, item.b)}.`,
+    `${tt({ es: 'Se multiplican los números sin signo', en: 'Multiply the numbers without their signs' })}: ${cuenta(`${abs(item.a)} · ${abs(item.b)} = ${abs(item.valor)}`)}.`,
+  ])}${respuesta(tt, cuentaBuena)}`;
+}
+
+/** Ejercicio 2: el cociente, el 0 entre un número, o «no se puede». */
+export function explicaDivide(item, { tt }) {
+  if (item.especial === 'entre-cero') {
+    return `<p>${tt({
+      es: `No se puede dividir entre 0: ninguna cuenta ${cuenta('□ · 0')} da ${fmt(item.a)}.`,
+      en: `You cannot divide by 0: no sum ${cuenta('□ · 0')} gives ${fmt(item.a)}.`,
+    })}</p>${respuesta(tt, cuenta(tt(TX.no_se_puede)))}`;
+  }
+  if (item.especial === 'cero-entre') {
+    return `<p>${tt({
+      es: `El 0 entre cualquier número distinto de 0 es 0.`,
+      en: `0 divided by any number other than 0 is 0.`,
+    })}</p>${respuesta(tt, cuenta(`${item.texto} = 0`))}`;
+  }
+  return `${pasos([
+    `${mismos(tt, item.a, item.b)}.`,
+    `${tt({ es: 'Se dividen los números sin signo', en: 'Divide the numbers without their signs' })}: ${cuenta(`${abs(item.a)} : ${abs(item.b)} = ${abs(item.valor)}`)}.`,
+  ])}${respuesta(tt, cuenta(`${item.texto} = ${fmt(item.valor)}`))}`;
+}
+
+/** Ejercicio 3: el factor que falta, dividiendo el producto entre el otro factor. */
+export function explicaFalta(item, { tt }) {
+  const lleno = item.hueco === 'izq' ? `${fmtPar(item.valor)} · ${fmtPar(item.k)}` : `${fmtPar(item.k)} · ${fmtPar(item.valor)}`;
+  return `${pasos([
+    `${tt({ es: 'El factor que falta es el producto dividido entre el otro factor', en: 'The missing factor is the product divided by the other factor' })}: ${cuenta(`${fmt(item.p)} : ${fmtPar(item.k)} = ${fmt(item.valor)}`)}.`,
+    `${tt({ es: 'Se comprueba', en: 'Check' })}: ${cuenta(`${lleno} = ${fmt(item.p)}`)}.`,
+  ])}${respuesta(tt, cuenta(fmt(item.valor)))}`;
+}
+
+/** Ejercicio 4: qué es la cuenta y su valor. */
+export function explicaMezcla(item, { tt }) {
+  const buena = cuenta(`${item.texto} = ${fmt(item.valor)}`);
+  if (item.producto) {
+    return `${pasos([
+      tt({ es: 'Hay un punto ·: es un producto, y se usa la regla de los signos.', en: 'There is a dot ·: it is a product, so use the rule of signs.' }),
+      `${mismos(tt, item.a, item.b)}: ${cuenta(`${abs(item.a)} · ${abs(item.b)} = ${abs(item.valor)}`)}.`,
+    ])}${respuesta(tt, buena)}`;
+  }
+  const nombre = item.clase === 'suma'
+    ? tt({ es: 'una suma', en: 'an addition' })
+    : tt({ es: 'una resta', en: 'a subtraction' });
+  return `${pasos([
+    tt({
+      es: `No hay punto ·: es ${nombre}, y aquí no vale la regla de los signos del producto.`,
+      en: `There is no dot ·: it is ${nombre}, so the product rule of signs does not work here.`,
+    }),
+    `${tt({ es: 'Se calcula sin más', en: 'Just work it out' })}: ${buena}.`,
+  ])}${respuesta(tt, buena)}`;
+}
+
+/** Ejercicio 5: el producto bien escrito. */
+export function explicaBien(item, { tt }) {
+  return `<p>${tt({
+    es: 'En un producto, el negativo que no va el primero lleva paréntesis.',
+    en: 'In a product, a negative number that is not first goes in brackets.',
+  })}</p>${respuesta(tt, cuenta(item.buena))}`;
+}
