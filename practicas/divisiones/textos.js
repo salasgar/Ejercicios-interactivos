@@ -22,3 +22,70 @@ export const TX = {
     correcta: { es: 'La cuenta correcta es', en: 'The correct working is' },
   },
 };
+
+// ─── Explicaciones del botón «No lo sé» (tarea 184) ─────────────────────────────
+
+const RESPUESTA = {
+  es: x => `La respuesta es ${x}.`,
+  en: x => `The answer is ${x}.`,
+};
+
+const veces = (p, e, idioma) => (idioma === 'es'
+  ? `el ${p} aparece ${e} ${e === 1 ? 'vez' : 'veces'}`
+  : `${p} appears ${e} time${e === 1 ? '' : 's'}`);
+
+export function explicaEscalera(item, { idioma }) {
+  const regla = idioma === 'es'
+    ? 'Se divide siempre entre el menor primo que divide al número, hasta llegar a 1.'
+    : 'Always divide by the smallest prime that divides the number, until you reach 1.';
+  const pasos = item.pasos.map(([m, p]) => {
+    const cuenta = idioma === 'es' ? `${m} : ${p} = ${m / p}` : `${m} ÷ ${p} = ${m / p}`;
+    const motivo = idioma === 'es' ? `${p} es el menor primo que divide a ${m}` : `${p} is the smallest prime that divides ${m}`;
+    return `<li><span class="cuenta">${cuenta}</span>: ${motivo}.</li>`;
+  });
+  const primos = item.pasos.map(([, p]) => p).join(' · ');
+  const cierre = RESPUESTA[idioma](`<strong>${item.n} = ${primos}</strong>`);
+  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol><p>${cierre}</p>`;
+}
+
+export function explicaPotencias(item, { idioma }) {
+  const regla = idioma === 'es'
+    ? 'Se cuenta cuántas veces aparece cada primo en la lista; ese número es su exponente.'
+    : 'Count how many times each prime appears in the list; that number is its exponent.';
+  const pasos = item.factorizacion.map(([p, e]) => {
+    const pot = e === 1 ? `${p}` : `${p}<sup>${e}</sup>`;
+    return `<li>${veces(p, e, idioma)}: <span class="cuenta">${pot}</span>.</li>`;
+  });
+  const decoy = item.bases.filter(p => !item.factorizacion.some(([q]) => q === p));
+  const nota = decoy.length
+    ? `<p>${idioma === 'es' ? `El ${decoy[0]} no aparece: su exponente es 0.` : `${decoy[0]} does not appear: its exponent is 0.`}</p>`
+    : '';
+  const cierre = RESPUESTA[idioma](`<strong>${item.n} = ${item.factorizacion.map(([p, e]) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`)).join(' · ')}</strong>`);
+  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol>${nota}<p>${cierre}</p>`;
+}
+
+export function explicaComprobar(item, { idioma }) {
+  const f = item.factorizacion;
+  const valor = f.reduce((a, [p, e]) => a * p ** e, 1);
+  const regla = idioma === 'es'
+    ? 'Se calcula cada potencia y después se multiplican los resultados.'
+    : 'Work out each power, then multiply the results.';
+  const pasos = f.filter(([, e]) => e > 1).map(([p, e]) => {
+    const rep = Array(e).fill(p).join(' · ');
+    return `<li><span class="cuenta">${p}<sup>${e}</sup> = ${rep} = ${p ** e}</span></li>`;
+  });
+  const producto = `<span class="cuenta">${f.map(([p, e]) => p ** e).join(' · ')} = ${valor}</span>`;
+  const lista = pasos.length ? `<ol class="pasos-ayuda">${pasos.join('')}</ol>` : '';
+  const multiplicar = `<p>${idioma === 'es' ? 'Multiplicamos' : 'We multiply'}: ${producto}.</p>`;
+  let cierre;
+  if (item.tipo === 'sino') {
+    const si = item.igualdadCorrecta;
+    const frase = idioma === 'es'
+      ? `El valor es ${valor}, y la igualdad dice ${item.valorMostrado}.`
+      : `The value is ${valor}, and the equality says ${item.valorMostrado}.`;
+    cierre = `<p>${frase} ${RESPUESTA[idioma](`<strong>${si ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`)}</p>`;
+  } else {
+    cierre = `<p>${RESPUESTA[idioma](`<strong>${valor}</strong>`)}</p>`;
+  }
+  return `<p>${regla}</p>${lista}${multiplicar}${cierre}`;
+}

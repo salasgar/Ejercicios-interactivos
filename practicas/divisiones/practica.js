@@ -10,7 +10,9 @@ import {
   generarPotencias, exponenteDe, esFactorizacionCorrecta, explicarPotencias,
   generarEjercicio3, explicarEj3,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, explicaEscalera, explicaPotencias, explicaComprobar } from './textos.js';
+
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const EXPONENTE_MAXIMO = 6;
 
@@ -168,6 +170,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarEscalera,
       enunciado: enunciadoEscalera,
+      explicacion: explicaEscalera,
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.potencias.nombre,
@@ -176,6 +180,8 @@ arrancar({
       clave: item => item.lista.join(','),
       montar: montarPotencias,
       enunciado: enunciadoPotencias,
+      explicacion: explicaPotencias,
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.ej3.nombre,
@@ -183,6 +189,8 @@ arrancar({
       generar: generarEjercicio3,
       montar: montarEj3,
       enunciado: enunciadoEj3,
+      explicacion: explicaComprobar,
+      noLoSe: NO_LO_SE,
     },
   ],
 });
