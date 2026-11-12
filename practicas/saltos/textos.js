@@ -248,3 +248,58 @@ const TEXTOS = { es: ES, en: EN };
 export const txt = idioma => TEXTOS[idioma] ?? ES;
 
 export { enunciadoProblema };
+
+// ─── «No lo sé» (tarea 178): una explicación por ejercicio ───
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const RESP = { es: 'La respuesta es', en: 'The answer is' };
+const lis = pasos => `<ol class="pasos-ayuda">${pasos.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const encadenados = terminos => pasosIzquierdaADerecha(terminos).map(p => c(`${p.cuenta} = ${fmt(p.valor)}`));
+
+const REGLA = {
+  es: { salto: 'Con + subes y con − bajas.', signo: 'Mira qué número pesa más: su signo es el del resultado.', cadena: 'Se calcula de izquierda a derecha, de dos en dos.', agrupa: 'Reparte positivos y negativos, suma cada grupo y junta.', problema: 'Sube es +, baja es −; después, de izquierda a derecha.' },
+  en: { salto: 'With + you go up and with − you go down.', signo: 'See which number weighs more: its sign is the sign of the answer.', cadena: 'Work from left to right, two numbers at a time.', agrupa: 'Sort positives and negatives, add each group and put them together.', problema: 'Going up is +, going down is −; then work from left to right.' },
+};
+
+export function explicaSalto(item, { idioma }) {
+  const [x, y] = item.terminos;
+  return `${REGLA[idioma].salto} ${camino(idioma, item.terminos)} ${RESP[idioma]} ${c(fmt(x + y))}.`;
+}
+
+export function explicaSigno(item, { idioma }) {
+  const T = txt(idioma);
+  const v = valorDe(item.terminos);
+  const palabra = v < 0 ? T.signo.negativo : T.signo.positivo;
+  return `${REGLA[idioma].signo}${lis([T.signo.razon(item.terminos), camino(idioma, item.terminos)])}${RESP[idioma]} ${palabra.toLowerCase()}: ${c(fmt(v))}.`;
+}
+
+export function explicaCadena(item, { idioma }) {
+  const T = txt(idioma).cadena;
+  const v = valorDe(item.terminos);
+  const pasos = encadenados(item.terminos);
+  if (item.modo === 'palabras') {
+    const escribe = T.verbos;
+    const total = c(`${textoDe(item.terminos)} = ${fmt(v)}`);
+    return `${REGLA[idioma].cadena}${lis([`${escribe} ${T.cuentaBuena(item.terminos)}`, pasos.join('; ')])}${RESP[idioma]} ${total}.`;
+  }
+  return `${REGLA[idioma].cadena}${lis(pasos)}${RESP[idioma]} ${c(fmt(v))}.`;
+}
+
+export function explicaAgrupa(item, { idioma }) {
+  const T = txt(idioma).agrupa;
+  const p = positivosDe(item.terminos), n = negativosDe(item.terminos), sp = valorDe(p), sn = valorDe(n);
+  const [a, b, d] = idioma === 'es' ? ['Positivos', 'Negativos', 'Juntos'] : ['Positives', 'Negatives', 'Together'];
+  const extra = item.pareja ? (idioma === 'es' ? `${item.pareja} y −${item.pareja} son opuestos: suman 0.` : `${item.pareja} and −${item.pareja} are opposites: they make 0.`) : '';
+  const suma = (ts, v) => c(ts.length > 1 ? `${textoDe(ts)} = ${fmt(v)}` : fmt(v));
+  const lineas = [`${a}: ${suma(p, sp)}`, `${b}: ${suma(n, sn)}`, `${d}: ${c(`${textoDe([sp, sn])} = ${fmt(sp + sn)}`)}`];
+  return `${REGLA[idioma].agrupa}${lis(lineas)}${extra ? `${extra} ` : ''}${RESP[idioma]} ${c(fmt(valorDe(item.terminos)))}.`;
+}
+
+export function explicaProblema(item, { idioma }) {
+  const T = txt(idioma).problema;
+  const v = valorDe(item.terminos);
+  const pasos = encadenados(item.terminos);
+  const lineas = [`${T.verbos} ${T.cuentaBuena(item.terminos).replace(/ = [^<]*(?=<\/span>)/, '')}`, pasos.join('; ')];
+  return `${REGLA[idioma].problema}${lis(lineas)}${RESP[idioma]}: ${T.fin(item.contexto, v)}`;
+}

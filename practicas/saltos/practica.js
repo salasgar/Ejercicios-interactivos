@@ -11,7 +11,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { fmt, campoEntero, derechaAIzquierda } from '../_comun/enteros.js';
 import { crearRecta } from '../_comun/recta-enteros.js';
 import * as L from './logica.js';
-import { NOMBRES, txt } from './textos.js';
+import { NOMBRES, txt, NO_SE_HACERLO, explicaSalto, explicaSigno, explicaCadena, explicaAgrupa, explicaProblema } from './textos.js';
 
 const c = s => `<span class="cuenta">${s}</span>`;
 const operacion = s => `<div class="operacion">${s}</div>`;
@@ -285,11 +285,11 @@ const claveTerminos = item => `${item.contexto ?? ''}${item.modo ?? ''}${item.te
 arrancar({
   slug: 'saltos',
   ejercicios: [
-    { ...NOMBRES[0], introduccion: intro(0), generar: L.generarSalto, clave: claveTerminos, montar: montarSalto, enunciado: enunciadoSalto },
-    { ...NOMBRES[1], introduccion: intro(1), generar: L.generarSigno, clave: claveTerminos, montar: montarSigno, enunciado: enunciadoSigno },
-    { ...NOMBRES[2], introduccion: intro(2), generar: L.generarCadena, clave: claveTerminos, montar: montarCadena, enunciado: enunciadoCadena },
-    { ...NOMBRES[3], introduccion: intro(3), generar: L.generarTerminos, clave: claveTerminos, montar: montarAgrupa, enunciado: enunciadoAgrupa },
-    { ...NOMBRES[4], introduccion: intro(4), generar: L.generarProblema, clave: claveTerminos, montar: montarProblema, enunciado: enunciadoProblema },
+    { ...NOMBRES[0], introduccion: intro(0), generar: L.generarSalto, clave: claveTerminos, montar: montarSalto, enunciado: enunciadoSalto, explicacion: explicaSalto, noLoSe: NO_SE_HACERLO },
+    { ...NOMBRES[1], introduccion: intro(1), generar: L.generarSigno, clave: claveTerminos, montar: montarSigno, enunciado: enunciadoSigno, explicacion: explicaSigno, noLoSe: NO_SE_HACERLO },
+    { ...NOMBRES[2], introduccion: intro(2), generar: L.generarCadena, clave: claveTerminos, montar: montarCadena, enunciado: enunciadoCadena, explicacion: explicaCadena, noLoSe: NO_SE_HACERLO },
+    { ...NOMBRES[3], introduccion: intro(3), generar: L.generarTerminos, clave: claveTerminos, montar: montarAgrupa, enunciado: enunciadoAgrupa, explicacion: explicaAgrupa, noLoSe: NO_SE_HACERLO },
+    { ...NOMBRES[4], introduccion: intro(4), generar: L.generarProblema, clave: claveTerminos, montar: montarProblema, enunciado: enunciadoProblema, explicacion: explicaProblema, noLoSe: NO_SE_HACERLO },
   ],
 });
 
