@@ -252,3 +252,51 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──────────────
+// Reutilizan `divisionDe`, `cadenaDecimal` y las `solucion` de arriba, y acaban con la respuesta tal
+// como la da por buena el ejercicio: «La respuesta es <strong>…</strong>.».
+
+const fin = (idioma, txt) => ` ${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>.`;
+const dos = (es, en, idioma) => (idioma === 'es' ? es : en);
+
+/** Ejercicio 1: de fracción a decimal (escribir, elegir, ¿periódico?, ¿exacto o periódico?). */
+export function explicaFraccionADecimal(item, { idioma }) {
+  const regla = dos('Una fracción es una división: se divide el numerador (arriba) entre el denominador (abajo).',
+    'A fraction is a division: divide the numerator (top) by the denominator (bottom).', idioma);
+  const periodico = item.tipo === 'periodico' || (item.tipo === 'tipo' && item.periodica);
+  const cuenta = item.tipo === 'tipo' || item.tipo === 'periodico'
+    ? `${divisionDe(item.f, idioma)} ${periodico
+      ? dos('La división no termina nunca: hay cifras que se repiten.', 'The division never ends: some digits repeat.', idioma)
+      : dos('La división termina.', 'The division ends.', idioma)}`
+    : `${divisionDe(item.f, idioma)}.`;
+  const resp = item.tipo === 'tipo'
+    ? (item.periodica ? dos('que es periódico (no termina)', 'that it is recurring (never ends)', idioma) : dos('que es exacto (termina)', 'that it is terminating (it ends)', idioma))
+    : valorDe(item.f, idioma);
+  return `${regla} ${cuenta}${fin(idioma, resp)}`;
+}
+
+/** Ejercicio 2: de decimal a fracción irreducible. */
+export function explicaDecimalAFraccion(item, { idioma }) {
+  const regla = dos('Se escribe con denominador 10, 100 o 1000 (tantos ceros como cifras decimales) y se simplifica hasta la irreducible.',
+    'Write it with denominator 10, 100 or 1000 (as many zeros as decimal places) and simplify it until it cannot be simplified any more.', idioma);
+  return `${regla} ${TX.ej2.solucion[idioma](item)}${fin(idioma, cf(h(item.respuesta)))}`;
+}
+
+/** Ejercicio 3: parejas fracción-decimal (las seis, con su división). */
+export function explicaParejas(item, { idioma }) {
+  const regla = dos('Cada fracción es una división: numerador entre denominador. Haz cada cuenta y une la fracción con su decimal.',
+    'Each fraction is a division: numerator divided by denominator. Work out each one and match the fraction with its decimal.', idioma);
+  const pares = item.fracciones.map((f, i) => `${h(f)} = ${n(item.decimales[item.solucion[i]], idioma)}`);
+  const cuentas = item.fracciones.map(f => divisionDe(f, idioma)).join(' ');
+  return `${regla} ${cuentas}${fin(idioma, cf(pares.join('; ')))}`;
+}
+
+/** Ejercicio 4: ¿fracción o decimal? (<, = o >). */
+export function explicaFraccionODecimal(item, { idioma }) {
+  const regla = dos('Se pasa la fracción a decimal (numerador entre denominador) y se comparan los dos decimales.',
+    'Change the fraction into a decimal (numerator divided by denominator) and compare the two decimals.', idioma);
+  const f = h(item.f), d = n(item.d, idioma);
+  const [izq, der] = item.orden === 'fd' ? [f, d] : [d, f];
+  return `${regla} ${divisionDe(item.f, idioma)}.${fin(idioma, cf(`${izq} ${SIGNO[item.respuesta]} ${der}`))}`;
+}

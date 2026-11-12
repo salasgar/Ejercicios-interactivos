@@ -9,7 +9,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { htmlFraccion, htmlRaya } from '../_comun/fracciones.js';
 import { aTexto, deTexto } from '../_comun/decimales.js';
-import { TX } from './textos.js';
+import { TX, explicaFraccionADecimal, explicaDecimalAFraccion, explicaParejas, explicaFraccionODecimal } from './textos.js';
 import {
   D, claveDe, generarFraccionADecimal, generarDecimalAFraccion, generarParejas, generarFraccionODecimal,
   errorFraccionADecimal, errorTipo, errorDecimalAFraccion, evaluarParejas, errorSigno,
@@ -267,16 +267,19 @@ function montarFraccionODecimal(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, ...(noLoSe ? { noLoSe } : {}),
 });
 
 arrancar({
   slug: 'fraccion-decimal',
   ejercicios: [
-    ejercicio(TX.ej1, generarFraccionADecimal, montarFraccionADecimal, enunciado1),
-    ejercicio(TX.ej2, generarDecimalAFraccion, montarDecimalAFraccion, enunciado2),
-    ejercicio(TX.ej3, generarParejas, montarParejas, enunciado3),
-    ejercicio(TX.ej4, generarFraccionODecimal, montarFraccionODecimal, enunciado4),
+    ejercicio(TX.ej1, generarFraccionADecimal, montarFraccionADecimal, enunciado1, explicaFraccionADecimal, NO_SE_HACERLO),
+    ejercicio(TX.ej2, generarDecimalAFraccion, montarDecimalAFraccion, enunciado2, explicaDecimalAFraccion, NO_SE_HACERLO),
+    ejercicio(TX.ej3, generarParejas, montarParejas, enunciado3, explicaParejas),
+    ejercicio(TX.ej4, generarFraccionODecimal, montarFraccionODecimal, enunciado4, explicaFraccionODecimal),
   ],
 });
