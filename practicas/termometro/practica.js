@@ -10,7 +10,7 @@ import {
   generarColoca, errorColoca, generarTemperatura, errorTemperatura, generarComparar, simbolo, errorComparar,
   generarOrden, ordenBien, errorOrden, cadenaOrden, generarClases, cajaDe, escribe, fallosClases, errorClases,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, NO_SE_HACERLO, explicaColoca, explicaTemperatura, explicaComparar, explicaOrden, explicaClases } from './textos.js';
 
 const CAJAS = ['positivo', 'negativo', 'ninguno'];
 
@@ -285,22 +285,31 @@ arrancar({
     {
       nombre: TX.ej1.nombre, detalle: TX.ej1.detalle, introduccion: TX.ej1.introduccion,
       generar: generarColoca, clave: i => `${i.min}:${i.objetivo}`, montar: montarColoca, enunciado: enunciadoColoca,
+      explicacion: explicaColoca,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej2.nombre, detalle: TX.ej2.detalle, introduccion: TX.ej2.introduccion,
       generar: generarTemperatura, clave: i => `${i.paso}:${i.max}:${i.valor}`, montar: montarTemperatura, enunciado: enunciadoTemperatura,
+      explicacion: explicaTemperatura,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej3.nombre, detalle: TX.ej3.detalle, introduccion: TX.ej3.introduccion,
       generar: generarComparar, clave: i => `${i.a}:${i.b}`, montar: montarComparar, enunciado: enunciadoComparar,
+      explicacion: explicaComparar,
     },
     {
       nombre: TX.ej4.nombre, detalle: TX.ej4.detalle, introduccion: TX.ej4.introduccion,
       generar: generarOrden, clave: i => `${i.creciente}:${i.numeros.join()}`, montar: montarOrden, enunciado: enunciadoOrden,
+      explicacion: explicaOrden,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej5.nombre, detalle: TX.ej5.detalle, introduccion: TX.ej5.introduccion,
       generar: generarClases, clave: i => i.numeros.map(escribe).join(), montar: montarClases, enunciado: enunciadoClases,
+      explicacion: explicaClases,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

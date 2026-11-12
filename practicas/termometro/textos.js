@@ -3,6 +3,7 @@
 // `fmt` (el menos es U+2212), y las expresiones, con `·`, nunca `×`.
 
 import { fmt } from '../_comun/enteros.js';
+import { cadenaOrden, cajaDe, escribe } from './logica.js';
 
 const lado = (v, es) => (v < 0 ? (es ? 'izquierda' : 'left') : (es ? 'derecha' : 'right'));
 const marcas = (n, es) => (es ? (n === 1 ? '1 marca' : `${n} marcas`) : (n === 1 ? '1 mark' : `${n} marks`));
@@ -156,3 +157,70 @@ export const TX = {
     sinPoner: { es: 'Falta repartir algún número.', en: 'Some numbers are still not sorted.' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+/** Ejercicio 1. */
+export function explicaColoca(item, { tt }) {
+  const regla = tt({
+    es: 'Se cuenta desde el 0: hacia la izquierda si el número es negativo y hacia la derecha si es positivo.',
+    en: 'Count from 0: to the left if the number is negative and to the right if it is positive.',
+  });
+  const n = item.objetivo;
+  const resp = tt({ es: `La respuesta es la marca del ${fmt(n)}.`, en: `The answer is the mark for ${fmt(n)}.` });
+  const d = Math.abs(n);
+  const unidades = tt({ es: d === 1 ? '1 unidad' : `${d} unidades`, en: d === 1 ? '1 unit' : `${d} units` });
+  const lado = tt({ es: n < 0 ? 'izquierda' : 'derecha', en: n < 0 ? 'left' : 'right' });
+  const marcasTxt = item.paso > 1 ? tt({ es: ` (${d / item.paso} marcas, de ${item.paso} en ${item.paso})`, en: ` (${d / item.paso} marks, going up in ${item.paso}s)` }) : '';
+  const cuerpo = tt({ es: `${fmt(n)} está a ${unidades} a la ${lado} del 0${marcasTxt}.`, en: `${fmt(n)} is ${unidades} to the ${lado} of 0${marcasTxt}.` });
+  return `${regla} ${cuerpo} ${resp}`;
+}
+
+/** Ejercicio 2. */
+export function explicaTemperatura(item, { tt }) {
+  const regla = tt({
+    es: 'Mira hasta dónde llega el líquido, cuenta las marcas desde el 0 y multiplica por lo que vale cada una.',
+    en: 'Look at where the liquid reaches, count the marks from 0 and multiply by what each one is worth.',
+  });
+  const resp = tt({ es: `La respuesta es ${fmt(item.valor)} °C.`, en: `The answer is ${fmt(item.valor)} °C.` });
+  return `${regla} ${tt(TX.ej2.bien)(item.valor, item.paso)}. ${resp}`;
+}
+
+/** Ejercicio 3. */
+export function explicaComparar(item, { tt }) {
+  const regla = tt({
+    es: 'En la recta, el número que está más a la derecha es el mayor.',
+    en: 'On the number line, the number further to the right is the greater.',
+  });
+  const { a, b } = item;
+  const extra = a < 0 && b < 0 ? ` ${tt(TX.ej3.naturales)(a, b)}.`
+    : (a < 0) !== (b < 0) || a === 0 || b === 0 ? ` ${tt(TX.ej3.absoluto)(a, b)}.` : '';
+  const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
+  return `${regla}${extra} ${tt(TX.ej3.bien)(a, b)}. ${resp} <span class="cuenta">${fmt(a)} ${a < b ? '&lt;' : '&gt;'} ${fmt(b)}</span>.`;
+}
+
+/** Ejercicio 4. */
+export function explicaOrden(item, { tt }) {
+  const regla = tt({
+    es: 'Los negativos van antes que el 0 y que los positivos. Entre negativos, el que está más lejos del 0 es el menor.',
+    en: 'Negative numbers come before 0 and before the positive numbers. Among negative numbers, the one further from 0 is the least.',
+  });
+  const sentido = tt(item.creciente
+    ? { es: 'De menor a mayor, se empieza por el que está más a la izquierda.', en: 'From least to greatest, start with the one furthest to the left.' }
+    : { es: 'De mayor a menor, se empieza por el que está más a la derecha.', en: 'From greatest to least, start with the one furthest to the right.' });
+  return `${regla} ${sentido} ${tt(TX.ej4.bien)(cadenaOrden(item))}.`;
+}
+
+/** Ejercicio 5. */
+export function explicaClases(item, { tt }) {
+  const regla = tt({
+    es: 'Positivo es mayor que 0 y negativo es menor que 0. El 0 no es ni lo uno ni lo otro, y +5 es lo mismo que 5.',
+    en: 'Positive means greater than 0 and negative means less than 0. 0 is neither, and +5 is the same as 5.',
+  });
+  const lista = caja => item.numeros.filter(n => cajaDe(n.valor) === caja).map(escribe).join(', ');
+  const linea = caja => `<li>${tt(TX.ej5.cajas[caja])}: <span class="cuenta">${lista(caja)}</span></li>`;
+  const resp = tt({ es: 'La respuesta es:', en: 'The answer is:' });
+  return `${regla} ${resp}<ol class="pasos-ayuda">${['positivo', 'negativo', 'ninguno'].map(linea).join('')}</ol>`;
+}
