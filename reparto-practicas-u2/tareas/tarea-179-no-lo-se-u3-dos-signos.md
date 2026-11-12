@@ -81,6 +81,9 @@ Propio de la unidad 3: Enteros sin paréntesis que no hagan falta (5 − 3, −5
 
 ## Trampas conocidas
 
+- (179) `-0`: `assert.equal(0 / item.b, 0)` falla con b negativo; comprobar con `0 / b === 0`. Y al buscar «no hay punto» en un texto, no mirar solo el `·`.
+- (179) Las explicaciones de jerarquia-enteros se montan con `cadenaDePasos` (de `_comun/enteros.js`); no hace falta reimplementar la jerarquía.
+
 - (de la coordinadora) El botón solo existe si el ejercicio declara `explicacion`: en varias prácticas de ortografía
   hay un parámetro que ya se llama `explicacion` dentro de sus `montar` (es el feedback); no es lo mismo ni se toca.
 - (de la coordinadora) `explicacion` recibe `(item, { idioma, t, tt, esc })`; dentro, usa el `tt` que recibe, no uno

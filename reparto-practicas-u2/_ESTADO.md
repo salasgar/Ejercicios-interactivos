@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-12T23:22Z por s-20261112T231547-05d8a0e0 al cerrar la 179 (LISTA, commit f37db32; npm test 2003/2003): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-12T23:21Z por s-20261112T231544-5daa433b cierre 178: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T23:16Z por s-20261112T231544-5daa433b al reclamar la 178 (botón «No lo sé» en termometro, opuestos, situaciones y saltos; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-12T22:42Z por s-20261112T224136-1ca1b79e al reclamar la 171 
 Actualizado 2026-11-12T22:11Z por s-20261112T221031-a65e0c81 al dar de alta las tareas 171-194 (botón «No lo sé» en todas las prácticas: 171-189 escritura MEDIO, 190-193 revisión ALTO, 194 panel MEDIO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-12T21:39Z por s-20261112T183110-92d9d858 al cerrar la 121 (LISTA: semanas 2 y 3 montadas en el panel, tareas 21 y 22; con la 20 de la semana 1, las tres; sin commit de código; con Chrome en el panel de Juan Luis): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-12T21:36Z por s-20261112T183110-92d9d858 al reclamar otra vez la 121 (EN CURSO; semana 3 con la propuesta de la 170, LISTA): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -332,7 +332,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-12 23:21Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 4 (171, 176, 179, 180) · LISTA 169 · PENDIENTE 10 (181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
+**Foto a 2026-11-12 23:22Z**: BLOQUEADA 11 (132, 156, 157, 158, 159, 160, 161, 190, 191, 192, 193) · EN CURSO 4 (171, 176, 179, 180) · LISTA 169 · PENDIENTE 10 (181, 182, 183, 184, 185, 186, 187, 188, 189, 194).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -371,12 +371,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (281), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (282), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 179 · 2026-11-12 23:22 · s-20261112T231547-05d8a0e0 · 6d10477, e98e8e9, a2f022f, f37db32 · practicas/{dos-signos,signos-producto,potencias-enteros,jerarquia-enteros}/{tex… · abierto 2026-11-12T23:15:47Z
 LISTA · tarea 178 · 2026-11-12 23:15 · s-20261112T231544-5daa433b · — · — · de 23:15 a 23:23 UTC (estimada: 2 h)
 LISTA · tarea 176 · 2026-11-12 23:12 · s-20261112T230548-46a75b0f · e00af69 (transposicion), d9a2186 (resuelve), 88da… · practicas/{transposicion,resuelve,parentesis-algebra,denominadores}/{practica,t… · de 23:05:48Z a 23:12:13Z
 LISTA · tarea 175 · 2026-11-12 23:12 · s-20261112T230552-18e515b5 · 9ecff5e (traduce), 2a65bff (valor-numerico), c536… · practicas/{traduce,valor-numerico,terminos-semejantes,es-solucion}/{practica,te… · 6 min (el reloj de la sesión; con contexto compac…
