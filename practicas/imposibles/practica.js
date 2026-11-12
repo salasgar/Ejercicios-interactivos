@@ -8,7 +8,10 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { TX, BANCO_NOMBRAR } from './textos.js';
-import { generarPuede, generarProducto, generarNombrar, valorExpr } from './logica.js';
+import {
+  generarPuede, generarProducto, generarNombrar, valorExpr,
+  feedbackPuede, feedbackProducto, explicaPuede, explicaProducto, explicaNombrar,
+} from './logica.js';
 
 // ─── Ejercicio 1: ¿Puede ser? ───────────────────────────────────────────────
 
@@ -21,13 +24,7 @@ function textoPuede(item, { tt }) {
   return `${etiqueta} = ${item.propuesto}. ${tt(TX.puedeSer)}`;
 }
 
-function explicacionPuede(item, { tt }) {
-  const previo = item.contexto !== null ? `${tt(TX.feedbackPuede.contexto[item.cantidad])(item.a, item.b, item.contexto)} ` : '';
-  if (item.puede) return previo + tt(TX.feedbackPuede.correcto[item.cantidad])(item.propuesto, item.a, item.b);
-  if (item.violacion === 'cero') return previo + tt(TX.feedbackPuede.cero);
-  if (item.violacion === 'mayor') return previo + tt(TX.feedbackPuede.mayor)(item.propuesto, Math.min(item.a, item.b));
-  return previo + tt(TX.feedbackPuede.menor)(item.propuesto, Math.max(item.a, item.b));
-}
+const explicacionPuede = (item, { idioma }) => feedbackPuede(item, idioma);
 
 function enunciadoPuede(item, textos) {
   // El texto se escapa entero y luego se destaca la pregunta (o la igualdad, sin contexto).
@@ -71,7 +68,6 @@ const enunciadoProducto = (item, { tt, esc, idioma }) => {
 
 function montarProducto(contenedor, item, api) {
   const { tt } = api;
-  const tres = item.tipo === 'tres';
   contenedor.innerHTML = enunciadoProducto(item, api);
   const botones = elecciones(contenedor, {
     clase: 'si-no',
@@ -83,9 +79,7 @@ function montarProducto(contenedor, item, api) {
       if (api.respondido()) return;
       const buena = item.cuadra ? 'cuadra' : 'noCuadra';
       botones.marcar([buena], valor);
-      const html = ({ tt }) => (tres
-        ? tt(TX.producto.feedbackTres)(item.a, item.b, item.c, item.g, item.m)
-        : tt(item.cuadra ? TX.producto.feedbackCuadra : TX.producto.feedbackNoCuadra)(item.a, item.b, item.g, item.m));
+      const html = ({ idioma }) => feedbackProducto(item, idioma);
       api.responder({ acierto: valor === buena, html, espera: 2200 });
     },
   });
@@ -136,6 +130,7 @@ arrancar({
       generar: generarPuede,
       montar: montarPuede,
       enunciado: enunciadoPuede,
+      explicacion: (item, { idioma }) => explicaPuede(item, idioma),
     },
     {
       nombre: TX.nombre.producto,
@@ -143,6 +138,7 @@ arrancar({
       generar: generarProducto,
       montar: montarProducto,
       enunciado: enunciadoProducto,
+      explicacion: (item, { idioma }) => explicaProducto(item, idioma),
     },
     {
       nombre: TX.nombre.nombrar,
@@ -150,6 +146,7 @@ arrancar({
       generar: generarNombrar,
       montar: montarNombrar,
       enunciado: enunciadoNombrar,
+      explicacion: (item, { idioma }) => explicaNombrar(item, idioma),
     },
   ],
 });

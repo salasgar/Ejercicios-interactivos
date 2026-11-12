@@ -102,6 +102,53 @@ export const TX = {
     yLaRespuestaEra: { es: 'y la respuesta era', en: 'but the answer was' },
     bienElEraRespuesta: { es: '✓ Es la respuesta.', en: '✓ That is the answer.' },
   },
+
+  // --- «No lo sé»: cómo se hace ese ítem ---
+  ayuda: {
+    respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    si: { es: 'Sí', en: 'Yes' },
+    no: { es: 'No', en: 'No' },
+    reglaPuede: {
+      mcd: {
+        es: 'El m.c.d. es un divisor de los dos números: tiene que dividirlos a los dos, así que no puede ser 0 ni pasar del menor.',
+        en: 'The GCD is a divisor of both numbers: it has to divide them both, so it cannot be 0 or bigger than the smaller one.',
+      },
+      mcm: {
+        es: 'El m.c.m. es un múltiplo de los dos números, así que no puede ser menor que el mayor.',
+        en: 'The LCM is a multiple of both numbers, so it cannot be smaller than the bigger one.',
+      },
+    },
+    consejoPuede: {
+      es: 'Consejo: primero compara el número propuesto con el menor y con el mayor de los datos.',
+      en: 'Tip: first compare the proposed number with the smaller and the bigger of the two numbers.',
+    },
+    reglaProducto: {
+      es: (a, b) => `Con dos números, m.c.d. · m.c.m. siempre es igual a su producto (${a} · ${b}). Calcula los dos productos y compáralos.`,
+      en: (a, b) => `With two numbers, GCD · LCM is always equal to their product (${a} · ${b}). Work out both products and compare them.`,
+    },
+    reglaTres: {
+      es: 'Esa igualdad solo está garantizada con dos números; con tres, no hay que fiarse de ella.',
+      en: 'That equality is only guaranteed with two numbers; with three, you cannot rely on it.',
+    },
+    pregunta: {
+      mcm: {
+        es: 'Se busca algo que sea múltiplo de los dos números a la vez y lo más pequeño posible (cuándo coinciden): es el m.c.m.',
+        en: 'We want something that is a multiple of both numbers at once and as small as possible (when they coincide): that is the LCM.',
+      },
+      mcd: {
+        es: 'Se reparte o se corta en partes iguales, lo más grande posible y sin que sobre nada: es un divisor de los dos números, el mayor, es decir, el m.c.d.',
+        en: 'We share or cut into equal parts, as large as possible and with nothing left over: it is a divisor of both numbers, the greatest one, that is, the GCD.',
+      },
+    },
+    calculo: {
+      es: (expr, v) => `Calculamos: ${expr} = ${v}.`,
+      en: (expr, v) => `We work it out: ${expr} = ${v}.`,
+    },
+    consejoNombrar: {
+      es: 'Consejo: fíjate en si el problema habla de «coincidir» (m.c.m.) o de «partes iguales, lo más grandes posible» (m.c.d.).',
+      en: 'Tip: check whether the problem is about «coinciding» (LCM) or about «equal parts, as large as possible» (GCD).',
+    },
+  },
 };
 
 function enteros(rng, min, max) {
