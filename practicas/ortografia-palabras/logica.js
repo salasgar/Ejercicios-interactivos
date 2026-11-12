@@ -763,3 +763,14 @@ export const opcionesNumero = (item, orden) => (orden === 0 ? [item.buena, item.
 export const explicacionNumero = item => `<b>${item.buena}</b>, no «${item.mala}»: ${ERRORES[item.error].regla}`;
 
 export const idErrorNumero = item => item.error;
+
+// --- «No lo sé»: la explicación de cada ejercicio (regla delante, la del banco detrás, solución al final) ---
+
+const ayudaHueco = (item, regla, explicacion) => `<p>${regla}</p>
+  <p>${explicacion}</p><p>Con la palabra puesta: «${rellenar(item.frase, `<b>${item.buena}</b>`)}». La respuesta es <b>${item.buena}</b>.</p>`;
+
+export const ayudaJuntas = item => ayudaHueco(item, 'Lee la frase con cada opción y fíjate en qué quiere decir: la palabra buena es la que da sentido a la frase.', explicacionJuntas(item));
+
+export const ayudaHomofono = item => ayudaHueco(item, 'Estas palabras suenan igual pero significan cosas distintas. Mira qué se dice en la frase y elige la que encaja.', explicacionHomofono(item));
+
+export const ayudaNumero = item => ayudaHueco(item, 'Mira cómo se escribe la palabra o el símbolo: tiene una forma correcta fija, y la otra es una falta típica.', explicacionNumero(item));

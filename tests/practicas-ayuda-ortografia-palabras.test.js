@@ -1,0 +1,39 @@
+// «No lo sé» en ortografia-palabras (tarea 182): la explicación termina en la palabra que el ejercicio da por buena.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { crearRng } from '../practicas/_comun/rng.js';
+import {
+  JUNTAS, HOMOFONOS, NUMEROS_Y_SIMBOLOS, generarJuntas, generarHomofonos, generarNumeros,
+  ayudaJuntas, ayudaHomofono, ayudaNumero, opcionesHomofono, opcionesNumero, rellenar,
+} from '../practicas/ortografia-palabras/logica.js';
+
+const N = 1000;
+const plano = html => html.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const sesion = i => ({ aciertos: i % 10, fallos: 0, puntos: i % 10, vidas: 5, anterior: null, idioma: 'es' });
+
+function recorrer(generar, banco, ayuda, semilla, opciones) {
+  const rng = crearRng(semilla);
+  for (let i = 0; i < N; i++) {
+    const item = generar(rng, sesion(i));
+    const it = banco[item.i];
+    const html = ayuda(it);
+    const p = plano(html);
+    assert.doesNotMatch(html, /undefined|NaN|\[object|×/, p);
+    assert.doesNotMatch(p, /\bnull\b/, p);
+    assert.ok(p.endsWith(`La respuesta es ${it.buena}.`), p);
+    assert.ok(p.includes(`«${rellenar(it.frase, it.buena)}»`), p);
+    assert.ok(opciones(it, item).includes(it.buena), 'la buena es una de las opciones');
+  }
+}
+
+test('ortografia-palabras, ¿junto o separado?: la frase con la palabra buena y la respuesta', () => {
+  recorrer(generarJuntas, JUNTAS, ayudaJuntas, 182011, it => it.opciones);
+});
+
+test('ortografia-palabras, suenan igual: la frase con el homófono bueno y la respuesta', () => {
+  recorrer(generarHomofonos, HOMOFONOS, ayudaHomofono, 182012, opcionesHomofono);
+});
+
+test('ortografia-palabras, números y símbolos: la frase con la forma buena y la respuesta', () => {
+  recorrer(generarNumeros, NUMEROS_Y_SIMBOLOS, ayudaNumero, 182013, (it, item) => opcionesNumero(it, item.orden));
+});
