@@ -76,12 +76,13 @@ const esParejaHoja = (pool, a, b) => pool.some(([x, y]) => signoDe(a, b) === sig
 const coincideDivide = (pool, a, b) => pool.some(([x, y]) => signoDe(a, b) === signoDe(x, y) && igualAbs(a, x) && igualAbs(b, y));
 
 // Hoja 3, ej. 1a (4/9·3/10), 6b (3/8·(−4/9)), 7a (2/11·5/11), 7b (1/10·3/4) y 7d (6·2/5); banco B11b (4/5·3/4);
-// hoja 2, ej. 11 (apartado «For after the class on Thursday 7 January»), de la a a la h.
+// hoja 2, ej. 11 (apartado «For after the class on Thursday 7 January»), de la a a la h, y ej. 12a-b.
 export const PAREJAS_HOJA_MULTIPLICA = [
   [[4, 9], [3, 10]], [[1, 10], [3, 4]], [[6, 1], [2, 5]], [[4, 5], [3, 4]],
   [[5, 1], [3, 8]], [[2, 1], [7, 12]], [[5, 8], [3, 7]], [[2, 3], [9, 10]],
   [[4, 5], [3, 5]], [[10, 21], [14, 15]], [[8, 9], [3, 4]], [[2, 5], [4, 7]],
   [[3, 8], [-4, 9]], [[2, 11], [5, 11]],
+  [[4, 5], [5, 12]], [[4, 9], [3, 8]],
 ];
 // Hoja 3, ej. 3a-3f; 4a, 4b, 4c, 4e, 4f; 5b, 5b2, 5b3; 6c, 6e; 7c2; 12b; banco B11a y B11c.
 export const PAREJAS_HOJA_DIVIDE = [

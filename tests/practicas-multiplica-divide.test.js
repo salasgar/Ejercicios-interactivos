@@ -75,13 +75,20 @@ test('la hoja 2, ej. 11 (a-h), está en la lista de productos reservados, en los
   }
 });
 
+test('la hoja 2, ej. 12a-b (con «of»), está en la lista de productos reservados, en los dos órdenes', () => {
+  for (const [a, b] of [[[4, 5], [5, 12]], [[4, 9], [3, 8]]]) {
+    assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, a, b), JSON.stringify([a, b]));
+    assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, b, a), JSON.stringify([b, a]));
+  }
+});
+
 test('el sitio del signo no cambia el caso: las huellas y las listas lo ignoran', () => {
   // Producto: el menos en un factor o en el otro es la misma cuenta; el signo contrario del resultado, no.
   assert.equal(huellaMultiplica([3, 8], [-4, 9]), huellaMultiplica([-3, 8], [4, 9]));
   assert.equal(huellaMultiplica([-3, 8], [4, 9]), huellaMultiplica([4, 9], [-3, 8]));
   assert.notEqual(huellaMultiplica([3, 8], [-4, 9]), huellaMultiplica([3, 8], [4, 9]));
   assert.ok(enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [-3, 8], [4, 9]), 'hoja 3, 6b con el menos en el otro factor');
-  assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [3, 8], [4, 9]));
+  assert.ok(!enListaSinOrden(PAREJAS_HOJA_MULTIPLICA, [-4, 5], [5, 12]), 'el signo contrario no es el caso de la hoja');
   // Cociente: «−a : b» y «a : (−b)» son lo mismo; el orden sí cuenta.
   assert.equal(huellaDivide([-3, 8], [5, 9]), huellaDivide([3, 8], [-5, 9]));
   assert.notEqual(huellaDivide([3, 8], [5, 9]), huellaDivide([3, 8], [-5, 9]));
