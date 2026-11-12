@@ -221,6 +221,16 @@ Es la quinta revisión de estas prácticas y cada una ha encontrado algo que la 
   coincidencias sin avisar: comprueba que tu lector abre todos los ficheros que esperas (cuenta los casos que lee de cada uno).
 - (de la coordinadora, 11-11) Hay terminadas **sin línea `CERRADA`** en su reclamo y un reclamo de la 152 sin commitear (incidencia
   `hechos/incidencias/s-20261111T215225-39c1f4f5.md`): no son tuyos; no los toques ni los comitees.
+- (de la 169, 12-11) **Al relevar, mira el scratchpad de la sesión caducada** (`ls -d /tmp/*/`, aquí `/tmp/s169/`): dejó el lector y el
+  barrido hechos. Cópialos a tu carpeta, vuelve a correrlos (salió idéntico) y lee cada coincidencia antes de fiarte; así la tarea
+  duró ~21 min en vez de 1 h.
+- (de la 169) **Guion de clics que no se queda viejo**: en vez de leer el enunciado con expresiones regulares, importa en la página las
+  funciones de texto de la propia práctica (`await import('/practicas/<slug>/textos.js')`), enumera los ítems posibles y compara su
+  texto con el de la pantalla (las `.frac` serializadas como `[n/d]`). Ojo: en `a − b/c` el «−» es la operación, no el signo de la
+  fracción (dos veces se le escapó al guion, no a la práctica).
+- (de la 169) El idioma alterna **por bloques**, no ítem a ítem: en una pasada un ejercicio puede salir entero en un idioma. Haz otra
+  pasada con el orden fallo→acierto, o más ítems, hasta ver los dos. Y a los 10 aciertos el ejercicio termina: un bucle de aciertos
+  se encuentra con la pantalla final, no con un fallo.
 
 ## Prohibido (propio de esta tarea)
 
