@@ -11,7 +11,7 @@ import {
   generarBase, textoBase, valorBase, rutaBase, baseDeItem, errorBase,
   generarRaiz, buenasCuadrados, cuadrado, errorCuadrados, errorRaiz, esAciertoRaiz,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, explicaProducto, explicaPotencia, explicaBase, explicaRaiz } from './textos.js';
 
 const cuenta = texto => `<span class="cuenta">${texto}</span>`;
 const mismos = (a, b) => a.length === b.length && a.every(x => b.includes(x));
@@ -334,6 +334,8 @@ arrancar({
       clave: item => item.factores.join(','),
       montar: montarProducto,
       enunciado: enunciadoProducto,
+      explicacion: explicaProducto,
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.ej2.nombre,
@@ -343,6 +345,8 @@ arrancar({
       clave: item => `${item.base}^${item.exp}`,
       montar: montarPotencia,
       enunciado: enunciadoPotencia,
+      explicacion: explicaPotencia,
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.ej3.nombre,
@@ -352,6 +356,8 @@ arrancar({
       clave: textoBase,
       montar: montarBase,
       enunciado: enunciadoBase,
+      explicacion: explicaBase,
+      noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.ej4.nombre,
@@ -361,6 +367,7 @@ arrancar({
       clave: item => `${item.tipo}${item.r}`,
       montar: montarRaiz,
       enunciado: enunciadoRaiz,
+      explicacion: explicaRaiz,
     },
   ],
 });

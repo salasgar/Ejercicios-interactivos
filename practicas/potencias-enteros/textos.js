@@ -2,6 +2,12 @@
 // comunes (Comprobar, Siguiente…) llegan en `api.t`. Producto con «·», nunca «×»;
 // el menos es U+2212; el hueco es «□».
 
+import { fmt, fmtPar, html as htmlEntero } from '../_comun/enteros.js';
+import {
+  producto, posicionesNegativas, expresionProducto, absolutosProducto, valorPotencia, textoPotencia,
+  textoBase, valorBase, baseDeItem, cuadrado,
+} from './logica.js';
+
 const plural = (n, uno, varios) => (n === 1 ? uno : varios);
 
 export const TX = {
@@ -148,4 +154,63 @@ export const TX = {
     },
     tu_valor: { es: 'Tú has escrito', en: 'You wrote' },
   },
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (docs/no-lo-se.md) ───────────
+
+const cuenta = html => `<span class="cuenta">${html}</span>`;
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuesta = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
+
+/** Ejercicio 1: el signo por la paridad de los negativos y el valor. */
+export function explicaProducto(item, { tt }) {
+  const p = producto(item);
+  const cuentaBuena = cuenta(`${expresionProducto(item)} = ${fmt(p)}`);
+  if (item.factores.includes(0)) return `<p>${tt(TX.ej1.cero)}.</p>${respuesta(tt, cuentaBuena)}`;
+  const k = posicionesNegativas(item).length;
+  const par = k % 2 === 0;
+  return `${pasos([
+    `${tt(TX.ej1.hay)(k, par)}, ${tt(TX.ej1.asi_que)(par)}.`,
+    `${tt({ es: 'Se multiplican sin signo', en: 'Multiply without the signs' })}: ${cuenta(`${absolutosProducto(item)} = ${Math.abs(p)}`)}.`,
+  ])}${respuesta(tt, cuentaBuena)}`;
+}
+
+/** Ejercicio 2: el signo por la paridad del exponente y el valor. */
+export function explicaPotencia(item, { tt }) {
+  const v = valorPotencia(item);
+  const factores = Array(item.exp).fill(fmtPar(item.base)).join(' · ');
+  const potencia = htmlEntero(textoPotencia(item.base, item.exp));
+  return `${pasos([
+    `${tt(TX.ej2.par)(item.exp, item.exp % 2 === 0)}.`,
+    `${tt({ es: 'Se multiplica la base por sí misma', en: 'Multiply the base by itself' })}: ${cuenta(`${potencia} = ${factores} = ${fmt(v)}`)}.`,
+  ])}${respuesta(tt, cuenta(fmt(v)))}`;
+}
+
+/** Ejercicio 3: cuál es la base y el valor. */
+export function explicaBase(item, { tt }) {
+  const v = valorBase(item);
+  const b = baseDeItem(item);
+  const potencia = `${fmtPar(b)}<sup>${item.exp}</sup>`;
+  const veces = Array(item.exp).fill(fmtPar(b)).join(' · ');
+  const paso2 = item.tipo === 'a'
+    ? `${cuenta(`${potencia} = ${veces} = ${fmt(b ** item.exp)}`)}.`
+    : `${tt(item.tipo === 'b' ? TX.ej3.fuera : TX.ej3.dentro)}: ${cuenta(`${htmlEntero(textoBase(item))} = ${fmt(v)}`)}.`;
+  return `${pasos([`${tt(TX.ej3.base_es)(cuenta(fmt(b)))}.`, paso2])}${respuesta(tt, tt({
+    es: `la base ${cuenta(fmt(b))} y el valor ${cuenta(fmt(v))}`,
+    en: `the base ${cuenta(fmt(b))} and the value ${cuenta(fmt(v))}`,
+  }))}`;
+}
+
+/** Ejercicio 4: los dos enteros del cuadrado, la raíz o «no existe». */
+export function explicaRaiz(item, { tt }) {
+  const n = cuadrado(item);
+  const r = item.r;
+  if (item.tipo === 'cuadrados') {
+    return `<p>${tt(TX.ej4.los_dos)(r)}: ${cuenta(`${r} · ${r} = ${n}`)} ${tt({ es: 'y', en: 'and' })} ${cuenta(`(−${r}) · (−${r}) = ${n}`)}.</p>${respuesta(tt, cuenta(`${r}, −${r}`))}`;
+  }
+  if (item.tipo === 'negativa') {
+    return `<p>${tt(TX.ej4.negativa_no_existe)(n)}. ${tt(TX.ej4.negativa_ejemplo)(r)}.</p>${respuesta(tt, cuenta(tt(TX.ej4.no_existe)))}`;
+  }
+  return `<p>${tt(TX.ej4.raiz_buena)(r, n)}: ${cuenta(`${r} · ${r} = ${n}`)}.</p>${respuesta(tt, cuenta(`√${n} = ${r}`))}`;
+}
