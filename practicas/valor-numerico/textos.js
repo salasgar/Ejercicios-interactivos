@@ -172,9 +172,15 @@ const respuestaFinal = (tt, texto) => `${tt({ es: 'La respuesta es', en: 'The an
 
 /** «No lo sé» del ejercicio 1: sustituir y calcular. */
 export function explicaSustituye(item, { idioma, tt }) {
-  const regla = tt({
-    es: `Sustituye la letra por el número y calcula: primero se multiplica; después se suma o se resta.${fr(item.v).num < 0 ? ' Un número negativo se sustituye entre paréntesis.' : ''}`,
-    en: `Substitute the letter by the number and work it out: first multiply; then add or subtract.${fr(item.v).num < 0 ? ' A negative number is substituted in brackets.' : ''}`,
+  // Con paréntesis, el orden es otro, y el negativo ya va dentro del paréntesis que hay (revisión 191).
+  const parentesis = item.e.forma === 'parentesis';
+  const negativo = fr(item.v).num < 0 && !parentesis;
+  const regla = tt(parentesis ? {
+    es: 'Sustituye la letra por el número y calcula: primero el paréntesis; después se multiplica.',
+    en: 'Replace the letter with the number and work it out: first the brackets; then multiply.',
+  } : {
+    es: `Sustituye la letra por el número y calcula: primero se multiplica; después se suma o se resta.${negativo ? ' Un número negativo se sustituye entre paréntesis.' : ''}`,
+    en: `Replace the letter with the number and work it out: first multiply; then add or subtract.${negativo ? ' A negative number goes in brackets.' : ''}`,
   });
   return `${regla} ${tt(TX.ej1.solucion)(item)} ${respuestaFinal(tt, numTexto(item.resultado, idioma))}`;
 }
@@ -183,7 +189,7 @@ export function explicaSustituye(item, { idioma, tt }) {
 export function explicaTabla(item, { idioma, tt }) {
   const regla = tt({
     es: 'En cada hueco, sustituye la x de esa columna en la expresión y calcula.',
-    en: 'In each gap, substitute the x of that column in the expression and work it out.',
+    en: 'In each gap, put the value of x from that column into the expression and work it out.',
   });
   const valores = item.huecos.map(col => numTexto(item.valores[col], idioma)).join(idioma === 'es' ? ' y ' : ' and ');
   return `${regla} ${solucionTabla(item, idioma)} ${tt({ es: 'Los huecos valen', en: 'The gaps are' })} ${c(valores)}.`;

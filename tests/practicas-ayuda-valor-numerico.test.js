@@ -25,6 +25,8 @@ test('valor-numerico, «sustituye»: la explicación lleva la cuenta y el result
       const que = `${idioma}: ${plano(html)}`;
       assert.ok(html.endsWith(`<span class="cuenta">${numTexto(real, idioma)}</span>.`), `el resultado al final — ${que}`);
       assert.ok(plano(html).includes(`= ${numTexto(real, idioma)}`), `la cuenta termina en el resultado — ${que}`);
+      // Con paréntesis, «primero se multiplica» sería falso (revisión 191).
+      assert.equal(/primero el paréntesis|first the brackets/.test(html), item.e.forma === 'parentesis', `el orden de las operaciones — ${que}`);
       assert.doesNotMatch(html, /undefined|NaN|×/, que);
     }
   }
