@@ -147,15 +147,13 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 del 6-11 de la tarea 162, cerradas ese mismo día: el ej. 4 `dos` y el ej. 2 de `fraccion-de` ya
 no sacan pasos de problemas de examen y el ahorro tiene gastos creíbles; `suma-resta` excluye sin
 orden en sus cinco ejercicios los casos de las hojas 2 y 3, de los semanales y del final; los
-casos de examen se excluyen por su huella, nunca en claro), y `combinadas-fracciones`, de la
-semana 3 (tarea 170, segunda pasada del 12-11, tras la reabierta del 12-11: la clave de los casos
-reservados ya no depende de dónde va el menos). Sin publicar, con su reabierta en
-`reparto-practicas-u2/hechos/reabiertas/`: `multiplica-divide` y `errores4`, de la semana 3. Lo
-que pidieron las reabiertas del 12-11 está hecho en las dos, pero cada una pide dos casos de la
-hoja 2 que la hoja escribe en palabras y nadie había leído: `multiplica-divide`, los productos del
-ej. 12a-b («of»); `errores4`, las potencias del ej. 13f-g («squared», «cubed»). La 170 se vuelve a
-reclamar cuando cierren, para revisar solo eso y publicarlas. El estado vivo es el campo
-`disponible` de `catalogo.js`.
+casos de examen se excluyen por su huella, nunca en claro), y las tres de la semana 3:
+`combinadas-fracciones` (tarea 170, segunda pasada del 12-11, tras la reabierta del 12-11: la
+clave de los casos reservados ya no depende de dónde va el menos), y `multiplica-divide` y
+`errores4` (tarea 170, tercera pasada del 12-11, tras sus segundas reabiertas del 12-11, cerradas
+ese mismo día: también excluyen los casos que la hoja 2 escribe en palabras, los productos del
+ej. 12a-b con «of» y las potencias del ej. 13 y de la hoja 3, ej. 1). Las diez prácticas de la U4
+están publicadas. El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 
