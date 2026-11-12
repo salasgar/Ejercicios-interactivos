@@ -1,5 +1,84 @@
 # ENTREGA · Tarea 170 · Publicar `multiplica-divide`, `combinadas-fracciones` y `errores4` (semana 3 de la U4, cuarta publicación)
 
+Este fichero lleva las dos pasadas de la 170: la **segunda** (arriba, sesión `s-20261112T183052-98cf3c42`) y la **primera** (abajo, sin
+tocar, sesión `s-20261112T010355-f006a9a8`).
+
+# Segunda pasada (12-11, s-20261112T183052-98cf3c42): solo lo reabierto el 12-11
+
+Commit **25d833d** (`catalogo.js`: solo `disponible: true` de la fila 54; `docs/practicas-unidad4.md`: la línea de publicadas). Terminada
+**PARCIAL** otra vez: se publica una de las tres y las otras dos vuelven a reabrirse, cada una por dos casos de la **hoja 2** escritos en
+palabras. Las dos reabiertas son de una línea de datos: MEDIO, cortas.
+
+## Veredicto
+
+| Práctica (tarea, id) | Lo que pedía la reabierta del 12-11 | Veredicto | Estado |
+|---|---|---|---|
+| `combinadas-fracciones` (106, 54) | hecho: la hoja 3 8e, el U4-3A-01 de la recuperación y la caja de Pablo del modelo 2 ya no salen con el menos en otro sitio | **pasa** | **publicada** (25d833d) |
+| `multiplica-divide` (105, 53) | hecho: ningún producto de U4-3C-09 ni de U4-2A-06, ni el «número : fracción» de U4-1A-02 | **no pasa**: el ej. 1 pide los productos de la hoja 2, ej. 12a-b («4/5 of 5/12», «4/9 of 3/8»), que la hoja escribe con «of» | sin publicar · `hechos/reabiertas/105--s-20261112T183052-98cf3c42-revision.md` |
+| `errores4` (107, 55) | hecho: la suma de la caja de Sara en ninguna plantilla, la hoja 1 5b y 8e, ninguna comparación de los semanales | **no pasa**: salen las potencias de la hoja 2, ej. 13f-g («five sixths squared», «three quarters cubed»), en palabras | sin publicar · `hechos/reabiertas/107--s-20261112T183052-98cf3c42-revision.md` |
+
+Los cuatro casos nuevos son de hoja (por eso van en claro) y son la misma trampa que el «a quarter of 52» de la primera pasada: **ningún
+lector anterior leía las cuentas que la hoja escribe en palabras**. Con el criterio del 11-11 («el mismo enunciado o cuenta, con los mismos
+datos») se reabren; la única exención de potencias de hoja es la del ej. 5 de `multiplica-divide`.
+
+El papel no ha cambiado desde el 9-11 (`find … -newermt '2026-11-09 18:15'`: nada; último commit de la carpeta de la unidad, eeed01f).
+
+## Cómo se revisó
+
+- **Barrido propio** (guion en el scratchpad, fuera del repo), con un analizador propio de las cadenas de los ítems y una **clave propia**:
+  átomos sin signo (en crudo y sin orden), número de sumas y restas, productos, cocientes y potencias, y el valor exacto; aparte, el número
+  de menos, para separar «el signo en otro operando» (criterio) de «dos menos más o menos» (fuera de criterio). Casos del papel
+  transcritos de los `.tsv` y `.tex` y comparaciones leídas de los seis `examen-u4-semanaN*.tex`.
+- **Comprobación del lector**: ve las 11 de `EXPRESIONES_HOJA`, las 23 huellas de examen de `combinadas-fracciones`, las 12 huellas
+  nuevas de producto y las 7 nuevas de cociente de `multiplica-divide`; de las comparaciones, 648 leídas y 54 parejas distintas.
+- **666000 ítems**: 60000 por ejercicio en `multiplica-divide` (ej. 1, 2 y 4) y en `errores4` (ej. 1, 2 y 3), 102000 por ejercicio en
+  `combinadas-fracciones`; semillas 170, 7 y 2026. 0 ítems que el analizador no lea.
+- **Recuentos** (sin casos de examen en claro):
+  - `combinadas-fracciones`: **0** casos de criterio en los tres ejercicios (ninguna expresión de las hojas 2 y 3, de U4-3A-01 y 3A-02 de
+    los semanales y del final, ni ninguna primera línea de caja, con el mismo número de menos; ninguna línea de dos o más operaciones del
+    ej. 3; ningún paso malo de caja). Solo la misma cuenta con **dos menos** más o menos que el papel: de 1 a 5 por ejercicio, fuera de
+    criterio, como ya decía la reabierta.
+  - `multiplica-divide`: 0 de U4-3C-09, U4-2A-06 y U4-1A-02; **33** ítems del ej. 1 con los productos de la hoja 2, ej. 12a-b.
+  - `errores4`: 0 de la caja de Sara, de la hoja 1 5b y 8e y de las comparaciones (de las 54 parejas, 9 tienen denominadores de la
+    práctica y ninguna la puede generar: solo saca parejas en las que el error se nota, y sus 163 parejas posibles salen todas en 600000
+    ítems sin ninguna de esas 9); **692, 892 y 893** ítems (ej. 1, 2 y 3) con las potencias de la hoja 2, ej. 13f-g.
+- **No se cuela nada por el cambio de `prohibido`** de la 107 (las comparaciones vuelven antes de mirar `PARAMS_HOJA` y `HUELLAS_EXAMEN`):
+  esas dos listas son de sumas y una comparación no casaba nunca con ellas.
+- **Navegador** (solo `combinadas-fracciones`, la que se publica): desde la primera pasada solo cambió su `logica.js` (la clave de
+  exclusión), así que la prueba es de regresión. Chrome headless por CDP con clics de ratón (`Input.dispatchMouseEvent`), «Probar sin
+  código», servidor propio en el 8170, idioma por URL: los tres ejercicios a 375 y a 1100 px, en español y en inglés (12 ítems, con aciertos
+  y fallos en los tres), feedback con los números del ítem, fracciones enteras (capturas revisadas), sin desbordes, **consola limpia**.
+- Tests: las cuatro baterías 110/110; `npm test` **1808/1808** con la publicación.
+
+## Propuesta de la tarea de la semana 3 (para Juan Luis; no está creada)
+
+**Sigue en espera.** El plan A de `salidas/111-publicar-u4-semana3/ENTREGA.md` (7 ★ + 3 a elegir, `['ortografia', 7]` el primer ★; del **lun
+11-1 al jue 14-1**; el final es el vie 15-1) vale tal cual en cuanto se publiquen las tres: las reabiertas no cambian ni el número ni el
+orden de los ejercicios, y su «a elegir» `['suma-resta', 4]` vale (la 169 publicó `suma-resta`). Puntúa sobre 100 (tarea 166): 10
+ejercicios, 10 puntos cada uno. Sin `multiplica-divide` no hay tarea de la semana 3 que valga (plan B de la 111), así que **la 121 todavía
+no puede montar la semana 3**. Si cuando cierre la 105 la 107 aún no estuviera, vale el plan A «sin `errores4`» de la 111 (con
+`['suma-resta', 2]`, `['simplifica', 3]` y `['fraccion-de', 4]` en su lugar entre los «a elegir»), todos publicados.
+
+## Hallazgos fuera de criterio (no bloquean; deciden Juan Luis o la coordinadora)
+
+1. **`multiplica-divide` ej. 1**: dos productos que son **un paso** de las cajas «Find the mistake» del final (Marta, modelo 2; Nora,
+   recuperación): 21 en 60000. No son el paso malo ni el caso entero.
+2. **`errores4` ej. 2**: líneas **intermedias** que son fracciones de las simplificaciones de las hojas 1 y 2 (1238 en 60000), y el paso de
+   simplificar el final de la caja de Marta (517); como pregunta del ítem, ninguna.
+3. **`errores4`, comparaciones con los dos signos cambiados** respecto a una pareja del papel (plantilla `ignora-el-signo`): 4 parejas
+   generables. Son otra comparación con otro resultado.
+4. **`combinadas-fracciones`**: las de dos menos más o menos (arriba), como en la primera pasada.
+5. Para la próxima pasada: los cuatro casos nuevos salen de un lector que no leía **cuentas en palabras de las hojas** («of» entre dos
+   fracciones, «squared», «cubed»). Repasadas todas las cuentas en palabras de las hojas 1-3 (búsqueda de ordinales, «of», «times»,
+   «divided by», «quotient», «sum», «difference», «subtract», «squared», «cubed»), con el barrido no queda ninguna más que estas tres
+   prácticas pregunten: la hoja 1 5g («3 out of every 7» de 28), la hoja 2 9b (dos sumas y una resta en palabras), la hoja 3 1f («four
+   thirds squared») y su «Write with numbers» (tres cocientes, ya en `PAREJAS_HOJA_DIVIDE`) dan 0. La hoja 2 9b también la tiene excluida
+   `suma-resta` (publicada por la 169).
+
+---
+
+# Primera pasada (12-11, s-20261112T010355-f006a9a8)
+
 Sesión `s-20261112T010355-f006a9a8`, 2026-11-12. Commit **0f656e7** (solo `docs/practicas-unidad4.md`: **no se publica nada**;
 `catalogo.js` sin tocar). Terminada **PARCIAL**: esta tarea se vuelve a reclamar cuando cierren las tres reabiertas, para revisar solo lo
 reabierto y publicar.

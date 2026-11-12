@@ -243,6 +243,18 @@ Es la quinta revisión de estas prácticas y cada una ha encontrado algo que la 
 - (de la 170) Guion de clics con el idioma fijado por URL (`?idioma=es|en`) y el ítem leído de la pantalla con la lógica de la propia
   práctica (`analizar` sobre el texto de la línea, `diagnosticar`, `PLANTILLAS`): en `combinadas` ej. 2 hay que repetir «tocar → elegir»
   hasta el final; en `errores4` ej. 1, el nombre del error se saca probando las plantillas con los números de la igualdad.
+- (de la 170, segunda pasada, 12-11) **Las hojas también escriben cuentas en palabras, y ningún lector las leía**: hoja 2, ej. 12a-b
+  («4/5 of 5/12»: «of» entre dos fracciones), 13f-g («five sixths squared», «three quarters cubed»), 9b (sumas y restas: «the sum of …»,
+  «subtract … from …», «the difference between …») y hoja 3, 1f y el «Write with numbers». Antes de barrer, `grep -i` de ordinales,
+  «of», «times», «divided by», «quotient», «sum», «difference», «subtract», «squared», «cubed» en las tres hojas, y conviértelos a mano.
+- (de la 170, segunda pasada) En la tercera pasada basta repetir el barrido de lo reabierto: `combinadas-fracciones` ya está publicada
+  (25d833d) y la interfaz de las otras dos no ha cambiado desde la prueba completa con clics de la primera pasada (`git log 0f656e7..HEAD --
+  practicas/<slug>/` lo dice); si solo cambia `logica.js`, la prueba del navegador es de regresión (cargar, un toque por ejercicio, consola).
+- (de la 170, segunda pasada) Las comparaciones de `errores4`: de las 54 parejas de U4-1C-17 y 1C-19 de los semanales, 9 tienen sus
+  denominadores, pero el generador solo da parejas donde el error se nota (163 posibles) y ninguna de esas 9 lo es: que
+  `HUELLAS_COMPARACION` solo tenga una de las 9 no es un fallo. Compruébalo generando, no mirando la lista.
+- (de la 170, segunda pasada) Chrome headless: tras elegir el ejercicio del menú hay que pulsar `#empezar` (la introducción va delante del
+  primer ítem); en `combinadas` ej. 3, tras tocar la línea mala sale una segunda pregunta (el tipo de error) en `.cf-pregunta`.
 
 ## Prohibido (propio de esta tarea)
 
