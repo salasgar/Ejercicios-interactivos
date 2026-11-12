@@ -39,3 +39,43 @@ export const TX = {
   correcta: { es: 'Bien hecho sería:', en: 'The right way is:' },
   se_llama: { es: 'Se llama:', en: 'It is called:' },
 };
+
+// ─── Explicaciones (la explicación del ítem y el botón «No lo sé») ─────────────
+
+import { esc } from '../_comun/textos.js';
+import { html as htmlEntero, ERRORES_TIPICOS } from '../_comun/enteros.js';
+import { PLANTILLA_POR_ID, VALIDA_POR_ID } from './logica.js';
+
+/** Texto con números a HTML seguro, con los exponentes `2^3` como <sup>. */
+export const texto = t => esc(t).replace(/\^(\d+)/g, '<sup>$1</sup>');
+export const nombreError = (id, tt) => texto(tt(ERRORES_TIPICOS[id].nombre));
+/** Una línea del cálculo: la primera tal cual y las demás con «= » delante. */
+export const linea = (expr, i) => `${i ? '= ' : ''}${htmlEntero(expr)}`;
+
+/** La explicación del ítem con sus números: dónde está el error, cómo se llama y cómo sería bien, o por qué no era error. */
+export function explicacion(item, { tt }) {
+  if (item.falsa === null) return texto(tt(VALIDA_POR_ID[item.plantilla].porque(item.params)));
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  const n = item.falsa + 1;
+  return `${tt(TX.la_linea_es)(n)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
+    + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
+    + `<br>${texto(tt(plantilla.porque(item.params)))}`
+    + `<br>${tt(TX.correcta)} <span class="linea-mala">= ${htmlEntero(plantilla.corregida(item.params))}</span>`;
+}
+
+const REGLA = {
+  donde: { es: 'Compara cada línea con la anterior: las dos tienen que valer lo mismo. La que no cuadra es la mala.', en: 'Compare each line with the line before: both must be worth the same. The one that does not fit is the wrong one.' },
+  cual: { es: 'Busca la línea que está mal y mira qué se ha hecho distinto de lo correcto: eso da el nombre del error.', en: 'Find the wrong line and see what was done differently from the right way: that gives the name of the mistake.' },
+  sino: { es: 'Repite cada paso con sus números. Si alguna línea no cuadra, hay un error; si todas cuadran, está bien.', en: 'Repeat each step with its numbers. If a line does not fit, there is a mistake; if all of them fit, it is right.' },
+};
+const FIN = { es: 'La respuesta es', en: 'The answer is' };
+const fin = (tt, respuesta) => `<br>${tt(FIN)} <strong>${respuesta}</strong>.`;
+
+export const explicaDonde = (item, { tt, idioma }) =>
+  `${tt(REGLA.donde)}<br>${explicacion(item, { tt })}${fin(tt, idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`)}`;
+
+export const explicaCual = (item, { tt }) =>
+  `${tt(REGLA.cual)}<br>${explicacion(item, { tt })}${fin(tt, `«${nombreError(item.solucion, tt)}»`)}`;
+
+export const explicaSiNo = (item, { tt }) =>
+  `${tt(REGLA.sino)}<br>${explicacion(item, { tt })}${fin(tt, `«${tt(item.solucion === 'bien' ? TX.bien : TX.error)}»`)}`;
