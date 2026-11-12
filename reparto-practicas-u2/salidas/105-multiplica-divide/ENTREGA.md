@@ -83,3 +83,6 @@ Hoja 3 añadida en claro: 3b, 3c, 6c y 12b al cociente; 6b y 7a al producto. Tes
 Barrido independiente con las huellas VIEJAS de `HEAD`: 5 semillas × 20000 ítems por ejercicio, con el menos en cualquier operando: 0 coincidencias.
 `node --test tests/practicas-comun.test.js tests/practicas-multiplica-divide.test.js`: 67/67. `npm test`: 1640/1640. Sin navegador (solo cambia
 lógica de exclusión, no la interfaz). Sin tocar `catalogo.js`. Sin publicar: sigue sin publicador (mar 22-12).
+
+## Reabierta del 12-11 (sesión s-20261112T013341-51aadc7e, commit 10bfb2d)
+Huellas nuevas (FNV-1a, sin casos en claro): 12 de multiplica (productos de U4-2A-06 del semanal 2 y de la pareja suma/producto de U4-3C-09 del semanal 3, con extras) y 7 de divide («número : fracción» de U4-1A-02: modelo 2 del final y semanal 1). El ej. 2 se vigila también contra las huellas de producto (test). Barrido 60000 ítems por ejercicio (1, 2, 4; semillas 170, 7, 2026): 0 casos de examen. Tests propios 21/21 + comun, npm test 1807/1807.
