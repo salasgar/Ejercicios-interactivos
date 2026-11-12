@@ -3,6 +3,9 @@
 // el menos es U+2212; el hueco es «□». Las operaciones (`3 · (−2)`, `(−2)²`) llegan
 // ya escritas por `enteros.js`.
 
+import { fmt, html as htmlEntero, cadenaDePasos, pasoCanonico, valorLiteral } from '../_comun/enteros.js';
+import { arbolDe, primerosPasos } from './logica.js';
+
 export const TX = {
   toca: { es: 'Toca la operación que se hace primero.', en: 'Tap the operation that comes first.' },
   toca_paso: { es: 'Toca la operación que va ahora.', en: 'Tap the operation that comes now.' },
@@ -112,4 +115,48 @@ export const TX = {
         <p>For example: <strong>−4 + 3 · (−2)<sup>2</sup></strong> = −4 + 3 · 4 = −4 + 12 = <strong>8</strong>. Tap each operation in its turn and choose its value.</p>`,
     },
   },
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (docs/no-lo-se.md) ───────────────
+
+const cuentaHtml = html => `<span class="cuenta">${html}</span>`;
+const pasosHtml = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const respuestaHtml = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
+const trucoOrden = tt => `<p>${tt(TX.orden)}</p>`;
+
+/** Una línea por paso del camino bueno: «op = valor». */
+const pasosDeCadena = (texto, tt) => cadenaDePasos(texto).slice(1).map(({ paso }, i) =>
+  `${tt({ es: i === 0 ? 'Primero' : 'Ahora', en: i === 0 ? 'First' : 'Now' })}: ${cuentaHtml(`${paso.operacion} = ${fmt(paso.valor)}`)}.`);
+
+const valorFinal = texto => {
+  const estados = cadenaDePasos(texto);
+  return fmt(valorLiteral(estados[estados.length - 1].arbol));
+};
+
+/** Ejercicio 1: qué operación va primero. */
+export function explicaPrimero(item, { tt }) {
+  const arbol = arbolDe(item.texto);
+  const posibles = primerosPasos(arbol);
+  const primera = pasoCanonico(arbol).operacion;
+  const otras = posibles.length > 1
+    ? ` ${tt({ es: 'También valdría', en: 'These would also be right' })}: ${posibles.filter(p => p !== primera).map(cuentaHtml).join(', ')}.`
+    : '';
+  return `${trucoOrden(tt)}<p>${tt(TX.va_primero)(primera)}.${otras}</p>${respuestaHtml(tt, cuentaHtml(primera))}`;
+}
+
+/** Ejercicios 2, 3 (cadena) y 4: la cadena de pasos hasta un número. */
+export function explicaCadena(item, { tt }) {
+  if (item.tipo === 'par') return explicaPar(item, { tt });
+  const truco = item.tipo === 'cadena'
+    ? `<p>${tt({ es: 'Los productos y cocientes seguidos se hacen de izquierda a derecha.', en: 'Products and quotients in a row are done from left to right.' })}</p>`
+    : trucoOrden(tt);
+  return `${pasosHtml(pasosDeCadena(item.texto, tt))}${truco}${respuestaHtml(tt, cuentaHtml(valorFinal(item.texto)))}`;
+}
+
+/** Ejercicio 3: el par de expresiones, una cadena para cada una. */
+export function explicaPar(item, { tt }) {
+  const cadena = texto => cadenaDePasos(texto).map(e => htmlEntero(e.arbol)).join(' = ');
+  return `${pasosHtml([cuentaHtml(cadena(item.sin)), cuentaHtml(cadena(item.con))])}<p>${tt(TX.ej3.par_agrupa)}</p>${respuestaHtml(tt,
+    `${cuentaHtml(valorFinal(item.sin))} ${tt({ es: 'y', en: 'and' })} ${cuentaHtml(valorFinal(item.con))}`)}`;
+}

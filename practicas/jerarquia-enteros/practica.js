@@ -16,7 +16,7 @@ import {
   arbolDe, clasificarToque, primerosPasos, rutasPrimeras, opcionesDePaso, opcionesOrdenadas,
   valoresDelPar, errorPar,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, explicaPrimero, explicaCadena } from './textos.js';
 
 const cuenta = texto => `<span class="cuenta">${texto}</span>`;
 const lineaHtml = (arbol, marcar = false) => htmlEntero(arbol, { marcarOperadores: marcar });
@@ -241,19 +241,22 @@ arrancar({
   ejercicios: [
     {
       nombre: TX.ej1.nombre, detalle: TX.ej1.detalle, introduccion: TX.ej1.introduccion,
-      generar: generarPrimero, clave: claveTexto, montar: montarPrimero, enunciado: enunciadoPrimero,
+      generar: generarPrimero, clave: claveTexto, montar: montarPrimero, enunciado: enunciadoPrimero, explicacion: explicaPrimero,
     },
     {
       nombre: TX.ej2.nombre, detalle: TX.ej2.detalle, introduccion: TX.ej2.introduccion,
       generar: generarMezcla, clave: claveTexto, montar: montarPasos, enunciado: enunciadoPasos,
+      explicacion: explicaCadena, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.ej3.nombre, detalle: TX.ej3.detalle, introduccion: TX.ej3.introduccion,
       generar: generarCadena, clave: claveTexto, montar: montarCadena, enunciado: enunciadoCadena,
+      explicacion: explicaCadena, noLoSe: TX.no_se_hacerlo,
     },
     {
       nombre: TX.ej4.nombre, detalle: TX.ej4.detalle, introduccion: TX.ej4.introduccion,
       generar: generarCombinada, clave: claveTexto, montar: montarPasos, enunciado: enunciadoPasos,
+      explicacion: explicaCadena, noLoSe: TX.no_se_hacerlo,
     },
   ],
 });
