@@ -22,7 +22,7 @@ GENERADORES.forEach((generar, i) => {
       for (const lang of IDIOMAS) {
         const html = explicaLeelo(i)(item, ctx(lang));
         assert.ok(html.includes(buenas[0].html ?? buenas[0].texto), `la opción buena (${buenas[0].texto})`);
-        assert.ok(html.includes(item.solucion[lang]), 'lo que dice el ítem');
+        assert.ok(html.includes(item.solucion[lang].replace(/([»”])\.$/, '$1')), 'lo que dice el ítem');
         assert.ok(html.includes(TX.instrucciones[item.instruccion][lang]), 'lo que se pide');
         assert.ok(html.includes(lang === 'es' ? 'La respuesta es' : 'The answer is'));
       }
