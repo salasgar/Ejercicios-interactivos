@@ -317,3 +317,24 @@ export function comprobaciones(it, idioma) {
   return `${x.comprobacion[idioma]} <span class="cuenta">${v} ≥ ${Math.max(it.a, it.b)}</span> (${x.el_mayor[idioma]}) ✓ ${x.y[idioma]} `
     + `<span class="cuenta">${v} ${entre} ${it.a} = ${v / it.a}</span>, <span class="cuenta">${v} ${entre} ${it.b} = ${v / it.b}</span> (${x.exactas[idioma]}) ✓`;
 }
+
+// --- «No lo sé»: cómo se hace cada ítem --------------------------------------------
+
+const descomposicion = (it, idioma) => TX.ayuda.descompon[idioma](numA(it), numB(it), htmlFact(it.fa), htmlFact(it.fb));
+
+/** Ejercicio 1 (Venn): descomponer, juntar parejas y leer el m.c.d. en el centro. */
+export function explicaVenn(it, idioma) {
+  const x = TX.ayuda;
+  const centro = it.comunes.length ? producto(it.comunes) : '';
+  const parejas = it.comunes.length ? x.parejas[idioma](centro) : x.sin_parejas[idioma];
+  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${parejas}</li></ol>`
+    + `<p>${TX.reglas.respuesta[idioma]}: ${resumenVenn(it, idioma).split('<br>')[0]}</p><p>${x.consejo_venn[idioma]}</p>`;
+}
+
+/** Ejercicios 2, 3 y 4 (m.c.d., m.c.m. y mezcla): descomponer, la regla y la solución. */
+export function explicaReglas(it, idioma) {
+  const x = TX.ayuda;
+  const consejo = it.tipo === 'mezcla' ? `<p>${x.consejo_mezcla[idioma]}</p>` : '';
+  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${x.regla[it.pide][idioma]}</li></ol>`
+    + `<p>${TX.reglas.respuesta[idioma]} ${solucionHtml(it, idioma)}</p>${consejo}`;
+}

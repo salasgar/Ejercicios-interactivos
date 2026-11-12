@@ -231,4 +231,38 @@ export const TX = {
     exactas: { es: 'divisiones exactas', en: 'exact divisions' },
     y: { es: 'y', en: 'and' },
   },
+
+  // --- «No lo sé»: cómo se hace ese ítem ---
+  ayuda: {
+    descompon: {
+      es: (A, B, fa, fb) => `Descompón cada número en factores primos: <span class="cuenta">${A} = ${fa}</span> y <span class="cuenta">${B} = ${fb}</span>.`,
+      en: (A, B, fa, fb) => `Write each number as a product of prime factors: <span class="cuenta">${A} = ${fa}</span> and <span class="cuenta">${B} = ${fb}</span>.`,
+    },
+    parejas: {
+      es: centro => `Junta cada primo de un número con el mismo primo del otro: cada pareja va al centro (<span class="cuenta">${centro}</span>). Lo que se queda sin pareja va a su lado.`,
+      en: centro => `Match each prime factor of one number with the same prime factor of the other: each pair goes in the centre (<span class="cuenta">${centro}</span>). Whatever has no pair stays on its own side.`,
+    },
+    sin_parejas: {
+      es: 'Ningún primo está en los dos números: no hay parejas y el centro queda vacío.',
+      en: 'No prime factor is in both numbers: there are no pairs and the centre stays empty.',
+    },
+    consejo_venn: {
+      es: 'Consejo: tacha cada pareja a medida que la pones en el centro.',
+      en: 'Tip: cross out each pair as you put it in the centre.',
+    },
+    regla: {
+      mcd: {
+        es: 'Para el m.c.d., toma solo los primos que están en los dos números, cada uno con el menor exponente.',
+        en: 'For the GCD, take only the prime factors that are in both numbers, each with its lowest power.',
+      },
+      mcm: {
+        es: 'Para el m.c.m., toma todos los primos que salen en alguno de los dos números, cada uno con el mayor exponente.',
+        en: 'For the LCM, take every prime factor that appears in either number, each with its highest power.',
+      },
+    },
+    consejo_mezcla: {
+      es: 'Consejo: el m.c.d. nunca es mayor que el menor de los números, y el m.c.m. nunca es menor que el mayor.',
+      en: 'Tip: the GCD is never larger than the smaller number, and the LCM is never smaller than the larger number.',
+    },
+  },
 };

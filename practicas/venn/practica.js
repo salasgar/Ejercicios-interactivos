@@ -12,7 +12,7 @@ import {
   generarVenn, generarMcd, generarMcm, generarMezcla, clave, EXPONENTE_MAXIMO,
   fichasDe, exponente, primosDe, factDe,
   esCorrectaVenn, diagnosticarVenn, explicarVenn, resumenVenn,
-  diagnosticar, explicar, solucionHtml, comprobaciones,
+  diagnosticar, explicar, solucionHtml, comprobaciones, explicaVenn, explicaReglas,
 } from './logica.js';
 
 // ─── Ejercicio 1: el Venn ──────────────────────────────────────────────────────
@@ -296,13 +296,14 @@ function montarReglas(contenedor, item, api) {
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
 const [venn, mcd, mcm, mezcla] = TX.ejercicios;
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 arrancar({
   slug: 'venn',
   ejercicios: [
-    { ...venn, generar: generarVenn, clave, montar: montarVenn, enunciado: enunciadoVenn },
-    { ...mcd, generar: generarMcd, clave, montar: montarReglas, enunciado: enunciadoReglas },
-    { ...mcm, generar: generarMcm, clave, montar: montarReglas, enunciado: enunciadoReglas },
-    { ...mezcla, generar: generarMezcla, clave: item => `${clave(item)}-${item.pide}`, montar: montarReglas, enunciado: enunciadoReglas },
+    { ...venn, generar: generarVenn, clave, montar: montarVenn, enunciado: enunciadoVenn, explicacion: (item, { idioma }) => explicaVenn(item, idioma), noLoSe: NO_LO_SE },
+    { ...mcd, generar: generarMcd, clave, montar: montarReglas, enunciado: enunciadoReglas, explicacion: (item, { idioma }) => explicaReglas(item, idioma), noLoSe: NO_LO_SE },
+    { ...mcm, generar: generarMcm, clave, montar: montarReglas, enunciado: enunciadoReglas, explicacion: (item, { idioma }) => explicaReglas(item, idioma), noLoSe: NO_LO_SE },
+    { ...mezcla, generar: generarMezcla, clave: item => `${clave(item)}-${item.pide}`, montar: montarReglas, enunciado: enunciadoReglas, explicacion: (item, { idioma }) => explicaReglas(item, idioma), noLoSe: NO_LO_SE },
   ],
 });
