@@ -147,3 +147,4 @@ natural), `$R/hechos/fallos/185--<sid>.md` con `parada por: mal cortada`, `ABAND
   edita con las herramientas de edición; `hechos/` sí se escribe desde el shell (un escritor).
 - Reescribir un fichero de `hechos/` (solo `>>`), editar un reclamo ajeno, o regenerar el tablón de memoria.
 - Dependencias nuevas (npm, CDN). Nombres de alumnos reales en ningún fichero.
+- (s-20261112T232555-695b625b, 12-11) La línea de cierre del reclamo es `CERRADA <ts>` sin guion inicial; con `- ` el regenerador del tablón no la ve y deja la tarea EN CURSO. Los textos de este tipo de ejercicio ya traen `{es, en}` con funciones: reutilízalos desde `explica*` en vez de duplicarlos (reloj y baldosas lo hacen).
