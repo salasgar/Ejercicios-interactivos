@@ -271,3 +271,4 @@ Si paras sin terminar: `$R/hechos/fallos/107--<sid>.md` con hasta dónde llegast
   fracciones negativas o potencias de base positiva en una sesión anterior a la suya (acta: negativas desde la semana 1,
   potencias en la sesión 7); algo de una sesión posterior a la de la destreza; distractores que
   puedan ser verdad, y en especial **dos opciones equivalentes** (`4/8` y `1/2`), que son dos respuestas correctas.
+- (12-11) La exclusión de un caso de examen va por lo que ve el alumno (`claveVista`) para TODOS los tipos: sumas, restas, cocientes, productos, potencias, fracción suelta (`N|n/d`) y comparaciones (`claveComparacion`, sin orden y con signo). Una huella atada a una plantilla (`HUELLAS_EXAMEN`) se esquiva con otra plantilla que escribe lo mismo. Para sacar las huellas: un guion fuera del repo que lee los `.tex` de examen, normaliza `\dfrac{a}{b}` a `a/b`, enumera lo que la práctica puede producir y cruza; luego verifica con 60000 ítems por ejercicio.
