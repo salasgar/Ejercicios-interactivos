@@ -4,7 +4,9 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
-import { TX } from './textos.js';
+import { TX, explicaBienMal, explicaLinea, explicaArregla } from './textos.js';
+
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 import { campoFraccion } from './campo.js';
 import {
   ex, generarBienMal, generarLinea, generarArregla, corregirArregla, claveItem,
@@ -158,8 +160,8 @@ function montarArregla(contenedor, item, api) {
 arrancar({
   slug: 'errores4',
   ejercicios: [
-    { nombre: TX.nombre.bienmal, detalle: TX.detalle.bienmal, introduccion: TX.introduccion.bienmal, generar: generarBienMal, clave: claveItem, montar: montarBienMal, enunciado: enunciadoBienMal },
-    { nombre: TX.nombre.linea, detalle: TX.detalle.linea, introduccion: TX.introduccion.linea, generar: generarLinea, clave: claveItem, montar: montarLinea, enunciado: enunciadoLinea },
-    { nombre: TX.nombre.arregla, detalle: TX.detalle.arregla, introduccion: TX.introduccion.arregla, generar: generarArregla, clave: claveItem, montar: montarArregla, enunciado: enunciadoArregla },
+    { nombre: TX.nombre.bienmal, detalle: TX.detalle.bienmal, introduccion: TX.introduccion.bienmal, generar: generarBienMal, clave: claveItem, montar: montarBienMal, enunciado: enunciadoBienMal, explicacion: explicaBienMal },
+    { nombre: TX.nombre.linea, detalle: TX.detalle.linea, introduccion: TX.introduccion.linea, generar: generarLinea, clave: claveItem, montar: montarLinea, enunciado: enunciadoLinea, explicacion: explicaLinea },
+    { nombre: TX.nombre.arregla, detalle: TX.detalle.arregla, introduccion: TX.introduccion.arregla, generar: generarArregla, clave: claveItem, montar: montarArregla, enunciado: enunciadoArregla, explicacion: explicaArregla, noLoSe: NO_SE_HACERLO },
   ],
 });

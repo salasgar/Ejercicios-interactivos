@@ -2,7 +2,48 @@
 // de `ERRORES_TIPICOS` (fracciones.js) y las explicaciones con números, de las plantillas de
 // logica.js. Reglas: producto con «·», división «:», sin letras, inglés sencillo.
 
-import { ex } from './logica.js';
+import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
+import { ex, PLANTILLA_POR_ID, COMPARACION_POR_ID, porqueComparacion, relacionBuena } from './logica.js';
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const REL = { '<': '&lt;', '>': '&gt;', '=': '=' };
+const igualdad = (izq, rel, der) => `<span class="cuenta-frac">${ex(izq)} ${REL[rel]} ${ex(der)}</span>`;
+const esComparacion = item => Boolean(COMPARACION_POR_ID[item.plantilla]);
+const porqueDe = item => (esComparacion(item) ? porqueComparacion(item.plantilla, item.params) : PLANTILLA_POR_ID[item.plantilla].porque(item.params));
+const lineaAyuda = (expr, i) => `${i ? '= ' : ''}${ex(expr)}`;
+
+/** Ejercicio 1: verdadera o falsa; si es falsa, cómo se llama el error y cómo queda bien. */
+export function explicaBienMal(item, { tt }) {
+  const consejo = tt({ es: 'Haz tú la cuenta (o la comparación) y mira si sale lo que dice la igualdad.', en: 'Do the calculation (or the comparison) yourself and see if you get what the equality says.' });
+  if (item.verdadera) {
+    return `${consejo} ${tt({ es: 'La respuesta es «Verdadera»:', en: 'The answer is “True”:' })} ${igualdad(item.izq, item.rel, item.der)}`;
+  }
+  const bien = esComparacion(item)
+    ? `${tt(TX.verdadera_cmp)} ${igualdad(item.izq, relacionBuena(item.params), item.der)}`
+    : `${tt(TX.bien_es)} ${igualdad(item.izq, '=', aTexto(PLANTILLA_POR_ID[item.plantilla].bien(item.params)))}`;
+  return `${consejo} ${tt({ es: 'La respuesta es «Falsa»:', en: 'The answer is “False”:' })} ${igualdad(item.izq, item.rel, item.der)}`
+    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}<br>${tt(porqueDe(item))}<br>${bien}`;
+}
+
+/** Ejercicio 2: qué línea falla, qué error es y cómo debía quedar. */
+export function explicaLinea(item, { tt }) {
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  const consejo = tt({ es: 'Cada línea tiene que valer lo mismo que la anterior: busca la primera que cambia el valor.', en: 'Each line has to be worth the same as the line before: look for the first one that changes the value.' });
+  return `${consejo} ${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${lineaAyuda(item.lineas[item.falsa], item.falsa)}</span>`
+    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}`
+    + `<br>${tt(plantilla.porque(item.params))}`
+    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${lineaAyuda(plantilla.corregida(item.params), item.falsa)}</span>`;
+}
+
+/** Ejercicio 3: el resultado bien hecho, irreducible, y el error que había. */
+export function explicaArregla(item, { tt }) {
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  const bien = aTexto(fraccion(item.bien.num, item.bien.den));
+  const consejo = tt({ es: 'Haz la cuenta con el método bueno y simplifica al final.', en: 'Do the calculation with the right method and simplify at the end.' });
+  return `${consejo} ${tt(TX.bien_es)} ${igualdad(item.izq, '=', bien)}`
+    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}<br>${tt(plantilla.porque(item.params))}`;
+}
 
 export const TX = {
   nombre: {
