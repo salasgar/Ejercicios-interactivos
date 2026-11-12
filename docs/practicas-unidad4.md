@@ -141,15 +141,14 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 3 | `errores4` | 55 | 107 | ¿Bien o mal? (y el nombre del error) · La línea mala · Arréglalo | denominadores 2-8, todo número ≤ 600 |
 | toda | `leelo4` | 56 | 108 | Emparejar · La lectura · ¿Qué pide? · Dictado | dinero 20-600 €, pizza 4-12 trozos, clase 12-36, denominadores ≤ 12 |
 
-**Publicadas** (a 2026-11-06): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
-26306eb), y `equivalentes` y `compara` (tarea 119, tras sus reabiertas del 30-10, cerradas el
-2-11). Sin publicar, con su reabierta en `reparto-practicas-u2/hechos/reabiertas/`:
-`fraccion-de` y `suma-resta` (tarea 162, 6-11, tercera vez: lo que pidieron las reabiertas del
-2-11 está hecho, pero `fraccion-de` saca un caso de examen como paso de su ej. 4 `dos` y pasos
-de problemas de examen en el ej. 2, y gastos poco creíbles en el ahorro de `dos`; `suma-resta`
-saca casos de examen conmutados en el ej. 3, no excluye nada en el ej. 5 y le faltan casos de
-las hojas 2 y 3 y del examen final; los casos de examen se excluyen por su huella, nunca en
-claro) y las tres de la semana 3, `multiplica-divide`,
+**Publicadas** (a 2026-11-12): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
+26306eb), `equivalentes` y `compara` (tarea 119, tras sus reabiertas del 30-10, cerradas el
+2-11), y `fraccion-de` y `suma-resta`, las dos de la semana 2 (tarea 169, tras las reabiertas
+del 6-11 de la tarea 162, cerradas ese mismo día: el ej. 4 `dos` y el ej. 2 de `fraccion-de` ya
+no sacan pasos de problemas de examen y el ahorro tiene gastos creíbles; `suma-resta` excluye sin
+orden en sus cinco ejercicios los casos de las hojas 2 y 3, de los semanales y del final; los
+casos de examen se excluyen por su huella, nunca en claro). Sin publicar, con su reabierta en
+`reparto-practicas-u2/hechos/reabiertas/`: las tres de la semana 3, `multiplica-divide`,
 `combinadas-fracciones` y `errores4` (tarea 163, 6-11, tercera vez: lo que pidieron las
 reabiertas del 2-11 está hecho, pero `multiplica-divide` saca casos de la hoja 3 que no lista y
 tres casos de examen con el signo en el otro operando; `combinadas-fracciones`, expresiones de la
