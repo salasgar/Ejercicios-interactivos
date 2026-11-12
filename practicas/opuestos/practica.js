@@ -10,7 +10,7 @@ import {
   RECTA, rectaPara, generarOpuesto, opuestoDe, errorOpuesto, generarDistancia, errorDistancia,
   generarOpuestoYAbsoluto, errorHueco, generarDistancias, aMarcar, mayorDe, errorMarcar, marcarBien,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, NO_SE_HACERLO, explicaOpuesto, explicaDistancia, explicaDoble, explicaDistancias } from './textos.js';
 
 const punto = (valor, clase = '') => ({ valor, etiqueta: fmt(valor), clase });
 
@@ -242,18 +242,26 @@ arrancar({
     {
       nombre: TX.ej1.nombre, detalle: TX.ej1.detalle, introduccion: TX.ej1.introduccion,
       generar: generarOpuesto, clave: i => `${i.modo}:${i.n}`, montar: montarOpuesto, enunciado: enunciadoOpuesto,
+      explicacion: explicaOpuesto,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej2.nombre, detalle: TX.ej2.detalle, introduccion: TX.ej2.introduccion,
       generar: generarDistancia, clave: i => `${i.n}`, montar: montarDistancia, enunciado: enunciadoDistancia,
+      explicacion: explicaDistancia,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej3.nombre, detalle: TX.ej3.detalle, introduccion: TX.ej3.introduccion,
       generar: generarOpuestoYAbsoluto, clave: i => `${i.n}`, montar: montarDoble, enunciado: enunciadoDoble,
+      explicacion: explicaDoble,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej4.nombre, detalle: TX.ej4.detalle, introduccion: TX.ej4.introduccion,
       generar: generarDistancias, clave: i => `${i.modo}:${i.k ?? ''}:${i.a ?? ''}:${i.b ?? ''}`, montar: montarDistancias, enunciado: enunciadoDistancias,
+      explicacion: explicaDistancias,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

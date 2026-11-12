@@ -138,3 +138,67 @@ export const TX = {
     recta: { es: 'Recta numérica', en: 'Number line' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+/** Ejercicio 1: tocar el opuesto o escribir −(n). */
+export function explicaOpuesto(item, { tt }) {
+  const n = item.n;
+  const regla = tt({
+    es: 'El opuesto está al otro lado del 0, a la misma distancia: es el mismo número con el signo cambiado.',
+    en: 'The opposite is on the other side of 0, at the same distance: it is the same number with its sign changed.',
+  });
+  const cuerpo = item.modo === 'doble'
+    ? `${tt(TX.ej1.bienDoble)(n)}.`
+    : tt({ es: `El opuesto de ${fmt(n)} es ${fmt(-n)}.`, en: `The opposite of ${fmt(n)} is ${fmt(-n)}.` });
+  const resp = tt(item.modo === 'doble'
+    ? { es: `La respuesta es ${fmt(-n)}.`, en: `The answer is ${fmt(-n)}.` }
+    : { es: `La respuesta es el ${fmt(-n)}: tócalo en la recta.`, en: `The answer is ${fmt(-n)}: tap it on the number line.` });
+  return `${regla} ${cuerpo} ${resp}`;
+}
+
+/** Ejercicio 2. */
+export function explicaDistancia(item, { tt }) {
+  const regla = tt({
+    es: 'El valor absoluto es la distancia al 0: se cuentan los saltos hasta el 0 y nunca sale negativo.',
+    en: 'The absolute value is the distance from 0: count the jumps to 0; it is never negative.',
+  });
+  const resp = tt({ es: `La respuesta es ${Math.abs(item.n)}.`, en: `The answer is ${Math.abs(item.n)}.` });
+  return `${regla} ${tt(TX.ej2.bien)(item.n)}. ${resp}`;
+}
+
+/** Ejercicio 3 (los dos huecos). */
+export function explicaDoble(item, { tt }) {
+  const n = item.n;
+  const regla = tt({
+    es: 'El opuesto es el número con el signo cambiado; el valor absoluto es la distancia al 0 y nunca es negativo.',
+    en: 'The opposite is the number with its sign changed; the absolute value is the distance from 0 and is never negative.',
+  });
+  const resp = tt({
+    es: `La respuesta es: el opuesto de ${fmt(n)} es ${fmt(-n)} y su valor absoluto es ${Math.abs(n)}.`,
+    en: `The answer is: the opposite of ${fmt(n)} is ${fmt(-n)} and its absolute value is ${Math.abs(n)}.`,
+  });
+  return `${regla} ${tt(TX.ej3.explica)(n)}. ${resp}`;
+}
+
+/** Ejercicio 4 (marcar los dos enteros, o elegir el mayor de dos negativos). */
+export function explicaDistancias(item, { tt }) {
+  if (item.modo === 'marcar') {
+    const k = item.k;
+    const regla = tt({
+      es: 'A una misma distancia del 0 hay dos enteros: uno a cada lado, con el signo cambiado.',
+      en: 'At the same distance from 0 there are two integers: one on each side, with opposite signs.',
+    });
+    const resp = tt({ es: `La respuesta es ${fmt(-k)} y ${fmt(k)}.`, en: `The answer is ${fmt(-k)} and ${fmt(k)}.` });
+    return `${regla} ${tt(TX.ej4.bienMarcar)(k)}. ${resp}`;
+  }
+  const { a, b } = item;
+  const regla = tt({
+    es: 'Entre dos negativos es mayor el que está más cerca del 0, o sea, el de menor valor absoluto.',
+    en: 'Between two negative numbers, the greater is the one closer to 0, that is, the one with the smaller absolute value.',
+  });
+  const resp = tt({ es: `La respuesta es ${fmt(Math.max(a, b))}.`, en: `The answer is ${fmt(Math.max(a, b))}.` });
+  return `${regla} ${tt(TX.ej4.bienComparar)(a, b)}. ${resp}`;
+}
