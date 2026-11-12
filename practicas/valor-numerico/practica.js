@@ -7,7 +7,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { deTexto } from '../_comun/algebra.js';
-import { TX, xIgual } from './textos.js';
+import { TX, xIgual, NO_SE_HACERLO, explicaSustituye, explicaTabla, explicaQueValor } from './textos.js';
 import {
   F, numTexto, htmlDe, claveDe, generarSustituye, generarTabla, generarQueValor, errorDeSustituye, erroresDeTabla,
 } from './logica.js';
@@ -142,15 +142,16 @@ function montar3(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, ...(noLoSe ? { noLoSe: NO_SE_HACERLO } : {}),
 });
 
 arrancar({
   slug: 'valor-numerico',
   ejercicios: [
-    ejercicio(TX.ej1, generarSustituye, montar1, enunciado1),
-    ejercicio(TX.ej2, generarTabla, montar2, enunciado2),
-    ejercicio(TX.ej3, generarQueValor, montar3, enunciado3),
+    ejercicio(TX.ej1, generarSustituye, montar1, enunciado1, explicaSustituye, true),
+    ejercicio(TX.ej2, generarTabla, montar2, enunciado2, explicaTabla, true),
+    ejercicio(TX.ej3, generarQueValor, montar3, enunciado3, explicaQueValor),
   ],
 });

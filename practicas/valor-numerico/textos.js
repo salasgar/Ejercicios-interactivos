@@ -166,6 +166,38 @@ export const TX = {
   },
 };
 
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const respuestaFinal = (tt, texto) => `${tt({ es: 'La respuesta es', en: 'The answer is' })} ${c(texto)}.`;
+
+/** «No lo sé» del ejercicio 1: sustituir y calcular. */
+export function explicaSustituye(item, { idioma, tt }) {
+  const regla = tt({
+    es: `Sustituye la letra por el número y calcula: primero se multiplica; después se suma o se resta.${fr(item.v).num < 0 ? ' Un número negativo se sustituye entre paréntesis.' : ''}`,
+    en: `Substitute the letter by the number and work it out: first multiply; then add or subtract.${fr(item.v).num < 0 ? ' A negative number is substituted in brackets.' : ''}`,
+  });
+  return `${regla} ${tt(TX.ej1.solucion)(item)} ${respuestaFinal(tt, numTexto(item.resultado, idioma))}`;
+}
+
+/** «No lo sé» del ejercicio 2: la tabla, hueco a hueco. */
+export function explicaTabla(item, { idioma, tt }) {
+  const regla = tt({
+    es: 'En cada hueco, sustituye la x de esa columna en la expresión y calcula.',
+    en: 'In each gap, substitute the x of that column in the expression and work it out.',
+  });
+  const valores = item.huecos.map(col => numTexto(item.valores[col], idioma)).join(idioma === 'es' ? ' y ' : ' and ');
+  return `${regla} ${solucionTabla(item, idioma)} ${tt({ es: 'Los huecos valen', en: 'The gaps are' })} ${c(valores)}.`;
+}
+
+/** «No lo sé» del ejercicio 3: probar cada expresión hasta dar con la que vale N. */
+export function explicaQueValor(item, { idioma, tt }) {
+  const regla = tt({
+    es: `Calcula cada expresión con ${xIgual(item.v, idioma)} hasta encontrar la que vale ${numTexto(item.N, idioma)}.`,
+    en: `Work out each expression with ${xIgual(item.v, idioma)} until you find the one that is ${numTexto(item.N, idioma)}.`,
+  });
+  return `${regla} ${tt(TX.ej3.solucion)(item)} ${tt({ es: 'La respuesta es', en: 'The answer is' })} ${htmlDe(item.opciones.find(o => o.correcta).e)}.`;
+}
+
 /** La tabla resuelta: «x = 1: 3 · 1 + 2 = 5» en cada hueco. */
 export function solucionTabla(item, idioma) {
   return item.huecos.map(col => `${x_} = ${numTexto({ num: item.xs[col], den: 1 }, idioma)}: ${cl(cuenta(item.e, { num: item.xs[col], den: 1 }, idioma))}`).join('; ') + '.';
