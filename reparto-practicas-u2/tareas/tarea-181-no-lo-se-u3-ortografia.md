@@ -89,6 +89,7 @@ Propio de la unidad 3: Enteros sin paréntesis que no hagan falta (5 − 3, −5
   y `aciertos` de 0 a 9; si tu `generar` necesita algo más, la explicación tiene que aguantar cualquier ítem que salga.
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
+- (s-20261112T233551-692b3b53, 13-11) Duración real: unos 25 min, no 90: las explicaciones ya existían en los bancos y solo hubo que envolverlas con la respuesta al final. En el shell zsh, `git add $VAR` con varias rutas no separa palabras: usar una función con `"$@"`. Con el árbol compartido sucio, `git pull --rebase` falla: si `git fetch` no trae nada, basta `git push`.
 
 ## Prohibido (propio de esta tarea)
 
