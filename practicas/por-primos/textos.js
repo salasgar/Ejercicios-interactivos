@@ -128,6 +128,32 @@ export const TX = {
   multiplicar: { es: p => `Multiplicar por ${p}`, en: p => `Multiply by ${p}` },
   dividir: { es: p => `Dividir entre ${p}`, en: p => `Divide by ${p}` },
 
+  // Explicaciones del botón «No lo sé» (tarea 184).
+  ayuda: {
+    respuesta: { es: x => `La respuesta es ${x}.`, en: x => `The answer is ${x}.` },
+    regla: {
+      1: { es: 'Tu número tiene que tener todos los primos del objetivo, cada uno con exponente igual o mayor.', en: 'Your number must have all the primes of the target, each one with an equal or greater exponent.' },
+      2: { es: 'Tu número solo puede tener primos del objetivo, cada uno con exponente igual o menor.', en: 'Your number can only have primes of the target, each one with an equal or smaller exponent.' },
+      3: { es: 'El m.c.m. lleva cada primo con el mayor exponente. Como solo se puede multiplicar, se sube lo que falta.', en: 'The LCM has each prime with the greatest exponent. As you can only multiply, you raise what is missing.' },
+      4: { es: 'El m.c.d. lleva cada primo con el menor exponente. Como solo se puede dividir, se baja lo que sobra.', en: 'The GCD has each prime with the smallest exponent. As you can only divide, you lower what is too much.' },
+    },
+    sube: {
+      es: (p, tiene, hace, n) => `el ${p}: tu número tiene exponente ${tiene} y el objetivo ${hace}; pulsa · ${p} (${n === 1 ? 'una vez' : `${n} veces`})`,
+      en: (p, tiene, hace, n) => `${p}: your number has exponent ${tiene} and the target ${hace}; press · ${p} (${n === 1 ? 'once' : `${n} times`})`,
+    },
+    baja: {
+      es: (p, tiene, hace, n) => `el ${p}: tu número tiene exponente ${tiene} y el objetivo ${hace}; pulsa : ${p} (${n === 1 ? 'una vez' : `${n} veces`})`,
+      en: (p, tiene, hace, n) => `${p}: your number has exponent ${tiene} and the target ${hace}; press : ${p} (${n === 1 ? 'once' : `${n} times`})`,
+    },
+    resto: { es: 'Los demás primos ya están bien.', en: 'The other primes are already fine.' },
+    varias: { es: 'Hay más de una respuesta válida; esta es la más corta.', en: 'There is more than one valid answer; this is the shortest.' },
+    todos: {
+      regla: { es: 'Cada divisor lleva los mismos primos que el número, cada uno con un exponente desde 0 hasta el que tiene el número.', en: 'Each divisor has the same primes as the number, each one with an exponent from 0 up to the one the number has.' },
+      primo: { es: (p, e) => `el ${p} puede ir con exponente ${Array.from({ length: e + 1 }, (_, i) => i).join(', ')}`, en: (p, e) => `${p} can go with exponent ${Array.from({ length: e + 1 }, (_, i) => i).join(', ')}` },
+      cuenta: { es: (n, k) => `${n} tiene ${k} divisores`, en: (n, k) => `${n} has ${k} divisors` },
+    },
+  },
+
   expl: {
     // Cabecera de la comparación de exponentes.
     esMultiplo: {

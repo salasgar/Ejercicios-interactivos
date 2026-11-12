@@ -7,8 +7,10 @@ import { htmlFact, valorDe } from '../_comun/aritmetica.js';
 import { TX } from './textos.js';
 import {
   BASES, AVISOS_MAX, generar, generarTodos, divisoresDe, esDivisorItem, explicarNoDivisor, resumenTodos,
-  expsDe, botonesActivos, tocar, esCorrecta, explicar, estadoPrimos,
+  expsDe, botonesActivos, tocar, esCorrecta, explicar, estadoPrimos, explicaToques, explicaTodos,
 } from './logica.js';
+
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const pot = (p, e) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`);
 const numero = f => `${valorDe(f)}${f.length ? ` = ${htmlFact(f)}` : ''}`;
@@ -218,6 +220,8 @@ arrancar({
       generar: (rng) => generar(j, rng),
       montar: montar(j),
       enunciado: enunciado(j),
+      explicacion: explicaToques,
+      noLoSe: NO_LO_SE,
     })),
     {
       nombre: TX.e5.nombre,
@@ -226,6 +230,8 @@ arrancar({
       generar: generarTodos,
       montar: montarTodos,
       enunciado: enunciadoTodos,
+      explicacion: explicaTodos,
+      noLoSe: NO_LO_SE,
     },
   ],
 });

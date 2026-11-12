@@ -204,6 +204,37 @@ export function explicar(item, actual, idioma) {
   return t(x.mcdDeMas)(b, quitados, valorDe(m), htmlFact(m), sv);
 }
 
+/** Los toques que llevan de la partida a una respuesta mínima (ejercicios 1-4): [[p, tiene, objetivo, veces], …] y el número al que se llega. */
+export function planAyuda(item) {
+  const j = item.ejercicio;
+  const o = expsDe(item.objetivo), p = expsDe(item.partida);
+  const sube = j === 1 || j === 3;
+  const pasos = BASES.map((b, i) => [b, p[i], o[i], sube ? o[i] - p[i] : p[i] - o[i]]).filter(([, , , n]) => n > 0);
+  const final = factDe(p.map((e, i) => e + (sube ? Math.max(0, o[i] - e) : -Math.max(0, e - o[i]))));
+  return { sube, pasos, final };
+}
+
+/** «No lo sé» de los ejercicios 1-4: qué toques hacen falta y a qué número se llega. */
+export function explicaToques(item, { idioma }) {
+  const a = TX.ayuda, j = item.ejercicio;
+  const { sube, pasos, final } = planAyuda(item);
+  const lineas = pasos.map(([p, tiene, hace, n]) => `<li>${(sube ? a.sube : a.baja)[idioma](p, tiene, hace, n)}.</li>`);
+  const v = valorDe(final);
+  const f = htmlFact(final);
+  const num = `<span class="cuenta">${String(v) === f ? f : `${v} = ${f}`}</span>`;
+  const varias = j <= 2 ? ` ${a.varias[idioma]}` : '';
+  return `<p>${a.regla[j][idioma]}</p><ol class="pasos-ayuda">${lineas.join('')}</ol><p>${a.resto[idioma]}${varias} ${a.respuesta[idioma](`<strong>${num}</strong>`)}</p>`;
+}
+
+/** «No lo sé» del ejercicio 5: qué exponentes vale cada primo y la lista de todos los divisores. */
+export function explicaTodos(item, { idioma }) {
+  const a = TX.ayuda.todos;
+  const o = expsDe(item.factN);
+  const lineas = BASES.map((p, i) => [p, o[i]]).filter(([, e]) => e > 0).map(([p, e]) => `<li>${a.primo[idioma](p, e)}.</li>`);
+  const lista = item.divisores.join(', ');
+  return `<p>${a.regla[idioma]}</p><ol class="pasos-ayuda">${lineas.join('')}</ol><p>${a.cuenta[idioma](item.n, item.divisores.length)}. ${TX.ayuda.respuesta[idioma](`<strong>${lista}</strong>`)}</p>`;
+}
+
 /** Por qué `actual` no es divisor de n (ejercicio 5): qué primos se pasan. */
 export function explicarNoDivisor(item, actual, idioma) {
   const o = expsDe(item.factN), e = expsDe(actual);
