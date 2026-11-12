@@ -419,6 +419,11 @@ export function lineaBuena(item) {
   return l.t ? { t: l.t } : { ec: l.q.aTexto() };
 }
 
+/** Las líneas de la resolución bien hecha, guardadas como las del ítem (para el «No lo sé» de «Corrígelo»). */
+export function lineasBuenas(item) {
+  return PLANTILLA_POR_ID[item.plantilla].cadena(item.params, false).lineas.map(guardar);
+}
+
 export const claveItem = item => `${item.plantilla}|${JSON.stringify(item.params)}|${item.falsa ?? 'x'}`;
 export { textoLinea };
 

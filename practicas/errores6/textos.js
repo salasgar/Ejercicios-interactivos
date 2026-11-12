@@ -3,8 +3,8 @@
 // Reglas: producto con «·», división «:», una sola letra (x), inglés sencillo, ni % ni x².
 
 import { ERRORES_TIPICOS } from '../_comun/algebra.js';
-import { aTexto as fracATexto } from '../_comun/fracciones.js';
-import { htmlLinea, lineaBuena, porque, resultadoBueno } from './logica.js';
+import { aTexto as fracATexto, htmlFraccion } from '../_comun/fracciones.js';
+import { htmlLinea, lineaBuena, lineasBuenas, porque, resultadoBueno } from './logica.js';
 
 export const TX = {
   nombre: {
@@ -70,11 +70,14 @@ export function explicaDonde(item, ctx) {
   const { tt } = ctx;
   const regla = tt({
     es: 'Mira las líneas de dos en dos: cada una tiene que salir de la anterior haciendo lo mismo a los dos lados (lo que suma pasa restando, lo que multiplica pasa dividiendo).',
-    en: 'Look at the lines two at a time: each one must come from the one before by doing the same to both sides (what adds goes over subtracting, what multiplies goes over dividing).',
+    en: 'Look at the lines two at a time: each one must come from the one before by doing the same to both sides (what is added moves across as a subtraction, what multiplies moves across as a division).',
   });
   const consejo = item.falsa === null ? '' : ` ${tt({ es: 'Consejo: en caso de duda, rehaz tú el paso.', en: 'Tip: if you are not sure, do the step yourself.' })}`;
-  return `${regla}<br>${explicacion(item, ctx)}${consejo}`;
+  return `${regla}<br>${sinDosSignos(explicacion(item, ctx))}${consejo}`;
 }
+
+// Revisión 191: el porqué de algunos errores (compartido con el feedback) escribe «−4 · −6»; en la tarjeta, «−4 · (−6)».
+const sinDosSignos = html => html.replace(/· −(\d+)/g, '· (−$1)');
 
 /** Ejercicio 2: ¿qué error es? */
 export function explicaQue(item, ctx) {
@@ -82,16 +85,22 @@ export function explicaQue(item, ctx) {
     es: 'Busca la línea que no sale de la anterior y piensa qué se ha hecho distinto de lo correcto: ese es el nombre del error.',
     en: 'Find the line that does not come from the one before and think what was done differently from the right way: that is the name of the mistake.',
   });
-  return `${regla}<br>${explicacion(item, ctx)}`;
+  return `${regla}<br>${sinDosSignos(explicacion(item, ctx))}`;
 }
 
 /** Ejercicio 3: corrígelo (la explicación acaba en el valor de x). */
 export function explicaCorrige(item, ctx) {
-  const { tt } = ctx;
+  const { tt, idioma } = ctx;
   const regla = tt({
     es: 'Encuentra la línea mala, hazla bien y sigue desde ahí hasta dejar la x sola.',
     en: 'Find the wrong line, do it right and carry on from there until x is alone.',
   });
-  const fin = `${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(`<i>x</i> = ${fracATexto(resultadoBueno(item))}`)}.`;
-  return `${regla}<br>${explicacion(item, ctx)}<br>${fin}`;
+  // Revisión 191: se enseña cómo se sigue desde la línea buena (antes saltaba de ella a la respuesta),
+  // y la solución con raya si es fracción.
+  const despues = lineasBuenas(item).slice(item.falsa + 1).filter(l => !l.t);
+  const sigue = despues.length
+    ? `<br>${tt({ es: 'Desde ahí:', en: 'From there:' })} ${despues.map(l => linea(l, idioma)).join(' → ')}`
+    : '';
+  const fin = `${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(`<i>x</i> = ${htmlFraccion(resultadoBueno(item))}`)}.`;
+  return `${regla}<br>${sinDosSignos(explicacion(item, ctx))}${sigue}<br>${fin}`;
 }

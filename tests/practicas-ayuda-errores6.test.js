@@ -5,13 +5,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { ERRORES_TIPICOS } from '../practicas/_comun/algebra.js';
-import { aTexto } from '../practicas/_comun/fracciones.js';
+import { htmlFraccion } from '../practicas/_comun/fracciones.js';
 import * as L from '../practicas/errores6/logica.js';
 import * as X from '../practicas/errores6/textos.js';
 
 const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
 const items = (fn, semilla, n = 1200) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => fn(rng)); };
+const sinDosSignos = html => html.replace(/· −(\d+)/g, '· (−$1)');
 
 test('errores6 · ejercicio 1: dice la línea mala, el error y cómo queda; o que todo está bien', () => {
   let sinError = 0;
@@ -24,7 +25,8 @@ test('errores6 · ejercicio 1: dice la línea mala, el error y cómo queda; o qu
       } else {
         assert.ok(html.includes(X.TX.la_linea_es[idioma](item.falsa + 1)), 'el número de línea');
         assert.ok(html.includes(ERRORES_TIPICOS[item.error].nombre[idioma]), 'el nombre del error');
-        assert.ok(html.includes(L.porque(item, idioma)), 'el porqué con los números');
+        assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))), 'el porqué con los números');
+        assert.doesNotMatch(html, /· −\d/, 'un negativo detrás de «·» va entre paréntesis');
       }
     }
   }
@@ -47,8 +49,12 @@ test('errores6 · ejercicio 3: la explicación acaba en el valor de x que se ace
     assert.equal(L.corregirCorrige(item, bueno).acierto, true, 'es la que el ejercicio da por buena');
     for (const idioma of IDIOMAS) {
       const html = X.explicaCorrige(item, ctx(idioma));
-      assert.ok(html.includes(`<i>x</i> = ${aTexto(bueno)}`), 'el valor de x');
-      assert.ok(html.includes(L.porque(item, idioma)));
+      // Revisión 191: la solución con raya, el porqué sin «· −6», y las líneas buenas desde la corregida hasta la x.
+      assert.ok(html.endsWith(`<span class="cuenta"><i>x</i> = ${htmlFraccion(bueno)}</span>.`), 'el valor de x');
+      assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))));
+      assert.doesNotMatch(html, /· −\d/);
+      const ultima = L.lineasBuenas(item).filter(l => !l.t).at(-1);
+      if (L.lineasBuenas(item).length > item.falsa + 1) assert.ok(html.includes(L.htmlLinea(ultima, idioma)), `la última línea buena — ${html}`);
     }
   }
 });
