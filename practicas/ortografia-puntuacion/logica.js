@@ -456,6 +456,21 @@ export function explicacionElegir(item, k) {
   return `${bien}<br>${item.malas.map(fallo).join(' ')}`;
 }
 
+/** La ayuda de «No lo sé» de «¿cuál está bien escrita?»: la explicación y la respuesta, explícita al final. */
+export function ayudaElegir(item) {
+  const respuesta = esAsuntoCuerpo(item)
+    ? `<b>${item.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>`
+    : `<b>${html(item.bien)}</b>`;
+  return `${explicacionElegir(item, 0)}<br>La respuesta es: ${respuesta}`;
+}
+
+/** La ayuda de «No lo sé» de las mayúsculas: qué palabras hay que tocar y por qué. */
+export function ayudaMayusculas(item) {
+  const puesta = item.texto.split(' ');
+  const palabras = buenasMayusculas(item).map(i => `<b>«${esc(limpia(puesta[i]))}»</b>`);
+  return `${explicacionMayusculas(item, [])}<br>La respuesta es: hay que tocar ${palabras.length > 1 ? `${palabras.slice(0, -1).join(', ')} y ${palabras.at(-1)}` : palabras[0]}.`;
+}
+
 /** El `idError` de la mala elegida (nada si acertó). */
 export function idErrorElegir(item, k) {
   if (esAsuntoCuerpo(item)) return item.donde === 'asunto' ? 'cuerpo-por-asunto' : 'asunto-por-cuerpo';

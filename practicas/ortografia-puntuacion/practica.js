@@ -18,7 +18,7 @@ import {
   MAYUSCULAS, PUNTO_COMA, DOS_PUNTOS, BANCO_CORREOS, esAsuntoCuerpo,
   generarMayusculas, generarPuntoComa, generarDosPuntos, generarCorreos,
   piezasMayusculas, buenasMayusculas, explicacionMayusculas, idErrorMayusculas,
-  explicacionElegir, idErrorElegir,
+  explicacionElegir, idErrorElegir, ayudaElegir, ayudaMayusculas,
 } from './logica.js';
 
 function montarMayusculas(contenedor, item, api) {
@@ -65,14 +65,15 @@ function montarCorreo(contenedor, item, api) {
 }
 
 const clave = item => String(item.i);
+const ayudaDe = banco => item => ayudaElegir(banco[item.i]);
 
 arrancar({
   slug: 'ortografia-puntuacion',
   idioma: 'es',
   ejercicios: [
-    { nombre: TX.mayusculas.nombre, detalle: TX.mayusculas.detalle, introduccion: TX.mayusculas.introduccion, generar: generarMayusculas, clave, montar: montarMayusculas },
-    { nombre: TX.puntoComa.nombre, detalle: TX.puntoComa.detalle, introduccion: TX.puntoComa.introduccion, generar: generarPuntoComa, clave, montar: montarEscrita(PUNTO_COMA, TXO.escrita) },
-    { nombre: TX.dosPuntos.nombre, detalle: TX.dosPuntos.detalle, introduccion: TX.dosPuntos.introduccion, generar: generarDosPuntos, clave, montar: montarEscrita(DOS_PUNTOS, TXO.escrita) },
-    { nombre: TX.correos.nombre, detalle: TX.correos.detalle, introduccion: TX.correos.introduccion, generar: generarCorreos, clave, montar: montarCorreo },
+    { nombre: TX.mayusculas.nombre, detalle: TX.mayusculas.detalle, introduccion: TX.mayusculas.introduccion, generar: generarMayusculas, clave, explicacion: item => ayudaMayusculas(MAYUSCULAS[item.i]), montar: montarMayusculas },
+    { nombre: TX.puntoComa.nombre, detalle: TX.puntoComa.detalle, introduccion: TX.puntoComa.introduccion, generar: generarPuntoComa, clave, explicacion: ayudaDe(PUNTO_COMA), montar: montarEscrita(PUNTO_COMA, TXO.escrita) },
+    { nombre: TX.dosPuntos.nombre, detalle: TX.dosPuntos.detalle, introduccion: TX.dosPuntos.introduccion, generar: generarDosPuntos, clave, explicacion: ayudaDe(DOS_PUNTOS), montar: montarEscrita(DOS_PUNTOS, TXO.escrita) },
+    { nombre: TX.correos.nombre, detalle: TX.correos.detalle, introduccion: TX.correos.introduccion, generar: generarCorreos, clave, explicacion: ayudaDe(BANCO_CORREOS), montar: montarCorreo },
   ],
 });
