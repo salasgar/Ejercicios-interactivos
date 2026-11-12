@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaLeelo } from './textos.js';
 import { generarPalabra, generarLeelo, generarConsigna, generarCompleta, claveItem } from './logica.js';
 
 const enunciadoElegir = (item, { tt }) => `
@@ -34,6 +34,7 @@ function montarElegir(contenedor, item, api) {
 }
 
 const ejercicio = (i, generar) => ({
+  explicacion: explicaLeelo(i),
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,

@@ -73,3 +73,26 @@ export const TX = {
     completa: { es: 'Elige la palabra que falta', en: 'Choose the missing word' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────────
+
+const CONSEJOS = [
+  { es: 'Consejo: si dudas, fíjate en las palabras que se parecen (numerator y denominator, expression y equation).', en: 'Tip: if you are not sure, watch the words that look alike (numerator and denominator, expression and equation).' },
+  { es: 'Consejo: lee primero los números y los signos, de izquierda a derecha, y después busca la lectura que dice lo mismo.', en: 'Tip: first read the numbers and the signs, from left to right, then look for the reading that says the same.' },
+  { es: 'Consejo: busca el verbo de la consigna (solve, simplify, evaluate, check, expand…); él dice qué hay que hacer.', en: 'Tip: look for the verb of the instruction (solve, simplify, evaluate, check, expand…); it says what to do.' },
+  { es: 'Consejo: lee la frase entera con cada palabra puesta en el hueco y quédate con la que tiene sentido.', en: 'Tip: read the whole sentence with each word in the blank and keep the one that makes sense.' },
+];
+
+/** Los cuatro ejercicios: qué pide, lo que dice el ítem y la opción buena. */
+export function explicaLeelo(i) {
+  return (item, { tt, esc }) => {
+    const buena = item.opciones.find(o => o.correcta);
+    const resp = buena.html ?? esc(buena.texto);
+    return `<ol class="pasos-ayuda">
+      <li>${tt(TX.instrucciones[item.instruccion])}.</li>
+      <li>${tt(item.solucion).replace(/([»”])\.$/, '$1')}</li>
+    </ol>
+    <p>${tt({ es: 'La respuesta es', en: 'The answer is' })} <strong>${resp}</strong>${/[.?!]$/.test(buena.texto) ? '' : '.'}</p>
+    <p>${tt(CONSEJOS[i])}</p>`;
+  };
+}
