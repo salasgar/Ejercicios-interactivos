@@ -4,6 +4,45 @@
 // Las fracciones se escriben con raya (`htmlFraccion`), salvo en las frases inglesas habladas.
 
 import { fraccion, htmlFraccion, htmlCuenta } from '../_comun/fracciones.js';
+import { terminoDe, cuentaDelItem } from './logica.js';
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+/** Ejercicio 1: las cinco parejas, con un consejo. */
+export function explicaEmparejar(item, { tt, esc }) {
+  const lista = item.en.map(id => `<li><strong lang="en">${esc(terminoDe(id).en)}</strong> = <span lang="es">${esc(terminoDe(id).es)}</span></li>`).join('');
+  const consejo = tt({ es: 'Empieza por las que sepas; las que queden se emparejan solas.', en: 'Start with the ones you know; the rest pair up by themselves.' });
+  return `${consejo} ${tt(TX.emparejar.correctas)}<ul class="lista-pares">${lista}</ul>`;
+}
+
+const CONSEJO_ELEGIR = {
+  leer_fraccion: { es: 'El numerador se lee con un número normal y el denominador con un ordinal (fifth, sixth…), en plural si el numerador no es 1.', en: 'The numerator is read as a normal number and the denominator as an ordinal (fifth, sixth…), in the plural if the numerator is not 1.' },
+  que_pide: { es: 'Busca la palabra clave del enunciado (left, the rest, shaded, out of, of).', en: 'Look for the key word in the problem (left, the rest, shaded, out of, of).' },
+};
+
+/** Ejercicios 2 y 3: la opción buena y su explicación. */
+export function explicaElegir(item, { tt, esc }) {
+  const buena = item.opciones.find(o => o.correcta);
+  const consejo = CONSEJO_ELEGIR[item.instruccion] ? `${tt(CONSEJO_ELEGIR[item.instruccion])} ` : '';
+  const respuesta = tt({ es: 'La respuesta es', en: 'The answer is' });
+  const [abre, cierra] = tt({ es: ['«', '»'], en: ['“', '”'] });
+  return `${consejo}${tt(item.solucion)} ${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
+}
+
+const PISTA_DICTADO = {
+  dictado_de: { es: '«of» entre una fracción y un número es multiplicar.', en: '“of” between a fraction and a number means multiply.' },
+  dictado_suma: { es: '«plus» y «the sum of» son «+».', en: '“plus” and “the sum of” mean “+”.' },
+  dictado_resta: { es: '«minus» y «the difference» son «−»; en «subtract b from a» se escribe a − b.', en: '“minus” and “the difference” mean “−”; “subtract b from a” is written a − b.' },
+  dictado_producto: { es: '«times», «multiplied by», «of» y «the product of» son «·».', en: '“times”, “multiplied by”, “of” and “the product of” mean “·”.' },
+  dictado_cociente: { es: '«divided by» y «the quotient of» son «:».', en: '“divided by” and “the quotient of” mean “:”.' },
+};
+
+/** Ejercicio 4: la cuenta que dice la frase. */
+export function explicaDictado(item, { tt }) {
+  const pista = PISTA_DICTADO[item.plantilla] ? `${tt(PISTA_DICTADO[item.plantilla])} ` : '';
+  const orden = tt({ es: 'Escribe las fracciones en el orden en que se dicen y elige la operación.', en: 'Write the fractions in the order they are said and choose the operation.' });
+  return `${orden} ${pista}${tt(TX.dictado.correcta)} <span class="cuenta">${cuentaDelItem(item)}</span>.`;
+}
 
 const H = (n, d) => htmlFraccion(fraccion(n, d), { compacta: true });
 const C = (...partes) => htmlCuenta(partes.map(p => (Array.isArray(p) ? fraccion(p[0], p[1]) : p)), { compacta: true });

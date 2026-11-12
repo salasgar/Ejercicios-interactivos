@@ -6,7 +6,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { MENOS } from '../_comun/fracciones.js';
-import { TX } from './textos.js';
+import { TX, explicaEmparejar, explicaElegir, explicaDictado } from './textos.js';
 import {
   generarEmparejar, generarLectura, generarQuePide, generarDictado,
   terminoDe, corregirEmparejar, claveEmparejar, claveItem,
@@ -223,19 +223,20 @@ function montarDictado(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (i, { generar, montar, enunciado, clave }) => ({
+const ejercicio = (i, { generar, montar, enunciado, clave, explicacion, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave, montar, enunciado,
+  generar, clave, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe } : {}),
 });
 
 arrancar({
   slug: 'leelo4',
   ejercicios: [
-    ejercicio(0, { generar: generarEmparejar, montar: montarEmparejar, enunciado: enunciadoEmparejar, clave: claveEmparejar }),
-    ejercicio(1, { generar: generarLectura, montar: montarElegir, enunciado: enunciadoElegir, clave: claveItem }),
-    ejercicio(2, { generar: generarQuePide, montar: montarElegir, enunciado: enunciadoElegir, clave: claveItem }),
-    ejercicio(3, { generar: generarDictado, montar: montarDictado, enunciado: enunciadoDictado, clave: claveItem }),
+    ejercicio(0, { generar: generarEmparejar, montar: montarEmparejar, enunciado: enunciadoEmparejar, clave: claveEmparejar, explicacion: explicaEmparejar }),
+    ejercicio(1, { generar: generarLectura, montar: montarElegir, enunciado: enunciadoElegir, clave: claveItem, explicacion: explicaElegir }),
+    ejercicio(2, { generar: generarQuePide, montar: montarElegir, enunciado: enunciadoElegir, clave: claveItem, explicacion: explicaElegir }),
+    ejercicio(3, { generar: generarDictado, montar: montarDictado, enunciado: enunciadoDictado, clave: claveItem, explicacion: explicaDictado, noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' } }),
   ],
 });
