@@ -55,7 +55,7 @@ test('el catálogo declara 5 ejercicios para multiplica-divide', () => {
 });
 
 test('las huellas de examen no están vacías y detectan de verdad (sin orden en multiplica, con orden en divide)', () => {
-  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.size === 15 && HUELLAS_EXAMEN_DIVIDE.size === 23 && HUELLAS_EXAMEN_POTENCIA.size === 7);
+  assert.ok(HUELLAS_EXAMEN_MULTIPLICA.size === 27 && HUELLAS_EXAMEN_DIVIDE.size === 30 && HUELLAS_EXAMEN_POTENCIA.size === 7);
   // U4-2C-08 variante 1 del examen de la semana 2 (6 · 2/11), en cualquier orden de los factores.
   assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([6, 1], [2, 11])));
   assert.ok(HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica([2, 11], [6, 1])));
@@ -184,6 +184,7 @@ test('ejercicio 2: cuadrícula b × d dentro de la cota del contexto; valor = (a
     assert.ok(F([y.length, total]).equals(F(item.valor)), 'el dibujo da la misma fracción');
     assert.ok(Math.max(...x) < total);
     assert.ok(!enListaSinOrden(PAREJAS_HOJA_PARTE, item.a, item.c), `caso de la hoja: ${JSON.stringify(item)}`);
+    assert.ok(!HUELLAS_EXAMEN_MULTIPLICA.has(huellaMultiplica(item.a, item.c)), `caso de examen: ${JSON.stringify(item)}`);
   }
   assert.equal(usados.size, CONTEXTOS_PARTE.length);
   // Cotas de realismo: nada que no sea un reparto en trozos creíbles.

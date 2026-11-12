@@ -48,11 +48,16 @@ export const huellaPotencia = (base, exp) => huella(`${fr(base)}^${exp}`);
 export const HUELLAS_EXAMEN_MULTIPLICA = new Set([
   'zzw14b', '1tfuajb', 'g62pu9', 'dedpbb', 'f7oy2t', 'zvyrqg', '2nl8qt', '16mdwuh',
   '1u3nv9g', '1felgiw', '8v0ap', 'llrdzg', '1a859pb', '1dvw5n1', 'yh1yci',
+  // Productos de U4-2A-06 (semanal 2) y de la pareja «suma y producto» de U4-3C-09 (semanal 3), con los extra.
+  '1ieab3t', '1fa60e6', 'k9ycer', '17ckci7', '7v86u4', '74pjb1',
+  '1hl324r', '1qxet79', 'j7uews', '1c6xb7k', '141esa9', '1ozppjz',
 ]);
 export const HUELLAS_EXAMEN_DIVIDE = new Set([
   'egip4f', 'ga31l8', '1pmlz6k', 'j6l89j', '1xto2fa', '1uddy7s', '155fuck', '6i7s2h',
   '1twfyos', '1bo0vnq', '17859kg', 'itht34', 'rcthdf', '1a707nu', '1wnx085', '16bzgc9',
   'wiwxc', '40p480', '10yro6m', 'gq7ign', '13iwn0r', 'ptscgd', 'qh6fvy',
+  // «Número : fracción» de U4-1A-02 (semanal 1 con los extra, y modelo 2 del final).
+  '52xqcx', '1o5dwkn', '1q1cidf', 'fapwhm', '1h6a7km', 'rtabpc', '11y96sy',
 ]);
 export const HUELLAS_EXAMEN_POTENCIA = new Set([
   '4ip7sn', 'x8sfeg', '1808zrt', '11rn67e', 'quac4a', '18hpam4',
