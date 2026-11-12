@@ -90,6 +90,10 @@ Propio de la unidad 2: Producto con «·», «divisor» (no «factor») entre n�
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
 
+- (s-20261112T232558-df61a86f) En el zsh de Claude Code, `F="a b"; git add $F` NO separa por palabras: falla con «pathspec … did not match». Escribe las rutas a mano.
+- (s-20261112T232558-df61a86f) La línea de cierre del reclamo es `CERRADA <fecha>` a principio de línea (sin «- »); con el prefijo el tablón la sigue dando EN CURSO. El script del tablón se llama con la CARPETA del reparto, no con `_ESTADO.md`.
+- (s-20261112T232558-df61a86f) Si una explicación vive en `logica.js` y usa `TX` de `textos.js`, no importes la lógica desde `textos.js` (import circular); pon la función en `logica.js` y el texto en `TX.ayuda` (como hizo por-primos).
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar generadores, opciones, comprobaciones o el feedback que ya existe; tocar `disponible` en `catalogo.js`.
