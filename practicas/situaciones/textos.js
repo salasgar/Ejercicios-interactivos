@@ -222,3 +222,46 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+
+/** Ejercicio 1: de la situación al entero. */
+export function explicaEntero(item, { tt }) {
+  const regla = tt({
+    es: 'Lo que queda por debajo de cero es negativo, y lo que queda por encima, positivo.',
+    en: 'What is below zero is negative, and what is above zero is positive.',
+  });
+  return `${regla} ${tt(TX.entero.razon)(item.ctx, item.n)}`;
+}
+
+/** Ejercicio 2: del entero a la frase. */
+export function explicaSituacion(item, { idioma, tt }) {
+  const regla = tt({
+    es: 'Primero mira el signo del entero; después busca la frase del tema pedido que lo dice.',
+    en: 'First look at the sign of the integer; then find the sentence about the topic that says it.',
+  });
+  const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
+  const [a, c] = idioma === 'es' ? ['«', '»'] : ['“', '”'];
+  return `${regla} ${tt(TX.situacion.bien)(item.ctx, item.n)} ${resp} ${a}${frase(item.ctx, item.n, idioma)}${c}.`;
+}
+
+/** Ejercicio 3: la cuenta del paso y la frase del resultado. */
+export function explicaPaso(item, { idioma, tt }) {
+  const sentido = item.dir > 0
+    ? tt({ es: 'subir o ingresar se suma', en: 'going up or depositing is adding' })
+    : tt({ es: 'bajar o sacar se resta', en: 'going down or withdrawing is subtracting' });
+  const paso1 = tt({ es: `Se empieza en ${fmt(item.s)}; ${sentido}:`, en: `Start at ${fmt(item.s)}; ${sentido}:` });
+  const paso2 = tt({ es: 'Después se elige la frase que dice ese resultado, con su signo.', en: 'Then choose the sentence that says that result, with its sign.' });
+  const resp = tt({
+    es: `La respuesta es ${fmt(item.r)}, con la frase «${fraseResultado(item.ctx, item.r, 'es')}».`,
+    en: `The answer is ${fmt(item.r)}, with the sentence “${fraseResultado(item.ctx, item.r, 'en')}”.`,
+  });
+  return `${pasos([
+    `${paso1} <span class="cuenta">${cuentaPaso(item)} = ${fmt(item.r)}</span>.`,
+    paso2,
+  ])} ${resp}`;
+}

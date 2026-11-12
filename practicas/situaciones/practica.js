@@ -14,7 +14,7 @@ import {
   generarEntero, generarSituacion, generarPaso, opcionBuena, frasesPaso, esCorrectoPaso,
   errorDePaso, terminosPaso, vistaPaso,
 } from './logica.js';
-import { TX, frase, fraseResultado, ENUNCIADO_PASO, BOTON_SALTO } from './textos.js';
+import { TX, frase, fraseResultado, ENUNCIADO_PASO, BOTON_SALTO, NO_SE_HACERLO, explicaEntero, explicaSituacion, explicaPaso } from './textos.js';
 
 // ─── Ejercicio 1: ¿qué entero es? ──────────────────────────────────────────────
 
@@ -189,6 +189,8 @@ arrancar({
       clave: item => `${item.ctx}:${item.n}`,
       montar: montarEntero,
       enunciado: enunciadoEntero,
+      explicacion: explicaEntero,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.situacion.nombre,
@@ -198,6 +200,7 @@ arrancar({
       clave: item => `${item.ctx}:${item.n}`,
       montar: montarSituacion,
       enunciado: enunciadoSituacion,
+      explicacion: explicaSituacion,
     },
     {
       nombre: TX.paso.nombre,
@@ -207,6 +210,8 @@ arrancar({
       clave: item => `${item.ctx}:${item.s}:${item.dir}:${item.m}`,
       montar: montarPaso,
       enunciado: enunciadoPaso,
+      explicacion: explicaPaso,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });
