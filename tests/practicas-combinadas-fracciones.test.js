@@ -90,6 +90,18 @@ test('la clave no depende del orden de los sumandos ni de los factores (reabiert
   assert.notEqual(claveSinOrden('1/2 + 1/3 · 2/5'), claveSinOrden('(1/2 + 1/3) · 2/5'));
 });
 
+test('la clave no depende del sitio del menos, pero sí de cuántos hay (reabierta del 12-11)', () => {
+  const M = MENOS;
+  assert.equal(claveSinOrden(`1/2 ${M} 3/4 · 2/9`), claveSinOrden(`${M}2/9 · 3/4 + 1/2`));
+  assert.equal(claveSinOrden(`1/2 ${M} 3/4 · 2/9`), claveSinOrden(`1/2 + 3/4 · (${M}2/9)`));
+  assert.equal(claveSinOrden(`1/2 ${M} 3/4 : 2/9`), claveSinOrden(`${M}3/4 : 2/9 + 1/2`));
+  assert.notEqual(claveSinOrden(`1/2 ${M} 3/4 · (${M}2/9)`), claveSinOrden('1/2 + 3/4 · 2/9'));
+  assert.notEqual(claveSinOrden(`1/2 ${M} 3/4 · 2/9`), claveSinOrden('1/2 + 3/4 · 2/9'));
+  for (const t of [`2/3 · 3/8 ${M} 1/2`, `3/8 · 2/3 ${M} 1/2`, `${M}1/2 + 3/8 · 2/3`]) {
+    assert.ok(esCasoReservado(t), t);
+  }
+});
+
 test('la hoja 3 (ej. 8 y 9) y la hoja 2 (U4-2C-04) están reservadas, también con los términos cambiados de sitio', () => {
   for (const t of [
     `9/10 ${MENOS} 1/4 : 5/6`, `2 ${MENOS} 5/6 · 3/10`, '3/8 · 4/9 + 1/4', '4/9 · 3/8 + 1/4', '(1/2 + 1/4) · 4/9', '4/9 · (1/4 + 1/2)',

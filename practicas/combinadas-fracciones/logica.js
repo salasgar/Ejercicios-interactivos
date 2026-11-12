@@ -27,28 +27,55 @@ const DENS = [2, 3, 4, 5, 6, 8, 9, 10, 12];
 // alumnos ya los tienen en papel), y los de los exámenes semanales y del final, por huella (el
 // repositorio es público: el enunciado de un examen no se escribe en claro).
 //
-// La clave NO depende del orden de los sumandos ni de los factores: es el conjunto de números, el
-// de operaciones y el valor de la expresión. Así `1/4 + 2/3 · 5/6` y `2/3 · 5/6 + 1/4`, o
+// La clave NO depende del orden de los sumandos ni de los factores ni del sitio del menos: ver
+// `claveSinOrden` (reabierta del 12-11: `a − b · c` y `−c · b + a` son la misma cuenta). Así `1/4 + 2/3 · 5/6` y `2/3 · 5/6 + 1/4`, o
 // `3/4 · 1/3` y `1/3 · 3/4`, cuentan como el mismo caso (la reabierta del 2-11 encontró dos casos
 // de examen que salían con los factores o los sumandos cambiados de sitio).
-const operandosDe = x => {
+const contarMenos = x => {
   switch (x.tipo) {
-    case 'num': return [{ num: x.valor.clave() }];
-    case 'op': return [...operandosDe(x.izq), { op: x.op }, ...operandosDe(x.der)];
-    case 'neg': return [{ op: 'neg' }, ...operandosDe(x.arg)];
-    case 'pos': return [{ op: 'pos' }, ...operandosDe(x.arg)];
-    case 'par': return operandosDe(x.arg);
-    case 'pot': return [{ op: '^' }, ...operandosDe(x.base), { num: String(x.exp) }];
+    case 'num': return 0;
+    case 'op': return (x.op === '-' ? 1 : 0) + contarMenos(x.izq) + contarMenos(x.der);
+    case 'neg': return 1 + contarMenos(x.arg);
+    case 'pos': case 'par': return contarMenos(x.arg);
+    case 'pot': return contarMenos(x.base);
     default: throw new Error(`nodo desconocido: ${x.tipo}`);
   }
 };
-/** Clave sin orden de una expresión (texto): números ordenados # operaciones ordenadas # valor. */
+const esSuma = x => x.tipo === 'op' && (x.op === '+' || x.op === '-');
+const esProducto = x => x.tipo === 'op' && !esSuma(x);
+/** Un factor (sin operación de producto en la raíz): signo y clave sin signo. */
+function atomo(x) {
+  switch (x.tipo) {
+    case 'num': { const c = x.valor.clave(); return c.startsWith('-') ? { s: -1, k: c.slice(1) } : { s: 1, k: c }; }
+    case 'neg': { const a = atomo(x.arg); return { s: -a.s, k: a.k }; }
+    case 'pos': return atomo(x.arg);
+    case 'par': return esSuma(x.arg) ? { s: 1, k: `S[${terminosDe(x.arg).join(',')}]` } : termino(x.arg);
+    case 'pot': { const b = atomo(x.base); return { s: x.exp % 2 === 0 ? 1 : b.s, k: `pow(${b.k},${x.exp})` }; }
+    default: throw new Error(`nodo desconocido: ${x.tipo}`);
+  }
+}
+/** Un término (producto o cociente sin sumas a su nivel): signo (producto de los signos) y clave sin orden. */
+function termino(x) {
+  if (!esProducto(x)) return atomo(x);
+  const factores = [], ops = [];
+  const recorrer = y => {
+    if (esProducto(y)) { ops.push(y.op); recorrer(y.izq); recorrer(y.der); } else factores.push(atomo(y));
+  };
+  recorrer(x);
+  return { s: factores.reduce((acc, f) => acc * f.s, 1), k: `P[${factores.map(f => f.k).sort().join(',')}|${ops.sort().join('')}]` };
+}
+function terminosDe(x) {
+  const lista = [];
+  const recorrer = (y, signo) => {
+    if (esSuma(y)) { recorrer(y.izq, signo); recorrer(y.der, y.op === '-' ? -signo : signo); } else { const t = termino(y); lista.push(`${t.s * signo < 0 ? '-' : '+'}${t.k}`); }
+  };
+  recorrer(x, 1);
+  return lista.sort();
+}
+/** Clave sin orden de una expresión (texto): sus términos con signo (sumandos sin orden; en cada producto, el producto de los signos y los factores sin signo y sin orden), el número de menos y el valor. El sitio del menos no cuenta: `a − b · c`, `−c · b + a` y `a + b · (−c)` son la misma. */
 export const claveSinOrden = texto => {
   const arbol = analizar(texto);
-  const partes = operandosDe(arbol);
-  const numeros = partes.filter(p => p.num !== undefined).map(p => p.num).sort();
-  const operaciones = partes.filter(p => p.op !== undefined).map(p => p.op).sort();
-  return `${numeros.join(',')}#${operaciones.join(',')}#${evaluar(arbol).clave()}`;
+  return `${terminosDe(arbol).join(',')}#${contarMenos(arbol)}#${evaluar(arbol).clave()}`;
 };
 
 // Hoja 3, ej. 8a-8e, 9a-9d y 12d; hoja 2, U4-2C-04 (5/6 + 1/3 − 1/4). Operandos irreducibles,
@@ -79,16 +106,16 @@ export const huellaExpresion = texto => huella(claveSinOrden(texto));
 // de «Find the mistake» (5b) de los modelos 1 y 2 y de la recuperación del examen final (el
 // adaptado-A repite los del modelo 1). La 3a del modelo 2 lleva una potencia y no puede salir.
 export const HUELLAS_EXAMEN_COMBINADAS = new Set([
-  'gz18zf', 'smxfcy', 's9v0jp', 'xk144e', 'x2ciy3', '7mhaem', 'qaedgm', '1qt0m4t',
-  '1gankhw', 'q49imx', '1ywg0me', '1abrdwc', 'lz7t47', 'kx5wep', '6zb7xf', '6u5yg1',
-  '34a63k', '1axjxio', '1yujj6a', '1vdce6l', '13xq3ds', 'j74a5l', '1e9faaj',
+  '1paetf8', 'h5aont', '2m7m8u', '1o412wh', '1iw37kg', 'tzoef7', '7rbnjv', '1o7cxng',
+  'byoho9', '1p0vyf2', 'iyjzfj', '1djpf7p', '1dxijqb', '1ve90kn', '1c6uvxn', 'a3wfl8',
+  '1tlrq9h', '13ei31c', 'jilhwj', '139cse3', '1yuxmum', 'qnt0az', '1el2n88',
 ]);
 // Pasos «línea k → línea k+1» de las cajas «Find the mistake» (5b) de los modelos 1 y 2 y de la
 // recuperación del examen final (el adaptado-A repite la de Leo): el paso mal hecho es el caso que
 // hay que encontrar, y no puede salir como línea de la caja del ejercicio 3. Solo huellas.
 export const HUELLAS_PASOS_EXAMEN = new Set([
-  '1e1bmcb', '4b6ogl', 'kcsk9f', 'hemtov', 'csbf62', '1txm2mn', '22cfjr',
-  '9ctdgs', '4w1g09', '1miwm0m', '1juv2j9', 'fhsf4e', '1t5dq0c', '14c91dl',
+  'arpn5f', '19sjted', '730lvy', 'arbel4', 'es8vyy', 'rcudlr', '8b4ooj',
+  'd02v3d', '1jm98p8', '1ggufpi', 'ubdo3', 'ni4pja', 'ql1lv7', '1q5dmi',
 ]);
 /** Huella de un paso de un procedimiento: la expresión de la línea k (clave sin orden) y el valor de la k+1. */
 export const huellaPaso = (antes, despues) => huella(`${claveSinOrden(antes)}>${evaluar(analizar(despues)).clave()}`);
