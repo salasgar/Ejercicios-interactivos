@@ -90,6 +90,13 @@ Propio de la unidad 6: Aquí sí hay letras y ecuaciones. Las prácticas de la u
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
 
+- (de s-20261112T230552-18e515b5, 12-11) Casi todo el feedback ya trae un `solucion` o `TX.*.solucion` con la cuenta
+  hecha: la explicación es regla + esa cuenta + «La respuesta es …»; no se rehace la cuenta. Si el ítem no guarda la
+  expresión (p. ej. `item.expr` no existe en `terminos-semejantes`, «reduce»), se recupera de `item.correcta` con `leerExpresion`.
+- (idem) En inglés, las comillas del texto son “ ”, no « »; cuidado con la respuesta final entre comillas.
+- (idem) El modo automático deniega `python3 -m http.server`: el paso 6 (navegador) no se puede hacer en sesión sin supervisión; queda para la 191.
+- (idem) Duración real de la 175: unos 6 min de reloj tras el reclamo (4 prácticas, 15 ejercicios), con el contexto compactado entre medias; la estimada era 1 h 30 min.
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar generadores, opciones, comprobaciones o el feedback que ya existe; tocar `disponible` en `catalogo.js`.
