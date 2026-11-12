@@ -15,7 +15,9 @@ import {
   generarPrimero, generarPasos, generarError, arbolDe, clasificarToque, primerosPasos, rutasPrimeras,
   opcionesDePaso, opcionesOrdenadas,
 } from './logica.js';
-import { TX, pistaDe } from './textos.js';
+import { TX, pistaDe, explicaPrimero, explicaPasosAyuda, explicaErrorAyuda } from './textos.js';
+
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const cuenta = texto => `<span class="cuenta">${htmlExp(texto)}</span>`;
 const lineaHtml = (arbol, marcar = false) => htmlExp(arbol, { marcarOperadores: marcar });
@@ -262,14 +264,17 @@ arrancar({
     {
       nombre: TX.ej1.nombre, detalle: TX.ej1.detalle, introduccion: TX.ej1.introduccion,
       generar: generarPrimero, clave: item => item.texto, montar: montarPrimero, enunciado: enunciadoPrimero,
+      explicacion: explicaPrimero,
     },
     {
       nombre: TX.ej2.nombre, detalle: TX.ej2.detalle, introduccion: TX.ej2.introduccion,
       generar: generarPasos, clave: item => item.texto, montar: montarPasos, enunciado: enunciadoPasos,
+      explicacion: explicaPasosAyuda, noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej3.nombre, detalle: TX.ej3.detalle, introduccion: TX.ej3.introduccion,
       generar: generarError, clave: item => item.lineas.join('|'), montar: montarError, enunciado: enunciadoError,
+      explicacion: explicaErrorAyuda,
     },
   ],
 });

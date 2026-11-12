@@ -4,7 +4,8 @@
 // fracciones.js), nunca «3/5» fuera de una frase en inglés hablado. Las operaciones
 // (`1/2 + 1/3`) llegan ya escritas por `fracciones.js`.
 
-import { html as cuentaFrac } from '../_comun/fracciones.js';
+import { html as cuentaFrac, htmlFraccion, leerFraccion, valorLiteral, aplicarPaso, pasoCanonico } from '../_comun/fracciones.js';
+import { arbolDe, primerosPasos } from './logica.js';
 
 // `html` no entiende «=»: una igualdad se pinta como sus miembros unidos por el signo.
 const c = texto => texto.split(' = ').map(parte => cuentaFrac(parte)).join(' = ');
@@ -127,6 +128,46 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const sinEspacios = s => s.replace(/\s+/g, ' ').trim();
+const cuentaAyuda = x => `<span class="cuenta">${h(x)}</span>`;
+
+/** Ejercicio 1: la jerarquía y la operación (o las operaciones) que pueden ir primero. */
+export function explicaPrimero(item, { tt }) {
+  const posibles = primerosPasos(arbolDe(item.texto));
+  const lista = posibles.map(cuentaAyuda).join(', ');
+  const fin = posibles.length > 1
+    ? tt({ es: `Pueden ir primero: ${lista}; vale cualquiera de ellas.`, en: `These can come first: ${lista}; any of them is right.` })
+    : tt({ es: `Va primero ${lista}.`, en: `${lista} comes first.` });
+  return sinEspacios(`${tt(TX.orden)} ${fin}`);
+}
+
+/** Ejercicio 2: todos los pasos hasta quedarse con un solo número, cada uno con su resultado. */
+export function explicaPasosAyuda(item, { tt }) {
+  let x = arbolDe(item.texto);
+  const filas = [];
+  for (let i = 0; i < 20 && valorLiteral(x) === null; i++) {
+    const paso = pasoCanonico(x);
+    filas.push(`<li>${tt(TX.mal_resultado)(paso.operacion, htmlFraccion(paso.valor))}</li>`);
+    x = aplicarPaso(x, paso);
+  }
+  const final = valorLiteral(x);
+  const fin = tt({ es: 'La respuesta es', en: 'The answer is' });
+  return `${tt(TX.orden)} <ol class="pasos-ayuda">${filas.join('')}</ol> ${fin} <span class="cuenta">${htmlFraccion(final)}</span>.`;
+}
+
+/** Ejercicio 3: qué línea está mal, si es de orden o de cálculo, y cómo tocaba. */
+export function explicaErrorAyuda(item, { tt }) {
+  const linea = tt({ es: `La línea con el error es la ${item.linea}.`, en: `The line with the mistake is line ${item.linea}.` });
+  const queFue = item.tipo === 'orden'
+    ? tt(TX.ej3.era_orden)(item.operacion, item.canonica)
+    : tt(TX.ej3.era_calculo)(item.operacion, htmlFraccion(leerFraccion(item.valorBueno)));
+  const pista = pistaDe(item.error, item.operacion);
+  const bien = tt({ es: `Bien hecha, la línea ${item.linea} sería`, en: `Done right, line ${item.linea} would be` });
+  return sinEspacios(`${linea} ${queFue} ${pista ? tt(pista) : ''} ${bien} <span class="cuenta">= ${h(item.bueno)}</span>.`);
+}
 
 /** La pista de un error; para `signo-perdido` en un producto o un cociente es la regla de los signos. */
 export const pistaDe = (error, operacion = '') => (error === 'signo-perdido' && /\s[·:]\s/.test(String(operacion).replace(/<[^>]*>/g, ''))
