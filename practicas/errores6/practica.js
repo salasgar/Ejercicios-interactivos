@@ -3,32 +3,18 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { ERRORES_TIPICOS } from '../_comun/algebra.js';
 import { aTexto as fracATexto } from '../_comun/fracciones.js';
-import { TX } from './textos.js';
+import { TX, cuenta, nombreError, explicacion, explicaDonde, explicaQue, explicaCorrige } from './textos.js';
 import {
-  generarDonde, generarQue, generarCorrige, claveItem, htmlLinea, lineaBuena, porque, resultadoBueno, corregirCorrige, leerResultado,
+  generarDonde, generarQue, generarCorrige, claveItem, htmlLinea, resultadoBueno, corregirCorrige, leerResultado,
 } from './logica.js';
 
-const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
-const cuenta = html => `<span class="cuenta">${html}</span>`;
 const linea = (l, idioma) => cuenta(htmlLinea(l, idioma));
 
 function procedimiento(item, idioma) {
   const filas = item.lineas.map((l, i) =>
     `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${linea(l, idioma)}</span></li>`);
   return `<ol class="procedimiento">${filas.join('')}</ol>`;
-}
-
-/** La explicación: qué línea, cómo se llama, por qué y cómo se hace bien. */
-function explicacion(item, { tt, idioma }, { escrito = null, resultado = null } = {}) {
-  if (item.falsa === null) return tt(TX.todo_bien_es);
-  const tuyo = escrito !== null ? `${tt(TX.has_escrito)} ${cuenta(fracATexto(escrito))}. ` : '';
-  const aviso = resultado?.error === 'repite-el-error' ? `${tt(TX.repite)} ` : '';
-  return `${tuyo}${aviso}${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], idioma)}</span>`
-    + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
-    + `<br>${porque(item, idioma)}`
-    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${linea(lineaBuena(item), idioma)}</span>`;
 }
 
 // ─── Ejercicio 1: ¿dónde está el error? ────────────────────────────────────────
@@ -131,8 +117,8 @@ function montarCorrige(contenedor, item, api) {
 arrancar({
   slug: 'errores6',
   ejercicios: [
-    { nombre: TX.nombre.donde, detalle: TX.detalle.donde, introduccion: TX.introduccion.donde, generar: generarDonde, clave: claveItem, montar: montarDonde, enunciado: enunciadoDonde },
-    { nombre: TX.nombre.que, detalle: TX.detalle.que, introduccion: TX.introduccion.que, generar: generarQue, clave: claveItem, montar: montarQue, enunciado: enunciadoQue },
-    { nombre: TX.nombre.corrige, detalle: TX.detalle.corrige, introduccion: TX.introduccion.corrige, generar: generarCorrige, clave: claveItem, montar: montarCorrige, enunciado: enunciadoCorrige },
+    { nombre: TX.nombre.donde, detalle: TX.detalle.donde, introduccion: TX.introduccion.donde, generar: generarDonde, clave: claveItem, montar: montarDonde, enunciado: enunciadoDonde, explicacion: explicaDonde },
+    { nombre: TX.nombre.que, detalle: TX.detalle.que, introduccion: TX.introduccion.que, generar: generarQue, clave: claveItem, montar: montarQue, enunciado: enunciadoQue, explicacion: explicaQue },
+    { nombre: TX.nombre.corrige, detalle: TX.detalle.corrige, introduccion: TX.introduccion.corrige, generar: generarCorrige, clave: claveItem, montar: montarCorrige, enunciado: enunciadoCorrige, explicacion: explicaCorrige, noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' } },
   ],
 });

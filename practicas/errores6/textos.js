@@ -2,6 +2,10 @@
 // `ERRORES_TIPICOS` (algebra.js) y las explicaciones con números, de las plantillas de logica.js.
 // Reglas: producto con «·», división «:», una sola letra (x), inglés sencillo, ni % ni x².
 
+import { ERRORES_TIPICOS } from '../_comun/algebra.js';
+import { aTexto as fracATexto } from '../_comun/fracciones.js';
+import { htmlLinea, lineaBuena, porque, resultadoBueno } from './logica.js';
+
 export const TX = {
   nombre: {
     donde: { es: '¿Dónde está el error?', en: 'Where is the mistake?' },
@@ -43,3 +47,51 @@ export const TX = {
   nombre_resultado: { es: 'Valor de x', en: 'Value of x' },
   en_blanco: { es: 'Escribe un número o una fracción', en: 'Write a number or a fraction' },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────────
+
+export const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
+export const cuenta = html => `<span class="cuenta">${html}</span>`;
+const linea = (l, idioma) => cuenta(htmlLinea(l, idioma));
+
+/** La explicación: qué línea, cómo se llama, por qué y cómo se hace bien. */
+export function explicacion(item, { tt, idioma }, { escrito = null, resultado = null } = {}) {
+  if (item.falsa === null) return tt(TX.todo_bien_es);
+  const tuyo = escrito !== null ? `${tt(TX.has_escrito)} ${cuenta(fracATexto(escrito))}. ` : '';
+  const aviso = resultado?.error === 'repite-el-error' ? `${tt(TX.repite)} ` : '';
+  return `${tuyo}${aviso}${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], idioma)}</span>`
+    + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
+    + `<br>${porque(item, idioma)}`
+    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${linea(lineaBuena(item), idioma)}</span>`;
+}
+
+/** Ejercicio 1: ¿dónde está el error? */
+export function explicaDonde(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt({
+    es: 'Mira las líneas de dos en dos: cada una tiene que salir de la anterior haciendo lo mismo a los dos lados (lo que suma pasa restando, lo que multiplica pasa dividiendo).',
+    en: 'Look at the lines two at a time: each one must come from the one before by doing the same to both sides (what adds goes over subtracting, what multiplies goes over dividing).',
+  });
+  const consejo = item.falsa === null ? '' : ` ${tt({ es: 'Consejo: en caso de duda, rehaz tú el paso.', en: 'Tip: if you are not sure, do the step yourself.' })}`;
+  return `${regla}<br>${explicacion(item, ctx)}${consejo}`;
+}
+
+/** Ejercicio 2: ¿qué error es? */
+export function explicaQue(item, ctx) {
+  const regla = ctx.tt({
+    es: 'Busca la línea que no sale de la anterior y piensa qué se ha hecho distinto de lo correcto: ese es el nombre del error.',
+    en: 'Find the line that does not come from the one before and think what was done differently from the right way: that is the name of the mistake.',
+  });
+  return `${regla}<br>${explicacion(item, ctx)}`;
+}
+
+/** Ejercicio 3: corrígelo (la explicación acaba en el valor de x). */
+export function explicaCorrige(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt({
+    es: 'Encuentra la línea mala, hazla bien y sigue desde ahí hasta dejar la x sola.',
+    en: 'Find the wrong line, do it right and carry on from there until x is alone.',
+  });
+  const fin = `${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(`<i>x</i> = ${fracATexto(resultadoBueno(item))}`)}.`;
+  return `${regla}<br>${explicacion(item, ctx)}<br>${fin}`;
+}
