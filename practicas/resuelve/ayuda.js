@@ -2,7 +2,7 @@
 // También las cuentas de comprobación, que comparten el feedback (practica.js) y la explicación.
 
 import { terminosAHtml, terminosATexto, termino, MENOS } from '../_comun/algebra.js';
-import { aTexto as textoFraccion, fraccion } from '../_comun/fracciones.js';
+import { aTexto as textoFraccion, fraccion, htmlFraccion } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
 import {
   ecDe, ecuacionAC, ecuacionSolucion, solDe, nombreDe, movimientos, lineasPrevias, lineasDeResolucion, solucionDe,
@@ -45,6 +45,11 @@ export const sumaDeNumeros = ts => terminosATexto(ts.map(t => termino(t.coef, nu
 const ent = n => textoFraccion(fraccion(n, 1));
 const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 const respuesta = (idioma, t) => (idioma === 'es' ? `La respuesta es ${t}.` : `The answer is ${t}.`);
+const comillas = (idioma, t) => (idioma === 'es' ? `«${t}»` : `“${t}”`);
+
+// Revisión 191: la comprobación (compartida con el feedback) escribe las fracciones con barra; en la tarjeta, con raya.
+const conRaya = html => html.replace(/(−?)(\d+)\/(\d+)/g, (_, menos, n, d) => htmlFraccion(fraccion(menos ? -Number(n) : Number(n), Number(d))));
+const comprobacionConRaya = (ec, s, tt) => conRaya(comprobacion(ec, s, tt));
 
 // ─── Ejercicio 1: el primer paso ──────────────────────────────────────────────────────────────
 
@@ -75,6 +80,10 @@ export function explicaPasoAPaso(item, { idioma, tt }) {
   const ultima = lineasPrevias(item).at(-1);
   const s = solDe(item);
   const l1 = cuenta(htmlEc(ecuacionAC(item.A, item.C)));
+  // Revisión 191: si no es entera, la división se escribe como fracción y se simplifica a la vista.
+  const q = fraccion(item.C, item.A);
+  const division = `${ent(item.C)} : ${entreParentesis(fraccion(item.A, 1))}`
+    + (s.den === 1 ? '' : ` = ${htmlFraccion(q)}${q.num === s.num && q.den === s.den ? '' : ` = ${htmlFraccion(s)}`}`);
   const lista = [es
     ? `Suma los números de la x, cada uno con su signo: ${cuenta(`${sumaDeNumeros(ultima.terminosIzq)} = ${ent(item.A)}`)}.`
     : `Add the numbers in front of x, each with its sign: ${cuenta(`${sumaDeNumeros(ultima.terminosIzq)} = ${ent(item.A)}`)}.`,
@@ -82,9 +91,9 @@ export function explicaPasoAPaso(item, { idioma, tt }) {
     ? (es ? `El número del segundo miembro se copia: ${cuenta(ent(item.C))}.` : `The number on the right-hand side is copied: ${cuenta(ent(item.C))}.`)
     : (es ? `Suma los números del segundo miembro: ${cuenta(`${sumaDeNumeros(ultima.terminosDer)} = ${ent(item.C)}`)}.` : `Add the numbers on the right-hand side: ${cuenta(`${sumaDeNumeros(ultima.terminosDer)} = ${ent(item.C)}`)}.`),
   es
-    ? `Queda ${l1}. El número de la x pasa dividiendo: ${cuenta(`${ent(item.C)} : ${entreParentesis(fraccion(item.A, 1))}`)}, y sale ${cuenta(htmlSol(s))}.`
-    : `You get ${l1}. The number in front of x moves across as a division: ${cuenta(`${ent(item.C)} : ${entreParentesis(fraccion(item.A, 1))}`)}, and you get ${cuenta(htmlSol(s))}.`];
-  return `${pasos(lista)}${comprobacion(ecDe(item), s, tt)}. ${respuesta(idioma, `${cuenta(ent(item.A))}, ${cuenta(ent(item.C))} ${es ? 'y' : 'and'} ${cuenta(htmlSol(s))}`)}`;
+    ? `Queda ${l1}. El número de la x pasa dividiendo: ${cuenta(division)}, y sale ${cuenta(htmlSol(s))}.`
+    : `You get ${l1}. The number in front of x moves across as a division: ${cuenta(division)}, and you get ${cuenta(htmlSol(s))}.`];
+  return `${pasos(lista)}${comprobacionConRaya(ecDe(item), s, tt)}. ${respuesta(idioma, `${cuenta(ent(item.A))}, ${cuenta(ent(item.C))} ${es ? 'y' : 'and'} ${cuenta(htmlSol(s))}`)}`;
 }
 
 // ─── Ejercicio 3: resuélvela ──────────────────────────────────────────────────────────────────
@@ -96,7 +105,7 @@ export function explicaResuelve(item, { idioma, tt }) {
   const regla = es
     ? 'Pasa los términos con x a un miembro y los números al otro (cambian de signo), suma lo semejante y divide entre el número de la x.'
     : 'Move the terms with x to one side and the numbers to the other side (their sign changes), add the like terms and divide by the number in front of x.';
-  return `${regla} ${tt(TX.ej3.resolucion)} ${resolucionHtml(ec)}. ${comprobacion(ec, s, tt)}. ${respuesta(idioma, cuenta(htmlSol(s)))}`;
+  return `${regla} ${tt(TX.ej3.resolucion)} ${resolucionHtml(ec)}. ${comprobacionConRaya(ec, s, tt)}. ${respuesta(idioma, cuenta(htmlSol(s)))}`;
 }
 
 // ─── Ejercicio 4: ¿está bien resuelta? ────────────────────────────────────────────────────────
@@ -106,12 +115,12 @@ export function explicaResolucion(item, { idioma, tt }) {
   const consejo = es ? ' Consejo: comprueba cada paso con la línea de justo encima.' : ' Tip: check each step against the line just above it.';
   if (item.malo === 0) {
     const ec = lineasDeResolucion(item)[0];
-    return `${es ? 'Cada paso sale bien de la línea de arriba.' : 'Every step follows correctly from the line above.'} ${comprobacion(ec, solucionDe(ec), tt)}. ${respuesta(idioma, tt(TX.ej4.todoBien).toLowerCase())}${consejo}`;
+    return `${es ? 'Cada paso sale bien de la línea de arriba.' : 'Every step follows correctly from the line above.'} ${comprobacionConRaya(ec, solucionDe(ec), tt)}. ${respuesta(idioma, comillas(idioma, tt(TX.ej4.todoBien)))}${consejo}`;
   }
   const nombre = (nombreDe(item.error)?.[idioma] ?? '').toLowerCase();
   const k = item.malo;
   const frase = es
     ? `El paso ${k} no sale de la línea de arriba. Tendría que ser ${cuenta(htmlDatos(item.correcta))}. Error: ${nombre}.`
     : `Step ${k} does not follow from the line above. It should be ${cuenta(htmlDatos(item.correcta))}. Mistake: ${nombre}.`;
-  return `${frase} ${respuesta(idioma, tt(TX.ej4.paso)(k).toLowerCase())}${consejo}`;
+  return `${frase} ${respuesta(idioma, comillas(idioma, tt(TX.ej4.paso)(k)))}${consejo}`;
 }

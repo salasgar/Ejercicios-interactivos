@@ -11,7 +11,11 @@ import * as A from '../practicas/resuelve/ayuda.js';
 const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, t: T[idioma], tt: obj => obj[idioma], esc: x => x });
 const items = (fn, semilla, n = 1000) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => fn(rng)); };
-const sinRestos = (html, donde) => assert.doesNotMatch(html, /undefined|NaN|\[object|null|×/, donde);
+// También sin fracciones con barra: la comprobación compartida con el feedback las escribe «−2/3» (revisión 191).
+const sinRestos = (html, donde) => {
+  assert.doesNotMatch(html, /undefined|NaN|\[object|null|×/, donde);
+  assert.doesNotMatch(html.replace(/<[^>]+>/g, ''), /\d\/\d/, `${donde}: fracción con barra`);
+};
 const lleva = (html, trozo, donde) => assert.ok(html.includes(trozo), `${donde}: falta «${trozo}» en «${html.replace(/<[^>]+>/g, '')}»`);
 
 test('resuelve ej. 1: la explicación lleva la línea buena', () => {
@@ -54,9 +58,10 @@ test('resuelve ej. 4: dice dónde está el error (o que no hay) y cómo queda bi
     for (const item of items(L.generarResolucion, 4)) {
       const html = A.explicaResolucion(item, ctx(idioma));
       sinRestos(html, 'ej4');
-      if (item.malo === 0) lleva(html, idioma === 'es' ? 'todo está bien' : 'all correct', 'ej4 todo bien');
+      // La opción tal como la ve el alumno, entre comillas (revisión 191).
+      if (item.malo === 0) lleva(html, idioma === 'es' ? '«Todo está bien»' : '“All correct”', 'ej4 todo bien');
       else {
-        lleva(html, idioma === 'es' ? `paso ${item.malo}.` : `step ${item.malo}.`, 'ej4 paso');
+        lleva(html, idioma === 'es' ? `«Paso ${item.malo}».` : `“Step ${item.malo}”.`, 'ej4 paso');
         lleva(html, A.cuenta(A.htmlDatos(item.correcta)), 'ej4 correcta');
       }
     }
