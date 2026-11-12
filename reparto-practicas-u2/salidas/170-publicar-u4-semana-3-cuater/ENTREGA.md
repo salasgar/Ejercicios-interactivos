@@ -1,7 +1,75 @@
 # ENTREGA · Tarea 170 · Publicar `multiplica-divide`, `combinadas-fracciones` y `errores4` (semana 3 de la U4, cuarta publicación)
 
-Este fichero lleva las dos pasadas de la 170: la **segunda** (arriba, sesión `s-20261112T183052-98cf3c42`) y la **primera** (abajo, sin
-tocar, sesión `s-20261112T010355-f006a9a8`).
+Este fichero lleva las tres pasadas de la 170: la **tercera** (arriba, sesión `s-20261112T210628-91ff0a16`), la **segunda** (en medio,
+sin tocar, sesión `s-20261112T183052-98cf3c42`) y la **primera** (abajo, sin tocar, sesión `s-20261112T010355-f006a9a8`).
+
+# Tercera pasada (12-11, s-20261112T210628-91ff0a16): solo lo reabierto en la segunda
+
+Commit **46524bd** (`catalogo.js`: solo `disponible: true` de las filas 53 y 55; `docs/practicas-unidad4.md`: el párrafo de publicadas).
+**Las tres de la semana 3 quedan publicadas** y, con ellas, las diez prácticas de la U4. La terminada ya no es PARCIAL.
+
+## Veredicto
+
+| Práctica (tarea, id) | Lo que pedía su reabierta (segunda pasada) | Cerrada en | Veredicto | Estado |
+|---|---|---|---|---|
+| `multiplica-divide` (105, 53) | los productos de la hoja 2, ej. 12a-b («4/5 of 5/12», «4/9 of 3/8») fuera del ej. 1 | 27b2c38 (18:58Z) | **pasa** | **publicada** (46524bd) |
+| `errores4` (107, 55) | las potencias de la hoja 2, ej. 13f-g («five sixths squared», «three quarters cubed») fuera de los tres ejercicios; repasar las demás de la hoja 2 (13a-h) y de la hoja 3 (1c-1f) | 56f048b (18:58Z) | **pasa** | **publicada** (46524bd) |
+| `combinadas-fracciones` (106, 54) | — (publicada en la segunda pasada, 25d833d) | — | — | publicada |
+
+El papel no ha cambiado desde el 9-11 (`find … -newermt '2026-11-09 18:15'` en los semanales, el final y las hojas: nada).
+
+## Cómo se revisó
+
+- **Código**: desde la prueba completa con clics de la primera pasada (0f656e7) solo ha cambiado `logica.js` en las dos
+  (`git diff 0f656e7..HEAD --stat`: 8 líneas en `multiplica-divide`, 24 en `errores4`); en esta pasada, solo las listas de datos de hoja
+  (`PAREJAS_HOJA_MULTIPLICA` +2 parejas; `CLAVES_HOJA` +11 claves de potencia y un comentario corregido). Las 11 claves cuadran una a una
+  con la hoja 2, ej. 13a-h (la 13b ya estaba) y la hoja 3, ej. 1c-1f, leídas en el `.tex`.
+- **Barrido propio** (guion en el scratchpad, fuera del repo) con una **clave propia**: producto por valores absolutos sin orden y signo
+  del resultado, cociente con orden y signo, potencia por base y exponente; casos transcritos a mano de las hojas (los de palabras: hoja 2
+  12a-b y 13a-h, hoja 3 1c-1f y los tres cocientes de «Write with numbers», hoja 1 5b). Control del lector: ve cada caso escrito con el
+  formato de la práctica, en los dos órdenes, y no confunde una variante con otro signo del resultado.
+- **60000 ítems por ejercicio** (semillas 170, 7 y 2026): `multiplica-divide` ej. 1, 2, 4 y 5 y `errores4` ej. 1, 2 y 3 (todas las líneas
+  que ve el alumno: la igualdad, las tres líneas, el lado izquierdo y el derecho).
+  - `multiplica-divide`: **0** en el ej. 1 (eran 33), 0 en el ej. 2 y 0 en el ej. 4. En el ej. 5 salen las potencias de las hojas, exentas
+    por el criterio del 11-11 (con 48 ítems posibles, quitarlas lo vacía).
+  - `errores4`: **0** en los ej. 1, 2 y 3 (eran 692, 892 y 893), ni con las demás potencias de las hojas 2 y 3.
+- **Regla de oro, por valor** (3000 ítems): ninguna potencia con dos opciones equivalentes; ningún nombre de error repetido entre las
+  opciones; ninguna igualdad del ej. 1 de `errores4` mal etiquetada (verdadera/falsa, comprobado evaluando los dos lados); ninguna línea
+  mala del ej. 2 mal marcada (cada línea comparada con la anterior). Los tests de las dos (cotas de realismo con todos los ítems) siguen
+  en verde.
+- **Navegador** (regresión, porque solo cambió `logica.js`): Chrome headless por CDP con clics de ratón (`Input.dispatchMouseEvent`) y texto
+  tecleado (`Input.insertText`), `?probar=1` y el idioma por URL, servidor propio en el 8173. Los 8 ejercicios de las dos, a 375 y a
+  1100 px, en español y en inglés (32 ítems): cada uno carga con sus fracciones, un toque (opción o respuesta) da el feedback con los
+  números del ítem y el botón «Siguiente»/«Next» tras el fallo, un acierto en `errores4` ej. 1; **consola limpia** en los 32.
+- Tests: las cuatro baterías 112/112; `npm test` **1810/1810** con la publicación.
+
+## Propuesta de la tarea de la semana 3 (para Juan Luis; no está creada): **plan A de la 111, tal cual**
+
+Ya vale: las tres prácticas están publicadas, las reabiertas no cambiaron ni el número ni el orden de los ejercicios, `['suma-resta', 4]`
+(«¿Qué queda?») está publicado (169) y `['ortografia', 7]` (comas que cambian el significado) es el ★ de ortografía de la semana 3 de la U4
+en el calendario del curso. Puntúa sobre 100 (tarea 166): 7 ★ + 3 a elegir, 10 puntos cada ejercicio.
+
+`U4 · Semana 3 · Multiplicar, dividir y combinadas` / `U4 · Week 3 · Multiplying, dividing and mixed operations` · `unidad: 4` ·
+`desde: '2027-01-11'` · `hasta: '2027-01-14'` (lun 11-1 a jue 14-1; el examen final es el vie 15-1).
+
+```js
+  estrella: [['ortografia', 7], ['multiplica-divide', 1], ['multiplica-divide', 2], ['multiplica-divide', 3], ['multiplica-divide', 4], ['combinadas-fracciones', 1], ['combinadas-fracciones', 2]],
+  elegir: [['multiplica-divide', 5], ['combinadas-fracciones', 3], ['errores4', 1], ['errores4', 2], ['errores4', 3], ['suma-resta', 4]],
+  nElegir: 3,
+```
+
+**La 121 ya puede montar la semana 3** (con la semana 2 de la 169, en la misma sesión con Juan Luis delante). El plan B de la 111 ya no hace
+falta.
+
+## Hallazgos fuera de criterio (no bloquean; deciden Juan Luis o la coordinadora)
+
+1. **`multiplica-divide` ej. 4**: en 15 de 60000 divisiones, el paso por la inversa es uno de los productos de la hoja 2, ej. 12a-b (el
+   cociente que se pregunta es otro, con otros datos, aunque dé el mismo resultado). Es un paso que el ítem enseña en el feedback, no la
+   pregunta: fuera de criterio, como los pasos compartidos de las pasadas anteriores.
+2. Siguen los de la segunda pasada (abajo): los pasos de cajas en el ej. 1 de `multiplica-divide`, las líneas intermedias del ej. 2 de
+   `errores4` y las comparaciones con los dos signos cambiados.
+
+---
 
 # Segunda pasada (12-11, s-20261112T183052-98cf3c42): solo lo reabierto el 12-11
 

@@ -255,6 +255,10 @@ Es la quinta revisión de estas prácticas y cada una ha encontrado algo que la 
   `HUELLAS_COMPARACION` solo tenga una de las 9 no es un fallo. Compruébalo generando, no mirando la lista.
 - (de la 170, segunda pasada) Chrome headless: tras elegir el ejercicio del menú hay que pulsar `#empezar` (la introducción va delante del
   primer ítem); en `combinadas` ej. 3, tras tocar la línea mala sale una segunda pregunta (el tipo de error) en `.cf-pregunta`.
+- (de la 170, tercera pasada, 12-11) Para la regresión con clics, `?probar=1&idioma=es|en` entra directo sin código (sin portada ni
+  Firebase: carga en un segundo). Selectores del ítem: `button.eleccion` (`errores4` ej. 1-2), `input.campo-numero` + `button.comprobar`
+  (lo demás; teclea con `Input.insertText` tras un clic en el campo). Un guion que pulsa «el primer botón» pulsa `#salir` («← Ejercicios»)
+  y parece que todo funciona porque la pantalla cambia: mira el texto de después, no solo que cambie.
 
 ## Prohibido (propio de esta tarea)
 
