@@ -9,6 +9,8 @@ import {
   generarMcm, generarSin, generarResuelve, generarPasos, corregirResuelve, corregirPasos, claveItem, explicaSiHace,
 } from './logica.js';
 
+import { explicaMcm, explicaSin, explicaResuelve, explicaPasos } from './ayuda.js';
+
 const cuenta = h => `<span class="cuenta">${h}</span>`;
 const frase = (item, { tt }, instruccion) => `
     <p class="instruccion">${tt(instruccion)}</p>
@@ -124,19 +126,21 @@ const montarPasos = (contenedor, item, api) => montarCampos(contenedor, item, ap
   solucion: it => it.explicacion,
 });
 
-const ejercicio = (i, { generar, montar, enunciado }) => ({
+const NO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const ejercicio = (i, { generar, montar, enunciado, explicacion, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave: claveItem, montar, enunciado,
+  generar, clave: claveItem, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe: NO_SE } : {}),
 });
 
 arrancar({
   slug: 'denominadores',
   ejercicios: [
-    ejercicio(0, { generar: generarMcm, montar: montarMcm, enunciado: enunciadoMcm }),
-    ejercicio(1, { generar: generarSin, montar: montarSin, enunciado: enunciadoSin }),
-    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve }),
-    ejercicio(3, { generar: generarPasos, montar: montarPasos, enunciado: enunciadoPasos }),
+    ejercicio(0, { generar: generarMcm, montar: montarMcm, enunciado: enunciadoMcm, explicacion: explicaMcm }),
+    ejercicio(1, { generar: generarSin, montar: montarSin, enunciado: enunciadoSin, explicacion: explicaSin }),
+    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve, explicacion: explicaResuelve, noLoSe: true }),
+    ejercicio(3, { generar: generarPasos, montar: montarPasos, enunciado: enunciadoPasos, explicacion: explicaPasos, noLoSe: true }),
   ],
 });
