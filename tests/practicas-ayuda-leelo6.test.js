@@ -22,7 +22,10 @@ GENERADORES.forEach((generar, i) => {
       for (const lang of IDIOMAS) {
         const html = explicaLeelo(i)(item, ctx(lang));
         assert.ok(html.includes(buenas[0].html ?? buenas[0].texto), `la opción buena (${buenas[0].texto})`);
-        assert.ok(html.includes(item.solucion[lang].replace(/([»”])\.$/, '$1')), 'lo que dice el ítem');
+        // Lo que dice el ítem, con las fracciones ya con raya (revisión 191): en texto plano, «x/3» queda «x3».
+        const plano = h => h.replace(/<[^>]+>/g, '');
+        assert.ok(plano(html).includes(plano(item.solucion[lang].replace(/([»”])\.$/, '$1')).replace(/(\w)\/(\d)/g, '$1$2')), 'lo que dice el ítem');
+        assert.doesNotMatch(plano(html), /\w\/\d/, `fracción con barra — ${plano(html)}`);
         assert.ok(html.includes(TX.instrucciones[item.instruccion][lang]), 'lo que se pide');
         assert.ok(html.includes(lang === 'es' ? 'La respuesta es' : 'The answer is'));
       }

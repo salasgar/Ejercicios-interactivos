@@ -83,6 +83,10 @@ const CONSEJOS = [
   { es: 'Consejo: lee la frase entera con cada palabra puesta en el hueco y quédate con la que tiene sentido.', en: 'Tip: read the whole sentence with each word in the blank and keep the one that makes sense.' },
 ];
 
+// Revisión 191: lo que dice el ítem escribe «x/3 − 5» con barra; en la tarjeta, con raya, como la respuesta.
+const conRaya = texto => texto.replace(/(^|[^\w/<>])([a-z]|\d+)\/(\d+)(?![\w/])/g,
+  (_, antes, a, d) => `${antes}<span class="frac"><span>${/\d/.test(a) ? a : `<i>${a}</i>`}</span><span>${d}</span></span>`);
+
 /** Los cuatro ejercicios: qué pide, lo que dice el ítem y la opción buena. */
 export function explicaLeelo(i) {
   return (item, { tt, esc }) => {
@@ -90,7 +94,7 @@ export function explicaLeelo(i) {
     const resp = buena.html ?? esc(buena.texto);
     return `<ol class="pasos-ayuda">
       <li>${tt(TX.instrucciones[item.instruccion])}.</li>
-      <li>${tt(item.solucion).replace(/([»”])\.$/, '$1')}</li>
+      <li>${conRaya(tt(item.solucion).replace(/([»”])\.$/, '$1'))}</li>
     </ol>
     <p>${tt({ es: 'La respuesta es', en: 'The answer is' })} <strong>${resp}</strong>${/[.?!]$/.test(buena.texto) ? '' : '.'}</p>
     <p>${tt(CONSEJOS[i])}</p>`;
