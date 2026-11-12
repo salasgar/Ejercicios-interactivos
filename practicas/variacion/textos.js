@@ -198,3 +198,54 @@ export function txt(idioma) {
     terminos,
   };
 }
+
+// ─── «No lo sé»: la explicación de cada ejercicio ──────────────────────────────
+
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cierre = (idioma, resp) => ` ${RESPUESTA[idioma]} <span class="cuenta">${resp}</span>.`;
+
+/** Ejercicio 1: la variación es final − inicial. */
+export function explicaCambio(item, { idioma }) {
+  const T = txt(idioma).cambio;
+  const o = item.opciones[item.solucion];
+  const regla = L(idioma, 'La variación es final − inicial: si sale positiva, ha subido; si sale negativa, ha bajado.', 'The change is end − start: if it comes out positive, it went up; if it comes out negative, it went down.');
+  const [abre, cierra] = L(idioma, ['«', '»'], ['“', '”']);
+  return `${regla} ${T.explica(item)}${cierre(idioma, `${abre}${T.frase(item.ctx, o.dir, o.k).replace(/\.$/, '')}${cierra}`)}`;
+}
+
+/** Ejercicio 2: el mayor menos el menor. */
+export function explicaDiferencia(item, { idioma }) {
+  const T = txt(idioma);
+  const regla = L(idioma, 'Para saber cuánto más es un valor que otro, resta el mayor menos el menor.', 'To find how much more one value is than another, subtract the bigger one minus the smaller one.');
+  return `${regla} ${T.diferencia.explica(item)}${cierre(idioma, `${item.d} ${T.unidad(item)}`)}`;
+}
+
+/** Ejercicio 3: sumar la variación, o hacer la operación al revés. */
+export function explicaFalta(item, { idioma }) {
+  const T = txt(idioma);
+  const regla = item.subtipo === 'final'
+    ? L(idioma, 'Si sabes dónde empieza y cuánto cambia, suma la variación al valor de partida.', 'If you know where it starts and how much it changes, add the change to the start value.')
+    : L(idioma, 'Si te dan el valor final, deshaz el cambio: lo que subió se resta y lo que bajó se suma.', 'If you are given the end value, undo the change: what went up is subtracted and what went down is added.');
+  const resp = item.ctx === 'planta' ? fmt(item.r) : valor(item.ctx, item.r);
+  return `${regla} ${T.falta.explica(item)}${cierre(idioma, resp)}`;
+}
+
+/** Ejercicio 4: años entre dos fechas, sin año 0. */
+export function explicaAnios(item, { idioma }) {
+  const T = txt(idioma);
+  const regla = item.era === 'cruza'
+    ? L(idioma, 'Una fecha es a. C. y la otra d. C.: se suman los dos años y se quita 1, porque no hubo año 0.', 'One date is BC and the other is AD: add the two years and take 1 away, because there was no year 0.')
+    : L(idioma, 'Las dos fechas son de la misma era: se resta el año mayor menos el menor.', 'Both dates are in the same era: subtract the bigger year minus the smaller one.');
+  return `${regla} ${T.anios.explica(item)}${cierre(idioma, `${item.d} ${T.unidad(item)}`)}`;
+}
+
+/** Ejercicio 5: la cuenta, el signo y el resultado. */
+export function explicaCuenta(item, { idioma }) {
+  const T = txt(idioma).cuenta;
+  const regla = {
+    cadena: L(idioma, 'Subir e ingresar suman; bajar y gastar restan. Escribe un término por cada cambio y calcula de izquierda a derecha.', 'Going up and paying in add; going down and spending subtract. Write one term for each change and work from left to right.'),
+    producto: L(idioma, 'Un cambio que se repite varias veces es un producto: lo que cambia cada vez, por las veces. Si baja, es negativo.', 'A change that repeats several times is a product: the change each time, times the number of times. If it goes down, it is negative.'),
+    cociente: L(idioma, 'Repartir un cambio total a partes iguales es una división: el cambio total, entre las veces. Si baja, es negativo.', 'Sharing a total change into equal parts is a division: the total change divided by the number of times. If it goes down, it is negative.'),
+  }[item.tipo];
+  return `${regla} ${T.explica(item)}${cierre(idioma, `${item.opciones[item.solucion].texto} = ${fmt(item.r)}`)}`;
+}

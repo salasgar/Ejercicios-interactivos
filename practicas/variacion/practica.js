@@ -12,9 +12,12 @@ import { elecciones } from '../_comun/piezas.js';
 import { fmt, campoEntero } from '../_comun/enteros.js';
 import { crearRecta } from '../_comun/recta-enteros.js';
 import * as L from './logica.js';
-import { NOMBRES, INTRODUCCION, txt } from './textos.js';
+import {
+  NOMBRES, INTRODUCCION, txt, explicaCambio, explicaDiferencia, explicaFalta, explicaAnios, explicaCuenta,
+} from './textos.js';
 
-const p = s => `<p class="instruccion instruccion--enunciado">${s}</p>`;
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const p =s => `<p class="instruccion instruccion--enunciado">${s}</p>`;
 
 // ─── Etapas ────────────────────────────────────────────────────────────────────
 
@@ -174,10 +177,10 @@ function montarCuenta(contenedor, item, api) {
 arrancar({
   slug: 'variacion',
   ejercicios: [
-    { nombre: NOMBRES.nombre[0], detalle: NOMBRES.detalle[0], introduccion: INTRODUCCION[0], generar: L.generarCambio, clave: L.claveItem, montar: montarCambio, enunciado: enunciadoCambio },
-    { nombre: NOMBRES.nombre[1], detalle: NOMBRES.detalle[1], introduccion: INTRODUCCION[1], generar: L.generarDiferencia, clave: L.claveItem, montar: montarDiferencia, enunciado: enunciadoDiferencia },
-    { nombre: NOMBRES.nombre[2], detalle: NOMBRES.detalle[2], introduccion: INTRODUCCION[2], generar: L.generarFalta, clave: L.claveItem, montar: montarFalta, enunciado: enunciadoFalta },
-    { nombre: NOMBRES.nombre[3], detalle: NOMBRES.detalle[3], introduccion: INTRODUCCION[3], generar: L.generarAnios, clave: L.claveItem, montar: montarAnios, enunciado: enunciadoAnios },
-    { nombre: NOMBRES.nombre[4], detalle: NOMBRES.detalle[4], introduccion: INTRODUCCION[4], generar: L.generarCuenta, clave: L.claveItem, montar: montarCuenta, enunciado: enunciadoCuenta },
+    { nombre: NOMBRES.nombre[0], detalle: NOMBRES.detalle[0], introduccion: INTRODUCCION[0], generar: L.generarCambio, clave: L.claveItem, montar: montarCambio, enunciado: enunciadoCambio, explicacion: explicaCambio },
+    { nombre: NOMBRES.nombre[1], detalle: NOMBRES.detalle[1], introduccion: INTRODUCCION[1], generar: L.generarDiferencia, clave: L.claveItem, montar: montarDiferencia, enunciado: enunciadoDiferencia, explicacion: explicaDiferencia, noLoSe: NO_SE_HACERLO },
+    { nombre: NOMBRES.nombre[2], detalle: NOMBRES.detalle[2], introduccion: INTRODUCCION[2], generar: L.generarFalta, clave: L.claveItem, montar: montarFalta, enunciado: enunciadoFalta, explicacion: explicaFalta, noLoSe: NO_SE_HACERLO },
+    { nombre: NOMBRES.nombre[3], detalle: NOMBRES.detalle[3], introduccion: INTRODUCCION[3], generar: L.generarAnios, clave: L.claveItem, montar: montarAnios, enunciado: enunciadoAnios, explicacion: explicaAnios, noLoSe: NO_SE_HACERLO },
+    { nombre: NOMBRES.nombre[4], detalle: NOMBRES.detalle[4], introduccion: INTRODUCCION[4], generar: L.generarCuenta, clave: L.claveItem, montar: montarCuenta, enunciado: enunciadoCuenta, explicacion: explicaCuenta, noLoSe: NO_SE_HACERLO },
   ],
 });
