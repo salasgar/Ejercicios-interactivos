@@ -305,7 +305,8 @@ test('la clave de lo que se ve no depende de la plantilla ni, en + y ·, del ord
   assert.notEqual(L.claveVista('4/5 : 2/3'), L.claveVista('2/3 : 4/5'));
   assert.equal(L.claveVista('(2/5)^2'), 'P|2/5|2');
   assert.notEqual(L.claveVista('(2/5)^2'), L.claveVista('(2/5)^3'));
-  assert.equal(L.CLAVES_HOJA.size, 17);
+  assert.equal(L.CLAVES_HOJA.size, 28);
+  for (const k of ['P|5/6|2', 'P|3/4|3', 'P|4/3|2']) assert.ok(L.CLAVES_HOJA.has(k), k);
   assert.equal(L.HUELLAS_VISTA_EXAMEN.size, 35);
   assert.equal(L.HUELLAS_COMPARACION.size, 9);
   for (const h of L.HUELLAS_COMPARACION) assert.match(h, /^[0-9a-z]{4,7}$/);
@@ -335,6 +336,21 @@ test('ningún ítem, en los tres ejercicios, es un caso de las hojas o de los ex
         if (k === null) continue;
         assert.ok(!L.CLAVES_HOJA.has(k), `caso de la hoja: ${k}`);
         assert.ok(!L.HUELLAS_VISTA_EXAMEN.has(L.huella(k)), `caso de examen (huella ${L.huella(k)}) en la plantilla ${item.plantilla}`);
+      }
+    }
+  }
+});
+
+test('las potencias de las hojas 2 (ej. 13a-h) y 3 (ej. 1c-1f), también las escritas en palabras, no salen en ningún ejercicio', () => {
+  const potencias = ['1/3|2', '2/5|2', '3/2|3', '4/7|2', '1/2|4', '5/6|2', '3/4|3', '5/4|2', '3/7|2', '1/4|3', '7/3|2', '4/3|2'].map(k => `P|${k}`);
+  for (const k of potencias) assert.ok(L.CLAVES_HOJA.has(k), k);
+  const prohibidas = new Set(potencias);
+  for (const semilla of [163, 7, 11]) {
+    for (const fn of [L.generarBienMal, L.generarLinea, L.generarArregla]) {
+      for (const item of generar(fn, semilla)) {
+        if (L.COMPARACION_POR_ID[item.plantilla]) continue;
+        const k = L.claveVista(L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
+        assert.ok(!prohibidas.has(k), `potencia de la hoja: ${k}`);
       }
     }
   }

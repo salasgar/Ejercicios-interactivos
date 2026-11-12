@@ -87,8 +87,11 @@ export const claveVista = l0 => {
 export const CLAVES_HOJA = new Set([
   'F|1/3|27', 'F|2/3|27', 'F|5/6|42', 'F|3/8|64', 'F|7/10|90', 'F|3/5|30', 'F|1/3|12',
   'S|3/4|5/6', 'R|1/3|5/6', 'S|1/6|2/3', 'P|2/5|2', 'S|1/4|5/6', 'D|4/5|2/3',
-  // Reabierta del 12-11: hoja 1 ej. 5b («a quarter of 52», en palabras) y ej. 8e; hoja 2 ej. 1a y 11b (simplificar).
+  // Reabierta del 12-11: hoja 1 ej. 5b («a quarter of 52», en palabras) y ej. 8e; hoja 2 ej. 1a y 7b (simplificar).
   'F|1/4|52', 'N|60/84', 'N|24/30', 'N|8/12',
+  // Hoja 2, ej. 13a-h (13f-g, «five sixths squared» y «three quarters cubed», en palabras; 13b ya está arriba) y hoja 3, ej. 1c-1f
+  // (1f, «four thirds squared», en palabras): potencias de fracciones.
+  'P|1/3|2', 'P|3/2|3', 'P|4/7|2', 'P|1/2|4', 'P|5/6|2', 'P|3/4|3', 'P|5/4|2', 'P|3/7|2', 'P|1/4|3', 'P|7/3|2', 'P|4/3|2',
 ]);
 
 // Exámenes semanales 1 y 3, por huella FNV-1a de `claveVista` (los casos de examen no se escriben en
