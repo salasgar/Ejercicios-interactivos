@@ -94,8 +94,8 @@ const cuentaH = h => `<span class="cuenta">${h}</span>`;
 
 const REGLAS = {
   semejantes: {
-    es: 'Dos términos son semejantes si tienen la misma parte literal (la misma letra), o si los dos son números sin letra. El número no importa.',
-    en: 'Two terms are like terms if they have the same variable part (the same letter), or if both are numbers with no letter. The number does not matter.',
+    es: 'Dos términos son semejantes si tienen la misma parte literal (la misma letra), o si los dos son números sin letra; el número de delante no importa.',
+    en: 'Two terms are like terms if they have the same variable part (the same letter), or if both are numbers with no letter; the number in front does not matter.',
   },
   coeficiente: {
     es: 'El coeficiente es el número que acompaña a la letra, con su signo; si no se ve ninguno, es 1 (o −1 si lleva un menos).',
@@ -115,9 +115,33 @@ const REGLAS = {
   },
 };
 
+const comillas = (texto, idioma) => (idioma === 'es' ? `«${texto}»` : `“${texto}”`);
+
+/** Lo que lleva cada término: su letra, o ninguna. */
+const lleva = (letra, idioma) => (letra === null
+  ? { es: 'no tiene letra', en: 'has no letter' }[idioma]
+  : { es: `tiene la <i>${letra}</i>`, en: `has <i>${letra}</i>` }[idioma]);
+
+/** El porqué de este par, con sus términos (revisión 191: el feedback decía «en 3 sin letra»). */
+function porQueSemejantes(item, idioma) {
+  const [a, b] = [cuentaH(item.htmlA), cuentaH(item.htmlB)];
+  const y = idioma === 'es' ? 'y' : 'and';
+  if (item.correcta === 'si' && item.letraA === null) {
+    return { es: `${a} y ${b} son números sin letra: son semejantes.`, en: `${a} and ${b} are numbers with no letter: they are like terms.` }[idioma];
+  }
+  if (item.correcta === 'si') {
+    return {
+      es: `${a} y ${b} tienen la misma letra, <i>${item.letraA}</i>: son semejantes, aunque el número sea distinto.`,
+      en: `${a} and ${b} have the same letter, <i>${item.letraA}</i>: they are like terms, even with different numbers.`,
+    }[idioma];
+  }
+  const no = { es: 'no son semejantes', en: 'they are not like terms' }[idioma];
+  return `${a} ${lleva(item.letraA, idioma)} ${y} ${b} ${lleva(item.letraB, idioma)}: ${no}.`;
+}
+
 /** «No lo sé» del ejercicio 1: la regla, el porqué de este par y el sí o el no al final. */
-export function explicaSemejantes(item, { tt }) {
-  return `${tt(REGLAS.semejantes)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${cuentaH(tt(TX.semejantes[item.correcta]))}.`;
+export function explicaSemejantes(item, { idioma, tt }) {
+  return `${tt(REGLAS.semejantes)} ${porQueSemejantes(item, idioma)} ${tt(LA_RESPUESTA)} ${comillas(tt(TX.semejantes[item.correcta]), idioma)}.`;
 }
 
 /** «No lo sé» del ejercicio 2: coeficiente o parte literal, según lo que pida el ítem. */
@@ -127,13 +151,28 @@ export function explicaCoeficiente(item, { tt }) {
 }
 
 /** «No lo sé» del ejercicio 3: el paso a paso de reducir y el resultado al final. */
-export function explicaReduce(item, { tt }) {
+export function explicaReduce(item, { idioma, tt }) {
   const resultado = leerExpresion(item.correcta, { variasLetras: true }).valor;
-  return `${tt(REGLAS.reduce)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${cuentaH(resultado.aHtml())}.`;
+  return `${tt(REGLAS.reduce)} ${pasosReduce(tt(item.solucion), idioma)} ${tt(LA_RESPUESTA)} ${cuentaH(resultado.aHtml())}.`;
+}
+
+// El paso a paso del feedback, sin lo que sobra en la tarjeta (revisión 191): la regla ya va delante,
+// «A = A» cuando los semejantes ya estaban juntos, y el «Resultado: R» que repite la respuesta.
+const UNA_CUENTA = '<span class="cuenta">(?:(?!<span class="cuenta">).)*</span>';
+function pasosReduce(solucion, idioma) {
+  const m = solucion.match(new RegExp(`^(${UNA_CUENTA}) = (${UNA_CUENTA}): .*?\\((.*)\\)\\. (?:Resultado|Result): ${UNA_CUENTA}\\.$`));
+  if (!m) return solucion;
+  const [, origen, agrupados, pasos] = m;
+  const juntos = origen === agrupados
+    ? { es: 'Los semejantes ya están juntos', en: 'The like terms are already together' }[idioma]
+    : { es: `Se ordenan: ${origen} = ${agrupados}`, en: `Reorder them: ${origen} = ${agrupados}` }[idioma];
+  return `${juntos}; ${pasos}.`;
 }
 
 /** «No lo sé» del ejercicio 4: dónde está el error (o que no lo hay) y la reducción bien hecha. */
 export function explicaErrores(item, { idioma, tt }) {
   const opcion = tt(TX.errores[item.correcta]);
-  return `${tt(REGLAS.errores)} ${tt(item.solucion)} ${tt(LA_RESPUESTA)} ${idioma === 'es' ? `«${opcion}»` : `“${opcion}”`}.`;
+  // «… no es −5x: Has sumado…» → «… no es −5x. Has sumado…» (en castellano, tras «:» va minúscula).
+  const solucion = tt(item.solucion).replace(/(<\/span>): (Has|You) /, '$1. $2 ');
+  return `${tt(REGLAS.errores)} ${solucion} ${tt(LA_RESPUESTA)} ${comillas(opcion, idioma)}.`;
 }

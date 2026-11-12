@@ -25,10 +25,14 @@ test('terminos-semejantes, «¿semejantes?»: la explicación lleva el porqué y
   recorrer(generarSemejantes, 175011, (item, idioma, ctx) => {
     const html = explicaSemejantes(item, ctx);
     const que = `${idioma}: ${plano(html)}`;
-    assert.ok(html.includes(item.solucion[idioma]), que);
+    // Los dos términos y lo que lleva cada uno (revisión 191: ya no se copia el feedback, que decía «en 3 sin letra»).
+    assert.ok(html.includes(item.htmlA) && html.includes(item.htmlB), `los dos términos — ${que}`);
     const mismaLetra = item.letraA === item.letraB;
     assert.equal(item.correcta, mismaLetra ? 'si' : 'no', 'lo que se da por bueno');
-    assert.ok(html.endsWith(`<span class="cuenta">${TX.semejantes[mismaLetra ? 'si' : 'no'][idioma]}</span>.`), `el sí o el no al final — ${que}`);
+    if (!mismaLetra) for (const l of [item.letraA, item.letraB]) assert.ok(plano(html).includes(l === null ? (idioma === 'es' ? 'no tiene letra' : 'has no letter') : ` ${l} `), `la letra de cada uno — ${que}`);
+    assert.doesNotMatch(plano(html), / (en|in) -?\d+ (sin|no) /, `frase sin verbo — ${que}`);
+    const sino = TX.semejantes[mismaLetra ? 'si' : 'no'][idioma];
+    assert.ok(html.endsWith(idioma === 'es' ? `«${sino}».` : `“${sino}”.`), `el sí o el no al final — ${que}`);
   });
 });
 
@@ -48,10 +52,13 @@ test('terminos-semejantes, «reduce»: la explicación termina en el resultado r
     const html = explicaReduce(item, ctx);
     const que = `${idioma}: ${plano(html)}`;
     assert.ok(corregirReducir(item, item.correcta).acierto, 'lo que se da por bueno');
-    assert.ok(html.includes(item.solucion[idioma]), que);
+    // Los pasos del feedback (la suma de coeficientes de cada letra), sin «A = A» ni «Resultado: R» repetido (revisión 191).
+    const pasos = item.solucion[idioma].match(/\((.*)\)\. (Resultado|Result):/)[1];
+    assert.ok(html.includes(pasos), `los pasos — ${que}`);
     const resultado = leerExpresion(item.correcta, { variasLetras: true }).valor.aHtml();
     assert.ok(html.endsWith(`<span class="cuenta">${resultado}</span>.`), `el resultado al final — ${que}`);
-    assert.ok(html.includes(`${idioma === 'es' ? 'Resultado' : 'Result'}: <span class="cuenta">${resultado}</span>`), `el resultado de la cuenta — ${que}`);
+    assert.equal(html.split(`<span class="cuenta">${resultado}</span>`).length, 2, `el resultado, una sola vez — ${que}`);
+    assert.doesNotMatch(html, /(<span class="cuenta">[^<]*(?:<[^s/][^>]*>[^<]*<\/[^>]+>[^<]*)*<\/span>) = \1/, `«A = A» — ${que}`);
   });
 });
 
@@ -60,7 +67,7 @@ test('terminos-semejantes, «caza el error»: la explicación dice dónde está 
     const html = explicaErrores(item, ctx);
     const que = `${idioma}: ${plano(html)}`;
     assert.equal(item.correcta, item.error ?? 'ninguno', 'lo que se da por bueno');
-    assert.ok(html.includes(item.solucion[idioma]), que);
+    assert.ok(html.includes(item.solucion[idioma].replace(/(<\/span>): (Has|You) /, '$1. $2 ')), que);
     const opcion = TX.errores[item.correcta][idioma];
     assert.ok(html.endsWith(idioma === 'es' ? `«${opcion}».` : `“${opcion}”.`), `la opción buena al final — ${que}`);
   });
