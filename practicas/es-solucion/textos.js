@@ -227,15 +227,17 @@ const sinEspacioFinal = t => t.trim();
 const REGLAS = {
   comprueba: {
     es: 'Sustituye la x por el número en cada miembro y calcula. Si los dos miembros valen lo mismo, es solución; si no, no.',
-    en: 'Substitute the x by the number in each side and work it out. If both sides are equal, it is a solution; if not, it is not.',
+    en: 'Replace x with the number on each side and work it out. If both sides are equal, it is a solution; if not, it is not.',
   },
+  // Revisión 191: la regla decía «en la ecuación buena», que es lo que el alumno no sabe.
   queEcuacion: {
-    es: 'Sustituye la x por ese valor en la ecuación buena y comprueba que los dos miembros valen lo mismo; en las otras no pasa.',
-    en: 'Substitute the x by that value in the right equation and check that both sides are equal; in the others they are not.',
+    es: 'Sustituye la x por ese valor en cada ecuación: la buena es la que tiene los dos miembros iguales.',
+    en: 'Replace x with that value in each equation: the right one is the one where both sides are equal.',
   },
+  // Revisión 191: con dos valores basta, y si alguno no cumple ya es una ecuación (no hace falta que cumpla el otro).
   identidad: {
-    es: 'Prueba con dos valores de x. Si los dos miembros coinciden siempre, es una identidad; si solo coinciden con uno, es una ecuación.',
-    en: 'Try two values of x. If both sides always match, it is an identity; if they match for only one, it is an equation.',
+    es: 'Prueba con dos valores de x. Si con los dos coinciden los miembros, es una identidad; si con alguno no coinciden, es una ecuación.',
+    en: 'Try two values of x. If both sides match for both values, it is an identity; if they do not match for one of them, it is an equation.',
   },
   inventa: {
     es: 'Elige una operación con la x, calcula cuánto da con la solución, y eso es el segundo miembro.',

@@ -50,6 +50,8 @@ test('es-solucion, «¿qué ecuación?»: la explicación comprueba la ecuación
     const que = `${idioma}: ${plano(html)}`;
     assert.ok(html.endsWith(`${htmlDe(buenas[0].e)}.`), que);
     assert.ok(plano(html).includes(' = '), que);
+    // La regla manda probar en cada ecuación: cuál es la buena es lo que el alumno no sabe (revisión 191).
+    assert.match(plano(html), /en cada ecuación|in each equation/, que);
     assert.doesNotMatch(html, /undefined|NaN|×/, que);
   });
 });
