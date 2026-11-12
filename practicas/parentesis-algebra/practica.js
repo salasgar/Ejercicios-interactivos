@@ -10,6 +10,8 @@ import {
   explicaError, OPCIONES_ERROR,
 } from './logica.js';
 
+import { explicaQuita, explicaDesarrollo, explicaResuelve, explicaErrores } from './ayuda.js';
+
 const cuenta = h => `<span class="cuenta">${h}</span>`;
 
 const enunciadoQuita = (item, { tt }) => `
@@ -124,19 +126,21 @@ const montarResuelve = (contenedor, item, api) => montarCampo(contenedor, item, 
   enunciado: enunciadoResuelve, corregir: corregirResuelve, etiqueta: TX.campos.solucion, placeholder: TX.campos.placeholderSolucion, solucion: it => it.explicacion,
 });
 
-const ejercicio = (i, { generar, montar, enunciado }) => ({
+const NO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const ejercicio = (i, { generar, montar, enunciado, explicacion, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave: claveItem, montar, enunciado,
+  generar, clave: claveItem, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe: NO_SE } : {}),
 });
 
 arrancar({
   slug: 'parentesis-algebra',
   ejercicios: [
-    ejercicio(0, { generar: generarQuita, montar: montarQuita, enunciado: enunciadoQuita }),
-    ejercicio(1, { generar: generarDesarrollo, montar: montarDesarrollo, enunciado: enunciadoDesarrollo }),
-    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve }),
-    ejercicio(3, { generar: generarErrores, montar: montarErrores, enunciado: enunciadoErrores }),
+    ejercicio(0, { generar: generarQuita, montar: montarQuita, enunciado: enunciadoQuita, explicacion: explicaQuita, noLoSe: true }),
+    ejercicio(1, { generar: generarDesarrollo, montar: montarDesarrollo, enunciado: enunciadoDesarrollo, explicacion: explicaDesarrollo }),
+    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve, explicacion: explicaResuelve, noLoSe: true }),
+    ejercicio(3, { generar: generarErrores, montar: montarErrores, enunciado: enunciadoErrores, explicacion: explicaErrores }),
   ],
 });
