@@ -16,7 +16,7 @@ import { etiquetaNivel } from '../_comun/nivel.js';
 import { TX } from './textos.js';
 import {
   HACHES, BV, GJ, OTRAS, generadorDe, partesLetras,
-  explicacionHaches, idErrorHaches, explicacionLetras, idErrorLetras,
+  explicacionHaches, idErrorHaches, explicacionLetras, idErrorLetras, ayudaHaches, ayudaLetras,
 } from './logica.js';
 
 function montarHaches(contenedor, item, api) {
@@ -44,12 +44,13 @@ const montarLetras = banco => (contenedor, item, api) => {
   });
 };
 
-const ejercicio = (tx, banco, montar) => ({
+const ejercicio = (tx, banco, montar, ayuda) => ({
   nombre: tx.nombre,
   detalle: tx.detalle,
   introduccion: tx.introduccion,
   generar: generadorDe(banco),
   clave: item => String(item.i),
+  explicacion: item => ayuda(banco[item.i]),
   montar,
 });
 
@@ -57,9 +58,9 @@ arrancar({
   slug: 'ortografia-letras',
   idioma: 'es',
   ejercicios: [
-    ejercicio(TX.haches, HACHES, montarHaches),
-    ejercicio(TX.bv, BV, montarLetras(BV)),
-    ejercicio(TX.gj, GJ, montarLetras(GJ)),
-    ejercicio(TX.otras, OTRAS, montarLetras(OTRAS)),
+    ejercicio(TX.haches, HACHES, montarHaches, ayudaHaches),
+    ejercicio(TX.bv, BV, montarLetras(BV), ayudaLetras),
+    ejercicio(TX.gj, GJ, montarLetras(GJ), ayudaLetras),
+    ejercicio(TX.otras, OTRAS, montarLetras(OTRAS), ayudaLetras),
   ],
 });

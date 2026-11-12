@@ -232,6 +232,9 @@ export function explicacionHaches(item) {
   return EXPLICA_H[item.buena](rellena);
 }
 
+/** La ayuda de «No lo sé» del ejercicio 1: la explicación del ítem y la respuesta, explícita al final. */
+export const ayudaHaches = item => `${explicacionHaches(item)} La respuesta es <b>${item.buena}</b>.`;
+
 /** `idError` del ejercicio 1: lo que puso el alumno en vez de lo bueno («ahi-por-hay»). */
 export const idErrorHaches = (item, puesta) => `${slug(puesta)}-por-${slug(item.buena)}`;
 
@@ -425,6 +428,9 @@ export function explicacionLetras(item) {
   }
   return base;
 }
+
+/** La ayuda de «No lo sé» de los ejercicios 2-4: la explicación del ítem y la respuesta, explícita al final. */
+export const ayudaLetras = item => `${explicacionLetras(item)} La respuesta es <b>${item.buena}</b>: <b>${item.palabra}</b>.`;
 
 /**
  * `idError` de los ejercicios 2-4: qué puso el alumno en vez de qué («v-por-b»). La diéresis tiene los
