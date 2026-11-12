@@ -147,16 +147,15 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 del 6-11 de la tarea 162, cerradas ese mismo día: el ej. 4 `dos` y el ej. 2 de `fraccion-de` ya
 no sacan pasos de problemas de examen y el ahorro tiene gastos creíbles; `suma-resta` excluye sin
 orden en sus cinco ejercicios los casos de las hojas 2 y 3, de los semanales y del final; los
-casos de examen se excluyen por su huella, nunca en claro). Sin publicar, con su reabierta en
-`reparto-practicas-u2/hechos/reabiertas/`: las tres de la semana 3, `multiplica-divide`,
-`combinadas-fracciones` y `errores4` (tarea 170, 12-11, cuarta vez: lo que pidieron las
-reabiertas del 6-11 está hecho, y la regla de oro y la prueba con clics, en verde; pero
-`multiplica-divide` pide productos y un cociente que son la cuenta entera de casos de examen que
-nadie había mirado; `combinadas-fracciones` distingue un menos de restar de uno de signo, y saca
-casos de la hoja 3 y del final con el menos en otro sitio; y `errores4` excluye un paso de una caja
-del final en una sola plantilla y le faltan un caso de la hoja 1 en palabras, las simplificaciones
-de las hojas y una comparación de examen). La 170 se vuelve a reclamar cuando cierren, para
-revisar solo eso y publicarlas. El estado vivo es el campo `disponible` de `catalogo.js`.
+casos de examen se excluyen por su huella, nunca en claro), y `combinadas-fracciones`, de la
+semana 3 (tarea 170, segunda pasada del 12-11, tras la reabierta del 12-11: la clave de los casos
+reservados ya no depende de dónde va el menos). Sin publicar, con su reabierta en
+`reparto-practicas-u2/hechos/reabiertas/`: `multiplica-divide` y `errores4`, de la semana 3. Lo
+que pidieron las reabiertas del 12-11 está hecho en las dos, pero cada una pide dos casos de la
+hoja 2 que la hoja escribe en palabras y nadie había leído: `multiplica-divide`, los productos del
+ej. 12a-b («of»); `errores4`, las potencias del ej. 13f-g («squared», «cubed»). La 170 se vuelve a
+reclamar cuando cierren, para revisar solo eso y publicarlas. El estado vivo es el campo
+`disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
 

@@ -104,7 +104,7 @@ export const CATALOGO = [
   { id: 51, slug: 'fraccion-de', ruta: 'fraccion-de/', unidad: 4, nombre: { es: 'La fracción de una cantidad', en: 'A fraction of a quantity' }, nEjercicios: 4, disponible: true },
   { id: 52, slug: 'suma-resta', ruta: 'suma-resta/', unidad: 4, nombre: { es: 'Suma y resta', en: 'Adding and subtracting' }, nEjercicios: 5, disponible: true },
   { id: 53, slug: 'multiplica-divide', ruta: 'multiplica-divide/', unidad: 4, nombre: { es: 'Multiplica y divide', en: 'Multiply and divide' }, nEjercicios: 5, disponible: false },
-  { id: 54, slug: 'combinadas-fracciones', ruta: 'combinadas-fracciones/', unidad: 4, nombre: { es: '¿Qué se hace primero? Con fracciones', en: 'What comes first? With fractions' }, nEjercicios: 3, disponible: false },
+  { id: 54, slug: 'combinadas-fracciones', ruta: 'combinadas-fracciones/', unidad: 4, nombre: { es: '¿Qué se hace primero? Con fracciones', en: 'What comes first? With fractions' }, nEjercicios: 3, disponible: true },
   { id: 55, slug: 'errores4', ruta: 'errores4/', unidad: 4, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
   { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Unidad 5, Decimals (PU2, tareas 123-129; filas puestas por la 122 el 2026-11-05, con un esqueleto en
