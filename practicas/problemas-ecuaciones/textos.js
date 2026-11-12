@@ -1,6 +1,8 @@
 // Práctica «Problemas con ecuaciones» (unidad 6): textos propios, siempre { es, en }.
 
-const c = h => `<span class="cuenta">${h}</span>`;
+import { solucionIncognita, solucionEcuacion, feedbackResuelve, solucionPide, solucionSentido } from './logica.js';
+
+const c = h =>`<span class="cuenta">${h}</span>`;
 const x = '<i>x</i>';
 
 export const TX = {
@@ -90,3 +92,49 @@ export const TX = {
     enunciado: { es: 'No: el enunciado está mal', en: 'No: the statement is wrong' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (la regla y lo que ya dice el ítem) ───
+
+const regla = (ctx, o) => `<p>${ctx.tt(o)}</p>`;
+const consejo = (ctx, o) => `<p>${ctx.tt({ es: `Consejo: ${o.es}`, en: `Tip: ${o.en}` })}</p>`;
+
+/** Ejercicio 1. */
+export function explicaIncognita(item, ctx) {
+  return regla(ctx, {
+    es: 'La x es lo que no sabes y te piden calcular. Lo que el enunciado ya dice con un número no puede ser la x.',
+    en: 'x is what you do not know and are asked to find. A number the statement already gives cannot be x.',
+  }) + `<p>${solucionIncognita(item)[ctx.idioma]}</p>`;
+}
+
+/** Ejercicio 2. */
+export function explicaEcuacion(item, ctx) {
+  return regla(ctx, {
+    es: 'Escribe cada frase con la x, palabra por palabra: «el doble» es 2x, «más» es +, «menos» es −, «en total» es el igual.',
+    en: 'Write each sentence using x, word by word: “twice” is 2x, “more” is +, “less” is −, “altogether” is the equals sign.',
+  }) + `<p>${solucionEcuacion(item)[ctx.idioma]}</p>`;
+}
+
+/** Ejercicio 3 (las cuatro fases). */
+export function explicaResuelve(item, ctx) {
+  return regla(ctx, {
+    es: 'Se hace en cuatro fases: qué es la x, la ecuación, resolverla y contestar a lo que pregunta el problema.',
+    en: 'Do it in four phases: what x is, the equation, solving it and answering what the problem asks.',
+  }) + feedbackResuelve(item, ctx.idioma)
+    + consejo(ctx, { es: 'vuelve a leer la pregunta: a veces no piden la x.', en: 'read the question again: sometimes they do not ask for x.' });
+}
+
+/** Ejercicio 4. */
+export function explicaPide(item, ctx) {
+  return regla(ctx, {
+    es: 'Resolver la ecuación da el valor de la x, pero el problema puede preguntar otra cosa: lee la pregunta y calcula esa cantidad.',
+    en: 'Solving the equation gives the value of x, but the problem may ask for something else: read the question and work out that quantity.',
+  }) + `<p>${solucionPide(item, ctx.idioma)}</p>`;
+}
+
+/** Ejercicio 5. */
+export function explicaSentido(item, ctx) {
+  return regla(ctx, {
+    es: 'Mira si el valor de la x es posible en el problema (nada de personas con decimales ni edades negativas). Si no lo es, hay un error: en la ecuación o al resolverla.',
+    en: 'Check whether the value of x is possible in the problem (no people with decimals, no negative ages). If it is not, there is a mistake: in the equation or when solving it.',
+  }) + `<p>${solucionSentido(item, ctx.idioma)}</p>`;
+}

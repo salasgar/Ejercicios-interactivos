@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaIncognita, explicaEcuacion, explicaResuelve, explicaPide, explicaSentido } from './textos.js';
 import {
   generarIncognita, generarEcuacion, generarResuelve, generarPide, generarSentido, corregirResuelve,
   solucionIncognita, porQueDato, solucionEcuacion, porQueEcuacion, feedbackResuelve, solucionPide, solucionPideCorta, porQuePide,
@@ -153,20 +153,22 @@ function montarResuelve(contenedor, item, api) {
   actualizar();
 }
 
-const ejercicio = (i, { generar, montar, enunciado }) => ({
+const ejercicio = (i, { generar, montar, enunciado, explicacion, noLoSe }) => ({
   nombre: TX.ejercicios[i].nombre,
   detalle: TX.ejercicios[i].detalle,
   introduccion: TX.ejercicios[i].introduccion,
-  generar, clave: claveItem, montar, enunciado,
+  generar, clave: claveItem, montar, enunciado, explicacion, ...(noLoSe ? { noLoSe } : {}),
 });
+
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 arrancar({
   slug: 'problemas-ecuaciones',
   ejercicios: [
-    ejercicio(0, { generar: generarIncognita, montar: montarIncognita, enunciado: enunciadoIncognita }),
-    ejercicio(1, { generar: generarEcuacion, montar: montarEcuacion, enunciado: enunciadoEcuacion }),
-    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve }),
-    ejercicio(3, { generar: generarPide, montar: montarPide, enunciado: enunciadoPide }),
-    ejercicio(4, { generar: generarSentido, montar: montarSentido, enunciado: enunciadoSentido }),
+    ejercicio(0, { generar: generarIncognita, montar: montarIncognita, enunciado: enunciadoIncognita, explicacion: explicaIncognita }),
+    ejercicio(1, { generar: generarEcuacion, montar: montarEcuacion, enunciado: enunciadoEcuacion, explicacion: explicaEcuacion }),
+    ejercicio(2, { generar: generarResuelve, montar: montarResuelve, enunciado: enunciadoResuelve, explicacion: explicaResuelve, noLoSe: NO_SE_HACERLO }),
+    ejercicio(3, { generar: generarPide, montar: montarPide, enunciado: enunciadoPide, explicacion: explicaPide }),
+    ejercicio(4, { generar: generarSentido, montar: montarSentido, enunciado: enunciadoSentido, explicacion: explicaSentido }),
   ],
 });
