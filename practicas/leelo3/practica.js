@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaElegir } from './textos.js';
 import {
   generarEnteros, generarOperaciones, generarPotencias, generarPalabras, claveDe,
 } from './logica.js';
@@ -41,6 +41,7 @@ const ejercicio = (i, generar) => ({
   clave: claveDe,
   montar,
   enunciado,
+  explicacion: explicaElegir,
 });
 
 arrancar({

@@ -71,3 +71,23 @@ export const TX = {
   escuchar: { es: '▶ Oír la frase', en: '▶ Hear the sentence' },
   era: { es: 'Era:', en: 'It was:' },
 };
+
+// ─── «No lo sé»: la explicación de los cuatro ejercicios (todos son de elegir) ──────
+
+const CONSEJO = {
+  leer: { es: 'Léelo de izquierda a derecha, signo por signo: el menos del número es «negative» o «minus».', en: 'Read it from left to right, sign by sign: the minus of a number is “negative” or “minus”.' },
+  escribir: { es: 'Pasa cada palabra a su símbolo, en el orden en que se dicen; ojo con «subtract … from …», que da la vuelta.', en: 'Turn each word into its symbol, in the order they are said; careful with “subtract … from …”, which turns it round.' },
+  completar: { es: 'Lee la frase entera y elige la palabra que encaja por su significado.', en: 'Read the whole sentence and choose the word that fits by its meaning.' },
+  orden: { es: 'Ascending es de menor a mayor y descending, de mayor a menor; entre dos negativos, es menor el que está más a la izquierda en la recta.', en: 'Ascending goes from the least to the greatest and descending the other way; between two negative numbers, the one further left on the number line is the least.' },
+  significa: { es: 'Squared es «al cuadrado» y cubed, «al cubo»; «to the power of» es la potencia en general.', en: 'Squared is “to the power of 2” and cubed is “to the power of 3”; “to the power of” is a power in general.' },
+  simbolos: { es: 'Pasa la frase a símbolos en el orden en que se dice: «negative» va pegado al número y «the opposite of» afecta a todo lo que viene detrás.', en: 'Turn the sentence into symbols in the order it is said: “negative” goes with the number and “the opposite of” affects everything that comes after it.' },
+  problema: { es: 'Busca qué se pide (change, balance, difference…) y haz la cuenta con los números del texto.', en: 'Find what is asked (change, balance, difference…) and do the calculation with the numbers in the text.' },
+};
+
+/** Ejercicios 1-4: el consejo del tipo, la explicación que ya tiene el ítem y la opción buena. */
+export function explicaElegir(item, { tt, esc }) {
+  const buena = item.opciones.find(o => o.correcta);
+  const respuesta = tt({ es: 'La respuesta es', en: 'The answer is' });
+  const [abre, cierra] = tt({ es: ['«', '»'], en: ['“', '”'] });
+  return `${tt(CONSEJO[item.instruccion])} ${tt(item.solucion)} ${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
+}
