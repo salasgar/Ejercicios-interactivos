@@ -147,3 +147,4 @@ natural), `$R/hechos/fallos/178--<sid>.md` con `parada por: mal cortada`, `ABAND
   edita con las herramientas de edición; `hechos/` sí se escribe desde el shell (un escritor).
 - Reescribir un fichero de `hechos/` (solo `>>`), editar un reclamo ajeno, o regenerar el tablón de memoria.
 - Dependencias nuevas (npm, CDN). Nombres de alumnos reales en ningún fichero.
+- (178) `situaciones`: si una frase de −r es subcadena de la de r, comprobar con `endsWith`, no con `includes`. En `termometro`, el test ve `&lt;` y no `<`: pasar el HTML por `plano` antes de comparar.
