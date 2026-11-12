@@ -10,9 +10,12 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { unir } from '../_comun/textos.js';
 import { esPrimo, factorizar, htmlFact } from '../_comun/aritmetica.js';
-import { TX } from './textos.js';
 import {
-  generar, parejasPropias, rutasDe, nodoEn, tieneVariosArboles, porQueCompuesto, primosAProbar, explicar,
+  TX, porQueNoPrimo, igualdadFinal, razonTerminada as razonTerminadaDe, razonNoTerminada as razonNoTerminadaDe,
+  explicaConstruir, explicaTerminada, explicaCompletar,
+} from './textos.js';
+import {
+  generar, parejasPropias, rutasDe, nodoEn, tieneVariosArboles,
   esCorrectaCompletar, ramasMal, solucionCompletar,
 } from './logica.js';
 
@@ -61,15 +64,6 @@ function pintarArbol(caja, arbol, pinta) {
 /** Un árbol terminado, sin nada que tocar: los primos, rodeados. */
 const nodoFijo = nodo => `<span class="nodo ${nodo.hijos.length ? 'nodo--partido' : 'nodo--primo'}">${nodo.valor}</span>`;
 
-/** «101 es primo: no es divisible entre 2, 3, 5 ni 7, y 11 · 11 = 121 ya se pasa de 101». */
-function porQuePrimo(p, { tt }) {
-  const { probados, siguiente } = primosAProbar(p);
-  if (probados.length < 2) return tt(TX.es_primo_pequeno)(p);
-  return tt(TX.es_primo_probando)(p, `${probados.slice(0, -1).join(', ')} ${tt(TX.ni)} ${probados.at(-1)}`, siguiente);
-}
-
-const porQueNoPrimo = (c, { tt }) => tt(TX.no_es_primo)(c, ...porQueCompuesto(c));
-const igualdadFinal = n => `<span class="cuenta">${n} = ${htmlFact(factorizar(n))}</span>`;
 
 // ─── Ejercicio 1: construye el árbol ───────────────────────────────────────────
 // De cada número de las puntas el alumno dice si es primo (se rodea) o si se
@@ -195,18 +189,8 @@ function montarTerminada(contenedor, item, api) {
     <p class="instruccion paso-dos" hidden>${tt(x.toca)}</p>`;
   const igualdad = contenedor.querySelector('.igualdad');
   const botonesFactor = [...igualdad.querySelectorAll('.factor')];
-  const datos = explicar(item);
-  const seria = ({ tt }) => `${tt(x.seria)(item.n, htmlFact(datos.factorizacion))}.`;
-
-  /** Por qué está terminada: todos son primos, y del más grande se dice por qué lo es. */
-  const razonTerminada = textos => {
-    const { tt, idioma } = textos;
-    const bases = item.igualdad.map(([base]) => base);
-    const frase = bases.length > 1 ? tt(x.todos_primos)(unir(bases, idioma)) : tt(x.un_primo)(bases[0]);
-    const mayor = Math.max(...bases);
-    return `${frase}.${mayor > 13 ? ` ${porQuePrimo(mayor, textos)}.` : ''}`;
-  };
-  const razonNoTerminada = textos => `${porQueNoPrimo(item.compuesto, textos)}. ${seria(textos)}`;
+  const razonTerminada = textos => razonTerminadaDe(item, textos);
+  const razonNoTerminada = textos => razonNoTerminadaDe(item, textos);
 
   const botones = elecciones(contenedor, {
     clase: 'si-no',
@@ -409,6 +393,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarConstruir,
       enunciado: enunciadoConstruir,
+      explicacion: explicaConstruir,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.terminada.nombre,
@@ -416,6 +402,7 @@ arrancar({
       generar: rng => generar('terminada', rng),
       montar: montarTerminada,
       enunciado: enunciadoTerminada,
+      explicacion: explicaTerminada,
     },
     {
       nombre: TX.completar.nombre,
@@ -424,6 +411,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarCompletar,
       enunciado: enunciadoCompletar,
+      explicacion: explicaCompletar,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
   ],
 });
