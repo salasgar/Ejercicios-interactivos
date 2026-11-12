@@ -10,6 +10,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { aTexto, deTexto } from '../_comun/decimales.js';
 import {
   TX, enunciadoComa, cuentaEntre, cuentaDecimal, divisionHecha, enunciadoProblema,
+  explicaComa, explicaEntre, explicaDecimal, explicaEstaBien, explicaProblema, explicaCombinada,
 } from './textos.js';
 import { textoExpresion } from './logica.js';
 import {
@@ -126,18 +127,21 @@ function montarEstaBien(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, ...(noLoSe ? { noLoSe } : {}),
 });
 
 arrancar({
   slug: 'multiplica-divide-decimales',
   ejercicios: [
-    ejercicio(TX.ej1, generarComa, montarDe(enunciado1, TX.ej1, errorDeComa), enunciado1),
-    ejercicio(TX.ej2, generarEntre, montarDe(enunciado2, TX.ej2, errorDeEntre, TX.campos.cociente), enunciado2),
-    ejercicio(TX.ej3, generarDecimal, montarDe(enunciado3, TX.ej3, errorDeDecimal, TX.campos.cociente), enunciado3),
-    ejercicio(TX.ej4, generarEstaBien, montarEstaBien, enunciado4),
-    ejercicio(TX.ej5, generarProblema, montarDe(enunciado5, TX.ej5, errorDeProblema, TX.campos.resultado), enunciado5),
-    ejercicio(TX.ej6, generarCombinada, montarDe(enunciado6, TX.ej6, errorDeCombinada), enunciado6),
+    ejercicio(TX.ej1, generarComa, montarDe(enunciado1, TX.ej1, errorDeComa), enunciado1, explicaComa, NO_SE_HACERLO),
+    ejercicio(TX.ej2, generarEntre, montarDe(enunciado2, TX.ej2, errorDeEntre, TX.campos.cociente), enunciado2, explicaEntre, NO_SE_HACERLO),
+    ejercicio(TX.ej3, generarDecimal, montarDe(enunciado3, TX.ej3, errorDeDecimal, TX.campos.cociente), enunciado3, explicaDecimal, NO_SE_HACERLO),
+    ejercicio(TX.ej4, generarEstaBien, montarEstaBien, enunciado4, explicaEstaBien),
+    ejercicio(TX.ej5, generarProblema, montarDe(enunciado5, TX.ej5, errorDeProblema, TX.campos.resultado), enunciado5, explicaProblema, NO_SE_HACERLO),
+    ejercicio(TX.ej6, generarCombinada, montarDe(enunciado6, TX.ej6, errorDeCombinada), enunciado6, explicaCombinada, NO_SE_HACERLO),
   ],
 });
