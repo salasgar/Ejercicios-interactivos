@@ -113,6 +113,7 @@ export const TX = {
     },
     resolucion: { es: 'La resolución:', en: 'The working:' },
     comprobacion: { es: 'Comprobación', en: 'Check' },
+    y: { es: 'y', en: 'and' },
     mal: {
       'transponer-sin-signo': {
         es: () => 'Al pasar un término al otro miembro hay que cambiarle el signo.',

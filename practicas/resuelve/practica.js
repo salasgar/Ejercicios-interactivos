@@ -7,44 +7,18 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { terminosAHtml, terminosATexto, termino, MENOS } from '../_comun/algebra.js';
+import { terminosAHtml, termino } from '../_comun/algebra.js';
 import { aTexto as textoFraccion, fraccion } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
+import {
+  cuenta, htmlEc, htmlDatos, htmlSol, entreParentesis, comprobacion, resolucionHtml, sumaDeNumeros,
+  explicaPrimerPaso, explicaPasoAPaso, explicaResuelve, explicaResolucion,
+} from './ayuda.js';
 import {
   generarPrimerPaso, generarPasoAPaso, generarResuelve, generarResolucion,
   ecDe, ecuacionAC, ecuacionSolucion, solDe, nombreDe,
   lineasPrevias, huecoMalo, errorHueco, leerSolucion, errorSolucion, movimientos, lineasDeResolucion, solucionDe,
 } from './logica.js';
-
-const cuenta = html => `<span class="cuenta">${html}</span>`;
-const htmlEc = ec => ec.aHtml();
-const htmlDatos = datos => htmlEc(ecDe(datos));
-const htmlSol = s => htmlEc(ecuacionSolucion(s));
-
-/** El número entre paréntesis si hace falta (negativo o fracción). */
-const entreParentesis = s => (s.num < 0 || s.den !== 1 ? `(${textoFraccion(s)})` : textoFraccion(s));
-
-/** «4 · 2 + 6»: un miembro con la x sustituida por s. */
-function sustituido(terminosLista, s) {
-  return terminosLista.map((t, i) => {
-    const c = t.coef.simplificar();
-    const abs = Math.abs(c.num);
-    const cuerpo = t.letra === null ? textoFraccion(fraccion(abs, c.den))
-      : (abs === 1 && c.den === 1 ? entreParentesis(s) : `${textoFraccion(fraccion(abs, c.den))} · ${entreParentesis(s)}`);
-    const signo = c.num < 0 ? (i === 0 ? MENOS : ` ${MENOS} `) : (i === 0 ? '' : ' + ');
-    return `${signo}${cuerpo}`;
-  }).join('');
-}
-
-/** «Comprobación (x = 2): 4 · 2 + 6 = 14 y 12 + 2 = 14 ✓». */
-function comprobacion(ec, s, tt) {
-  const vi = ec.izq.evaluar(s), vd = ec.der.evaluar(s);
-  return `${tt(TX.ej3.comprobacion)} (x = ${textoFraccion(s)}): ${cuenta(`${sustituido(ec.terminosIzq, s)} = ${textoFraccion(vi.simplificar())}`)}`
-    + ` y ${cuenta(`${sustituido(ec.terminosDer, s)} = ${textoFraccion(vd.simplificar())}`)} ✓`;
-}
-
-/** La resolución completa de una ecuación: cada línea en su cuenta. */
-const resolucionHtml = ec => [ec, ...ec.pasos().map(p => p.ecuacion)].map(e => cuenta(htmlEc(e))).join(' → ');
 
 // ─── Un campo de texto para un número, una fracción o «x = …» ───────────────────────────────────
 
@@ -124,9 +98,6 @@ const enunciado2 = (item, { tt }) => {
       ${trans ? `<div class="flecha" aria-hidden="true">↓</div><div class="operacion">${htmlEc(trans)}</div>` : ''}
     </div>`;
 };
-
-/** La suma de los números de una lista de términos, tal como se escribe: «3 − 5». */
-const sumaDeNumeros = ts => terminosATexto(ts.map(t => termino(t.coef, null)));
 
 function feedback2(item, mios, { tt }) {
   const ec = ecDe(item);
@@ -307,16 +278,18 @@ function montar4(contenedor, item, api) {
 
 // ─── La práctica ──────────────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
-  nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, montar, enunciado,
+const NO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
+  nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, montar, enunciado, explicacion,
+  ...(noLoSe ? { noLoSe: NO_SE } : {}),
 });
 
 arrancar({
   slug: 'resuelve',
   ejercicios: [
-    ejercicio(TX.ej1, generarPrimerPaso, montar1, enunciado1),
-    ejercicio(TX.ej2, generarPasoAPaso, montar2, enunciado2),
-    ejercicio(TX.ej3, generarResuelve, montar3, enunciado3),
-    ejercicio(TX.ej4, generarResolucion, montar4, enunciado4),
+    ejercicio(TX.ej1, generarPrimerPaso, montar1, enunciado1, explicaPrimerPaso, false),
+    ejercicio(TX.ej2, generarPasoAPaso, montar2, enunciado2, explicaPasoAPaso, true),
+    ejercicio(TX.ej3, generarResuelve, montar3, enunciado3, explicaResuelve, true),
+    ejercicio(TX.ej4, generarResolucion, montar4, enunciado4, explicaResolucion, false),
   ],
 });
