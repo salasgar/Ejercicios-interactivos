@@ -13,7 +13,9 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { htmlFact } from '../_comun/aritmetica.js';
-import { TX } from './textos.js';
+import { TX, explicaContar, explicaDivisible } from './textos.js';
+
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
 import { generarContar, olvidoSumarUno, divisores, generarDivisible } from './logica.js';
 
 // ─── Ejercicio 1: ¿cuántos divisores tiene? ────────────────────────────────
@@ -117,6 +119,8 @@ arrancar({
       generar: generarContar,
       montar: montarContar,
       enunciado: enunciadoContar,
+      explicacion: explicaContar,
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.nombre.divisible,
@@ -124,6 +128,8 @@ arrancar({
       generar: generarDivisible,
       montar: montarDivisible,
       enunciado: enunciadoDivisible,
+      explicacion: explicaDivisible,
+      noLoSe: NO_LO_SE,
     },
   ],
 });
