@@ -15,9 +15,9 @@ import { montarHueco, montarElegir, TXO } from '../_comun/ortografia.js';
 import { etiquetaNivel } from '../_comun/nivel.js';
 import { TX } from './textos.js';
 import {
-  partes, FORMAS, PORQUES, generarPorques, explicacionPorque, idErrorPorque,
-  VERBOS, generarVerbos, opcionesVerbo, explicacionVerbo, idErrorVerbo,
-  SIGLAS, AVANZADA, generarSiglas, generarAvanzada, explicacionElegir, idErrorElegir,
+  partes, FORMAS, PORQUES, generarPorques, explicacionPorque, ayudaPorque, idErrorPorque,
+  VERBOS, generarVerbos, opcionesVerbo, explicacionVerbo, ayudaVerbo, idErrorVerbo,
+  SIGLAS, AVANZADA, generarSiglas, generarAvanzada, explicacionElegir, ayudaElegir, idErrorElegir,
 } from './logica.js';
 
 const clave = item => String(item.i);
@@ -62,17 +62,18 @@ const montarEscrita = banco => (contenedor, item, api) => {
   });
 };
 
-const ejercicio = (textos, generar, montar) => ({
+const ejercicio = (textos, generar, montar, banco, ayuda) => ({
   nombre: textos.nombre, detalle: textos.detalle, introduccion: textos.introduccion, generar, clave, montar,
+  explicacion: item => ayuda(banco[item.i]),
 });
 
 arrancar({
   slug: 'ortografia-ampliacion',
   idioma: 'es',
   ejercicios: [
-    ejercicio(TX.porques, generarPorques, montarPorque),
-    ejercicio(TX.verbos, generarVerbos, montarVerbo),
-    ejercicio(TX.siglas, generarSiglas, montarEscrita(SIGLAS)),
-    ejercicio(TX.avanzada, generarAvanzada, montarEscrita(AVANZADA)),
+    ejercicio(TX.porques, generarPorques, montarPorque, PORQUES, ayudaPorque),
+    ejercicio(TX.verbos, generarVerbos, montarVerbo, VERBOS, ayudaVerbo),
+    ejercicio(TX.siglas, generarSiglas, montarEscrita(SIGLAS), SIGLAS, ayudaElegir),
+    ejercicio(TX.avanzada, generarAvanzada, montarEscrita(AVANZADA), AVANZADA, ayudaElegir),
   ],
 });

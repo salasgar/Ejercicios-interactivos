@@ -496,3 +496,15 @@ export function explicacionElegir(item, k) {
 
 /** El `idError` de la mala elegida (nada si acertó). */
 export const idErrorElegir = (item, k) => (Number(k) > 0 ? item.malas[k - 1][1] : null);
+
+// --- «No lo sé»: la explicación de cada ejercicio (regla delante, solución al final) ---
+
+export const ayudaPorque = item => `<p>Mira la palabra de antes y qué hace la frase: ¿pregunta, da una causa o nombra un motivo?</p>
+  <p>${explicacionPorque(item)}</p><p>La respuesta es <b>${item.buena}</b>.</p>`;
+
+export const ayudaVerbo = item => `<p>Una de las dos formas es una falta típica de los verbos. Comprueba cuál con la regla.</p>
+  <p>${explicacionVerbo(item)}</p><p>Con la forma puesta: «${esc(rellenar(item.frase, item.buena))}». La respuesta es <b>${item.buena}</b>.</p>`;
+
+export const ayudaElegir = item => `<p>Compara las opciones: solo una respeta la norma; las otras tienen una falta.</p>
+  <p>${item.malas.map(([texto, id]) => `En <i>${esc(texto)}</i> ${esc(MOTIVOS[id])}.`).join(' ')}</p>
+  <p>La respuesta es: <b>${esc(item.bien)}</b></p>`;
