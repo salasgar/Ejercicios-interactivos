@@ -2,6 +2,9 @@
 // `ERRORES_TIPICOS` (decimales.js) y las explicaciones con números, de las plantillas de logica.js.
 // Reglas: producto con «·», división «:», sin letras, inglés sencillo, coma en español y punto en inglés.
 
+import { ERRORES_TIPICOS, aTexto } from '../_comun/decimales.js';
+import { PLANTILLA_POR_ID, htmlLinea, tieneCerosFinales, resultadoBueno } from './logica.js';
+
 export const TX = {
   nombre: {
     donde: { es: '¿Dónde está el error?', en: 'Where is the mistake?' },
@@ -45,3 +48,53 @@ export const TX = {
   nombre_resultado: { es: 'Resultado', en: 'Result' },
   en_blanco: { es: 'Escribe un número', en: 'Write a number' },
 };
+
+// ─── La explicación del ítem (feedback de siempre y «No lo sé») ────────────────────────────────
+
+const cuenta = html => `<span class="cuenta">${html}</span>`;
+/** Una línea del cálculo (la 1 tal cual; las demás ya empiezan por «= » o por su texto). */
+export const linea = (l, idioma) => cuenta(htmlLinea(l, idioma));
+export const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
+
+/** La explicación: qué línea, cómo se llama, por qué y cómo se hace bien (movida desde practica.js sin cambios). */
+export function explicacionDe(item, { tt, idioma }, { escrito = null, resultado = null } = {}) {
+  const p = PLANTILLA_POR_ID[item.plantilla];
+  if (item.falsa === null) return `${tt(TX.todo_bien_es)}${tieneCerosFinales(item) ? `<br>${tt(TX.ceros)}` : ''}`;
+  const buena = p.cadena(item.params, false).lineas[item.falsa];
+  const tuyo = escrito !== null ? `${tt(TX.has_escrito)} ${cuenta(aTexto(escrito, idioma))}. ` : '';
+  const aviso = resultado?.error === 'repite-el-error' ? `${tt(TX.repite)} ` : resultado?.error === 'cifras' ? `${tt(TX.cifras)} ` : '';
+  return `${tuyo}${aviso}${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], idioma)}</span>`
+    + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
+    + `<br>${p.porque(item.params, idioma)}`
+    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${linea(buena, idioma)}</span>`;
+}
+
+// ─── «No lo sé»: cómo se hace cada ejercicio (la regla, el paso del ítem y la respuesta) ──────
+
+const fin = (idioma, txt) => `<br>${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>.`;
+const dos = (es, en, idioma) => (idioma === 'es' ? es : en);
+
+/** Ejercicio 1: ¿dónde está el error? */
+export function explicaDonde(item, ctx) {
+  const { idioma, tt } = ctx;
+  const regla = dos('Repite cada paso con sus números: la línea que no cuadra es la mala. Si todas cuadran, todo está bien.',
+    'Repeat each step with its numbers: the line that does not fit is the wrong one. If all of them fit, everything is right.', idioma);
+  const resp = item.falsa === null ? dos('que todo está bien', 'that everything is right', idioma) : dos(`la línea ${item.falsa + 1}`, `line ${item.falsa + 1}`, idioma);
+  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, resp)}`;
+}
+
+/** Ejercicio 2: ¿qué error es? */
+export function explicaQue(item, ctx) {
+  const { idioma, tt } = ctx;
+  const regla = dos('Busca la línea que está mal y mira qué se ha hecho distinto de lo correcto: eso da el nombre del error.',
+    'Find the wrong line and see what was done differently from the right way: that gives the name of the mistake.', idioma);
+  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, `«${nombreError(item.solucion, tt)}»`)}`;
+}
+
+/** Ejercicio 3: corrígelo. */
+export function explicaCorrige(item, ctx) {
+  const { idioma } = ctx;
+  const regla = dos('Busca la línea mala, haz bien ese paso y sigue con las líneas que faltan hasta el resultado.',
+    'Find the wrong line, do that step right and carry on with the remaining lines to the result.', idioma);
+  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, aTexto(resultadoBueno(item), idioma, item.cifras))}`;
+}
