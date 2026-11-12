@@ -6,7 +6,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ejercicioNuevo, anotar, ayudar, ayudasDelGrupo, queHaPasado, AYUDAS_POR_PUNTO } from '../practicas/_comun/contador.js';
 import { fusionarEjercicio } from '../practicas/_comun/nube.js';
-import { validarPractica } from '../practicas/_comun/base.js';
+import { validarPractica, declaracionDe } from '../practicas/_comun/base.js';
+import { CATALOGO } from '../practicas/_comun/catalogo.js';
 import { T } from '../practicas/_comun/textos.js';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { htmlFraccion } from '../practicas/_comun/fracciones.js';
@@ -79,6 +80,9 @@ test('base: «explicacion» es una función y «noLoSe», un texto { es, en } qu
   assert.throws(() => validarPractica(con({ explicacion: 'x' })), /«explicacion» tiene que ser una función/);
   assert.throws(() => validarPractica(con({ explicacion: () => 'x', noLoSe: 'No sé' })), /«noLoSe» tiene que ser \{ es, en \}/);
   assert.throws(() => validarPractica(con({ noLoSe: { es: 'a', en: 'b' } })), /«noLoSe» sin «explicacion»/);
+  assert.doesNotThrow(() => validarPractica(con({ sinAyuda: 'Es un juego: no hay nada que explicar.' })));
+  assert.throws(() => validarPractica(con({ sinAyuda: 'no' })), /«sinAyuda» es el motivo/);
+  assert.throws(() => validarPractica(con({ sinAyuda: 'Es un juego: no hay nada que explicar.', explicacion: () => 'x' })), /o «explicacion» o «sinAyuda»/);
 });
 
 test('textos comunes del «No lo sé», en los dos idiomas', () => {
@@ -143,3 +147,63 @@ test('multiplica-divide: la explicación de cada ejercicio lleva la regla y el r
     assert.equal(/signos/.test(MDT.explicaMultiplica(item, ctx)), item.a[0] < 0 || item.b[0] < 0);
   }
 });
+
+// ─── Todas las prácticas del catálogo, cargadas de verdad (sin navegador) ───────────────────
+//
+// `declaracionDe` importa el `practica.js` de cada práctica con la base en modo «solo declarar».
+// Reglas, para cualquier práctica presente o futura, sin tocar este fichero:
+//   · una práctica que ha empezado a declarar el «No lo sé» lo declara en TODOS sus ejercicios:
+//     `explicacion` o, si no procede (juego, ejercicio por pasos), `sinAyuda` con el motivo;
+//   · cada `explicacion` se prueba con 200 ítems de su `generar`, en los idiomas de la práctica:
+//     devuelve HTML con contenido, sin restos (undefined, NaN, [object…), con las etiquetas
+//     cerradas y, desde la unidad 2, sin «×»; y el texto cambia de un idioma al otro.
+// Que la explicación lleve LA SOLUCIÓN del ítem no se puede comprobar aquí: va en el test propio
+// de cada práctica (como arriba, en fraccion-de y multiplica-divide).
+
+const declaraciones = [];
+for (const ficha of CATALOGO) declaraciones.push([ficha, await declaracionDe(ficha)]);
+
+test('todas las prácticas del catálogo cargan sin navegador', () => {
+  for (const [ficha, practica] of declaraciones) assert.equal(practica?.ejercicios?.length, ficha.nEjercicios, ficha.slug);
+});
+
+const etiquetasCerradas = html => {
+  const pila = [];
+  for (const [, cierre, nombre, resto] of html.matchAll(/<(\/?)([a-zA-Z][a-zA-Z0-9]*)([^>]*)>/g)) {
+    if (['br', 'img', 'hr', 'input'].includes(nombre) || resto.trim().endsWith('/')) continue;
+    if (!cierre) pila.push(nombre);
+    else if (pila.pop() !== nombre) return false;
+  }
+  return pila.length === 0;
+};
+
+for (const [ficha, practica] of declaraciones) {
+  const defs = practica?.ejercicios ?? [];
+  if (!defs.some(d => d.explicacion || d.sinAyuda)) continue;
+  test(`«No lo sé» en ${ficha.slug}: todos los ejercicios lo declaran y cada explicación sale bien con 200 ítems`, () => {
+    const idiomas = practica.idioma ? [practica.idioma] : IDIOMAS;
+    defs.forEach((def, n) => {
+      const que = `${ficha.slug}, ejercicio ${n + 1}`;
+      assert.ok(def.explicacion || def.sinAyuda, `${que}: falta «explicacion» (o «sinAyuda» con el motivo)`);
+      if (!def.explicacion) return;
+      const rng = crearRng(1000 + ficha.id * 10 + n);
+      let anterior = null;
+      for (let i = 0; i < 200; i++) {
+        const idioma = idiomas[i % idiomas.length];
+        const item = def.generar(rng, { aciertos: i % 10, fallos: i % 3, puntos: i % 10, vidas: 5, anterior, idioma });
+        anterior = item;
+        const textos = idiomas.map(idi => def.explicacion(item, textosDe(idi)));
+        textos.forEach((html, k) => {
+          const donde = `${que} (${idiomas[k]}): ${typeof html === 'string' ? plano(html).slice(0, 200) : html}`;
+          assert.equal(typeof html, 'string', donde);
+          assert.ok(plano(html).trim().length >= 25, `demasiado corta — ${donde}`);
+          assert.doesNotMatch(html, /undefined|NaN|\[object|Infinity/, donde);
+          assert.doesNotMatch(plano(html), /\bnull\b/, donde);
+          if (ficha.unidad !== 1) assert.doesNotMatch(html, /×/, `producto con «·» desde la unidad 2 — ${donde}`);
+          assert.ok(etiquetasCerradas(html), `etiquetas sin cerrar — ${donde}`);
+        });
+        if (textos.length === 2) assert.notEqual(textos[0], textos[1], `${que}: la explicación es igual en español y en inglés`);
+      }
+    });
+  });
+}

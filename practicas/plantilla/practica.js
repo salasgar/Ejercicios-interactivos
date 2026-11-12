@@ -66,6 +66,12 @@
 //                         declares en un ejercicio por pasos ni en un juego.
 //     noLoSe              opcional, { es, en }: otro texto para ese botón, p. ej.
 //                         «No sé hacerlo» en un ejercicio de procedimiento.
+//     sinAyuda            en vez de `explicacion`, el motivo (una frase) de que ese
+//                         ejercicio no lleve el botón: un juego, o un ejercicio por
+//                         pasos. Una práctica que declara `explicacion` en un ejercicio
+//                         tiene que declarar una de las dos en todos
+//                         (tests/practicas-no-lo-se.test.js lo comprueba, y prueba cada
+//                         explicación con ítems de verdad en los dos idiomas).
 //
 // ─── api (lo que recibe `montar`) ──────────────────────────────────────────────
 //

@@ -67,6 +67,8 @@ export function validarPractica(practica) {
     if (e.explicacion !== undefined && typeof e.explicacion !== 'function') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «explicacion» tiene que ser una función (item, { idioma, t, tt, esc })`);
     if (e.noLoSe !== undefined && !esBilingue(e.noLoSe)) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «noLoSe» tiene que ser { es, en }`);
     if (e.noLoSe !== undefined && e.explicacion === undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «noLoSe» sin «explicacion» no hace nada`);
+    if (e.sinAyuda !== undefined && (typeof e.sinAyuda !== 'string' || e.sinAyuda.trim().length < 10)) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «sinAyuda» es el motivo, en una frase, de que el ejercicio no lleve «No lo sé»`);
+    if (e.sinAyuda !== undefined && e.explicacion !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: o «explicacion» o «sinAyuda», no las dos`);
     for (const viejo of ['inicial', 'maximo']) {
       if (e[viejo] !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «${viejo}» ya no existe; el contador es por puntos («objetivo», «penalizacion», «vidas»)`);
     }
