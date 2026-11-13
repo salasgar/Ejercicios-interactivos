@@ -324,3 +324,4 @@ Si paras sin terminar: `$R/hechos/fallos/153--<sid>.md` con hasta dónde llegast
   proporcionalidad, segundo grado, sistemas, dos incógnitas; `eval` o coma flotante; lo que el acta deja fuera (`x²` en una ecuación que resolver o al reducir, `U6-2C-14`, `x` en el denominador, sacar factor común, el producto de dos paréntesis, un reto fuera de un ítem marcado como reto) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+- (13-11, reabierta de los hallazgos 4 y 5) En contextos de dinero, ninguna línea ni solución con fracción: se descarta el caso si no son céntimos exactos y se pasan a decimales las líneas de ERRORES_TIPICOS. Un valor pedido que no es la x enseña su cuenta (`pedido(..., esX, cuenta)`).

@@ -35,3 +35,6 @@ Consecutivos: menor 5-120 (≤ 200); reparto «veces»: 3-40 cada uno, total ≤
 - «cuántas veces más» pasa a «por cuánto hay que multiplicar lo de A para tener lo de B» (reparto-veces y reparto-tres); test: ningún texto con «veces más».
 - Fuera el jardín (`SITIOS`; quedan patio y póster) y fuera `edades-futuro` entera (relacionaba dos edades en el futuro: es de papel), con `EDADES_FUTURO`, `PADRES`, `paren` y los tres mensajes de error de edades. Cotas y `assert` del resto, como estaban.
 - Test nuevo de 3000 ítems: sin «veces más», sin jardín, todo euro con dos decimales. Sin probar en navegador. `catalogo.js` sin tocar.
+
+## Reabierta del 13-11 (sesión s-20261113T170735-83efa212)
+1. Ej. 5 con dinero: `generarSentido` descarta soluciones que no sean céntimos exactos y pasa a decimales (`fraccionesADecimales`) la línea mala; ya no sale «x = 53/30». 2. Ej. 4: cada `pedido` lleva su `cuenta`; `frasesConCuenta` escribe «Eva tiene 7 + 6 = 13 años» en el feedback, la solución y la tarjeta. Tests nuevos (3000 ítems; fallan con el código anterior). Commit ca61f72. Sin navegador.
