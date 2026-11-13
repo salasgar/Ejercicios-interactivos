@@ -193,9 +193,13 @@ function solucionDeDesarrollo(caso) {
       en: `In ${origen} ${dicho.en} changes the sign of <strong>every</strong> term in the brackets: ${ex}.${colaEn}`,
     };
   }
+  // Con algo delante del paréntesis, la igualdad de los productos lleva solo lo del paréntesis (Revisión 191):
+  // «(−2) · 4 + (−2) · 4x = −8 − 8x; con lo de delante, 2x − 8 − 8x».
+  const dentro = cuenta(unir(expandirTerminos(k, inner), true));
+  const igualdad = pre.length ? { es: `${productos} = ${dentro}; con lo de delante, ${ex}`, en: `${productos} = ${dentro}; with what is in front, ${ex}` } : { es: `${productos} = ${ex}`, en: `${productos} = ${ex}` };
   return {
-    es: `En ${origen} ${dicho.es} multiplica a <strong>cada</strong> término del paréntesis: ${productos} = ${ex}.${colaEs}`,
-    en: `In ${origen} ${dicho.en} multiplies <strong>every</strong> term in the brackets: ${productos} = ${ex}.${colaEn}`,
+    es: `En ${origen} ${dicho.es} multiplica a <strong>cada</strong> término del paréntesis: ${igualdad.es}.${colaEs}`,
+    en: `In ${origen} ${dicho.en} multiplies <strong>every</strong> term in the brackets: ${igualdad.en}.${colaEn}`,
   };
 }
 

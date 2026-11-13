@@ -265,3 +265,41 @@ test('casos reservados: hooks vacíos pero operativos', () => {
   const q = ecuacion('3x - 6', 12);
   assert.equal(reservado(q), false);
 });
+
+// ─── Revisión 191 (hallazgo 2): toda igualdad que escribe el feedback del desarrollo es cierta ─────────────
+
+/** El valor de un texto como «2x − 2(4 + 4x)» o «(−2) · 4 + (−2) · 4x» con x = v (aritmética de JS sobre enteros). */
+const valorEn = (texto, v) => Function(`return ${texto.replace(/−/g, '-').replace(/·/g, '*').replace(/(\d)\(/g, '$1*(').replace(/\)\(/g, ')*(').replace(/(\d)x/g, '$1*x').replace(/x/g, `(${v})`)}`)();
+
+test('el feedback del desarrollo: cada igualdad que escribe es cierta en dos valores de x (con y sin algo delante del paréntesis)', () => {
+  const MARCA = { es: 'paréntesis: ', en: 'brackets: ' };
+  let conDelante = 0, sinDelante = 0, productos = 0;
+  const revisa = (it, solucion, donde) => {
+    for (const idioma of ['es', 'en']) {
+      const plano = sinTags(solucion[idioma]);
+      const i = plano.indexOf(MARCA[idioma]);
+      assert.ok(i >= 0, `${donde}: sin «${MARCA[idioma]}» en ${plano}`);
+      const cola = plano.slice(i + MARCA[idioma].length).replace(/\. (Se juntan|Put the like).*$/, '.').replace(/\.$/, '');
+      const [primero, ...resto] = cola.split('; ');
+      assert.ok(resto.length <= 1, `${donde}: demasiados «;» en ${plano}`);
+      const lados = primero.split(' = ');
+      for (const x of [7, -3]) {
+        for (const l of lados) assert.equal(valorEn(l, x), valorEn(lados[0], x), `${donde} ${idioma} x=${x}: «${primero}» no es una igualdad cierta — ${plano}`);
+      }
+      if (lados.length > 1) productos++;
+      if (resto.length) {
+        // «con lo de delante, 2x − 8 − 8x»: lo de delante más lo del paréntesis es el valor de la expresión de origen.
+        const total = resto[0].replace(/^(con lo de delante|with what is in front), /, '');
+        assert.notEqual(total, resto[0], `${donde}: frase de «lo de delante» no reconocida en ${plano}`);
+        for (const x of [7, -3]) assert.equal(valorEn(total, x), valorEn(it.origen.replace(/ = .*$/, ''), x), `${donde} ${idioma} x=${x}: «${total}» no vale lo que ${it.origen} — ${plano}`);
+        conDelante++;
+      } else sinDelante++;
+    }
+  };
+  for (const it of items(generarQuita, 71)) revisa(it, it.solucion, `ej1 ${it.origen}`);
+  for (const it of items(generarDesarrollo, 72)) revisa(it, it.solucion, `ej2 ${it.origen}`);
+  for (const it of items(generarErrores, 73)) {
+    if (it.correcta === 'ninguno') revisa({ origen: it.origen }, { es: it.solucion.es.replace(/^Está bien: /, ''), en: it.solucion.en.replace(/^It is right: /, '') }, `ej4 ${it.origen}`);
+  }
+  assert.ok(conDelante > 500 && sinDelante > 500 && productos > 1000, `casos: ${conDelante}/${sinDelante}/${productos}`);
+});
