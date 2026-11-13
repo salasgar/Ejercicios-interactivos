@@ -1,6 +1,8 @@
 // Constructor de números: textos propios, siempre { es, en }. Los comunes (Comprobar,
 // Siguiente…) llegan a `montar` en `api.t`. Los números ya vienen formateados desde practica.js.
 
+import { fmt, errorPegado, escribir } from './logica.js';
+
 /** Nombre de cada posición, de las unidades (0) hacia arriba. */
 export const POSICION = [
   { es: 'unidades', en: 'units' },
@@ -159,3 +161,68 @@ export const TX = {
     falta: { es: 'Escribe el número.', en: 'Write the number.' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────
+
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cuentaHtml = s => `<span class="cuenta">${s}</span>`;
+
+/** Ejercicio 1: construye el número. */
+export function explicaConstruir(item, { tt, idioma }) {
+  const T = TX.construir;
+  const num = n => fmt(n, idioma);
+  const ultima = item.solucion % 10;
+  const resto = [...item.cifras];
+  resto.splice(resto.indexOf(ultima), 1);
+  const porQue = {
+    mayor: () => tt(T.por_que.mayor)(),
+    menor: () => tt(T.por_que.menor)(item.hayCero),
+    menor_par: () => tt(T.por_que.menor_par)(ultima, resto.includes(0)),
+    mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
+    cercano: () => tt(T.por_que.cercano)(num(item.objetivo), num(Math.abs(item.solucion - item.objetivo))),
+  }[item.consigna]();
+  const cifras = { es: `Tienes las cifras ${item.cifras.join(', ')}.`, en: `You have the digits ${item.cifras.join(', ')}.` };
+  return `${tt(cifras)} ${tt(RESPUESTA)} ${cuentaHtml(num(item.solucion))}${porQue}`;
+}
+
+/** Ejercicio 2: valor de las cifras (cuatro tipos de ítem). */
+export function explicaDescomposicion(item, { tt, idioma }) {
+  const T = TX.descomposicion;
+  const num = n => fmt(n, idioma);
+  if (item.tipo === 'a_suma') {
+    const regla = { es: 'Cada cifra se escribe con lo que vale en su posición; las posiciones con 0 no se ponen.', en: 'Each digit is written with what it is worth in its position; positions with 0 are left out.' };
+    return `${tt(regla)} ${tt(T.a_suma_fb)(num(item.n), item.correctas.map(num).join(' + '))}`;
+  }
+  if (item.tipo === 'a_numero') {
+    const regla = { es: 'Se suman los valores de cada posición.', en: 'Add the values of each position.' };
+    const pegado = errorPegado(item);
+    const aviso = pegado === null ? '' : tt(T.pegado)(num(item.n), num(pegado));
+    return `${tt(regla)} ${tt(T.a_numero_fb)(num(item.n), item.sumandos.map(num).join(' + '))}${aviso}`;
+  }
+  if (item.tipo === 'valor') {
+    const regla = { es: 'Una cifra vale según la posición en la que está.', en: 'A digit is worth what its position says.' };
+    return `${tt(regla)} ${tt(T.valor_fb)(num(item.n), item.cifra, item.pos, num(item.correcto))} ${tt(RESPUESTA)} ${cuentaHtml(num(item.correcto))}.`;
+  }
+  const regla = { es: 'Se cuenta desde la derecha: unidades, decenas, centenas, millares…', en: 'Count from the right: units, tens, hundreds, thousands…' };
+  return `${tt(regla)} ${tt(T.posicion_fb)(num(item.n), item.cifra, item.pos)}`;
+}
+
+/** Ejercicio 3: comas y puntos, o un número dicho con palabras. */
+export function explicaComaPalabras(item, { tt, idioma }) {
+  const T = TX.coma;
+  if (item.tipo === 'coma') {
+    const fb = (item.sub === 'miles' ? T.fb_miles : T.fb_decimal)[item.dir];
+    let h = tt(fb)(item.dado, item.correcto);
+    if (item.sub === 'decimal') h += tt(T.trampa_decimal)(escribir(item.c, 'es'), escribir(item.c, 'en'));
+    else {
+      // «75.443 sería 75.443» no dice nada: la trampa solo se cuenta si cambia la escritura.
+      const escrito = escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto');
+      if (item.mal !== null && item.mal !== item.correcto && item.mal !== escrito) h += tt(T.trampa)(escrito, item.mal);
+    }
+    return h;
+  }
+  const m = Math.floor(item.n / 1000000), k = Math.floor(item.n / 1000) % 1000, u = item.n % 1000;
+  const g = x => String(x).padStart(3, '0');
+  const regla = { es: 'Escribe por grupos de tres cifras: millones, millares y unidades.', en: 'Write it in groups of three digits: millions, thousands and units.' };
+  return `${tt(regla)} ${tt(T.palabras_fb)(fmt(item.n, idioma), tt(T.grupos_nombres)(m, g(k), g(u)))}`;
+}

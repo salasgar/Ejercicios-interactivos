@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, claseCorreccion } from '../_comun/piezas.js';
-import { TX, POSICION } from './textos.js';
+import { TX, POSICION, explicaConstruir, explicaDescomposicion, explicaComaPalabras } from './textos.js';
 import {
   fmt, generarConstruir, esAciertoConstruir, generarDescomposicion, esAciertoASuma, esAciertoANumero,
   errorPegado, esAciertoOpcion, generarComaPalabras, esAciertoComa, escribir, esAciertoPalabras, enPalabras, leerEntero,
@@ -319,6 +319,8 @@ arrancar({
       clave: item => `${item.cifras.join('')}/${item.consigna}/${item.objetivo ?? ''}`,
       montar: montarConstruir,
       enunciado: enunciadoConstruir,
+      explicacion: explicaConstruir,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.descomposicion.nombre,
@@ -328,6 +330,7 @@ arrancar({
       clave: item => `${item.tipo}/${item.n}`,
       montar: montarDescomposicion,
       enunciado: enunciadoDescomposicion,
+      explicacion: explicaDescomposicion,
     },
     {
       nombre: TX.coma.nombre,
@@ -337,6 +340,7 @@ arrancar({
       clave: item => `${item.tipo}/${item.n ?? item.dado}`,
       montar: montarComaPalabras,
       enunciado: enunciadoComaPalabras,
+      explicacion: explicaComaPalabras,
     },
   ],
 });
