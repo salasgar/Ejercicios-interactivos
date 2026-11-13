@@ -4,41 +4,16 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import {
+  TX, simbolo, pot, cuentaDe, cadena, lineaJunta, cuentaPotencias, explicaJuntar, explicaPotencias, explicaUltima,
+} from './textos.js';
 import {
   generarJuntar, generarPotencias, generarUltima,
   razonNoJunta, exponenteJunto, juntar, terminado, efectivo,
   posicionEnCiclo, CELDAS,
 } from './logica.js';
 
-const simbolo = (op, idioma) => (op === ':' && idioma === 'en' ? '÷' : op);
-
-/** HTML de un término: b^e o (b^e)^k. */
-function pot(t) {
-  const { base, exp, k = 1 } = t;
-  return k > 1 ? `(${base}<sup>${exp}</sup>)<sup>${k}</sup>` : `${base}<sup>${exp}</sup>`;
-}
-
-/** Los términos con sus operadores como una cuenta que no se parte. */
-function cuentaDe(terminos, ops, idioma) {
-  const trozos = terminos.map(pot);
-  return `<span class="cuenta">${trozos.map((t, i) => (i ? `${simbolo(ops[i - 1], idioma)} ${t}` : t)).join(' ')}</span>`;
-}
-
-/** Una potencia desarrollada: 2 · 2 · 2 (solo si es corta). */
-const desarrollo = (base, exp) => Array(exp).fill(base).join(' · ');
-
-/** Una cadena de igualdades que se parte por los «=» (cada tramo no se parte), para que quepa en 375 px. */
-const cadena = linea => linea.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
-
-/** Si es corto, la cuenta de los factores: (2 · 2 · 2) · (2 · 2 · 2 · 2) = 2 · 2 · 2 · 2 · 2 · 2 · 2. Texto que se parte donde haga falta. */
-function desarrolloJunto(base, ea, eb, suma, idioma) {
-  if (ea + eb > 12) return '';
-  const a = desarrollo(base, ea), b = desarrollo(base, eb);
-  return suma
-    ? ` (${a}) · (${b}) = ${desarrollo(base, ea + eb)}.`
-    : ` (${a}) ${simbolo(':', idioma)} (${b}) = ${desarrollo(base, ea - eb)}.`;
-}
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 // ─── Ejercicio 1: junta las potencias ──────────────────────────────────────────
 
@@ -131,12 +106,7 @@ function montarJuntar(contenedor, item, api) {
       const suma = op === '·';
       const ea = efectivo(a), eb = efectivo(b);
       // La línea de explicación de esta pareja, en el idioma que reciba.
-      const linea = ({ tt, idioma }) => {
-        const desarrolado = desarrolloJunto(a.base, ea, eb, suma, idioma);
-        return suma
-          ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}.${desarrolado}`
-          : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}.${desarrolado}`;
-      };
+      const linea = textos => lineaJunta(a, b, op, bueno, textos);
       if (mio !== bueno) {
         const sugerencia = ({ tt }) => {
           if (suma && mio === ea * eb) return ` ${tt(x.no_multiplica)}`;
@@ -202,24 +172,9 @@ function montarPotencias(contenedor, item, api) {
     control.bloquear();
     ev.target.hidden = true;
     const bueno = item.solucion;
-    const html = ({ tt, idioma }) => {
-    let html;
-    if (esPotencia) {
-      const m = t0.exp, k = t0.k;
-      const des = Array(k).fill(`${base}<sup>${m}</sup>`).join(' · ');
-      html = `${cadena(tt(x.potencia_cuenta)(base, m, k, des, bueno))}. ${tt(x.potencia_regla)(m, k, bueno)}`;
-      if (mio !== bueno && mio === m + k) html += ` ${tt(x.sumaste)(m, k)}`;
-    } else {
-      // Cuenta de exponentes: 3 · 2 + 4 − 3 (los paréntesis se resuelven antes).
-      const cuentaExp = terminos.map((t, i) => {
-        const e = t.k > 1 ? `${t.exp} · ${t.k}` : `${t.exp}`;
-        return i ? `${ops[i - 1] === '·' ? '+' : '−'} ${e}` : e;
-      }).join(' ');
-      const original = terminos.map((t, i) => (i ? `${simbolo(ops[i - 1], idioma)} ${pot(t)}` : pot(t))).join(' ');
-      html = cadena(tt(x.cadena_cuenta)(original, cuentaExp, bueno, base));
-    }
-    if (mio !== bueno) html = `${tt(x.tu_respuesta)} ${base}<sup>${mio || '□'}</sup> ${tt(x.no_da)} ${html}`;
-    return html;
+    const html = textos => {
+      const cuenta = cuentaPotencias(item, textos, mio);
+      return mio !== bueno ? `${textos.tt(x.tu_respuesta)} ${base}<sup>${mio || '□'}</sup> ${textos.tt(x.no_da)} ${cuenta}` : cuenta;
     };
     api.responder({ acierto: mio === bueno, html, espera: 2400 });
   });
@@ -367,6 +322,8 @@ arrancar({
       generar: generarJuntar,
       montar: montarJuntar,
       enunciado: enunciadoJuntar,
+      explicacion: explicaJuntar,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.potencia.nombre,
@@ -375,6 +332,8 @@ arrancar({
       generar: generarPotencias,
       montar: montarPotencias,
       enunciado: enunciadoPotencias,
+      explicacion: explicaPotencias,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ultima.nombre,
@@ -385,6 +344,8 @@ arrancar({
       clave: item => `${item.base}^${item.exponente}`,
       montar: montarUltima,
       enunciado: enunciadoUltima,
+      explicacion: explicaUltima,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

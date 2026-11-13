@@ -2,6 +2,8 @@
 // Los exponentes llevan <sup>; el producto, «·»; la división, «:» en español y «÷» en inglés
 // (el símbolo ya viene en la cadena que pinta practica.js).
 
+import { efectivo, exponenteJunto, juntar, razonNoJunta, posicionEnCiclo } from './logica.js';
+
 export const TX = {
   juntar: {
     nombre: { es: 'Junta las potencias', en: 'Join the powers' },
@@ -146,3 +148,119 @@ export const TX = {
     },
   },
 };
+
+// ─── Cuentas y explicaciones (feedback y «No lo sé») ───────────────────────────
+
+export const simbolo = (op, idioma) => (op === ':' && idioma === 'en' ? '÷' : op);
+
+/** HTML de un término: b^e o (b^e)^k. */
+export function pot(t) {
+  const { base, exp, k = 1 } = t;
+  return k > 1 ? `(${base}<sup>${exp}</sup>)<sup>${k}</sup>` : `${base}<sup>${exp}</sup>`;
+}
+
+/** Los términos con sus operadores como una cuenta que no se parte. */
+export function cuentaDe(terminos, ops, idioma) {
+  const trozos = terminos.map(pot);
+  return `<span class="cuenta">${trozos.map((t, i) => (i ? `${simbolo(ops[i - 1], idioma)} ${t}` : t)).join(' ')}</span>`;
+}
+
+/** Una potencia desarrollada: 2 · 2 · 2 (solo si es corta). */
+export const desarrollo = (base, exp) => Array(exp).fill(base).join(' · ');
+
+/** Una cadena de igualdades que se parte por los «=» (cada tramo no se parte), para que quepa en 375 px. */
+export const cadena = linea => linea.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
+
+/** Si es corto, la cuenta de los factores: (2 · 2 · 2) · (2 · 2 · 2 · 2) = 2 · 2 · 2 · 2 · 2 · 2 · 2. Texto que se parte donde haga falta. */
+export function desarrolloJunto(base, ea, eb, suma, idioma) {
+  if (ea + eb > 12) return '';
+  const a = desarrollo(base, ea), b = desarrollo(base, eb);
+  return suma
+    ? ` (${a}) · (${b}) = ${desarrollo(base, ea + eb)}.`
+    : ` (${a}) ${simbolo(':', idioma)} (${b}) = ${desarrollo(base, ea - eb)}.`;
+}
+
+/** La línea de explicación de juntar a · b (o a : b) con el exponente `bueno`, en el idioma que reciba. */
+export function lineaJunta(a, b, op, bueno, { tt, idioma }) {
+  const x = TX.juntar;
+  const suma = op === '·';
+  const ea = efectivo(a), eb = efectivo(b);
+  const desarrolado = desarrolloJunto(a.base, ea, eb, suma, idioma);
+  return suma
+    ? `<span class="cuenta">${pot(a)} · ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.suma)(ea, eb, bueno)}.${desarrolado}`
+    : `<span class="cuenta">${pot(a)} ${simbolo(':', idioma)} ${pot(b)} = ${a.base}<sup>${bueno}</sup></span>: ${tt(x.resta)(ea, eb, bueno)}.${desarrolado}`;
+}
+
+/** La cuenta de una potencia de potencia o de una cadena; con `mio`, avisa si sumó en vez de multiplicar. */
+export function cuentaPotencias(item, { tt, idioma }, mio = null) {
+  const x = TX.potencia;
+  const { terminos, operadores: ops, base, solucion: bueno } = item;
+  if (item.tipo === 'potencia') {
+    const { exp: m, k } = terminos[0];
+    const des = Array(k).fill(`${base}<sup>${m}</sup>`).join(' · ');
+    let html = `${cadena(tt(x.potencia_cuenta)(base, m, k, des, bueno))}. ${tt(x.potencia_regla)(m, k, bueno)}`;
+    if (mio !== null && mio !== bueno && mio === m + k) html += ` ${tt(x.sumaste)(m, k)}`;
+    return html;
+  }
+  // Cuenta de exponentes: 3 · 2 + 4 − 3 (los paréntesis se resuelven antes).
+  const cuentaExp = terminos.map((t, i) => {
+    const e = t.k > 1 ? `${t.exp} · ${t.k}` : `${t.exp}`;
+    return i ? `${ops[i - 1] === '·' ? '+' : '−'} ${e}` : e;
+  }).join(' ');
+  const original = terminos.map((t, i) => (i ? `${simbolo(ops[i - 1], idioma)} ${pot(t)}` : pot(t))).join(' ');
+  return cadena(tt(x.cadena_cuenta)(original, cuentaExp, bueno, base));
+}
+
+const AYUDA = {
+  respuesta: { es: 'La respuesta es', en: 'The answer is' },
+  juntar: {
+    es: 'Con la misma base, en un producto se suman los exponentes y en un cociente se restan; las operaciones, de izquierda a derecha.',
+    en: 'With the same base, in a product you add the exponents and in a quotient you subtract them; operations go from left to right.',
+  },
+  potencia: {
+    es: 'Para escribir una sola potencia, mira primero si hay potencias de potencias.',
+    en: 'To write a single power, first look for powers of powers.',
+  },
+  tabla: {
+    es: (b, cifras) => `Últimas cifras de ${b}<sup>1</sup>, ${b}<sup>2</sup>, ${b}<sup>3</sup>…: ${cifras.join(', ')}.`,
+    en: (b, cifras) => `Last digits of ${b}<sup>1</sup>, ${b}<sup>2</sup>, ${b}<sup>3</sup>…: ${cifras.join(', ')}.`,
+  },
+  ultima: {
+    es: (b, n, d) => `${b}<sup>${n}</sup> acaba en ${d}`,
+    en: (b, n, d) => `${b}<sup>${n}</sup> ends in ${d}`,
+  },
+};
+
+/** «No lo sé» del ejercicio 1: se juntan las potencias de izquierda a derecha, con sus cuentas. */
+export function explicaJuntar(item, ctx) {
+  const { tt } = ctx;
+  let terminos = item.terminos, ops = item.operadores;
+  const lineas = [];
+  for (;;) {
+    const i = terminos.findIndex((_, j) => j < terminos.length - 1 && razonNoJunta(terminos, ops, j) === null);
+    if (i < 0) break;
+    const bueno = exponenteJunto(terminos, ops, i);
+    lineas.push(lineaJunta(terminos[i], terminos[i + 1], ops[i], bueno, ctx));
+    ({ terminos, ops } = juntar(terminos, ops, i, bueno));
+  }
+  const final = cuentaDe(terminos, ops, ctx.idioma);
+  const nota = terminos.length > 1 ? ` ${tt(TX.juntar.ajena_nota)}` : '';
+  return `<p>${tt(AYUDA.juntar)}</p><p>${lineas.join('<br>')}</p><p><strong>${tt(AYUDA.respuesta)} ${final}.</strong>${nota}</p>`;
+}
+
+/** «No lo sé» del ejercicio 2: la cuenta de los exponentes y la potencia resultante. */
+export function explicaPotencias(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${tt(AYUDA.potencia)}</p><p>${cuentaPotencias(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${item.base}<sup>${item.solucion}</sup>.</strong></p>`;
+}
+
+/** «No lo sé» del ejercicio 3: la tabla de últimas cifras, el patrón y la cifra pedida. */
+export function explicaUltima(item, { tt }) {
+  const { base, exponente: n, ciclo: L, solucion: d } = item;
+  const x = TX.ultima;
+  let razon;
+  if (L === 1) razon = tt(x.explica_uno)(base, n, d);
+  else if (n % L === 0) razon = tt(x.explica_multiplo)(base, n, L, n / L, d);
+  else razon = tt(x.explica_resto)(base, n, L, Math.floor(n / L), posicionEnCiclo(n, L), d);
+  return `<p>${tt(AYUDA.tabla)(base, item.tabla)}</p><p>${razon}</p><p><strong>${tt(AYUDA.respuesta)}: ${tt(AYUDA.ultima)(base, n, d)}.</strong></p>`;
+}
