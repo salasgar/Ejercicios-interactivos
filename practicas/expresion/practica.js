@@ -13,41 +13,12 @@ import { TX } from './textos.js';
 import {
   OPERADORES, MAX_FICHAS, aFichas, evaluar, corregir, erroresDe, plantillaPorId,
   generarSin, generarCon, generarPotencias, claveItem, esRestaRepetida,
+  simbolo, htmlExpresion, cuenta, htmlModelo, explicaExpresion,
 } from './logica.js';
 
-// ─── Cómo se escribe una expresión ─────────────────────────────────────────────
-
-/** El símbolo de una ficha: «−» para la resta y, en inglés, «÷» para la división. */
-function simbolo(ficha, idioma) {
-  if (ficha === '-') return '−';
-  if (ficha === ':') return idioma === 'en' ? '÷' : ':';
-  return String(ficha);
-}
-
-/** Fichas → HTML en una línea: «(7 + 3) · 2», «3<sup>2</sup> + 4<sup>2</sup>». */
-function htmlExpresion(fichas, idioma) {
-  return fichas.map(f => {
-    if (OPERADORES.includes(f)) return ` ${simbolo(f, idioma)} `;
-    return f === '²' ? '<sup>2</sup>' : simbolo(f, idioma);
-  }).join('');
-}
-
-/** «expresión = valor» si el valor es un entero; si no, la expresión sola. */
-function cuenta(fichas, valor, idioma) {
-  const igual = Number.isInteger(valor) ? ` = ${String(valor).replace('-', '−')}` : '';
-  return `<span class="cuenta">${htmlExpresion(fichas, idioma)}${igual}</span>`;
-}
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const htmlEnunciado = (item, idioma) => `<p class="enunciado">${plantillaPorId(item.plantilla)[idioma](item.numeros)}</p>`;
-
-/** La explicación del modelo, con los números del ítem: «…: (7 + 3) · 2 = 20». */
-function htmlModelo(item, { tt, idioma }) {
-  const plantilla = plantillaPorId(item.plantilla);
-  const explica = plantilla.explica[idioma](item.numeros);
-  const modelo = cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma);
-  // Si la explicación acaba en dos puntos, la expresión la remata; si no, va en su frase.
-  return explica.endsWith(':') ? `${explica} ${modelo}.` : `${explica} ${tt(TX.la_expresion_es)} ${modelo}.`;
-}
 
 // El enunciado de cada ítem (también en la traducción).
 const enunciadoMontar = (item, { tt, idioma }) => `
@@ -200,8 +171,8 @@ const montar = (contenedor, item, api) => (item.tipo === 'elegir' ? montarElecci
 arrancar({
   slug: 'expresion',
   ejercicios: [
-    { ...TX.sin, generar: generarSin, clave: claveItem, montar, enunciado },
-    { ...TX.con, generar: generarCon, clave: claveItem, montar, enunciado },
-    { ...TX.potencias, generar: generarPotencias, clave: claveItem, montar, enunciado },
+    { ...TX.sin, generar: generarSin, clave: claveItem, montar, enunciado, explicacion: explicaExpresion, noLoSe: NO_SE_HACERLO },
+    { ...TX.con, generar: generarCon, clave: claveItem, montar, enunciado, explicacion: explicaExpresion, noLoSe: NO_SE_HACERLO },
+    { ...TX.potencias, generar: generarPotencias, clave: claveItem, montar, enunciado, explicacion: explicaExpresion },
   ],
 });

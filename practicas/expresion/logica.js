@@ -15,7 +15,7 @@
 // fuera una letra (ver `equivalentes`). Así 2 · (7 + 3), (7 + 3) · 2 y
 // 7 · 2 + 3 · 2 valen las tres, y 7 + 3 · 2 no, dé lo que dé.
 
-import { PLANTILLAS } from './textos.js';
+import { PLANTILLAS, TX } from './textos.js';
 
 export const OPERADORES = ['+', '-', '·', ':'];
 /** Tope de fichas en la línea de montaje (cabe en un móvil y acota las cuentas). */
@@ -502,4 +502,43 @@ export function corregir(item, fichas) {
     tipo: error?.tipo ?? null,
     casualidad: valor !== null && valor === evaluar(item.modelo),
   };
+}
+
+// --- Cómo se escribe una expresión y la explicación del ítem -----------------------
+
+/** El símbolo de una ficha: «−» para la resta y, en inglés, «÷» para la división. */
+export function simbolo(ficha, idioma) {
+  if (ficha === '-') return '−';
+  if (ficha === ':') return idioma === 'en' ? '÷' : ':';
+  return String(ficha);
+}
+
+/** Fichas → HTML en una línea: «(7 + 3) · 2», «3<sup>2</sup> + 4<sup>2</sup>». */
+export function htmlExpresion(fichas, idioma) {
+  return fichas.map(f => {
+    if (OPERADORES.includes(f)) return ` ${simbolo(f, idioma)} `;
+    return f === '²' ? '<sup>2</sup>' : simbolo(f, idioma);
+  }).join('');
+}
+
+/** «expresión = valor» si el valor es un entero; si no, la expresión sola. */
+export function cuenta(fichas, valor, idioma) {
+  const igual = Number.isInteger(valor) ? ` = ${String(valor).replace('-', '−')}` : '';
+  return `<span class="cuenta">${htmlExpresion(fichas, idioma)}${igual}</span>`;
+}
+
+/** La explicación del modelo, con los números del ítem: «…: (7 + 3) · 2 = 20». */
+export function htmlModelo(item, { tt, idioma }) {
+  const plantilla = plantillaPorId(item.plantilla);
+  const explica = plantilla.explica[idioma](item.numeros);
+  const modelo = cuenta(aFichas(item.modelo), evaluar(item.modelo), idioma);
+  return explica.endsWith(':') ? `${explica} ${modelo}.` : `${explica} ${tt(TX.la_expresion_es)} ${modelo}.`;
+}
+
+/** «No lo sé»: el razonamiento del ítem, la expresión que lo resuelve y un consejo. */
+export function explicaExpresion(item, ctx) {
+  const consejo = item.tipo === 'elegir'
+    ? ctx.tt({ es: 'Consejo: lee qué se hace primero y qué se hace con el resultado.', en: 'Tip: read what you do first and what you do with the result.' })
+    : ctx.tt({ es: 'Consejo: piensa cada parte del problema por separado y luego únelas.', en: 'Tip: think about each part of the problem on its own, then join them.' });
+  return `${htmlModelo(item, ctx)} ${consejo}`;
 }
