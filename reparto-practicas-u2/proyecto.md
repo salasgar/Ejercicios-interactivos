@@ -845,3 +845,30 @@ aparte en `ayudas`, el ítem siguiente es otro, «No sé hacerlo» en los ejerci
   cada sesión abre su servidor en un puerto propio, 81NN). Recomendado: hasta 4 a la vez.
 - Otra sesión, ajena al reparto, hacía el 12-11 arreglos sueltos en `division` y `factorizaciones` sin comitear: las fichas mandan
   mirar `git status --short` de cada carpeta antes de tocarla.
+
+## Decisiones del 13-11: tareas 195-196 y cuatro reabiertas (coordinadora s-20261111T215225-39c1f4f5)
+
+Juan Luis contestó a la lista de decisiones pendientes:
+
+- **195 (ALTO, 1 h 15 min)**: publica `lee-decimales`, `compara-decimales`, `suma-resta-decimales` y `multiplica-divide-decimales`
+  (U5), que la 130 y la 131 reabrieron el 8-11 y dejaron sin publicador; pone al día las dos propuestas de tarea semanal de la U5. Espera
+  a la **190** (revisión del «No lo sé» de la U4 y la U5, RELEVABLE el 13-11). La **132** espera ahora a la 195.
+- **196 (ALTO, 1 h 15 min)**: publica `ortografia-tildes`, `ortografia-palabras` y `ortografia-ampliacion`, que la 141 y la 142
+  reabrieron el 9-11; pone al día la tabla de ★ de la U7, la U8 y junio. Espera a la **192** (revisión del «No lo sé» de la U3 con la
+  ortografía, RELEVABLE el 13-11). La 195 y la 196 comparten `catalogo.js`: en cadena, en cualquier orden.
+- **Ampliación de ortografía: (b), entre los «a elegir» de las tareas de la U8**, nunca ★ (sustituye al «(c) por defecto» de la 142).
+  La 196 propone qué ejercicio va en qué paquete.
+- **Reabiertas** (MEDIO, cortas, carpetas disjuntas: caben a la vez):
+  - 149 `transposicion`: el feedback de `signo-cambiado` llama positivo a un negativo en la forma «producto» (hallazgo 1 de la 191).
+  - 151 `parentesis-algebra`: el feedback escribe una igualdad falsa cuando hay algo delante del paréntesis (hallazgo 2 de la 191).
+  - 153 `problemas-ecuaciones`: el dinero del ej. 5, con decimales y no con fracciones; las edades (y todo pedido que no es la x) del ej. 4,
+    con la cuenta (hallazgos 4 y 5 de la 191).
+  - 104 `suma-resta` (publicada; sigue publicada): el ej. 5 reparte mal las sumas (1/2 + 1/6, el 18 % de los ítems). Espera a la 190,
+    que hereda su carpeta. Plazo: lun 21-12.
+- **Criterio nuevo de reapertura: variedad.** Por el caso de `suma-resta`, la coordinadora lo extiende a las publicaciones 195 y 196: un
+  ítem que sale en más del 10 % de los de un ejercicio se reabre. Juan Luis puede cambiar el umbral.
+- **Fracciones con raya o con barra** en la U6 (hallazgo 3 de la 191): **sin decidir**. Si Juan Luis elige la raya, se añade a las
+  reabiertas de la 149, la 151 y la 153 antes de que nadie las coja, y hay que reabrir también `resuelve` (150) y `leelo6` (155).
+- **Cambios sin commitear en `division`, `semaforo`, `factorizaciones`, `fichas-del-parchis` y `divisiones`** (12-11 y 13-11): son de
+  Juan Luis, hechos en sesiones sueltas fuera del reparto que esperaban su «publícalo». Mientras sigan ahí, la 183, la 186 y la 187 no se
+  pueden coger (sus fichas lo mandan mirar).

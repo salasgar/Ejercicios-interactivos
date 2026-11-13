@@ -38,9 +38,8 @@ RAIZ = os.path.dirname(os.path.abspath(R))
 NOW = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None)
 MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic']
 
-# Precondiciones externas: (cumplida, texto). Revisadas el 2026-11-11 por s-20261111T215225-39c1f4f5.
+# Precondiciones externas: (cumplida, texto). Revisadas el 2026-11-11 por s-20261111T215225-39c1f4f5; el 13-11 sale la 132 (espera a la 195, que está en hechos/).
 EXTERNO = {
-    132: (False, 'solo 3 de las 7 prácticas de la U5 publicadas; las otras 4 (123-126), sin publicador'),
     156: (False, 'la hoja 1 y el examen 1 de la U6 aún no existen (11-11)'),
     157: (False, 'la hoja 2 y el examen 2 de la U6 aún no existen (11-11)'),
     158: (False, 'la hoja 3 y el examen 3 de la U6 aún no existen (11-11)'),
