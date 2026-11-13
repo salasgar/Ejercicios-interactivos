@@ -185,6 +185,16 @@ y las demás se publican igual. Sin esta publicación no puede avanzar la 132 (l
 - (de la coordinadora, 5-11) `catalogo.js` lo comparten muchas tareas: edita, comitea con ruta explícita y suéltalo enseguida.
 - (de la 109) Si `npm test` falla por el `disponible`, mira cómo lo resolvió la 109 (26306eb); si aun así falla un test que no es de tus
   ficheros, no lo arregles: dilo en la terminada.
+- (s-20261113T170133-3d38e018, 13-11) Duración real ~30 min (estimada 1 h 15 min). El cotejo tiene que saber **qué tarea pide cada caso**
+  (por la destreza en las claves; por el enunciado del ejercicio en hojas y finales) y comparar las cuentas **enteras**: con «un decimal
+  del ítem aparece en el caso» salen cientos de coincidencias falsas (la respuesta de un caso, un 2,5 de «2.5 marks», un `0.58\linewidth`).
+- (ídem) En `multiplica-divide-decimales` ej. 1, la forma «potencia» es **× / : 0,1, 0,01, 0,001** (U5-2C-03), no por 10, 100, 1000: un
+  guion que la lea como «÷ 100» ve casos de U5-1C-16 que no existen.
+- (ídem) Para acertar a propósito en los clics, sirve el `logica.js` de la práctica envuelto **solo en el navegador** (CDP `Fetch`, sin
+  tocar el disco) para que cada `generar*` deje su ítem en `globalThis.__item`; los botones `.eleccion` llevan `data-i` = índice de la
+  opción. `python3 -m http.server` corta conexiones con CDP y un guion leyendo a la vez (ECONNRESET): mejor un servidor estático de Node.
+- (ídem) `registro.js` no está en la lista literal de «Ficheros que toca», pero «el §7 con `registro.js`» obliga a tocarlo: el test de
+  registro exige que la tabla del §7 y `DESTREZAS` coincidan.
 
 ## Prohibido (propio de esta tarea)
 
