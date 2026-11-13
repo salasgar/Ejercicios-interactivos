@@ -37,7 +37,8 @@ function steppers(caja, item, api, tope) {
   const controles = primos.map(p => pasos(grupo, {
     max: tope(p),
     nombre: api.tt(TX.exponente_de)(p),
-    pinta: e => (e === 0 ? `${p}` : `${p}<sup>${e}</sup>`),
+    // Siempre con su exponente, también el 0 (5⁰): no elegir ningún 5 es tomar 5⁰ = 1.
+    pinta: e => `${p}<sup>${e}</sup>`,
     alCambiar: pintar,
   }));
   pintar();
