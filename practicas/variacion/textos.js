@@ -208,7 +208,8 @@ const cierre = (idioma, resp) => ` ${RESPUESTA[idioma]} <span class="cuenta">${r
 export function explicaCambio(item, { idioma }) {
   const T = txt(idioma).cambio;
   const o = item.opciones[item.solucion];
-  const regla = L(idioma, 'La variación es final − inicial: si sale positiva, ha subido; si sale negativa, ha bajado.', 'The change is end − start: if it comes out positive, it went up; if it comes out negative, it went down.');
+  // Lo de «positiva: ha subido» ya lo dice `explica` con los números del ítem; la regla no lo repite.
+  const regla = L(idioma, 'La variación es final − inicial.', 'The change is end − start.');
   const [abre, cierra] = L(idioma, ['«', '»'], ['“', '”']);
   return `${regla} ${T.explica(item)}${cierre(idioma, `${abre}${T.frase(item.ctx, o.dir, o.k).replace(/\.$/, '')}${cierra}`)}`;
 }
@@ -216,36 +217,52 @@ export function explicaCambio(item, { idioma }) {
 /** Ejercicio 2: el mayor menos el menor. */
 export function explicaDiferencia(item, { idioma }) {
   const T = txt(idioma);
-  const regla = L(idioma, 'Para saber cuánto más es un valor que otro, resta el mayor menos el menor.', 'To find how much more one value is than another, subtract the bigger one minus the smaller one.');
-  return `${regla} ${T.diferencia.explica(item)}${cierre(idioma, `${item.d} ${T.unidad(item)}`)}`;
+  // «Resta el mayor menos el menor» no es castellano; y «La diferencia es 17» repetía la respuesta.
+  const regla = L(idioma, 'Para saber cuánto va de un valor a otro, se hace el mayor menos el menor.', 'To find how far it is from one value to the other, do the bigger one minus the smaller one.');
+  return `${regla} <span class="cuenta">${item.hi} − ${fmtPar(item.lo)} = ${item.d}</span>.${cierre(idioma, `${item.d} ${T.unidad(item)}`)}`;
 }
 
-/** Ejercicio 3: sumar la variación, o hacer la operación al revés. */
+/**
+ * Ejercicio 3: hacia delante, lo que sube se suma y lo que baja se resta; hacia atrás, al revés.
+ * («Suma la variación» con una cuenta «3 − 7» desconcierta; y «deshaz el cambio» + «se hace la
+ * operación al revés» del feedback decían lo mismo dos veces.)
+ */
 export function explicaFalta(item, { idioma }) {
-  const T = txt(idioma);
+  const saldo = item.ctx === 'saldo';
   const regla = item.subtipo === 'final'
-    ? L(idioma, 'Si sabes dónde empieza y cuánto cambia, suma la variación al valor de partida.', 'If you know where it starts and how much it changes, add the change to the start value.')
-    : L(idioma, 'Si te dan el valor final, deshaz el cambio: lo que subió se resta y lo que bajó se suma.', 'If you are given the end value, undo the change: what went up is subtracted and what went down is added.');
+    ? (saldo ? L(idioma, 'Parte del saldo del principio: lo que ingresas se suma y lo que gastas se resta.', 'Start from the first balance: what you pay in is added and what you spend is subtracted.')
+      : L(idioma, 'Parte del valor del principio: lo que sube se suma y lo que baja se resta.', 'Start from the first value: what goes up is added and what goes down is subtracted.'))
+    : (saldo ? L(idioma, 'Te dan el saldo final: deshaz el cambio. Lo que ingresaste se resta y lo que gastaste se suma.', 'You are given the final balance: undo the change. What you paid in is subtracted and what you spent is added.')
+      : L(idioma, 'Te dan el valor final: deshaz el cambio. Lo que subió se resta y lo que bajó se suma.', 'You are given the end value: undo the change. What went up is subtracted and what went down is added.'));
+  const suma = item.subtipo === 'final' ? item.dir > 0 : item.dir < 0;
+  const cuenta = `${fmt(item.x)} ${suma ? '+' : '−'} ${item.k} = ${fmt(item.r)}`;
   const resp = item.ctx === 'planta' ? fmt(item.r) : valor(item.ctx, item.r);
-  return `${regla} ${T.falta.explica(item)}${cierre(idioma, resp)}`;
+  return `${regla} <span class="cuenta">${cuenta}</span>.${cierre(idioma, resp)}`;
 }
 
-/** Ejercicio 4: años entre dos fechas, sin año 0. */
+/**
+ * Ejercicio 4: años entre dos fechas, sin año 0. Cuando cruza, la cuenta de la unidad (final − inicial)
+ * y el 1 que se quita; el recuento por tramos del feedback hacía la tarjeta de siete líneas.
+ */
 export function explicaAnios(item, { idioma }) {
   const T = txt(idioma);
-  const regla = item.era === 'cruza'
-    ? L(idioma, 'Una fecha es a. C. y la otra d. C.: se suman los dos años y se quita 1, porque no hubo año 0.', 'One date is BC and the other is AD: add the two years and take 1 away, because there was no year 0.')
-    : L(idioma, 'Las dos fechas son de la misma era: se resta el año mayor menos el menor.', 'Both dates are in the same era: subtract the bigger year minus the smaller one.');
-  return `${regla} ${T.anios.explica(item)}${cierre(idioma, `${item.d} ${T.unidad(item)}`)}`;
+  const { a, b, d } = item;
+  const [regla, cuenta] = item.era === 'cruza'
+    ? [L(idioma, 'Una fecha es a. C. y la otra d. C.: los años a. C. son negativos y se hace la resta; después se quita 1, porque no hubo año 0.', 'One date is BC and the other is AD: BC years are negative, so subtract; then take 1 away, because there was no year 0.'),
+      `${b} − ${fmtPar(-a)} = ${a + b} ${L(idioma, 'y', 'and')} ${a + b} − 1 = ${d}`]
+    : [L(idioma, 'Las dos fechas son de la misma era: al año mayor se le resta el menor.', 'Both dates are in the same era: take the smaller year away from the bigger one.'),
+      `${Math.max(a, b)} − ${Math.min(a, b)} = ${d}`];
+  return `${regla} <span class="cuenta">${cuenta}</span>.${cierre(idioma, `${d} ${T.unidad(item)}`)}`;
 }
 
 /** Ejercicio 5: la cuenta, el signo y el resultado. */
 export function explicaCuenta(item, { idioma }) {
-  const T = txt(idioma).cuenta;
   const regla = {
     cadena: L(idioma, 'Subir e ingresar suman; bajar y gastar restan. Escribe un término por cada cambio y calcula de izquierda a derecha.', 'Going up and paying in add; going down and spending subtract. Write one term for each change and work from left to right.'),
-    producto: L(idioma, 'Un cambio que se repite varias veces es un producto: lo que cambia cada vez, por las veces. Si baja, es negativo.', 'A change that repeats several times is a product: the change each time, times the number of times. If it goes down, it is negative.'),
+    producto: L(idioma, 'Un cambio que se repite varias veces es un producto: las veces, por lo que cambia cada vez. Si baja, es negativo.', 'A change that repeats several times is a product: the number of times, times the change each time. If it goes down, it is negative.'),
     cociente: L(idioma, 'Repartir un cambio total a partes iguales es una división: el cambio total, entre las veces. Si baja, es negativo.', 'Sharing a total change into equal parts is a division: the total change divided by the number of times. If it goes down, it is negative.'),
   }[item.tipo];
-  return `${regla} ${T.explica(item)}${cierre(idioma, `${item.opciones[item.solucion].texto} = ${fmt(item.r)}`)}`;
+  // El feedback (`cuenta.explica`) empieza por «cuenta = resultado», que la respuesta del final ya dice: aquí solo el signo.
+  const signo = item.r > 0 ? L(idioma, 'El resultado es positivo.', 'The result is positive.') : L(idioma, 'El resultado es negativo.', 'The result is negative.');
+  return `${regla} ${signo}${cierre(idioma, `${item.opciones[item.solucion].texto} = ${fmt(item.r)}`)}`;
 }

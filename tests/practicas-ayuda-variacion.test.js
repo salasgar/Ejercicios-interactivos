@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { T } from '../practicas/_comun/textos.js';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { fmt } from '../practicas/_comun/enteros.js';
+import { fmt, fmtPar } from '../practicas/_comun/enteros.js';
 import * as L from '../practicas/variacion/logica.js';
 import * as X from '../practicas/variacion/textos.js';
 
@@ -45,7 +45,11 @@ test('ej. 2: la respuesta es el mayor menos el menor, con su unidad', () => {
   for (const item of items(L.generarDiferencia, 2)) {
     assert.equal(item.d, item.hi - item.lo);
     for (const idioma of IDIOMAS) {
-      comprobar(X.explicaDiferencia(item, ctx(idioma)), idioma, `${item.hi - item.lo} ${X.txt(idioma).unidad(item)}`, `ej2 ${idioma}`);
+      const html = X.explicaDiferencia(item, ctx(idioma));
+      comprobar(html, idioma, `${item.hi - item.lo} ${X.txt(idioma).unidad(item)}`, `ej2 ${idioma}`);
+      assert.ok(html.includes(`${item.hi} − ${fmtPar(item.lo)} = ${item.hi - item.lo}`), `ej2 ${idioma}: falta la cuenta — ${plano(html)}`);
+      // Ni «resta el mayor menos el menor» ni la diferencia dicha dos veces.
+      assert.doesNotMatch(html, /resta el mayor|subtract the bigger one minus|La diferencia es|The difference is/, plano(html));
     }
   }
 });
@@ -59,6 +63,11 @@ test('ej. 3: la respuesta es el valor que falta, hacia delante o al revés', () 
     for (const idioma of IDIOMAS) {
       const html = X.explicaFalta(item, ctx(idioma));
       assert.match(html, new RegExp(`${FIN[idioma]} <span class="cuenta">.*${fmt(esperado).replace('−', '\\u2212')}.*</span>\\.$`), plano(html));
+      // La cuenta: hacia delante, subir suma; hacia atrás, subir resta. Y el signo que se ve es el de la regla.
+      const suma = item.subtipo === 'final' ? item.dir > 0 : item.dir < 0;
+      assert.equal(item.x + (suma ? item.k : -item.k), esperado);
+      assert.ok(html.includes(`${fmt(item.x)} ${suma ? '+' : '−'} ${item.k} = ${fmt(esperado)}`), `falta la cuenta — ${plano(html)}`);
+      assert.doesNotMatch(html, /suma la variación|add the change|operación al revés|operation the other way/, plano(html));
       assert.doesNotMatch(html, /undefined|NaN|\[object|null|×/, plano(html));
     }
   }
@@ -70,7 +79,14 @@ test('ej. 4: la respuesta son los años entre las dos fechas, quitando 1 si cruz
     const esperado = item.era === 'cruza' ? item.a + item.b - 1 : Math.abs(item.a - item.b);
     assert.equal(item.d, esperado);
     for (const idioma of IDIOMAS) {
-      comprobar(X.explicaAnios(item, ctx(idioma)), idioma, `${esperado} ${X.txt(idioma).unidad(item)}`, `ej4 ${idioma}`);
+      const html = X.explicaAnios(item, ctx(idioma));
+      comprobar(html, idioma, `${esperado} ${X.txt(idioma).unidad(item)}`, `ej4 ${idioma}`);
+      const cuenta = item.era === 'cruza'
+        ? `${item.b} − (−${item.a}) = ${item.a + item.b} ${idioma === 'es' ? 'y' : 'and'} ${item.a + item.b} − 1 = ${esperado}`
+        : `${Math.max(item.a, item.b)} − ${Math.min(item.a, item.b)} = ${esperado}`;
+      assert.ok(html.includes(cuenta), `ej4 ${idioma}: falta la cuenta — ${plano(html)}`);
+      // Tres o cuatro líneas de móvil: el recuento por tramos del feedback no entra en la tarjeta.
+      assert.ok(plano(html).length < 230, `ej4 ${idioma}: demasiado larga — ${plano(html)}`);
     }
   }
 });
@@ -81,6 +97,7 @@ test('ej. 5: la respuesta es la cuenta buena con su resultado', () => {
       const html = X.explicaCuenta(item, ctx(idioma));
       comprobar(html, idioma, `${item.opciones[item.solucion].texto} = ${fmt(item.r)}`, `ej5 ${idioma}`);
       assert.ok(html.includes(item.r > 0 ? { es: 'positivo', en: 'positive' }[idioma] : { es: 'negativo', en: 'negative' }[idioma]), `ej5 ${idioma}: falta el signo`);
+      assert.equal(html.split(item.opciones[item.solucion].texto).length, 2, `ej5 ${idioma}: la cuenta sale dos veces — ${plano(html)}`);
     }
   }
 });
