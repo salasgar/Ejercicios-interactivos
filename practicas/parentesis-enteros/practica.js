@@ -3,7 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { campoEntero, html as htmlExpr, aTexto, analizar, evaluar, fmt, nodoEn, MENOS } from '../_comun/enteros.js';
-import { TX, explicaQuita, explicaCalcula, explicaPotencia, explicaColocar } from './textos.js';
+import { TX, explicaQuita, explicaCalcula, explicaPotencia, explicaCorchetes, explicaColocar } from './textos.js';
 import {
   generar, arbolQuita, signosBuenos, reescritura, errorQuita,
   operandoDentro, quitandoParentesis, erroresCalcula, errorDe,
@@ -356,8 +356,10 @@ const AYUDA = [
   { explicacion: explicaQuita, noLoSe: NO_SE_HACERLO },
   { explicacion: explicaCalcula, noLoSe: NO_SE_HACERLO },
   { explicacion: explicaPotencia, noLoSe: NO_SE_HACERLO },
-  { sinAyuda: 'Se hace por pasos: cada paso ya dice qué paréntesis toca y el último fallo enseña toda la resolución.' },
-  { explicacion: explicaColocar },
+  // Va por pasos dentro del mismo ítem, pero su `generar` no usa `sesion.aciertos`: no es motivo de `sinAyuda`.
+  { explicacion: explicaCorchetes, noLoSe: NO_SE_HACERLO },
+  // Construir (poner los paréntesis) es de procedimiento.
+  { explicacion: explicaColocar, noLoSe: NO_SE_HACERLO },
 ];
 
 arrancar({

@@ -6,7 +6,7 @@
 // paréntesis de agrupación; y el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 // Los ejemplos de las introducciones no son los de las hojas ni los de los exámenes.
 
-import { html as htmlExpr, fmt, evaluar } from '../_comun/enteros.js';
+import { html as htmlExpr, fmt, evaluar, aTexto, cadenaDePasos, quitarParentesisDeNumeros } from '../_comun/enteros.js';
 import { arbolQuita, reescritura, signosBuenos, operandoDentro, quitandoParentesis, cadenaHtml, buenas } from './logica.js';
 
 export const TX = {
@@ -195,10 +195,30 @@ const cuenta = h => `<span class="cuenta">${h}</span>`;
 const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 const respuesta = (tt, h) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${h}.</p>`;
 
-/** Ejercicio 1: la regla del signo de delante y la cuenta reescrita. */
+/**
+ * Una cuenta x resuelta paso a paso, como `cadenaHtml`, pero si el penúltimo paso es una suma o resta con
+ * un número entre paréntesis («7 − (−1) + 12», «4 + (−96)»), se enseña también sin él («7 + 1 + 12»):
+ * el salto de «7 − (−1) + 12» a «20» es justo lo que no sabe quien pulsa «No lo sé».
+ */
+export function cadenaConSignos(x) {
+  const arboles = cadenaDePasos(x).map(e => e.arbol);
+  if (arboles.length >= 2) {
+    const penultimo = arboles[arboles.length - 2];
+    const sin = quitarParentesisDeNumeros(penultimo);
+    if (aTexto(sin) !== aTexto(penultimo)) arboles.splice(arboles.length - 1, 0, sin);
+  }
+  return arboles.map(a => htmlExpr(a)).join(' = ');
+}
+
+/**
+ * Ejercicio 1: la regla del signo de delante y la cuenta reescrita. Si el paréntesis va el primero y sin
+ * signo («(15 − 7) + 18»), el feedback dice «Delante del paréntesis hay un +», que no es lo que se ve.
+ */
 export function explicaQuita(item, { tt }) {
   const bien = reescritura(item, signosBuenos(item));
-  const regla = tt(item.signoPar > 0 ? TX.quita.razon_mas : TX.quita.razon_menos);
+  const regla = item.antes.length === 0 && item.signoPar > 0
+    ? tt({ es: 'Delante del paréntesis no hay signo, y eso es como un +: los signos de dentro no cambian.', en: 'There is no sign in front of the brackets, which is like a +: the signs inside stay the same.' })
+    : tt(item.signoPar > 0 ? TX.quita.razon_mas : TX.quita.razon_menos);
   return `<p>${regla}</p><p>${cuenta(`${htmlExpr(arbolQuita(item))} = ${htmlExpr(bien)}`)}</p>${respuesta(tt, cuenta(htmlExpr(bien)))}`;
 }
 
@@ -206,24 +226,50 @@ export function explicaQuita(item, { tt }) {
 export function explicaCalcula(item, { tt }) {
   const valor = evaluar(item.expr);
   const dentro = operandoDentro(item);
+  const sin = quitarParentesisDeNumeros(dentro);
+  const conPar = aTexto(sin) !== aTexto(dentro);
+  const segundo = conPar
+    ? `${tt({ es: 'Quito los paréntesis de los números y sumo y resto de izquierda a derecha', en: 'Remove the brackets around the numbers, then add and subtract from left to right' })}: ${cuenta(`${htmlExpr(dentro)} = ${htmlExpr(sin)} = ${fmt(valor)}`)}.`
+    : `${tt({ es: 'Sumo y resto de izquierda a derecha', en: 'Add and subtract from left to right' })}: ${cuenta(`${htmlExpr(dentro)} = ${fmt(valor)}`)}.`;
   return `${pasos([
     `${tt({ es: 'Calculo lo de dentro de cada paréntesis', en: 'Work out the inside of each pair of brackets' })}: ${cuenta(`${htmlExpr(item.expr)} = ${htmlExpr(dentro)}`)}.`,
-    `${tt({ es: 'Sumo y resto de izquierda a derecha', en: 'Add and subtract from left to right' })}: ${cuenta(`${htmlExpr(dentro)} = ${fmt(valor)}`)}.`,
+    segundo,
   ])}${respuesta(tt, cuenta(fmt(valor)))}`;
 }
 
-/** Ejercicio 3: cada cuenta resuelta de dentro afuera y la nota de dónde está el exponente. */
+const ORDEN = { es: 'Primero, lo de dentro del paréntesis. Dentro y fuera, el orden es el mismo: potencias, productos y, al final, sumas y restas.', en: 'First, the inside of the brackets. Inside and outside, the order is the same: powers, then products, and adding and subtracting last.' };
+
+/** Ejercicio 3: cada cuenta resuelta de dentro afuera y la nota de dónde está el exponente (o el orden, si es una sola). */
 export function explicaPotencia(item, { tt }) {
   const pareja = item.exprs.length === 2;
-  const lineas = item.exprs.map((e, i) => `${pareja ? `${i ? 'B' : 'A'}: ` : ''}${cuenta(cadenaHtml(e))}.`);
+  const lineas = item.exprs.map((e, i) => `${pareja ? `${i ? 'B' : 'A'}: ` : ''}${cuenta(cadenaConSignos(e))}.`);
   const nota = item.tipo === 'par-pot' ? `<p>${tt(TX.potencia.nota_par_pot)(item.meta)}</p>`
     : item.tipo === 'prod-neg' ? `<p>${tt(TX.potencia.nota_prod_neg)(item.meta)}</p>` : '';
   const final = pareja ? `A = ${fmt(item.valores[0])}; B = ${fmt(item.valores[1])}` : fmt(item.valores[0]);
-  return `${pasos(lineas)}${nota}${respuesta(tt, cuenta(final))}`;
+  return `${pareja ? '' : `<p>${tt(ORDEN)}</p>`}${pasos(lineas)}${nota}${respuesta(tt, cuenta(final))}`;
 }
 
-/** Ejercicio 5: una colocación que sirve, resuelta de dentro afuera. */
+/**
+ * Ejercicio 4: de dentro afuera. Va por pasos dentro del MISMO ítem (su `generar` no mira `sesion`), así
+ * que lleva tarjeta como cualquier otro: la resolución entera, la misma que enseña el feedback al fallar.
+ */
+export function explicaCorchetes(item, { tt }) {
+  return `<p>${tt({ es: 'Se empieza por el paréntesis de más adentro; después, los corchetes, y al final lo que queda, de izquierda a derecha.', en: 'Start with the innermost brackets; then the square brackets, and last what is left, from left to right.' })}</p>`
+    + `<p>${cuenta(cadenaConSignos(item.expr))}</p>${respuesta(tt, cuenta(fmt(evaluar(item.expr))))}`;
+}
+
+/**
+ * Ejercicio 5: cómo buscar la colocación y la que sirve. Varias colocaciones pueden dar el objetivo (y el
+ * ejercicio da por buena cualquiera): si hay más de una, salen todas, para no hacer creer que solo vale una.
+ */
 export function explicaColocar(item, { tt }) {
-  const buena = buenas(item)[0];
-  return `<p>${tt({ es: 'Prueba a poner el paréntesis en distintos sitios y calcula primero lo de dentro. Una colocación que sirve', en: 'Try the brackets in different places and work out the inside first. One place that works' })}:</p>${respuesta(tt, cuenta(cadenaHtml(buena.texto)))}`;
+  const todas = buenas(item);
+  const consejo = tt({
+    es: `Lo de dentro del paréntesis se hace primero. Prueba a rodear dos números seguidos (o más) y calcula, hasta que salga ${fmt(item.objetivo)}.`,
+    en: `The inside of the brackets is worked out first. Try putting them around two or more numbers next to each other and work it out, until you get ${fmt(item.objetivo)}.`,
+  });
+  const lista = todas.map(b => cuenta(cadenaConSignos(b.texto))).join(tt({ es: ' o ', en: ' or ' }));
+  const fin = todas.length === 2 ? tt({ es: '; valen las dos', en: '; both are right' })
+    : todas.length > 2 ? tt({ es: `; vale cualquiera de las ${todas.length}`, en: `; any of the ${todas.length} is right` }) : '';
+  return `<p>${consejo}</p><p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${lista}${fin}.</p>`;
 }
