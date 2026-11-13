@@ -80,6 +80,18 @@ corrige lo que encuentre. La especificación es `docs/no-lo-se.md`.
 - (de la coordinadora) Una explicación puede llevar la solución y aun así enseñar mal: un paso que solo vale para ese
   ítem, un consejo falso en general, o la regla dicha con una palabra que no se ha dado.
 - (de la coordinadora) El feedback de acierto reutilizado a veces da la cuenta sin decir por qué: delante tiene que ir la regla.
+- (s-20261112T232612-419f0576, al cerrar) Los tests de 175-177 comprueban `html.includes(item.solucion)`: dan por buena
+  la explicación que **copia el feedback tal cual**, y el feedback tenía igualdades falsas («(−2) · 4 + (−2) · 4x =
+  2x − 8 − 8x»), signos mal dichos («−4 es positivo»), frases sin verbo («en 3 sin letra») y fracciones con barra.
+  Leer el feedback reutilizado como si fuera texto nuevo, y que el test compruebe la cuenta (evaluarla), no la copia.
+- (íd.) Los consejos generales fallan en un caso concreto del propio generador: «de izquierda a derecha» con «menos
+  que», «primero se multiplica» con k(x + c), «sustituye en la ecuación buena» cuando no sabes cuál es. Por cada
+  consejo, buscar con `plantillas.mjs` (un ítem por plantilla) el ítem en el que es falso.
+- (íd.) El feedback no se toca; la tarjeta sí. La forma limpia es posprocesar en `ayuda.js`/`textos.js` (`conRaya`,
+  `sinDosSignos`, `desarrolloBien`) y dejar el arreglo del feedback como hallazgo con recomendación.
+- (íd.) `python3 -m http.server` lo deniega el clasificador de permisos en las sesiones automáticas (también en 175-177):
+  los clics se quedan para Juan Luis. No hay que rodearlo (ni con `file://` ni con Chrome headless).
+- (íd.) Duración real del trabajo: unos 20 min para once prácticas con Opus. La estimación de 1 h 30 min sobra.
 
 ## Prohibido (propio de esta tarea)
 
