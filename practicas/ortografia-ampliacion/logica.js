@@ -499,12 +499,70 @@ export const idErrorElegir = (item, k) => (Number(k) > 0 ? item.malas[k - 1][1] 
 
 // --- «No lo sé»: la explicación de cada ejercicio (regla delante, solución al final) ---
 
-export const ayudaPorque = item => `<p>Mira la palabra de antes y qué hace la frase: ¿pregunta, da una causa o nombra un motivo?</p>
+// El consejo nombra los cuatro casos: sin el cuarto («por» que pide el verbo), en los ítems de «por que» llevaba a otra.
+export const ayudaPorque = item => `<p>Mira la palabra de antes y qué hace la frase: ¿pregunta, da una causa, nombra un motivo o lleva un «por» que pide el verbo (optar por)?</p>
   <p>${explicacionPorque(item)}</p><p>La respuesta es <b>${item.buena}</b>.</p>`;
 
-export const ayudaVerbo = item => `<p>Una de las dos formas es una falta típica de los verbos. Comprueba cuál con la regla.</p>
-  <p>${explicacionVerbo(item)}</p><p>Con la forma puesta: «${esc(rellenar(item.frase, item.buena))}». La respuesta es <b>${item.buena}</b>.</p>`;
+/**
+ * La frase entre comillas, sin su punto final: el punto va detrás de las comillas de cierre y no se duplica
+ * («… muy deprisa». y no «… muy deprisa.».), como enseña el ejercicio 4. Los signos ? y ! se quedan dentro.
+ */
+export const fraseCitada = frase => frase.replace(/\.$/, '');
 
-export const ayudaElegir = item => `<p>Compara las opciones: solo una respeta la norma; las otras tienen una falta.</p>
-  <p>${item.malas.map(([texto, id]) => `En <i>${esc(texto)}</i> ${esc(MOTIVOS[id])}.`).join(' ')}</p>
-  <p>La respuesta es: <b>${esc(item.bien)}</b></p>`;
+export const ayudaVerbo = item => `<p>Una de las dos formas es una falta típica de los verbos. Comprueba cuál con la regla.</p>
+  <p>${explicacionVerbo(item)}</p><p>Con la forma puesta: «${esc(fraseCitada(rellenar(item.frase, item.buena)))}». La respuesta es <b>${item.buena}</b>.</p>`;
+
+/**
+ * Ejercicios 3 y 4, para la tarjeta de «No lo sé»: la regla que cumple la buena, dicha en positivo, por cada
+ * `idError` de sus malas. Las confusiones que salen juntas en un ítem y dicen lo mismo (prefijo separado / con
+ * guion, sin guion / con espacio ante cifra…) llevan el mismo texto, y la tarjeta no lo repite.
+ */
+export const REGLA_ELEGIR = {
+  // 3. Siglas, abreviaturas y prefijos
+  'puntos-en-sigla': 'Las siglas se escriben sin puntos ni espacios: DNI, ONG, ESO.',
+  'sigla-en-minuscula': 'Estas siglas van en mayúsculas: cada letra es la inicial de una palabra.',
+  'plural-en-sigla': 'Las siglas no llevan -s (ni \'s) en plural: el plural lo dice el artículo (las ONG, los DVD).',
+  'abreviatura-sin-punto': 'Las abreviaturas acaban en punto: pág., Sr., etc.',
+  'abreviatura-sin-tilde': 'La abreviatura conserva la tilde de la palabra: página → pág.',
+  'etc-con-puntos-suspensivos': 'Detrás de «etc.» no van puntos suspensivos: ya quiere decir «y lo demás».',
+  'prefijo-separado': 'Delante de una sola palabra en minúscula, el prefijo va pegado: sin espacio y sin guion.',
+  'prefijo-con-guion': 'Delante de una sola palabra en minúscula, el prefijo va pegado: sin espacio y sin guion.',
+  'guion-ante-varias-palabras': 'Si el prefijo afecta a dos o más palabras que forman una unidad, va separado y sin guion: ex primer ministro.',
+  'prefijo-pegado-a-dos-palabras': 'Si el prefijo afecta a dos o más palabras que forman una unidad, va separado y sin guion: ex primer ministro.',
+  'espacio-ante-cifra': 'Delante de una cifra o de una mayúscula, el prefijo lleva guion: sub-16, anti-OTAN.',
+  'sin-guion-ante-cifra': 'Delante de una cifra o de una mayúscula, el prefijo lleva guion: sub-16, anti-OTAN.',
+  'r-simple-tras-prefijo': 'Si el prefijo acaba en vocal y la palabra empieza por r, se escribe rr para que suene fuerte: antirrobo.',
+  'plural-curriculum': 'El plural de «currículum» es «currículums» (o «currículos»).',
+  'plural-comic': 'El plural de «cómic» es «cómics».',
+  'plural-album': 'El plural de «álbum» es «álbumes», con m como en el singular.',
+  'plural-album-n': 'El plural de «álbum» es «álbumes», con m como en el singular.',
+  // 4. Puntuación avanzada
+  'guion-por-raya': 'El diálogo se escribe con raya (—), que es más larga que el guion (-).',
+  'espacio-tras-raya': 'La raya con la que empieza a hablar el personaje va pegada a la primera palabra.',
+  'falta-espacio-raya': 'La raya que abre o cierra el comentario del narrador va separada por un espacio de lo que queda fuera.',
+  'mayuscula-tras-raya': 'El comentario del narrador con «dijo», «preguntó»… empieza en minúscula, aunque vaya detrás de un signo de interrogación o de exclamación.',
+  'punto-antes-de-raya': 'Delante del comentario del narrador con «dijo», «preguntó»… no va punto.',
+  'inciso-narrador-mal': 'Si el personaje sigue hablando después del comentario del narrador, ese comentario se cierra con otra raya.',
+  'punto-dentro-parentesis': 'El punto de la frase va detrás del paréntesis de cierre, no dentro.',
+  'espacio-dentro-parentesis': 'El paréntesis va pegado a la primera y a la última palabra que encierra.',
+  'coma-por-punto-y-coma': 'Cuando cada parte lleva su coma dentro, las partes se separan con punto y coma.',
+  'punto-y-coma-mal-puesto': 'El punto y coma separa una parte de otra; la coma, dentro de cada parte, separa el nombre de lo que le corresponde.',
+  'punto-dentro-comillas': 'El punto final va detrás de las comillas de cierre, no dentro, y se pone aunque dentro haya un signo de interrogación o de exclamación.',
+  'sin-punto-tras-comillas': 'El punto final va detrás de las comillas de cierre, no dentro, y se pone aunque dentro haya un signo de interrogación o de exclamación.',
+  'coma-dentro-comillas': 'La coma va detrás de las comillas de cierre, no dentro.',
+  'espacio-dentro-comillas': 'Las comillas van pegadas a la primera y a la última palabra que encierran.',
+  'punto-y-coma-por-dos-puntos': 'Para anunciar lo que viene después («una cosa», «lo siguiente») se usan dos puntos.',
+  'dos-puntos-mal-puestos': 'Los dos puntos van justo detrás de lo que anuncian, no en medio.',
+  'punto-y-coma-tras-conector': 'Cuando «sin embargo», «no obstante» o «por tanto» unen dos frases, delante va punto y coma (o punto) y detrás, coma.',
+  'sin-signo-antes-del-conector': 'Cuando «sin embargo», «no obstante» o «por tanto» unen dos frases, delante va punto y coma (o punto) y detrás, coma.',
+};
+
+/** Las reglas de un ítem de los ejercicios 3 y 4, sin repetir (dos malas con la misma confusión dan una sola). */
+export const reglasElegir = item => [...new Set(item.malas.map(([, id]) => REGLA_ELEGIR[id]))];
+
+// Ejercicios 3 y 4: la buena y por qué (docs/no-lo-se.md, «Elegir»). No se copian las malas enteras, como hace
+// `explicacionElegir`: alargaban la tarjeta, repetían el motivo cuando dos malas fallan en lo mismo y dejaban
+// «En <i>… el D.N.I.</i> sobran…», con el punto de la frase mala en medio.
+export const ayudaElegir = item => `<p>Compara las opciones y busca qué cambia de una a otra: solo una respeta la norma.</p>
+  <p>${reglasElegir(item).map(esc).join(' ')}</p>
+  <p>La respuesta es <b>${esc(item.bien)}</b></p>`;
