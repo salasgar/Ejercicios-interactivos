@@ -3,7 +3,7 @@
 // (−1/8 + 5/8) o como resultado, sin paréntesis. La palabra no matemática que decide la respuesta
 // lleva su aclaración entre paréntesis en el texto inglés.
 
-import { fraccion, htmlFraccion, htmlCuenta, ERRORES_TIPICOS } from '../_comun/fracciones.js';
+import { fraccion, htmlFraccion, htmlRaya, htmlCuenta, ERRORES_TIPICOS } from '../_comun/fracciones.js';
 import { F, ERRORES_PROPIOS, terminosNat, resultadoNat, resultadoMismo, equivalentes, sumaDeNumeradores, resultadoPasos, respuestaQueda } from './logica.js';
 
 const fr = (n, d) => htmlFraccion(fraccion(n, d));
@@ -183,47 +183,154 @@ export function explicaCaza(item, idioma) {
 }
 
 // ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──
+// La tarjeta no reutiliza las soluciones del feedback (`solucion…`, `explicaCaza`): las escribe
+// por su cuenta, con la regla delante y sin repetirla, y enseña CÓMO sale cada número
+// (por cuánto se multiplica al ampliar, entre cuánto se divide al simplificar).
+
+const mcdN = (a, b) => (b === 0 ? Math.abs(a) : mcdN(b, a % b));
+const pasosAyuda = lis => `<ol class="pasos-ayuda">${lis.map(li => `<li>${li}</li>`).join('')}</ol>`;
+const resp = (s, es) => (es ? `La respuesta es ${cuenta(s)}.` : `The answer is ${cuenta(s)}.`);
+
+/** «2/4 = 2·11 / 4·11 = 22/44» (con raya), o «7/12 ya tiene denominador 12». */
+function ampliada(f, m, es) {
+  const k = m / f.d;
+  if (k === 1) return es ? `${frItem(f)} ya tiene denominador ${m}` : `${frItem(f)} already has denominator ${m}`;
+  return cuenta(`${frItem(f)} = ${htmlRaya(`${f.n} · ${k}`, `${f.d} · ${k}`)} = ${fr(f.n * k, m)}`);
+}
+
+/** « Simplificando (entre 2): 2/12 = 1/6.» o '' si ya es irreducible. */
+function simplificada(r, es) {
+  const g = mcdN(r.num, r.den);
+  if (g === 1) return '';
+  const c = cuenta(`${frItem(r)} = ${frItem(r.simplificar())}`);
+  return es ? ` Se simplifica dividiendo arriba y abajo entre ${g}: ${c}.` : ` Simplify by dividing top and bottom by ${g}: ${c}.`;
+}
 
 /** Ejercicio 1: la regla en una frase y la cuenta del ítem. */
 export function explicaMismo(item, ctx) {
-  const regla = ctx.idioma === 'es'
-    ? 'Con el mismo denominador, se suman o se restan los numeradores y el denominador se queda igual.'
-    : 'With the same denominator, add or subtract the numerators and keep the denominator.';
-  return sinEspacios(`${regla} ${solucionMismo(item, ctx.idioma)}`);
+  const es = ctx.idioma === 'es';
+  const r = resultadoMismo(item);
+  const nums = cuenta(`${signoNum(item.a.n)} ${OP[item.op]} ${item.b.n} = ${signoNum(r.num)}`);
+  const linea = cuenta(htmlCuenta([F(item.a), item.op, F(item.b), '=', r]));
+  const regla = es
+    ? `Con el mismo denominador, se suman o se restan los numeradores y el denominador se queda igual: ${nums}, así que ${linea}.`
+    : `With the same denominator, add or subtract the numerators and keep the denominator: ${nums}, so ${linea}.`;
+  return sinEspacios(`${regla}${simplificada(r, es)} ${resp(frItem(r.simplificar()), es)}`);
 }
 
-/** Ejercicio 2: los tres pasos (m.c.m., equivalentes, resultado). */
+/** Ejercicio 2: los tres pasos (m.c.m., equivalentes, resultado), como los pide el ejercicio. */
 export function explicaPasos(item, ctx) {
-  const regla = ctx.idioma === 'es'
-    ? 'Con distinto denominador hacen falta tres pasos: el m.c.m. de los denominadores, cada fracción pasada a ese denominador y, por último, la cuenta con los numeradores.'
-    : 'With different denominators you need three steps: the LCM of the denominators, each fraction changed to that denominator, and finally the calculation with the numerators.';
-  return sinEspacios(`${regla} ${solucionPasos(item, ctx.idioma)}`);
+  const es = ctx.idioma === 'es';
+  const dens = item.fracs.map(f => f.d).join(', ');
+  const eq = equivalentes(item);
+  const total = sumaDeNumeradores(item, eq);
+  const nums = eq.map((x, i) => (i === 0 ? `${x}` : `${OP[item.ops[i - 1]]} ${x}`)).join(' ');
+  const r = resultadoPasos(item);
+  const lista = item.fracs.map(f => ampliada(f, item.m, es)).join('; ');
+  const regla = es
+    ? 'Con distinto denominador, primero se pasan todas al mismo denominador, el m.c.m. de los denominadores; después se opera con los numeradores.'
+    : 'With different denominators, first change them all to the same denominator, the LCM of the denominators; then work with the numerators.';
+  const pasos = es
+    ? [
+      cuenta(`m.c.m.(${dens}) = ${item.m}`) + '.',
+      `Cada una, con denominador ${item.m} (arriba y abajo por el mismo número): ${lista}.`,
+      `Los numeradores: ${cuenta(`${nums} = ${total}`)}, así que queda ${cuenta(fr(total, item.m))}.${simplificada(r, es)}`,
+    ]
+    : [
+      cuenta(`LCM(${dens}) = ${item.m}`) + '.',
+      `Each one with denominator ${item.m} (multiply top and bottom by the same number): ${lista}.`,
+      `The numerators: ${cuenta(`${nums} = ${total}`)}, so you get ${cuenta(fr(total, item.m))}.${simplificada(r, es)}`,
+    ];
+  return sinEspacios(`${regla} ${pasosAyuda(pasos)} ${resp(frItem(r.simplificar()), es)}`);
 }
 
-/** Ejercicio 3: el natural pasa a fracción (la solución ya lo explica). */
+/** Ejercicio 3: el natural pasa a fracción con el denominador de la otra, y se opera. */
 export function explicaNat(item, ctx) {
-  const regla = ctx.idioma === 'es'
-    ? 'Un número natural es una fracción con un 1 abajo; se pasa al denominador de la otra fracción para poder sumar o restar.'
-    : 'A whole number is a fraction with 1 at the bottom; change it to the denominator of the other fraction so you can add or subtract.';
-  return sinEspacios(`${regla} ${solucionNat(item, ctx.idioma)}`);
+  const es = ctx.idioma === 'es';
+  const { x, op, y } = terminosNat(item);
+  const d = item.f.d;
+  const nat = fraccion(item.nat * d, d);
+  const x2 = x.den === 1 ? nat : x, y2 = y.den === 1 ? nat : y;
+  const r = resultadoNat(item);
+  const nums = cuenta(`${x2.num} ${OP[op]} ${y2.num} = ${signoNum(r.num)}`);
+  const linea = cuenta(htmlCuenta([x2, op, y2, '=', r]));
+  const regla = es
+    ? 'Para sumar o restar un natural y una fracción, el natural se escribe como fracción con el mismo denominador que la otra: se multiplica por ese denominador.'
+    : 'To add or subtract a whole number and a fraction, write the whole number as a fraction with the same denominator as the other one: multiply it by that denominator.';
+  const pasos = es
+    ? [`${cuenta(`${item.nat} · ${d} = ${item.nat * d}`)}, así que ${cuenta(`${item.nat} = ${htmlFraccion(nat)}`)}.`, `Con el mismo denominador: ${nums}, así que ${linea}.`]
+    : [`${cuenta(`${item.nat} · ${d} = ${item.nat * d}`)}, so ${cuenta(`${item.nat} = ${htmlFraccion(nat)}`)}.`, `With the same denominator: ${nums}, so ${linea}.`];
+  return sinEspacios(`${regla} ${pasosAyuda(pasos)} ${resp(htmlFraccion(r), es)}`);
 }
 
 /** Ejercicio 4: lo que suman las partes y, si se pide lo que queda, lo que falta hasta 1. */
 export function explicaQueda(item, ctx) {
-  const regla = ctx.idioma === 'es'
-    ? 'Las partes se suman; lo que queda es lo que falta hasta 1 (el todo).'
-    : 'The parts are added; what is left is what is missing up to 1 (the whole).';
-  return sinEspacios(`${regla} ${solucionQueda(item, ctx.idioma)}`);
+  const es = ctx.idioma === 'es';
+  const a = F(item.a), b = F(item.b);
+  const m = mcm(a.den, b.den);
+  const an = (a.num * m) / a.den, bn = (b.num * m) / b.den;
+  const suma = fraccion(an + bn, m);
+  const tras = f => (f.simplificar().den === f.den ? '' : ` = ${frItem(f.simplificar())}`);
+  const juntas = cuenta(`${frItem(a)} + ${frItem(b)} = ${fr(an, m)} + ${fr(bn, m)} = ${fr(an + bn, m)}`);
+  const buena = frItem(respuestaQueda(item));
+  const regla = es
+    ? 'Las partes de un todo se suman; lo que queda es lo que falta hasta 1 (el todo).'
+    : 'The parts of a whole are added; what is left is what is missing up to 1 (the whole).';
+  let cuerpo;
+  if (item.pregunta === 'gastan') {
+    const c = cuenta(`${frItem(a)} + ${frItem(b)} = ${fr(an, m)} + ${fr(bn, m)} = ${fr(an + bn, m)}${tras(suma)}`);
+    cuerpo = es ? `Aquí se pregunta lo que suman las dos partes: ${c}.` : `Here the question asks what the two parts make together: ${c}.`;
+  } else {
+    const q = fraccion(m - an - bn, m);
+    const resta = cuenta(`1 − ${fr(an + bn, m)} = ${fr(m, m)} − ${fr(an + bn, m)} = ${fr(m - an - bn, m)}${tras(q)}`);
+    cuerpo = es
+      ? `Aquí se pregunta lo que queda. Las dos partes juntas: ${juntas}; y queda ${resta}.`
+      : `Here the question asks what is left. The two parts together: ${juntas}; and what is left is ${resta}.`;
+  }
+  return sinEspacios(`${regla} ${cuerpo} ${resp(buena, es)}`);
 }
 
-/** Ejercicio 5: dónde está el error (o que no hay ninguno) y cómo queda bien. */
+/** Ejercicio 5: qué se mira en cada línea, dónde está el error (o que no hay) y cómo queda bien. */
 export function explicaCazaAyuda(item, ctx) {
   const es = ctx.idioma === 'es';
-  const donde = item.mala === null
-    ? (es ? 'La respuesta es «No hay error».' : 'The answer is “No mistake”.')
-    : (es ? `La línea con el error es la ${item.mala + 1}.` : `The line with the mistake is line ${item.mala + 1}.`);
-  const consejo = es ? 'Repasa cada línea con la anterior: ¿se ha hecho lo que toca en ese paso?' : 'Check each line against the one before it: was the right thing done in that step?';
-  return sinEspacios(`${consejo} ${explicaCaza(item, ctx.idioma)} ${donde}`);
+  const a = F(item.a), b = F(item.b), m = item.m;
+  const regla = es
+    ? 'Cada línea se comprueba con la de antes: en la 1, cada fracción vale lo mismo; en la 2, se suman solo los numeradores; en la 3, se divide arriba y abajo entre lo mismo.'
+    : 'Check each line against the one before: in line 1, each fraction keeps its value; in line 2, only the numerators are added; in line 3, top and bottom are divided by the same number.';
+  const s = F(item.l2.s);
+  const sumaBien = fraccion(item.l1.x.n + item.l1.y.n, m);
+  let cuerpo;
+  switch (item.error) {
+    case null: {
+      const g = mcdN(s.num, s.den);
+      const nums = cuenta(`${item.l1.x.n} + ${item.l1.y.n} = ${item.l2.s.n}`);
+      const simp = cuenta(`${frItem(s)} = ${frItem(item.l3.r)}`);
+      cuerpo = es
+        ? `Aquí las tres están bien: ${ampliada(item.a, m, es)} y ${ampliada(item.b, m, es)}; ${nums}; y ${simp}, dividiendo arriba y abajo entre ${g}. La respuesta es «No hay error».`
+        : `Here all three are right: ${ampliada(item.a, m, es)} and ${ampliada(item.b, m, es)}; ${nums}; and ${simp}, dividing top and bottom by ${g}. The answer is “No mistake”.`;
+      break;
+    }
+    case 'amplia-solo-denominador':
+      cuerpo = es
+        ? `En la línea 1, ${frItem(item.l1.x)} no vale lo mismo que ${frItem(a)}: hay que multiplicar arriba y abajo por ${m / a.den}, ${ampliada(item.a, m, es)}.`
+        : `In line 1, ${frItem(item.l1.x)} is not the same as ${frItem(a)}: multiply top and bottom by ${m / a.den}, ${ampliada(item.a, m, es)}.`;
+      break;
+    case 'suma-arriba-y-abajo':
+      cuerpo = es
+        ? `En la línea 2 se han sumado también los denominadores; el denominador se queda en ${m}: ${cuenta(`${fr(item.l1.x.n, m)} + ${fr(item.l1.y.n, m)} = ${frItem(sumaBien)}`)}, no ${frItem(s)}.`
+        : `In line 2 the denominators were added too; the denominator stays ${m}: ${cuenta(`${fr(item.l1.x.n, m)} + ${fr(item.l1.y.n, m)} = ${frItem(sumaBien)}`)}, not ${frItem(s)}.`;
+      break;
+    default: {
+      const g = mcdN(s.num, s.den);
+      cuerpo = es
+        ? `En la línea 3 se ha dividido solo el numerador; hay que dividir arriba y abajo entre ${g}: ${cuenta(`${frItem(s)} = ${frItem(s.simplificar())}`)}, no ${frItem(item.l3.r)}.`
+        : `In line 3 only the numerator was divided; divide top and bottom by ${g}: ${cuenta(`${frItem(s)} = ${frItem(s.simplificar())}`)}, not ${frItem(item.l3.r)}.`;
+    }
+  }
+  const fin = item.error === null ? ''
+    : (es ? `La respuesta es la línea ${item.mala + 1}, y lo que ha pasado: «${nombreError(item.error, 'es')}».`
+      : `The answer is line ${item.mala + 1}, and what went wrong: “${nombreError(item.error, 'en')}”.`);
+  return sinEspacios(`${regla} ${cuerpo} ${fin}`);
 }
 
 // ─── Los textos de los cinco ejercicios ────────────────────────────────────────
