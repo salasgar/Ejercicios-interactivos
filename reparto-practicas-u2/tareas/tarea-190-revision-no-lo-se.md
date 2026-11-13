@@ -80,6 +80,12 @@ corrige lo que encuentre. La especificación es `docs/no-lo-se.md`.
 - (de la coordinadora) Una explicación puede llevar la solución y aun así enseñar mal: un paso que solo vale para ese
   ítem, un consejo falso en general, o la regla dicha con una palabra que no se ha dado.
 - (de la coordinadora) El feedback de acierto reutilizado a veces da la cuenta sin decir por qué: delante tiene que ir la regla.
+- (s-20261113T170133-3d38e018, relevo) Duración real: ~55 min en total (35 + 20), con la lectura repartida en cinco subagentes. La
+  sesión que la hizo se paró tras escribir la ENTREGA y antes del marcador y la terminada: escribe la terminada en cuanto acabes.
+- (ídem) Clics con el guion de la 192 (`hechos/notas/s-20261113T074721-a71b7338-clics-no-lo-se.mjs`, cópialo al scratchpad y cambia
+  rutas y puertos). El servidor `python3 -m http.server` va con `run_in_background`: lanzado con `&` dentro de una llamada muere al
+  acabarla y el guion da «sin» botón en todo lo que viene detrás. «itemIgualAlAnterior» compara el texto del ítem: en los ejercicios de
+  dibujo (que-fraccion ej1) el texto es solo la instrucción y da falsos positivos.
 
 ## Prohibido (propio de esta tarea)
 
