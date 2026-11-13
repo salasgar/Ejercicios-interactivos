@@ -1,6 +1,20 @@
 // Práctica «Divisiones sucesivas guiadas»: textos propios, siempre { es, en }.
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
+/**
+ * Cierre de la factorización: multiplicar los factores devuelve el número de
+ * partida (la factorización ES la respuesta; la cuenta solo sirve para comprobar).
+ */
+export function lineaComprobacion(n, factorizacion, idioma) {
+  const factores = factorizacion.map(([p, e]) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`)).join(' · ');
+  const valores = factorizacion.map(([p, e]) => p ** e).join(' · ');
+  const cuenta = `<span class="cuenta">${factores} = ${valores} = ${n}</span>`;
+  const frase = idioma === 'es'
+    ? `Para comprobarlo, multiplica los factores: ${cuenta}. Sale el número de partida, ${n}.`
+    : `To check it, multiply the factors: ${cuenta}. You get the number you started with, ${n}.`;
+  return `<p>${frase}</p>`;
+}
+
 export const TX = {
   escalera: {
     nombre: { es: 'La escalera de divisiones', en: 'The division ladder' },
@@ -61,7 +75,7 @@ export function explicaPotencias(item, { idioma }) {
     ? `<p>${idioma === 'es' ? `El ${decoy[0]} no aparece: su exponente es 0.` : `${decoy[0]} does not appear: its exponent is 0.`}</p>`
     : '';
   const cierre = RESPUESTA[idioma](`<strong>${item.n} = ${item.factorizacion.map(([p, e]) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`)).join(' · ')}</strong>`);
-  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol>${nota}<p>${cierre}</p>`;
+  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol>${nota}${lineaComprobacion(item.n, item.factorizacion, idioma)}<p>${cierre}</p>`;
 }
 
 export function explicaComprobar(item, { idioma }) {

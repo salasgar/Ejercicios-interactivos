@@ -12,6 +12,7 @@
 //                { tipo, factorizacion, valorMostrado, igualdadCorrecta }
 
 import { factorizar, valorDe, criterio, htmlFact, esPrimo } from '../_comun/aritmetica.js';
+import { lineaComprobacion } from './textos.js';
 
 export const PRIMOS_ESCALERA = [2, 3, 5, 7, 11, 13];
 // 2, 3 y 5 tienen un criterio de divisibilidad sencillo (aritmetica.js); para
@@ -184,10 +185,11 @@ export function generarPotencias(rng) {
 
 /** Feedback del ejercicio 2: cuántas veces aparece cada primo, con su potencia. */
 export function explicarPotencias(factorizacion, idioma) {
+  const n = valorDe(factorizacion);
   const lineas = factorizacion.map(([p, e]) => (idioma === 'es'
     ? `el ${p} aparece ${e} ${e === 1 ? 'vez' : 'veces'}: ${p}${e === 1 ? '' : `<sup>${e}</sup>`}`
     : `${p} appears ${e} time${e === 1 ? '' : 's'}: ${p}${e === 1 ? '' : `<sup>${e}</sup>`}`));
-  return `<ul class="explicacion">${lineas.map(l => `<li>${l}</li>`).join('')}</ul>`;
+  return `<ul class="explicacion">${lineas.map(l => `<li>${l}</li>`).join('')}</ul>${lineaComprobacion(n, factorizacion, idioma)}`;
 }
 
 /** El exponente de `p` en una factorización (0 si no aparece). */
