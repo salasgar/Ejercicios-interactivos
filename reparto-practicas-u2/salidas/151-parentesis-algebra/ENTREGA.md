@@ -24,3 +24,6 @@ Coeficientes del paréntesis 1-5, números 1-9, k de 2 a 6 (o −1); término de
 
 ## Probarlo en 1 minuto
 `npm run servir` → http://localhost:8080/practicas/parentesis-algebra/ → «Probar sin código». Probado en Chrome (ES y EN, un ítem acertado/fallado en los cuatro ejercicios) y en un iframe de 375 px: sin desbordamiento horizontal en ninguno.
+
+## Reabierta del 13-11 (sesión s-20261113T170434-bebf93c0)
+`solucionDeDesarrollo` (rama del producto) con algo delante: «(−2) · 4 + (−2) · 4x = −8 − 8x; con lo de delante, 2x − 8 − 8x», en los dos idiomas. `ayuda.js` pierde el parche `desarrolloBien` (ya no hace falta: la tarjeta y el feedback comparten el texto). Test nuevo: cada igualdad del feedback de los ejercicios 1, 2 y 4 es cierta en x = 7 y x = −3 (3000 ítems por ejercicio; falla con el código anterior). Commit cf464c3. Sin navegador.
