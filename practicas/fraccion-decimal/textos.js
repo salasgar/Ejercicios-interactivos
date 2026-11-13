@@ -7,7 +7,7 @@
 // mixtos ni «×»; el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 
 import { htmlFraccion } from '../_comun/fracciones.js';
-import { aTexto } from '../_comun/decimales.js';
+import { aTexto, dividir } from '../_comun/decimales.js';
 import { mcd } from '../_comun/aritmetica.js';
 import { D, Fr, decimalDe, primerasCifras } from './logica.js';
 
@@ -257,46 +257,98 @@ export const TX = {
 // Reutilizan `divisionDe`, `cadenaDecimal` y las `solucion` de arriba, y acaban con la respuesta tal
 // como la da por buena el ejercicio: «La respuesta es <strong>…</strong>.».
 
-const fin = (idioma, txt) => ` ${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>.`;
+// Revisión de la tarea 190: tras «…» no va punto («La respuesta es 0,555…», sin «….»); las opciones,
+// entre comillas y como salen en el botón; la regla delante y el paso del ítem detrás, sin repetirla.
+const fin = (idioma, txt) => ` ${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>${/…$/.test(txt) ? '' : '.'}`;
 const dos = (es, en, idioma) => (idioma === 'es' ? es : en);
+/** Una opción del ejercicio entre comillas, como sale en el botón. */
+const opcion = (txt, idioma) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
+/** Tras una cuenta: punto, salvo si acaba en «…» (entonces la frase ya está cerrada). */
+const cierra = html => (/…<\/span>$/.test(html) ? html : `${html}.`);
+const cifrasDec = (k, idioma) => (idioma === 'es' ? `${k} ${k === 1 ? 'cifra decimal' : 'cifras decimales'}` : `${k} decimal ${k === 1 ? 'place' : 'places'}`);
+
+/** La cifra que se repite en un periódico de periodo 1 (los denominadores 3, 6 y 9 de la práctica), o null. */
+function cifraQueSeRepite(f) {
+  const x = D(dividir(f.num, f.den, 6).cociente);
+  const ultimas = String(x.m).slice(-4);
+  return /^(\d)\1{3}$/.test(ultimas) ? Number(ultimas[0]) : null;
+}
 
 /** Ejercicio 1: de fracción a decimal (escribir, elegir, ¿periódico?, ¿exacto o periódico?). */
 export function explicaFraccionADecimal(item, { idioma }) {
   const regla = dos('Una fracción es una división: se divide el numerador (arriba) entre el denominador (abajo).',
     'A fraction is a division: divide the numerator (top) by the denominator (bottom).', idioma);
   const periodico = item.tipo === 'periodico' || (item.tipo === 'tipo' && item.periodica);
-  const cuenta = item.tipo === 'tipo' || item.tipo === 'periodico'
-    ? `${divisionDe(item.f, idioma)} ${periodico
-      ? dos('La división no termina nunca: hay cifras que se repiten.', 'The division never ends: some digits repeat.', idioma)
-      : dos('La división termina.', 'The division ends.', idioma)}`
-    : `${divisionDe(item.f, idioma)}.`;
-  const resp = item.tipo === 'tipo'
-    ? (item.periodica ? dos('que es periódico (no termina)', 'that it is recurring (never ends)', idioma) : dos('que es exacto (termina)', 'that it is terminating (it ends)', idioma))
-    : valorDe(item.f, idioma);
-  return `${regla} ${cuenta}${fin(idioma, resp)}`;
+  const cuenta = cierra(divisionDe(item.f, idioma));
+  let detalle = '';
+  if (periodico) {
+    const cifra = cifraQueSeRepite(item.f);
+    detalle = cifra === null
+      ? dos(' La división no termina nunca: las cifras se repiten siempre.', ' The division never ends: the digits repeat for ever.', idioma)
+      : dos(` La división no termina nunca: el ${cifra} se repite siempre.`, ` The division never ends: the ${cifra} repeats for ever.`, idioma);
+  } else if (item.tipo === 'tipo') {
+    detalle = dos(' La división termina: el resto llega a 0.', ' The division ends: the remainder gets to 0.', idioma);
+  }
+  const consejo = item.tipo === 'tipo'
+    ? dos(' Si al dividir vuelve a salir un resto que ya había salido, las cifras se repiten: es periódico.',
+      ' If a remainder you already had comes up again, the digits repeat: it is recurring.', idioma)
+    : '';
+  const resp = item.tipo === 'tipo' ? opcion((item.periodica ? TX.ej1.periodico : TX.ej1.exacto)[idioma], idioma) : valorDe(item.f, idioma);
+  return `${regla} ${cuenta}${detalle}${consejo}${fin(idioma, resp)}`;
 }
 
 /** Ejercicio 2: de decimal a fracción irreducible. */
 export function explicaDecimalAFraccion(item, { idioma }) {
-  const regla = dos('Se escribe con denominador 10, 100 o 1000 (tantos ceros como cifras decimales) y se simplifica hasta la irreducible.',
-    'Write it with denominator 10, 100 or 1000 (as many zeros as decimal places) and simplify it until it cannot be simplified any more.', idioma);
-  return `${regla} ${TX.ej2.solucion[idioma](item)}${fin(idioma, cf(h(item.respuesta)))}`;
+  const regla = dos('Se escribe como fracción con denominador 10, 100 o 1000 (un 0 por cada cifra decimal) y después se simplifica.',
+    'Write it as a fraction with denominator 10, 100 or 1000 (one 0 for each decimal place), then simplify it.', idioma);
+  const x = D(item.d), grande = { num: x.m, den: unidades(x.k) }, g = mcd(x.m, unidades(x.k));
+  const paso1 = dos(`${n(item.d, idioma)} tiene ${cifrasDec(x.k, idioma)}: ${cf(`${n(item.d, idioma)} = ${h(grande)}`)}.`,
+    `${n(item.d, idioma)} has ${cifrasDec(x.k, idioma)}: ${cf(`${n(item.d, idioma)} = ${h(grande)}`)}.`, idioma);
+  const paso2 = g > 1
+    ? dos(`Se divide arriba y abajo entre ${g}: ${cf(`${h(grande)} = ${h(item.respuesta)}`)}.`,
+      `Divide top and bottom by ${g}: ${cf(`${h(grande)} = ${h(item.respuesta)}`)}.`, idioma)
+    : dos('No se puede simplificar: ya es irreducible.', 'It cannot be simplified: it is already in its simplest form.', idioma);
+  return `${regla} ${paso1} ${paso2}${fin(idioma, cf(h(item.respuesta)))}`;
 }
 
-/** Ejercicio 3: parejas fracción-decimal (las seis, con su división). */
+/** Ejercicio 3: parejas fracción-decimal (las seis, cada una con su división). */
 export function explicaParejas(item, { idioma }) {
-  const regla = dos('Cada fracción es una división: numerador entre denominador. Haz cada cuenta y une la fracción con su decimal.',
-    'Each fraction is a division: numerator divided by denominator. Work out each one and match the fraction with its decimal.', idioma);
-  const pares = item.fracciones.map((f, i) => `${h(f)} = ${n(item.decimales[item.solucion[i]], idioma)}`);
-  const cuentas = item.fracciones.map(f => divisionDe(f, idioma)).join(' ');
-  return `${regla} ${cuentas}${fin(idioma, cf(pares.join('; ')))}`;
+  const regla = dos('Cada fracción es una división: numerador entre denominador.',
+    'Each fraction is a division: numerator divided by denominator.', idioma);
+  const pares = item.fracciones.map((f, i) => `${h(f)} = ${f.num} : ${f.den} = ${n(item.decimales[item.solucion[i]], idioma)}`);
+  return `${regla}${fin(idioma, cf(pares.join('; ')))}`;
 }
 
-/** Ejercicio 4: ¿fracción o decimal? (<, = o >). */
+const LUGARES = {
+  es: ['la parte entera', 'las décimas', 'las centésimas', 'las milésimas'],
+  en: ['the whole part', 'the tenths', 'the hundredths', 'the thousandths'],
+};
+/** Dónde se distinguen dos decimales distintos, cifra a cifra desde la izquierda: { lugar, a, b } (cifras o partes enteras). */
+export function primeraDiferencia(x, y) {
+  const k = Math.max(x.k, y.k), a = D(x).conCifras(k), b = D(y).conCifras(k);
+  const ea = Math.floor(a.m / unidades(k)), eb = Math.floor(b.m / unidades(k));
+  if (ea !== eb) return { lugar: 0, a: ea, b: eb };
+  const da = String(a.m % unidades(k)).padStart(k, '0'), db = String(b.m % unidades(k)).padStart(k, '0');
+  for (let i = 0; i < k; i++) if (da[i] !== db[i]) return { lugar: i + 1, a: Number(da[i]), b: Number(db[i]) };
+  return null;
+}
+
+/** Ejercicio 4: ¿fracción o decimal? (<, = o >): se pasa a decimal y se comparan cifra a cifra. */
 export function explicaFraccionODecimal(item, { idioma }) {
   const regla = dos('Se pasa la fracción a decimal (numerador entre denominador) y se comparan los dos decimales.',
     'Change the fraction into a decimal (numerator divided by denominator) and compare the two decimals.', idioma);
   const f = h(item.f), d = n(item.d, idioma);
   const [izq, der] = item.orden === 'fd' ? [f, d] : [d, f];
-  return `${regla} ${divisionDe(item.f, idioma)}.${fin(idioma, cf(`${izq} ${SIGNO[item.respuesta]} ${der}`))}`;
+  const delFraccion = decimalDe(item.f) ?? primerasCifras(item.f);   // el periódico, con sus tres primeras cifras
+  const [x, y] = item.orden === 'fd' ? [delFraccion, item.d] : [item.d, delFraccion];
+  const dif = item.respuesta === '=' ? null : primeraDiferencia(x, y);
+  // Con ceros a la derecha hasta la cifra que decide (0,7 → 0,70), para que se vea qué se compara.
+  const conCeros = v => aTexto(D(v).conCifras(Math.max(D(v).k, dif ? dif.lugar : 0)), idioma);
+  const deF = decimalDe(item.f) ? conCeros(decimalDe(item.f)) : valorDe(item.f, idioma);
+  const [tx, ty] = item.orden === 'fd' ? [deF, conCeros(item.d)] : [conCeros(item.d), deF];
+  const compara = dif === null
+    ? dos('Son el mismo número.', 'They are the same number.', idioma)
+    : dos(`Desde la izquierda, ${tx} y ${ty} se distinguen en ${LUGARES.es[dif.lugar]}: ${c(`${dif.a} ${SIGNO[item.respuesta]} ${dif.b}`)}.`,
+      `From the left, ${tx} and ${ty} first differ in ${LUGARES.en[dif.lugar]}: ${c(`${dif.a} ${SIGNO[item.respuesta]} ${dif.b}`)}.`, idioma);
+  return `${regla} ${cierra(divisionDe(item.f, idioma))} ${compara}${fin(idioma, cf(`${izq} ${SIGNO[item.respuesta]} ${der}`))}`;
 }
