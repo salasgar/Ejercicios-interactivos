@@ -33,6 +33,9 @@ test('dos-signos · ejercicio 1: la explicación lleva el signo y el resultado',
       assert.ok(html.includes(item.texto), 'la cuenta del ítem');
       const iguales = item.op === item.interno;
       assert.equal(/same|iguales/.test(plano(html)) && !/different|distintos/.test(plano(html)), iguales, 'iguales o distintos');
+      // Revisión 192: tras los dos puntos, minúscula; y «así que», no una coma entre dos frases.
+      assert.ok(!/: (Los|The) signs?/.test(plano(html)), 'sin mayúscula tras los dos puntos');
+      assert.ok(/(así que|so) [+−] (se queda|is left)/.test(plano(html)) || /así que se queda [+−]/.test(plano(html)), 'así que / so');
     }
   }
 });
@@ -60,6 +63,8 @@ test('dos-signos · ejercicio 3: la explicación lleva cada signo y el resultado
       assert.equal(valor, item.valor);
       assert.ok(html.includes(`${L.textoSinParentesis(signos, item.terminos)} = ${fmt(valor)}`), 'cuenta sin paréntesis y resultado');
       for (const t of item.terminos) assert.ok(html.includes(`(${L.ver(t.interno)}${t.mag})`), 'cada término');
+      // Revisión 192: la regla dice qué dos signos se juntan («Cada número con su signo» no lo decía).
+      assert.ok(/Junta el signo de delante con el del paréntesis|Put the sign in front together with the sign in the brackets/.test(html), 'qué signos se juntan');
     }
   }
 });

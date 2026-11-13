@@ -151,12 +151,12 @@ TX.no_se_hacerlo = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 const respuesta = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
-const mayus = s => `${s.charAt(0).toUpperCase()}${s.slice(1)}`;
 
 /** Ejercicio 1: el signo que queda y el resultado. */
 export function explicaUnSigno(item, { tt }) {
-  const razon = mayus(mismosOdistintos(tt, item.op, item.interno));
-  const paso1 = `${cuenta(item.texto)}: ${razon}, ${queda(tt, item.signo)}.`;
+  // Tras los dos puntos, minúscula; «así que» en vez de una coma entre dos frases.
+  const razon = mismosOdistintos(tt, item.op, item.interno);
+  const paso1 = `${cuenta(item.texto)}: ${razon}, ${tt({ es: 'así que', en: 'so' })} ${queda(tt, item.signo)}.`;
   const paso2 = item.solo
     ? `${cuenta(`${item.texto} = ${item.reescrita}`)}.`
     : `${cuenta(`${item.texto} = ${item.reescrita} = ${fmt(item.valor)}`)}.`;
@@ -189,8 +189,8 @@ export function explicaQuita(item, { tt }) {
   }).join('; ');
   return `${pasos([
     tt({
-      es: `Cada número con su signo: signos iguales dan +, distintos dan ${MENOS}. El primero se queda con el suyo: ${trozos}.`,
-      en: `Each number with its sign: same signs give +, different signs give ${MENOS}. The first one keeps its own: ${trozos}.`,
+      es: `Junta el signo de delante con el del paréntesis: iguales dan +, distintos dan ${MENOS}. El primer número se queda con su signo: ${trozos}.`,
+      en: `Put the sign in front together with the sign in the brackets: same signs give +, different signs give ${MENOS}. The first number keeps its own sign: ${trozos}.`,
     }),
     `${tt({ es: 'Calcula', en: 'Work it out' })}: ${cuenta(`${item.reescrita} = ${fmt(item.valor)}`)}.`,
   ])}${respuesta(tt, tt({
