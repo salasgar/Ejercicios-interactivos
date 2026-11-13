@@ -9,7 +9,7 @@
 // `#panel-hoy`; el contexto está documentado en `profesor-tareas.js`.
 
 import {
-  agregar, sinAlumnosDePrueba, tareaVigente, fechaMadrid, textoEntrega, documentosAMapa, asignacionesAMapa,
+  agregar, claveDocumento, sinAlumnosDePrueba, tareaVigente, fechaMadrid, textoEntrega, documentosAMapa, asignacionesAMapa,
 } from '../herramientas/informe-actividad.mjs';
 import { PUNTOS_TAREA } from './_comun/tareas.js';
 
@@ -35,6 +35,12 @@ export function calcularHoy({ tareas, alumnos, documentos, tareaId = null, horas
   const docs = documentosAMapa(documentos?.['progreso-libre'] ?? [], documentos?.['progreso-tareas'] ?? []);
   const asignaciones = asignacionesAMapa(documentos?.asignaciones);
   const resumen = agregar({ docs, tarea, lista, nombres, desde: ahora - horas * 3600 * 1000, asignaciones, ahora });
+  // «No lo sé» (docs/no-lo-se.md): `agregar` no cuenta las ayudas, así que se suman aquí de los mismos documentos.
+  const ayudasDe = (e, codigo) => {
+    const n = docs.get(claveDocumento(tarea, e.slug, codigo))?.ej?.[e.n - 1]?.ayudas;
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  };
+  for (const e of resumen.ejercicios) e.ayudas = lista.reduce((s, a) => s + ayudasDe(e, a.codigo), 0);
   return { tarea, motivo, resumen, horas, ahora };
 }
 
@@ -99,7 +105,7 @@ function pintar(contenedor, hoy) {
   tabla.append(cab);
   for (const e of r.ejercicios) {
     const fila = el('tr');
-    const fallos = e.aciertos + e.fallos > 0 ? `${Math.round((100 * e.fallos) / (e.aciertos + e.fallos))} % (${e.fallos})` : '—';
+    const fallos = (e.aciertos + e.fallos > 0 ? `${Math.round((100 * e.fallos) / (e.aciertos + e.fallos))} % (${e.fallos})` : '—') + (e.ayudas > 0 ? ` · ?${e.ayudas}` : '');
     for (const c of [`${e.slug} ej. ${e.n}${e.estrella ? ' ★' : ''}`, e.intentan, e.terminan, fallos, e.reinician]) fila.append(el('td', String(c)));
     tabla.append(fila);
   }

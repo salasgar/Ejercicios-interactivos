@@ -182,9 +182,13 @@ function pintarSelector(practicas) {
 /** Cuánto de un ejercicio se hizo en inglés (solo lo sabe la nube, no el código de resultado). */
 const enInglés = e => (e.en_aciertos || e.en_fallos ? ` <span class="pequeno">EN: ${e.en_aciertos ?? 0}/${e.en_fallos ?? 0}</span>` : '');
 
+/** Veces que pulsó «No lo sé» (solo lo sabe la nube; el campo solo existe si es > 0). */
+const conAyudas = e => (e.ayudas > 0 ? ` <span title="${e.ayudas} ${e.ayudas === 1 ? 'vez' : 'veces'} «No lo sé»">· ?${e.ayudas}</span>` : '');
+
 function celda(e) {
-  if (e.terminado) return `<td class="num celda--ok">✓ ${e.fallos}${e.tope ? '+' : ''}${enInglés(e)}</td>`;
-  if (e.puntos !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">${e.puntos}/${e.objetivo ?? '?'} pt${e.reinicios ? ` · ↺${e.reinicios}` : ''}${enInglés(e)}</td>`;
+  if (e.terminado) return `<td class="num celda--ok">✓ ${e.fallos}${e.tope ? '+' : ''}${conAyudas(e)}${enInglés(e)}</td>`;
+  if (e.puntos !== undefined && e.aciertos + e.fallos > 0) return `<td class="num">${e.puntos}/${e.objetivo ?? '?'} pt${e.reinicios ? ` · ↺${e.reinicios}` : ''}${conAyudas(e)}${enInglés(e)}</td>`;
+  if (e.ayudas > 0) return `<td class="num">—${conAyudas(e)}</td>`;
   return '<td class="num celda--no">—</td>';
 }
 
@@ -423,7 +427,7 @@ function htmlFallos(vista, practicas, validos) {
   const deTarea = vista !== FALLOS;
   return `
     <table>
-      <thead><tr><th>Práctica</th><th class="num">Ej.</th><th>Ejercicio</th>${deTarea ? '<th></th>' : ''}<th class="num">Lo han empezado</th><th class="num">Lo han terminado</th><th class="num">Fallos</th><th class="num">Fallos por alumno</th><th class="num">Veces sin vidas (↺)</th></tr></thead>
+      <thead><tr><th>Práctica</th><th class="num">Ej.</th><th>Ejercicio</th>${deTarea ? '<th></th>' : ''}<th class="num">Lo han empezado</th><th class="num">Lo han terminado</th><th class="num">Fallos</th><th class="num">Fallos por alumno</th><th class="num">Veces sin vidas (↺)</th><th class="num">«No lo sé»</th></tr></thead>
       <tbody>${filas.map(f => `
         <tr>
           <td>${esc(f.practica.nombre.es)}</td><td class="num">${f.n}</td><td>${esc(f.nombre)}</td>${deTarea ? `<td>${f.marca}</td>` : ''}
@@ -431,6 +435,7 @@ function htmlFallos(vista, practicas, validos) {
           <td class="num">${f.empezados ? `${f.fallos}${f.tope ? '+' : ''}` : '—'}</td>
           <td class="num"><strong>${f.empezados ? decimal(f.fallosPorAlumno) : '—'}</strong></td>
           <td class="num">${f.empezados ? f.reinicios : '—'}</td>
+          <td class="num">${f.ayudas || '—'}</td>
         </tr>`).join('')}</tbody>
     </table>
     <p class="pequeno">Una fila por ejercicio, de más a menos <strong>fallos por alumno que lo ha empezado</strong>. De cada alumno se toma lo mismo que en la tabla de su práctica (sus códigos o la nube, lo que tenga más terminado). Si hay nombres en la lista, solo cuentan los alumnos de la lista (así no cuenta un código de prueba). Con los códigos de resultado los fallos se cuentan hasta 15 («+») y no se saben las veces sin vidas: carga la nube para verlo todo.</p>`;

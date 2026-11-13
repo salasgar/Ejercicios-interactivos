@@ -286,7 +286,7 @@ export function asignacionesParaGuardar(previas, asignables, marcadas) {
  * @param deCodigos  [{ practica, indice, ejercicios, dia }]
  * @param deNube     [{ practica, indice, ej }]
  * @param ejercicios [{ practica: { id, nEjercicios }, n }]: las filas (n empieza en 1)
- * @returns [{ practica (id), n, empezados, terminados, fallos, fallosPorAlumno, reinicios, tope }],
+ * @returns [{ practica (id), n, empezados, terminados, fallos, fallosPorAlumno, reinicios, ayudas, tope }],
  *          ordenadas de más a menos fallos por alumno que lo empezó (y luego por fallos).
  *          `tope`: algún código de resultado contaba 15 fallos o más (el código no cuenta más).
  */
@@ -312,6 +312,8 @@ export function juntarFallos(nombres, deCodigos, deNube, ejercicios) {
       fallos,
       fallosPorAlumno: empezados.length ? fallos / empezados.length : 0,
       reinicios: empezados.reduce((s, e) => s + (e.reinicios ?? 0), 0),
+      // «No lo sé» (docs/no-lo-se.md): solo llega por la nube; quien solo pulsó la ayuda cuenta aunque no figure como empezado.
+      ayudas: suyos.reduce((s, e) => s + (e.ayudas ?? 0), 0),
       tope: empezados.some(e => e.tope),
     };
   }).sort((a, b) => b.fallosPorAlumno - a.fallosPorAlumno || b.fallos - a.fallos || a.practica - b.practica || a.n - b.n);

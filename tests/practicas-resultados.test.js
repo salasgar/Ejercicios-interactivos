@@ -10,7 +10,7 @@ import { codigoAlumno, leerCodigoAlumno } from '../practicas/_comun/codigos.js';
 import { TAREAS, diaDeFecha } from '../practicas/_comun/tareas.js';
 import {
   juntarTareas, calcularRetrasos, asignacionesParaGuardar, leerDocumentos, leerAsignaciones, partirIdTarea,
-  filtrarFallos, agruparFallos, juntarFallos, tareaPublicada, cumplidasDe,
+  juntarResultados, filtrarFallos, agruparFallos, juntarFallos, tareaPublicada, cumplidasDe,
   indicesDeCodigos, filasMisAlumnos, faltanCodigos, repartirCodigos, fusionarLeidos, desdeParaLeer, MARGEN_LECTURA,
   leerCodigoTareaEspacio,
 } from '../practicas/resultados.js';
@@ -274,4 +274,46 @@ test('«qué falla más» de una tarea v2 con los documentos de la tarea', () =>
   const deNube = [{ practica: p.id, indice: 0, ej: [{ terminado: false, aciertos: 1, fallos: 4 }] }];
   const filas = juntarFallos(['Ana'], [], deNube, [{ practica: p, n: 1 }]);
   assert.deepEqual([filas[0].empezados, filas[0].fallos], [1, 4]);
+});
+
+test('«No lo sé» en el panel: ayudas por ejercicio, sin campo en lo antiguo, nube sobre código (tarea 194)', () => {
+  const p = practicaPorSlug('semaforo');
+  const deNube = [
+    { practica: p.id, indice: 0, ej: [{ terminado: true, aciertos: 10, fallos: 1, ayudas: 2 }, { terminado: false, aciertos: 0, fallos: 0, ayudas: 1 }] },
+    { practica: p.id, indice: 1, ej: [{ terminado: false, aciertos: 3, fallos: 2 }] },              // progreso antiguo: sin `ayudas`
+    { practica: p.id, indice: 2, ej: [{ terminado: false, aciertos: 1, fallos: 0, ayudas: 4 }] },
+  ];
+  const filas = juntarResultados(['Ana', 'Luis', 'Eva'], [], deNube, 2);
+  assert.deepEqual(filas.map(f => f.ejercicios[0].ayudas), [2, undefined, 4]);
+  const f = juntarFallos(['Ana', 'Luis', 'Eva'], [], deNube, [{ practica: p, n: 1 }, { practica: p, n: 2 }]);
+  const porN = n => f.find(x => x.n === n);
+  assert.equal(porN(1).ayudas, 6, 'suma de los tres alumnos; el antiguo cuenta 0');
+  assert.equal(porN(2).ayudas, 1, 'quien solo pulsó la ayuda cuenta, aunque no figure como empezado');
+  assert.equal(porN(2).empezados, 0, 'y el recuento de empezados no cambia');
+  // Código de resultado + nube: gana la fuente con más terminados; el código no trae `ayudas` y no la pisa.
+  const deCodigos = [{ practica: p.id, indice: 0, ejercicios: [{ terminado: false, fallos: 0 }, { terminado: false, fallos: 0 }], dia: 1 }];
+  const mezcla = juntarResultados(['Ana'], deCodigos, [deNube[0]], 2);
+  assert.equal(mezcla[0].ejercicios[0].ayudas, 2);
+  // Sin ayudas en ningún sitio: 0.
+  assert.equal(juntarFallos(['Ana'], [], [{ practica: p.id, indice: 0, ej: [{ aciertos: 1, fallos: 1 }] }], [{ practica: p, n: 1 }])[0].ayudas, 0);
+});
+
+test('«Hoy» suma las ayudas de «No lo sé» por ejercicio (tarea 194)', async () => {
+  const { calcularHoy } = await import('../practicas/profesor-hoy.js');
+  const tarea = { id: 77, nElegir: 0, estrella: [['recta', 1]], elegir: [], desde: '2026-10-01', hasta: '2026-12-31' };
+  const alumnos = [{ n: 1, nombre: 'Ana Prueba', codigo: 'AAAA' }, { n: 2, nombre: 'Luis Prueba', codigo: 'BBBB' }, { n: 1000, nombre: 'Prueba', codigo: 'CCCC' }];
+  const crudo = (id, ej) => ({ id, estado: JSON.stringify({ ej }), actualizado: String(Date.now()) });
+  const hoy = calcularHoy({
+    tareas: [tarea], alumnos, tareaId: 77,
+    documentos: {
+      'progreso-libre': [],
+      'progreso-tareas': [
+        crudo('t77--recta--AAAA', [{ aciertos: 2, fallos: 1, ayudas: 3 }]),
+        crudo('t77--recta--BBBB', [{ aciertos: 1, fallos: 0 }]),
+        crudo('t77--recta--CCCC', [{ aciertos: 1, fallos: 0, ayudas: 9 }]),
+      ],
+      asignaciones: [],
+    },
+  });
+  assert.equal(hoy.resumen.ejercicios[0].ayudas, 3, 'el alumno de prueba (n.º ≥ 1000) no cuenta');
 });
