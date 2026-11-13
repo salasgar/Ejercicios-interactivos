@@ -2,6 +2,8 @@
 // Siguiente…) llegan a `montar` en `api.t`. Los números ya vienen formateados
 // (fmt) desde practica.js; aquí solo se compone la frase.
 
+import { ORDENES, redondear, fmt, cifraDecisiva, diferenciaCon } from './logica.js';
+
 /** «a la decena», «a la centena», «al millar». */
 export const A_ORDEN = {
   10: { es: 'a la decena', en: 'to the nearest ten' },
@@ -142,3 +144,69 @@ export const TX = {
     ],
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────
+
+const REGLA_CORTA = {
+  es: 'Mira la cifra de la derecha del orden: 5 o más, sube; menos de 5, baja.',
+  en: 'Look at the digit to the right of the place you round to: 5 or more, go up; less than 5, go down.',
+};
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cuentaHtml = s => `<span class="cuenta">${s}</span>`;
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+
+/** Ejercicio 1: en la recta. */
+export function explicaRecta(item, { tt, idioma }) {
+  const T = TX.recta;
+  const [inf, sup] = item.marcas;
+  const num = n => fmt(n, idioma);
+  const c = cifraDecisiva(item.n, item.orden);
+  let h = tt(T.entre)(num(item.n), num(inf), num(sup));
+  if (item.medio) h += tt(T.medio)(num(item.redondeado));
+  else h += item.exceso ? tt(T.sube)(num(item.redondeado), c) : tt(T.baja)(num(item.redondeado), c);
+  return `${tt(REGLA_CORTA)} ${h} ${tt(RESPUESTA)} ${cuentaHtml(num(item.redondeado))}.`;
+}
+
+/** Ejercicio 2: a tres órdenes. */
+export function explicaTres(item, { tt, idioma }) {
+  const filas = ORDENES.map(o => tt(TX.tres.fila)(fmt(item.n, idioma), o, fmt(item.redondeados[o], idioma), cifraDecisiva(item.n, o)));
+  return `${tt(REGLA_CORTA)}${pasos(filas)}`;
+}
+
+/** Ejercicio 3: estimar, ¿es razonable? o cantidad en contexto. */
+export function explicaEstimacion(item, { tt, idioma }) {
+  const T = TX.estimar;
+  const num = n => fmt(n, idioma);
+  const signo = item.op === '+' ? ' + ' : ' · ';
+  if (item.tipo === 'estimar') {
+    const orden = item.ordenes[0];
+    const redondeados = item.terminos.map(t => num(redondear(t, orden)));
+    const est = num(item.estimaciones[orden]);
+    const dif = num(diferenciaCon(item, orden));
+    const [mayor, menor] = item.exacto >= item.estimaciones[orden] ? [item.exacto, item.estimaciones[orden]] : [item.estimaciones[orden], item.exacto];
+    const resta = `${num(mayor)} − ${num(menor)} = ${dif}`;
+    const frases = {
+      es: [`Redondea cada número ${A_ORDEN[orden].es}: ${cuentaHtml(item.terminos.map(num).join(signo))} pasa a ${cuentaHtml(redondeados.join(signo))}.`,
+        `Haz la cuenta con los redondeados: ${cuentaHtml(`${redondeados.join(signo)} = ${est}`)}.`,
+        `El resultado exacto es ${num(item.exacto)}; la diferencia es ${cuentaHtml(resta)}.`],
+      en: [`Round each number ${A_ORDEN[orden].en}: ${cuentaHtml(item.terminos.map(num).join(signo))} becomes ${cuentaHtml(redondeados.join(signo))}.`,
+        `Do the calculation with the rounded numbers: ${cuentaHtml(`${redondeados.join(signo)} = ${est}`)}.`,
+        `The exact result is ${num(item.exacto)}; the difference is ${cuentaHtml(resta)}.`],
+    };
+    const fin = { es: `Mi estimación es ${est} y la diferencia, ${dif}.`, en: `My estimate is ${est} and the difference is ${dif}.` };
+    return `${pasos(tt(frases))} ${tt(fin)}`;
+  }
+  if (item.tipo === 'razonable') {
+    const rs = item.terminos.map(t => num(redondear(t, item.orden)));
+    const est = `${rs.join(signo)} = ${num(item.estimacion)}`;
+    const propuesto = num(item.propuesto), exacto = num(item.exacto);
+    const por = { es: 'Estima: redondea cada número y haz la cuenta con ellos; compara con el resultado propuesto.', en: 'Estimate: round each number and calculate with them; compare with the proposed result.' };
+    const cuerpo = item.razonable
+      ? tt(T.razonable_si)(est, propuesto)
+      : tt(T.razonable_no[item.motivo])(est, propuesto, exacto, num(item.terminos[0]), num(item.terminos[1]));
+    const fin = { es: item.razonable ? 'Sí, es razonable.' : 'No, no es razonable.', en: item.razonable ? 'Yes, it is reasonable.' : 'No, it is not reasonable.' };
+    return `${tt(por)} ${cuerpo} ${tt(RESPUESTA)} ${tt(fin)}`;
+  }
+  const fb = tt(T.contexto_fb)(num(item.n), item.orden, num(item.correcto), cifraDecisiva(item.n, item.orden));
+  return `${tt(REGLA_CORTA)} ${fb}`;
+}

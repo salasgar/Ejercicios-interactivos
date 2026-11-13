@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX, ETIQUETA_ORDEN } from './textos.js';
+import { TX, ETIQUETA_ORDEN, explicaRecta, explicaTres, explicaEstimacion } from './textos.js';
 import {
   ORDENES, redondear, fmt, leerEntero, cifraDecisiva, fraccionDe, generarRecta, posicionCorrecta, esAciertoRecta,
   generarTres, esAciertoTres, generarEstimacion, diferenciaCon, esAciertoEstimar,
@@ -283,6 +283,7 @@ arrancar({
       clave: item => `${item.n}/${item.orden}`,
       montar: montarRecta,
       enunciado: enunciadoRecta,
+      explicacion: explicaRecta,
     },
     {
       nombre: TX.tres.nombre,
@@ -292,6 +293,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarTres,
       enunciado: enunciadoTres,
+      explicacion: explicaTres,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.estimar.nombre,
@@ -300,6 +303,7 @@ arrancar({
       generar: generarEstimacion,
       montar: montarEstimacion,
       enunciado: enunciadoEstimacion,
+      explicacion: explicaEstimacion,
     },
   ],
 });
