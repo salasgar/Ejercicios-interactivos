@@ -232,8 +232,18 @@ export function explicacionHaches(item) {
   return EXPLICA_H[item.buena](rellena);
 }
 
-/** La ayuda de «No lo sé» del ejercicio 1: la explicación del ítem y la respuesta, explícita al final. */
-export const ayudaHaches = item => `${explicacionHaches(item)} La respuesta es <b>${item.buena}</b>.`;
+/**
+ * La ayuda de «No lo sé» del ejercicio 1: la explicación del ítem y la respuesta, explícita al final.
+ * Revisión 192: en «hay que madrugar» no «existe algo»: «hay que» es «es necesario». La tarjeta lo
+ * dice así; el feedback (EXPLICA_H.hay) sigue con «algo existe» (hallazgo de la 192).
+ */
+export function ayudaHaches(item) {
+  const hayQue = item.buena === 'hay' && /_ que /.test(item.texto);
+  const explicacion = hayQue
+    ? `Va <b>hay</b>, del verbo <b>haber</b> («hay que» quiere decir «es necesario»): «${rellenarHaches(item, '<b>hay</b>').replace(/\.$/, '')}». Se puede cambiar por «había». «Ahí» sería un lugar y «ay», un quejido.`
+    : explicacionHaches(item);
+  return `${explicacion} La respuesta es <b>${item.buena}</b>.`;
+}
 
 /** `idError` del ejercicio 1: lo que puso el alumno en vez de lo bueno («ahi-por-hay»). */
 export const idErrorHaches = (item, puesta) => `${slug(puesta)}-por-${slug(item.buena)}`;
@@ -429,8 +439,41 @@ export function explicacionLetras(item) {
   return base;
 }
 
+/**
+ * Revisión 192: reglas de REGLAS que, dichas tal cual, no son verdad siempre. La tarjeta de «No lo sé»
+ * las dice bien; el feedback de fallo sigue con el texto de REGLAS (hallazgo de la 192).
+ *   - mb: «después de la m solo puede ir b» es falso (campo, himno): es «b y no v».
+ *   - bl-br: bl y br no son sílabas.
+ *   - n-otras: «delante de las demás consonantes, n» es falso delante de n (himno, alumno, gimnasio).
+ *   - y-final: «detrás de otra vocal, la i final es y» es falso en leí, oí, caí, fui (i tónica); muy sí lleva y.
+ *   - bien: el latín es «bene», no «bien».
+ *   - gue-gui: «con j sería otro sonido: hoguera» no decía qué sonido.
+ */
+export const AYUDA_REGLAS = {
+  mb: 'Después de la <b>m</b> se escribe <b>b</b>, nunca v (no existe «mv»): {p}.',
+  'bl-br': 'Delante de <b>l</b> y de <b>r</b> se escribe <b>b</b>, nunca v (en español no existen «vl» ni «vr»): {p}.',
+  'n-otras': 'Delante de <b>c, d, s, t</b> y <b>v</b> se escribe <b>n</b>, nunca m: {p}.',
+  'y-final': 'Al final de la palabra, el sonido «i» átono (sin la fuerza de la voz) detrás de otra vocal se escribe <b>y</b> ({n}): {p}.',
+  'gue-gui': 'El sonido de «guerra» y «guitarra» se escribe <b>gue, gui</b>, y la u no suena; con j sonaría como en «jefe» o «jirafa»: {p}.',
+  bien: 'Las palabras que empiezan por <b>bien-</b> o <b>bene-</b> (que quieren decir «bien») se escriben con <b>b</b>: {p}.',
+};
+
+/**
+ * Revisión 192: dos notas de excepción que enseñaban mal. «Sílaba» no lleva b «como los verbos en -aba»
+ * (lava, octava y esclava acaban igual y llevan v); «ingeniero» no es una palabra en -jero.
+ */
+export const AYUDA_NOTAS = {
+  'sílaba': '«Sílaba» no es un verbo, así que la regla de -aba (cantaba, jugaba) no le sirve: lleva <b>b</b> y hay que aprenderla.',
+  ingeniero: '«Ingeniero» lleva <b>g</b> porque viene de «ingenio», que también la lleva. No acaba en -jero: acaba en -niero.',
+};
+
 /** La ayuda de «No lo sé» de los ejercicios 2-4: la explicación del ítem y la respuesta, explícita al final. */
-export const ayudaLetras = item => `${explicacionLetras(item)} La respuesta es <b>${item.buena}</b>: <b>${item.palabra}</b>.`;
+export function ayudaLetras(item) {
+  const regla = AYUDA_REGLAS[item.regla];
+  const explicacion = AYUDA_NOTAS[item.palabra]
+    ?? (regla ? regla.replaceAll('{p}', `<b>${item.palabra}</b>`).replaceAll('{n}', item.nota ?? '') : explicacionLetras(item));
+  return `${explicacion} La respuesta es <b>${item.buena}</b>: <b>${item.palabra}</b>.`;
+}
 
 /**
  * `idError` de los ejercicios 2-4: qué puso el alumno en vez de qué («v-por-b»). La diéresis tiene los
