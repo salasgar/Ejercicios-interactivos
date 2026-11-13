@@ -4,44 +4,81 @@
 // Las fracciones se escriben con raya (`htmlFraccion`), salvo en las frases inglesas habladas.
 
 import { fraccion, htmlFraccion, htmlCuenta } from '../_comun/fracciones.js';
-import { terminoDe, cuentaDelItem } from './logica.js';
+import { terminoDe, cuentaDelItem, leer } from './logica.js';
 
 // ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
 
 /** Ejercicio 1: las cinco parejas, con un consejo. */
 export function explicaEmparejar(item, { tt, esc }) {
   const lista = item.en.map(id => `<li><strong lang="en">${esc(terminoDe(id).en)}</strong> = <span lang="es">${esc(terminoDe(id).es)}</span></li>`).join('');
-  const consejo = tt({ es: 'Empieza por las que sepas; las que queden se emparejan solas.', en: 'Start with the ones you know; the rest pair up by themselves.' });
+  // «Las que queden se emparejan solas» solo es verdad para la última; y «the rest» es una de las palabras.
+  const consejo = tt({ es: 'Empieza por las que sepas: cada pareja que haces deja menos para elegir.', en: 'Start with the ones you know: each pair you make leaves fewer to choose from.' });
   return `${consejo} ${tt(TX.emparejar.correctas)}<ul class="lista-pares">${lista}</ul>`;
 }
 
-const CONSEJO_ELEGIR = {
-  leer_fraccion: { es: 'El numerador se lee con un número normal y el denominador con un ordinal (fifth, sixth…), en plural si el numerador no es 1.', en: 'The numerator is read as a normal number and the denominator as an ordinal (fifth, sixth…), in the plural if the numerator is not 1.' },
+// La regla de cada lectura. La de las fracciones dice también las dos que no van con ordinal
+// (half, quarter): sin eso, «el denominador con un ordinal» es falso en 1/2 y en 3/4.
+const LEER_FRACCION = {
+  es: 'El numerador se lee con un número normal y el denominador con un ordinal (third, fifth…), en plural si el numerador no es 1; el 2 se lee half (halves) y el 4, quarter o fourth.',
+  en: 'The numerator is read as a normal number and the denominator as an ordinal (third, fifth…), in the plural if the numerator is not 1; 2 is read half (halves) and 4 is quarter or fourth.',
+};
+const REGLA_LECTURA = {
+  leer_fraccion: LEER_FRACCION,
+  leer_suma: { es: '«+» se lee «plus» y «=», «equals» o «is»; cada fracción, como siempre (three fifths).', en: '“+” is read “plus” and “=” is “equals” or “is”; each fraction as usual (three fifths).' },
+  leer_resta: { es: '«−» se lee «minus» y «=», «equals» o «is»; cada fracción, como siempre (three fifths).', en: '“−” is read “minus” and “=” is “equals” or “is”; each fraction as usual (three fifths).' },
+  leer_producto: { es: '«·» se lee «times» o «multiplied by», y «=», «equals» o «is»; cada fracción, como siempre (three fifths).', en: '“·” is read “times” or “multiplied by”, and “=” is “equals” or “is”; each fraction as usual (three fifths).' },
+  leer_cociente: { es: '«:» se lee «divided by» y «=», «equals» o «is»; cada fracción, como siempre (three fifths).', en: '“:” is read “divided by” and “=” is “equals” or “is”; each fraction as usual (three fifths).' },
+  leer_potencia: { es: 'El exponente 2 se lee «squared» y el 3, «cubed»; «=» es «equals» o «is»; cada fracción, como siempre (three fifths).', en: 'The exponent 2 is read “squared” and 3 is “cubed”; “=” is “equals” or “is”; each fraction as usual (three fifths).' },
   que_pide: { es: 'Busca la palabra clave del enunciado (left, the rest, shaded, out of, of).', en: 'Look for the key word in the problem (left, the rest, shaded, out of, of).' },
 };
 
-/** Ejercicios 2 y 3: la opción buena y su explicación. */
-export function explicaElegir(item, { tt, esc }) {
+/** Ejercicios 2 y 3: la regla, lo que dice el ítem y la opción buena al final. */
+export function explicaElegir(item, { idioma, tt, esc }) {
   const buena = item.opciones.find(o => o.correcta);
-  const consejo = CONSEJO_ELEGIR[item.instruccion] ? `${tt(CONSEJO_ELEGIR[item.instruccion])} ` : '';
+  const regla = REGLA_LECTURA[item.plantilla] ?? REGLA_LECTURA[item.instruccion];
   const respuesta = tt({ es: 'La respuesta es', en: 'The answer is' });
   const [abre, cierra] = tt({ es: ['«', '»'], en: ['“', '”'] });
-  return `${consejo}${tt(item.solucion)} ${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
+  // En las cuentas, `solucion` repite entera la lectura que va a ser la respuesta: la tarjeta da la regla y la respuesta.
+  let cuerpo = item.instruccion === 'leer_cuenta' ? '' : tt(item.solucion);
+  // En inglés, la solución de «of» decía «“1/2 of 38” is 1/2 of 38 = 19»: se dice qué operación es.
+  if (item.plantilla === 'de' && idioma === 'en') cuerpo = cuerpo.replace(/” is (.*) of (\d+) = /, '” means $1 · $2 = ');
+  return `${regla ? `${tt(regla)} ` : ''}${cuerpo ? `${cuerpo} ` : ''}${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
 }
 
-const PISTA_DICTADO = {
-  dictado_de: { es: '«of» entre una fracción y un número es multiplicar.', en: '“of” between a fraction and a number means multiply.' },
-  dictado_suma: { es: '«plus» y «the sum of» son «+».', en: '“plus” and “the sum of” mean “+”.' },
-  dictado_resta: { es: '«minus» y «the difference» son «−»; en «subtract b from a» se escribe a − b.', en: '“minus” and “the difference” mean “−”; “subtract b from a” is written a − b.' },
-  dictado_producto: { es: '«times», «multiplied by», «of» y «the product of» son «·».', en: '“times”, “multiplied by”, “of” and “the product of” mean “·”.' },
-  dictado_cociente: { es: '«divided by» y «the quotient of» son «:».', en: '“divided by” and “the quotient of” mean “:”.' },
-};
+/** Qué significa cada trozo de la frase del dictado: solo los que salen en ESA frase. */
+function pistasDictado(frase) {
+  const p = [];
+  const dice = re => re.test(frase);
+  // Sin letras (no se dan hasta la unidad 6): las reglas hablan de «las dos fracciones».
+  if (dice(/^subtract /)) p.push({ es: 'con «subtract… from…» se escribe primero lo que va detrás de «from» y se le resta lo que va detrás de «subtract»', en: 'with “subtract… from…”, write first what comes after “from” and take away what comes after “subtract”' });
+  else if (dice(/ minus /)) p.push({ es: '«minus» es «−»', en: '“minus” is “−”' });
+  if (dice(/ plus /)) p.push({ es: '«plus» es «+»', en: '“plus” is “+”' });
+  if (dice(/^the sum of /)) p.push({ es: '«the sum of» une las dos fracciones con «+»', en: '“the sum of” joins the two fractions with “+”' });
+  if (dice(/ (times|multiplied by) /)) p.push({ es: `«${frase.match(/times|multiplied by/)[0]}» es «·»`, en: `“${frase.match(/times|multiplied by/)[0]}” is “·”` });
+  if (dice(/^the product of /)) p.push({ es: '«the product of» une las dos fracciones con «·»', en: '“the product of” joins the two fractions with “·”' });
+  if (dice(/ of /) && !dice(/^the (sum|product|quotient) of /)) p.push({ es: '«of» detrás de una fracción es multiplicar', en: '“of” after a fraction means multiply' });
+  if (dice(/ divided by /)) p.push({ es: '«divided by» es «:»', en: '“divided by” is “:”' });
+  if (dice(/^the quotient of /)) p.push({ es: '«the quotient of» une las dos fracciones con «:»', en: '“the quotient of” joins the two fractions with “:”' });
+  return p;
+}
 
-/** Ejercicio 4: la cuenta que dice la frase. */
-export function explicaDictado(item, { tt }) {
-  const pista = PISTA_DICTADO[item.plantilla] ? `${tt(PISTA_DICTADO[item.plantilla])} ` : '';
-  const orden = tt({ es: 'Escribe las fracciones en el orden en que se dicen y elige la operación.', en: 'Write the fractions in the order they are said and choose the operation.' });
-  return `${orden} ${pista}${tt(TX.dictado.correcta)} <span class="cuenta">${cuentaDelItem(item)}</span>.`;
+/** Ejercicio 4: cómo se escribe cada fracción, qué significa cada palabra de ESA frase y la cuenta. */
+export function explicaDictado(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  // El ejemplo es la primera fracción de ESA frase (si su lectura sale tal cual en la frase); si no, el fijo.
+  const f = [item.a, item.b].map(([n, d]) => fraccion(n, d)).find(x => x.den > 1);
+  const dicha = f && item.frase.includes(leer(f)) ? leer(f) : null;
+  const fracciones = dicha
+    ? (es
+      ? `«${dicha}» se escribe ${f.num} arriba y ${f.den} abajo: el número es el numerador y el ordinal, el denominador; half es 2 y quarter, 4.`
+      : `“${dicha}” is written ${f.num} on top and ${f.den} at the bottom: the number is the numerator and the ordinal is the denominator; half is 2 and quarter is 4.`)
+    : (es
+      ? '«three fifths» se escribe 3 arriba y 5 abajo: el número es el numerador y el ordinal (fifths), el denominador; half es 2 y quarter, 4.'
+      : '“three fifths” is written 3 on top and 5 at the bottom: the number is the numerator and the ordinal (fifths) is the denominator; half is 2 and quarter is 4.');
+  const orden = /^subtract /.test(item.frase) ? '' : (es ? ' Las fracciones van en el orden en que se dicen.' : ' The fractions go in the order they are said.');
+  const pistas = pistasDictado(item.frase).map(x => tt(x)).join('; ');
+  const igual = es ? '«is» o «equals» es «=»' : '“is” or “equals” is “=”';
+  return `${fracciones}${orden} ${pistas ? `${pistas.charAt(0).toUpperCase()}${pistas.slice(1)}; ${igual}.` : ''} ${tt({ es: 'La respuesta es', en: 'The answer is' })} <span class="cuenta">${cuentaDelItem(item)}</span>.`;
 }
 
 const H = (n, d) => htmlFraccion(fraccion(n, d), { compacta: true });
