@@ -242,3 +242,34 @@ export const ERRORES_PROPIOS = [
 ];
 export const ERRORES_DE_LA_BASE = ['simplifica-a-medias', 'simplifica-solo-numerador', 'simplifica-solo-denominador', 'signo-perdido-al-simplificar']
   .filter(id => ERRORES_TIPICOS[id]);
+
+// --- «No lo sé»: la explicación de cada ejercicio, con los números del ítem ---------
+
+/** Ejercicio 1: la cadena de divisiones hasta la irreducible, tal como la da por buena el ejercicio. */
+export function explicaPasos(item, { idioma }) {
+  const cadena = [fraccionDe(item)];
+  for (let k = menorDivisorComun(cadena.at(-1)); k !== null; k = menorDivisorComun(cadena.at(-1))) {
+    cadena.push(evaluarPaso(cadena.at(-1), k).fraccion);
+  }
+  const regla = idioma === 'es'
+    ? 'Divide arriba y abajo entre un número que divida a los dos (prueba con 2, 3, 5 y 7) y repite hasta que ya no puedas.'
+    : 'Divide top and bottom by a number that divides both (try 2, 3, 5 and 7) and repeat until you cannot any more.';
+  return `${regla} ${explicarPasos(cadena, idioma)}`;
+}
+
+/** Ejercicio 2: una línea por fracción (irreducible o con su m.c.d.), y la regla. */
+export function explicaIrreducibles(item, { idioma }) {
+  const regla = idioma === 'es'
+    ? 'Una fracción es irreducible si el m.c.d. de sus dos términos es 1.'
+    : 'A fraction is in lowest terms if the GCD of its two terms is 1.';
+  const todas = item.fracs.map((_, i) => i);
+  return `${regla}<br>${explicarIrreducibles(item, todas, idioma)}`;
+}
+
+/** Ejercicio 3: el m.c.d. y la fracción irreducible. */
+export function explicaDeUnaVez(item, { idioma }) {
+  const regla = idioma === 'es'
+    ? 'Busca el m.c.d. de los dos términos y divide arriba y abajo entre él.'
+    : 'Find the GCD of the two terms and divide top and bottom by it.';
+  return `${regla} ${explicarDeUnaVez(item, null, null, idioma)}`;
+}

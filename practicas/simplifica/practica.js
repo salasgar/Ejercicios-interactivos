@@ -9,6 +9,7 @@ import {
   BOTONES, generarPasos, fraccionDe, evaluarPaso, avisoNoDivide, evaluarIrreducible, avisoTodavia, explicarPasos,
   generarIrreducibles, irreduciblesDe, errorIrreducibles, explicarIrreducibles,
   generarDeUnaVez, evaluarDeUnaVez, respuestaDeUnaVez, explicarDeUnaVez,
+  explicaPasos, explicaIrreducibles, explicaDeUnaVez,
 } from './logica.js';
 import { TX } from './textos.js';
 
@@ -205,6 +206,8 @@ arrancar({
       clave: item => `${item.num}/${item.den}`,
       montar: montarPasos,
       enunciado: enunciadoPasos,
+      explicacion: explicaPasos,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.irred.nombre,
@@ -214,6 +217,7 @@ arrancar({
       clave: item => item.fracs.map(f => `${f.num}/${f.den}`).join(','),
       montar: montarIrred,
       enunciado: enunciadoIrred,
+      explicacion: explicaIrreducibles,
     },
     {
       nombre: TX.vez.nombre,
@@ -223,6 +227,8 @@ arrancar({
       clave: item => `${item.num}/${item.den}`,
       montar: montarVez,
       enunciado: enunciadoVez,
+      explicacion: explicaDeUnaVez,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
   ],
 });
