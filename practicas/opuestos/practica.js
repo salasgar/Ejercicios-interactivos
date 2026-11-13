@@ -261,7 +261,6 @@ arrancar({
       nombre: TX.ej4.nombre, detalle: TX.ej4.detalle, introduccion: TX.ej4.introduccion,
       generar: generarDistancias, clave: i => `${i.modo}:${i.k ?? ''}:${i.a ?? ''}:${i.b ?? ''}`, montar: montarDistancias, enunciado: enunciadoDistancias,
       explicacion: explicaDistancias,
-      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

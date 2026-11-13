@@ -150,8 +150,12 @@ export function explicaOpuesto(item, { tt }) {
     es: 'El opuesto está al otro lado del 0, a la misma distancia: es el mismo número con el signo cambiado.',
     en: 'The opposite is on the other side of 0, at the same distance: it is the same number with its sign changed.',
   });
+  // En −(n) hay que decir qué significa el − de delante: es lo que no sabe quien pulsa «No sé hacerlo».
   const cuerpo = item.modo === 'doble'
-    ? `${tt(TX.ej1.bienDoble)(n)}.`
+    ? tt({
+      es: `El − de delante quiere decir «el opuesto de», y el opuesto de ${fmt(n)} es ${fmt(-n)}: <span class="cuenta">−(${fmt(n)}) = ${fmt(-n)}</span>.`,
+      en: `The − in front means “the opposite of”, and the opposite of ${fmt(n)} is ${fmt(-n)}: <span class="cuenta">−(${fmt(n)}) = ${fmt(-n)}</span>.`,
+    })
     : tt({ es: `El opuesto de ${fmt(n)} es ${fmt(-n)}.`, en: `The opposite of ${fmt(n)} is ${fmt(-n)}.` });
   const resp = tt(item.modo === 'doble'
     ? { es: `La respuesta es ${fmt(-n)}.`, en: `The answer is ${fmt(-n)}.` }
@@ -165,8 +169,13 @@ export function explicaDistancia(item, { tt }) {
     es: 'El valor absoluto es la distancia al 0: se cuentan los saltos hasta el 0 y nunca sale negativo.',
     en: 'The absolute value is the distance from 0: count the jumps to 0; it is never negative.',
   });
-  const resp = tt({ es: `La respuesta es ${Math.abs(item.n)}.`, en: `The answer is ${Math.abs(item.n)}.` });
-  return `${regla} ${tt(TX.ej2.bien)(item.n)}. ${resp}`;
+  const n = item.n;
+  const d = Math.abs(n);
+  const cuerpo = n === 0
+    ? tt({ es: 'El punto ya está en el 0: no hay ningún salto, así que', en: 'The point is already at 0: there are no jumps, so' })
+    : tt({ es: `De ${fmt(n)} al 0 hay ${d === 1 ? '1 salto' : `${d} saltos`}, así que`, en: `From ${fmt(n)} to 0 there ${d === 1 ? 'is 1 jump' : `are ${d} jumps`}, so` });
+  const resp = tt({ es: `La respuesta es ${d}.`, en: `The answer is ${d}.` });
+  return `${regla} ${cuerpo} <span class="cuenta">|${fmt(n)}| = ${d}</span>. ${resp}`;
 }
 
 /** Ejercicio 3 (los dos huecos). */
@@ -180,7 +189,13 @@ export function explicaDoble(item, { tt }) {
     es: `La respuesta es: el opuesto de ${fmt(n)} es ${fmt(-n)} y su valor absoluto es ${Math.abs(n)}.`,
     en: `The answer is: the opposite of ${fmt(n)} is ${fmt(-n)} and its absolute value is ${Math.abs(n)}.`,
   });
-  return `${regla} ${tt(TX.ej3.explica)(n)}. ${resp}`;
+  // Sin repetir la regla con otras palabras (antes: «El valor absoluto es la distancia (16); el opuesto, el punto del otro lado»).
+  const d = Math.abs(n);
+  const cuerpo = tt({
+    es: `${fmt(n)} está a ${unidades(d, true)} del 0, y su opuesto, ${fmt(-n)}, está al otro lado.${n < 0 ? ' Con un número negativo, el opuesto y el valor absoluto coinciden.' : ''}`,
+    en: `${fmt(n)} is ${unidades(d, false)} from 0, and its opposite, ${fmt(-n)}, is on the other side.${n < 0 ? ' With a negative number, the opposite and the absolute value are the same.' : ''}`,
+  });
+  return `${regla} ${cuerpo} ${resp}`;
 }
 
 /** Ejercicio 4 (marcar los dos enteros, o elegir el mayor de dos negativos). */
@@ -192,7 +207,12 @@ export function explicaDistancias(item, { tt }) {
       en: 'At the same distance from 0 there are two integers: one on each side, with opposite signs.',
     });
     const resp = tt({ es: `La respuesta es ${fmt(-k)} y ${fmt(k)}.`, en: `The answer is ${fmt(-k)} and ${fmt(k)}.` });
-    return `${regla} ${tt(TX.ej4.bienMarcar)(k)}. ${resp}`;
+    // Las dos cuentas, unidas con «y» (el feedback las pone una tras otra: «|−4| = 4 |4| = 4»).
+    const cuentas = tt({
+      es: `${fmt(k)} y su opuesto, ${fmt(-k)}, están a ${unidades(k, true)} del 0: <span class="cuenta">|${fmt(-k)}| = ${k}</span> y <span class="cuenta">|${fmt(k)}| = ${k}</span>.`,
+      en: `${fmt(k)} and its opposite, ${fmt(-k)}, are ${unidades(k, false)} from 0: <span class="cuenta">|${fmt(-k)}| = ${k}</span> and <span class="cuenta">|${fmt(k)}| = ${k}</span>.`,
+    });
+    return `${regla} ${cuentas} ${resp}`;
   }
   const { a, b } = item;
   const regla = tt({
