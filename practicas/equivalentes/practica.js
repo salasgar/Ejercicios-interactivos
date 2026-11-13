@@ -7,7 +7,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { htmlFraccion, htmlRaya } from '../_comun/fracciones.js';
-import { TX } from './textos.js';
+import { TX, explicaTermino, explicaSonEquivalentes, explicaEquipos, explicaComun } from './textos.js';
 import {
   generarTermino, generarSonEquivalentes, generarEquipos, generarComun, errorTermino, errorEquivalentes,
   evaluarEquipos, errorMcm, errorNumeradores, cruzados, claveDe,
@@ -247,16 +247,18 @@ function montarComun(contenedor, item, api) {
 
 // ─── La práctica ───────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre, detalle: tx.detalle, introduccion: tx.introduccion, generar, clave: claveDe, montar, enunciado,
+  explicacion, ...(noLoSe ? { noLoSe } : {}),
 });
+const noSeHacerlo = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 arrancar({
   slug: 'equivalentes',
   ejercicios: [
-    ejercicio(TX.ej1, generarTermino, montarTermino, enunciado1),
-    ejercicio(TX.ej2, generarSonEquivalentes, montarSonEquivalentes, enunciado2),
-    ejercicio(TX.ej3, generarEquipos, montarEquipos, enunciado3),
-    ejercicio(TX.ej4, generarComun, montarComun, enunciado4),
+    ejercicio(TX.ej1, generarTermino, montarTermino, enunciado1, explicaTermino, noSeHacerlo),
+    ejercicio(TX.ej2, generarSonEquivalentes, montarSonEquivalentes, enunciado2, explicaSonEquivalentes),
+    ejercicio(TX.ej3, generarEquipos, montarEquipos, enunciado3, explicaEquipos, noSeHacerlo),
+    ejercicio(TX.ej4, generarComun, montarComun, enunciado4, explicaComun, noSeHacerlo),
   ],
 });

@@ -6,6 +6,7 @@
 // feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM; ni decimales, ni mixtos, ni letras.
 
 import { htmlFraccion } from '../_comun/fracciones.js';
+import { mcd } from '../_comun/aritmetica.js';
 
 const h = (num, den) => htmlFraccion({ num, den }, { compacta: true });
 const hf = f => h(f.num, f.den);
@@ -238,3 +239,56 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio, con los números del ítem ────
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+
+/** Ejercicio 1: la regla y la cuenta del otro término, que da el hueco. */
+export function explicaTermino(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  const regla = es
+    ? `Para pasar de una fracción a otra equivalente se multiplica o se divide <strong>arriba y abajo por el mismo número</strong>.`
+    : `To get an equivalent fraction you multiply or divide <strong>top and bottom by the same number</strong>.`;
+  const respuesta = es ? `El número que falta es ${c(item.respuesta)}.` : `The missing number is ${c(item.respuesta)}.`;
+  return `${regla} ${tt(TX.ej1.solucion)(item)} ${respuesta}`;
+}
+
+/** Ejercicio 2: los productos cruzados y la respuesta Sí/No. */
+export function explicaSonEquivalentes(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  const x = item.a.num * item.b.den, y = item.a.den * item.b.num;
+  const lista = [
+    es ? 'Dos fracciones son equivalentes si sus <strong>productos cruzados</strong> son iguales.' : 'Two fractions are equivalent if their <strong>cross products</strong> are equal.',
+    tt(TX.ej2.cruzados)(item, [x, y]),
+  ];
+  const resp = item.equivalentes ? (es ? 'Sí' : 'Yes') : 'No';
+  return `${pasos(lista)}${es ? `La respuesta es <strong>${resp}</strong>.` : `The answer is <strong>${resp}</strong>.`}`;
+}
+
+/** Ejercicio 3: cada tarjeta, reducida a su valor; van juntas las que dan el mismo. */
+export function explicaEquipos(item, { idioma }) {
+  const es = idioma === 'es';
+  const grupos = [...new Set(item.tarjetas.map(t => t.grupo))];
+  const lista = grupos.map((g, i) => {
+    const tarjetas = item.tarjetas.filter(t => t.grupo === g);
+    const d = mcd(tarjetas[0].num, tarjetas[0].den);
+    const valor = h(tarjetas[0].num / d, tarjetas[0].den / d);
+    const todas = tarjetas.map(t => hf(t)).join(', ');
+    return es ? `Caja ${i + 1}: ${todas}; todas valen ${valor}.` : `Box ${i + 1}: ${todas}; they are all ${valor}.`;
+  });
+  const regla = es
+    ? 'Simplifica cada tarjeta hasta que no se pueda más: las que dan la misma fracción van en la misma caja.'
+    : 'Simplify each card as far as you can: the cards that give the same fraction go in the same box.';
+  return `${regla}${pasos(lista)}`;
+}
+
+/** Ejercicio 4: el m.c.m. y los dos numeradores. */
+export function explicaComun(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  const lista = [tt(TX.ej4.solucion1)(item), tt(TX.ej4.solucion2)(item)];
+  const resp = es
+    ? `La respuesta: denominador común ${c(`${item.mcm}`)}, con ${hf(item.a)} = ${hf(item.ea)} y ${hf(item.b)} = ${hf(item.eb)}.`
+    : `The answer: common denominator ${c(`${item.mcm}`)}, with ${hf(item.a)} = ${hf(item.ea)} and ${hf(item.b)} = ${hf(item.eb)}.`;
+  return `${pasos(lista)}${resp}`;
+}
