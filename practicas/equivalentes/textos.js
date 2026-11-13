@@ -244,26 +244,42 @@ export const TX = {
 
 const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 
-/** Ejercicio 1: la regla y la cuenta del otro término, que da el hueco. */
-export function explicaTermino(item, { idioma, tt }) {
+/**
+ * Ejercicio 1: la regla, el término que se conoce en las dos fracciones (de dónde sale el número por
+ * el que se multiplica o se divide) y lo mismo en el otro término, que da el hueco.
+ */
+export function explicaTermino(item, { idioma }) {
   const es = idioma === 'es';
+  const conocido = item.hueco === 'num' ? 'den' : 'num';
+  const [de, a] = [item.izq[conocido], item.der[conocido]];
+  const ampliar = item.direccion === 'ampliar';
+  const op = (x, y) => c(`${x} ${ampliar ? '·' : ':'} ${item.k} = ${y}`);
+  const sitio = t => (es ? (t === 'num' ? 'Arriba' : 'Abajo') : (t === 'num' ? 'On top' : 'At the bottom'));
   const regla = es
-    ? `Para pasar de una fracción a otra equivalente se multiplica o se divide <strong>arriba y abajo por el mismo número</strong>.`
-    : `To get an equivalent fraction you multiply or divide <strong>top and bottom by the same number</strong>.`;
-  const respuesta = es ? `El número que falta es ${c(item.respuesta)}.` : `The missing number is ${c(item.respuesta)}.`;
-  return `${regla} ${tt(TX.ej1.solucion)(item)} ${respuesta}`;
+    ? 'Arriba y abajo se multiplica, o se divide, <strong>por el mismo número</strong>.'
+    : 'Top and bottom are multiplied, or divided, <strong>by the same number</strong>.';
+  const lista = [
+    es
+      ? `${sitio(conocido)} se pasa de ${de} a ${a}: ${op(de, a)}.`
+      : `${sitio(conocido)}, ${de} becomes ${a}: ${op(de, a)}.`,
+    es
+      ? `${sitio(item.hueco)}, lo mismo: ${op(item.izq[item.hueco], item.respuesta)}.`
+      : `${sitio(item.hueco)}, the same: ${op(item.izq[item.hueco], item.respuesta)}.`,
+  ];
+  return `${regla}${pasos(lista)}${es ? 'La respuesta es' : 'The answer is'} ${c(item.respuesta)}.`;
 }
 
-/** Ejercicio 2: los productos cruzados y la respuesta Sí/No. */
-export function explicaSonEquivalentes(item, { idioma, tt }) {
+/** Ejercicio 2: la regla de los productos cruzados, las dos cuentas y la respuesta Sí/No. */
+export function explicaSonEquivalentes(item, { idioma }) {
   const es = idioma === 'es';
   const x = item.a.num * item.b.den, y = item.a.den * item.b.num;
-  const lista = [
-    es ? 'Dos fracciones son equivalentes si sus <strong>productos cruzados</strong> son iguales.' : 'Two fractions are equivalent if their <strong>cross products</strong> are equal.',
-    tt(TX.ej2.cruzados)(item, [x, y]),
-  ];
+  const regla = es
+    ? 'Multiplica en cruz, el numerador de cada una por el denominador de la otra: si salen iguales, son equivalentes.'
+    : 'Cross-multiply, the numerator of each one by the denominator of the other: if you get the same number, they are equivalent.';
+  const cuentas = `${c(`${item.a.num} · ${item.b.den} = ${x}`)} ${es ? 'y' : 'and'} ${c(`${item.a.den} · ${item.b.num} = ${y}`)}`;
+  const veredicto = x === y ? (es ? 'salen iguales' : 'they are the same') : (es ? 'no salen iguales' : 'they are not the same');
   const resp = item.equivalentes ? (es ? 'Sí' : 'Yes') : 'No';
-  return `${pasos(lista)}${es ? `La respuesta es <strong>${resp}</strong>.` : `The answer is <strong>${resp}</strong>.`}`;
+  return `${regla} ${hf(item.a)} ${es ? 'y' : 'and'} ${hf(item.b)}: ${cuentas}; ${veredicto}. ${es ? `La respuesta es <strong>${resp}</strong>.` : `The answer is <strong>${resp}</strong>.`}`;
 }
 
 /** Ejercicio 3: cada tarjeta, reducida a su valor; van juntas las que dan el mismo. */
@@ -283,12 +299,29 @@ export function explicaEquipos(item, { idioma }) {
   return `${regla}${pasos(lista)}`;
 }
 
-/** Ejercicio 4: el m.c.m. y los dos numeradores. */
-export function explicaComun(item, { idioma, tt }) {
+/**
+ * Ejercicio 4: el m.c.m. buscado entre los múltiplos del denominador mayor (como en la unidad 2) y
+ * cada fracción ampliada hasta él; la que ya lo tiene se queda igual.
+ */
+export function explicaComun(item, { idioma }) {
   const es = idioma === 'es';
-  const lista = [tt(TX.ej4.solucion1)(item), tt(TX.ej4.solucion2)(item)];
+  const [mayor, menor] = item.a.den > item.b.den ? [item.a.den, item.b.den] : [item.b.den, item.a.den];
+  const multiplos = Array.from({ length: item.mcm / mayor }, (_, i) => mayor * (i + 1));
+  const paso1 = multiplos.length === 1
+    ? (es ? `${mayor} ya es múltiplo de ${menor}: el m.c.m. es ${c(mayor)}.` : `${mayor} is already a multiple of ${menor}: the LCM is ${c(mayor)}.`)
+    : (es
+      ? `Múltiplos de ${mayor}: ${multiplos.join(', ')}. El primero que también es múltiplo de ${menor} es el ${item.mcm}: m.c.m. = ${c(item.mcm)}.`
+      : `Multiples of ${mayor}: ${multiplos.join(', ')}. The first one that is also a multiple of ${menor} is ${item.mcm}: LCM = ${c(item.mcm)}.`);
+  const amplia = (x, e) => {
+    const k = item.mcm / x.den;
+    if (k === 1) return es ? `${hf(x)} ya tiene denominador ${item.mcm}: se queda igual.` : `${hf(x)} already has denominator ${item.mcm}: it stays the same.`;
+    return es
+      ? `${hf(x)}: ${c(`${item.mcm} : ${x.den} = ${k}`)}, así que arriba y abajo por ${k}: ${hf(x)} = ${hf(e)}.`
+      : `${hf(x)}: ${c(`${item.mcm} : ${x.den} = ${k}`)}, so top and bottom times ${k}: ${hf(x)} = ${hf(e)}.`;
+  };
+  const lista = [paso1, amplia(item.a, item.ea), amplia(item.b, item.eb)];
   const resp = es
-    ? `La respuesta: denominador común ${c(`${item.mcm}`)}, con ${hf(item.a)} = ${hf(item.ea)} y ${hf(item.b)} = ${hf(item.eb)}.`
-    : `The answer: common denominator ${c(`${item.mcm}`)}, with ${hf(item.a)} = ${hf(item.ea)} and ${hf(item.b)} = ${hf(item.eb)}.`;
+    ? `La respuesta es ${c(item.mcm)}, con ${hf(item.ea)} y ${hf(item.eb)}.`
+    : `The answer is ${c(item.mcm)}, with ${hf(item.ea)} and ${hf(item.eb)}.`;
   return `${pasos(lista)}${resp}`;
 }

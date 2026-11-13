@@ -258,7 +258,8 @@ arrancar({
   ejercicios: [
     ejercicio(TX.ej1, generarTermino, montarTermino, enunciado1, explicaTermino, noSeHacerlo),
     ejercicio(TX.ej2, generarSonEquivalentes, montarSonEquivalentes, enunciado2, explicaSonEquivalentes),
-    ejercicio(TX.ej3, generarEquipos, montarEquipos, enunciado3, explicaEquipos, noSeHacerlo),
+    // Repartir en cajas es clasificar: lleva el «No lo sé» de siempre (docs/no-lo-se.md).
+    ejercicio(TX.ej3, generarEquipos, montarEquipos, enunciado3, explicaEquipos),
     ejercicio(TX.ej4, generarComun, montarComun, enunciado4, explicaComun, noSeHacerlo),
   ],
 });
