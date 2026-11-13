@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX, renderPlantilla, explicarPlantilla } from './textos.js';
+import { TX, renderPlantilla, explicarPlantilla, explicaVF, explicaFalsa } from './textos.js';
 import { generarVF, generarFalsa, evaluar } from './logica.js';
 
 // ─── Ejercicio 1: ¿verdadero o falso? ───────────────────────────────────────────
@@ -77,6 +77,7 @@ arrancar({
       clave: item => `${item.id}-${JSON.stringify(item.vars)}`,
       montar: montarVF,
       enunciado: enunciadoVF,
+      explicacion: explicaVF,
     },
     {
       nombre: TX.nombre2,
@@ -84,6 +85,7 @@ arrancar({
       generar: generarFalsa,
       montar: montarFalsa,
       enunciado: enunciadoFalsa,
+      explicacion: explicaFalsa,
     },
   ],
 });

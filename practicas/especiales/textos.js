@@ -7,6 +7,7 @@
 // contrastando el cálculo real con la afirmación falsa si no lo es).
 
 import { agrupar } from '../potencias10/logica.js';
+import { evaluar } from './logica.js';
 
 export const TX = {
   nombre: { es: '¿Verdadero o falso?', en: 'True or false?' },
@@ -104,4 +105,26 @@ export function explicarPlantilla(id, vars, lado1, lado2) {
     },
   };
   return { es: tabla[id].es(), en: tabla[id].en() };
+}
+
+const RESPUESTA = {
+  verdadero: { es: 'La respuesta es verdadero.', en: 'The answer is true.' },
+  falso: { es: 'La respuesta es falso.', en: 'The answer is false.' },
+  laFalsa: { es: 'La falsa es', en: 'The false one is' },
+  calcula: { es: 'Calcula cada lado y compara:', en: 'Work out each side and compare:' },
+};
+
+/** «No lo sé» del ejercicio 1: se calculan los dos lados y se compara. */
+export function explicaVF(item, { tt, idioma }) {
+  const { lado1, lado2, verdad } = evaluar(item.id, item.vars);
+  const e = explicarPlantilla(item.id, item.vars, lado1, lado2)[idioma];
+  return `<p>${tt(RESPUESTA.calcula)}</p><p>${e}</p><p><strong>${tt(verdad ? RESPUESTA.verdadero : RESPUESTA.falso)}</strong></p>`;
+}
+
+/** «No lo sé» del ejercicio 2: se comprueba cada igualdad y se señala la falsa. */
+export function explicaFalsa(item, { tt, idioma }) {
+  const falsa = item.items[item.solucion];
+  const { lado1, lado2 } = evaluar(falsa.id, falsa.vars);
+  const e = explicarPlantilla(falsa.id, falsa.vars, lado1, lado2)[idioma];
+  return `<p>${tt(RESPUESTA.calcula)}</p><p>${e}</p><p><strong>${tt(RESPUESTA.laFalsa)} ${renderPlantilla(falsa.id, falsa.vars)}.</strong></p>`;
 }
