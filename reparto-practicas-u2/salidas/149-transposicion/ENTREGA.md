@@ -27,3 +27,6 @@ Pura aritmética, sin contextos. Ej. 1: números de 2 a 100 y lados naturales. E
 
 ## Cómo probarlo en 1 minuto
 `node --test tests/practicas-transposicion.test.js`. En `npm run servir`: http://localhost:8080/practicas/transposicion/ → «Probar sin código». Probado en Chrome (ancha, ES y EN, ej. 1 operador y hueco, 2, 3 con las dos fases, 4, 5; sin errores de montaje). **375 px no probado de verdad**: la ventana de la herramienta no se estrechó; el diseño es de una columna con la misma base que `valor-numerico`.
+
+## Reabierta del 13-11 (sesión s-20261113T170200-9bb8cd51)
+En «producto», `candidatos` elige ahora `signo-de-la-solucion` (solución negativa) o `signo-cambiado` (positiva), como suma/resta. Test nuevo: «el feedback de signo dice positivo/negativo según el signo de la solución» (3000 ítems del ej. 2 y del ej. 5, cuatro formas, ES/EN). Commit 251487a. El atajo de `explicaComprueba` (Revisión 191) se queda. Sin navegador.

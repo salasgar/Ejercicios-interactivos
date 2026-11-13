@@ -322,3 +322,4 @@ Si paras sin terminar: `$R/hechos/fallos/149--<sid>.md` con hasta dónde llegast
   proporcionalidad, segundo grado, sistemas, dos incógnitas; `eval` o coma flotante; lo que el acta deja fuera (`x²` en una ecuación que resolver o al reducir, `U6-2C-14`, `x` en el denominador, sacar factor común, el producto de dos paréntesis, un reto fuera de un ítem marcado como reto) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+- (13-11, reabierta del hallazgo 191) Un error con nombre que depende del signo de la solución (`signo-cambiado` / `signo-de-la-solucion`) se elige en `candidatos` **en todas las formas**, no solo en suma/resta; el test recorre el feedback buscando «positivo/negativo» y lo compara con el número que nombra.
