@@ -258,30 +258,49 @@ const lis = pasos => `<ol class="pasos-ayuda">${pasos.map(p => `<li>${p}</li>`).
 const encadenados = terminos => pasosIzquierdaADerecha(terminos).map(p => c(`${p.cuenta} = ${fmt(p.valor)}`));
 
 const REGLA = {
-  es: { salto: 'Con + subes y con − bajas.', signo: 'Mira qué número pesa más: su signo es el del resultado.', cadena: 'Se calcula de izquierda a derecha, de dos en dos.', agrupa: 'Reparte positivos y negativos, suma cada grupo y junta.', problema: 'Sube es +, baja es −; después, de izquierda a derecha.' },
-  en: { salto: 'With + you go up and with − you go down.', signo: 'See which number weighs more: its sign is the sign of the answer.', cadena: 'Work from left to right, two numbers at a time.', agrupa: 'Sort positives and negatives, add each group and put them together.', problema: 'Going up is +, going down is −; then work from left to right.' },
+  es: { salto: 'Con + subes y con − bajas.', signo: 'Mira qué número pesa más: su signo es el del resultado.', cadena: 'Se calcula de izquierda a derecha, de dos en dos.', agrupa: 'Reparte positivos y negativos, suma cada grupo y junta.' },
+  en: { salto: 'With + you go up and with − you go down.', signo: 'See which number weighs more: its sign is the sign of the answer.', cadena: 'Work from left to right, two numbers at a time.', agrupa: 'Sort positives and negatives, add each group and put them together.' },
 };
+
+/**
+ * El camino de dos términos para la tarjeta. Igual que `camino` (el del feedback), salvo con dos negativos, donde
+ * «3 y 6 se suman hacia abajo» no se entiende: aquí se dice cuánto se baja en total.
+ */
+function caminoAyuda(L, [x, y]) {
+  if (!(x < 0 && y < 0)) return camino(L, [x, y]);
+  const cu = c(`${cuenta2([x, y])} = ${fmt(x + y)}`);
+  const total = c(`${abs(x)} + ${abs(y)} = ${abs(x) + abs(y)}`);
+  return L === 'es'
+    ? `${c(cuenta2([x, y]))}: ya estás ${abs(x)} por debajo del 0 y bajas ${abs(y)} más; en total, ${total} por debajo, así que ${cu}.`
+    : `${c(cuenta2([x, y]))}: you are already ${abs(x)} below 0 and go down ${abs(y)} more; in total, ${total} below, so ${cu}.`;
+}
 
 export function explicaSalto(item, { idioma }) {
   const [x, y] = item.terminos;
-  return `${REGLA[idioma].salto} ${camino(idioma, item.terminos)} ${RESP[idioma]} ${c(fmt(x + y))}.`;
+  return `${REGLA[idioma].salto} ${caminoAyuda(idioma, item.terminos)} ${RESP[idioma]} ${c(fmt(x + y))}.`;
 }
 
 export function explicaSigno(item, { idioma }) {
   const T = txt(idioma);
   const v = valorDe(item.terminos);
   const palabra = v < 0 ? T.signo.negativo : T.signo.positivo;
-  return `${REGLA[idioma].signo}${lis([T.signo.razon(item.terminos), camino(idioma, item.terminos)])}${RESP[idioma]} ${palabra.toLowerCase()}: ${c(fmt(v))}.`;
+  return `${REGLA[idioma].signo}${lis([T.signo.razon(item.terminos), caminoAyuda(idioma, item.terminos)])}${RESP[idioma]} ${palabra.toLowerCase()}: ${c(fmt(v))}.`;
 }
+
+/** Cómo se escriben los verbos de ese enunciado (no la lista de todos: en la recta no se «ingresa» ni se «gasta»). */
+const VERBOS = {
+  es: { mover: 'Subir se escribe con + y bajar, con −:', saldo: 'Ingresar se escribe con + y gastar, con −:' },
+  en: { mover: 'Going up is written with + and going down with −:', saldo: 'Paying in is written with + and spending with −:' },
+};
+const CUENTA_ES = { es: t => `la cuenta es ${c(textoDe(t))}.`, en: t => `the calculation is ${c(textoDe(t))}.` };
 
 export function explicaCadena(item, { idioma }) {
   const T = txt(idioma).cadena;
   const v = valorDe(item.terminos);
   const pasos = encadenados(item.terminos);
   if (item.modo === 'palabras') {
-    const escribe = T.verbos;
     const total = c(`${textoDe(item.terminos)} = ${fmt(v)}`);
-    return `${REGLA[idioma].cadena}${lis([`${escribe} ${T.cuentaBuena(item.terminos)}`, pasos.join('; ')])}${RESP[idioma]} ${total}.`;
+    return `${REGLA[idioma].cadena}${lis([`${VERBOS[idioma].mover} ${CUENTA_ES[idioma](item.terminos)}`, pasos.join('; ')])}${RESP[idioma]} ${total}.`;
   }
   return `${REGLA[idioma].cadena}${lis(pasos)}${RESP[idioma]} ${c(fmt(v))}.`;
 }
@@ -300,6 +319,17 @@ export function explicaProblema(item, { idioma }) {
   const T = txt(idioma).problema;
   const v = valorDe(item.terminos);
   const pasos = encadenados(item.terminos);
-  const lineas = [`${T.verbos} ${T.cuentaBuena(item.terminos).replace(/ = [^<]*(?=<\/span>)/, '')}`, pasos.join('; ')];
-  return `${REGLA[idioma].problema}${lis(lineas)}${RESP[idioma]}: ${T.fin(item.contexto, v)}`;
+  // La regla ya no repite «sube es +, baja es −» (lo dice el primer paso, con los verbos de ese contexto).
+  const regla = idioma === 'es'
+    ? 'Escribe la cuenta con sus signos y calcula de izquierda a derecha.'
+    : 'Write the calculation with its signs and work from left to right.';
+  const verbos = VERBOS[idioma][item.contexto === 'saldo' ? 'saldo' : 'mover'];
+  const lineas = [`${verbos} ${CUENTA_ES[idioma](item.terminos)}`, pasos.join('; ')];
+  // La frase de la opción buena, sin mayúscula tras los dos puntos; con dinero en negativo, qué quiere decir.
+  const fin = T.fin(item.contexto, v);
+  const frase = fin[0].toLowerCase() + fin.slice(1);
+  const deuda = item.contexto === 'saldo' && v < 0
+    ? frase.replace(/\.$/, idioma === 'es' ? `, o sea, debes ${abs(v)} €.` : `, that is, you owe ${abs(v)} €.`)
+    : frase;
+  return `${regla}${lis(lineas)}${RESP[idioma]}: ${deuda}`;
 }
