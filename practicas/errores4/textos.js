@@ -3,46 +3,109 @@
 // logica.js. Reglas: producto con «·», división «:», sin letras, inglés sencillo.
 
 import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
-import { ex, PLANTILLA_POR_ID, COMPARACION_POR_ID, porqueComparacion, relacionBuena } from './logica.js';
+import { mcd, mcm } from '../_comun/aritmetica.js';
+import { ex, PLANTILLA_POR_ID, COMPARACION_POR_ID, GRUPO_DE, relacionBuena } from './logica.js';
 
 // ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+// La tarjeta va así: la regla de esa operación delante; la cuenta bien hecha, paso a paso, con los
+// números del ítem (`pasosBien`); y la respuesta al final, con el nombre del error entre comillas
+// (tal como sale en el botón). No reutiliza el feedback de acierto/fallo (`explicacionBienMal`…).
 
 const REL = { '<': '&lt;', '>': '&gt;', '=': '=' };
-const igualdad = (izq, rel, der) => `<span class="cuenta-frac">${ex(izq)} ${REL[rel]} ${ex(der)}</span>`;
 const esComparacion = item => Boolean(COMPARACION_POR_ID[item.plantilla]);
-const porqueDe = item => (esComparacion(item) ? porqueComparacion(item.plantilla, item.params) : PLANTILLA_POR_ID[item.plantilla].porque(item.params));
 const lineaAyuda = (expr, i) => `${i ? '= ' : ''}${ex(expr)}`;
+const cuenta = html => `<span class="cuenta">${html}</span>`;
+const unir = exprs => cuenta(exprs.map(ex).join(' = '));
 
-/** Ejercicio 1: verdadera o falsa; si es falsa, cómo se llama el error y cómo queda bien. */
-export function explicaBienMal(item, { tt }) {
-  const consejo = tt({ es: 'Haz tú la cuenta (o la comparación) y mira si sale lo que dice la igualdad.', en: 'Do the calculation (or the comparison) yourself and see if you get what the equality says.' });
-  if (item.verdadera) {
-    return `${consejo} ${tt({ es: 'La respuesta es «Verdadera»:', en: 'The answer is “True”:' })} ${igualdad(item.izq, item.rel, item.der)}`;
+/** La regla de la operación de una plantilla, en una frase. */
+function regla(id) {
+  if (COMPARACION_POR_ID[id]) return { es: 'Para comparar dos fracciones, se ponen con el mismo denominador y se comparan los numeradores.', en: 'To compare two fractions, write them with the same denominator and compare the numerators.' };
+  if (id === 'signo-perdido' || GRUPO_DE[id] === 'suma') return { es: 'Para sumar o restar fracciones, se ponen con el mismo denominador (el m.c.m.) y se suman o restan solo los numeradores.', en: 'To add or subtract fractions, write them with the same denominator (the LCM) and add or subtract only the numerators.' };
+  if (GRUPO_DE[id] === 'simplificar') return { es: 'Para simplificar, se dividen el numerador y el denominador entre el mismo número; con su m.c.d., sale la irreducible de una vez.', en: 'To simplify, divide the numerator and the denominator by the same number; with their GCD you get lowest terms in one step.' };
+  if (GRUPO_DE[id] === 'deCantidad') return { es: 'Para multiplicar una fracción por un número (la fracción de una cantidad), se divide entre el denominador y se multiplica por el numerador.', en: 'To multiply a fraction by a number (a fraction of an amount), divide by the denominator and multiply by the numerator.' };
+  if (GRUPO_DE[id] === 'division') return { es: 'Para dividir, se multiplica la primera fracción por la inversa de la segunda.', en: 'To divide, multiply the first fraction by the reciprocal of the second one.' };
+  return { es: 'Una potencia de una fracción se hace arriba y abajo: se elevan el numerador y el denominador.', en: 'A power of a fraction works on top and bottom: raise the numerator and the denominator.' };
+}
+
+/** La cuenta bien hecha de una plantilla (no de una comparación), paso a paso: [texto, …], el último es el resultado. */
+export function pasosBien(id, params) {
+  const p = PLANTILLA_POR_ID[id];
+  const l0 = p.l0(params), bien = aTexto(p.bien(params));
+  const conSimp = (pasos, ultimo) => (ultimo === bien ? pasos : [...pasos, bien]);   // aTexto no simplifica
+  if (id === 'signo-perdido' || GRUPO_DE[id] === 'suma') {
+    const [a, b, c, d] = params, m = mcm(b, d), A = a * (m / b), B = c * (m / d);
+    const op = id === 'signo-perdido' ? '−' : '+';
+    const res = aTexto(fraccion(op === '+' ? A + B : A - B, m));
+    return conSimp([l0, `${A}/${m} ${op} ${B}/${m}`, res], res);
   }
-  const bien = esComparacion(item)
-    ? `${tt(TX.verdadera_cmp)} ${igualdad(item.izq, relacionBuena(item.params), item.der)}`
-    : `${tt(TX.bien_es)} ${igualdad(item.izq, '=', aTexto(PLANTILLA_POR_ID[item.plantilla].bien(item.params)))}`;
-  return `${consejo} ${tt({ es: 'La respuesta es «Falsa»:', en: 'The answer is “False”:' })} ${igualdad(item.izq, item.rel, item.der)}`
-    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}<br>${tt(porqueDe(item))}<br>${bien}`;
+  if (GRUPO_DE[id] === 'simplificar') return [l0, bien];
+  if (GRUPO_DE[id] === 'deCantidad') {
+    const [num, den, n] = params;
+    return num === 1 ? [l0, `${n} : ${den}`, bien] : [l0, `${n} : ${den} · ${num}`, `${n / den} · ${num}`, bien];
+  }
+  if (GRUPO_DE[id] === 'division') {
+    const [a, b, c, d] = params;
+    const res = aTexto(fraccion(a * d, b * c));
+    return conSimp([l0, `${a}/${b} · ${d}/${c}`, res], res);
+  }
+  return [l0, bien];
 }
 
-/** Ejercicio 2: qué línea falla, qué error es y cómo debía quedar. */
-export function explicaLinea(item, { tt }) {
-  const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  const consejo = tt({ es: 'Cada línea tiene que valer lo mismo que la anterior: busca la primera que cambia el valor.', en: 'Each line has to be worth the same as the line before: look for the first one that changes the value.' });
-  return `${consejo} ${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${lineaAyuda(item.lineas[item.falsa], item.falsa)}</span>`
-    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}`
-    + `<br>${tt(plantilla.porque(item.params))}`
-    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${lineaAyuda(plantilla.corregida(item.params), item.falsa)}</span>`;
+/** «La cuenta bien hecha» de un ítem (plantilla o comparación), en HTML y en un idioma, con su porqué corto. */
+function bienHecha(item, es) {
+  if (esComparacion(item)) {
+    const [p, q, r, s] = item.params;
+    const rel = REL[relacionBuena(item.params)];
+    const fr2 = (n, d) => ex(aTexto(fraccion(n, d)));
+    const ent = n => (n < 0 ? `−${-n}` : `${n}`);
+    const m = mcm(q, s), A = p * (m / q), B = r * (m / s);
+    // Con negativas, el numerador mayor es el que está más cerca del 0 (unidad 3).
+    const cerca = p < 0 ? (es ? `, porque ${ent(Math.max(A, B))} está más cerca del 0` : `, because ${ent(Math.max(A, B))} is closer to 0`) : '';
+    const nums = `${cuenta(`${ent(A)} ${rel} ${ent(B)}`)}${cerca}`;
+    const final = cuenta(`${fr2(p, q)} ${rel} ${fr2(r, s)}`);
+    if (q === s) return es ? `Ya tienen el mismo denominador: ${nums}, así que ${final}.` : `They already have the same denominator: ${nums}, so ${final}.`;
+    const lista = `${cuenta(`${fr2(p, q)} = ${fr2(A, m)}`)} ${es ? 'y' : 'and'} ${cuenta(`${fr2(r, s)} = ${fr2(B, m)}`)}`;
+    return es ? `Con denominador ${m}: ${lista}; ${nums}, así que ${final}.` : `With denominator ${m}: ${lista}; ${nums}, so ${final}.`;
+  }
+  const pasos = unir(pasosBien(item.plantilla, item.params));
+  const [n, d] = item.params;
+  const entre = GRUPO_DE[item.plantilla] === 'simplificar' ? (es ? `, dividiendo arriba y abajo entre ${mcd(n, d)}` : `, dividing top and bottom by ${mcd(n, d)}`) : '';
+  return es ? `Bien hecha: ${pasos}${entre}.` : `Done right: ${pasos}${entre}.`;
 }
 
-/** Ejercicio 3: el resultado bien hecho, irreducible, y el error que había. */
-export function explicaArregla(item, { tt }) {
+const nombre = (item, es) => ERRORES_TIPICOS[item.error].nombre[es ? 'es' : 'en'];
+
+/** Ejercicio 1: la regla, la cuenta (o la comparación) bien hecha y si es verdadera o falsa (y el error). */
+export function explicaBienMal(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  // Lo que dice el ítem cuando es falso: en una igualdad, su resultado; en una comparación, el signo.
+  const dice = esComparacion(item) ? cuenta(`${ex(item.izq)} ${REL[item.rel]} ${ex(item.der)}`) : cuenta(ex(item.der));
+  const fin = item.verdadera
+    ? (es ? `Es justo lo que dice. La respuesta es «${TX.verdadera.es}».` : `That is exactly what it says. The answer is “${TX.verdadera.en}”.`)
+    : (es ? `No es lo que dice (${dice}). La respuesta es «${TX.falsa.es}», y el error, «${nombre(item, es)}».`
+      : `That is not what it says (${dice}). The answer is “${TX.falsa.en}”, and the mistake is “${nombre(item, es)}”.`);
+  return `${tt(regla(item.plantilla))} ${bienHecha(item, es)} ${fin}`;
+}
+
+/** Ejercicio 2: la regla de las líneas, por qué cambia el valor la mala, cómo quedaba bien y cuál es. */
+export function explicaLinea(item, { idioma, tt }) {
+  const es = idioma === 'es';
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  const n = item.falsa + 1;
+  const consejo = es ? 'Cada línea tiene que valer lo mismo que la anterior: la mala es la primera que cambia el valor.' : 'Each line has to be worth the same as the line before: the wrong one is the first that changes the value.';
+  const bien = cuenta(lineaAyuda(plantilla.corregida(item.params), item.falsa));
+  const linea = es ? `Bien hecha, la línea ${n} queda así: ${bien}.` : `Done right, line ${n} reads ${bien}.`;
+  const fin = es ? `La respuesta es la línea ${n}.` : `The answer is line ${n}.`;
+  return `${consejo} ${tt(plantilla.porque(item.params))} ${linea} ${fin}`;
+}
+
+/** Ejercicio 3: la regla, la cuenta bien hecha paso a paso, el error que había y el resultado irreducible. */
+export function explicaArregla(item, { idioma, tt }) {
+  const es = idioma === 'es';
   const bien = aTexto(fraccion(item.bien.num, item.bien.den));
-  const consejo = tt({ es: 'Haz la cuenta con el método bueno y simplifica al final.', en: 'Do the calculation with the right method and simplify at the end.' });
-  return `${consejo} ${tt(TX.bien_es)} ${igualdad(item.izq, '=', bien)}`
-    + `<br>${tt(TX.se_llama)} ${tt(ERRORES_TIPICOS[item.error].nombre)}<br>${tt(plantilla.porque(item.params))}`;
+  const error = es ? `El error era: «${nombre(item, es)}».` : `The mistake was: “${nombre(item, es)}”.`;
+  const fin = es ? `La respuesta es ${cuenta(ex(bien))}.` : `The answer is ${cuenta(ex(bien))}.`;
+  return `${tt(regla(item.plantilla))} ${bienHecha(item, es)} ${error} ${fin}`;
 }
 
 export const TX = {
