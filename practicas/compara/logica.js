@@ -324,27 +324,106 @@ export function explicarRecta(item, toque, idioma) {
 
 const regla = (idioma, es, en) => (idioma === 'es' ? es : en);
 
-/** Ejercicio 1: el método que tocaba, sin error que corregir. */
+const respuesta = (idioma, que) => regla(idioma, `La respuesta es ${que}.`, `The answer is ${que}.`);
+/** «4/7 = 16/28», o solo «16/28» si ya tenía ese denominador (nada de «16/28 = 16/28»). */
+const pasada = (f, g) => (f.den === g.den ? H(f) : `${H(f)} = ${H(g)}`);
+
+/**
+ * Ejercicio 1: el método que tocaba y el signo que va en el hueco. Los métodos de una positiva y una
+ * negativa, del mismo denominador y del mismo numerador son los del feedback; el de dos negativas y el
+ * del denominador común son propios de la tarjeta, que enseña las equivalentes (el feedback solo dice
+ * «con denominador 20») y no escribe «13/8 = 13/8».
+ */
 export function explicaComparar(item, { idioma }) {
-  return explicarComparar(item, null, idioma);
+  const x = aFr(item.a), y = aFr(item.b);
+  const c = comparar(x, y);
+  const s = SIGNO(c);
+  const A = H(x), B = H(y);
+  const m = TX.comp.metodo;
+  let metodo;
+  if (x.num < 0 !== y.num < 0) {
+    const [neg, pos] = x.num < 0 ? [A, B] : [B, A];
+    metodo = m.mixto[idioma](neg, pos, A, s, B);
+  } else if (x.num < 0) {
+    const ax = x.opuesta(), ay = y.opuesta();
+    const s2 = SIGNO(comparar(ax, ay));
+    const lejos = comparar(ax, ay) > 0 ? A : B;
+    let sinSigno = `${H(ax)} ${s2} ${H(ay)}`;
+    if (ax.den !== ay.den) {
+      const [ax2, ay2] = comunDenominador(ax, ay).fracciones;
+      sinSigno = `${pasada(ax, ax2)} ${s2} ${pasada(ay, ay2)}`;
+    }
+    metodo = regla(idioma,
+      `Las dos son negativas: es menor la que está más lejos del 0. Sin el signo, ${sinSigno}; así que ${lejos} está más lejos del 0 y ${A} ${s} ${B}.`,
+      `Both are negative: the one farther from 0 is less. Without the sign, ${sinSigno}; so ${lejos} is farther from 0 and ${A} ${s} ${B}.`);
+  } else if (item.caso === 'mismo-den') {
+    metodo = m.mismoDen[idioma](x.num, s, y.num, A, B);
+  } else if (item.caso === 'mismo-num') {
+    metodo = m.mismoNum[idioma](x.den, SIGNO(x.den < y.den ? -1 : 1), y.den, A, s, B);
+  } else {
+    const com = comunDenominador(x, y);
+    const [x2, y2] = com.fracciones;
+    metodo = regla(idioma,
+      `Si no tienen ni el mismo denominador ni el mismo numerador, se pasan a denominador común, ${com.mcm}: ${pasada(x, x2)} ${s} ${pasada(y, y2)}, porque ${abs(x2.num)} ${s} ${abs(y2.num)}.`,
+      `With neither the same denominator nor the same numerator, use a common denominator, ${com.mcm}: ${pasada(x, x2)} ${s} ${pasada(y, y2)}, because ${abs(x2.num)} ${s} ${abs(y2.num)}.`);
+  }
+  return `${metodo} ${respuesta(idioma, `<strong>${s}</strong>`)}`;
 }
 
-/** Ejercicio 2: una línea por fracción, con su caja y la razón. */
+/** Ejercicio 2: la regla y, caja por caja, las fracciones que van en ella con su cuenta. */
 export function explicaCajas(item, { idioma }) {
-  const lineas = item.fracs.map(f => TX.cajas.razon[cajaDe(f)][idioma](H(aFr(f)), f.num, f.den));
   const mitad = H(fraccion(1, 2));
   const intro = regla(idioma,
-    `Compara cada fracción con ${mitad} y con 1: mira si el numerador es menor que la mitad del denominador, está entre la mitad y el denominador, o lo supera.`,
-    `Compare each fraction with ${mitad} and with 1: see if the numerator is less than half the denominator, between half and the denominator, or more than it.`);
-  return `${intro}<br>${lineas.join('<br>')}`;
+    `Para comparar con ${mitad}, dobla el numerador y compáralo con el denominador; para comparar con 1, compara el numerador con el denominador.`,
+    `To compare with ${mitad}, double the numerator and compare it with the denominator; to compare with 1, compare the numerator with the denominator.`);
+  const y = regla(idioma, 'y', 'and');
+  const porque = {
+    menor: ({ num: n, den: d }) => `${n} · 2 = ${2 * n} &lt; ${d}`,
+    entre: ({ num: n, den: d }) => `${n} · 2 = ${2 * n} &gt; ${d} ${y} ${n} &lt; ${d}`,
+    mayor: ({ num: n, den: d }) => `${n} &gt; ${d}`,
+  };
+  const lineas = CAJAS.flatMap(caja => {
+    const dentro = item.fracs.filter(f => cajaDe(f) === caja);
+    if (!dentro.length) return [];
+    return [`<strong>${TX.cajas.cajas[caja][idioma]}</strong>: ${dentro.map(f => `${H(aFr(f))} (${porque[caja](f)})`).join('; ')}.`];
+  });
+  return `${intro} ${regla(idioma, 'La respuesta, caja por caja:', 'The answer, box by box:')}<br>${lineas.join('<br>')}`;
 }
 
-/** Ejercicio 3: el común denominador de todas y la cadena ordenada. */
+/** Ejercicio 3: la regla, el común denominador de todas (sin «11/18 = 11/18») y la cadena ordenada. */
 export function explicaOrden(item, { idioma }) {
-  return explicarOrden(item, null, idioma);
+  const fs = item.fracs.map(aFr);
+  const com = comunDenominador(fs);
+  const negativas = fs.filter(f => f.num < 0).length;
+  const reglaNeg = negativas === 0 ? ''
+    : negativas === 1
+      ? regla(idioma, ' La negativa es la menor de todas.', ' The negative one is the least of all.')
+      : regla(idioma, ' Las negativas son menores que las positivas; entre las dos negativas, es menor la que está más lejos del 0.',
+        ' The negatives are less than the positives; between the two negatives, the one farther from 0 is less.');
+  const intro = regla(idioma, 'Pasa todas a común denominador y compara los numeradores.', 'Write them all with a common denominator and compare the numerators.') + reglaNeg;
+  const lista = fs.map((f, i) => pasada(f, com.fracciones[i])).join('; ');
+  const orden = ordenCorrecto(item);
+  const cadena = htmlCuenta(orden.flatMap((i, k) => (k ? [item.creciente ? '<' : '>', fs[i]] : [fs[i]])), { compacta: true });
+  const paso = regla(idioma, `Con denominador ${com.mcm}: ${lista}.`, `With denominator ${com.mcm}: ${lista}.`);
+  return `${intro} ${paso} ${respuesta(idioma, cadena)}`;
 }
 
-/** Ejercicio 4: cuántos huecos hay que contar desde el 0. */
+/** Ejercicio 4: qué mide cada hueco, cuántos se cuentan desde el 0 y hacia dónde, y la marca a la que se llega. */
 export function explicaRecta(item, { idioma }) {
-  return explicarRecta(item, null, idioma);
+  const es = idioma === 'es';
+  const f = fraccionRecta(item);
+  const n = abs(item.num), d = item.den;
+  const huecos = k => (es ? `${k} ${k === 1 ? 'hueco' : 'huecos'}` : `${k} ${k === 1 ? 'gap' : 'gaps'}`);
+  const lado = item.num < 0 ? (es ? 'la izquierda' : 'the left') : (es ? 'la derecha' : 'the right');
+  const unidad = es
+    ? `De un entero al siguiente hay ${d} huecos iguales, como dice el denominador: cada hueco mide ${H(fraccion(1, d))}.`
+    : `From one whole number to the next there are ${d} equal gaps, as the denominator says: each gap is ${H(fraccion(1, d))}.`;
+  const falta = n - d;
+  const pasa = n > d
+    ? (es ? ` (con ${d} llegas al 1 y ${falta === 1 ? 'falta 1 más' : `faltan ${falta} más`})` : ` (${d} take you to 1, then ${falta} more)`)
+    : '';
+  const cuenta = es
+    ? `Desde el 0, cuenta ${huecos(n)} hacia ${lado}${pasa}.`
+    : `From 0, count ${huecos(n)} to ${lado}${pasa}.`;
+  return `${unidad} ${cuenta} ${es ? `La respuesta es la marca a la que llegas: ${H(f)}.` : `The answer is the mark you reach: ${H(f)}.`}`;
 }
