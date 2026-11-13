@@ -515,3 +515,44 @@ test('ni «×», ni «1x», ni dos letras, ni otra incógnita que x en las ecuac
     assert.equal((t.match(/ = /g) ?? []).length, 1);
   }
 });
+
+// ─── Revisión 191 (hallazgo 1): el signo que nombra el feedback es el del número que nombra ────
+
+test('el feedback de signo dice «positivo/negativo» según el signo de la solución, en las cuatro formas y los dos idiomas', () => {
+  const PALABRA = /\b(es|is) (positivo|negativo|positive|negative) \(([^)]*)\)/g;
+  const signoDeTexto = t => (/^[−-]/.test(t.trim()) ? -1 : 1);
+  let vistos = 0, vistosProducto = 0, negativosProducto = 0;
+  const formas = new Set();
+  const revisa = (it, error, valor, donde) => {
+    for (const idioma of ['es', 'en']) {
+      const t = sinHtml(TX.ej2.por_que[idioma](it, error, valor));
+      for (const m of t.matchAll(PALABRA)) {
+        const dice = /^(positivo|positive)$/.test(m[2]) ? 1 : -1;
+        assert.equal(dice, signoDeTexto(m[3]), `${donde} ${idioma}: «${m[0]}» en ${t}`);
+        assert.equal(dice, Math.sign(solucionDe(it).num), `${donde} ${idioma}: signo de la solución en ${t}`);
+        vistos++;
+      }
+    }
+  };
+  for (const item of lote(generarUnaOperacion, 61)) {
+    const cands = candidatos(item).filter(k => k.valor);
+    const s = solucionDe(item).num;
+    for (const c of cands) {
+      if (c.error === 'signo-de-la-solucion') assert.ok(s < 0, `signo-de-la-solucion con solución no negativa en ${textoEcuacion(item)}`);
+      if (c.error === 'signo-cambiado') assert.ok(s > 0, `signo-cambiado con solución no positiva en ${textoEcuacion(item)}`);
+      if (c.error === 'signo-de-la-solucion' || c.error === 'signo-cambiado') {
+        revisa(item, c.error, c.valor, `ej2 ${textoEcuacion(item)}`);
+        formas.add(item.forma);
+        if (item.forma === 'producto') { vistosProducto++; if (s < 0) negativosProducto++; }
+      }
+    }
+  }
+  for (const item of lote(generarComprueba, 62)) {
+    if (item.buena || !(item.error === 'signo-cambiado' || item.error === 'signo-de-la-solucion')) continue;
+    const s = Math.sign(solucionDe(item).num);
+    assert.equal(item.error === 'signo-de-la-solucion', s < 0, `ej5 ${textoEcuacion(item)}: ${item.error}`);
+    revisa(item, item.error, F(item.mostrada), `ej5 ${textoEcuacion(item)}`);
+  }
+  assert.ok(vistos > 200, `pocos casos de signo: ${vistos}`);
+  assert.ok(formas.has('producto') && vistosProducto > 50 && negativosProducto > 10, `producto: ${vistosProducto}/${negativosProducto}`);
+});

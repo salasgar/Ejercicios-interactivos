@@ -213,7 +213,7 @@ export function candidatos(it) {
         { error: 'multiplicar-en-vez-de-dividir', valor: fr(c * A) },
         { error: 'invertir-coeficiente', valor: c === 0 ? null : fr(A, c) },
         { error: 'signo-al-dividir', valor: A < 0 ? fr(c, -A) : null },
-        { error: 'signo-cambiado', valor: s.opuesta().simplificar() },
+        s.num < 0 ? { error: 'signo-de-la-solucion', valor: s.opuesta().simplificar() } : { error: 'signo-cambiado', valor: s.opuesta().simplificar() },
       ];
     }
     default: {
