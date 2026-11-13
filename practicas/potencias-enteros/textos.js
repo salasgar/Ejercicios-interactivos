@@ -165,13 +165,31 @@ const respuesta = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answe
 
 /** Ejercicio 1: el signo por la paridad de los negativos y el valor. */
 export function explicaProducto(item, { tt }) {
+  // El ejercicio pide dos cosas: tocar los negativos y escribir el resultado. La explicación dice
+  // cuáles se tocan (también cuando hay un 0, que decide el resultado pero no quita los negativos).
   const p = producto(item);
   const cuentaBuena = cuenta(`${expresionProducto(item)} = ${fmt(p)}`);
-  if (item.factores.includes(0)) return `<p>${tt(TX.ej1.cero)}.</p>${respuesta(tt, cuentaBuena)}`;
-  const k = posicionesNegativas(item).length;
+  const negativos = posicionesNegativas(item).map(i => cuenta(fmtPar(item.factores[i])));
+  const k = negativos.length;
+  const lista = k < 2 ? negativos.join('') : `${negativos.slice(0, -1).join(', ')} ${tt({ es: 'y', en: 'and' })} ${negativos[k - 1]}`;
+  const toca = k === 0
+    ? tt({ es: 'No hay factores negativos: no se toca ninguno', en: 'There are no negative factors: do not tap any' })
+    : k === 1
+      ? tt({ es: `Se toca el único negativo, ${lista}`, en: `Tap the only negative, ${lista}` })
+      : tt({ es: `Se tocan los negativos: ${lista}`, en: `Tap the negatives: ${lista}` });
+  if (item.factores.includes(0)) return `${pasos([`${toca}.`, `${tt(TX.ej1.cero)}.`])}${respuesta(tt, cuentaBuena)}`;
   const par = k % 2 === 0;
+  // En inglés, even y odd se aclaran (reglas de la unidad 3).
+  const signo = k === 0
+    ? tt({ es: '. Sin negativos, el producto es positivo', en: '. With no negatives, the product is positive' })
+    : k === 1
+      ? tt({ es: '. Hay 1, un número impar, así que el producto es negativo', en: '. There is 1, an odd (impar) number, so the product is negative' })
+      : tt({
+        es: `. Son ${k}, un número ${par ? 'par' : 'impar'}, así que el producto es ${par ? 'positivo' : 'negativo'}`,
+        en: `. There are ${k}, an ${par ? 'even (par)' : 'odd (impar)'} number, so the product is ${par ? 'positive' : 'negative'}`,
+      });
   return `${pasos([
-    `${tt(TX.ej1.hay)(k, par)}, ${tt(TX.ej1.asi_que)(par)}.`,
+    `${toca}${signo}.`,
     `${tt({ es: 'Se multiplican sin signo', en: 'Multiply without the signs' })}: ${cuenta(`${absolutosProducto(item)} = ${Math.abs(p)}`)}.`,
   ])}${respuesta(tt, cuentaBuena)}`;
 }
@@ -182,21 +200,42 @@ export function explicaPotencia(item, { tt }) {
   const factores = Array(item.exp).fill(fmtPar(item.base)).join(' · ');
   const potencia = htmlEntero(textoPotencia(item.base, item.exp));
   return `${pasos([
-    `${tt(TX.ej2.par)(item.exp, item.exp % 2 === 0)}.`,
+    // Como TX.ej2.par, pero con even y odd aclarados en inglés.
+    item.exp % 2 === 0
+      ? tt({ es: `El exponente ${item.exp} es par: el resultado es positivo.`, en: `The exponent ${item.exp} is even (par): the result is positive.` })
+      : tt({ es: `El exponente ${item.exp} es impar: el resultado es negativo.`, en: `The exponent ${item.exp} is odd (impar): the result is negative.` }),
     `${tt({ es: 'Se multiplica la base por sí misma', en: 'Multiply the base by itself' })}: ${cuenta(`${potencia} = ${factores} = ${fmt(v)}`)}.`,
-  ])}${respuesta(tt, cuenta(fmt(v)))}`;
+  ])}${respuesta(tt, tt({
+    // Las dos partes del ejercicio: el botón del signo y el valor.
+    es: `«${TX.ej2[v > 0 ? 'positivo' : 'negativo'].es}» y el valor ${cuenta(fmt(v))}`,
+    en: `“${TX.ej2[v > 0 ? 'positivo' : 'negativo'].en}” and the value ${cuenta(fmt(v))}`,
+  }))}`;
 }
 
 /** Ejercicio 3: cuál es la base y el valor. */
 export function explicaBase(item, { tt }) {
+  // Revisión 192: el paso 1 dice POR QUÉ esa es la base, y el paso 2 enseña la potencia antes
+  // del menos de fuera («−4² = −16» a secas se saltaba justo lo que hay que aprender).
   const v = valorBase(item);
   const b = baseDeItem(item);
   const potencia = `${fmtPar(b)}<sup>${item.exp}</sup>`;
   const veces = Array(item.exp).fill(fmtPar(b)).join(' · ');
+  const pot = b ** item.exp;
+  const B = cuenta(fmt(b));
+  const paso1 = {
+    a: { es: `El exponente afecta a todo el paréntesis: la base es ${B}`, en: `The exponent affects the whole bracket: the base is ${B}` },
+    b: { es: `El exponente solo afecta al ${B}, no al menos: la base es ${B}`, en: `The exponent only affects the ${B}, not the minus sign: the base is ${B}` },
+    c: { es: `El exponente afecta al paréntesis, no al menos de fuera: la base es ${B}`, en: `The exponent affects the bracket, not the minus sign outside: the base is ${B}` },
+  }[item.tipo];
+  const laPotencia = cuenta(`${potencia} = ${veces} = ${fmt(pot)}`);
+  const todo = cuenta(`${htmlEntero(textoBase(item))} = ${fmt(v)}`);
   const paso2 = item.tipo === 'a'
-    ? `${cuenta(`${potencia} = ${veces} = ${fmt(b ** item.exp)}`)}.`
-    : `${tt(item.tipo === 'b' ? TX.ej3.fuera : TX.ej3.dentro)}: ${cuenta(`${htmlEntero(textoBase(item))} = ${fmt(v)}`)}.`;
-  return `${pasos([`${tt(TX.ej3.base_es)(cuenta(fmt(b)))}.`, paso2])}${respuesta(tt, tt({
+    ? `${laPotencia}.`
+    : tt({
+      es: `Primero la potencia y después el menos de fuera, que cambia el signo: ${laPotencia}, así que ${todo}.`,
+      en: `First the power, then the minus sign outside, which changes the sign: ${laPotencia}, so ${todo}.`,
+    });
+  return `${pasos([`${tt(paso1)}.`, paso2])}${respuesta(tt, tt({
     es: `la base ${cuenta(fmt(b))} y el valor ${cuenta(fmt(v))}`,
     en: `the base ${cuenta(fmt(b))} and the value ${cuenta(fmt(v))}`,
   }))}`;
@@ -207,10 +246,17 @@ export function explicaRaiz(item, { tt }) {
   const n = cuadrado(item);
   const r = item.r;
   if (item.tipo === 'cuadrados') {
-    return `<p>${tt(TX.ej4.los_dos)(r)}: ${cuenta(`${r} · ${r} = ${n}`)} ${tt({ es: 'y', en: 'and' })} ${cuenta(`(−${r}) · (−${r}) = ${n}`)}.</p>${respuesta(tt, cuenta(`${r}, −${r}`))}`;
+    return `<p>${tt(TX.ej4.los_dos)(r)}: ${cuenta(`${r} · ${r} = ${n}`)} ${tt({ es: 'y', en: 'and' })} ${cuenta(`(−${r}) · (−${r}) = ${n}`)}.</p>${respuesta(tt, tt({
+      es: `${cuenta(String(r))} y ${cuenta(`−${r}`)}: se marcan los dos`,
+      en: `${cuenta(String(r))} and ${cuenta(`−${r}`)}: tap both`,
+    }))}`;
   }
   if (item.tipo === 'negativa') {
-    return `<p>${tt(TX.ej4.negativa_no_existe)(n)}. ${tt(TX.ej4.negativa_ejemplo)(r)}.</p>${respuesta(tt, cuenta(tt(TX.ej4.no_existe)))}`;
+    // El ejemplo, con dos puntos y no con una coma entre dos frases; el botón, entre comillas.
+    return `<p>${tt(TX.ej4.negativa_no_existe)(n)}. ${tt({
+      es: `Por ejemplo, ${r}<sup>2</sup> = ${n} y (−${r})<sup>2</sup> = ${n}: ninguno da −${n}`,
+      en: `For example, ${r}<sup>2</sup> = ${n} and (−${r})<sup>2</sup> = ${n}: neither gives −${n}`,
+    })}.</p>${respuesta(tt, tt({ es: `«${TX.ej4.no_existe.es}»`, en: `“${TX.ej4.no_existe.en}”` }))}`;
   }
   return `<p>${tt(TX.ej4.raiz_buena)(r, n)}: ${cuenta(`${r} · ${r} = ${n}`)}.</p>${respuesta(tt, cuenta(`√${n} = ${r}`))}`;
 }
