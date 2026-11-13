@@ -319,3 +319,32 @@ export function explicarRecta(item, toque, idioma) {
   return `${x.errores[error][idioma](arg)} ${bien}`;
 }
 
+
+// --- «No lo sé»: la explicación de cada ejercicio, con los números del ítem ---------
+
+const regla = (idioma, es, en) => (idioma === 'es' ? es : en);
+
+/** Ejercicio 1: el método que tocaba, sin error que corregir. */
+export function explicaComparar(item, { idioma }) {
+  return explicarComparar(item, null, idioma);
+}
+
+/** Ejercicio 2: una línea por fracción, con su caja y la razón. */
+export function explicaCajas(item, { idioma }) {
+  const lineas = item.fracs.map(f => TX.cajas.razon[cajaDe(f)][idioma](H(aFr(f)), f.num, f.den));
+  const mitad = H(fraccion(1, 2));
+  const intro = regla(idioma,
+    `Compara cada fracción con ${mitad} y con 1: mira si el numerador es menor que la mitad del denominador, está entre la mitad y el denominador, o lo supera.`,
+    `Compare each fraction with ${mitad} and with 1: see if the numerator is less than half the denominator, between half and the denominator, or more than it.`);
+  return `${intro}<br>${lineas.join('<br>')}`;
+}
+
+/** Ejercicio 3: el común denominador de todas y la cadena ordenada. */
+export function explicaOrden(item, { idioma }) {
+  return explicarOrden(item, null, idioma);
+}
+
+/** Ejercicio 4: cuántos huecos hay que contar desde el 0. */
+export function explicaRecta(item, { idioma }) {
+  return explicarRecta(item, null, idioma);
+}

@@ -10,6 +10,7 @@ import {
   CAJAS, generarCajas, cajaDe, fallosCajas, errorCajas, explicarCajas,
   generarOrden, ordenBien, errorOrden, explicarOrden,
   generarRecta, fraccionRecta, errorRecta, explicarRecta,
+  explicaComparar, explicaCajas, explicaOrden, explicaRecta,
 } from './logica.js';
 import { TX } from './textos.js';
 
@@ -213,19 +214,20 @@ arrancar({
   ejercicios: [
     {
       nombre: TX.comp.nombre, detalle: TX.comp.detalle, introduccion: TX.comp.introduccion,
-      generar: generarComparar, clave: i => `${T(i.a)}:${T(i.b)}`, montar: montarComparar, enunciado: enunciadoComparar,
+      generar: generarComparar, clave: i => `${T(i.a)}:${T(i.b)}`, montar: montarComparar, enunciado: enunciadoComparar, explicacion: explicaComparar,
     },
     {
       nombre: TX.cajas.nombre, detalle: TX.cajas.detalle, introduccion: TX.cajas.introduccion,
-      generar: generarCajas, clave: i => i.fracs.map(T).join(','), montar: montarCajas, enunciado: enunciadoCajas,
+      generar: generarCajas, clave: i => i.fracs.map(T).join(','), montar: montarCajas, enunciado: enunciadoCajas, explicacion: explicaCajas,
     },
     {
       nombre: TX.orden.nombre, detalle: TX.orden.detalle, introduccion: TX.orden.introduccion,
-      generar: generarOrden, clave: i => `${i.creciente}:${i.fracs.map(T).join(',')}`, montar: montarOrden, enunciado: enunciadoOrden,
+      generar: generarOrden, clave: i => `${i.creciente}:${i.fracs.map(T).join(',')}`, montar: montarOrden, enunciado: enunciadoOrden, explicacion: explicaOrden,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.recta.nombre, detalle: TX.recta.detalle, introduccion: TX.recta.introduccion,
-      generar: generarRecta, clave: i => `${i.min}:${i.max}:${i.num}/${i.den}`, montar: montarRecta, enunciado: enunciadoRecta,
+      generar: generarRecta, clave: i => `${i.min}:${i.max}:${i.num}/${i.den}`, montar: montarRecta, enunciado: enunciadoRecta, explicacion: explicaRecta,
     },
   ],
 });
