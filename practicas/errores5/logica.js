@@ -408,6 +408,74 @@ nueva({
 });
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
+
+// ─── Cómo se hace bien (para el «No lo sé») ─────────────────────────────────────
+// El método con los números del ítem, SIN la frase del error que lleva `porque` (el feedback): así vale
+// también cuando todo está bien, y no arrastra lo que el feedback dice mal («añadir un cero» con · 1000,
+// la cadena de redondeos 14,2745 → 14,275 → 14,27). Pura: no cambia ningún ítem ni el feedback.
+
+const ESC_CMP = { '<': '&lt;', '>': '&gt;', '=': '=' };
+const lugaresTxt = (n, i) => (i === 'en' ? `${n} place${n === 1 ? '' : 's'}` : `${n} lugar${n === 1 ? '' : 'es'}`);
+const COMO_SE_HACE = {
+  'alinea-a-la-derecha'(p, i, T) {
+    const [a, b, op] = [D(p[0]), D(p[1]), p[2]], k = Math.max(a.k, b.k), bien = PLANTILLA_POR_ID['alinea-a-la-derecha'].bien(p);
+    const cuenta = `${T(a.conCifras(k))} ${op} ${T(b.conCifras(k))} = ${T(bien)}`;
+    return i === 'en'
+      ? `${T(a)} ${op} ${T(b)}: the decimal points go one under the other and the gaps are filled with zeros: ${cuenta}.`
+      : `${T(a)} ${op} ${T(b)}: las comas van una debajo de otra y los huecos se rellenan con ceros: ${cuenta}.`;
+  },
+  'coma-mal-puesta'(p, i, T) {
+    const [a, b] = [D(p[0]), D(p[1])], r = multiplicar(a, b), rn = r.normalizar();
+    const igual = rn.k !== r.k ? (i === 'en' ? `, that is, ${T(rn)}` : `, o sea, ${T(rn)}`) : '';
+    return i === 'en'
+      ? `${T(a)} · ${T(b)}: multiply with no decimal points (${a.m} · ${b.m} = ${a.m * b.m}); the product has as many decimal places as both factors together, ${a.k} + ${b.k} = ${a.k + b.k}: ${T(r)}${igual}.`
+      : `${T(a)} · ${T(b)}: se multiplica sin comas (${a.m} · ${b.m} = ${a.m * b.m}) y el producto lleva tantas cifras decimales como los dos factores juntos, ${a.k} + ${b.k} = ${a.k + b.k}: ${T(r)}${igual}.`;
+  },
+  'por-diez-anadiendo-cero'(p, i, T) {
+    const [d, n, c] = [D(p[0]), p[1], p[2]], x = porPotenciaDe10(d, n);
+    return i === 'en'
+      ? `${T(d)} · ${pot10(n)}: the decimal point moves ${lugaresTxt(n, i)} to the right: ${T(x)}. Then ${T(x)} + ${c} = ${T(sumar(x, c))}.`
+      : `${T(d)} · ${pot10(n)}: la coma se mueve ${lugaresTxt(n, i)} a la derecha: ${T(x)}. Después, ${T(x)} + ${c} = ${T(sumar(x, c))}.`;
+  },
+  'olvida-coma-cociente': (p, i) => PLANTILLA_POR_ID['olvida-coma-cociente'].porque(p, i),
+  'coma-solo-en-divisor'(p, i, T) {
+    const [a, b] = [D(p[0]), D(p[1])], q = dividir(a, b).cociente;
+    return i === 'en'
+      ? `${T(a)} : ${T(b)}: the decimal point moves ${lugaresTxt(b.k, i)} to the right in the dividend and in the divisor: ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}.`
+      : `${T(a)} : ${T(b)}: la coma se mueve ${lugaresTxt(b.k, i)} a la derecha en el dividendo y en el divisor: ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}.`;
+  },
+  'resto-sin-deshacer': (p, i) => PLANTILLA_POR_ID['resto-sin-deshacer'].porque(p, i),
+  'fraccion-al-reves'(p, i, T) {
+    const [n, d] = p, v = deFraccion(fraccion(n, d));
+    return i === 'en'
+      ? `${htmlFraccion(fraccion(n, d))} means ${n} : ${d}, the numerator divided by the denominator: ${T(v)}.`
+      : `${htmlFraccion(fraccion(n, d))} significa ${n} : ${d}, el numerador entre el denominador: ${T(v)}.`;
+  },
+  'periodico-por-redondeo'(p, i) {
+    const [n, d] = p, f = fraccion(n, d);
+    return i === 'en'
+      ? `${htmlFraccion(f)} = ${n} : ${d} = ${aTextoPeriodico(f, i)}: the division never ends and the digits repeat for ever, so it is written with “…”. A rounded number is not the same number.`
+      : `${htmlFraccion(f)} = ${n} : ${d} = ${aTextoPeriodico(f, i)}: la división no termina y las cifras se repiten siempre; por eso se escribe con «…». Un redondeo no es el mismo número.`;
+  },
+  'compara-por-cifras'(p, i, T) {
+    const [a, b] = [D(p[0]), D(p[1])], k = Math.max(a.k, b.k), r = ESC_CMP[cmpTexto(comparar(a, b))];
+    return i === 'en'
+      ? `${T(a)} and ${T(b)}: with the same number of decimal places, ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}, so ${T(a)} ${r} ${T(b)}.`
+      : `${T(a)} y ${T(b)}: con las mismas cifras decimales, ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}, luego ${T(a)} ${r} ${T(b)}.`;
+  },
+};
+const comoRedondear = (p, i, T) => {
+  const [a, b, c] = [D(p[0]), D(p[1]), p[2]], s = sumar(a, b), dig = digitoSiguiente(s, c), r = redondear(s, c);
+  const orden = ORDEN[c].t[i], sube = dig >= 5;
+  return i === 'en'
+    ? `${T(a)} + ${T(b)} = ${T(s)}. To round ${orden}, look only at the next digit, ${dig}: ${sube ? 'it is 5 or more, so round up' : 'it is less than 5, so leave it'}: ${T(r)}.`
+    : `${T(a)} + ${T(b)} = ${T(s)}. Para redondear ${orden}, se mira solo la cifra siguiente, ${dig}: ${sube ? 'como es 5 o más, se sube' : 'como es menor que 5, se deja'}: ${T(r)}.`;
+};
+COMO_SE_HACE['redondea-truncando'] = comoRedondear;
+COMO_SE_HACE['redondea-en-cadena'] = comoRedondear;
+
+/** Cómo se hace bien el cálculo del ítem, con sus números (HTML corto, en ese idioma). */
+export const comoSeHace = (item, idioma) => COMO_SE_HACE[item.plantilla](item.params, idioma, x => aTexto(x, idioma));
 /** Los errores que se pueden nombrar (los de las plantillas más los hermanos de su clase) y a qué cálculo se aplican. */
 export const CLASE_DE = {
   'alinea-a-la-derecha': 'suma', 'coma-mal-puesta': 'producto', 'por-diez-anadiendo-cero': 'por10', 'entre-diez-quitando-cero': 'por10',

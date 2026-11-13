@@ -3,7 +3,8 @@
 // Reglas: producto con «·», división «:», sin letras, inglés sencillo, coma en español y punto en inglés.
 
 import { ERRORES_TIPICOS, aTexto } from '../_comun/decimales.js';
-import { PLANTILLA_POR_ID, htmlLinea, tieneCerosFinales, resultadoBueno } from './logica.js';
+import { fraccion, htmlFraccion } from '../_comun/fracciones.js';
+import { PLANTILLA_POR_ID, htmlLinea, tieneCerosFinales, resultadoBueno, comoSeHace } from './logica.js';
 
 export const TX = {
   nombre: {
@@ -71,24 +72,41 @@ export function explicacionDe(item, { tt, idioma }, { escrito = null, resultado 
 
 // ─── «No lo sé»: cómo se hace cada ejercicio (la regla, el paso del ítem y la respuesta) ──────
 
+// La tarjeta no copia `explicacionDe` (el feedback): «Se llama:» repetía la respuesta del ej. 2 y en los
+// otros no hace falta; «Está todo bien» no decía por qué; y el «por qué» del feedback lleva la frase del
+// error, que con «· 1000» dice «añadir un cero» y en el redondeo en cadena enseña mal la cadena. Aquí: la
+// línea mala, cómo se hace bien con los números del ítem (`comoSeHace`) y la línea buena.
+
 const fin = (idioma, txt) => `<br>${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>.`;
 const dos = (es, en, idioma) => (idioma === 'es' ? es : en);
+const opcion = (txt, idioma) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
+/** El nombre de un error con sus fracciones con raya («1/3 es 0,333…» → raya). */
+const nombreConRaya = (id, tt) => nombreError(id, tt).replace(/(\d+)\/(\d+)/g, (_, a, b) => htmlFraccion(fraccion(Number(a), Number(b)), { compacta: true }));
+
+/** Lo común: la línea mala, cómo se hace bien y la línea buena (o, sin error, por qué todo cuadra). */
+function lineaMalaYBuena(item, { tt, idioma }) {
+  const como = comoSeHace(item, idioma);
+  if (item.falsa === null) return `${tt(TX.todo_bien_es)} ${como}${tieneCerosFinales(item) ? `<br>${tt(TX.ceros)}` : ''}`;
+  const buena = PLANTILLA_POR_ID[item.plantilla].cadena(item.params, false).lineas[item.falsa];
+  return `${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], idioma)}</span>`
+    + `<br>${como}<br>${tt(TX.bien_es)} ${linea(buena, idioma)}`;
+}
 
 /** Ejercicio 1: ¿dónde está el error? */
 export function explicaDonde(item, ctx) {
   const { idioma, tt } = ctx;
   const regla = dos('Repite cada paso con sus números: la línea que no cuadra es la mala. Si todas cuadran, todo está bien.',
     'Repeat each step with its numbers: the line that does not fit is the wrong one. If all of them fit, everything is right.', idioma);
-  const resp = item.falsa === null ? dos('que todo está bien', 'that everything is right', idioma) : dos(`la línea ${item.falsa + 1}`, `line ${item.falsa + 1}`, idioma);
-  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, resp)}`;
+  const resp = item.falsa === null ? opcion(tt(TX.todo_bien), idioma) : dos(`la línea ${item.falsa + 1}`, `line ${item.falsa + 1}`, idioma);
+  return `${regla}<br>${lineaMalaYBuena(item, ctx)}${fin(idioma, resp)}`;
 }
 
 /** Ejercicio 2: ¿qué error es? */
 export function explicaQue(item, ctx) {
   const { idioma, tt } = ctx;
-  const regla = dos('Busca la línea que está mal y mira qué se ha hecho distinto de lo correcto: eso da el nombre del error.',
-    'Find the wrong line and see what was done differently from the right way: that gives the name of the mistake.', idioma);
-  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, `«${nombreError(item.solucion, tt)}»`)}`;
+  const regla = dos('Busca la línea que está mal y compárala con cómo se hace bien: lo que cambia da el nombre del error.',
+    'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.', idioma);
+  return `${regla}<br>${lineaMalaYBuena(item, ctx)}${fin(idioma, opcion(nombreConRaya(item.solucion, tt), idioma))}`;
 }
 
 /** Ejercicio 3: corrígelo. */
@@ -96,5 +114,5 @@ export function explicaCorrige(item, ctx) {
   const { idioma } = ctx;
   const regla = dos('Busca la línea mala, haz bien ese paso y sigue con las líneas que faltan hasta el resultado.',
     'Find the wrong line, do that step right and carry on with the remaining lines to the result.', idioma);
-  return `${regla}<br>${explicacionDe(item, ctx)}${fin(idioma, aTexto(resultadoBueno(item), idioma, item.cifras))}`;
+  return `${regla}<br>${lineaMalaYBuena(item, ctx)}${fin(idioma, aTexto(resultadoBueno(item), idioma, item.cifras))}`;
 }
