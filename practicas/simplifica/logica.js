@@ -13,7 +13,7 @@
 // mcd-no-es-el-mayor, mcd-mal.
 
 import { fraccion, htmlFraccion, htmlCuenta, ERRORES_TIPICOS } from '../_comun/fracciones.js';
-import { mcd } from '../_comun/aritmetica.js';
+import { mcd, factorizar, mcdFact, htmlFact } from '../_comun/aritmetica.js';
 import { TX } from './textos.js';
 
 export const BOTONES = [2, 3, 5, 7];
@@ -245,31 +245,93 @@ export const ERRORES_DE_LA_BASE = ['simplifica-a-medias', 'simplifica-solo-numer
 
 // --- «No lo sé»: la explicación de cada ejercicio, con los números del ítem ---------
 
-/** Ejercicio 1: la cadena de divisiones hasta la irreducible, tal como la da por buena el ejercicio. */
+const pasosAyuda = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const enCuenta = t => `<span class="cuenta">${t}</span>`;
+
+/**
+ * Ejercicio 1: la cadena de divisiones hasta la irreducible, tal como la da por buena el ejercicio,
+ * en un paso por botón (las divisiones seguidas entre el mismo número van juntas), y la respuesta.
+ */
 export function explicaPasos(item, { idioma }) {
-  const cadena = [fraccionDe(item)];
-  for (let k = menorDivisorComun(cadena.at(-1)); k !== null; k = menorDivisorComun(cadena.at(-1))) {
-    cadena.push(evaluarPaso(cadena.at(-1), k).fraccion);
+  const es = idioma === 'es';
+  const tramos = [];
+  let actual = fraccionDe(item);
+  for (let k = menorDivisorComun(actual); k !== null; k = menorDivisorComun(actual)) {
+    const siguiente = evaluarPaso(actual, k).fraccion;
+    if (tramos.at(-1)?.k === k) tramos.at(-1).cadena.push(siguiente);
+    else tramos.push({ k, cadena: [actual, siguiente] });
+    actual = siguiente;
   }
-  const regla = idioma === 'es'
+  const regla = es
     ? 'Divide arriba y abajo entre un número que divida a los dos (prueba con 2, 3, 5 y 7) y repite hasta que ya no puedas.'
     : 'Divide top and bottom by a number that divides both (try 2, 3, 5 and 7) and repeat until you cannot any more.';
-  return `${regla} ${explicarPasos(cadena, idioma)}`;
+  const lista = tramos.map(({ k, cadena }) => `${es ? 'Entre' : 'Divide by'} ${k}: ${htmlCuenta(cadena.flatMap((f, i) => (i ? ['=', f] : [f])), { compacta: true })}`);
+  const n = abs(actual.num), d = actual.den;
+  const fin = es
+    ? `Ya no se puede más: el único divisor común de ${n} y ${d} es el 1, así que se pulsa «${TX.pasos.irreducible.es}».${actual.num < 0 ? ` ${TX.pasos.signo.es}` : ''} La respuesta es ${enCuenta(compacta(actual))}.`
+    : `You cannot go on: the only common divisor of ${n} and ${d} is 1, so press “${TX.pasos.irreducible.en}”.${actual.num < 0 ? ` ${TX.pasos.signo.en}` : ''} The answer is ${enCuenta(compacta(actual))}.`;
+  return `${regla}${pasosAyuda(lista)}${fin}`;
 }
 
-/** Ejercicio 2: una línea por fracción (irreducible o con su m.c.d.), y la regla. */
+/** Ejercicio 2: la regla, una línea por fracción (irreducible o con su m.c.d.) y las que hay que marcar. */
 export function explicaIrreducibles(item, { idioma }) {
-  const regla = idioma === 'es'
+  const es = idioma === 'es';
+  const regla = es
     ? 'Una fracción es irreducible si el m.c.d. de sus dos términos es 1.'
     : 'A fraction is in lowest terms if the GCD of its two terms is 1.';
-  const todas = item.fracs.map((_, i) => i);
-  return `${regla}<br>${explicarIrreducibles(item, todas, idioma)}`;
+  const lineas = item.fracs.map(f => {
+    const fr = fraccion(f.num, f.den);
+    const n = abs(f.num), d = f.den;
+    if (esIrreduciblePar(f)) {
+      return es ? `${compacta(fr)}: solo el 1 divide a ${n} y a ${d}; es irreducible.` : `${compacta(fr)}: only 1 divides both ${n} and ${d}; it is in lowest terms.`;
+    }
+    const g = mcd(n, d);
+    return es
+      ? `${compacta(fr)} = ${compacta(fr.simplificar())} (entre ${g}): no es irreducible.`
+      : `${compacta(fr)} = ${compacta(fr.simplificar())} (dividing by ${g}): it is not in lowest terms.`;
+  });
+  const buenas = irreduciblesDe(item).map(i => compacta(fraccion(item.fracs[i].num, item.fracs[i].den)));
+  const lista = buenas.length === 1 ? buenas[0] : `${buenas.slice(0, -1).join(', ')} ${es ? 'y' : 'and'} ${buenas.at(-1)}`;
+  // El consejo, una vez y solo si hay una reducible con los dos términos impares (el error que se busca).
+  const impares = item.fracs.some(f => !esIrreduciblePar(f) && abs(f.num) % 2 === 1 && f.den % 2 === 1);
+  const consejo = impares ? ` ${TX.irred.impares[idioma]}` : '';
+  return `${regla}<br>${lineas.join('<br>')}<br>${es ? 'La respuesta es' : 'The answer is'} ${lista}.${consejo}`;
 }
 
-/** Ejercicio 3: el m.c.d. y la fracción irreducible. */
+/** «24 = 2³ · 3 y 36 = 2² · 3²», «7 es primo y 20 = 2² · 5» (sin «5 = 5»). */
+function descomposicion(n, d, es) {
+  const primo = x => factorizar(x).length === 1 && factorizar(x)[0][1] === 1;
+  const una = x => (primo(x) ? (es ? `${x} es primo` : `${x} is prime`) : `${x} = ${htmlFact(factorizar(x))}`);
+  if (primo(n) && primo(d)) return es ? `${n} y ${d} son primos` : `${n} and ${d} are prime`;
+  return `${una(n)} ${es ? 'y' : 'and'} ${una(d)}`;
+}
+
+/**
+ * Ejercicio 3: el m.c.d. por factorización (los primos comunes con el menor exponente, como en la
+ * unidad 2), la división de los dos términos y la respuesta: el m.c.d. y la fracción irreducible.
+ */
 export function explicaDeUnaVez(item, { idioma }) {
-  const regla = idioma === 'es'
-    ? 'Busca el m.c.d. de los dos términos y divide arriba y abajo entre él.'
-    : 'Find the GCD of the two terms and divide top and bottom by it.';
-  return `${regla} ${explicarDeUnaVez(item, null, null, idioma)}`;
+  const es = idioma === 'es';
+  const n = abs(item.num), d = item.den, g = item.mcd;
+  const f = fraccionDe(item), buena = irreducibleDe(item);
+  const nombre = es ? 'm.c.d.' : 'GCD';
+  const regla = es ? 'Se divide arriba y abajo entre el m.c.d. de los dos términos.' : 'Divide top and bottom by the GCD of the two terms.';
+  const factores = htmlFact(mcdFact(factorizar(n), factorizar(d)));
+  const lista = [
+    `${es ? 'Factoriza' : 'Factorise'}: ${descomposicion(n, d, es)}.`,
+    g === 1
+      ? (es ? `No tienen ningún primo común: ${nombre}(${n}, ${d}) = 1.` : `They have no common prime: ${nombre}(${n}, ${d}) = 1.`)
+      : (es
+        ? `Los primos comunes, con el menor exponente: ${nombre}(${n}, ${d}) = ${factores === String(g) ? g : `${factores} = ${g}`}.`
+        : `The common primes, with the smaller exponent: ${nombre}(${n}, ${d}) = ${factores === String(g) ? g : `${factores} = ${g}`}.`),
+    g === 1
+      ? (es ? `Con m.c.d. 1, ${compacta(f)} ya es irreducible y se queda igual.` : `With GCD 1, ${compacta(f)} is already in lowest terms and stays the same.`)
+      : (es
+        ? `Divide entre ${g}: ${enCuenta(`${n} : ${g} = ${n / g}`)} y ${enCuenta(`${d} : ${g} = ${d / g}`)}.`
+        : `Divide by ${g}: ${enCuenta(`${n} : ${g} = ${n / g}`)} and ${enCuenta(`${d} : ${g} = ${d / g}`)}.`),
+  ];
+  const signo = item.num < 0 ? (es ? ' El signo menos se queda delante.' : ' The minus sign stays in front.') : '';
+  const resultado = enCuenta(g === 1 ? compacta(buena) : `${compacta(f)} = ${compacta(buena)}`);
+  const fin = es ? `La respuesta es ${nombre} = ${g} y ${resultado}.` : `The answer is ${nombre} = ${g} and ${resultado}.`;
+  return `${regla}${pasosAyuda(lista)}${signo ? `${signo.trim()} ` : ''}${fin}`;
 }
