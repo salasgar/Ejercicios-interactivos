@@ -222,8 +222,9 @@ export function explicaCalculo(item, idioma) {
   const es = idioma === 'es';
   const una = item.total / item.d;
   const unidad = item.ctx ? ` ${enunciadoContexto(item, idioma).unidad}` : '';
+  // Con contexto, lo que se pide lleva su unidad (revisión del 13-11: «5/6 de 84 litros», no «de 84»).
   const quePiden = item.ctx
-    ? (es ? `Hay que calcular ${frItem(item)} de ${item.total}. ` : `You have to work out ${frItem(item)} of ${item.total}. `)
+    ? (es ? `Hay que calcular ${frItem(item)} de ${item.total}${unidad}. ` : `You have to work out ${frItem(item)} of ${item.total}${unidad}. `)
     : '';
   const lista = [es
     ? `Divide entre el denominador: ${cuenta(`${item.total} : ${item.d} = ${una}`)}. Eso vale una de las ${item.d} partes.`
@@ -240,23 +241,42 @@ export function explicaCalculo(item, idioma) {
   return `${quePiden}${pasos(lista)}${fin}${consejo}`;
 }
 
-/** Ejercicio 3: la parte arriba, el total abajo, y simplificar. */
+/** Ejercicio 3: la parte arriba, el total abajo, y simplificar (entre el m.c.d., como en los apuntes de la U4). */
 export function explicaParte(item, { tt }) {
   const regla = tt({
-    es: 'Arriba se escribe la parte y abajo, el total. Después se simplifica.',
-    en: 'Write the part on top and the whole at the bottom. Then simplify.',
+    es: 'Arriba se escribe la parte y abajo, el total. Después se dividen los dos entre su m.c.d. para simplificar.',
+    en: 'Write the part on top and the whole at the bottom. Then divide both by their GCD to simplify.',
   });
   return `${regla} ${tt(TX.parte.razon)(item)}`;
 }
 
-/** Ejercicio 4: el paso a paso del problema. */
+/**
+ * La regla de cada variante del ejercicio 4, en una frase, delante del paso a paso (revisión del 13-11:
+ * la tarjeta no decía qué se hace en cada tipo de problema).
+ */
+const REGLA_PROBLEMA = {
+  queda: { es: 'Se calcula la parte del enunciado y se resta del total.', en: 'Work out the part in the problem and subtract it from the whole.' },
+  dos: { es: 'Se calcula cada parte y se restan las dos del total.', en: 'Work out each part and subtract both from the whole.' },
+  parte: { es: 'Se halla lo que vale una parte y se multiplica por el denominador.', en: 'Find what one part is worth and multiply by the denominator.' },
+  restante: { es: 'Se mira qué fracción falta, se halla lo que vale una parte y se multiplica por el denominador.', en: 'See what fraction is missing, find what one part is worth and multiply by the denominator.' },
+};
+
+/** La respuesta buena del ejercicio 4 tal como sale en su botón («100 kilómetros»). */
+export function respuestaProblema(item, idioma) {
+  const buena = item.opciones.find(o => o.error === null);
+  return `${buena.v} ${ESCENARIOS[item.variante][item.esc].unidad[idioma]}`;
+}
+
+/** Ejercicio 4: la regla, el paso a paso del feedback, la respuesta con su unidad y un consejo. */
 export function explicaProblema(item, idioma) {
   const es = idioma === 'es';
   const d = item.f1.d;
+  const fin = es ? `La respuesta es ${cuenta(respuestaProblema(item, idioma))}.` : `The answer is ${cuenta(respuestaProblema(item, idioma))}.`;
+  // En «dos» la regla ya dice cómo se hace; el consejo de antes («calcula cada parte por separado y después resta») la repetía.
   const consejo = item.variante === 'dos'
-    ? (es ? 'Consejo: calcula cada parte por separado y después resta.' : 'Tip: work out each part separately and then subtract.')
-    : (es ? `Consejo: dibuja una barra partida en ${d} partes iguales y marca lo que dice el enunciado.` : `Tip: draw a bar divided into ${d} equal parts and mark what the problem says.`);
-  return `${solucionProblema(item, idioma)} ${consejo}`;
+    ? ''
+    : (es ? ` Consejo: dibújalo como una barra de ${d} partes iguales.` : ` Tip: draw it as a bar of ${d} equal parts.`);
+  return `${REGLA_PROBLEMA[item.variante][idioma]} ${solucionProblema(item, idioma)} ${fin}${consejo}`;
 }
 
 /** Por qué está mal una opción del ejercicio 4 (con los números del ítem), en un idioma. */
