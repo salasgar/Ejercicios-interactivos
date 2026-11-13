@@ -3,7 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaDeslizador, explicaAndOCifras, explicaBillion } from './textos.js';
 import {
   N_MAXIMO, agrupar, gruposDe, mostrarDeslizador, formasDe,
   generarDeslizador, esRespuestaDeslizador, generarAnd, generarCifras, esRespuestaCifras, generarBillion,
@@ -235,6 +235,7 @@ arrancar({
       generar: generarDeslizador,
       montar: montarDeslizador,
       enunciado: enunciadoDeslizador,
+      explicacion: explicaDeslizador,
     },
     {
       nombre: TX.and.nombre,
@@ -243,6 +244,7 @@ arrancar({
       generar: rng => (rng.azar() < 0.5 ? generarAnd(rng) : generarCifras(rng)),
       montar: montarAndOCifras,
       enunciado: enunciadoAndOCifras,
+      explicacion: explicaAndOCifras,
     },
     {
       nombre: TX.billion.nombre,
@@ -251,6 +253,7 @@ arrancar({
       generar: generarBillion,
       montar: montarBillion,
       enunciado: enunciadoBillion,
+      explicacion: explicaBillion,
     },
   ],
 });

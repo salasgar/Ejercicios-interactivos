@@ -2,7 +2,73 @@
 // Los nombres de número («one hundred thousand»…) vienen de logica.js y no se traducen:
 // son el contenido que se practica.
 
+import { agrupar, gruposDe, mostrarDeslizador, formasDe } from './logica.js';
+
 const pot = (c, e) => (c > 1 ? `${c} · 10<sup>${e}</sup>` : `10<sup>${e}</sup>`);
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────
+
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cuenta = s => `<span class="cuenta">${s}</span>`;
+
+/** Ejercicio 1: el deslizador de ceros. La solución es la posición del deslizador, n. */
+export function explicaDeslizador(item, { tt }) {
+  const v = mostrarDeslizador(item.n);
+  const regla = {
+    es: 'Una potencia de 10 es un 1 seguido de tantos ceros como dice el exponente.',
+    en: 'A power of 10 is a 1 followed by as many zeros as the exponent says.',
+  };
+  const ceros = { es: n => (n === 1 ? '1 cero' : `${n} ceros`), en: n => (n === 1 ? '1 zero' : `${n} zeros`) };
+  const nombres = `${v.en}${v.enGb ? ` = ${v.enGb}` : ''} = ${v.es}`;
+  const lectura = {
+    es: `Aquí: ${cuenta(`10<sup>${item.n}</sup> = ${v.cifras}`)} (${tt(ceros)(item.n)}), en inglés y español: ${nombres}.`,
+    en: `Here: ${cuenta(`10<sup>${item.n}</sup> = ${v.cifras}`)} (${tt(ceros)(item.n)}), in English and Spanish: ${nombres}.`,
+  };
+  const fin = { es: `el deslizador va en ${item.n}.`, en: `the slider goes to ${item.n}.` };
+  return `${tt(regla)} ${tt(lectura)} ${tt(RESPUESTA)} ${cuenta(item.n)}: ${tt(fin)}`;
+}
+
+/** Ejercicio 2: el «and» (emparejar) o escribir con cifras (ceros de cada grupo). */
+export function explicaAndOCifras(item, { tt }) {
+  if (item.tipo === 'and') {
+    const intro = {
+      es: 'El «and» marca dónde empiezan las unidades sueltas.',
+      en: 'The "and" shows where the loose units start.',
+    };
+    const lineas = item.nombres.map((nombre, i) => {
+      const n = item.numeros[item.solucion[i]], g = gruposDe(n);
+      const razon = tt(/ thousand and /.test(nombre) ? TX.and.por_que.despues : TX.and.por_que.dentro)(g.miles, g.unidades);
+      return `${nombre}<br>${cuenta(`= ${agrupar(n)}`)}<br>${razon}`;
+    });
+    const fin = { es: 'cada nombre con el número que va debajo de él.', en: 'each name with the number written under it.' };
+    return `${tt(intro)}<br>${lineas.join('<br><br>')}<br>${tt(RESPUESTA)}: ${tt(fin)}`;
+  }
+  const g = gruposDe(item.n);
+  const regla = item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es;
+  const lectura = {
+    es: `Lee el número por grupos de tres cifras (${tt(TX.and.grupos)(g)}).`,
+    en: `Read the number in groups of three digits (${tt(TX.and.grupos)(g)}).`,
+  };
+  return `${item.texto}<br>${tt(lectura)} ${tt(regla)}<br>${tt(RESPUESTA)} ${cuenta(agrupar(item.n))}.`;
+}
+
+/** Ejercicio 3: billion, million y trillion. */
+export function explicaBillion(item, { tt }) {
+  const SI = { es: 'Sí', en: 'Yes' }, NO = { es: 'No', en: 'No' };
+  if (item.clase === 'mismo') {
+    let h = `${item.a.texto}<br>${cuenta(`= ${agrupar(item.a.valor)}`)}<br>${item.b.texto}<br>${cuenta(`= ${agrupar(item.b.valor)}`)}<br>`;
+    h += `${tt(item.verdad ? TX.billion.es_igual : TX.billion.es_distinto)}.`;
+    if (item.verdad) h += ` ${tt(TX.billion.nota_billion)}`;
+    else if ([item.a, item.b].some(x => /trillion/.test(x.texto))) h += ` ${tt(TX.billion.nota_trillion)}`;
+    return `${h} ${tt(RESPUESTA)} ${cuenta(tt(item.verdad ? SI : NO))}.`;
+  }
+  const f = formasDe(item.c, item.e);
+  let h = `${cuenta(`${f.cifras} = ${pot(item.c, item.e)}`)} = ${f.en}${f.enGb ? ` = ${f.enGb}` : ''} = ${f.es}.`;
+  if (item.e === 9) h += ` ${tt(TX.billion.nota_billion)}`;
+  if (item.e === 12) h += ` ${tt(TX.billion.nota_trillion)}`;
+  const buena = item.clase === 'potencia' ? pot(item.c, item.e) : item.opciones[item.solucion];
+  return `${h} ${tt(RESPUESTA)} ${cuenta(buena)}.`;
+}
 
 export const TX = {
   pot,
