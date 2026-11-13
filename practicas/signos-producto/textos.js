@@ -171,10 +171,12 @@ export function explicaMultiplica(item, { tt }) {
 /** Ejercicio 2: el cociente, el 0 entre un número, o «no se puede». */
 export function explicaDivide(item, { tt }) {
   if (item.especial === 'entre-cero') {
+    // El botón se nombra entre comillas («La respuesta es No se puede» parecía una errata), y en
+    // inglés un producto no es «a sum».
     return `<p>${tt({
-      es: `No se puede dividir entre 0: ninguna cuenta ${cuenta('□ · 0')} da ${fmt(item.a)}.`,
-      en: `You cannot divide by 0: no sum ${cuenta('□ · 0')} gives ${fmt(item.a)}.`,
-    })}</p>${respuesta(tt, cuenta(tt(TX.no_se_puede)))}`;
+      es: `No se puede dividir entre 0: ningún número por 0 da ${cuenta(fmt(item.a))}.`,
+      en: `You cannot divide by 0: no number times 0 gives ${cuenta(fmt(item.a))}.`,
+    })}</p>${respuesta(tt, tt({ es: `«${TX.no_se_puede.es}»`, en: `“${TX.no_se_puede.en}”` }))}`;
   }
   if (item.especial === 'cero-entre') {
     return `<p>${tt({
@@ -199,12 +201,17 @@ export function explicaFalta(item, { tt }) {
 
 /** Ejercicio 4: qué es la cuenta y su valor. */
 export function explicaMezcla(item, { tt }) {
+  // La respuesta tiene dos partes, como el ejercicio: la opción que se elige y el resultado.
   const buena = cuenta(`${item.texto} = ${fmt(item.valor)}`);
+  const final = opcion => respuesta(tt, tt({
+    es: `«${opcion.es}» y el resultado ${cuenta(fmt(item.valor))}`,
+    en: `“${opcion.en}” and the result ${cuenta(fmt(item.valor))}`,
+  }));
   if (item.producto) {
     return `${pasos([
       tt({ es: 'Hay un punto ·: es un producto, y se usa la regla de los signos.', en: 'There is a dot ·: it is a product, so use the rule of signs.' }),
-      `${mismos(tt, item.a, item.b)}: ${cuenta(`${abs(item.a)} · ${abs(item.b)} = ${abs(item.valor)}`)}.`,
-    ])}${respuesta(tt, buena)}`;
+      `${mismos(tt, item.a, item.b)}; ${tt({ es: 'sin los signos', en: 'without the signs' })}, ${cuenta(`${abs(item.a)} · ${abs(item.b)} = ${abs(item.valor)}`)}. ${tt({ es: 'Así que', en: 'So' })} ${buena}.`,
+    ])}${final(TX.es_producto)}`;
   }
   const nombre = item.clase === 'suma'
     ? tt({ es: 'una suma', en: 'an addition' })
@@ -215,7 +222,7 @@ export function explicaMezcla(item, { tt }) {
       en: `There is no dot ·: it is ${nombre}, so the product rule of signs does not work here.`,
     }),
     `${tt({ es: 'Se calcula sin más', en: 'Just work it out' })}: ${buena}.`,
-  ])}${respuesta(tt, buena)}`;
+  ])}${final(TX.es_suma)}`;
 }
 
 /** Ejercicio 5: el producto bien escrito. */

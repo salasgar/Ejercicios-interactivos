@@ -41,6 +41,9 @@ test('signos-producto · ejercicio 2: la explicación lleva el cociente, el 0 o 
       if (item.especial === 'entre-cero') {
         assert.equal(item.valor, null);
         assert.ok(plano(html).includes(X.TX.no_se_puede[idioma]), 'la respuesta es «no se puede»');
+        // Revisión 192: el botón, entre comillas; y en inglés un producto no es «a sum».
+        assert.ok(/«No se puede»|“Not possible”/.test(html), 'el botón entre comillas');
+        assert.ok(!/\bsum\b/.test(html), 'sin «sum» para un producto');
       } else if (item.especial === 'cero-entre') {
         assert.ok(0 / item.b === 0);
         assert.ok(html.includes(`${item.texto} = 0`));
@@ -74,6 +77,10 @@ test('signos-producto · ejercicio 4: la explicación lleva qué es la cuenta y 
       assert.equal(item.texto.includes('·'), item.producto, 'el punto solo si es un producto');
       assert.equal(/regla de los signos|rule of signs/.test(html), true);
       assert.equal(/no hay punto|no dot/i.test(plano(html)), !item.producto, 'dice qué es');
+      // Revisión 192: la respuesta lleva las dos partes del ejercicio, la opción que se elige y el resultado.
+      const opcion = (item.producto ? X.TX.es_producto : X.TX.es_suma)[idioma];
+      const final = plano(html).split(idioma === 'es' ? 'La respuesta es' : 'The answer is')[1];
+      assert.ok(final.includes(opcion) && final.includes(fmt(valor)), 'la opción y el resultado en la respuesta');
     }
   }
 });
