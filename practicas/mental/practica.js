@@ -6,7 +6,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaCompensar, explicaDescomponer } from './textos.js';
 import {
   generarCompensar, generarDescomponer, enunciadoCompensar, lineaCompensar,
   redondeoCorrecto, ajusteCorrecto, resultadoCorrecto, valorOpcion, reconstruye, lineaDescomponer,
@@ -14,6 +14,7 @@ import {
 } from './logica.js';
 
 const P = '·';
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 /** Una cadena de igualdades que se parte por los «=» (cada tramo no se parte), para que quepa en 375 px. */
 const cadena = linea => linea.split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
@@ -164,6 +165,8 @@ arrancar({
       clave: item => `${item.variante}${item.n}${item.k}`,
       montar: montarCompensar,
       enunciado: enunciadoCompensarTexto,
+      explicacion: explicaCompensar,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.descomponer.nombre,
@@ -173,6 +176,8 @@ arrancar({
       clave: item => `${item.a}${item.b}`,
       montar: montarDescomponer,
       enunciado: enunciadoDescomponer,
+      explicacion: explicaDescomponer,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

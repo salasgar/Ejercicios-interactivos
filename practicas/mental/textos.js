@@ -1,6 +1,8 @@
 // Práctica «Cálculo mental con estrategia»: textos propios, { es, en }.
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
+import { lineaDescomponer } from './logica.js';
+
 export const TX = {
   compensar: {
     nombre: { es: 'Compensar', en: 'Compensate' },
@@ -57,3 +59,29 @@ export const TX = {
     },
   },
 };
+
+const AYUDA = {
+  compensar: {
+    es: (k, R) => `Usa ${R} en lugar de ${k}, que es un número redondo, y después corrige la diferencia.`,
+    en: (k, R) => `Use ${R} instead of ${k}, which is a round number, and then fix the difference.`,
+  },
+  descomponer: {
+    es: (a, b, p, q) => `Parte el ${b} en ${p} · ${q}: así ${a} · ${p} da un número redondo y la cuenta sale rápido.`,
+    en: (a, b, p, q) => `Split ${b} into ${p} · ${q}: then ${a} · ${p} is a round number and the calculation is quick.`,
+  },
+  respuesta: { es: 'La respuesta es', en: 'The answer is' },
+};
+
+/** «No lo sé» del ejercicio 1: redondear a la centena, ajustar y calcular. */
+export function explicaCompensar(item, { tt }) {
+  const x = TX.compensar;
+  const cuenta = tt(item.variante === 'producto' ? x.explicacion_producto : x.explicacion_suma)(item.n, item.k, item.R, item.falta, item.valor);
+  return `<p>${tt(AYUDA.compensar)(item.k, item.R)}</p><p><span class="cuenta">${cuenta}</span></p><p><strong>${tt(AYUDA.respuesta)} ${item.valor}.</strong></p>`;
+}
+
+/** «No lo sé» del ejercicio 2: partir el factor en un producto cómodo y calcular por pasos. */
+export function explicaDescomponer(item, { tt }) {
+  const op = item.opciones.find(o => o.correcta && o.clase === 'producto');
+  const cuenta = lineaDescomponer(item, op).split(' = ').map(t => `<span class="cuenta">${t}</span>`).join(' = ');
+  return `<p>${tt(AYUDA.descomponer)(item.a, item.b, item.p, item.q)}</p><p>${cuenta}</p><p><strong>${tt(AYUDA.respuesta)} ${item.valor}.</strong></p>`;
+}
