@@ -272,3 +272,59 @@ test('casos reservados: hooks vacíos pero operativos', () => {
   HUELLAS_EXAMEN.delete(huellaCanonica(parse));
   assert.equal(reservado(parse), false);
 });
+
+// ─── Revisión 191 (hallazgos 4 y 5) ─────────────────────────────────────────────────────────────
+
+import { explicaPide, explicaSentido } from '../practicas/problemas-ecuaciones/textos.js';
+const ctxT = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
+
+test('ej. 5, dinero: ni la resolución ni la solución llevan fracciones, y los importes son creíbles', () => {
+  let dinero = 0, resolucion = 0, ecuacion = 0;
+  for (const item of items(generarSentido, 81)) {
+    if (!item.dinero) continue;
+    dinero++;
+    if (item.donde === 'resolucion') resolucion++;
+    if (item.donde === 'ecuacion') ecuacion++;
+    const textos = [item.linea?.es, item.linea?.en, item.solucionTxt.es, item.solucionTxt.en, item.ecuacion?.es, item.ecuacion?.en];
+    for (const idioma of IDIOMAS) {
+      textos.push(solucionSentido(item, idioma), explicaSentido(item, ctxT(idioma)));
+    }
+    for (const t of textos.filter(Boolean)) assert.doesNotMatch(plano(t), /\d+\/\d+/, `fracción en ${item.clave}: ${plano(t)}`);
+    assert.ok(!('frac' in (item.solValor ?? {})), 'campo .frac');
+    if (item.solValor) {
+      const cents = item.solValor.num * 100;
+      assert.ok(cents % item.solValor.den === 0, `no son céntimos exactos: ${item.solValor.num}/${item.solValor.den}`);
+      const euros = item.solValor.num / item.solValor.den;
+      assert.ok(euros >= -100 && euros <= 2000, `importe increíble: ${euros} € en ${item.clave}`);
+    }
+    // En español, coma; en inglés, punto.
+    if (item.linea) { assert.doesNotMatch(item.linea.es, /\d\.\d/); assert.doesNotMatch(item.linea.en, /\d,\d/); }
+  }
+  assert.ok(dinero > 300 && resolucion > 50 && ecuacion > 50, `casos: ${dinero}/${resolucion}/${ecuacion}`);
+});
+
+test('ej. 4: cada pedido que no es la x enseña la cuenta con los números del ítem, en el feedback y en la tarjeta, y la cuenta da el valor', () => {
+  const NUM = '(?:€?\\d+(?:[.,]\\d+)?(?: €)?)';
+  const RE = new RegExp(`(${NUM}(?: [·+] ${NUM})+) = (${NUM})`);
+  const num = s => Number(s.replace(/[€\s]/g, '').replace(',', '.'));
+  const cuentaDe = t => {
+    const m = plano(t).match(RE);
+    assert.ok(m, `sin cuenta en «${plano(t)}»`);
+    const expr = m[1].replace(/[€\s]/g, c => (c === '€' ? '' : ' ')).replace(/,/g, '.').replace(/·/g, '*');
+    assert.ok(Math.abs(new Function(`return ${expr}`)() - num(m[2])) < 1e-9, `la cuenta «${m[1]} = ${m[2]}» no cuadra`);
+    return num(m[2]);
+  };
+  let conCuenta = 0; const tipos = new Set();
+  for (const item of items(generarPide, 82)) {
+    if (item.esX) continue;
+    conCuenta++; tipos.add(item.contexto.tipo);
+    const esperado = item.contexto.dinero ? item.valor / 100 : item.valor;
+    for (const idioma of IDIOMAS) {
+      assert.equal(cuentaDe(item.frases[idioma]), esperado, `feedback ${item.clave}`);
+      assert.equal(cuentaDe(solucionPide(item, idioma)), esperado, `solución ${item.clave}`);
+      assert.equal(cuentaDe(explicaPide(item, ctxT(idioma))), esperado, `tarjeta ${item.clave}`);
+    }
+  }
+  assert.ok(conCuenta > 1000, `pocos pedidos que no son x: ${conCuenta}`);
+  assert.ok(tipos.size >= 7, [...tipos].join(','));
+});

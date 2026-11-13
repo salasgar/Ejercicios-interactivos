@@ -111,7 +111,9 @@ const TRIOS = [['Sandra', 'Alberto', 'Carmen'], ['Olivia', 'Bruno', 'Greta'], ['
 //   pasosMano       → solo con dinero (la resolución escrita a mano);
 //   cota            → { min, max } de lo que puede valer la incógnita en ese contexto.
 
-const pedido = (id, frase, nombre, valor, resp, esX = false) => ({ id, frase, nombre, valor, esX, resp });
+// `cuenta` (solo si el valor no es la x): la cuenta que lo calcula desde la x, con los números del ítem; recibe cómo se escribe
+// una cantidad de ese problema («7», «2,50 €») y devuelve «7 + 6». El feedback y la tarjeta la enseñan: «Eva tiene 7 + 6 = 13 años».
+const pedido = (id, frase, nombre, valor, resp, esX = false, cuenta = null) => ({ id, frase, nombre, valor, esX, resp, cuenta });
 const cant = (nombre, valor) => ({ nombre, valor });
 
 const PLANTILLAS = {};
@@ -136,9 +138,9 @@ PLANTILLAS.consecutivos = rng => {
     ],
     pedidos: [
       pedido('mayor', bi('¿Cuál es el mayor de los tres números?', 'What is the largest of the three numbers?'), bi('el mayor de los tres', 'the largest of the three'), n + 2,
-        v => bi(`El mayor de los tres números es ${v}.`, `The largest of the three numbers is ${v}.`)),
+        v => bi(`El mayor de los tres números es ${v}.`, `The largest of the three numbers is ${v}.`), false, f => `${f(n)} + 2`),
       pedido('medio', bi('¿Cuál es el número del medio?', 'What is the middle number?'), bi('el número del medio', 'the middle number'), n + 1,
-        v => bi(`El número del medio es ${v}.`, `The middle number is ${v}.`)),
+        v => bi(`El número del medio es ${v}.`, `The middle number is ${v}.`), false, f => `${f(n)} + 1`),
     ],
     cantidades: [cant(bi('el menor de los tres', 'the smallest of the three'), n), cant(bi('el del medio', 'the middle one'), n + 1),
       cant(bi('el mayor de los tres', 'the largest of the three'), n + 2), cant(bi('la suma de los tres', 'the sum of the three'), S)],
@@ -169,7 +171,7 @@ PLANTILLAS['reparto-veces'] = rng => {
     ],
     pedidos: [
       pedido('B', bi(`¿Cuántos ${c.es} ha comprado ${B}?`, `How many ${c.en} did ${B} buy?`), bi(`los ${c.es} de ${B}`, `${B}'s ${c.en}`), k * n,
-        v => bi(`${B} ha comprado ${v} ${c.es}.`, `${B} bought ${v} ${c.en}.`)),
+        v => bi(`${B} ha comprado ${v} ${c.es}.`, `${B} bought ${v} ${c.en}.`), false, f => `${k} · ${f(n)}`),
       pedido('A', bi(`¿Cuántos ${c.es} ha comprado ${A}?`, `How many ${c.en} did ${A} buy?`), bi(`los ${c.es} de ${A}`, `${A}'s ${c.en}`), n,
         v => bi(`${A} ha comprado ${v} ${c.es}.`, `${A} bought ${v} ${c.en}.`), true),
     ],
@@ -203,9 +205,9 @@ PLANTILLAS['reparto-tres'] = rng => {
     ],
     pedidos: [
       pedido('C', bi(`¿Cuántas ha hecho ${C}?`, `How many did ${C} make?`), bi(`las ${c.es} de ${C}`, `${C}'s ${c.en}`), 2 * s + n,
-        v => bi(`${C} ha hecho ${v} ${c.es}.`, `${C} made ${v} ${c.en}.`)),
+        v => bi(`${C} ha hecho ${v} ${c.es}.`, `${C} made ${v} ${c.en}.`), false, f => `2 · ${f(s)} + ${f(n)}`),
       pedido('B', bi(`¿Cuántas ha hecho ${B}?`, `How many did ${B} make?`), bi(`las ${c.es} de ${B}`, `${B}'s ${c.en}`), 2 * s,
-        v => bi(`${B} ha hecho ${v} ${c.es}.`, `${B} made ${v} ${c.en}.`)),
+        v => bi(`${B} ha hecho ${v} ${c.es}.`, `${B} made ${v} ${c.en}.`), false, f => `2 · ${f(s)}`),
     ],
     cantidades: [cant(bi(`las de ${A}`, `${A}'s`), s), cant(bi(`las de ${B}`, `${B}'s`), 2 * s), cant(bi(`las de ${C}`, `${C}'s`), 2 * s + n),
       cant(bi('las de los tres juntos', 'the three together'), T)],
@@ -232,7 +234,7 @@ PLANTILLAS['edades-diferencia'] = rng => {
     ],
     pedidos: [
       pedido('M', bi(`¿Cuántos años tiene ${M}?`, `How old is ${M}?`), bi(`la edad de ${M}`, `${M}'s age`), L + n,
-        v => bi(`${M} tiene ${v} años.`, `${M} is ${v} years old.`)),
+        v => bi(`${M} tiene ${v} años.`, `${M} is ${v} years old.`), false, f => `${f(L)} + ${f(n)}`),
       pedido('m', bi(`¿Cuántos años tiene ${m}?`, `How old is ${m}?`), bi(`la edad de ${m}`, `${m}'s age`), L,
         v => bi(`${m} tiene ${v} años.`, `${m} is ${v} years old.`), true),
     ],
@@ -268,7 +270,7 @@ PLANTILLAS.entradas = rng => {
       pedido('una', bi(`¿Cuánto cuesta ${c.una_es}?`, `How much does ${c.una_en} cost?`), bi(`el precio de ${c.una_es}`, `the price of ${c.una_en}`), p * 100,
         v => bi(`${c.una_es[0].toUpperCase()}${c.una_es.slice(1)} cuesta ${eurosDe(v, 'es')}.`, `${c.una_en[0].toUpperCase()}${c.una_en.slice(1)} costs ${eurosDe(v, 'en')}.`), true),
       pedido('todas', bi(`¿Cuánto cuestan las ${k} ${c.k_es}, sin lo que se paga aparte?`, `How much do the ${k} ${c.k_en} cost, without the extra?`), bi(`lo que cuestan las ${k} ${c.k_es}`, `what the ${k} ${c.k_en} cost`), k * p * 100,
-        v => bi(`Las ${k} ${c.k_es} cuestan ${eurosDe(v, 'es')}.`, `The ${k} ${c.k_en} cost ${eurosDe(v, 'en')}.`)),
+        v => bi(`Las ${k} ${c.k_es} cuestan ${eurosDe(v, 'es')}.`, `The ${k} ${c.k_en} cost ${eurosDe(v, 'en')}.`), false, f => `${k} · ${f(p * 100)}`),
     ],
     cantidades: [cant(bi(`el precio de ${c.una_es}`, `the price of ${c.una_en}`), p * 100), cant(bi(`lo que cuestan las ${k} ${c.k_es}`, `what the ${k} ${c.k_en} cost`), k * p * 100),
       cant(bi('lo que cuesta todo', 'the total cost'), T * 100), cant(bi('lo que cuesta lo que se paga aparte', 'the cost of the extra'), b * 100)],
@@ -302,7 +304,7 @@ PLANTILLAS.cuadernos = rng => {
       pedido('uno', bi('¿Cuánto cuesta cada cuaderno?', 'How much does each notebook cost?'), bi('el precio de un cuaderno', 'the price of one notebook'), p,
         v => bi(`Cada cuaderno cuesta ${eurosDe(v, 'es')}.`, `Each notebook costs ${eurosDe(v, 'en')}.`), true),
       pedido('cuadernos', bi(`¿Cuánto cuestan los ${k} cuadernos, sin el bolígrafo?`, `How much do the ${k} notebooks cost, without the pen?`), bi(`lo que cuestan los ${k} cuadernos`, `what the ${k} notebooks cost`), k * p,
-        v => bi(`Los ${k} cuadernos cuestan ${eurosDe(v, 'es')}.`, `The ${k} notebooks cost ${eurosDe(v, 'en')}.`)),
+        v => bi(`Los ${k} cuadernos cuestan ${eurosDe(v, 'es')}.`, `The ${k} notebooks cost ${eurosDe(v, 'en')}.`), false, f => `${k} · ${f(p)}`),
     ],
     cantidades: [cant(bi('el precio de un cuaderno', 'the price of one notebook'), p), cant(bi(`lo que cuestan los ${k} cuadernos`, `what the ${k} notebooks cost`), k * p),
       cant(bi('lo que cuesta todo', 'the total cost'), T), cant(bi('lo que cuesta el bolígrafo', 'the price of the pen'), b)],
@@ -337,7 +339,7 @@ PLANTILLAS.perimetro = rng => {
     ],
     pedidos: [
       pedido('largo', bi(`¿Cuánto mide ${s.una_es} de largo?`, `How long is ${s.una_en}?`), bi(`lo que mide ${s.una_es} de largo`, `the length of ${s.una_en}`), w + n,
-        v => bi(`${s.una_es[0].toUpperCase()}${s.una_es.slice(1)} mide ${v} ${u} de largo.`, `${s.una_en[0].toUpperCase()}${s.una_en.slice(1)} is ${v} ${u} long.`)),
+        v => bi(`${s.una_es[0].toUpperCase()}${s.una_es.slice(1)} mide ${v} ${u} de largo.`, `${s.una_en[0].toUpperCase()}${s.una_en.slice(1)} is ${v} ${u} long.`), false, f => `${f(w)} + ${f(n)}`),
       pedido('ancho', bi(`¿Cuánto mide ${s.una_es} de ancho?`, `How wide is ${s.una_en}?`), bi(`lo que mide ${s.una_es} de ancho`, `the width of ${s.una_en}`), w,
         v => bi(`${s.una_es[0].toUpperCase()}${s.una_es.slice(1)} mide ${v} ${u} de ancho.`, `${s.una_en[0].toUpperCase()}${s.una_en.slice(1)} is ${v} ${u} wide.`), true),
     ],
@@ -371,7 +373,7 @@ PLANTILLAS.pienso = rng => {
       pedido('numero', bi('¿Qué número he pensado?', 'What number did I think of?'), bi('el número pensado', 'the number I thought of'), x,
         v => bi(`He pensado el ${v}.`, `I thought of ${v}.`), true),
       pedido('doble', bi('¿Cuánto es el doble del número que he pensado?', 'What is double the number I thought of?'), bi('el doble del número pensado', 'double the number I thought of'), 2 * x,
-        v => bi(`El doble del número que he pensado es ${v}.`, `Double the number I thought of is ${v}.`)),
+        v => bi(`El doble del número que he pensado es ${v}.`, `Double the number I thought of is ${v}.`), false, f => `2 · ${f(x)}`),
     ],
     cantidades: [cant(bi('el número pensado', 'the number I thought of'), x), cant(bi('el doble del número pensado', 'double the number I thought of'), 2 * x),
       cant(bi('el resultado', 'the result'), R), cant(bi(`el número multiplicado por ${k}`, `the number times ${k}`), k * x)],
@@ -585,6 +587,18 @@ function leadResuelve(item, r, idioma) {
 
 // ─── Ejercicio 4 · ¿Qué pide? (U6-4A-01, 4A-08) ────────────────────────────────────────────────
 
+/** La frase de respuesta de un pedido; si el valor no es la x, con la cuenta delante del valor («Eva tiene 7 + 6 = 13 años.»). */
+export function frasesConCuenta(P, ped) {
+  const r = ped.resp(ped.valor);
+  if (ped.esX || !ped.cuenta) return r;
+  const una = idioma => {
+    const v = fmtVal(P, ped.valor, idioma), i = r[idioma].lastIndexOf(v);
+    const cta = `${ped.cuenta(c => fmtVal(P, c, idioma))} = ${v}`;
+    return i < 0 ? r[idioma] : `${r[idioma].slice(0, i)}${cta}${r[idioma].slice(i + v.length)}`;
+  };
+  return { es: una('es'), en: una('en') };
+}
+
 export function generarPide(rng) {
   for (let i = 0; i < 200; i++) {
     const it = intentoPide(rng);
@@ -609,7 +623,7 @@ function intentoPide(rng) {
   const correcta = { valor: ped.valor, correcta: true, nombre: ped.nombre, error: null };
   return itemBase(P, 'pide', `${P.enun.es}|${ped.id}`, {
     pregunta: ped.frase, opciones: rng.barajar([correcta, ...otras]), x: P.x, xDef: P.xDef, valor: ped.valor, nombreP: ped.nombre, esX: ped.esX,
-    frases: ped.resp(ped.valor), eqTxt: P.eq.txt, contexto: P,
+    frases: frasesConCuenta(P, ped), eqTxt: P.eq.txt, contexto: P,
   });
 }
 
@@ -657,11 +671,14 @@ export function generarSentido(rng) {
     const tipo = rng.elegir(['bien', 'bien', 'ecuacion', 'ecuacion', 'resolucion']);
     if (tipo === 'bien') return sentidoBien(P);
     if (tipo === 'ecuacion') {
-      const malas = rng.barajar(P.errores.filter(e => e.sol && !razonable(P, e.sol)));
+      const malas = rng.barajar(P.errores.filter(e => e.sol && !razonable(P, e.sol) && centimosExactos(P, e.sol)));
       if (malas.length) return sentidoEcuacion(P, malas[0]);
     } else {
       const f = falloAlResolver(P);
-      if (f) return sentidoResolucion(P, f);
+      if (f && centimosExactos(P, f.sol)) {
+        const it = sentidoResolucion(P, f);
+        if (!P.dinero || (it.linea.es && it.linea.en)) return it;
+      }
     }
   }
   throw new Error('generarSentido: no se encuentra un caso');
@@ -677,6 +694,20 @@ const solTexto = (P, f, idioma) => {
   return fraccionATexto(f, idioma);
 };
 
+/** Pasa las fracciones de un texto a decimales (coma en español, punto en inglés; hasta céntimos), o null si alguna no es exacta. */
+export function fraccionesADecimales(texto, idioma) {
+  let ok = true;
+  const t = texto.replace(/(\d+)\/(\d+)/g, (_, n, d) => {
+    const c = Number(n) * 100;
+    if (c % Number(d) !== 0) { ok = false; return _; }
+    const cents = c / Number(d), e = Math.trunc(cents / 100), r = cents % 100;
+    return `${e}${r === 0 ? '' : (idioma === 'es' ? ',' : '.') + String(r).padStart(2, '0').replace(/0$/, '')}`;
+  });
+  return ok ? t : null;
+}
+/** En dinero, la solución tiene que ser un número exacto de céntimos: nunca un precio con fracción. */
+const centimosExactos = (P, f) => !P.dinero || (f.num * 100) % f.den === 0;
+
 const baseSentido = (P, donde, extra) => itemBase(P, 'sentido', `${P.enun.es}|${donde}|${extra.clave}`, {
   correcta: donde === 'bien' ? 'bien' : donde, donde, xDef: P.xDef, eqTxt: P.eq.txt, x: P.x, contexto: P, ...extra,
 });
@@ -691,8 +722,10 @@ function sentidoEcuacion(P, e) {
   });
 }
 function sentidoResolucion(P, f) {
+  const linea = { es: f.paso.aTexto('es'), en: f.paso.aTexto('en') };
+  if (P.dinero) { linea.es = fraccionesADecimales(linea.es, 'es'); linea.en = fraccionesADecimales(linea.en, 'en'); }
   return baseSentido(P, 'resolucion', {
-    clave: `${P.eq.parse}|${f.id}`, ecuacion: P.eq.txt, linea: { es: f.paso.aTexto('es'), en: f.paso.aTexto('en') }, errorId: f.id,
+    clave: `${P.eq.parse}|${f.id}`, ecuacion: P.eq.txt, linea, errorId: f.id,
     solucionTxt: { es: solTexto(P, f.sol, 'es'), en: solTexto(P, f.sol, 'en') }, solValor: { num: f.sol.num, den: f.sol.den },
   });
 }
