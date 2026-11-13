@@ -80,6 +80,20 @@ corrige lo que encuentre. La especificación es `docs/no-lo-se.md`.
 - (de la coordinadora) Una explicación puede llevar la solución y aun así enseñar mal: un paso que solo vale para ese
   ítem, un consejo falso en general, o la regla dicha con una palabra que no se ha dado.
 - (de la coordinadora) El feedback de acierto reutilizado a veces da la cuenta sin decir por qué: delante tiene que ir la regla.
+- (de la 192, s-20261113T074721-a71b7338) **Las 18 tenían algo**: lo típico es un consejo que vale para la mayoría de los ítems y es
+  falso en otros («los negativos van antes» al ordenar de mayor a menor; «después de m, b» con *himno*). Hay que buscarlo
+  por rama o plantilla, no solo con 20 ítems al azar. En ortografía, los bancos son finitos: se leen enteros.
+- (de la 192) **«No se puede probar en el navegador» no es verdad aquí**: `python3 -m http.server` sí se deja levantar, y Chrome
+  headless se maneja por CDP con el `WebSocket` de Node, sin dependencias (guion: `$R/hechos/notas/s-20261113T074721-a71b7338-clics-no-lo-se.mjs`). Hay que pulsar
+  «Empezar» (`#empezar`) antes del ítem. Con `--user-data-dir` temporal y, al acabar, `pkill -f` de ese perfil: matar solo el
+  proceso padre deja vivos los «Helper» (memoria `chrome-headless-huerfano`). Tarda unos 15 s por ejercicio y ancho.
+- (de la 192) En zsh, `for … $VAR` no parte las palabras: los bucles con listas de rutas, en `bash -c`.
+- (de la 192, relevo s-20261113T170145-b187d221) El guion de clics, en paralelo: cada Chrome con su `PUERTO` de CDP, pero
+  **`python3 -m http.server` es de un solo hilo** y con tres Chrome a la vez da `ERR_CONNECTION_RESET` al cargar algunos módulos
+  (sale como «sin» botón). No es la app: se repite solo. Y su `itemIgualAlAnterior` compara los 120 primeros caracteres de `#item`,
+  que en los ejercicios con instrucciones largas (saltos ej. 4) son iguales en todos los ítems: comparar el texto entero.
+- (de la 192, relevo) Una sesión relevada puede haber empujado ya todo su código: mira `git log --grep 'tarea NN'`, no las 25
+  últimas líneas, antes de rehacer nada.
 
 ## Prohibido (propio de esta tarea)
 
