@@ -20,6 +20,10 @@ test('situaciones · ejercicio 1: la explicación lleva el entero que el ejercic
       assert.ok(L.enCota(item.ctx, item.n));
       assert.ok(html.includes(`${fmt(item.n)} .`) || html.includes(`${fmt(item.n)}.`), `respuesta ${item.n}`);
       assert.ok(html.includes(item.n < 0 ? (idioma === 'es' ? 'negativo. La' : 'negative. The') : item.n > 0 ? (idioma === 'es' ? 'positivo. La' : 'positive. The') : '0'), 'el signo');
+      // Revisión 192: dice cuál es el cero de esa situación, y ninguna frase empieza en minúscula («. «bajo el…»).
+      assert.match(html, /El cero es | es el cero: |Zero is /);
+      assert.doesNotMatch(html, /\. [«“][a-záéíóú]/);
+      if (item.ctx === 'planta' && item.n > 0) assert.ok(html.includes(idioma === 'es' ? `«planta ${item.n}»` : `“floor ${item.n}”`));
     }
   }
 });
@@ -35,6 +39,10 @@ test('situaciones · ejercicio 2: la explicación lleva la frase buena, y solo e
       for (const o of item.opciones.filter(x => x.error !== null)) {
         assert.ok(!html.endsWith(`${X.frase(o.ctx, o.v, idioma)}».`) && !html.endsWith(`${X.frase(o.ctx, o.v, idioma)}”.`), 'no nombra una opción mala como respuesta');
       }
+      // Revisión 192: la frase buena sale una sola vez, y nada de «below zero is below zero».
+      assert.equal(html.split(dicha).length - 1, 1, 'la frase, una vez');
+      assert.doesNotMatch(html, /below zero is below zero|bajo cero es por debajo de cero/);
+      assert.match(html, idioma === 'es' ? (item.n < 0 ? /es negativo, así que/ : /es positivo, así que/) : (item.n < 0 ? /is negative, so/ : /is positive, so/));
     }
   }
 });
@@ -50,6 +58,11 @@ test('situaciones · ejercicio 3: la explicación lleva la cuenta, el resultado 
       assert.equal(buena.v, item.r);
       const dicha = X.fraseResultado(item.ctx, buena.v, idioma);
       assert.ok(html.endsWith(idioma === 'es' ? `con la frase «${dicha}».` : `with the sentence “${dicha}”.`), 'la frase del resultado, al final');
+      // Revisión 192: el verbo es el del enunciado (en la temperatura y el ascensor no se ingresa ni se saca)
+      // y, si se empieza en negativo, se dice por qué.
+      if (item.ctx !== 'saldo') assert.doesNotMatch(html, /ingres|sacar|deposit|withdraw/);
+      else assert.doesNotMatch(html, /subir|bajar|going up|going down/);
+      assert.equal(/es negativo\)|is negative\)/.test(html), item.s < 0, 'el porqué del inicio negativo');
     }
   }
 });

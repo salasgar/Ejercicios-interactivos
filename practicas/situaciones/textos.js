@@ -229,13 +229,38 @@ export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 
+/** Qué es el cero en cada contexto (ejercicio 1): sin él, «“sótano” es por debajo de cero» no se entiende. */
+const CERO = {
+  temperatura: { es: 'la temperatura de 0 grados', en: 'a temperature of 0 degrees' },
+  planta: { es: 'la planta baja', en: 'the ground floor' },
+  saldo: { es: 'no tener ni deber nada', en: 'having nothing and owing nothing' },
+  mar: { es: 'el nivel del mar', en: 'sea level' },
+  buceo: { es: 'la superficie del agua', en: 'the surface of the water' },
+  anios: { es: 'el nacimiento de Cristo', en: 'the birth of Christ' },
+};
+
+/** La palabra que decide el signo, como sale en la frase («planta 16», no «planta» a secas). */
+const claveDe = (ctx, n, idioma) => (ctx === 'planta' && n > 0
+  ? (idioma === 'es' ? `planta ${n}` : `floor ${n}`)
+  : CLAVE[ctx][tipo(n)][idioma]);
+
 /** Ejercicio 1: de la situación al entero. */
-export function explicaEntero(item, { tt }) {
+export function explicaEntero(item, { idioma, tt }) {
   const regla = tt({
     es: 'Lo que queda por debajo de cero es negativo, y lo que queda por encima, positivo.',
     en: 'What is below zero is negative, and what is above zero is positive.',
   });
-  return `${regla} ${tt(TX.entero.razon)(item.ctx, item.n)}`;
+  const { ctx, n } = item;
+  const cero = CERO[ctx][idioma];
+  const k = claveDe(ctx, n, idioma);
+  const porque = n === 0
+    ? tt({ es: `${cero[0].toUpperCase()}${cero.slice(1)} es el cero: no es positivo ni negativo.`, en: `Zero is ${cero}: it is neither positive nor negative.` })
+    : tt({
+      es: `El cero es ${cero}, y «${k}» queda por ${n < 0 ? 'debajo' : 'encima'}: es ${n < 0 ? 'negativo' : 'positivo'}.`,
+      en: `Zero is ${cero}, and “${k}” is ${n < 0 ? 'below' : 'above'} it: ${n < 0 ? 'negative' : 'positive'}.`,
+    });
+  const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
+  return `${regla} ${porque} ${resp} <span class="cuenta">${fmt(n)}</span>.`;
 }
 
 /** Ejercicio 2: del entero a la frase. */
@@ -246,15 +271,31 @@ export function explicaSituacion(item, { idioma, tt }) {
   });
   const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
   const [a, c] = idioma === 'es' ? ['«', '»'] : ['“', '”'];
-  return `${regla} ${tt(TX.situacion.bien)(item.ctx, item.n)} ${resp} ${a}${frase(item.ctx, item.n, idioma)}${c}.`;
+  // Sin repetir la frase dos veces ni el «below zero is below zero» del feedback.
+  const { ctx, n } = item;
+  const signo = tt({
+    es: `${fmt(n)} es ${n < 0 ? 'negativo' : 'positivo'}, así que la frase tiene que decir «${claveDe(ctx, n, 'es')}».`,
+    en: `${fmt(n)} is ${n < 0 ? 'negative' : 'positive'}, so the sentence has to say “${claveDe(ctx, n, 'en')}”.`,
+  });
+  return `${regla} ${signo} ${resp} ${a}${frase(ctx, n, idioma)}${c}.`;
 }
 
 /** Ejercicio 3: la cuenta del paso y la frase del resultado. */
 export function explicaPaso(item, { idioma, tt }) {
+  // El verbo del propio enunciado (en la temperatura no se «ingresa»), y por qué se empieza en negativo.
+  const dinero = item.ctx === 'saldo';
   const sentido = item.dir > 0
-    ? tt({ es: 'subir o ingresar se suma', en: 'going up or depositing is adding' })
-    : tt({ es: 'bajar o sacar se resta', en: 'going down or withdrawing is subtracting' });
-  const paso1 = tt({ es: `Se empieza en ${fmt(item.s)}; ${sentido}:`, en: `Start at ${fmt(item.s)}; ${sentido}:` });
+    ? tt(dinero ? { es: 'ingresar se suma', en: 'depositing is adding' } : { es: 'subir se suma', en: 'going up is adding' })
+    : tt(dinero ? { es: 'sacar se resta', en: 'withdrawing is subtracting' } : { es: 'bajar se resta', en: 'going down is subtracting' });
+  const INICIO_NEGATIVO = {
+    temperatura: { es: 'bajo cero', en: 'below zero' },
+    planta: { es: 'sótano', en: 'basement' },
+    saldo: { es: 'debes', en: 'you owe' },
+  };
+  const porque = item.s < 0
+    ? tt({ es: ` («${INICIO_NEGATIVO[item.ctx].es}» es negativo)`, en: ` (“${INICIO_NEGATIVO[item.ctx].en}” is negative)` })
+    : '';
+  const paso1 = tt({ es: `Se empieza en ${fmt(item.s)}${porque}; ${sentido}:`, en: `Start at ${fmt(item.s)}${porque}; ${sentido}:` });
   const paso2 = tt({ es: 'Después se elige la frase que dice ese resultado, con su signo.', en: 'Then choose the sentence that says that result, with its sign.' });
   const resp = tt({
     es: `La respuesta es ${fmt(item.r)}, con la frase «${fraseResultado(item.ctx, item.r, 'es')}».`,
