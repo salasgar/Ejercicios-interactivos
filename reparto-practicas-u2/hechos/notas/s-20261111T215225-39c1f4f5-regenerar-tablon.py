@@ -45,7 +45,7 @@ EXTERNO = {
     157: (False, 'la hoja 2 y el examen 2 de la U6 aún no existen (11-11)'),
     158: (False, 'la hoja 3 y el examen 3 de la U6 aún no existen (11-11)'),
     159: (False, 'la hoja 4, el tipo test 4 y el final de la U6 aún no existen (11-11)'),
-    161: (False, 'F0 del reparto de la U6 sin firmar (11-11)'),
+    161: (True, 'F0 del reparto de la U6 firmada el 12-11'),
 }
 
 ISO = re.compile(r'(20\d\d-\d\d-\d\d)[T ](\d\d:\d\d(?::\d\d)?)Z?')
