@@ -90,6 +90,12 @@ Propio de la unidad 1: La unidad 1 usa «×» para el producto (el resto de su m
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
 
+- (de la sesión de cierre, 13-11) `agrupar`/`fmt` de varias prácticas usan espacio duro o fino: en el test, `plano()` lo
+  normaliza a espacio normal, así que hay que normalizar también el valor esperado (`.replace(/\s/g, ' ')`); es lo que
+  dejó en rojo el ejercicio 3 de `constructor`. Y no se edita código con python/sed desde el shell (candado de sesiones).
+- (de la sesión de cierre) Antes de reutilizar un feedback de fallo en una explicación, léelo con números reales: el de
+  `constructor` ej. 3 decía «75.443 sería 75.443»; en la explicación se omite esa frase.
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar generadores, opciones, comprobaciones o el feedback que ya existe; tocar `disponible` en `catalogo.js`.
