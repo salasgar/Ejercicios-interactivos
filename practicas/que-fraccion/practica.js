@@ -9,7 +9,7 @@ import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { crearFigura } from '../_comun/dibujo-fracciones.js';
 import { fraccion, htmlFraccion, htmlRaya } from '../_comun/fracciones.js';
-import { TX } from './textos.js';
+import { TX, explicaLeeFigura, explicaSombrea, explicaFrase, explicaLee } from './textos.js';
 import {
   generarLeeFigura, generarSombrea, generarFrase, generarLee, errorLeeFigura, errorSombrea,
   errorFrase, contextoDe, claveDe,
@@ -211,7 +211,7 @@ function montarLee(contenedor, item, api) {
 
 // ─── La práctica ───────────────────────────────────────────────────────────────────────
 
-const ejercicio = (tx, generar, montar, enunciado) => ({
+const ejercicio = (tx, generar, montar, enunciado, explicacion, noLoSe) => ({
   nombre: tx.nombre,
   detalle: tx.detalle,
   introduccion: tx.introduccion,
@@ -219,14 +219,16 @@ const ejercicio = (tx, generar, montar, enunciado) => ({
   clave: claveDe,
   montar,
   enunciado,
+  explicacion,
+  ...(noLoSe ? { noLoSe } : {}),
 });
 
 arrancar({
   slug: 'que-fraccion',
   ejercicios: [
-    ejercicio(TX.ej1, generarLeeFigura, montarLeeFigura, enunciado1),
-    ejercicio(TX.ej2, generarSombrea, montarSombrea, enunciado2),
-    ejercicio(TX.ej3, generarFrase, montarFrase, enunciado3),
-    ejercicio(TX.ej4, generarLee, montarLee, enunciado4),
+    ejercicio(TX.ej1, generarLeeFigura, montarLeeFigura, enunciado1, explicaLeeFigura, TX.no_se_hacerlo),
+    ejercicio(TX.ej2, generarSombrea, montarSombrea, enunciado2, explicaSombrea, TX.no_se_hacerlo),
+    ejercicio(TX.ej3, generarFrase, montarFrase, enunciado3, explicaFrase),
+    ejercicio(TX.ej4, generarLee, montarLee, enunciado4, explicaLee),
   ],
 });

@@ -236,4 +236,100 @@ export const TX = {
   },
 
   comprobar: { es: 'Comprobar', en: 'Check' },
+  // El botón «No lo sé» de la base, con el texto de un ejercicio de procedimiento.
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio, con los números del ítem ────
+
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const cuenta = c => `<span class="cuenta">${c}</span>`;
+const sombreadasDe = (n, es) => (es ? (n === 1 ? 'sombreada' : 'sombreadas') : 'shaded');
+
+/** Ejercicio 1: contar las partes de una figura (abajo) y las sombreadas (arriba). */
+export function explicaLeeFigura(item, { idioma }) {
+  const es = idioma === 'es';
+  const varias = item.figuras > 1;
+  const lista = [
+    es
+      ? `Cuenta las partes iguales de ${varias ? 'una figura' : FIGURA[item.tipo].es}: ${item.den}. Ese es el número de <strong>abajo</strong>${varias ? '; las dos figuras son iguales' : ''}.`
+      : `Count the equal parts of ${varias ? 'one figure' : FIGURA[item.tipo].en}: ${item.den}. That is the <strong>bottom</strong> number${varias ? '; the figures are all the same' : ''}.`,
+    es
+      ? `Cuenta las partes sombreadas${varias ? ' en total' : ''}: ${item.num}. Ese es el número de <strong>arriba</strong>.`
+      : `Count the shaded parts${varias ? ' in all' : ''}: ${item.num}. That is the <strong>top</strong> number.`,
+  ];
+  const fin = es ? `La respuesta es ${cuenta(h(item.num, item.den))}.` : `The answer is ${cuenta(h(item.num, item.den))}.`;
+  const consejo = item.exacta
+    ? (es ? ' Aquí no se simplifica: deja la fracción tal como sale de contar.' : ' Do not simplify here: leave the fraction as it comes out of counting.')
+    : (es ? ' Vale cualquier fracción equivalente; esta es la que sale de contar.' : ' Any equivalent fraction is fine; this is the one you get by counting.');
+  return `${pasos(lista)}${fin}${consejo}`;
+}
+
+/** Ejercicio 2: cuántas partes de la figura vale cada trozo y cuántas hay que sombrear. */
+export function explicaSombrea(item, { idioma }) {
+  const es = idioma === 'es';
+  const lista = item.m === 1
+    ? [es
+      ? `La figura tiene ${item.partes} partes, tantas como el denominador: cada trozo es 1 parte.`
+      : `The figure has ${item.partes} parts, as many as the denominator: each share is 1 part.`,
+    es
+      ? `El numerador es ${item.num}: hay que sombrear ${item.num} ${item.num === 1 ? 'parte' : 'partes'}.`
+      : `The numerator is ${item.num}: shade ${item.num} ${item.num === 1 ? 'part' : 'parts'}.`]
+    : [es
+      ? `Mira cuántas partes tiene cada trozo: ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)}.`
+      : `Find how many parts each share has: ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)}.`,
+    es
+      ? `Multiplica por el numerador: ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)}.`
+      : `Multiply by the numerator: ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)}.`];
+  const fin = es
+    ? `Hay que sombrear ${cuenta(item.objetivo)} ${item.objetivo === 1 ? 'parte' : 'partes'} de las ${item.partes}.`
+    : `You have to shade ${cuenta(item.objetivo)} of the ${item.partes} parts.`;
+  const consejo = item.m === 1
+    ? ''
+    : (es ? ' Consejo: la figura puede tener más partes que el denominador.' : ' Tip: the figure can have more parts than the denominator.');
+  return `${es ? `Hay que sombrear ${h(item.num, item.den)} de ${FIGURA[item.tipo].es}. ` : `You have to shade ${h(item.num, item.den)} of ${FIGURA[item.tipo].en}. `}${pasos(lista)}${fin}${consejo}`;
+}
+
+/** Ejercicio 3: los que cumplen arriba y todo el grupo abajo. */
+export function explicaFrase(item, { idioma }) {
+  const es = idioma === 'es';
+  const lista = [
+    es ? `Cuenta todo el grupo: ${item.n}. Va <strong>abajo</strong>.` : `Count the whole group: ${item.n}. It goes at the <strong>bottom</strong>.`,
+    es ? `Cuenta los que cumplen lo que dice el enunciado: ${item.k}. Van <strong>arriba</strong>.` : `Count those that match what the problem says: ${item.k}. They go on <strong>top</strong>.`,
+  ];
+  const fin = es ? `La respuesta es ${cuenta(h(item.k, item.n))}.` : `The answer is ${cuenta(h(item.k, item.n))}.`;
+  const consejo = es
+    ? ` Consejo: abajo va todo el grupo, no solo los que no cumplen (${item.n - item.k}).`
+    : ` Tip: the bottom number is the whole group, not only those who do not (${item.n - item.k}).`;
+  return `${pasos(lista)}${fin}${consejo}`;
+}
+
+/** Ejercicio 4: numerador como número normal y denominador como ordinal. */
+export function explicaLee(item, { idioma }) {
+  const es = idioma === 'es';
+  const lectura = item.idioma === 'en' ? (es ? 'en inglés' : 'in English') : (es ? 'en español' : 'in Spanish');
+  const fin = es
+    ? `La respuesta es ${cuenta(`${h(item.num, item.den)} = «${item.texto}»`)} (${lectura}).`
+    : `The answer is ${cuenta(`${h(item.num, item.den)} = “${item.texto}”`)} (${lectura}).`;
+  if (item.den === 2 || item.den === 4) {
+    const regla = es
+      ? `${h(item.num, item.den)} es un caso especial: el denominador ${item.den} tiene un nombre propio, el de «${item.texto.split(' ').pop()}».`
+      : `${h(item.num, item.den)} is a special case: the denominator ${item.den} has its own name, “${item.texto.split(' ').pop()}”.`;
+    return `${regla} ${fin}`;
+  }
+  const palabras = item.texto.split(' ');
+  const ordinal = palabras.pop();
+  const numero = palabras.join(' ');
+  const lista = [
+    es
+      ? `El numerador es ${item.num}: se lee como un número normal, «${numero}».`
+      : `The numerator is ${item.num}: it is read as an ordinary number, “${numero}”.`,
+    es
+      ? `El denominador es ${item.den}: se lee como un <strong>ordinal</strong>, «${ordinal}».`
+      : `The denominator is ${item.den}: it is read as an <strong>ordinal</strong>, “${ordinal}”.`,
+  ];
+  const consejo = es
+    ? ' Consejo: el denominador nunca se dice como un número normal.'
+    : ' Tip: the denominator is never said as an ordinary number.';
+  return `${pasos(lista)}${fin}${consejo}`;
+}
