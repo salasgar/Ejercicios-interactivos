@@ -97,7 +97,7 @@ function montarSino(contenedor, item, api) {
 // ─── Ejercicio 4: la cifra que falta ────────────────────────────────────────────
 
 function enunciadoCifra(item, { tt }) {
-  const texto = item.cifras.map((c, i) => (i === item.hueco ? '□' : c)).join('');
+  const texto = item.cifras.map((c, i) => (i === item.hueco ? '<span class="cifra-hueco">□</span>' : c)).join('');
   const condicion = item.divisores.length === 1
     ? tt(TX.ej4.pregunta_uno)(item.divisores[0])
     : tt(TX.ej4.pregunta_dos)(item.divisores[0], item.divisores[1]);
@@ -120,6 +120,9 @@ function montarCifra(contenedor, item, api) {
       if (api.respondido()) return;
       botones.forEach(x => { x.disabled = true; });
       const acierto = esCorrecta(item, d);
+      // El hueco del número se rellena con la cifra pulsada, en verde o en rojo.
+      const hueco = contenedor.querySelector('.operacion .cifra-hueco');
+      if (hueco) { hueco.textContent = String(d); hueco.classList.add(claseCorreccion(true, acierto)); }
       botones.forEach((x, v) => {
         const c = claseCorreccion(v === d, esCorrecta(item, v));
         if (c) x.classList.add(c);

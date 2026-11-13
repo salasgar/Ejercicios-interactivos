@@ -1,5 +1,6 @@
 /* Semáforo: lo común está en ../_comun/estilos.css (también los cuatro estados de
-   la corrección); aquí solo el botón «Ninguno». */
+   la corrección); aquí solo el botón «Ninguno» y el hueco
+   del ejercicio 4. */
 
 /* «Ninguno»: más ancho que los números, borde del color primario; encendido se ve
    como un número encendido (la regla común de [aria-pressed="true"] lo pinta). */
@@ -11,3 +12,7 @@
 .botones-numeros button.ninguno.bien { color: var(--correcto); border-color: var(--correcto); }
 .botones-numeros button.ninguno.mal { color: var(--error); border-color: var(--error); }
 .botones-numeros button.ninguno.falta { color: var(--correcto); border: 2px dashed var(--correcto); }
+
+/* Ejercicio 4: al contestar, el hueco del número pasa a ser la cifra pulsada. */
+.operacion .cifra-hueco.bien { color: var(--correcto); }
+.operacion .cifra-hueco.mal { color: var(--error); }
