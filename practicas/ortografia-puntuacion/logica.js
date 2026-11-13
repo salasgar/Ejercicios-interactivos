@@ -457,18 +457,36 @@ export function explicacionElegir(item, k) {
 }
 
 /** La ayuda de «No lo sé» de «¿cuál está bien escrita?»: la explicación y la respuesta, explícita al final. */
+// Revisión 192: «La respuesta es X», sin dos puntos entre «es» y lo que sigue (la RAE no los pone entre
+// el verbo y su atributo, y esto es una práctica de ortografía); y la frase buena ya no sale dos veces:
+// la tarjeta dice qué falla en cada mala y acaba en la buena.
 export function ayudaElegir(item) {
-  const respuesta = esAsuntoCuerpo(item)
-    ? `<b>${item.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>`
-    : `<b>${html(item.bien)}</b>`;
-  return `${explicacionElegir(item, 0)}<br>La respuesta es: ${respuesta}`;
+  if (esAsuntoCuerpo(item)) return `${explicacionElegir(item, 0)}<br>La respuesta es «<b>${item.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>».`;
+  const fallos = item.malas.map(([texto, id]) => `En <i>${html(texto)}</i> ${esc(MOTIVOS[id])}.`).join(' ');
+  return `${fallos}<br>La respuesta es <b>${html(item.bien)}</b>`;
 }
 
 /** La ayuda de «No lo sé» de las mayúsculas: qué palabras hay que tocar y por qué. */
+// Revisión 192: la regla del nombre común decía «va con minúscula aunque no sea la primera palabra», que es
+// al revés (va con minúscula PORQUE no empieza la frase); la tarjeta la dice bien y el feedback queda como
+// hallazgo. Y la respuesta nombra cada palabra como sale en pantalla (para saber cuál tocar) y como se
+// escribe bien, para que ninguna forma mal escrita quede sin su corrección al lado.
+const REGLAS_AYUDA_MAYUSCULAS = {
+  ...REGLAS_MAYUSCULAS,
+  'mayuscula-en-nombre-comun': c => `«${c}» es un nombre común y no empieza la frase: va con minúscula.`,
+};
+
+const enLista = palabras => (palabras.length > 1 ? `${palabras.slice(0, -1).join(', ')} y ${palabras.at(-1)}` : palabras[0]);
+
 export function ayudaMayusculas(item) {
+  const buenas = buenasMayusculas(item);
   const puesta = item.texto.split(' ');
-  const palabras = buenasMayusculas(item).map(i => `<b>«${esc(limpia(puesta[i]))}»</b>`);
-  return `${explicacionMayusculas(item, [])}<br>La respuesta es: hay que tocar ${palabras.length > 1 ? `${palabras.slice(0, -1).join(', ')} y ${palabras.at(-1)}` : palabras[0]}.`;
+  const corregida = item.correcto.split(' ');
+  const frase = corregida.map((p, i) => (buenas.includes(i) ? `<b>${esc(p)}</b>` : esc(p))).join(' ');
+  const motivos = buenas.map((i, k) => esc(REGLAS_AYUDA_MAYUSCULAS[item.tipos[k]](limpia(corregida[i])))).join(' ');
+  const tocar = enLista(buenas.map(i => `«${esc(limpia(puesta[i]))}»`));
+  const quedan = enLista(buenas.map(i => `<b>«${esc(limpia(corregida[i]))}»</b>`));
+  return `Bien escrita: ${frase} ${motivos}<br>La respuesta es tocar ${tocar}, que se ${buenas.length > 1 ? 'escriben' : 'escribe'} ${quedan}.`;
 }
 
 /** El `idError` de la mala elegida (nada si acertó). */

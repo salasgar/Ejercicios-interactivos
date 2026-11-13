@@ -25,12 +25,19 @@ test('ortografia-puntuacion, mayúsculas: la explicación nombra cada palabra qu
     const it = MAYUSCULAS[item.i];
     const html = def.explicacion(item, textos);
     limpio(html);
-    const malas = buenasMayusculas(it).map(k => it.texto.split(' ')[k].replace(/[.,;:¿?¡!«»]/g, ''));
+    const limpia = p => p.replace(/[.,;:¿?¡!«»]/g, '');
+    const malas = buenasMayusculas(it).map(k => limpia(it.texto.split(' ')[k]));
+    const bien = buenasMayusculas(it).map(k => limpia(it.correcto.split(' ')[k]));
     assert.ok(malas.length > 0);
-    const frase = plano(html).split('La respuesta es:')[1];
-    assert.ok(html.includes('<br>La respuesta es: hay que tocar '), plano(html));
-    for (const m of malas) assert.ok(frase.includes(`«${m}»`), `${m} — ${plano(html)}`);
+    // Revisión 192: sin dos puntos tras «es», y cada palabra mal puesta con su forma buena al lado.
+    assert.ok(html.includes('<br>La respuesta es tocar '), plano(html));
+    const [tocar, quedan] = plano(html).split('La respuesta es tocar ')[1].split(/, que se escriben? /);
+    assert.ok(quedan, plano(html));
+    for (const m of malas) assert.ok(tocar.includes(`«${m}»`), `${m} — ${plano(html)}`);
+    for (const b of bien) assert.ok(quedan.includes(`«${b}»`), `${b} — ${plano(html)}`);
     assert.ok(plano(html).startsWith('Bien escrita: '), plano(html));
+    // Va con minúscula PORQUE no empieza la frase, no «aunque».
+    assert.doesNotMatch(html, /aunque no sea la primera palabra/, plano(html));
   }
 });
 
@@ -44,9 +51,15 @@ test('ortografia-puntuacion, mayúsculas: la explicación nombra cada palabra qu
       const html = def.explicacion(item, textos);
       limpio(html);
       const fin = esAsuntoCuerpo(it)
-        ? `<br>La respuesta es: <b>${it.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>`
-        : `<br>La respuesta es: <b>${escapa(it.bien)}</b>`;
+        ? `<br>La respuesta es «<b>${it.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>».`
+        : `<br>La respuesta es <b>${escapa(it.bien)}</b>`;
       assert.ok(html.endsWith(fin), plano(html));
+      // Revisión 192: la frase buena sale una sola vez (al final), y cada mala lleva su motivo.
+      if (!esAsuntoCuerpo(it)) {
+        assert.equal(html.split(`<b>${escapa(it.bien)}</b>`).length - 1, 1, plano(html));
+        assert.doesNotMatch(html, /Bien escrita: /, plano(html));
+        for (const [mala] of it.malas) assert.ok(html.includes(`En <i>${escapa(mala)}</i> `), plano(html));
+      }
       const buena = esAsuntoCuerpo(it) ? it.donde : it.bien;
       assert.ok(item.opciones.some(o => (o.k ?? o) === buena || o.texto === buena || o === buena || o.k === it.donde), 'la buena es una opción');
     }
