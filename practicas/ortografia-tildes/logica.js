@@ -455,13 +455,20 @@ const silabaTonica = item => acentuarSilabas(item.mente ? item.silabas.slice(0, 
 export function ayudaTonica(item) {
   return `<ol class="pasos-ayuda">
     <li>Dila en voz alta, alargando cada sílaba: la que suena con más fuerza es la tónica. ${explicacionTonica1(item)}</li>
-    <li>Cuenta desde el final: la última es aguda; la penúltima, llana; la antepenúltima, esdrújula. ${explicacionTonica2(item)}</li>
-  </ol><p>La respuesta es: tónica «${silabaTonica(item)}», palabra <b>${nombreClase(item.clase)}</b>.</p>`;
+    <li>Cuenta desde el final en qué lugar está la tónica. ${explicacionTonica2(item)}</li>
+  </ol><p>La respuesta es la tónica «${silabaTonica(item)}» y la palabra <b>${nombreClase(item.clase)}</b>.</p>`;
 }
 
 export function ayudaTilde(item) {
   const respuesta = llevaTilde(item) ? `tocar «${silabaTonica(item)}», la sílaba de la tilde: <b>${escritaDe(item)}</b>` : 'tocar «Ninguna»: no lleva tilde';
-  return `<p>Busca la sílaba tónica, mira si es aguda, llana o esdrújula y cómo acaba la palabra.</p>
+  // El consejo tiene que valer para ESE ítem: en -mente manda el adjetivo (fácilmente, llana en vocal, lleva
+  // tilde) y en los monosílabos no hay aguda ni llana.
+  const consejo = item.mente
+    ? 'Quita «-mente» y mira si el adjetivo que queda lleva tilde.'
+    : razonDe(item).motivo === 'monosilaba'
+    ? 'Primero cuenta las sílabas de la palabra.'
+    : 'Busca la sílaba tónica, mira si la palabra es aguda, llana o esdrújula y cómo acaba.';
+  return `<p>${consejo}</p>
     <p>${explicacionTilde(item)}</p><p>La respuesta es ${respuesta}.</p>`;
 }
 
@@ -471,12 +478,17 @@ export function ayudaVocales(item) {
   }
   const pos = letraConTilde(item);
   const respuesta = pos === null ? 'tocar «Ninguna»: no lleva tilde' : `tocar la «${item.escrita[pos]}»: <b>${item.escrita}</b>`;
-  return `<p>Mira qué vocales van juntas: ¿van en la misma sílaba (diptongo) o se separan (hiato)? Luego aplica las reglas de siempre.</p>
+  // «Las reglas de siempre» no bastan: el hiato con i o u tónica (día, raíz) lleva tilde aunque no le toque.
+  return `<p>Mira si las vocales juntas van en la misma sílaba (diptongo) o se separan (hiato). Una i o una u tónica junto a una a, una e o una o lleva tilde siempre; si no, mandan las reglas de siempre.</p>
     <p>${explicacionVocales(item)}</p><p>La respuesta es ${respuesta}.</p>`;
 }
 
 export function ayudaMates(item) {
-  return `<p>Busca la sílaba tónica y aplica la regla de las agudas, las llanas o las esdrújulas.</p>
+  // En «raíz» la regla de las agudas diría «sin tilde» (acaba en z): ahí manda la del hiato.
+  const consejo = razon(item.silabas, item.tonica).motivo === 'hiato'
+    ? 'Mira si la tónica es una i o una u junto a una a, una e o una o: entonces lleva tilde siempre.'
+    : 'Busca la sílaba tónica y aplica la regla de las agudas, las llanas o las esdrújulas.';
+  return `<p>${consejo}</p>
     <p>${explicacionMates(item)}</p><p>La respuesta es <b>${item.escrita}</b>.</p>`;
 }
 

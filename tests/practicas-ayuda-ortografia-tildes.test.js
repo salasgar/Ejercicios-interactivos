@@ -27,7 +27,7 @@ test('ortografia-tildes, la sílaba tónica: la explicación nombra la tónica y
     const p = plano(html);
     limpia(html, p);
     assert.ok(p.endsWith(`palabra ${nombreClase(it.clase)}.`), p);
-    assert.match(p, /La respuesta es: tónica «[^»]+»/, p);
+    assert.match(p, /La respuesta es la tónica «[^»]+» y la palabra /, p);
   });
 });
 
@@ -60,6 +60,28 @@ test('ortografia-tildes, diptongos e hiatos: termina en la letra con tilde, en �
     if (pos === null) assert.ok(p.endsWith('«Ninguna»: no lleva tilde.'), p);
     else assert.ok(p.endsWith(`tocar la «${it.escrita[pos]}»: ${it.escrita}.`), p);
   });
+});
+
+// Revisión 192: el consejo de delante tiene que valer para ESE ítem, no solo para la mayoría.
+test('ortografia-tildes: el consejo no contradice la regla del ítem', () => {
+  for (const it of TONICA) {
+    const p = plano(ayudaTonica(it));
+    // Sin la lista «la última es aguda…», que dejaba fuera a las sobresdrújulas y repetía la frase de después.
+    assert.doesNotMatch(p, /la última es aguda/, p);
+  }
+  for (const it of TILDE) {
+    const p = plano(ayudaTilde(it));
+    if (it.mente) assert.match(p, /Quita «-mente»/, `${it.escrita}: en -mente manda el adjetivo`);
+    else assert.doesNotMatch(p, /-mente/, p);
+  }
+  for (const it of VOCALES_BANCO.filter(v => v.tipo === 'tocar')) {
+    const p = plano(ayudaVocales(it));
+    assert.doesNotMatch(p, /Luego aplica las reglas de siempre/, p);
+    assert.match(p, /Una i o una u tónica junto a una a, una e o una o lleva tilde siempre/, p);
+  }
+  const raiz = MATES.find(m => m.escrita === 'raíz');
+  assert.match(plano(ayudaMates(raiz)), /una i o una u junto a una a, una e o una o: entonces lleva tilde siempre/);
+  for (const it of MATES.filter(m => m !== raiz)) assert.match(plano(ayudaMates(it)), /regla de las agudas/, it.escrita);
 });
 
 test('ortografia-tildes, las palabras de Matemáticas: termina en la palabra bien escrita', () => {
