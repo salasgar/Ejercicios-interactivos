@@ -309,7 +309,6 @@ arrancar({
       nombre: TX.ej5.nombre, detalle: TX.ej5.detalle, introduccion: TX.ej5.introduccion,
       generar: generarClases, clave: i => i.numeros.map(escribe).join(), montar: montarClases, enunciado: enunciadoClases,
       explicacion: explicaClases,
-      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

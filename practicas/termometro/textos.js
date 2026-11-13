@@ -173,7 +173,7 @@ export function explicaColoca(item, { tt }) {
   const d = Math.abs(n);
   const unidades = tt({ es: d === 1 ? '1 unidad' : `${d} unidades`, en: d === 1 ? '1 unit' : `${d} units` });
   const lado = tt({ es: n < 0 ? 'izquierda' : 'derecha', en: n < 0 ? 'left' : 'right' });
-  const marcasTxt = item.paso > 1 ? tt({ es: ` (${d / item.paso} marcas, de ${item.paso} en ${item.paso})`, en: ` (${d / item.paso} marks, going up in ${item.paso}s)` }) : '';
+  const marcasTxt = item.paso > 1 ? tt({ es: ` (${marcas(d / item.paso, true)}, de ${item.paso} en ${item.paso})`, en: ` (${marcas(d / item.paso, false)}, counting in ${item.paso}s)` }) : '';
   const cuerpo = tt({ es: `${fmt(n)} está a ${unidades} a la ${lado} del 0${marcasTxt}.`, en: `${fmt(n)} is ${unidades} to the ${lado} of 0${marcasTxt}.` });
   return `${regla} ${cuerpo} ${resp}`;
 }
@@ -181,11 +181,20 @@ export function explicaColoca(item, { tt }) {
 /** Ejercicio 2. */
 export function explicaTemperatura(item, { tt }) {
   const regla = tt({
-    es: 'Mira hasta dónde llega el líquido, cuenta las marcas desde el 0 y multiplica por lo que vale cada una.',
-    en: 'Look at where the liquid reaches, count the marks from 0 and multiply by what each one is worth.',
+    es: 'Cuenta las marcas desde el 0 hasta donde llega el líquido y multiplica por lo que vale cada una; por debajo del 0, la temperatura es negativa.',
+    en: 'Count the marks from 0 to where the liquid reaches and multiply by what each one is worth; below 0, the temperature is negative.',
   });
-  const resp = tt({ es: `La respuesta es ${fmt(item.valor)} °C.`, en: `The answer is ${fmt(item.valor)} °C.` });
-  return `${regla} ${tt(TX.ej2.bien)(item.valor, item.paso)}. ${resp}`;
+  const { valor: v, paso } = item;
+  const k = Math.abs(v) / paso;
+  const cuenta = paso > 1 ? `<span class="cuenta">${k} · ${paso} = ${Math.abs(v)}</span>` : '';
+  const cuerpo = v === 0
+    ? tt({ es: 'El líquido llega justo al 0.', en: 'The liquid reaches exactly 0.' })
+    : tt({
+      es: `El líquido está ${marcas(k, true)} ${v < 0 ? 'por debajo' : 'por encima'} del 0${paso > 1 ? `, de ${paso} en ${paso}: ${cuenta}` : ''}.`,
+      en: `The liquid is ${marcas(k, false)} ${v < 0 ? 'below' : 'above'} 0${paso > 1 ? `, counting in ${paso}s: ${cuenta}` : ''}.`,
+    });
+  const resp = tt({ es: `La respuesta es ${fmt(v)} °C.`, en: `The answer is ${fmt(v)} °C.` });
+  return `${regla} ${cuerpo} ${resp}`;
 }
 
 /** Ejercicio 3. */
@@ -195,29 +204,53 @@ export function explicaComparar(item, { tt }) {
     en: 'On the number line, the number further to the right is the greater.',
   });
   const { a, b } = item;
-  const extra = a < 0 && b < 0 ? ` ${tt(TX.ej3.naturales)(a, b)}.`
-    : (a < 0) !== (b < 0) || a === 0 || b === 0 ? ` ${tt(TX.ej3.absoluto)(a, b)}.` : '';
+  const [mx, mn] = [Math.max(a, b), Math.min(a, b)];
+  const [M, m] = [fmt(mx), fmt(mn)];
+  // Una frase por caso, con los números del ítem: por qué el mayor es el mayor.
+  const porque = mx < 0
+    ? tt({
+      es: `Entre negativos, el mayor es el que está más cerca del 0: ${M} es mayor que ${m}, aunque ${-mx} sea menos que ${-mn}.`,
+      en: `Among negative numbers, the greater is the one closer to 0: ${M} is greater than ${m}, even though ${-mx} is less than ${-mn}.`,
+    })
+    : mn < 0 && mx > 0
+      ? tt({
+        es: `Los negativos están a la izquierda del 0 y los positivos, a la derecha: ${m} es menor que ${M}, aunque ${-mn} sea más que ${mx}.`,
+        en: `Negative numbers are to the left of 0 and positive numbers are to the right: ${m} is less than ${M}, even though ${-mn} is bigger than ${mx}.`,
+      })
+      : mn < 0
+        ? tt({ es: `Los negativos están a la izquierda del 0: ${m} es menor que 0.`, en: `Negative numbers are to the left of 0: ${m} is less than 0.` })
+        : mn === 0
+          ? tt({ es: `Los positivos están a la derecha del 0: ${M} es mayor que 0.`, en: `Positive numbers are to the right of 0: ${M} is greater than 0.` })
+          : tt({ es: `${M} está más a la derecha que ${m}: ${M} es mayor que ${m}.`, en: `${M} is further to the right than ${m}: ${M} is greater than ${m}.` });
   const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
-  return `${regla}${extra} ${tt(TX.ej3.bien)(a, b)}. ${resp} <span class="cuenta">${fmt(a)} ${a < b ? '&lt;' : '&gt;'} ${fmt(b)}</span>.`;
+  return `${regla} ${porque} ${resp} <span class="cuenta">${fmt(a)} ${a < b ? '&lt;' : '&gt;'} ${fmt(b)}</span>.`;
 }
 
 /** Ejercicio 4. */
 export function explicaOrden(item, { tt }) {
-  const regla = tt({
-    es: 'Los negativos van antes que el 0 y que los positivos. Entre negativos, el que está más lejos del 0 es el menor.',
-    en: 'Negative numbers come before 0 and before the positive numbers. Among negative numbers, the one further from 0 is the least.',
-  });
-  const sentido = tt(item.creciente
-    ? { es: 'De menor a mayor, se empieza por el que está más a la izquierda.', en: 'From least to greatest, start with the one furthest to the left.' }
-    : { es: 'De mayor a menor, se empieza por el que está más a la derecha.', en: 'From greatest to least, start with the one furthest to the right.' });
-  return `${regla} ${sentido} ${tt(TX.ej4.bien)(cadenaOrden(item))}.`;
+  // El consejo sigue el sentido que se pide: de mayor a menor, los negativos van al final.
+  const cero = item.numeros.includes(0);
+  const regla = tt(item.creciente
+    ? {
+      es: `De menor a mayor se va de izquierda a derecha en la recta: primero los negativos, empezando por el más lejos del 0, y después ${cero ? 'el 0 y ' : ''}los positivos.`,
+      en: `From least to greatest, go from left to right on the number line: first the negative numbers, starting with the one furthest from 0, then ${cero ? '0 and ' : ''}the positive numbers.`,
+    }
+    : {
+      es: `De mayor a menor se va de derecha a izquierda en la recta: primero los positivos, después ${cero ? 'el 0 y ' : ''}los negativos, y el más lejos del 0 va el último.`,
+      en: `From greatest to least, go from right to left on the number line: first the positive numbers, then ${cero ? '0 and ' : ''}the negative numbers; the one furthest from 0 goes last.`,
+    });
+  const resp = tt({ es: 'La respuesta es', en: 'The answer is' });
+  return `${regla} ${resp} <span class="cuenta">${cadenaOrden(item)}</span>.`;
 }
 
 /** Ejercicio 5. */
 export function explicaClases(item, { tt }) {
+  // El «+5 es lo mismo que 5», con un número del ítem que lleve el más (si hay alguno).
+  const conMas = item.numeros.find(n => n.mas && n.valor > 0);
+  const mas = conMas ? tt({ es: `, y +${conMas.valor} es lo mismo que ${conMas.valor}`, en: `, and +${conMas.valor} is the same as ${conMas.valor}` }) : '';
   const regla = tt({
-    es: 'Positivo es mayor que 0 y negativo es menor que 0. El 0 no es ni lo uno ni lo otro, y +5 es lo mismo que 5.',
-    en: 'Positive means greater than 0 and negative means less than 0. 0 is neither, and +5 is the same as 5.',
+    es: `Los positivos son mayores que 0 y los negativos, menores que 0. El 0 no es ni lo uno ni lo otro${mas}.`,
+    en: `Positive numbers are greater than 0 and negative numbers are less than 0. 0 is neither${mas}.`,
   });
   const lista = caja => item.numeros.filter(n => cajaDe(n.valor) === caja).map(escribe).join(', ');
   const linea = caja => `<li>${tt(TX.ej5.cajas[caja])}: <span class="cuenta">${lista(caja)}</span></li>`;
