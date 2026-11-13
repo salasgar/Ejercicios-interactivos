@@ -3,8 +3,8 @@
 // el menos es U+2212; el hueco es «□». Las operaciones (`3 · (−2)`, `(−2)²`) llegan
 // ya escritas por `enteros.js`.
 
-import { fmt, html as htmlEntero, cadenaDePasos, pasoCanonico, valorLiteral } from '../_comun/enteros.js';
-import { arbolDe, primerosPasos } from './logica.js';
+import { fmt, html as htmlEntero, aTexto, nodoEn, cadenaDePasos, pasoCanonico, pasosPosibles, valorLiteral, NIVEL } from '../_comun/enteros.js';
+import { arbolDe } from './logica.js';
 
 export const TX = {
   toca: { es: 'Toca la operación que se hace primero.', en: 'Tap the operation that comes first.' },
@@ -125,24 +125,66 @@ const pasosHtml = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</
 const respuestaHtml = (tt, html) => `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${html}.</p>`;
 const trucoOrden = tt => `<p>${tt(TX.orden)}</p>`;
 
-/** Una línea por paso del camino bueno: «op = valor». */
-const pasosDeCadena = (texto, tt) => cadenaDePasos(texto).slice(1).map(({ paso }, i) =>
-  `${tt({ es: i === 0 ? 'Primero' : 'Ahora', en: i === 0 ? 'First' : 'Now' })}: ${cuentaHtml(`${paso.operacion} = ${fmt(paso.valor)}`)}.`);
+/**
+ * Una línea por paso del camino bueno: «op = valor». Con `queda`, también la expresión que queda
+ * («4³ = 64 → −64 − 4»): sin ella, en `−4³ − 4` el menos aparecía de golpe en el paso siguiente.
+ */
+const pasosDeCadena = (texto, tt, queda = false) => {
+  const estados = cadenaDePasos(texto);
+  return estados.slice(1).map(({ arbol, paso }, i) => {
+    // Lo que queda se dice si el paso siguiente no lo repite tal cual, o si este paso estaba
+    // debajo de un menos (−4³: el 64 pasa a −64).
+    const siguiente = estados[i + 2]?.paso;
+    const padre = paso.ruta.includes('.') ? paso.ruta.slice(0, paso.ruta.lastIndexOf('.')) : '';
+    const bajoUnMenos = paso.ruta !== '' && nodoEn(estados[i].arbol, padre)?.tipo === 'neg';
+    const mostrar = queda && siguiente && (aTexto(arbol) !== siguiente.operacion || bajoUnMenos);
+    const resto = mostrar ? ` → ${htmlEntero(arbol)}` : '';
+    return `${tt({ es: i === 0 ? 'Primero' : 'Ahora', en: i === 0 ? 'First' : 'Now' })}: ${cuentaHtml(`${paso.operacion} = ${fmt(paso.valor)}${resto}`)}.`;
+  });
+};
 
 const valorFinal = texto => {
   const estados = cadenaDePasos(texto);
   return fmt(valorLiteral(estados[estados.length - 1].arbol));
 };
 
-/** Ejercicio 1: qué operación va primero. */
+/** Nombre de la operación de un paso, con artículo: «la potencia», «el producto»… */
+const NOMBRE_PASO = {
+  pot: { es: 'la potencia', en: 'the power' },
+  '*': { es: 'el producto', en: 'the product' },
+  ':': { es: 'el cociente', en: 'the quotient' },
+  '+': { es: 'la suma', en: 'the addition' },
+  '-': { es: 'la resta', en: 'the subtraction' },
+};
+
+/**
+ * Ejercicio 1: qué operación va primero y por qué, con los datos del ítem.
+ *
+ * Revisión 192: las alternativas que se citan son solo las operaciones INDEPENDIENTES
+ * (`pasosPosibles(…, { cadenas: false })`). En una cadena del mismo nivel la regla de Juan Luis
+ * del 08-10 también acepta adelantar la segunda si no cambia el valor (en `10 : 2 · (−3) : 3`,
+ * hacer antes `−3 : 3`), y el ejercicio la da por buena; pero quien no sabe hacerlo tiene que leer
+ * «de izquierda a derecha», no un atajo que, generalizado, falla (`24 : 4 : 2`).
+ */
 export function explicaPrimero(item, { tt }) {
   const arbol = arbolDe(item.texto);
-  const posibles = primerosPasos(arbol);
-  const primera = pasoCanonico(arbol).operacion;
-  const otras = posibles.length > 1
-    ? ` ${tt({ es: 'También valdría', en: 'These would also be right' })}: ${posibles.filter(p => p !== primera).map(cuentaHtml).join(', ')}.`
+  const paso = pasoCanonico(arbol);
+  const primera = cuentaHtml(paso.operacion);
+  const otras = pasosPosibles(arbol, { cadenas: false }).map(p => p.operacion).filter(op => op !== paso.operacion).map(cuentaHtml);
+  // Sin paréntesis que agrupen (así son los ítems de este ejercicio), si lo de fuera es un
+  // producto o un cociente es que no hay sumas ni restas: es una cadena del mismo nivel.
+  const soloProductos = arbol.tipo === 'op' && NIVEL[arbol.op] === NIVEL['*'];
+  const nombre = NOMBRE_PASO[paso.tipo === 'pot' ? 'pot' : paso.op] ?? { es: 'la operación', en: 'the operation' };
+  const porque = soloProductos
+    ? tt({
+      es: `Solo hay productos y cocientes, que son del mismo nivel: se va de izquierda a derecha. Va primero la de la izquierda, ${primera}.`,
+      en: `There are only products and quotients, which are the same level: go from left to right. The one on the left, ${primera}, comes first.`,
+    })
+    : `${tt(TX.orden)} ${tt({ es: `Aquí va primero ${nombre.es}, ${primera}.`, en: `Here ${nombre.en}, ${primera}, comes first.` })}`;
+  const tambien = otras.length
+    ? ` ${tt({ es: `También vale empezar por ${otras.join(', ')}.`, en: `You can also start with ${otras.join(', ')}.` })}`
     : '';
-  return `${trucoOrden(tt)}<p>${tt(TX.va_primero)(primera)}.${otras}</p>${respuestaHtml(tt, cuentaHtml(primera))}`;
+  return `<p>${porque}${tambien}</p>${respuestaHtml(tt, primera)}`;
 }
 
 /** Ejercicios 2, 3 (cadena) y 4: la cadena de pasos hasta un número. */
@@ -151,12 +193,14 @@ export function explicaCadena(item, { tt }) {
   const truco = item.tipo === 'cadena'
     ? `<p>${tt({ es: 'Los productos y cocientes seguidos se hacen de izquierda a derecha.', en: 'Products and quotients in a row are done from left to right.' })}</p>`
     : trucoOrden(tt);
-  return `${pasosHtml(pasosDeCadena(item.texto, tt))}${truco}${respuestaHtml(tt, cuentaHtml(valorFinal(item.texto)))}`;
+  // En las cadenas cada paso parte del resultado anterior; en las mezclas (ej. 2 y 4) se dice qué queda.
+  // La regla, delante de los pasos (docs/no-lo-se.md, punto 5).
+  return `${truco}${pasosHtml(pasosDeCadena(item.texto, tt, item.tipo !== 'cadena'))}${respuestaHtml(tt, cuentaHtml(valorFinal(item.texto)))}`;
 }
 
 /** Ejercicio 3: el par de expresiones, una cadena para cada una. */
 export function explicaPar(item, { tt }) {
   const cadena = texto => cadenaDePasos(texto).map(e => htmlEntero(e.arbol)).join(' = ');
-  return `${pasosHtml([cuentaHtml(cadena(item.sin)), cuentaHtml(cadena(item.con))])}<p>${tt(TX.ej3.par_agrupa)}</p>${respuestaHtml(tt,
+  return `${pasosHtml([`${cuentaHtml(cadena(item.sin))}.`, `${cuentaHtml(cadena(item.con))}.`])}<p>${tt(TX.ej3.par_agrupa)}</p>${respuestaHtml(tt,
     `${cuentaHtml(valorFinal(item.sin))} ${tt({ es: 'y', en: 'and' })} ${cuentaHtml(valorFinal(item.con))}`)}`;
 }

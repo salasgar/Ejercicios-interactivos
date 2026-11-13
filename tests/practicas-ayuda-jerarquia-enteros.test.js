@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { fmt, evaluar, analizar } from '../practicas/_comun/enteros.js';
+import { fmt, evaluar, analizar, pasoCanonico, pasosPosibles, aplicarPaso, cadenaDePasos } from '../practicas/_comun/enteros.js';
 import * as L from '../practicas/jerarquia-enteros/logica.js';
 import * as X from '../practicas/jerarquia-enteros/textos.js';
 
@@ -24,7 +24,30 @@ test('jerarquia-enteros · ejercicio 1: la explicación dice una operación que 
       const posibles = L.primerosPasos(L.arbolDe(item.texto));
       assert.ok(posibles.some(p => html.includes(`<span class="cuenta">${p}</span>.</p>`)), 'la respuesta es una de las buenas');
       assert.ok(limpio(html));
+      // Revisión 192: la respuesta es la de la izquierda / la de más nivel, y nunca se cita como
+      // alternativa una operación de cadena (adelantar la segunda: en 10 : 2 · (−3) : 3, «−3 : 3»).
+      const arbol = L.arbolDe(item.texto);
+      assert.ok(html.endsWith(`<span class="cuenta">${pasoCanonico(arbol).operacion}</span>.</p>`), 'la respuesta es el paso canónico');
+      for (const p of pasosPosibles(arbol).filter(q => q.cadena)) {
+        assert.ok(!html.includes(`<span class="cuenta">${p.operacion}</span>`), `no cita ${p.operacion}`);
+      }
+      const soloProductos = arbol.tipo === 'op' && (arbol.op === '*' || arbol.op === ':');
+      assert.equal(/izquierda a derecha|left to right/.test(html), soloProductos, 'en las cadenas, de izquierda a derecha');
     }
+  }
+});
+
+test('jerarquia-enteros · ejercicio 1: el caso de la tarea 179 (10 : 2 · (−3) : 3)', () => {
+  const item = { texto: '10 : 2 · (−3) : 3' };
+  const arbol = L.arbolDe(item.texto);
+  // La lógica acepta «−3 : 3» (regla de Juan Luis del 08-10: no cambia el valor) …
+  assert.deepEqual(L.primerosPasos(arbol), ['10 : 2', '−3 : 3']);
+  assert.equal(evaluar(aplicarPaso(arbol, pasosPosibles(arbol)[1])), evaluar(arbol));
+  // … pero la explicación solo enseña la de la izquierda.
+  for (const idioma of IDIOMAS) {
+    const html = X.explicaPrimero(item, ctx(idioma));
+    assert.ok(!html.includes('−3 : 3'));
+    assert.ok(html.includes('<span class="cuenta">10 : 2</span>'));
   }
 });
 
@@ -38,6 +61,15 @@ for (const [n, gen, semilla] of [[2, L.generarMezcla, 502], [3, L.generarCadena,
         const texto = plano(html);
         assert.ok(texto.includes(idioma === 'es' ? 'La respuesta es' : 'The answer is'));
         assert.ok(limpio(html));
+        // Revisión 192: cada paso dice su cuenta, y la cuenta es verdad.
+        if (item.tipo !== 'par') {
+          for (const { paso } of cadenaDePasos(item.texto).slice(1)) {
+            assert.equal(evaluar(analizar(paso.operacion)), paso.valor, paso.operacion);
+            assert.ok(texto.includes(`${paso.operacion} = ${fmt(paso.valor)}`), 'el paso y su valor');
+          }
+        }
+        // Con −4³ delante, se dice que el 64 queda como −64 (antes el menos aparecía de golpe).
+        if (n !== 3 && /^−\d+[²³]/.test(item.texto)) assert.ok(texto.includes('→'), 'lo que queda tras −b²');
       }
     }
   });
