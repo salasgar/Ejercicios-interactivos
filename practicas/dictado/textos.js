@@ -2,6 +2,8 @@
 // Los números en palabras («six thousand and fourteen», «dos mil ochenta y uno») vienen de
 // logica.js y no se traducen: son el contenido que se practica.
 
+import { agrupar, enNum, gruposConValor } from './logica.js';
+
 export const TX = {
   voz: {
     escuchar_en: { es: '▶ Listen', en: '▶ Listen' },
@@ -124,3 +126,81 @@ export const TX = {
     dictado_instruccion_sin_voz: { es: 'Escribe con cifras este número.', en: 'Write this number in figures.' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ítem ─────────────────────────────────
+
+const AYUDA = {
+  respuesta: { es: 'La respuesta es', en: 'The answer is' },
+  pasos: {
+    es: 'Escribe el número por grupos, de izquierda a derecha; si un grupo no aparece, pon ceros en su sitio.',
+    en: 'Write the number group by group, from left to right; if a group is missing, put zeros in its place.',
+  },
+  pasosEs: {
+    es: 'Escribe el número por partes, de izquierda a derecha; lo que no se nombra se rellena con ceros.',
+    en: 'Write the number part by part, from left to right; what is not said is filled with zeros.',
+  },
+  pasosFichas: {
+    es: 'Ordena las palabras tal como se dice el número y deja fuera las fichas mal escritas.',
+    en: 'Put the words in the order we say the number and leave out the misspelled tiles.',
+  },
+  sobran: { es: 'Fichas que sobran', en: 'Extra tiles' },
+};
+
+/** Lo que va delante de «mil» en el texto español ('' si el número empieza por «mil»). */
+export const prefijoMil = texto => (texto.startsWith('mil') ? '' : texto.split(' mil')[0]);
+
+/** La palabra del ítem con el acento marcado: six<strong>TEEN</strong> (al final) o <strong>SIX</strong>ty (al principio). */
+export function acentuada(n, sufijo) {
+  const palabra = enNum(n);
+  const raiz = palabra.slice(0, -sufijo.length);
+  return sufijo === 'teen' ? `${raiz}<strong>TEEN</strong>` : `<strong>${raiz.toUpperCase()}</strong>${sufijo}`;
+}
+
+/** Explicación de un dictado: el número en palabras y por grupos (inglés) o solo el número (español). */
+export function explicarDictado(item, { tt, esc }) {
+  let html = `${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
+  if (item.tipo === 'dictado') {
+    const grupos = gruposConValor(item.n).map(g => `${g.texto} = ${agrupar(g.valor)}`);
+    if (grupos.length > 1) html += `<br>${tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
+  }
+  return html;
+}
+
+/** «No lo sé» de un dictado (en inglés o en español). */
+export function explicaDictado(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt(item.tipo === 'dictado' ? AYUDA.pasos : AYUDA.pasosEs);
+  return `<p>${regla}</p><p>${explicarDictado(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(item.n)}.</strong></p>`;
+}
+
+/** La nota de la escritura inglesa: guion, ortografía de la decena o plural. */
+export function notaEscritura(item, { tt, esc }) {
+  const buena = item.opciones[item.solucion];
+  const malas = item.opciones.filter((_, i) => i !== item.solucion);
+  return {
+    compuesto: () => tt(TX.teen.nota_compuesto),
+    decena: () => tt(TX.teen.nota_decena)(esc(buena), esc(malas.join(', '))),
+    plural: () => tt(TX.teen.nota_plural)(esc(buena), esc(malas.find(o => o.endsWith('s')))),
+  }[item.clase]();
+}
+
+/** «No lo sé» del ejercicio 2: -teen o -ty (oído), o cómo se escribe un número en inglés. */
+export function explicaTeenOEscritura(item, ctx) {
+  const { tt, esc } = ctx;
+  if (item.tipo === 'teen') {
+    const otro = item.opciones[1 - item.solucion];
+    return `<p>${tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), esc(item.texto), acentuada(item.base[0], 'teen'), acentuada(item.base[1], 'ty'))}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(item.n)}.</strong></p>`;
+  }
+  const buena = item.opciones[item.solucion];
+  return `<p>${tt(TX.teen.escritura_ok)(agrupar(item.n), esc(buena))} ${notaEscritura(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${esc(buena)}.</strong></p>`;
+}
+
+/** «No lo sé» del ejercicio 3: ordenar las fichas del número en español, o dictado en español. */
+export function explicaFichasODictadoEs(item, ctx) {
+  if (item.tipo !== 'fichas') return explicaDictado(item, ctx);
+  const { tt, esc } = ctx;
+  const pre = prefijoMil(item.texto);
+  const notas = item.sobran.map(s => `<br>«${esc(s)}»: ${tt(TX.fichas.notas[s])(esc(item.texto), esc(pre))}`).join('');
+  return `<p>${tt(AYUDA.pasosFichas)}</p><p>${tt(TX.fichas.correcta)}: ${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span></p>`
+    + `<p>${tt(AYUDA.sobran)}:${notas}</p><p><strong>${tt(AYUDA.respuesta)}: ${esc(item.texto)}.</strong></p>`;
+}

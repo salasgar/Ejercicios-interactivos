@@ -4,11 +4,13 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicarDictado, acentuada, notaEscritura, prefijoMil, explicaDictado, explicaTeenOEscritura, explicaFichasODictadoEs } from './textos.js';
 import {
-  agrupar, enNum, generarDictado, esRespuestaDictado, gruposConValor, generarTeen, generarEscritura,
+  agrupar, generarDictado, esRespuestaDictado, generarTeen, generarEscritura,
   generarFichas, esSecuenciaCorrecta, generarDictadoEs,
 } from './logica.js';
+
+const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 // ─── Síntesis de voz (patrón de ../leelo/practica.js) ───────────────────────
 // `getVoices()` devuelve [] la primera vez en Chrome: se espera a `voiceschanged` (hasta 1 s).
@@ -94,16 +96,6 @@ function teclado(contenedor, api, alComprobar) {
   });
 }
 
-/** Explicación de un dictado: el número en palabras y por grupos (inglés) o solo el número (español). */
-function explicarDictado(item, { tt, esc }) {
-  let html = `${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
-  if (item.tipo === 'dictado') {
-    const grupos = gruposConValor(item.n).map(g => `${g.texto} = ${agrupar(g.valor)}`);
-    if (grupos.length > 1) html += `<br>${tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
-  }
-  return html;
-}
-
 function textosDictado(item) {
   return item.tipo === 'dictado'
     ? { instruccion: TX.dictado.instruccion, sinVoz: TX.dictado.instruccion_sin_voz, boton: TX.voz.escuchar_en }
@@ -134,13 +126,6 @@ function montarDictado(contenedor, item, api) {
 }
 
 // ─── Ejercicio 2: -teen o -ty, y cómo se escribe ─────────────────────────────
-
-/** La palabra del ítem con el acento marcado: six<strong>TEEN</strong> (al final) o <strong>SIX</strong>ty (al principio). */
-function acentuada(n, sufijo) {
-  const palabra = enNum(n);
-  const raiz = palabra.slice(0, -sufijo.length);
-  return sufijo === 'teen' ? `${raiz}<strong>TEEN</strong>` : `<strong>${raiz.toUpperCase()}</strong>${sufijo}`;
-}
 
 const enunciadoTeen = (item, { tt }) => `<p class="instruccion">${tt(TX.teen.instruccion)}</p>`;
 const enunciadoEscritura = (item, { tt }) => `<p class="instruccion">${tt(TX.teen.escritura)(agrupar(item.n))}</p>`;
@@ -176,17 +161,9 @@ function montarEscritura(contenedor, item, api) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
       const buena = item.opciones[item.solucion];
-      const malas = item.opciones.filter((_, i) => i !== item.solucion);
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: ({ tt, esc }) => {
-          const nota = {
-            compuesto: () => tt(TX.teen.nota_compuesto),
-            decena: () => tt(TX.teen.nota_decena)(esc(buena), esc(malas.join(', '))),
-            plural: () => tt(TX.teen.nota_plural)(esc(buena), esc(malas.find(o => o.endsWith('s')))),
-          }[item.clase]();
-          return `${tt(TX.teen.escritura_ok)(agrupar(item.n), esc(buena))} ${nota}`;
-        },
+        html: textos => `${textos.tt(TX.teen.escritura_ok)(agrupar(item.n), textos.esc(buena))} ${notaEscritura(item, textos)}`,
         espera: 3200,
       });
     },
@@ -238,7 +215,7 @@ function montarFichas(contenedor, item, api) {
     linea.classList.add(acierto ? 'linea-fichas--bien' : 'linea-fichas--mal');
     banco.querySelectorAll('button').forEach(b => { b.disabled = true; });
     // Solo las notas de las fichas erróneas que el alumno puso, con las palabras de este número
-    const pre = item.texto.startsWith('mil') ? '' : item.texto.split(' mil')[0];
+    const pre = prefijoMil(item.texto);
     api.responder({
       acierto,
       html: ({ tt, esc }) => {
@@ -267,6 +244,8 @@ arrancar({
       generar: generarDictado,
       montar: montarDictado,
       enunciado: enunciadoDictado,
+      explicacion: explicaDictado,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.teen.nombre,
@@ -275,6 +254,7 @@ arrancar({
       generar: rng => (rng.azar() < 0.5 ? generarTeen(rng) : generarEscritura(rng)),
       montar: montarTeenOEscritura,
       enunciado: enunciadoTeenOEscritura,
+      explicacion: explicaTeenOEscritura,
     },
     {
       nombre: TX.fichas.nombre,
@@ -283,6 +263,8 @@ arrancar({
       generar: rng => (rng.azar() < 0.6 ? generarFichas(rng) : generarDictadoEs(rng)),
       montar: montarFichasODictadoEs,
       enunciado: enunciadoFichasODictadoEs,
+      explicacion: explicaFichasODictadoEs,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });
