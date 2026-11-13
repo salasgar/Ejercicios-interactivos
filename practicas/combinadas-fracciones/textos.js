@@ -4,8 +4,8 @@
 // fracciones.js), nunca «3/5» fuera de una frase en inglés hablado. Las operaciones
 // (`1/2 + 1/3`) llegan ya escritas por `fracciones.js`.
 
-import { html as cuentaFrac, htmlFraccion, leerFraccion, valorLiteral, aplicarPaso, pasoCanonico } from '../_comun/fracciones.js';
-import { arbolDe, primerosPasos } from './logica.js';
+import { html as cuentaFrac, htmlFraccion, leerFraccion, valorLiteral, aplicarPaso, pasoCanonico, pasosPosibles, analizar } from '../_comun/fracciones.js';
+import { arbolDe } from './logica.js';
 
 // `html` no entiende «=»: una igualdad se pinta como sus miembros unidos por el signo.
 const c = texto => texto.split(' = ').map(parte => cuentaFrac(parte)).join(' = ');
@@ -134,14 +134,54 @@ export const TX = {
 const sinEspacios = s => s.replace(/\s+/g, ' ').trim();
 const cuentaAyuda = x => `<span class="cuenta">${h(x)}</span>`;
 
-/** Ejercicio 1: la jerarquía y la operación (o las operaciones) que pueden ir primero. */
-export function explicaPrimero(item, { tt }) {
-  const posibles = primerosPasos(arbolDe(item.texto));
-  const lista = posibles.map(cuentaAyuda).join(', ');
-  const fin = posibles.length > 1
-    ? tt({ es: `Pueden ir primero: ${lista}; vale cualquiera de ellas.`, en: `These can come first: ${lista}; any of them is right.` })
-    : tt({ es: `Va primero ${lista}.`, en: `${lista} comes first.` });
-  return sinEspacios(`${tt(TX.orden)} ${fin}`);
+// La regla de la tarjeta lleva lo que a `TX.orden` le falta para decidir TODOS los ítems: entre
+// operaciones del mismo nivel, de izquierda a derecha (`7/9 − 1/3 + 4/9`, `5/8 : 1/2 · 2/3`).
+// El atajo de las cadenas que el ejercicio 1 acepta porque no cambia el valor (`a · b : c`, hacer
+// antes `b : c`) no se enseña: generalizado falla (`a : b · c`). Ver la ENTREGA de la tarea 190.
+const ORDEN_AYUDA = {
+  es: 'Primero lo de dentro de los paréntesis; después, los productos y cocientes; al final, las sumas y restas. Entre las del mismo nivel, de izquierda a derecha.',
+  en: 'First what is inside brackets; then products and quotients; last, additions and subtractions. With operations of the same level, from left to right.',
+};
+
+/** Las operaciones de un árbol que están fuera de todo paréntesis: [{ op }]. */
+function operacionesFuera(n, fuera = []) {
+  if (n.tipo === 'op') { fuera.push(n.op); operacionesFuera(n.izq, fuera); operacionesFuera(n.der, fuera); }
+  else if (n.tipo === 'neg' || n.tipo === 'pos') operacionesFuera(n.arg, fuera);
+  return fuera;
+}
+
+/** Por qué va ahora el paso `p` del árbol `x` (una frase sin punto), o '' si no hay una corta. */
+function motivo(x, p, es) {
+  if (p.tipo !== 'op') return '';
+  if (p.profundidad > 0) return es ? 'está dentro del paréntesis' : 'it is inside the brackets';
+  const fuera = operacionesFuera(x);
+  const sumas = fuera.some(o => o === '+' || o === '-');
+  const mismoNivel = fuera.filter(o => NIVEL_OP[o] === p.nivel).length > 1;
+  if (p.nivel === 2) {
+    const que = p.op === '*' ? (es ? 'es una multiplicación' : 'it is a multiplication') : (es ? 'es una división' : 'it is a division');
+    const antes = sumas ? (es ? ', que va antes que las sumas y restas' : ', which comes before additions and subtractions') : '';
+    const izq = mismoNivel ? (es ? `${sumas ? ',' : ''} y es la de la izquierda` : `${sumas ? ',' : ''} and it is the one on the left`) : '';
+    return `${que}${antes}${izq}`;
+  }
+  return es ? 'solo hay sumas y restas, y es la de la izquierda' : 'there are only additions and subtractions, and it is the one on the left';
+}
+const NIVEL_OP = { '+': 1, '-': 1, '*': 2, ':': 2 };
+
+/** Ejercicio 1: la regla, la operación que va primero y por qué (o las que se pueden hacer ya). */
+export function explicaPrimero(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  const x = arbolDe(item.texto);
+  const ya = pasosPosibles(x, { cadenas: false });
+  let fin;
+  if (ya.length > 1) {
+    const lista = ya.map(p => cuentaAyuda(p.operacion)).join(es ? ' y ' : ' and ');
+    fin = es ? `Aquí se pueden hacer ya ${lista}: vale cualquiera de las dos.` : `Here ${lista} can both be done now: either one is right.`;
+  } else {
+    const por = motivo(x, ya[0], es);
+    const op = cuentaAyuda(ya[0].operacion);
+    fin = es ? `Va primero ${op}${por ? `, porque ${por}` : ''}.` : `${op} comes first${por ? `, because ${por}` : ''}.`;
+  }
+  return sinEspacios(`${tt(ORDEN_AYUDA)} ${fin}`);
 }
 
 /** Ejercicio 2: todos los pasos hasta quedarse con un solo número, cada uno con su resultado. */
@@ -155,18 +195,40 @@ export function explicaPasosAyuda(item, { tt }) {
   }
   const final = valorLiteral(x);
   const fin = tt({ es: 'La respuesta es', en: 'The answer is' });
-  return `${tt(TX.orden)} <ol class="pasos-ayuda">${filas.join('')}</ol> ${fin} <span class="cuenta">${htmlFraccion(final)}</span>.`;
+  return `${tt(ORDEN_AYUDA)} <ol class="pasos-ayuda">${filas.join('')}</ol> ${fin} <span class="cuenta">${htmlFraccion(final)}</span>.`;
 }
 
-/** Ejercicio 3: qué línea está mal, si es de orden o de cálculo, y cómo tocaba. */
-export function explicaErrorAyuda(item, { tt }) {
-  const linea = tt({ es: `La línea con el error es la ${item.linea}.`, en: `The line with the mistake is line ${item.linea}.` });
-  const queFue = item.tipo === 'orden'
-    ? tt(TX.ej3.era_orden)(item.operacion, item.canonica)
-    : tt(TX.ej3.era_calculo)(item.operacion, htmlFraccion(leerFraccion(item.valorBueno)));
-  const pista = pistaDe(item.error, item.operacion);
-  const bien = tt({ es: `Bien hecha, la línea ${item.linea} sería`, en: `Done right, line ${item.linea} would be` });
-  return sinEspacios(`${linea} ${queFue} ${pista ? tt(pista) : ''} ${bien} <span class="cuenta">= ${h(item.bueno)}</span>.`);
+// Las pistas que hablan de denominadores no dicen nada cuando la cuenta es entre dos naturales
+// («2 + 2», «1 · 2»): ahí la tarjeta da solo la cuenta bien hecha.
+const PISTAS_CON_ENTEROS = new Set(['confunde-la-operacion', 'signo-perdido', 'signo-del-primero', 'suma-en-vez-de-multiplicar']);
+const soloEnteros = operacion => !/\//.test(String(operacion));
+
+/** Ejercicio 3: la regla, qué ha pasado en la línea mala, cómo quedaba bien y la respuesta (línea y razón). */
+export function explicaErrorAyuda(item, { idioma, tt }) {
+  const es = idioma === 'es';
+  const n = item.linea;
+  const op = cuentaAyuda(item.operacion);
+  let cuerpo;
+  if (item.tipo === 'orden') {
+    const antes = analizar(item.lineas[n - 1]);
+    const por = motivo(antes, pasoCanonico(antes), es);
+    const toca = cuentaAyuda(item.canonica);
+    cuerpo = es
+      ? `En la línea ${n} se ha hecho ${op} antes de tiempo; tocaba ${toca}${por ? `, porque ${por}` : ''}.`
+      : `In line ${n}, ${op} was done too early; ${toca} came first${por ? `, because ${por}` : ''}.`;
+  } else {
+    const bueno = `<span class="cuenta">${h(item.operacion)} = ${htmlFraccion(leerFraccion(item.valorBueno))}</span>`;
+    const pista = soloEnteros(item.operacion) && !PISTAS_CON_ENTEROS.has(item.error) ? null : pistaDe(item.error, item.operacion);
+    cuerpo = es
+      ? `En la línea ${n} la operación era la que tocaba, pero está mal hecha: ${bueno}. ${pista ? tt(pista) : ''}`
+      : `In line ${n} it was the right operation, but it was worked out wrongly: ${bueno}. ${pista ? tt(pista) : ''}`;
+  }
+  // Si la línea buena es solo el número del cálculo, ya está dicha.
+  const bien = valorLiteral(analizar(item.bueno)) !== null && item.tipo === 'calculo' ? ''
+    : (es ? `Bien hecha, la línea ${n} queda así: <span class="cuenta">= ${h(item.bueno)}</span>.` : `Done right, line ${n} reads <span class="cuenta">= ${h(item.bueno)}</span>.`);
+  const razon = tt(item.tipo === 'orden' ? TX.ej3.es_orden : TX.ej3.es_calculo);
+  const fin = es ? `La respuesta es la línea ${n}: «${razon}».` : `The answer is line ${n}: “${razon}”.`;
+  return sinEspacios(`${tt(ORDEN_AYUDA)} ${cuerpo} ${bien} ${fin}`);
 }
 
 /** La pista de un error; para `signo-perdido` en un producto o un cociente es la regla de los signos. */
