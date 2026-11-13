@@ -4,6 +4,7 @@
 // típico (o `undefined` si el alumno acertó).
 
 import { fraccion, htmlFraccion, htmlCuenta, htmlRaya, MENOS } from '../_comun/fracciones.js';
+import { mcd } from '../_comun/aritmetica.js';
 import {
   F, par, tachado, contextoDe, pasosDivide, CONTEXTOS_PARTE,
   ERROR_SIN_SIMPLIFICAR, ERROR_DIVIDE_EN_VEZ_DE_MULTIPLICAR,
@@ -270,17 +271,32 @@ export function feedbackPotencia(item, { tt }, error) {
 
 const esNatural = p => p[1] === 1;
 const hayNegativa = (...pares) => pares.some(p => p[0] < 0);
+const NATURAL = { es: 'El número natural es una fracción con un 1 abajo.', en: 'The whole number is a fraction with 1 at the bottom.' };
+
+// Revisión del 13-11: las tarjetas terminaban en la cuenta (o en «Si se puede, el resultado se simplifica», la regla
+// detrás) sin decir la respuesta ni cómo se pasa de 88/36 a 22/9. Ahora: la regla delante, la cuenta del feedback,
+// entre qué se divide para simplificar (el m.c.d., como en los apuntes de la U4) y «La respuesta es …» al final.
+
+/** «Para simplificar, se divide arriba y abajo entre 4, el m.c.d. de 88 y 36.» si `bruto` no es ya la irreducible; si no, ''. */
+export function fraseSimplifica(bruto, tt) {
+  const n = Math.abs(bruto.num), d = bruto.den, g = mcd(n, d);
+  if (g === 1) return '';
+  return ` ${tt({
+    es: `Para simplificar, se divide arriba y abajo entre ${g}, el m.c.d. de ${n} y ${d}.`,
+    en: `To simplify, divide top and bottom by ${g}, the GCD of ${n} and ${d}.`,
+  })}`;
+}
+
+const laRespuesta = (valor, tt) => ` ${tt({ es: `La respuesta es ${fr(valor)}.`, en: `The answer is ${fr(valor)}.` })}`;
 
 /** Ejercicio 1. */
 export function explicaMultiplica(item, ctx) {
   const { tt } = ctx;
-  const regla = tt({ es: 'Se multiplica arriba por arriba y abajo por abajo.', en: 'Multiply top by top and bottom by bottom.' });
-  const natural = [item.a, item.b].some(esNatural)
-    ? ` ${tt({ es: 'El número natural es una fracción con un 1 abajo.', en: 'The whole number is a fraction with 1 at the bottom.' })}`
-    : '';
+  const regla = tt({ es: 'Se multiplica arriba por arriba y abajo por abajo, y después se simplifica si se puede.', en: 'Multiply top by top and bottom by bottom, then simplify if you can.' });
+  const natural = [item.a, item.b].some(esNatural) ? ` ${tt(NATURAL)}` : '';
   const signo = hayNegativa(item.a, item.b) ? ` ${signosDistintos(item, tt)}` : '';
-  const fin = tt({ es: 'Si se puede, el resultado se simplifica.', en: 'If you can, simplify the result.' });
-  return `${regla}${natural}${signo} ${feedbackMultiplica(item, ctx)} ${fin}`;
+  const bruto = F(item.a).multiplicar(F(item.b));
+  return `${regla}${natural}${signo} ${feedbackMultiplica(item, ctx)}${fraseSimplifica(bruto, tt)}${laRespuesta(item.valor, tt)}`;
 }
 
 /** Ejercicio 2. */
@@ -289,16 +305,23 @@ export function explicaParte(item, ctx) {
     es: 'La fracción «de» otra fracción es un producto: arriba por arriba y abajo por abajo.',
     en: 'A fraction “of” another fraction is a product: top by top and bottom by bottom.',
   });
-  return `${regla} ${feedbackParte(item, ctx)}`;
+  const bruto = F(item.a).multiplicar(F(item.c));
+  return `${regla} ${feedbackParte(item, ctx)}${fraseSimplifica(bruto, ctx.tt)}${laRespuesta(item.valor, ctx.tt)}`;
 }
 
-/** Ejercicio 3 (los dos pasos). */
+/** Ejercicio 3 (los dos pasos): con un natural, se dice que es una fracción con 1 abajo; al final, las dos respuestas. */
 export function explicaInversa(item, ctx) {
-  const regla = ctx.tt({
+  const { tt } = ctx;
+  const regla = tt({
     es: 'Para la inversa se da la vuelta a la fracción: lo de arriba pasa abajo y lo de abajo, arriba. El signo no cambia.',
     en: 'For the reciprocal, turn the fraction upside down: the top goes to the bottom and the bottom goes to the top. The sign does not change.',
   });
-  return `${regla} ${feedbackInversa(item, ctx)} ${feedbackProductoInversa(item, ctx)}`;
+  const f = F(item.f);
+  const natural = esNatural(item.f)
+    ? ` ${tt({ es: `${fr(f)} es ${htmlFraccion(f, { conUno: true })}.`, en: `${fr(f)} is ${htmlFraccion(f, { conUno: true })}.` })}`
+    : '';
+  const fin = tt({ es: `Las respuestas son ${fr(item.valor)} y 1.`, en: `The answers are ${fr(item.valor)} and 1.` });
+  return `${regla}${natural} ${feedbackInversa(item, ctx)} ${feedbackProductoInversa(item, ctx)} ${fin}`;
 }
 
 /** Ejercicio 4. */
@@ -308,17 +331,20 @@ export function explicaDivide(item, ctx) {
     es: 'Dividir entre una fracción es multiplicar por su inversa: la primera se queda igual y a la segunda se le da la vuelta.',
     en: 'To divide by a fraction, multiply by its reciprocal: the first one stays the same and you turn the second one upside down.',
   });
+  // El natural solo se aclara cuando es el divisor, que es al que se le da la vuelta (7 = 7/1 → 1/7).
+  const natural = esNatural(item.b) ? ` ${tt(NATURAL)}` : '';
   const signo = hayNegativa(item.a, item.b) ? ` ${signosDistintos(item, tt)}` : '';
-  return `${regla}${signo} ${feedbackDivide(item, ctx)}`;
+  const bruto = F(pasosDivide(item).producto);
+  return `${regla}${natural}${signo} ${feedbackDivide(item, ctx)}${fraseSimplifica(bruto, tt)}${laRespuesta(item.valor, tt)}`;
 }
 
-/** Ejercicio 5. */
+/** Ejercicio 5 (la base es irreducible, así que la potencia ya lo es: no hay que simplificar). */
 export function explicaPotencia(item, ctx) {
   const regla = ctx.tt({
     es: `El exponente dice cuántas veces se multiplica la fracción por sí misma: aquí, ${item.exp}. Se eleva el numerador y también el denominador.`,
     en: `The exponent tells you how many times to multiply the fraction by itself: here, ${item.exp}. Raise the numerator and also the denominator.`,
   });
-  return `${regla} ${feedbackPotencia(item, ctx)}`;
+  return `${regla} ${feedbackPotencia(item, ctx)}${laRespuesta(item.valor, ctx.tt)}`;
 }
 
 export { par, CONTEXTOS_PARTE };
