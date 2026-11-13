@@ -6,8 +6,8 @@
 // inglés; sin porcentajes, letras, fracciones ni «×»; unidades en inglés británico; la palabra no
 // matemática que decide la respuesta se aclara entre paréntesis; el feedback habla de LOS NÚMEROS DE ESE ÍTEM.
 
-import { aTexto, decimal, sumar, multiplicar, porPotenciaDe10 } from '../_comun/decimales.js';
-import { D, pasosNatural, pasosCombinada, textoExpresion } from './logica.js';
+import { aTexto, decimal, sumar, multiplicar, porPotenciaDe10, dividir } from '../_comun/decimales.js';
+import { D, pasosNatural, pasosDivision, pasosCombinada, textoExpresion, tienParentesis } from './logica.js';
 
 const n = (d, idioma) => aTexto(D(d).normalizar(), idioma);
 const n2 = (d, idioma) => aTexto(D(d).conCifras(2), idioma);
@@ -372,72 +372,154 @@ function solucionEstaBien(item, idioma) {
 
 
 // ─── «No lo sé»: la explicación de cada ejercicio (la regla y la cuenta del ítem) ──────────────
-// Reutilizan las `solucion…` de arriba (la cuenta con los números del ítem) y les ponen delante la
-// regla en una frase y detrás la respuesta, tal como la da por buena el ejercicio.
+// La regla delante, en una frase y con los números del ítem; después las cuentas, y al final la
+// respuesta tal como la da por buena el ejercicio. No reutilizan las `solucion…` de arriba (el
+// feedback): «1 cifras decimales» con un factor natural, «la coma debajo de la del dividendo» cuando el
+// dividendo no tiene coma y «14,8 €» con un solo decimal (hallazgos de la revisión, tarea 190).
 
 const respuesta = (idioma, txt) => ` ${idioma === 'es' ? 'La respuesta es' : 'The answer is'} <strong>${txt}</strong>.`;
 const dos = (es, en, idioma) => (idioma === 'es' ? es : en);
+/** «2 cifras decimales» / «1 decimal place». */
+const cifrasDec = (k, idioma) => (idioma === 'es' ? `${k} ${k === 1 ? 'cifra decimal' : 'cifras decimales'}` : `${k} decimal ${k === 1 ? 'place' : 'places'}`);
+/** Una opción del ejercicio entre comillas, como sale en el botón. */
+const opcion = (txt, idioma) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
+const FALTAN_CEROS = { es: 'Si faltan cifras, se completan con ceros.', en: 'If there are not enough digits, fill the gaps with zeros.' };
+/** Euros con sus dos decimales (14,80 €, €14.80), a partir de un decimal { m, k }. */
+const eurD = (d, idioma) => { const t = aTexto(D(d).conCifras(2), idioma); return idioma === 'en' ? `€${t}` : `${t} €`; };
 
 /** Ejercicio 1: colocar la coma. */
 export function explicaComa(item, { idioma }) {
-  const regla = item.forma === 'potencia'
-    ? dos(`Multiplicar por 0,1; 0,01 o 0,001 es dividir entre 10, 100 o 1000 (la coma va a la izquierda); dividir entre ellos es multiplicar (la coma va a la derecha).`,
-      `Times 0.1, 0.01 or 0.001 is dividing by 10, 100 or 1000 (the point moves left); dividing by them is multiplying (the point moves right).`, idioma)
-    : dos('Se multiplica sin coma y en el resultado se ponen tantas cifras decimales como tienen los dos factores juntos.',
-      'Multiply with no point, then put in the answer as many decimal places as both factors have together.', idioma);
-  const cifras = (k) => (idioma === 'es' ? `${k} ${k === 1 ? 'cifra decimal' : 'cifras decimales'}` : `${k} decimal ${k === 1 ? 'place' : 'places'}`);
-  const cuenta = item.forma === 'producto'
-    ? (() => {
-      const ka = D(item.a).k, kb = D(item.b).k, cta = `${enunciadoComa(item, idioma).cuenta} = ${n(item.resultado, idioma)}`;
-      return dos(`${c(cta)}: ${n(item.a, idioma)} tiene ${cifras(ka)} y ${n(item.b, idioma)} tiene ${cifras(kb)}; en total, ${cifras(ka + kb)}.`,
-        `${c(cta)}: ${n(item.a, idioma)} has ${cifras(ka)} and ${n(item.b, idioma)} has ${cifras(kb)}; in total, ${cifras(ka + kb)}.`, idioma);
-    })()
-    : solucionComa(item, idioma);
-  return `${regla} ${cuenta}${respuesta(idioma, n(item.resultado, idioma))}`;
+  const resultado = n(item.resultado, idioma);
+  const cuenta = c(`${enunciadoComa(item, idioma).cuenta} = ${resultado}`);
+  if (item.forma === 'potencia') {
+    const por = item.op === 'por', u = unoPor(item.p, idioma), p10 = 10 ** item.p, lug = lugares(item.p, idioma === 'es');
+    const regla = por
+      ? dos(`Multiplicar por ${u} es como dividir entre ${p10}: la coma se mueve ${lug} a la izquierda.`,
+        `Multiplying by ${u} is the same as dividing by ${p10}: the decimal point moves ${lug} to the left.`, idioma)
+      : dos(`Dividir entre ${u} es como multiplicar por ${p10}: la coma se mueve ${lug} a la derecha.`,
+        `Dividing by ${u} is the same as multiplying by ${p10}: the decimal point moves ${lug} to the right.`, idioma);
+    // Faltan cifras: a la izquierda, si el número tiene menos cifras que lugares tiene que haber detrás de la coma; a la derecha, si tiene menos decimales que lugares.
+    const d = D(item.d), faltan = por ? String(d.m).length < d.k + item.p : d.k < item.p;
+    return `${regla} ${cuenta}.${faltan ? ` ${FALTAN_CEROS[idioma]}` : ''}${respuesta(idioma, resultado)}`;
+  }
+  const a = D(item.a), b = D(item.b), ka = a.k, kb = b.k, k = ka + kb;
+  const regla = dos('Se multiplica sin comas y el resultado lleva tantas cifras decimales como los dos factores juntos.',
+    'Multiply with no decimal points; the answer has as many decimal places as both factors together.', idioma);
+  const tieneB = kb === 0 ? dos(`${n(b, idioma)} no tiene ninguna`, `${n(b, idioma)} has none`, idioma)
+    : dos(`${n(b, idioma)} tiene ${kb}`, `${n(b, idioma)} has ${kb}`, idioma);
+  const recuento = dos(`${n(a, idioma)} tiene ${cifrasDec(ka, idioma)} y ${tieneB}: en total, ${cifrasDec(k, idioma)}`,
+    `${n(a, idioma)} has ${cifrasDec(ka, idioma)} and ${tieneB}: ${cifrasDec(k, idioma)} in total`, idioma);
+  const faltan = String(item.enteros).length < k ? ` ${FALTAN_CEROS[idioma]}` : '';
+  return `${regla} ${c(`${a.m} · ${b.m} = ${item.enteros}`)}; ${recuento}. ${cuenta}.${faltan}${respuesta(idioma, resultado)}`;
 }
 
-/** Ejercicio 2: dividir entre un natural. */
+/** Un paso de la división larga: «Se baja el 7: 57 : 12 = 4, sobran 9.» */
+function pasoDivision(p, divisor, idioma) {
+  const es = idioma === 'es';
+  const cuenta = `${c(`${p.parcial} : ${divisor} = ${p.cifra}`)}${p.resto ? (es ? `, sobran ${p.resto}` : `, ${p.resto} left over`) : ''}`;
+  if (p.baja === null) return `${cuenta}.`;
+  const que = p.cero ? (es ? 'se añade un 0' : 'add a 0') : (es ? `se baja el ${p.baja}` : `bring down the ${p.baja}`);
+  const antes = p.coma ? (es ? `Se pone la coma en el cociente y ${que}` : `Put the decimal point in the quotient and ${que}`) : que[0].toUpperCase() + que.slice(1);
+  return `${antes}: ${cuenta}.`;
+}
+
+/** Ejercicio 2: dividir entre un natural (la división larga, cifra a cifra). */
 export function explicaEntre(item, { idioma }) {
-  const regla = dos('Se divide como siempre; la coma del cociente se pone al bajar la primera cifra decimal, y si sobra resto se añade un cero y se sigue.',
-    'Divide as usual; the point of the quotient goes in when you bring down the first decimal digit, and if there is a remainder you add a zero and keep going.', idioma);
-  return `${regla} ${solucionEntre(item, idioma)}${respuesta(idioma, n(item.cociente, idioma))}`;
+  const regla = dos('Se divide como siempre; al pasar a los decimales, se pone la coma en el cociente.',
+    'Divide as usual; when you reach the decimals, put the decimal point in the quotient.', idioma);
+  const pasos = pasosDivision(item.dividendo, item.divisor).map(p => `<li>${pasoDivision(p, item.divisor, idioma)}</li>`).join('');
+  return `${regla} <ol class="pasos-ayuda">${pasos}</ol>${c(`${cuentaEntre(item, idioma)} = ${n(item.cociente, idioma)}`)}.${respuesta(idioma, n(item.cociente, idioma))}`;
 }
 
 /** Ejercicio 3: dividir entre un decimal (escribir el cociente o elegir la división equivalente). */
 export function explicaDecimal(item, { idioma }) {
-  const regla = dos('Se mueve la coma el mismo número de lugares en el dividendo y en el divisor, hasta que el divisor no tenga coma; el cociente no cambia.',
-    'Move the point the same number of places in the dividend and in the divisor, until the divisor has no point; the quotient does not change.', idioma);
-  const fin = item.tipo === 'equivalente' ? divisionEquivalente(item, idioma) : n(item.cociente, idioma);
-  return `${regla} ${solucionDecimal(item, idioma)}${respuesta(idioma, fin)}`;
+  const s = D(item.divisor).k, lug = lugares(s, idioma === 'es');
+  const regla = dos('Para dividir entre un decimal, la coma se mueve a la derecha los mismos lugares en los dos números, hasta que el divisor no tenga coma; el cociente no cambia.',
+    'To divide by a decimal, move the decimal point to the right the same number of places in both numbers, until the divisor has no point; the quotient does not change.', idioma);
+  const aqui = dos(`${n(item.divisor, idioma)} tiene ${cifrasDec(s, idioma)}: ${lug}.`,
+    `${n(item.divisor, idioma)} has ${cifrasDec(s, idioma)}: ${lug}.`, idioma);
+  const faltan = D(item.dividendo).normalizar().k < s ? ` ${FALTAN_CEROS[idioma]}` : '';
+  const equivalente = divisionEquivalente(item, idioma);
+  const cuenta = item.tipo === 'equivalente'
+    ? c(`${cuentaDecimal(item, idioma)} = ${equivalente}`)
+    : c(`${cuentaDecimal(item, idioma)} = ${equivalente} = ${n(item.cociente, idioma)}`);
+  return `${regla} ${aqui}${faltan} ${cuenta}.${respuesta(idioma, item.tipo === 'equivalente' ? equivalente : n(item.cociente, idioma))}`;
 }
 
-/** Ejercicio 4: ¿está bien hecha la división? */
+/** Ejercicio 4: ¿está bien hecha la división? La prueba con lo que se ve y, si falla, por qué y la buena. */
 export function explicaEstaBien(item, { idioma }) {
-  const regla = dos('Una división está bien si divisor · cociente + resto = dividendo.', 'A division is right if divisor · quotient + remainder = dividend.', idioma);
-  const fin = item.estaBien ? dos('que está bien hecha', 'that it is right', idioma) : dos('que está mal hecha', 'that it is wrong', idioma);
-  return `${regla} ${solucionEstaBien(item, idioma)}${respuesta(idioma, fin)}`;
+  const regla = dos('La prueba: divisor · cociente + resto tiene que dar el dividendo.',
+    'The proof: divisor · quotient + remainder must give the dividend.', idioma);
+  const buena = prueba(item, item.cociente, item.resto, idioma).texto;
+  if (item.estaBien) {
+    return `${regla} ${c(buena)}, ${dos('que es el dividendo', 'which is the dividend', idioma)}.${respuesta(idioma, opcion(TX.ej4.estaBien[idioma], idioma))}`;
+  }
+  const mala = prueba(item, item.mostrado.cociente, item.mostrado.resto, idioma).texto;
+  const m = item.mostrado, k = D(item.b).k;
+  const porque = {
+    'resto-sin-deshacer': dos(`${n(m.resto, idioma)} es el resto de la división sin coma; el de la original es ${c(`${n(m.resto, idioma)} : ${10 ** k} = ${n(item.resto, idioma)}`)}.`,
+      `${n(m.resto, idioma)} is the remainder of the division with no point; in the original it is ${c(`${n(m.resto, idioma)} : ${10 ** k} = ${n(item.resto, idioma)}`)}.`, idioma),
+    'cociente-coma-corrida': dos(`El cociente tiene la coma mal puesta: es ${n2(item.cociente, idioma)}.`,
+      `The quotient has the decimal point in the wrong place: it is ${n2(item.cociente, idioma)}.`, idioma),
+    'cociente-redondeado': dos(`El cociente está redondeado, y hay que cortarlo: es ${n2(item.cociente, idioma)}.`,
+      `The quotient is rounded, but it has to be cut off: it is ${n2(item.cociente, idioma)}.`, idioma),
+  }[item.error];
+  return `${regla} ${c(mala)}, ${dos(`que no es ${n(item.a, idioma)}`, `which is not ${n(item.a, idioma)}`, idioma)}. ${porque} ${dos('Bien hecha', 'Done right', idioma)}: ${c(buena)}.`
+    + respuesta(idioma, opcion(TX.ej4.estaMal[idioma], idioma));
 }
 
-/** Ejercicio 5: problemas. */
+/** La división de un problema, con la coma ya fuera del divisor si la tiene: «10,81 : 2,3 = 108,1 : 23». */
+function divisionSinComa(a, b, idioma) {
+  const s = D(b).normalizar().k;
+  const texto = `${aTexto(D(a), idioma)} : ${n(b, idioma)}`;
+  return s === 0 ? texto : `${texto} = ${n(porPotenciaDe10(D(a), s), idioma)} : ${n(porPotenciaDe10(D(b), s), idioma)}`;
+}
+
+/** a : b redondeado: «Sale 29,05…; a la décima se mira la cifra siguiente, 5: como es 5 o más, se sube y queda 29,1 L.» */
+function redondeoDe(a, b, cifras, redondeado, idioma) {
+  const { cociente: corto, exacta } = dividir(a, b, cifras + 1);
+  const sigue = !exacta;
+  const siguiente = Math.abs(corto.m) % 10;
+  const valor = `${aTexto(corto, idioma)}${sigue ? '…' : '.'}`;   // tras «…» no va punto
+  const hasta = cifras === 1 ? dos('a la décima', 'to one decimal place', idioma) : dos('al céntimo', 'to the nearest cent', idioma);
+  const sube = siguiente >= 5;
+  return dos(`Sale ${valor} Para redondear ${hasta} se mira la cifra siguiente, ${siguiente}: ${sube ? 'como es 5 o más, se sube' : 'como es menor que 5, se deja'} y queda ${redondeado}.`,
+    `You get ${valor} To round ${hasta}, look at the next digit, ${siguiente}: ${sube ? 'it is 5 or more, so round up' : 'it is less than 5, so leave it'}, and you get ${redondeado}.`, idioma);
+}
+
+/** Ejercicio 5: problemas (la regla, las cuentas con sus unidades y la respuesta en euros con dos decimales). */
 export function explicaProblema(item, { idioma }) {
-  const regla = {
-    importe: dos('Importe = cantidad · precio.', 'Amount = quantity · price.', idioma),
-    precio: dos('Precio de un kilo = importe : cantidad.', 'Price of one kilogram = amount : quantity.', idioma),
-    litros: dos('Litros = importe : precio del litro.', 'Litres = amount : price per litre.', idioma),
-    viaje: dos('Primero el gasto total (litros · precio) y después se reparte entre las personas.', 'First the total cost (litres · price), then share it between the people.', idioma),
-  }[item.tipo];
-  const resp = item.tipo === 'importe' ? eur(item.importe, idioma)
-    : item.tipo === 'precio' ? eur(item.precio, idioma)
-      : item.tipo === 'litros' ? `${n(item.litros, idioma)} L`
-        : (idioma === 'en' ? `€${n(item.porPersona, idioma)}` : `${n(item.porPersona, idioma)} €`);
-  const redondeo = item.redondeo ? ` ${dos('Se redondea como pide el enunciado.', 'Round as the question says.', idioma)}` : '';
-  const cuentas = cuentaProblema(item, idioma).replace('</span> <span', '</span>; <span');
-  return `${regla}${redondeo} ${cuentas}.${respuesta(idioma, resp)}`;
+  const E = idioma === 'en' ? ' euros' : ' €';
+  const precio = euros(item.precio, idioma);
+  switch (item.tipo) {
+    case 'importe':
+      return `${dos('Lo que pagas = kilos · precio del kilo.', 'What you pay = kilograms · price per kilogram.', idioma)} ${c(`${n(item.peso, idioma)} · ${precio} = ${euros(item.importe, idioma)}${E}`)}.`
+        + respuesta(idioma, eur(item.importe, idioma));
+    case 'precio':
+      return `${dos('Precio del kilo = lo que cuesta : kilos.', 'Price per kilogram = cost : kilograms.', idioma)} ${c(`${divisionSinComa(decimal(item.importe, 2), item.peso, idioma)} = ${precio}${E}`)}.`
+        + respuesta(idioma, eur(item.precio, idioma));
+    case 'litros': {
+      const regla = dos('Litros = euros que echas : precio del litro.', 'Litres = euros you put in : price per litre.', idioma);
+      const a = decimal(item.importe, 2), b = decimal(item.precio, 2), L = `${n(item.litros, idioma)} L`;
+      if (!item.redondeo) return `${regla} ${c(`${divisionSinComa(a, b, idioma)} = ${L}`)}.${respuesta(idioma, L)}`;
+      return `${regla} ${c(divisionSinComa(a, b, idioma))}. ${redondeoDe(a, b, 1, L, idioma)}${respuesta(idioma, L)}`;
+    }
+    default: {
+      const regla = dos('Primero el gasto total (litros · precio del litro) y después se reparte entre las personas.',
+        'First the total cost (litres · price per litre), then share it between the people.', idioma);
+      const total = c(`${item.litros} · ${precio} = ${euros(item.total, idioma)}${E}`);
+      const pp = eurD(item.porPersona, idioma);
+      const reparto = `${euros(item.total, idioma)} : ${item.personas}`;
+      if (!item.redondeo) return `${regla} ${total}; ${c(`${reparto} = ${aTexto(D(item.porPersona).conCifras(2), idioma)}${E}`)}.${respuesta(idioma, pp)}`;
+      return `${regla} ${total}; ${c(reparto)}. ${redondeoDe(decimal(item.total, 2), item.personas, 2, pp, idioma)}${respuesta(idioma, pp)}`;
+    }
+  }
 }
 
 /** Ejercicio 6: combinadas. */
 export function explicaCombinada(item, { idioma }) {
-  const regla = dos('Primero lo de dentro del paréntesis, luego · y :, y al final + y −; un paso por línea.',
-    'First what is inside the brackets, then · and :, and last + and −; one step per line.', idioma);
+  const regla = tienParentesis(item.expresion)
+    ? dos('Primero lo de dentro del paréntesis, luego · y :, y al final + y −.', 'First what is inside the brackets, then · and :, and last + and −.', idioma)
+    : dos('Primero se hacen · y :, y al final + y −.', 'First do · and :, and last + and −.', idioma);
   return `${regla} ${pasosDe(item, idioma)}.${respuesta(idioma, n(item.resultado, idioma))}`;
 }

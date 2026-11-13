@@ -259,6 +259,29 @@ export function pasosNatural(dividendo, divisor) {
   return pasos;
 }
 
+/**
+ * La división larga de un decimal (o natural) entre un natural, cifra a cifra, para el «No lo sé»:
+ * 209,76 : 12 → [{ parcial: 209, cifra: 17, resto: 5, baja: null }, { parcial: 57, cifra: 4, resto: 9, baja: 7, coma: true }, …].
+ * El primer paso divide la parte entera; los demás bajan la cifra decimal siguiente (`baja`) o, si ya no
+ * quedan, un 0 (`cero: true`). `coma` marca el paso en el que se pone la coma en el cociente. Pura: no
+ * cambia ningún ítem. Para cuando el resto es 0 y no quedan cifras (o tras `max` pasos decimales).
+ */
+export function pasosDivision(dividendo, divisor, max = 6) {
+  const x = D(dividendo).normalizar();
+  const entero = Math.floor(x.m / pot(x.k));
+  const decimales = x.k > 0 ? String(x.m % pot(x.k)).padStart(x.k, '0') : '';
+  const pasos = [{ parcial: entero, cifra: Math.floor(entero / divisor), resto: entero % divisor, baja: null, cero: false, coma: false }];
+  let resto = pasos[0].resto;
+  for (let i = 0; (resto !== 0 || i < decimales.length) && i < max; i++) {
+    const cero = i >= decimales.length;
+    const baja = cero ? 0 : Number(decimales[i]);
+    const parcial = resto * 10 + baja;
+    resto = parcial % divisor;
+    pasos.push({ parcial, cifra: Math.floor(parcial / divisor), resto, baja, cero, coma: i === 0 });
+  }
+  return pasos;
+}
+
 // ─── Ejercicio 3: divide entre un decimal ────────────────────────────────────────────────────
 
 const DIVISORES_DECIMALES = ['0.5', '0.25', '0.2', '0.4', '0.05', '0.15', '0.12', '0.16', '0.75', '0.8', '0.6', '0.9', '1.5', '2.5', '1.2', '0.04', '0.025', '0.125', '0.08', '0.35']
