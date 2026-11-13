@@ -89,6 +89,10 @@ Propio de la unidad 1: La unidad 1 usa «×» para el producto (el resto de su m
   y `aciertos` de 0 a 9; si tu `generar` necesita algo más, la explicación tiene que aguantar cualquier ítem que salga.
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
+- (s-20261113T074656-bd10878b) En `propiedades`, `generarJuntar` solo da cadenas de 3 términos y bases ajenas con
+  `sesion.aciertos >= 3`: el test debe pasarle `{ aciertos: 5 }` o solo ve el caso fácil. Y los ayudantes puros
+  (`pot`, `cuentaDe`…) estaban en `practica.js`: hay que moverlos a `textos.js` para poder testear la explicación sin navegador.
+- (s-20261113T074656-bd10878b) En zsh `git add $F` con `F="a b"` no separa: usa un array `F=(a b)` y `"${F[@]}"`.
 
 ## Prohibido (propio de esta tarea)
 
