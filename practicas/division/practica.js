@@ -143,10 +143,13 @@ function montarInversa(contenedor, item, api) {
     alElegir(v) {
       if (api.respondido()) return;
       botones.marcar([solucion], v);
-      const explicacion = ({ tt }) => (solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r, D)
-        : solucion === 'ninguna' ? tt(TX.prueba.inversa_ninguna)(D, a, b, r)
-        : solucion === 'a' ? tt(TX.prueba.inversa_una)(D, a, b, r, b)
-        : tt(TX.prueba.inversa_una)(D, b, a, r, a));
+      // Con una sola división buena, el mensaje depende de lo pulsado (ver textos.js).
+      const [buena, otro] = solucion === 'a' ? [a, b] : [b, a];
+      const explicacion = ({ tt }) => (solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r)
+        : solucion === 'ninguna' ? tt(TX.prueba.inversa_ninguna)(a, b, r)
+        : v === solucion ? tt(TX.prueba.inversa_una_ok)(buena, otro, r)
+        : v === 'ninguna' ? tt(TX.prueba.inversa_una_si)(D, buena, r)
+        : tt(TX.prueba.inversa_una_regla)(D, otro, r));
       api.responder({ acierto: v === solucion, html: explicacion, espera: 2600 });
     },
   });

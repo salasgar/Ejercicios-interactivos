@@ -100,16 +100,26 @@ export const TX = {
       en: 'the check has to be dividend = divisor · quotient + remainder',
     },
     inversa_ambas: {
-      es: (a, b, r, D) => `Las dos valen: ${D} : ${a} da cociente ${b} y resto ${r} (${r} < ${a}); y ${D} : ${b} da cociente ${a} y resto ${r} (${r} < ${b}).`,
-      en: (a, b, r, D) => `Both are right: ${D} ÷ ${a} gives quotient ${b} and remainder ${r} (${r} < ${a}); and ${D} ÷ ${b} gives quotient ${a} and remainder ${r} (${r} < ${b}).`,
+      es: (a, b, r) => `Las dos valen: el resto ${r} es menor que ${a} y menor que ${b}.`,
+      en: (a, b, r) => `Both are right: the remainder ${r} is less than ${a} and less than ${b}.`,
     },
-    inversa_una: {
-      es: (D, a, b, r, otro) => `Vale ${D} : ${a} (cociente ${b}, resto ${r}, y ${r} < ${a}). En ${D} : ${otro} el resto ${r} no sería menor que el divisor ${otro}.`,
-      en: (D, a, b, r, otro) => `${D} ÷ ${a} works (quotient ${b}, remainder ${r}, and ${r} < ${a}). In ${D} ÷ ${otro} the remainder ${r} would not be less than the divisor ${otro}.`,
+    // Solución «solo una» (D : a vale, D : otro no). El mensaje depende de lo pulsado:
+    // acierto → inversa_una_ok; «De ninguna» → inversa_una_si; lo demás → inversa_una_regla.
+    inversa_una_ok: {
+      es: (a, otro, r) => `El resto ${r} es menor que ${a}, pero no es menor que ${otro}.`,
+      en: (a, otro, r) => `The remainder ${r} is less than ${a}, but it is not less than ${otro}.`,
+    },
+    inversa_una_si: {
+      es: (D, a, r) => `Sí es la prueba de ${D} : ${a}: el resto ${r} es menor que el divisor ${a}.`,
+      en: (D, a, r) => `It is the check of ${D} ÷ ${a}: the remainder ${r} is less than the divisor ${a}.`,
+    },
+    inversa_una_regla: {
+      es: (D, otro, r) => `El resto tiene que ser menor que el divisor. En la división ${D} : ${otro} el resto no puede ser ${r}.`,
+      en: (D, otro, r) => `The remainder has to be less than the divisor. In the division ${D} ÷ ${otro} the remainder cannot be ${r}.`,
     },
     inversa_ninguna: {
-      es: (D, a, b, r) => `En ${D} : ${a} y en ${D} : ${b} el resto ${r} no es menor que el divisor (${r} ≥ ${a} y ${r} ≥ ${b}), así que no es la prueba de ninguna.`,
-      en: (D, a, b, r) => `In ${D} ÷ ${a} and in ${D} ÷ ${b} the remainder ${r} is not less than the divisor (${r} ≥ ${a} and ${r} ≥ ${b}), so it is the check of neither.`,
+      es: (a, b, r) => `El resto tiene que ser menor que el divisor. Aquí el resto ${r} no es menor que ${a} ni que ${b}.`,
+      en: (a, b, r) => `The remainder has to be less than the divisor. Here the remainder ${r} is not less than ${a} or ${b}.`,
     },
   },
   // ─── Ejercicio 3 ───
