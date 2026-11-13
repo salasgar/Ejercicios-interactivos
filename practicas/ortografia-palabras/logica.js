@@ -766,11 +766,26 @@ export const idErrorNumero = item => item.error;
 
 // --- «No lo sé»: la explicación de cada ejercicio (regla delante, la del banco detrás, solución al final) ---
 
+/**
+ * La frase entre comillas, sin su punto final: el punto va detrás de las comillas de cierre y no se duplica
+ * («… de naranja». y no «… de naranja.».). Los signos ? y ! se quedan dentro: «¿Me pasas la sal?».
+ */
+export const fraseCitada = frase => frase.replace(/\.$/, '');
+
 const ayudaHueco = (item, regla, explicacion) => `<p>${regla}</p>
-  <p>${explicacion}</p><p>Con la palabra puesta: «${rellenar(item.frase, `<b>${item.buena}</b>`)}». La respuesta es <b>${item.buena}</b>.</p>`;
+  <p>${explicacion}</p><p>Con la palabra puesta: «${fraseCitada(rellenar(item.frase, `<b>${item.buena}</b>`))}». La respuesta es <b>${item.buena}</b>.</p>`;
 
 export const ayudaJuntas = item => ayudaHueco(item, 'Lee la frase con cada opción y fíjate en qué quiere decir: la palabra buena es la que da sentido a la frase.', explicacionJuntas(item));
 
-export const ayudaHomofono = item => ayudaHueco(item, 'Estas palabras suenan igual pero significan cosas distintas. Mira qué se dice en la frase y elige la que encaja.', explicacionHomofono(item));
+/**
+ * Lo mismo que `explicacionHomofono`, pero sin empezar frase en minúscula detrás de punto («… el saludo. «ola» es…»):
+ * las otras van detrás de punto y coma.
+ */
+export function porQueHomofono(item) {
+  const otras = opcionesHomofono(item).filter(p => p !== item.buena);
+  return `Aquí va <b>${item.buena}</b>: ${SIGNIFICADOS[item.buena]}; en cambio, ${otras.map(o => `«${o}» es ${SIGNIFICADOS[o]}`).join(', y ')}.`;
+}
+
+export const ayudaHomofono = item => ayudaHueco(item, 'Estas palabras suenan igual pero significan cosas distintas. Mira qué se dice en la frase y elige la que encaja.', porQueHomofono(item));
 
 export const ayudaNumero = item => ayudaHueco(item, 'Mira cómo se escribe la palabra o el símbolo: tiene una forma correcta fija, y la otra es una falta típica.', explicacionNumero(item));

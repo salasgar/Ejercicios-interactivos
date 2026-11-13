@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
   JUNTAS, HOMOFONOS, NUMEROS_Y_SIMBOLOS, generarJuntas, generarHomofonos, generarNumeros,
-  ayudaJuntas, ayudaHomofono, ayudaNumero, opcionesHomofono, opcionesNumero, rellenar,
+  ayudaJuntas, ayudaHomofono, ayudaNumero, opcionesHomofono, opcionesNumero, rellenar, fraseCitada,
 } from '../practicas/ortografia-palabras/logica.js';
 
 const N = 1000;
@@ -21,8 +21,14 @@ function recorrer(generar, banco, ayuda, semilla, opciones) {
     assert.doesNotMatch(html, /undefined|NaN|\[object|×/, p);
     assert.doesNotMatch(p, /\bnull\b/, p);
     assert.ok(p.endsWith(`La respuesta es ${it.buena}.`), p);
-    assert.ok(p.includes(`«${rellenar(it.frase, it.buena)}»`), p);
+    assert.ok(p.includes(`«${fraseCitada(rellenar(it.frase, it.buena))}»`), p);
     assert.ok(opciones(it, item).includes(it.buena), 'la buena es una de las opciones');
+    // Revisión 192: es una práctica de ortografía; la tarjeta no puede tener ella misma faltas de puntuación.
+    assert.doesNotMatch(p, /\.»\./, `punto dentro y fuera de las comillas: ${p}`);
+    // («… el saludo. «ola» es…»; empezar párrafo con la palabra citada en negrita, «<b>sino</b>, junto…», sí vale).
+    for (const parrafo of html.split('<p>').map(plano)) {
+      assert.doesNotMatch(parrafo, /\. «[a-záéíóú]/, `frase en minúscula detrás de punto: ${parrafo}`);
+    }
   }
 }
 
