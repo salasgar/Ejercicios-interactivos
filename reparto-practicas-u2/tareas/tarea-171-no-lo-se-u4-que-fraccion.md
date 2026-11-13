@@ -90,6 +90,8 @@ Propio de la unidad 4: Fracciones con raya (`htmlFraccion`), la solución irredu
 - (de la coordinadora) Otra sesión hace arreglos sueltos en prácticas fuera del reparto (12-11: `division`,
   `factorizaciones`): por eso el `git status --short` de tus carpetas antes de empezar cada práctica.
 
+- (de la 171, relevo s-20261113T074657-0aff1360) `htmlFraccion` no admite un hueco («□») como término: no pongas el ítem con hueco dentro de la explicación, usa el texto de la regla. Al leer a mano salieron «sombrear 1 partes» y «La respuesta es 21 : 1/3 = …» (parece una división): cuida plurales y los dos puntos.
+
 ## Prohibido (propio de esta tarea)
 
 - Cambiar generadores, opciones, comprobaciones o el feedback que ya existe; tocar `disponible` en `catalogo.js`.
