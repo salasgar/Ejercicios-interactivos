@@ -634,3 +634,60 @@ export const PASOS = [
 ];
 
 export const PASOS_POR_ID = Object.fromEntries(PASOS.map(p => [p.id, p]));
+
+// ─── Explicaciones («No lo sé» y feedback) ─────────────────────────────────────
+
+import { esc } from '../_comun/textos.js';
+
+/** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
+export const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
+
+/** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
+export function explicacion(item, { tt }) {
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  if (!item.error) {
+    // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
+    const porque = tt(plantilla.porque(item.params));
+    return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
+  }
+  const n = item.error.linea + 1;
+  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
+  return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
+}
+
+/** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
+export function explicacionPasos(item, { tt }) {
+  const plantilla = PASOS_POR_ID[item.plantilla];
+  if (item.salta) {
+    const k = plantilla.entre ?? item.lineas.length - 1;
+    return `${tt(TX.falta_paso)(k)} ${html(`= ${plantilla.falta(item.params)}`)}<br>${html(tt(plantilla.porque(item.params)))}`;
+  }
+  return `${tt(TX.paso_a_paso)} ${html(tt(plantilla.porque(item.params)))}`;
+}
+
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cierre = (tt, texto) => `<p><strong>${tt(RESPUESTA)}: ${texto}${texto.endsWith('.') ? '' : '.'}</strong></p>`;
+
+/** «No lo sé» del ejercicio 1: la explicación del ítem y la respuesta. */
+export function explicaHay(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, esc(tt(item.error ? TX.error : TX.bien)))}`;
+}
+
+/** «No lo sé» del ejercicio 2: dónde está el error. */
+export function explicaLinea(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, `${esc(tt(TX.linea))} ${item.solucion + 1}`)}`;
+}
+
+/** «No lo sé» del ejercicio 3: cómo se llama el error. */
+export function explicaNombre(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, esc(tt(NOMBRES[item.solucion])))}`;
+}
+
+/** «No lo sé» del ejercicio 4: ¿falta un paso? */
+export function explicaPasos(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${explicacionPasos(item, ctx)}</p>${cierre(tt, esc(tt(item.solucion === 'si' ? TX.si : TX.no)))}`;
+}

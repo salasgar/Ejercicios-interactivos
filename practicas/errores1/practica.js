@@ -4,29 +4,13 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { esc } from '../_comun/textos.js';
-import { TX, NOMBRES } from './textos.js';
-import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clavePasos, PLANTILLA_POR_ID, PASOS_POR_ID } from './logica.js';
-
-/** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
-const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
+import { TX, NOMBRES, html, explicacion, explicacionPasos, explicaHay, explicaLinea, explicaNombre, explicaPasos } from './textos.js';
+import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clavePasos } from './logica.js';
 
 function procedimiento(item, { tt }) {
   const filas = item.lineas.map((l, i) =>
     `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${html(tt(l))}</span></li>`);
   return `<ol class="procedimiento">${filas.join('')}</ol>`;
-}
-
-/** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
-function explicacion(item, { tt }) {
-  const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  if (!item.error) {
-    // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
-    const porque = tt(plantilla.porque(item.params));
-    return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
-  }
-  const n = item.error.linea + 1;
-  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
-  return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
 }
 
 const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
@@ -79,16 +63,6 @@ function montarNombre(contenedor, item, api) {
   });
 }
 
-/** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
-function explicacionPasos(item, { tt }) {
-  const plantilla = PASOS_POR_ID[item.plantilla];
-  if (item.salta) {
-    const k = plantilla.entre ?? item.lineas.length - 1;
-    return `${tt(TX.falta_paso)(k)} ${html(`= ${plantilla.falta(item.params)}`)}<br>${html(tt(plantilla.porque(item.params)))}`;
-  }
-  return `${tt(TX.paso_a_paso)} ${html(tt(plantilla.porque(item.params)))}`;
-}
-
 function montarPasos(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = enunciadoPasos(item, api);
@@ -114,6 +88,7 @@ arrancar({
       clave: claveItem,
       montar: montarHay,
       enunciado: enunciadoHay,
+      explicacion: explicaHay,
     },
     {
       nombre: TX.nombre.linea,
@@ -122,6 +97,7 @@ arrancar({
       clave: claveItem,
       montar: montarLinea,
       enunciado: enunciadoLinea,
+      explicacion: explicaLinea,
     },
     {
       nombre: TX.nombre.nombre,
@@ -130,6 +106,7 @@ arrancar({
       clave: claveItem,
       montar: montarNombre,
       enunciado: enunciadoNombre,
+      explicacion: explicaNombre,
     },
     {
       nombre: TX.nombre.pasos,
@@ -139,6 +116,7 @@ arrancar({
       clave: clavePasos,
       montar: montarPasos,
       enunciado: enunciadoPasos,
+      explicacion: explicaPasos,
     },
   ],
 });
