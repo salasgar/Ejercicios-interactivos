@@ -9,7 +9,7 @@ import { declaracionDe } from '../practicas/_comun/base.js';
 import { PAREJAS, partes, estaBien } from '../practicas/ortografia/logica.js';
 import { PARES, PREGUNTAS, frase, alPrincipio, mayuscula } from '../practicas/ortografia/tildes.js';
 import { opciones as opcionesComa, buena as buenaComa } from '../practicas/ortografia/comas.js';
-import { opcionesSignos } from '../practicas/ortografia/signos.js';
+import { SIGNOS, opcionesSignos } from '../practicas/ortografia/signos.js';
 import { opcionesSujeto } from '../practicas/ortografia/sujeto.js';
 
 const N = 1000;
@@ -90,7 +90,9 @@ test('ortografia, ejercicios 10-11 (signos y sujeto): la respuesta es la frase b
     const buena = opcionesSignos(item).find(o => o.k === 0).texto;
     assert.equal(resp, `<i>${buena}</i>`);
     assert.equal(veces(html, `<i>${buena}</i>`), 1, plano(html));
-    assert.ok(html.startsWith('A las frases mal escritas: '), plano(html));
+    // Segunda pasada de la 192: cada mala con su propio motivo (antes, «A las frases mal escritas: le falta…»).
+    for (const [mala, motivo] of SIGNOS[item.i].malas) assert.ok(html.includes(`En <i>${mala}</i>, ${motivo}.`), plano(html));
+    assert.doesNotMatch(html, /A las (otras|frases mal escritas)/, plano(html));
   });
   recorrer(10, 181311, (item, resp, html) => {
     const buena = opcionesSujeto(item).find(o => o.k === 0).texto;

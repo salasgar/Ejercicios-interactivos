@@ -10,7 +10,7 @@ import { TX, explicacion } from './textos.js';
 import { partes, rellenar, estaBien } from './logica.js';
 import { explicacionComa, opciones, buena as opcionBuena } from './comas.js';
 import { frase, alPrincipio, mayuscula, explicacionExtra, explicacionTilde, PARES } from './tildes.js';
-import { explicacionSignos, opcionesSignos } from './signos.js';
+import { SIGNOS, opcionesSignos } from './signos.js';
 import { explicacionSujeto, opcionesSujeto } from './sujeto.js';
 
 const respuesta = html => `<br>La respuesta es ${html}`;
@@ -50,9 +50,11 @@ export function ayudaTilde(item, { esc }) {
 }
 
 /** Ejercicios 10 y 11: la frase bien escrita es la de la posición 0. */
+// Segunda pasada de la revisión 192 (s-20261113T170145-b187d221): «A las frases mal escritas: le falta…» no
+// concordaba (las frases / le) ni decía cuál de las dos tenía cada fallo; ahora cada mala va con el suyo,
+// con los mismos motivos del banco (signos.js no se toca).
 export function ayudaSignos(item) {
-  // Sin la frase buena delante, «A las otras» no tendría a qué referirse.
-  const porque = sinFraseInicial(explicacionSignos(item, 0)).replace(/^A las otras: /, 'A las frases mal escritas: ');
+  const porque = SIGNOS[item.i].malas.map(([texto, motivo]) => `En <i>${texto}</i>, ${motivo}.`).join(' ');
   return `${porque}${respuesta(`<i>${opcionesSignos(item).find(o => o.k === 0).texto}</i>`)}`;
 }
 
