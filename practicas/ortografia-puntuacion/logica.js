@@ -460,9 +460,30 @@ export function explicacionElegir(item, k) {
 // Revisión 192: «La respuesta es X», sin dos puntos entre «es» y lo que sigue (la RAE no los pone entre
 // el verbo y su atributo, y esto es una práctica de ortografía); y la frase buena ya no sale dos veces:
 // la tarjeta dice qué falla en cada mala y acaba en la buena.
+// Segunda pasada de la revisión 192 (s-20261113T170145-b187d221): cuando las dos malas fallan en lo mismo
+// (20 de los 99 ítems de los ej. 2 y 3: incisos, conectores, puntos suspensivos), el motivo sale una vez
+// para las dos y no repetido palabra por palabra; y en los correos sin tildes, la tarjeta nombra las
+// palabras de ese correo que las llevan, en vez de la lista fija «qué, cuándo, explicación…».
+function motivoAyuda(texto, id, bien) {
+  if (id !== TILDE) return MOTIVOS[id];
+  const malas = texto.split(/\s+/);
+  const buenas = bien.split(/\s+/);
+  const conTilde = malas.length === buenas.length ? buenas.filter((p, i) => p !== malas[i]).map(limpia) : [];
+  if (!conTilde.length) return MOTIVOS[id];
+  const lista = enLista(conTilde.map(p => `«${p}»`));
+  return conTilde.length > 1 ? `faltan las tildes de ${lista}` : `falta la tilde de ${lista}`;
+}
+
 export function ayudaElegir(item) {
   if (esAsuntoCuerpo(item)) return `${explicacionElegir(item, 0)}<br>La respuesta es «<b>${item.donde === 'asunto' ? 'En el asunto' : 'En el cuerpo'}</b>».`;
-  const fallos = item.malas.map(([texto, id]) => `En <i>${html(texto)}</i> ${esc(MOTIVOS[id])}.`).join(' ');
+  const grupos = [];
+  for (const [texto, id] of item.malas) {
+    const motivo = motivoAyuda(texto, id, item.bien);
+    const igual = grupos.find(g => g.motivo === motivo);
+    if (igual) igual.textos.push(texto);
+    else grupos.push({ motivo, textos: [texto] });
+  }
+  const fallos = grupos.map(({ motivo, textos }) => `${textos.map((t, i) => `${i ? 'en' : 'En'} <i>${html(t)}</i>`).join(' y ')} ${esc(motivo)}.`).join(' ');
   return `${fallos}<br>La respuesta es <b>${html(item.bien)}</b>`;
 }
 

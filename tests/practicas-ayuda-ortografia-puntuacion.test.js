@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 import { declaracionDe } from '../practicas/_comun/base.js';
-import { MAYUSCULAS, PUNTO_COMA, DOS_PUNTOS, BANCO_CORREOS, esAsuntoCuerpo, buenasMayusculas } from '../practicas/ortografia-puntuacion/logica.js';
+import { MAYUSCULAS, PUNTO_COMA, DOS_PUNTOS, BANCO_CORREOS, MOTIVOS, esAsuntoCuerpo, buenasMayusculas } from '../practicas/ortografia-puntuacion/logica.js';
 
 const N = 1000;
 const plano = html => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').replace(/ ([.,;:])/g, '$1').trim();
@@ -58,7 +58,22 @@ test('ortografia-puntuacion, mayúsculas: la explicación nombra cada palabra qu
       if (!esAsuntoCuerpo(it)) {
         assert.equal(html.split(`<b>${escapa(it.bien)}</b>`).length - 1, 1, plano(html));
         assert.doesNotMatch(html, /Bien escrita: /, plano(html));
-        for (const [mala] of it.malas) assert.ok(html.includes(`En <i>${escapa(mala)}</i> `), plano(html));
+        for (const [mala] of it.malas) assert.match(html, new RegExp(`(En|en) <i>${escapa(mala).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}</i> `), plano(html));
+        // Segunda pasada de la 192: si las dos malas fallan en lo mismo, el motivo sale una sola vez.
+        const ids = it.malas.map(m => m[1]);
+        if (ids[0] === ids[1] && ids[0] !== 'sin-tilde-correo') {
+          assert.equal(html.split(escapa(MOTIVOS[ids[0]]).replace(/&quot;/g, '"')).length - 1, 1, plano(html));
+          assert.ok(html.includes(`</i> y en <i>`), plano(html));
+        }
+        // Y en un correo sin tildes, la tarjeta nombra las palabras de ESE correo que las llevan.
+        for (const [mala, id] of it.malas) {
+          if (id !== 'sin-tilde-correo') continue;
+          const b = it.bien.split(/\s+/);
+          const conTilde = mala.split(/\s+/).map((p, i) => [p, b[i]]).filter(([p, q]) => p !== q).map(([, q]) => q.replace(/[.,;:¿?¡!«»]/g, ''));
+          assert.ok(conTilde.length > 0 && conTilde.every(p => /[áéíóú]/.test(p)), plano(html));
+          for (const p of conTilde) assert.ok(plano(html).includes(`«${p}»`), `${p} — ${plano(html)}`);
+          assert.doesNotMatch(html, /«explicación»…/, plano(html));
+        }
       }
       const buena = esAsuntoCuerpo(it) ? it.donde : it.bien;
       assert.ok(item.opciones.some(o => (o.k ?? o) === buena || o.texto === buena || o === buena || o.k === it.donde), 'la buena es una opción');
