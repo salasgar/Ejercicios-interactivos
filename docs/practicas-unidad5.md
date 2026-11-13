@@ -149,18 +149,17 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 2 | `errores5` | 62 | 128 | ¿Dónde está el error? (la línea mala o «todo bien») · ¿Qué error es? (cuatro nombres, uno verdadero) · Corrígelo (el resultado bueno) | sin contextos; hasta cuatro cifras enteras |
 | toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
 
-**Publicadas** (a 2026-11-08): `leelo5`, `fraccion-decimal` y `errores5` (tarea 131, tras sus
-reabiertas del 8-11). **`leelo5` va con la semana 2**, no con la 1: lleva vocabulario y cuentas de
-las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*, *simplest form*); la portada la enseña
-desde el 18-1 en «Para toda la unidad». Sin publicar y **sin publicador** (hace falta una tarea de
-publicación nueva), por casos de examen que sus generadores producían porque se escribieron antes
-que los exámenes:
-- semana 1 (tarea 130, 8-11): `lee-decimales` y `suma-resta-decimales` (reabiertas ya cerradas:
-  solo falta publicarlas) y `compara-decimales` (una segunda reabierta abierta: el examen 2, la
-  hoja 2 y dos erratas de feedback);
-- semana 2 (tarea 131, 8-11): `multiplica-divide-decimales` (le faltan U5-2C-17 y el final).
-Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el campo
-`disponible` de `catalogo.js`.
+**Publicadas** (a 2026-11-13): **las siete**. `leelo5`, `fraccion-decimal` y `errores5` el 8-11
+(tarea 131, tras sus reabiertas del 8-11); `lee-decimales`, `compara-decimales`,
+`suma-resta-decimales` y `multiplica-divide-decimales` el 13-11 (tarea 195), tras las reabiertas
+que les abrieron la 130 y la 131 el 8-11 por casos de examen que sus generadores producían (se
+escribieron antes que los exámenes; cerradas el 8-11 y el 9-11) y un barrido nuevo de la 195 contra
+los exámenes 1 y 2, las hojas 1 y 2 y los cinco finales. **`leelo5` va con la semana 2**, no con la
+1: lleva vocabulario y cuentas de las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*,
+*simplest form*); la portada la enseña desde el 18-1 en «Para toda la unidad». `leelo5` tiene
+abierta desde el 13-11 una reabierta de la 129 (las opciones del ej. 3 «La consigna» enseñan el
+marcado HTML en crudo en 1 de cada 8 ítems); sigue publicada mientras tanto. Las reabiertas están en
+`reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 5
 
@@ -222,8 +221,8 @@ esta tabla: lo comprueba `tests/practicas-registro.test.js`.
 | U5-2C-11 | 2 |  | Reconocer al dividir si una fracción da un decimal exacto o uno periódico | `fraccion-decimal` |
 | U5-2C-12 | 2 |  | Comparar y ordenar fracciones y decimales juntos | `fraccion-decimal` |
 | U5-2C-13 | 2 |  | Calcular el cuadrado y el cubo de un decimal | — |
-| U5-2C-14 | 2 | sí | Calcular una combinada con decimales sin paréntesis, respetando la jerarquía | — |
-| U5-2C-15 | 2 | sí | Calcular una combinada con decimales y un paréntesis, una operación por línea | — |
+| U5-2C-14 | 2 | sí | Calcular una combinada con decimales sin paréntesis, respetando la jerarquía | `multiplica-divide-decimales` |
+| U5-2C-15 | 2 | sí | Calcular una combinada con decimales y un paréntesis, una operación por línea | `multiplica-divide-decimales` |
 | U5-2C-16 | 2 |  | Multiplicar, dividir y operar en combinadas con decimales negativos, con la regla de los signos de la U… | — |
 | U5-2C-17 | 2 | sí | Reconocer y nombrar el error de un procedimiento: la tabla de errores típicos de la unidad | `errores5`, `multiplica-divide-decimales` |
 | U5-2C-18 | 2 |  | Saber lo que no es un error: ceros finales, dos decimales en dinero, nought o zero, un decimal o su fra… | `errores5` |
@@ -277,11 +276,10 @@ Once de las 54. Nueve, a propósito:
   en `lee-decimales` 3) y **U5-2A-04** (cuántas veces cabe es dividir; su ejemplo es de botellas,
   contexto que el acta reserva al papel).
 
-Y dos **nucleares** que ninguna ficha recoge, pendientes de que Juan Luis decida dónde van
-(propuesta en la ENTREGA de la tarea 122):
-
-- **U5-2C-14** y **U5-2C-15** — las combinadas con decimales, sin paréntesis y con un paréntesis
-  (sesión 6). En la unidad 4 había práctica propia (`combinadas-fracciones`); en la 5, no.
+Las dos **nucleares** que la ficha 122 no recogía, **U5-2C-14** y **U5-2C-15** (las combinadas con
+decimales, sin paréntesis y con un paréntesis; sesión 6), las trabaja desde el 6-11 el ej. 6
+«Combinadas» de `multiplica-divide-decimales` (opción b de la ENTREGA de la 122; tarea 126). La
+tabla y `DESTREZAS` lo dicen desde el 13-11 (tarea 195, propuesta 1 de la 131).
 
 ## 8. Dónde está lo demás
 

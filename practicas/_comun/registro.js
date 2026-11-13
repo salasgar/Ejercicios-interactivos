@@ -90,7 +90,7 @@ export const DESTREZAS = {
   'fraccion-decimal': ['U5-2C-08', 'U5-2C-09', 'U5-2C-10', 'U5-2C-11', 'U5-2C-12'],
   'lee-decimales': ['U5-1B-01', 'U5-1B-02', 'U5-1B-03', 'U5-1B-04', 'U5-1C-01', 'U5-1C-03', 'U5-1C-04', 'U5-1C-06'],
   leelo5: ['U5-1B-01', 'U5-1B-02', 'U5-1B-03', 'U5-1B-04', 'U5-1B-05', 'U5-1B-06', 'U5-1B-07', 'U5-2B-01', 'U5-2B-02', 'U5-2B-03'],
-  'multiplica-divide-decimales': ['U5-2A-01', 'U5-2A-02', 'U5-2A-03', 'U5-2C-01', 'U5-2C-02', 'U5-2C-03', 'U5-2C-04', 'U5-2C-05', 'U5-2C-06', 'U5-2C-07', 'U5-2C-17'],
+  'multiplica-divide-decimales': ['U5-2A-01', 'U5-2A-02', 'U5-2A-03', 'U5-2C-01', 'U5-2C-02', 'U5-2C-03', 'U5-2C-04', 'U5-2C-05', 'U5-2C-06', 'U5-2C-07', 'U5-2C-14', 'U5-2C-15', 'U5-2C-17'],
   'suma-resta-decimales': ['U5-1A-01', 'U5-1A-02', 'U5-1C-13', 'U5-1C-14', 'U5-1C-15', 'U5-1C-16'],
   // Unidad 6
   denominadores: ['U6-3C-11', 'U6-3C-12'],

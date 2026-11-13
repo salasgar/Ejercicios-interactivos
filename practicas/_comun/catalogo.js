@@ -109,10 +109,10 @@ export const CATALOGO = [
   { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Unidad 5, Decimals (PU2, tareas 123-129; filas puestas por la 122 el 2026-11-05, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (130-131).
-  { id: 57, slug: 'lee-decimales', ruta: 'lee-decimales/', unidad: 5, nombre: { es: 'Lee y escribe decimales', en: 'Read and write decimals' }, nEjercicios: 4, disponible: false },
-  { id: 58, slug: 'compara-decimales', ruta: 'compara-decimales/', unidad: 5, nombre: { es: 'Compara, ordena y redondea', en: 'Compare, order and round' }, nEjercicios: 4, disponible: false },
-  { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: false },
-  { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 6, disponible: false },
+  { id: 57, slug: 'lee-decimales', ruta: 'lee-decimales/', unidad: 5, nombre: { es: 'Lee y escribe decimales', en: 'Read and write decimals' }, nEjercicios: 4, disponible: true },
+  { id: 58, slug: 'compara-decimales', ruta: 'compara-decimales/', unidad: 5, nombre: { es: 'Compara, ordena y redondea', en: 'Compare, order and round' }, nEjercicios: 4, disponible: true },
+  { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: true },
+  { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 6, disponible: true },
   { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: true },
   { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
