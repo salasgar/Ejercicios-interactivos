@@ -74,20 +74,62 @@ export const TX = {
 
 // ─── «No lo sé»: la explicación de los cuatro ejercicios (todos son de elegir) ──────
 
+// El consejo va por PLANTILLA y no por instrucción: «leer» o «completar» juntan ítems muy distintos
+// (−(−39), 6², «−9 is ___ than 18», «The ___ of 12 and 4 is 8»…) y un consejo común salía falso o vacío
+// en muchos. Cada consejo es verdad para todos los ítems de su plantilla.
+const LEER_MENOS = { es: 'El menos de un número se lee «negative» o «minus».', en: 'The minus of a number is read “negative” or “minus”.' };
 const CONSEJO = {
-  leer: { es: 'Léelo de izquierda a derecha, signo por signo: el menos del número es «negative» o «minus».', en: 'Read it from left to right, sign by sign: the minus of a number is “negative” or “minus”.' },
-  escribir: { es: 'Pasa cada palabra a su símbolo, en el orden en que se dicen; ojo con «subtract … from …», que da la vuelta.', en: 'Turn each word into its symbol, in the order they are said; careful with “subtract … from …”, which turns it round.' },
-  completar: { es: 'Lee la frase entera y elige la palabra que encaja por su significado.', en: 'Read the whole sentence and choose the word that fits by its meaning.' },
-  orden: { es: 'Ascending es de menor a mayor y descending, de mayor a menor; entre dos negativos, es menor el que está más a la izquierda en la recta.', en: 'Ascending goes from the least to the greatest and descending the other way; between two negative numbers, the one further left on the number line is the least.' },
-  significa: { es: 'Squared es «al cuadrado» y cubed, «al cubo»; «to the power of» es la potencia en general.', en: 'Squared is “to the power of 2” and cubed is “to the power of 3”; “to the power of” is a power in general.' },
-  simbolos: { es: 'Pasa la frase a símbolos en el orden en que se dice: «negative» va pegado al número y «the opposite of» afecta a todo lo que viene detrás.', en: 'Turn the sentence into symbols in the order it is said: “negative” goes with the number and “the opposite of” affects everything that comes after it.' },
-  problema: { es: 'Busca qué se pide (change, balance, difference…) y haz la cuenta con los números del texto.', en: 'Find what is asked (change, balance, difference…) and do the calculation with the numbers in the text.' },
+  leer_entero: LEER_MENOS,
+  leer_expresion: LEER_MENOS,
+  leer_producto: LEER_MENOS,
+  leer_temperatura: { es: 'Bajo cero se dice «minus», «negative» o «… below zero».', en: 'Below zero you say “minus”, “negative” or “… below zero”.' },
+  absoluto_opuesto: { es: '|…| se lee «the absolute value of …» y −(…), con el menos solo delante, «the opposite of …».', en: '|…| is read “the absolute value of …” and −(…), with only a minus in front, “the opposite of …”.' },
+  palabras_a_entero: { es: '«Negative», «minus» y «below zero» dicen que el número lleva menos.', en: '“Negative”, “minus” and “below zero” tell you the number has a minus sign.' },
+  take_away_from: { es: 'Con «from» los números van al revés de como se dicen.', en: 'With “from”, the numbers go the other way round from how they are said.' },
+  comparar: item => (item.frase.includes('°C')
+    ? { es: 'Warmer es «más cálido», la temperatura mayor; colder es «más frío», la menor.', en: 'Warmer means a higher temperature; colder means a lower one.' }
+    : { es: 'Greater than es «mayor que» y less than, «menor que»; en la recta, el mayor está más a la derecha.', en: 'On the number line, the greater number is further to the right.' }),
+  orden: { es: 'En la recta, cuanto más a la izquierda, menor: entre dos negativos, es menor el de mayor valor absoluto.', en: 'On the number line, the further left, the less: between two negative numbers, the one with the greater absolute value is less.' },
+  nombre_resultado: { es: 'Haz la suma, la resta, el producto y el cociente de los dos números: solo uno da el resultado de la frase.', en: 'Work out the sum, the difference, the product and the quotient of the two numbers: only one gives the result in the sentence.' },
+  regla_de_signos: { es: 'Al multiplicar o dividir, signos iguales dan positivo y signos distintos, negativo.', en: 'When you multiply or divide, the same signs give a positive result and different signs a negative one.' },
+  leer_potencia: { es: 'El exponente 2 se lee «squared», el 3 «cubed» y los demás, «to the power of …».', en: 'An exponent of 2 is read “squared”, 3 “cubed” and any other “to the power of …”.' },
+  base_exponente: { es: 'La base es el número que se multiplica; el exponente es el número pequeño de arriba.', en: 'The base is the number that is multiplied; the exponent is the small number at the top.' },
+  par_impar: item => (item.notacion
+    ? { es: 'Even (par) es 2, 4, 6…; odd (impar) es 3, 5, 7…', en: 'Even numbers are 2, 4, 6…; odd numbers are 3, 5, 7…' }
+    : { es: 'Con base negativa, un exponente par da positivo y uno impar, negativo.', en: 'With a negative base, an even exponent gives a positive result and an odd one a negative result.' }),
+  cuadrado_cubo: { es: 'Squared es «al cuadrado» (exponente 2) y cubed, «al cubo» (exponente 3).', en: 'Squared means to the power of 2 and cubed, to the power of 3.' },
+  frase_potencia: { es: '«The opposite of» cambia el signo de todo lo que viene detrás; «negative» va con el número, y si se eleva, entre paréntesis.', en: '“The opposite of” changes the sign of everything after it; “negative” goes with the number, in brackets if it is raised to a power.' },
+  frase_operacion: { es: 'Escribe cada palabra en el orden en que se dice; un negativo detrás de + o − va entre paréntesis.', en: 'Write each word in the order it is said; a negative number after + or − goes in brackets.' },
 };
+const CONSEJO_PROBLEMA = { es: 'Busca qué se pide (change, balance, difference…) y haz la cuenta con los números del texto.', en: 'Find what is asked (change, balance, difference…) and do the calculation with the numbers in the text.' };
 
-/** Ejercicios 1-4: el consejo del tipo, la explicación que ya tiene el ítem y la opción buena. */
+/** El consejo del ítem: el de su plantilla (los problemas comparten uno). */
+export function consejoDe(item) {
+  const c = CONSEJO[item.plantilla] ?? (item.instruccion === 'problema' ? CONSEJO_PROBLEMA : null);
+  if (!c) throw new Error(`leelo3: la plantilla «${item.plantilla}» no tiene consejo`);
+  return typeof c === 'function' ? c(item) : c;
+}
+
+const NOMBRE_ES = { sum: 'una suma', difference: 'una resta', product: 'un producto', quotient: 'un cociente' };
+const OPERA = { sum: (a, b) => [`${a} + ${b}`, a + b], difference: (a, b) => [`${a} − ${b}`, a - b], product: (a, b) => [`${a} · ${b}`, a * b], quotient: (a, b) => [`${a} : ${b}`, a / b] };
+
+/**
+ * Lo que se dice del ítem. Casi siempre es `item.solucion` (el feedback); en «The ___ of a and b is r»
+ * el feedback español dice «es el difference (resta)», «es el sum (suma)», así que la tarjeta lo dice a
+ * su manera: «12 − 4 = 8 es una resta: su resultado es la difference».
+ */
+function delItem(item, tt) {
+  if (item.plantilla !== 'nombre_resultado') return tt(item.solucion);
+  const [, a, b] = /^The ___ of (\d+) and (\d+) is /.exec(item.frase).map(Number);
+  const palabra = item.opciones.find(o => o.correcta).texto;
+  const [cuenta, r] = OPERA[palabra](a, b);
+  return tt({ es: `${cuenta} = ${r} es ${NOMBRE_ES[palabra]}: su resultado se llama ${palabra}.`, en: `${cuenta} = ${r}: it is the ${palabra}.` });
+}
+
+/** Ejercicios 1-4: el consejo de la plantilla, lo que dice el ítem y la opción buena. */
 export function explicaElegir(item, { tt, esc }) {
   const buena = item.opciones.find(o => o.correcta);
   const respuesta = tt({ es: 'La respuesta es', en: 'The answer is' });
   const [abre, cierra] = tt({ es: ['«', '»'], en: ['“', '”'] });
-  return `${tt(CONSEJO[item.instruccion])} ${tt(item.solucion)} ${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
+  return `${tt(consejoDe(item))} ${delItem(item, tt)} ${respuesta} <span class="cuenta">${abre}${buena.html ?? esc(buena.texto)}${cierra}</span>.`;
 }
