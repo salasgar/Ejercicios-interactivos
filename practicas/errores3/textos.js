@@ -71,11 +71,28 @@ const REGLA = {
 const FIN = { es: 'La respuesta es', en: 'The answer is' };
 const fin = (tt, respuesta) => `<br>${tt(FIN)} <strong>${respuesta}</strong>.`;
 
+/**
+ * Lo que dice la tarjeta del ítem: la línea mala, por qué y cómo queda bien (o por qué no hay error).
+ * Es el feedback (`explicacion`) sin «Se llama: …»: en el ej. 2 el nombre ya es la respuesta del final
+ * (saldría dos veces) y en el 1 y el 3 no se pregunta; además, en −5 − 7 = 12 valen dos nombres del
+ * mismo grupo («regla de los signos» y «olvida el signo»), así que ponerle uno sería engañoso.
+ */
+function cuerpo(item, tt) {
+  if (item.falsa === null) return texto(tt(VALIDA_POR_ID[item.plantilla].porque(item.params)));
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  return `${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
+    + `<br>${texto(tt(plantilla.porque(item.params)))}`
+    + `<br>${tt(TX.correcta)} <span class="linea-mala">= ${htmlEntero(plantilla.corregida(item.params))}</span>`;
+}
+
 export const explicaDonde = (item, { tt, idioma }) =>
-  `${tt(REGLA.donde)}<br>${explicacion(item, { tt })}${fin(tt, idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`)}`;
+  `${tt(REGLA.donde)}<br>${cuerpo(item, tt)}${fin(tt, idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`)}`;
+
+/** La opción entre comillas: «…» en español y “…” en inglés. */
+const cita = (tt, texto) => tt({ es: `«${texto}»`, en: `“${texto}”` });
 
 export const explicaCual = (item, { tt }) =>
-  `${tt(REGLA.cual)}<br>${explicacion(item, { tt })}${fin(tt, `«${nombreError(item.solucion, tt)}»`)}`;
+  `${tt(REGLA.cual)}<br>${cuerpo(item, tt)}${fin(tt, cita(tt, nombreError(item.solucion, tt)))}`;
 
 export const explicaSiNo = (item, { tt }) =>
-  `${tt(REGLA.sino)}<br>${explicacion(item, { tt })}${fin(tt, `«${tt(item.solucion === 'bien' ? TX.bien : TX.error)}»`)}`;
+  `${tt(REGLA.sino)}<br>${cuerpo(item, tt)}${fin(tt, cita(tt, tt(item.solucion === 'bien' ? TX.bien : TX.error)))}`;
