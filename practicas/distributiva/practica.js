@@ -7,7 +7,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaPartir, explicaFactor, explicaCompensar } from './textos.js';
 import {
   generarPartir, generarFactorValido, generarCompensar, corteCorrecto, cortesCorrectos, totalCorrecto, igualdad,
   juntarCorrecto, textoFichas, valorFichas, sumaDeProductos, compensarCorrecto, enunciadoCompensar, fmt,
@@ -343,6 +343,8 @@ arrancar({
       generar: generarPartir,
       montar: montarPartir,
       enunciado: enunciadoPartir,
+      explicacion: explicaPartir,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.factor.nombre,
@@ -352,6 +354,7 @@ arrancar({
       clave: item => `${item.tipo}${item.a}${item.b}${item.c}${item.resta}`,
       montar: montarFactor,
       enunciado: enunciadoFactor,
+      explicacion: explicaFactor,
     },
     {
       nombre: TX.compensar.nombre,
@@ -361,6 +364,8 @@ arrancar({
       clave: item => `${item.tipo}${item.n}${item.k}`,
       montar: montarCompensar,
       enunciado: enunciadoCompensar3,
+      explicacion: explicaCompensar,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
   ],
 });

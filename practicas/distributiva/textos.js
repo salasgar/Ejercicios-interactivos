@@ -1,7 +1,7 @@
 // Práctica «Distributiva con rectángulos»: textos propios, { es, en }.
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
-import { fmt } from './logica.js';
+import { fmt, igualdad, sumaDeProductos } from './logica.js';
 
 // «1 celda», «2 celdas» / «1 cell», «2 cells».
 const celdasEs = n => `${n} ${n === 1 ? 'celda' : 'celdas'}`;
@@ -122,3 +122,48 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────
+
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cuenta = s => `<span class="cuenta">${s}</span>`;
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+
+/** Ejercicio 1: parte el rectángulo y calcula el total. */
+export function explicaPartir(item, { tt }) {
+  const { a, b, c, resta, largo, corte, solucion } = item;
+  const corta = resta
+    ? { es: `El lado largo mide ${largo} celdas. Se corta tras la celda ${corte}: el trozo de la derecha (${c} celdas) se quita.`,
+        en: `The long side is ${largo} cells. Cut after cell ${corte}: the piece on the right (${c} cells) is taken away.` }
+    : { es: `El lado largo mide ${largo} celdas: ${b} + ${c}. Se corta tras la celda ${corte}.`,
+        en: `The long side is ${largo} cells: ${b} + ${c}. Cut after cell ${corte}.` };
+  const calcula = { es: `Cada trozo es un rectángulo de ${a} filas: ${cuenta(igualdad(item))}.`, en: `Each piece is a rectangle with ${a} rows: ${cuenta(igualdad(item))}.` };
+  return `${pasos([tt(corta), tt(calcula)])}${tt(RESPUESTA)} ${cuenta(solucion)}.`;
+}
+
+/** Ejercicio 2: junta los rectángulos (o elige la expresión) sacando el factor común. */
+export function explicaFactor(item, { tt }) {
+  const { a, b, c, resta, valor } = item;
+  const op = resta ? '−' : '+';
+  const juntos = `${a} · (${b} ${op} ${c})`;
+  const sacar = {
+    es: `En ${sumaDeProductos(item)} el ${a} se repite: es la altura de los dos rectángulos. Se escribe una vez, fuera del paréntesis, y dentro van las dos anchuras: ${b} ${op} ${c}.`,
+    en: `In ${sumaDeProductos(item)} the ${a} is repeated: it is the height of both rectangles. Write it once, outside the brackets, and put the two widths inside: ${b} ${op} ${c}.`,
+  };
+  const comprueba = {
+    es: `Se comprueba: ${cuenta(`${juntos} = ${a} · ${resta ? b - c : b + c} = ${valor}`)}, lo mismo que ${sumaDeProductos(item)}.`,
+    en: `Check: ${cuenta(`${juntos} = ${a} · ${resta ? b - c : b + c} = ${valor}`)}, the same as ${sumaDeProductos(item)}.`,
+  };
+  return `${pasos([tt(sacar), tt(comprueba)])}${tt(RESPUESTA)} ${cuenta(juntos)}.`;
+}
+
+/** Ejercicio 3: compensar con 99 o 98. */
+export function explicaCompensar(item, { tt, idioma }) {
+  const { tipo, n, k, falta, valor } = item;
+  const regla = tipo === 'producto'
+    ? { es: `${k} es 100 − ${falta}: se multiplica por 100 y se quita ${falta === 1 ? 'una vez' : 'dos veces'} el ${n}.`, en: `${k} is 100 − ${falta}: multiply by 100 and take away ${n} ${falta === 1 ? 'once' : 'twice'}.` }
+    : { es: `${k} es 100 − ${falta}: se suma 100 y se quita ${falta}.`, en: `${k} is 100 − ${falta}: add 100 and take away ${falta}.` };
+  const x = TX.compensar;
+  const cuentaTxt = (tipo === 'producto' ? x.explicacion_producto : x.explicacion_suma);
+  return `${tt(regla)} ${tt(cuentaTxt)(n, k, falta, valor)} ${tt(RESPUESTA)} ${cuenta(fmt(valor, idioma))}.`;
+}
