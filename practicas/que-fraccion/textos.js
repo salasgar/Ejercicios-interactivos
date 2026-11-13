@@ -6,7 +6,7 @@
 // producto con «·», nunca «×»; inglés sencillo; el feedback dice qué pasa con LOS NÚMEROS DE ESE
 // ÍTEM; ni decimales, ni números mixtos, ni letras de variable.
 
-import { htmlFraccion } from '../_comun/fracciones.js';
+import { htmlFraccion, enPalabras, fraccion } from '../_comun/fracciones.js';
 
 const h = (num, den) => htmlFraccion({ num, den }, { compacta: true });
 
@@ -253,7 +253,7 @@ export function explicaLeeFigura(item, { idioma }) {
   const lista = [
     es
       ? `Cuenta las partes iguales de ${varias ? 'una figura' : FIGURA[item.tipo].es}: ${item.den}. Ese es el número de <strong>abajo</strong>${varias ? '; las dos figuras son iguales' : ''}.`
-      : `Count the equal parts of ${varias ? 'one figure' : FIGURA[item.tipo].en}: ${item.den}. That is the <strong>bottom</strong> number${varias ? '; the figures are all the same' : ''}.`,
+      : `Count the equal parts of ${varias ? 'one figure' : FIGURA[item.tipo].en}: ${item.den}. That is the <strong>bottom</strong> number${varias ? '; both figures are the same' : ''}.`,
     es
       ? `Cuenta las partes sombreadas${varias ? ' en total' : ''}: ${item.num}. Ese es el número de <strong>arriba</strong>.`
       : `Count the shaded parts${varias ? ' in all' : ''}: ${item.num}. That is the <strong>top</strong> number.`,
@@ -265,71 +265,101 @@ export function explicaLeeFigura(item, { idioma }) {
   return `${pasos(lista)}${fin}${consejo}`;
 }
 
-/** Ejercicio 2: cuántas partes de la figura vale cada trozo y cuántas hay que sombrear. */
+/** Ejercicio 2: en cuántos trozos reparte el denominador la figura, cuántas partes tiene cada trozo y cuántas se sombrean. */
 export function explicaSombrea(item, { idioma }) {
   const es = idioma === 'es';
-  const lista = item.m === 1
-    ? [es
-      ? `La figura tiene ${item.partes} partes, tantas como el denominador: cada trozo es 1 parte.`
-      : `The figure has ${item.partes} parts, as many as the denominator: each share is 1 part.`,
-    es
-      ? `El numerador es ${item.num}: hay que sombrear ${item.num} ${item.num === 1 ? 'parte' : 'partes'}.`
-      : `The numerator is ${item.num}: shade ${item.num} ${item.num === 1 ? 'part' : 'parts'}.`]
-    : [es
-      ? `Mira cuántas partes tiene cada trozo: ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)}.`
-      : `Find how many parts each share has: ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)}.`,
-    es
-      ? `Multiplica por el numerador: ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)}.`
-      : `Multiply by the numerator: ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)}.`];
+  const partes = n => (es ? `${n} ${n === 1 ? 'parte' : 'partes'}` : `${n} ${n === 1 ? 'part' : 'parts'}`);
+  const regla = es
+    ? 'El denominador dice en cuántos trozos iguales se reparte la figura; el numerador, cuántos trozos se sombrean.'
+    : 'The denominator says how many equal shares the figure is split into; the numerator, how many shares are shaded.';
   const fin = es
-    ? `Hay que sombrear ${cuenta(item.objetivo)} ${item.objetivo === 1 ? 'parte' : 'partes'} de las ${item.partes}.`
-    : `You have to shade ${cuenta(item.objetivo)} of the ${item.partes} parts.`;
-  const consejo = item.m === 1
-    ? ''
-    : (es ? ' Consejo: la figura puede tener más partes que el denominador.' : ' Tip: the figure can have more parts than the denominator.');
-  return `${es ? `Hay que sombrear ${h(item.num, item.den)} de ${FIGURA[item.tipo].es}. ` : `You have to shade ${h(item.num, item.den)} of ${FIGURA[item.tipo].en}. `}${pasos(lista)}${fin}${consejo}`;
+    ? `La respuesta es ${cuenta(partes(item.objetivo))} de las ${item.partes}.`
+    : `The answer is ${cuenta(partes(item.objetivo))} out of ${item.partes}.`;
+  if (item.m === 1) {
+    const paso = es
+      ? `Aquí la figura tiene ${item.partes} partes, tantas como el denominador: cada trozo es 1 parte.`
+      : `Here the figure has ${item.partes} parts, as many as the denominator: each share is 1 part.`;
+    return `${regla} ${paso} ${fin}`;
+  }
+  const uno = item.num === 1;
+  const lista = [
+    es
+      ? `La figura tiene ${item.partes} partes: cada trozo tiene ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)} partes.`
+      : `The figure has ${item.partes} parts: each share has ${cuenta(`${item.partes} : ${item.den} = ${item.m}`)} parts.`,
+    es
+      ? `${item.num} ${uno ? 'trozo tiene' : 'trozos tienen'} ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)} partes.`
+      : `${item.num} ${uno ? 'share has' : 'shares have'} ${cuenta(`${item.num} · ${item.m} = ${item.objetivo}`)} parts.`,
+  ];
+  return `${regla}${pasos(lista)}${fin}`;
 }
 
-/** Ejercicio 3: los que cumplen arriba y todo el grupo abajo. */
+// Ejercicio 3: cómo se llama el total y la parte de cada contexto (los de `CONTEXTOS` de logica.js).
+const PARTES_FRASE = {
+  'clase-gafas': { total: { es: 'alumnos', en: 'students' }, parte: { es: 'Llevan gafas', en: 'Wear glasses' } },
+  'clase-bici': { total: { es: 'alumnos', en: 'students' }, parte: { es: 'Van en bici', en: 'Cycle to school' } },
+  tarta: { total: { es: 'trozos', en: 'slices' }, parte: { es: 'Se han comido', en: 'Eaten' } },
+  equipo: { total: { es: 'jugadores', en: 'players' }, parte: { es: 'Con camiseta roja', en: 'In a red shirt' } },
+  caja: { total: { es: 'bombones', en: 'chocolates' }, parte: { es: 'De chocolate negro', en: 'Dark chocolates' } },
+};
+
+/** Ejercicio 3: la parte que se pregunta arriba y el total abajo. */
 export function explicaFrase(item, { idioma }) {
   const es = idioma === 'es';
+  const c = PARTES_FRASE[item.contexto];
+  const regla = es
+    ? 'Arriba va la parte por la que se pregunta; abajo, el total.'
+    : 'The part the question asks about goes on top; the total goes at the bottom.';
   const lista = [
-    es ? `Cuenta todo el grupo: ${item.n}. Va <strong>abajo</strong>.` : `Count the whole group: ${item.n}. It goes at the <strong>bottom</strong>.`,
-    es ? `Cuenta los que cumplen lo que dice el enunciado: ${item.k}. Van <strong>arriba</strong>.` : `Count those that match what the problem says: ${item.k}. They go on <strong>top</strong>.`,
+    es ? `Total: ${item.n} ${c.total.es}. Va <strong>abajo</strong>.` : `Total: ${item.n} ${c.total.en}. It goes at the <strong>bottom</strong>.`,
+    es ? `${c.parte.es}: ${item.k}. Va <strong>arriba</strong>.` : `${c.parte.en}: ${item.k}. It goes on <strong>top</strong>.`,
   ];
   const fin = es ? `La respuesta es ${cuenta(h(item.k, item.n))}.` : `The answer is ${cuenta(h(item.k, item.n))}.`;
   const consejo = es
-    ? ` Consejo: abajo va todo el grupo, no solo los que no cumplen (${item.n - item.k}).`
-    : ` Tip: the bottom number is the whole group, not only those who do not (${item.n - item.k}).`;
-  return `${pasos(lista)}${fin}${consejo}`;
+    ? ` Ojo: abajo va el total (${item.n}), no los demás (${item.n - item.k}).`
+    : ` Careful: the bottom number is the total (${item.n}), not the others (${item.n - item.k}).`;
+  return `${regla}${pasos(lista)}${fin}${consejo}`;
 }
 
-/** Ejercicio 4: numerador como número normal y denominador como ordinal. */
+/**
+ * Ejercicio 4: el numerador se dice como un número normal y el denominador con su nombre de fracción.
+ * En inglés, con ordinales (fifths), salvo half y quarter; en español, medios, tercios… décimos y,
+ * desde el 11, con -avo (onceavos), como en los apuntes de la unidad: en español no son ordinales.
+ */
 export function explicaLee(item, { idioma }) {
   const es = idioma === 'es';
-  const lectura = item.idioma === 'en' ? (es ? 'en inglés' : 'in English') : (es ? 'en español' : 'in Spanish');
+  const enIngles = item.idioma === 'en';
+  const lectura = enIngles ? (es ? 'en inglés' : 'in English') : (es ? 'en español' : 'in Spanish');
+  const q = t => (es ? `«${t}»` : `“${t}”`);
   const fin = es
     ? `La respuesta es ${cuenta(`${h(item.num, item.den)} = «${item.texto}»`)} (${lectura}).`
     : `The answer is ${cuenta(`${h(item.num, item.den)} = “${item.texto}”`)} (${lectura}).`;
-  if (item.den === 2 || item.den === 4) {
+  const palabras = item.texto.split(' ');
+  const nombre = palabras.pop();
+  const numero = palabras.join(' ');
+  if (enIngles && (item.den === 2 || item.den === 4)) {
     const regla = es
-      ? `${h(item.num, item.den)} es un caso especial: el denominador ${item.den} tiene un nombre propio, el de «${item.texto.split(' ').pop()}».`
-      : `${h(item.num, item.den)} is a special case: the denominator ${item.den} has its own name, “${item.texto.split(' ').pop()}”.`;
+      ? `En inglés, el 2 y el 4 de abajo tienen nombre propio: «half» y «quarter». Aquí abajo hay un ${item.den}: ${q(nombre)}.`
+      : `In English, a 2 or a 4 at the bottom has its own name: “half” and “quarter”. Here the bottom number is ${item.den}: ${q(nombre)}.`;
     return `${regla} ${fin}`;
   }
-  const palabras = item.texto.split(' ');
-  const ordinal = palabras.pop();
-  const numero = palabras.join(' ');
+  const regla = enIngles
+    ? (es ? 'En inglés, el numerador se dice como un número normal y el denominador, como un <strong>ordinal</strong>.'
+      : 'In English, the numerator is said as an ordinary number and the denominator as an <strong>ordinal</strong>.')
+    : (item.den <= 10
+      ? (es ? 'En español, el numerador se dice como un número normal y el denominador, así: medios, tercios, cuartos, quintos… hasta décimos.'
+        : 'In Spanish, the numerator is said as an ordinary number and the denominator like this: medios, tercios, cuartos, quintos… up to décimos.')
+      : (es ? 'En español, el numerador se dice como un número normal y, desde el 11, el denominador se dice con -avos: onceavos, doceavos…'
+        : 'In Spanish, the numerator is said as an ordinary number and, from 11 on, the denominator ends in -avos: onceavos, doceavos…'));
+  const plural = enIngles && item.num !== 1
+    ? (es ? ', en plural porque arriba no hay un 1' : ', plural because the top number is not 1')
+    : '';
   const lista = [
-    es
-      ? `El numerador es ${item.num}: se lee como un número normal, «${numero}».`
-      : `The numerator is ${item.num}: it is read as an ordinary number, “${numero}”.`,
-    es
-      ? `El denominador es ${item.den}: se lee como un <strong>ordinal</strong>, «${ordinal}».`
-      : `The denominator is ${item.den}: it is read as an <strong>ordinal</strong>, “${ordinal}”.`,
+    es ? `Arriba, ${item.num}: ${q(numero)}.` : `Top, ${item.num}: ${q(numero)}.`,
+    es ? `Abajo, ${item.den}: ${q(nombre)}${plural}.` : `Bottom, ${item.den}: ${q(nombre)}${plural}.`,
   ];
-  const consejo = es
-    ? ' Consejo: el denominador nunca se dice como un número normal.'
-    : ' Tip: the denominator is never said as an ordinary number.';
-  return `${pasos(lista)}${fin}${consejo}`;
+  // El error típico, leer los dos con números normales («tres cinco»), nunca es una lectura válida.
+  const cardinal = n => enPalabras(fraccion(n, 1), item.idioma);
+  const mal = q(`${cardinal(item.num)} ${cardinal(item.den)}`);
+  const consejo = es ? ` Ojo: ${mal} está mal.` : ` Careful: ${mal} is wrong.`;
+  return `${regla}${pasos(lista)}${fin}${consejo}`;
 }
