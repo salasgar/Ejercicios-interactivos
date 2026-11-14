@@ -88,3 +88,19 @@ test('divisores: «No lo sé» declarado en los seis ejercicios (el 6, juego, si
   assert.match(defs[5].sinAyuda, /juego/);
   assert.equal(defs[5].explicacion, undefined);
 });
+
+test('divisores · reabierta 14-11: la pareja del feedback de fallo es la de la tarjeta y vale, en 2000 ítems', async () => {
+  const { readFileSync } = await import('node:fs');
+  const fuente = readFileSync(new URL('../divisores/practica.js', import.meta.url), 'utf8');
+  assert.ok(/const \[sx, sy\] = solucionExplicada\(item\)/.test(fuente), 'el feedback usa solucionExplicada');
+  assert.ok(!/solucionArrastrar/.test(fuente), 'el feedback ya no usa solucionArrastrar');
+  for (const item of generar(4, 31, 2000)) {
+    const [sx, sy] = X.solucionExplicada(item);
+    assert.ok(L.cumple(item.relacion, sx, sy), `${item.relacion} ${sx} ${sy}`);
+    assert.ok(L.esCorrecta(item, [sx, sy]));
+    const grande = Math.max(...item.numeros);
+    assert.equal(item.relacion === 'divisor' ? sy : sx, grande);
+    // La pareja que ya no se enseña, «12 es múltiplo de 2» con 24 : 12 = 2, no se confunde con la de la tarjeta.
+    assert.deepEqual(X.solucionExplicada(item), [sx, sy]);
+  }
+});

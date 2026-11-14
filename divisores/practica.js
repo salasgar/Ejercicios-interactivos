@@ -11,11 +11,11 @@ import { arrancar } from '../practicas/_comun/base.js';
 import { elecciones } from '../practicas/_comun/piezas.js';
 import { unir } from '../practicas/_comun/textos.js';
 import {
-  RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, solucionArrastrar, claveDe, cumple,
+  RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, claveDe, cumple,
 } from './logica.js';
 import {
   T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada, explicacion, cerrar,
-  explicaPreposicion, explicaEleccion, explicaArrastrar, NO_SE_HACERLO,
+  explicaPreposicion, explicaEleccion, explicaArrastrar, solucionExplicada, NO_SE_HACERLO,
 } from './textos.js';
 
 // No se repite el mismo ítem dos veces seguidas; `numeros` (el ejercicio 4)
@@ -208,7 +208,8 @@ function montarArrastrar(contenedor, item, api) {
       api.responder({ acierto: true, html: ({ idioma: i }) => `${frase(item.relacion, x, y, i)}: <span class="cuenta">${razon(item.relacion, x, y, i)}</span>.`, espera: 1800 });
       return;
     }
-    const [sx, sy] = solucionArrastrar(item);
+    // Reabierta 14-11: la pareja del feedback es la de la tarjeta (el grande con un pequeño), no la primera del orden barajado.
+    const [sx, sy] = solucionExplicada(item);
     const alReves = cumple(item.relacion, y, x);
     api.responder({
       acierto: false,
