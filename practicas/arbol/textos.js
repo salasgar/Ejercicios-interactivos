@@ -103,8 +103,8 @@ const RESPUESTA = {
 const ayuda = {
   construir: {
     regla: {
-      es: 'Parte cada número en un producto de dos y sigue con los que no sean primos hasta que todas las puntas sean primos.',
-      en: 'Split each number into a product of two, and keep going with the ones that are not prime until all the ends are prime.',
+      es: 'Parte cada número en un producto de dos (vale cualquiera; aquí, empezando por el primo más pequeño) y sigue con los que no sean primos hasta que todas las puntas sean primos.',
+      en: 'Split each number into a product of two (any product works; here, we start with the smallest prime), and keep going with the ones that are not prime until all the ends are prime.',
     },
     parte: {
       es: (c, p, r) => `${cuenta(`${c} = ${p} · ${r}`)}: ${!esPrimo(r) ? `${p} es primo; ${r} se puede partir` : p === r ? `${p} es primo` : `${p} y ${r} son primos`}.`,
@@ -114,15 +114,27 @@ const ayuda = {
   },
   terminada: {
     regla: { es: 'Mira cada factor de la igualdad y pregúntate si es primo.', en: 'Look at each factor in the equality and ask yourself: is it prime?' },
-    no: { es: c => `No, no está terminada. El factor que no es primo es ${c}`, en: c => `No, it is not finished. The factor that is not prime is ${c}` },
-    si: { es: 'Sí, está terminada', en: 'Yes, it is finished' },
+    // Revisión 193: la respuesta con el texto de los botones («Sí, terminada» / «No») y, si no está
+    // terminada, el factor que hay que tocar.
+    no: {
+      es: c => `La respuesta es «<strong>${TX.terminada.no.es}</strong>», y el factor que no es primo es el <strong>${c}</strong>.`,
+      en: c => `The answer is “<strong>${TX.terminada.no.en}</strong>”, and the factor that is not prime is <strong>${c}</strong>.`,
+    },
+    si: {
+      es: `La respuesta es «<strong>${TX.terminada.si.es}</strong>».`,
+      en: `The answer is “<strong>${TX.terminada.si.en}</strong>”.`,
+    },
   },
   completar: {
     regla: {
-      es: 'En cada rama, el producto de los dos números de abajo es el número de arriba. Si falta uno, se divide o se multiplica. En negrita, los que faltaban:',
-      en: 'In each branch, the product of the two numbers below is the number above. If one is missing, divide or multiply. In bold, the missing ones:',
+      es: 'En cada rama, el número de arriba es el producto de los dos de abajo. Si falta el de arriba, se multiplican los de abajo; si falta uno de abajo, se divide el de arriba entre el otro.',
+      en: 'In each branch, the number above is the product of the two numbers below. If the one above is missing, multiply the two below; if one below is missing, divide the one above by the other one.',
     },
-    faltan: { es: l => `Los números de los huecos son ${l}`, en: l => `The numbers for the empty boxes are ${l}` },
+    divide: { es: (a, b, v) => `${a} : ${b} = ${v}`, en: (a, b, v) => `${a} ÷ ${b} = ${v}` },
+    pareja: {
+      es: (a, b, c) => `de tus números, ${cuenta(`${a} · ${b} = ${c}`)}`,
+      en: (a, b, c) => `from your numbers, ${cuenta(`${a} · ${b} = ${c}`)}`,
+    },
   },
 };
 
@@ -168,19 +180,63 @@ export function explicaTerminada(item, textos) {
   const { tt } = textos;
   const cierre = item.terminada ? tt(ayuda.terminada.si) : tt(ayuda.terminada.no)(item.compuesto);
   const razon = item.terminada ? razonTerminada(item, textos) : razonNoTerminada(item, textos);
-  return `<p>${tt(ayuda.terminada.regla)}</p><p>${razon}</p><p>${tt(RESPUESTA)(`<strong>${cierre}</strong>`)}</p>`;
+  return `<p>${tt(ayuda.terminada.regla)}</p><p>${razon}</p><p>${cierre}</p>`;
 }
 
-/** Ejercicio 3: las ramas que tienen un hueco, con sus cuentas, y los números que faltan. */
+const hermanoDe = ruta => ruta.slice(0, -1) + (1 - Number(ruta.at(-1)));
+
+/**
+ * En qué orden se deducen los huecos de un ítem «completar» y cómo: [{ tipo, ruta, hermano? }], con
+ * tipo 'multiplica' (el hueco tiene sus dos hijos a la vista), 'divide' (a la vista su padre y su
+ * hermano) o 'pareja' (faltan los dos hijos de un número a la vista: se buscan entre las fichas dos
+ * que den ese producto; el ítem tiene una sola solución, así que la pareja es la buena).
+ */
+export function pasosCompletar(item) {
+  const conocido = new Set(rutasDe(item.arbol).filter(r => !item.huecos.includes(r)));
+  const quedan = [...item.huecos];
+  const pasos = [];
+  const hecho = (paso, ...rutas) => {
+    pasos.push(paso);
+    for (const r of rutas) { conocido.add(r); quedan.splice(quedan.indexOf(r), 1); }
+  };
+  while (quedan.length) {
+    const mult = quedan.find(r => nodoEn(item.arbol, r).hijos.length && conocido.has(r + '0') && conocido.has(r + '1'));
+    if (mult !== undefined) { hecho({ tipo: 'multiplica', ruta: mult }, mult); continue; }
+    const div = quedan.find(r => conocido.has(r.slice(0, -1)) && conocido.has(hermanoDe(r)));
+    if (div !== undefined) { hecho({ tipo: 'divide', ruta: div }, div); continue; }
+    const par = quedan.find(r => conocido.has(r.slice(0, -1)) && quedan.includes(hermanoDe(r)));
+    if (par === undefined) throw new Error(`arbol: no se pueden deducir los huecos de ${item.n}`);
+    const [a, b] = [par, hermanoDe(par)].sort();
+    hecho({ tipo: 'pareja', ruta: a, hermano: b }, a, b);
+  }
+  return pasos;
+}
+
+/** Ejercicio 3: hueco a hueco, en el orden en que se pueden deducir, con la cuenta que lo da. */
 export function explicaCompletar(item, { tt, idioma }) {
+  const valor = ruta => nodoEn(item.arbol, ruta).valor;
   const huecos = new Set(item.huecos);
-  const ramas = rutasDe(item.arbol)
-    .filter(ruta => { const nodo = nodoEn(item.arbol, ruta); return nodo.hijos.length && [ruta, ruta + '0', ruta + '1'].some(r => huecos.has(r)); })
-    .map(ruta => {
-      const nodo = nodoEn(item.arbol, ruta);
-      const [a, b] = nodo.hijos.map((h, i) => (huecos.has(ruta + i) ? `<strong>${h.valor}</strong>` : h.valor));
-      return `<li>${cuenta(`${huecos.has(ruta) ? `<strong>${nodo.valor}</strong>` : nodo.valor} = ${a} · ${b}`)}</li>`;
-    });
-  const lista = unir(solucionCompletar(item).map(String), idioma);
-  return `<p>${tt(ayuda.completar.regla)}</p><ol class="pasos-ayuda">${ramas.join('')}</ol><p>${tt(RESPUESTA)(`<strong>${lista}</strong>`)}</p>`;
+  const b = v => `<strong>${v}</strong>`;
+  // La rama tal como se ve antes de ese paso: □ en los huecos que aún no se saben.
+  const sabidos = new Set();
+  const ver = ruta => (huecos.has(ruta) && !sabidos.has(ruta) ? '□' : valor(ruta));
+  const rama = ruta => `${ver(ruta)} = ${ver(ruta + '0')} · ${ver(ruta + '1')}`;
+  const orden = [];
+  const pasos = pasosCompletar(item).map(paso => {
+    let li;
+    if (paso.tipo === 'multiplica') {
+      const r = paso.ruta;
+      li = `${cuenta(`□ = ${valor(r + '0')} · ${valor(r + '1')} = ${b(valor(r))}`)}`;
+    } else if (paso.tipo === 'divide') {
+      const padre = paso.ruta.slice(0, -1);
+      li = `${cuenta(rama(padre))} → ${cuenta(tt(ayuda.completar.divide)(valor(padre), valor(hermanoDe(paso.ruta)), b(valor(paso.ruta))))}`;
+    } else {
+      const padre = paso.ruta.slice(0, -1);
+      li = `${cuenta(rama(padre))}: ${tt(ayuda.completar.pareja)(b(valor(paso.ruta)), b(valor(paso.hermano)), valor(padre))}`;
+    }
+    for (const r of [paso.ruta, paso.hermano]) if (r !== undefined) { sabidos.add(r); orden.push(valor(r)); }
+    return `<li>${li}</li>`;
+  });
+  const lista = unir(orden.map(String), idioma);
+  return `<p>${tt(ayuda.completar.regla)}</p><ol class="pasos-ayuda">${pasos.join('')}</ol><p>${tt(RESPUESTA)(b(lista))}</p>`;
 }

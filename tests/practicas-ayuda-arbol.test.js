@@ -35,29 +35,51 @@ test('arbol · ejercicio 2: la explicación dice si está terminada y, si no, cu
   for (const idioma of IDIOMAS) {
     for (const item of generar(L.generarTerminada, 2)) {
       const html = plano(X.explicaTerminada(item, ctx(idioma)));
-      const respuesta = idioma === 'es' ? /La respuesta es (.*)\.$/ : /The answer is (.*)\.$/;
-      const dicho = html.match(respuesta)?.[1] ?? '';
+      // Revisión 193: la respuesta con el texto de los botones, entre comillas, una sola vez.
+      assert.equal((html.match(/respuesta es|answer is/g) || []).length, 1, html);
       if (item.terminada) {
         assert.ok(item.igualdad.every(([b]) => esPrimo(b)));
-        assert.match(dicho, idioma === 'es' ? /^Sí, está terminada$/ : /^Yes, it is finished$/);
+        assert.ok(html.endsWith(idioma === 'es' ? `La respuesta es «${X.TX.terminada.si.es}».` : `The answer is “${X.TX.terminada.si.en}”.`), html);
       } else {
         assert.ok(!esPrimo(item.compuesto));
-        assert.ok(dicho.endsWith(`${item.compuesto}`), `${item.n}: ${html}`);
-        assert.ok(html.includes(`${item.compuesto} = `), 'la cuenta del compuesto');
+        const fin = idioma === 'es'
+          ? `La respuesta es «${X.TX.terminada.no.es}», y el factor que no es primo es el ${item.compuesto}.`
+          : `The answer is “${X.TX.terminada.no.en}”, and the factor that is not prime is ${item.compuesto}.`;
+        assert.ok(html.endsWith(fin), `${item.n}: ${html}`);
+        const [p, q] = L.porQueCompuesto(item.compuesto);
+        assert.ok(html.includes(`${item.compuesto} = ${p} · ${q}`), 'la cuenta del compuesto');
       }
     }
   }
 });
 
-test('arbol · ejercicio 3: la explicación lleva las cuentas de las ramas y los números de los huecos', () => {
+test('arbol · ejercicio 3: la explicación da la cuenta de cada hueco y los números de los huecos', () => {
+  const items = generar(L.generarCompletar, 3, 1000);
   for (const idioma of IDIOMAS) {
-    for (const item of generar(L.generarCompletar, 3, 400)) {
+    for (const item of items) {
       const html = plano(X.explicaCompletar(item, ctx(idioma)).replace(/<\/li>/g, ' '));
       const faltan = L.solucionCompletar(item);
       assert.ok(L.esCorrectaCompletar(item, faltan));
-      const fin = idioma === 'es' ? `La respuesta es ${faltan.slice(0, -1).join(', ')} y ${faltan.at(-1)}.` : `The answer is ${faltan.slice(0, -1).join(', ')} and ${faltan.at(-1)}.`;
-      assert.ok(html.endsWith(fin), `${html}`);
+      // Revisión 193: los números de la respuesta son los de los huecos (en el orden en que se deducen).
+      const dicho = html.match(idioma === 'es' ? /La respuesta es (.*)\.$/ : /The answer is (.*)\.$/)?.[1] ?? '';
+      const numeros = dicho.split(/, | y | and /).map(Number);
+      assert.deepEqual([...numeros].sort((a, b) => a - b), [...faltan].sort((a, b) => a - b), html);
+      // Un paso por hueco (la pareja de hermanos cuenta por dos) y cada cuenta, verdad.
+      const pasos = X.pasosCompletar(item);
+      assert.equal(pasos.reduce((s, p) => s + (p.tipo === 'pareja' ? 2 : 1), 0), item.huecos.length);
+      assert.equal([...X.explicaCompletar(item, ctx(idioma)).matchAll(/<li>/g)].length, pasos.length);
       for (const [, c, a, b] of html.matchAll(/(\d+) = (\d+) · (\d+)/g)) assert.equal(Number(a) * Number(b), Number(c));
+      for (const [, a, b, c] of html.matchAll(/(\d+) · (\d+) = (\d+)/g)) assert.equal(Number(a) * Number(b), Number(c));
+      for (const [, a, b, c] of html.matchAll(/(\d+) [:÷] (\d+) = (\d+)/g)) assert.equal(Number(a) / Number(b), Number(c));
+      // Cada división parte de una rama con su hueco a la vista.
+      for (const [, a, b] of html.matchAll(/(\d+) [:÷] (\d+) = /g)) assert.match(html, new RegExp(`${a} = (□ · ${b}|${b} · □) → ${a} [:÷] ${b}`));
     }
+  }
+});
+
+test('arbol · ejercicio 1: la regla dice que vale cualquier producto (revisión 193)', () => {
+  for (const idioma of IDIOMAS) {
+    const html = X.explicaConstruir({ tipo: 'construir', n: 60 }, ctx(idioma));
+    assert.match(html, idioma === 'es' ? /vale cualquiera/ : /any product works/);
   }
 });
