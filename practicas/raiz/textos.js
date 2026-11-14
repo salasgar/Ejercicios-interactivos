@@ -186,17 +186,22 @@ export function explicaForma(item, ctx) {
     en: 'Find the biggest side for which the square is complete: its counters, side · side, cannot be more than you have.',
   });
   const fin = item.resto === 0
-    ? tt({ es: `lado ${item.raiz} y no sobra ninguna`, en: `side ${item.raiz} and none left over` })
-    : tt({ es: `lado ${item.raiz} y sobran ${item.resto}`, en: `side ${item.raiz} and ${item.resto} left over` });
-  return `<p>${regla}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p><p>${tt(RESP)}: ${fin}.</p>`;
+    ? tt({ es: `lado ${cuenta(item.raiz)} y no sobra ninguna`, en: `side ${cuenta(item.raiz)} and none left over` })
+    : tt({ es: `lado ${cuenta(item.raiz)} y ${item.resto === 1 ? 'sobra' : 'sobran'} ${cuenta(item.resto)}`, en: `side ${cuenta(item.raiz)} and ${cuenta(item.resto)} left over` });
+  return `<p>${regla}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p><p>${tt(RESP)} ${fin}.</p>`;
 }
 
 /** Ejercicio 2: raíz exacta, raíz entera y resto, o «¿puede ser?». */
 export function explicaSinDibujo(item, ctx) {
   const { tt, t } = ctx;
   if (item.tipo === 'puede') {
-    return `<p>${tt(TX.sin.puede_pregunta)(item.raiz, item.resto)}</p><p>${tt(item.puede ? TX.sin.puede_si : TX.sin.puede_no)(item.raiz, item.resto)}</p>`
-      + `<p>${tt(RESP)}: ${item.puede ? t.si : t.no}.</p>`;
+    // la regla delante (no la pregunta otra vez); luego la cuenta del feedback; la respuesta, con la palabra del botón
+    const boton = item.puede ? t.si : t.no;
+    return `<p>${tt({
+      es: 'Si el resto es demasiado grande, cabe un cuadrado mayor y la raíz entera ya no sería esa.',
+      en: 'If the remainder is too big, a bigger square fits and the whole root would not be that one.',
+    })}</p><p>${tt(item.puede ? TX.sin.puede_si : TX.sin.puede_no)(item.raiz, item.resto)}</p>`
+      + `<p>${tt(RESP)} ${tt({ es: `«${boton}»`, en: `“${boton}”` })}.</p>`;
   }
   if (item.tipo === 'exacta') {
     return `<p>${tt({
@@ -205,7 +210,7 @@ export function explicaSinDibujo(item, ctx) {
     })}</p><p>${tt(TX.sin.exacta_bien)(item.n, item.raiz)}</p><p>${tt(RESP)} ${cuenta(item.raiz)}.</p>`;
   }
   return `<p>${tt(TX.sin.entera_ayuda)}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p>`
-    + `<p>${tt(RESP)}: ${tt({ es: 'raíz entera', en: 'whole root' })} ${cuenta(item.raiz)}, ${tt({ es: 'resto', en: 'remainder' })} ${cuenta(item.resto)}.</p>`;
+    + `<p>${tt(RESP)} ${tt({ es: 'raíz entera', en: 'whole root' })} ${cuenta(item.raiz)}, ${tt({ es: 'resto', en: 'remainder' })} ${cuenta(item.resto)}.</p>`;
 }
 
 /** Ejercicio 3: qué se pide, la cuenta del cuadrado y la frase de respuesta. */
@@ -214,5 +219,29 @@ export function explicaProblema(item, ctx) {
   return `<p>${tt({
     es: 'El lado del cuadrado es la raíz entera del número de piezas; lo que sobra es el resto.',
     en: 'The side of the square is the whole square root of the number of pieces; what is left over is the remainder.',
-  })}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)} ${tt(TX.prob.respuesta)(item.raiz, item.resto, item.dosCampos)}</p>`;
+  })}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p>`
+    + `<p>${tt({ es: 'Respuesta:', en: 'Answer:' })} ${tt(fraseProblema(item))}</p>`;
+}
+
+/** La frase de respuesta del problema, con las palabras de su enunciado (baldosas, filas, cromos…). */
+export function fraseProblema({ plantilla, variante, raiz: k, resto: r }) {
+  const cosas = {
+    lado: [{ es: 'baldosas', en: 'tiles' }, { es: 'azulejos', en: 'tiles' }],
+    sillas: [{ es: 'sillas', en: 'chairs' }, { es: 'sillas', en: 'chairs' }],
+    fichas: [{ es: 'fichas', en: 'counters' }, { es: 'cromos', en: 'stickers' }],
+  }[plantilla][variante];
+  const uno = { baldosas: 'baldosa', azulejos: 'azulejo', sillas: 'silla', fichas: 'ficha', cromos: 'cromo',
+    tiles: 'tile', chairs: 'chair', counters: 'counter', stickers: 'sticker' };
+  const de = (n, idioma) => `${n} ${n === 1 ? uno[cosas[idioma]] : cosas[idioma]}`;
+  const sobra = {
+    es: `${r === 1 ? 'sobra' : 'sobran'} ${de(r, 'es')}`,
+    en: `${de(r, 'en')} ${r === 1 ? 'is' : 'are'} left over`,
+  };
+  if (plantilla === 'lado') return { es: `hay ${de(k, 'es')} en cada lado.`, en: `there are ${de(k, 'en')} on each side.` };
+  if (plantilla === 'sillas') {
+    return variante === 0
+      ? { es: `hay ${de(k, 'es')} en cada fila y ${sobra.es}.`, en: `there are ${de(k, 'en')} in each row, and ${sobra.en}.` }
+      : { es: `se forman ${k} filas y ${sobra.es}.`, en: `${k} rows are made, and ${sobra.en}.` };
+  }
+  return { es: `el lado tiene ${de(k, 'es')} y ${sobra.es}.`, en: `the side has ${de(k, 'en')}, and ${sobra.en}.` };
 }

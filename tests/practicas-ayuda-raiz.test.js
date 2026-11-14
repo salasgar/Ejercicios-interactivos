@@ -23,9 +23,11 @@ test('ej. 1: la explicación da el lado y el resto que calcula la lógica', () =
     for (const idioma of IDIOMAS) {
       const html = X.explicaForma(item, ctx(idioma));
       sano(html);
+      // sin dos puntos entre «es» y la respuesta, y «sobra 1» en singular
+      const sobran = resto === 1 ? 'sobra' : 'sobran';
       const fin = idioma === 'es'
-        ? (resto === 0 ? `lado ${raiz} y no sobra ninguna.` : `lado ${raiz} y sobran ${resto}.`)
-        : (resto === 0 ? `side ${raiz} and none left over.` : `side ${raiz} and ${resto} left over.`);
+        ? (resto === 0 ? `La respuesta es lado ${raiz} y no sobra ninguna.` : `La respuesta es lado ${raiz} y ${sobran} ${resto}.`)
+        : (resto === 0 ? `The answer is side ${raiz} and none left over.` : `The answer is side ${raiz} and ${resto} left over.`);
       assert.ok(plano(html).endsWith(fin), plano(html));
     }
   }
@@ -41,9 +43,13 @@ test('ej. 2: la explicación de cada subtipo lleva su solución', () => {
       const c = ctx(idioma);
       const texto = plano(X.explicaSinDibujo(item, c));
       sano(texto);
+      assert.doesNotMatch(texto, /\b(es|is):/, texto);
       if (item.tipo === 'puede') {
         assert.equal(item.puede, L.esPosible(item.raiz, item.resto));
-        assert.ok(texto.endsWith(`${item.puede ? c.t.si : c.t.no}.`), texto);
+        const boton = item.puede ? c.t.si : c.t.no;
+        assert.ok(texto.endsWith(idioma === 'es' ? `La respuesta es «${boton}».` : `The answer is “${boton}”.`), texto);
+        // no empieza repitiendo la pregunta del enunciado
+        assert.ok(!texto.includes(plano(c.tt(X.TX.sin.puede_pregunta)(item.raiz, item.resto))), texto);
       } else if (item.tipo === 'exacta') {
         assert.equal(L.cuadradoMasGrande(item.n).resto, 0);
         assert.ok(texto.endsWith(`${item.raiz}.`), texto);
@@ -64,10 +70,22 @@ test('ej. 3: la explicación lleva la frase de respuesta con el lado y lo que so
     for (const idioma of IDIOMAS) {
       const texto = plano(X.explicaProblema(item, ctx(idioma)));
       sano(texto);
-      const fin = idioma === 'es'
-        ? (item.dosCampos ? `Respuesta: lado ${raiz} y sobran ${resto}.` : `Respuesta: ${raiz} en cada lado.`)
-        : (item.dosCampos ? `Answer: side ${raiz}, and ${resto} left over.` : `Answer: ${raiz} on each side.`);
-      assert.ok(texto.endsWith(fin), texto);
+      // la frase de respuesta habla con las palabras del enunciado (baldosas, filas, cromos…)
+      const enunciado = plano(ctx(idioma).tt(X.TX.prob[item.plantilla][item.variante])(item.n));
+      const frase = texto.slice(texto.lastIndexOf(idioma === 'es' ? 'Respuesta: ' : 'Answer: '));
+      const cosa = { es: ['baldosas', 'azulejos', 'sillas', 'fichas', 'cromos'], en: ['tiles', 'chairs', 'counters', 'stickers'] }[idioma]
+        .find(p => enunciado.includes(p));
+      assert.ok(cosa && frase.includes(` ${raiz} ${item.plantilla === 'sillas' && item.variante === 1 ? (idioma === 'es' ? 'filas' : 'rows') : cosa}`), frase);
+      if (item.dosCampos) {
+        const una = cosa.replace(/s$/, '');
+        const r = idioma === 'es'
+          ? `${resto === 1 ? 'sobra' : 'sobran'} ${resto} ${resto === 1 ? una : cosa}.`
+          : `${resto} ${resto === 1 ? una : cosa} ${resto === 1 ? 'is' : 'are'} left over.`;
+        assert.ok(frase.endsWith(r), frase);
+      } else {
+        assert.equal(resto, 0);
+        assert.ok(frase.endsWith(idioma === 'es' ? 'en cada lado.' : 'on each side.'), frase);
+      }
     }
   }
 });
