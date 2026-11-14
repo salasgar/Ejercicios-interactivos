@@ -57,10 +57,34 @@ for (const [k, nombre] of [[1, 'ej. 1'], [2, 'ej. 2'], [3, 'ej. 3']]) {
   });
 }
 
-test('ej. 3: la explicación avisa de que las agrupaciones imposibles no cuentan', () => {
+test('ej. 3: la explicación enseña una agrupación del ítem que no se puede calcular, con su motivo verdadero', () => {
   for (const item of items(3, 7)) {
-    assert.match(X.explicaImposibles(item, ctx('es')), /no se pueden calcular/);
-    assert.match(X.explicaImposibles(item, ctx('en')), /cannot be worked out/);
+    const mala = X.agrupacionImposible(L.expresionDe(item));
+    assert.ok(mala, `sin agrupación imposible: ${JSON.stringify(item)}`);
+    // de verdad no se puede: el evaluador de la práctica la para con ese motivo y esa operación
+    const r = L.evaluar(mala.arbol);
+    assert.equal(r.valor, undefined);
+    assert.deepEqual([r.invalido.razon, r.invalido.a, r.invalido.op, r.invalido.b], [mala.razon, mala.a, mala.op, mala.b]);
+    if (mala.razon === 'negativo') assert.ok(mala.b > mala.a);
+    if (mala.razon === 'inexacta') assert.ok(mala.a % mala.b !== 0);
+    for (const idioma of IDIOMAS) {
+      const texto = plano(X.explicaImposibles(item, ctx(idioma)));
+      const agrupacion = plano(L.formatear(L.textoArbol(mala.arbol), idioma));
+      const operacion = plano(L.textoOperacion(mala.a, mala.op, mala.b, idioma));
+      assert.ok(texto.includes(`${idioma === 'es' ? 'Por ejemplo,' : 'For example,'} ${agrupacion} ${idioma === 'es' ? 'no cuenta:' : 'does not count:'} ${operacion}`), texto);
+      // «resta negativa» no: lo negativo sería el resultado, y en la U1 no hay negativos
+      assert.doesNotMatch(texto, /resta negativa|negative subtraction/);
+    }
+  }
+});
+
+test('ej. 1 a 3: la lista de resultados acaba en «y» / «and», no solo con comas', () => {
+  for (const k of [1, 2, 3]) {
+    for (const item of items(k, 300 + k).slice(0, 200)) {
+      const ultimo = item.resultados.at(-1);
+      assert.match(plano(EXPLICA[k - 1](item, ctx('es'))), new RegExp(` y ${ultimo}\\.$`));
+      assert.match(plano(EXPLICA[k - 1](item, ctx('en'))), new RegExp(` and ${ultimo}\\.$`));
+    }
   }
 });
 

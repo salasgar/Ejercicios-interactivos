@@ -5,7 +5,7 @@
 // la división se escribe con «÷». Las expresiones con signos no se escriben aquí:
 // las pinta `formatear` de logica.js.
 
-import { expresionDe, arbolQueDa, evaluar, formatear, textoArbol } from './logica.js';
+import { expresionDe, arbolQueDa, evaluar, formatear, textoArbol, arboles, colocacion, textoOperacion } from './logica.js';
 
 export const TX = {
   ejercicios: [
@@ -142,12 +142,33 @@ function cadenaQueDa(e, valor, idioma) {
 }
 
 /** Los ejercicios 1 a 3: todos los resultados, cada uno con una agrupación que lo consigue. */
-function explicaTodos(item, { tt, idioma }, regla) {
+function explicaTodos(item, { tt, idioma }, regla, extra = '') {
   const e = expresionDe(item);
   const filas = item.resultados.map(v => cuenta(cadenaQueDa(e, v, idioma)));
-  const valores = item.resultados.map(v => cuenta(v)).join(', ');
-  return `<p>${tt(regla)}</p>${lista(filas)}<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${valores}.</p>`;
+  const valores = item.resultados.map(v => cuenta(v));
+  const enLista = `${valores.slice(0, -1).join(', ')} ${idioma === 'es' ? 'y' : 'and'} ${valores.at(-1)}`;
+  return `<p>${tt(regla)}</p>${extra}${lista(filas)}<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${enLista}.</p>`;
 }
+
+/** Una agrupación de la expresión que no se puede calcular (la de menos paréntesis), con su motivo; o null. */
+export function agrupacionImposible(e) {
+  const n = e.numeros.length;
+  const parentesis = a => { const c = colocacion(a, n); return [...c.abre, ...c.cierra].reduce((x, y) => x + y, 0); };
+  const malas = arboles(e)
+    .map(a => ({ a, r: evaluar(a) }))
+    .filter(x => x.r.invalido && x.r.invalido.razon !== 'grande')
+    .sort((x, y) => (x.r.invalido.razon === 'cero') - (y.r.invalido.razon === 'cero') || parentesis(x.a) - parentesis(y.a));
+  return malas.length ? { arbol: malas[0].a, ...malas[0].r.invalido } : null;
+}
+
+const MOTIVO = {
+  negativo: {
+    es: (op, a, b) => `${op} no se puede, porque ${b} es mayor que ${a}`,
+    en: (op, a, b) => `${op} is not possible, because ${b} is bigger than ${a}`,
+  },
+  inexacta: { es: op => `${op} no es una división exacta`, en: op => `${op} is not an exact division` },
+  cero: { es: op => `${op} no se puede, porque no se divide entre 0`, en: op => `${op} is not possible, because you cannot divide by 0` },
+};
 
 /** Ejercicio 1: tres números. */
 export function explicaTres(item, ctx) {
@@ -167,10 +188,16 @@ export function explicaPotencia(item, ctx) {
 
 /** Ejercicio 3: con resta y división (hay agrupaciones que no se pueden calcular y no cuentan). */
 export function explicaImposibles(item, ctx) {
+  const { tt, idioma } = ctx;
+  const mala = agrupacionImposible(expresionDe(item));
+  const ejemplo = mala
+    ? `<p>${tt({ es: 'Por ejemplo,', en: 'For example,' })} ${cuenta(formatear(textoArbol(mala.arbol), idioma))} ${tt({ es: 'no cuenta:', en: 'does not count:' })} `
+      + `${tt(MOTIVO[mala.razon])(cuenta(textoOperacion(mala.a, mala.op, mala.b, idioma)), mala.a, mala.b)}.</p>`
+    : '';
   return explicaTodos(item, ctx, {
-    es: 'Prueba paréntesis distintos. Las agrupaciones que dan una resta negativa o una división inexacta no se pueden calcular y no cuentan.',
-    en: 'Try different brackets. Groupings that give a negative subtraction or an inexact division cannot be worked out and do not count.',
-  });
+    es: 'Prueba a rodear dos o tres números seguidos y calcula. Si sale una resta en la que se quita más de lo que hay o una división que no es exacta, esa agrupación no cuenta.',
+    en: 'Try putting brackets around two or three numbers next to each other and work it out. If you get a subtraction that takes away more than you have, or a division that is not exact, that grouping does not count.',
+  }, ejemplo);
 }
 
 /** Ejercicio 4: una diana; vale cualquier colocación que dé el objetivo, y se enseña una. */
