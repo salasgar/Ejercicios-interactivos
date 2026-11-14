@@ -57,18 +57,18 @@ export const TX = {
     },
   },
   tres: {
-    nombre: { es: 'Cada cuántos días', en: 'How often' },
+    nombre: { es: 'Cada cuántos minutos', en: 'How often' },
     detalle: {
       es: 'A veces son tres datos; a veces uno ya es múltiplo del otro.',
       en: 'Sometimes three numbers; sometimes one is already a multiple of the other.',
     },
     pregunta_tres: (a, b, c) => ({
-      es: `Tres atracciones de la feria se repiten cada <strong>${a}, ${b} y ${c} días</strong>. ¿Cada cuántos días coinciden las tres a la vez?`,
-      en: `Three fair rides repeat every <strong>${a}, ${b} and ${c} days</strong>. How often do all three coincide? Write the number of days.`,
+      es: `Tres atracciones de la feria arrancan a la vez al abrir. Una sale cada <strong>${a}</strong> minutos, otra cada <strong>${b}</strong> y otra cada <strong>${c}</strong>. ¿Cada cuántos minutos vuelven a salir las tres a la vez?`,
+      en: `Three fair rides start together when the fair opens. One leaves every <strong>${a}</strong> minutes, another every <strong>${b}</strong> and another every <strong>${c}</strong>. How often do all three leave together again? Write the number of minutes.`,
     }),
     pregunta_multiplo: (a, b) => ({
-      es: `Dos atracciones de la feria se repiten cada <strong>${a}</strong> y cada <strong>${b} días</strong>. ¿Cada cuántos días coinciden las dos?`,
-      en: `Two fair rides repeat every <strong>${a}</strong> and every <strong>${b} days</strong>. How often do both coincide? Write the number of days.`,
+      es: `Dos atracciones de la feria arrancan a la vez al abrir. Una sale cada <strong>${a}</strong> minutos y otra cada <strong>${b}</strong>. ¿Cada cuántos minutos vuelven a salir las dos a la vez?`,
+      en: `Two fair rides start together when the fair opens. One leaves every <strong>${a}</strong> minutes and the other every <strong>${b}</strong>. How often do both leave together again? Write the number of minutes.`,
     }),
     // Los múltiplos del mayor hasta el primero que lo es también de los otros.
     cuenta_tres: (a, b, c, lista, solucion) => ({
@@ -76,10 +76,10 @@ export const TX = {
       en: `Multiples of ${c}: ${lista.join(', ')}. The first one that is also a multiple of ${a} and ${b} is ${solucion}: LCM(${a}, ${b}, ${c}) = ${solucion}.`,
     }),
     pista_multiplo: (menor, mayor) => ({
-      es: `${mayor} ya es múltiplo de ${menor}: coinciden cada ${mayor} días, sin calcular nada más.`,
-      en: `${mayor} is already a multiple of ${menor}: they coincide every ${mayor} days, with nothing else to calculate.`,
+      es: `${mayor} ya es múltiplo de ${menor}: salen juntas cada ${mayor} minutos, sin calcular nada más.`,
+      en: `${mayor} is already a multiple of ${menor}: they leave together every ${mayor} minutes, with nothing else to calculate.`,
     }),
-    respuesta_label: { es: 'Días', en: 'Days' },
+    respuesta_label: { es: 'Minutos', en: 'Minutes' },
   },
   // «No lo sé» (revisión 193): qué se pide, las cuentas con sus unidades y la frase de respuesta.
   // m.c.m. con listas cuando los datos son pequeños (ej. 1 y 3) y por factorización con datos de dos cifras (ej. 2),
@@ -125,16 +125,16 @@ export const TX = {
       en: `The answer is <strong>${hora}</strong>: at that time they leave together again.`,
     }),
     pide_dias: (lista, tres) => ({
-      es: `Se pide cada cuántos días coinciden ${tres ? 'las tres' : 'las dos'}: el menor múltiplo común de ${lista}, su m.c.m.`,
-      en: `You need how often ${tres ? 'all three' : 'both'} coincide: the lowest common multiple of ${lista}, their LCM.`,
+      es: `Se pide cada cuántos minutos vuelven a salir juntas ${tres ? 'las tres' : 'las dos'}: el menor múltiplo común de ${lista}, su m.c.m.`,
+      en: `You need how often ${tres ? 'all three' : 'both'} leave together again: the lowest common multiple of ${lista}, their LCM.`,
     }),
     multiplo: (menor, mayor) => ({
       es: `<span class="cuenta">${mayor} : ${menor} = ${mayor / menor}</span>, así que ${mayor} ya es múltiplo de ${menor}: <span class="cuenta">m.c.m.(${menor}, ${mayor}) = ${mayor}</span>, sin calcular nada más.`,
       en: `<span class="cuenta">${mayor} ÷ ${menor} = ${mayor / menor}</span>, so ${mayor} is already a multiple of ${menor}: <span class="cuenta">LCM(${menor}, ${mayor}) = ${mayor}</span>, with nothing else to work out.`,
     }),
     fin_dias: (n, tres) => ({
-      es: `La respuesta es <strong>${n}</strong> días: es lo que tardan ${tres ? 'las tres' : 'las dos'} en volver a coincidir.`,
-      en: `The answer is <strong>${n}</strong> days: that is how long ${tres ? 'all three take' : 'both take'} to coincide again.`,
+      es: `La respuesta es <strong>${n}</strong> minutos: es lo que tardan ${tres ? 'las tres' : 'las dos'} en volver a salir juntas.`,
+      en: `The answer is <strong>${n}</strong> minutes: that is how long ${tres ? 'all three take' : 'both take'} to leave together again.`,
     }),
     y: { es: 'y', en: 'and' },
   },

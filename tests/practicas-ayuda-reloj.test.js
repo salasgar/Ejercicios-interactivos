@@ -76,7 +76,7 @@ test('reloj, ejercicio 3: la explicación da el m.c.m. de los tres datos o el m�
       const texto = plano(html);
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
-      assert.match(texto, new RegExp(`(La respuesta es|The answer is) ${m} (días|days): `), donde);
+      assert.match(texto, new RegExp(`(La respuesta es|The answer is) ${m} (minutos|minutes): `), donde);
       assert.match(texto, /^(Se pide|You need)/, donde);
       assert.ok(!/(La respuesta es|The answer is):/.test(texto), donde);
       for (const p of item.periodos) assert.ok(texto.includes(String(p)), donde);

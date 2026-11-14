@@ -87,21 +87,25 @@ export function multiplosHasta(periodo, limite) {
 }
 
 // ─── Ejercicio 3: tres datos pequeños, o uno múltiplo del otro ───────────────
-const TRIOS = [];
-for (let a = 2; a <= 8; a++) {
-  for (let b = a + 1; b <= 9; b++) {
-    for (let c = b + 1; c <= 12; c++) {
+// Atracciones de feria: cada periodo entre 3 y 20 minutos (un viaje con su subida y su bajada) y la
+// coincidencia dentro de una tarde de feria (m.c.m. ≤ 120 min; los tríos, de datos pequeños, ≤ 60).
+export const PERIODO_MIN = 3, PERIODO_MAX = 20, MCM_MAX_FERIA = 120, MCM_MAX_TRIOS = 60;
+
+export const TRIOS = [];
+for (let a = PERIODO_MIN; a <= PERIODO_MAX; a++) {
+  for (let b = a + 1; b <= PERIODO_MAX; b++) {
+    for (let c = b + 1; c <= PERIODO_MAX; c++) {
       const m = mcm(a, b, c);
-      if (m <= 60) TRIOS.push([a, b, c, m]);
+      if (m <= MCM_MAX_TRIOS) TRIOS.push([a, b, c, m]);
     }
   }
 }
 
-const MULTIPLOS = [];
-for (let d = 2; d <= 15; d++) {
+export const MULTIPLOS = [];
+for (let d = PERIODO_MIN; d <= PERIODO_MAX; d++) {
   for (let k = 2; k <= 5; k++) {
     const producto = d * k;
-    if (producto <= 80) MULTIPLOS.push([d, producto]);
+    if (producto <= PERIODO_MAX) MULTIPLOS.push([d, producto]);
   }
 }
 

@@ -496,7 +496,7 @@ test('tareas: cada ejercicio de una tarea tiene el nombre que dice la nota de te
     'imposibles/2': 'producto', 'imposibles/3': 'Nómbralo', 'factorizaciones/3': 'cociente', 'fabrica/2': 'Sin dividir', 'leelo/3': 'Completa',
     'divisores/6': 'miente', 'parentesis/1': 'Tres', 'raiz/2': 'Sin dibujo',
     'clasificador/2': 'trampa', 'reloj/2': 'hora', 'baldosas/1': 'más grande', 'baldosas/2': 'Cuántas', 'errores/1': 'error',
-    'errores/2': 'paso', 'clasificador/3': 'Justif', 'reloj/3': 'días', 'baldosas/3': 'Cuerdas', 'errores/3': 'Nombra', 'leelo/1': 'Escúchalo',
+    'errores/2': 'paso', 'clasificador/3': 'Justif', 'reloj/3': 'minutos', 'baldosas/3': 'Cuerdas', 'errores/3': 'Nombra', 'leelo/1': 'Escúchalo',
     'criba/3': 'probar', 'expresion/1': 'Dos operaciones', 'errores1/1': 'error',
   };
   const vistos = new Set();

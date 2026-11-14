@@ -208,3 +208,48 @@ test('textos: «por primera vez», 24 horas y la cuenta del m.c.m. en el feedbac
     assert.ok(!/every how many/i.test(t), t);
   }
 });
+
+// --- Atracciones de feria en minutos (reabierta del 14-11) ----------------------
+
+import { TRIOS, MULTIPLOS, PERIODO_MIN, PERIODO_MAX, MCM_MAX_FERIA } from '../practicas/reloj/logica.js';
+
+test('ejercicio 3: TODOS los trios y pares posibles son creíbles para una atracción (3-20 min, coincidencia ≤ 120 min)', () => {
+  assert.ok(TRIOS.length >= 15 && MULTIPLOS.length >= 15, `${TRIOS.length} tríos, ${MULTIPLOS.length} pares`);
+  for (const [a, b, c, m] of TRIOS) {
+    for (const p of [a, b, c]) assert.ok(p >= PERIODO_MIN && p <= PERIODO_MAX, `${a},${b},${c}`);
+    assert.equal(m, mcmBruto(a, b, c));
+    assert.ok(m <= MCM_MAX_FERIA, `${a},${b},${c}`);
+  }
+  for (const [d, mayor] of MULTIPLOS) {
+    for (const p of [d, mayor]) assert.ok(p >= PERIODO_MIN && p <= PERIODO_MAX, `${d},${mayor}`);
+    assert.ok(mayor % d === 0 && mayor > d, `${d},${mayor}`);
+    assert.ok(mcmBruto(d, mayor) <= MCM_MAX_FERIA);
+  }
+});
+
+test('ejercicio 3: ningún texto habla de días, y dice minutos, en los dos idiomas', () => {
+  const rng = crearRng(31415);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarTresOMultiplo(rng);
+    const x = TX.tres;
+    const textos = item.tipo === 'tres' ? [x.pregunta_tres(...item.periodos)] : [x.pregunta_multiplo(...item.periodos)];
+    if (item.tipo === 'multiplo') textos.push(x.pista_multiplo(Math.min(...item.periodos), item.solucion));
+    for (const t of textos) {
+      assert.ok(/minutos/.test(t.es) && /minutes/.test(t.en), t.es);
+      assert.ok(!/d[ií]as?\b/i.test(t.es) && !/\bdays?\b/i.test(t.en), t.es);
+    }
+  }
+  assert.ok(!/d[ií]as/i.test(x_nombre()) );
+});
+function x_nombre() { return TX.tres.nombre.es + TX.tres.nombre.en + TX.tres.respuesta_label.es + TX.tres.respuesta_label.en; }
+
+test('ejercicio 3: variedad, ningún ítem pasa del 10 % en 20 000', () => {
+  const rng = crearRng(2718);
+  const cuenta = new Map();
+  for (let i = 0; i < 20000; i++) {
+    const it = generarTresOMultiplo(rng);
+    const k = `${it.tipo}:${it.periodos.join(',')}`;
+    cuenta.set(k, (cuenta.get(k) || 0) + 1);
+  }
+  assert.ok(Math.max(...cuenta.values()) <= 2000);
+});
