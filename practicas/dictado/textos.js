@@ -2,7 +2,7 @@
 // Los números en palabras («six thousand and fourteen», «dos mil ochenta y uno») vienen de
 // logica.js y no se traducen: son el contenido que se practica.
 
-import { agrupar, enNum, gruposConValor } from './logica.js';
+import { agrupar, enNum, esNum, gruposConValor } from './logica.js';
 
 export const TX = {
   voz: {
@@ -131,20 +131,48 @@ export const TX = {
 
 const AYUDA = {
   respuesta: { es: 'La respuesta es', en: 'The answer is' },
+  // Revisión 193: la regla anterior («si un grupo no aparece, pon ceros») no cubría el caso típico,
+  // el cero DENTRO del grupo (17 095), y los grupos iban separados con «·», que en la U1 es el producto.
+  // mil: la palabra que separa los dos grupos («thousand» o «mil»), ya entre comillas.
   pasos: {
-    es: 'Escribe el número por grupos, de izquierda a derecha; si un grupo no aparece, pon ceros en su sitio.',
-    en: 'Write the number group by group, from left to right; if a group is missing, put zeros in its place.',
+    es: mil => `Separa el número en dos grupos: lo que va delante de ${mil} y lo que va detrás, que siempre se escribe con tres cifras; si falta alguna, pon un 0 en su sitio.`,
+    en: mil => `Split the number into two groups: the part before ${mil} and the part after it, which is always written with three digits; if a digit is missing, put a 0 in its place.`,
   },
-  pasosEs: {
-    es: 'Escribe el número por partes, de izquierda a derecha; lo que no se nombra se rellena con ceros.',
-    en: 'Write the number part by part, from left to right; what is not said is filled with zeros.',
+  pasos3: {
+    es: 'Un número de tres cifras se escribe con sus centenas, decenas y unidades; si falta alguna, pon un 0 en su sitio.',
+    en: 'A three-digit number is written with its hundreds, tens and units; if one is missing, put a 0 in its place.',
   },
+  cifras3: {
+    es: (c, d, u) => `${c} ${c === '1' ? 'centena' : 'centenas'}, ${d} ${d === '1' ? 'decena' : 'decenas'} y ${u} ${u === '1' ? 'unidad' : 'unidades'}`,
+    en: (c, d, u) => `${c} ${c === '1' ? 'hundred' : 'hundreds'}, ${d} ${d === '1' ? 'ten' : 'tens'} and ${u} ${u === '1' ? 'unit' : 'units'}`,
+  },
+  nada_detras: { es: 'detrás no hay nada', en: 'nothing after it' },
   pasosFichas: {
-    es: 'Ordena las palabras tal como se dice el número y deja fuera las fichas mal escritas.',
-    en: 'Put the words in the order we say the number and leave out the misspelled tiles.',
+    es: 'Pon las fichas en el orden en que se dice el número; las que no van en él sobran.',
+    en: 'Put the tiles in the order we say the number; the tiles that are not in it are extra.',
   },
-  sobran: { es: 'Fichas que sobran', en: 'Extra tiles' },
+  sobran: { es: 'Sobran', en: 'Extra tiles' },
+  // Por qué sobra cada ficha errónea (texto: el número en palabras; pre: lo que va delante de «mil»)
+  notas: {
+    miles: {
+      es: (texto, pre) => `«mil» no tiene plural (${pre ? `${pre} mil, no ${pre} miles` : 'mil, no miles'})`,
+      en: (texto, pre) => `“mil” has no plural (${pre ? `${pre} mil, not ${pre} miles` : 'mil, not miles'})`,
+    },
+    un: {
+      es: texto => (texto.startsWith('mil') ? 'se dice «mil», no «un mil»' : 'este número no lleva «un»'),
+      en: texto => (texto.startsWith('mil') ? 'we say “mil”, not “un mil”' : 'this number has no “un”'),
+    },
+    y: {
+      es: () => 'la «y» solo va entre las decenas y las unidades (treinta y dos), y este número no la lleva',
+      en: () => '“y” only goes between the tens and the units (treinta y dos), and this number has none',
+    },
+    sietecientos: { es: () => 'se escribe «setecientos»', en: () => 'the right word is “setecientos”' },
+    nuevecientos: { es: () => 'se escribe «novecientos»', en: () => 'the right word is “novecientos”' },
+    cincocientos: { es: () => 'se escribe «quinientos»', en: () => 'the right word is “quinientos”' },
+  },
 };
+
+const comillas = { es: x => `«${x}»`, en: x => `“${x}”` };
 
 /** Lo que va delante de «mil» en el texto español ('' si el número empieza por «mil»). */
 export const prefijoMil = texto => (texto.startsWith('mil') ? '' : texto.split(' mil')[0]);
@@ -166,11 +194,27 @@ export function explicarDictado(item, { tt, esc }) {
   return html;
 }
 
-/** «No lo sé» de un dictado (en inglés o en español). */
-export function explicaDictado(item, ctx) {
-  const { tt } = ctx;
-  const regla = tt(item.tipo === 'dictado' ? AYUDA.pasos : AYUDA.pasosEs);
-  return `<p>${regla}</p><p>${explicarDictado(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(item.n)}.</strong></p>`;
+/**
+ * «No lo sé» de un dictado (en inglés o en español): los dos grupos, delante y detrás de
+ * «thousand»/«mil», con el de detrás a tres cifras (17 095: seventeen thousand → 17; ninety-five → 095).
+ * Sin «thousand» (solo en inglés, de 100 a 999): centenas, decenas y unidades.
+ */
+export function explicaDictado(item, { tt, esc }) {
+  const ingles = item.tipo === 'dictado';
+  const nombre = ingles ? enNum : esNum;
+  const n = item.n, k = Math.floor(n / 1000), u = n % 1000;
+  const cifra = x => `<span class="cuenta">${x}</span>`;
+  let regla, pasos;
+  if (k === 0) {
+    regla = tt(AYUDA.pasos3);
+    const [c, d, un] = String(n);
+    pasos = `${esc(item.texto)}: ${tt(AYUDA.cifras3)(c, d, un)} → ${cifra(n)}`;
+  } else {
+    regla = tt(AYUDA.pasos)(tt(comillas)(ingles ? 'thousand' : 'mil'));
+    const detras = u ? `${esc(nombre(u))} → ${cifra(String(u).padStart(3, '0'))}` : `${tt(AYUDA.nada_detras)} → ${cifra('000')}`;
+    pasos = `${esc(item.texto)}<br>${esc(nombre(k * 1000))} → ${cifra(k)}; ${detras}`;
+  }
+  return `<p>${regla}</p><p>${pasos}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(n)}.</strong></p>`;
 }
 
 /** La nota de la escritura inglesa: guion, ortografía de la decena o plural. */
@@ -191,8 +235,9 @@ export function explicaTeenOEscritura(item, ctx) {
     const otro = item.opciones[1 - item.solucion];
     return `<p>${tt(TX.teen.diferencia)(agrupar(item.n), agrupar(otro), esc(item.texto), acentuada(item.base[0], 'teen'), acentuada(item.base[1], 'ty'))}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(item.n)}.</strong></p>`;
   }
+  // La regla (la nota) delante; el feedback la pone detrás, pegada a «fifty = 50» sin punto.
   const buena = item.opciones[item.solucion];
-  return `<p>${tt(TX.teen.escritura_ok)(agrupar(item.n), esc(buena))} ${notaEscritura(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${esc(buena)}.</strong></p>`;
+  return `<p>${notaEscritura(item, ctx)}</p><p>${tt(TX.teen.escritura_ok)(agrupar(item.n), esc(buena))}</p><p><strong>${tt(AYUDA.respuesta)} ${esc(buena)}.</strong></p>`;
 }
 
 /** «No lo sé» del ejercicio 3: ordenar las fichas del número en español, o dictado en español. */
@@ -200,7 +245,8 @@ export function explicaFichasODictadoEs(item, ctx) {
   if (item.tipo !== 'fichas') return explicaDictado(item, ctx);
   const { tt, esc } = ctx;
   const pre = prefijoMil(item.texto);
-  const notas = item.sobran.map(s => `<br>«${esc(s)}»: ${tt(TX.fichas.notas[s])(esc(item.texto), esc(pre))}`).join('');
-  return `<p>${tt(AYUDA.pasosFichas)}</p><p>${tt(TX.fichas.correcta)}: ${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span></p>`
-    + `<p>${tt(AYUDA.sobran)}:${notas}</p><p><strong>${tt(AYUDA.respuesta)}: ${esc(item.texto)}.</strong></p>`;
+  const q = tt(comillas);
+  const notas = item.sobran.map(s => `<br>${q(esc(s))}: ${tt(AYUDA.notas[s])(esc(item.texto), esc(pre))}.`).join('');
+  return `<p>${tt(AYUDA.pasosFichas)}</p><p>${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span></p>`
+    + `<p>${tt(AYUDA.sobran)}:${notas}</p><p><strong>${tt(AYUDA.respuesta)} ${esc(item.texto)}.</strong></p>`;
 }
