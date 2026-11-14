@@ -213,13 +213,29 @@ export function cuentaPotencias(item, { tt, idioma }, mio = null) {
 
 const AYUDA = {
   respuesta: { es: 'La respuesta es', en: 'The answer is' },
+  // Revisión 193: las reglas, como en los apuntes de la U1 (soluciones de la hoja de la semana 3): «Al
+  // multiplicar, se deja la base y se suman los exponentes. Al dividir, se deja la base y se restan los
+  // exponentes. En una potencia de potencia, se multiplican los exponentes.»
   juntar: {
-    es: 'Con la misma base, en un producto se suman los exponentes y en un cociente se restan; las operaciones, de izquierda a derecha.',
-    en: 'With the same base, in a product you add the exponents and in a quotient you subtract them; operations go from left to right.',
+    es: 'Con la misma base, al multiplicar se deja la base y se suman los exponentes, y al dividir se restan; las operaciones van de izquierda a derecha.',
+    en: 'With the same base, when you multiply you keep the base and add the exponents, and when you divide you subtract them; operations go from left to right.',
   },
+  // La anterior («mira primero si hay potencias de potencias») no decía ninguna regla.
   potencia: {
-    es: 'Para escribir una sola potencia, mira primero si hay potencias de potencias.',
-    en: 'To write a single power, first look for powers of powers.',
+    es: 'En una potencia de potencia, se deja la base y se multiplican los exponentes.',
+    en: 'In a power of a power, you keep the base and multiply the exponents.',
+  },
+  cadena_con: {
+    es: 'Primero cada potencia de potencia (se multiplican los exponentes); después, de izquierda a derecha, al multiplicar se suman los exponentes y al dividir se restan.',
+    en: 'First each power of a power (multiply the exponents); then, from left to right, add the exponents when you multiply and subtract them when you divide.',
+  },
+  cadena_sin: {
+    es: 'Con la misma base, de izquierda a derecha: al multiplicar se deja la base y se suman los exponentes, y al dividir se restan.',
+    en: 'With the same base, from left to right: when you multiply you keep the base and add the exponents, and when you divide you subtract them.',
+  },
+  cifra: {
+    es: b => `No hace falta calcular la potencia entera: multiplica la última cifra de la potencia anterior por ${b} y quédate con la última cifra del resultado.`,
+    en: b => `You do not need the whole power: multiply the last digit of the previous power by ${b} and keep the last digit of the result.`,
   },
   tabla: {
     es: (b, cifras) => `Últimas cifras de ${b}<sup>1</sup>, ${b}<sup>2</sup>, ${b}<sup>3</sup>…: ${cifras.join(', ')}.`,
@@ -244,14 +260,26 @@ export function explicaJuntar(item, ctx) {
     ({ terminos, ops } = juntar(terminos, ops, i, bueno));
   }
   const final = cuentaDe(terminos, ops, ctx.idioma);
-  const nota = terminos.length > 1 ? ` ${tt(TX.juntar.ajena_nota)}` : '';
-  return `<p>${tt(AYUDA.juntar)}</p><p>${lineas.join('<br>')}</p><p><strong>${tt(AYUDA.respuesta)} ${final}.</strong>${nota}</p>`;
+  // La nota de la base ajena va con las cuentas: la respuesta, al final.
+  if (terminos.length > 1) lineas.push(tt(TX.juntar.ajena_nota));
+  return `<p>${tt(AYUDA.juntar)}</p><p>${lineas.join('<br>')}</p><p><strong>${tt(AYUDA.respuesta)} ${final}.</strong></p>`;
 }
 
-/** «No lo sé» del ejercicio 2: la cuenta de los exponentes y la potencia resultante. */
+/** «No lo sé» del ejercicio 2: la regla, la cuenta de los exponentes y la potencia resultante. */
 export function explicaPotencias(item, ctx) {
   const { tt } = ctx;
-  return `<p>${tt(AYUDA.potencia)}</p><p>${cuentaPotencias(item, ctx)}</p><p><strong>${tt(AYUDA.respuesta)} ${item.base}<sup>${item.solucion}</sup>.</strong></p>`;
+  const { base: b, solucion: r } = item;
+  let regla, cuenta;
+  if (item.tipo === 'potencia') {
+    // (2³)² = 2³ · 2³ = 2^(3 · 2) = 2⁶, como en la hoja; sin repetir la regla detrás (el feedback la lleva).
+    const { exp: m, k } = item.terminos[0];
+    regla = tt(AYUDA.potencia);
+    cuenta = cadena(`(${b}<sup>${m}</sup>)<sup>${k}</sup> = ${Array(k).fill(`${b}<sup>${m}</sup>`).join(' · ')} = ${b}<sup>${m} · ${k}</sup> = ${b}<sup>${r}</sup>`);
+  } else {
+    regla = tt(item.terminos.some(t => t.k > 1) ? AYUDA.cadena_con : AYUDA.cadena_sin);
+    cuenta = cuentaPotencias(item, ctx).replace(/\.(<\/span>)?$/, '$1');
+  }
+  return `<p>${regla}</p><p>${cuenta}</p><p><strong>${tt(AYUDA.respuesta)} ${b}<sup>${r}</sup>.</strong></p>`;
 }
 
 /** «No lo sé» del ejercicio 3: la tabla de últimas cifras, el patrón y la cifra pedida. */
@@ -262,5 +290,6 @@ export function explicaUltima(item, { tt }) {
   if (L === 1) razon = tt(x.explica_uno)(base, n, d);
   else if (n % L === 0) razon = tt(x.explica_multiplo)(base, n, L, n / L, d);
   else razon = tt(x.explica_resto)(base, n, L, Math.floor(n / L), posicionEnCiclo(n, L), d);
-  return `<p>${tt(AYUDA.tabla)(base, item.tabla)}</p><p>${razon}</p><p><strong>${tt(AYUDA.respuesta)}: ${tt(AYUDA.ultima)(base, n, d)}.</strong></p>`;
+  // La regla de la tabla delante; la respuesta es la cifra, sin «es:» (la frase «acaba en d» ya está en `razon`).
+  return `<p>${tt(AYUDA.cifra)(base)}</p><p>${tt(AYUDA.tabla)(base, item.tabla)}<br>${razon}</p><p><strong>${tt(AYUDA.respuesta)} ${d}.</strong></p>`;
 }
