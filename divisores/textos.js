@@ -196,7 +196,8 @@ export function explicaArrastrar(item, { idioma }, [sx, sy] = solucionExplicada(
     : `You have the numbers ${item.numeros.join(', ')}; they come from ${cuenta(textoOperacion(item.op, idioma))}.`;
   const regla = reglaRelacion(item.relacion, sx, sy, idioma);
   const buena = `${es ? 'Aquí:' : 'Here:'} ${cuenta(cuentaRelacion(item.relacion, sx, sy, idioma))}, ${es ? 'así que' : 'so'} ${frase(item.relacion, sx, sy, idioma)}.`;
-  const fin = es ? `Una solución es ${sx} y ${sy}.` : `One solution is ${sx} and ${sy}.`;
+  // Revisión 193: la respuesta, con la fórmula de las demás tarjetas; «por ejemplo», porque suele valer otra pareja.
+  const fin = es ? `La respuesta es ${sx} y ${sy}, por ejemplo.` : `The answer is ${sx} and ${sy}, for example.`;
   const consejo = es
     ? ' Consejo: el número más grande de la operación es el múltiplo; los otros dos son divisores suyos.'
     : ' Tip: the biggest number in the operation is the multiple; the other two are divisors of it.';

@@ -72,6 +72,8 @@ test('divisores · ejercicio 5: la solución que da vale y lleva su cuenta', () 
       assert.ok(html.includes(X.frase(item.relacion, sol[0], sol[1], idioma)), html);
       assert.ok(html.includes(`${sol[0]} ${idioma === 'es' ? 'y' : 'and'} ${sol[1]}`), html);
       assert.ok(html.includes(X.cuentaRelacion(item.relacion, sol[0], sol[1], idioma)), html);
+      // Revisión 193 (sesión): «La respuesta es …, por ejemplo», no «Una solución es».
+      assert.ok(html.includes(idioma === 'es' ? `La respuesta es ${sol[0]} y ${sol[1]}, por ejemplo.` : `The answer is ${sol[0]} and ${sol[1]}, for example.`), html);
     }
   }
 });
