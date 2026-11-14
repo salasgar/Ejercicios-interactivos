@@ -154,7 +154,7 @@ test('textos: la introducción del ejercicio 2 no usa letras, y los mensajes cit
   assert.equal(dos, 'Lado 7: 40 : 7 = 5, sobran 5 dm; 30 : 7 = 4, sobran 2 dm. No cabe en ninguno de los dos.');
   assert.equal((dos.match(/Lado/g) || []).length, 1);
   assert.match(TX.baldosa.incorrecto_no_cabe.es(7, fa), /^7 no vale: 40 : 7 = 5, sobran 5 dm/);
-  assert.match(TX.cuantas.instruccion.en(40, 56, 8), /tiles of side 8/);
+  assert.match(TX.cuantas.instruccion.en(40, 56, 8), /tiles with a side of 8 dm/);
   // 5 baldosas a lo largo y 7 a lo ancho: el dibujo tiene 7 filas de 5.
   assert.match(TX.cuantas.error_suma.es(5, 7, 35), /7 filas de 5 son 35/);
   assert.match(TX.cuantas.error_suma.en(5, 7, 35), /7 rows of 5 is 35/);
@@ -192,4 +192,13 @@ test('práctica.js: cada dibujo lleva ids de pattern únicos (no fijos)', async 
   const src = await readFile(new URL('../practicas/baldosas/practica.js', import.meta.url), 'utf8');
   assert.doesNotMatch(src, /id="baldosas-(cuadricula|rayado)"/);
   assert.match(src, /id="\$\{id\}-cuadricula"/);
+});
+
+test('tarea 198: la baldosa lleva siempre su unidad («8 dm de lado»), también en la introducción', async () => {
+  const { TX } = await import('../practicas/baldosas/textos.js');
+  assert.equal(TX.cuantas.instruccion.es(40, 56, 8), 'Suelo de 40 dm por 56 dm cubierto con baldosas de 8 dm de lado. ¿Cuántas baldosas hacen falta?');
+  assert.match(TX.cuantas.instruccion.en(40, 56, 8), /tiles with a side of 8 dm/);
+  assert.match(TX.cuantas.introduccion.es, /baldosas de 8 dm de lado/);
+  assert.match(TX.cuantas.introduccion.en.replace(/\s+/g, ' '), /tiles with a side of 8 dm/);
+  assert.ok(!/baldosas de lado \d|tiles of side \d/.test(TX.cuantas.introduccion.es + TX.cuantas.introduccion.en + TX.cuantas.instruccion.es(1, 2, 3) + TX.cuantas.instruccion.en(1, 2, 3)));
 });

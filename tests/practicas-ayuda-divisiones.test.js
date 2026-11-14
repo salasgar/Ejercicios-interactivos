@@ -67,7 +67,7 @@ test('divisiones · ejercicio 3: la respuesta es el valor (o Sí/No) que el ejer
       const dicho = html.match(RESP)?.[1];
       const valor = valorDe(item.factorizacion);
       if (item.tipo === 'valor') {
-        assert.equal(dicho, String(valor), html);
+        assert.equal(dicho.replace(/[\s,]/g, ''), String(valor), html);
         assert.equal(item.solucion, valor);
       } else {
         const boton = item.igualdadCorrecta ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No';

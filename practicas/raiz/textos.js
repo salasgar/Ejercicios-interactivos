@@ -131,12 +131,12 @@ export const TX = {
     campo_sillas_fila: { es: 'Sillas por fila', en: 'Chairs per row' },
     campo_sobran: { es: 'Sobran', en: 'Left over' },
     respuesta: {
-      es: (k, r, dos) => (dos ? `Respuesta: lado ${k} y sobran ${r}.` : `Respuesta: ${k} en cada lado.`),
-      en: (k, r, dos) => (dos ? `Answer: side ${k}, and ${r} left over.` : `Answer: ${k} on each side.`),
+      es: (k, r, dos) => (dos ? `Respuesta: lado ${k} y ${r === 1 ? 'sobra' : 'sobran'} ${r}.` : `Respuesta: ${k} en cada lado.`),
+      en: (k, r, dos) => (dos ? `Answer: side ${k}, and ${r} ${r === 1 ? 'is' : 'are'} left over.` : `Answer: ${k} on each side.`),
     },
     tu_respuesta: {
-      es: (a, b) => (b === null ? `Has dicho ${a}.` : `Has dicho lado ${a} y sobran ${b}.`),
-      en: (a, b) => (b === null ? `You said ${a}.` : `You said side ${a} and ${b} left over.`),
+      es: (a, b) => (b === null ? `Has dicho ${a}.` : `Has dicho lado ${a} y ${b === 1 ? 'sobra' : 'sobran'} ${b}.`),
+      en: (a, b) => (b === null ? `You said ${a}.` : `You said side ${a} and ${b} ${b === 1 ? 'is' : 'are'} left over.`),
     },
   },
 
@@ -151,7 +151,7 @@ export const TX = {
       en: (n, k) => `<span class="cuenta">${c(k)} = ${k * k} ≤ ${n} &lt; ${(k + 1) * (k + 1)} = ${c(k + 1)}</span>`,
     },
     sobran: {
-      es: (n, k, r) => `Sobran <span class="cuenta">${n} − ${k * k} = ${r}</span>.`,
+      es: (n, k, r) => `${r === 1 ? 'Sobra' : 'Sobran'} <span class="cuenta">${n} − ${k * k} = ${r}</span>.`,
       en: (n, k, r) => `Left over: <span class="cuenta">${n} − ${k * k} = ${r}</span>.`,
     },
     exacta: {

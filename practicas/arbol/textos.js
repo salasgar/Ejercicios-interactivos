@@ -103,14 +103,14 @@ const RESPUESTA = {
 const ayuda = {
   construir: {
     regla: {
-      es: 'Parte cada número en un producto de dos (vale cualquiera; aquí, empezando por el primo más pequeño) y sigue con los que no sean primos hasta que todas las puntas sean primos.',
+      es: 'Parte cada número en un producto de dos (vale cualquiera; aquí, empezando por el primo más pequeño) y sigue con los que no sean primos hasta que todas las puntas sean números primos.',
       en: 'Split each number into a product of two (any product works; here, we start with the smallest prime), and keep going with the ones that are not prime until all the ends are prime.',
     },
     parte: {
       es: (c, p, r) => `${cuenta(`${c} = ${p} · ${r}`)}: ${!esPrimo(r) ? `${p} es primo; ${r} se puede partir` : p === r ? `${p} es primo` : `${p} y ${r} son primos`}.`,
       en: (c, p, r) => `${cuenta(`${c} = ${p} · ${r}`)}: ${!esPrimo(r) ? `${p} is prime; ${r} can be split` : p === r ? `${p} is prime` : `${p} and ${r} are prime`}.`,
     },
-    puntas: { es: 'Ya todas las puntas son primos.', en: 'Now all the ends are prime.' },
+    puntas: { es: 'Ya todas las puntas son números primos.', en: 'Now all the ends are prime.' },
   },
   terminada: {
     regla: { es: 'Mira cada factor de la igualdad y pregúntate si es primo.', en: 'Look at each factor in the equality and ask yourself: is it prime?' },

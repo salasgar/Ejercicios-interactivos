@@ -419,7 +419,7 @@ const PLANTILLAS = [
     id: 'divisor_pair',
     generar(rng) {
       const x = rng.entero(2, 9), y = rng.entero(2, 9), a = x * y;
-      return { frase: `${x} · ${y} is a ___ pair of ${a}`, correcta: 'divisor', falsas: ['remainder', 'quotient'], datos: { x, y, a } };
+      return { frase: `${x} and ${y} are a ___ pair of ${a}`, correcta: 'divisor', falsas: ['remainder', 'quotient'], datos: { x, y, a } };
     },
   },
   {

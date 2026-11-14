@@ -109,7 +109,7 @@ export const TX = {
       en: (texto, valor) => `${texto} = ${fmt(valor, 'en')}.`,
     },
     explicacion_producto: {
-      es: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${fmt(n * 100, 'es')} − ${falta * n} = ${fmt(valor, 'es')}: a ${n} filas de 100 se les quita ${falta === 1 ? 'una columna' : 'dos columnas'}.`,
+      es: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${fmt(n * 100, 'es')} − ${falta * n} = ${fmt(valor, 'es')}: a ${n} filas de 100 se les ${falta === 1 ? 'quita una columna' : 'quitan dos columnas'}.`,
       en: (n, k, falta, valor) => `${n} · ${k} = ${n} · 100 − ${falta === 1 ? n : `2 · ${n}`} = ${fmt(n * 100, 'en')} − ${falta * n} = ${fmt(valor, 'en')}: from ${n} rows of 100 we take away ${falta === 1 ? 'one column' : 'two columns'}.`,
     },
     explicacion_suma: {

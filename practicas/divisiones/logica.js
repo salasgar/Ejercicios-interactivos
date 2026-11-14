@@ -12,7 +12,7 @@
 //                { tipo, factorizacion, valorMostrado, igualdadCorrecta }
 
 import { factorizar, valorDe, criterio, htmlFact, esPrimo } from '../_comun/aritmetica.js';
-import { lineaComprobacion } from './textos.js';
+import { lineaComprobacion, miles } from './textos.js';
 
 export const PRIMOS_ESCALERA = [2, 3, 5, 7, 11, 13];
 // 2, 3 y 5 tienen un criterio de divisibilidad sencillo (aritmetica.js); para
@@ -280,11 +280,9 @@ export function generarEjercicio3(rng) {
 /** La explicación paso a paso: cada potencia calculada de verdad y el producto final. */
 export function explicarEj3(factorizacion, idioma) {
   // Solo las potencias de verdad: con exponente 1 «3 = 3» no explica nada.
-  const pasos = factorizacion.filter(([, e]) => e > 1).map(([p, e]) => `${p}<sup>${e}</sup> = ${p ** e}`);
+  const pasos = factorizacion.filter(([, e]) => e > 1).map(([p, e]) => `${p}<sup>${e}</sup> = ${miles(p ** e, idioma)}`);
   const correcto = valorDe(factorizacion);
-  const productoTexto = factorizacion.map(([p, e]) => p ** e).join(' · ');
-  const frase = idioma === 'es'
-    ? `${pasos.join('; ')}; ${productoTexto} = ${correcto}`
-    : `${pasos.join('; ')}; ${productoTexto} = ${correcto}`;
+  const productoTexto = factorizacion.map(([p, e]) => miles(p ** e, idioma)).join(' · ');
+  const frase = `${pasos.join('; ')}; ${productoTexto} = ${miles(correcto, idioma)}`;
   return `<span class="cuenta">${frase}</span>`;
 }

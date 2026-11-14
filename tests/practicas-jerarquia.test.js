@@ -367,3 +367,10 @@ test('a + b − b: tocar el − antes que el + no cambia el valor y no es fallo'
   assert.deepEqual(validos(['9', '+', '8', '-', '3']), [1, 3]);
   assert.deepEqual(validos(['10', '-', '4', '+', '3']), [1]);
 });
+
+test('tarea 198: la introducción en inglés habla de «a calculation», no de «a sum»', async () => {
+  const { TX } = await import('../practicas/jerarquia/textos.js');
+  assert.match(TX.intro1.en, /You will see a calculation with several operations/);
+  assert.match(TX.intro1.en, /the calculation gets shorter/);
+  assert.ok(!/a sum with|the sum gets/.test(TX.intro1.en));
+});

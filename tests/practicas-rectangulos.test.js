@@ -182,3 +182,11 @@ test('huecoCelda: tres tramos', () => {
   assert.equal(huecoCelda(8), 2);
   assert.equal(huecoCelda(20), 2);
 });
+
+test('tarea 198: el «<» del feedback va escapado (&lt;) y no queda ninguno suelto fuera de etiqueta', async () => {
+  const { TX } = await import('../practicas/rectangulos/textos.js');
+  for (const html of [TX.parar.correcto.es(9, 91), TX.parar.correcto.en(9, 91), TX.parar.incorrecto.es(7, 9, 91), TX.parar.incorrecto.en(7, 9, 91)]) {
+    assert.ok(html.includes('&lt;'), html);
+    assert.ok(!html.replace(/<[^>]*>/g, '').includes('<'), html);
+  }
+});

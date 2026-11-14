@@ -274,3 +274,17 @@ test('completar: ramasMal dice la cuenta de la rama que falla', () => {
   assert.ok(esCorrectaCompletar(dos, [3, 5]) && esCorrectaCompletar(dos, [5, 3]));
   assert.equal(solucionesCompletar(dos).length, 1);
 });
+
+test('tarea 198: las puntas del árbol «son números primos», no «son primos»', async () => {
+  const { explicaConstruir } = await import('../practicas/arbol/textos.js');
+  const { generarConstruir } = await import('../practicas/arbol/logica.js');
+  const item = generarConstruir(crearRng(198));
+  for (const idioma of ['es', 'en']) {
+    const html = explicaConstruir(item, { tt: obj => obj[idioma], idioma });
+    if (idioma === 'es') {
+      assert.match(html, /todas las puntas sean números primos/);
+      assert.match(html, /Ya todas las puntas son números primos\./);
+      assert.ok(!/puntas (sean|son) primos/.test(html), html);
+    }
+  }
+});

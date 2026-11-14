@@ -3,6 +3,13 @@
 
 import { criterio, factorizar, htmlFact } from '../_comun/aritmetica.js';
 
+/** Separador de miles desde 5 cifras (la RAE no separa los de 4): «11 979» en español, «11,979» en inglés. */
+export function miles(n, idioma = 'es') {
+  const s = String(n);
+  if (s.length < 5) return s;
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, idioma === 'en' ? ',' : ' ');
+}
+
 /**
  * Cierre de la factorización: multiplicar los factores devuelve el número de
  * partida (la factorización ES la respuesta; la cuenta solo sirve para comprobar).
@@ -33,7 +40,7 @@ export const TX = {
     nombre: { es: 'Comprobar multiplicando', en: 'Check by multiplying' },
     detalle: { es: '¿Cuánto vale esta factorización?', en: 'What does this factorisation equal?' },
     pregunta_valor: { es: f => `¿Cuánto vale <strong>${f}</strong>?`, en: f => `What does <strong>${f}</strong> equal?` },
-    pregunta_sino: { es: (f, v) => `¿Es correcto que <strong>${f} = ${v}</strong>?`, en: (f, v) => `Is it correct that <strong>${f} = ${v}</strong>?` },
+    pregunta_sino: { es: (f, v) => `¿Es correcto que <strong>${f} = ${miles(v, 'es')}</strong>?`, en: (f, v) => `Is it correct that <strong>${f} = ${miles(v, 'en')}</strong>?` },
     no_da: { es: 'no da', en: 'is not' },
     correcta: { es: 'La cuenta correcta es', en: 'The correct working is' },
   },
@@ -110,22 +117,22 @@ export function explicaComprobar(item, { idioma }) {
     : 'Work out each power, then multiply the results.';
   const pasos = f.filter(([, e]) => e > 1).map(([p, e]) => {
     const rep = Array(e).fill(p).join(' · ');
-    return `<li><span class="cuenta">${p}<sup>${e}</sup> = ${rep} = ${p ** e}</span></li>`;
+    return `<li><span class="cuenta">${p}<sup>${e}</sup> = ${rep} = ${miles(p ** e, idioma)}</span></li>`;
   });
-  const producto = `<span class="cuenta">${f.map(([p, e]) => p ** e).join(' · ')} = ${valor}</span>`;
+  const producto = `<span class="cuenta">${f.map(([p, e]) => miles(p ** e, idioma)).join(' · ')} = ${miles(valor, idioma)}</span>`;
   const lista = pasos.length ? `<ol class="pasos-ayuda">${pasos.join('')}</ol>` : '';
   const multiplicar = `<p>${idioma === 'es' ? 'Multiplicamos' : 'We multiply'}: ${producto}.</p>`;
   let cierre;
   if (item.tipo === 'sino') {
     const si = item.igualdadCorrecta;
     const frase = idioma === 'es'
-      ? `El valor es ${valor}, y la igualdad dice ${item.valorMostrado}.`
-      : `The value is ${valor}, and the equality says ${item.valorMostrado}.`;
+      ? `El valor es ${miles(valor, idioma)}, y la igualdad dice ${miles(item.valorMostrado, idioma)}.`
+      : `The value is ${miles(valor, idioma)}, and the equality says ${miles(item.valorMostrado, idioma)}.`;
     // El texto del botón, entre comillas (revisión 193).
     const boton = `<strong>${si ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`;
     cierre = `<p>${frase} ${RESPUESTA[idioma](idioma === 'es' ? `«${boton}»` : `“${boton}”`)}</p>`;
   } else {
-    cierre = `<p>${RESPUESTA[idioma](`<strong>${valor}</strong>`)}</p>`;
+    cierre = `<p>${RESPUESTA[idioma](`<strong>${miles(valor, idioma)}</strong>`)}</p>`;
   }
   return `<p>${regla}</p>${lista}${multiplicar}${cierre}`;
 }

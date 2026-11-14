@@ -10,7 +10,7 @@ import {
   generarPotencias, exponenteDe, esFactorizacionCorrecta, explicarPotencias,
   generarEjercicio3, explicarEj3,
 } from './logica.js';
-import { TX, explicaEscalera, explicaPotencias, explicaComprobar } from './textos.js';
+import { TX, explicaEscalera, explicaPotencias, explicaComprobar, miles } from './textos.js';
 
 const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
@@ -149,7 +149,7 @@ const enunciadoEj3 = (item, textos) => (item.tipo === 'sino' ? enunciadoSino(ite
 function montarValor(contenedor, item, api) {
   contenedor.innerHTML = enunciadoValor(item, api);
   const botones = elecciones(contenedor, {
-    opciones: item.opciones.map(v => ({ valor: v, html: String(v) })),
+    opciones: item.opciones.map(v => ({ valor: v, html: miles(v, api.idioma) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);

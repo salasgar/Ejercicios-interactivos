@@ -248,3 +248,26 @@ test('explicarEj3: con exponente 1 no escribe «3 = 3»', () => {
   assert.ok(!html.includes('3 = 3'), html);
   assert.ok(html.includes('8 · 3 = 24'));
 });
+
+test('tarea 198: ejercicio 3, ningún número de cinco cifras o más sale sin separador de miles (enunciado, feedback y tarjeta)', async () => {
+  const { TX, miles, explicaComprobar } = await import('../practicas/divisiones/textos.js');
+  const { generarEjercicio3, explicarEj3 } = await import('../practicas/divisiones/logica.js');
+  assert.equal(miles(11979, 'es'), '11 979');
+  assert.equal(miles(11979, 'en'), '11,979');
+  assert.equal(miles(9999, 'es'), '9999');
+  const rng = crearRng(198);
+  const sinMiles = html => html.replace(/<[^>]*>/g, ' ');
+  let grandes = 0;
+  for (let i = 0; i < 300; i++) {
+    const item = generarEjercicio3(rng);
+    for (const idioma of ['es', 'en']) {
+      const textos = [explicarEj3(item.factorizacion, idioma), explicaComprobar(item, { idioma })];
+      if (item.tipo === 'sino') textos.push(TX.ej3.pregunta_sino[idioma]('2<sup>3</sup>', item.valorMostrado));
+      for (const t of textos) {
+        assert.ok(!/\d{5,}/.test(sinMiles(t)), t);
+        if (/\d[ ,]\d{3}/.test(sinMiles(t))) grandes++;
+      }
+    }
+  }
+  assert.ok(grandes > 0, 'el generador debería sacar números de cinco cifras');
+});

@@ -43,17 +43,17 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>El suelo ya está cubierto con la baldosa más grande posible, la del m.c.d. de sus
         dos lados. ¿Cuántas baldosas hacen falta? Ejemplo: un suelo de 40 dm por 56 dm,
-        con baldosas de lado 8. A lo largo caben <span class="numero">40 : 8 = 5</span>
+        con baldosas de 8 dm de lado. A lo largo caben <span class="numero">40 : 8 = 5</span>
         y a lo ancho <span class="numero">56 : 8 = 7</span>. Las filas de baldosas <strong>se
         multiplican</strong>, no se suman: 7 filas de 5 baldosas son 35, no 12.</p>`,
       en: `<h2>How it works</h2>
         <p>The floor is already covered with the biggest possible tile, the one given by the
         GCD of its two sides. How many tiles are needed? Example: a floor 40 dm by 56 dm,
-        with tiles of side 8. Along the length there are <span class="numero">40 : 8 = 5</span>
+        with tiles with a side of 8 dm. Along the length there are <span class="numero">40 : 8 = 5</span>
         and along the width <span class="numero">56 : 8 = 7</span>. The rows of tiles
         <strong>multiply</strong>, they do not add up: 7 rows of 5 tiles is 35, not 12.</p>`,
     },
-    instruccion: { es: (a, b, g) => `Suelo de ${a} dm por ${b} dm cubierto con baldosas de lado ${g}. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `A floor of ${a} dm by ${b} dm covered with tiles of side ${g}. How many tiles are needed?` },
+    instruccion: { es: (a, b, g) => `Suelo de ${a} dm por ${b} dm cubierto con baldosas de ${g} dm de lado. ¿Cuántas baldosas hacen falta?`, en: (a, b, g) => `A floor of ${a} dm by ${b} dm covered with tiles with a side of ${g} dm. How many tiles are needed?` },
     respuesta_label: { es: 'Número de baldosas', en: 'Number of tiles' },
     cuenta: { es: (a, b, g, p, q, cuantas) => `A lo largo: ${a} : ${g} = ${p}; a lo ancho: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.`, en: (a, b, g, p, q, cuantas) => `Along the length: ${a} : ${g} = ${p}; along the width: ${b} : ${g} = ${q}; ${p} · ${q} = ${cuantas}.` },
     // p = baldosas a lo largo (por fila), q = a lo ancho (filas): el dibujo tiene q filas de p.

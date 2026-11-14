@@ -37,8 +37,8 @@ export const TX = {
     faltan: { es: 'Faltan estas parejas:', en: 'These pairs are missing:' },
     el_uno_y_el_propio: { es: 'El 1 y el propio número siempre son divisores.', en: 'The number 1 and the number itself are always divisors.' },
     se_para_en: {
-      es: (r, n) => `Y no hacía falta seguir más allá del ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; a partir de ahí las parejas se repiten al revés.`,
-      en: (r, n) => `And there was no need to go past ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; after that the pairs repeat the other way round.`,
+      es: (r, n) => `Y no hacía falta seguir más allá del ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; a partir de ahí las parejas se repiten al revés.`,
+      en: (r, n) => `And there was no need to go past ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; after that the pairs repeat the other way round.`,
     },
   },
   banco: {
@@ -54,8 +54,8 @@ export const TX = {
     nombre: { es: '¿Dónde se para?', en: 'Where do you stop?' },
     detalle: { es: 'Hasta dónde hay que probar para tener todos los divisores', en: 'How far you must try to find every divisor' },
     pregunta: { es: n => `Para encontrar todos los divisores de ${n} por parejas, ¿<strong>hasta qué número</strong> hay que probar?`, en: n => `To find all the divisors of ${n} in pairs, <strong>up to which number</strong> do you have to try?` },
-    correcto: { es: (r, n) => `Correcto: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; a partir de ${r + 1} las parejas se repiten al revés.`, en: (r, n) => `Correct: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; from ${r + 1} on, the pairs repeat the other way round.` },
-    incorrecto: { es: (elegido, r, n) => `${elegido} no es el número. Hay que probar hasta ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.`, en: (elegido, r, n) => `${elegido} is not the number. You must try up to ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} < <span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.` },
+    correcto: { es: (r, n) => `Correcto: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; a partir de ${r + 1} las parejas se repiten al revés.`, en: (r, n) => `Correct: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>; from ${r + 1} on, the pairs repeat the other way round.` },
+    incorrecto: { es: (elegido, r, n) => `${elegido} no es el número. Hay que probar hasta ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.`, en: (elegido, r, n) => `${elegido} is not the number. You must try up to ${r}: <span class="cuenta">${r} · ${r} = ${r * r}</span> ≤ ${n} &lt;<span class="cuenta">${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}</span>.` },
   },
   cuadrado: {
     pregunta: { es: (n, r) => `${n} = ${r} · ${r}. ¿<strong>Cuántas veces se escribe el ${r}</strong> en la lista de divisores de ${n}?`, en: (n, r) => `${n} = ${r} · ${r}. <strong>How many times is ${r} written</strong> in the list of divisors of ${n}?` },
@@ -86,8 +86,8 @@ export function explicaRectangulos(item, { idioma }) {
   const n = item.n, r = raizEntera(n);
   const claves = todasLasClaves(n);
   const prueba = es
-    ? `Prueba los anchos 1, 2, 3… hasta el ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} < ${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, así que no hace falta seguir.`
-    : `Try widths 1, 2, 3… up to ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} < ${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, so you do not need to go on.`;
+    ? `Prueba los anchos 1, 2, 3… hasta el ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} &lt;${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, así que no hace falta seguir.`
+    : `Try widths 1, 2, 3… up to ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} &lt;${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, so you do not need to go on.`;
   // Revisión 193: aquí se nombran solo los anchos; antes salían ya las parejas, que la respuesta repetía.
   const anchos = unir(claves.map(c => c.split('x')[0]), idioma);
   const [w, h] = claves.at(-1).split('x');

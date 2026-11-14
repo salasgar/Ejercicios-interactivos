@@ -143,3 +143,15 @@ test('con la misma semilla salen los mismos ítems (y con otra, distintos)', () 
   assert.deepEqual(a, b);
   assert.notDeepEqual(a, c);
 });
+
+test('tarea 198: con 1 ficha de resto, «sobra 1» y «1 is left over»; con más, «sobran»', async () => {
+  const { TX } = await import('../practicas/raiz/textos.js');
+  assert.equal(TX.prob.respuesta.es(3, 1, true), 'Respuesta: lado 3 y sobra 1.');
+  assert.equal(TX.prob.respuesta.es(3, 4, true), 'Respuesta: lado 3 y sobran 4.');
+  assert.equal(TX.prob.respuesta.en(3, 1, true), 'Answer: side 3, and 1 is left over.');
+  assert.equal(TX.prob.respuesta.en(3, 4, true), 'Answer: side 3, and 4 are left over.');
+  assert.equal(TX.prob.tu_respuesta.es(3, 1), 'Has dicho lado 3 y sobra 1.');
+  assert.equal(TX.prob.tu_respuesta.en(3, 1), 'You said side 3 and 1 is left over.');
+  assert.match(TX.comun.sobran.es(10, 3, 1), /^Sobra </);
+  assert.match(TX.comun.sobran.es(11, 3, 2), /^Sobran </);
+});

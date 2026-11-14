@@ -345,3 +345,21 @@ test('tarea 43: generarPar saca a menudo números con palabra parecida (-teen/-t
   }
   assert.ok(especiales / N >= 0.5, `especiales: ${especiales / N}`);
 });
+
+test('tarea 198: «La frase correcta es «…»» sin dos puntos, y «4 and 8 are a ___ pair of 32» con remainder y quotient siempre falsas', async () => {
+  const { TX } = await import('../practicas/leelo/textos.js');
+  assert.ok(!TX.completar.correcta_fue.es.endsWith(':') && !TX.completar.correcta_fue.en.endsWith(':'));
+  const rng = crearRng(198);
+  let vistos = 0;
+  for (let i = 0; i < 600; i++) {
+    const it = generarCompletar(rng);
+    if (it.plantilla !== 'divisor_pair') continue;
+    vistos++;
+    const { x, y, a } = it.datos;
+    assert.equal(it.frase, `${x} and ${y} are a ___ pair of ${a}`);
+    assert.equal(x * y, a);
+    assert.equal(it.solucion, 'divisor');
+    assert.deepEqual([...it.opciones].sort(), ['divisor', 'quotient', 'remainder']);
+  }
+  assert.ok(vistos > 0);
+});

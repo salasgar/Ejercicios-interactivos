@@ -20,7 +20,7 @@ export const TX = {
   completar: {
     nombre: { es: 'Completa la frase', en: 'Complete the sentence' },
     detalle: { es: 'Elige la palabra que falta', en: 'Choose the missing word' },
-    correcta_fue: { es: 'La frase correcta es:', en: 'The correct sentence is:' },
+    correcta_fue: { es: 'La frase correcta es', en: 'The correct sentence is' },
   },
 };
 

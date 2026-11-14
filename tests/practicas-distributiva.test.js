@@ -277,3 +277,9 @@ test('segunda revisión: «1 celda», no «1 celdas»', () => {
   assert.ok(/1 celda a la izquierda/.test(TX.partir.corte_mal_suma.es(1, 5)));
   assert.ok(/queda 4 − 3 = 1 celda/.test(TX.partir.corte_mal_resta.es(4, 3, 1)));
 });
+
+test('tarea 198: «se les quita una columna» / «se les quitan dos columnas»', () => {
+  assert.match(TX.compensar.explicacion_producto.es(12, 99, 1, 1188), /se les quita una columna\.$/);
+  assert.match(TX.compensar.explicacion_producto.es(12, 98, 2, 1176), /se les quitan dos columnas\.$/);
+  assert.ok(!/se les quita dos/.test(TX.compensar.explicacion_producto.es(12, 98, 2, 1176)));
+});

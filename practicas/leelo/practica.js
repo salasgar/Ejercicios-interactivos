@@ -143,7 +143,7 @@ function montarCompletar(contenedor, item, api) {
       const fraseCompleta = item.frase.replace('___', item.solucion);
       api.responder({
         acierto: valor === item.solucion,
-        html: ({ tt, esc }) => `${tt(TX.completar.correcta_fue)} ${esc(fraseCompleta)}.`,
+        html: ({ tt, esc, idioma }) => `${tt(TX.completar.correcta_fue)} ${idioma === 'es' ? `«${esc(fraseCompleta)}»` : `“${esc(fraseCompleta)}”`}.`,
       });
     },
   });
