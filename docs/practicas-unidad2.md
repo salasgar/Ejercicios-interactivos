@@ -352,6 +352,8 @@ Lo que recibe `montar` en `api`:
 - `api.responder({ acierto, html, espera, pistas, error, respuesta })`: **una vez por ítem**. `html` es la
   explicación con los números de ese ítem. Acierto: feedback verde y pasa solo al siguiente a
   los `espera` ms (1300 por defecto; algo más si hay punto extra por la racha, que se anuncia).
+  Con `espera: 'boton'` no pasa solo: espera al botón «Siguiente», como en el fallo (para que se
+  lea la razón donde se puede acertar al azar; lo usa «Con trampa» de `clasificador/`).
   Fallo: feedback rojo con los puntos perdidos y las vidas que quedan (o el aviso de que el
   ejercicio vuelve a empezar), el ánimo y el botón «Siguiente». `pistas` (entero ≥ 0) son las
   ayudas usadas: se suman a los fallos sin tocar los puntos ni las vidas.

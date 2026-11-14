@@ -955,6 +955,17 @@ export function arrancar(practica) {
         const racha = cambio.extra ? `<p class="racha">${t(i).racha_extra(RACHA, cambio.ganados - 1)}</p>` : '';
         return `<div class="feedback feedback--bien"><strong>✓ ${t(i).bien}</strong> ${texto}${racha}</div>`;
       };
+      // `espera: 'boton'`: también el acierto espera a «Siguiente», para que se lea la razón
+      // (donde se puede acertar al azar o por la razón equivocada).
+      if (espera === 'boton') {
+        caja.innerHTML = `${tarjeta(idi, html)}${botonTraduccion()}<button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
+        activarTraduccion(tarjeta);
+        const boton = caja.querySelector('#siguiente');
+        boton.addEventListener('click', siguiente);
+        boton.focus({ preventScroll: true });
+        boton.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        return;
+      }
       caja.innerHTML = `${tarjeta(idi, html)}${botonTraduccion()}`;
       const miTurno = turno;
       const temporizador = setTimeout(() => { if (miTurno === turno) siguiente(); }, espera + (cambio.extra ? 900 : 0));

@@ -34,8 +34,25 @@ function montarEscalera(contenedor, item, api) {
     <p class="instruccion">${api.tt(TX.escalera.instruccion)}</p>
     <div class="operacion" id="numero">${m}</div>
     <p class="frase" id="mensaje"></p>
-    <div class="botones-numeros" id="botones" role="group" aria-label="primos"></div>`;
+    <div class="botones-numeros" id="botones" role="group" aria-label="primos"></div>
+    <div class="escalera-columnas" aria-live="polite">
+      <ul class="escalera-lineas" id="lineas"></ul>
+      <table class="escalera-tabla"><tbody id="tabla"></tbody></table>
+    </div>`;
   const numeroEl = contenedor.querySelector('#numero');
+  const lineasEl = contenedor.querySelector('#lineas');
+  const tablaEl = contenedor.querySelector('#tabla');
+  const signo = api.idioma === 'es' ? ':' : '÷';
+
+  // Las divisiones hechas hasta ahora, de dos maneras a la vez (Juan Luis, 2026-11-14):
+  // en línea («540 : 2 = 270») y en la tabla de siempre, con la raya vertical
+  // («540 | 2»). Abajo, el número actual con «…» donde irá el primo; al llegar a 1, el 1 solo.
+  function pintarColumnas() {
+    lineasEl.innerHTML = realizados.map(([a, p]) => `<li>${a} ${signo} ${p} = ${a / p}</li>`).join('')
+      + (m > 1 ? `<li class="escalera-actual">${m} ${signo} …</li>` : '');
+    tablaEl.innerHTML = realizados.map(([a, p]) => `<tr><td>${a}</td><td>${p}</td></tr>`).join('')
+      + `<tr class="escalera-actual"><td>${m}</td><td>${m > 1 ? '…' : ''}</td></tr>`;
+  }
   const mensajeEl = contenedor.querySelector('#mensaje');
   const cajaBotones = contenedor.querySelector('#botones');
 
@@ -47,11 +64,13 @@ function montarEscalera(contenedor, item, api) {
     cajaBotones.append(b);
     return b;
   });
+  pintarColumnas();
 
   function avanzar(p) {
     realizados.push([m, p]);
     m /= p;
     numeroEl.textContent = String(m);
+    pintarColumnas();
     if (m === 1) {
       botones.forEach(b => { b.disabled = true; });
       api.responder({ acierto: errores === 0, html: ({ idioma }) => explicarEscalera(item.n, realizados, idioma), espera: 2600 });

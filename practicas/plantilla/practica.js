@@ -97,6 +97,8 @@
 //                     Acierto: feedback verde y pasa solo al siguiente a los
 //                     `espera` ms (1300 por defecto; sube si hay mucho que leer).
 //                     Con punto extra por la racha, lo dice y espera un poco más.
+//                     Con `espera: 'boton'` no pasa solo: espera a «Siguiente»
+//                     (donde se acierta al azar y hay que leer la razón).
 //                     Fallo: feedback rojo con «−penalización», las vidas que
 //                     quedan (o que el ejercicio vuelve a empezar), unas palabras
 //                     de ánimo (las pone la base) y botón «Siguiente».

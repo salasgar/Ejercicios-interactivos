@@ -2,3 +2,16 @@
 
 #mensaje:empty { display: none; }
 #mensaje { color: var(--error); font-size: 1rem; }
+
+/* Ejercicio 1: las divisiones que se van haciendo, en línea y en la tabla con la raya vertical. */
+.escalera-columnas {
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start;
+  gap: .75rem 2.5rem; margin-top: 1rem; font-size: 1.15rem; font-variant-numeric: tabular-nums;
+}
+.escalera-lineas { list-style: none; margin: 0; padding: 0; text-align: left; }
+.escalera-lineas li { line-height: 1.6; }
+.escalera-tabla { border-collapse: collapse; width: auto; font-size: inherit; }
+.escalera-tabla td { padding: 0 .6rem; line-height: 1.6; border-bottom: none; }
+.escalera-tabla td:first-child { text-align: right; border-right: 2px solid var(--texto); }
+.escalera-tabla td:last-child { text-align: left; }
+.escalera-actual { color: var(--texto-suave); }

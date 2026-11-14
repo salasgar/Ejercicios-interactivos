@@ -19,7 +19,9 @@ function enunciadoJustificar(item, { tt, esc }) {
     <p class="instruccion clasificador-justificar">${esc(tt(TX.preguntaJustificar))} <strong>${esc(etiqueta)}</strong>${etiqueta.endsWith('.') ? '' : '.'} ${esc(tt(TX.porque))}</p>`;
 }
 
-function montarClasificar(contenedor, item, api) {
+// `espera`: en «Con trampa» el acierto también espera a «Siguiente» (Juan Luis, 2026-11-14): se
+// puede acertar al azar o por la razón equivocada, y hay que darle tiempo a leer la razón.
+function montarClasificar(contenedor, item, api, { espera = 2200 } = {}) {
   const { tt } = api;
   const plantilla = BANCO[item.plantilla];
   contenedor.innerHTML = enunciadoClasificar(item, api);
@@ -35,7 +37,7 @@ function montarClasificar(contenedor, item, api) {
       api.responder({
         acierto: valor === item.clase,
         html: ({ tt }) => tt(plantilla.razon(...item.numeros)),
-        espera: 2200,
+        espera,
       });
     },
   });
@@ -75,7 +77,7 @@ arrancar({
       nombre: TX.nombre.trampa,
       detalle: TX.detalle.trampa,
       generar: generarTrampa,
-      montar: montarClasificar,
+      montar: (contenedor, item, api) => montarClasificar(contenedor, item, api, { espera: 'boton' }),
       enunciado: enunciadoClasificar,
       explicacion: (item, { idioma }) => explicaClasificar(item, idioma),
     },
