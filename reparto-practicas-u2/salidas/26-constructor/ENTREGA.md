@@ -12,3 +12,6 @@ Ejercicios (3, como el catálogo):
 3. **Comas, puntos y palabras** (1B-05, 1B-11, 1C-24, 1B-25): mismo número en inglés/español (la lectura con las reglas del otro idioma va siempre de señuelo) y números en palabras de 1 000 001 a 9 999 999 con grupos de tres.
 
 Probar en 1 minuto: Probar sin código → un ítem de cada ejercicio (probado a 400 px en ES; la versión inglesa usa los mismos textos { es, en }).
+
+## Reabierta del 14-11 (s-20261114T210753-9aa39c14 · commit 2c0df6f)
+Feedback del ej. 1 en `feedbackConstruir` (textos.js), con par/impar = tarjeta (`explicaUltima`); grupos de palabras con «;»; el ej. 3 ya no da decimales (`generarComaDecimal` queda exportada para la U5).

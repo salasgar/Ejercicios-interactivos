@@ -12,6 +12,10 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T21:11Z por s-20261114T210753-9aa39c14 al cerrar la 26 (LISTA, reabierta del 14-11, commit 2c0df6f; npm test 2306/2306; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
+Actualizado 2026-11-14T21:06Z por s-20261114T210553-2c36437d al reclamar la 10 (reabierta del 14-11: tres números, parejas con m.c.d. ≥ 2 en contexto, «<» escapado; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T20:58Z por s-20261114T205046-d42ceb19 al dar de alta lo que sale de los hallazgos de la 193 (coordinadora, sin reclamo): quince reabiertas (02, 05, 10, 11, 12, 14, 17, 21, 23, 24, 26, 28, 29, 32, 114) y las fichas 197 (base, ALTO) y 198 (retoques, MEDIO); decisiones en proyecto.md, «Decisiones del 14-11»: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T19:39Z por s-20261114T185703-a741c82e al cerrar la 193 (LISTA, relevo; commits 2ceb108 1980429; npm test 2295/2295): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -31,10 +35,6 @@ Actualizado 2026-11-14T13:31Z por s-20261114T132733-b7aa7c71 al cerrar la 129 (L
 Actualizado 2026-11-14T13:30Z por s-20261114T132736-7a85f991 al cerrar la 135 (LISTA, cuarta reabierta, commit 3598600; npm test 2232/2232; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T12:14Z por s-20261114T120759-e1c97fc9 al cerrar la 196 (PARCIAL, segunda pasada: la 64 sigue sin publicar, cuarta reabierta de la 135 por triunfo y proporcional; sin commit de código; tildes 36/36): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T12:08Z por s-20261114T120759-e1c97fc9 al reclamar la 196 (reapertura solo para la 64, ortografia-tildes; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T11:58Z por s-20261114T115719-c2e98c78 al cerrar la 135 (LISTA, tercera reabierta, commit 3bc3808; npm test 2232/2232; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -143,8 +143,8 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 07 | Divisiones sucesivas guiadas | tareas/tarea-07-divisiones.md | 01 LISTA | 2 h | MEDIO | 08 | practicas/divisiones/; salidas/07-divisiones/ | LISTA | terminada 17:53Z (8-oct) · commit 3b63f58 |
 | 08 | Fábrica de divisores | tareas/tarea-08-fabrica.md | 01 LISTA | 10 min | MEDIO | 07 | practicas/fabrica/; salidas/08-fabrica/ | LISTA | terminada 18:03Z (8-oct) · commit 07b8a60 |
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | LISTA | terminada 21:44Z (7-oct) · commit f5748e7 |
-| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | REABIERTA | reabierta 20:57Z (14-nov): `hechos/reabiertas/10--s-20261114T205046-d42ceb19-tres-numeros-y-menor.md` |
-| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/11--s-20261114T205046-d42ceb19-razones-del-banco.md` |
+| 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | EN CURSO | s-20261114T210553-2c36437d · caduca 22:35:53Z (14-nov) |
+| 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | EN CURSO | s-20261114T210739-c776e8d4 · caduca 22:37:39Z (14-nov) |
 | 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/12--s-20261114T205046-d42ceb19-feria-en-minutos.md` |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 10:38Z (9-oct) |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/14--s-20261114T205046-d42ceb19-mcd-cero-y-comillas.md` |
@@ -157,9 +157,9 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 21 | El exponente y su base (U1) | tareas/tarea-21-exponente.md | 34 LISTA | 2 h | MEDIO | 22 | practicas/exponente/; salidas/21-exponente/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/21--s-20261114T205046-d42ceb19-e-veces-y-miles.md` |
 | 22 | Raíz cuadrada con cuadrados (U1) | tareas/tarea-22-raiz.md | 34 LISTA | 2 h | MEDIO | 21 | practicas/raiz/; salidas/22-raiz/ | LISTA | terminada 17:56Z (8-oct) |
 | 23 | División entera: cajas y resto (U1) | tareas/tarea-23-division.md | 34 LISTA | 2 h | MEDIO | — | practicas/division/; salidas/23-division/ | REABIERTA | reabierta 20:55Z (14-nov): `hechos/reabiertas/23--s-20261114T205046-d42ceb19-sobra-1.md` |
-| 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/24--s-20261114T205046-d42ceb19-sin-todo-no-hay-parentesis.md` |
+| 24 | Del enunciado a la expresión (U1) | tareas/tarea-24-expresion.md | 34 LISTA | 2 h 30 min | ALTO | — | practicas/expresion/; salidas/24-expresion/ | EN CURSO | s-20261114T210546-d2b384b6 · caduca 22:35:46Z (14-nov) |
 | 25 | Redondeo y estimación (U1) | tareas/tarea-25-redondeo.md | 34 LISTA | 2 h | MEDIO | 26 | practicas/redondeo/; salidas/25-redondeo/ | LISTA | terminada 18:04Z (8-oct) |
-| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | REABIERTA | reabierta 20:58Z (14-nov): `hechos/reabiertas/26--s-20261114T205046-d42ceb19-grupos-y-por-que.md` |
+| 26 | Constructor de números (U1) | tareas/tarea-26-constructor.md | 34 LISTA | 2 h | MEDIO | 25 | practicas/constructor/; salidas/26-constructor/ | LISTA | terminada 21:11Z (14-nov) · commit 2c0df6f |
 | 27 | Distributiva con rectángulos (U1) | tareas/tarea-27-distributiva.md | 34 LISTA | 2 h | MEDIO | 30 | practicas/distributiva/; salidas/27-distributiva/ | LISTA | terminada 10:41Z (9-oct) · commit d42dfba |
 | 28 | Potencias de 10 y números grandes (U1) | tareas/tarea-28-potencias10.md | 34 LISTA | 1 h 30 min | MEDIO | 29 | practicas/potencias10/; salidas/28-potencias10/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/28--s-20261114T205046-d42ceb19-grupos-y-comillas.md` |
 | 29 | Dictado de números (U1) | tareas/tarea-29-dictado.md | 34 LISTA | 2 h | MEDIO | 28 | practicas/dictado/; salidas/29-dictado/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/29--s-20261114T205046-d42ceb19-grupos-y-puntuacion.md` |
@@ -336,7 +336,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 20:58Z**: BLOQUEADA 5 (156, 157, 158, 159, 160) · LISTA 176 · PENDIENTE 2 (197, 198) · REABIERTA 15 (2, 5, 10, 11, 12, 14, 17, 21, 23, 24, 26, 28, 29, 32, 114).
+**Foto a 2026-11-14 21:11Z**: BLOQUEADA 5 (156, 157, 158, 159, 160) · EN CURSO 3 (10, 11, 24) · LISTA 177 · PENDIENTE 2 (197, 198) · REABIERTA 11 (2, 5, 12, 14, 17, 21, 23, 28, 29, 32, 114).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -368,12 +368,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (311), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (312), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 26 · 2026-11-14 21:11 · s-20261114T210753-9aa39c14 · 2c0df6f (practicas/constructor/{logica,practica,t… · 5 · ~20 min
 LISTA · tarea 193 · 2026-11-14 19:39 · s-20261114T185703-a741c82e · — · 2ceb108 practicas/fabrica/textos.js (10 ++++++++--), tests/practicas-ayuda-fabr… · de 2026-11-14T18:57:03Z a 2026-11-14T19:39:08Z (l…
 LISTA · tarea 187 · 2026-11-14 15:05 · s-20261114T145716-e48af71b · cba3e84 (heredada) 6dbee49 a549885 3668110 e5cad9c · practicas/{parentesis,jerarquia,exponente,raiz,division}/{practica,textos}.js,… · ~10 min (abierto 14:57Z; relevo, parentesis ya he…
 LISTA · tarea 186 · 2026-11-14 14:08 · s-20261114T113351-e5a8777d · c9733a1 8b0c28a a92eb6d 73df841 · practicas/{errores,leelo,factorizaciones,fichas-del-parchis}/*, tests/practicas… · ~2 h 35 min (abierto 11:33Z; estimada 1 h 30)
