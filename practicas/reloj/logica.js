@@ -4,7 +4,7 @@
 //         inicio: { h, m } | null, horaSolucion: { h, m } | null,
 //         errorTipico: { h, m } | null }
 
-import { mcm } from '../_comun/aritmetica.js';
+import { mcm, factorizar, mcmFact, htmlFact } from '../_comun/aritmetica.js';
 import { TX, horaTexto } from './textos.js';
 
 // ─── Ejercicio 1: predecir la coincidencia en la línea de tiempo (0-60) ───────
@@ -125,30 +125,77 @@ export function comprobarTresOMultiplo(item, respuesta) {
   return respuesta === item.solucion;
 }
 
-// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final.
+// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final (revisión 193: qué se pide,
+// el m.c.m. con el método de los apuntes, las cuentas con sus unidades y la frase de respuesta).
+
+const pasosAyuda = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const enLista = (cosas, idioma) => `${cosas.slice(0, -1).join(', ')} ${TX.ayuda.y[idioma]} ${cosas.at(-1)}`;
+
+/** Ejercicio 1: datos pequeños, así que listas de múltiplos hasta el primero común. */
 export function explicaLinea(item, idioma) {
   const x = TX.linea, y = TX.ayuda;
   const [a, b] = item.periodos;
-  const listas = `${x.lista(x.azul[idioma], multiplosHasta(a, 60))[idioma]}<br>${x.lista(x.naranja[idioma], multiplosHasta(b, 60))[idioma]}`;
-  return `<p>${listas}</p><p>${y.primero_comun(item.solucion)[idioma]}</p><p>${y.respuesta[idioma]}: <strong>${y.segundo(item.solucion)[idioma]}</strong>. ${y.consejo[idioma]}</p>`;
+  return `<p>${y.pide_linea(a, b)[idioma]}</p>`
+    + pasosAyuda([
+      y.lista_luz(x.azul, a, multiplosHasta(a, item.solucion))[idioma],
+      y.lista_luz(x.naranja, b, multiplosHasta(b, item.solucion))[idioma],
+      y.primero_comun(a, b, item.solucion)[idioma],
+    ])
+    + `<p>${y.fin_linea(item.solucion)[idioma]}</p>`;
 }
 
+/**
+ * Las sumas de la hora, de hora en hora y sin pasar de 60 minutos de golpe: 21:30 + 40 min se hace
+ * 21:30 + 30 min = 22:00 y 22:00 + 10 min = 22:10 (el error típico es sumar los minutos hasta 100).
+ */
+export function cuentasHora(inicio, horas, minutos) {
+  const t = x => horaTexto(x.h, x.m);
+  const cuentas = [];
+  let actual = inicio;
+  if (horas > 0) {
+    const siguiente = sumarMinutos(actual.h, actual.m, horas * 60);
+    cuentas.push(`${t(actual)} + ${horas} h = ${t(siguiente)}`);
+    actual = siguiente;
+  }
+  if (minutos > 0) {
+    const hastaEnPunto = 60 - actual.m;
+    if (minutos > hastaEnPunto) {
+      const enPunto = sumarMinutos(actual.h, actual.m, hastaEnPunto);
+      cuentas.push(`${t(actual)} + ${hastaEnPunto} min = ${t(enPunto)}`);
+      cuentas.push(`${t(enPunto)} + ${minutos - hastaEnPunto} min = ${t(sumarMinutos(enPunto.h, enPunto.m, minutos - hastaEnPunto))}`);
+    } else {
+      cuentas.push(`${t(actual)} + ${minutos} min = ${t(sumarMinutos(actual.h, actual.m, minutos))}`);
+    }
+  }
+  return cuentas.map(c => `<span class="cuenta">${c}</span>`).join('; ');
+}
+
+/** Ejercicio 2: datos de dos cifras, así que el m.c.m. por factorización; después, a horas y a la hora de reloj. */
 export function explicaHora(item, idioma) {
-  const [a, b] = item.periodos;
-  const hExtra = Math.floor(item.solucion / 60), mExtra = item.solucion % 60;
-  const intermedia = sumarMinutos(item.inicio.h, item.inicio.m, hExtra * 60);
-  const cuenta = TX.hora.descomposicion(a, b, item.solucion, hExtra, mExtra, item.inicio, intermedia, item.horaSolucion)[idioma];
   const y = TX.ayuda;
-  return `<p>${cuenta}</p><p>${y.respuesta[idioma]}: <strong>${horaTexto(item.horaSolucion.h, item.horaSolucion.m)}</strong>.</p>`;
+  const [a, b] = item.periodos;
+  const fa = factorizar(a), fb = factorizar(b);
+  const horas = Math.floor(item.solucion / 60), minutos = item.solucion % 60;
+  const pasos = [
+    y.descompon(a, b, htmlFact(fa), htmlFact(fb))[idioma],
+    y.mcm_fact(a, b, htmlFact(mcmFact(fa, fb)), item.solucion)[idioma],
+  ];
+  if (horas > 0) pasos.push(y.a_horas(item.solucion, horas, minutos)[idioma]);
+  pasos.push(y.suma(cuentasHora(item.inicio, horas, minutos))[idioma]);
+  return `<p>${y.pide_hora(a, b, horaTexto(item.inicio.h, item.inicio.m))[idioma]}</p>${pasosAyuda(pasos)}`
+    + `<p>${y.fin_hora(horaTexto(item.horaSolucion.h, item.horaSolucion.m))[idioma]}</p>`;
 }
 
+/** Ejercicio 3: datos pequeños (listas de múltiplos del mayor) o uno múltiplo del otro (a simple vista). */
 export function explicaTres(item, idioma) {
   const x = TX.tres, y = TX.ayuda;
-  const resp = `<p>${y.respuesta[idioma]}: <strong>${item.solucion}</strong>.</p>`;
-  if (item.tipo === 'tres') {
+  const tres = item.tipo === 'tres';
+  const datos = [...item.periodos].sort((p, q) => p - q);
+  const pide = `<p>${y.pide_dias(enLista(datos, idioma), tres)[idioma]}</p>`;
+  const fin = `<p>${y.fin_dias(item.solucion, tres)[idioma]}</p>`;
+  if (tres) {
     const [p1, p2, p3] = item.periodos;
-    return `<p>${x.cuenta_tres(p1, p2, p3, multiplosHasta(p3, item.solucion), item.solucion)[idioma]}</p>${resp}`;
+    return `${pide}<p>${x.cuenta_tres(p1, p2, p3, multiplosHasta(p3, item.solucion), item.solucion)[idioma]}</p>${fin}`;
   }
-  const [p1, p2] = item.periodos;
-  return `<p>${x.pista_multiplo(Math.min(p1, p2), Math.max(p1, p2))[idioma]}</p>${resp}`;
+  return `${pide}<p>${y.multiplo(datos[0], datos[1])[idioma]}</p>${fin}`;
 }

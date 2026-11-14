@@ -81,17 +81,62 @@ export const TX = {
     }),
     respuesta_label: { es: 'Días', en: 'Days' },
   },
+  // «No lo sé» (revisión 193): qué se pide, las cuentas con sus unidades y la frase de respuesta.
+  // m.c.m. con listas cuando los datos son pequeños (ej. 1 y 3) y por factorización con datos de dos cifras (ej. 2),
+  // como en los apuntes de la U2 (apartado 5).
   ayuda: {
     respuesta: { es: 'La respuesta es', en: 'The answer is' },
-    segundo: n => ({ es: `el segundo ${n}`, en: `second ${n}` }),
-    primero_comun: n => ({
-      es: `El primer número que está en las dos listas es el ${n}.`,
-      en: `The first number that is in both lists is ${n}.`,
+    pide_linea: (a, b) => ({
+      es: `Se pide el primer segundo en que se encienden las dos a la vez: el menor múltiplo común de ${a} y ${b}, su m.c.m.`,
+      en: `You need the first second when both lights switch on together: the lowest common multiple of ${a} and ${b}, their LCM.`,
     }),
-    consejo: {
-      es: 'Coinciden en el m.c.m. de los dos números.',
-      en: 'They coincide at the LCM of the two numbers.',
+    lista_luz: (color, p, lista) => ({
+      es: `Luz ${color.es}, cada ${p} s: ${lista.join(', ')}.`,
+      en: `${color.en[0].toUpperCase()}${color.en.slice(1)} light, every ${p} s: ${lista.join(', ')}.`,
+    }),
+    primero_comun: (a, b, n) => ({
+      es: `El primero que está en las dos listas es el ${n}: <span class="cuenta">m.c.m.(${a}, ${b}) = ${n} s</span>.`,
+      en: `The first number in both lists is ${n}: <span class="cuenta">LCM(${a}, ${b}) = ${n} s</span>.`,
+    }),
+    fin_linea: n => ({
+      es: `La respuesta es <strong>el segundo ${n}</strong>: en ese momento vuelven a encenderse juntas.`,
+      en: `The answer is <strong>second ${n}</strong>: that is when they switch on together again.`,
+    }),
+    pide_hora: (a, b, ini) => ({
+      es: `Se pide una hora: primero, cada cuántos minutos salen juntos (el m.c.m. de ${a} y ${b}); después, se suman esos minutos a las ${ini}.`,
+      en: `You need a clock time: first, how often they leave together (the LCM of ${a} and ${b}); then, add those minutes to ${ini}.`,
+    }),
+    descompon: (a, b, fa, fb) => ({
+      es: `Descompón los dos números: <span class="cuenta">${a} = ${fa}</span> y <span class="cuenta">${b} = ${fb}</span>.`,
+      en: `Write both numbers as products of primes: <span class="cuenta">${a} = ${fa}</span> and <span class="cuenta">${b} = ${fb}</span>.`,
+    }),
+    mcm_fact: (a, b, f, n) => ({
+      es: `Para el m.c.m., todos los primos con el mayor exponente: <span class="cuenta">m.c.m.(${a}, ${b}) = ${f} = ${n} min</span>.`,
+      en: `For the LCM, take all the primes with the highest power: <span class="cuenta">LCM(${a}, ${b}) = ${f} = ${n} min</span>.`,
+    }),
+    // «135 min = 120 min + 15 min = 2 h 15 min»: una hora son 60 minutos, no 100.
+    a_horas: (n, h, m) => {
+      const cuenta = m === 0 ? `${n} min = ${h} h` : `${n} min = ${h * 60} min + ${m} min = ${h} h ${m} min`;
+      return { es: `Pásalo a horas: <span class="cuenta">${cuenta}</span>.`, en: `Change it to hours: <span class="cuenta">${cuenta}</span>.` };
     },
+    suma: cuentas => ({ es: `Súmalo a la hora: ${cuentas}.`, en: `Add it to the time: ${cuentas}.` }),
+    fin_hora: hora => ({
+      es: `La respuesta es <strong>${hora}</strong>: a esa hora vuelven a salir juntos.`,
+      en: `The answer is <strong>${hora}</strong>: at that time they leave together again.`,
+    }),
+    pide_dias: (lista, tres) => ({
+      es: `Se pide cada cuántos días coinciden ${tres ? 'las tres' : 'las dos'}: el menor múltiplo común de ${lista}, su m.c.m.`,
+      en: `You need how often ${tres ? 'all three' : 'both'} coincide: the lowest common multiple of ${lista}, their LCM.`,
+    }),
+    multiplo: (menor, mayor) => ({
+      es: `<span class="cuenta">${mayor} : ${menor} = ${mayor / menor}</span>, así que ${mayor} ya es múltiplo de ${menor}: <span class="cuenta">m.c.m.(${menor}, ${mayor}) = ${mayor}</span>, sin calcular nada más.`,
+      en: `<span class="cuenta">${mayor} ÷ ${menor} = ${mayor / menor}</span>, so ${mayor} is already a multiple of ${menor}: <span class="cuenta">LCM(${menor}, ${mayor}) = ${mayor}</span>, with nothing else to work out.`,
+    }),
+    fin_dias: (n, tres) => ({
+      es: `La respuesta es <strong>${n}</strong> días: es lo que tardan ${tres ? 'las tres' : 'las dos'} en volver a coincidir.`,
+      en: `The answer is <strong>${n}</strong> days: that is how long ${tres ? 'all three take' : 'both take'} to coincide again.`,
+    }),
+    y: { es: 'y', en: 'and' },
   },
 };
 

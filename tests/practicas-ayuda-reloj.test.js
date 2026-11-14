@@ -23,8 +23,14 @@ test('reloj, ejercicio 1: la explicación lista los múltiplos y da el segundo d
       const texto = plano(html);
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
-      assert.match(texto, new RegExp(`(La respuesta es|The answer is): (el segundo|second) ${m}\\.`), donde);
-      for (const p of item.periodos) assert.ok(texto.includes(`${p}, ${2 * p}`), `lista de ${p} — ${donde}`);
+      // Revisión 193: sin dos puntos tras «es», con la frase de respuesta, y las listas hasta el primer común (no hasta 60).
+      assert.match(texto, new RegExp(`(La respuesta es el segundo|The answer is second) ${m}: `), donde);
+      assert.match(texto, /^(Se pide|You need)/, `qué se pide, delante — ${donde}`);
+      for (const p of item.periodos) {
+        const lista = Array.from({ length: m / p }, (_, k) => (k + 1) * p).join(', ');
+        assert.ok(texto.includes(`${p} s: ${lista}.`), `lista de ${p} hasta ${m} — ${donde}`);
+      }
+      assert.ok(texto.includes(`(${item.periodos.join(', ')}) = ${m} s`), donde);
     }
   }
 });
@@ -40,8 +46,20 @@ test('reloj, ejercicio 2: la explicación da la hora de reloj correcta', () => {
       const texto = plano(html);
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
-      assert.match(texto, new RegExp(`(La respuesta es|The answer is): ${fin}\\.`), donde);
+      assert.match(texto, new RegExp(`(La respuesta es|The answer is) ${fin}: `), donde);
       assert.ok(texto.includes(`${m} min`), donde);
+      // Revisión 193: qué se pide, el m.c.m. por factorización (datos de dos cifras, como en los apuntes) y la
+      // suma de la hora sin pasar nunca de 59 minutos en una cuenta (el error de sumar hasta 100).
+      assert.match(texto, /^(Se pide una hora|You need a clock time)/, donde);
+      for (const p of item.periodos) assert.match(texto, new RegExp(`\\b${p} = [0-9 ·]+`), `factorización de ${p} — ${donde}`);
+      const sumas = [...texto.matchAll(/(\d+):(\d\d) \+ (\d+) (h|min) = (\d+):(\d\d)/g)];
+      assert.ok(sumas.length >= 1, donde);
+      for (const [, h1, m1, n, u, h2, m2] of sumas) {
+        const antes = Number(h1) * 60 + Number(m1), despues = Number(h2) * 60 + Number(m2);
+        assert.equal(despues - antes, u === 'h' ? Number(n) * 60 : Number(n), `cuenta mal hecha — ${donde}`);
+        if (u === 'min') assert.ok(Number(m1) + Number(n) <= 60, `pasa de la hora en una sola suma — ${donde}`);
+      }
+      assert.equal(`${sumas.at(-1)[5]}:${sumas.at(-1)[6]}`, fin, donde);
     }
   }
 });
@@ -58,7 +76,9 @@ test('reloj, ejercicio 3: la explicación da el m.c.m. de los tres datos o el m�
       const texto = plano(html);
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
-      assert.match(texto, new RegExp(`(La respuesta es|The answer is): ${m}\\.`), donde);
+      assert.match(texto, new RegExp(`(La respuesta es|The answer is) ${m} (días|days): `), donde);
+      assert.match(texto, /^(Se pide|You need)/, donde);
+      assert.ok(!/(La respuesta es|The answer is):/.test(texto), donde);
       for (const p of item.periodos) assert.ok(texto.includes(String(p)), donde);
     }
   }
