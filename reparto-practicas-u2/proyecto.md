@@ -872,3 +872,60 @@ Juan Luis contestó a la lista de decisiones pendientes:
 - **Cambios sin commitear en `division`, `semaforo`, `factorizaciones`, `fichas-del-parchis` y `divisiones`** (12-11 y 13-11): son de
   Juan Luis, hechos en sesiones sueltas fuera del reparto que esperaban su «publícalo». Mientras sigan ahí, la 183, la 186 y la 187 no se
   pueden coger (sus fichas lo mandan mirar).
+
+## Decisiones del 14-11: hallazgos de la 193 (coordinadora s-20261114T205046-d42ceb19)
+
+La revisión 193 (el «No lo sé» de la U1 y la U2) dejó veinte hallazgos fuera de criterio en `salidas/193-revision-no-lo-se/ENTREGA.md`.
+Los números son los de esa lista.
+
+**Decididos por Juan Luis (14-11)**
+
+- **1. «·» y no «×» en la U1 de la app.** Las prácticas ya lo escriben; solo estaba mal `docs/no-lo-se.md`, corregido por la
+  coordinadora. El papel de la U1 de este curso sigue con «×». El test genérico aún deja pasar «×» en la U1: lo cierra la 197.
+- **5. El rosal regado cada N días de `clasificador` se queda**: donde llueve a menudo es creíble.
+- **6. Las atracciones de la feria de `reloj`, en minutos y no en días** (reabierta de la 12, con cota propia de 3 a 20 minutos y test).
+- **2, 3 y 4**: los dejó a la coordinadora («que lo decida Fable»); están abajo. No queda nada pendiente de Juan Luis.
+
+**Decididos por la coordinadora** (Juan Luis puede cambiarlos)
+
+- **2. Los decimales salen del ej. 3 de `constructor`** (reabierta 26): fuera la rama `decimal` de `generarComa` (el 45 % de los
+  ítems de «coma»). Los decimales son de la U5 y la ficha 26 ya los prohibía salvo como pista; se queda el señuelo 12,5 de los ítems de
+  miles, que es la destreza 1B-05 y solo se lee. La rama se guarda como función aparte; llevarla a `lee-decimales` (U5) es una propuesta
+  para Juan Luis, no un alta, porque cambia el número de ejercicios de una práctica publicada.
+- **3. La glosa inglesa del feedback español de `division` se queda**, en cursiva como en la introducción. Juan Luis lo dejó a la
+  coordinadora («son alumnos de bilingüe: tampoco es grave»): es corta, es la frase clave de la práctica y ya se enseña así en la
+  introducción. No se repone en la tarjeta ni se añaden glosas a más textos. Un grep por las 33 prácticas no encuentra otras.
+- **4 ★ `imposibles`, ej. 1: con contexto, solo parejas con m.c.d. ≥ 2; sin contexto, el m.c.d. 1 sigue saliendo** (reabierta 10, la
+  misma del punto 8). Juan Luis lo dejó a la coordinadora. «El mayor número de grupos iguales» con respuesta 1 es el caso de las pulseras
+  de la regla de realismo: matemáticamente es cierto, pero el alumno no ve ahí un reparto; con números a secas, en cambio, saber que el m.c.d. puede ser 1 es justo lo que se practica.
+- **7 ★ `expresion`: se arregla** (reabierta 24). «Sin «todo» no hay paréntesis» es falso en el ej. 2 de la misma práctica; la regla pasa a ser la jerarquía.
+- **8 ★ `imposibles`: se arregla** (reabierta 10, con el 4). «Con tres números ya no coincide» es falso (3, 4, 5): la comprobación «no vale»; y `generarTres`, con tres números distintos y sin tope de intentos.
+- **9 ★ `clasificador`: se arregla** (reabierta 11). Comillas “ ” en inglés y mayúscula inicial, y se leen las 24 razones del banco por si alguna dice la receta falsa que la 193 quitó de la tarjeta.
+- **10 `exponente`: se arregla** (reabierta 21). «Multiplicado por sí mismo e veces» no es exacto; el feedback dirá lo de los apuntes y la tarjeta, «un producto de e factores iguales».
+- **11 `fichas-del-parchis`: se arregla** (reabierta 114). «5 = 5» y «quedan 1 amarilla» son erratas que ve el alumno en una práctica que se hace en clase.
+- **12 `errores`: se arregla** (reabierta 14). Sin «único», la corrección de «m.c.d. = 0» no explica por qué es 1.
+- **13 `errores1`: se arregla** (reabierta 32). Mayúscula tras dos puntos, y «7² y 7² no dependen una de otra» no tiene sentido: los dos números, distintos.
+- **14 `criba`, `rectangulos`, `imposibles`: se arregla.** El feedback de `criba` ej. 3 dirá lo que la tarjeta (reabierta 05); el «<» sin escapar es HTML mal formado (05, 10 y, para `rectangulos`, la 198).
+- **15 `semaforo` y `divisores`: se arregla** (reabiertas 02 y 17). El feedback da el método antes que la cifra, y la pareja del fallo no contradice el consejo de la práctica.
+- **16 «·» entre grupos de cifras: se arregla** (reabiertas 26, 28 y 29). Tras la decisión 1, «·» es el producto en toda la app: los grupos van con su nombre y «;».
+- **17 concordancias y puntuación: se arreglan todas.** Son baratas y un alumno las ve. Van en la reabierta de su práctica (23, 28, 29) o en la 198 (`distributiva`, `raiz`, `leelo`, `arbol`).
+- **18 menores: se arreglan, salvo uno.** «A calculation», los espacios de miles, «12 dm de lado» y «4 and 8 are a divisor pair» (lo de `leelo` era inexacto) van en la 21 y la 198. **Se deja** el feedback común de `_comun/relaciones.js` (`explicacionCompleta`): es correcto, lo usan dos prácticas con sus tests y acortarlo es gusto, no error.
+- **19 signos sueltos a 375 px: tarea propia de la base, la 197 (ALTO).** Una sola solución en `_comun` (propuesta: un ayudante de la base que meta el signo dentro del bloque de la cuenta, sin `nowrap`), medida a 375 px antes y después; ninguna práctica se parchea.
+- **20 `constructor`: se arregla** (reabierta 26). El feedback dirá el método que ya da la tarjeta, no «la mejor es el 8».
+- **`noLoSe` en los ejercicios mixtos: se queda el criterio de la 193**, sin cambios. «No sé hacerlo» donde predomina calcular y «No lo sé» donde predomina elegir es la regla que Juan Luis aprobó el 12-11; la etiqueta no cambia ni la tarjeta ni la puntuación, y la 193 los miró uno a uno.
+- **La introducción del ej. 4 de `division`** lleva la misma glosa inglesa en cursiva: se queda, por lo mismo que la 3.
+
+**Lo dado de alta**
+
+- **Quince reabiertas** (`hechos/reabiertas/NN--s-20261114T205046-d42ceb19-*.md`), una por tarea dueña, todas MEDIO y de 30 min a 1 h
+  aunque la ficha diga otra cosa (la banda y la duración de la tabla son las de la ficha original): 02 `semaforo`, 05 `criba`,
+  10 `imposibles` ★, 11 `clasificador` ★, 12 `reloj`, 14 `errores`, 17 `divisores`, 21 `exponente`, 23 `division`, 24 `expresion` ★,
+  26 `constructor`, 28 `potencias10`, 29 `dictado`, 32 `errores1` y 114 `fichas-del-parchis`.
+- **197 (ALTO, 1 h 30 min)**: la base, los signos pegados a la cuenta, y el «×» de la U1 en el test genérico.
+- **198 (MEDIO, 1 h)**: los retoques de una línea de ocho prácticas sin reabierta (`rectangulos`, `arbol`, `divisiones`, `baldosas`,
+  `leelo`, `jerarquia`, `raiz`, `distributiva`). Una tarea y no ocho reabiertas: cada una es un cambio de diez minutos.
+- **Todas pueden ir a la vez**: cada reabierta toca solo la carpeta de su práctica y sus tests; la 198, otras ocho carpetas; la 197,
+  solo `_comun` y los tests comunes. Ninguna toca `catalogo.js` (todas están publicadas y siguen publicadas). Recomendado: hasta 4 a la vez.
+- **Orden de prioridad**: primero las tres ★ (24, 10, 11), que enseñan algo falso; después 26 (los decimales), 12 y 21; luego el resto, la 198 y la 197.
+- **Regla para todas**: la tarjeta del «No lo sé» ya dice bien lo que se corrige; el feedback reutiliza su función y no inventa una
+  tercera versión. Los generadores no cambian salvo en la 10, la 12, la 26 y la 32, que lo dicen (y la frase de un ítem de `leelo` en la 198).

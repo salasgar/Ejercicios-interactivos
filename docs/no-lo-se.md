@@ -51,7 +51,8 @@ probarla; `practica.js` solo la conecta.
 
 ## Reglas de contenido (las de siempre; la explicación no las relaja)
 
-- Producto con «·» y división con «:» desde la unidad 2; **la unidad 1 usa «×»**, como el resto de su material.
+- Producto con «·» y división con «:» **en toda la app, también en la unidad 1** (decisión de Juan Luis del
+  14-11-2026: las prácticas de la U1 ya escriben «·»). El «×» queda solo en el material en papel de la U1 de este curso.
 - «Divisor», no «factor», para la relación entre números; GCD y LCM, no HCF.
 - Fracciones con raya (`htmlFraccion`), nunca con barra; enteros sin paréntesis que no hagan falta.
 - **Nada que no se haya dado** en esa unidad: ni letras ni ecuaciones antes de la unidad 6 (hueco □), ni decimales
