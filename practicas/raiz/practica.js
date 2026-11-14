@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaCuadrado, explicaForma, explicaSinDibujo, explicaProblema } from './textos.js';
 import {
   generarForma, generarSinDibujo, generarProblema, fichasEnLado, LADO_MAXIMO,
 } from './logica.js';
@@ -12,12 +12,7 @@ import {
 const cuad = k => `${k}<sup>2</sup>`;
 
 /** La explicación de un ítem con su raíz y su resto: entre qué cuadrados está, lo que sobra, la comprobación. */
-function explicacion(n, k, r, api) {
-  const { tt } = api;
-  const x = TX.comun;
-  if (r === 0) return tt(x.exacta)(n, k);
-  return `${tt(x.entre)(n, k)}. ${tt(x.sobran)(n, k, r)} ${tt(x.comprobacion)(n, k, r)} ${tt(x.vocab)(n, k, r)}`;
-}
+const explicacion = explicaCuadrado;
 
 // ─── Teclado propio con uno o dos campos ──────────────────────────────────────────
 
@@ -274,6 +269,8 @@ function montarProblema(contenedor, item, api) {
 
 // ─── La práctica ───────────────────────────────────────────────────────────────────
 
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
 arrancar({
   slug: 'raiz',
   ejercicios: [
@@ -285,6 +282,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarForma,
       enunciado: enunciadoForma,
+      explicacion: explicaForma,
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.sin.nombre,
@@ -293,6 +292,8 @@ arrancar({
       generar: generarSinDibujo,
       montar: montarSinDibujo,
       enunciado: enunciadoSinDibujo,
+      explicacion: explicaSinDibujo,
+      noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.prob.nombre,
@@ -300,6 +301,8 @@ arrancar({
       generar: generarProblema,
       montar: montarProblema,
       enunciado: enunciadoProblema,
+      explicacion: explicaProblema,
+      noLoSe: NO_LO_SE,
     },
   ],
 });

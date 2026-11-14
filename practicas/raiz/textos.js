@@ -165,3 +165,54 @@ export const TX = {
     tuyo: { es: 'Has dicho', en: 'You said' },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+const RESP = { es: 'La respuesta es', en: 'The answer is' };
+
+/** Cómo se encuentra la raíz entera y el resto de n (la misma cuenta que el feedback de los ejercicios). */
+export function explicaCuadrado(n, k, r, { tt }) {
+  const x = TX.comun;
+  if (r === 0) return tt(x.exacta)(n, k);
+  return `${tt(x.entre)(n, k)}. ${tt(x.sobran)(n, k, r)} ${tt(x.comprobacion)(n, k, r)} ${tt(x.vocab)(n, k, r)}`;
+}
+
+/** Ejercicio 1: el lado más grande que completa el cuadrado y lo que sobra. */
+export function explicaForma(item, ctx) {
+  const { tt } = ctx;
+  const regla = tt({
+    es: 'Busca el lado más grande con el que el cuadrado se completa: sus fichas, lado · lado, no pueden pasar de las que tienes.',
+    en: 'Find the biggest side for which the square is complete: its counters, side · side, cannot be more than you have.',
+  });
+  const fin = item.resto === 0
+    ? tt({ es: `lado ${item.raiz} y no sobra ninguna`, en: `side ${item.raiz} and none left over` })
+    : tt({ es: `lado ${item.raiz} y sobran ${item.resto}`, en: `side ${item.raiz} and ${item.resto} left over` });
+  return `<p>${regla}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p><p>${tt(RESP)}: ${fin}.</p>`;
+}
+
+/** Ejercicio 2: raíz exacta, raíz entera y resto, o «¿puede ser?». */
+export function explicaSinDibujo(item, ctx) {
+  const { tt, t } = ctx;
+  if (item.tipo === 'puede') {
+    return `<p>${tt(TX.sin.puede_pregunta)(item.raiz, item.resto)}</p><p>${tt(item.puede ? TX.sin.puede_si : TX.sin.puede_no)(item.raiz, item.resto)}</p>`
+      + `<p>${tt(RESP)}: ${item.puede ? t.si : t.no}.</p>`;
+  }
+  if (item.tipo === 'exacta') {
+    return `<p>${tt({
+      es: 'La raíz cuadrada exacta es el número que, multiplicado por sí mismo, da el número de dentro.',
+      en: 'The exact square root is the number that, multiplied by itself, gives the number inside.',
+    })}</p><p>${tt(TX.sin.exacta_bien)(item.n, item.raiz)}</p><p>${tt(RESP)} ${cuenta(item.raiz)}.</p>`;
+  }
+  return `<p>${tt(TX.sin.entera_ayuda)}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)}</p>`
+    + `<p>${tt(RESP)}: ${tt({ es: 'raíz entera', en: 'whole root' })} ${cuenta(item.raiz)}, ${tt({ es: 'resto', en: 'remainder' })} ${cuenta(item.resto)}.</p>`;
+}
+
+/** Ejercicio 3: qué se pide, la cuenta del cuadrado y la frase de respuesta. */
+export function explicaProblema(item, ctx) {
+  const { tt } = ctx;
+  return `<p>${tt({
+    es: 'El lado del cuadrado es la raíz entera del número de piezas; lo que sobra es el resto.',
+    en: 'The side of the square is the whole square root of the number of pieces; what is left over is the remainder.',
+  })}</p><p>${explicaCuadrado(item.n, item.raiz, item.resto, ctx)} ${tt(TX.prob.respuesta)(item.raiz, item.resto, item.dosCampos)}</p>`;
+}
