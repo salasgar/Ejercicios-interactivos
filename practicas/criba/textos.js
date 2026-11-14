@@ -107,10 +107,6 @@ export const TX = {
     },
     mitad: { es: n => `todos los primos hasta la mitad de ${n}`, en: n => `all the primes up to half of ${n}` },
     primo_pregunta: { es: '¿Y <strong>es primo</strong>?', en: 'And <strong>is it prime</strong>?' },
-    explicacion: {
-      es: (n, r, s, ultimo) => `${r} · ${r} = ${r * r} ≤ ${n} < ${s} · ${s} = ${s * s}, así que basta probar hasta el ${ultimo}.`,
-      en: (n, r, s, ultimo) => `${r} · ${r} = ${r * r} ≤ ${n} < ${s} · ${s} = ${s * s}, so it is enough to try up to ${ultimo}.`,
-    },
   },
 };
 
@@ -156,21 +152,29 @@ export function explicaFlashcard(item, ctx) {
 }
 
 /**
+ * La frase del límite del ejercicio 3, la misma en la tarjeta del «No lo sé» y en el feedback: el último primo que,
+ * por sí mismo, no pasa del número, y el siguiente, que ya pasa. Con palabras, sin cadena de desigualdades.
+ */
+export function limiteRaiz(n, { tt }) {
+  const { ultimo, siguiente } = datosExplicacionRaiz(n);
+  const c = (p) => `<span class="cuenta">${p} · ${p} = ${p * p}</span>`;
+  return tt({
+    es: `${c(ultimo)} no pasa de ${n}, pero ${c(siguiente)} sí: basta probar hasta el ${ultimo}.`,
+    en: `${c(ultimo)} is not more than ${n}, but ${c(siguiente)} is: it is enough to try up to ${ultimo}.`,
+  });
+}
+
+/**
  * Ejercicio 3: hasta qué primo se llega (con el mismo criterio que la regla: el último primo que, por sí
  * mismo, no pasa del número, y el siguiente, que ya pasa) y, si el número es compuesto, la segunda
- * pregunta del ítem («¿Y es primo?») con su divisor. No reutiliza `TX.raiz.explicacion`, que mezcla la
- * raíz entera con el siguiente primo («9 · 9 = 81 ≤ 91 < 11 · 11») y lleva un «<» sin escapar.
+ * pregunta del ítem («¿Y es primo?») con su divisor. La frase del límite es `limiteRaiz`, que usa también el
+ * feedback (reabierta del 14-11: antes llevaba «9 · 9 = 81 ≤ 91 < 11 · 11», con un «<» sin escapar).
  */
 export function explicaRaiz(item, ctx) {
   const { tt } = ctx;
   const n = item.n;
-  const { ultimo, siguiente } = datosExplicacionRaiz(n);
   const lista = listaHastaRaiz(n).join(', ');
-  const c = (p) => `<span class="cuenta">${p} · ${p} = ${p * p}</span>`;
-  const limite = tt({
-    es: `${c(ultimo)} no pasa de ${n}, pero ${c(siguiente)} sí: basta probar hasta el ${ultimo}.`,
-    en: `${c(ultimo)} is not more than ${n}, but ${c(siguiente)} is: it is enough to try up to ${ultimo}.`,
-  });
+  const limite = limiteRaiz(n, ctx);
   if (!item.compuesto) return `<p>${tt(REGLA_PRIMO)}</p><p>${limite}</p><p>${tt(RESPUESTA)(lista)}</p>`;
   const p = listaHastaRaiz(n).find(q => n % q === 0);
   const divisor = `<span class="cuenta">${n} = ${p} · ${n / p}</span>`;

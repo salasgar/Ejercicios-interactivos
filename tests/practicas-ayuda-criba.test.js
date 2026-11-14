@@ -64,3 +64,19 @@ test('criba · revisión 193: sin letras en la regla, sin «<» sin escapar, una
     }
   }
 });
+
+test('criba · reabierta 14-11: el feedback del ejercicio 3 dice lo mismo que la tarjeta, sin «<» ni cadena de desigualdades', () => {
+  for (const idioma of IDIOMAS) {
+    for (const item of generar(L.generarRaiz, 9, 1000)) {
+      const html = X.limiteRaiz(item.n, ctx(idioma));
+      assert.ok(!/<(?![a-z/])/i.test(html) && !html.includes('≤'), `${item.n}: ${html}`);
+      assert.ok(X.explicaRaiz(item, ctx(idioma)).includes(html), 'la tarjeta lleva la misma frase');
+      const cuentas = [...html.matchAll(/(\d+) · \1 = (\d+)/g)].map(m => [Number(m[1]), Number(m[2])]);
+      assert.equal(cuentas.length, 2);
+      const [[u, u2], [s, s2]] = cuentas;
+      assert.equal(u2, u * u); assert.equal(s2, s * s);
+      assert.ok(u2 <= item.n && s2 > item.n, `${item.n}: ${u2} no pasa y ${s2} sí`);
+      assert.ok(L.datosExplicacionRaiz(item.n).siguiente === s && L.datosExplicacionRaiz(item.n).ultimo === u);
+    }
+  }
+});

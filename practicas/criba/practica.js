@@ -4,11 +4,11 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { esPrimo } from '../_comun/aritmetica.js';
-import { TX, explicarClase, explicaFlashcard, explicaRaiz } from './textos.js';
+import { TX, explicarClase, explicaFlashcard, explicaRaiz, limiteRaiz } from './textos.js';
 import {
   generarCriba, aciertaTachar, PRIMOS_HASTA_100,
   generarFlashcard, claseDe,
-  generarRaiz, datosExplicacionRaiz,
+  generarRaiz,
 } from './logica.js';
 
 const PRIMOS_HASTA_100_SET = new Set(PRIMOS_HASTA_100);
@@ -174,8 +174,7 @@ function textoOpcion(o, item, api) {
 }
 
 function htmlExplicacionLista(item, api) {
-  const { r, ultimo, siguiente } = datosExplicacionRaiz(item.n);
-  return api.tt(TX.raiz.explicacion)(item.n, r, siguiente, ultimo);
+  return limiteRaiz(item.n, api);
 }
 
 const enunciadoRaiz = (item, { tt }) => `
