@@ -93,8 +93,8 @@ export const CATALOGO = [
   { id: 64, slug: 'ortografia-tildes', ruta: 'ortografia-tildes/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las tildes', en: 'Spanish spelling: accents' }, nEjercicios: 4, disponible: false },
   { id: 65, slug: 'ortografia-letras', ruta: 'ortografia-letras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las letras', en: 'Spanish spelling: letters' }, nEjercicios: 4, disponible: true },
   { id: 66, slug: 'ortografia-puntuacion', ruta: 'ortografia-puntuacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: puntuación y mayúsculas', en: 'Spanish spelling: punctuation and capitals' }, nEjercicios: 4, disponible: true },
-  { id: 67, slug: 'ortografia-palabras', ruta: 'ortografia-palabras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: palabras que se confunden', en: 'Spanish spelling: confusable words' }, nEjercicios: 3, disponible: false },
-  { id: 68, slug: 'ortografia-ampliacion', ruta: 'ortografia-ampliacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: ampliación', en: 'Spanish spelling: going further' }, nEjercicios: 4, disponible: false },
+  { id: 67, slug: 'ortografia-palabras', ruta: 'ortografia-palabras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: palabras que se confunden', en: 'Spanish spelling: confusable words' }, nEjercicios: 3, disponible: true },
+  { id: 68, slug: 'ortografia-ampliacion', ruta: 'ortografia-ampliacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: ampliación', en: 'Spanish spelling: going further' }, nEjercicios: 4, disponible: true },
   // Unidad 4, Fractions (PU2, tareas 99-108; filas puestas por la 98 el 2026-10-26, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (109-111).
   { id: 47, slug: 'que-fraccion', ruta: 'que-fraccion/', unidad: 4, nombre: { es: '¿Qué fracción es?', en: 'What fraction is it?' }, nEjercicios: 4, disponible: true },

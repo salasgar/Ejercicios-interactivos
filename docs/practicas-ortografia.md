@@ -218,6 +218,14 @@ falla y lo más fácil; la ampliación, nunca.
 | Junio · 1 (lun 14-6) | `['ortografia-palabras', 3]` Números y símbolos | 142 |
 | Junio · 2 (lun 21-6) | `['ortografia-puntuacion', 4]` El correo al profesor | 140 |
 
+**La ampliación (68), entre los «a elegir» de la U8** (decisión de Juan Luis del 13-11-2026:
+la opción (b) de la 142). Nunca es ★: sus cuatro ejercicios van entre los ejercicios «a
+elegir» de las tareas semanales de la U8, como alternativa para quien ya tenga hecho el ★ de
+ortografía de esa semana, y cuentan en los puntos como cualquier «a elegir» si el alumno los
+elige. Además salen en la portada, con el aviso «Ampliación» en cada introducción. Qué
+ejercicio va en qué paquete: la ENTREGA de la tarea 196
+(`reparto-practicas-u2/salidas/196-publicar-ortografia-4/ENTREGA.md`).
+
 ## 6. Lo que nunca es distractor
 
 Dos formas que la RAE admite las dos, o una recomendación y no una regla. **Nunca** van como
@@ -258,15 +266,16 @@ lo que un libro de texto viejo diga distinto que la Ortografía de 2010, fuera.
 
 ## 7. Qué hay publicado
 
-Este apartado lo rellenan las tareas 140, 141 y 142 al publicar.
+Este apartado lo rellenan las tareas de publicación (140, 141, 142 y 196) al publicar.
 
 | Bloque | Publicado | Ejercicios | Ítems por nivel (1 / 2 / 3) |
 |---|---|---|---|
 | `ortografia` (45), lo más frecuente | antes de la sección | los 11 de siempre | niveles de la 143 |
 | `ortografia-letras` (65), las letras | 9-11-2026 (tarea 140) | 1 hay, ahí, ay; a ver, haber · 2 b o v · 3 g o j y la diéresis · 4 otras letras | 1: 18 / 19 / 23 · 2: 25 / 46 / 29 · 3: 20 / 37 / 35 · 4: 43 / 22 / 38 |
 | `ortografia-puntuacion` (66), puntuación y mayúsculas | 9-11-2026 (tarea 141, tras la reabierta de la 137) | 1 mayúsculas · 2 el punto y la coma · 3 dos puntos, puntos suspensivos y el saludo · 4 el correo al profesor | 1: 15 / 16 / 18 · 2: 16 / 16 / 17 · 3: 16 / 17 / 17 · 4: 16 / 16 / 32 (16 correos y 16 asunto o cuerpo) |
-| `ortografia-tildes` (64), las tildes | **no** (tarea 141: reabierta la 135) | — | — |
-| `ortografia-palabras` (67), `-ampliacion` (68) | no (tarea 142) | — | — |
+| `ortografia-tildes` (64), las tildes | **no** (tareas 141, 142 y 196: reabierta la 135 por tercera vez) | — | — |
+| `ortografia-palabras` (67), palabras que se confunden | 14-11-2026 (tarea 196, tras la reabierta de la 138) | 1 ¿junto o separado? · 2 suenan igual, se escriben distinto · 3 números y símbolos | 1: 38 / 37 / 23 · 2: 24 / 29 / 30 · 3: 27 / 23 / 30 |
+| `ortografia-ampliacion` (68), ampliación (nunca ★; «a elegir» de la U8, §5) | 14-11-2026 (tarea 196, tras la reabierta de la 139) | 1 porque, por qué, porqué, por que · 2 formas verbales mal escritas · 3 siglas, abreviaturas y prefijos · 4 puntuación avanzada | 1: 16 / 16 / 16 · 2: 19 / 18 / 17 · 3: 17 / 17 / 16 · 4: 16 / 16 / 17 |
 
 La 140 quitó cinco ítems de `ortografia-letras` antes de publicarla (lista y motivos en
 `reparto-practicas-u2/salidas/140-publicar-ortografia-1/ENTREGA.md`). `ortografia-puntuacion`
@@ -281,3 +290,14 @@ es «Sierra Espuña» y el genérico funciona como parte del nombre, como en «M
 formas son otra palabra (*medico*, *canto*, *cantara*, *ordenes*, *peiné*, *descuidó*…); además,
 «El 7 de 0,7 es una décima», la variante *paralelógramo* y «TÉ-le-fo-no» en el menú. Lista en
 `reparto-practicas-u2/hechos/reabiertas/135--s-20261109T101428-e1825b21.md`.
+
+La 142 (9-11) no publicó nada: reabrió `ortografia-palabras` (frases que caducan con el año,
+«conque» y «malentendido» que también valían, reglas de cien/ciento y de la apócope),
+`ortografia-ampliacion` (el cuadrado «caracterizado» por sus lados, dos «por que» que
+admitían «porque», punto y coma frente a dos puntos, «Avda.», motivos de los prefijos) y otra
+vez `ortografia-tildes`. Las tres reabiertas se cerraron el 9-11. La 196 (14-11) leyó los
+tres bancos enteros, cotejó en el DLE y el DPD lo dudoso y los probó con clics en los tres
+niveles: publicó `ortografia-palabras` y `ortografia-ampliacion` sin quitar ningún ítem, y
+reabrió `ortografia-tildes` por tercera vez (*jamás*, que sin tilde es *jamas*, de *jamar*;
+*pie* y *Luis*, del tipo de *fie* y *hui*; y la frase de la proporcionalidad). Lista en
+`reparto-practicas-u2/hechos/reabiertas/135--s-20261114T113316-d58f9cb4.md`.
