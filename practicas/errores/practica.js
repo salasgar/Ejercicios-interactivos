@@ -4,7 +4,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { esc } from '../_comun/textos.js';
-import { TX, NOMBRES, html, explicaItem } from './textos.js';
+import { TX, NOMBRES, html, explicaItem, explicaHay, explicaLinea, explicaNombre } from './textos.js';
 import { generarHay, generarLinea, generarNombre, claveItem, PLANTILLA_POR_ID } from './logica.js';
 
 function procedimiento(item, api) {
@@ -13,7 +13,7 @@ function procedimiento(item, api) {
   return `<ol class="procedimiento">${filas.join('')}</ol>`;
 }
 
-const explicacion = explicaItem;
+const explicacion = explicaItem;   // el feedback al responder; el «No lo sé» lleva su tarjeta (explicaHay…)
 
 // Los enunciados salen también en la traducción (sin los botones).
 const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
@@ -76,7 +76,7 @@ arrancar({
       clave: claveItem,
       montar: montarHay,
       enunciado: enunciadoHay,
-      explicacion,
+      explicacion: explicaHay,
     },
     {
       nombre: TX.nombre.linea,
@@ -85,7 +85,7 @@ arrancar({
       clave: claveItem,
       montar: montarLinea,
       enunciado: enunciadoLinea,
-      explicacion,
+      explicacion: explicaLinea,
     },
     {
       nombre: TX.nombre.nombre,
@@ -94,7 +94,7 @@ arrancar({
       clave: claveItem,
       montar: montarNombre,
       enunciado: enunciadoNombre,
-      explicacion,
+      explicacion: explicaNombre,
     },
   ],
 });

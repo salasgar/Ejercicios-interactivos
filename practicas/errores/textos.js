@@ -547,3 +547,73 @@ export function explicaItem(item, { tt }) {
   const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
   return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
 }
+
+// ─── «No lo sé»: la regla del ejercicio, la línea mala y cómo se hace bien, y la respuesta (tarea 193) ───
+//
+// La tarjeta no copia `explicaItem` (el feedback): le faltaban la regla delante y la respuesta al final, en el
+// ej. 3 el nombre del error salía en el cuerpo y otra vez como respuesta, y en «m.c.d. = 0» su porqué («el 1 es
+// divisor de los dos números, así que el m.c.d. es 1») vale para cualquier pareja de números.
+
+const REGLA = {
+  hay: { es: 'Repasa cada línea: sus cuentas y la regla que usa. Si alguna falla, hay un error.', en: 'Check each line: its calculations and the rule it uses. If one of them fails, there is a mistake.' },
+  linea: { es: 'Repasa las líneas en orden y para en la primera cuya cuenta o regla falla.', en: 'Check the lines in order and stop at the first one with a wrong calculation or a wrong rule.' },
+  nombre: { es: 'Busca la línea mala y compárala con cómo se hace bien: lo que cambia da el nombre del error.', en: 'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.' },
+};
+const PRIMERA_MALA = { es: 'Es la primera línea que falla:', en: 'It is the first line that is wrong:' };
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const cierre = (idioma, txt) => `<br>${RESPUESTA[idioma]} <strong>${txt}</strong>.`;
+const entreComillas = (idioma, txt) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
+/** «Ha tratado la potencia como un producto.» → sin el punto final (sí el de «m.c.m.»), que va fuera de las comillas. */
+const sinPunto = txt => txt.replace(/(?<!m\.c\.[dm])\.$/, '');
+/** Minúscula tras dos puntos, sin tocar siglas (GCD, LCM). */
+const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0].toLowerCase() + txt.slice(1) : txt);
+/** Comillas inglesas “” en lugar de las rectas que traen algunos `porque`. */
+const comillasIn = txt => txt.replace(/"([^"]+)"/g, '“$1”');
+
+/** La cuenta bien hecha de la tarjeta: la `corregida` de la plantilla, salvo donde enseñaba algo falso en general. */
+const CORREGIDA_TARJETA = {
+  'e-mcd-cero': ({ a, b }) => L(
+    `el único divisor que tienen en común ${a} y ${b} es el 1, así que m.c.d.(${a}, ${b}) = 1. El m.c.d. nunca es 0.`,
+    `the only divisor that ${a} and ${b} have in common is 1, so GCD(${a}, ${b}) = 1. The GCD is never 0.`),
+};
+export const corregidaTarjeta = item => (CORREGIDA_TARJETA[item.plantilla] ?? PLANTILLA_POR_ID[item.plantilla].corregida)(item.params);
+
+const ESTA_EN = { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` };
+
+/**
+ * La línea mala y cómo queda bien hecha. En el ej. 2 el número de la línea es la respuesta: va al final y aquí
+ * solo delante de la línea; en los otros se dice antes («El error está en la línea 2:») y no se repite.
+ */
+function malaYBuena(item, { tt }, esElEj2 = false) {
+  const n = item.error.linea + 1;
+  const texto = html(tt(item.lineas[item.error.linea]));
+  const mala = esElEj2 ? `${tt(PRIMERA_MALA)} <span class="linea-mala">${n}. ${texto}</span>` : `${tt(ESTA_EN)(n)} <span class="linea-mala">${texto}</span>`;
+  return `${mala}<br>${tt(TX.correcta)} ${html(minuscula(tt(corregidaTarjeta(item))))}`;
+}
+
+/** Sin error: el porqué de la plantilla sin su «Está bien:» (la respuesta ya lo dice al final). */
+function porQueEstaBien(item, { tt }) {
+  const porque = comillasIn(tt(PLANTILLA_POR_ID[item.plantilla].porque(item.params))).replace(/^(Está bien|It is right): /, '');
+  return html(porque[0].toUpperCase() + porque.slice(1));
+}
+
+/** Ejercicio 1: ¿está bien o hay un error? */
+export function explicaHay(item, ctx) {
+  const { tt, idioma } = ctx;
+  const cuerpo = item.error ? malaYBuena(item, ctx) : porQueEstaBien(item, ctx);
+  return `${tt(REGLA.hay)}<br>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.error ? TX.error : TX.bien))))}`;
+}
+
+/** Ejercicio 2: la primera línea que está mal. */
+export function explicaLinea(item, ctx) {
+  const { tt, idioma } = ctx;
+  const resp = idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`;
+  return `${tt(REGLA.linea)}<br>${malaYBuena(item, ctx, true)}${cierre(idioma, resp)}`;
+}
+
+/** Ejercicio 3: el nombre del error. */
+export function explicaNombre(item, ctx) {
+  const { tt, idioma } = ctx;
+  const resp = entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion]))));
+  return `${tt(REGLA.nombre)}<br>${malaYBuena(item, ctx)}${cierre(idioma, resp)}`;
+}
