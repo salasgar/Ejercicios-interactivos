@@ -24,43 +24,65 @@ export function explicaDeslizador(item, { tt }) {
     es: `Aquí: ${cuenta(`10<sup>${item.n}</sup> = ${v.cifras}`)} (${tt(ceros)(item.n)}), en inglés y español: ${nombres}.`,
     en: `Here: ${cuenta(`10<sup>${item.n}</sup> = ${v.cifras}`)} (${tt(ceros)(item.n)}), in English and Spanish: ${nombres}.`,
   };
-  const fin = { es: `el deslizador va en ${item.n}.`, en: `the slider goes to ${item.n}.` };
-  return `${tt(regla)} ${tt(lectura)} ${tt(RESPUESTA)} ${cuenta(item.n)}: ${tt(fin)}`;
+  // Revisión 193: antes, «La respuesta es 8: el deslizador va en 8» (el 8 dos veces y sin decir qué es).
+  const sol = item.pide === 'ceros' ? tt(ceros)(item.n) : `10<sup>${item.n}</sup>`;
+  const fin = { es: `(el deslizador, en ${item.n})`, en: `(the slider at ${item.n})` };
+  return `${tt(regla)} ${tt(lectura)} ${tt(RESPUESTA)} ${cuenta(sol)} ${tt(fin)}.`;
 }
+
+const mayuscula = s => s[0].toUpperCase() + s.slice(1);
+const de3 = x => String(x).padStart(3, '0');
 
 /** Ejercicio 2: el «and» (emparejar) o escribir con cifras (ceros de cada grupo). */
 export function explicaAndOCifras(item, { tt }) {
+  // Revisión 193: la regla de delante («el and marca dónde empiezan las unidades») era falsa en el segundo
+  // nombre («five hundred and sixty thousand»: ahí el and va dentro de los miles); la respuesta acababa en
+  // «La respuesta es: cada nombre con el número que va debajo»; y los grupos se separaban con «·», que en
+  // esta unidad es el signo de multiplicar. Los textos de `TX.and` siguen igual en el feedback.
   if (item.tipo === 'and') {
-    const intro = {
-      es: 'El «and» marca dónde empiezan las unidades sueltas.',
-      en: 'The "and" shows where the loose units start.',
+    const regla = {
+      es: 'Fíjate en si el «and» va después o antes de «thousand».',
+      en: 'Look at whether the “and” comes after or before “thousand”.',
     };
-    const lineas = item.nombres.map((nombre, i) => {
-      const n = item.numeros[item.solucion[i]], g = gruposDe(n);
-      const razon = tt(/ thousand and /.test(nombre) ? TX.and.por_que.despues : TX.and.por_que.dentro)(g.miles, g.unidades);
-      return `${nombre}<br>${cuenta(`= ${agrupar(n)}`)}<br>${razon}`;
+    const pares = item.nombres.map((nombre, i) => ({ nombre, n: item.numeros[item.solucion[i]] }));
+    const lineas = pares.map(({ nombre, n }) => {
+      const g = gruposDe(n);
+      const despues = / thousand and /.test(nombre);
+      return tt(despues
+        ? { es: `«${nombre}»: el «and» va después de «thousand», así que lo que sigue son las unidades (miles ${g.miles}; unidades ${g.unidades}).`,
+            en: `“${nombre}”: the “and” comes after “thousand”, so what follows is the units (thousands ${g.miles}; units ${g.unidades}).` }
+        : { es: `«${nombre}»: el «and» va antes de «thousand», dentro de los miles (miles ${g.miles}; unidades ${g.unidades}).`,
+            en: `“${nombre}”: the “and” comes before “thousand”, inside the thousands (thousands ${g.miles}; units ${g.unidades}).` });
     });
-    const fin = { es: 'cada nombre con el número que va debajo de él.', en: 'each name with the number written under it.' };
-    return `${tt(intro)}<br>${lineas.join('<br><br>')}<br>${tt(RESPUESTA)}: ${tt(fin)}`;
+    const [p, q] = pares.map(({ nombre, n }) => cuenta(`${nombre} = ${agrupar(n)}`));
+    const fin = { es: `${p} y ${q}`, en: `${p} and ${q}` };
+    return `${tt(regla)}<ol class="pasos-ayuda">${lineas.map(l => `<li>${l}</li>`).join('')}</ol>${tt(RESPUESTA)} ${tt(fin)}.`;
   }
   const g = gruposDe(item.n);
-  const regla = item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es;
-  const lectura = {
-    es: `Lee el número por grupos de tres cifras (${tt(TX.and.grupos)(g)}).`,
-    en: `Read the number in groups of three digits (${tt(TX.and.grupos)(g)}).`,
-  };
-  return `${item.texto}<br>${tt(lectura)} ${tt(regla)}<br>${tt(RESPUESTA)} ${cuenta(agrupar(item.n))}.`;
+  const k = Math.floor((item.n % 1e6) / 1e3), u = item.n % 1e3;
+  const regla = { es: 'Se escribe por grupos de tres cifras: millones, miles y unidades.', en: 'Write it in groups of three digits: millions, thousands and units.' };
+  // Lo que suele fallar, con los números del ítem: un grupo corto lleva ceros delante y un grupo que no se dice es 000.
+  const corto = [k, u].find(x => x > 0 && x < 100);
+  const ojo = [
+    corto === undefined ? null : { es: `cada grupo lleva tres cifras (${corto} → ${de3(corto)})`, en: `each group has three digits (${corto} → ${de3(corto)})` },
+    k === 0 || u === 0 ? { es: 'un grupo que no se dice es 000', en: 'a group that is not said is 000' } : null,
+  ].filter(Boolean).map(tt);
+  const aviso = ojo.length ? ` ${mayuscula(ojo.join(tt({ es: ', y ', en: ', and ' })))}.` : '';
+  const grupos = { es: `Aquí: millones ${g.millones}; miles ${g.miles}; unidades ${g.unidades}.`, en: `Here: millions ${g.millones}; thousands ${g.miles}; units ${g.unidades}.` };
+  return `${tt(regla)}${aviso} ${tt(grupos)} ${tt(RESPUESTA)} ${cuenta(agrupar(item.n))}.`;
 }
 
 /** Ejercicio 3: billion, million y trillion. */
 export function explicaBillion(item, { tt }) {
-  const SI = { es: 'Sí', en: 'Yes' }, NO = { es: 'No', en: 'No' };
+  // Revisión 193: «son el mismo número» empezaba línea en minúscula y «La respuesta es Sí» llevaba mayúscula a
+  // media frase; ahora, una frase con mayúscula y el botón entre comillas.
+  const SI = { es: '«Sí»', en: '“Yes”' }, NO = { es: '«No»', en: '“No”' };
   if (item.clase === 'mismo') {
-    let h = `${item.a.texto}<br>${cuenta(`= ${agrupar(item.a.valor)}`)}<br>${item.b.texto}<br>${cuenta(`= ${agrupar(item.b.valor)}`)}<br>`;
-    h += `${tt(item.verdad ? TX.billion.es_igual : TX.billion.es_distinto)}.`;
+    let h = `${cuenta(`${item.a.texto} = ${agrupar(item.a.valor)}`)}<br>${cuenta(`${item.b.texto} = ${agrupar(item.b.valor)}`)}<br>`;
+    h += tt(item.verdad ? { es: 'Son el mismo número.', en: 'They are the same number.' } : { es: 'Son números distintos.', en: 'They are different numbers.' });
     if (item.verdad) h += ` ${tt(TX.billion.nota_billion)}`;
     else if ([item.a, item.b].some(x => /trillion/.test(x.texto))) h += ` ${tt(TX.billion.nota_trillion)}`;
-    return `${h} ${tt(RESPUESTA)} ${cuenta(tt(item.verdad ? SI : NO))}.`;
+    return `${h} ${tt(RESPUESTA)} ${tt(item.verdad ? SI : NO)}.`;
   }
   const f = formasDe(item.c, item.e);
   let h = `${cuenta(`${f.cifras} = ${pot(item.c, item.e)}`)} = ${f.en}${f.enGb ? ` = ${f.enGb}` : ''} = ${f.es}.`;
