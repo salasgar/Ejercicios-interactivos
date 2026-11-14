@@ -80,6 +80,14 @@ corrige lo que encuentre. La especificación es `docs/no-lo-se.md`.
 - (de la coordinadora) Una explicación puede llevar la solución y aun así enseñar mal: un paso que solo vale para ese
   ítem, un consejo falso en general, o la regla dicha con una palabra que no se ha dado.
 - (de la coordinadora) El feedback de acierto reutilizado a veces da la cuenta sin decir por qué: delante tiene que ir la regla.
+- (relevo s-20261114T185703-a741c82e) **No termines el turno «esperando» a un proceso en segundo plano**: la sesión anterior
+  dijo «espero a que terminen los clics» y no volvió; los clics murieron con ella y el reclamo caducó. Espera con un bucle
+  `until … ; do sleep 5; done` en primer plano (o con Monitor) y sigue trabajando en la misma vuelta.
+- (relevo) Los clics de 33 prácticas tardan unos 35 min a dos anchos. Lánzalos una práctica por proceso y con tiempo de espera en
+  cada llamada CDP: si una llamada se cuelga, se pierde una práctica, no la pasada entera. `python3 -m http.server` es de un
+  solo hilo y a veces corta la conexión (`ERR_CONNECTION_RESET`): repite esa práctica antes de dar el fallo por bueno.
+- (relevo) «Ítem igual al anterior» es un falso aviso en los dictados: el número se oye y no se ve, así que el texto del ítem no cambia.
+- (relevo) «La mejor es el 8» lleva la solución pero no el método: mira también si la tarjeta dice **cómo** se elige, no solo **qué**.
 
 ## Prohibido (propio de esta tarea)
 

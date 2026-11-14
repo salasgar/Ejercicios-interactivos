@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T19:39Z por s-20261114T185703-a741c82e al cerrar la 193 (LISTA, relevo; commits 2ceb108 1980429; npm test 2295/2295): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T15:08Z por s-20261114T150738-c83636b9 al reclamar la 193 (revisión del «No lo sé» de la U1 y la U2): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T15:05Z por s-20261114T145716-e48af71b al cerrar la 187 (LISTA, relevo; «No lo sé» en parentesis, jerarquia, exponente, raiz y division; npm test 2250/2250; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T12:08Z por s-20261114T120759-e1c97fc9 al reclamar la 196 
 Actualizado 2026-11-14T11:58Z por s-20261114T115719-c2e98c78 al cerrar la 135 (LISTA, tercera reabierta, commit 3bc3808; npm test 2232/2232; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T11:56Z por s-20261114T113316-d58f9cb4 al cerrar la 196 (PARCIAL, commit ed3cc3f: publicadas 67 y 68; la 64 reabierta, tercera de la 135; npm test 2231/2231): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T11:48Z por s-20261114T113420-fca06614 al cerrar la 161 (LISTA, commit 6efce4b; npm test 2231/2231; sin prueba en navegador): **retoque de la fila 161 y de la foto** (hay otras sesiones en el árbol).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -326,7 +326,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 190 | Revisión del «No lo sé» de las unidades 4 y 5: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-190-revision-no-lo-se.md | 171-174 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/190-revision-no-lo-se/ | LISTA | terminada 17:25Z (13-nov) |
 | 191 | Revisión del «No lo sé» de la unidad 6: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-191-revision-no-lo-se.md | 175-177 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/191-revision-no-lo-se/ | LISTA | terminada 04:52Z (13-nov) · commit d72ce50 |
 | 192 | Revisión del «No lo sé» de la unidad 3 (con la ortografía): leer las explicaciones, probarlas con clics y corregir | tareas/tarea-192-revision-no-lo-se.md | 178-182 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/192-revision-no-lo-se/ | LISTA | terminada 17:13Z (13-nov) |
-| 193 | Revisión del «No lo sé» de las unidades 1 y 2: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-193-revision-no-lo-se.md | 183-189 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/193-revision-no-lo-se/ | EN CURSO | s-20261114T150738-c83636b9 · caduca 18:07:38Z (14-nov) |
+| 193 | Revisión del «No lo sé» de las unidades 1 y 2: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-193-revision-no-lo-se.md | 183-189 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/193-revision-no-lo-se/ | LISTA | terminada 19:39Z (14-nov) |
 | 194 | Enseñar en el panel del profesor cuántas veces ha pulsado «No lo sé» cada alumno en cada ejercicio | tareas/tarea-194-ayudas-en-el-panel.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/194-ayudas-en-el-panel/ | LISTA | terminada 08:57Z (13-nov) · commit 826db4a |
 | 195 | Publicar `lee-decimales` (57), `compara-decimales` (58), `suma-resta-decimales` (59) y `multiplica-divide-decimales` (60) tras sus reabiertas del 8-11, con las propuestas de las tareas de las semanas 1 y 2 de la unidad 5 al día | tareas/tarea-195-publicar-u5-cuatro.md | las **reabiertas del 8-11** de 123, 124 (las dos), 125 y 126 cerradas con terminada nueva (lo están: `hechos/terminadas/123--s-20261108T101900-95a51c60.md`, `1… | 1 h 15 min | ALTO | 196 | reparto-practicas-u2/salidas/195-publicar-u5-cuatro/ | LISTA | terminada 17:56Z (13-nov) · commit b483ad7 |
 | 196 | Publicar «Las tildes» (`ortografia-tildes`, 64), «Palabras que se confunden» (`ortografia-palabras`, 67) y «Ampliación» (`ortografia-ampliacion`, 68) tras sus reabiertas del 9-11, con la tabla de ★ de la U7, la U8 y junio al día y la ampliación entre los «a elegir» de la U8 | tareas/tarea-196-publicar-ortografia-4.md | las **reabiertas del 9-11** de 135 (la segunda), 138 y 139 cerradas con terminada nueva (lo están: `hechos/terminadas/135--s-20261109T114919-4bdd2b23.md`, `138… | 1 h 15 min | ALTO | 195 | reparto-practicas-u2/salidas/196-publicar-ortografia-4/ | LISTA | terminada 13:51Z (14-nov) · commit 02a39ee |
@@ -334,7 +334,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 15:08Z**: BLOQUEADA 5 (156, 157, 158, 159, 160) · EN CURSO 1 (193) · LISTA 190.
+**Foto a 2026-11-14 19:39Z**: BLOQUEADA 5 (156, 157, 158, 159, 160) · LISTA 191.
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -366,12 +366,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (310), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (311), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 193 · 2026-11-14 19:39 · s-20261114T185703-a741c82e · — · 2ceb108 practicas/fabrica/textos.js (10 ++++++++--), tests/practicas-ayuda-fabr… · de 2026-11-14T18:57:03Z a 2026-11-14T19:39:08Z (l…
 LISTA · tarea 187 · 2026-11-14 15:05 · s-20261114T145716-e48af71b · cba3e84 (heredada) 6dbee49 a549885 3668110 e5cad9c · practicas/{parentesis,jerarquia,exponente,raiz,division}/{practica,textos}.js,… · ~10 min (abierto 14:57Z; relevo, parentesis ya he…
 LISTA · tarea 186 · 2026-11-14 14:08 · s-20261114T113351-e5a8777d · c9733a1 8b0c28a a92eb6d 73df841 · practicas/{errores,leelo,factorizaciones,fichas-del-parchis}/*, tests/practicas… · ~2 h 35 min (abierto 11:33Z; estimada 1 h 30)
 LISTA · tarea 196 · 2026-11-14 13:51 · s-20261114T133806-21f1b6d7 · 02a39ee · README.md (4 ±), docs/practicas-ortografia.md (§7: fila de las tildes y un párr… · 9 min (13:38Z-13:47Z), frente a 1 h 15 min espera…
