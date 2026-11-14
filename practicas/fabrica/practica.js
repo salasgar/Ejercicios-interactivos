@@ -129,7 +129,7 @@ arrancar({
       montar: montarDivisible,
       enunciado: enunciadoDivisible,
       explicacion: explicaDivisible,
-      noLoSe: NO_LO_SE,
+      // Sin `noLoSe` (revisión 193): es un sí/no de leer la factorización (destreza U2-2C-14), no un procedimiento.
     },
   ],
 });

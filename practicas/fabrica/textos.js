@@ -60,8 +60,8 @@ export function explicaContar(item, { idioma }) {
   const cuenta = item.fact.map(([, e]) => e + 1).join(' · ');
   const producto = `<span class="cuenta">${cuenta} = ${item.solucion}</span>`;
   const mult = item.fact.length > 1 ? `<p>${idioma === 'es' ? 'Multiplicamos' : 'We multiply'}: ${producto}.</p>` : '';
-  const tiene = idioma === 'es' ? `${item.n} tiene ${item.solucion} divisores.` : `${item.n} has ${item.solucion} divisors.`;
-  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol>${mult}<p>${tiene} ${RESPUESTA[idioma](`<strong>${item.solucion}</strong>`)}</p>`;
+  // Revisión 193: sin «132 tiene 12 divisores» delante de «La respuesta es 12» (la respuesta, una vez).
+  return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol>${mult}<p>${RESPUESTA[idioma](`<strong>${item.solucion}</strong>`)}</p>`;
 }
 
 export function explicaDivisible(item, { idioma }) {
@@ -72,17 +72,23 @@ export function explicaDivisible(item, { idioma }) {
   const pasos = item.factD.map(([p, necesita]) => {
     const tiene = fMapa.get(p) ?? 0;
     const texto = tiene === 0
-      ? (idioma === 'es' ? `el ${p} no aparece en ${item.n}` : `${p} is not in ${item.n}`)
+      ? (idioma === 'es' ? `el ${p} no aparece en ${item.n}` : `${p} does not appear in ${item.n}`)
       : (idioma === 'es'
         ? `el ${p} tiene exponente ${tiene} en ${item.n} y hace falta ${necesita}`
         : `${p} has exponent ${tiene} in ${item.n} and ${necesita} is needed`);
     const ok = tiene >= necesita;
     return `<li>${texto}: ${ok ? (idioma === 'es' ? 'vale' : 'it is enough') : (idioma === 'es' ? 'no vale' : 'it is not enough')}.</li>`;
   });
-  const cabecera = `<p>${item.n} = ${item.fact.map(pot).join(' · ')}; ${item.d} = ${item.factD.map(pot).join(' · ')}.</p>`;
+  // Revisión 193: si el divisor es primo, nada de «5 = 5»: se dice que es primo.
+  const esPrimoD = item.factD.length === 1 && item.factD[0][1] === 1;
+  const deD = esPrimoD
+    ? (idioma === 'es' ? `${item.d} es primo` : `${item.d} is prime`)
+    : `${item.d} = ${item.factD.map(pot).join(' · ')}`;
+  const cabecera = `<p>${item.n} = ${item.fact.map(pot).join(' · ')}; ${deD}.</p>`;
   const conclusion = item.divisible
     ? (idioma === 'es' ? `Todos valen, así que ${item.n} es divisible entre ${item.d}.` : `All of them are enough, so ${item.n} is divisible by ${item.d}.`)
-    : (idioma === 'es' ? `Alguno no vale, así que ${item.n} no es divisible entre ${item.d}.` : `One is not enough, so ${item.n} is not divisible by ${item.d}.`);
-  const si = idioma === 'es' ? 'Sí' : 'Yes';
-  return `<p>${regla}</p>${cabecera}<ol class="pasos-ayuda">${pasos.join('')}</ol><p>${conclusion} ${RESPUESTA[idioma](`<strong>${item.divisible ? si : 'No'}</strong>`)}</p>`;
+    : (idioma === 'es' ? `Alguno no vale, así que ${item.n} no es divisible entre ${item.d}.` : `Not all of them are enough, so ${item.n} is not divisible by ${item.d}.`);
+  // El texto del botón, entre comillas (revisión 193).
+  const boton = `<strong>${item.divisible ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`;
+  return `<p>${regla}</p>${cabecera}<ol class="pasos-ayuda">${pasos.join('')}</ol><p>${conclusion} ${RESPUESTA[idioma](idioma === 'es' ? `«${boton}»` : `“${boton}”`)}</p>`;
 }
