@@ -34,6 +34,7 @@ export const TX = {
 // ─── «No lo sé» (tarea 183): la explicación de cada ejercicio ─────────────────────────────────────
 
 import { parejasDivisores } from '../_comun/aritmetica.js';
+import { unir } from '../_comun/textos.js';
 import { explicar } from './logica.js';
 
 export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
@@ -50,9 +51,10 @@ export function explicaMultiplos(item, { idioma }) {
     : `The multiples of ${n} are the numbers in its times table: start at 0 and go up in ${n}s.`;
   const salto = `${cuenta(item.correctos.slice(1, 4).map((v, k) => `${n} · ${k + 1} = ${v}`).join('; '))}…`;
   const cero = es ? `El 0 también es múltiplo de ${n}: ${cuenta(`0 = ${n} · 0`)}.` : `0 is also a multiple of ${n}: ${cuenta(`0 = ${n} · 0`)}.`;
+  // Revisión 193: sin dos puntos entre «es» y la lista, que termina en «y».
   const fin = es
-    ? `La respuesta, hasta el ${item.hasta}, es: ${item.correctos.join(', ')}.`
-    : `The answer, up to ${item.hasta}, is: ${item.correctos.join(', ')}.`;
+    ? `La respuesta, hasta el ${item.hasta}, es ${unir(item.correctos.map(String), idioma)}.`
+    : `The answer, up to ${item.hasta}, is ${unir(item.correctos.map(String), idioma)}.`;
   return `${pasos([regla, salto, cero])}${fin}`;
 }
 
@@ -67,7 +69,8 @@ export function explicaDivisores(item, { idioma }) {
   const limite = es
     ? `Los divisores no pasan de ${n}: los números de la tabla del ${n}, como ${2 * n} y ${3 * n}, son múltiplos, no divisores. El 0 tampoco: no se puede dividir entre 0.`
     : `Divisors are never bigger than ${n}: the numbers in the ${n} times table, like ${2 * n} and ${3 * n}, are multiples, not divisors. 0 is not one either: you cannot divide by 0.`;
-  const fin = es ? `La respuesta es: ${item.correctos.join(', ')}.` : `The answer is: ${item.correctos.join(', ')}.`;
+  const lista = unir(item.correctos.map(String), idioma);
+  const fin = es ? `La respuesta es ${lista}.` : `The answer is ${lista}.`; // revisión 193: sin dos puntos
   return `${pasos([regla, limite])}${fin}`;
 }
 

@@ -14,13 +14,17 @@ const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, t: T[idioma], tt: o => o[idioma], esc: x => x });
 const plano = html => html.replace(/<\/(li|p)>/g, ' ').replace(/<br>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 const generar = (fn, semilla, total = 1200) => { const rng = crearRng(semilla); return Array.from({ length: total }, () => fn(rng)); };
-const RESP = /(?:La respuesta(?:, hasta el \d+,)? es|The answer(?:, up to \d+,)? is): (.*)\.$/;
+// Revisión 193: «La respuesta es 1, 2, 4 y 7.», sin dos puntos y con «y» antes del último.
+const RESP = /(?:La respuesta(?:, hasta el \d+,)? es|The answer(?:, up to \d+,)? is) (\d[\d, ]*(?: y | and )\d+)\.$/;
+const lista = texto => texto.split(/, | y | and /).map(Number);
+const sinDosPuntos = html => assert.ok(!/(respuesta(, hasta el \d+,)? es|answer(, up to \d+,)? is):/.test(html), html);
 
 test('recta · ejercicio 1: la respuesta son los múltiplos del 0 al 60, con el 0', () => {
   for (const idioma of IDIOMAS) {
     for (const item of generar(L.generarMultiplos, 1)) {
       const html = plano(X.explicaMultiplos(item, ctx(idioma)));
-      const dichos = html.match(RESP)?.[1].split(', ').map(Number);
+      sinDosPuntos(html);
+      const dichos = lista(html.match(RESP)?.[1] ?? '');
       const reales = [];
       for (let v = 0; v <= 60; v += item.n) reales.push(v);
       assert.deepEqual(dichos, reales, html);
@@ -34,7 +38,8 @@ test('recta · ejercicio 2: la respuesta son los divisores (sin el 0), con sus p
   for (const idioma of IDIOMAS) {
     for (const item of generar(L.generarDivisores, 2)) {
       const html = plano(X.explicaDivisores(item, ctx(idioma)));
-      const dichos = html.match(RESP)?.[1].split(', ').map(Number);
+      sinDosPuntos(html);
+      const dichos = lista(html.match(RESP)?.[1] ?? '');
       const reales = [];
       for (let d = 1; d <= item.n; d++) if (item.n % d === 0) reales.push(d);
       assert.deepEqual(dichos, reales, html);
