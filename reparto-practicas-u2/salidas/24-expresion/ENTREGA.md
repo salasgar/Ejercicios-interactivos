@@ -87,3 +87,23 @@ aparte** (tabla `RESULTADO` del test, leída del enunciado y no de la familia).
 
 - **Tarea 18:** poner `disponible: true` a `expresion` en `practicas/_comun/catalogo.js`.
 - Sin propuestas de cambio del contrato de la base.
+
+## Reabierta del 14-11 (punto 7 de la revisión 193), sesión s-20261114T210546-d2b384b6
+
+- **Commit 50edd8b**: `practicas/expresion/textos.js`, `practicas/expresion/logica.js`, `tests/practicas-expresion.test.js`.
+- La regla que se enseña es la **jerarquía**, no «sin «todo» no hay paréntesis» (falso en el ej. 2: «31 menos la suma de 8 y 2»):
+  - Introducción del ej. 1: «la multiplicación va antes que la resta, así que «20 menos 5 multiplicado por 3» es 20 − 5 · 3. Para que
+    la resta vaya antes, la frase lo dice: «20 menos 5, todo multiplicado por 3» es (20 − 5) · 3» (y en inglés con “all”).
+  - `explica` de `frase_mas_por`, `frase_menos_por`, `frase_mas_entre`: el texto que ya daba la tarjeta («Solo el 7 va multiplicado
+    por 3, y la multiplicación ya se hace antes que la resta: no hace falta paréntesis»). La tarjeta ya no tiene caso especial
+    (`SIN_TODO` fuera de `logica.js`): sale del mismo `explica` que el feedback; un solo texto.
+  - Comentario del banco puesto al día. La introducción del ej. 2 («Sin «todo» sería 7 + 3 · 2») se queda: es verdad y, leída tras la
+    nueva del ej. 1, no suena a la regla vieja.
+- Comillas: en inglés ya eran “ ” y en español « »; nada que cambiar.
+- **Generadores y tarjetas intactos**: hash de 300 ítems por ejercicio (semillas 1, 2, 3) y de sus tarjetas es/en, igual antes y después.
+  Ninguna exclusión de casos tocada.
+- Tests: el de la introducción, reescrito; dos nuevos: ningún texto (TX entero, enunciados y explica de todas las plantillas, 1800
+  tarjetas) contiene la regla falsa en ningún idioma, y el explica de las tres frases razona con la jerarquía y es el principio de la
+  tarjeta. `node --test` de expresion, ayuda-expresion y no-lo-se: 117/117. `npm test`: 2301/2301.
+- Clics (Chrome headless por CDP, `?probar=1&ejercicio=1`): a 375 y 1200 px, es y en, un fallo con paréntesis de más, un acierto y un
+  «No lo sé» en las frases sin paréntesis: 12/12 dicen la jerarquía, sin desbordar, consola limpia.

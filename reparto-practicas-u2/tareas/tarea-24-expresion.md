@@ -163,6 +163,10 @@ Propios de esta tarea:
 - (Reabierta, 2026-10-08.) Tratar cada número como una letra da por mala la suma repetida
   (`√49 + √49` por `2 · √49`), que es un planteamiento correcto. `sumaRepetida` lo resuelve
   tomando como constantes solo los números que el alumno no ha usado.
+- (Reabierta, 2026-11-14.) Una «convención» que vale en un ejercicio puede ser falsa en el de al
+  lado: «sin «todo» no hay paréntesis» choca con «31 menos la suma de 8 y 2» del ej. 2. Se enseña la
+  jerarquía, que vale siempre. Y el texto del feedback y el de la tarjeta del «No lo sé» salen del
+  mismo `explica`: dos versiones acaban diciendo cosas distintas.
 
 ## Prohibido (propio de esta tarea)
 
