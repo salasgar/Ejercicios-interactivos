@@ -99,27 +99,27 @@ export const TX = {
     notas: {
       miles: {
         es: (texto, pre) => (pre ? `«mil» no tiene plural: ${pre} mil, no ${pre} miles.` : '«mil» no tiene plural: se dice mil, no miles.'),
-        en: (texto, pre) => (pre ? `"mil" has no plural: ${pre} mil, not ${pre} miles.` : '"mil" has no plural: we say mil, not miles.'),
+        en: (texto, pre) => (pre ? `“mil” has no plural: ${pre} mil, not ${pre} miles.` : '“mil” has no plural: we say mil, not miles.'),
       },
       un: {
         es: texto => `Aquí no hace falta «un»: ${texto}.`,
-        en: texto => `There is no "un" here: ${texto}.`,
+        en: texto => `There is no “un” here: ${texto}.`,
       },
       y: {
         es: texto => `Aquí no va «y»: la «y» solo va entre las decenas y las unidades (treinta y dos); este número es ${texto}.`,
-        en: texto => `There is no "y" here: "y" only goes between tens and units (treinta y dos); this number is ${texto}.`,
+        en: texto => `There is no “y” here: “y” only goes between tens and units (treinta y dos); this number is ${texto}.`,
       },
       sietecientos: {
         es: () => 'Es «setecientos», no «sietecientos».',
-        en: () => 'It is "setecientos", not "sietecientos".',
+        en: () => 'It is “setecientos”, not “sietecientos”.',
       },
       nuevecientos: {
         es: () => 'Es «novecientos», no «nuevecientos».',
-        en: () => 'It is "novecientos", not "nuevecientos".',
+        en: () => 'It is “novecientos”, not “nuevecientos”.',
       },
       cincocientos: {
         es: () => 'Es «quinientos», no «cincocientos».',
-        en: () => 'It is "quinientos", not "cincocientos".',
+        en: () => 'It is “quinientos”, not “cincocientos”.',
       },
     },
     dictado_instruccion: { es: 'Escucha el número en español y escríbelo con cifras.', en: 'Listen to the number in Spanish and write it in figures.' },
@@ -184,14 +184,44 @@ export function acentuada(n, sufijo) {
   return sufijo === 'teen' ? `${raiz}<strong>TEEN</strong>` : `<strong>${raiz.toUpperCase()}</strong>${sufijo}`;
 }
 
+/**
+ * Los dos grupos de un dictado, delante y detrás de «thousand»/«mil», con el de detrás siempre a tres cifras
+ * (seventeen thousand → 17; ninety-five → 095). La usan la tarjeta del «No lo sé» y el feedback.
+ */
+function gruposDelDictado(item, { tt, esc }) {
+  const nombre = item.tipo === 'dictado' ? enNum : esNum;
+  const k = Math.floor(item.n / 1000), u = item.n % 1000;
+  const cifra = x => `<span class="cuenta">${x}</span>`;
+  const detras = u ? `${esc(nombre(u))} → ${cifra(String(u).padStart(3, '0'))}` : `${tt(AYUDA.nada_detras)} → ${cifra('000')}`;
+  return `${esc(nombre(k * 1000))} → ${cifra(k)}; ${detras}`;
+}
+
 /** Explicación de un dictado: el número en palabras y por grupos (inglés) o solo el número (español). */
-export function explicarDictado(item, { tt, esc }) {
+export function explicarDictado(item, ctx) {
+  const { tt, esc } = ctx;
   let html = `${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
-  if (item.tipo === 'dictado') {
-    const grupos = gruposConValor(item.n).map(g => `${g.texto} = ${agrupar(g.valor)}`);
-    if (grupos.length > 1) html += `<br>${tt(TX.dictado.grupos)}: ${grupos.join(' · ')}`;
-  }
+  if (item.tipo === 'dictado' && gruposConValor(item.n).length > 1) html += `<br>${tt(TX.dictado.grupos)}: ${gruposDelDictado(item, ctx)}`;
   return html;
+}
+
+/** Feedback de los dictados (ejercicios 1 y 3). */
+export function feedbackDictado(item, escrito, acierto, textos) {
+  const buena = explicarDictado(item, textos);
+  return acierto ? buena : `${textos.tt(TX.dictado.tu_respuesta)(agrupar(Number(escrito)))} ${buena}`;
+}
+
+/** Feedback del ejercicio 2, escritura: «fifty = 50», punto, y la nota (antes iban pegadas: «fifty = 50 Ojo…»). */
+export function feedbackEscritura(item, textos) {
+  const buena = item.opciones[item.solucion];
+  return `${textos.tt(TX.teen.escritura_ok)(agrupar(item.n), textos.esc(buena))}. ${notaEscritura(item, textos)}`;
+}
+
+/** Feedback de las fichas (ejercicio 3): lo que puso, la buena y la nota de cada ficha errónea que puso. */
+export function feedbackFichas(item, mias, acierto, { tt, esc }) {
+  const pre = prefijoMil(item.texto);
+  const buena = `${tt(TX.fichas.correcta)}: ${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
+  const notas = item.sobran.filter(s => mias.includes(s)).map(s => tt(TX.fichas.notas[s])(esc(item.texto), esc(pre))).join(' ');
+  return acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: ${esc(mias.join(' '))}.<br>${buena}${notas ? `<br>${notas}` : ''}`;
 }
 
 /**
@@ -211,8 +241,7 @@ export function explicaDictado(item, { tt, esc }) {
     pasos = `${esc(item.texto)}: ${tt(AYUDA.cifras3)(c, d, un)} → ${cifra(n)}`;
   } else {
     regla = tt(AYUDA.pasos)(tt(comillas)(ingles ? 'thousand' : 'mil'));
-    const detras = u ? `${esc(nombre(u))} → ${cifra(String(u).padStart(3, '0'))}` : `${tt(AYUDA.nada_detras)} → ${cifra('000')}`;
-    pasos = `${esc(item.texto)}<br>${esc(nombre(k * 1000))} → ${cifra(k)}; ${detras}`;
+    pasos = `${esc(item.texto)}<br>${gruposDelDictado(item, { tt, esc })}`;
   }
   return `<p>${regla}</p><p>${pasos}</p><p><strong>${tt(AYUDA.respuesta)} ${agrupar(n)}.</strong></p>`;
 }

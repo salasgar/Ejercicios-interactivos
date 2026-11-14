@@ -4,7 +4,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX, explicarDictado, acentuada, notaEscritura, prefijoMil, explicaDictado, explicaTeenOEscritura, explicaFichasODictadoEs } from './textos.js';
+import { TX, acentuada, explicaDictado, explicaTeenOEscritura, explicaFichasODictadoEs, feedbackDictado, feedbackEscritura, feedbackFichas } from './textos.js';
 import {
   agrupar, generarDictado, esRespuestaDictado, generarTeen, generarEscritura,
   generarFichas, esSecuenciaCorrecta, generarDictadoEs,
@@ -116,10 +116,7 @@ function montarDictado(contenedor, item, api) {
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
     api.responder({
       acierto,
-      html: textos => {
-        const buena = explicarDictado(item, textos);
-        return acierto ? buena : `${textos.tt(TX.dictado.tu_respuesta)(agrupar(Number(escrito)))} ${buena}`;
-      },
+      html: textos => feedbackDictado(item, escrito, acierto, textos),
       espera: 3000,
     });
   });
@@ -160,10 +157,9 @@ function montarEscritura(contenedor, item, api) {
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
-      const buena = item.opciones[item.solucion];
       api.responder({
         acierto: Number(valor) === item.solucion,
-        html: textos => `${textos.tt(TX.teen.escritura_ok)(agrupar(item.n), textos.esc(buena))} ${notaEscritura(item, textos)}`,
+        html: textos => feedbackEscritura(item, textos),
         espera: 3200,
       });
     },
@@ -214,15 +210,9 @@ function montarFichas(contenedor, item, api) {
     const acierto = esSecuenciaCorrecta(item, mias);
     linea.classList.add(acierto ? 'linea-fichas--bien' : 'linea-fichas--mal');
     banco.querySelectorAll('button').forEach(b => { b.disabled = true; });
-    // Solo las notas de las fichas erróneas que el alumno puso, con las palabras de este número
-    const pre = prefijoMil(item.texto);
     api.responder({
       acierto,
-      html: ({ tt, esc }) => {
-        const buena = `${tt(TX.fichas.correcta)}: ${esc(item.texto)} = <span class="cuenta">${agrupar(item.n)}</span>`;
-        const notas = item.sobran.filter(s => mias.includes(s)).map(s => tt(TX.fichas.notas[s])(esc(item.texto), esc(pre))).join(' ');
-        return acierto ? `${buena}` : `${tt(TX.fichas.tu_respuesta)}: ${esc(mias.join(' '))}.<br>${buena}${notas ? `<br>${notas}` : ''}`;
-      },
+      html: textos => feedbackFichas(item, mias, acierto, textos),
       espera: 3200,
     });
   });

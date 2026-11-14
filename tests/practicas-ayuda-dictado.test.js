@@ -112,3 +112,55 @@ test('dictado · ejercicio 3 (fichas): cada ficha que sobra tiene su porqué, co
     if (item.sobran.includes('un')) assert.equal(/un mil/.test(t), item.texto.startsWith('mil'), t);
   }
 });
+
+// ─── Reabierta del 14-11 de la tarea 29: el feedback (no solo la tarjeta) ───────
+
+// Una minúscula o un dígito, un espacio y una mayúscula de principio de frase: «fifty = 50 Ojo…» (falta el punto).
+// Un <br> es un salto de línea de verdad: separa frases.
+const planoBr = html => plano(html.replace(/<br>/g, ' | '));
+const PEGADA = /[\p{Ll}\d] (Ojo|Careful|Aquí|Here|Del|From|Fíjate|Look|En inglés|In English|Cuando|When|Si |If )/u;
+
+test('dictado · feedback (14-11): ningún feedback lleva «·» ni frases pegadas, y los grupos son los de la tarjeta', () => {
+  for (const idioma of IDIOMAS) {
+    const c = ctx(idioma);
+    for (const item of generar(L.generarDictado, 51, 1000)) {
+      for (const [acierto, e] of [[true, String(item.n)], [false, String(item.n + 1)]]) {
+        const t = planoBr(X.feedbackDictado(item, e, acierto, c));
+        assert.ok(!t.includes('·'), t);
+        assert.ok(!PEGADA.test(t), t);
+      }
+      if (item.n % 1000 !== 0 && item.n >= 1000 && item.n % 1000 !== item.n) {
+        const k = Math.floor(item.n / 1000), u = item.n % 1000;
+        const t = planoBr(X.feedbackDictado(item, String(item.n), true, c));
+        if (k && u) assert.ok(t.includes(`→ ${k} ;`) && t.includes(`→ ${String(u).padStart(3, '0')}`), t);
+      }
+    }
+    for (const item of generar(L.generarDictadoEs, 52, 1000)) {
+      const t = planoBr(X.feedbackDictado(item, String(item.n + 1), false, c));
+      assert.ok(!t.includes('·') && !PEGADA.test(t), t);
+    }
+    for (const item of generar(L.generarEscritura, 53, 1000)) {
+      const t = planoBr(X.feedbackEscritura(item, c));
+      assert.ok(!t.includes('·') && !PEGADA.test(t), t);
+      assert.ok(/\d ?\. \S/.test(t), `«fifty = 50» lleva punto antes de la nota: ${t}`);
+    }
+    for (const item of generar(L.generarFichas, 54, 1000)) {
+      for (const [acierto, mias] of [[true, item.fichas.slice(0, 1)], [false, item.sobran.concat(item.fichas.slice(0, 2))]]) {
+        const t = planoBr(X.feedbackFichas(item, mias, acierto, c));
+        assert.ok(!t.includes('·') && !PEGADA.test(t), t);
+      }
+    }
+  }
+});
+
+test('dictado · comillas (14-11): ningún texto lleva comillas rectas', () => {
+  const rectas = /(^|[\s(>])"[^"<>=]+"/;
+  const visita = (o, ruta) => {
+    for (const [k, v] of Object.entries(o)) {
+      if (typeof v === 'function' || typeof v === 'string') {
+        if ((k === 'en' || k === 'es') && rectas.test(String(v))) assert.fail(`${ruta}.${k}: ${String(v).slice(0, 120)}`);
+      } else if (v && typeof v === 'object') visita(v, `${ruta}.${k}`);
+    }
+  };
+  visita(X.TX, 'TX');
+});
