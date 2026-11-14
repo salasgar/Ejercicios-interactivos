@@ -17,6 +17,7 @@
 // ítem (la base lo sortea después y además deja ver el otro idioma al responder).
 // Queda como propuesta en la terminada.
 
+import { esc } from '../_comun/textos.js';
 import { factorizar, valorDe, textoFact, mcd, mcm, divisores, parejasDivisores, esPrimo, PRIMOS, sumaCifras, cifras } from '../_comun/aritmetica.js';
 
 // ─── Nombres de los errores (lista cerrada) ────────────────────────────────────
@@ -528,3 +529,21 @@ export const PLANTILLAS = [
 ];
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
+
+// ─── La explicación del ítem (feedback de acierto/fallo y botón «No lo sé») ────
+
+/** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
+export const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
+
+/** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
+export function explicaItem(item, { tt }) {
+  const plantilla = PLANTILLA_POR_ID[item.plantilla];
+  if (!item.error) {
+    // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
+    const porque = tt(plantilla.porque(item.params));
+    return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
+  }
+  const n = item.error.linea + 1;
+  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
+  return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
+}
