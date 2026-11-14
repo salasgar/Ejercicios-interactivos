@@ -294,3 +294,11 @@ Si paras sin terminar: `$R/hechos/fallos/161--<sid>.md` con hasta dónde llegast
   proporcionalidad, segundo grado, sistemas, dos incógnitas; `eval` o coma flotante; lo que el acta deja fuera (`x²` en una ecuación que resolver o al reducir, `U6-2C-14`, `x` en el denominador, sacar factor común, el producto de dos paréntesis, un reto fuera de un ítem marcado como reto) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones equivalentes** (`2x + 3` y `3 + 2x`; dos ecuaciones con la misma solución), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+
+## Trampas conocidas (al cerrar, 2026-11-14)
+
+- `ecuaciones_primer_grado.js` importa los racionales (`Q`, `qSuma`…) y los términos (`tX`, `tN`, `tP`, `texTerminos`) de `expresiones_algebraicas.js`: no tocar sus firmas sin mirar el otro fichero.
+- `distractores.test.js` exige que todo error declarado **llegue a salir** con `concepto`: un error que solo es relleno (como `resta_al_reves`) tiene que salir alguna vez en 3000 ítems, o se quita de la tabla.
+- Un distractor con paso `mal` necesita una línea que termine en `= valor` (`ejercicios.test.js`): en las traducciones, que no tienen cuenta, la línea es una derivación o una igualdad con ella misma (`x + 2 = x + 2`).
+- El `\cdot` nunca va junto a la `x` (`x \cdot 2`): el test nuevo lo comprueba en todo lo que se pinta, también en los pasos de los distractores.
+- No hay contextos: no hay cotas de realismo ni casos de hoja o examen que excluir; si algún día entra un generador de problemas, será otra tarea con sus cotas.
