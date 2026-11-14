@@ -7,7 +7,7 @@
 // o quita el paréntesis de cada grupo (numerador, denominador, radicando).
 
 import { arrancar } from '../_comun/base.js';
-import { TX } from './textos.js';
+import { TX, explicaSinParentesis, explicaPotenciasRaices, explicaConParentesis, explicaInvisibles } from './textos.js';
 import {
   NIVEL, esNumero, esNatural, signo, texto, cadena, toca, paso, validos, motivo, exigidos, lineal, esCorrecto, evaluar,
   generarPasos1, generarPasos2, generarPasos3, generarInvisibles,
@@ -191,19 +191,22 @@ function montarInvisibles(contenedor, item, api) {
 
 // ─── La práctica ───────────────────────────────────────────────────────────────
 
-const clavePasos = item => item.fichas.join(' ');
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+const clavePasos =item => item.fichas.join(' ');
 
 arrancar({
   slug: 'jerarquia',
   ejercicios: [
-    { nombre: TX.nombre1, detalle: TX.detalle1, introduccion: TX.intro1, generar: generarPasos1, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
-    { nombre: TX.nombre2, detalle: TX.detalle2, introduccion: TX.intro2, generar: generarPasos2, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
-    { nombre: TX.nombre3, detalle: TX.detalle3, introduccion: TX.intro3, generar: generarPasos3, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos },
+    { nombre: TX.nombre1, detalle: TX.detalle1, introduccion: TX.intro1, generar: generarPasos1, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos, explicacion: explicaSinParentesis, noLoSe: NO_LO_SE },
+    { nombre: TX.nombre2, detalle: TX.detalle2, introduccion: TX.intro2, generar: generarPasos2, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos, explicacion: explicaPotenciasRaices, noLoSe: NO_LO_SE },
+    { nombre: TX.nombre3, detalle: TX.detalle3, introduccion: TX.intro3, generar: generarPasos3, clave: clavePasos, montar: montarPasos, enunciado: enunciadoPasos, explicacion: explicaConParentesis, noLoSe: NO_LO_SE },
     {
       nombre: TX.nombre4, detalle: TX.detalle4, introduccion: TX.intro4, generar: generarInvisibles,
       clave: item => `${item.antes.join('')}|${item.grupos.map(g => g.join('')).join('/')}|${item.despues.join('')}`,
       montar: montarInvisibles,
       enunciado: enunciadoInvisibles,
+      explicacion: explicaInvisibles,
+      noLoSe: NO_LO_SE,
     },
   ],
 });

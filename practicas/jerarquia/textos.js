@@ -1,6 +1,8 @@
 // «¿Qué se hace primero?»: textos propios, siempre { es, en }. Los comunes
 // (Comprobar, Siguiente…) llegan a `montar` en `api.t`.
 
+import { cadena, texto, exigidos, lineal } from './logica.js';
+
 const NIVELES = {
   1: { es: '+ y −', en: '+ and −' },
   2: { es: '· y :', en: '· and ÷' },
@@ -108,3 +110,44 @@ export const TX = {
   correcta: { es: 'La línea correcta es', en: 'The correct line is' },
   bien4: { es: 'Bien', en: 'Good' },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const conExp = s => s.replace(/\^(\d)/g, '<sup>$1</sup>');
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+
+/** Ejercicios 1-3: la regla y la cuenta resuelta paso a paso, hasta el resultado. */
+function explicaPasos(item, { tt, idioma }, regla) {
+  const estados = cadena(item.fichas);
+  const pasos = estados.map(e => conExp(texto(e.fichas, idioma))).join(' = ');
+  return `<p>${tt(regla)}</p><p>${cuenta(pasos)}</p>`
+    + `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(texto(estados.at(-1).fichas, idioma))}.</p>`;
+}
+
+export const explicaSinParentesis = (item, ctx) => explicaPasos(item, ctx, {
+  es: 'Primero · y :, después + y −. Si hay dos seguidas del mismo tipo, de izquierda a derecha.',
+  en: 'First · and ÷, then + and −. If there are two of the same kind in a row, go from left to right.',
+});
+
+export const explicaPotenciasRaices = (item, ctx) => explicaPasos(item, ctx, {
+  es: 'Primero las potencias y las raíces; después · y :; al final + y −.',
+  en: 'First powers and roots; then · and ÷; last + and −.',
+});
+
+export const explicaConParentesis = (item, ctx) => explicaPasos(item, ctx, {
+  es: 'Primero lo de dentro de los paréntesis, de dentro hacia fuera; un exponente sobre un paréntesis, después de resolverlo.',
+  en: 'First what is inside the brackets, from the inside out; an index on a bracket, after working it out.',
+});
+
+/** Ejercicio 4: qué grupos necesitan paréntesis y cómo queda la línea. */
+export function explicaInvisibles(item, { tt, idioma }) {
+  const raya = item.agrupador === 'raya';
+  const piden = exigidos(item);
+  const linea = texto(lineal(item, piden), idioma);
+  const regla = tt(raya ? TX.explicacion_raya : TX.explicacion_radical);
+  const cuales = piden.map((r, i) => (r ? tt(TX[`falta_${raya ? (i === 0 ? 'num' : 'den') : 'rad'}`]) : null)).filter(Boolean);
+  const cambia = cuales.length
+    ? `<p>${cuales.join('; ')}.</p>`
+    : `<p>${tt({ es: 'Aquí no hace falta ningún paréntesis.', en: 'Here no brackets are needed.' })}</p>`;
+  return `<p>${regla}</p>${cambia}<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(linea)}.</p>`;
+}
