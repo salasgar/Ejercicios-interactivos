@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T23:20Z por s-20261114T231306-acc90cc9 al cerrar la 198 (LISTA, commit a651262; npm test 2337/2337; sin navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T23:18Z por s-20261114T231306-b600a65e al cerrar la 114 (LISTA, reabierta queda-una-y-cinco-igual-cinco; commit a4cd1f9; npm test 2329/2329; sin navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T23:08Z por s-20261114T230323-5099e2b1 al cerrar la 12 (LISTA, reabierta del 14-11: atracciones en minutos; commit d256334; npm test 2330/2330; prueba en navegador 375 y 1200 px): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T21:11Z por s-20261114T210753-9aa39c14 al cerrar la 26 (LI
 Actualizado 2026-11-14T21:06Z por s-20261114T210553-2c36437d al reclamar la 10 (reabierta del 14-11: tres números, parejas con m.c.d. ≥ 2 en contexto, «<» escapado; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T20:58Z por s-20261114T205046-d42ceb19 al dar de alta lo que sale de los hallazgos de la 193 (coordinadora, sin reclamo): quince reabiertas (02, 05, 10, 11, 12, 14, 17, 21, 23, 24, 26, 28, 29, 32, 114) y las fichas 197 (base, ALTO) y 198 (retoques, MEDIO); decisiones en proyecto.md, «Decisiones del 14-11»: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T19:39Z por s-20261114T185703-a741c82e al cerrar la 193 (LISTA, relevo; commits 2ceb108 1980429; npm test 2295/2295): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -331,7 +331,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 195 | Publicar `lee-decimales` (57), `compara-decimales` (58), `suma-resta-decimales` (59) y `multiplica-divide-decimales` (60) tras sus reabiertas del 8-11, con las propuestas de las tareas de las semanas 1 y 2 de la unidad 5 al día | tareas/tarea-195-publicar-u5-cuatro.md | las **reabiertas del 8-11** de 123, 124 (las dos), 125 y 126 cerradas con terminada nueva (lo están: `hechos/terminadas/123--s-20261108T101900-95a51c60.md`, `1… | 1 h 15 min | ALTO | 196 | reparto-practicas-u2/salidas/195-publicar-u5-cuatro/ | LISTA | terminada 17:56Z (13-nov) · commit b483ad7 |
 | 196 | Publicar «Las tildes» (`ortografia-tildes`, 64), «Palabras que se confunden» (`ortografia-palabras`, 67) y «Ampliación» (`ortografia-ampliacion`, 68) tras sus reabiertas del 9-11, con la tabla de ★ de la U7, la U8 y junio al día y la ampliación entre los «a elegir» de la U8 | tareas/tarea-196-publicar-ortografia-4.md | las **reabiertas del 9-11** de 135 (la segunda), 138 y 139 cerradas con terminada nueva (lo están: `hechos/terminadas/135--s-20261109T114919-4bdd2b23.md`, `138… | 1 h 15 min | ALTO | 195 | reparto-practicas-u2/salidas/196-publicar-ortografia-4/ | LISTA | terminada 13:51Z (14-nov) · commit 02a39ee |
 | 197 | Base común: que el signo de puntuación no se quede solo en el renglón siguiente detrás de una `.cuenta` (375 px), con una sola solución en `_comun` | tareas/tarea-197-signos-pegados-a-la-cuenta.md | ninguna · no en paralelo con otra que toque `_comun/base.js`, `piezas.js`, `estilos.css` o los tests comunes (hoy, ninguna) | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/197-signos-pegados-a-la-cuenta/ | LISTA | terminada 22:37Z (14-nov) · commit eabecac |
-| 198 | Retoques de una línea en el feedback de ocho prácticas de la U1 y la U2 (`rectangulos`, `arbol`, `divisiones`, `baldosas`, `leelo`, `jerarquia`, `raiz`, `distributiva`): concordancias, signos y unidades que encontró la 193 | tareas/tarea-198-retoques-feedback-u1-u2.md | ninguna · sus ocho carpetas no las toca ninguna reabierta del 14-11 | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/198-retoques-feedback-u1-u2/ | PENDIENTE | — |
+| 198 | Retoques de una línea en el feedback de ocho prácticas de la U1 y la U2 (`rectangulos`, `arbol`, `divisiones`, `baldosas`, `leelo`, `jerarquia`, `raiz`, `distributiva`): concordancias, signos y unidades que encontró la 193 | tareas/tarea-198-retoques-feedback-u1-u2.md | ninguna · sus ocho carpetas no las toca ninguna reabierta del 14-11 | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/198-retoques-feedback-u1-u2/ | LISTA | terminada 23:18Z (14-nov) |
 | 199 | Base de «Coloca los paréntesis» para la U3, la U4 y la U5: el motor de árboles de `parentesis` sacado a `_comun` con aritmética exacta (naturales, enteros, fracciones, decimales), la pantalla común, y las tres prácticas nuevas en el catálogo (ids 80-82, sin publicar) con su esqueleto | tareas/tarea-199-motor-coloca-parentesis.md | **197 LISTA** · nadie con `catalogo.js`, `portada.js`, `registro.js` ni docs U3-U5 · plazo mié 18-11 | 2 h 30 min | ALTO | — (las 200-202 son MEDIO: van en sesiones aparte, las tres a la vez) | practicas/_comun/parentesis-*.js, catálogo 80-82, esqueletos, tests…; salidas/199-motor-coloca-parentesis/ | PENDIENTE | — |
 | 200 | Práctica de la unidad 3 «Coloca los paréntesis. Con enteros» (`coloca-enteros`, id 80): todos los resultados con tres números, con una potencia y con división | tareas/tarea-200-coloca-enteros.md | **199 LISTA** · plazo vie 27-11 | 1 h 15 min | MEDIO | 201, 202 (misma banda, carpetas disjuntas) | practicas/coloca-enteros/*, tests/practicas-{,ayuda-}coloca-enteros.test.js; salidas/200-coloca-enteros/ | BLOQUEADA | espera a 199 |
 | 201 | Práctica de la unidad 4 «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, id 81): todos los resultados con tres números, con división, y una diana | tareas/tarea-201-coloca-fracciones.md | **199 LISTA** · plazo vie 18-12 | 1 h 30 min | MEDIO | 200, 202 (misma banda, carpetas disjuntas) | practicas/coloca-fracciones/*, tests/practicas-{,ayuda-}coloca-fracciones.test.js; salidas/201-coloca-fraccio… | BLOQUEADA | espera a 199 |
@@ -342,7 +342,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 23:18Z**: BLOQUEADA 10 (156, 157, 158, 159, 160, 200, 201, 202, 203, 204) · LISTA 191 · PENDIENTE 2 (198, 199) · REABIERTA 1 (23).
+**Foto a 2026-11-14 23:20Z**: BLOQUEADA 10 (156, 157, 158, 159, 160, 200, 201, 202, 203, 204) · LISTA 192 · PENDIENTE 1 (199) · REABIERTA 1 (23).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -374,12 +374,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (326), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (327), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 198 · 2026-11-14 23:18 · s-20261114T231306-acc90cc9 · — · 21 (practicas/{rectangulos,arbol,baldosas,jerarquia,raiz,distributiva}/textos.j… · —
 LISTA · tarea 114 · 2026-11-14 23:18 · s-20261114T231306-b600a65e · — · practicas/fichas-del-parchis/textos.js, tests/practicas-fichas-de-pablo.test.js… · —
 LISTA · tarea 12 · 2026-11-14 23:08 · s-20261114T230323-5099e2b1 · d256334 en origin/main (practicas/reloj/{logica,t… · 5 · ~40 min
 LISTA · tarea 21 · 2026-11-14 23:07 · s-20261114T230322-89736f6e · c851e45 · practicas/exponente/{logica,practica,textos}.js, tests/practicas-exponente.test… · ~25 min (reclamo de 90)

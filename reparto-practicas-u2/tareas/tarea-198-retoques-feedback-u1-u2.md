@@ -92,6 +92,8 @@ Un commit por práctica (rutas explícitas de su carpeta y sus tests), o uno sol
 - (de la coordinadora) Los signos sueltos a 375 px detrás de una cuenta son de la base (tarea 197): no los parchees aquí.
 - (de la coordinadora) Si al leer encuentras algo más que un retoque de texto (una regla falsa, un ítem imposible), no lo arregles:
   hallazgo en la ENTREGA, y la coordinadora reabre a la dueña.
+- (de la 198, s-20261114T231306-acc90cc9) Un test que quita las etiquetas con `''` puede pegar dos números vecinos y ver cifras de más: quítalas con `' '`. El `<` suelto de rectangulos estaba en cuatro textos, no solo en `parar.correcto`.
+- (de la 198) `git pull --rebase` falla si hay ficheros sin versionar ajenos con el mismo nombre que los de origin: empuja desde un worktree limpio (`git worktree add /tmp/wt origin/main`, cherry-pick, `npm test`, regenerar el tablón allí).
 
 ## Prohibido (propio de esta tarea)
 
