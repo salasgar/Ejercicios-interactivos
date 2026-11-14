@@ -367,3 +367,33 @@ test('decisión del 9-10: sin la plantilla «factor = divisor»; el m.c.m. se no
   for (const pl of PLANTILLAS) for (const l of (pl.lineas(pl.numeros(crearRng(4)))))
     assert.doesNotMatch(l.es, /es factor de|a menor múltiplo común es/);
 });
+
+// ─── Reapertura de la tarea 14 (decisiones del 14-11) ───────────────────────
+
+test('el banco tiene 28 plantillas, 14 con error y 14 sin error (el comentario de textos.js lo dice)', () => {
+  assert.equal(PLANTILLAS.length, 28);
+  assert.equal(PLANTILLAS.filter(p => p.error).length, 14);
+  assert.equal(PLANTILLAS.filter(p => !p.error).length, 14);
+});
+
+test('e-mcd-cero: la corrección dice que el 1 es el ÚNICO divisor común, en los dos idiomas', () => {
+  const p = PLANTILLA_POR_ID['e-mcd-cero'];
+  const rng = crearRng(1414);
+  for (let i = 0; i < 20; i++) {
+    const params = p.numeros(rng);
+    const { es, en } = p.corregida(params);
+    assert.match(es, /único divisor que tienen en común \d+ y \d+ es el 1/);
+    assert.match(en, /only divisor that \d+ and \d+ have in common is 1/);
+  }
+});
+
+test('textos del banco: sin comillas rectas en lo que ve el alumno (en inglés “ ”, en español « »)', () => {
+  const rng = crearRng(1515);
+  for (const p of PLANTILLAS) {
+    for (let i = 0; i < 20; i++) {
+      const params = p.numeros(rng);
+      const textos = [...p.lineas(params), p.corregida?.(params), p.porque?.(params)].filter(Boolean);
+      for (const t of textos) for (const idioma of ['es', 'en']) assert.ok(!/["']/.test(t[idioma].replace(/\b\w+'\w+\b/g, '')), `${p.id} ${idioma}: ${t[idioma]}`);
+    }
+  }
+});

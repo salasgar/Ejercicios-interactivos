@@ -133,7 +133,7 @@ function numerosMinutos(rng) {
   }
 }
 
-// ─── El banco: 29 plantillas (14 con error, 15 sin error) ───────────────────────
+// ─── El banco: 28 plantillas (14 con error, 14 sin error; lo comprueba el test) ───────────────────────
 
 export const PLANTILLAS = [
   // ── Con error ──
@@ -247,8 +247,8 @@ export const PLANTILLAS = [
       L(`m.c.d.(${a}, ${b}) = 0`, `GCD(${a}, ${b}) = 0`),
     ],
     corregida: ({ a, b }) => L(
-      `El 1 es divisor de los dos números, así que m.c.d.(${a}, ${b}) = 1. El m.c.d. nunca es 0.`,
-      `1 is a divisor of both numbers, so GCD(${a}, ${b}) = 1. The GCD is never 0.`),
+      `El único divisor que tienen en común ${a} y ${b} es el 1, así que m.c.d.(${a}, ${b}) = 1. El m.c.d. nunca es 0.`,
+      `The only divisor that ${a} and ${b} have in common is 1, so GCD(${a}, ${b}) = 1. The GCD is never 0.`),
   },
   {
     id: 'e-olvida-1-n',
@@ -374,12 +374,12 @@ export const PLANTILLAS = [
         L(`Múltiplos de ${a}: ${lista(a)}`, `Multiples of ${a}: ${lista(a)}`),
         L(`Múltiplos de ${b}: ${lista(b)}`, `Multiples of ${b}: ${lista(b)}`),
         L(`El menor múltiplo común distinto de cero es ${l}: m.c.m.(${a}, ${b}) = ${l}.`, `The smallest common multiple other than zero is ${l}: LCM(${a}, ${b}) = ${l}.`),
-        L(`En inglés se dice «lowest common multiple» o «least common multiple».`, `We say 'lowest common multiple' or 'least common multiple'.`),
+        L(`En inglés se dice «lowest common multiple» o «least common multiple».`, `We say “lowest common multiple” or “least common multiple”.`),
       ];
     },
     porque: () => L(
       '«Lowest» y «least» common multiple son dos nombres de lo mismo (el m.c.m. en inglés): las dos están bien.',
-      '"Lowest" and "least" common multiple are two names for the same thing (the LCM): both are right.'),
+      '“Lowest” and “least” common multiple are two names for the same thing (the LCM): both are right.'),
   },
   {
     id: 'b-divisible-por',
@@ -571,11 +571,8 @@ const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0]
 const comillasIn = txt => txt.replace(/"([^"]+)"/g, '“$1”');
 
 /** La cuenta bien hecha de la tarjeta: la `corregida` de la plantilla, salvo donde enseñaba algo falso en general. */
-const CORREGIDA_TARJETA = {
-  'e-mcd-cero': ({ a, b }) => L(
-    `el único divisor que tienen en común ${a} y ${b} es el 1, así que m.c.d.(${a}, ${b}) = 1. El m.c.d. nunca es 0.`,
-    `the only divisor that ${a} and ${b} have in common is 1, so GCD(${a}, ${b}) = 1. The GCD is never 0.`),
-};
+// Vacía desde la reabierta del 14-11: la `corregida` de `e-mcd-cero` ya dice «el único divisor común» y vale tal cual.
+const CORREGIDA_TARJETA = {};
 export const corregidaTarjeta = item => (CORREGIDA_TARJETA[item.plantilla] ?? PLANTILLA_POR_ID[item.plantilla].corregida)(item.params);
 
 const ESTA_EN = { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` };
