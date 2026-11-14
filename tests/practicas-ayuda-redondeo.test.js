@@ -37,6 +37,11 @@ test('redondeo · ejercicio 3: estimar, razonable y contexto llevan su solución
       const o = item.ordenes[0];
       assert.ok(t.includes(`= ${F(L.estimarCon(item.op, item.terminos, o), idioma)}`), t);
       assert.ok(t.includes(`= ${F(L.diferenciaCon(item, o), idioma)}`), t);
+      // Revisión 193 (sesión): respuesta al final, sin «Mi estimación»; si se elige el orden, que valga cualquiera.
+      const est = F(L.estimarCon(item.op, item.terminos, o), idioma), dif = F(L.diferenciaCon(item, o), idioma);
+      assert.ok(t.endsWith(idioma === 'es' ? `La respuesta es ${est} de estimación y ${dif} de diferencia.` : `The answer is ${est} for the estimate and ${dif} for the difference.`), t);
+      assert.ok(!/Mi estimación|My estimate/.test(t), t);
+      assert.equal(/cualquier otro orden de los que se ofrecen|any other place value offered/.test(t), item.ordenes.length > 1, t);
     } else if (item.tipo === 'razonable') {
       const dice = item.propuesto === L.exactoDe(item.op, item.terminos);
       assert.equal(dice, item.razonable);

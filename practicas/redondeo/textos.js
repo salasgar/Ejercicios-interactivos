@@ -185,15 +185,20 @@ export function explicaEstimacion(item, { tt, idioma }) {
     const dif = num(diferenciaCon(item, orden));
     const [mayor, menor] = item.exacto >= item.estimaciones[orden] ? [item.exacto, item.estimaciones[orden]] : [item.estimaciones[orden], item.exacto];
     const resta = `${num(mayor)} − ${num(menor)} = ${dif}`;
+    // Revisión 193: si se puede elegir el orden, la tarjeta dice que vale cualquiera (y no solo el que usa).
+    const elige = item.ordenes.length > 1
+      ? { es: ' (o a cualquier otro orden de los que se ofrecen)', en: ' (or to any other place value offered)' }
+      : { es: '', en: '' };
     const frases = {
-      es: [`Redondea cada número ${A_ORDEN[orden].es}: ${cuentaHtml(item.terminos.map(num).join(signo))} pasa a ${cuentaHtml(redondeados.join(signo))}.`,
+      es: [`Redondea cada número ${A_ORDEN[orden].es}${elige.es}: ${cuentaHtml(item.terminos.map(num).join(signo))} pasa a ${cuentaHtml(redondeados.join(signo))}.`,
         `Haz la cuenta con los redondeados: ${cuentaHtml(`${redondeados.join(signo)} = ${est}`)}.`,
         `El resultado exacto es ${num(item.exacto)}; la diferencia es ${cuentaHtml(resta)}.`],
-      en: [`Round each number ${A_ORDEN[orden].en}: ${cuentaHtml(item.terminos.map(num).join(signo))} becomes ${cuentaHtml(redondeados.join(signo))}.`,
+      en: [`Round each number ${A_ORDEN[orden].en}${elige.en}: ${cuentaHtml(item.terminos.map(num).join(signo))} becomes ${cuentaHtml(redondeados.join(signo))}.`,
         `Do the calculation with the rounded numbers: ${cuentaHtml(`${redondeados.join(signo)} = ${est}`)}.`,
         `The exact result is ${num(item.exacto)}; the difference is ${cuentaHtml(resta)}.`],
     };
-    const fin = { es: `Mi estimación es ${est} y la diferencia, ${dif}.`, en: `My estimate is ${est} and the difference is ${dif}.` };
+    // Revisión 193: «Mi estimación es…» hablaba en primera persona y no decía «La respuesta es».
+    const fin = { es: `La respuesta es ${est} de estimación y ${dif} de diferencia.`, en: `The answer is ${est} for the estimate and ${dif} for the difference.` };
     return `${pasos(tt(frases))} ${tt(fin)}`;
   }
   if (item.tipo === 'razonable') {
