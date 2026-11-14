@@ -234,31 +234,48 @@ export function explicaCajas(item, { tt }) {
     es: `Llena cajas de ${d} objetos mientras quepan: las cajas llenas son el cociente y lo que queda suelto, el resto.`,
     en: `Fill boxes of ${d} objects while they fit: the full boxes are the quotient and what is left loose is the remainder.`,
   });
-  const pasos = `${cuenta(`${d} · ${q} = ${d * q}`)}; ${cuenta(`${D} − ${d * q} = ${r}`)}`;
-  return `<p>${regla}</p><p>${pasos}</p><p>${tt(RESP)}: ${tt(TX.cajas.correcto)(q, r)} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.</p>`;
+  // por qué no caben más cajas: con una más ya no llegan los objetos
+  const pasos = tt({
+    es: `${q === 1 ? '1 caja lleva' : `${q} cajas llevan`} ${cuenta(`${d} · ${q} = ${d * q}`)} objetos; ${q + 1} llevarían ${cuenta(`${d * (q + 1)}`)}, y solo hay ${D}. Sobran ${cuenta(`${D} − ${d * q} = ${r}`)}.`,
+    en: `${q === 1 ? '1 box holds' : `${q} boxes hold`} ${cuenta(`${d} · ${q} = ${d * q}`)} objects; ${q + 1} would need ${cuenta(`${d * (q + 1)}`)}, and there are only ${D}. Left over: ${cuenta(`${D} − ${d * q} = ${r}`)}.`,
+  });
+  const comprobacion = `${tt({ es: 'Prueba:', en: 'Check:' })} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.`;
+  return `<p>${regla}</p><p>${pasos}</p><p>${comprobacion}</p>`
+    + `<p>${tt(RESP)} ${tt({ es: 'cociente', en: 'quotient' })} ${cuenta(q)} ${tt({ es: 'y resto', en: 'and remainder' })} ${cuenta(r)}.</p>`;
 }
 
 /** Ejercicio 2: la prueba de una división, o de qué divisiones es prueba una igualdad. */
 export function explicaPrueba(item, { tt, idioma }) {
-  const regla = tt(TX.prueba.no_orden);
-  const mayus = regla[0].toUpperCase() + regla.slice(1);
+  // Sin letras (D, d, q, r): en la unidad 1 no se han dado; se dice con palabras y con los números del ítem.
+  const entre = (x, y) => cuenta(divTxt(x, y, idioma));
   if (item.tipo === 'prueba') {
     const { D, d, q, r } = item;
-    const paso = cuenta(`${divTxt(D, d, idioma)}: ${tt({ es: 'cociente', en: 'quotient' })} ${q}, ${tt({ es: 'resto', en: 'remainder' })} ${r}`);
-    return `<p>${mayus}.</p><p>${paso}</p><p>${tt(RESP)} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.</p>`;
+    return `<p>${tt({
+      es: 'La prueba de una división es dividendo = divisor · cociente + resto.',
+      en: 'The check of a division is dividend = divisor · quotient + remainder.',
+    })}</p><p>${tt({
+      es: `En ${entre(D, d)}, el dividendo es ${D}, el divisor ${d}, el cociente ${q} y el resto ${r}.`,
+      en: `In ${entre(D, d)}, the dividend is ${D}, the divisor ${d}, the quotient ${q} and the remainder ${r}.`,
+    })}</p><p>${tt(RESP)} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.</p>`;
   }
   const { a, b, r, D, solucion } = item;
   const [buena, otro] = solucion === 'a' ? [a, b] : [b, a];
   const razon = solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r)
-    : solucion === 'ninguna' ? tt(TX.prueba.inversa_ninguna)(a, b, r)
-    : `${tt(TX.prueba.inversa_una_si)(D, buena, r)} ${tt(TX.prueba.inversa_una_ok)(buena, otro, r)}`;
+    : solucion === 'ninguna' ? tt({
+      es: `Aquí el resto ${r} no es menor que ${a} ni que ${b}.`,
+      en: `Here the remainder ${r} is not less than ${a} or ${b}.`,
+    })
+    : tt({
+      es: `Es la prueba de ${entre(D, buena)}, porque el resto ${r} es menor que ${buena}; no es la de ${entre(D, otro)}, porque ${r} no es menor que ${otro}.`,
+      en: `It is the check of ${entre(D, buena)}, because the remainder ${r} is less than ${buena}; it is not the check of ${entre(D, otro)}, because ${r} is not less than ${otro}.`,
+    });
   const fin = solucion === 'a' ? tt(TX.prueba.solo)(divTxt(D, a, idioma))
     : solucion === 'b' ? tt(TX.prueba.solo)(divTxt(D, b, idioma))
     : tt(solucion === 'ambas' ? TX.prueba.ambas : TX.prueba.ninguna);
   return `<p>${tt({
-    es: 'Una igualdad D = d · q + r es la prueba de una división solo si el resto es menor que el divisor.',
-    en: 'An equality D = d · q + r is the check of a division only if the remainder is less than the divisor.',
-  })}</p><p>${razon}</p><p>${tt(RESP)}: ${fin}.</p>`;
+    es: `${cuenta(`${D} = ${a} · ${b} + ${r}`)} puede ser la prueba de ${entre(D, a)} o de ${entre(D, b)}; vale para cada una solo si el resto es menor que su divisor.`,
+    en: `${cuenta(`${D} = ${a} · ${b} + ${r}`)} can be the check of ${entre(D, a)} or of ${entre(D, b)}; it works for each one only if the remainder is less than its divisor.`,
+  })}</p><p>${razon}</p><p>${tt(RESP)} ${tt({ es: `«${fin}»`, en: `“${fin}”` })}.</p>`;
 }
 
 /** Ejercicio 3: la división del problema y qué significa cada número. */
@@ -269,23 +286,48 @@ export function explicaSignificado(item, { tt }) {
     : pide === 'sueltos' ? tt(TX.significado.ok_sueltos)(D, d, q, r)
     : r === 0 ? tt(TX.significado.ok_hacen_exacto)(D, d, q)
     : tt(TX.significado.ok_hacen)(D, d, q, r, cosa);
+  // la respuesta con su unidad: «3 coches», «1 manzana»
+  const nombre = pide === 'sueltos'
+    ? (solucion === 1 ? UNO[clave] : { es: cosa.es, en: cosa.en })
+    : (solucion === 1 ? cosa.unidad : { es: cosa.caja.es, en: cosa.caja.en });
   return `<p>${tt({
     es: `Se divide ${D} entre ${d}: el cociente cuenta lo que se llena y el resto, lo que sobra.`,
     en: `Divide ${D} by ${d}: the quotient counts what gets filled and the remainder is what is left.`,
-  })}</p><p>${paso}</p><p>${tt(RESP)} ${cuenta(solucion)}.</p>`;
+  })}</p><p>${paso}</p><p>${tt(RESP)} ${cuenta(solucion)} ${tt(nombre)}.</p>`;
 }
+
+/** El singular de los objetos que pueden sobrar (ejercicio 3, escenarios de «sobra»). */
+const UNO = {
+  huevos: { es: 'huevo', en: 'egg' }, lapices: { es: 'lápiz', en: 'pencil' },
+  manzanas: { es: 'manzana', en: 'apple' }, pegatinas: { es: 'pegatina', en: 'sticker' },
+};
 
 /** Ejercicio 4: por qué el resto (y la cuenta) pueden o no ser. */
 export function explicaPuede(item, { tt, t }) {
   const { variante, D, d, q, r, solucion } = item;
+  // La regla va una sola vez, en la primera línea; por eso no se reutilizan no_puede ni mal_resto, que la repiten
+  // (y en español la glosan en inglés). Sin letras: en la unidad 1 no se han dado.
+  const regla = variante === 'resto'
+    ? tt({
+      es: `El resto es siempre menor que el divisor: si sobraran ${d} o más, aún se podría hacer otro grupo de ${d}.`,
+      en: `The remainder is always less than the divisor: if ${d} or more were left over, you could still make another group of ${d}.`,
+    })
+    : tt({
+      es: 'Para que esté bien, el resto tiene que ser menor que el divisor y divisor · cociente + resto tiene que dar el dividendo.',
+      en: 'For it to be right, the remainder has to be less than the divisor, and divisor · quotient + remainder has to give the dividend.',
+    });
   let razon;
-  if (variante === 'resto') razon = solucion ? tt(TX.puede.si_puede)(d, r) : tt(TX.puede.no_puede)(d, r);
-  else if (solucion) razon = tt(TX.puede.esta_bien)(D, d, q, r);
+  if (variante === 'resto') {
+    razon = solucion ? tt(TX.puede.si_puede)(d, r)
+      : tt({ es: `No puede ser: ${r} no es menor que ${d}.`, en: `It cannot be: ${r} is not less than ${d}.` });
+  } else if (solucion) razon = tt(TX.puede.esta_bien)(D, d, q, r);
   else if (r >= d && d * q + r !== D) razon = tt(TX.puede.mal_los_dos)(D, d, q, r);
-  else if (r >= d) razon = tt(TX.puede.mal_resto)(D, d, q, r);
-  else razon = tt(TX.puede.mal_cuenta)(D, d, q, r);
-  return `<p>${tt({
-    es: 'Para que sea posible, el resto tiene que ser menor que el divisor y la prueba D = d · q + r tiene que dar el dividendo.',
-    en: 'To be possible, the remainder has to be less than the divisor and the check D = d · q + r has to give the dividend.',
-  })}</p><p>${razon}</p><p>${tt(RESP)}: ${solucion ? t.si : t.no}.</p>`;
+  else if (r >= d) {
+    razon = tt({
+      es: `Está mal: aunque ${cuenta(`${d} · ${q} + ${r} = ${D}`)}, el resto ${r} no es menor que ${d}.`,
+      en: `It is wrong: even though ${cuenta(`${d} · ${q} + ${r} = ${D}`)}, the remainder ${r} is not less than ${d}.`,
+    });
+  } else razon = tt(TX.puede.mal_cuenta)(D, d, q, r);
+  const boton = solucion ? t.si : t.no;
+  return `<p>${regla}</p><p>${razon}</p><p>${tt(RESP)} ${tt({ es: `«${boton}»`, en: `“${boton}”` })}.</p>`;
 }
