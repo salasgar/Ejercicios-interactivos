@@ -21,7 +21,7 @@ const PATRON_ID = /^[a-z0-9-]{1,40}$/;
 // Lo que nunca es distractor (docs/practicas-ortografia.md, §6): ninguna palabra de los bancos, con o sin tilde.
 const LISTA_NEGRA = ['solo', 'sólo', 'este', 'éste', 'ese', 'ése', 'aquel', 'aquél', 'guion', 'guión', 'truhan', 'truhán', 'hui', 'huí', 'fie', 'fié', 'rio', 'frio',
   'sion', 'ruan', 'período', 'periodo', 'vídeo', 'video', 'cardíaco', 'cardiaco', 'olimpíada', 'olimpiada', 'alvéolo', 'alveolo', 'policíaco', 'policiaco',
-  'fútbol', 'futbol', 'chófer', 'chofer', 'icono', 'ícono', 'élite', 'elite', 'quilómetro', 'quilometro', 'octógono', 'octágono', 'cinc', 'zinc', 'biznieto', 'bisnieto'];
+  'fútbol', 'futbol', 'chófer', 'chofer', 'icono', 'ícono', 'élite', 'elite', 'quilómetro', 'quilometro', 'octógono', 'octágono', 'cinc', 'zinc', 'biznieto', 'bisnieto', 'pie', 'pié', 'luis', 'luís'];
 
 const ejercicios = [
   { nombre: 'tónica', banco: TONICA, generar: generarTonica },
@@ -37,7 +37,7 @@ const porNivel = (banco, n) => banco.filter(it => it.nivel === n);
 // peiné, descuidó, libró, airé, paralelógramo (variante chilena) y décima (el 7 de 0,7 son siete décimas). Segunda
 // reabierta del 9-11 (cotejadas en el DLE): lampara (lampar), ahincó (ahincar), antiguó (antiguar) y ademas (adema).
 const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'libro', 'aire', 'paralelogramo', 'decima',
-  'lampara', 'ahinco', 'antiguo', 'ademas'];
+  'lampara', 'ahinco', 'antiguo', 'ademas', 'jamas'];
 // La misma palabra con otra tónica en voseo (cuidate, comételo, explicáselo): tampoco. Sí valen las que en voseo cambian de
 // letras (devuélvemelo / devolvémelo, muéstraselo / mostráselo) y las de usted (dígamelo).
 const VOSEO = ['cuidate', 'cometelo', 'explicaselo'];

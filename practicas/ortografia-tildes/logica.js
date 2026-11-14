@@ -204,7 +204,7 @@ export const TONICA = banco(CRUDO_TONICA, p => ({ clase: clase(p.silabas, p.toni
 
 const CRUDO_TILDE = {
   1: [
-    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "ja-'más", "ra-'tón", "'plá-ta-no", "'sá-ba-do", // con tilde
+    "ca-'mión", "can-'ción", "so-'fá", "des-'pués", "me-'nú", "ra-'tón", "'plá-ta-no", "'sá-ba-do", // con tilde
     "re-'loj", "pa-'red", "ver-'dad", "can-'tar", "a-'zul", "fe-'liz", "e-'xa-men", "'lu-nes", // sin tilde
   ],
   2: [
@@ -213,7 +213,7 @@ const CRUDO_TILDE = {
   ],
   3: [
     "'bí-ceps", "'có-mics", "'fá-cil|mente", "'rá-pi-da|mente", "'Án-gel", "'Á-fri-ca", "'Ós-car", "'Úr-su-la", // con tilde
-    "'fue", "'dio", "'vio", "'pie", "jer-'sey", "ro-'bots", "tran-'qui-la|mente", "'so-la|mente", // sin tilde
+    "'fue", "'dio", "'vio", "'bien", "jer-'sey", "ro-'bots", "tran-'qui-la|mente", "'so-la|mente", // sin tilde
   ],
 };
 
@@ -225,7 +225,7 @@ export const TILDE = banco(CRUDO_TILDE);
 const CRUDO_VOCALES = {
   1: [
     "'dí-a", "'tí-a", "pa-'ís", "ra-'íz", "ma-'íz", "o-'ír", "ba-'úl", "Ma-'rí-a", // hiatos con tilde
-    "'Luis", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'cua-tro", "'cau-sa", "'trein-ta", // diptongos sin tilde
+    "'triun-fo", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'cua-tro", "'cau-sa", "'trein-ta", // diptongos sin tilde
   ],
   2: [
     "tam-'bién", "des-'pués", "'náu-ti-co", "'hués-ped", "des-'truí", "le-'ón", "a-'é-re-o", "'hé-ro-e", // con tilde
@@ -242,7 +242,7 @@ const AUN = [
   { antes: 'Son las nueve y ', despues: ' no ha llegado el autobús.', buena: 'aún', otra: 'aun', razon: 'todavia' },
   { antes: 'Son las tres y Lucía ', despues: ' no ha salido de clase.', buena: 'aún', otra: 'aun', razon: 'todavia' },
   { antes: '', despues: ' así, aprobó el examen.', buena: 'Aun', otra: 'Aún', razon: 'incluso' },
-  { antes: '', despues: ' los más pequeños pueden hacerlo.', buena: 'Aun', otra: 'Aún', razon: 'incluso' },
+  { antes: '', despues: ' los más pequeños lo entienden a la primera.', buena: 'Aun', otra: 'Aún', razon: 'incluso' },
 ];
 
 /** Palabras con vocales juntas (¿lleva tilde y en qué letra?) y, en el nivel 3, cuatro frases de aún / aun. */
@@ -289,7 +289,7 @@ const CRUDO_MATES = {
     { raw: "de-'ce-nas", mal: 'decénas', antes: '748 son 7 centenas, 4 ', despues: ' y 8 unidades.' },
     { raw: "cen-'te-nas", mal: 'centénas', antes: '356 son 3 ', despues: ', 5 decenas y 6 unidades.' },
     { raw: "u-ni-'da-des", mal: 'unidádes', antes: '295 son 2 centenas, 9 decenas y 5 ', despues: '.' },
-    { raw: "pa-ra-'le-las", mal: 'paralélas', antes: 'Dos rectas que nunca se cortan son ', despues: '.' },
+    { raw: "pa-ra-'le-las", mal: 'paralélas', antes: 'Dos rectas de un plano que nunca se cortan son ', despues: '.' },
     { raw: "dia-go-'nal", mal: 'diagonál', antes: 'La ', despues: ' de un cuadrado va de una esquina a la opuesta.' },
     { raw: "seg-'men-to", mal: 'ségmento', antes: 'Un ', despues: ' es la parte de una recta entre dos puntos.' },
     { raw: "cir-cun-fe-'ren-cia", mal: 'circunferéncia', antes: 'Dibuja una ', despues: ' con el compás.' },
@@ -309,7 +309,7 @@ const CRUDO_MATES = {
     { raw: "he-xa-go-'nal", mal: 'hexagonál', antes: 'Un prisma con base de seis lados es ', despues: '.' },
     { raw: "'cu-bo", mal: 'cúbo', antes: 'Un dado tiene forma de ', despues: '.' },
     { raw: "tra-'pe-cio", mal: 'trapécio', antes: 'Un cuadrilátero con solo dos lados paralelos es un ', despues: '.' },
-    { raw: "pro-por-cio-'nal", mal: 'proporciónal', antes: 'Si una cantidad se duplica y la otra también, la relación es directamente ', despues: '.' },
+    { raw: "pro-por-cio-'nal", mal: 'proporciónal', antes: 'Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, son directamente ', despues: '.' },
     { raw: "ci-'lin-dro", mal: 'cílindro', antes: 'Una lata de refresco tiene forma de ', despues: '.' },
   ],
 };

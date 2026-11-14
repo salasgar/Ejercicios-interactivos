@@ -106,3 +106,15 @@ asertos nuevos para las cuatro reglas y para que ninguna frase del ej. 4 sea «E
 `npm test` 1791/1791. Sin clics en el navegador (solo cambian palabras y textos; `node --check` en verde).
 
 **Sin cambiar, como decidió la 142:** casa, cocina, causa, idea (en voseo dan *otra* palabra).
+
+## Reabierta 3 del 14-11
+
+**Cambios (los seis ítems de `hechos/reabiertas/135--s-20261114T113316-d58f9cb4.md`):**
+- Ej. 2, N1: *jamás* (*jamas*, de *jamar* / plural de *jama*) → **menú** (sin homógrafo en el DLE, según la sesión que reabrió).
+- Ej. 2, N3: *pie* (lista de la Ortografía de 2010, como *fie* y *hui*) → **bien** (monosílabo de la regla general).
+- Ej. 3, N1: *Luis* (estructura de *hui*) → **triunfo** (diptongo iu).
+- Ej. 4, N3: «Si una cantidad se duplica y la otra también…» → «Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, son directamente ___.»
+- Ej. 4, N2: «Dos rectas **de un plano** que nunca se cortan son ___.»
+- Ej. 3, aún/aun: «Aun los más pequeños lo entienden a la primera.» (ya no admite *todavía*).
+
+**Test:** `LISTA_NEGRA` con pie, pié, luis, luís; `HOMOGRAFAS_SIN_TILDE` con jamas. Recuento sin cambios: ej. 1 16/16/16 · ej. 2 16/16/16 · ej. 3 16/16/14 (+4 de aún) · ej. 4 16/16/16. Motor y `catalogo.js` sin tocar. `npm test` 2232/2232. Sin clics (solo palabras).
