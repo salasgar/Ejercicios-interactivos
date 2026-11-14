@@ -31,3 +31,11 @@ test('especiales · ejercicio 2: la explicación señala la igualdad falsa', () 
     assert.ok(!/undefined|NaN/.test(t), t);
   }
 });
+
+// Revisión 193: «Calcula cada lado y compara:» cerraba el párrafo con dos puntos y lo siguiente empezaba con mayúscula.
+test('especiales · ejercicios 1 y 2: ningún párrafo acaba en dos puntos', () => {
+  for (const idioma of IDIOMAS) {
+    for (const item of generar(L.generarVF, 3, 1000)) assert.ok(!/:\s*<\/p>/.test(X.explicaVF(item, ctx(idioma))));
+    for (const item of generar(L.generarFalsa, 4, 1000)) assert.ok(!/:\s*<\/p>/.test(X.explicaFalsa(item, ctx(idioma))));
+  }
+});

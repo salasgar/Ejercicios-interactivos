@@ -111,7 +111,8 @@ const RESPUESTA = {
   verdadero: { es: 'La respuesta es verdadero.', en: 'The answer is true.' },
   falso: { es: 'La respuesta es falso.', en: 'The answer is false.' },
   laFalsa: { es: 'La falsa es', en: 'The false one is' },
-  calcula: { es: 'Calcula cada lado y compara:', en: 'Work out each side and compare:' },
+  // Con punto: lo que sigue es otra frase, con mayúscula («Cualquier número…», «Un exponente…»).
+  calcula: { es: 'Calcula cada lado y compara.', en: 'Work out each side and compare.' },
 };
 
 /** «No lo sé» del ejercicio 1: se calculan los dos lados y se compara. */
