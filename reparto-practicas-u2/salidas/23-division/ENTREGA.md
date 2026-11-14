@@ -10,3 +10,9 @@ Vocabulario 2B-04/05/15/17-19/25 en los textos ES/EN.
 Probar en 1 minuto: entrar sin código, llenar cajas hasta que se desactive el botón, escribir cociente y resto.
 Verificado en navegador (386 px, ES/EN): los cuatro ejercicios aciertan y fallan sin errores de consola ni desbordamiento.
 Catálogo: petición a la 18 de poner disponible:true para «division» (id 20).
+
+## Reabierta del 14-11 (sobra-1) · s-20261114T230323-cbe431d2 · commit 7e1ef72
+- `TX.cajas.correcto` con singular/plural y resto 0 («Hay 1 caja llena y sobra 1», «Hay 2 cajas llenas y no sobra ninguno»; «There is 1 full box and 1 is left over»).
+- Glosa inglesa en `<em>` en `puede.no_puede` y `puede.mal_resto`; la tarjeta del «No lo sé» no se toca.
+- Tests nuevos en `tests/practicas-division.test.js` (dos). Generadores sin cambios (solo se tocó textos.js).
+- Sin prueba en navegador (375/1200 px) ni comprobación de https://salasgar.github.io/... : no hecho; sin push (ver terminada).
