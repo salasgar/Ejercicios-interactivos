@@ -241,10 +241,6 @@ const AYUDA = {
     es: (b, cifras) => `Últimas cifras de ${b}<sup>1</sup>, ${b}<sup>2</sup>, ${b}<sup>3</sup>…: ${cifras.join(', ')}.`,
     en: (b, cifras) => `Last digits of ${b}<sup>1</sup>, ${b}<sup>2</sup>, ${b}<sup>3</sup>…: ${cifras.join(', ')}.`,
   },
-  ultima: {
-    es: (b, n, d) => `${b}<sup>${n}</sup> acaba en ${d}`,
-    en: (b, n, d) => `${b}<sup>${n}</sup> ends in ${d}`,
-  },
 };
 
 /** «No lo sé» del ejercicio 1: se juntan las potencias de izquierda a derecha, con sus cuentas. */
