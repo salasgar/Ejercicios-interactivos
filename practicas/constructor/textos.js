@@ -69,6 +69,23 @@ export const TX = {
         en: (obj, dist) => `: it is ${dist} away from ${obj}, and no other number with these digits is that close.`,
       },
     },
+    // Solo la tarjeta del «No lo sé» (relevo de la revisión 193): cómo se elige la última cifra, no solo cuál es.
+    // El feedback sigue usando por_que.
+    ayuda_ultima: {
+      menor_par: {
+        es: (ult, cero) => `Tiene que acabar en cifra par. Al final se deja la par más grande, el ${ult}, para que las pequeñas vayan delante; el resto, de menor a mayor${cero ? ', pero el 0 no puede ir delante: va en segundo lugar' : ''}.`,
+        en: (ult, cero) => `It has to end in an even digit. Leave the greatest even digit, ${ult}, for the end, so the small digits go first; the other digits go from smallest to greatest${cero ? ', but 0 cannot go first: it goes second' : ''}.`,
+      },
+      // Con el 0: dejar al final la par más grande puede obligar a poner delante una cifra más grande.
+      menor_par_cero: {
+        es: (mayorPar, conMayor, solucion) => `Tiene que acabar en cifra par. Con el ${mayorPar} al final saldría ${conMayor}, porque el 0 no puede ir delante; con el 0 al final, las demás van de menor a mayor y sale ${solucion}, que es menor.`,
+        en: (mayorPar, conMayor, solucion) => `It has to end in an even digit. With ${mayorPar} at the end you would get ${conMayor}, because 0 cannot go first; with 0 at the end, the other digits go from smallest to greatest and you get ${solucion}, which is smaller.`,
+      },
+      mayor_impar: {
+        es: ult => `Tiene que acabar en cifra impar. Al final se deja la impar más pequeña, el ${ult}, para que las grandes vayan delante; el resto, de mayor a menor.`,
+        en: ult => `It has to end in an odd digit. Leave the smallest odd digit, ${ult}, for the end, so the big digits go first; the other digits go from greatest to smallest.`,
+      },
+    },
   },
   descomposicion: {
     nombre: { es: 'Valor de las cifras', en: 'Value of the digits' },
@@ -210,16 +227,24 @@ export function explicaConstruir(item, ctx) {
   const ultima = item.solucion % 10;
   const resto = [...item.cifras];
   resto.splice(resto.indexOf(ultima), 1);
+  // Relevo de la revisión 193: en par/impar, el método para elegir la última cifra (antes, «la mejor es el 8» sin porqué).
+  const A = T.ayuda_ultima;
+  const menorPar = () => {
+    const mayorPar = Math.max(...item.cifras.filter(d => d % 2 === 0));
+    if (ultima === mayorPar) return tt(A.menor_par)(ultima, resto.includes(0));
+    const conMayor = Math.min(...permutaciones(item.cifras).filter(n => n % 10 === mayorPar));
+    return tt(A.menor_par_cero)(mayorPar, cuentaHtml(fmt(conMayor, idioma)), cuentaHtml(fmt(item.solucion, idioma)));
+  };
   const porQue = {
     mayor: () => tt(T.por_que.mayor)(),
     menor: () => tt(T.por_que.menor)(item.hayCero),
-    menor_par: () => tt(T.por_que.menor_par)(ultima, resto.includes(0)),
-    mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
+    menor_par: menorPar,
+    mayor_impar: () => tt(A.mayor_impar)(ultima),
   }[item.consigna]();
   const cifras = { es: `Tienes las cifras ${item.cifras.join(', ')}.`, en: `You have the digits ${item.cifras.join(', ')}.` };
   // «: las cifras de mayor a menor.» (mayor, menor) no es una frase por sí sola: se le pone el verbo.
   const razon = porQue.replace(/^: /, '');
-  const frase = ['mayor', 'menor'].includes(item.consigna) ? `${tt({ es: 'Se ponen', en: 'Put the' })} ${razon}` : mayuscula(razon);
+  const frase = ['mayor', 'menor'].includes(item.consigna) ? `${tt({ es: 'Se ponen', en: 'Put the' })} ${razon}` : razon;
   return `${tt(cifras)} ${frase} ${tt(RESPUESTA)} ${cuentaHtml(fmt(item.solucion, idioma))}.`;
 }
 

@@ -72,6 +72,35 @@ test('constructor · ejercicio 1 (revisión 193): la respuesta, al final y una v
   assert.ok(cercanos > 0);
 });
 
+test('constructor · ejercicio 1 (relevo de la revisión 193): par e impar dicen cómo se elige la última cifra, y es verdad', () => {
+  const vistos = { par: 0, cero: 0, impar: 0 };
+  for (const idioma of IDIOMAS) for (const item of generar(L.generarConstruir, 12, 6000)) {
+    if (!['menor_par', 'mayor_impar'].includes(item.consigna)) continue;
+    const t = plano(X.explicaConstruir(item, ctx(idioma)));
+    const ultima = item.solucion % 10;
+    assert.doesNotMatch(t, /la mejor es|the best one is/, t);
+    if (item.consigna === 'mayor_impar') {
+      vistos.impar++;
+      assert.equal(ultima, Math.min(...item.cifras.filter(d => d % 2 === 1)), 'la impar más pequeña, al final');
+      assert.ok(t.includes(idioma === 'es' ? `la impar más pequeña, el ${ultima},` : `smallest odd digit, ${ultima},`), t);
+      continue;
+    }
+    const mayorPar = Math.max(...item.cifras.filter(d => d % 2 === 0));
+    if (ultima === mayorPar) {
+      vistos.par++;
+      assert.ok(t.includes(idioma === 'es' ? `la par más grande, el ${ultima},` : `greatest even digit, ${ultima},`), t);
+    } else {
+      // La única excepción: con el 0, puede salir menor dejando el 0 al final.
+      vistos.cero++;
+      assert.equal(ultima, 0, t);
+      const conMayor = Math.min(...L.permutaciones(item.cifras).filter(n => n % 10 === mayorPar));
+      assert.ok(conMayor > item.solucion, t);
+      assert.ok(t.includes(F(conMayor, idioma)), t);
+    }
+  }
+  assert.ok(vistos.par > 0 && vistos.cero > 0 && vistos.impar > 0, JSON.stringify(vistos));
+});
+
 test('constructor · ejercicio 2 (revisión 193): la regla una vez y «La respuesta es …» al final', () => {
   const ORD = { es: ['primera', 'segunda', 'tercera', 'cuarta', 'quinta'], en: ['first', 'second', 'third', 'fourth', 'fifth'] };
   for (const idioma of IDIOMAS) for (const item of generar(L.generarDescomposicion, 12, 2400)) {
