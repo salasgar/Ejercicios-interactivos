@@ -118,3 +118,9 @@ asertos nuevos para las cuatro reglas y para que ninguna frase del ej. 4 sea «E
 - Ej. 3, aún/aun: «Aun los más pequeños lo entienden a la primera.» (ya no admite *todavía*).
 
 **Test:** `LISTA_NEGRA` con pie, pié, luis, luís; `HOMOGRAFAS_SIN_TILDE` con jamas. Recuento sin cambios: ej. 1 16/16/16 · ej. 2 16/16/16 · ej. 3 16/16/14 (+4 de aún) · ej. 4 16/16/16. Motor y `catalogo.js` sin tocar. `npm test` 2232/2232. Sin clics (solo palabras).
+
+## Reabierta 4 del 14-11
+
+- Ej. 3, N1: *triunfo* (también vale *triunfó*) → **nieve** (ninguna vocal con tilde da otra palabra). *triunfo* añadida a `HOMOGRAFAS_SIN_TILDE`.
+- Ej. 4, N3: «…y al triple el triple, las dos son directamente ___.» con **proporcionales** (llana acabada en s, sin tilde).
+Recuento sin cambios; motor y `catalogo.js` sin tocar. `npm test` 2232/2232. Sin clics (solo palabras). Commit 3598600.
