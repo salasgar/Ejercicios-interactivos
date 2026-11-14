@@ -5,8 +5,8 @@
 // entre números; producto con «·», nunca «×»; inglés sencillo; los colores siempre en los dos
 // idiomas (verde / green); y el feedback dice qué pasa con LOS NÚMEROS DE ESE ÍTEM.
 
-import { exp, colores, valor, indice, nFichas, quitar, juntar, comunes, montonMinimo, numeroDivisores, deNumero, submontones } from './logica.js';
-import { fichaHtml, montonHtml, colorTxt, desglose, cuentaDe } from './dibujo.js';
+import { exp, colores, valor, indice, nFichas, quitar, juntar, comunes, montonMinimo, numeroDivisores, deNumero, submontones, productoFichas } from './logica.js';
+import { fichaHtml, montonHtml, colorTxt, colorContado, desglose, cuentaDe } from './dibujo.js';
 
 const F = fichaHtml;
 const M = montonHtml;
@@ -434,9 +434,10 @@ const REGLA = {
     es: 'Descompón el número en primos y pon una ficha por cada primo. Un exponente son fichas del mismo color: 2<sup>3</sup> son tres verdes (green).',
     en: 'Break the number into primes and put one counter for each prime. An exponent means counters of the same colour: 2<sup>3</sup> is three green (verde).',
   },
+  // «Sin sumar nada» chocaba con la regla de los exponentes (las verdes de uno más las del otro SÍ se suman).
   producto: {
-    es: 'Multiplicar es juntar: se ponen en un mismo montón todas las fichas de los dos números, sin sumar nada.',
-    en: 'Multiplying is putting together: all the counters of both numbers go in one pile, nothing is added.',
+    es: 'Multiplicar es juntar: se ponen en un mismo montón todas las fichas de los dos números; de cada color, las de uno más las del otro.',
+    en: 'Multiplying is putting together: all the counters of both numbers go in one pile; for each colour, the counters of one plus those of the other.',
   },
   anadir: {
     es: 'Multiplicar por un número es añadir sus fichas al montón. Primero se descompone ese número en fichas.',
@@ -451,8 +452,8 @@ const REGLA = {
     en: 'You can divide if the counters of the divisor fit inside the pile: for each colour, it cannot ask for more counters than there are.',
   },
   divisores: {
-    es: 'Cada divisor se forma con algunas de las fichas del número: de cada color, desde ninguna hasta todas. El total es el producto de los (exponente + 1).',
-    en: 'Each divisor is made with some of the counters of the number: for each colour, from none up to all of them. The total is the product of the (exponent + 1).',
+    es: 'Cada divisor se forma con algunas de las fichas del número: de cada color, desde ninguna hasta todas. Para contarlos, se multiplica el (exponente + 1) de cada color.',
+    en: 'Each divisor is made with some of the counters of the number: for each colour, from none up to all of them. To count them, multiply the (exponent + 1) of each colour.',
   },
   mcd: {
     es: 'Se emparejan las fichas del mismo color que tienen los dos números. Las fichas con pareja forman el m.c.d.',
@@ -464,15 +465,108 @@ const REGLA = {
   },
 };
 
-const con = (clave, tt, resto) => `${tt(REGLA[clave])} ${resto}`;
+// Revisión de la tarea 193: la tarjeta ya no copia el feedback (`buena`). Le faltaba la respuesta al final
+// (en los ej. 1, 2, 3, 4, 6, 7 y 8 no había «La respuesta es …»; en el 5, ni el sí/no), y lo que arrastraba
+// del feedback enseñaba mal: «125 : 25 = 5 = 5» y «quedan 1 amarilla» (`quedaTxt`, ej. 4 y 5) y, en el 8,
+// la regla dos veces. Aquí: la regla, la cuenta del ítem y la respuesta tal como la pide el ejercicio.
 
-export const explicaLee = (item, { tt }) => con('lee', tt, tt(TX.lee.buena)(item.m));
-export const explicaConstruye = (item, { tt }) => con('construye', tt, tt(TX.construye.buena)(item.m));
-export const explicaProducto = (item, { tt }) => (item.tipo === 'anadir'
-  ? con('anadir', tt, tt(TX.producto.buenaAnadir)(item.a, item.k))
-  : con('producto', tt, tt(TX.producto.buena)(item.a, item.b)));
-export const explicaQuita = (item, { tt }) => con('quita', tt, tt(TX.quita.buena)(item.a, item.d));
-export const explicaRegla = (item, { tt }) => con('regla', tt, item.divisible ? tt(TX.regla.buena)(item.a, item.d) : tt(TX.regla.buenaNo)(item.a, item.d, item.falta));
-export const explicaDivisores = (item, { tt }) => con('divisores', tt, tt(TX.divisores.buena)(item.a));
-export const explicaMcd = (item, { tt }) => con('mcd', tt, tt(TX.mcd.buena)(item.a, item.b));
-export const explicaMcm = (item, { tt }) => con('mcm', tt, tt(TX.mcm.buena)(item.a, item.b));
+const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const fin = (tt, txt) => ` ${tt(RESPUESTA)} ${txt}.`;
+/** «2 · 5 = 10», pero «5» y no «5 = 5» cuando las potencias ya son el número. */
+const potYValor = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${indice(m)} = ${valor(m)}`);
+/** «1 verde (green) y 2 azules (blue)»: las fichas de un montón, con «y» delante de la última. */
+function fichasTxt(m, idioma) {
+  const partes = colores(m).map(p => colorContado(p, exp(m, p), idioma));
+  if (!partes.length) return idioma === 'es' ? 'ninguna ficha (no counters)' : 'no counters (ninguna ficha)';
+  const y = idioma === 'es' ? ' y ' : ' and ';
+  return partes.length === 1 ? partes[0] : `${partes.slice(0, -1).join(', ')}${y}${partes.at(-1)}`;
+}
+const lista = (ns, idioma) => `${ns.slice(0, -1).join(', ')}${idioma === 'es' ? ' y ' : ' and '}${ns.at(-1)}`;
+/** «Quedan 1 verde (green) y 1 amarilla (yellow): 40 : 4 = 2 · 5 = 10», con «queda» si es una sola ficha. */
+function quedanTxt(a, d, idioma) {
+  const r = quitar(a, d), una = nFichas(r) === 1;
+  const cuentaQ = cuenta(`${valor(a)} : ${valor(d)} = ${potYValor(r)}`);
+  return idioma === 'es'
+    ? `Se quitan las fichas de ${valor(d)} y ${una ? 'queda' : 'quedan'} ${fichasTxt(r, 'es')}: ${cuentaQ}.`
+    : `Take away the counters of ${valor(d)}; what is left is ${fichasTxt(r, 'en')}: ${cuentaQ}.`;
+}
+
+export const explicaLee = (item, { tt }) => {
+  const m = item.m;
+  // Con una sola ficha no hay cuenta que hacer: «Aquí: 7. La respuesta es 7» repetía el número.
+  const cuerpo = nFichas(m) > 1
+    ? ` ${tt({ es: 'Aquí', en: 'Here' })}: ${cuenta(cuentaDe(m))}.`
+    : nFichas(m) ? '' : ` ${tt({ es: 'Ninguna ficha es el 1 (multiplicar por ninguna ficha no cambia nada).', en: 'No counters is the number 1 (multiplying by no counters changes nothing).' })}`;
+  return `${tt(REGLA.lee)}${cuerpo}${fin(tt, cuenta(`${valor(m)}`))}`;
+};
+
+export const explicaConstruye = (item, { tt, idioma }) => {
+  const m = item.m;
+  // «18 = 2 · 3 · 3 = 2 · 3²»; un primo (7, 13) es ya una sola ficha.
+  const partes = [productoFichas(m), indice(m)].filter((x, i, xs) => x !== `${valor(m)}` && xs.indexOf(x) === i);
+  const cuerpo = partes.length
+    ? `${cuenta(`${valor(m)} = ${partes.join(' = ')}`)}.`
+    : tt({ es: `${valor(m)} es primo: es una sola ficha.`, en: `${valor(m)} is prime: it is one counter.` });
+  return `${tt(REGLA.construye)} ${cuerpo}${fin(tt, fichasTxt(m, idioma))}`;
+};
+
+export const explicaProducto = (item, { tt, idioma }) => {
+  if (item.tipo === 'anadir') {
+    const k = deNumero(item.k);
+    const cuentaK = cuenta(`${item.k} = ${indice(k)}`);
+    const total = cuenta(`${valor(item.a)} · ${item.k} = ${potYValor(juntar(item.a, k))}`);
+    const cuerpo = indice(k) === `${item.k}`
+      ? tt({ es: `${item.k} es primo: es una sola ficha. ${total}.`, en: `${item.k} is prime: it is one counter. ${total}.` })
+      : tt({ es: `${cuentaK}: se añaden sus fichas. ${total}.`, en: `${cuentaK}: add its counters. ${total}.` });
+    return `${tt(REGLA.anadir)} ${cuerpo}${fin(tt, fichasTxt(k, idioma))}`;
+  }
+  const j = juntar(item.a, item.b);
+  return `${tt(REGLA.producto)} ${cuenta(`${valor(item.a)} · ${valor(item.b)} = ${potYValor(j)}`)}.${fin(tt, fichasTxt(j, idioma))}`;
+};
+
+/** Ejercicio 4: se tocan las fichas que se quitan, que son las del divisor. */
+export const explicaQuita = (item, { tt, idioma }) => `${tt(REGLA.quita)} ${quedanTxt(item.a, item.d, idioma)}${fin(tt, fichasTxt(item.d, idioma))}`;
+
+/** Ejercicio 5: sí y el cociente en potencias, o no y el color que falta. */
+export const explicaRegla = (item, { tt, idioma }) => {
+  const { a, d } = item;
+  if (item.divisible) {
+    const q = quitar(a, d);
+    const resp = idioma === 'es' ? `sí, y el cociente es ${cuenta(indice(q))}` : `yes, and the quotient is ${cuenta(indice(q))}`;
+    return `${tt(REGLA.regla)} ${tt({ es: `Las fichas de ${valor(d)} caben en ${valor(a)}.`, en: `The counters of ${valor(d)} fit in ${valor(a)}.` })} ${quedanTxt(a, d, idioma)}${fin(tt, resp)}`;
+  }
+  const c = item.falta, tiene = exp(a, c);
+  const porque = idioma === 'es'
+    ? `${valor(d)} necesita ${colorContado(c, exp(d, c), 'es')} y ${valor(a)} ${tiene ? `solo tiene ${tiene}` : 'no tiene ninguna'}.`
+    : `${valor(d)} needs ${colorContado(c, exp(d, c), 'en')} and ${valor(a)} ${tiene ? `has only ${tiene}` : 'has none'}.`;
+  const resp = idioma === 'es' ? `no, y falta el color ${colorTxt(c, 'es')}` : `no, and the missing colour is ${colorTxt(c, 'en')}`;
+  return `${tt(REGLA.regla)} ${porque}${fin(tt, resp)}`;
+};
+
+export const explicaDivisores = (item, { tt, idioma }) => {
+  const a = item.a;
+  const cuantos = cuenta(`${colores(a).map(p => `(${exp(a, p)} + 1)`).join(' · ')} = ${numeroDivisores(a)}`);
+  const ds = submontones(a).map(valor).sort((x, y) => x - y);
+  return `${tt(REGLA.divisores)} ${tt({ es: `Aquí: ${cuantos} divisores.`, en: `Here: ${cuantos} divisors.` })}${fin(tt, cuenta(lista(ds, idioma)))}`;
+};
+
+/** Ejercicio 7: se tocan las fichas de a con pareja; sin parejas, el botón y el m.c.d. 1. */
+export const explicaMcd = (item, { tt, idioma }) => {
+  const { a, b } = item, g = comunes(a, b);
+  if (!nFichas(g)) {
+    const boton = idioma === 'es' ? `«${TX.mcd.ninguna.es}»` : `“${TX.mcd.ninguna.en}”`;
+    // «12 = 2² · 3 y 7», no «y 7 = 7» (el feedback sí lo escribe así).
+    const escrito = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${valor(m)} = ${indice(m)}`);
+    return `${tt(REGLA.mcd)} ${tt({ es: `${escrito(a)} y ${escrito(b)} no tienen ninguna ficha en común, y ninguna ficha es el 1.`, en: `${escrito(a)} and ${escrito(b)} have no counter in common, and no counters is the number 1.` })}`
+      + fin(tt, tt({ es: `${boton}, y el m.c.d. es 1`, en: `${boton}, and the GCD is 1` }));
+  }
+  const mcdTxt = cuenta(`${tt({ es: 'm.c.d.', en: 'GCD' })}(${valor(a)}, ${valor(b)}) = ${potYValor(g)}`);
+  return `${tt(REGLA.mcd)} ${tt({ es: `De cada color, tantas como tenga el que menos: ${mcdTxt}.`, en: `For each colour, as many as the one with fewer: ${mcdTxt}.` })}${fin(tt, fichasTxt(g, idioma))}`;
+};
+
+export const explicaMcm = (item, { tt, idioma }) => {
+  const { a, b } = item, m = montonMinimo(a, b), L = valor(m);
+  const mcmTxt = cuenta(`${tt({ es: 'm.c.m.', en: 'LCM' })}(${valor(a)}, ${valor(b)}) = ${potYValor(m)}`);
+  const comprueba = cuenta(`${L} = ${valor(a)} · ${L / valor(a)} = ${valor(b)} · ${L / valor(b)}`);
+  return `${tt(REGLA.mcm)} ${mcmTxt} (${tt({ es: 'compruébalo', en: 'check it' })}: ${comprueba}).${fin(tt, fichasTxt(m, idioma))}`;
+};
