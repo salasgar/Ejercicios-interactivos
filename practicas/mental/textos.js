@@ -61,9 +61,15 @@ export const TX = {
 };
 
 const AYUDA = {
-  compensar: {
-    es: (k, R) => `Usa ${R} en lugar de ${k}, que es un número redondo, y después corrige la diferencia.`,
-    en: (k, R) => `Use ${R} instead of ${k}, which is a round number, and then fix the difference.`,
+  // La regla dice QUÉ se quita: en la suma, lo que se ha sumado de más (1 o 2); en el producto,
+  // las veces que sobra el otro factor (el n, no el 1): «corrige la diferencia» llevaba a restar 1.
+  compensar_suma: {
+    es: (k, R, falta) => `Suma ${R}, que es un número redondo, en vez de ${k}; así sumas ${falta} de más, y después lo quitas.`,
+    en: (k, R, falta) => `Add ${R}, which is a round number, instead of ${k}; that adds ${falta} too much, so then take ${falta} away.`,
+  },
+  compensar_producto: {
+    es: (n, k, R, falta) => `Multiplica por ${R}, que es un número redondo, en vez de por ${k}; así sobra${falta === 1 ? ' una vez' : 'n dos veces'} el ${n}, y después ${falta === 1 ? `restas ${n} (no 1)` : `restas 2 · ${n} (no 2)`}.`,
+    en: (n, k, R, falta) => `Multiply by ${R}, which is a round number, instead of ${k}; that gives ${falta === 1 ? `one ${n}` : `two ${n}s`} too many, so then subtract ${falta === 1 ? `${n} (not 1)` : `2 · ${n} (not 2)`}.`,
   },
   descomponer: {
     es: (a, b, p, q) => `Parte el ${b} en ${p} · ${q}: así ${a} · ${p} da un número redondo y la cuenta sale rápido.`,
@@ -74,9 +80,16 @@ const AYUDA = {
 
 /** «No lo sé» del ejercicio 1: redondear a la centena, ajustar y calcular. */
 export function explicaCompensar(item, { tt }) {
-  const x = TX.compensar;
-  const cuenta = tt(item.variante === 'producto' ? x.explicacion_producto : x.explicacion_suma)(item.n, item.k, item.R, item.falta, item.valor);
-  return `<p>${tt(AYUDA.compensar)(item.k, item.R)}</p><p><span class="cuenta">${cuenta}</span></p><p><strong>${tt(AYUDA.respuesta)} ${item.valor}.</strong></p>`;
+  const { n, k, R, falta, valor } = item;
+  let regla, cuenta;
+  if (item.variante === 'producto') {
+    regla = tt(AYUDA.compensar_producto)(n, k, R, falta);
+    cuenta = `${n} · ${k} = ${n} · ${R} − ${falta === 1 ? n : `${falta} · ${n}`} = ${n * R} − ${falta * n} = ${valor}`;
+  } else {
+    regla = tt(AYUDA.compensar_suma)(k, R, falta);
+    cuenta = `${n} + ${k} = ${n} + ${R} − ${falta} = ${n + R} − ${falta} = ${valor}`;
+  }
+  return `<p>${regla}</p><p><span class="cuenta">${cuenta}</span></p><p><strong>${tt(AYUDA.respuesta)} ${valor}.</strong></p>`;
 }
 
 /** «No lo sé» del ejercicio 2: partir el factor en un producto cómodo y calcular por pasos. */

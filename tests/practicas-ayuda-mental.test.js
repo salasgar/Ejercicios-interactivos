@@ -34,3 +34,25 @@ test('mental · ejercicio 2: la explicación lleva el resultado y una descomposi
     assert.ok(!/undefined|NaN/.test(t), t);
   }
 });
+
+// Revisión 193: «corrige la diferencia» llevaba a restar 1 en 27 · 99, y «100 en lugar de 99, que es un número
+// redondo» decía que el redondo era el 99. La regla dice ahora qué se resta, y es verdad en todos los ítems.
+test('mental · ejercicio 1: la regla dice qué se resta, y lo que dice es verdad', () => {
+  const vistos = new Set();
+  for (const idioma of IDIOMAS) for (const item of generar(L.generarCompensar, 11)) {
+    const { n, k, R, falta } = item;
+    vistos.add(`${item.variante}-${falta}`);
+    const regla = plano(X.explicaCompensar(item, ctx(idioma))).split(/ \d+ [+·] \d+ = /)[0];
+    assert.ok(!/diferencia|difference/.test(regla), regla);
+    assert.ok(regla.includes(idioma === 'es' ? `${R}, que es un número redondo` : `${R}, which is a round number`), regla);
+    if (item.variante === 'producto') {
+      assert.equal(n * R - falta * n, n * k);
+      const resta = falta === 1 ? `${n} (` : `${falta} · ${n} (`;
+      assert.ok(regla.includes(idioma === 'es' ? `restas ${resta}` : `subtract ${resta}`), regla);
+    } else {
+      assert.equal(n + R - falta, n + k);
+      assert.ok(regla.includes(idioma === 'es' ? `sumas ${falta} de más` : `adds ${falta} too much`), regla);
+    }
+  }
+  assert.deepEqual([...vistos].sort(), ['producto-1', 'producto-2', 'suma-1', 'suma-2']);
+});
