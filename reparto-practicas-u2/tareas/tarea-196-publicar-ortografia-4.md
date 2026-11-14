@@ -170,6 +170,12 @@ c: solo en la portada, sin puntos), **Juan Luis ha elegido la (b)**. Por tanto:
   ella aunque su reclamo esté CERRADO. Si reclamas la 196 justo después de otra pasada, deja estas dos ediciones para el final y espera con un Monitor
   que compare `date -u +%H%M` (en las sesiones del lanzador, `sleep` en segundo plano vuelve al instante y un `sleep` largo en primer plano lo bloquea
   el entorno). El `sleep 30` del reclamo puede no esperar: vuelve a listar `hechos/reclamos/` un rato después.
+- (de la 196, tercera pasada, 14-11) **Sin Claude in Chrome, el DLE no se abre de ninguna manera**: el modo automático deniega un `curl` a
+  `dle.rae.es`, y esa denegación vale para cualquier otra vía. Si la sesión no trae las herramientas de Chrome, coteja de cabeza solo lo que no
+  sea dudoso (la conjugación entera del verbo, por ejemplo) y lo dudoso va a la reabierta marcado «comprobar».
+- (de la 196, tercera pasada) **El guion de clics de la 192 no pasa `&nivel=`** y no deja forzar un ítem: para ver uno concreto, pulsa «No lo sé» y
+  «Siguiente» en bucle hasta que salga (el texto de `#item` lleva las letras separadas: quita los espacios antes de buscar). Y dentro de una
+  plantilla de JS que mandas con `Runtime.evaluate`, `/\s+/` llega como `/s+/` y se come las eses del volcado: no es la práctica.
 
 ## Prohibido (propio de esta tarea)
 

@@ -9,6 +9,10 @@ publica**: tercera reabierta de la 135 (`hechos/reabiertas/135--s-20261114T11331
 > **Segunda pasada (14-11, 12:08Z, sesión `s-20261114T120759-e1c97fc9`)**: la tercera reabierta se cerró (3bc3808), pero dos de sus
 > sustitutos no valen. **Las tildes siguen sin publicar**: cuarta reabierta de la 135 (`hechos/reabiertas/135--s-20261114T120759-e1c97fc9.md`).
 > Detalle al final, «Segunda pasada».
+>
+> **Tercera pasada (14-11, 13:38Z, sesión `s-20261114T133806-21f1b6d7`)**: la cuarta reabierta se cerró (3598600) y sus dos sustitutos
+> valen. **`ortografia-tildes` (64) PUBLICADA**, commit **02a39ee**: los tres bloques de la tarea están publicados y la 196 queda LISTA.
+> Detalle al final, «Tercera pasada».
 
 Commit del código: **ed3cc3f** (`hechos/terminadas/196--s-20261114T113316-d58f9cb4.md`). Ficheros: `practicas/_comun/catalogo.js`
 (solo `disponible: true` de las filas 67 y 68), `tests/practicas-ortografia-comun.test.js` (solo `PUBLICADOS`), `docs/practicas-ortografia.md`
@@ -99,15 +103,17 @@ Capturas a 375 px de la introducción y del primer fallo de cada ejercicio, en e
 
 **Publicados hoy**: `ortografia` (45), `ortografia-letras` (65), `ortografia-puntuacion` (66), `ortografia-palabras` (67) y
 `ortografia-ampliacion` (68). Sin publicar: `ortografia-tildes` (64), con reabierta MEDIO y plazo jue 18-2.
+**Desde la tercera pasada (14-11, 02a39ee) también `ortografia-tildes` (64): va el plan A entero, y el plan B y la regla de sustitución
+ya no hacen falta.**
 
 **Plan A** (las tildes publicadas antes del jue 25-2): el de siempre. Líneas literales para el editor del panel:
 
 | Paquete | ★ (línea literal) | Ejercicio | Bloque publicado hoy |
 |---|---|---|---|
-| U7 · 1 (lun 1-3) | `['ortografia-tildes', 1]` | La sílaba tónica | no |
-| U7 · 2 | `['ortografia-tildes', 2]` | ¿Lleva tilde? | no |
-| U7 · 3 | `['ortografia-tildes', 3]` | Diptongos e hiatos | no |
-| U7 · 4 | `['ortografia-tildes', 4]` | Las palabras de Matemáticas | no |
+| U7 · 1 (lun 1-3) | `['ortografia-tildes', 1]` | La sílaba tónica | **sí** (tercera pasada, 02a39ee) |
+| U7 · 2 | `['ortografia-tildes', 2]` | ¿Lleva tilde? | **sí** (tercera pasada) |
+| U7 · 3 | `['ortografia-tildes', 3]` | Diptongos e hiatos | **sí** (tercera pasada) |
+| U7 · 4 | `['ortografia-tildes', 4]` | Las palabras de Matemáticas | **sí** (tercera pasada) |
 | U7 · 5 (lun 19-4) | `['ortografia-palabras', 1]` | ¿Junto o separado? | **sí** |
 | U8 · 1 (lun 26-4) | `['ortografia-letras', 2]` | ¿b o v? | **sí** |
 | U8 · 2 (desde el mar 4-5; el 3-5 es festivo) | `['ortografia-letras', 3]` | ¿g o j? Y la diéresis | **sí** |
@@ -172,7 +178,8 @@ de la app») **no se edita desde este reparto**: la actualiza Juan Luis, o una s
    hace `elegirDeNivel` a propósito (mezcla los inferiores) y lo mismo en los bloques ya publicados; lo digo por si choca al probar.
 
 ## Cómo probarlo en 1 minuto
-https://salasgar.github.io/Ejercicios-interactivos/practicas/ → sección «Ortografía»: salen «Palabras que se confunden» y «Ampliación». En local:
+https://salasgar.github.io/Ejercicios-interactivos/practicas/ → sección «Ortografía»: salen «Palabras que se confunden» y «Ampliación» (y,
+desde la tercera pasada, «Las tildes»). En local:
 `python3 -m http.server 8196` → `http://127.0.0.1:8196/practicas/ortografia-ampliacion/?probar=1&ejercicio=1&nivel=2`.
 
 ## Segunda pasada: solo lo de la tercera reabierta de la 135 (14-11, sesión `s-20261114T120759-e1c97fc9`)
@@ -201,3 +208,42 @@ publicadas el jue 25-2).
 
 **Para quien publique las tildes la próxima vez**: además de los dos sustitutos nuevos, pasa a cada palabra suelta de los ej. 2 y 3 la prueba de
 «la tilde en cada vocal (o en cada sílaba): ¿sale alguna palabra del DLE?». Es lo que se le escapó a *triunfo*.
+
+## Tercera pasada: la cuarta reabierta de la 135 y la publicación de las tildes (14-11, sesión `s-20261114T133806-21f1b6d7`)
+
+Reclamada otra vez la 196 a las 13:38Z, tras la terminada `hechos/terminadas/135--s-20261114T132736-7a85f991.md` (commit 3598600, que solo
+cambia dos cadenas de `logica.js` y añade *triunfo* a `HOMOGRAFAS_SIN_TILDE`). Revisado **solo lo reabierto**, y la prueba de la tilde en cada
+vocal que pedía la segunda pasada.
+
+| Punto de la cuarta reabierta | Cambio en 3598600 | Veredicto |
+|---|---|---|
+| 1. *triunfo* (ej. 3, N1) | → *nieve*; *triunfo* a `HOMOGRAFAS_SIN_TILDE` | **bien**: con la tilde en cada vocal salen *níeve*, *niéve* y *nievé*, y ninguna existe (de *nevar*: *nieva*, *nieve*, *nevé*, *nevó*). Explicación: «nieve (NIE-ve): las dos vocales van en la misma sílaba (diptongo). Es llana y acaba en vocal: no lleva tilde» |
+| 2. «…, son directamente ___» (ej. 4, N3) | → «Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, las dos son directamente ___.» con *proporcionales* / *proporciónales* | **bien**: concuerda («las dos [cantidades] son … proporcionales») y el dato es el de 1.º. *proporciónales* existe (imperativo de *proporcionar* con *les*), pero en esa frase no cabe: es la regla 2 de la ortografía, como *numero* o *calculo*. La explicación no dice que no exista: «proporcionales (pro-por-cio-NA-les) es llana y acaba en s: no lleva tilde» |
+
+**Prueba de la tilde en cada vocal o sílaba** (los 48 ítems de palabra suelta del ej. 2 y los 46 del ej. 3): solo salen *causá* (de *causa*) e
+*ideá* (de *idea*), voseo que da **otra** palabra, que se queda por el criterio estricto del 9-11 (`proyecto.md`). Las demás formas no existen
+o son grafías que la Ortografía de 2010 ya no admite (*fué*, *dió*, *vió*, *huída*, *jesuíta*, *construído*, *carácteres*). Cotejo **de cabeza**:
+esta sesión no tiene Claude in Chrome y el modo automático no deja abrir el DLE de otra forma; ninguna de las formas es dudosa (si lo fuera,
+iría a la reabierta marcada «comprobar»).
+
+**Clics** (Chrome sin ventana, guion de la 192 con `&nivel=`, `python3 -m http.server 8296`, «Probar sin código»): los 4 ejercicios en los 3
+niveles a 375 y 1200 px (24 recorridos, 4 «No lo sé» cada uno): consola sin errores, ningún desborde, la tarjeta de ayuda sale y el ítem siguiente
+es otro en los 24. Además, buscados a propósito a 375 px y fallados: *nieve* (ej. 3, N1; tocando la primera «e» sale la explicación y «Ninguna»
+queda marcada en verde) y la frase de *proporcionales* (ej. 4, N3; tocando *proporciónales* la buena queda en verde en el hueco).
+
+Variedad: sin cambio en el número de ítems por nivel (ej. 1 16/16/16 · ej. 2 16/16/16 · ej. 3 16/16/18 con las 4 de aún · ej. 4 16/16/16);
+la primera pasada midió un máximo de 7,3 % por ítem con estos mismos recuentos.
+
+**Veredicto: `ortografia-tildes` (64) SE PUBLICA.** Commit **02a39ee**: `disponible: true` de la fila 64 en `catalogo.js` (solo ese campo),
+`'ortografia-tildes'` en `PUBLICADOS` del test común, `docs/practicas-ortografia.md` §7 (fila de las tildes y un párrafo) y el párrafo de la
+ortografía de `README.md`. Ningún `logica.js` tocado. Ortografía 58/58, `npm test` 2232/2232. Los tres bloques de la tarea, publicados: va
+el **plan A** de la tabla de ★ (arriba, ya marcado), y la U7 · 1 (lun 1-3) tiene su ★ publicado con tres meses de margen.
+
+### Hallazgo fuera de criterio de la tercera pasada (decide Juan Luis)
+
+8. **A 375 px, las palabras largas se parten a mitad dentro de los botones**, sin guion: «proporciónal / es», y lo mismo *Matemáticas*,
+   *circunferencia*, *decimotercero* y *decimoquinto* (5 de las 48 del ej. 4 de las tildes, con su forma mala). Sale de la base común
+   (`practicas/_comun/estilos.css`, línea 103: `overflow-wrap: anywhere` en los botones de opción), así que pasa igual en las demás prácticas y
+   probablemente en los otros bloques de ortografía ya publicados; no desborda y se lee entera, por eso no reabre nada. En una práctica de
+   ortografía, «proporcional es» partido así se puede leer como dos palabras. Propuesta: una tarea de la base que, en los botones de opción de
+   la ortografía, no parta palabras (`overflow-wrap: normal` con letra algo menor, o las dos opciones una debajo de otra si alguna no cabe).
