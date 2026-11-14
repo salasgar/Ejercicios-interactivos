@@ -157,8 +157,8 @@ const TRAMPA_A = [
   es: (a, b) => `${d.esF(a, b)} ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b) => `${d.enF(a, b)} Do you need the GCD or the LCM?`,
   razon: (a, b) => ({
-    es: `«menor número de ${d.oEs}» habla de ${d.genero === 'f' ? 'cuántas' : 'cuántos'} hay, no de su tamaño: ${d.genero === 'f' ? 'pocas' : 'pocos'} ${d.oEs} = ${d.oEs} grandes = el tamaño más grande que cabe en ${a} y ${b} → m.c.d.`,
-    en: `«the smallest number of ${d.oEn}» talks about how many there are, not about their size: fewer ${d.oEn} = bigger ${d.oEn} = the largest size that fits into ${a} and ${b} → GCD.`,
+    es: `La pregunta por el «menor número de ${d.oEs}» habla de ${d.genero === 'f' ? 'cuántas' : 'cuántos'} hay, no de su tamaño: ${d.genero === 'f' ? 'pocas' : 'pocos'} ${d.oEs} = ${d.oEs} grandes = el tamaño más grande que cabe en ${a} y ${b} → m.c.d.`,
+    en: `The question about the “smallest number of ${d.oEn}” is about how many there are, not about their size: fewer ${d.oEn} = bigger ${d.oEn} = the largest size that fits into ${a} and ${b} → GCD.`,
   }),
   numeros: dosGrandes,
 }));
@@ -180,8 +180,8 @@ const TRAMPA_B = [
   es: (a, b, c) => `Quieres tener ${d.oEs} que se puedan repartir en partes iguales, sin que sobre nada, entre ${a} ${d.gEs}, entre ${b} ${d.gEs} o entre ${c} ${d.gEs}. ¿Cuál es el MENOR número de ${d.oEs} que puedes tener? ¿Hace falta el m.c.d. o el m.c.m.?`,
   en: (a, b, c) => `You want to have ${d.oEn} that can be shared equally, with nothing left over, among ${a} ${d.gEn}, among ${b} ${d.gEn} or among ${c} ${d.gEn}. What is the SMALLEST number of ${d.oEn} you can have? Do you need the GCD or the LCM?`,
   razon: (a, b, c) => ({
-    es: `«repartir en partes iguales sin que sobre nada» entre ${a}, entre ${b} y entre ${c} pide un número que sea múltiplo de ${a}, de ${b} y de ${c} a la vez: el menor que vale para los tres es su mínimo común múltiplo → m.c.m.`,
-    en: `«shared equally with nothing left over» among ${a}, ${b} and ${c} asks for a number that is a multiple of ${a}, ${b} and ${c} at the same time: the smallest one that works for all three is their least common multiple → LCM.`,
+    es: `Repartir en partes iguales sin que sobre nada entre ${a}, entre ${b} y entre ${c} pide un número que sea múltiplo de ${a}, de ${b} y de ${c} a la vez: el menor que vale para los tres es su mínimo común múltiplo → m.c.m.`,
+    en: `Sharing equally with nothing left over among ${a}, ${b} and ${c} asks for a number that is a multiple of ${a}, ${b} and ${c} at the same time: the smallest one that works for all three is their least common multiple → LCM.`,
   }),
   numeros: tresPequenos,
 }));
@@ -198,7 +198,7 @@ export const TX = {
   },
   detalle: {
     limpio: { es: 'Decide si hace falta el m.c.d. o el m.c.m.', en: 'Decide whether you need the GCD or the LCM' },
-    trampa: { es: 'Cuidado: «mayor» y «menor» no siempre significan lo que parece', en: 'Careful: «smallest» and «largest» do not always mean what they seem' },
+    trampa: { es: 'Cuidado: «mayor» y «menor» no siempre significan lo que parece', en: 'Careful: “smallest” and “largest” do not always mean what they seem' },
     justificar: { es: 'Elige la razón correcta', en: 'Choose the correct reason' },
   },
   boton: {
@@ -211,8 +211,8 @@ export const TX = {
     va: { es: 'porque el número que buscamos cabe en los datos (los divide)', en: 'because the number we are looking for goes into the data (it divides them)' },
     tamano: { es: 'porque primero se busca el tamaño de cada parte, y ese tamaño cabe en los datos (los divide)', en: 'because first we look for the size of each part, and that size goes into the data (it divides them)' },
     contiene: { es: 'porque el número que buscamos contiene a los datos (es múltiplo de ellos)', en: 'because the number we are looking for contains the data (it is a multiple of them)' },
-    dice_mayor: { es: 'porque el enunciado dice «mayor»', en: 'because the problem says «largest»' },
-    dice_menor: { es: 'porque el enunciado dice «menor»', en: 'because the problem says «smallest»' },
+    dice_mayor: { es: 'porque el enunciado dice «mayor»', en: 'because the problem says “largest”' },
+    dice_menor: { es: 'porque el enunciado dice «menor»', en: 'because the problem says “smallest”' },
     datos_pequenos: { es: 'porque los datos son pequeños', en: 'because the numbers are small' },
     dos_datos: { es: 'porque hay dos datos', en: 'because there are two numbers' },
   },

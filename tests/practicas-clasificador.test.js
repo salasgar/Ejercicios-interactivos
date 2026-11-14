@@ -213,3 +213,20 @@ test('las seis plantillas de trampa A piden un tamaño: todas llevan `tamano` y 
   }
   assert.ok(BANCO.filter(p => !(p.trampa && p.clase === 'mcd')).every(p => !p.tamano));
 });
+
+test('razones del banco y textos: mayúscula al abrir frase y comillas del idioma (es «», en “”), reabierta 14-11', () => {
+  const rng = crearRng(7);
+  for (const p of BANCO) {
+    const numeros = p.numeros(rng);
+    const r = p.razon(...numeros);
+    assert.match(r.es, /^[«]?\p{Lu}/u, `mayúscula (es): ${r.es}`);
+    assert.match(r.en, /^[“]?\p{Lu}/u, `mayúscula (en): ${r.en}`);
+    assert.ok(!/[“”"]/.test(r.es), `comillas en es: ${r.es}`);
+    assert.ok(!/[«»"]/.test(r.en), `comillas en en: ${r.en}`);
+  }
+  const textos = [TX.detalle.trampa, TX.justificacion.dice_mayor, TX.justificacion.dice_menor];
+  for (const t of textos) {
+    assert.ok(!/[“”"]/.test(t.es), t.es);
+    assert.ok(!/[«»"]/.test(t.en), t.en);
+  }
+});
