@@ -418,3 +418,61 @@ export const TX = {
 };
 
 export { M as montonTxt };
+
+// ─── «No lo sé»: la explicación de cada ejercicio (tarea 186) ─────────────────────
+// La regla en una frase y, detrás, el paso a paso que ya da el feedback de acierto (`buena`), con los
+// números del ítem. Todas reciben `(item, { tt })`, como `enunciado`.
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const REGLA = {
+  lee: {
+    es: 'Cada ficha es un primo y las fichas se multiplican. El exponente cuenta las fichas del mismo color.',
+    en: 'Each counter is a prime and the counters are multiplied. The exponent counts the counters of the same colour.',
+  },
+  construye: {
+    es: 'Descompón el número en primos y pon una ficha por cada primo. Un exponente son fichas del mismo color: 2<sup>3</sup> son tres verdes (green).',
+    en: 'Break the number into primes and put one counter for each prime. An exponent means counters of the same colour: 2<sup>3</sup> is three green (verde).',
+  },
+  producto: {
+    es: 'Multiplicar es juntar: se ponen en un mismo montón todas las fichas de los dos números, sin sumar nada.',
+    en: 'Multiplying is putting together: all the counters of both numbers go in one pile, nothing is added.',
+  },
+  anadir: {
+    es: 'Multiplicar por un número es añadir sus fichas al montón. Primero se descompone ese número en fichas.',
+    en: 'Multiplying by a number means adding its counters to the pile. First, break that number into counters.',
+  },
+  quita: {
+    es: 'Dividir es quitar: se quitan del montón las fichas del divisor, y lo que queda es el cociente.',
+    en: 'Dividing is taking away: take the counters of the divisor out of the pile, and what is left is the quotient.',
+  },
+  regla: {
+    es: 'Se puede dividir si las fichas del divisor caben dentro del montón: de cada color, no puede pedir más fichas de las que hay.',
+    en: 'You can divide if the counters of the divisor fit inside the pile: for each colour, it cannot ask for more counters than there are.',
+  },
+  divisores: {
+    es: 'Cada divisor se forma con algunas de las fichas del número: de cada color, desde ninguna hasta todas. El total es el producto de los (exponente + 1).',
+    en: 'Each divisor is made with some of the counters of the number: for each colour, from none up to all of them. The total is the product of the (exponent + 1).',
+  },
+  mcd: {
+    es: 'Se emparejan las fichas del mismo color que tienen los dos números. Las fichas con pareja forman el m.c.d.',
+    en: 'Match the counters of the same colour that both numbers have. The counters with a partner make the GCD.',
+  },
+  mcm: {
+    es: 'El m.c.m. es el montón más pequeño que contiene a los dos: de cada color se coge el mayor número de fichas.',
+    en: 'The LCM is the smallest pile that contains both: for each colour take the larger number of counters.',
+  },
+};
+
+const con = (clave, tt, resto) => `${tt(REGLA[clave])} ${resto}`;
+
+export const explicaLee = (item, { tt }) => con('lee', tt, tt(TX.lee.buena)(item.m));
+export const explicaConstruye = (item, { tt }) => con('construye', tt, tt(TX.construye.buena)(item.m));
+export const explicaProducto = (item, { tt }) => (item.tipo === 'anadir'
+  ? con('anadir', tt, tt(TX.producto.buenaAnadir)(item.a, item.k))
+  : con('producto', tt, tt(TX.producto.buena)(item.a, item.b)));
+export const explicaQuita = (item, { tt }) => con('quita', tt, tt(TX.quita.buena)(item.a, item.d));
+export const explicaRegla = (item, { tt }) => con('regla', tt, item.divisible ? tt(TX.regla.buena)(item.a, item.d) : tt(TX.regla.buenaNo)(item.a, item.d, item.falta));
+export const explicaDivisores = (item, { tt }) => con('divisores', tt, tt(TX.divisores.buena)(item.a));
+export const explicaMcd = (item, { tt }) => con('mcd', tt, tt(TX.mcd.buena)(item.a, item.b));
+export const explicaMcm = (item, { tt }) => con('mcm', tt, tt(TX.mcm.buena)(item.a, item.b));

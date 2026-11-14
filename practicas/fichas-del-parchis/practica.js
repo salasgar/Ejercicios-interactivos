@@ -9,7 +9,10 @@
 
 import { arrancar } from '../_comun/base.js';
 import { campoNumero, elecciones, pasos } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import {
+  TX, NO_SE_HACERLO, explicaLee, explicaConstruye, explicaProducto, explicaQuita, explicaRegla,
+  explicaDivisores, explicaMcd, explicaMcm,
+} from './textos.js';
 import { fichaHtml, montonHtml } from './dibujo.js';
 import {
   PRIMOS_FICHA, MAX_FICHAS_COLOR, MAX_FICHAS_PRODUCTO,
@@ -454,13 +457,13 @@ function montarMcm(contenedor, item, api) {
 arrancar({
   slug: 'fichas-de-pablo',
   ejercicios: [
-    { nombre: TX.lee.nombre, detalle: TX.lee.detalle, introduccion: TX.lee.introduccion, generar: generarLee, montar: montarLee, enunciado: enunciadoLee },
-    { nombre: TX.construye.nombre, detalle: TX.construye.detalle, introduccion: TX.construye.introduccion, generar: generarConstruye, montar: montarConstruye, enunciado: enunciadoConstruye },
-    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto },
-    { nombre: TX.quita.nombre, detalle: TX.quita.detalle, objetivo: 8, introduccion: TX.quita.introduccion, generar: generarQuita, montar: montarQuita, enunciado: enunciadoQuita },
-    { nombre: TX.regla.nombre, detalle: TX.regla.detalle, introduccion: TX.regla.introduccion, generar: generarRegla, montar: montarRegla, enunciado: enunciadoRegla },
-    { nombre: TX.divisores.nombre, detalle: TX.divisores.detalle, introduccion: TX.divisores.introduccion, generar: generarTablaDivisores, montar: montarDivisores, enunciado: enunciadoDivisores },
-    { nombre: TX.mcd.nombre, detalle: TX.mcd.detalle, objetivo: 8, introduccion: TX.mcd.introduccion, generar: generarMcd, montar: montarMcd, enunciado: enunciadoMcd },
-    { nombre: TX.mcm.nombre, detalle: TX.mcm.detalle, objetivo: 8, introduccion: TX.mcm.introduccion, generar: generarMcm, montar: montarMcm, enunciado: enunciadoMcm },
+    { nombre: TX.lee.nombre, detalle: TX.lee.detalle, introduccion: TX.lee.introduccion, generar: generarLee, montar: montarLee, enunciado: enunciadoLee, explicacion: explicaLee, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.construye.nombre, detalle: TX.construye.detalle, introduccion: TX.construye.introduccion, generar: generarConstruye, montar: montarConstruye, enunciado: enunciadoConstruye, explicacion: explicaConstruye, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto, explicacion: explicaProducto, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.quita.nombre, detalle: TX.quita.detalle, objetivo: 8, introduccion: TX.quita.introduccion, generar: generarQuita, montar: montarQuita, enunciado: enunciadoQuita, explicacion: explicaQuita, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.regla.nombre, detalle: TX.regla.detalle, introduccion: TX.regla.introduccion, generar: generarRegla, montar: montarRegla, enunciado: enunciadoRegla, explicacion: explicaRegla },
+    { nombre: TX.divisores.nombre, detalle: TX.divisores.detalle, introduccion: TX.divisores.introduccion, generar: generarTablaDivisores, montar: montarDivisores, enunciado: enunciadoDivisores, explicacion: explicaDivisores, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.mcd.nombre, detalle: TX.mcd.detalle, objetivo: 8, introduccion: TX.mcd.introduccion, generar: generarMcd, montar: montarMcd, enunciado: enunciadoMcd, explicacion: explicaMcd, noLoSe: NO_SE_HACERLO },
+    { nombre: TX.mcm.nombre, detalle: TX.mcm.detalle, objetivo: 8, introduccion: TX.mcm.introduccion, generar: generarMcm, montar: montarMcm, enunciado: enunciadoMcm, explicacion: explicaMcm, noLoSe: NO_SE_HACERLO },
   ],
 });
