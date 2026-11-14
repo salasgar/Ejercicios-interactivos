@@ -1,7 +1,7 @@
 // Constructor de números: textos propios, siempre { es, en }. Los comunes (Comprobar,
 // Siguiente…) llegan a `montar` en `api.t`. Los números ya vienen formateados desde practica.js.
 
-import { fmt, errorPegado, escribir } from './logica.js';
+import { fmt, errorPegado, escribir, permutaciones } from './logica.js';
 
 /** Nombre de cada posición, de las unidades (0) hacia arriba. */
 export const POSICION = [
@@ -167,10 +167,46 @@ export const TX = {
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
 const cuentaHtml = s => `<span class="cuenta">${s}</span>`;
 
-/** Ejercicio 1: construye el número. */
-export function explicaConstruir(item, { tt, idioma }) {
-  const T = TX.construir;
+const mayuscula = s => s[0].toUpperCase() + s.slice(1);
+
+/**
+ * «Más cercano a…»: el más cercano siempre es el más próximo por debajo o el más próximo por encima
+ * (revisión 193: antes solo decía que «ningún otro está tan cerca», sin un método para el siguiente).
+ */
+function explicaCercano(item, { tt, idioma }) {
   const num = n => fmt(n, idioma);
+  const todas = permutaciones(item.cifras);
+  const debajo = todas.filter(n => n < item.objetivo);
+  const encima = todas.filter(n => n > item.objetivo);
+  const lado = (n, es) => (es
+    ? `${cuentaHtml(num(n))} (está a ${num(Math.abs(n - item.objetivo))})`
+    : `${cuentaHtml(num(n))} (${num(Math.abs(n - item.objetivo))} away)`);
+  const o = num(item.objetivo);
+  const c = item.cifras.join(', ');
+  let caso;
+  if (debajo.length && encima.length) {
+    const d = Math.max(...debajo), e = Math.min(...encima);
+    caso = {
+      es: `Con las cifras ${c}, el más próximo por debajo de ${o} es ${lado(d, true)} y el más próximo por encima, ${lado(e, true)}.`,
+      en: `With the digits ${c}, the closest below ${o} is ${lado(d, false)} and the closest above is ${lado(e, false)}.`,
+    };
+  } else {
+    const n = debajo.length ? Math.max(...debajo) : Math.min(...encima);
+    const donde = debajo.length ? { es: 'por debajo', en: 'below' } : { es: 'por encima', en: 'above' };
+    caso = {
+      es: `Con las cifras ${c}, todos quedan ${donde.es} de ${o}; el más próximo es ${lado(n, true)}.`,
+      en: `With the digits ${c}, they are all ${donde.en} ${o}; the closest is ${lado(n, false)}.`,
+    };
+  }
+  const regla = { es: 'Busca el más próximo por debajo y el más próximo por encima: gana el que está más cerca.', en: 'Find the closest number below and the closest number above: the nearer one wins.' };
+  return `${tt(regla)} ${tt(caso)} ${tt(RESPUESTA)} ${cuentaHtml(num(item.solucion))}.`;
+}
+
+/** Ejercicio 1: construye el número. Revisión 193: la razón delante y la respuesta al final (antes, «La respuesta es X: razón»). */
+export function explicaConstruir(item, ctx) {
+  const { tt, idioma } = ctx;
+  if (item.consigna === 'cercano') return explicaCercano(item, ctx);
+  const T = TX.construir;
   const ultima = item.solucion % 10;
   const resto = [...item.cifras];
   resto.splice(resto.indexOf(ultima), 1);
@@ -179,50 +215,84 @@ export function explicaConstruir(item, { tt, idioma }) {
     menor: () => tt(T.por_que.menor)(item.hayCero),
     menor_par: () => tt(T.por_que.menor_par)(ultima, resto.includes(0)),
     mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
-    cercano: () => tt(T.por_que.cercano)(num(item.objetivo), num(Math.abs(item.solucion - item.objetivo))),
   }[item.consigna]();
   const cifras = { es: `Tienes las cifras ${item.cifras.join(', ')}.`, en: `You have the digits ${item.cifras.join(', ')}.` };
-  return `${tt(cifras)} ${tt(RESPUESTA)} ${cuentaHtml(num(item.solucion))}${porQue}`;
+  // «: las cifras de mayor a menor.» (mayor, menor) no es una frase por sí sola: se le pone el verbo.
+  const razon = porQue.replace(/^: /, '');
+  const frase = ['mayor', 'menor'].includes(item.consigna) ? `${tt({ es: 'Se ponen', en: 'Put the' })} ${razon}` : mayuscula(razon);
+  return `${tt(cifras)} ${frase} ${tt(RESPUESTA)} ${cuentaHtml(fmt(item.solucion, idioma))}.`;
 }
 
 /** Ejercicio 2: valor de las cifras (cuatro tipos de ítem). */
 export function explicaDescomposicion(item, { tt, idioma }) {
   const T = TX.descomposicion;
   const num = n => fmt(n, idioma);
+  // Revisión 193: en a_suma la regla salía dos veces (la de delante y la del feedback); en a_suma, a_numero y
+  // posicion faltaba «La respuesta es …» al final.
   if (item.tipo === 'a_suma') {
     const regla = { es: 'Cada cifra se escribe con lo que vale en su posición; las posiciones con 0 no se ponen.', en: 'Each digit is written with what it is worth in its position; positions with 0 are left out.' };
-    return `${tt(regla)} ${tt(T.a_suma_fb)(num(item.n), item.correctas.map(num).join(' + '))}`;
+    const fichas = item.correctas.map(v => cuentaHtml(num(v)));
+    const lista = fichas.length === 1
+      ? { es: fichas[0], en: fichas[0] }
+      : { es: `${fichas.slice(0, -1).join(', ')} y ${fichas.at(-1)}`, en: `${fichas.slice(0, -1).join(', ')} and ${fichas.at(-1)}` };
+    return `${tt(regla)} ${cuentaHtml(`${num(item.n)} = ${item.correctas.map(num).join(' + ')}`)}. ${tt(RESPUESTA)} ${tt(lista)}.`;
   }
   if (item.tipo === 'a_numero') {
     const regla = { es: 'Se suman los valores de cada posición.', en: 'Add the values of each position.' };
     const pegado = errorPegado(item);
     const aviso = pegado === null ? '' : tt(T.pegado)(num(item.n), num(pegado));
-    return `${tt(regla)} ${tt(T.a_numero_fb)(num(item.n), item.sumandos.map(num).join(' + '))}${aviso}`;
+    return `${tt(regla)} ${tt(T.a_numero_fb)(num(item.n), item.sumandos.map(num).join(' + '))}${aviso} ${tt(RESPUESTA)} ${cuentaHtml(num(item.n))}.`;
   }
   if (item.tipo === 'valor') {
     const regla = { es: 'Una cifra vale según la posición en la que está.', en: 'A digit is worth what its position says.' };
     return `${tt(regla)} ${tt(T.valor_fb)(num(item.n), item.cifra, item.pos, num(item.correcto))} ${tt(RESPUESTA)} ${cuentaHtml(num(item.correcto))}.`;
   }
   const regla = { es: 'Se cuenta desde la derecha: unidades, decenas, centenas, millares…', en: 'Count from the right: units, tens, hundreds, thousands…' };
-  return `${tt(regla)} ${tt(T.posicion_fb)(num(item.n), item.cifra, item.pos)}`;
+  const orden = ORDINAL[item.pos];
+  const caso = { es: `En ${num(item.n)}, el ${item.cifra} es la ${orden.es} cifra por la derecha.`, en: `In ${num(item.n)}, the ${item.cifra} is the ${orden.en} digit from the right.` };
+  const sol = { es: `«${POSICION[item.pos].es}»`, en: `“${POSICION[item.pos].en}”` };
+  return `${tt(regla)} ${tt(caso)} ${tt(RESPUESTA)} ${tt(sol)}.`;
 }
+
+const ORDINAL = [
+  { es: 'primera', en: 'first' }, { es: 'segunda', en: 'second' }, { es: 'tercera', en: 'third' },
+  { es: 'cuarta', en: 'fourth' }, { es: 'quinta', en: 'fifth' },
+];
 
 /** Ejercicio 3: comas y puntos, o un número dicho con palabras. */
 export function explicaComaPalabras(item, { tt, idioma }) {
-  const T = TX.coma;
+  // Revisión 193: la tarjeta de los decimales repetía la regla dos veces y el número tres; la de palabras
+  // daba la respuesta delante y separaba los grupos con «·», que en esta unidad es el signo de multiplicar.
   if (item.tipo === 'coma') {
-    const fb = (item.sub === 'miles' ? T.fb_miles : T.fb_decimal)[item.dir];
-    let h = tt(fb)(item.dado, item.correcto);
-    if (item.sub === 'decimal') h += tt(T.trampa_decimal)(escribir(item.c, 'es'), escribir(item.c, 'en'));
-    else {
-      // «75.443 sería 75.443» no dice nada: la trampa solo se cuenta si cambia la escritura.
-      const escrito = escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto');
-      if (item.mal !== null && item.mal !== item.correcto && item.mal !== escrito) h += tt(T.trampa)(escrito, item.mal);
+    const sol = `${tt(RESPUESTA)} ${cuentaHtml(item.correcto)}.`;
+    if (item.sub === 'decimal') {
+      const regla = item.dir === 'en_es'
+        ? { es: 'En inglés el punto separa los decimales; en español los separa la coma.', en: 'In English a point separates the decimals; in Spanish a comma does.' }
+        : { es: 'En español la coma separa los decimales; en inglés los separa el punto.', en: 'In Spanish a comma separates the decimals; in English a point does.' };
+      return `${tt(regla)} ${sol}`;
     }
-    return h;
+    const regla = item.dir === 'en_es'
+      ? { es: 'En inglés la coma separa los grupos de tres cifras; en español se separan con un punto o un espacio.', en: 'In English a comma separates groups of three digits; in Spanish you use a point or a space.' }
+      : { es: 'En español los grupos de tres cifras se separan con un punto o un espacio; en inglés, con una coma.', en: 'In Spanish groups of three digits are separated with a point or a space; in English, with a comma.' };
+    // La trampa (leerlo con las reglas del otro idioma), solo si cambia la escritura: «75.443 sería 75.443» no dice nada.
+    const escrito = escribir(item.c, item.dir === 'en_es' ? 'en' : 'es', 'punto');
+    const trampa = item.mal !== null && item.mal !== item.correcto && item.mal !== escrito
+      ? (item.dir === 'en_es'
+        ? { es: ` Ojo: leído a la española, ${escrito} sería ${cuentaHtml(item.mal)}, otro número.`, en: ` Careful: read the Spanish way, ${escrito} would be ${cuentaHtml(item.mal)}, a different number.` }
+        : { es: ` Ojo: leído a la inglesa, ${escrito} sería ${cuentaHtml(item.mal)}, otro número.`, en: ` Careful: read the English way, ${escrito} would be ${cuentaHtml(item.mal)}, a different number.` })
+      : null;
+    return `${tt(regla)} ${sol}${trampa ? tt(trampa) : ''}`;
   }
   const m = Math.floor(item.n / 1000000), k = Math.floor(item.n / 1000) % 1000, u = item.n % 1000;
   const g = x => String(x).padStart(3, '0');
-  const regla = { es: 'Escribe por grupos de tres cifras: millones, millares y unidades.', en: 'Write it in groups of three digits: millions, thousands and units.' };
-  return `${tt(regla)} ${tt(T.palabras_fb)(fmt(item.n, idioma), tt(T.grupos_nombres)(m, g(k), g(u)))}`;
+  const regla = { es: 'Se escribe por grupos de tres cifras: millones, millares y unidades.', en: 'Write it in groups of three digits: millions, thousands and units.' };
+  // Lo que suele fallar: un grupo corto lleva ceros delante (87 → 087) y un grupo que no se dice es 000.
+  const corto = [k, u].find(x => x > 0 && x < 100);
+  const ojo = [
+    corto === undefined ? null : { es: `cada grupo lleva tres cifras (${corto} → ${g(corto)})`, en: `each group has three digits (${corto} → ${g(corto)})` },
+    k === 0 || u === 0 ? { es: 'un grupo que no se dice es 000', en: 'a group that is not said is 000' } : null,
+  ].filter(Boolean);
+  const aviso = ojo.length ? ` ${mayuscula(ojo.map(tt).join(idioma === 'es' ? ', y ' : ', and '))}.` : '';
+  const grupos = { es: `Aquí: millones ${m}; millares ${g(k)}; unidades ${g(u)}.`, en: `Here: millions ${m}; thousands ${g(k)}; units ${g(u)}.` };
+  return `${tt(regla)}${aviso} ${tt(grupos)} ${tt(RESPUESTA)} ${cuentaHtml(fmt(item.n, idioma))}.`;
 }
