@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T23:08Z por s-20261114T230323-5099e2b1 al cerrar la 12 (LISTA, reabierta del 14-11: atracciones en minutos; commit d256334; npm test 2330/2330; prueba en navegador 375 y 1200 px): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T22:38Z por s-20261114T211653-2333dc16 al cerrar la 197 (LISTA; commit eabecac en origin; npm test 2323/2323; 375 px: de 98 signos sueltos a 0; 1200 px: 0): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T21:38Z por s-20261114T212714-761c8123 al dar de alta «Coloca los paréntesis» en la U3, la U4 y la U5 (coordinadora, sin reclamo): fichas 199 (motor y base, ALTO), 200-202 (prácticas, MEDIO) y 203-204 (publicación, ALTO); decisiones en proyecto.md, «Decisiones del 14-11: colocar paréntesis en la U3, la U4 y la U5»: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T19:39Z por s-20261114T185703-a741c82e al cerrar la 193 (L
 Actualizado 2026-11-14T15:08Z por s-20261114T150738-c83636b9 al reclamar la 193 (revisión del «No lo sé» de la U1 y la U2): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T15:05Z por s-20261114T145716-e48af71b al cerrar la 187 (LISTA, relevo; «No lo sé» en parentesis, jerarquia, exponente, raiz y division; npm test 2250/2250; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T14:08Z por s-20261114T113351-e5a8777d al cerrar la 186 (LISTA; npm test 2205/2205): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -145,7 +145,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 09 | m.c.d. y m.c.m. con factores primos (Venn) | tareas/tarea-09-venn.md | 01 LISTA | 2 h 30 min | ALTO | — | practicas/venn/; salidas/09-venn/ | LISTA | terminada 21:44Z (7-oct) · commit f5748e7 |
 | 10 | Detector de imposibles | tareas/tarea-10-imposibles.md | 01 LISTA | 1 h 30 min | MEDIO | 08 | practicas/imposibles/; salidas/10-imposibles/ | LISTA | terminada 21:13Z (14-nov) · commit 06f266b |
 | 11 | ¿m.c.d. o m.c.m.? Clasificador de enunciados | tareas/tarea-11-clasificador.md | 01 LISTA | 2 h | MEDIO | — | practicas/clasificador/; salidas/11-clasificador/ | LISTA | terminada 21:12Z (14-nov) · commit 100f0d3 |
-| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | REABIERTA | reabierta 20:54Z (14-nov): `hechos/reabiertas/12--s-20261114T205046-d42ceb19-feria-en-minutos.md` |
+| 12 | Reloj de coincidencias | tareas/tarea-12-reloj.md | 01 LISTA | 2 h | MEDIO | — | practicas/reloj/; salidas/12-reloj/ | LISTA | terminada 23:08Z (14-nov) · commit d256334 |
 | 13 | Baldosas y cuerdas | tareas/tarea-13-baldosas.md | 01 LISTA | 2 h | MEDIO | — | practicas/baldosas/; salidas/13-baldosas/ | LISTA | terminada 10:38Z (9-oct) |
 | 14 | Caza el error | tareas/tarea-14-errores.md | 01 LISTA | 2 h | MEDIO | — | practicas/errores/; salidas/14-errores/ | LISTA | terminada 21:16Z (14-nov) · commit 1497a85 |
 | 15 | Léelo en inglés | tareas/tarea-15-leelo.md | 01 LISTA | 1 h 30 min | MEDIO | 16 | practicas/leelo/; salidas/15-leelo/ | LISTA | terminada 10:38Z (9-oct) · commit 6b365ca |
@@ -342,7 +342,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 22:38Z**: BLOQUEADA 10 (156, 157, 158, 159, 160, 200, 201, 202, 203, 204) · LISTA 188 · PENDIENTE 2 (198, 199) · REABIERTA 4 (12, 21, 23, 114).
+**Foto a 2026-11-14 23:08Z**: BLOQUEADA 10 (156, 157, 158, 159, 160, 200, 201, 202, 203, 204) · LISTA 189 · PENDIENTE 2 (198, 199) · REABIERTA 3 (21, 23, 114).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -374,12 +374,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (323), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (324), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 12 · 2026-11-14 23:08 · s-20261114T230323-5099e2b1 · d256334 en origin/main (practicas/reloj/{logica,t… · 5 · ~40 min
 LISTA · tarea 197 · 2026-11-14 22:37 · s-20261114T211653-2333dc16 · eabecac en origin/main (cherry-pick desde worktre… · 6 (docs/no-lo-se.md, practicas/_comun/base.js, practicas/_comun/estilos.css, pr… · ~1 h 20 min (21:16Z → 22:37Z), con unos 15 min de…
 LISTA · tarea 17 · 2026-11-14 21:23 · s-20261114T212145-cf10b436 · 1fbf4ee (divisores/practica.js, tests/practicas-a… · 2 · ~20 min
 LISTA · tarea 02 · 2026-11-14 21:21 · s-20261114T211723-19571cd6 · f208f58 (practicas/semaforo/{logica,textos}.js, t… · 3 · ~25 min

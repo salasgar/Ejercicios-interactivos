@@ -138,6 +138,7 @@ Propios de esta tarea:
   `base.js`). Ponerlo también en el `html` duplica el mensaje («No es correcto. No es
   correcto. …»); el único sitio donde se vio fue probando en el navegador, los tests no
   lo detectan porque no miran el HTML final montado por la base.
+- (12, reabierta del 14-11) El ej. 3 son atracciones de feria en **minutos**, no días: periodos 3-20 y m.c.m. ≤ 120 (tríos ≤ 60); las cotas están exportadas en `logica.js` y un test recorre `TRIOS` y `MULTIPLOS` enteros. Un cambio de unidad toca también `tests/practicas-semana.test.js` (`'reloj/3'`) y `practicas-ayuda-reloj.test.js`.
 - La línea de tiempo se hizo con **dos filas de 31 columnas** (`.rejilla` con
   `--columnas: 31`, segundos 0-30 y 31-60), no con una fila de 61 con lupa: a 375 px da
   celdas de ~11 px, legibles y tocables sin zoom.
