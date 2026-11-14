@@ -17,12 +17,12 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>Lee el problema y <strong>monta la expresión</strong> que lo resuelve tocando las fichas. No hay que calcular nada.</p>
         <p>Por ejemplo, «3 cajas de 12 botes y 5 cajas de 8 botes» es <strong>3 · 12 + 5 · 8</strong>.</p>
-        <p>Ojo con los paréntesis: si la frase no dice «todo», no los hay. «20 menos 5 multiplicado por 3» es <strong>20 − 5 · 3</strong>, no (20 − 5) · 3.</p>
+        <p>Ojo con los paréntesis: la multiplicación va antes que la resta, así que «20 menos 5 multiplicado por 3» es <strong>20 − 5 · 3</strong>. Para que la resta vaya antes, la frase lo dice: «20 menos 5, todo multiplicado por 3» es (20 − 5) · 3.</p>
         <p>Si te equivocas, toca una ficha de la línea para quitarla. Recuerda: la multiplicación y la división se hacen antes que la suma y la resta.</p>`,
       en: `<h2>How it works</h2>
         <p>Read the problem and <strong>build the expression</strong> that solves it. Tap the buttons. You do not need to calculate anything.</p>
         <p>For example, “3 boxes of 12 tins and 5 boxes of 8 tins” is <strong>3 · 12 + 5 · 8</strong>.</p>
-        <p>Watch the brackets: if the sentence does not say “all”, there are none. “20 minus 5 multiplied by 3” is <strong>20 − 5 · 3</strong>, not (20 − 5) · 3.</p>
+        <p>Watch the brackets: multiplication comes before subtraction, so “20 minus 5 multiplied by 3” is <strong>20 − 5 · 3</strong>. For the subtraction to come first, the sentence says so: “20 minus 5, all multiplied by 3” is (20 − 5) · 3.</p>
         <p>If you make a mistake, tap it in the line to remove it. Remember: multiplication and division come before addition and subtraction.</p>`,
     },
   },
@@ -118,8 +118,11 @@ export const TX = {
 //   es, en    el enunciado, función de los números
 //   explica   { es, en }: por qué la expresión es esa, con los números
 //
-// REGLA DE ORO: ningún enunciado admite dos modelos distintos. Los verbales
-// siguen la convención de la unidad: sin «todo» / «all» no hay paréntesis.
+// REGLA DE ORO: ningún enunciado admite dos modelos distintos. En los verbales
+// manda la jerarquía: el paréntesis solo aparece cuando la frase pide hacer
+// antes una suma o una resta, y lo avisa («todo» / «all», «la suma de…»,
+// «la diferencia de…»). Revisión 193: «sin «todo» no hay paréntesis» no vale
+// como regla («31 menos la suma de 8 y 2», ejercicio 2).
 
 const cuadrados = [16, 25, 36, 49, 64, 81, 100, 121, 144];
 /** Parejas de cuadrados cuya suma también es un cuadrado. */
@@ -204,8 +207,8 @@ export const PLANTILLAS = [
     es: n => `«${n.a} menos ${n.b} multiplicado por ${n.c}»`,
     en: n => `“${n.a} minus ${n.b} multiplied by ${n.c}”`,
     explica: {
-      es: n => `La frase no dice «todo», así que no hay paréntesis: solo el ${n.b} se multiplica por ${n.c}.`,
-      en: n => `The sentence does not say “all”, so there are no brackets: only ${n.b} is multiplied by ${n.c}.`,
+      es: n => `Solo el ${n.b} va multiplicado por ${n.c}, y la multiplicación ya se hace antes que la resta: no hace falta paréntesis.`,
+      en: n => `Only ${n.b} is multiplied by ${n.c}, and multiplication already comes before subtraction: you do not need brackets.`,
     },
   },
   {
@@ -274,8 +277,8 @@ export const PLANTILLAS = [
     es: n => `«${n.a} más ${n.b} multiplicado por ${n.c}»`,
     en: n => `“${n.a} plus ${n.b} multiplied by ${n.c}”`,
     explica: {
-      es: n => `La frase no dice «todo», así que no hay paréntesis: solo el ${n.b} se multiplica por ${n.c}.`,
-      en: n => `The sentence does not say “all”, so there are no brackets: only ${n.b} is multiplied by ${n.c}.`,
+      es: n => `Solo el ${n.b} va multiplicado por ${n.c}, y la multiplicación ya se hace antes que la suma: no hace falta paréntesis.`,
+      en: n => `Only ${n.b} is multiplied by ${n.c}, and multiplication already comes before addition: you do not need brackets.`,
     },
   },
   {
@@ -284,8 +287,8 @@ export const PLANTILLAS = [
     es: n => `«${n.a} más ${n.b} dividido entre ${n.c}»`,
     en: n => `“${n.a} plus ${n.b} divided by ${n.c}”`,
     explica: {
-      es: n => `La frase no dice «todo», así que no hay paréntesis: solo el ${n.b} se divide entre ${n.c}.`,
-      en: n => `The sentence does not say “all”, so there are no brackets: only ${n.b} is divided by ${n.c}.`,
+      es: n => `Solo el ${n.b} va dividido entre ${n.c}, y la división ya se hace antes que la suma: no hace falta paréntesis.`,
+      en: n => `Only ${n.b} is divided by ${n.c}, and division already comes before addition: you do not need brackets.`,
     },
   },
 

@@ -536,30 +536,12 @@ export function htmlModelo(item, { tt, idioma }) {
 }
 
 /**
- * Revisión 193: en estas tres frases el `explica` del banco (que usa también el feedback) dice «La frase no
- * dice «todo», así que no hay paréntesis», y eso no vale siempre: «31 menos la suma de 8 y 2» (ejercicio 2)
- * lleva paréntesis sin decir «todo». La tarjeta usa en su lugar la jerarquía, que sí vale siempre.
+ * «No lo sé»: el razonamiento del ítem, la expresión que lo resuelve y un consejo. El razonamiento es el
+ * `explica` del banco, el mismo que da el feedback (reabierta de la 24, 14-11: una sola versión del texto).
  */
-const SIN_TODO = {
-  frase_mas_por: { es: ['multiplicado por', 'la multiplicación', 'la suma'], en: ['multiplied by', 'multiplication', 'addition'] },
-  frase_menos_por: { es: ['multiplicado por', 'la multiplicación', 'la resta'], en: ['multiplied by', 'multiplication', 'subtraction'] },
-  frase_mas_entre: { es: ['dividido entre', 'la división', 'la suma'], en: ['divided by', 'division', 'addition'] },
-};
-
-/** «No lo sé»: el razonamiento del ítem, la expresión que lo resuelve y un consejo. */
 export function explicaExpresion(item, ctx) {
   const consejo = item.tipo === 'elegir'
     ? ctx.tt({ es: 'Consejo: lee qué se hace primero y qué se hace con el resultado.', en: 'Tip: read what you do first and what you do with the result.' })
     : ctx.tt({ es: 'Consejo: piensa cada parte del problema por separado y luego únelas.', en: 'Tip: think about each part of the problem on its own, then join them.' });
-  const sinTodo = SIN_TODO[item.plantilla];
-  if (sinTodo) {
-    const { b, c } = item.numeros;
-    const [op, primera, segunda] = sinTodo[ctx.idioma];
-    const razon = ctx.idioma === 'es'
-      ? `Solo el ${b} va ${op} ${c}, y ${primera} ya se hace antes que ${segunda}: no hace falta paréntesis.`
-      : `Only ${b} is ${op} ${c}, and ${primera} already comes before ${segunda}: you do not need brackets.`;
-    const modelo = cuenta(aFichas(item.modelo), evaluar(item.modelo), ctx.idioma);
-    return `${razon} ${ctx.tt(TX.la_expresion_es)} ${modelo}. ${consejo}`;
-  }
   return `${htmlModelo(item, ctx)} ${consejo}`;
 }

@@ -15,6 +15,7 @@ import {
   analizar, aFichas, evaluar, equivalentes, quitarSobrantes, corregir,
   FAMILIAS, instanciar, modeloDe, erroresDe, plantillaPorId, numerosValidos,
   generarSin, generarCon, generarPotencias, claveItem, P_VARIANTE, MAX_FICHAS, sumaRepetida, esRestaRepetida,
+  explicaExpresion,
 } from '../practicas/expresion/logica.js';
 
 // ─── Definiciones independientes ────────────────────────────────────────────────
@@ -666,9 +667,62 @@ test('suma repetida (segunda revisión): una sola ficha, los omitidos que no son
   assert.ok(/restar/.test(TX.repetidaResta.es([2])) && /subtracting/.test(TX.repetidaResta.en([2])));
 });
 
-test('introducción del ejercicio 1: explica que sin «todo» no hay paréntesis, con un ejemplo corto', () => {
-  assert.ok(/no dice «todo», no los hay/.test(TX.sin.introduccion.es) && /20 − 5 · 3/.test(TX.sin.introduccion.es));
-  assert.ok(/does not say “all”, there are none/.test(TX.sin.introduccion.en) && /20 − 5 · 3/.test(TX.sin.introduccion.en));
+test('introducción del ejercicio 1: el paréntesis por la jerarquía, con «20 − 5 · 3» y «(20 − 5) · 3» (reabierta 24, 14-11)', () => {
+  const es = TX.sin.introduccion.es, en = TX.sin.introduccion.en;
+  assert.ok(/la multiplicación va antes que la resta/.test(es) && /20 − 5 · 3/.test(es) && /todo multiplicado por 3» es \(20 − 5\) · 3/.test(es), es);
+  assert.ok(/multiplication comes before subtraction/.test(en) && /20 − 5 · 3/.test(en) && /all multiplied by 3” is \(20 − 5\) · 3/.test(en), en);
+});
+
+// Revisión 193, punto 7: «si la frase no dice «todo», no hay paréntesis» es falso en la propia práctica
+// («31 menos la suma de 8 y 2», ejercicio 2). No puede volver a salir como regla en ningún texto.
+const REGLA_FALSA = /no dice «todo»|sin «todo»,? no hay|does not say “all”|without “all”,? there (are|is) no/i;
+
+test('ningún texto de la práctica enseña «sin «todo» no hay paréntesis» (introducciones, explica, tarjeta, feedback; es y en)', () => {
+  const textos = [];
+  const recorrer = v => {
+    if (typeof v === 'string') textos.push(v);
+    else if (typeof v === 'function') { for (const arg of [[2, 3], 1, 2]) { try { textos.push(String(v(arg))); } catch { /* firma distinta */ } } }
+    else if (v && typeof v === 'object') Object.values(v).forEach(recorrer);
+  };
+  recorrer(TX);
+  const rng = crearRng(24);
+  for (const p of PLANTILLAS) for (let k = 0; k < 5; k++) {
+    const n = p.numeros(rng);
+    for (const idioma of ['es', 'en']) { textos.push(p[idioma](n)); if (p.explica) textos.push(p.explica[idioma](n)); }
+  }
+  const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
+  for (const [generar, semilla] of [[generarSin, 1], [generarCon, 2], [generarPotencias, 3]]) {
+    const r = crearRng(semilla);
+    for (let i = 0; i < 300; i++) {
+      const item = generar(r, { aciertos: i % 12, fallos: 0, puntos: 0, vidas: 5, anterior: null });
+      for (const idioma of ['es', 'en']) textos.push(explicaExpresion(item, ctx(idioma)));
+    }
+  }
+  assert.ok(textos.length > 2000, `solo ${textos.length} textos`);
+  for (const t of textos) assert.ok(!REGLA_FALSA.test(t), t);
+});
+
+test('frases del ejercicio 1 sin paréntesis: el explica razona con la jerarquía, el mismo texto que la tarjeta', () => {
+  const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
+  const casos = {
+    frase_mas_por: ['multiplicado por', 'la multiplicación ya se hace antes que la suma', 'multiplication already comes before addition'],
+    frase_menos_por: ['multiplicado por', 'la multiplicación ya se hace antes que la resta', 'multiplication already comes before subtraction'],
+    frase_mas_entre: ['dividido entre', 'la división ya se hace antes que la suma', 'division already comes before addition'],
+  };
+  const r = crearRng(7);
+  const vistos = new Set();
+  for (let i = 0; i < 600; i++) {
+    const item = generarSin(r, { aciertos: i % 12, fallos: 0, puntos: 0, vidas: 5, anterior: null });
+    const caso = casos[item.plantilla];
+    if (!caso) continue;
+    vistos.add(item.plantilla);
+    const { b, c } = item.numeros;
+    const p = plantillaPorId(item.plantilla);
+    assert.equal(p.explica.es(item.numeros), `Solo el ${b} va ${caso[0]} ${c}, y ${caso[1]}: no hace falta paréntesis.`);
+    assert.ok(p.explica.en(item.numeros).startsWith(`Only ${b} is `) && p.explica.en(item.numeros).includes(caso[2]), p.explica.en(item.numeros));
+    for (const idioma of ['es', 'en']) assert.ok(explicaExpresion(item, ctx(idioma)).startsWith(p.explica[idioma](item.numeros)));
+  }
+  assert.equal(vistos.size, 3);
 });
 
 test('textos: los números que faltan se enumeran con comas («3, 4 y 5»)', () => {
