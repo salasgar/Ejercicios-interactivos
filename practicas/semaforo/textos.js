@@ -27,3 +27,55 @@ export const TX = {
     instruccion: { es: '¿Qué cifra falta?', en: 'What digit is missing?' },
   },
 };
+
+// ─── «No lo sé» (tarea 183): la explicación de cada ejercicio ─────────────────────────────────────
+// Reutiliza el paso a paso que ya da el feedback (`explicar`, de `logica.js`) y le pone delante la regla
+// y detrás la respuesta, tal como la da por buena el ejercicio.
+
+import { explicar, primosDe } from './logica.js';
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const lista = (valores, idioma) => {
+  const y = idioma === 'es' ? ' y ' : ' and ';
+  return valores.length < 2 ? valores.join('') : `${valores.slice(0, -1).join(', ')}${y}${valores.at(-1)}`;
+};
+
+/** Ejercicios 1 y 2: cada botón con su criterio, y la lista de los que dividen al número. */
+export function explicaSemaforo(item, { idioma }) {
+  const es = idioma === 'es';
+  const regla = es
+    ? `Mira cada botón con su criterio de divisibilidad (2, 5 y 10: la última cifra; 3 y 9: la suma de las cifras${item.divisores.includes(11) ? '; 11: las cifras de lugar impar y de lugar par' : ''}):`
+    : `Check each button with its divisibility rule (2, 5 and 10: the last digit; 3 and 9: the sum of the digits${item.divisores.includes(11) ? '; 11: the digits in odd and even places' : ''}):`;
+  const buenos = item.correctos.length ? lista(item.correctos, idioma) : TX.ninguno[idioma];
+  const fin = es ? `La respuesta es: ${buenos}.` : `The answer is: ${buenos}.`;
+  return `<p>${regla}</p>${explicar(item, null, idioma)}<p>${fin}</p>`;
+}
+
+/** Ejercicio 3: un compuesto se comprueba con sus primos; la trampa del 24, dividiendo. */
+export function explicaSino(item, { idioma }) {
+  const es = idioma === 'es';
+  const respuesta = item.correctos === 'si' ? (es ? 'Sí' : 'Yes') : 'No';
+  const regla = item.tipo === 'trampa'
+    ? (es ? 'Ser divisible entre 4 y entre 6 no basta para el 24: hay que hacer la división.' : 'Being divisible by 4 and by 6 is not enough for 24: you have to do the division.')
+    : (es
+      ? `Para el ${item.d} se miran sus primos (${lista(primosDe(item.d), idioma)}): tiene que ser divisible entre todos.`
+      : `For ${item.d}, look at its primes (${lista(primosDe(item.d), idioma)}): it has to be divisible by all of them.`);
+  const fin = es ? `La respuesta es «${respuesta}».` : `The answer is “${respuesta}”.`;
+  return `<p>${regla}</p><p>${explicar(item, item.correctos, idioma)}</p><p>${fin}</p>`;
+}
+
+const CRITERIO_CIFRA = {
+  es: { 2: 'acabar en cifra par', 5: 'acabar en 0 o en 5', 3: 'que las cifras sumen un múltiplo de 3', 9: 'que las cifras sumen un múltiplo de 9', 11: 'que las cifras de lugar impar y de lugar par se diferencien en un múltiplo de 11' },
+  en: { 2: 'ending in an even digit', 5: 'ending in 0 or 5', 3: 'the digits adding up to a multiple of 3', 9: 'the digits adding up to a multiple of 9', 11: 'the digits in odd and even places differing by a multiple of 11' },
+};
+
+/** Ejercicio 4: el criterio de cada divisor, la cifra y la comprobación con el número completo. */
+export function explicaCifra(item, { idioma }) {
+  const es = idioma === 'es';
+  const criterios = item.divisores.map(d => `${d}: ${CRITERIO_CIFRA[idioma][d]}`).join('; ');
+  const regla = es
+    ? `Prueba cifras en el hueco hasta que se cumpla lo que pide cada divisor (${criterios}).`
+    : `Try digits in the gap until each divisor’s rule is true (${criterios}).`;
+  return `<p>${regla}</p><p>${explicar(item, item.solucion, idioma)}</p>`;
+}

@@ -5,7 +5,7 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
 import { generarMultiplos, generarDivisores, generarVF, esCorrecta, explicar } from './logica.js';
-import { TX } from './textos.js';
+import { TX, explicaMultiplos, explicaDivisores, explicaVF, NO_SE_HACERLO } from './textos.js';
 
 // ─── Ejercicios 1 y 2: marca en la recta (filas de diez, toque para encender) ───
 
@@ -94,6 +94,8 @@ arrancar({
       clave: item => `${item.n}`,
       montar: montarRecta,
       enunciado: enunciadoRecta,
+      explicacion: explicaMultiplos, // «No lo sé» (tarea 183)
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej2.nombre,
@@ -102,6 +104,8 @@ arrancar({
       clave: item => `${item.n}`,
       montar: montarRecta,
       enunciado: enunciadoRecta,
+      explicacion: explicaDivisores,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej3.nombre,
@@ -110,6 +114,7 @@ arrancar({
       clave: item => `${item.plantilla}-${item.n ?? ''}-${item.a ?? ''}-${item.b ?? ''}`,
       montar: montarVF,
       enunciado: enunciadoVF,
+      explicacion: explicaVF,
     },
   ],
 });

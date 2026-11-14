@@ -8,7 +8,7 @@ import {
   generarSemaforo1, generarSemaforo2, generarSinoOTrampa, generarCifra,
   esCorrecta, explicar,
 } from './logica.js';
-import { TX } from './textos.js';
+import { TX, explicaSemaforo, explicaSino, explicaCifra, NO_SE_HACERLO } from './textos.js';
 
 // ─── Ejercicios 1 y 2: el semáforo (botones que se encienden y se apagan) ───────
 
@@ -146,6 +146,8 @@ arrancar({
       clave: item => `${item.n}`,
       montar: montarSemaforo,
       enunciado: enunciadoSemaforo,
+      explicacion: explicaSemaforo, // «No lo sé» (tarea 183): construir la respuesta, no solo reconocerla
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej2.nombre,
@@ -154,6 +156,8 @@ arrancar({
       clave: item => `${item.n}`,
       montar: montarSemaforo,
       enunciado: enunciadoSemaforo,
+      explicacion: explicaSemaforo, // «No lo sé» (tarea 183): construir la respuesta, no solo reconocerla
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.ej3.nombre,
@@ -162,6 +166,7 @@ arrancar({
       clave: item => `${item.tipo}-${item.n}-${item.d ?? ''}`,
       montar: montarSino,
       enunciado: enunciadoSino,
+      explicacion: explicaSino,
     },
     {
       nombre: TX.ej4.nombre,
@@ -170,6 +175,8 @@ arrancar({
       clave: item => `${item.cifras.join('')}-${item.hueco}`,
       montar: montarCifra,
       enunciado: enunciadoCifra,
+      explicacion: explicaCifra,
+      noLoSe: NO_SE_HACERLO,
     },
   ],
 });

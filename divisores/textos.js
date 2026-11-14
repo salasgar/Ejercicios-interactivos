@@ -108,6 +108,80 @@ export function razonFalsa(relacion, x, y, idioma) {
   return `${dividendo} : ${divisor} = ${Math.floor(dividendo / divisor)}, ${COMUN[idioma].resto} ${dividendo % divisor}`;
 }
 
+// ─── «No lo sé» (tarea 183): la explicación de cada ejercicio, con los números del ítem ───────────
+
+export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
+const cuenta = texto => `<span class="cuenta">${texto}</span>`;
+const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const comillas = (texto, idioma) => (idioma === 'es' ? `«${texto}»` : `“${texto}”`);
+const nombreRelacion = (relacion, idioma) => comillas(T[idioma].relacion[relacion], idioma);
+
+/** Qué quiere decir «x es <relación> y», en una frase y con los números del ítem. */
+export function reglaRelacion(relacion, x, y, idioma) {
+  const nombre = nombreRelacion(relacion, idioma);
+  if (idioma === 'es') {
+    if (relacion === 'multiplo') return `${nombre} quiere decir que está en la tabla del ${y}: ${x} = ${y} · algún número.`;
+    if (relacion === 'divisor') return `${nombre} quiere decir que puedes dividir ${y} entre ${x} y el resto es 0.`;
+    return `${nombre} quiere decir que al dividir ${x} entre ${y} el resto es 0 (lo mismo que «múltiplo de»).`;
+  }
+  if (relacion === 'multiplo') return `${nombre} means it is in the ${y} times table: ${x} = ${y} · some number.`;
+  if (relacion === 'divisor') return `${nombre} means you can divide ${y} by ${x} and the remainder is 0.`;
+  return `${nombre} means that when you divide ${x} by ${y} the remainder is 0 (the same as “a multiple of”).`;
+}
+
+/** La cuenta que acompaña a la regla: «divisible» se comprueba dividiendo; las otras, como en `razon`. */
+export function cuentaRelacion(relacion, x, y, idioma) {
+  return relacion === 'divisible' ? `${x} : ${y} = ${x / y}, ${COMUN[idioma].resto} 0` : razon(relacion, x, y, idioma);
+}
+
+/** Ejercicio 0 («de» o «entre»): la preposición depende de la palabra, no de los números. */
+export function explicaPreposicion(item, { idioma }) {
+  const es = idioma === 'es';
+  const { x, y, relacion } = item;
+  const palabra = item.correcta;
+  const regla = es
+    ? 'Se dice «múltiplo de» y «divisor de», pero «divisible entre».'
+    : 'We say “a multiple of” and “a divisor of”, but “divisible by”.';
+  const prep = T[idioma].preposicion[palabra];
+  const aqui = es
+    ? `Aquí la frase es «${x} es ${T.es.palabra[relacion]} … ${y}»: lleva «${prep}».`
+    : `Here the sentence is “${x} is ${T.en.palabra[relacion]} … ${y}”: it takes “${prep}”.`;
+  const verdad = `${frase(relacion, x, y, idioma)}: ${cuenta(cuentaRelacion(relacion, x, y, idioma))}.`;
+  const fin = es ? `La respuesta es «${prep}».` : `The answer is “${prep}”.`;
+  return `${pasos([regla, aqui, verdad])}${fin}`;
+}
+
+/** Ejercicios 1, 2 y 3 (elegir la relación): se comprueba con la cuenta de cada relación que es verdad. */
+export function explicaEleccion(item, { idioma }) {
+  const es = idioma === 'es';
+  const { x, y, correctas } = item;
+  const comprobar = es
+    ? `Mira ${cuenta(textoOperacion(item.op, idioma))}: ¿está el ${x} en la tabla del ${y}, o el ${y} en la tabla del ${x}?`
+    : `Look at ${cuenta(textoOperacion(item.op, idioma))}: is ${x} in the ${y} times table, or ${y} in the ${x} times table?`;
+  const verdades = correctas.map(r => `${reglaRelacion(r, x, y, idioma)} ${es ? 'Aquí:' : 'Here:'} ${cuenta(cuentaRelacion(r, x, y, idioma))}, ${es ? 'así que' : 'so'} ${frase(r, x, y, idioma)}.`);
+  const nombres = correctas.map(r => nombreRelacion(r, idioma)).join(es ? ' o ' : ' or ');
+  const fin = es
+    ? `La respuesta es ${nombres}${correctas.length > 1 ? ' (las dos valen)' : ''}.`
+    : `The answer is ${nombres}${correctas.length > 1 ? ' (both are right)' : ''}.`;
+  return `${pasos([comprobar, ...verdades])}${fin}`;
+}
+
+/** Ejercicio 4 (arrastrar dos números a la frase): una colocación que sea verdad, con su cuenta. */
+export function explicaArrastrar(item, { idioma }, [sx, sy]) {
+  const es = idioma === 'es';
+  const dados = es
+    ? `Tienes los números ${item.numeros.join(', ')}; vienen de ${cuenta(textoOperacion(item.op, idioma))}.`
+    : `You have the numbers ${item.numeros.join(', ')}; they come from ${cuenta(textoOperacion(item.op, idioma))}.`;
+  const regla = reglaRelacion(item.relacion, sx, sy, idioma);
+  const buena = `${es ? 'Aquí:' : 'Here:'} ${cuenta(cuentaRelacion(item.relacion, sx, sy, idioma))}, ${es ? 'así que' : 'so'} ${frase(item.relacion, sx, sy, idioma)}.`;
+  const fin = es ? `Una solución es ${sx} y ${sy}.` : `One solution is ${sx} and ${sy}.`;
+  const consejo = es
+    ? ' Consejo: el número más grande de la operación es el múltiplo; los otros dos son divisores suyos.'
+    : ' Tip: the biggest number in the operation is the multiple; the other two are divisors of it.';
+  return `${pasos([dados, regla, buena])}${fin}${consejo}`;
+}
+
 /** «1 es divisor de 7: 7 : 1 = 7, resto 0» o «60 no es divisor de 5: «divisor de 5» quiere decir…». */
 export function fraseRazonada(f, idioma) {
   return f.verdadera

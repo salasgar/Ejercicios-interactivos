@@ -7,7 +7,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos, claseCorreccion } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaRectangulos, explicaBanco, explicaParar, NO_SE_HACERLO } from './textos.js';
 import {
   generarRectangulos, parPara, clavePar, todasLasClaves, sonTodasLasParejas, raizEntera,
   generarBanco, generarParte3, ladoCelda, huecoCelda,
@@ -227,6 +227,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarRectangulos,
       enunciado: enunciadoRectangulos,
+      explicacion: explicaRectangulos, // «No lo sé» (tarea 183)
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.banco.nombre,
@@ -235,6 +237,8 @@ arrancar({
       clave: item => String(item.n),
       montar: montarBanco,
       enunciado: enunciadoBanco,
+      explicacion: explicaBanco,
+      noLoSe: NO_SE_HACERLO,
     },
     {
       nombre: TX.parar.nombre,
@@ -242,6 +246,7 @@ arrancar({
       generar: generarParte3,
       montar: montarParte3,
       enunciado: enunciadoParte3,
+      explicacion: explicaParar,
     },
   ],
 });

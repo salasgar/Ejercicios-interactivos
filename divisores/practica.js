@@ -13,7 +13,10 @@ import { unir } from '../practicas/_comun/textos.js';
 import {
   RELACIONES, EJERCICIOS_ACTUALES, generar, esCorrecta, solucionArrastrar, claveDe, cumple,
 } from './logica.js';
-import { T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada, explicacion, cerrar } from './textos.js';
+import {
+  T as TX, textoOperacion, frase, fraseNegada, razon, fraseRazonada, explicacion, cerrar,
+  explicaPreposicion, explicaEleccion, explicaArrastrar, NO_SE_HACERLO,
+} from './textos.js';
 
 // No se repite el mismo ítem dos veces seguidas; `numeros` (el ejercicio 4)
 // se excluye a propósito, porque el barajado cambia aunque la operación no.
@@ -290,5 +293,15 @@ arrancar({
     clave,
     montar: n === 0 ? montarPreposicion : n === 4 ? montarArrastrar : n === 5 ? montarBichos : montarEleccion,
     enunciado: n === 0 ? enunciadoPreposicion : n === 4 ? enunciadoArrastrar : n === 5 ? enunciadoBichos : enunciadoEleccion,
+    // «No lo sé» (tarea 183). Elegir la preposición o la relación: reconocer, texto por defecto del botón.
+    // Arrastrar: construir, «No sé hacerlo». Los bichos son un juego: sin botón.
+    ...(n === 5
+      ? { sinAyuda: 'Es un juego (¿quién miente?): hay que leer las frases, no hay procedimiento que explicar.' }
+      : {
+        explicacion: n === 0 ? explicaPreposicion
+          : n === 4 ? (item, ctx) => explicaArrastrar(item, ctx, solucionArrastrar(item))
+            : explicaEleccion,
+        ...(n === 4 ? { noLoSe: NO_SE_HACERLO } : {}),
+      }),
   })),
 });
