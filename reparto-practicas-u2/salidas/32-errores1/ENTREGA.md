@@ -20,3 +20,11 @@ Navegador (Chrome, EN): menú y ejercicio 1 probados, fallo con feedback y penal
 Propuestas:
 - Catálogo: poner disponible: true para errores1 (tarea 18).
 - Decisión de Juan Luis: «saltarse un resultado intermedio» marca como error combinar operaciones dependientes en un paso (p. ej. 50 − 3·4 + 4 = 38 + 4); si prefiere tolerarlo en algún nivel, basta quitar esas 4 plantillas.
+
+## Reabierta del 14-11 (sesión s-20261114T211632-3d8a4f58, commit 1c4a684)
+- Feedback (`explicacion`): usa `ESTA_EN` y `minuscula` de la tarjeta: «El error está en la línea 2: <línea>» (número una sola vez, sin «2.» delante de la línea) y minúscula tras «Bien hecho sería:».
+- `parDistinto` (nuevo) en `b-independientes-potencias` (a ≠ b); en `b-independientes-productos`, «a · b» y «c · d» nunca son la misma operación (ni con los factores en otro orden). El resto de plantillas sigue con `par`. La práctica no tiene casos de examen excluidos.
+- Hash de 300 ítems por ejercicio (4 ejercicios, semilla por ítem), sin esas dos plantillas: idéntico antes y después.
+- Tests nuevos: 1500 ítems de feedback en es/en y 3000 ítems de las dos plantillas (salen las dos). errores1+ayuda+no-lo-se 122/122.
+- npm test 2316/2317: el fallo es `dictado · feedback (14-11)` (tarea 29, trabajo de otra sesión sin comitear en el árbol), no mío.
+- **No hice clics en el navegador**: cambio de texto y generador, cubierto por tests.
