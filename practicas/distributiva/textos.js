@@ -137,7 +137,11 @@ export function explicaPartir(item, { tt }) {
         en: `The long side is ${largo} cells. Cut after cell ${corte}: the piece on the right (${c} cells) is taken away.` }
     : { es: `El lado largo mide ${largo} celdas: ${b} + ${c}. Se corta tras la celda ${corte}.`,
         en: `The long side is ${largo} cells: ${b} + ${c}. Cut after cell ${corte}.` };
-  const calcula = { es: `Cada trozo es un rectángulo de ${a} filas: ${cuenta(igualdad(item))}.`, en: `Each piece is a rectangle with ${a} rows: ${cuenta(igualdad(item))}.` };
+  // Revisión 193: en la resta no son «dos trozos» que se suman, sino el rectángulo entero menos el trozo que se quita.
+  const calcula = resta
+    ? { es: `El rectángulo entero tiene ${a} filas de ${b}, y el trozo que se quita, ${a} filas de ${c}: ${cuenta(igualdad(item))}.`,
+        en: `The whole rectangle has ${a} rows of ${b}, and the piece taken away has ${a} rows of ${c}: ${cuenta(igualdad(item))}.` }
+    : { es: `Cada trozo es un rectángulo de ${a} filas: ${cuenta(igualdad(item))}.`, en: `Each piece is a rectangle with ${a} rows: ${cuenta(igualdad(item))}.` };
   return `${pasos([tt(corta), tt(calcula)])}${tt(RESPUESTA)} ${cuenta(solucion)}.`;
 }
 
@@ -163,7 +167,16 @@ export function explicaCompensar(item, { tt, idioma }) {
   const regla = tipo === 'producto'
     ? { es: `${k} es 100 − ${falta}: se multiplica por 100 y se quita ${falta === 1 ? 'una vez' : 'dos veces'} el ${n}.`, en: `${k} is 100 − ${falta}: multiply by 100 and take away ${n} ${falta === 1 ? 'once' : 'twice'}.` }
     : { es: `${k} es 100 − ${falta}: se suma 100 y se quita ${falta}.`, en: `${k} is 100 − ${falta}: add 100 and take away ${falta}.` };
-  const x = TX.compensar;
-  const cuentaTxt = (tipo === 'producto' ? x.explicacion_producto : x.explicacion_suma);
-  return `${tt(regla)} ${tt(cuentaTxt)(n, k, falta, valor)} ${tt(RESPUESTA)} ${cuenta(fmt(valor, idioma))}.`;
+  // Revisión 193: la cuenta se escribe aquí y no con `explicacion_producto` del feedback, que dice
+  // «se les quita dos columnas» (es «se les quitan»).
+  const f = v => fmt(v, idioma);
+  if (tipo === 'producto') {
+    const quita = falta === 1 ? `${n}` : `2 · ${n}`;
+    const dibujo = {
+      es: `a ${n} filas de 100 se les ${falta === 1 ? 'quita una columna' : 'quitan dos columnas'}`,
+      en: `from ${n} rows of 100 we take away ${falta === 1 ? 'one column' : 'two columns'}`,
+    };
+    return `${tt(regla)} ${cuenta(`${n} · ${k} = ${n} · 100 − ${quita} = ${f(n * 100)} − ${falta * n} = ${f(valor)}`)}: ${tt(dibujo)}. ${tt(RESPUESTA)} ${cuenta(f(valor))}.`;
+  }
+  return `${tt(regla)} ${tt(TX.compensar.explicacion_suma)(n, k, falta, valor)} ${tt(RESPUESTA)} ${cuenta(f(valor))}.`;
 }

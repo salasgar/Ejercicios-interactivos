@@ -56,3 +56,21 @@ test('distributiva · ejercicio 3: la explicación lleva el resultado y la escri
   }
   assert.ok(vistos.producto > 0 && vistos.suma > 0);
 });
+
+// ─── Revisión 193 ───────────────────────────────────────────────────────────────
+
+test('distributiva (revisión 193): en la resta, el rectángulo entero menos el trozo; «se les quitan dos columnas»', () => {
+  for (const idioma of IDIOMAS) for (const item of generar(L.generarPartir, 21)) {
+    const t = plano(X.explicaPartir(item, ctx(idioma)));
+    if (item.resta) {
+      assert.ok(t.includes(idioma === 'es' ? `El rectángulo entero tiene ${item.a} filas de ${item.b}` : `The whole rectangle has ${item.a} rows of ${item.b}`), t);
+      assert.ok(!/Cada trozo|Each piece/.test(t), t);
+    } else assert.ok(t.includes(idioma === 'es' ? 'Cada trozo' : 'Each piece'), t);
+  }
+  for (const item of generar(L.generarCompensar, 22)) {
+    const t = plano(X.explicaCompensar(item, ctx('es')));
+    assert.ok(!t.includes('se les quita dos'), t);
+    if (item.tipo === 'producto') assert.ok(t.includes(item.falta === 1 ? 'se les quita una columna' : 'se les quitan dos columnas'), t);
+    assert.equal(t.split('La respuesta es').length, 2, t);
+  }
+});
