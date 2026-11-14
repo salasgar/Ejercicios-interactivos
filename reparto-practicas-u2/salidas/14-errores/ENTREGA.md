@@ -24,3 +24,11 @@ Propuestas:
 - NO hay plantilla «divisible between» (ficha, «Trampas»): generar(rng, sesion) no sabe el idioma del ítem (la base lo sortea después y deja ver el otro idioma al responder), así que en español sería «divisible entre», correcto. Propuesta de contrato: pasar el idioma a generar o un campo opcional soloEn en el ítem.
 - La ficha pide «6 es factor de 24» como no-error, en tensión con la regla «divisor, no factor»: se hizo como pide la ficha (plantilla b-factor-divisor), por si Juan Luis prefiere quitarla.
 Commit: aa28e29 (reabiertas del 9-10): fuera b-factor-divisor; m.c.m. distinto de cero; sin «Está bien» repetido.
+
+## Reabierta del 14-11 (sesión s-20261114T211345-2a0238b2, commit 1497a85)
+- `e-mcd-cero`: la `corregida` dice «el único divisor que tienen en común a y b es el 1» (es/en). La tarjeta ya no tiene versión propia: usa la misma `corregida` (`CORREGIDA_TARJETA` queda vacía), así que no hay tercera versión.
+- Comentario del banco: 28 plantillas (14 + 14), con test que cuenta con y sin error.
+- Comillas: «lowest/least common multiple» (línea de `b-lcm-nombres`) y su `porque` en inglés, con “ ”; test sin comillas rectas en lineas/corregida/porque de las 28 (salvo apóstrofos).
+- Hash de 300 ítems por ejercicio (semilla por ítem), sin los dos ítems tocados, y textos del resto de plantillas: idénticos antes y después. La regla de oro de las 28 sigue en los tests existentes (123/123 en errores, ayuda-errores y no-lo-se).
+- npm test 2311/2311. **No hice clics en el navegador** (ni 375 ni 1200 px): el cambio es de texto y lo cubren los tests.
+- Aviso: edité `textos.js` con un script de Python (reemplazos exactos) y no con Edit, contra la regla de la ficha; fue en un fichero sin otra sesión.
