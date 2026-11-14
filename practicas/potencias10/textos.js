@@ -33,27 +33,48 @@ export function explicaDeslizador(item, { tt }) {
 const mayuscula = s => s[0].toUpperCase() + s.slice(1);
 const de3 = x => String(x).padStart(3, '0');
 
+/**
+ * Por qué un nombre con «and» vale lo que vale: dónde va el «and» respecto a «thousand» (miles y unidades del número).
+ * La usan la tarjeta del «No lo sé» y el feedback del ejercicio 2 (reabierta del 14-11 de la tarea 28).
+ */
+export function razonAnd(nombre, n, tt) {
+  const g = gruposDe(n);
+  return tt(/ thousand and /.test(nombre)
+    ? { es: `el «and» va después de «thousand», así que lo que sigue son las unidades (miles ${g.miles}; unidades ${g.unidades}).`,
+        en: `the “and” comes after “thousand”, so what follows is the units (thousands ${g.miles}; units ${g.unidades}).` }
+    : { es: `el «and» va antes de «thousand», dentro de los miles (miles ${g.miles}; unidades ${g.unidades}).`,
+        en: `the “and” comes before “thousand”, inside the thousands (thousands ${g.miles}; units ${g.unidades}).` });
+}
+
+/** Feedback del ejercicio 2, emparejar: cada nombre con su número y la razón (la misma que la tarjeta). */
+export function feedbackAnd(item, { tt }) {
+  return item.nombres.map((nombre, i) => {
+    const n = item.numeros[item.solucion[i]];
+    return `${nombre}<br><span class="cuenta">= ${agrupar(n)}</span><br>${razonAnd(nombre, n, tt)}`;
+  }).join('<br><br>');
+}
+
+/** Feedback del ejercicio 2, escribir con cifras: el número y sus grupos (con «;», nunca «·»). */
+export function feedbackCifras(item, escrito, acierto, { tt }) {
+  const g = gruposDe(item.n);
+  const buena = `${item.texto}<br><span class="cuenta">= ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
+  if (acierto) return buena;
+  return `${tt(TX.and.tu_respuesta)(agrupar(Number(escrito)))} ${buena}<br>${tt(item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es)}`;
+}
+
 /** Ejercicio 2: el «and» (emparejar) o escribir con cifras (ceros de cada grupo). */
 export function explicaAndOCifras(item, { tt }) {
   // Revisión 193: la regla de delante («el and marca dónde empiezan las unidades») era falsa en el segundo
   // nombre («five hundred and sixty thousand»: ahí el and va dentro de los miles); la respuesta acababa en
   // «La respuesta es: cada nombre con el número que va debajo»; y los grupos se separaban con «·», que en
-  // esta unidad es el signo de multiplicar. Los textos de `TX.and` siguen igual en el feedback.
+  // esta unidad es el signo de multiplicar. El feedback usa la misma razón (`razonAnd`).
   if (item.tipo === 'and') {
     const regla = {
       es: 'Fíjate en si el «and» va después o antes de «thousand».',
       en: 'Look at whether the “and” comes after or before “thousand”.',
     };
     const pares = item.nombres.map((nombre, i) => ({ nombre, n: item.numeros[item.solucion[i]] }));
-    const lineas = pares.map(({ nombre, n }) => {
-      const g = gruposDe(n);
-      const despues = / thousand and /.test(nombre);
-      return tt(despues
-        ? { es: `«${nombre}»: el «and» va después de «thousand», así que lo que sigue son las unidades (miles ${g.miles}; unidades ${g.unidades}).`,
-            en: `“${nombre}”: the “and” comes after “thousand”, so what follows is the units (thousands ${g.miles}; units ${g.unidades}).` }
-        : { es: `«${nombre}»: el «and» va antes de «thousand», dentro de los miles (miles ${g.miles}; unidades ${g.unidades}).`,
-            en: `“${nombre}”: the “and” comes before “thousand”, inside the thousands (thousands ${g.miles}; units ${g.unidades}).` });
-    });
+    const lineas = pares.map(({ nombre, n }) => `${tt({ es: `«${nombre}»: `, en: `“${nombre}”: ` })}${razonAnd(nombre, n, tt)}`);
     const [p, q] = pares.map(({ nombre, n }) => cuenta(`${nombre} = ${agrupar(n)}`));
     const fin = { es: `${p} y ${q}`, en: `${p} and ${q}` };
     return `${tt(regla)}<ol class="pasos-ayuda">${lineas.map(l => `<li>${l}</li>`).join('')}</ol>${tt(RESPUESTA)} ${tt(fin)}.`;
@@ -120,7 +141,7 @@ export const TX = {
     gb: { es: 'en inglés británico', en: 'in British English' },
   },
   and: {
-    nombre: { es: 'El «and» y los ceros', en: 'The "and" and the zeros' },
+    nombre: { es: 'El «and» y los ceros', en: 'The “and” and the zeros' },
     detalle: { es: 'Emparejar nombres y escribir números con ceros en cada grupo', en: 'Match names and write numbers with zeros in each group' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
@@ -138,21 +159,11 @@ export const TX = {
       es: texto => `Escribe con cifras: <strong>${texto}</strong>`,
       en: texto => `Write in figures: <strong>${texto}</strong>`,
     },
-    por_que: {
-      despues: {
-        es: (miles, unidades) => `El «and» va después de «thousand», así que lo que sigue son las unidades sueltas. Miles: ${miles} · unidades: ${unidades}.`,
-        en: (miles, unidades) => `The "and" comes after "thousand", so what follows is the loose units. Thousands: ${miles} · units: ${unidades}.`,
-      },
-      dentro: {
-        es: (miles, unidades) => `El «and» va antes de «thousand», dentro de los miles. Miles: ${miles} · unidades: ${unidades}.`,
-        en: (miles, unidades) => `The "and" comes before "thousand", inside the thousands. Thousands: ${miles} · units: ${unidades}.`,
-      },
-    },
     borrar: { es: 'Borrar', en: 'Delete' },
     vacio: { es: 'Pulsa las cifras', en: 'Press the digits' },
     grupos: {
-      es: g => `${g.millones ? `millones: ${g.millones} · ` : ''}miles: ${g.miles} · unidades: ${g.unidades}`,
-      en: g => `${g.millones ? `millions: ${g.millones} · ` : ''}thousands: ${g.miles} · units: ${g.unidades}`,
+      es: g => `${g.millones ? `millones ${g.millones}; ` : ''}miles ${g.miles}; unidades ${g.unidades}`,
+      en: g => `${g.millones ? `millions ${g.millones}; ` : ''}thousands ${g.miles}; units ${g.unidades}`,
     },
     tu_respuesta: {
       es: n => `Has escrito <span class="cuenta">${n}</span>, que no es.`,
@@ -160,11 +171,11 @@ export const TX = {
     },
     pista_grupos: {
       es: 'Cada grupo de tres cifras se rellena con ceros: «two thousand» → 002.',
-      en: 'Each group of three digits is filled with zeros: "two thousand" → 002.',
+      en: 'Each group of three digits is filled with zeros: “two thousand” → 002.',
     },
     pista_grupos_es: {
       es: 'Cada grupo de tres cifras se rellena con ceros: «dos mil» → 002.',
-      en: 'Each group of three digits is filled with zeros: "dos mil" → 002.',
+      en: 'Each group of three digits is filled with zeros: “dos mil” → 002.',
     },
   },
   billion: {
@@ -202,7 +213,7 @@ export const TX = {
     },
     nota_trillion: {
       es: 'Trillion es 10<sup>12</sup>, que en español es «billón»; billion y billón no son lo mismo.',
-      en: 'Trillion is 10<sup>12</sup>, which is "billón" in Spanish; billion and billón are not the same.',
+      en: 'Trillion is 10<sup>12</sup>, which is “billón” in Spanish; billion and billón are not the same.',
     },
   },
 };

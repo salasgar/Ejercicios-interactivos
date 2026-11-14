@@ -105,3 +105,44 @@ test('potencias10 · ejercicio 3 (revisión 193): la tarjeta nunca dice que bill
     for (const m of t.matchAll(/(\w+(?:[ -]\w+)*?) billion = ([\d ]+)/g)) assert.equal(m[2].replace(/\D/g, '').length, 10 + String(item.c).length - 1, t);
   }
 });
+
+// ─── Reabierta del 14-11 de la tarea 28: el feedback del ejercicio 2 y las comillas ──
+
+test('potencias10 · feedback del ejercicio 2 (14-11): sin «·» entre grupos, sin la regla falsa y con la razón de la tarjeta', () => {
+  const sinProducto = t => assert.ok(!/\d\s*·\s*\d/.test(t) && !t.includes('· unidades') && !t.includes('· units'), t);
+  for (const idioma of IDIOMAS) {
+    const c = ctx(idioma);
+    for (const item of generar(L.generarAnd, 33, 1000)) {
+      for (const acierto of [true, false]) {
+        const t = plano(X.feedbackAnd(item, c));
+        sinProducto(t);
+        assert.ok(!/unidades sueltas|loose units/.test(t), t);
+        item.nombres.forEach((nombre, i) => {
+          const razon = plano(X.razonAnd(nombre, item.numeros[item.solucion[i]], c.tt));
+          assert.ok(t.includes(razon), `${acierto}: ${t}`);
+        });
+      }
+    }
+    for (const item of generar(L.generarCifras, 34, 1000)) {
+      const escrito = String(item.n + 1);
+      for (const [acierto, e] of [[true, String(item.n)], [false, escrito]]) {
+        const t = plano(X.feedbackCifras(item, e, acierto, c));
+        sinProducto(t);
+        assert.ok(t.includes(';'), t);
+      }
+    }
+    for (const item of generar(L.generarAnd, 35, 1000)) sinProducto(plano(X.explicaAndOCifras(item, c)));
+  }
+});
+
+test('potencias10 · comillas (14-11): ningún texto en inglés lleva comillas rectas', () => {
+  const rectas = /(^|[\s(>])"[^"<>=]+"/;
+  const visita = (o, ruta) => {
+    for (const [k, v] of Object.entries(o)) {
+      if (typeof v === 'function' || typeof v === 'string') {
+        if ((k === 'en' || k === 'es') && rectas.test(String(v))) assert.fail(`${ruta}.${k}: ${String(v).slice(0, 120)}`);
+      } else if (v && typeof v === 'object') visita(v, `${ruta}.${k}`);
+    }
+  };
+  visita(X.TX, 'TX');
+});

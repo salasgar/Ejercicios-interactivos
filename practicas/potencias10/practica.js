@@ -3,7 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX, explicaDeslizador, explicaAndOCifras, explicaBillion } from './textos.js';
+import { TX, explicaDeslizador, explicaAndOCifras, explicaBillion, feedbackAnd, feedbackCifras } from './textos.js';
 import {
   N_MAXIMO, agrupar, gruposDe, mostrarDeslizador, formasDe,
   generarDeslizador, esRespuestaDeslizador, generarAnd, generarCifras, esRespuestaCifras, generarBillion,
@@ -104,13 +104,7 @@ function montarAnd(contenedor, item, api) {
     ev.target.hidden = true;
     item.solucion.forEach((j, i) => boton(i, j).classList.add('pareja__boton--correcta'));
     if (!acierto) boton(0, asignado[0]).classList.add('pareja__boton--mal'), boton(1, asignado[1]).classList.add('pareja__boton--mal');
-    // El nombre en su línea (se puede partir) y el número debajo; y por qué: dónde va el «and»
-    const lineas = ({ tt }) => item.nombres.map((nombre, i) => {
-      const n = item.numeros[item.solucion[i]], g = gruposDe(n);
-      const razon = tt(/ thousand and /.test(nombre) ? TX.and.por_que.despues : TX.and.por_que.dentro)(g.miles, g.unidades);
-      return `${nombre}<br><span class="cuenta">= ${agrupar(n)}</span><br>${razon}`;
-    });
-    api.responder({ acierto, html: textos => lineas(textos).join('<br><br>'), espera: 4200 });
+    api.responder({ acierto, html: textos => feedbackAnd(item, textos), espera: 4200 });
   });
 }
 
@@ -149,11 +143,9 @@ function montarCifras(contenedor, item, api) {
     contenedor.querySelectorAll('#teclado button').forEach(b => { b.disabled = true; });
     ev.target.hidden = true;
     pantalla.classList.add(acierto ? 'operacion--bien' : 'operacion--mal');
-    const g = gruposDe(item.n);
-    const buena = ({ tt }) => `${item.texto}<br><span class="cuenta">= ${agrupar(item.n)}</span><br>${tt(TX.and.grupos)(g)}`;
     api.responder({
       acierto,
-      html: textos => (acierto ? buena(textos) : `${textos.tt(TX.and.tu_respuesta)(agrupar(Number(escrito)))} ${buena(textos)}<br>${textos.tt(item.lengua === 'en' ? TX.and.pista_grupos : TX.and.pista_grupos_es)}`),
+      html: textos => feedbackCifras(item, escrito, acierto, textos),
       espera: 3000,
     });
   });
