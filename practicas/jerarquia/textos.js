@@ -145,9 +145,31 @@ export function explicaInvisibles(item, { tt, idioma }) {
   const piden = exigidos(item);
   const linea = texto(lineal(item, piden), idioma);
   const regla = tt(raya ? TX.explicacion_raya : TX.explicacion_radical);
-  const cuales = piden.map((r, i) => (r ? tt(TX[`falta_${raya ? (i === 0 ? 'num' : 'den') : 'rad'}`]) : null)).filter(Boolean);
-  const cambia = cuales.length
-    ? `<p>${cuales.join('; ')}.</p>`
-    : `<p>${tt({ es: 'Aquí no hace falta ningún paréntesis.', en: 'Here no brackets are needed.' })}</p>`;
-  return `<p>${regla}</p>${cambia}<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(linea)}.</p>`;
+  // Por qué cada grupo lleva (o no) paréntesis, con sus números. Cada grupo tiene como mucho una operación.
+  const porque = item.grupos.map((g, i) => {
+    if (g.length === 1) return null;
+    const G = cuenta(texto(g, idioma)), primero = cuenta(g[0]);
+    if (!raya) return tt({
+      es: `Por eso ${G} va entre paréntesis; sin ellos, la raíz sería solo de ${primero}.`,
+      en: `So ${G} goes in brackets; without them, the root would only be of ${primero}.`,
+    });
+    if (i === 1) return tt({
+      es: `El denominador, ${G}, va entre paréntesis; sin ellos, solo se dividiría entre ${primero}.`,
+      en: `The denominator, ${G}, goes in brackets; without them, you would only divide by ${primero}.`,
+    });
+    if (piden[0]) {
+      const suma = g.includes('+');
+      return tt({
+        es: `El numerador, ${G}, es una ${suma ? 'suma' : 'resta'}: va entre paréntesis para hacerla antes de dividir.`,
+        en: `The numerator, ${G}, is ${suma ? 'an addition' : 'a subtraction'}: it goes in brackets so that it is done before dividing.`,
+      });
+    }
+    return tt({
+      es: `El numerador, ${G}, no necesita paréntesis: · y : van de izquierda a derecha, así que ya se multiplica antes de dividir.`,
+      en: `The numerator, ${G}, does not need brackets: · and ÷ go from left to right, so you already multiply before dividing.`,
+    });
+  }).filter(Boolean);
+  const pasos = cadena(lineal(item, piden)).map(e => texto(e.fichas, idioma)).join(' = ');
+  return `<p>${regla} ${porque.join(' ')}</p><p>${cuenta(pasos)}</p>`
+    + `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(linea)}.</p>`;
 }
