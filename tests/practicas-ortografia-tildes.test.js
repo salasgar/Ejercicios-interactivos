@@ -36,7 +36,7 @@ const porNivel = (banco, n) => banco.filter(it => it.nivel === n);
 // palabra, con la tónica en otro sitio (reabierta del 9-11): medicó/medico, musica, cantara, canto, ordenes, vehiculo,
 // peiné, descuidó, libró, airé, paralelógramo (variante chilena) y décima (el 7 de 0,7 son siete décimas). Segunda
 // reabierta del 9-11 (cotejadas en el DLE): lampara (lampar), ahincó (ahincar), antiguó (antiguar) y ademas (adema).
-const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'libro', 'aire', 'paralelogramo', 'decima',
+const HOMOGRAFAS_SIN_TILDE = ['medico', 'musica', 'cantara', 'canto', 'ordenes', 'vehiculo', 'peine', 'descuido', 'libro', 'aire', 'paralelogramo', 'decima', 'triunfo',
   'lampara', 'ahinco', 'antiguo', 'ademas', 'jamas'];
 // La misma palabra con otra tónica en voseo (cuidate, comételo, explicáselo): tampoco. Sí valen las que en voseo cambian de
 // letras (devuélvemelo / devolvémelo, muéstraselo / mostráselo) y las de usted (dígamelo).

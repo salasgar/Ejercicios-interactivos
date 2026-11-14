@@ -225,7 +225,7 @@ export const TILDE = banco(CRUDO_TILDE);
 const CRUDO_VOCALES = {
   1: [
     "'dí-a", "'tí-a", "pa-'ís", "ra-'íz", "ma-'íz", "o-'ír", "ba-'úl", "Ma-'rí-a", // hiatos con tilde
-    "'triun-fo", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'cua-tro", "'cau-sa", "'trein-ta", // diptongos sin tilde
+    "'nie-ve", "'rui-do", "cui-'da-do", "ciu-'dad", "'jui-cio", "'cua-tro", "'cau-sa", "'trein-ta", // diptongos sin tilde
   ],
   2: [
     "tam-'bién", "des-'pués", "'náu-ti-co", "'hués-ped", "des-'truí", "le-'ón", "a-'é-re-o", "'hé-ro-e", // con tilde
@@ -309,7 +309,7 @@ const CRUDO_MATES = {
     { raw: "he-xa-go-'nal", mal: 'hexagonál', antes: 'Un prisma con base de seis lados es ', despues: '.' },
     { raw: "'cu-bo", mal: 'cúbo', antes: 'Un dado tiene forma de ', despues: '.' },
     { raw: "tra-'pe-cio", mal: 'trapécio', antes: 'Un cuadrilátero con solo dos lados paralelos es un ', despues: '.' },
-    { raw: "pro-por-cio-'nal", mal: 'proporciónal', antes: 'Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, son directamente ', despues: '.' },
+    { raw: "pro-por-cio-'na-les", mal: 'proporciónales', antes: 'Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, las dos son directamente ', despues: '.' },
     { raw: "ci-'lin-dro", mal: 'cílindro', antes: 'Una lata de refresco tiene forma de ', despues: '.' },
   ],
 };
