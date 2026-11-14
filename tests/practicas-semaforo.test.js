@@ -177,3 +177,23 @@ test('explicar añade la frase de cierre solo cuando no es divisible entre ningu
     }
   }
 });
+
+// --- Reabierta 14-11: el feedback del ejercicio 4 da el método y acaba en la cifra ----
+
+test('ejercicio 4: el feedback (acierto y fallo) es el método de la tarjeta, no empieza por la respuesta y acaba en la cifra única', () => {
+  for (const item of generarN(generarCifra, 1000, 21)) {
+    for (const idioma of ['es', 'en']) {
+      for (const respuesta of [item.solucion, (item.solucion + 1) % 10]) {
+        const html = explicar(item, respuesta, idioma);
+        const texto = html.replace(/<[^>]+>/g, '');
+        assert.ok(!/^(La cifra que falta es|The missing digit is)/.test(texto), texto);
+        assert.ok(/^(La cifra del hueco tiene que cumplir|The digit in the gap has to pass)/.test(texto), texto);
+        assert.ok(texto.includes(idioma === 'es' ? `La respuesta es ${item.solucion} (` : `The answer is ${item.solucion} (`), texto);
+        assert.ok(!html.includes('prueba cifras'), texto);
+      }
+    }
+    if (item.divisores.includes(11)) {
+      assert.match(explicar(item, item.solucion, 'es'), /suman|la cifra de lugar/);
+    }
+  }
+});
