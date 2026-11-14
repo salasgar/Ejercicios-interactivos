@@ -28,6 +28,12 @@ test('rectangulos · ejercicio 1: la respuesta son todas las parejas, y no sobra
       assert.deepEqual(L.todasLasClaves(item.n), esperadas.map(c => c.replace(' · ', 'x')));
       const r = L.raizEntera(item.n);
       assert.ok(html.includes(`${r} · ${r} = ${r * r}`), html);
+      // Revisión 193: la lista de parejas sale una vez, en la respuesta (antes también en el paso 2, con «= n»).
+      assert.equal(html.split(`1 · ${item.n}`).length - 1, 1, html);
+      const anchos = esperadas.map(p => p.split(' · ')[0]);
+      assert.ok(html.includes(`(${anchos.length < 2 ? anchos[0] : `${anchos.slice(0, -1).join(', ')}${idioma === 'es' ? ' y ' : ' and '}${anchos.at(-1)}`})`), html);
+      const [w, h] = esperadas.at(-1).split(' · ');
+      assert.ok(html.includes(`${item.n} : ${w} = ${h}`), html);
     }
   }
 });
@@ -37,8 +43,10 @@ test('rectangulos · ejercicio 2: la respuesta son exactamente los divisores, y 
     for (const item of generar(L.generarBanco, 2)) {
       const html = plano(X.explicaBanco(item, ctx(idioma)));
       const y = idioma === 'es' ? ' y ' : ' and ';
-      const m = html.match(/(?:La respuesta es|The answer is): (.*?)\.(?: Consejo| Tip|$)/);
+      // Revisión 193: «La respuesta es 1, 2…», sin dos puntos.
+      const m = html.match(/(?:La respuesta es|The answer is) (.*?)\.(?: Consejo| Tip|$)/);
       assert.ok(m, html);
+      assert.ok(!/(respuesta es|answer is):/.test(html), html);
       const dichos = m[1].split(y).flatMap((t, i, a) => (i < a.length - 1 ? t.split(', ') : [t])).map(Number);
       const reales = item.banco.filter(x => item.n % x === 0).sort((a, b) => a - b);
       assert.deepEqual(dichos, reales, html);

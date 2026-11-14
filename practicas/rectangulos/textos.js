@@ -88,9 +88,12 @@ export function explicaRectangulos(item, { idioma }) {
   const prueba = es
     ? `Prueba los anchos 1, 2, 3… hasta el ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} < ${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, así que no hace falta seguir.`
     : `Try widths 1, 2, 3… up to ${r}: ${cuenta(`${r} · ${r} = ${r * r}`)} ≤ ${n} < ${cuenta(`${r + 1} · ${r + 1} = ${(r + 1) * (r + 1)}`)}, so you do not need to go on.`;
+  // Revisión 193: aquí se nombran solo los anchos; antes salían ya las parejas, que la respuesta repetía.
+  const anchos = unir(claves.map(c => c.split('x')[0]), idioma);
+  const [w, h] = claves.at(-1).split('x');
   const cierran = es
-    ? `El rectángulo se cierra con los anchos que dividen ${n}, y cada uno da una pareja: ${parejasConCuenta(n)}.`
-    : `The rectangle closes with the widths that divide ${n}, and each one gives a pair: ${parejasConCuenta(n)}.`;
+    ? `El rectángulo se cierra con los anchos que dividen ${n} (${anchos}), y cada uno da una pareja; por ejemplo, ${cuenta(`${n} : ${w} = ${h}`)} da ${cuenta(`${w} · ${h}`)}.`
+    : `The rectangle closes with the widths that divide ${n} (${anchos}), and each one gives a pair; for example, ${cuenta(`${n} : ${w} = ${h}`)} gives ${cuenta(`${w} · ${h}`)}.`;
   const fin = es
     ? `La respuesta son ${claves.length} ${claves.length === 1 ? 'pareja' : 'parejas'}: ${claves.map(c => cuenta(textoPareja(c))).join(', ')}.`
     : `The answer is ${claves.length} ${claves.length === 1 ? 'pair' : 'pairs'}: ${claves.map(c => cuenta(textoPareja(c))).join(', ')}.`;
@@ -104,9 +107,10 @@ export function explicaBanco(item, { idioma }) {
   const regla = es
     ? `Un divisor de ${n} es un número que lo divide sin resto. Se buscan por parejas: ${parejasConCuenta(n)}.`
     : `A divisor of ${n} is a number that divides it with no remainder. You find them in pairs: ${parejasConCuenta(n)}.`;
+  // Revisión 193: sin dos puntos entre «es» y la respuesta.
   const fin = es
-    ? `La respuesta es: ${unir(item.divisoresN, idioma)}.`
-    : `The answer is: ${unir(item.divisoresN, idioma)}.`;
+    ? `La respuesta es ${unir(item.divisoresN, idioma)}.`
+    : `The answer is ${unir(item.divisoresN, idioma)}.`;
   const consejo = es ? ' Consejo: el 1 y el propio número siempre son divisores.' : ' Tip: 1 and the number itself are always divisors.';
   return `<p>${regla}</p><p>${fin}${consejo}</p>`;
 }
