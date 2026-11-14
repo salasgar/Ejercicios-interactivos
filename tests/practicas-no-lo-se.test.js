@@ -152,7 +152,8 @@ test('multiplica-divide: la explicación de cada ejercicio lleva la regla y el r
 //
 // `declaracionDe` importa el `practica.js` de cada práctica con la base en modo «solo declarar».
 // Reglas, para cualquier práctica presente o futura, sin tocar este fichero:
-//   · una práctica que ha empezado a declarar el «No lo sé» lo declara en TODOS sus ejercicios:
+//   · toda práctica del catálogo declara el «No lo sé» en TODOS sus ejercicios (desde la tarea 193,
+//     la última revisión, ya no se salta ninguna):
 //     `explicacion` o, si no procede (juego, ejercicio por pasos), `sinAyuda` con el motivo;
 //   · cada `explicacion` se prueba con 200 ítems de su `generar`, en los idiomas de la práctica:
 //     devuelve HTML con contenido, sin restos (undefined, NaN, [object…), con las etiquetas
@@ -179,7 +180,6 @@ const etiquetasCerradas = html => {
 
 for (const [ficha, practica] of declaraciones) {
   const defs = practica?.ejercicios ?? [];
-  if (!defs.some(d => d.explicacion || d.sinAyuda)) continue;
   test(`«No lo sé» en ${ficha.slug}: todos los ejercicios lo declaran y cada explicación sale bien con 200 ítems`, () => {
     const idiomas = practica.idioma ? [practica.idioma] : IDIOMAS;
     defs.forEach((def, n) => {
