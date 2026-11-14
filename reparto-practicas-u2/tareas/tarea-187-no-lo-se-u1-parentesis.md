@@ -81,6 +81,12 @@ Propio de la unidad 1: La unidad 1 usa «×» para el producto (el resto de su m
 
 ## Trampas conocidas
 
+- (s-20261114T145716-e48af71b, relevo; real ~10 min con parentesis ya hecha) En zsh, `git add $F` con una variable de
+  varias rutas falla: escribir las rutas a mano en `git add` y en `git commit --`.
+- (ídem) En los tests, el `plano()` que quita etiquetas pega el texto («81La respuesta»): no uses `\b` tras un
+  número, usa `(?!\d)`, o sustituye las etiquetas por un espacio.
+- (ídem) El servidor 8187 puede estar denegado en modo automático: no hay prueba en navegador; decirlo en la ENTREGA.
+
 - (de la coordinadora) El botón solo existe si el ejercicio declara `explicacion`: en varias prácticas de ortografía
   hay un parámetro que ya se llama `explicacion` dentro de sus `montar` (es el feedback); no es lo mismo ni se toca.
 - (de la coordinadora) `explicacion` recibe `(item, { idioma, t, tt, esc })`; dentro, usa el `tt` que recibe, no uno
