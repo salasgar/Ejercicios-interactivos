@@ -299,7 +299,7 @@ arrancar({
       ? { sinAyuda: 'Es un juego (¿quién miente?): hay que leer las frases, no hay procedimiento que explicar.' }
       : {
         explicacion: n === 0 ? explicaPreposicion
-          : n === 4 ? (item, ctx) => explicaArrastrar(item, ctx, solucionArrastrar(item))
+          : n === 4 ? (item, ctx) => explicaArrastrar(item, ctx)
             : explicaEleccion,
         ...(n === 4 ? { noLoSe: NO_SE_HACERLO } : {}),
       }),

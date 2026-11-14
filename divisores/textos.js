@@ -2,7 +2,7 @@
 // Los comunes (Comprobar, Siguiente, ¡Bien!, «es», «no es», «resto»…) llegan
 // en `api.t` (ver `../practicas/_comun/textos.js`) y no se repiten aquí.
 
-import { T as COMUN } from '../practicas/_comun/textos.js';
+import { T as COMUN, unir } from '../practicas/_comun/textos.js';
 import { explicacion, explicacionCompleta, cerrar } from '../practicas/_comun/relaciones.js';
 
 // La explicación de los fallos (tabla, división exacta, «al revés») es común con `recta/`.
@@ -144,9 +144,10 @@ export function explicaPreposicion(item, { idioma }) {
     ? 'Se dice «múltiplo de» y «divisor de», pero «divisible entre».'
     : 'We say “a multiple of” and “a divisor of”, but “divisible by”.';
   const prep = T[idioma].preposicion[palabra];
+  // Revisión 193: sin «: lleva «entre»», que decía la respuesta antes de tiempo (y la repetía).
   const aqui = es
-    ? `Aquí la frase es «${x} es ${T.es.palabra[relacion]} … ${y}»: lleva «${prep}».`
-    : `Here the sentence is “${x} is ${T.en.palabra[relacion]} … ${y}”: it takes “${prep}”.`;
+    ? `Aquí la frase es «${x} es ${T.es.palabra[relacion]} … ${y}».`
+    : `Here the sentence is “${x} is ${T.en.palabra[relacion]} … ${y}”.`;
   const verdad = `${frase(relacion, x, y, idioma)}: ${cuenta(cuentaRelacion(relacion, x, y, idioma))}.`;
   const fin = es ? `La respuesta es «${prep}».` : `The answer is “${prep}”.`;
   return `${pasos([regla, aqui, verdad])}${fin}`;
@@ -156,19 +157,39 @@ export function explicaPreposicion(item, { idioma }) {
 export function explicaEleccion(item, { idioma }) {
   const es = idioma === 'es';
   const { x, y, correctas } = item;
-  const comprobar = es
-    ? `Mira ${cuenta(textoOperacion(item.op, idioma))}: ¿está el ${x} en la tabla del ${y}, o el ${y} en la tabla del ${x}?`
-    : `Look at ${cuenta(textoOperacion(item.op, idioma))}: is ${x} in the ${y} times table, or ${y} in the ${x} times table?`;
+  const op = cuenta(textoOperacion(item.op, idioma));
+  // Revisión 193: con x = y la pregunta salía «¿está el 4 en la tabla del 4, o el 4 en la tabla del 4?».
+  const comprobar = x === y
+    ? (es ? `Mira ${op}: todo número es divisor y múltiplo de sí mismo (${x} = ${x} · 1).`
+      : `Look at ${op}: every number is a divisor and a multiple of itself (${x} = ${x} · 1).`)
+    : (es ? `Mira ${op}: ¿está el ${x} en la tabla del ${y}, o el ${y} en la tabla del ${x}?`
+      : `Look at ${op}: is ${x} in the ${y} times table, or ${y} in the ${x} times table?`);
   const verdades = correctas.map(r => `${reglaRelacion(r, x, y, idioma)} ${es ? 'Aquí:' : 'Here:'} ${cuenta(cuentaRelacion(r, x, y, idioma))}, ${es ? 'así que' : 'so'} ${frase(r, x, y, idioma)}.`);
-  const nombres = correctas.map(r => nombreRelacion(r, idioma)).join(es ? ' o ' : ' or ');
+  // Revisión 193: con las tres buenas decía «… o … o … (las dos valen)».
+  const nombres = unir(correctas.map(r => nombreRelacion(r, idioma)), idioma, 'o');
+  const cuantas = { 2: { es: ' (las dos valen)', en: ' (both are right)' }, 3: { es: ' (las tres valen)', en: ' (all three are right)' } };
   const fin = es
-    ? `La respuesta es ${nombres}${correctas.length > 1 ? ' (las dos valen)' : ''}.`
-    : `The answer is ${nombres}${correctas.length > 1 ? ' (both are right)' : ''}.`;
+    ? `La respuesta es ${nombres}${cuantas[correctas.length]?.es ?? ''}.`
+    : `The answer is ${nombres}${cuantas[correctas.length]?.en ?? ''}.`;
   return `${pasos([comprobar, ...verdades])}${fin}`;
 }
 
+/**
+ * La colocación que enseña la ayuda del ejercicio 4: el número grande de la operación con uno de los pequeños
+ * (distinto del grande si se puede), como dice el consejo. Revisión 193: `solucionArrastrar` toma la primera
+ * pareja que vale en el orden barajado y a veces daba «12 es múltiplo de 2» con 24 : 12 = 2, que contradice el
+ * consejo y se justifica con un número que no está en la pantalla («12 = 2 · 6»).
+ */
+export function solucionExplicada(item) {
+  const { op } = item;
+  const grande = op.clase === 'producto' ? op.c : op.a;
+  const pequenos = op.clase === 'producto' ? [op.a, op.b] : [op.b, op.c];
+  const p = pequenos.find(n => n !== grande) ?? pequenos[0];
+  return item.relacion === 'divisor' ? [p, grande] : [grande, p];
+}
+
 /** Ejercicio 4 (arrastrar dos números a la frase): una colocación que sea verdad, con su cuenta. */
-export function explicaArrastrar(item, { idioma }, [sx, sy]) {
+export function explicaArrastrar(item, { idioma }, [sx, sy] = solucionExplicada(item)) {
   const es = idioma === 'es';
   const dados = es
     ? `Tienes los números ${item.numeros.join(', ')}; vienen de ${cuenta(textoOperacion(item.op, idioma))}.`

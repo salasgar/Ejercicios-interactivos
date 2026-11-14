@@ -29,6 +29,8 @@ test('divisores · ejercicio 1: la respuesta es «entre» solo con «divisible»
       assert.equal(X.T[idioma].preposicion[item.correcta], prep);
       assert.ok(html.includes(X.frase(item.relacion, item.x, item.y, idioma)), html);
       assert.ok(L.cumple(item.relacion, item.x, item.y), 'la frase es verdad');
+      // Revisión 193: la preposición sale una vez en la frase completa y otra en la respuesta, no antes.
+      assert.ok(!/lleva «|it takes “/.test(html), html);
     }
   }
 });
@@ -46,6 +48,11 @@ test('divisores · ejercicios 2, 3 y 4: la respuesta nombra todas las relaciones
           assert.equal(L.cumple(r, item.x, item.y), item.correctas.includes(r));
         }
         for (const r of item.correctas) assert.ok(html.includes(X.frase(r, item.x, item.y, idioma)), html);
+        // Revisión 193: «las dos valen» solo con dos; con tres, «las tres»; y sin «el 4 … o el 4 en la tabla del 4».
+        const cuantas = { 1: null, 2: idioma === 'es' ? '(las dos valen)' : '(both are right)', 3: idioma === 'es' ? '(las tres valen)' : '(all three are right)' }[item.correctas.length];
+        if (cuantas) assert.ok(html.includes(cuantas), html);
+        assert.equal(/las dos valen|both are right/.test(html), item.correctas.length === 2, html);
+        if (item.x === item.y) assert.ok(!html.includes(`en la tabla del ${item.x}, o el`) && !html.includes(`times table, or ${item.y} in`), html);
         assert.ok(html.includes(X.textoOperacion(item.op, idioma)), html);
       }
     }
@@ -55,10 +62,13 @@ test('divisores · ejercicios 2, 3 y 4: la respuesta nombra todas las relaciones
 test('divisores · ejercicio 5: la solución que da vale y lleva su cuenta', () => {
   for (const idioma of IDIOMAS) {
     for (const item of generar(4, 20)) {
-      const sol = L.solucionArrastrar(item);
-      assert.ok(sol, 'siempre hay solución');
-      const html = plano(X.explicaArrastrar(item, ctx(idioma), sol));
+      const sol = X.solucionExplicada(item);
+      const html = plano(X.explicaArrastrar(item, ctx(idioma)));
       assert.ok(L.esCorrecta(item, sol));
+      // Revisión 193: la colocación es la del consejo, el número grande de la operación con uno de los pequeños.
+      const grande = Math.max(...item.numeros);
+      assert.equal(item.relacion === 'divisor' ? sol[1] : sol[0], grande, html);
+      assert.ok(item.numeros.includes(sol[0]) && item.numeros.includes(sol[1]), html);
       assert.ok(html.includes(X.frase(item.relacion, sol[0], sol[1], idioma)), html);
       assert.ok(html.includes(`${sol[0]} ${idioma === 'es' ? 'y' : 'and'} ${sol[1]}`), html);
       assert.ok(html.includes(X.cuentaRelacion(item.relacion, sol[0], sol[1], idioma)), html);
