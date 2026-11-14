@@ -19,7 +19,9 @@ test('criba · ejercicio 2: la explicación lleva la clase que el ejercicio da p
     for (const item of generar(L.generarFlashcard, 1)) {
       const html = plano(X.explicaFlashcard(item, ctx(idioma)));
       const clase = L.claseDe(item.n);
-      assert.ok(html.includes(`${NOMBRE[clase][idioma]}.`), `${item.n}: ${html}`);
+      // Revisión 193: la opción, entre comillas (es el texto de un botón) y al final.
+      const opcion = idioma === 'es' ? `«${NOMBRE[clase].es}».` : `“${NOMBRE[clase].en}”.`;
+      assert.ok(html.endsWith(opcion), `${item.n}: ${html}`);
       assert.ok(/(respuesta es|answer is)/.test(html));
       if (clase === 'compuesto') assert.match(html, new RegExp(`${item.n} = \\d+ · \\d+`));
     }
@@ -32,8 +34,33 @@ test('criba · ejercicio 3: la explicación lleva la lista buena y, en los compu
       const html = plano(X.explicaRaiz(item, ctx(idioma)));
       const buena = item.opciones.find(o => o.correcta).lista.join(', ');
       assert.equal(buena, L.listaHastaRaiz(item.n).join(', '));
-      assert.ok(html.endsWith(`${buena} .`) || html.endsWith(`${buena}.`), `${item.n}: ${html}`);
-      if (item.compuesto) assert.match(html, new RegExp(`${item.n} = \\d+ · \\d+`));
+      if (!item.compuesto) assert.ok(html.endsWith(`${buena}.`), `${item.n}: ${html}`);
+      else {
+        // Los dos pasos del ítem: la lista y «¿Y es primo?» → no, con su divisor.
+        const fin = idioma === 'es' ? `${buena}, y ${item.n} no es primo.` : `${buena}, and ${item.n} is not prime.`;
+        assert.ok(html.endsWith(fin), `${item.n}: ${html}`);
+        const m = html.match(new RegExp(`${item.n} = (\\d+) · (\\d+)`));
+        assert.ok(m && Number(m[1]) * Number(m[2]) === item.n && Number(m[1]) > 1 && Number(m[2]) > 1, `${item.n}: ${html}`);
+      }
+      // Revisión 193: el límite con el mismo criterio que la regla (último primo al cuadrado ≤ n < siguiente al cuadrado).
+      const u = L.listaHastaRaiz(item.n).at(-1);
+      const { siguiente: s } = L.datosExplicacionRaiz(item.n);
+      assert.ok(u * u <= item.n && s * s > item.n);
+      assert.ok(html.includes(`${u} · ${u} = ${u * u}`) && html.includes(`${s} · ${s} = ${s * s}`), `${item.n}: ${html}`);
+    }
+  }
+});
+
+test('criba · revisión 193: sin letras en la regla, sin «<» sin escapar, una sola respuesta', () => {
+  for (const idioma of IDIOMAS) {
+    const htmls = [
+      ...generar(L.generarFlashcard, 3).map(item => X.explicaFlashcard(item, ctx(idioma))),
+      ...generar(L.generarRaiz, 4).map(item => X.explicaRaiz(item, ctx(idioma))),
+    ];
+    for (const html of htmls) {
+      assert.doesNotMatch(plano(html), /\bp · p\b/, html);
+      assert.doesNotMatch(html.replace(/<\/?[a-z][^>]*>/g, ''), /</, html);
+      assert.equal((plano(html).match(/respuesta es|answer is/g) || []).length, 1, html);
     }
   }
 });

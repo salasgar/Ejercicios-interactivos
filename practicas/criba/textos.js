@@ -120,9 +120,16 @@ const RESPUESTA = {
   es: x => `La respuesta es <strong>${x}</strong>.`,
   en: x => `The answer is <strong>${x}</strong>.`,
 };
+// La opción del ejercicio 2 es el texto de un botón: va entre comillas.
+const RESPUESTA_OPCION = {
+  es: x => `La respuesta es «<strong>${x}</strong>».`,
+  en: x => `The answer is “<strong>${x}</strong>”.`,
+};
+// Sin letras (nada de «p · p» antes de la U6): el primo «multiplicado por sí mismo», que es lo mismo que
+// probar hasta la raíz entera, como dicen los apuntes.
 const REGLA_PRIMO = {
-  es: 'Para ver si un número es primo, pruébalo con los primos 2, 3, 5, 7… y para cuando <span class="cuenta">p · p</span> pase de ese número.',
-  en: 'To check if a number is prime, try the primes 2, 3, 5, 7… and stop when <span class="cuenta">p · p</span> is more than that number.',
+  es: 'Para ver si un número es primo, se prueban los primos 2, 3, 5, 7… hasta que uno, multiplicado por sí mismo, pase del número (o sea, hasta su raíz entera).',
+  en: 'To check if a number is prime, try the primes 2, 3, 5, 7… until one of them, times itself, is more than the number (that is, up to its integer square root).',
 };
 
 /** Por qué un número es primo, compuesto o ninguno (lo usan el feedback y la explicación). */
@@ -145,17 +152,35 @@ export function explicaFlashcard(item, ctx) {
   const { tt } = ctx;
   const clase = claseDe(item.n);
   const regla = clase === 'ninguno' ? '' : `<p>${tt(REGLA_PRIMO)}</p>`;
-  return `${regla}<p>${explicarClase(item.n, clase, ctx)}</p><p>${tt(RESPUESTA)(tt(TX.flash.opcion[clase]))}</p>`;
+  return `${regla}<p>${explicarClase(item.n, clase, ctx)}</p><p>${tt(RESPUESTA_OPCION)(tt(TX.flash.opcion[clase]))}</p>`;
 }
 
-/** Ejercicio 3: por qué basta llegar a la raíz, la lista buena y, si el número es compuesto, su divisor. */
+/**
+ * Ejercicio 3: hasta qué primo se llega (con el mismo criterio que la regla: el último primo que, por sí
+ * mismo, no pasa del número, y el siguiente, que ya pasa) y, si el número es compuesto, la segunda
+ * pregunta del ítem («¿Y es primo?») con su divisor. No reutiliza `TX.raiz.explicacion`, que mezcla la
+ * raíz entera con el siguiente primo («9 · 9 = 81 ≤ 91 < 11 · 11») y lleva un «<» sin escapar.
+ */
 export function explicaRaiz(item, ctx) {
   const { tt } = ctx;
-  const { r, ultimo, siguiente } = datosExplicacionRaiz(item.n);
-  const lista = listaHastaRaiz(item.n).join(', ');
-  const paso1 = `<p>${tt(REGLA_PRIMO)} ${tt(TX.raiz.explicacion)(item.n, r, siguiente, ultimo)}</p>`;
-  const segundo = item.compuesto
-    ? `<p>${tt(TX.raiz.primo_pregunta)} ${explicarClase(item.n, 'compuesto', ctx)} ${tt({ es: 'No es primo.', en: 'It is not prime.' })}</p>`
-    : '';
-  return `${paso1}${segundo}<p>${tt(RESPUESTA)(lista)}</p>`;
+  const n = item.n;
+  const { ultimo, siguiente } = datosExplicacionRaiz(n);
+  const lista = listaHastaRaiz(n).join(', ');
+  const c = (p) => `<span class="cuenta">${p} · ${p} = ${p * p}</span>`;
+  const limite = tt({
+    es: `${c(ultimo)} no pasa de ${n}, pero ${c(siguiente)} sí: basta probar hasta el ${ultimo}.`,
+    en: `${c(ultimo)} is not more than ${n}, but ${c(siguiente)} is: it is enough to try up to ${ultimo}.`,
+  });
+  if (!item.compuesto) return `<p>${tt(REGLA_PRIMO)}</p><p>${limite}</p><p>${tt(RESPUESTA)(lista)}</p>`;
+  const p = listaHastaRaiz(n).find(q => n % q === 0);
+  const divisor = `<span class="cuenta">${n} = ${p} · ${n / p}</span>`;
+  const pasos = tt({
+    es: `<ol class="pasos-ayuda"><li>${limite}</li><li>¿Y es primo? No: ${divisor}.</li></ol>`,
+    en: `<ol class="pasos-ayuda"><li>${limite}</li><li>And is it prime? No: ${divisor}.</li></ol>`,
+  });
+  const fin = tt({
+    es: `La respuesta es <strong>${lista}</strong>, y ${n} <strong>no</strong> es primo.`,
+    en: `The answer is <strong>${lista}</strong>, and ${n} is <strong>not</strong> prime.`,
+  });
+  return `<p>${tt(REGLA_PRIMO)}</p>${pasos}<p>${fin}</p>`;
 }
