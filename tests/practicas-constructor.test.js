@@ -10,7 +10,7 @@ import {
   CONSIGNAS, generarConstruir, esAciertoConstruir, permutaciones, solucionDe,
   generarASuma, esAciertoASuma, generarANumero, esAciertoANumero, errorPegado, componentesDe,
   generarValor, generarPosicion, generarDescomposicion, esAciertoOpcion,
-  generarComa, esAciertoComa, escribir, generarPalabras, esAciertoPalabras, enPalabras, generarComaPalabras, fmt, leerComo, leerEntero,
+  generarComa, generarComaDecimal, esAciertoComa, escribir, generarPalabras, esAciertoPalabras, enPalabras, generarComaPalabras, fmt, leerComo, leerEntero,
 } from '../practicas/constructor/logica.js';
 
 const N = 3000;
@@ -192,7 +192,7 @@ test('coma: el correcto es el mismo número y los falsos otros distintos (regla 
     trampas++;
   }
   assert.ok(trampas >= 0);
-  assert.ok(cuantos(items, i => i.sub === 'miles') / N > 0.4 && cuantos(items, i => i.sub === 'decimal') / N > 0.3);
+  assert.ok(items.every(i => i.sub === 'miles'), 'reabierta 14-11: sin decimales en esta práctica');
   assert.ok(cuantos(items, i => i.dir === 'en_es') / N > 0.4);
   assert.ok(cuantos(items, i => i.estilo === 'espacio' && i.dir === 'es_en' && i.sub === 'miles') > 100, 'forma con espacio');
 });
@@ -347,6 +347,27 @@ test('textos: «1 centena» en singular y la frase de menor_par distingue el 0',
   assert.match(TX.descomposicion.valor_fb.es('1 234', 1, 2, 100), /1 centena = 100/);
   assert.match(TX.descomposicion.valor_fb.en('1,234', 1, 2, 100), /1 hundred = 100/);
   assert.match(TX.descomposicion.valor_fb.es('8 274', 2, 2, 200), /2 centenas = 200/);
-  assert.match(TX.construir.por_que.menor_par.es(6, true), /el 0 no puede ir delante: va en segundo lugar/);
-  assert.doesNotMatch(TX.construir.por_que.menor_par.es(6, false), /0/);
+  assert.match(TX.construir.ayuda_ultima.menor_par.es(6, true), /el 0 no puede ir delante: va en segundo lugar/);
+  assert.doesNotMatch(TX.construir.ayuda_ultima.menor_par.es(6, false), /0/);
+});
+
+// ─── Reabierta del 14-11 de la tarea 26 ─────────────────────────────────────────
+
+test('ejercicio 3 (14-11): ningún ítem es decimal y el número dado y la respuesta son naturales', () => {
+  for (const it of generarN(generarComaPalabras, 31, 5000)) {
+    assert.notEqual(it.sub, 'decimal');
+    if (it.tipo === 'coma') {
+      assert.equal(it.sub, 'miles');
+      assert.equal(it.c % 100, 0, 'natural');
+      assert.match(it.dado.replace(/\s/g, ' '), /^\d{1,3}([.,  ]\d{3})*$/, it.dado);
+      assert.match(it.correcto.replace(/\s/g, ' '), /^\d{1,3}([.,  ]\d{3})*$/, it.correcto);
+    }
+  }
+});
+
+test('generarComaDecimal (para la U5): sigue dando decimales con opciones distintas', () => {
+  for (const it of generarN(generarComaDecimal, 32, 500)) {
+    assert.equal(it.sub, 'decimal');
+    assert.equal(new Set(it.opciones).size, 4);
+  }
 });

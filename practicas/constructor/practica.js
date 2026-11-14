@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, claseCorreccion } from '../_comun/piezas.js';
-import { TX, POSICION, explicaConstruir, explicaDescomposicion, explicaComaPalabras } from './textos.js';
+import { TX, POSICION, explicaConstruir, feedbackConstruir, explicaDescomposicion, explicaComaPalabras } from './textos.js';
 import {
   fmt, generarConstruir, esAciertoConstruir, generarDescomposicion, esAciertoASuma, esAciertoANumero,
   errorPegado, esAciertoOpcion, generarComaPalabras, esAciertoComa, escribir, esAciertoPalabras, enPalabras, leerEntero,
@@ -77,27 +77,9 @@ function montarConstruir(contenedor, item, api) {
     boton.style.display = 'none';
     casillas.forEach(c => { c.disabled = true; c.classList.add(acierto ? 'casilla--bien' : 'casilla--mal'); });
     fichas.forEach(f => { f.disabled = true; });
-    const ultima = item.solucion % 10;
-    const mio = Number(mias.join(''));
     api.responder({
       acierto,
-      html: textos => {
-        const { tt } = textos;
-        const buena = num(item.solucion, textos);
-        const porQue = {
-          mayor: () => tt(T.por_que.mayor)(),
-          menor: () => tt(T.por_que.menor)(item.hayCero),
-          menor_par: () => {
-            const resto = [...item.cifras];
-            resto.splice(resto.indexOf(ultima), 1);
-            return tt(T.por_que.menor_par)(ultima, resto.includes(0));
-          },
-          mayor_impar: () => tt(T.por_que.mayor_impar)(ultima),
-          cercano: () => tt(T.por_que.cercano)(num(item.objetivo, textos), num(Math.abs(item.solucion - item.objetivo), textos)),
-        }[item.consigna]();
-        const cabecera = acierto ? tt(T.bien)(buena) : tt(T.hecho)(mias[0] === 0 ? mias.join('') : num(mio, textos), buena);
-        return `${cabecera}${porQue}`;
-      },
+      html: textos => feedbackConstruir(item, mias, acierto, textos),
       espera: 3200,
     });
   });

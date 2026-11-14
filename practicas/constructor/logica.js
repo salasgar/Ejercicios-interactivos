@@ -231,12 +231,11 @@ export function leerComo(cadena, loc, estilo = 'punto') {
 }
 
 /**
- * Ítem coma: { tipo: 'coma', sub: 'miles' | 'decimal', dir: 'en_es' | 'es_en', c, estilo, dado, opciones, correcto }.
+ * Ítem coma: { tipo: 'coma', sub: 'miles' (o 'decimal', solo con generarComaDecimal), dir: 'en_es' | 'es_en', c, estilo, dado, opciones, correcto }.
  * Se da un número escrito a un lado (12,500 en inglés) y se pide cómo se escribe al otro: 12.500. La
  * trampa de verdad —leerlo con las reglas del otro idioma (12,500 → 12,5)— va siempre de señuelo.
  */
-export function generarComa(rng) {
-  const sub = rng.azar() < 0.55 ? 'miles' : 'decimal';
+function construirComa(rng, sub) {
   const dir = rng.elegir(['en_es', 'es_en']);
   const estilo = rng.elegir(['punto', 'espacio']);
   let c;
@@ -266,6 +265,12 @@ export function generarComa(rng) {
   const opciones = rng.barajar([correcto, ...falsos]);
   return { tipo: 'coma', sub, dir, c, estilo, dado: escribir(c, origen, estilo), opciones, correcto, mal };
 }
+
+/** Ejercicio 3 de la práctica: solo miles (los decimales son de la unidad 5; decisión del 14-11, tarea 26). */
+export function generarComa(rng) { return construirComa(rng, 'miles'); }
+
+/** Para la U5 (`lee-decimales`): la misma pregunta con un decimal (689.6). No la usa esta práctica. */
+export function generarComaDecimal(rng) { return construirComa(rng, 'decimal'); }
 
 export const esAciertoComa = (item, elegida) => elegida === item.correcto;
 

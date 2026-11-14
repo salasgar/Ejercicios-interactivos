@@ -56,21 +56,12 @@ export const TX = {
         es: (cero) => (cero ? ': las cifras de menor a mayor, pero el 0 no puede ir delante: va el menor que no es 0 y después el 0.' : ': las cifras de menor a mayor.'),
         en: (cero) => (cero ? ': digits from smallest to greatest, but 0 cannot go first: the smallest digit that is not 0 goes first, then the 0.' : ': digits from smallest to greatest.'),
       },
-      menor_par: {
-        es: (ult, cero) => `: tiene que acabar en cifra par, y la mejor es el ${ult}; el resto, de menor a mayor${cero ? ', pero el 0 no puede ir delante: va en segundo lugar' : ''}.`,
-        en: (ult, cero) => `: it has to end in an even digit, and the best one is ${ult}; the other digits go from smallest to greatest${cero ? ', but 0 cannot go first: it goes second' : ''}.`,
-      },
-      mayor_impar: {
-        es: ult => `: tiene que acabar en cifra impar, y la mejor es el ${ult}; el resto, de mayor a menor.`,
-        en: ult => `: it has to end in an odd digit, and the best one is ${ult}; the other digits go from greatest to smallest.`,
-      },
       cercano: {
         es: (obj, dist) => `: está a ${dist} de ${obj}, y ningún otro número con esas cifras está tan cerca.`,
         en: (obj, dist) => `: it is ${dist} away from ${obj}, and no other number with these digits is that close.`,
       },
     },
-    // Solo la tarjeta del «No lo sé» (relevo de la revisión 193): cómo se elige la última cifra, no solo cuál es.
-    // El feedback sigue usando por_que.
+    // Cómo se elige la última cifra (relevo de la revisión 193): la usan la tarjeta del «No lo sé» y el feedback (`explicaUltima`).
     ayuda_ultima: {
       menor_par: {
         es: (ult, cero) => `Tiene que acabar en cifra par. Al final se deja la par más grande, el ${ult}, para que las pequeñas vayan delante; el resto, de menor a mayor${cero ? ', pero el 0 no puede ir delante: va en segundo lugar' : ''}.`,
@@ -172,8 +163,8 @@ export const TX = {
       en: (n, grupos) => `<span class="cuenta">${n}</span>. By groups: ${grupos}. A group that is not said at all is written 000.`,
     },
     grupos_nombres: {
-      es: (m, k, u) => `millones ${m} · millares ${k} · unidades ${u}`,
-      en: (m, k, u) => `millions ${m} · thousands ${k} · units ${u}`,
+      es: (m, k, u) => `millones ${m}; millares ${k}; unidades ${u}`,
+      en: (m, k, u) => `millions ${m}; thousands ${k}; units ${u}`,
     },
     falta: { es: 'Escribe el número.', en: 'Write the number.' },
   },
@@ -219,27 +210,52 @@ function explicaCercano(item, { tt, idioma }) {
   return `${tt(regla)} ${tt(caso)} ${tt(RESPUESTA)} ${cuentaHtml(num(item.solucion))}.`;
 }
 
+/**
+ * Par/impar: cómo se elige la última cifra (relevo de la revisión 193). Lo usan la tarjeta del «No lo sé» y el feedback,
+ * para que digan lo mismo (reabierta del 14-11 de la tarea 26).
+ */
+export function explicaUltima(item, { tt, idioma }) {
+  const A = TX.construir.ayuda_ultima;
+  const ultima = item.solucion % 10;
+  const resto = [...item.cifras];
+  resto.splice(resto.indexOf(ultima), 1);
+  if (item.consigna === 'mayor_impar') return tt(A.mayor_impar)(ultima);
+  const mayorPar = Math.max(...item.cifras.filter(d => d % 2 === 0));
+  if (ultima === mayorPar) return tt(A.menor_par)(ultima, resto.includes(0));
+  const conMayor = Math.min(...permutaciones(item.cifras).filter(n => n % 10 === mayorPar));
+  return tt(A.menor_par_cero)(mayorPar, cuentaHtml(fmt(conMayor, idioma)), cuentaHtml(fmt(item.solucion, idioma)));
+}
+
+/**
+ * Feedback del ejercicio 1 (acierto o fallo). Con par/impar dice lo mismo que la tarjeta del «No lo sé»
+ * (reabierta del 14-11 de la tarea 26): cómo se elige la última cifra, y el caso del 0.
+ */
+export function feedbackConstruir(item, mias, acierto, textos) {
+  const { tt, idioma } = textos;
+  const T = TX.construir;
+  const num = n => fmt(n, idioma);
+  const buena = num(item.solucion);
+  const mio = Number(mias.join(''));
+  const cabecera = acierto ? tt(T.bien)(buena) : tt(T.hecho)(mias[0] === 0 ? mias.join('') : num(mio), buena);
+  if (item.consigna === 'menor_par' || item.consigna === 'mayor_impar') return `${cabecera}. ${explicaUltima(item, textos)}`;
+  const porQue = {
+    mayor: () => tt(T.por_que.mayor)(),
+    menor: () => tt(T.por_que.menor)(item.hayCero),
+    cercano: () => tt(T.por_que.cercano)(num(item.objetivo), num(Math.abs(item.solucion - item.objetivo))),
+  }[item.consigna]();
+  return `${cabecera}${porQue}`;
+}
+
 /** Ejercicio 1: construye el número. Revisión 193: la razón delante y la respuesta al final (antes, «La respuesta es X: razón»). */
 export function explicaConstruir(item, ctx) {
   const { tt, idioma } = ctx;
   if (item.consigna === 'cercano') return explicaCercano(item, ctx);
   const T = TX.construir;
-  const ultima = item.solucion % 10;
-  const resto = [...item.cifras];
-  resto.splice(resto.indexOf(ultima), 1);
-  // Relevo de la revisión 193: en par/impar, el método para elegir la última cifra (antes, «la mejor es el 8» sin porqué).
-  const A = T.ayuda_ultima;
-  const menorPar = () => {
-    const mayorPar = Math.max(...item.cifras.filter(d => d % 2 === 0));
-    if (ultima === mayorPar) return tt(A.menor_par)(ultima, resto.includes(0));
-    const conMayor = Math.min(...permutaciones(item.cifras).filter(n => n % 10 === mayorPar));
-    return tt(A.menor_par_cero)(mayorPar, cuentaHtml(fmt(conMayor, idioma)), cuentaHtml(fmt(item.solucion, idioma)));
-  };
   const porQue = {
     mayor: () => tt(T.por_que.mayor)(),
     menor: () => tt(T.por_que.menor)(item.hayCero),
-    menor_par: menorPar,
-    mayor_impar: () => tt(A.mayor_impar)(ultima),
+    menor_par: () => explicaUltima(item, ctx),
+    mayor_impar: () => explicaUltima(item, ctx),
   }[item.consigna]();
   const cifras = { es: `Tienes las cifras ${item.cifras.join(', ')}.`, en: `You have the digits ${item.cifras.join(', ')}.` };
   // «: las cifras de mayor a menor.» (mayor, menor) no es una frase por sí sola: se le pone el verbo.

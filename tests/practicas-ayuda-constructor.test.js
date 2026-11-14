@@ -140,3 +140,27 @@ test('constructor · ejercicio 3 (revisión 193): sin «·» entre los grupos, s
     }
   }
 });
+
+// ─── Reabierta del 14-11 de la tarea 26: el feedback del ej. 1 y el de palabras ──
+
+test('constructor · feedback del ejercicio 1 (14-11): par/impar dicen lo mismo que la tarjeta, en las tres ramas', () => {
+  for (const idioma of IDIOMAS) for (const item of generar(L.generarConstruir, 41, 6000)) {
+    if (item.consigna !== 'menor_par' && item.consigna !== 'mayor_impar') continue;
+    const c = ctx(idioma);
+    const ayuda = plano(X.explicaUltima(item, c));
+    assert.ok(ayuda.length > 20);
+    for (const acierto of [true, false]) {
+      const html = plano(X.feedbackConstruir(item, acierto ? item.cifras : [...item.cifras].reverse(), acierto, c));
+      assert.ok(html.includes(ayuda), `${acierto}: ${html}`);
+      assert.ok(!html.includes('la mejor es') && !html.includes('the best one is'), html);
+    }
+  }
+});
+
+test('constructor · feedback de palabras (14-11): sin «·» entre los grupos', () => {
+  for (const idioma of ['es', 'en']) {
+    const t = X.TX.coma.grupos_nombres[idioma](2, '040', '006');
+    assert.ok(!t.includes('·'), t);
+    assert.ok(t.includes(';'), t);
+  }
+});
