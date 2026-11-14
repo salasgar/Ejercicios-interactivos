@@ -83,6 +83,11 @@ Dos tareas en el panel con los campos de la propuesta, leídas de vuelta, con su
 
 - Claude en Chrome necesita la pestaña activa y visible; el editor de tareas del panel es el de la tarea 67: si falla, reabierta de la 67 y plan B (él teclea, la sesión dicta).
 - Si la 131 no ha cerrado pero sí la 130, se puede montar solo la semana 1 y volver: dilo en la ENTREGA y deja la tarea A MEDIAS con su nota.
+- (14-11, s-20261114T113340-e665d987, ~10 min) Lo más rápido y fiable: rellenar el editor con `javascript_tool` (valor + eventos `input` y
+  `change` en cada campo; cada ejercicio es un `<select>` con valores `''`, `estrella`, `elegir`, en la fila «práctica | n. nombre»),
+  releer todos los campos, pedir la confirmación de las dos semanas en una sola pregunta y pulsar «Guardar». Releer tras recargar con
+  «Editar»/«Cancelar». Si la salida de un script lleva pares `a=b|c=d`, la extensión la bloquea («Cookie/query string data»): usar otros
+  separadores. «Empieza el» de la cabecera de la unidad es un `<input type="date">`: en `innerText` sale vacío y no es un fallo.
 
 ## Prohibido (propio de esta tarea)
 
