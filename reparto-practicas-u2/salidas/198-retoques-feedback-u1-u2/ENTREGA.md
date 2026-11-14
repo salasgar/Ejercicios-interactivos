@@ -1,6 +1,6 @@
 # Entrega de la tarea 198 · Retoques de feedback en ocho prácticas (U1 y U2)
 
-Sesión s-20261114T231306-acc90cc9 · código en el commit a651262 (21 ficheros, solo textos y tests).
+Sesión s-20261114T231306-acc90cc9 · código en el commit 7c58383 (21 ficheros, solo textos y tests).
 
 ## Lo hecho
 
