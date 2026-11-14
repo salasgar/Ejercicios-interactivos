@@ -39,6 +39,9 @@ test('fabrica · ejercicio 2: la respuesta es Sí/No según los exponentes y coi
       assert.equal(item.n % item.d === 0, item.divisible);
       // Revisión 193: nada de «5 = 5» cuando el divisor es primo.
       assert.doesNotMatch(html, new RegExp(`(^|[^\\d])${item.d} = ${item.d}\\.`), html);
+      // Relevo de la revisión 193: «Todos valen» / «Alguno no vale» solo si el divisor tiene más de un primo.
+      const varios = /Todos valen|Alguno no vale|All of them are enough|Not all of them are enough/.test(html);
+      assert.equal(varios, item.factD.length > 1, html);
     }
   }
 });

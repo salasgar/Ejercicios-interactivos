@@ -85,9 +85,15 @@ export function explicaDivisible(item, { idioma }) {
     ? (idioma === 'es' ? `${item.d} es primo` : `${item.d} is prime`)
     : `${item.d} = ${item.factD.map(pot).join(' · ')}`;
   const cabecera = `<p>${item.n} = ${item.fact.map(pot).join(' · ')}; ${deD}.</p>`;
+  // Relevo de la revisión 193: con un solo primo en el divisor, nada de «Todos valen» / «Alguno no vale».
+  const uno = item.factD.length === 1;
   const conclusion = item.divisible
-    ? (idioma === 'es' ? `Todos valen, así que ${item.n} es divisible entre ${item.d}.` : `All of them are enough, so ${item.n} is divisible by ${item.d}.`)
-    : (idioma === 'es' ? `Alguno no vale, así que ${item.n} no es divisible entre ${item.d}.` : `Not all of them are enough, so ${item.n} is not divisible by ${item.d}.`);
+    ? (idioma === 'es'
+      ? `${uno ? 'Vale' : 'Todos valen'}, así que ${item.n} es divisible entre ${item.d}.`
+      : `${uno ? 'It is enough' : 'All of them are enough'}, so ${item.n} is divisible by ${item.d}.`)
+    : (idioma === 'es'
+      ? `${uno ? 'No vale' : 'Alguno no vale'}, así que ${item.n} no es divisible entre ${item.d}.`
+      : `${uno ? 'It is not enough' : 'Not all of them are enough'}, so ${item.n} is not divisible by ${item.d}.`);
   // El texto del botón, entre comillas (revisión 193).
   const boton = `<strong>${item.divisible ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`;
   return `<p>${regla}</p>${cabecera}<ol class="pasos-ayuda">${pasos.join('')}</ol><p>${conclusion} ${RESPUESTA[idioma](idioma === 'es' ? `«${boton}»` : `“${boton}”`)}</p>`;
