@@ -20,7 +20,8 @@ const ES_NUMERO = /^−?\d+([.,]\d+)?$/;
 function esperada(item, idioma) {
   const o = item.opciones.find(x => x.correcta);
   if (ES_NUMERO.test(o.texto)) return aTexto(deTexto(o.texto), idioma);
-  return idioma === 'en' ? `“${o.texto}”` : `«${o.texto}»`;
+  const t = o.html ?? o.texto;
+  return idioma === 'en' ? `“${t}”` : `«${t}»`;
 }
 
 for (const [nombre, generar, explica, semilla] of [

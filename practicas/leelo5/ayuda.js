@@ -64,9 +64,8 @@ const ES_NUMERO = /^−?\d+([.,]\d+)?$/;
  */
 export const opcionBuena = (item, esc = x => x, idioma = null) => {
   const o = item.opciones.find(x => x.correcta);
-  if (o.html) return o.html;
-  // «Pasa <fracción> a decimal»: el texto ya lleva la fracción como HTML (htmlFraccion) y no se escapa.
-  const texto = /<span class="frac/.test(o.texto) ? o.texto : esc(o.texto);
+  // «Pasa <fracción> a decimal»: `html` lleva la fracción con raya (htmlFraccion) y no se escapa.
+  const texto = o.html ?? esc(o.texto);
   if (!idioma) return texto;
   if (ES_NUMERO.test(o.texto)) return aTexto(deTexto(o.texto), idioma);
   return idioma === 'en' ? `“${texto}”` : `«${texto}»`;

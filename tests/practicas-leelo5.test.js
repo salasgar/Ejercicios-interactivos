@@ -336,7 +336,7 @@ function esperadaDe(en) {
   if ((m = en.match(/^Write a decimal that is between (\S+) and (\S+)\.$/))) return `Escribe un decimal que esté entre ${es(m[1])} y ${es(m[2])}`;
   if ((m = en.match(/^Write (.+) in (ascending|descending) order\.$/))) {
     const nums = m[1].split(', ').map(es);
-    return `Ordena ${nums.slice(0, -1).join(', ')} y ${nums.at(-1)} ${m[2] === 'ascending' ? 'de menor a mayor' : 'de mayor a menor'}`;
+    return `Ordena ${nums.slice(0, -1).join('; ')} y ${nums.at(-1)} ${m[2] === 'ascending' ? 'de menor a mayor' : 'de mayor a menor'}`;
   }
   if ((m = en.match(/^Which number is (greater|smaller), (\S+) or (\S+)\?$/))) return `¿Qué número es ${m[1] === 'greater' ? 'mayor' : 'menor'}, ${es(m[2])} o ${es(m[3])}?`;
   if ((m = en.match(/^Estimate (\S+) \+ (\S+) by rounding to the nearest whole number\.$/))) return `Estima ${es(m[1])} + ${es(m[2])} redondeando a la unidad más cercana`;
@@ -357,7 +357,8 @@ test('ej. 3: cada consigna tiene una sola traducción verdadera, la marcada; las
       assert.ok(f, 'fracción de la consigna');
       // La fracción va con raya: la buena es «Pasa <fracción> a decimal» con esa misma fracción; ninguna falsa acaba en «a decimal».
       const [, n, d] = f;
-      assert.equal(correcta(it).texto, `Pasa <span class="frac frac--compacta"><span>${n}</span><span>${d}</span></span> a decimal`);
+      assert.equal(correcta(it).texto, `Pasa ${n}/${d} a decimal`);
+      assert.equal(correcta(it).html, `Pasa <span class="frac frac--compacta"><span>${n}</span><span>${d}</span></span> a decimal`);
       for (const o of falsas(it)) assert.ok(!/ a decimal$/.test(o.texto), `«${o.texto}» acaba como la buena`);
       continue;
     }
@@ -451,8 +452,8 @@ test('ej. 4: cada frase tiene una sola palabra verdadera, la marcada', () => {
         break;
       }
       case 'completa_vuelta': {
-        m = t.match(/^(\S+) pays with a €(\d+) note \(billete\) and the book costs €(\S+)\. Her  is €(\S+)\.$/);
-        const [billete, precio, cambio] = [Number(m[2]), deTexto(m[3]), deTexto(m[4])];
+        m = t.match(/^(\S+) pays with a €(\d+) note \(billete\) and the book costs €(\S+)\. (\S+)'s  is €(\S+)\.$/);
+        const [billete, precio, cambio] = [Number(m[2]), deTexto(m[3]), deTexto(m[5])];
         assert.ok(COTAS.libro.billetes.includes(billete), 'billete');
         assert.ok(precio.m >= COTAS.libro.min * 100 && precio.m <= COTAS.libro.max * 100 && precio.m < billete * 100, 'precio');
         assert.ok(cambio.equals(decimal(billete * 100 - precio.m, 2)) && cambio.m > 0, 'la vuelta');
@@ -577,5 +578,34 @@ test('los nombres de los errores propios están en los dos idiomas y no se pisan
   for (const [id, e] of Object.entries(ERRORES_LEELO)) {
     assert.ok(e.nombre.es && e.nombre.en, id);
     assert.ok(!/ I /.test(e.nombre.en));
+  }
+});
+
+test('ningún texto de opción lleva marcado HTML y las de «convertir» llevan la fracción con raya en `html`', () => {
+  let convertir = 0;
+  for (const generar of [generarPalabra, generarLeelo, generarConsigna, generarCompleta]) {
+    const rng = crearRng(920000 + generar.name.length);
+    for (let i = 0; i < 600; i++) {
+      const it = generar(rng, 5);
+      for (const o of it.opciones) {
+        assert.ok(!/</.test(o.texto), `${it.plantilla}: «${o.texto}»`);
+        if (it.plantilla === 'consigna_convertir') {
+          convertir++;
+          assert.match(o.html, /class="frac/, o.texto);
+          assert.ok(!/\d+\/\d+/.test(o.html), o.html);
+        }
+      }
+    }
+  }
+  assert.ok(convertir > 40, `solo ${convertir} opciones de convertir`);
+});
+
+test('completa_vuelta no usa «Her»/«she» con nombres de chico y consigna_orden no separa con comas en español', () => {
+  const rng = crearRng(930001);
+  for (let i = 0; i < 1500; i++) {
+    const it = generarCompleta(rng, 5);
+    if (it.plantilla === 'completa_vuelta') assert.ok(!/\bHer\b/.test(JSON.stringify(it)) && !/\bshe\b/.test(JSON.stringify(it)));
+    const c = generarConsigna(rng, 5);
+    if (c.plantilla === 'consigna_orden') for (const o of c.opciones) assert.ok(!/\d,\d+, \d/.test(o.texto), o.texto);
   }
 });

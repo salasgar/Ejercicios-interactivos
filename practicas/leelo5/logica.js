@@ -28,7 +28,7 @@ import {
   porPotenciaDe10, multiplicar, dividir, sumar, restar, comparar, mismoValor, ORDENES, MENOS,
   ERRORES_TIPICOS, alinearDerecha, comaMalPuesta, olvidarComaCociente, compararPorCifras,
 } from '../_comun/decimales.js';
-import { fraccion, htmlFraccion } from '../_comun/fracciones.js';
+import { fraccion, htmlFraccion, aTexto as aTextoFraccion } from '../_comun/fracciones.js';
 
 export { numeroAIngles, numeroAEspanol };
 const w = numeroAIngles;
@@ -574,7 +574,7 @@ function consignaOrden(rng) {
     if (!lista.some(x => x.equals(d))) lista.push(d);
   }
   const asc = rng.azar() < 0.5;
-  const E = lista.map(d => num(d, 'en')).join(', '), Es = [num(lista[0], 'es'), num(lista[1], 'es')].join(', ') + ' y ' + num(lista[2], 'es');
+  const E = lista.map(d => num(d, 'en')).join(', '), Es = [num(lista[0], 'es'), num(lista[1], 'es')].join('; ') + ' y ' + num(lista[2], 'es');
   const dir = asc ? par('de menor a mayor', 'ascending') : par('de mayor a menor', 'descending');
   return consigna(rng, {
     plantilla: 'consigna_orden', en: `Write ${E} in ${asc ? 'ascending' : 'descending'} order.`, ok: `Ordena ${Es} ${dir.es}`,
@@ -631,16 +631,19 @@ function consignaConvertir(rng) {
     break;
   }
   if (!f) throw new ItemPobre('consigna_convertir');
-  const H = htmlFraccion(f, { compacta: true });
-  return consigna(rng, {
-    plantilla: 'consigna_convertir', en: `Convert ${H} to a decimal.`, ok: `Pasa ${H} a decimal`,
+  const H = htmlFraccion(f, { compacta: true }), T = aTextoFraccion(f);
+  // `texto` en claro (registro de fallos, comparaciones); `html` lo que ve el alumno, con la fracción con raya.
+  const conHtml = o => ({ ...o, html: o.texto.split(T).join(H) });
+  const item = consigna(rng, {
+    plantilla: 'consigna_convertir', en: `Convert ${H} to a decimal.`, ok: `Pasa ${T} a decimal`,
     falsas: [
-      { texto: `Simplifica la fracción ${H}`, error: 'confunde-la-operacion-pedida', por_que: par('«Convert … to a decimal» pide un decimal, no simplificar.', '“Convert … to a decimal” asks for a decimal, not for simplifying.') },
-      { texto: `Calcula ${H} de 100`, error: 'confunde-la-operacion-pedida', por_que: par('«Convert» es pasar de una forma a otra, no calcular una parte de 100.', '“Convert” means to change one form into another, not to find a part of 100.') },
-      { texto: `Pasa ${H} a fracción decimal`, error: 'confunde-la-forma-pedida', por_que: par('«To a decimal» pide un decimal (con coma), no otra fracción.', '“To a decimal” asks for a decimal (with a point), not another fraction.') },
+      { texto: `Simplifica la fracción ${T}`, error: 'confunde-la-operacion-pedida', por_que: par('«Convert … to a decimal» pide un decimal, no simplificar.', '“Convert … to a decimal” asks for a decimal, not for simplifying.') },
+      { texto: `Calcula ${T} de 100`, error: 'confunde-la-operacion-pedida', por_que: par('«Convert» es pasar de una forma a otra, no calcular una parte de 100.', '“Convert” means to change one form into another, not to find a part of 100.') },
+      { texto: `Pasa ${T} a fracción decimal`, error: 'confunde-la-forma-pedida', por_que: par('«To a decimal» pide un decimal (con coma), no otra fracción.', '“To a decimal” asks for a decimal (with a point), not another fraction.') },
     ],
     solucion: par('«Convert» es «pasar de una forma a otra»: de fracción a decimal se divide el numerador entre el denominador.', '“Convert” means to change from one form to another: from a fraction to a decimal, you divide the numerator by the denominator.'), sesion: 5,
   });
+  return { ...item, opciones: item.opciones.map(conHtml) };
 }
 
 function consignaDividir(rng) {
@@ -787,9 +790,9 @@ function completaVuelta(rng) {
     const cambio = restar(billete, precio);
     if (esReservado(precio.normalizar()) || esReservado(cambio.normalizar())) continue;
     return completa(rng, {
-      plantilla: 'completa_vuelta', en: `${N} pays with a €${billete} note (billete) and the book costs ${dinero(precio, 'en')}. Her ${HUECO} is ${dinero(cambio, 'en')}.`, ok: 'change',
+      plantilla: 'completa_vuelta', en: `${N} pays with a €${billete} note (billete) and the book costs ${dinero(precio, 'en')}. ${N}'s ${HUECO} is ${dinero(cambio, 'en')}.`, ok: 'change',
       falsas: [
-        noEncaja('price', 'palabra-que-no-encaja', par(`El precio del libro es ${dinero(precio, 'es')}; ${dinero(cambio, 'es')} es lo que le devuelven.`, `The price of the book is ${dinero(precio, 'en')}; ${dinero(cambio, 'en')} is what she gets back.`)),
+        noEncaja('price', 'palabra-que-no-encaja', par(`El precio del libro es ${dinero(precio, 'es')}; ${dinero(cambio, 'es')} es lo que le devuelven.`, `The price of the book is ${dinero(precio, 'en')}; ${dinero(cambio, 'en')} is what ${N} gets back.`)),
         noEncaja('total', 'palabra-que-no-encaja', par(`El total de la compra es ${dinero(precio, 'es')}; ${dinero(cambio, 'es')} es la vuelta.`, `The total of the purchase is ${dinero(precio, 'en')}; ${dinero(cambio, 'en')} is the change.`)),
         noEncaja('discount', 'palabra-que-no-encaja', par('Un «discount» es un descuento; aquí nadie rebaja el precio.', 'A “discount” is a reduction of the price; nobody lowers the price here.')),
       ],
