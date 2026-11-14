@@ -929,3 +929,73 @@ Los números son los de esa lista.
 - **Orden de prioridad**: primero las tres ★ (24, 10, 11), que enseñan algo falso; después 26 (los decimales), 12 y 21; luego el resto, la 198 y la 197.
 - **Regla para todas**: la tarjeta del «No lo sé» ya dice bien lo que se corrige; el feedback reutiliza su función y no inventa una
   tercera versión. Los generadores no cambian salvo en la 10, la 12, la 26 y la 32, que lo dicen (y la frase de un ítem de `leelo` en la 198).
+
+## Decisiones del 14-11: colocar paréntesis en la U3, la U4 y la U5 (coordinadora s-20261114T212714-761c8123)
+
+Encargo de Juan Luis (14-11): «Los ejercicios de colocar paréntesis me gustan mucho. Espero que hagas otros similares en la U3, en la U4
+y en la U5». Se refiere a `parentesis` (U1, id 16), sobre todo al ej. 1: todos los resultados posibles, apagados, que se encienden al
+conseguirlos. Nadie contestaba preguntas: lo ha decidido la coordinadora y Juan Luis puede cambiar cualquier punto.
+
+**Lo que había**: U3 `parentesis-enteros` ej. 5 (una diana de un solo par de paréntesis, U3-4A-04); U4 `combinadas-fracciones` (cuál
+primero, paso a paso, caza el error); U5 `multiplica-divide-decimales` ej. 6 (combinadas). Ninguna tiene el «encuentra todos».
+
+**Decisiones**
+
+- **Tres prácticas nuevas, no ejercicios al final de las que hay**: `coloca-enteros` (80, U3), `coloca-fracciones` (81, U4) y
+  `coloca-decimales` (82, U5), «Coloca los paréntesis. Con enteros / fracciones / decimales». Porque un ejercicio añadido a una práctica
+  publicada se ve en cuanto se empuja (no hay `disponible` por ejercicio) y saltaría la revisión con clics; porque cambiar `nEjercicios`
+  obliga a tocar `catalogo.js` y los totales de `tests/practicas-comun.test.js` en cada tarea y las pondría en serie; y porque las tres
+  prácticas que habría que ampliar tienen ya cinco o seis ejercicios de otro tipo y una historia de reaperturas. Añadir al final no
+  rompería el progreso ni las tareas (se guardan por posición y citan `[slug, n]`), pero no compensa. Nacen con `disponible: false`.
+- **Un motor común**, `practicas/_comun/parentesis-motor.js`, con la aritmética inyectada (naturales, enteros, fracciones exactas,
+  decimales en enteros escalados), y una pantalla común, `parentesis-pantalla.js`, en vez de tres copias de las ~800 líneas de la U1:
+  lo difícil (agrupaciones con el exponente, paréntesis mínimos, la pista, qué se puede alcanzar con el editor) se escribe y se prueba
+  una vez. Ficheros **nuevos** en `_comun`: no pisan a la 197 (`base.js`, `piezas.js`, `estilos.css`); los estilos del editor van en el
+  `estilos.css` de cada práctica.
+- **La U1 no se toca.** Está publicada y gusta como está. El motor se prueba contra ella (mismos árboles, resultados, colocaciones y
+  pistas en 3000 ítems por ejercicio); pasarla al motor es una propuesta para después.
+- **Una base ALTO primero (199)** que deja motor, pantalla, las tres filas del catálogo, sus esqueletos, la portada, `DESTREZAS` y el §7
+  de los docs: así las tres prácticas (200-202, MEDIO) van **a la vez**, cada una solo en su carpeta, sin tocar ningún fichero común.
+  La 199 espera a la 197 (comparten `tests/practicas-comun.test.js`).
+- **U3, tres «encuentra todos», sin diana** (la diana ya es `parentesis-enteros` ej. 5): tres números (+ − ·; el primero puede ser
+  negativo; exactamente 2 resultados), con una potencia (3-5 resultados; al menos el 40 % de los ítems con una base negativa al agrupar,
+  U3-3C-10) y con división (cuatro números, 3-6 resultados y alguna agrupación que **no se puede** porque el cociente no es entero o es
+  entre 0, como el ej. 3 de la U1). Todo valor entre −200 y 200. Con enteros la resta siempre se puede: es lo que se ve de nuevo.
+- **U4, dos «encuentra todos» y una diana**: tres números (+ − ·; 2 resultados), con división (cuatro números; 3-5) y una diana de cuatro
+  números (la diana obliga a calcular y tiene fallo y feedback; es U4-3A-02 al revés). Fracciones de denominador 2-6 (a veces 8, 10, 12)
+  y naturales de 2 a 5; solo el primero negativo (30 %); todo valor irreducible con denominador ≤ 36 y numerador entre −60 y 60. **Sin
+  agrupaciones imposibles**: con fracciones todo se puede salvo dividir entre 0, y el generador descarta esas expresiones (decir «no se
+  puede» de algo que se puede sería falso). **Sin potencias**: en la U4 son de base positiva y sueltas (U4-2C-12), no de las combinadas,
+  y `combinadas-fracciones` tampoco las mezcla. Raya siempre; un entero, como entero.
+- **U5, dos «encuentra todos» y una diana**: tres números (una operación de + − y otra de · :; 2 resultados), con un cuadrado (³ en un 15 %;
+  3-5; U5-2C-13, que el acta pone «dentro de las combinadas») y una diana de cuatro números. Decimales de una o dos cifras y naturales de
+  2 a 10; **todo valor no negativo, con tres cifras decimales como mucho, divisiones exactas, hasta 500**; sin imposibles a la vista
+  (un periódico se reconoce en la sesión 6, no se opera; los negativos de la U5 nunca son nucleares). Coma en español y punto en inglés.
+- **Pruebas que deja cada práctica**: 2000 ítems por ejercicio en el test con las cotas; **todas las colocaciones del editor** en 200
+  ítems dan exactamente los chips (ni sobra ni falta ninguno); un chip por valor (3/4 = 6/8; 0,5 = 0,50); no repite el anterior; la
+  reserva de `buscar` en menos del 1 %; variedad (ningún ítem en más del 10 % de 20 000); casos del papel fuera (la misma cuenta sin
+  paréntesis; los de examen, por huella FNV-1a, nunca en claro); «No lo sé» con la solución del ítem en su test de ayuda; ES/EN;
+  navegador a 375 y 1200 px.
+- **Plazos** (calendario del curso y sesiones de cada inventario): la U3 coloca paréntesis en la sesión 13 (mié 9-12, semana 4) →
+  200 antes del vie 27-11 y 203 publica antes del jue 3-12; la U4, combinadas en la sesión 10 (semana 3, desde el lun 11-1) y la U5 en la
+  sesión 6 (mar 26-1) → 201 y 202 antes del vie 18-12 y 204 publica antes del mar 22-12 (límites jue 7-1 y jue 21-1).
+- **Tareas semanales**: las publicaciones **proponen** en qué tarea entra cada una (lo razonable, como «a elegir» de la semana 4 de la U3,
+  la 3 de la U4 y la 2 de la U5, que ya están montadas o propuestas); **Juan Luis las cambia en el panel**.
+- **Nombres en el bloque de la portada**: `coloca-enteros`, en el de la semana 3 de la U3 («Potencias, jerarquía y paréntesis»), detrás
+  de `parentesis-enteros`, que también es de las semanas 3-4; las otras dos, en el bloque de la semana de sus combinadas.
+
+**Lo dado de alta**
+
+| # | Tarea | Banda | Duración | Precondición | Plazo |
+|---|---|---|---|---|---|
+| 199 | Motor y pantalla comunes, filas 80-82 (sin publicar), esqueletos, portada, `DESTREZAS`, §7 | ALTO | 2 h 30 min | 197 LISTA; nadie con `catalogo.js` | mié 18-11 |
+| 200 | `coloca-enteros` (U3) | MEDIO | 1 h 15 min | 199 LISTA | vie 27-11 |
+| 201 | `coloca-fracciones` (U4) | MEDIO | 1 h 30 min | 199 LISTA | vie 18-12 |
+| 202 | `coloca-decimales` (U5) | MEDIO | 1 h 15 min | 199 LISTA | vie 18-12 |
+| 203 | Revisión con clics y publicación de `coloca-enteros` | ALTO | 1 h | 200 LISTA | jue 3-12 |
+| 204 | Revisión con clics y publicación de `coloca-fracciones` y `coloca-decimales` | ALTO | 1 h 15 min | 201 y 202 LISTAS | mar 22-12 |
+
+- **Qué va a la vez**: 200, 201 y 202, las tres juntas (carpetas y tests disjuntos). 203 puede ir con 201 y 202. **203 y 204, nunca a la
+  vez** (las dos tocan `catalogo.js`, docs y `README.md`): en cadena, en cualquier orden. Ninguna toca una carpeta de las quince reabiertas
+  del 14-11 ni de la 198.
+- **Orden de prioridad**: 199 en cuanto cierre la 197; después 200 (la U3 es la que corre) y 203; luego 201, 202 y 204.
