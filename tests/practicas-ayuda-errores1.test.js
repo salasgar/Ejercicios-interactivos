@@ -11,12 +11,21 @@ const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
 const plano = html => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 const generar = (fn, semilla, n = 1000) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => fn(rng)); };
 const RESP = { es: 'La respuesta es', en: 'The answer is' };
+const Q = { es: x => `«${x}»`, en: x => `“${x}”` };
+/** Revisión 193: la respuesta, sin dos puntos tras «es», al final y una sola vez. */
+const alFinal = (t, idioma, txt) => {
+  const r = `${RESP[idioma]} ${txt}.`;
+  assert.ok(t.trim().endsWith(r), t);
+  assert.ok(!t.includes(`${RESP[idioma]}:`), t);
+};
 
 test('errores1 · ejercicio 1: la explicación dice si hay error o no', () => {
   for (const idioma of IDIOMAS) for (const item of generar(L.generarHay, 1)) {
     const t = plano(X.explicaHay(item, ctx(idioma)));
     assert.equal(item.solucion, item.error ? 'error' : 'bien');
-    assert.ok(t.includes(`${RESP[idioma]}: ${item.error ? X.TX.error[idioma] : X.TX.bien[idioma]}.`), t);
+    alFinal(t, idioma, Q[idioma](item.error ? X.TX.error[idioma] : X.TX.bien[idioma]));
+    // El veredicto no se dice dos veces («Está bien: …» al principio y otra vez al final)
+    assert.equal(t.split(item.error ? X.TX.error[idioma] : X.TX.bien[idioma]).length - 1, 1, t);
     assert.ok(!/undefined|NaN/.test(t), t);
   }
 });
@@ -25,7 +34,7 @@ test('errores1 · ejercicio 2: la explicación señala la línea del error', () 
   for (const idioma of IDIOMAS) for (const item of generar(L.generarLinea, 2)) {
     const t = plano(X.explicaLinea(item, ctx(idioma)));
     assert.equal(item.solucion, item.error.linea);
-    assert.ok(t.includes(`${RESP[idioma]}: ${X.TX.linea[idioma]} ${item.error.linea + 1}.`), t);
+    alFinal(t, idioma, `${idioma === 'es' ? 'la línea' : 'line'} ${item.error.linea + 1}`);
     assert.ok(t.includes(plano(X.html(item.lineas[item.error.linea][idioma]))), t);
     assert.ok(!/undefined|NaN/.test(t), t);
   }
@@ -35,7 +44,9 @@ test('errores1 · ejercicio 3: la explicación da el nombre del error', () => {
   for (const idioma of IDIOMAS) for (const item of generar(L.generarNombre, 3)) {
     const t = plano(X.explicaNombre(item, ctx(idioma)));
     assert.equal(item.solucion, item.error.nombre);
-    assert.ok(t.includes(`${RESP[idioma]}: ${X.NOMBRES[item.error.nombre][idioma]}`), t);
+    const nombre = X.NOMBRES[item.error.nombre][idioma].replace(/\.$/, '');
+    alFinal(t, idioma, Q[idioma](nombre));
+    assert.equal(t.split(nombre).length - 1, 1, t);   // el nombre solo en la respuesta
     assert.ok(!t.includes('..'), t);
     assert.ok(!/undefined|NaN/.test(t), t);
   }
@@ -45,7 +56,29 @@ test('errores1 · ejercicio 4: la explicación dice si falta un paso', () => {
   for (const idioma of IDIOMAS) for (const item of generar(L.generarPasos, 4)) {
     const t = plano(X.explicaPasos(item, ctx(idioma)));
     assert.equal(item.solucion, item.salta ? 'si' : 'no');
-    assert.ok(t.includes(`${RESP[idioma]}: ${(item.salta ? X.TX.si : X.TX.no)[idioma]}.`), t);
+    alFinal(t, idioma, Q[idioma]((item.salta ? X.TX.si : X.TX.no)[idioma]));
+    if (item.salta) {
+      // La línea que falta, con sus números, y el número de la línea tras la que va
+      const p = L.PASOS_POR_ID[item.plantilla];
+      const k = p.entre ?? item.lineas.length - 1;
+      assert.ok(t.includes(idioma === 'es' ? `Entre las líneas ${k} y ${k + 1} falta esta:` : `between lines ${k} and ${k + 1}:`), t);
+      assert.ok(t.includes(plano(X.html(`= ${p.falta(item.params)}`)).trim()), t);
+    }
     assert.ok(!/undefined|NaN/.test(t), t);
+  }
+});
+
+test('errores1 · ejercicios 1-3: regla delante; con error, la línea mala y la cuenta bien hecha, en minúscula tras «sería:»', () => {
+  const fns = [[X.explicaHay, L.generarHay], [X.explicaLinea, L.generarLinea], [X.explicaNombre, L.generarNombre]];
+  for (const [explica, gen] of fns) for (const idioma of IDIOMAS) for (const item of generar(gen, 5)) {
+    const html = explica(item, ctx(idioma));
+    const t = plano(html);
+    assert.ok(/^<p>[^<]+<\/p>/.test(html), html);   // la regla, en su párrafo, delante
+    if (!item.error) continue;
+    const corregida = plano(X.html(L.PLANTILLA_POR_ID[item.plantilla].corregida(item.params)[idioma])).trim();
+    assert.ok(t.toLowerCase().includes(corregida.toLowerCase()), t);
+    assert.ok(t.includes(plano(X.html(item.lineas[item.error.linea][idioma])).trim()), t);
+    const tras = t.split(X.TX.correcta[idioma])[1].trim();
+    assert.ok(!/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(tras), t);
   }
 });

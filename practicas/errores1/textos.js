@@ -665,29 +665,78 @@ export function explicacionPasos(item, { tt }) {
   return `${tt(TX.paso_a_paso)} ${html(tt(plantilla.porque(item.params)))}`;
 }
 
+// ─── «No lo sé»: la regla del ejercicio, la línea mala y cómo se hace bien, y la respuesta (revisión 193) ───
+//
+// La tarjeta no copia el feedback (`explicacion`, `explicacionPasos`): le faltaba la regla delante, cerraba con
+// «La respuesta es: …» (dos puntos entre verbo y atributo), en el ej. 3 el nombre del error salía en el cuerpo y
+// otra vez como respuesta, y en los ej. 1 y 4 el veredicto («Está bien», «Sí se ha saltado…») iba al principio y
+// al final. Mismo formato que `practicas/errores/` (la de la U2).
+
+const REGLA = {
+  hay: { es: 'Repasa cada línea: sus cuentas y la regla que usa. Si alguna falla, hay un error.', en: 'Check each line: its calculations and the rule it uses. If one of them fails, there is a mistake.' },
+  linea: { es: 'Repasa las líneas en orden y para en la primera cuya cuenta o regla falla.', en: 'Check the lines in order and stop at the first one with a wrong calculation or a wrong rule.' },
+  nombre: { es: 'Busca la línea mala y compárala con cómo se hace bien: lo que cambia da el nombre del error.', en: 'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.' },
+  pasos: {
+    es: 'En un paso caben varias operaciones si ninguna necesita el resultado de otra; si lo necesita, ese resultado se escribe antes, en su propia línea.',
+    en: 'A step can have several operations if none of them needs the result of another one; if it does, that result is written first, in its own line.',
+  },
+};
+const PRIMERA_MALA = { es: 'Es la primera línea que falla:', en: 'It is the first line that is wrong:' };
+const ESTA_EN = { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` };
+const FALTA_LINEA = {
+  es: k => `Entre las líneas ${k} y ${k + 1} falta esta:`,
+  en: k => `This line is missing between lines ${k} and ${k + 1}:`,
+};
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
-const cierre = (tt, texto) => `<p><strong>${tt(RESPUESTA)}: ${texto}${texto.endsWith('.') ? '' : '.'}</strong></p>`;
+const cierre = (idioma, txt) => `<p><strong>${RESPUESTA[idioma]} ${txt}.</strong></p>`;
+const entreComillas = (idioma, txt) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
+const sinPunto = txt => txt.replace(/\.$/, '');
+/** Minúscula tras dos puntos («Bien hecho sería: con 5 o más…»). */
+const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0].toLowerCase() + txt.slice(1) : txt);
 
-/** «No lo sé» del ejercicio 1: la explicación del ítem y la respuesta. */
+/** La línea mala y cómo queda bien hecha. En el ej. 2 el número de la línea es la respuesta: aquí solo va delante de la línea. */
+function malaYBuena(item, { tt }, esElEj2 = false) {
+  const n = item.error.linea + 1;
+  const texto = html(tt(item.lineas[item.error.linea]));
+  const mala = esElEj2 ? `${tt(PRIMERA_MALA)} <span class="linea-mala">${n}. ${texto}</span>` : `${tt(ESTA_EN)(n)} <span class="linea-mala">${texto}</span>`;
+  return `<p>${mala}<br>${tt(TX.correcta)} ${html(minuscula(tt(PLANTILLA_POR_ID[item.plantilla].corregida(item.params))))}</p>`;
+}
+
+/** Sin error: el porqué de la plantilla sin su «Está bien:» (la respuesta ya lo dice al final). */
+function porQueEstaBien(item, { tt }) {
+  const porque = tt(PLANTILLA_POR_ID[item.plantilla].porque(item.params)).replace(/^(Está bien|It is right): /, '');
+  return `<p>${html(porque[0].toUpperCase() + porque.slice(1))}</p>`;
+}
+
+/** «No lo sé» del ejercicio 1: ¿está bien o hay un error? */
 export function explicaHay(item, ctx) {
-  const { tt } = ctx;
-  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, esc(tt(item.error ? TX.error : TX.bien)))}`;
+  const { tt, idioma } = ctx;
+  const cuerpo = item.error ? malaYBuena(item, ctx) : porQueEstaBien(item, ctx);
+  return `<p>${tt(REGLA.hay)}</p>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.error ? TX.error : TX.bien))))}`;
 }
 
-/** «No lo sé» del ejercicio 2: dónde está el error. */
+/** «No lo sé» del ejercicio 2: la primera línea que está mal. */
 export function explicaLinea(item, ctx) {
-  const { tt } = ctx;
-  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, `${esc(tt(TX.linea))} ${item.solucion + 1}`)}`;
+  const { tt, idioma } = ctx;
+  const resp = idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`;
+  return `<p>${tt(REGLA.linea)}</p>${malaYBuena(item, ctx, true)}${cierre(idioma, resp)}`;
 }
 
-/** «No lo sé» del ejercicio 3: cómo se llama el error. */
+/** «No lo sé» del ejercicio 3: el nombre del error (solo al final). */
 export function explicaNombre(item, ctx) {
-  const { tt } = ctx;
-  return `<p>${explicacion(item, ctx)}</p>${cierre(tt, esc(tt(NOMBRES[item.solucion])))}`;
+  const { tt, idioma } = ctx;
+  return `<p>${tt(REGLA.nombre)}</p>${malaYBuena(item, ctx)}${cierre(idioma, entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion])))))}`;
 }
 
-/** «No lo sé» del ejercicio 4: ¿falta un paso? */
+/** «No lo sé» del ejercicio 4: ¿falta un paso? La línea que falta con sus números, o por qué caben en un paso. */
 export function explicaPasos(item, ctx) {
-  const { tt } = ctx;
-  return `<p>${explicacionPasos(item, ctx)}</p>${cierre(tt, esc(tt(item.solucion === 'si' ? TX.si : TX.no)))}`;
+  const { tt, idioma } = ctx;
+  const plantilla = PASOS_POR_ID[item.plantilla];
+  const porque = html(tt(plantilla.porque(item.params)));
+  let cuerpo = `<p>${porque}</p>`;
+  if (item.salta) {
+    const k = plantilla.entre ?? item.lineas.length - 1;
+    cuerpo = `<p>${tt(FALTA_LINEA)(k)} <span class="cuenta">${html(`= ${plantilla.falta(item.params)}`)}</span><br>${porque}</p>`;
+  }
+  return `<p>${tt(REGLA.pasos)}</p>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.solucion === 'si' ? TX.si : TX.no))))}`;
 }
