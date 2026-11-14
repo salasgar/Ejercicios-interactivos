@@ -2,6 +2,8 @@
 // «divisor» y no «factor», inglés sencillo, y el feedback habla de LOS
 // NÚMEROS DE ESE ÍTEM.
 
+import { divTxt } from './logica.js';
+
 const cuantos = g => (g === 'f' ? 'Cuántas' : 'Cuántos');
 
 /** Objetos y recipientes de los problemas del ejercicio 3 (g: género del nombre en español). */
@@ -219,3 +221,71 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+const RESP = { es: 'La respuesta es', en: 'The answer is' };
+
+/** Ejercicio 1: cuántas cajas llenas caben, cuántos objetos quedan sueltos y la prueba. */
+export function explicaCajas(item, { tt }) {
+  const { D, d, q, r } = item;
+  const regla = tt({
+    es: `Llena cajas de ${d} objetos mientras quepan: las cajas llenas son el cociente y lo que queda suelto, el resto.`,
+    en: `Fill boxes of ${d} objects while they fit: the full boxes are the quotient and what is left loose is the remainder.`,
+  });
+  const pasos = `${cuenta(`${d} · ${q} = ${d * q}`)}; ${cuenta(`${D} − ${d * q} = ${r}`)}`;
+  return `<p>${regla}</p><p>${pasos}</p><p>${tt(RESP)}: ${tt(TX.cajas.correcto)(q, r)} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.</p>`;
+}
+
+/** Ejercicio 2: la prueba de una división, o de qué divisiones es prueba una igualdad. */
+export function explicaPrueba(item, { tt, idioma }) {
+  const regla = tt(TX.prueba.no_orden);
+  const mayus = regla[0].toUpperCase() + regla.slice(1);
+  if (item.tipo === 'prueba') {
+    const { D, d, q, r } = item;
+    const paso = cuenta(`${divTxt(D, d, idioma)}: ${tt({ es: 'cociente', en: 'quotient' })} ${q}, ${tt({ es: 'resto', en: 'remainder' })} ${r}`);
+    return `<p>${mayus}.</p><p>${paso}</p><p>${tt(RESP)} ${cuenta(`${D} = ${d} · ${q} + ${r}`)}.</p>`;
+  }
+  const { a, b, r, D, solucion } = item;
+  const [buena, otro] = solucion === 'a' ? [a, b] : [b, a];
+  const razon = solucion === 'ambas' ? tt(TX.prueba.inversa_ambas)(a, b, r)
+    : solucion === 'ninguna' ? tt(TX.prueba.inversa_ninguna)(a, b, r)
+    : `${tt(TX.prueba.inversa_una_si)(D, buena, r)} ${tt(TX.prueba.inversa_una_ok)(buena, otro, r)}`;
+  const fin = solucion === 'a' ? tt(TX.prueba.solo)(divTxt(D, a, idioma))
+    : solucion === 'b' ? tt(TX.prueba.solo)(divTxt(D, b, idioma))
+    : tt(solucion === 'ambas' ? TX.prueba.ambas : TX.prueba.ninguna);
+  return `<p>${tt({
+    es: 'Una igualdad D = d · q + r es la prueba de una división solo si el resto es menor que el divisor.',
+    en: 'An equality D = d · q + r is the check of a division only if the remainder is less than the divisor.',
+  })}</p><p>${razon}</p><p>${tt(RESP)}: ${fin}.</p>`;
+}
+
+/** Ejercicio 3: la división del problema y qué significa cada número. */
+export function explicaSignificado(item, { tt }) {
+  const { clave, D, d, q, r, pide, solucion } = item;
+  const cosa = COSAS[clave];
+  const paso = pide === 'llenas' ? tt(TX.significado.ok_llenas)(D, d, q, r, cosa)
+    : pide === 'sueltos' ? tt(TX.significado.ok_sueltos)(D, d, q, r)
+    : r === 0 ? tt(TX.significado.ok_hacen_exacto)(D, d, q)
+    : tt(TX.significado.ok_hacen)(D, d, q, r, cosa);
+  return `<p>${tt({
+    es: `Se divide ${D} entre ${d}: el cociente cuenta lo que se llena y el resto, lo que sobra.`,
+    en: `Divide ${D} by ${d}: the quotient counts what gets filled and the remainder is what is left.`,
+  })}</p><p>${paso}</p><p>${tt(RESP)} ${cuenta(solucion)}.</p>`;
+}
+
+/** Ejercicio 4: por qué el resto (y la cuenta) pueden o no ser. */
+export function explicaPuede(item, { tt, t }) {
+  const { variante, D, d, q, r, solucion } = item;
+  let razon;
+  if (variante === 'resto') razon = solucion ? tt(TX.puede.si_puede)(d, r) : tt(TX.puede.no_puede)(d, r);
+  else if (solucion) razon = tt(TX.puede.esta_bien)(D, d, q, r);
+  else if (r >= d && d * q + r !== D) razon = tt(TX.puede.mal_los_dos)(D, d, q, r);
+  else if (r >= d) razon = tt(TX.puede.mal_resto)(D, d, q, r);
+  else razon = tt(TX.puede.mal_cuenta)(D, d, q, r);
+  return `<p>${tt({
+    es: 'Para que sea posible, el resto tiene que ser menor que el divisor y la prueba D = d · q + r tiene que dar el dividendo.',
+    en: 'To be possible, the remainder has to be less than the divisor and the check D = d · q + r has to give the dividend.',
+  })}</p><p>${razon}</p><p>${tt(RESP)}: ${solucion ? t.si : t.no}.</p>`;
+}

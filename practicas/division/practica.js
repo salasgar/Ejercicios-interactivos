@@ -3,7 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX, COSAS } from './textos.js';
+import { TX, COSAS, explicaCajas, explicaPrueba, explicaSignificado, explicaPuede } from './textos.js';
 import {
   generarCajas, generarPruebaOInversa, generarSignificado, generarPuede,
   divTxt, solucionSignificado,
@@ -221,12 +221,15 @@ function montarPuede(contenedor, item, api) {
 
 // ─── La práctica ─────────────────────────────────────────────────────────────
 
+const NO_LO_SE = { es: 'No sé hacerlo', en: 'I don’t know how' };
+
 arrancar({
   slug: 'division',
   ejercicios: [
     {
       nombre: TX.cajas.nombre, detalle: TX.cajas.detalle, introduccion: TX.cajas.introduccion,
       generar: generarCajas, clave: it => `${it.D}/${it.d}`, montar: montarCajas, enunciado: enunciadoCajas,
+      explicacion: explicaCajas, noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.prueba.nombre, detalle: TX.prueba.detalle, introduccion: TX.prueba.introduccion,
@@ -234,14 +237,17 @@ arrancar({
       clave: it => (it.tipo === 'prueba' ? `p${it.D}/${it.d}` : `i${it.a}x${it.b}+${it.r}`),
       montar: montarPrueba,
       enunciado: enunciadoPrueba,
+      explicacion: explicaPrueba,
     },
     {
       nombre: TX.significado.nombre, detalle: TX.significado.detalle, introduccion: TX.significado.introduccion,
       generar: generarSignificado, clave: it => `${it.clave}${it.D}/${it.d}${it.pide}`, montar: montarSignificado, enunciado: enunciadoSignificado,
+      explicacion: explicaSignificado, noLoSe: NO_LO_SE,
     },
     {
       nombre: TX.puede.nombre, detalle: TX.puede.detalle, introduccion: TX.puede.introduccion,
       generar: generarPuede, clave: it => `${it.variante}${it.D ?? ''}/${it.d}/${it.q ?? ''}/${it.r}`, montar: montarPuede, enunciado: enunciadoPuede,
+      explicacion: explicaPuede,
     },
   ],
 });
