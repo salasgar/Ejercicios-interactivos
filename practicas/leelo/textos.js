@@ -28,59 +28,79 @@ export const TX = {
 // Lo que se oye o se lee es siempre inglés; la explicación va en el idioma del alumno.
 
 const cuenta = c => `<span class="cuenta">${c}</span>`;
-const pasos = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
 const supers = (p, e) => (e === 1 ? `${p}` : `${p}<sup>${e}</sup>`);
 
-/** Las piezas de la expresión: [inglés, símbolo en HTML], en el orden en que se leen. */
+/**
+ * Las piezas de la expresión: [inglés, símbolo en HTML], en el orden en que se leen (tarea 193: el «·» va
+ * entre los factores, donde se dice, y no al final; y la coma de GCD(a, b) es el «and» de la lectura).
+ */
 export function piezas(item, estilo = ESTILOS[0]) {
   if (item.clase === 'fact') {
     const lista = [[numeroAIngles(item.n), `${item.n}`], [estilo.verboFact, '=']];
-    item.f.forEach(([p, e]) => lista.push([leerExponente(p, e), supers(p, e)]));
-    if (item.f.length > 1) lista.push([estilo.veces, '·']);
+    item.f.forEach(([p, e], i) => {
+      if (i === 1) lista.push([estilo.veces, '·']);   // una vez basta: todos los «·» se leen igual
+      lista.push([leerExponente(p, e), supers(p, e)]);
+    });
     return lista;
   }
   const clase = item.clase === 'gcd' ? 'GCD' : 'LCM';
   const nombre = item.clase === 'gcd' ? estilo.gcd : estilo.lcm;
   return [
-    [`the ${nombre} of`, clase], [numeroAIngles(item.a), `${item.a}`], [numeroAIngles(item.b), `${item.b}`],
+    [`the ${nombre} of`, clase], [numeroAIngles(item.a), `${item.a}`], ['and', ','], [numeroAIngles(item.b), `${item.b}`],
     [estilo.verboPred, '='], [numeroAIngles(item.valor), `${item.valor}`],
   ];
 }
 
-const CLAVES = {
-  es: 'Palabra a palabra',
-  en: 'Word by word',
+// La regla, delante: cada símbolo tiene su palabra y se dicen en el orden en que están escritos.
+const REGLA = {
+  leer: { es: 'Cada símbolo se lee con su palabra, en el orden en que está escrito:', en: 'Each symbol is read with its word, in the order it is written:' },
+  escuchar: { es: 'Cada trozo se escribe con su símbolo, en el orden en que se dice:', en: 'Each part is written with its symbol, in the order it is said:' },
 };
 
-function listaPiezas(item, estilo, alReves, { tt, esc }) {
-  const filas = piezas(item, estilo).map(([ing, sim]) => cuenta(alReves ? `${sim} → ${esc(ing)}` : `${esc(ing)} → ${sim}`));
-  return `${tt(CLAVES)}: ${filas.join('; ')}.`;
+function listaPiezas(item, estilo, alReves, { esc }) {
+  return piezas(item, estilo).map(([ing, sim]) => cuenta(alReves ? `${sim} → ${esc(ing)}` : `${esc(ing)} → ${sim}`)).join('; ');
 }
 
-const consejoLectura = {
-  es: 'Consejo: los números acabados en «-teen» (13 a 19) suenan distinto de los acabados en «-ty» (30, 40…).',
-  en: 'Tip: numbers ending in “-teen” (13 to 19) sound different from numbers ending in “-ty” (30, 40…).',
-};
-const necesitaConsejo = item => [item.n, item.a, item.b, item.valor].some(x => x !== undefined && x >= 13 && x <= 40 && (x <= 19 || x % 10 === 0));
+/** El número del ítem que tiene pareja «-teen»/«-ty» (14 ↔ 40, 60 ↔ 16), y su pareja; o null. */
+function parejaTeenTy(item) {
+  for (const x of [item.n, item.a, item.b, item.valor]) {
+    if (x >= 13 && x <= 19) return [x, (x - 10) * 10];
+    if (x >= 30 && x <= 90 && x % 10 === 0) return [x, x / 10 + 10];
+  }
+  return null;
+}
+
+// El consejo antiguo («-teen suena distinto de -ty») salía también con el 20, que no tiene pareja, y no con
+// 50-90 (fifty/fifteen); y no decía cuál es cuál. Ahora, solo si un número del ítem tiene pareja, y con ella.
+function consejoTeenTy(item, { idioma }) {
+  const par = parejaTeenTy(item);
+  if (!par) return '';
+  const [teen, ty] = par[0] < 20 ? par : [par[1], par[0]];
+  return idioma === 'es'
+    ? ` Consejo: no confundas «-teen» con «-ty»: «${numeroAIngles(teen)}» es ${teen} y «${numeroAIngles(ty)}» es ${ty}.`
+    : ` Tip: do not mix up “-teen” and “-ty”: “${numeroAIngles(teen)}” is ${teen} and “${numeroAIngles(ty)}” is ${ty}.`;
+}
+
+const FIN = { es: 'La respuesta es', en: 'The answer is' };
 
 /** Ejercicio 1 (escuchar y elegir la notación): lo que se oye, pieza a pieza, y la notación. */
 export function explicaEscuchar(item, textos) {
   const { tt, esc } = textos;
   const oido = {
-    es: `Has oído: «${esc(leer(item))}».`,
-    en: `You heard: “${esc(leer(item))}”.`,
+    es: `Has oído «${esc(leer(item))}».`,
+    en: `You heard “${esc(leer(item))}”.`,
   };
-  const fin = { es: 'La respuesta es', en: 'The answer is' };
-  return `${pasos([tt(oido), listaPiezas(item, ESTILOS[0], false, textos)])}${tt(fin)} ${cuenta(notacion(item))}.${necesitaConsejo(item) ? ` ${tt(consejoLectura)}` : ''}`;
+  return `<p>${tt(oido)} ${tt(REGLA.escuchar)} ${listaPiezas(item, ESTILOS[0], false, textos)}.</p>`
+    + `<p>${tt(FIN)} ${cuenta(notacion(item))}.${consejoTeenTy(item, textos)}</p>`;
 }
 
 /** Ejercicio 2 (ver la notación y elegir la lectura): cada símbolo en inglés y la lectura entera. */
 export function explicaLeer(item, textos) {
   const { tt, esc } = textos;
   const estilo = item.estilo ?? ESTILOS[0];
-  const fin = { es: 'La respuesta es', en: 'The answer is' };
   const lectura = esc(leer(item, estilo));
-  return `${pasos([listaPiezas(item, estilo, true, textos)])}${tt(fin)} ${cuenta(tt({ es: `«${lectura}»`, en: `“${lectura}”` }))}.${necesitaConsejo(item) ? ` ${tt(consejoLectura)}` : ''}`;
+  return `<p>${tt(REGLA.leer)} ${listaPiezas(item, estilo, true, textos)}.</p>`
+    + `<p>${tt(FIN)} ${cuenta(tt({ es: `«${lectura}»`, en: `“${lectura}”` }))}.${consejoTeenTy(item, textos)}</p>`;
 }
 
 /** Ejercicio 3 (completar la frase): por qué se dice así y la frase completa. */
@@ -122,8 +142,9 @@ const REGLAS_COMPLETAR = {
     en: `In the sieve only the primes are not crossed out. ${n} is crossed out, so it is <strong>composite</strong>.`,
   }),
   zero_multiple: ({ n }) => ({
-    es: `${n} · 0 = 0, así que el 0 es un <strong>multiple</strong> (múltiplo) de ${n}. Un número es múltiplo de otro cuando sale al multiplicarlo.`,
-    en: `${n} · 0 = 0, so 0 is a <strong>multiple</strong> of ${n}. A number is a multiple of another when you get it by multiplying.`,
+    // («Un número es múltiplo de otro cuando sale al multiplicarlo» no decía multiplicar qué por qué.)
+    es: `${n} · 0 = 0, así que el 0 es un <strong>multiple</strong> (múltiplo) de ${n}: el 0 es múltiplo de todos los números.`,
+    en: `${n} · 0 = 0, so 0 is a <strong>multiple</strong> of ${n}: 0 is a multiple of every number.`,
   }),
   smallest_prime: () => ({
     es: 'El 1 no es primo (solo tiene un divisor). El 2 tiene exactamente dos divisores, 1 y 2: es el primo más pequeño.',
@@ -131,8 +152,11 @@ const REGLAS_COMPLETAR = {
   }),
 };
 
-export function explicaCompletar(item, { tt, esc }) {
+// La tarjeta cierra con la palabra que se elige y la frase completa; no reutiliza «La frase correcta es: …»
+// del feedback (dos puntos entre el verbo y lo que sigue), ni la lista de un solo paso.
+export function explicaCompletar(item, { tt, idioma, esc }) {
   const regla = REGLAS_COMPLETAR[item.plantilla](item.datos);
   const frase = item.frase.replace('___', item.solucion);
-  return `${pasos([tt(regla)])}${tt(TX.completar.correcta_fue)} ${cuenta(esc(frase))}.`;
+  const palabra = idioma === 'es' ? `«${esc(item.solucion)}»` : `“${esc(item.solucion)}”`;
+  return `<p>${tt(regla)}</p><p>${tt(FIN)} <strong>${palabra}</strong>: ${cuenta(esc(frase))}.</p>`;
 }
