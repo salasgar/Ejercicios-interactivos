@@ -32,8 +32,14 @@ test('imposibles, ejercicio 1: la explicación dice sí o no según el ítem, co
       const texto = plano(html);
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
-      assert.match(texto, new RegExp(`(La respuesta es|The answer is): ${item.puede ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}\\.`), donde);
+      const boton = item.puede ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No';
+      assert.ok(texto.includes(idioma === 'es' ? `La respuesta es «${boton}».` : `The answer is “${boton}”.`), donde);
       assert.ok(texto.includes(String(item.propuesto)), `lleva el número propuesto — ${donde}`);
+      // Revisión 193: la regla va una vez (el feedback la repetía en el segundo paso) y los < > van escapados.
+      assert.equal((texto.match(/no puede ser menor que el mayor|no puede ser 0 ni pasar del menor|cannot be smaller than the bigger one|cannot be 0 or bigger/g) ?? []).length, 1, `regla una vez — ${donde}`);
+      assert.ok(!/ [<>] /.test(html), `< o > sin escapar — ${donde}`);
+      if (item.violacion === 'mayor') assert.ok(texto.includes(`${item.propuesto} &gt; ${Math.min(item.a, item.b)}`), donde);
+      if (item.violacion === 'menor') assert.ok(texto.includes(`${item.propuesto} &lt; ${Math.max(item.a, item.b)}`), donde);
     }
   }
   assert.ok(vistos.si > 100 && vistos.no > 100, JSON.stringify(vistos));
@@ -53,7 +59,9 @@ test('imposibles, ejercicio 2: la explicación lleva el producto y dice si cuadr
       const donde = `${idioma}: ${texto}`;
       sinRestos(html, donde);
       const nombre = item.cuadra ? { es: 'Cuadra', en: 'It checks out' }[idioma] : { es: 'No cuadra', en: "It doesn't check out" }[idioma];
-      assert.ok(texto.includes(`: ${nombre}.`), `respuesta «${nombre}» — ${donde}`);
+      assert.ok(texto.includes(idioma === 'es' ? `La respuesta es «${nombre}».` : `The answer is “${nombre}”.`), `respuesta «${nombre}» — ${donde}`);
+      // Revisión 193: con tres números no se dice que «nunca coincide» (con 3, 4 y 5 sí coincide).
+      assert.ok(!/ya no coincide|no longer matches/.test(texto), donde);
       assert.ok(texto.includes(`${item.g} · ${item.m} = ${item.g * item.m}`), `lleva g · m — ${donde}`);
       if (item.tipo === 'producto') assert.ok(texto.includes(`${item.a} · ${item.b}`), donde);
       else assert.ok(texto.includes(`${item.a * item.b * item.c}`), donde);
@@ -75,6 +83,9 @@ test('imposibles, ejercicio 3: la explicación nombra el m.c.d. o el m.c.m. de v
       sinRestos(html, donde);
       assert.ok(texto.includes(`${nombre}(${item.a}, ${item.b}) = ${valor}`), donde);
       assert.ok(texto.includes(`${nombre}(${item.a}, ${item.b}).`), `la respuesta — ${donde}`);
+      // Revisión 193: la razón lleva los números del ítem; en inglés, nada de comillas «».
+      assert.ok(texto.includes(item.cantidad === 'mcd' ? `${valor} ${idioma === 'es' ? 'cabe en' : 'goes into'} ${item.a}` : `${valor} ${idioma === 'es' ? 'es múltiplo de' : 'is a multiple of'} ${item.a}`), donde);
+      if (idioma === 'en') assert.ok(!/[«»]/.test(texto), donde);
     }
   }
 });

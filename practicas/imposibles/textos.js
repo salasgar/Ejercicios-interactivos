@@ -118,6 +118,31 @@ export const TX = {
         en: 'The LCM is a multiple of both numbers, so it cannot be smaller than the bigger one.',
       },
     },
+    // Revisión 193: el segundo paso compara con los números del ítem, sin repetir la regla del primero.
+    compara: {
+      correcto: {
+        mcd: {
+          es: (n, a, b) => `${n} divide a ${a} y a ${b}, y no pasa del menor (${Math.min(a, b)}).`,
+          en: (n, a, b) => `${n} divides ${a} and ${b}, and it is not bigger than the smaller one (${Math.min(a, b)}).`,
+        },
+        mcm: {
+          es: (n, a, b) => `${n} es múltiplo de ${a} y de ${b}, y no es menor que el mayor (${Math.max(a, b)}).`,
+          en: (n, a, b) => `${n} is a multiple of ${a} and ${b}, and it is not smaller than the bigger one (${Math.max(a, b)}).`,
+        },
+      },
+      cero: {
+        es: 'Aquí te proponen 0, y el 1 ya divide a los dos: el m.c.d. es como poco 1.',
+        en: 'Here the number is 0, and 1 already divides both: the GCD is at least 1.',
+      },
+      mayor: {
+        es: (n, minimo) => `<span class="cuenta">${n} &gt; ${minimo}</span>: pasa del menor de los dos números.`,
+        en: (n, minimo) => `<span class="cuenta">${n} &gt; ${minimo}</span>: it is bigger than the smaller number.`,
+      },
+      menor: {
+        es: (n, maximo) => `<span class="cuenta">${n} &lt; ${maximo}</span>: es menor que el mayor de los dos números.`,
+        en: (n, maximo) => `<span class="cuenta">${n} &lt; ${maximo}</span>: it is smaller than the bigger number.`,
+      },
+    },
     consejoPuede: {
       es: 'Consejo: primero compara el número propuesto con el menor y con el mayor de los datos.',
       en: 'Tip: first compare the proposed number with the smaller and the bigger of the two numbers.',
@@ -127,17 +152,23 @@ export const TX = {
       en: (a, b) => `With two numbers, GCD · LCM is always equal to their product (${a} · ${b}). Work out both products and compare them.`,
     },
     reglaTres: {
-      es: 'Esa igualdad solo está garantizada con dos números; con tres, no hay que fiarse de ella.',
-      en: 'That equality is only guaranteed with two numbers; with three, you cannot rely on it.',
+      es: 'La comprobación m.c.d. · m.c.m. = producto solo vale con dos números; con tres, no hay que fiarse de ella.',
+      en: 'The check GCD · LCM = product only works with two numbers; with three, you cannot rely on it.',
     },
+    // Revisión 193: sin la regla general falsa del feedback («con tres números ya no coincide»: con 3, 4 y 5 sí coincide).
+    cuentaTres: {
+      es: (a, b, c, g, m) => `Aquí: <span class="cuenta">${g} · ${m} = ${g * m}</span> y <span class="cuenta">${a} · ${b} · ${c} = ${a * b * c}</span>; no son iguales.`,
+      en: (a, b, c, g, m) => `Here: <span class="cuenta">${g} · ${m} = ${g * m}</span> and <span class="cuenta">${a} · ${b} · ${c} = ${a * b * c}</span>; they are not equal.`,
+    },
+    // Revisión 193: la pregunta clave de los apuntes (¿cabe en los datos o los contiene?), con los números del ítem.
     pregunta: {
       mcm: {
-        es: 'Se busca algo que sea múltiplo de los dos números a la vez y lo más pequeño posible (cuándo coinciden): es el m.c.m.',
-        en: 'We want something that is a multiple of both numbers at once and as small as possible (when they coincide): that is the LCM.',
+        es: (a, b, r) => `El ${r} es múltiplo de ${a} y de ${b}, y es la primera vez que coinciden: es el m.c.m.`,
+        en: (a, b, r) => `${r} is a multiple of ${a} and ${b}, and it is the first time they coincide: it is the LCM.`,
       },
       mcd: {
-        es: 'Se reparte o se corta en partes iguales, lo más grande posible y sin que sobre nada: es un divisor de los dos números, el mayor, es decir, el m.c.d.',
-        en: 'We share or cut into equal parts, as large as possible and with nothing left over: it is a divisor of both numbers, the greatest one, that is, the GCD.',
+        es: (a, b, r) => `El ${r} cabe en ${a} y en ${b} sin que sobre nada (es divisor de los dos), y es el mayor posible: es el m.c.d.`,
+        en: (a, b, r) => `${r} goes into ${a} and ${b} with nothing left over (it is a divisor of both), and it is the largest possible: it is the GCD.`,
       },
     },
     calculo: {
@@ -145,8 +176,8 @@ export const TX = {
       en: (expr, v) => `We work it out: ${expr} = ${v}.`,
     },
     consejoNombrar: {
-      es: 'Consejo: fíjate en si el problema habla de «coincidir» (m.c.m.) o de «partes iguales, lo más grandes posible» (m.c.d.).',
-      en: 'Tip: check whether the problem is about «coinciding» (LCM) or about «equal parts, as large as possible» (GCD).',
+      es: 'Consejo: comprueba el valor; el m.c.d. no pasa del menor de los datos y el m.c.m. no baja del mayor.',
+      en: 'Tip: check the value; the GCD is never bigger than the smaller number and the LCM is never smaller than the bigger one.',
     },
   },
 };

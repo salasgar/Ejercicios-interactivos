@@ -150,18 +150,34 @@ export function feedbackProducto(item, idioma) {
   return (item.cuadra ? P.feedbackCuadra : P.feedbackNoCuadra)[idioma](item.a, item.b, item.g, item.m);
 }
 
+/** «La respuesta es «No cuadra».» / «The answer is “It checks out”.» (el texto del botón, entre comillas). */
+const respuestaBoton = (texto, idioma) => (idioma === 'es'
+  ? `${AY.respuesta.es} «<strong>${texto}</strong>».`
+  : `${AY.respuesta.en} “<strong>${texto}</strong>”.`);
+
+/**
+ * Revisión 193: primero qué se busca (si hay contexto) y la regla; después, la comparación con los números del
+ * ítem, sin repetir la regla (el feedback la repite, así que no se reutiliza aquí).
+ */
 export function explicaPuede(item, idioma) {
-  const respuesta = `${AY.respuesta[idioma]}: <strong>${item.puede ? AY.si[idioma] : AY.no[idioma]}</strong>.`;
-  return `<ol class="pasos-ayuda"><li>${AY.reglaPuede[item.cantidad][idioma]}</li><li>${feedbackPuede(item, idioma)}</li></ol>`
-    + `<p>${respuesta}</p><p>${AY.consejoPuede[idioma]}</p>`;
+  const F = TX.feedbackPuede, C = AY.compara;
+  const previo = item.contexto !== null ? `${F.contexto[item.cantidad][idioma](item.a, item.b, item.contexto)} ` : '';
+  const comparacion = item.puede ? C.correcto[item.cantidad][idioma](item.propuesto, item.a, item.b)
+    : item.violacion === 'cero' ? C.cero[idioma]
+      : item.violacion === 'mayor' ? C.mayor[idioma](item.propuesto, Math.min(item.a, item.b))
+        : C.menor[idioma](item.propuesto, Math.max(item.a, item.b));
+  const boton = item.puede ? AY.si[idioma] : AY.no[idioma];
+  return `<ol class="pasos-ayuda"><li>${previo}${AY.reglaPuede[item.cantidad][idioma]}</li><li>${comparacion}</li></ol>`
+    + `<p>${respuestaBoton(boton, idioma)}</p><p>${AY.consejoPuede[idioma]}</p>`;
 }
 
 export function explicaProducto(item, idioma) {
   const tres = item.tipo === 'tres';
   const regla = tres ? AY.reglaTres[idioma] : AY.reglaProducto[idioma](item.a, item.b);
+  const cuenta = tres ? AY.cuentaTres[idioma](item.a, item.b, item.c, item.g, item.m) : feedbackProducto(item, idioma);
   const boton = TX.producto.boton[item.cuadra ? 'cuadra' : 'noCuadra'][idioma];
-  return `<ol class="pasos-ayuda"><li>${regla}</li><li>${feedbackProducto(item, idioma)}</li></ol>`
-    + `<p>${AY.respuesta[idioma]}: <strong>${boton}</strong>.</p>`;
+  return `<ol class="pasos-ayuda"><li>${regla}</li><li>${cuenta}</li></ol>`
+    + `<p>${respuestaBoton(boton, idioma)}</p>`;
 }
 
 /** «m.c.d.(12, 18)» o «GCD(12, 18)». */
@@ -170,6 +186,6 @@ export const etiquetaExpr = (fn, x, y, idioma) => TX.etiquetaExpr[fn][idioma](x,
 export function explicaNombrar(item, idioma) {
   const valor = valorExpr(item.cantidad, item.a, item.b);
   const expr = etiquetaExpr(item.cantidad, item.a, item.b, idioma);
-  return `<ol class="pasos-ayuda"><li>${AY.pregunta[item.cantidad][idioma]}</li><li>${AY.calculo[idioma](expr, valor)}</li></ol>`
+  return `<ol class="pasos-ayuda"><li>${AY.pregunta[item.cantidad][idioma](item.a, item.b, valor)}</li><li>${AY.calculo[idioma](expr, valor)}</li></ol>`
     + `<p>${AY.respuesta[idioma]} <strong>${expr}</strong>.</p><p>${AY.consejoNombrar[idioma]}</p>`;
 }
