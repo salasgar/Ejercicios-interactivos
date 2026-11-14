@@ -170,3 +170,30 @@ de la app») **no se edita desde este reparto**: la actualiza Juan Luis, o una s
 ## Cómo probarlo en 1 minuto
 https://salasgar.github.io/Ejercicios-interactivos/practicas/ → sección «Ortografía»: salen «Palabras que se confunden» y «Ampliación». En local:
 `python3 -m http.server 8196` → `http://127.0.0.1:8196/practicas/ortografia-ampliacion/?probar=1&ejercicio=1&nivel=2`.
+
+## Segunda pasada: solo lo de la tercera reabierta de la 135 (14-11, sesión `s-20261114T120759-e1c97fc9`)
+
+Reclamada otra vez la 196 a las 12:08Z, tras la terminada `hechos/terminadas/135--s-20261114T115719-c2e98c78.md` (commit 3bc3808). Revisado
+**solo lo reabierto**: los seis cambios de 3bc3808, en el código, con la explicación y la ayuda de «No lo sé» que salen para cada ítem (volcadas
+con node), y los tests (`node --test tests/practicas-ortografia-comun.test.js tests/practicas-ortografia-tildes.test.js`: 36/36).
+
+| Punto de la tercera reabierta | Cambio en 3bc3808 | Veredicto |
+|---|---|---|
+| 1. *jamás* (ej. 2, N1) | → *menú* | bien (*menu* no existe; la 196 lo había cotejado en el DLE) |
+| 2. *pie* (ej. 2, N3) | → *bien* | bien |
+| 3. *Luis* (ej. 3, N1) | → *triunfo* | **MAL**: tocar la «o» da *triunfó*, que también vale (como *descuido / descuidó*) |
+| 4. «se duplica y la otra también» (ej. 4, N3) | → «Si al doble de una cantidad le corresponde el doble de la otra, y al triple el triple, son directamente ___» (*proporcional*) | **frase mal construida**: «son … proporcional», sin concordancia; el nivel 3 tiene 16 (el mínimo) y no se puede quitar |
+| 5. «Dos rectas que nunca se cortan» (ej. 4, N2) | → «Dos rectas de un plano que nunca se cortan son ___» | bien |
+| 6. «Aún los más pequeños pueden hacerlo» (ej. 3, N3) | → «Aun los más pequeños lo entienden a la primera» | bien: «todavía» ya no cabe |
+
+Veredicto: **`ortografia-tildes` (64) NO SE PUBLICA**. *triunfo* sola se podía quitar aquí (el ej. 3, N1, quedaba en 15 ≥ 12, con un 53 % con
+tilde), pero *proporcional* hay que escribirlo, y con el bloque parado de todas formas es mejor que la reabierta sustituya las dos y el nivel 1 se
+quede en 16. Cuarta reabierta de la 135, MEDIO, ~20 min, plazo jue 18-2: `hechos/reabiertas/135--s-20261114T120759-e1c97fc9.md`. Cuando se cierre,
+otra vez la 196 para revisar solo esos dos ítems y publicar.
+
+Sin cambios en el código ni en `catalogo.js`: esta pasada no tiene commit de código. Sin prueba en el navegador (no se publica nada; los dos
+fallos se ven en el banco). La tabla de ★ y la propuesta de la ampliación de arriba siguen igual: el plan A sigue a tiempo (las tildes hacen falta
+publicadas el jue 25-2).
+
+**Para quien publique las tildes la próxima vez**: además de los dos sustitutos nuevos, pasa a cada palabra suelta de los ej. 2 y 3 la prueba de
+«la tilde en cada vocal (o en cada sílaba): ¿sale alguna palabra del DLE?». Es lo que se le escapó a *triunfo*.

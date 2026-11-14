@@ -12,6 +12,10 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T12:14Z por s-20261114T120759-e1c97fc9 al cerrar la 196 (PARCIAL, segunda pasada: la 64 sigue sin publicar, cuarta reabierta de la 135 por triunfo y proporcional; sin commit de código; tildes 36/36): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
+Actualizado 2026-11-14T12:08Z por s-20261114T120759-e1c97fc9 al reclamar la 196 (reapertura solo para la 64, ortografia-tildes; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T11:58Z por s-20261114T115719-c2e98c78 al cerrar la 135 (LISTA, tercera reabierta, commit 3bc3808; npm test 2232/2232; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T11:56Z por s-20261114T113316-d58f9cb4 al cerrar la 196 (PARCIAL, commit ed3cc3f: publicadas 67 y 68; la 64 reabierta, tercera de la 135; npm test 2231/2231): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -31,10 +35,6 @@ Actualizado 2026-11-13T17:56Z por s-20261113T170133-3d38e018 al cerrar la 195 (L
 Actualizado 2026-11-13T17:26Z por s-20261113T170133-3d38e018 al reclamar la 195 (encadenada tras la 190; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-13T17:25Z por s-20261113T170133-3d38e018 al cerrar la 190 (LISTA, relevo; 17 commits heredados a087f7b…dff9cfc; npm test 2154/2154; clics 63 ejercicios × 2 anchos): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-13T17:13Z por s-20261113T170145-b187d221 al cerrar la 192 (LISTA, relevo; commits 95aba43 fd3dc24 sobre los 18 heredados 55cdbe4…62267ea; npm test 2154/2154; clics de las 18 hechos): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-13T17:10Z por s-20261113T170735-83efa212 al cerrar la 153 (LISTA, commit ca61f72; npm test 2154/2154): **retoque de la fila 153** (hay otras sesiones en el árbol).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -268,7 +268,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 132 | Montar en el panel de la app las dos tareas semanales de la U5 (con Juan Luis delante, Claude en Chrome); desbloquea la tarea 24 del reparto de la U5 | tareas/tarea-132-tareas-u5-panel.md | 130 y 131 LISTAS · Juan Luis delante con el panel abierto · plazo jue 14-1 | 45 min | ALTO | — | ninguno del repositorio (nube: `config/tareas`); salidas/132-tareas-u5-panel/ | LISTA | terminada 11:40Z (14-nov) |
 | 133 | Generador `src/ejercicios/decimales.js` de la app principal al día con el inventario de la U5 (`items`, distractores = errores típicos, nunca opciones del mismo valor, enteros escalados) | tareas/tarea-133-generador-decimales.md | F0 del reparto de la U5 firmada · no en paralelo con otra que toque decimales.js · plazo mar 22-12 | 1 h | MEDIO | — | src/ejercicios/decimales.js y su test; salidas/133-generador-decimales/ | LISTA | terminada 22:24Z (5-nov) · commit b25849f |
 | 134 | Base de la ortografía en bloques: sección «Ortografía» en la portada, bloques 64-68 en el catálogo (esqueletos) y nombre nuevo de la 45, niveles adaptables (`_comun/nivel.js`: por puntos y vidas, `?nivel=` en «Probar sin código»), piezas comunes (`_comun/ortografia.js`), `docs/practicas-ortografia.md` | tareas/tarea-134-base-ortografia.md | ninguna · no en paralelo con 122, 130, 131 ni nada que toque catalogo.js, portada.js o el test común · plazo mar 1-12 | 2 h | ALTO | — | practicas/_comun/catalogo.js, nivel.js (nuevo), ortografia.js (nuevo), practicas/portada.js, vista-tareas.js,… | LISTA | terminada 22:19Z (5-nov) · commit 43a2c00 |
-| 135 | Bloque «Las tildes» (`ortografia-tildes`, 64; 4 ej. × 3 niveles): la sílaba tónica, ¿lleva tilde?, diptongos e hiatos, las palabras de Matemáticas; motor `acentuar` comprobado por el test | tareas/tarea-135-ortografia-tildes.md | 134 LISTA · plazo mar 9-2 | 1 h 30 min | MEDIO | — | practicas/ortografia-tildes/*, tests/practicas-ortografia-tildes.test.js; salidas/135-ortografia-tildes/ | LISTA | terminada 11:58Z (14-nov) · commit 3bc3808 · **sin publicar** (`ortografia-tildes`): la publica la 196 (PARCIAL) |
+| 135 | Bloque «Las tildes» (`ortografia-tildes`, 64; 4 ej. × 3 niveles): la sílaba tónica, ¿lleva tilde?, diptongos e hiatos, las palabras de Matemáticas; motor `acentuar` comprobado por el test | tareas/tarea-135-ortografia-tildes.md | 134 LISTA · plazo mar 9-2 | 1 h 30 min | MEDIO | — | practicas/ortografia-tildes/*, tests/practicas-ortografia-tildes.test.js; salidas/135-ortografia-tildes/ | REABIERTA | reabierta 12:11Z (14-nov): `hechos/reabiertas/135--s-20261114T120759-e1c97fc9.md` |
 | 136 | Bloque «Las letras» (`ortografia-letras`, 65; 4 ej. × 3 niveles): hay/ahí/ay y a ver/haber, b o v, g o j y la diéresis, otras letras | tareas/tarea-136-ortografia-letras.md | 134 LISTA · plazo mar 26-1 | 1 h 30 min | MEDIO | — | practicas/ortografia-letras/*, tests/practicas-ortografia-letras.test.js; salidas/136-ortografia-letras/ | LISTA | terminada 00:01Z (6-nov) · commit df71445 |
 | 137 | Bloque «Puntuación y mayúsculas» (`ortografia-puntuacion`, 66; 4 ej. × 3 niveles): mayúsculas, el punto y la coma, dos puntos y el saludo, el correo al profesor | tareas/tarea-137-ortografia-puntuacion.md | 134 LISTA · plazo mar 26-1 | 1 h 30 min | MEDIO | — | practicas/ortografia-puntuacion/*, tests/practicas-ortografia-puntuacion.test.js; salidas/137-ortografia-punt… | LISTA | terminada 10:16Z (9-nov) · commit d8b86f5 |
 | 138 | Bloque «Palabras que se confunden» (`ortografia-palabras`, 67; 3 ej. × 3 niveles): ¿junto o separado?, homófonos, números y símbolos; cada ítem cotejado con la RAE | tareas/tarea-138-ortografia-palabras.md | 134 LISTA · plazo mar 23-3 | 1 h 30 min | ALTO | — | practicas/ortografia-palabras/*, tests/practicas-ortografia-palabras.test.js; salidas/138-ortografia-palabras/ | LISTA | terminada 11:31Z (9-nov) · commit 05221aa |
@@ -329,12 +329,12 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 193 | Revisión del «No lo sé» de las unidades 1 y 2: leer las explicaciones, probarlas con clics y corregir | tareas/tarea-193-revision-no-lo-se.md | 183-189 LISTAS | 1 h 30 min | ALTO | ninguna | reparto-practicas-u2/salidas/193-revision-no-lo-se/ | BLOQUEADA | espera a 186, 187 |
 | 194 | Enseñar en el panel del profesor cuántas veces ha pulsado «No lo sé» cada alumno en cada ejercicio | tareas/tarea-194-ayudas-en-el-panel.md | ninguna (la base ya está en `main`) · sus carpetas sin cambios sin comitear ni reclamo vivo de otra tarea | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/194-ayudas-en-el-panel/ | LISTA | terminada 08:57Z (13-nov) · commit 826db4a |
 | 195 | Publicar `lee-decimales` (57), `compara-decimales` (58), `suma-resta-decimales` (59) y `multiplica-divide-decimales` (60) tras sus reabiertas del 8-11, con las propuestas de las tareas de las semanas 1 y 2 de la unidad 5 al día | tareas/tarea-195-publicar-u5-cuatro.md | las **reabiertas del 8-11** de 123, 124 (las dos), 125 y 126 cerradas con terminada nueva (lo están: `hechos/terminadas/123--s-20261108T101900-95a51c60.md`, `1… | 1 h 15 min | ALTO | 196 | reparto-practicas-u2/salidas/195-publicar-u5-cuatro/ | LISTA | terminada 17:56Z (13-nov) · commit b483ad7 |
-| 196 | Publicar «Las tildes» (`ortografia-tildes`, 64), «Palabras que se confunden» (`ortografia-palabras`, 67) y «Ampliación» (`ortografia-ampliacion`, 68) tras sus reabiertas del 9-11, con la tabla de ★ de la U7, la U8 y junio al día y la ampliación entre los «a elegir» de la U8 | tareas/tarea-196-publicar-ortografia-4.md | las **reabiertas del 9-11** de 135 (la segunda), 138 y 139 cerradas con terminada nueva (lo están: `hechos/terminadas/135--s-20261109T114919-4bdd2b23.md`, `138… | 1 h 15 min | ALTO | 195 | reparto-practicas-u2/salidas/196-publicar-ortografia-4/ | PARCIAL | PARCIAL: publicadas ortografia-palabras (67) y ortografia-ampliacion (68); ortografia-tildes (64) NO, tercera reabierta de la 135. Cuando esa reabierta esté ce… |
+| 196 | Publicar «Las tildes» (`ortografia-tildes`, 64), «Palabras que se confunden» (`ortografia-palabras`, 67) y «Ampliación» (`ortografia-ampliacion`, 68) tras sus reabiertas del 9-11, con la tabla de ★ de la U7, la U8 y junio al día y la ampliación entre los «a elegir» de la U8 | tareas/tarea-196-publicar-ortografia-4.md | las **reabiertas del 9-11** de 135 (la segunda), 138 y 139 cerradas con terminada nueva (lo están: `hechos/terminadas/135--s-20261109T114919-4bdd2b23.md`, `138… | 1 h 15 min | ALTO | 195 | reparto-practicas-u2/salidas/196-publicar-ortografia-4/ | PARCIAL | PARCIAL: «Las tildes» (ortografia-tildes, 64) sigue SIN publicar; cuarta reabierta de la 135 (hechos/reabiertas/135--s-20261114T120759-e1c97fc9.md). Las 67 y 6… |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 11:58Z**: BLOQUEADA 6 (156, 157, 158, 159, 160, 193) · EN CURSO 3 (129, 186, 187) · LISTA 186 · PARCIAL 1 (196).
+**Foto a 2026-11-14 12:14Z**: BLOQUEADA 6 (156, 157, 158, 159, 160, 193) · EN CURSO 3 (129, 186, 187) · LISTA 185 · PARCIAL 1 (196) · REABIERTA 1 (135).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -352,7 +352,7 @@ apartado 2): los decide la coordinadora.
 
 Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las fichas que lo cambian («Ficheros que toca»).
 
-- `ortografia-tildes` (tarea 135, LISTA): la publica la 196 (PARCIAL)
+- `ortografia-tildes` (tarea 135, REABIERTA): la publica la 196 (PARCIAL)
 - `traduce` (tarea 145, LISTA): la publica la 156 (BLOQUEADA)
 - `valor-numerico` (tarea 146, LISTA): la publica la 156 (BLOQUEADA)
 - `terminos-semejantes` (tarea 147, LISTA): la publica la 156 (BLOQUEADA)
@@ -367,12 +367,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (304), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (305), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+PARCIAL · tarea 196 · 2026-11-14 12:12 · s-20261114T120759-e1c97fc9 · ninguno de código (no se publica nada; catalogo.j… · — · ~10 min (12:07Z-12:17Z de trabajo; el cierre espe…
 LISTA · tarea 135 · 2026-11-14 11:58 · s-20261114T115719-c2e98c78 · 3bc3808 · practicas/ortografia-tildes/logica.js, tests/practicas-ortografia-tildes.test.j… · —
 PARCIAL · tarea 196 · 2026-11-14 11:55 · s-20261114T113316-d58f9cb4 · ed3cc3f · README.md (4 +++-), docs/practicas-ortografia.md (26 ++++-, §5 decisión de la a… · de 2026-11-14T11:33:16Z a 2026-11-14T11:55:52Z. E…
 LISTA · tarea 104 · 2026-11-14 11:51 · s-20261114T114723-d6250ee9 · 5a76697 · practicas/suma-resta/logica.js, tests/practicas-suma-resta.test.js · —
