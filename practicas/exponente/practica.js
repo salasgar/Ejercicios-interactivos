@@ -2,7 +2,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones, pasos } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaAlcance, explicaMultiplicacion, explicaAreas } from './textos.js';
 import {
   generarAlcance, aciertaAlcance, idBaseDe, valorParte, valorErroneoParte,
   generarMultiplicacion, secuenciaCorrecta, aciertaRepetida, aciertaPotencia,
@@ -278,6 +278,7 @@ arrancar({
       generar: generarAlcance,
       montar: montarAlcance,
       enunciado: enunciadoAlcance,
+      explicacion: explicaAlcance,
     },
     {
       nombre: TX.repetida.nombre,
@@ -285,6 +286,7 @@ arrancar({
       generar: generarMultiplicacion,
       montar: montarMultiplicacion,
       enunciado: enunciadoMultiplicacion,
+      explicacion: explicaMultiplicacion,
     },
     {
       nombre: TX.areas.nombre,
@@ -292,6 +294,8 @@ arrancar({
       generar: generarAreas,
       montar: montarAreas,
       enunciado: enunciadoAreas,
+      explicacion: explicaAreas,
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
   ],
 });

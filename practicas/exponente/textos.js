@@ -4,6 +4,8 @@
 // nunca «×»; inglés sencillo; el feedback dice qué pasa con los números de
 // ese ítem; sin letras ni ecuaciones (el hueco es «□»).
 
+import { idBaseDe, cuentaParte, secuenciaCorrecta, respuestasAreas } from './logica.js';
+
 export const TX = {
   alcance: {
     nombre: { es: '¿A qué afecta el exponente?', en: 'What does the exponent apply to?' },
@@ -95,3 +97,64 @@ export const TX = {
     },
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+const RESP = { es: 'La respuesta es', en: 'The answer is' };
+
+/** Ejercicio 1: la base del exponente de la parte preguntada, con la cuenta bien hecha. */
+export function explicaAlcance(item, { tt }) {
+  const p = item.partes[item.preguntada];
+  const grupo = idBaseDe(p.forma) === 'grupo';
+  const base = grupo
+    ? tt({ es: 'todo el paréntesis', en: 'the whole bracket' })
+    : tt({ es: `el número ${p.b}`, en: `the number ${p.b}` });
+  const regla = tt({
+    es: 'El exponente se aplica solo a lo que tiene justo delante: un número o un paréntesis entero.',
+    en: 'The exponent applies only to what is right before it: one number or a whole bracket.',
+  });
+  return `<p>${regla}</p><p>${cuenta(cuentaParte(p))}</p><p>${tt(RESP)}: ${base}.</p>`;
+}
+
+/** Ejercicio 2: según el subtipo del ítem (producto repetido, potencia o valor). */
+export function explicaMultiplicacion(item, { tt }) {
+  const { base: b, exponente: e } = item;
+  const producto = Array(e).fill(b).join(' · ');
+  const potencia = `${b}<sup>${e}</sup>`;
+  if (item.tipo === 'repetida') {
+    return `<p>${tt({
+      es: `El exponente ${e} dice cuántas veces se escribe la base ${b}, multiplicada por sí misma.`,
+      en: `The exponent ${e} says how many times the base ${b} is written, multiplied by itself.`,
+    })}</p><p>${cuenta(`${potencia} = ${producto}`)}</p><p>${tt(RESP)} ${cuenta(secuenciaCorrecta(item).join(' '))}.</p>`;
+  }
+  if (item.tipo === 'potencia') {
+    return `<p>${tt({
+      es: 'La base es el número que se repite; el exponente, las veces que aparece.',
+      en: 'The base is the number that repeats; the exponent is how many times it appears.',
+    })}</p><p>${cuenta(`${producto} = ${potencia}`)}</p><p>${tt(RESP)} ${tt({ es: `base ${b}, exponente ${e}`, en: `base ${b}, exponent ${e}` })}.</p>`;
+  }
+  return `<p>${tt({
+    es: `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces (no ${b} · ${e}).`,
+    en: `${b} to the power of ${e} is ${b} multiplied by itself ${e} times (not ${b} · ${e}).`,
+  })}</p><p>${cuenta(`${potencia} = ${producto} = ${item.correcta}`)}</p><p>${tt(RESP)} ${cuenta(item.correcta)}.</p>`;
+}
+
+/** Ejercicio 3: las dos cuentas, con las áreas o con el producto. */
+export function explicaAreas(item, { tt }) {
+  const { a, b } = item;
+  const { pregunta1: p1, pregunta2: p2 } = respuestasAreas(item);
+  const fin = `<p>${tt(RESP)} ${cuenta(p1)} ${tt({ es: 'y', en: 'and' })} ${cuenta(p2)}.</p>`;
+  if (item.variante) {
+    return `<p>${tt({
+      es: 'En un producto sí se puede repartir el exponente.',
+      en: 'With a product you can split the exponent.',
+    })}</p><ul class="resumen"><li>${cuenta(`(${a} · ${b})<sup>2</sup> = ${a * b}<sup>2</sup> = ${p1}`)}</li>`
+      + `<li>${cuenta(`${a}<sup>2</sup> · ${b}<sup>2</sup> = ${a * a} · ${b * b} = ${p2}`)}</li></ul>${fin}`;
+  }
+  return `<p>${tt({
+    es: 'Primero se hace la suma del paréntesis y luego se eleva; no se reparte el exponente en una suma.',
+    en: 'First work out the sum in the bracket, then raise it; do not split the exponent over a sum.',
+  })}</p><ul class="resumen"><li>${cuenta(`(${a} + ${b})<sup>2</sup> = ${a + b}<sup>2</sup> = ${p1}`)}</li>`
+    + `<li>${cuenta(`${a}<sup>2</sup> + ${b}<sup>2</sup> = ${a * a} + ${b * b} = ${p2}`)}</li></ul>${fin}`;
+}
