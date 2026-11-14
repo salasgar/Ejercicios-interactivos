@@ -8,3 +8,6 @@ Sesión s-20261026T093512-94d2c6f9 · commit a80b030.
 - Tests: 14/14 propios; `npm test` 1167/1167. Probado en navegador con 33 = 3·11 (fallo con casillas marcadas, luego acierto); no probado a 375 px real ni en inglés ni con 12 divisores (ventana de 400 px reportada como ancha: tabla de 3 columnas).
 - Pregunta para Juan Luis: ¿Pablo sigue como personaje? (se ha dejado).
 - Cómo probarlo: `npm run servir`, http://localhost:8080/practicas/fichas-de-pablo/ → «Probar sin código» → ejercicio 6.
+
+## Reabierta del 14-11 (queda-una-y-cinco-igual-cinco) · s-20261114T231306-b600a65e · commit a4cd1f9
+- Feedback ej. 4 y 5: sin «N = N», «queda 1 amarilla» en singular. m.c.d. sin parejas y m.c.m. con la cuenta del ítem. Test de 1000 ítems por ejercicio. Sin prueba en navegador (375/1200 px) ni comprobación de la página publicada.
