@@ -5,6 +5,8 @@
 // la división se escribe con «÷». Las expresiones con signos no se escriben aquí:
 // las pinta `formatear` de logica.js.
 
+import { expresionDe, arbolQueDa, evaluar, formatear, textoArbol } from './logica.js';
+
 export const TX = {
   ejercicios: [
     {
@@ -127,3 +129,58 @@ export const TX = {
     en: n => `A grouping that gives ${n}:`,
   },
 };
+
+// ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
+
+const cuenta = h => `<span class="cuenta">${h}</span>`;
+const lista = filas => `<ul class="resumen">${filas.map(f => `<li>${f}</li>`).join('')}</ul>`;
+
+/** Una agrupación (con los menos paréntesis posibles) que da `valor`, resuelta paso a paso: «2 + 3 · 4 = 2 + 12 = 14». */
+function cadenaQueDa(e, valor, idioma) {
+  const pasos = evaluar(arbolQueDa(e, valor)).pasos;
+  return formatear(pasos.join(' = '), idioma);
+}
+
+/** Los ejercicios 1 a 3: todos los resultados, cada uno con una agrupación que lo consigue. */
+function explicaTodos(item, { tt, idioma }, regla) {
+  const e = expresionDe(item);
+  const filas = item.resultados.map(v => cuenta(cadenaQueDa(e, v, idioma)));
+  const valores = item.resultados.map(v => cuenta(v)).join(', ');
+  return `<p>${tt(regla)}</p>${lista(filas)}<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${valores}.</p>`;
+}
+
+/** Ejercicio 1: tres números. */
+export function explicaTres(item, ctx) {
+  return explicaTodos(item, ctx, {
+    es: 'Lo de dentro del paréntesis se hace primero. Prueba a rodear dos números seguidos y calcula; cada resultado distinto es uno nuevo.',
+    en: 'The inside of the brackets is worked out first. Try putting brackets around two numbers next to each other and work it out; each different result is a new one.',
+  });
+}
+
+/** Ejercicio 2: con una potencia. */
+export function explicaPotencia(item, ctx) {
+  return explicaTodos(item, ctx, {
+    es: `El exponente ${item.exponente === 3 ? '³' : '²'} se aplica a lo que tiene justo delante: a un número o a todo un paréntesis. Se hace antes que los productos y las sumas.`,
+    en: `The index ${item.exponente === 3 ? '³' : '²'} applies to what is right before it: a number or a whole bracket. It is done before products and sums.`,
+  });
+}
+
+/** Ejercicio 3: con resta y división (hay agrupaciones que no se pueden calcular y no cuentan). */
+export function explicaImposibles(item, ctx) {
+  return explicaTodos(item, ctx, {
+    es: 'Prueba paréntesis distintos. Las agrupaciones que dan una resta negativa o una división inexacta no se pueden calcular y no cuentan.',
+    en: 'Try different brackets. Groupings that give a negative subtraction or an inexact division cannot be worked out and do not count.',
+  });
+}
+
+/** Ejercicio 4: una diana; vale cualquier colocación que dé el objetivo, y se enseña una. */
+export function explicaDiana(item, { tt, idioma }) {
+  const e = expresionDe(item);
+  const arbol = arbolQueDa(e, item.objetivo);
+  const consejo = tt({
+    es: `Lo de dentro del paréntesis se hace primero. Prueba a rodear dos números seguidos (o más) y calcula, hasta que salga ${item.objetivo}; vale cualquier colocación que lo dé.`,
+    en: `The inside of the brackets is worked out first. Try putting brackets around two or more numbers next to each other and work it out, until you get ${item.objetivo}; any placement that gives it is right.`,
+  });
+  return `<p>${consejo}</p><p>${cuenta(cadenaQueDa(e, item.objetivo, idioma))}</p>`
+    + `<p>${tt({ es: 'La respuesta es', en: 'The answer is' })} ${cuenta(formatear(textoArbol(arbol), idioma))}.</p>`;
+}

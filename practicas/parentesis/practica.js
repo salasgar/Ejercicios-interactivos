@@ -2,7 +2,7 @@
 // Toda la aritmética está en logica.js; aquí solo hay pantalla.
 
 import { arrancar } from '../_comun/base.js';
-import { TX } from './textos.js';
+import { TX, explicaTres, explicaPotencia, explicaImposibles, explicaDiana } from './textos.js';
 import {
   generar, expresionDe, interpretar, evaluar, sinParentesis, textoArbol, textoColocacion,
   formatear, lineaHtml, textoPasos, textoOperacion, arbolQueDa, pistaPara,
@@ -290,6 +290,9 @@ const EJERCICIOS = TX.ejercicios.map((x, i) => ({
   generar: rng => generar(i + 1, rng),
   montar: i < 3 ? montarTodos : montarDiana,
   enunciado: i < 3 ? enunciadoTodos : enunciadoDiana,
+  // «No lo sé»: colocar los paréntesis es de procedimiento (construir).
+  explicacion: [explicaTres, explicaPotencia, explicaImposibles, explicaDiana][i],
+  noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
 }));
 
 arrancar({ slug: 'parentesis', ejercicios: EJERCICIOS });
