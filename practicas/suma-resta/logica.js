@@ -409,31 +409,44 @@ const ERRORES_CAZA = ['amplia-solo-denominador', 'suma-arriba-y-abajo', 'simplif
  * la mala son coherentes con ella: solo hay UNA línea mal.
  */
 export function generarCaza(rng) {
-  const mala = rng.azar() < 0.5 ? null : rng.entero(0, 2);   // se decide antes de reintentar: si no, se sesga el reparto
-  for (let intento = 0; intento < 5000; intento++) {
-    const d1 = rng.entero(2, 12), d2 = rng.entero(2, 12);
+  const mala = rng.azar() < 0.5 ? null : rng.entero(0, 2);
+  const c = rng.elegir(candidatosCaza(mala));
+  const error = mala === null ? null : ERRORES_CAZA[mala];
+  const razones = error === null ? [] : rng.barajar([error, rng.elegir(ERRORES_CAZA.filter(e => e !== error))]);
+  return { a: dato(c.a), b: dato(c.b), m: c.m, l1: c.l1, l2: c.l2, l3: c.l3, mala, error, razones };
+}
+
+const CANDIDATOS_CAZA = new Map();
+
+/** Todas las sumas válidas para un valor de `mala`: sortear de esta lista las reparte de forma uniforme. */
+function candidatosCaza(mala) {
+  if (CANDIDATOS_CAZA.has(mala)) return CANDIDATOS_CAZA.get(mala);
+  const lista = [];
+  for (let d1 = 2; d1 <= 15; d1++) for (let d2 = 2; d2 <= 15; d2++) {
     if (d1 === d2) continue;
     const m = mcm(d1, d2);
     if (m > 60 || (mala === 0 && m === d1)) continue;   // para equivocar la 1.ª equivalente hace falta que cambie (k1 > 1)
-    const a = fraccion(rng.entero(1, d1 - 1), d1), b = fraccion(rng.entero(1, d2 - 1), d2);
-    if (!a.esIrreducible() || !b.esIrreducible() || !propia(a.sumar(b))) continue;
-    if (esReservadoCaza({ a: dato(a), b: dato(b) })) continue;
-    const k1 = m / d1, k2 = m / d2;
-    let x = a.num * k1, y = b.num * k2;
-    if (mala === 0) x = a.num;                                  // amplia-solo-denominador: 2/3 = 2/6
-    let l1 = { x: { n: x, d: m }, y: { n: y, d: m } };
-    let s = { n: x + y, d: m };
-    if (mala === 1) s = { n: x + y, d: 2 * m };                 // suma-arriba-y-abajo: 3/12 + 2/12 = 5/24
-    const g = mcd(s.n, s.d);
-    if (g < 2) continue;
-    let r = { n: s.n / g, d: s.d / g };
-    if (mala === 2) r = { n: s.n / g, d: s.d };                 // simplifica-solo-numerador
-    if (F(r).esEntera()) continue;
-    const error = mala === null ? null : ERRORES_CAZA[mala];
-    const razones = error === null ? [] : rng.barajar([error, rng.elegir(ERRORES_CAZA.filter(e => e !== error))]);
-    return { a: dato(a), b: dato(b), m, l1, l2: { s }, l3: { r }, mala, error, razones };
+    for (let n1 = 1; n1 < d1; n1++) for (let n2 = 1; n2 < d2; n2++) {
+      const a = fraccion(n1, d1), b = fraccion(n2, d2);
+      if (!a.esIrreducible() || !b.esIrreducible() || !propia(a.sumar(b))) continue;
+      if (esReservadoCaza({ a: dato(a), b: dato(b) })) continue;
+      const k1 = m / d1, k2 = m / d2;
+      let x = a.num * k1, y = b.num * k2;
+      if (mala === 0) x = a.num;                                  // amplia-solo-denominador: 2/3 = 2/6
+      const l1 = { x: { n: x, d: m }, y: { n: y, d: m } };
+      let s = { n: x + y, d: m };
+      if (mala === 1) s = { n: x + y, d: 2 * m };                 // suma-arriba-y-abajo: 3/12 + 2/12 = 5/24
+      const g = mcd(s.n, s.d);
+      if (g < 2) continue;
+      let r = { n: s.n / g, d: s.d / g };
+      if (mala === 2) r = { n: s.n / g, d: s.d };                 // simplifica-solo-numerador
+      if (F(r).esEntera()) continue;
+      lista.push({ a, b, m, l1, l2: { s }, l3: { r } });
+    }
   }
-  throw new Error('generarCaza: sin ítem posible');
+  if (!lista.length) throw new Error('generarCaza: sin ítem posible');
+  CANDIDATOS_CAZA.set(mala, lista);
+  return lista;
 }
 
 /** ¿Está bien la línea `i` (0, 1 o 2) de un ítem del ejercicio 5? Se recalcula desde la línea anterior. */

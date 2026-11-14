@@ -444,3 +444,17 @@ test('ejercicio 4: si lo que queda no es irreducible, el paso a paso lo simplifi
     assert.ok(/5\s*10\s*=\s*1\s*2/.test(t.replace(/\s+/g, ' ')), `sin el paso de simplificar: ${t}`);
   }
 });
+
+test('ej. 5: las sumas salen repartidas (ninguna pasa del 3 %, al menos 150 distintas)', () => {
+  const rng = crearRng(12345);
+  const cuenta = new Map();
+  const N5 = 20000;
+  for (let i = 0; i < N5; i++) {
+    const it = generarCaza(rng);
+    const clave = [`${it.a.n}/${it.a.d}`, `${it.b.n}/${it.b.d}`].sort().join('+');
+    cuenta.set(clave, (cuenta.get(clave) || 0) + 1);
+  }
+  const maximo = Math.max(...cuenta.values());
+  assert.ok(maximo / N5 <= 0.03, `la suma más repetida sale el ${(100 * maximo / N5).toFixed(1)} %`);
+  assert.ok(cuenta.size >= 150, `solo ${cuenta.size} sumas distintas`);
+});
