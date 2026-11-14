@@ -277,8 +277,8 @@ La ortografía española tiene su propia sección en la portada, «Ortografía»
 bloques: `ortografia` (id 45, «lo más frecuente») y `ortografia-tildes`, `-letras`,
 `-puntuacion`, `-palabras` y `-ampliacion` (ids 64-68). Publicados: la 45 y, desde el
 9-11-2026, `ortografia-letras` (65) y `ortografia-puntuacion` (66), y desde el 14-11-2026,
-`ortografia-palabras` (67) y `ortografia-ampliacion` (68, nunca ★: va entre los «a elegir» de la
-U8); `ortografia-tildes` (64) sigue en revisión. Cada ejercicio
+`ortografia-tildes` (64), `ortografia-palabras` (67) y `ortografia-ampliacion` (68, nunca ★: va
+entre los «a elegir» de la U8): los seis. Cada ejercicio
 de un bloque tiene tres niveles que se eligen según cómo vaya el alumno
 (`practicas/_comun/nivel.js`), y los bloques comparten sus piezas
 (`practicas/_comun/ortografia.js`). Qué hay, los niveles y cómo se escribe un ejercicio:

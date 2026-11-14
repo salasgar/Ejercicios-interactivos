@@ -90,7 +90,7 @@ export const CATALOGO = [
   { id: 45, slug: 'ortografia', ruta: 'ortografia/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: lo más frecuente', en: 'Spanish spelling: the most frequent slips' }, nEjercicios: 11, disponible: true },
   // Los bloques nuevos (PU2, tareas 135-139; filas y esqueletos puestos por la 134). Cada uno pone
   // su `disponible: true` cuando lo publique su tarea de revisión (140-142).
-  { id: 64, slug: 'ortografia-tildes', ruta: 'ortografia-tildes/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las tildes', en: 'Spanish spelling: accents' }, nEjercicios: 4, disponible: false },
+  { id: 64, slug: 'ortografia-tildes', ruta: 'ortografia-tildes/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las tildes', en: 'Spanish spelling: accents' }, nEjercicios: 4, disponible: true },
   { id: 65, slug: 'ortografia-letras', ruta: 'ortografia-letras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: las letras', en: 'Spanish spelling: letters' }, nEjercicios: 4, disponible: true },
   { id: 66, slug: 'ortografia-puntuacion', ruta: 'ortografia-puntuacion/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: puntuación y mayúsculas', en: 'Spanish spelling: punctuation and capitals' }, nEjercicios: 4, disponible: true },
   { id: 67, slug: 'ortografia-palabras', ruta: 'ortografia-palabras/', unidad: 3, transversal: true, seccion: 'ortografia', nombre: { es: 'Ortografía: palabras que se confunden', en: 'Spanish spelling: confusable words' }, nEjercicios: 3, disponible: true },

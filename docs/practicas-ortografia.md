@@ -273,7 +273,7 @@ Este apartado lo rellenan las tareas de publicación (140, 141, 142 y 196) al pu
 | `ortografia` (45), lo más frecuente | antes de la sección | los 11 de siempre | niveles de la 143 |
 | `ortografia-letras` (65), las letras | 9-11-2026 (tarea 140) | 1 hay, ahí, ay; a ver, haber · 2 b o v · 3 g o j y la diéresis · 4 otras letras | 1: 18 / 19 / 23 · 2: 25 / 46 / 29 · 3: 20 / 37 / 35 · 4: 43 / 22 / 38 |
 | `ortografia-puntuacion` (66), puntuación y mayúsculas | 9-11-2026 (tarea 141, tras la reabierta de la 137) | 1 mayúsculas · 2 el punto y la coma · 3 dos puntos, puntos suspensivos y el saludo · 4 el correo al profesor | 1: 15 / 16 / 18 · 2: 16 / 16 / 17 · 3: 16 / 17 / 17 · 4: 16 / 16 / 32 (16 correos y 16 asunto o cuerpo) |
-| `ortografia-tildes` (64), las tildes | **no** (tareas 141, 142 y 196: reabierta la 135 por tercera vez) | — | — |
+| `ortografia-tildes` (64), las tildes | 14-11-2026 (tarea 196, tercera pasada, tras la cuarta reabierta de la 135) | 1 la sílaba tónica · 2 ¿lleva tilde? · 3 diptongos e hiatos · 4 las palabras de Matemáticas | 1: 16 / 16 / 16 · 2: 16 / 16 / 16 · 3: 16 / 16 / 18 (14 palabras y 4 frases de aún / aun) · 4: 16 / 16 / 16 |
 | `ortografia-palabras` (67), palabras que se confunden | 14-11-2026 (tarea 196, tras la reabierta de la 138) | 1 ¿junto o separado? · 2 suenan igual, se escriben distinto · 3 números y símbolos | 1: 38 / 37 / 23 · 2: 24 / 29 / 30 · 3: 27 / 23 / 30 |
 | `ortografia-ampliacion` (68), ampliación (nunca ★; «a elegir» de la U8, §5) | 14-11-2026 (tarea 196, tras la reabierta de la 139) | 1 porque, por qué, porqué, por que · 2 formas verbales mal escritas · 3 siglas, abreviaturas y prefijos · 4 puntuación avanzada | 1: 16 / 16 / 16 · 2: 19 / 18 / 17 · 3: 17 / 17 / 16 · 4: 16 / 16 / 17 |
 
@@ -301,3 +301,8 @@ niveles: publicó `ortografia-palabras` y `ortografia-ampliacion` sin quitar nin
 reabrió `ortografia-tildes` por tercera vez (*jamás*, que sin tilde es *jamas*, de *jamar*;
 *pie* y *Luis*, del tipo de *fie* y *hui*; y la frase de la proporcionalidad). Lista en
 `reparto-practicas-u2/hechos/reabiertas/135--s-20261114T113316-d58f9cb4.md`.
+
+Ese mismo día, la segunda pasada de la 196 reabrió `ortografia-tildes` una cuarta vez por dos
+sustitutos (*triunfo*, que con la tilde en la o es *triunfó*, y «son directamente proporcional»,
+sin concordancia), y la tercera pasada lo publicó tras comprobar los suyos: *nieve* (ninguna de
+*níeve*, *niéve* o *nievé* existe) y «…, las dos son directamente proporcionales».
