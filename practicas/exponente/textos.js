@@ -4,7 +4,16 @@
 // nunca «×»; inglés sencillo; el feedback dice qué pasa con los números de
 // ese ítem; sin letras ni ecuaciones (el hueco es «□»).
 
-import { idBaseDe, cuentaParte, secuenciaCorrecta, respuestasAreas } from './logica.js';
+import { idBaseDe, cuentaParte, secuenciaCorrecta, respuestasAreas, fmt } from './logica.js';
+
+/** «b elevado a e es un producto de e factores iguales a b: b · b · … = p». La cuenta solo cuando cabe (hasta 6 factores). */
+export function fraseProducto(b, e, p, idioma, { noEs = false } = {}) {
+  const cuenta = e <= 6 ? `${Array(e).fill(b).join(' · ')} = ${fmt(p, idioma)}` : fmt(p, idioma);
+  const no = noEs && b !== e ? (idioma === 'es' ? ` (no ${b} · ${e})` : ` (not ${b} · ${e})`) : '';
+  return idioma === 'es'
+    ? `${b} elevado a ${e} es un producto de ${e} factores, todos iguales a ${b}${no}: ${cuenta}.`
+    : `${b} to the power of ${e} is a product of ${e} factors, all of them equal to ${b}${no}: ${cuenta}.`;
+}
 
 export const TX = {
   alcance: {
@@ -29,7 +38,7 @@ export const TX = {
       en: (b, e) => `Write <strong>${b}<sup>${e}</sup></strong> as a <strong>product of ${e} factors</strong>, all of them equal to ${b}. Tap the tiles in order.`,
     },
     instruccion_deshacer: { es: 'Toca una ficha de la fila para quitarla.', en: 'Tap a tile in the row to remove it.' },
-    bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
+    bien: { es: (b, e, p) => fraseProducto(b, e, p, 'es'), en: (b, e, p) => fraseProducto(b, e, p, 'en') },
     mal: {
       es: (p, b, e) => `Tiene que quedar: ${p}. Son ${e} factores y todos son ${b}, sin otras fichas.`,
       en: (p, b, e) => `It should be: ${p}. That is ${e} factors, all of them ${b}, with no other tiles.`,
@@ -44,7 +53,7 @@ export const TX = {
     },
     base: { es: 'Base', en: 'Base' },
     exponente: { es: 'Exponente', en: 'Exponent' },
-    bien: { es: (b, e, p) => `${p} es ${b} multiplicado por sí mismo ${e} veces: ${b} elevado a ${e}.`, en: (b, e, p) => `${p} is ${b} multiplied by itself ${e} times: ${b} to the power of ${e}.` },
+    bien: { es: (b, e, p) => `${p} es ${b} elevado a ${e}: un producto de ${e} factores, todos iguales a ${b}.`, en: (b, e, p) => `${p} is ${b} to the power of ${e}: a product of ${e} factors, all of them equal to ${b}.` },
     // (b, e) = la potencia esperada; (pb, pe) = lo que ha puesto el alumno
     mal: {
       es: (b, e, p, pb, pe) => `${p} es ${b} elevado a ${e}: la base es el número que se repite.${pb ** pe === b ** e ? ` Lo que has puesto (${pb} elevado a ${pe}) vale lo mismo, pero aquí la base tiene que ser ${b}.` : ''}`,
@@ -55,15 +64,15 @@ export const TX = {
     nombre: { es: '¿Cuánto vale?', en: 'What is its value?' },
     detalle: { es: 'Elige el valor correcto de la potencia', en: 'Choose the correct value of the power' },
     pregunta: { es: (b, e) => `¿Cuánto vale <strong>${b} elevado a ${e}</strong>?`, en: (b, e) => `What is <strong>${b} to the power of ${e}</strong>?` },
-    bien: { es: (b, e, p) => `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces: ${p}.`, en: (b, e, p) => `${b} to the power of ${e} is ${b} multiplied by itself ${e} times: ${p}.` },
+    bien: { es: (b, e, p) => fraseProducto(b, e, p, 'es'), en: (b, e, p) => fraseProducto(b, e, p, 'en') },
     // `elegido` es la opción que ha tocado el alumno: se dice qué cuenta daría ese número
     mal: {
       es: (b, e, p, elegido) => `${elegido === b * e
-        ? `${elegido} es ${b} · ${e}: eso multiplica la base por el exponente.`
-        : elegido === e ** b ? `${elegido} es ${e} elevado a ${b}: has cambiado la base y el exponente.` : `${elegido} no es ${b} elevado a ${e}.`} El valor correcto es ${p}: ${b} multiplicado por sí mismo ${e} veces.`,
+        ? `${fmt(elegido, 'es')} es ${b} · ${e}: eso multiplica la base por el exponente.`
+        : elegido === e ** b ? `${fmt(elegido, 'es')} es ${e} elevado a ${b}: has cambiado la base y el exponente.` : `${fmt(elegido, 'es')} no es ${b} elevado a ${e}.`} ${fraseProducto(b, e, p, 'es')}`,
       en: (b, e, p, elegido) => `${elegido === b * e
-        ? `${elegido} is ${b} · ${e}: that multiplies the base by the exponent.`
-        : elegido === e ** b ? `${elegido} is ${e} to the power of ${b}: you swapped the base and the exponent.` : `${elegido} is not ${b} to the power of ${e}.`} The correct value is ${p}: ${b} multiplied by itself ${e} times.`,
+        ? `${fmt(elegido, 'en')} is ${b} · ${e}: that multiplies the base by the exponent.`
+        : elegido === e ** b ? `${fmt(elegido, 'en')} is ${e} to the power of ${b}: you swapped the base and the exponent.` : `${fmt(elegido, 'en')} is not ${b} to the power of ${e}.`} ${fraseProducto(b, e, p, 'en')}`,
     },
   },
   areas: {
@@ -104,7 +113,7 @@ const cuenta = h => `<span class="cuenta">${h}</span>`;
 const RESP = { es: 'La respuesta es', en: 'The answer is' };
 
 /** Ejercicio 1: la base del exponente de la parte preguntada, con la cuenta bien hecha. */
-export function explicaAlcance(item, { tt }) {
+export function explicaAlcance(item, { tt, idioma }) {
   const p = item.partes[item.preguntada];
   const grupo = idBaseDe(p.forma) === 'grupo';
   const parentesis = p.forma === 'grupo' ? `(${p.a} · ${p.b})` : p.forma === 'sumagrupo' ? `(${p.a} + ${p.b})` : `(${p.b} + ${p.c})`;
@@ -115,11 +124,11 @@ export function explicaAlcance(item, { tt }) {
     es: 'El exponente se aplica solo a lo que tiene justo delante: un número o un paréntesis entero.',
     en: 'The exponent applies only to what is right before it: one number or a whole bracket.',
   });
-  return `<p>${regla}</p><p>${cuenta(cuentaParte(p))}</p><p>${tt(RESP)} ${base}.</p>`;
+  return `<p>${regla}</p><p>${cuenta(cuentaParte(p, idioma))}</p><p>${tt(RESP)} ${base}.</p>`;
 }
 
 /** Ejercicio 2: según el subtipo del ítem (producto repetido, potencia o valor). */
-export function explicaMultiplicacion(item, { tt }) {
+export function explicaMultiplicacion(item, { tt, idioma }) {
   const { base: b, exponente: e } = item;
   const producto = Array(e).fill(b).join(' · ');
   const potencia = `${b}<sup>${e}</sup>`;
@@ -140,7 +149,7 @@ export function explicaMultiplicacion(item, { tt }) {
   return `<p>${tt({
     es: `${b} elevado a ${e} es un producto de ${e} factores, todos iguales a ${b}${noEs.es}.`,
     en: `${b} to the power of ${e} is a product of ${e} factors, all of them equal to ${b}${noEs.en}.`,
-  })}</p><p>${cuenta(`${potencia} = ${producto} = ${item.correcta}`)}</p><p>${tt(RESP)} ${cuenta(item.correcta)}.</p>`;
+  })}</p><p>${cuenta(`${potencia} = ${producto} = ${fmt(item.correcta, idioma)}`)}</p><p>${tt(RESP)} ${cuenta(fmt(item.correcta, idioma))}.</p>`;
 }
 
 /** Ejercicio 3: las dos cuentas, con las áreas o con el producto. */

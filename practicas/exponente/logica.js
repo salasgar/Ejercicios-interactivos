@@ -70,34 +70,44 @@ export function valorErroneoParte(p) {
   return p.a * (p.b + p.c ** p.e); // intermedia: eleva solo el último número del grupo
 }
 
+/** Un número con separador de miles desde 5 cifras (la RAE no separa los de 4): «52 488» (español, espacio fino de no separación) o «52,488» (inglés). */
+export function fmt(n, idioma = 'es') {
+  const s = String(n);
+  if (s.length < 5) return s;
+  return s.replace(/\B(?=(\d{3})+(?!\d))/g, idioma === 'en' ? ',' : '\u00a0');
+}
+
 /** La cuenta con la base correcta, paso a paso: «2 · 5² = 2 · 25 = 50». */
-export function cuentaParte(p) {
+export function cuentaParte(p, idioma = 'es') {
   const { a, b, c, e } = p;
-  if (p.forma === 'simple') return `${a} · ${b}<sup>${e}</sup> = ${a} · ${b ** e} = ${valorParte(p)}`;
-  if (p.forma === 'suma') return `${a} + ${b}<sup>${e}</sup> = ${a} + ${b ** e} = ${valorParte(p)}`;
-  if (p.forma === 'grupo') return `(${a} · ${b})<sup>${e}</sup> = ${a * b}<sup>${e}</sup> = ${valorParte(p)}`;
-  if (p.forma === 'sumagrupo') return `(${a} + ${b})<sup>${e}</sup> = ${a + b}<sup>${e}</sup> = ${valorParte(p)}`;
-  return `${a} · (${b} + ${c})<sup>${e}</sup> = ${a} · ${b + c}<sup>${e}</sup> = ${a} · ${(b + c) ** e} = ${valorParte(p)}`;
+  const f = n => fmt(n, idioma);
+  if (p.forma === 'simple') return `${a} · ${b}<sup>${e}</sup> = ${a} · ${f(b ** e)} = ${f(valorParte(p))}`;
+  if (p.forma === 'suma') return `${a} + ${b}<sup>${e}</sup> = ${a} + ${f(b ** e)} = ${f(valorParte(p))}`;
+  if (p.forma === 'grupo') return `(${a} · ${b})<sup>${e}</sup> = ${f(a * b)}<sup>${e}</sup> = ${f(valorParte(p))}`;
+  if (p.forma === 'sumagrupo') return `(${a} + ${b})<sup>${e}</sup> = ${f(a + b)}<sup>${e}</sup> = ${f(valorParte(p))}`;
+  return `${a} · (${b} + ${c})<sup>${e}</sup> = ${a} · ${b + c}<sup>${e}</sup> = ${a} · ${f((b + c) ** e)} = ${f(valorParte(p))}`;
 }
 
 /** La cuenta del error típico: lo que saldría si el exponente afectara a otra parte. */
-export function cuentaErronea(p) {
+export function cuentaErronea(p, idioma = 'es') {
   const { a, b, c, e } = p;
-  if (p.forma === 'simple') return `(${a} · ${b})<sup>${e}</sup> = ${a * b}<sup>${e}</sup> = ${valorErroneoParte(p)}`;
-  if (p.forma === 'suma') return `(${a} + ${b})<sup>${e}</sup> = ${a + b}<sup>${e}</sup> = ${valorErroneoParte(p)}`;
-  if (p.forma === 'grupo') return `${a} · ${b}<sup>${e}</sup> = ${a} · ${b ** e} = ${valorErroneoParte(p)}`;
-  if (p.forma === 'sumagrupo') return `${a} + ${b}<sup>${e}</sup> = ${a} + ${b ** e} = ${valorErroneoParte(p)}`;
-  return `${a} · (${b} + ${c}<sup>${e}</sup>) = ${a} · (${b} + ${c ** e}) = ${valorErroneoParte(p)}`;
+  const f = n => fmt(n, idioma);
+  if (p.forma === 'simple') return `(${a} · ${b})<sup>${e}</sup> = ${f(a * b)}<sup>${e}</sup> = ${f(valorErroneoParte(p))}`;
+  if (p.forma === 'suma') return `(${a} + ${b})<sup>${e}</sup> = ${f(a + b)}<sup>${e}</sup> = ${f(valorErroneoParte(p))}`;
+  if (p.forma === 'grupo') return `${a} · ${b}<sup>${e}</sup> = ${a} · ${f(b ** e)} = ${f(valorErroneoParte(p))}`;
+  if (p.forma === 'sumagrupo') return `${a} + ${b}<sup>${e}</sup> = ${a} + ${f(b ** e)} = ${f(valorErroneoParte(p))}`;
+  return `${a} · (${b} + ${c}<sup>${e}</sup>) = ${a} · (${b} + ${f(c ** e)}) = ${f(valorErroneoParte(p))}`;
 }
 
 /** La cuenta de lo que el alumno ha tocado: el exponente afectando solo a esa región. */
-export function cuentaTocada(p, id) {
+export function cuentaTocada(p, id, idioma = 'es') {
   const { a, b, c, e } = p;
-  const v = valorTocado(p, id);
-  if (p.forma === 'simple') return `${a}<sup>${e}</sup> · ${b} = ${a ** e} · ${b} = ${v}`;
-  if (p.forma === 'suma') return `${a}<sup>${e}</sup> + ${b} = ${a ** e} + ${b} = ${v}`;
-  if (p.forma === 'intermedia' && id === 'a') return `${a}<sup>${e}</sup> · (${b} + ${c}) = ${a ** e} · ${b + c} = ${v}`;
-  return cuentaErronea(p); // grupo, sumagrupo e intermedia con la c
+  const f = n => fmt(n, idioma);
+  const v = f(valorTocado(p, id));
+  if (p.forma === 'simple') return `${a}<sup>${e}</sup> · ${b} = ${f(a ** e)} · ${b} = ${v}`;
+  if (p.forma === 'suma') return `${a}<sup>${e}</sup> + ${b} = ${f(a ** e)} + ${b} = ${v}`;
+  if (p.forma === 'intermedia' && id === 'a') return `${a}<sup>${e}</sup> · (${b} + ${c}) = ${f(a ** e)} · ${b + c} = ${v}`;
+  return cuentaErronea(p, idioma); // grupo, sumagrupo e intermedia con la c
 }
 
 /** Lectura en inglés de una potencia: «three to the power of four». */

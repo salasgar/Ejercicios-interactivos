@@ -11,9 +11,11 @@ import {
   generarPotencia, aciertaPotencia,
   generarValor, generarMultiplicacion,
   generarAreas, respuestasAreas, aciertaAreas,
-  cuentaParte, cuentaErronea, cuentaTocada, valorTocado, valorParte, REGIONES, lecturaIngles,
+  cuentaParte, cuentaErronea, cuentaTocada, valorTocado, valorParte, REGIONES, lecturaIngles, fmt,
 } from '../practicas/exponente/logica.js';
 import { TX } from '../practicas/exponente/textos.js';
+
+const sinMiles = c => c.replace(/\u00a0/g, '');
 
 test('ejercicio 1: las cuentas del feedback terminan en el valor correcto y en el erróneo, y son distintos', () => {
   const rng = crearRng(5);
@@ -22,7 +24,7 @@ test('ejercicio 1: las cuentas del feedback terminan en el valor correcto y en e
   const valorEscrito = cuenta => Function(`"use strict"; return (${js(cuenta.split(' = ')[0])});`)();
   for (let i = 0; i < 3000; i++) {
     const p = generarParte(rng);
-    const buena = cuentaParte(p), mala = cuentaErronea(p);
+    const buena = sinMiles(cuentaParte(p)), mala = sinMiles(cuentaErronea(p));
     const final = c => Number(c.split(' = ').at(-1));
     // Cada paso de la cadena vale lo mismo que el primero, y el último es el resultado.
     for (const c of [buena, mala]) {
@@ -53,7 +55,7 @@ test('ejercicio 1: «lo que has tocado daría» corresponde a la región tocada,
       assert.equal(valorTocado(p, id), esperado(p, id), `${p.forma} ${id}`);
       if (id === idBaseDe(p.forma)) continue;
       vistos.add(`${p.forma}/${id}`);
-      const cuenta = cuentaTocada(p, id);
+      const cuenta = sinMiles(cuentaTocada(p, id));
       const v = Function(`"use strict"; return (${js(cuenta.split(' = ')[0])});`)();
       assert.equal(v, esperado(p, id), `${cuenta}`);
       assert.equal(Number(cuenta.split(' = ').at(-1)), v);
@@ -108,7 +110,7 @@ test('ejercicio 2 (valor): el feedback dice la cuenta de la opción elegida', ()
     for (const o of it.opciones.filter(x => x !== it.correcta)) {
       const es = TX.valor.mal.es(it.base, it.exponente, it.correcta, o);
       const en = TX.valor.mal.en(it.base, it.exponente, it.correcta, o);
-      assert.ok(es.startsWith(String(o)) && en.startsWith(String(o)));
+      assert.ok(es.startsWith(fmt(o, 'es')) && en.startsWith(fmt(o, 'en')));
       if (o === it.base * it.exponente) assert.match(es, new RegExp(`${it.base} · ${it.exponente}`));
       else if (o === it.exponente ** it.base) assert.match(es, new RegExp(`${it.exponente} elevado a ${it.base}`));
       else assert.match(es, /no es/);

@@ -6,7 +6,7 @@ import { TX, explicaAlcance, explicaMultiplicacion, explicaAreas } from './texto
 import {
   generarAlcance, aciertaAlcance, idBaseDe, valorParte, valorErroneoParte,
   generarMultiplicacion, secuenciaCorrecta, aciertaRepetida, aciertaPotencia,
-  generarAreas, respuestasAreas, aciertaAreas, cuentaParte, cuentaErronea, cuentaTocada, lecturaIngles,
+  generarAreas, respuestasAreas, aciertaAreas, cuentaParte, cuentaErronea, cuentaTocada, lecturaIngles, fmt,
 } from './logica.js';
 
 // ─── Ejercicio 1: ¿a qué afecta el exponente? ──────────────────────────────────
@@ -48,9 +48,8 @@ function montarAlcance(contenedor, item, api) {
         if (x.dataset.id === id) x.classList.add(acierto ? 'exp-click--bien' : 'exp-click--mal');
         else if (x.dataset.id === correctaId) x.classList.add('exp-click--correcta');
       });
-      const correcta = cuentaParte(parte);
       // «Si afectara a otra parte» (acierto) es el error típico; «lo que has tocado daría» (fallo) es la región tocada.
-      const html = ({ tt }) => acierto ? tt(TX.alcance.bien)(correcta, cuentaErronea(parte)) : tt(TX.alcance.mal)(correcta, cuentaTocada(parte, id));
+      const html = ({ tt, idioma }) => acierto ? tt(TX.alcance.bien)(cuentaParte(parte, idioma), cuentaErronea(parte, idioma)) : tt(TX.alcance.mal)(cuentaParte(parte, idioma), cuentaTocada(parte, id, idioma));
       api.responder({ acierto, html, espera: 1800 });
     });
   });
@@ -145,7 +144,7 @@ const enunciadoValor = (item, { tt }) => `<p class="instruccion">${tt(TX.valor.p
 function montarValor(contenedor, item, api) {
   contenedor.innerHTML = enunciadoValor(item, api);
   const botones = elecciones(contenedor, {
-    opciones: item.opciones.map(v => ({ valor: v, html: String(v) })),
+    opciones: item.opciones.map(v => ({ valor: v, html: fmt(v, api.idioma) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.correcta], valor);

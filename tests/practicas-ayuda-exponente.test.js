@@ -12,6 +12,7 @@ const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, t: T[idioma], tt: obj => obj[idioma], esc: x => x });
 const plano = html => html.replace(/<sup>(\d)<\/sup>/g, '^$1').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
 const N = 1000;
+const sinMiles = t => t.replace(/(?<=\d)[ ,](?=\d{3}(?!\d))/g, '');
 const sano = html => assert.doesNotMatch(html, /undefined|NaN|\[object|null/, plano(html));
 
 test('ej. 1: la explicación trae la cuenta bien hecha y nombra la base correcta', () => {
@@ -23,7 +24,7 @@ test('ej. 1: la explicación trae la cuenta bien hecha y nombra la base correcta
       const html = X.explicaAlcance(item, ctx(idioma));
       sano(html);
       const cuenta = plano(html.match(/<span class="cuenta">(.*?)<\/span>/)[1]);
-      assert.equal(Number(cuenta.split(' = ').at(-1)), L.valorParte(p), cuenta);
+      assert.equal(Number(sinMiles(cuenta).split(' = ').at(-1)), L.valorParte(p), cuenta);
       // el paréntesis que se toca, escrito con sus números (y sin «es:», que no lleva dos puntos)
       const grupo = { grupo: `(${p.a} · ${p.b})`, sumagrupo: `(${p.a} + ${p.b})`, intermedia: `(${p.b} + ${p.c})` }[p.forma];
       const base = L.idBaseDe(p.forma) === 'grupo'
@@ -76,8 +77,53 @@ test('ej. 3: la explicación da las dos respuestas que el ejercicio da por buena
       const texto = plano(html);
       const y = idioma === 'es' ? 'y' : 'and';
       assert.ok(texto.endsWith(`${pregunta1} ${y} ${pregunta2}.`), texto);
-      const finales = [...html.matchAll(/<li><span class="cuenta">(.*?)<\/span><\/li>/g)].map(m => Number(plano(m[1]).split(' = ').at(-1)));
+      const finales = [...html.matchAll(/<li><span class="cuenta">(.*?)<\/span><\/li>/g)].map(m => Number(sinMiles(plano(m[1])).split(' = ').at(-1)));
       assert.deepEqual(finales, [pregunta1, pregunta2]);
     }
   }
+});
+
+test('ej. 2: el feedback dice «producto de e factores», sin «(no b · e)» si base = exponente, y sin cifras de 5 o más sin separar', () => {
+  const rng = crearRng(403);
+  const cincoSeguidas = /\d{5}/;
+  let iguales = 0;
+  for (let n = 0; n < 300; n++) {
+    const item = L.generarMultiplicacion(rng);
+    const { base: b, exponente: e } = item;
+    const prod = Array(e).fill(b).join(' · ');
+    const textos = [];
+    for (const idioma of IDIOMAS) {
+      textos.push(X.explicaMultiplicacion(item, ctx(idioma)));
+      if (item.tipo === 'valor') {
+        textos.push(X.TX.valor.bien[idioma](b, e, item.correcta));
+        for (const o of item.opciones.filter(x => x !== item.correcta)) textos.push(X.TX.valor.mal[idioma](b, e, item.correcta, o));
+      } else if (item.tipo === 'repetida') {
+        textos.push(X.TX.repetida.bien[idioma](b, e, prod));
+      } else {
+        textos.push(X.TX.potencia.bien[idioma](b, e, prod));
+      }
+    }
+    for (const t of textos) {
+      assert.doesNotMatch(t, /por sí mismo \d+ veces|by itself \d+ times/, plano(t));
+      assert.doesNotMatch(plano(t), cincoSeguidas, plano(t));
+      if (b === e) { assert.doesNotMatch(t, /\(no |\(not /, plano(t)); iguales++; }
+    }
+  }
+  assert.ok(iguales > 0, 'el test tiene que ver ítems con base = exponente');
+});
+
+test('ej. 1: las cuentas del feedback y de la tarjeta no traen cifras de 5 o más sin separar, en los dos idiomas', () => {
+  const rng = crearRng(404);
+  for (let n = 0; n < 300; n++) {
+    const item = L.generarAlcance(rng);
+    const p = item.partes[item.preguntada];
+    for (const idioma of IDIOMAS) {
+      const textos = [X.explicaAlcance(item, ctx(idioma)), L.cuentaParte(p, idioma), L.cuentaErronea(p, idioma),
+        ...L.REGIONES[p.forma].map(id => L.cuentaTocada(p, id, idioma))];
+      for (const t of textos) assert.doesNotMatch(plano(t), /\d{5}/, plano(t));
+    }
+  }
+  assert.equal(L.fmt(52488, 'es'), '52 488');
+  assert.equal(L.fmt(52488, 'en'), '52,488');
+  assert.equal(L.fmt(2401, 'es'), '2401');
 });
