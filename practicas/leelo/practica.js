@@ -5,7 +5,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { TX } from './textos.js';
+import { TX, explicaEscuchar, explicaLeer, explicaCompletar } from './textos.js';
 import {
   generarEscuchar, opcionesEscuchar,
   generarLeer, opcionesLeer,
@@ -161,6 +161,7 @@ arrancar({
       clave: item => JSON.stringify(item),
       montar: montarEscuchar,
       enunciado: enunciadoEscuchar,
+      explicacion: explicaEscuchar,
     },
     {
       nombre: TX.leer.nombre,
@@ -169,6 +170,7 @@ arrancar({
       clave: item => JSON.stringify({ ...item, estilo: undefined }),
       montar: montarLeer,
       enunciado: enunciadoLeer,
+      explicacion: explicaLeer,
     },
     {
       nombre: TX.completar.nombre,
@@ -177,6 +179,7 @@ arrancar({
       clave: item => item.frase,
       montar: montarCompletar,
       enunciado: enunciadoCompletar,
+      explicacion: explicaCompletar,
     },
   ],
 });
