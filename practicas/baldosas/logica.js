@@ -7,7 +7,7 @@
 // posible (de nuevo el m.c.d.) y decir cuánto mide cada trozo y cuántos salen
 // en total (se suman los trozos de cada cuerda, porque son cuerdas distintas).
 
-import { mcd, divisores } from '../_comun/aritmetica.js';
+import { mcd, divisores, factorizar, mcdFact, htmlFact, valorDe } from '../_comun/aritmetica.js';
 import { TX } from './textos.js';
 
 const rango = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -118,24 +118,50 @@ export function esCorteDeCuerdas(item, trozo, totalTrozos) {
 
 export { rango };
 
-// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final.
-const ayudaResp = (idioma, texto) => `<p>${TX.ayuda.respuesta[idioma]}: <strong>${texto}</strong>.</p>`;
+// «No lo sé»: cómo se resuelve este ítem, con sus números, y la solución al final (revisión 193: qué se pide,
+// el m.c.d. con el método de los apuntes, las cuentas con sus unidades y la frase de respuesta).
+
+const pasosAyuda = lista => `<ol class="pasos-ayuda">${lista.map(p => `<li>${p}</li>`).join('')}</ol>`;
+const enLista = (cosas, idioma) => `${cosas.slice(0, -1).join(', ')} ${TX.ayuda.y[idioma]} ${cosas.at(-1)}`;
+/** Hasta aquí, listas de divisores; con números mayores, factorización (el mismo corte que el feedback de acierto). */
+export const LISTAS_HASTA = 50;
+
+/** Los dos pasos del m.c.d. por factorización: descomponer y quedarse con los primos comunes, con el menor exponente. */
+function mcdPorFactorizacion(numeros, idioma) {
+  const x = TX.ayuda;
+  const fs = numeros.map(factorizar);
+  const comun = mcdFact(...fs);
+  const sola = comun.length === 1 && comun[0][1] === 1;
+  const cuenta = `${sola ? '' : `${htmlFact(comun)} = `}${valorDe(comun)}`;
+  return [
+    x.descompon[idioma](enLista(numeros.map((n, i) => `<span class="cuenta">${n} = ${htmlFact(fs[i])}</span>`), idioma)),
+    x.mcd_fact[idioma](numeros.join(', '), cuenta),
+  ];
+}
 
 export function explicaBaldosa(item, idioma) {
   const { a, b, g } = item;
   const x = TX.ayuda;
-  const comunes = divisores(g);
-  return `<p>${x.divisores[idioma](a, divisores(a))}<br>${x.divisores[idioma](b, divisores(b))}</p>`
-    + `<p>${x.comunes[idioma](comunes, g)}</p>`
-    + ayudaResp(idioma, x.baldosa_respuesta[idioma](g));
+  const pasos = Math.max(a, b) <= LISTAS_HASTA
+    ? [x.divisores[idioma](a, divisores(a)), x.divisores[idioma](b, divisores(b)), x.comunes[idioma](a, b, divisores(g), g)]
+    : mcdPorFactorizacion([a, b], idioma);
+  return `<p>${x.pide_baldosa[idioma](a, b)}</p>${pasosAyuda(pasos)}<p>${x.fin_baldosa[idioma](g)}</p>`;
 }
 
 export function explicaCuantas(item, idioma) {
   const { a, b, g, cuantas } = item;
-  return `<p>${TX.cuantas.cuenta[idioma](a, b, g, a / g, b / g, cuantas)}</p>${ayudaResp(idioma, TX.ayuda.cuantas_respuesta[idioma](cuantas))}`;
+  const x = TX.ayuda;
+  const p = a / g, q = b / g;
+  return `<p>${x.pide_cuantas[idioma](g)}</p>`
+    + pasosAyuda([x.a_lo_largo[idioma](a, g, p), x.a_lo_ancho[idioma](b, g, q), x.filas[idioma](p, q, cuantas)])
+    + `<p>${x.fin_cuantas[idioma](cuantas)} ${x.consejo_cuantas[idioma]}</p>`;
 }
 
 export function explicaCuerdas(item, idioma) {
-  return `<p>${TX.cuerdas.cuenta[idioma](item.longitudes, item.g, item.porCuerda, item.trozosTotal)}</p>`
-    + ayudaResp(idioma, TX.ayuda.cuerdas_respuesta[idioma](item.g, item.trozosTotal));
+  const x = TX.ayuda;
+  const { longitudes, g, porCuerda, trozosTotal } = item;
+  const divisiones = longitudes.map((l, i) => `<span class="cuenta">${l} : ${g} = ${porCuerda[i]}</span>`).join('; ');
+  return `<p>${x.pide_cuerdas[idioma]}</p>`
+    + pasosAyuda([...mcdPorFactorizacion(longitudes, idioma), x.trozos[idioma](divisiones, porCuerda, trozosTotal)])
+    + `<p>${x.fin_cuerdas[idioma](g, trozosTotal)}</p>`;
 }

@@ -90,12 +90,62 @@ export const TX = {
     pista_total_coherente: { es: (t, porCuerda, total) => `Con tu trozo de ${t} dm la suma está bien hecha (${porCuerda.join(' + ')} = ${total}); el fallo está en el trozo, que no es el más largo.`, en: (t, porCuerda, total) => `With your ${t} dm piece the addition is right (${porCuerda.join(' + ')} = ${total}); the mistake is the piece, which is not the longest.` },
     pista_total_mal: { es: (porCuerda, total) => `Aquí sí se suman, porque son cuerdas distintas: ${porCuerda.join(' + ')} = ${total} trozos.`, en: (porCuerda, total) => `Here you do add them up, because they are different ropes: ${porCuerda.join(' + ')} = ${total} pieces.` },
   },
+  // «No lo sé» (revisión 193): qué se pide, las cuentas con sus unidades y la frase de respuesta. El m.c.d. con el
+  // método de los apuntes de la U2: listas de divisores con números pequeños (hasta 50, como el feedback de acierto
+  // del ejercicio 1) y factorización con los grandes y con las cuerdas.
   ayuda: {
     respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    pide_baldosa: {
+      es: (a, b) => `Se pide el lado de la baldosa cuadrada más grande que cubre el suelo sin cortar ninguna: el mayor número que divide a ${a} y a ${b}, su m.c.d.`,
+      en: (a, b) => `You need the side of the biggest square tile that covers the floor without cutting any: the biggest number that divides ${a} and ${b}, their GCD.`,
+    },
     divisores: { es: (n, lista) => `Divisores de ${n}: ${lista.join(', ')}.`, en: (n, lista) => `Divisors of ${n}: ${lista.join(', ')}.` },
-    comunes: { es: (lista, g) => `Los lados que dividen a los dos: ${lista.join(', ')}. El mayor es ${g}.`, en: (lista, g) => `The sides that divide both: ${lista.join(', ')}. The biggest is ${g}.` },
-    baldosa_respuesta: { es: g => `lado ${g} dm`, en: g => `side ${g} dm` },
-    cuantas_respuesta: { es: n => `${n} baldosas`, en: n => `${n} tiles` },
-    cuerdas_respuesta: { es: (g, t) => `trozos de ${g} dm, ${t} trozos en total`, en: (g, t) => `pieces of ${g} dm, ${t} pieces in total` },
+    comunes: {
+      es: (a, b, lista, g) => `Los que dividen a los dos: ${lista.join(', ')}. El mayor es el ${g}: <span class="cuenta">m.c.d.(${a}, ${b}) = ${g} dm</span>.`,
+      en: (a, b, lista, g) => `The ones that divide both: ${lista.join(', ')}. The biggest is ${g}: <span class="cuenta">GCD(${a}, ${b}) = ${g} dm</span>.`,
+    },
+    descompon: {
+      es: igualdades => `Descompón en factores primos: ${igualdades}.`,
+      en: igualdades => `Write them as products of primes: ${igualdades}.`,
+    },
+    mcd_fact: {
+      es: (datos, cuenta) => `Para el m.c.d., solo los primos comunes, con el menor exponente: <span class="cuenta">m.c.d.(${datos}) = ${cuenta} dm</span>.`,
+      en: (datos, cuenta) => `For the GCD, take only the common primes, with the lowest power: <span class="cuenta">GCD(${datos}) = ${cuenta} dm</span>.`,
+    },
+    fin_baldosa: {
+      es: g => `La respuesta es <strong>${g} dm</strong>: es el lado de la baldosa más grande.`,
+      en: g => `The answer is <strong>${g} dm</strong>: that is the side of the biggest tile.`,
+    },
+    pide_cuantas: {
+      es: g => `Se pide cuántas baldosas de ${g} dm de lado cubren el suelo: se cuenta cuántas caben a lo largo y a lo ancho, y se multiplica.`,
+      en: g => `You need how many tiles of side ${g} dm cover the floor: count how many fit along the length and along the width, and multiply.`,
+    },
+    a_lo_largo: { es: (a, g, p) => `A lo largo: <span class="cuenta">${a} : ${g} = ${p}</span> baldosas.`, en: (a, g, p) => `Along the length: <span class="cuenta">${a} : ${g} = ${p}</span> tiles.` },
+    a_lo_ancho: { es: (b, g, q) => `A lo ancho: <span class="cuenta">${b} : ${g} = ${q}</span> baldosas.`, en: (b, g, q) => `Along the width: <span class="cuenta">${b} : ${g} = ${q}</span> tiles.` },
+    filas: {
+      es: (p, q, n) => `Son ${q} ${q === 1 ? 'fila' : 'filas'} de ${p}: <span class="cuenta">${p} · ${q} = ${n}</span> baldosas.`,
+      en: (p, q, n) => `That is ${q} ${q === 1 ? 'row' : 'rows'} of ${p}: <span class="cuenta">${p} · ${q} = ${n}</span> tiles.`,
+    },
+    fin_cuantas: {
+      es: n => `La respuesta es <strong>${n} baldosas</strong>: son las que hacen falta para cubrir el suelo.`,
+      en: n => `The answer is <strong>${n} tiles</strong>: that is how many you need to cover the floor.`,
+    },
+    consejo_cuantas: {
+      es: 'Consejo: las filas de baldosas se multiplican, no se suman.',
+      en: 'Tip: the rows of tiles multiply, they do not add up.',
+    },
+    pide_cuerdas: {
+      es: 'Se piden dos cosas: cuánto mide cada trozo (lo más largo que cabe en todas las cuerdas sin que sobre nada, el m.c.d.) y cuántos trozos salen (se suman los de cada cuerda).',
+      en: 'You need two things: how long each piece is (the longest length that goes into every rope with nothing left over, the GCD) and how many pieces there are (add up the pieces of each rope).',
+    },
+    trozos: {
+      es: (divisiones, porCuerda, total) => `Trozos de cada cuerda: ${divisiones}. En total, <span class="cuenta">${porCuerda.join(' + ')} = ${total}</span> trozos.`,
+      en: (divisiones, porCuerda, total) => `Pieces from each rope: ${divisiones}. In total, <span class="cuenta">${porCuerda.join(' + ')} = ${total}</span> pieces.`,
+    },
+    fin_cuerdas: {
+      es: (g, t) => `La respuesta es <strong>${g} dm</strong> cada trozo y <strong>${t} trozos</strong> en total.`,
+      en: (g, t) => `The answer is <strong>${g} dm</strong> for each piece and <strong>${t} pieces</strong> in total.`,
+    },
+    y: { es: 'y', en: 'and' },
   },
 };
