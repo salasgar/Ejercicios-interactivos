@@ -21,7 +21,9 @@
      .campo-numero                    campo para escribir un número (piezas.js, campoNumero)
      .cuenta                          una cuenta dentro del feedback: no se parte si cabe
                                       en una línea (pasa entera a la siguiente); si no cabe
-                                      en ninguna, se parte antes que ensanchar la página */
+                                      en ninguna, se parte antes que ensanchar la página;
+                                      la base mete dentro el signo que la sigue o la precede
+                                      (.signo-cuenta, tarea 197) para que no se quede solo */
 
 .cabecera__titulo { white-space: normal; }
 .idiomas { gap: .3rem; flex-shrink: 0; }
@@ -211,6 +213,10 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
    siguiente; y solo si no cabe en ninguno se parte (antes «nowrap», que
    ensanchaba la página en 375 px cuando una práctica metía una frase entera). */
 .cuenta { font-weight: 700; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+/* Tarea 197: el signo que la base pega dentro de la cuenta (pegarSignos, piezas.js) no va en negrita, salvo que todo
+   lo de alrededor lo esté. */
+.cuenta > .signo-cuenta { font-weight: 400; }
+:is(strong, b, h1, h2, h3) .cuenta > .signo-cuenta { font-weight: inherit; }
 .penalizacion { margin: .5rem 0 0; font-weight: 700; }
 .sin-vidas { margin: .5rem 0 0; font-weight: 700; }
 .racha { margin: .5rem 0 0; font-weight: 700; color: #b45309; }
@@ -228,6 +234,8 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
 .frac--compacta { font-size: .85em; }
 .frac-neg { white-space: nowrap; }
 .cuenta-frac { display: inline-block; max-width: 100%; line-height: 2.4; overflow-wrap: anywhere; }
+/* Tarea 197: una fracción y el signo pegado a ella, juntos (pegarSignos, piezas.js): el renglón no se parte entre los dos. */
+.frac-y-signo { display: inline-block; }
 
 /* Fin y código de resultado */
 .fin { text-align: center; }

@@ -157,7 +157,8 @@ test('multiplica-divide: la explicación de cada ejercicio lleva la regla y el r
 //     `explicacion` o, si no procede (juego, ejercicio por pasos), `sinAyuda` con el motivo;
 //   · cada `explicacion` se prueba con 200 ítems de su `generar`, en los idiomas de la práctica:
 //     devuelve HTML con contenido, sin restos (undefined, NaN, [object…), con las etiquetas
-//     cerradas y, desde la unidad 2, sin «×»; y el texto cambia de un idioma al otro.
+//     cerradas y sin «×» en ninguna unidad (también la 1, desde el 14-11: tarea 197); y el texto
+//     cambia de un idioma al otro.
 // Que la explicación lleve LA SOLUCIÓN del ítem no se puede comprobar aquí: va en el test propio
 // de cada práctica (como arriba, en fraccion-de y multiplica-divide).
 
@@ -199,7 +200,7 @@ for (const [ficha, practica] of declaraciones) {
           assert.ok(plano(html).trim().length >= 25, `demasiado corta — ${donde}`);
           assert.doesNotMatch(html, /undefined|NaN|\[object|Infinity/, donde);
           assert.doesNotMatch(plano(html), /\bnull\b/, donde);
-          if (ficha.unidad !== 1) assert.doesNotMatch(html, /×/, `producto con «·» desde la unidad 2 — ${donde}`);
+          assert.doesNotMatch(html, /×/, `producto con «·», también en la unidad 1 (decisión del 14-11) — ${donde}`);
           assert.ok(etiquetasCerradas(html), `etiquetas sin cerrar — ${donde}`);
         });
         if (textos.length === 2) assert.notEqual(textos[0], textos[1], `${que}: la explicación es igual en español y en inglés`);

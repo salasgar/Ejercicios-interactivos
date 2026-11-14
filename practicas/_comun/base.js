@@ -34,6 +34,7 @@ import {
   leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico,
   idDocumentoPractica, idDocumentoTarea, claveProgresoTarea, coleccionEspacio,
 } from './nube.js';
+import { pegarSignos } from './piezas.js';
 import { datosFallo, registrarFallo, enviarPendientes } from './registro.js';
 import { crearRng } from './rng.js';
 import { TAREAS, tareaPorId } from './tareas.js';
@@ -855,10 +856,10 @@ export function arrancar(practica) {
         <p class="animo">${t(i).ayuda_lee}</p>
       </div>`;
     const caja = app.querySelector('#feedback');
-    caja.innerHTML = `
+    caja.innerHTML = pegarSignos(`
       ${tarjeta(idi, texto)}
       ${botonTraduccion()}
-      <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
+      <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`);
     activarTraduccion(tarjeta);
     const boton = caja.querySelector('#siguiente');
     boton.addEventListener('click', siguiente);
@@ -941,7 +942,7 @@ export function arrancar(practica) {
       try { enunciado = defs[n].enunciado?.(item, textosDe(otro)) ?? ''; } catch (e) { console.error(e); }
       let html = '';
       try { html = feedback(textosDe(otro)); } catch (e) { console.error(e); }
-      caja.innerHTML = `${enunciado}${tarjeta(otro, html)}`;
+      caja.innerHTML = pegarSignos(`${enunciado}${tarjeta(otro, html)}`);
       alAbrir?.();
     });
   }
@@ -958,7 +959,7 @@ export function arrancar(practica) {
       // `espera: 'boton'`: también el acierto espera a «Siguiente», para que se lea la razón
       // (donde se puede acertar al azar o por la razón equivocada).
       if (espera === 'boton') {
-        caja.innerHTML = `${tarjeta(idi, html)}${botonTraduccion()}<button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
+        caja.innerHTML = pegarSignos(`${tarjeta(idi, html)}${botonTraduccion()}<button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`);
         activarTraduccion(tarjeta);
         const boton = caja.querySelector('#siguiente');
         boton.addEventListener('click', siguiente);
@@ -966,7 +967,7 @@ export function arrancar(practica) {
         boton.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         return;
       }
-      caja.innerHTML = `${tarjeta(idi, html)}${botonTraduccion()}`;
+      caja.innerHTML = pegarSignos(`${tarjeta(idi, html)}${botonTraduccion()}`);
       const miTurno = turno;
       const temporizador = setTimeout(() => { if (miTurno === turno) siguiente(); }, espera + (cambio.extra ? 900 : 0));
       // Si abre la traducción, no se pasa solo al siguiente: le damos tiempo a leerla.
@@ -985,10 +986,10 @@ export function arrancar(practica) {
         : `<p class="penalizacion">${t(i).penalizacion(cambio.perdidos)} · ${t(i).vidas_quedan(cambio.vidas)}</p><p class="animo">${t(i).animos[animo % t(i).animos.length]}</p>`;
       return `<div class="feedback feedback--mal"><strong>✗ ${t(i).mal}</strong> ${texto}${vidas}</div>`;
     };
-    caja.innerHTML = `
+    caja.innerHTML = pegarSignos(`
       ${tarjeta(idi, html)}
       ${botonTraduccion()}
-      <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`;
+      <button type="button" id="siguiente" class="ancho">${t(idi).siguiente}</button>`);
     activarTraduccion(tarjeta);
     const boton = app.querySelector('#siguiente');
     boton.addEventListener('click', siguiente);

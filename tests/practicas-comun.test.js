@@ -23,6 +23,7 @@ import {
   criterio, CRITERIOS, multiplicarFact, dividirFact, esMultiploFact, mcdFact, mcmFact, htmlFact, textoFact,
 } from '../practicas/_comun/aritmetica.js';
 import { T, TRADUCCION, unir, esc, fechaCorta } from '../practicas/_comun/textos.js';
+import { pegarSignos, SIGNOS_CIERRE, SIGNOS_APERTURA } from '../practicas/_comun/piezas.js';
 import { juntarResultados, juntarResumen, leerDocumentos } from '../practicas/resultados.js';
 import {
   generarPrimo, clasePrimo, primosAProbar, generarFactorizacion, esFactorizacionDe, factDe, BASES, EXPONENTE_MAXIMO, NUMEROS,
@@ -863,4 +864,95 @@ test('textos de las tareas v2: plazo, retraso, tipo y unidades en los dos idioma
   assert.equal(T.es.repaso_de_unidad(1), '· repaso U1');
   assert.equal(T.en.repaso_de_unidad(1), '· U1 review');
   assert.equal(T.es.tarea_obligatoria_para_ti, 'Obligatoria para ti');
+});
+
+// ─── Tarea 197: el signo va pegado a la cuenta ───────────────────────────────────
+
+test('pegarSignos: el signo que sigue a una cuenta entra en ella (punto, coma con texto, varios signos)', () => {
+  const S = s => `<span class="signo-cuenta">${s}</span>`;
+  assert.equal(pegarSignos('Es <span class="cuenta">3 · 4 = 12</span>.'), `Es <span class="cuenta">3 · 4 = 12${S('.')}</span>`);
+  assert.equal(pegarSignos('<span class="cuenta">2 + 3</span>, y luego <b>no</b>.'), `<span class="cuenta">2 + 3${S(',')}</span> y luego <b>no</b>.`);
+  assert.equal(pegarSignos('«<span class="cuenta">7²</span>».'), `<span class="cuenta">${S('«')}7²${S('».')}</span>`);
+  assert.equal(pegarSignos('Mira (<span class="cuenta">5 − 2</span>): sale'), `Mira <span class="cuenta">${S('(')}5 − 2${S('):')}</span> sale`);
+  assert.equal(pegarSignos('¿<span class="cuenta">8 : 2</span>?'), `<span class="cuenta">${S('¿')}8 : 2${S('?')}</span>`);
+});
+
+test('pegarSignos: dos cuentas seguidas, cuenta al final sin signo, clase con más nombres y .cuenta-frac', () => {
+  const S = s => `<span class="signo-cuenta">${s}</span>`;
+  assert.equal(pegarSignos('<span class="cuenta">a</span>;<span class="cuenta">b</span>.'),
+    `<span class="cuenta">a${S(';')}</span><span class="cuenta">b${S('.')}</span>`);
+  assert.equal(pegarSignos('<span class="cuenta">a</span> y (<span class="cuenta">b</span>)'),
+    `<span class="cuenta">a</span> y <span class="cuenta">${S('(')}b${S(')')}</span>`);
+  assert.equal(pegarSignos('Sale <span class="cuenta">10</span>'), 'Sale <span class="cuenta">10</span>');
+  assert.equal(pegarSignos('<span class="cuenta venn-larga">x</span>.'), `<span class="cuenta venn-larga">x${S('.')}</span>`);
+  // La cuenta acaba en una fracción (inline-flex): el signo entra en la cuenta y va junto a la fracción en un .frac-y-signo.
+  const f1 = '<span class="frac"><span>1</span><span>2</span></span>', f2 = '<span class="frac"><span>1</span><span>3</span></span>';
+  assert.equal(pegarSignos(`<span class="cuenta-frac">${f1} + ${f2}</span>.`), `<span class="cuenta-frac">${f1} + <span class="frac-y-signo">${f2}.</span></span>`);
+  // Una cuenta dentro de otra no se toca: el signo va a la de fuera.
+  assert.equal(pegarSignos('<span class="cuenta"><span class="cuenta">1</span>.</span>.'), `<span class="cuenta"><span class="cuenta">1</span>.${S('.')}</span>`);
+  // Etiquetas vacías y sin cierre dentro de la cuenta no la descuadran.
+  assert.equal(pegarSignos('<span class="cuenta">3<sup>2</sup><br>9</span>.'), `<span class="cuenta">3<sup>2</sup><br>9${S('.')}</span>`);
+});
+
+test('pegarSignos: el signo salta el <strong> que envuelve la cuenta, y la fracción no se separa de su signo', () => {
+  const S = s => `<span class="signo-cuenta">${s}</span>`;
+  // fraccion-decimal, ej. 3: «The answer is <strong><cuenta-frac>…</cuenta-frac></strong>.»
+  assert.equal(pegarSignos('es <strong><span class="cuenta-frac">1 : 8 = 0,125</span></strong>.\n<p>x</p>'),
+    `es <strong><span class="cuenta-frac">1 : 8 = 0,125${S('.')}</span></strong>\n<p>x</p>`);
+  assert.equal(pegarSignos('(<strong><span class="cuenta">3 + 4</span></strong>) y'),
+    `<strong><span class="cuenta">${S('(')}3 + 4${S(')')}</span></strong> y`);
+  // Sin signo al lado, las etiquetas no se mueven.
+  assert.equal(pegarSignos('<b><span class="cuenta">3</span></b> y'), '<b><span class="cuenta">3</span></b> y');
+  // Una fracción fuera de cuenta (equivalentes) y una dentro, seguida de «)» (combinadas-fracciones).
+  const f = '<span class="frac"><span>4</span><span>18</span></span>';
+  const J = s => `<span class="frac-y-signo">${s}</span>`;
+  assert.equal(pegarSignos(`${f}: sale`), `${J(`${f}:`)} sale`);
+  assert.equal(pegarSignos(`(${f}`), J(`(${f}`));
+  assert.equal(pegarSignos(`<span class="cuenta">(1 + ${f}) · 2</span>`), `<span class="cuenta">(1 + ${J(`${f})`)} · 2</span>`);
+  // Con <strong> en medio (multiplica-divide: «La respuesta es <strong>⅓</strong>.»), y la cuenta que acaba en fracción dentro de <strong>.
+  assert.equal(pegarSignos(`es <strong>${f}</strong>.`), `es <strong>${J(`${f}.`)}</strong>`);
+  assert.equal(pegarSignos(`es <strong><span class="cuenta-frac">1 + ${f}</span></strong>.`),
+    `es <strong><span class="cuenta-frac">1 + ${J(`${f}.`)}</span></strong>`);
+  assert.equal(pegarSignos(`«<b>${f}</b>»`), `<b>${J(`«${f}»`)}</b>`);
+  // Una fracción sin signo al lado no se envuelve.
+  assert.equal(pegarSignos(`${f} y ${f}`), `${f} y ${f}`);
+  for (const html of [`es <strong>${f}</strong>.`, `es <strong><span class="cuenta-frac">1 + ${f}</span></strong>.`, `«<b>${f}</b>»`]) {
+    const una = pegarSignos(html);
+    assert.equal(pegarSignos(una), una, html);
+    assert.equal(una.replace(/<[^>]+>/g, ''), html.replace(/<[^>]+>/g, ''), html);
+  }
+  for (const html of [`${f}: sale`, `<span class="cuenta">(1 + ${f}) · 2</span>.`, '(<strong><span class="cuenta">3</span></strong>).']) {
+    assert.equal(pegarSignos(pegarSignos(html)), pegarSignos(html), html);
+  }
+});
+
+test('pegarSignos: HTML sin cuentas sale igual, no toca clases parecidas, y es idempotente', () => {
+  for (const html of ['', 'Hola.', '<p>La cuenta es 5.</p>', '<span class="cuenta-campo">3</span>.', '<span class="juntador__cuenta">3</span>.', '<div class="cuentas">x</div>.']) {
+    assert.equal(pegarSignos(html), html);
+  }
+  assert.equal(pegarSignos(null), null);
+  const muestras = [
+    'Es <span class="cuenta">3 · 4 = 12</span>.',
+    '«<span class="cuenta">7²</span>»; y (<span class="cuenta">5 − 2</span>), ¡<span class="cuenta-frac">½</span>!',
+    '<div class="feedback"><strong>✓</strong> <span class="cuenta">1 + 1</span>.<p class="animo">Bien.</p></div>',
+  ];
+  for (const html of muestras) {
+    const una = pegarSignos(html);
+    assert.equal(pegarSignos(una), una, html);
+    // No se pierde ni se inventa texto: quitando las etiquetas, es lo mismo.
+    const plano = h => h.replace(/<[^>]+>/g, '');
+    assert.equal(plano(una), plano(html));
+  }
+  assert.ok(SIGNOS_CIERRE.includes('.') && SIGNOS_APERTURA.includes('('));
+});
+
+test('pegarSignos: el signo pegado no va en negrita (estilos.css) y la cuenta sigue sin nowrap (la 37: no ensancha a 375 px)', () => {
+  const css = readFileSync(new URL('../practicas/_comun/estilos.css', import.meta.url), 'utf8');
+  assert.match(css, /\.cuenta > \.signo-cuenta \{ font-weight: 400; \}/);
+  assert.match(css, /\.frac-y-signo \{ display: inline-block; \}/);
+  const regla = css.match(/^\.cuenta \{[^}]*\}/m)[0];
+  assert.match(regla, /display: inline-block/);
+  assert.match(regla, /overflow-wrap: anywhere/);
+  assert.doesNotMatch(regla, /nowrap/);
+  assert.doesNotMatch(css.match(/^\.cuenta-frac \{[^}]*\}/m)[0], /nowrap/);
 });

@@ -64,7 +64,7 @@ probarla; `practica.js` solo la conecta.
 ## Cómo se prueba
 
 - `tests/practicas-no-lo-se.test.js` (no se edita) carga cada práctica y prueba cada `explicacion` con 200 ítems:
-  sin restos (`undefined`, `NaN`…), etiquetas cerradas, sin «×» desde la unidad 2, distinta en cada idioma, y que
+  sin restos (`undefined`, `NaN`…), etiquetas cerradas, sin «×» en ninguna unidad (también la 1), distinta en cada idioma, y que
   ningún ejercicio se quede sin declarar.
 - **Que lleve la solución del ítem** se prueba en un fichero propio por práctica, `tests/practicas-ayuda-<slug>.test.js`:
   1000 ítems o más por ejercicio, en los idiomas de la práctica, y la explicación contiene la solución que el
