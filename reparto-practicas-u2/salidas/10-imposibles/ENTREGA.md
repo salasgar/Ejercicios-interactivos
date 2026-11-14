@@ -44,3 +44,12 @@ inglés, en 375 px y en 1280 px. Sin errores de consola.
 
 - Pide a la tarea 18 que ponga `disponible: true` para `imposibles` en el catálogo.
 - Ningún cambio del contrato de la base.
+
+## Reabierta del 14-11 (sesión s-20261114T210553-2c36437d, commit 06f266b)
+- Feedback de tres números = el de la tarjeta (reutiliza `TX.ayuda.cuentaTres`): «la comprobación no vale: a veces coincide y a veces no» + la cuenta del ítem. Fuera el ejemplo fijo 2, 4, 8 y la regla falsa.
+- `generarTres`: se enumeran los tríos de 3..10 con números distintos y g·m ≠ a·b·c (246) y se sortea; sin bucle ni tope. Test sobre 5000 ítems.
+- Ej. 1 con contexto de m.c.d.: se sortea de las 108 parejas de 3..20 con m.c.d. ≥ 2 (54 sin orden); en 20000 ítems la más repetida es el 2,6 % de los ítems de ese tipo. Sin contexto sigue saliendo el m.c.d. 1 (test). Contexto de m.c.m., sin cambios.
+- Realismo repasado: contextos con a, b en 3..20 (grupos de 1 a 10; autobuses y luces cada 3 a 20 min o s, coincidencia hasta 380); propuestos «No» en 1..40 grupos, creíbles como pregunta. No hace falta cota nueva.
+- «<» y «>» de `feedbackPuede` pasan a palabras («72 es mayor que 24»); sin más «<» sueltos (test sobre 3000 ítems).
+- Hash de 300 ítems por ejercicio (semilla por ítem, antes/después): iguales ej. 3, ej. 2 de dos números, ej. 1 sin contexto y ej. 1 con contexto de m.c.m.; cambian solo ej. 1 con contexto m.c.d. y ej. 2 de tres números, como se pedía. La práctica no tiene casos de examen excluidos (no había nada que quitar).
+- npm test 2301/2301. Navegador a 375 px: ej. 2 (fallo, en inglés) y el feedback nuevo renderizado; no hice los clics en los dos idiomas de cada ejercicio ni a 1200 px. Tras el push, la URL publicada responde 200.
