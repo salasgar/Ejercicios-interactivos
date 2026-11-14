@@ -54,8 +54,8 @@ export const TX = {
       en: (q, r) => `You wrote quotient ${q} and remainder ${r}.`,
     },
     correcto: {
-      es: (q, r) => `Hay <span class="cuenta">${q}</span> cajas llenas y sobran <span class="cuenta">${r}</span>.`,
-      en: (q, r) => `There are <span class="cuenta">${q}</span> full boxes and <span class="cuenta">${r}</span> left over.`,
+      es: (q, r) => `Hay <span class="cuenta">${q}</span> ${q === 1 ? 'caja llena' : 'cajas llenas'} y ${r === 0 ? 'no sobra ninguno' : `${r === 1 ? 'sobra' : 'sobran'} <span class="cuenta">${r}</span>`}.`,
+      en: (q, r) => `${q === 1 ? 'There is' : 'There are'} <span class="cuenta">${q}</span> full ${q === 1 ? 'box' : 'boxes'} and ${r === 0 ? 'none is left over' : `<span class="cuenta">${r}</span> ${r === 1 ? 'is' : 'are'} left over`}.`,
     },
   },
   // ─── Ejercicio 2 ───
@@ -200,7 +200,7 @@ export const TX = {
       en: (d, r) => `Yes: ${r} is less than ${d}.`,
     },
     no_puede: {
-      es: (d, r) => `No puede ser: ${r} no es menor que ${d}. El resto es siempre menor que el divisor (the remainder is always less than the divisor).`,
+      es: (d, r) => `No puede ser: ${r} no es menor que ${d}. El resto es siempre menor que el divisor (<em>the remainder is always less than the divisor</em>).`,
       en: (d, r) => `It cannot be: ${r} is not less than ${d}. The remainder is always less than the divisor.`,
     },
     esta_bien: {
@@ -212,7 +212,7 @@ export const TX = {
       en: (D, d, q, r) => `It is wrong: ${d} · ${q} + ${r} = <span class="cuenta">${d * q + r}</span>, and it should be ${D}.`,
     },
     mal_resto: {
-      es: (D, d, q, r) => `Está mal: aunque ${d} · ${q} + ${r} = ${D}, el resto ${r} no es menor que ${d}. El resto es siempre menor que el divisor (the remainder is always less than the divisor).`,
+      es: (D, d, q, r) => `Está mal: aunque ${d} · ${q} + ${r} = ${D}, el resto ${r} no es menor que ${d}. El resto es siempre menor que el divisor (<em>the remainder is always less than the divisor</em>).`,
       en: (D, d, q, r) => `It is wrong: even though ${d} · ${q} + ${r} = ${D}, the remainder ${r} is not less than ${d}. The remainder is always less than the divisor.`,
     },
     mal_los_dos: {

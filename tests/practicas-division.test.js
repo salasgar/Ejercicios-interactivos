@@ -150,3 +150,29 @@ test('ejercicio 4: «puede» es falso exactamente cuando r ≥ d o d · q + r �
   const noCuenta = items.filter(i => i.variante === 'division' && i.r < i.d && i.d * i.q + i.r !== i.D).length;
   assert.ok(noResto > 50 && noCuenta > 50);
 });
+
+test('TX.cajas.correcto: singular y plural, sin «1 cajas», «sobran 1» ni «1 boxes»', async () => {
+  const { TX } = await import('../practicas/division/textos.js');
+  for (const q of [1, 2, 3]) for (const r of [0, 1, 2]) {
+    for (const idioma of ['es', 'en']) {
+      const f = TX.cajas.correcto[idioma](q, r).replace(/<[^>]+>/g, '');
+      assert.ok(!/\b1 (cajas|boxes)\b/.test(f), f);
+      assert.ok(!/sobran 1\b/.test(f) && !/\b1 are left\b/.test(f), f);
+      assert.ok(!/sobran 0\b/.test(f) && !/\b0 (is|are) left\b/.test(f), f);
+    }
+  }
+  const limpio = (e, q, r) => TX.cajas.correcto[e](q, r).replace(/<[^>]+>/g, '');
+  assert.equal(limpio('es', 1, 1), 'Hay 1 caja llena y sobra 1.');
+  assert.equal(limpio('es', 3, 2), 'Hay 3 cajas llenas y sobran 2.');
+  assert.equal(limpio('es', 2, 0), 'Hay 2 cajas llenas y no sobra ninguno.');
+  assert.equal(limpio('en', 1, 1), 'There is 1 full box and 1 is left over.');
+  assert.equal(limpio('en', 3, 2), 'There are 3 full boxes and 2 are left over.');
+  assert.equal(limpio('en', 2, 0), 'There are 2 full boxes and none is left over.');
+});
+
+test('el feedback de «puede ser» lleva la glosa inglesa en cursiva', async () => {
+  const { TX } = await import('../practicas/division/textos.js');
+  const g = '<em>the remainder is always less than the divisor</em>';
+  assert.ok(TX.puede.no_puede.es(7, 9).includes(g));
+  assert.ok(TX.puede.mal_resto.es(65, 7, 8, 9).includes(g));
+});
