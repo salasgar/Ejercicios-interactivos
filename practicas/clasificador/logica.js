@@ -50,18 +50,30 @@ export function generarJustificar(rng) {
 }
 
 // «No lo sé»: el porqué del banco (con los números del ítem) y la solución al final.
+
+/**
+ * La razón del banco, arreglada para la tarjeta (revisión 193): sin la flecha final «→ m.c.d.» (la respuesta va
+ * después, una sola vez), con mayúscula al empezar y, en inglés, con comillas “” (el banco lleva «» también en inglés).
+ */
+export function razonDeAyuda(item, idioma) {
+  let razon = BANCO[item.plantilla].razon(...item.numeros)[idioma].replace(/ → (m\.c\.[dm]\.|GCD|LCM)\.?$/, '.');
+  if (idioma === 'en') razon = razon.replace(/«/g, '“').replace(/»/g, '”');
+  return razon.replace(/^([«“]?)(\p{Ll})/u, (_, comilla, letra) => comilla + letra.toUpperCase());
+}
+
 function explica(item, idioma, respuesta) {
-  const razon = BANCO[item.plantilla].razon(...item.numeros)[idioma];
   const x = TX.ayuda;
-  return `<p>${razon}</p><p>${x.respuesta[idioma]}: ${respuesta}</p><p>${x.consejo[idioma]}</p>`;
+  return `<p>${razonDeAyuda(item, idioma)}</p><p>${x.respuesta[idioma]} ${respuesta}</p><p>${x.consejo[idioma]}</p>`;
 }
 
-/** Ejercicios 1 y 2: elegir m.c.d. o m.c.m. */
+/** Ejercicios 1 y 2: elegir m.c.d. o m.c.m. («m.c.d.» ya lleva su punto; «GCD», no). */
 export function explicaClasificar(item, idioma) {
-  return explica(item, idioma, `<strong>${TX.boton[item.clase][idioma]}</strong>`);
+  const nombre = TX.boton[item.clase][idioma];
+  return explica(item, idioma, `<strong>${nombre}</strong>${nombre.endsWith('.') ? '' : '.'}`);
 }
 
-/** Ejercicio 3: la razón correcta de la clase que ya viene puesta. */
+/** Ejercicio 3: la razón correcta de la clase que ya viene puesta (es lo que se elige: el texto de la opción, entre comillas). */
 export function explicaJustificar(item, idioma) {
-  return explica(item, idioma, `<strong>${TX.boton[item.clase][idioma]}</strong>, ${TX.justificacion[item.solucion][idioma]}.`);
+  const opcion = `<strong>${TX.justificacion[item.solucion][idioma]}</strong>`;
+  return explica(item, idioma, idioma === 'es' ? `«${opcion}».` : `“${opcion}”.`);
 }

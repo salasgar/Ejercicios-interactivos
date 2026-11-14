@@ -218,9 +218,11 @@ export const TX = {
   },
   ayuda: {
     respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    // Revisión 193: el consejo de antes («si se reparte en partes iguales, m.c.d.») era falso en las trampas B,
+    // donde se reparte en partes iguales y es un m.c.m.
     consejo: {
-      es: 'Consejo: no te dejes llevar por una palabra suelta. Pregúntate si se reparte o se corta en partes iguales (m.c.d.) o si algo vuelve a coincidir (m.c.m.).',
-      en: 'Tip: do not trust a single word. Ask yourself whether things are shared or cut into equal parts (GCD) or whether something coincides again (LCM).',
+      es: 'Consejo: «mayor» y «menor» no deciden. Pregúntate si los datos se parten en partes iguales (m.c.d.) o si buscas un número que sea múltiplo de todos los datos (m.c.m.).',
+      en: 'Tip: “largest” and “smallest” do not decide. Ask yourself whether the numbers in the problem are split into equal parts (GCD) or whether you need a number that is a multiple of all of them (LCM).',
     },
   },
 };

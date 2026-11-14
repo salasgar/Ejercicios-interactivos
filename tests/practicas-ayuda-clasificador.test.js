@@ -29,11 +29,26 @@ for (const [nombre, generador, explica, semilla] of [
         const texto = plano(html);
         const donde = `${nombre} ${idioma}: ${texto}`;
         assert.ok(!/undefined|NaN|\[object|null|×/.test(html), donde);
-        assert.ok(texto.includes(plano(plantilla.razon(...item.numeros)[idioma])), `lleva la razón — ${donde}`);
+        // La razón del banco, sin su flecha final (revisión 193: la respuesta va una sola vez, al final).
+        const razon = plano(plantilla.razon(...item.numeros)[idioma]).replace(/ → \S+$/, '').replace(/[«»“”]/g, '').slice(1);
+        assert.ok(texto.replace(/[«»“”]/g, '').includes(razon), `lleva la razón — ${donde}`);
+        assert.ok(!texto.includes('→'), `sin la flecha de la respuesta — ${donde}`);
         for (const n of item.numeros) assert.ok(texto.includes(String(n)), `lleva el dato ${n} — ${donde}`);
-        const respuesta = new RegExp(`(La respuesta es|The answer is): ${NOMBRE[item.clase][idioma].replace(/\./g, '\\.')}( |,|$)`);
-        assert.match(texto, respuesta, donde);
-        if (nombre === 'justificar') assert.ok(texto.includes(plano(TX.justificacion[item.solucion][idioma])), donde);
+        assert.ok(!/(La respuesta es|The answer is):/.test(texto), `dos puntos tras «es» — ${donde}`);
+        if (idioma === 'en') assert.ok(!/[«»]/.test(texto), `comillas «» en inglés — ${donde}`);
+        assert.match(texto, /^ ?[«“]?\p{Lu}/u, `mayúscula al empezar — ${donde}`);
+        const seguido = html.replace(/<[^>]+>/g, '');
+        if (nombre === 'justificar') {
+          // Lo que se elige es la razón: la respuesta es el texto de esa opción, entre comillas.
+          const opcion = TX.justificacion[item.solucion][idioma];
+          assert.ok(seguido.includes(idioma === 'es' ? `La respuesta es «${opcion}».` : `The answer is “${opcion}”.`), donde);
+        } else {
+          const n = NOMBRE[item.clase][idioma];
+          assert.ok(seguido.includes(`${idioma === 'es' ? 'La respuesta es' : 'The answer is'} ${n}${n.endsWith('.') ? '' : '.'}`), donde);
+          assert.ok(!seguido.includes(`${n}..`), donde);
+        }
+        // El consejo tiene que valer también en las trampas: «repartir en partes iguales» no siempre es m.c.d.
+        assert.ok(!/se reparte o se corta en partes iguales \(m\.c\.d\.\)|shared or cut into equal parts \(GCD\)/.test(texto), donde);
       }
     }
   });
