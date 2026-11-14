@@ -40,9 +40,18 @@ test('redondeo · ejercicio 3: estimar, razonable y contexto llevan su solución
     } else if (item.tipo === 'razonable') {
       const dice = item.propuesto === L.exactoDe(item.op, item.terminos);
       assert.equal(dice, item.razonable);
-      assert.ok(t.endsWith(dice ? (idioma === 'es' ? 'Sí, es razonable.' : 'Yes, it is reasonable.') : (idioma === 'es' ? 'No, no es razonable.' : 'No, it is not reasonable.')), t);
+      // Revisión 193: sin mayúscula a media frase («La respuesta es Sí, …»); el botón, entre comillas.
+      assert.ok(t.endsWith(dice ? (idioma === 'es' ? 'La respuesta es «Sí»: es razonable.' : 'The answer is “Yes”: it is reasonable.') : (idioma === 'es' ? 'La respuesta es «No»: no es razonable.' : 'The answer is “No”: it is not reasonable.')), t);
     } else {
-      assert.ok(t.includes(`es ${F(L.redondear(item.n, item.orden), idioma)} (`) || t.includes(`is ${F(L.redondear(item.n, item.orden), idioma)} (`), t);
+      // Revisión 193: la respuesta, al final y una sola vez; y se dice qué cifra decide y si sube o baja.
+      const r = F(L.redondear(item.n, item.orden), idioma);
+      assert.ok(t.endsWith(`${idioma === 'es' ? 'La respuesta es' : 'The answer is'} ${r}.`), t);
+      assert.equal(t.split(r).length - 1, 1, `la respuesta una sola vez: ${t}`);
+      const c = L.cifraDecisiva(item.n, item.orden);
+      const sube = c >= 5;
+      assert.equal(L.redondear(item.n, item.orden) > item.n, sube);
+      assert.ok(t.includes(idioma === 'es' ? `es un ${c}; como es ${sube ? '5 o más, sube' : 'menos de 5, baja'}` : `it is ${c}; it is ${sube ? '5 or more, so it goes up' : 'less than 5, so it goes down'}`), t);
+      assert.ok(t.includes(idioma === 'es' ? `la cifra de ${X.CIFRA_ORDEN[item.orden].es}` : X.CIFRA_ORDEN[item.orden].en), t);
     }
   }
   assert.ok(vistos.estimar > 0 && vistos.razonable > 0 && vistos.contexto > 0);

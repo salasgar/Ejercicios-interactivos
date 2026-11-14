@@ -204,9 +204,18 @@ export function explicaEstimacion(item, { tt, idioma }) {
     const cuerpo = item.razonable
       ? tt(T.razonable_si)(est, propuesto)
       : tt(T.razonable_no[item.motivo])(est, propuesto, exacto, num(item.terminos[0]), num(item.terminos[1]));
-    const fin = { es: item.razonable ? 'Sí, es razonable.' : 'No, no es razonable.', en: item.razonable ? 'Yes, it is reasonable.' : 'No, it is not reasonable.' };
+    // Revisión 193: «La respuesta es Sí, es razonable» llevaba mayúscula a media frase; ahora, el botón entre comillas.
+    const fin = {
+      es: item.razonable ? '«Sí»: es razonable.' : '«No»: no es razonable.',
+      en: item.razonable ? '“Yes”: it is reasonable.' : '“No”: it is not reasonable.',
+    };
     return `${tt(por)} ${cuerpo} ${tt(RESPUESTA)} ${tt(fin)}`;
   }
-  const fb = tt(T.contexto_fb)(num(item.n), item.orden, num(item.correcto), cifraDecisiva(item.n, item.orden));
-  return `${tt(REGLA_CORTA)} ${fb}`;
+  // Revisión 193: la tarjeta acababa en «(la cifra decisiva es 1)», sin decir qué cifra ni dar la respuesta al final.
+  const c = cifraDecisiva(item.n, item.orden);
+  const decide = {
+    es: `${A_ORDEN[item.orden].es[0].toUpperCase()}${A_ORDEN[item.orden].es.slice(1)} decide la cifra de ${CIFRA_ORDEN[item.orden].es}: en ${num(item.n)} es un ${c}; como es ${c >= 5 ? '5 o más, sube' : 'menos de 5, baja'}.`,
+    en: `To the nearest ${{ 10: 'ten', 100: 'hundred', 1000: 'thousand' }[item.orden]}, ${CIFRA_ORDEN[item.orden].en} decides: in ${num(item.n)} it is ${c}; it is ${c >= 5 ? '5 or more, so it goes up' : 'less than 5, so it goes down'}.`,
+  };
+  return `${tt(REGLA_CORTA)} ${tt(decide)} ${tt(RESPUESTA)} ${cuentaHtml(num(item.correcto))}.`;
 }
