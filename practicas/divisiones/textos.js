@@ -1,6 +1,8 @@
 // Práctica «Divisiones sucesivas guiadas»: textos propios, siempre { es, en }.
 // Los comunes (Comprobar, Siguiente, ¡Bien!…) llegan en `api.t`.
 
+import { criterio, factorizar, htmlFact } from '../_comun/aritmetica.js';
+
 /**
  * Cierre de la factorización: multiplicar los factores devuelve el número de
  * partida (la factorización ES la respuesta; la cuenta solo sirve para comprobar).
@@ -48,17 +50,39 @@ const veces = (p, e, idioma) => (idioma === 'es'
   ? `el ${p} aparece ${e} ${e === 1 ? 'vez' : 'veces'}`
   : `${p} appears ${e} time${e === 1 ? '' : 's'}`);
 
+// Primos de los botones de la escalera (los mismos que PRIMOS_ESCALERA de logica.js).
+const PRIMOS_BOTONES = [2, 3, 5, 7, 11, 13];
+const listaNi = (l, idioma) => (l.length < 2 ? `${l[0]}` : `${l.slice(0, -1).join(', ')} ${idioma === 'es' ? 'ni' : 'or'} ${l.at(-1)}`);
+
+/**
+ * Por qué ese primo es el que toca (revisión 193): los primos menores no dividen a m y ese sí, con el
+ * criterio de los apuntes para 2, 3 y 5 (para 7, 11 y 13 se prueba dividiendo). Si m ya es primo, se
+ * dice y se acaba.
+ */
+function motivoPaso(m, p, idioma) {
+  const es = idioma === 'es';
+  if (m === p) return es ? `${p} es primo, así que se divide entre él y sale 1` : `${p} is prime, so you divide by it and get 1`;
+  const menores = PRIMOS_BOTONES.filter(q => q < p);
+  const no = menores.length ? (es ? `no es divisible entre ${listaNi(menores, idioma)}; ` : `it is not divisible by ${listaNi(menores, idioma)}; `) : '';
+  const si = [2, 3, 5].includes(p) ? criterio(m, p).razon[idioma] : (es ? `entre ${p}, sí` : `it is divisible by ${p}`);
+  return `${no}${si}`;
+}
+
 export function explicaEscalera(item, { idioma }) {
   const regla = idioma === 'es'
-    ? 'Se divide siempre entre el menor primo que divide al número, hasta llegar a 1.'
-    : 'Always divide by the smallest prime that divides the number, until you reach 1.';
+    ? 'Prueba los primos en orden (2, 3, 5, 7…) y divide entre el primero que divida al número; sigue con el resultado hasta llegar a 1.'
+    : 'Try the primes in order (2, 3, 5, 7…) and divide by the first one that divides the number; keep going with the result until you reach 1.';
   const pasos = item.pasos.map(([m, p]) => {
     const cuenta = idioma === 'es' ? `${m} : ${p} = ${m / p}` : `${m} ÷ ${p} = ${m / p}`;
-    const motivo = idioma === 'es' ? `${p} es el menor primo que divide a ${m}` : `${p} is the smallest prime that divides ${m}`;
-    return `<li><span class="cuenta">${cuenta}</span>: ${motivo}.</li>`;
+    return `<li><span class="cuenta">${cuenta}</span>: ${motivoPaso(m, p, idioma)}.</li>`;
   });
-  const primos = item.pasos.map(([, p]) => p).join(' · ');
-  const cierre = RESPUESTA[idioma](`<strong>${item.n} = ${primos}</strong>`);
+  // Lo que se pulsa, en orden, y la factorización escrita con potencias, como en el feedback y los apuntes.
+  const pulsados = item.pasos.map(([, p]) => String(p));
+  const lista = pulsados.length < 2 ? pulsados[0] : `${pulsados.slice(0, -1).join(', ')} ${idioma === 'es' ? 'y' : 'and'} ${pulsados.at(-1)}`;
+  const fact = `<span class="cuenta">${item.n} = ${htmlFact(factorizar(item.n))}</span>`;
+  const cierre = idioma === 'es'
+    ? `La respuesta es <strong>${lista}</strong>, en ese orden: ${fact}.`
+    : `The answer is <strong>${lista}</strong>, in that order: ${fact}.`;
   return `<p>${regla}</p><ol class="pasos-ayuda">${pasos.join('')}</ol><p>${cierre}</p>`;
 }
 
@@ -97,7 +121,9 @@ export function explicaComprobar(item, { idioma }) {
     const frase = idioma === 'es'
       ? `El valor es ${valor}, y la igualdad dice ${item.valorMostrado}.`
       : `The value is ${valor}, and the equality says ${item.valorMostrado}.`;
-    cierre = `<p>${frase} ${RESPUESTA[idioma](`<strong>${si ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`)}</p>`;
+    // El texto del botón, entre comillas (revisión 193).
+    const boton = `<strong>${si ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No'}</strong>`;
+    cierre = `<p>${frase} ${RESPUESTA[idioma](idioma === 'es' ? `«${boton}»` : `“${boton}”`)}</p>`;
   } else {
     cierre = `<p>${RESPUESTA[idioma](`<strong>${valor}</strong>`)}</p>`;
   }

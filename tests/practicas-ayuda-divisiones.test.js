@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { T } from '../practicas/_comun/textos.js';
-import { factorizar, valorDe } from '../practicas/_comun/aritmetica.js';
+import { factorizar, valorDe, htmlFact } from '../practicas/_comun/aritmetica.js';
 import * as L from '../practicas/divisiones/logica.js';
 import * as X from '../practicas/divisiones/textos.js';
 
@@ -20,10 +20,24 @@ test('divisiones · ejercicio 1: cada paso divide entre el menor primo y la resp
     for (const item of generar(L.generarEscalera, 1)) {
       const html = plano(X.explicaEscalera(item, ctx(idioma)));
       const dicho = html.match(RESP)?.[1];
-      assert.equal(dicho, `${item.n} = ${item.pasos.map(([, p]) => p).join(' · ')}`, html);
+      // Revisión 193: lo que se pulsa, en orden, y la factorización con potencias (como el feedback).
+      const pulsados = item.pasos.map(([, p]) => p);
+      const lista = pulsados.length < 2 ? `${pulsados[0]}` : `${pulsados.slice(0, -1).join(', ')} ${idioma === 'es' ? 'y' : 'and'} ${pulsados.at(-1)}`;
+      const fact = plano(htmlFact(factorizar(item.n)));
+      assert.equal(dicho, `${lista}, ${idioma === 'es' ? 'en ese orden' : 'in that order'}: ${item.n} = ${fact}`, html);
       for (const [m, p] of item.pasos) {
         assert.equal(L.pasoCorrecto(m), p);
         assert.ok(html.includes(`${m} ${idioma === 'es' ? ':' : '÷'} ${p} = ${m / p}`), html);
+        // Revisión 193: el motivo de cada paso no es «p es el menor primo que divide a m» (no enseña a
+        // encontrarlo); los primos menores que se dicen no dividen de verdad.
+        assert.doesNotMatch(html, /es el menor primo que divide|is the smallest prime that divides/);
+        if (p > 2 && m !== p) {
+          const menores = L.PRIMOS_ESCALERA.filter(q => q < p);
+          assert.ok(menores.every(q => m % q !== 0), `${m}`);
+          const ni = menores.length < 2 ? `${menores[0]}` : `${menores.slice(0, -1).join(', ')} ${idioma === 'es' ? 'ni' : 'or'} ${menores.at(-1)}`;
+          const cuenta = `${m} ${idioma === 'es' ? ':' : '÷'} ${p} = ${m / p}: `;
+          assert.ok(html.includes(`${cuenta}${idioma === 'es' ? 'no es divisible entre' : 'it is not divisible by'} ${ni};`), html);
+        }
       }
       assert.equal(item.pasos.reduce((a, [, p]) => a * p, 1), item.n);
     }
@@ -56,7 +70,8 @@ test('divisiones · ejercicio 3: la respuesta es el valor (o Sí/No) que el ejer
         assert.equal(dicho, String(valor), html);
         assert.equal(item.solucion, valor);
       } else {
-        assert.equal(dicho, (item.valorMostrado === valor) === item.igualdadCorrecta ? (item.igualdadCorrecta ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No') : 'imposible', html);
+        const boton = item.igualdadCorrecta ? (idioma === 'es' ? 'Sí' : 'Yes') : 'No';
+        assert.equal(dicho, idioma === 'es' ? `«${boton}»` : `“${boton}”`, html);
         assert.equal(item.igualdadCorrecta, item.valorMostrado === valor);
       }
       assert.equal(factorizar(valor).length > 0, true);
