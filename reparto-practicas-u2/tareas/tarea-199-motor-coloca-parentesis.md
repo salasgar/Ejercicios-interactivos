@@ -175,6 +175,14 @@ tiene que servir a las tres.
   ítems de cada `explicacion`: en cuanto pongas las filas, los esqueletos tienen que estar completos. No se edita (es de la 197).
 - (de la 88) `.cuenta` no se parte (`nowrap`): solo cuentas cortas dentro; las frases, como texto normal.
 - (de la coordinadora) Hay varias sesiones en este árbol: mira `git status --short` de cada fichero común antes de tocarlo.
+- (de la 199) **`tests/practicas-semana.test.js` fija a mano los slugs de cada bloque de la portada** (y el orden de los bloques
+  publicados de la U4 y la U5): poner un slug en `portada.js` lo rompe. No estaba en «Ficheros que toca»; cualquier alta futura en
+  la portada lo tiene que declarar.
+- (de la 199) Con cuatro números, la expresión del editor **no cabe en un renglón a 375 px, ni en la U1 publicada** (ancho natural
+  380-465 px en una caja de 324): pasa a dos renglones sin salirse. Las medidas están en la ENTREGA.
+- (de la 199) `python3 -m http.server` corta conexiones (`ERR_CONNECTION_RESET`) cuando una práctica pide veinte módulos a la vez:
+  la prueba en el navegador falla al azar. Un servidor estático de diez líneas en Node no lo hace.
+- (de la 199) En zsh, `git add $F` con varias rutas en una variable no parte en palabras: usa un array (`"${F[@]}"`).
 
 ## Prohibido (propio de esta tarea)
 
