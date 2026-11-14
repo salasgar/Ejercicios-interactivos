@@ -11,3 +11,6 @@ Ejercicios:
 
 Probar en 1 minuto: entrar sin código, abrir cada ejercicio, acertar y fallar un ítem.
 Tests: node --test tests/practicas-potencias10.test.js (15, con analizadores EN/ES independientes).
+
+## Reabierta del 14-11 (s-20261114T211210-c83ffcb7 · commit 34fe0fc)
+Feedback del ej. 2 en `feedbackAnd`/`feedbackCifras` (textos.js), con la razón de la tarjeta (`razonAnd`); grupos con «;»; comillas del idioma.
