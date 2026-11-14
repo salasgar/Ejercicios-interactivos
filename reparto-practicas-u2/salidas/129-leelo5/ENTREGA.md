@@ -38,3 +38,6 @@ Dinero a leer 0,05–59,99 € (dos cifras); decimal a leer: 1–3 cifras, parte
 ## Cómo probarlo en 1 minuto
 
 `node --test tests/practicas-comun.test.js tests/practicas-leelo5.test.js` (64 en verde); en el navegador `python3 -m http.server 8137` y http://localhost:8137/practicas/leelo5/ → «Probar sin código» → los cuatro ejercicios (el 8080 puede estar ocupado por otra sesión). Probado con clics: ej. 1, 2 (con un fallo y su feedback, en inglés), 3 y 4 en inglés y español; scrollWidth 371 px en un iframe de 375 px (sin desbordes) en los cuatro ejercicios. No probado el feedback de cada plantilla con clics (solo por test).
+
+## Reabierta del 13-11 (revisión 88ebbbda), cerrada el 14-11 por s-20261114T132733-b7aa7c71
+Commit a56c48c. Opciones de «convertir» con html (fracción con raya) y texto en claro; «N's» en la vuelta; «;» en el orden. Probado en navegador (375 y 1200 px, es/en): sin marcado en crudo ni desborde.

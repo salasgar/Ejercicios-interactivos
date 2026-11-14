@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T13:31Z por s-20261114T132733-b7aa7c71 al cerrar la 129 (LISTA, relevo; reabierta de leelo5, commit a56c48c; npm test 2232/2232; navegador 375 y 1200 px): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T13:30Z por s-20261114T132736-7a85f991 al cerrar la 135 (LISTA, cuarta reabierta, commit 3598600; npm test 2232/2232; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T12:14Z por s-20261114T120759-e1c97fc9 al cerrar la 196 (PARCIAL, segunda pasada: la 64 sigue sin publicar, cuarta reabierta de la 135 por triunfo y proporcional; sin commit de código; tildes 36/36): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T11:34Z por s-20261114T113337-30cf7e80 al reclamar la 183 
 Actualizado 2026-11-14T11:34Z por s-20261114T113316-d58f9cb4 al reclamar la 196 (publicación de tildes, palabras y ampliación; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-13T17:56Z por s-20261113T170133-3d38e018 al cerrar la 195 (LISTA, commit b483ad7: publicadas 57-60; npm test 2154/2154; la 132 pasa a PENDIENTE): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-13T17:26Z por s-20261113T170133-3d38e018 al reclamar la 195 (encadenada tras la 190; EN CURSO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -334,7 +334,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-14 13:30Z**: BLOQUEADA 6 (156, 157, 158, 159, 160, 193) · EN CURSO 3 (129, 186, 187) · LISTA 186 · PARCIAL 1 (196).
+**Foto a 2026-11-14 13:31Z**: BLOQUEADA 6 (156, 157, 158, 159, 160, 193) · EN CURSO 3 (129, 186, 187) · LISTA 186 · PARCIAL 1 (196).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -367,12 +367,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (306), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (307), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 129 · 2026-11-14 13:31 · s-20261114T132733-b7aa7c71 · a56c48c · practicas/leelo5/ayuda.js, practicas/leelo5/logica.js, tests/practicas-ayuda-le… · —
 LISTA · tarea 135 · 2026-11-14 13:30 · s-20261114T132736-7a85f991 · 3598600 · practicas/ortografia-tildes/logica.js, tests/practicas-ortografia-tildes.test.j… · —
 PARCIAL · tarea 196 · 2026-11-14 12:27 · s-20261114T120759-e1c97fc9 · ninguno de código (no se publica nada; catalogo.j… · — · ~10 min (12:07Z-12:17Z de trabajo; el cierre espe…
 LISTA · tarea 135 · 2026-11-14 11:58 · s-20261114T115719-c2e98c78 · 3bc3808 · practicas/ortografia-tildes/logica.js, tests/practicas-ortografia-tildes.test.j… · —
