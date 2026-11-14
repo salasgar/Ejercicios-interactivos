@@ -71,12 +71,12 @@ export const TX = {
       en: 'No: it cannot be 0, because 1 is always a common divisor, so the GCD is never 0.',
     },
     mayor: {
-      es: (propuesto, minimo) => `${propuesto} > ${minimo}: el m.c.d. es un divisor de los dos datos y no puede pasar del menor (${minimo}).`,
-      en: (propuesto, minimo) => `${propuesto} > ${minimo}: the GCD is a divisor of both numbers and cannot be bigger than the smaller one (${minimo}).`,
+      es: (propuesto, minimo) => `${propuesto} es mayor que ${minimo}: el m.c.d. es un divisor de los dos datos y no puede pasar del menor (${minimo}).`,
+      en: (propuesto, minimo) => `${propuesto} is bigger than ${minimo}: the GCD is a divisor of both numbers and cannot be bigger than the smaller one (${minimo}).`,
     },
     menor: {
-      es: (propuesto, maximo) => `${propuesto} < ${maximo}: el m.c.m. es múltiplo de los dos datos y no puede ser menor que el mayor (${maximo}).`,
-      en: (propuesto, maximo) => `${propuesto} < ${maximo}: the LCM is a multiple of both numbers and cannot be smaller than the bigger one (${maximo}).`,
+      es: (propuesto, maximo) => `${propuesto} es menor que ${maximo}: el m.c.m. es múltiplo de los dos datos y no puede ser menor que el mayor (${maximo}).`,
+      en: (propuesto, maximo) => `${propuesto} is smaller than ${maximo}: the LCM is a multiple of both numbers and cannot be smaller than the bigger one (${maximo}).`,
     },
   },
   producto: {
@@ -91,9 +91,10 @@ export const TX = {
       es: (a, b, g, m) => `${g} · ${m} = ${g * m} ≠ ${a * b}: uno de los dos está mal.`,
       en: (a, b, g, m) => `${g} · ${m} = ${g * m} ≠ ${a * b}: one of the two is wrong.`,
     },
+    // La misma cuenta que la tarjeta del «No lo sé» (`ayuda.cuentaTres`): no se escribe una tercera versión.
     feedbackTres: {
-      es: (a, b, c, g, m) => `No: con tres números el m.c.d. · m.c.m. ya no coincide con el producto. Ejemplo: m.c.d.(2, 4, 8) · m.c.m.(2, 4, 8) = 2 · 8 = 16 ≠ 64. Aquí: ${g} · ${m} = ${g * m} ≠ ${a * b * c}.`,
-      en: (a, b, c, g, m) => `No: with three numbers, GCD · LCM no longer matches the product. Example: GCD(2, 4, 8) · LCM(2, 4, 8) = 2 · 8 = 16 ≠ 64. Here: ${g} · ${m} = ${g * m} ≠ ${a * b * c}.`,
+      es: (a, b, c, g, m) => `No: con tres números esta comprobación no vale: a veces coincide y a veces no. ${TX.ayuda.cuentaTres.es(a, b, c, g, m)}`,
+      en: (a, b, c, g, m) => `No: with three numbers this check does not work: sometimes it matches and sometimes it does not. ${TX.ayuda.cuentaTres.en(a, b, c, g, m)}`,
     },
   },
   nombrar: {

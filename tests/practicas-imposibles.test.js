@@ -226,3 +226,73 @@ test('ejercicio 1: el prefijo del feedback de m.c.d. nombra lo que dice el enunc
   assert.match(f.en(24, 36, 0), /number of groups/);
   assert.match(f.en(13, 11, 1), /number of bags/);
 });
+
+// ─── Reapertura de la tarea 10 (decisiones del 14-11) ───────────────────────
+
+import { feedbackPuede, feedbackProducto } from '../practicas/imposibles/logica.js';
+
+test('ejercicio 1: con contexto de m.c.d., mcd(a, b) ≥ 2 siempre; sin contexto sigue saliendo el m.c.d. 1', () => {
+  const rng = crearRng(1414);
+  let sinContextoCoprimos = 0;
+  const veces = new Map();
+  let contextoMcd = 0;
+  for (let i = 0; i < 20000; i++) {
+    const item = generarPuede(rng);
+    if (item.contexto !== null) {
+      assert.ok(item.a >= 3 && item.a <= 20 && item.b >= 3 && item.b <= 20, JSON.stringify(item));
+      if (item.cantidad === 'mcd') {
+        assert.ok(mcdBF(item.a, item.b) >= 2, JSON.stringify(item));
+        assert.equal(item.verdadero, mcdBF(item.a, item.b));
+        contextoMcd++;
+        const clave = `${Math.min(item.a, item.b)}-${Math.max(item.a, item.b)}`;
+        veces.set(clave, (veces.get(clave) || 0) + 1);
+      }
+    } else if (mcdBF(item.a, item.b) === 1) sinContextoCoprimos++;
+  }
+  assert.ok(contextoMcd > 2000, `ítems de m.c.d. con contexto: ${contextoMcd}`);
+  assert.ok(sinContextoCoprimos > 0, 'sin contexto el m.c.d. 1 tiene que salir');
+  assert.ok(Math.max(...veces.values()) / contextoMcd < 0.1, 'ninguna pareja pasa del 10 %');
+  assert.ok(veces.size > 40, `parejas distintas: ${veces.size}`);
+});
+
+test('ejercicio 2, tres números: distintos, g · m ≠ a · b · c siempre, y los valores son los de verdad', () => {
+  const rng = crearRng(1515);
+  let tres = 0;
+  for (let i = 0; i < 5000; i++) {
+    const item = generarProducto(rng);
+    if (item.tipo !== 'tres') continue;
+    tres++;
+    assert.equal(new Set([item.a, item.b, item.c]).size, 3, JSON.stringify(item));
+    assert.equal(item.g, mcdBF(item.a, item.b, item.c));
+    assert.equal(item.m, mcmBF(item.a, item.b, item.c));
+    assert.notEqual(item.g * item.m, item.a * item.b * item.c, JSON.stringify(item));
+    assert.equal(item.cuadra, false);
+  }
+  assert.ok(tres > 500, `ítems de tres números: ${tres}`);
+});
+
+test('ejercicio 2, tres números: el feedback dice que la comprobación no vale, sin la regla falsa, y hace la cuenta', () => {
+  const item = { tipo: 'tres', a: 6, b: 8, c: 10, g: 2, m: 120, cuadra: false };
+  for (const idioma of ['es', 'en']) {
+    const f = feedbackProducto(item, idioma);
+    assert.ok(!/ya no coincide|no longer matches|2, 4, 8|2, 4 and 8/.test(f), f);
+    assert.ok(f.includes('2 · 120 = 240') && f.includes('6 · 8 · 10 = 480'), f);
+  }
+  assert.match(feedbackProducto(item, 'es'), /a veces coincide y a veces no/);
+  assert.match(feedbackProducto(item, 'en'), /sometimes it matches and sometimes it does not/);
+});
+
+test('ejercicio 1: ningún feedback lleva «<» ni «>» sueltos (HTML mal formado)', () => {
+  const rng = crearRng(1616);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarPuede(rng);
+    for (const idioma of ['es', 'en']) {
+      const f = feedbackPuede(item, idioma);
+      assert.ok(!/[<>]/.test(f), f);
+    }
+  }
+  for (const idioma of ['es', 'en']) {
+    assert.match(feedbackPuede({ cantidad: 'mcm', puede: false, violacion: 'menor', propuesto: 12, a: 18, b: 24, contexto: null }, idioma), idioma === 'es' ? /12 es menor que 24/ : /12 is smaller than 24/);
+    assert.match(feedbackPuede({ cantidad: 'mcd', puede: false, violacion: 'mayor', propuesto: 72, a: 24, b: 36, contexto: null }, idioma), idioma === 'es' ? /72 es mayor que 24/ : /72 is bigger than 24/);
+  }
+});

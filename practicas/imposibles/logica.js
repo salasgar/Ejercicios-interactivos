@@ -11,10 +11,26 @@ import { BANCO_NOMBRAR, TX } from './textos.js';
 
 const CONTEXTOS_PUEDE = { mcd: 2, mcm: 2 }; // número de plantillas de contexto por clase (ver textos.js)
 
+// Con contexto de m.c.d. («el mayor número de grupos iguales») solo salen parejas con m.c.d. ≥ 2: con m.c.d. 1 el
+// «mayor número de grupos» es 1 y no hay reparto (regla de realismo). Sin contexto, el m.c.d. 1 sigue saliendo.
+export const RANGO_CONTEXTO = [3, 20];
+export const PAREJAS_MCD_CONTEXTO = (() => {
+  const parejas = [];
+  for (let a = RANGO_CONTEXTO[0]; a <= RANGO_CONTEXTO[1]; a++) {
+    for (let b = RANGO_CONTEXTO[0]; b <= RANGO_CONTEXTO[1]; b++) if (a !== b && mcd(a, b) >= 2) parejas.push([a, b]);
+  }
+  return parejas;
+})();
+
 function generarPuedeNumeros(rng, cantidad, rango, conContexto) {
-  let a = rng.entero(...rango);
-  let b = rng.entero(...rango);
-  while (b === a) b = rng.entero(...rango);
+  let a, b;
+  if (conContexto && cantidad === 'mcd') {
+    [a, b] = rng.elegir(PAREJAS_MCD_CONTEXTO);
+  } else {
+    a = rng.entero(...rango);
+    b = rng.entero(...rango);
+    while (b === a) b = rng.entero(...rango);
+  }
   const verdadero = cantidad === 'mcd' ? mcd(a, b) : mcm(a, b);
   const puede = rng.azar() < 0.5;
   if (puede) return { a, b, cantidad, verdadero, puede: true, propuesto: verdadero, violacion: null };
@@ -33,14 +49,14 @@ function generarPuedeNumeros(rng, cantidad, rango, conContexto) {
 export function generarPuede(rng) {
   const cantidad = rng.elegir(['mcd', 'mcm']);
   const contexto = rng.azar() < 0.3 ? rng.entero(0, CONTEXTOS_PUEDE[cantidad] - 1) : null;
-  const rango = contexto === null ? [12, 96] : [3, 20];
+  const rango = contexto === null ? [12, 96] : RANGO_CONTEXTO;
   const base = generarPuedeNumeros(rng, cantidad, rango, contexto !== null);
   return { tipo: 'puede', contexto, ...base };
 }
 
 // ─── Ejercicio 2: la comprobación del producto ─────────────────────────────
 // g · m = a · b con dos números (g y m etiquetados GCD y LCM, a veces uno de
-// los dos está mal); con tres números la comprobación nunca vale (tipo 'tres').
+// los dos está mal); con tres números la comprobación no vale (tipo 'tres': unas veces coincide y otras no).
 
 function generarDos(rng) {
   let a = rng.entero(6, 48);
@@ -53,18 +69,25 @@ function generarDos(rng) {
   return { tipo: 'producto', a, b, g, m: m + a, cuadra: false };
 }
 
+// Con tres números la comprobación no sirve: unas veces g · m coincide con a · b · c (3, 4, 5) y otras no. El ítem
+// pregunta si vale y enseña un caso en que no coincide, así que solo salen tríos de números DISTINTOS con
+// g · m ≠ a · b · c. Se enumeran una vez y se sortea de la lista: no hay bucle ni tope de intentos.
+export const TRIOS_SIN_COINCIDIR = (() => {
+  const trios = [];
+  for (let a = 3; a <= 10; a++) {
+    for (let b = 3; b <= 10; b++) {
+      for (let c = 3; c <= 10; c++) {
+        if (a === b || a === c || b === c) continue;
+        if (mcd(a, b, c) * mcm(a, b, c) !== a * b * c) trios.push([a, b, c]);
+      }
+    }
+  }
+  return trios;
+})();
+
 function generarTres(rng) {
-  let a, b, c, g, m;
-  let intentos = 0;
-  do {
-    a = rng.entero(3, 10);
-    b = rng.entero(3, 10);
-    c = rng.entero(3, 10);
-    g = mcd(a, b, c);
-    m = mcm(a, b, c);
-    intentos++;
-  } while (g * m === a * b * c && intentos < 15);
-  return { tipo: 'tres', a, b, c, g, m, cuadra: false };
+  const [a, b, c] = rng.elegir(TRIOS_SIN_COINCIDIR);
+  return { tipo: 'tres', a, b, c, g: mcd(a, b, c), m: mcm(a, b, c), cuadra: false };
 }
 
 export function generarProducto(rng) {
