@@ -94,6 +94,11 @@ en sus textos, y ninguna se toca.
 - (de la coordinadora) `practicas/_comun/relaciones.js` también define su `cuenta()`: no hace falta tocarlo si el ayudante trabaja
   sobre el HTML ya pintado.
 - (de la 193) En la pasada de medida, `constructor` ej. 1 no cargó una vez porque el servidor de prueba cortó la conexión: reintenta.
+- (de la 197) **Desactiva la caché del Chrome headless** (`Network.setCacheDisabled`) al medir después de un cambio: con el mismo
+  perfil y el mismo puerto, la medida «final» salió con la `base.js` de antes y parecía que el arreglo no hacía nada.
+- (de la 197) Un U+2060 entre una `.frac` (`inline-flex`) y su signo no impide el corte en Chrome; un envoltorio `inline-block` sí.
+- (de la 197) `base.js` puede quedar cogido por otra sesión (incluso fuera del reparto) después de reclamar: avanza con lo que no
+  lo toca y espera; no fuerces el candado.
 
 ## Prohibido (propio de esta tarea)
 
