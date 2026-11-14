@@ -107,14 +107,15 @@ const RESP = { es: 'La respuesta es', en: 'The answer is' };
 export function explicaAlcance(item, { tt }) {
   const p = item.partes[item.preguntada];
   const grupo = idBaseDe(p.forma) === 'grupo';
+  const parentesis = p.forma === 'grupo' ? `(${p.a} · ${p.b})` : p.forma === 'sumagrupo' ? `(${p.a} + ${p.b})` : `(${p.b} + ${p.c})`;
   const base = grupo
-    ? tt({ es: 'todo el paréntesis', en: 'the whole bracket' })
-    : tt({ es: `el número ${p.b}`, en: `the number ${p.b}` });
+    ? tt({ es: `todo el paréntesis ${cuenta(parentesis)}`, en: `the whole bracket ${cuenta(parentesis)}` })
+    : tt({ es: `el número ${cuenta(p.b)}`, en: `the number ${cuenta(p.b)}` });
   const regla = tt({
     es: 'El exponente se aplica solo a lo que tiene justo delante: un número o un paréntesis entero.',
     en: 'The exponent applies only to what is right before it: one number or a whole bracket.',
   });
-  return `<p>${regla}</p><p>${cuenta(cuentaParte(p))}</p><p>${tt(RESP)}: ${base}.</p>`;
+  return `<p>${regla}</p><p>${cuenta(cuentaParte(p))}</p><p>${tt(RESP)} ${base}.</p>`;
 }
 
 /** Ejercicio 2: según el subtipo del ítem (producto repetido, potencia o valor). */
@@ -134,9 +135,11 @@ export function explicaMultiplicacion(item, { tt }) {
       en: 'The base is the number that repeats; the exponent is how many times it appears.',
     })}</p><p>${cuenta(`${producto} = ${potencia}`)}</p><p>${tt(RESP)} ${tt({ es: `base ${b}, exponente ${e}`, en: `base ${b}, exponent ${e}` })}.</p>`;
   }
+  // «(no 2 · 2)» sería falso cuando la base y el exponente coinciden: 2 · 2 es justo 2².
+  const noEs = b === e ? { es: '', en: '' } : { es: ` (no ${b} · ${e})`, en: ` (not ${b} · ${e})` };
   return `<p>${tt({
-    es: `${b} elevado a ${e} es ${b} multiplicado por sí mismo ${e} veces (no ${b} · ${e}).`,
-    en: `${b} to the power of ${e} is ${b} multiplied by itself ${e} times (not ${b} · ${e}).`,
+    es: `${b} elevado a ${e} es un producto de ${e} factores, todos iguales a ${b}${noEs.es}.`,
+    en: `${b} to the power of ${e} is a product of ${e} factors, all of them equal to ${b}${noEs.en}.`,
   })}</p><p>${cuenta(`${potencia} = ${producto} = ${item.correcta}`)}</p><p>${tt(RESP)} ${cuenta(item.correcta)}.</p>`;
 }
 

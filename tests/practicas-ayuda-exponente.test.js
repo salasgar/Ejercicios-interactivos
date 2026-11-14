@@ -24,10 +24,14 @@ test('ej. 1: la explicación trae la cuenta bien hecha y nombra la base correcta
       sano(html);
       const cuenta = plano(html.match(/<span class="cuenta">(.*?)<\/span>/)[1]);
       assert.equal(Number(cuenta.split(' = ').at(-1)), L.valorParte(p), cuenta);
+      // el paréntesis que se toca, escrito con sus números (y sin «es:», que no lleva dos puntos)
+      const grupo = { grupo: `(${p.a} · ${p.b})`, sumagrupo: `(${p.a} + ${p.b})`, intermedia: `(${p.b} + ${p.c})` }[p.forma];
       const base = L.idBaseDe(p.forma) === 'grupo'
-        ? (idioma === 'es' ? 'todo el paréntesis' : 'the whole bracket')
+        ? (idioma === 'es' ? `todo el paréntesis ${grupo}` : `the whole bracket ${grupo}`)
         : (idioma === 'es' ? `el número ${p.b}` : `the number ${p.b}`);
-      assert.ok(plano(html).endsWith(`: ${base}.`), plano(html));
+      const fin = idioma === 'es' ? 'La respuesta es' : 'The answer is';
+      assert.ok(plano(html).endsWith(`${fin} ${base}.`), plano(html));
+      assert.doesNotMatch(plano(html), /(es|is):/);
     }
   }
 });
@@ -44,6 +48,10 @@ test('ej. 2: la explicación de cada subtipo lleva su solución', () => {
       const texto = plano(html);
       if (item.tipo === 'valor') {
         assert.match(texto, new RegExp(`= ${item.correcta}(?!\\d)`), texto);
+        // «(no 2 · 2)» no: con base = exponente, b · e es justo el producto bueno
+        if (item.base === item.exponente) assert.doesNotMatch(texto, /\((no|not) \d/, texto);
+        else assert.ok(texto.includes(`${idioma === 'es' ? '(no' : '(not'} ${item.base} · ${item.exponente})`), texto);
+        assert.doesNotMatch(texto, /sí mismo|by itself/);
         assert.ok(texto.endsWith(` ${item.correcta}.`), texto);
       } else if (item.tipo === 'repetida') {
         assert.ok(texto.endsWith(` ${L.secuenciaCorrecta(item).join(' ')}.`), texto);

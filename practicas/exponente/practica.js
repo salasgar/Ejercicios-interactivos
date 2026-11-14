@@ -287,6 +287,8 @@ arrancar({
       montar: montarMultiplicacion,
       enunciado: enunciadoMultiplicacion,
       explicacion: explicaMultiplicacion,
+      // los tres subtipos son de procedimiento: construir el producto, escribir la potencia, calcular su valor
+      noLoSe: { es: 'No sé hacerlo', en: 'I don’t know how' },
     },
     {
       nombre: TX.areas.nombre,
