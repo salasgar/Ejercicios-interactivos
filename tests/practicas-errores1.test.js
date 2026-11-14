@@ -532,3 +532,39 @@ test('ejercicio 4: textos en los dos idiomas, sin ×, sin letras, producto con �
   assert.match(TX.falta_paso.es(2), /líneas 2 y 3/);
   assert.match(TX.falta_paso.en(2), /lines 2 and 3/);
 });
+
+// ─── Reapertura de la tarea 32 (decisiones del 14-11) ───────────────────────
+
+import { explicacion } from '../practicas/errores1/textos.js';
+
+test('feedback con error: minúscula tras «Bien hecho sería:» y el número de línea una sola vez, en los dos idiomas', () => {
+  const rng = crearRng(3232);
+  const tt = (x, idioma) => (typeof x === 'function' ? x : x[idioma]);
+  for (let i = 0; i < 1500; i++) {
+    const item = (i % 2 ? generarLinea : generarNombre)(rng);
+    for (const idioma of ['es', 'en']) {
+      const html = explicacion(item, { tt: x => tt(x, idioma) });
+      const donde = `${idioma} ${item.plantilla}: ${html}`;
+      assert.ok(!/(Bien hecho sería|The right way is):<\/?[a-z]*>? ?[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
+      assert.ok(!/(Bien hecho sería|The right way is): [A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
+      assert.equal((html.match(/línea \d|line \d/g) ?? []).length, 1, donde);
+      assert.ok(!/linea-mala">\d+\. /.test(html), donde);
+    }
+  }
+});
+
+test('nunca «X y X no dependen una de otra» (a² y b², a · b y c · d): las dos operaciones son distintas, en 3000 ítems', () => {
+  const rng = crearRng(3333);
+  const ids = new Set();
+  for (let i = 0; i < 3000; i++) {
+    for (const item of [generarHay(rng), generarPasos(rng)]) {
+      const p = item.params;
+      if (item.plantilla === 'b-independientes-potencias') { ids.add(item.plantilla); assert.notEqual(p.a, p.b, JSON.stringify(p)); }
+      if (item.plantilla === 'b-independientes-productos') {
+        ids.add(item.plantilla);
+        assert.ok(Math.min(p.a, p.b) !== Math.min(p.c, p.d) || Math.max(p.a, p.b) !== Math.max(p.c, p.d), JSON.stringify(p));
+      }
+    }
+  }
+  assert.equal(ids.size, 2, 'las dos plantillas tienen que salir para que el test valga');
+});

@@ -102,6 +102,13 @@ const ig = t => L(t, t);
 
 /** Un «a» y un «b» sin repetir nada raro. */
 const par = (rng, min, max) => [rng.entero(min, max), rng.entero(min, max)];
+/** Dos números DISTINTOS: donde se comparan dos operaciones («a² y b²») no pueden salir dos idénticas. */
+const parDistinto = (rng, min, max) => {
+  const a = rng.entero(min, max);
+  let b = rng.entero(min, max - 1);
+  if (b >= a) b += 1;
+  return [a, b];
+};
 
 const CUADRADOS_PARES = [16, 36, 64, 100, 144, 196, 256, 324, 400];   // el 4 no: 4 : 2 = 2 = √4
 const CUADRADOS = [16, 25, 36, 49, 64, 81, 100, 121, 144, 169];
@@ -321,7 +328,13 @@ export const PLANTILLAS = [
   {
     id: 'b-independientes-productos',
     error: null,
-    numeros: rng => { const [a, b] = par(rng, 2, 9), [c, d] = par(rng, 2, 9); return { a, b, c, d }; },
+    numeros: rng => {
+      const [a, b] = par(rng, 2, 9);
+      let [c, d] = par(rng, 2, 9);
+      // «a · b y c · d» nunca son la misma operación (ni con los factores cambiados de orden).
+      while (Math.min(a, b) === Math.min(c, d) && Math.max(a, b) === Math.max(c, d)) [c, d] = par(rng, 2, 9);
+      return { a, b, c, d };
+    },
     lineas: ({ a, b, c, d }) => cad([`${a} · ${b} + ${c} · ${d}`, `${a * b} + ${c * d}`, `${a * b + c * d}`]),
     porque: ({ a, b, c, d }) => L(
       `Está bien: ${a} · ${b} y ${c} · ${d} no dependen una de otra, así que se pueden hacer en el mismo paso.`,
@@ -330,7 +343,7 @@ export const PLANTILLAS = [
   {
     id: 'b-independientes-potencias',
     error: null,
-    numeros: rng => { const [a, b] = par(rng, 2, 9); return { a, b }; },
+    numeros: rng => { const [a, b] = parDistinto(rng, 2, 9); return { a, b }; },
     lineas: ({ a, b }) => cad([`${a}^2 + ${b}^2`, `${a * a} + ${b * b}`, `${a * a + b * b}`]),
     porque: ({ a, b }) => L(
       `Está bien: ${a}^2 y ${b}^2 no dependen una de otra, así que se pueden hacer en el mismo paso.`,
@@ -650,9 +663,11 @@ export function explicacion(item, { tt }) {
     const porque = tt(plantilla.porque(item.params));
     return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
   }
+  // Reabierta del 14-11: el número de línea una sola vez («El error está en la línea 2:») y minúscula tras «Bien hecho sería:»,
+  // como la tarjeta (`ESTA_EN` y `minuscula`, más abajo).
   const n = item.error.linea + 1;
-  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
-  return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
+  const mala = `<span class="linea-mala">${html(tt(item.lineas[item.error.linea]))}</span>`;
+  return `${tt(ESTA_EN)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(minuscula(tt(plantilla.corregida(item.params))))}`;
 }
 
 /** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
