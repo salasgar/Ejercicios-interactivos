@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-14T21:21Z por s-20261114T211632-3d8a4f58 al cerrar la 10, la 14 y la 32 (reabiertas del 14-11; commits 06f266b, d3c6844, fe898e1): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-14T21:21Z por s-20261114T211453-78365b52 al cerrar la 29 (LISTA, reabierta del 14-11, commit f03cbf2; npm test 2317/2317; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T21:15Z por s-20261114T210546-d2b384b6 al cerrar la 24 (LISTA, reabierta del 14-11; commit 50edd8b en local, cherry-pick en origin; npm test 2301/2301; navegador 375 y 1200 px): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T19:39Z por s-20261114T185703-a741c82e al cerrar la 193 (L
 Actualizado 2026-11-14T15:08Z por s-20261114T150738-c83636b9 al reclamar la 193 (revisión del «No lo sé» de la U1 y la U2): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T15:05Z por s-20261114T145716-e48af71b al cerrar la 187 (LISTA, relevo; «No lo sé» en parentesis, jerarquia, exponente, raiz y division; npm test 2250/2250; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T14:08Z por s-20261114T113351-e5a8777d al cerrar la 186 (LISTA; npm test 2205/2205): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
