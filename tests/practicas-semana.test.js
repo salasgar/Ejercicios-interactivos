@@ -674,7 +674,7 @@ test('portada: los cinco bloques de la unidad 3 (tarea 79), con las doce prácti
   ]);
   assert.deepEqual(u3.map(b => b.slugs), [
     ['termometro', 'opuestos', 'situaciones', 'saltos'], ['dos-signos', 'signos-producto'],
-    ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros'], ['variacion', 'errores3'], ['leelo3'],
+    ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros', 'coloca-enteros'], ['variacion', 'errores3'], ['leelo3'],
   ]);
   // Las doce de la unidad 3 (sin la ortografía, que es transversal), cada una en un bloque y con su descripción.
   const doce = CATALOGO.filter(p => p.unidad === 3 && !p.transversal);
@@ -705,7 +705,7 @@ test('portada: los cuatro bloques de la unidad 4 (tarea 98), con las diez práct
   ]);
   assert.deepEqual(u4.map(b => b.slugs), [
     ['que-fraccion', 'equivalentes', 'simplifica', 'compara'], ['fraccion-de', 'suma-resta'],
-    ['multiplica-divide', 'combinadas-fracciones', 'errores4'], ['leelo4'],
+    ['multiplica-divide', 'combinadas-fracciones', 'coloca-fracciones', 'errores4'], ['leelo4'],
   ]);
   const diez = CATALOGO.filter(p => p.unidad === 4);
   assert.deepEqual(diez.map(p => p.slug).sort(), u4.flatMap(b => b.slugs).sort());
@@ -726,7 +726,7 @@ test('portada: los cuatro bloques de la unidad 4 (tarea 98), con las diez práct
   const publicadas = CATALOGO.map(p => (p.unidad === 4 ? { ...p, disponible: true } : p));
   const bloques = bloquesPublicados(publicadas, 4);
   assert.equal(bloques.length, 4);
-  assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['multiplica-divide', 'combinadas-fracciones', 'errores4']);
+  assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['multiplica-divide', 'combinadas-fracciones', 'coloca-fracciones', 'errores4']);
 });
 
 test('portada: los tres bloques de la unidad 5 (tarea 122), con las siete prácticas', async () => {
@@ -737,7 +737,7 @@ test('portada: los tres bloques de la unidad 5 (tarea 122), con las siete práct
     'Para toda la unidad · Vocabulario',
   ]);
   assert.deepEqual(u5.map(b => b.slugs), [
-    ['lee-decimales', 'compara-decimales', 'suma-resta-decimales'], ['multiplica-divide-decimales', 'fraccion-decimal', 'errores5'], ['leelo5'],
+    ['lee-decimales', 'compara-decimales', 'suma-resta-decimales'], ['multiplica-divide-decimales', 'coloca-decimales', 'fraccion-decimal', 'errores5'], ['leelo5'],
   ]);
   const siete = CATALOGO.filter(p => p.unidad === 5);
   assert.deepEqual(siete.map(p => p.slug).sort(), u5.flatMap(b => b.slugs).sort());
@@ -754,7 +754,7 @@ test('portada: los tres bloques de la unidad 5 (tarea 122), con las siete práct
   const publicadas = CATALOGO.map(p => (p.unidad === 5 ? { ...p, disponible: true } : p));
   const bloques = bloquesPublicados(publicadas, 5);
   assert.equal(bloques.length, 3);
-  assert.deepEqual(bloques[1].practicas.map(p => p.slug), ['multiplica-divide-decimales', 'fraccion-decimal', 'errores5']);
+  assert.deepEqual(bloques[1].practicas.map(p => p.slug), ['multiplica-divide-decimales', 'coloca-decimales', 'fraccion-decimal', 'errores5']);
 });
 
 test('portada: los cinco bloques de la unidad 6 (tarea 144), con las once prácticas, ninguna publicada todavía', async () => {

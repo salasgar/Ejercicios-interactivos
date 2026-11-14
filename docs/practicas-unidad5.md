@@ -145,6 +145,7 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 1 | `compara-decimales` | 58 | 124 | ¿Cuál es mayor? (`<`, `=`, `>`; la trampa de las cifras, ceros, iguales, negativos) · Ordena (4-5 decimales) · Entre dos (escribir o elegir) · Redondea (a la unidad, la décima o la centésima; el 9 que arrastra) | parte entera 0-20, hasta 3 cifras decimales, negativos hasta −20 |
 | 1 | `suma-resta-decimales` | 59 | 125 | Alinea la coma (dos o tres términos, también con naturales) · En el súper (fruta al peso y gasolina; total o la vuelta) · Medidas (listón, botella y vasos, estaturas, paquetes) · Mueve la coma (·/: por 10, 100 y 1000) | fruta 0,50-15,00 € cada importe y 40 € en total; repostaje 6-48 €; billete de 5, 10, 20 o 50 € que cubre el total; listón 1-3 m; botella 1-2 L y vasos 0,20-0,33 L; persona 1,20-2,10 m; paquete 0,1-30 kg |
 | 2 | `multiplica-divide-decimales` | 60 | 126 | Coloca la coma (el producto y ·/: por 0,1, 0,01 y 0,001) · Divide hasta el final (entre un natural) · Entre un decimal (o la división equivalente) · ¿Está bien hecha? (cociente con dos decimales, resto y prueba) · Problemas (fruta al peso, gasolina, gasolina de un viaje entre varios) · Combinadas (2-3 operaciones, con y sin paréntesis) | fruta 0,80-6,00 €/kg y 0,5-5 kg; gasolina 1,20-2,00 €/L y 5-70 L; viaje 15-60 L entre 2 y 5 personas |
+| 2 | `coloca-decimales` | 82 | 202 | Tres números (todos los resultados) · Con un cuadrado (³ a veces) · Una sola diana. **Sin publicar** (la publica la 204) | todo valor ≥ 0, ≤ 3 cifras decimales, divisiones exactas, ≤ 500; sin agrupaciones imposibles a la vista |
 | 2 | `fraccion-decimal` | 61 | 127 | De fracción a decimal (exacto o periódico, con «…») · De decimal a fracción (irreducible; las impropias, impropias) · Los que hay que saberse (los pares de memoria) · ¿Fracción o decimal? (`<`, `=`, `>`) | sin contextos; fracción ≤ 3, denominadores ≤ 1000 |
 | 2 | `errores5` | 62 | 128 | ¿Dónde está el error? (la línea mala o «todo bien») · ¿Qué error es? (cuatro nombres, uno verdadero) · Corrígelo (el resultado bueno) | sin contextos; hasta cuatro cifras enteras |
 | toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
@@ -220,9 +221,9 @@ esta tabla: lo comprueba `tests/practicas-registro.test.js`.
 | U5-2C-10 | 2 | sí | Pasar un decimal exacto a fracción irreducible | `fraccion-decimal` |
 | U5-2C-11 | 2 |  | Reconocer al dividir si una fracción da un decimal exacto o uno periódico | `fraccion-decimal` |
 | U5-2C-12 | 2 |  | Comparar y ordenar fracciones y decimales juntos | `fraccion-decimal` |
-| U5-2C-13 | 2 |  | Calcular el cuadrado y el cubo de un decimal | — |
-| U5-2C-14 | 2 | sí | Calcular una combinada con decimales sin paréntesis, respetando la jerarquía | `multiplica-divide-decimales` |
-| U5-2C-15 | 2 | sí | Calcular una combinada con decimales y un paréntesis, una operación por línea | `multiplica-divide-decimales` |
+| U5-2C-13 | 2 |  | Calcular el cuadrado y el cubo de un decimal | `coloca-decimales` |
+| U5-2C-14 | 2 | sí | Calcular una combinada con decimales sin paréntesis, respetando la jerarquía | `multiplica-divide-decimales`, `coloca-decimales` |
+| U5-2C-15 | 2 | sí | Calcular una combinada con decimales y un paréntesis, una operación por línea | `multiplica-divide-decimales`, `coloca-decimales` |
 | U5-2C-16 | 2 |  | Multiplicar, dividir y operar en combinadas con decimales negativos, con la regla de los signos de la U… | — |
 | U5-2C-17 | 2 | sí | Reconocer y nombrar el error de un procedimiento: la tabla de errores típicos de la unidad | `errores5`, `multiplica-divide-decimales` |
 | U5-2C-18 | 2 |  | Saber lo que no es un error: ceros finales, dos decimales en dinero, nought o zero, un decimal o su fra… | `errores5` |
@@ -260,7 +261,8 @@ práctica las cubre en el ejercicio que se dice):
 
 ### Destrezas de la unidad 5 sin práctica
 
-Once de las 54. Nueve, a propósito:
+Ocho de las 54, a propósito (eran once: U5-2C-14 y 2C-15 pasaron a `multiplica-divide-decimales` el
+13-11, y U5-2C-13 a `coloca-decimales` el 14-11, tarea 199):
 
 - **U5-1C-12** — estimar para comprobar una suma, una resta o dónde va la coma: destreza de hoja
   (acta, punto q); en `compara-decimales`, a lo sumo como pista del feedback.
@@ -269,8 +271,8 @@ Once de las 54. Nueve, a propósito:
   **U5-1C-17** (negativos: comparar, ordenar y la recta → `compara-decimales`), **U5-1C-18**
   (negativos: sumar y restar → `suma-resta-decimales`), **U5-2C-16** (negativos: multiplicar,
   dividir, combinadas → `multiplica-divide-decimales`), **U5-1A-04** (cambios de unidad, solo
-  km-m, m-cm, kg-g, L-mL y euros-céntimos → `suma-resta-decimales` 4) y **U5-2C-13** (cuadrado
-  y cubo → `multiplica-divide-decimales` 1).
+  km-m, m-cm, kg-g, L-mL y euros-céntimos → `suma-resta-decimales` 4). **U5-2C-13** (cuadrado y
+  cubo) ya tiene práctica: el ej. 2 de `coloca-decimales`, «Con un cuadrado» (tarea 199).
 - **No nucleares que ninguna ficha recoge**: **U5-1A-03** (comparar y ordenar en contexto; cabría
   en `compara-decimales` 2), **U5-1C-02** (un decimal en décimas, centésimas o milésimas; cabría
   en `lee-decimales` 3) y **U5-2A-04** (cuántas veces cabe es dividir; su ejemplo es de botellas,

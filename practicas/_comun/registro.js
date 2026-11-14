@@ -63,6 +63,7 @@ export const DESTREZAS = {
   // Unidad 3
   'dos-signos': ['U3-2C-05', 'U3-2C-06', 'U3-2C-07', 'U3-2C-08', 'U3-2C-10'],
   errores3: ['U3-2C-21', 'U3-3C-19', 'U3-4A-05', 'U3-4C-08', 'U3-4C-09'],
+  'coloca-enteros': ['U3-3A-01', 'U3-3C-10', 'U3-3C-16', 'U3-4A-04', 'U3-4A-06'],
   'jerarquia-enteros': ['U3-3A-01', 'U3-3A-02', 'U3-3A-03', 'U3-3C-20', 'U3-4A-01', 'U3-4A-02'],
   leelo3: ['U3-1B-01', 'U3-1B-02', 'U3-1B-03', 'U3-2B-01', 'U3-2B-02', 'U3-2B-03', 'U3-3B-02', 'U3-4B-01', 'U3-4B-02'],
   opuestos: ['U3-1C-07', 'U3-1C-08', 'U3-1C-09', 'U3-1C-10'],
@@ -74,6 +75,7 @@ export const DESTREZAS = {
   termometro: ['U3-1C-02', 'U3-1C-03', 'U3-1C-04', 'U3-1C-05', 'U3-1C-06'],
   variacion: ['U3-3C-21', 'U3-4B-02', 'U3-4C-01', 'U3-4C-02', 'U3-4C-03', 'U3-4C-04', 'U3-4C-05', 'U3-4C-07', 'U3-4C-10'],
   // Unidad 4
+  'coloca-fracciones': ['U4-3A-01', 'U4-3A-02', 'U4-3C-10'],
   'combinadas-fracciones': ['U4-3A-01', 'U4-3A-02', 'U4-3C-09', 'U4-3C-10', 'U4-3C-11'],
   compara: ['U4-1C-17', 'U4-1C-18', 'U4-1C-19', 'U4-1C-20', 'U4-1C-21', 'U4-1C-23', 'U4-1C-24'],
   equivalentes: ['U4-1C-10', 'U4-1C-11', 'U4-1C-12', 'U4-1C-16'],
@@ -85,6 +87,7 @@ export const DESTREZAS = {
   simplifica: ['U4-1C-13', 'U4-1C-14', 'U4-1C-15', 'U4-1C-22'],
   'suma-resta': ['U4-1C-16', 'U4-2A-01', 'U4-2A-04', 'U4-2C-01', 'U4-2C-02', 'U4-2C-03', 'U4-2C-04', 'U4-2C-07', 'U4-3C-11'],
   // Unidad 5
+  'coloca-decimales': ['U5-2C-13', 'U5-2C-14', 'U5-2C-15'],
   'compara-decimales': ['U5-1C-05', 'U5-1C-07', 'U5-1C-08', 'U5-1C-09', 'U5-1C-10', 'U5-1C-11'],
   errores5: ['U5-2C-17', 'U5-2C-18'],
   'fraccion-decimal': ['U5-2C-08', 'U5-2C-09', 'U5-2C-10', 'U5-2C-11', 'U5-2C-12'],

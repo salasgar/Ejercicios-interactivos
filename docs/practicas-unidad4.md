@@ -138,6 +138,7 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 2 | `suma-resta` | 52 | 104 | Mismo denominador · Distinto denominador, paso a paso · Con naturales · ¿Qué queda? · Caza el error | denominadores 2-12, m.c.m. ≤ 60 |
 | 3 | `multiplica-divide` | 53 | 105 | Multiplica (con «Simplifica antes») · La fracción de una fracción (cuadrícula) · La inversa · Divide (por la inversa o en cruz) · Potencias | términos 1-12; tableta y huerto ≤ 24 trozos, bandeja ≤ 20; potencias de base positiva hasta 9² y 5³ |
 | 3 | `combinadas-fracciones` | 54 | 106 | ¿Cuál primero? · Un paso cada vez · Caza el error (orden o cálculo) | 2-3 operaciones, denominadores 2-12, pasos ≤ 72, final con denominador ≤ 36 |
+| 3 | `coloca-fracciones` | 81 | 201 | Tres números (todos los resultados) · Con división (cuatro números) · Una sola diana. **Sin publicar** (la publica la 204) | todo valor irreducible con denominador ≤ 36 y numerador −60…60; solo el primero negativo; sin agrupaciones imposibles a la vista |
 | 3 | `errores4` | 55 | 107 | ¿Bien o mal? (y el nombre del error) · La línea mala · Arréglalo | denominadores 2-8, todo número ≤ 600 |
 | toda | `leelo4` | 56 | 108 | Emparejar · La lectura · ¿Qué pide? · Dictado | dinero 20-600 €, pizza 4-12 trozos, clase 12-36, denominadores ≤ 12 |
 
@@ -222,8 +223,8 @@ comprueba `tests/practicas-registro.test.js`.
 | U4-2C-10 | 2 |  | Simplificar antes de multiplicar, tachando factores comunes de un numerador y un denominador | `multiplica-divide` |
 | U4-2C-11 | 2 | sí | Calcular la fracción de una fracción: «of» es multiplicar | `multiplica-divide` |
 | U4-2C-12 | 2 |  | Calcular la potencia de una fracción de base positiva: se elevan el numerador y el denominador | `multiplica-divide` |
-| U4-3A-01 | 3 | sí | Calcular una combinada sin paréntesis respetando la jerarquía | `combinadas-fracciones` |
-| U4-3A-02 | 3 | sí | Calcular una combinada con un paréntesis | `combinadas-fracciones` |
+| U4-3A-01 | 3 | sí | Calcular una combinada sin paréntesis respetando la jerarquía | `combinadas-fracciones`, `coloca-fracciones` |
+| U4-3A-02 | 3 | sí | Calcular una combinada con un paréntesis | `combinadas-fracciones`, `coloca-fracciones` |
 | U4-3A-03 | 3 | sí | Resolver un problema «del resto»: la fracción del resto se calcula sobre lo que queda, no sobre el tota… | — |
 | U4-3A-04 | 3 | sí | Hallar el total conociendo lo que queda al final de un problema «del resto» | — |
 | U4-3A-06 | 3 |  | Escribir una combinada paso a paso, una operación por línea, copiando el resto | — |
@@ -236,7 +237,7 @@ comprueba `tests/practicas-registro.test.js`.
 | U4-3C-07 | 3 | sí | Dividir un natural entre una fracción y una fracción entre un natural | `multiplica-divide` |
 | U4-3C-08 | 3 |  | Elegir la operación en un problema: «la fracción de» es multiplicar; «cuántas veces cabe» es dividir | — |
 | U4-3C-09 | 3 | sí | Distinguir las reglas de la suma y del producto en una tanda mezclada | `combinadas-fracciones`, `errores4` |
-| U4-3C-10 | 3 |  | Multiplicar, dividir y operar en combinadas con fracciones negativas, con la regla de los signos de la… | `combinadas-fracciones`, `multiplica-divide` |
+| U4-3C-10 | 3 |  | Multiplicar, dividir y operar en combinadas con fracciones negativas, con la regla de los signos de la… | `combinadas-fracciones`, `multiplica-divide`, `coloca-fracciones` |
 | U4-3C-11 | 3 | sí | Reconocer y nombrar el error en un procedimiento: la tabla de errores típicos de toda la unidad | `combinadas-fracciones`, `errores4`, `suma-resta` |
 | U4-3C-12 | 3 |  | Saber lo que no es un error: otro denominador común, simplificar antes o después, «en cruz» al dividir,… | `errores4` |
 

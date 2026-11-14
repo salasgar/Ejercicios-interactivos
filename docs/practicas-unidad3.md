@@ -119,6 +119,7 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 3 | `potencias-enteros` | 39 | 86 | Cuenta los negativos · Potencia de base negativa · ¿Cuál es la base? ((−a)ⁿ, −aⁿ, −(−a)ⁿ) · Cuadrados y raíces (con «No existe») | \|producto\| ≤ 500, \|potencia\| ≤ 1000, cuadrados 1-144 |
 | 3-4 | `jerarquia-enteros` | 40 | 87 | ¿Qué va primero? · Producto o potencia dentro de una suma · Cadenas de · y : (y el par `30 : (−5) · 2` / `30 : (−5 · 2)`) · Combinadas (sesión 13) | final ±100, pasos ±200 y nunca 0 |
 | 3-4 | `parentesis-enteros` | 41 | 88 | Quita el paréntesis · Calcula (operando dentro o quitando) · ¿Al paréntesis o al número? · De dentro afuera (corchetes) · Coloca los paréntesis (ej. 3-5, sesión 13) | todo valor ±200 |
+| 3-4 | `coloca-enteros` | 80 | 200 | Tres números (todos los resultados) · Con una potencia (base negativa al agrupar) · Con división (agrupaciones que no se pueden). **Sin publicar** (la publica la 203) | todo valor ±200 |
 | 4 | `errores3` | 42 | 89 | ¿Dónde está el error? · ¿Qué error es? (distractores de otro grupo de errores) · ¿Error o no? (parejas válidas) | términos 1-9, todo ≤ 300 |
 | 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura de mediodía a mediodía −15…40 °C (cambio ≤ 15), plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 2700 a. C.-2026, ninguna moneda anterior al 600 a. C. |
 | toda | `leelo3` | 44 | 91 | Los enteros · Sumas, restas y productos · Potencias · Palabras y símbolos (cada ejercicio, de una semana) | temperaturas −30…45 °C; parejas de ciudades de un mismo día de invierno |
@@ -181,20 +182,20 @@ tiene que coincidir con esta tabla: lo comprueba `tests/practicas-registro.test.
 | U3-2C-19 | 2 |  | Hallar el factor que falta en un producto de enteros | `signos-producto` |
 | U3-2C-20 | 2 |  | Saber que 0 entre un entero distinto de 0 es 0, y que entre 0 no se divide | `signos-producto` |
 | U3-2C-21 | 2 | sí | No aplicar la regla de los signos a una suma o una resta | `signos-producto`, `errores3` |
-| U3-3A-01 | 3 | sí | Calcular una expresión con un producto o un cociente dentro de una suma o una resta | `jerarquia-enteros` |
+| U3-3A-01 | 3 | sí | Calcular una expresión con un producto o un cociente dentro de una suma o una resta | `jerarquia-enteros`, `coloca-enteros` |
 | U3-3A-02 | 3 | sí | Calcular una expresión con una potencia dentro de una suma o una resta | `jerarquia-enteros` |
 | U3-3A-03 | 3 |  | Calcular multiplicaciones y divisiones encadenadas, de izquierda a derecha | `jerarquia-enteros` |
 | U3-3A-04 | 3 | sí | Calcular una expresión de sumas y restas con paréntesis que envuelven operaciones | `parentesis-enteros` |
 | U3-3B-02 | 3 |  | Vocabulario y lectura de las potencias: power, base, exponent / index, squared, cubed, even / odd expone… | `leelo3` |
 | U3-3C-02 | 3 | sí | Decidir el signo de un producto de varios factores contando los negativos | `potencias-enteros` |
 | U3-3C-03 | 3 |  | Calcular un producto de varios factores; multiplicar por −1 y por 0 | `potencias-enteros` |
-| U3-3C-10 | 3 | sí | Calcular una potencia de base negativa | `potencias-enteros` |
+| U3-3C-10 | 3 | sí | Calcular una potencia de base negativa | `potencias-enteros`, `coloca-enteros` |
 | U3-3C-11 | 3 | sí | Decidir el signo de una potencia de base negativa por el exponente: par, positivo; impar, negativo | `potencias-enteros` |
 | U3-3C-12 | 3 | sí | Distinguir (−a)^n de −a^n, y decir cuál es la base en cada caso | `potencias-enteros` |
 | U3-3C-13 | 3 |  | Hallar los dos enteros cuyo cuadrado es un número dado; la raíz cuadrada es solo el positivo | `potencias-enteros` |
 | U3-3C-14 | 3 |  | Saber que la raíz cuadrada de un número negativo no existe | `potencias-enteros` |
 | U3-3C-15 | 3 |  | Calcular una potencia con un signo menos delante, con y sin paréntesis | `potencias-enteros` |
-| U3-3C-16 | 3 | sí | Operar primero dentro del paréntesis | `parentesis-enteros` |
+| U3-3C-16 | 3 | sí | Operar primero dentro del paréntesis | `parentesis-enteros`, `coloca-enteros` |
 | U3-3C-17 | 3 |  | Quitar un paréntesis precedido de +: los signos de dentro no cambian | `parentesis-enteros` |
 | U3-3C-18 | 3 | sí | Quitar un paréntesis precedido de −: cambian todos los signos de dentro | `parentesis-enteros` |
 | U3-3C-19 | 3 |  | Encontrar el error en un cálculo con paréntesis | `errores3` |
@@ -203,9 +204,9 @@ tiene que coincidir con esta tabla: lo comprueba `tests/practicas-registro.test.
 | U3-4A-01 | 4 | sí | Decidir qué operación va primero en una expresión combinada con enteros | `jerarquia-enteros` |
 | U3-4A-02 | 4 | sí | Calcular una expresión combinada con potencias, productos y sumas | `jerarquia-enteros` |
 | U3-4A-03 | 4 | sí | Calcular una expresión combinada con un paréntesis que contiene una potencia o un producto | `parentesis-enteros` |
-| U3-4A-04 | 4 |  | Colocar paréntesis en una expresión para obtener un resultado dado | `parentesis-enteros` |
+| U3-4A-04 | 4 |  | Colocar paréntesis en una expresión para obtener un resultado dado | `parentesis-enteros`, `coloca-enteros` |
 | U3-4A-05 | 4 |  | Encontrar el error en un cálculo combinado | `errores3` |
-| U3-4A-06 | 4 |  | Distinguir la potencia que afecta a todo el paréntesis de la que afecta solo a un número de dentro | `parentesis-enteros` |
+| U3-4A-06 | 4 |  | Distinguir la potencia que afecta a todo el paréntesis de la que afecta solo a un número de dentro | `parentesis-enteros`, `coloca-enteros` |
 | U3-4A-07 | 4 |  | Calcular una expresión con paréntesis dentro de corchetes, de dentro afuera | `parentesis-enteros` |
 | U3-4B-01 | 4 |  | Pasar una expresión a palabras y una frase a símbolos, en los dos idiomas | `leelo3` |
 | U3-4B-02 | 4 |  | Vocabulario de los problemas: change, difference, deeper, balance, profit / loss, how much warmer / cold… | `variacion`, `leelo3` |

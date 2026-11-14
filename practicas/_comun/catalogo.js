@@ -73,6 +73,8 @@ export const CATALOGO = [
   { id: 39, slug: 'potencias-enteros', ruta: 'potencias-enteros/', unidad: 3, nombre: { es: 'Productos y potencias con signo', en: 'Signs in products and powers' }, nEjercicios: 4, disponible: true },
   { id: 40, slug: 'jerarquia-enteros', ruta: 'jerarquia-enteros/', unidad: 3, nombre: { es: '¿Qué se hace primero? Con enteros', en: 'What comes first? With integers' }, nEjercicios: 4, disponible: true },
   { id: 41, slug: 'parentesis-enteros', ruta: 'parentesis-enteros/', unidad: 3, nombre: { es: 'Paréntesis y corchetes', en: 'Brackets' }, nEjercicios: 5, disponible: true },
+  // Coloca los paréntesis con enteros (PU2: fila y esqueleto de la 199, sobre `_comun/parentesis-motor.js`; la escribe la 200 y la publica la 203).
+  { id: 80, slug: 'coloca-enteros', ruta: 'coloca-enteros/', unidad: 3, nombre: { es: 'Coloca los paréntesis. Con enteros', en: 'Place the brackets: with integers' }, nEjercicios: 3, disponible: false },
   { id: 42, slug: 'errores3', ruta: 'errores3/', unidad: 3, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 43, slug: 'variacion', ruta: 'variacion/', unidad: 3, nombre: { es: 'Subidas, bajadas y diferencias', en: 'Rises, falls and differences' }, nEjercicios: 5, disponible: true },
   { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
@@ -105,6 +107,8 @@ export const CATALOGO = [
   { id: 52, slug: 'suma-resta', ruta: 'suma-resta/', unidad: 4, nombre: { es: 'Suma y resta', en: 'Adding and subtracting' }, nEjercicios: 5, disponible: true },
   { id: 53, slug: 'multiplica-divide', ruta: 'multiplica-divide/', unidad: 4, nombre: { es: 'Multiplica y divide', en: 'Multiply and divide' }, nEjercicios: 5, disponible: true },
   { id: 54, slug: 'combinadas-fracciones', ruta: 'combinadas-fracciones/', unidad: 4, nombre: { es: '¿Qué se hace primero? Con fracciones', en: 'What comes first? With fractions' }, nEjercicios: 3, disponible: true },
+  // Coloca los paréntesis con fracciones (PU2: fila y esqueleto de la 199; la escribe la 201 y la publica la 204).
+  { id: 81, slug: 'coloca-fracciones', ruta: 'coloca-fracciones/', unidad: 4, nombre: { es: 'Coloca los paréntesis. Con fracciones', en: 'Place the brackets: with fractions' }, nEjercicios: 3, disponible: false },
   { id: 55, slug: 'errores4', ruta: 'errores4/', unidad: 4, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 56, slug: 'leelo4', ruta: 'leelo4/', unidad: 4, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Unidad 5, Decimals (PU2, tareas 123-129; filas puestas por la 122 el 2026-11-05, con un esqueleto en
@@ -113,6 +117,8 @@ export const CATALOGO = [
   { id: 58, slug: 'compara-decimales', ruta: 'compara-decimales/', unidad: 5, nombre: { es: 'Compara, ordena y redondea', en: 'Compare, order and round' }, nEjercicios: 4, disponible: true },
   { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: true },
   { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 6, disponible: true },
+  // Coloca los paréntesis con decimales (PU2: fila y esqueleto de la 199; la escribe la 202 y la publica la 204).
+  { id: 82, slug: 'coloca-decimales', ruta: 'coloca-decimales/', unidad: 5, nombre: { es: 'Coloca los paréntesis. Con decimales', en: 'Place the brackets: with decimals' }, nEjercicios: 3, disponible: false },
   { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: true },
   { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },

@@ -51,6 +51,7 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     // Unidad 3 (tarea 79).
     [33, 'termometro', 5], [34, 'opuestos', 4], [35, 'situaciones', 3], [36, 'saltos', 5], [37, 'dos-signos', 4],
     [38, 'signos-producto', 5], [39, 'potencias-enteros', 4], [40, 'jerarquia-enteros', 4], [41, 'parentesis-enteros', 5],
+    [80, 'coloca-enteros', 3],   // tarea 199: fuera del rango 33-44 de la 79
     [42, 'errores3', 3], [43, 'variacion', 5], [44, 'leelo3', 4],
     [45, 'ortografia', 11],
     // Ortografía en bloques (tarea 134): sección propia de la portada.
@@ -58,10 +59,10 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [67, 'ortografia-palabras', 3], [68, 'ortografia-ampliacion', 4],
     // Unidad 4 (tarea 98).
     [47, 'que-fraccion', 4], [48, 'equivalentes', 4], [49, 'simplifica', 3], [50, 'compara', 4], [51, 'fraccion-de', 4],
-    [52, 'suma-resta', 5], [53, 'multiplica-divide', 5], [54, 'combinadas-fracciones', 3], [55, 'errores4', 3], [56, 'leelo4', 4],
+    [52, 'suma-resta', 5], [53, 'multiplica-divide', 5], [54, 'combinadas-fracciones', 3], [81, 'coloca-fracciones', 3], [55, 'errores4', 3], [56, 'leelo4', 4],
     // Unidad 5 (tarea 122).
     [57, 'lee-decimales', 4], [58, 'compara-decimales', 4], [59, 'suma-resta-decimales', 4], [60, 'multiplica-divide-decimales', 6],
-    [61, 'fraccion-decimal', 4], [62, 'errores5', 3], [63, 'leelo5', 4],
+    [82, 'coloca-decimales', 3], [61, 'fraccion-decimal', 4], [62, 'errores5', 3], [63, 'leelo5', 4],
     // Unidad 6 (tarea 144).
     [69, 'traduce', 4], [70, 'valor-numerico', 3], [71, 'terminos-semejantes', 4], [72, 'es-solucion', 4], [73, 'transposicion', 5],
     [74, 'resuelve', 4], [75, 'parentesis-algebra', 4], [76, 'denominadores', 4], [77, 'problemas-ecuaciones', 5], [78, 'errores6', 3],

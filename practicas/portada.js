@@ -70,7 +70,7 @@ export const BLOQUES = [
   {
     unidad: 3,
     titulo: { es: 'Semana 3 · Potencias, jerarquía y paréntesis', en: 'Week 3 · Powers, order of operations and brackets' },
-    slugs: ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros'],
+    slugs: ['potencias-enteros', 'jerarquia-enteros', 'parentesis-enteros', 'coloca-enteros'],
   },
   {
     unidad: 3,
@@ -96,7 +96,7 @@ export const BLOQUES = [
   {
     unidad: 4,
     titulo: { es: 'Semana 3 · Multiplicar, dividir, combinadas y errores', en: 'Week 3 · Multiplying, dividing, mixed operations and mistakes' },
-    slugs: ['multiplica-divide', 'combinadas-fracciones', 'errores4'],
+    slugs: ['multiplica-divide', 'combinadas-fracciones', 'coloca-fracciones', 'errores4'],
   },
   {
     unidad: 4,
@@ -112,7 +112,7 @@ export const BLOQUES = [
   {
     unidad: 5,
     titulo: { es: 'Semana 2 · Multiplicar, dividir, fracciones y decimales, errores', en: 'Week 2 · Multiplying, dividing, fractions and decimals, mistakes' },
-    slugs: ['multiplica-divide-decimales', 'fraccion-decimal', 'errores5'],
+    slugs: ['multiplica-divide-decimales', 'coloca-decimales', 'fraccion-decimal', 'errores5'],
   },
   {
     unidad: 5,
@@ -192,6 +192,7 @@ export const DESCRIPCION = {
   'potencias-enteros': { es: 'El signo de un producto de varios factores y de una potencia de base negativa: (−3)² frente a −3².', en: 'The sign of a product of several factors and of a power with a negative base: (−3)² compared with −3².' },
   'jerarquia-enteros': { es: 'Toca la operación que va primero, paso a paso, con enteros, productos y potencias.', en: 'Tap the operation that comes first, step by step, with integers, products and powers.' },
   'parentesis-enteros': { es: 'Quita paréntesis precedidos de + y de −, opera de dentro afuera y coloca paréntesis para conseguir un resultado.', en: 'Remove brackets after + and after −, work from the inside out and place brackets to get a result.' },
+  'coloca-enteros': { es: 'Coloca paréntesis en una operación con enteros y encuentra todos los resultados que salen, también con una potencia y con divisiones.', en: 'Place brackets in a calculation with integers and find all the results you can get, also with a power and with divisions.' },
   errores3: { es: 'Procedimientos de la unidad 3: dónde está el error, qué error es y qué no es un error.', en: 'Worked answers from unit 3: where the mistake is, which mistake it is and what is not a mistake.' },
   variacion: { es: 'Cuánto ha subido o bajado, diferencias de temperaturas y de alturas, el dato que falta y los años antes de Cristo.', en: 'How much it has risen or fallen, differences of temperatures and heights, the missing piece and years BC.' },
   leelo3: { es: 'Lee en inglés enteros, sumas, productos y potencias con signo, y pasa de las palabras a los símbolos.', en: 'Read integers, sums, products and powers with signs in English, and go from words to symbols.' },
@@ -203,6 +204,7 @@ export const DESCRIPCION = {
   'suma-resta': { es: 'Suma y resta con el mismo y con distinto denominador, con naturales y con negativas, lo que queda y los errores típicos.', en: 'Add and subtract with the same and with different denominators, with whole numbers and negative fractions, what is left and the common mistakes.' },
   'multiplica-divide': { es: 'Producto, fracción de una fracción, potencias, la inversa y la división por los dos métodos.', en: 'Multiplying, a fraction of a fraction, powers, the reciprocal and dividing in two ways.' },
   'combinadas-fracciones': { es: 'Toca la operación que va primero y resuelve paso a paso, con fracciones y paréntesis.', en: 'Tap the operation that comes first and work it out step by step, with fractions and brackets.' },
+  'coloca-fracciones': { es: 'Coloca paréntesis en una operación con fracciones: encuentra todos los resultados y consigue el que se pide.', en: 'Place brackets in a calculation with fractions: find all the results and get the one you are asked for.' },
   errores4: { es: 'Procedimientos de la unidad 4: si están bien o mal, en qué línea está el error y cómo se arregla.', en: 'Worked answers from unit 4: right or wrong, which line has the mistake and how to fix it.' },
   leelo4: { es: 'El vocabulario de las fracciones en inglés: empareja, lee fracciones y cuentas, entiende la pregunta y escribe lo que oyes.', en: 'Fraction vocabulary in English: match, read fractions and calculations, understand the question and write what you hear.' },
   // Unidad 5 (tarea 122), sacadas de las fichas 123-129.
@@ -210,6 +212,7 @@ export const DESCRIPCION = {
   'compara-decimales': { es: 'Compara sin caer en la trampa de las cifras, ordena, busca un decimal entre dos y redondea a la unidad, a la décima y a la centésima.', en: 'Compare without falling for the number of digits, put decimals in order, find one in between and round to the nearest whole number, tenth and hundredth.' },
   'suma-resta-decimales': { es: 'Suma y resta con las comas en columna, también con naturales, problemas de compras y de medidas, y multiplica y divide por 10, 100 y 1000.', en: 'Add and subtract lining up the decimal points, also with whole numbers, shopping and measurement problems, and multiply and divide by 10, 100 and 1000.' },
   'multiplica-divide-decimales': { es: 'Coloca la coma en el producto, divide entre un natural y entre un decimal, comprueba una división con su resto y resuelve problemas de precios y repartos.', en: 'Place the point in a product, divide by a whole number and by a decimal, check a division with its remainder and solve price and sharing problems.' },
+  'coloca-decimales': { es: 'Coloca paréntesis en una operación con decimales: encuentra todos los resultados, también con un cuadrado, y consigue el que se pide.', en: 'Place brackets in a calculation with decimals: find all the results, also with a square, and get the one you are asked for.' },
   'fraccion-decimal': { es: 'De fracción a decimal dividiendo, exacto o periódico, de decimal a fracción irreducible, los pares que hay que saberse y una fracción frente a un decimal.', en: 'Fractions to decimals by dividing, terminating or recurring, decimals to fractions in their simplest form, the pairs to learn by heart and a fraction against a decimal.' },
   errores5: { es: 'Cálculos con decimales de la unidad 5: si están bien o mal, en qué paso está el error, qué error es y cómo se arregla.', en: 'Worked calculations with decimals from unit 5: right or wrong, which step has the mistake, what the mistake is and how to fix it.' },
   leelo5: { es: 'El vocabulario de los decimales en inglés: la palabra, lee decimales y cantidades de dinero, entiende la consigna y completa la frase.', en: 'Decimal vocabulary in English: learn the words, read decimals and amounts of money, understand the instruction and fill in the sentence.' },
