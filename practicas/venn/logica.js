@@ -322,19 +322,37 @@ export function comprobaciones(it, idioma) {
 
 const descomposicion = (it, idioma) => TX.ayuda.descompon[idioma](numA(it), numB(it), htmlFact(it.fa), htmlFact(it.fb));
 
-/** Ejercicio 1 (Venn): descomponer, juntar parejas y leer el m.c.d. en el centro. */
+/** «2, 3 y 5» / «2, 3 and 5». */
+const enLista = (cosas, idioma) => (cosas.length < 2 ? cosas.join('') : `${cosas.slice(0, -1).join(', ')} ${TX.ayuda.y[idioma]} ${cosas.at(-1)}`);
+
+/** Ejercicio 1 (Venn): descomponer, hacer las parejas y decir dónde va cada ficha (lo que se contesta). */
 export function explicaVenn(it, idioma) {
   const x = TX.ayuda;
-  const centro = it.comunes.length ? producto(it.comunes) : '';
-  const parejas = it.comunes.length ? x.parejas[idioma](centro) : x.sin_parejas[idioma];
-  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${parejas}</li></ol>`
-    + `<p>${TX.reglas.respuesta[idioma]}: ${resumenVenn(it, idioma).split('<br>')[0]}</p><p>${x.consejo_venn[idioma]}</p>`;
+  const parejas = enLista(it.comunes.map(([p, e]) => x.pareja_de[idioma](e, p)), idioma);
+  const paso = it.comunes.length ? x.parejas[idioma](parejas) : x.sin_parejas[idioma];
+  const lado = f => (f.length ? enLista(fichasDe(f), idioma) : x.nada[idioma]);
+  const colocacion = x.colocacion[idioma](it.comunes.length ? parejas : x.nada[idioma], lado(it.soloA), it.a, lado(it.soloB), it.b);
+  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${paso}</li></ol>`
+    + `<p>${colocacion}</p><p>${x.consejo_venn[idioma]}</p>`;
 }
 
-/** Ejercicios 2, 3 y 4 (m.c.d., m.c.m. y mezcla): descomponer, la regla y la solución. */
+/** Ejercicios 2, 3 y 4 (m.c.d., m.c.m. y mezcla): descomponer, la regla con los primos del ítem y la solución. */
 export function explicaReglas(it, idioma) {
   const x = TX.ayuda;
-  const consejo = it.tipo === 'mezcla' ? `<p>${x.consejo_mezcla[idioma]}</p>` : '';
-  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${x.regla[it.pide][idioma]}</li></ol>`
-    + `<p>${TX.reglas.respuesta[idioma]} ${solucionHtml(it, idioma)}</p>${consejo}`;
+  const nombre = `<span class="venn-${it.pide}">${NOMBRE[it.pide][idioma]}</span>`;
+  const sinComunes = it.pide === 'mcd' && it.comunes.length === 0;
+  const regla = sinComunes
+    ? x.sin_comunes[idioma](numA(it), numB(it))
+    : x.regla[it.pide][idioma](enLista(it.solucion.map(([p, e]) => `<span class="cuenta">${potencia(p, e)}</span>`), idioma));
+  const sola = it.solucion.length === 0 || (it.solucion.length === 1 && it.solucion[0][1] === 1);
+  const solucion = `<span class="cuenta">${nombre} = ${sola ? '' : `${htmlFact(it.solucion)} = `}${valorDe(it.solucion)}</span>`;
+  // Como mucho un consejo: en la mezcla, la comprobación; en los otros, el caso especial del ítem si lo hay.
+  const menor = Math.min(it.a, it.b), mayor = Math.max(it.a, it.b);
+  const clase = n => `<span class="${n === it.a ? 'va' : 'vb'}">${n}</span>`;
+  const consejo = it.tipo === 'mezcla' ? x.consejo_mezcla[idioma]
+    : sinComunes ? x.consejo_uno[idioma]
+      : mayor % menor === 0 ? TX.reglas.uno_divide[it.pide][idioma](clase(menor), clase(mayor))
+        : '';
+  return `<ol class="pasos-ayuda"><li>${descomposicion(it, idioma)}</li><li>${regla}</li></ol>`
+    + `<p>${TX.reglas.respuesta[idioma]} ${solucion}.</p>${consejo ? `<p>${consejo}</p>` : ''}`;
 }

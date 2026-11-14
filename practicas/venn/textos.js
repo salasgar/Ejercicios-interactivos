@@ -238,28 +238,45 @@ export const TX = {
       es: (A, B, fa, fb) => `Descompón cada número en factores primos: <span class="cuenta">${A} = ${fa}</span> y <span class="cuenta">${B} = ${fb}</span>.`,
       en: (A, B, fa, fb) => `Write each number as a product of prime factors: <span class="cuenta">${A} = ${fa}</span> and <span class="cuenta">${B} = ${fb}</span>.`,
     },
+    // Revisión 193: la tarjeta dice dónde va cada ficha (eso es lo que se contesta), no el m.c.d.
     parejas: {
-      es: centro => `Junta cada primo de un número con el mismo primo del otro: cada pareja va al centro (<span class="cuenta">${centro}</span>). Lo que se queda sin pareja va a su lado.`,
-      en: centro => `Match each prime factor of one number with the same prime factor of the other: each pair goes in the centre (<span class="cuenta">${centro}</span>). Whatever has no pair stays on its own side.`,
+      es: lista => `Haz parejas con el mismo primo, uno de cada número: salen ${lista}. Las parejas van al centro; lo que se queda sin pareja, a su lado.`,
+      en: lista => `Make pairs with the same prime, one from each number: you get ${lista}. The pairs go in the middle; anything without a pair stays on its own side.`,
     },
+    pareja_de: { es: (n, p) => `${parejas.es(n)} de ${p}`, en: (n, p) => `${parejas.en(n)} of ${p}` },
     sin_parejas: {
-      es: 'Ningún primo está en los dos números: no hay parejas y el centro queda vacío.',
-      en: 'No prime factor is in both numbers: there are no pairs and the centre stays empty.',
+      es: 'Ningún primo está en los dos números: no hay parejas.',
+      en: 'No prime factor is in both numbers: there are no pairs.',
     },
+    colocacion: {
+      es: (centro, soloA, A, soloB, B) => `La respuesta es esta: en el centro, ${centro}; en «solo ${A}», ${soloA}; en «solo ${B}», ${soloB}.`,
+      en: (centro, soloA, A, soloB, B) => `The answer is this: in the middle, ${centro}; in “only ${A}”, ${soloA}; in “only ${B}”, ${soloB}.`,
+    },
+    nada: { es: 'nada', en: 'nothing' },
     consejo_venn: {
       es: 'Consejo: tacha cada pareja a medida que la pones en el centro.',
-      en: 'Tip: cross out each pair as you put it in the centre.',
+      en: 'Tip: cross out each pair as you put it in the middle.',
     },
+    // Revisión 193: la regla, aplicada a los primos de ese ítem (antes solo se enunciaba, y se repetía al final).
     regla: {
       mcd: {
-        es: 'Para el m.c.d., toma solo los primos que están en los dos números, cada uno con el menor exponente.',
-        en: 'For the GCD, take only the prime factors that are in both numbers, each with its lowest power.',
+        es: lista => `Para el m.c.d., coge solo los primos comunes, cada uno con el menor exponente: ${lista}.`,
+        en: lista => `For the GCD, take only the common prime factors, each with its lowest power: ${lista}.`,
       },
       mcm: {
-        es: 'Para el m.c.m., toma todos los primos que salen en alguno de los dos números, cada uno con el mayor exponente.',
-        en: 'For the LCM, take every prime factor that appears in either number, each with its highest power.',
+        es: lista => `Para el m.c.m., coge todos los primos, comunes y no comunes, cada uno con el mayor exponente: ${lista}.`,
+        en: lista => `For the LCM, take all the prime factors, common and not common, each with its highest power: ${lista}.`,
       },
     },
+    sin_comunes: {
+      es: (A, B) => `Para el m.c.d., coge solo los primos comunes: ${A} y ${B} no tienen ninguno.`,
+      en: (A, B) => `For the GCD, take only the common prime factors: ${A} and ${B} have none.`,
+    },
+    consejo_uno: {
+      es: 'Consejo: sin primos comunes, el m.c.d. es 1, nunca 0.',
+      en: 'Tip: with no common prime factors, the GCD is 1, never 0.',
+    },
+    y: { es: 'y', en: 'and' },
     consejo_mezcla: {
       es: 'Consejo: el m.c.d. nunca es mayor que el menor de los números, y el m.c.m. nunca es menor que el mayor.',
       en: 'Tip: the GCD is never larger than the smaller number, and the LCM is never smaller than the larger number.',
