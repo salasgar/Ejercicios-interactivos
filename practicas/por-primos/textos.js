@@ -146,10 +146,25 @@ export const TX = {
       en: (p, tiene, hace, n) => `${p}: your number has exponent ${tiene} and the target ${hace}; press : ${p} (${n === 1 ? 'once' : `${n} times`})`,
     },
     resto: { es: 'Los demás primos ya están bien.', en: 'The other primes are already fine.' },
-    varias: { es: 'Hay más de una respuesta válida; esta es la más corta.', en: 'There is more than one valid answer; this is the shortest.' },
+    // Ejercicios 1 y 2 (revisión 193): hay muchas respuestas buenas; la de la explicación es un ejemplo,
+    // la de menos toques, y se dice que vale cualquier otra. Sustituye a «Hay más de una respuesta
+    // válida; esta es la más corta. La respuesta es …», que acababa dándola como la respuesta.
+    ejemplo: {
+      1: {
+        es: (x, b) => `La respuesta es ${x}, por ejemplo: es la que necesita menos toques, pero vale cualquier múltiplo de ${b}.`,
+        en: (x, b) => `The answer is ${x}, for example: it needs the fewest taps, but any multiple of ${b} is fine.`,
+      },
+      2: {
+        es: (x, b) => `La respuesta es ${x}, por ejemplo: es la que necesita menos toques, pero vale cualquier divisor de ${b}.`,
+        en: (x, b) => `The answer is ${x}, for example: it needs the fewest taps, but any divisor of ${b} is fine.`,
+      },
+    },
     todos: {
       regla: { es: 'Cada divisor lleva los mismos primos que el número, cada uno con un exponente desde 0 hasta el que tiene el número.', en: 'Each divisor has the same primes as the number, each one with an exponent from 0 up to the one the number has.' },
-      primo: { es: (p, e) => `el ${p} puede ir con exponente ${Array.from({ length: e + 1 }, (_, i) => i).join(', ')}`, en: (p, e) => `${p} can go with exponent ${Array.from({ length: e + 1 }, (_, i) => i).join(', ')}` },
+      primo: {
+        es: (p, e) => `el ${p} puede ir con exponente ${Array.from({ length: e }, (_, i) => i).join(', ')} o ${e}`,
+        en: (p, e) => `${p} can go with exponent ${Array.from({ length: e }, (_, i) => i).join(', ')} or ${e}`,
+      },
       cuenta: { es: (n, k) => `${n} tiene ${k} divisores`, en: (n, k) => `${n} has ${k} divisors` },
     },
   },

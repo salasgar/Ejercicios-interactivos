@@ -222,8 +222,14 @@ export function explicaToques(item, { idioma }) {
   const v = valorDe(final);
   const f = htmlFact(final);
   const num = `<span class="cuenta">${String(v) === f ? f : `${v} = ${f}`}</span>`;
-  const varias = j <= 2 ? ` ${a.varias[idioma]}` : '';
-  return `<p>${a.regla[j][idioma]}</p><ol class="pasos-ayuda">${lineas.join('')}</ol><p>${a.resto[idioma]}${varias} ${a.respuesta[idioma](`<strong>${num}</strong>`)}</p>`;
+  // Revisión 193: «Los demás primos ya están bien» solo si hay otros primos (en tu número o en el objetivo).
+  const tocados = new Set(pasos.map(([p]) => p));
+  const otros = BASES.some((p, i) => !tocados.has(p) && (expsDe(item.objetivo)[i] > 0 || expsDe(item.partida)[i] > 0));
+  const resto = otros ? `${a.resto[idioma]} ` : '';
+  // m.c.d. 1: se dice por qué (la misma frase que el feedback de acierto).
+  const uno = j === 4 && v === 1 ? `${TX.expl.mcdUno[idioma](valorDe(item.partida), valorDe(item.objetivo)).trim()} ` : '';
+  const fin = j <= 2 ? a.ejemplo[j][idioma](`<strong>${num}</strong>`, valorDe(item.objetivo)) : a.respuesta[idioma](`<strong>${num}</strong>`);
+  return `<p>${a.regla[j][idioma]}</p><ol class="pasos-ayuda">${lineas.join('')}</ol><p>${resto}${uno}${fin}</p>`;
 }
 
 /** «No lo sé» del ejercicio 5: qué exponentes vale cada primo y la lista de todos los divisores. */
