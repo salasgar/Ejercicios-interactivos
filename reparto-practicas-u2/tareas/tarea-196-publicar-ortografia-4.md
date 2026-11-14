@@ -154,6 +154,15 @@ c: solo en la portada, sin puntos), **Juan Luis ha elegido la (b)**. Por tanto:
 - El lunes 3-5 es festivo: el paquete 2 de la U8 empieza el martes 4-5; la propuesta nombra paquetes, no fechas.
 - (de la coordinadora, 5-11) `catalogo.js` lo comparten muchas tareas: edita, comitea con ruta explícita y suéltalo enseguida.
 - (de la 163) El 8080 suele estar ocupado por el servidor de otra sesión: levanta el tuyo en otro puerto.
+- (de la 196, 14-11) **El DLE con Claude in Chrome**: abre una pestaña en `https://dle.rae.es/<palabra>` y haz `fetch('https://dle.rae.es/' + w)`
+  desde ella (mismo origen; desde otra pestaña da «Failed to fetch»). La búsqueda **sin tilde** es la prueba de las tildes: si «jamas» devuelve
+  artículos (`jama`, `jamar`), la forma existe; si solo devuelve sugerencias entre paréntesis («autobús (autobús)»), no. Comprueba también los
+  sustitutos: *compás* parecía limpio y *compas* es el plural de *compa*. El DPD está en `www.rae.es/dpd/<entrada>` (otra pestaña u origen).
+- (de la 196) Un recorte que deja un nivel por debajo del mínimo (16; 12 en los de tocar) **no es recorte**: el test lo tumba (tildes, línea 136).
+  Cuenta antes de quitar.
+- (de la 196) El bot de clics al azar va lento con un `python3 -m http.server` (unos 25 s por recorrido; 66 recorridos, ~25 min): lánzalo en
+  segundo plano nada más empezar, y mientras tanto lee. Y mientras corre, ese servidor tarda en responder a otra pestaña («Cargando…»).
+- (de la 196) La etiqueta de nivel enseña el nivel del alumno, no el del ítem (`elegirDeNivel` mezcla los inferiores): «mesa» con «Nivel 3» es lo diseñado.
 
 ## Prohibido (propio de esta tarea)
 
