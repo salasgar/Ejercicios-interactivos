@@ -79,6 +79,28 @@ export const TX = {
     },
     enunciado: { es: (a, b) => `${a} : ${b}`, en: (a, b) => `${a} ÷ ${b}` },
   },
+  no_se_hacerlo: { es: 'No sé hacerlo', en: 'I don’t know how' },
+  // La explicación del botón «No lo sé» (la arma logica.js: explicaProducto, explicaMultiplo, explicaCociente).
+  ayuda: {
+    regla_producto: {
+      es: 'Para multiplicar sin calcular, se suman los exponentes de cada primo. Un primo que está en un solo número pasa tal cual.',
+      en: 'To multiply without calculating, add the exponents of each prime. A prime that is in only one number stays as it is.',
+    },
+    regla_multiplo: {
+      es: 'Un número es múltiplo de otro si tiene todos sus primos, cada uno con exponente igual o mayor.',
+      en: 'A number is a multiple of another if it has all its primes, each one with an equal or greater exponent.',
+    },
+    regla_cociente: {
+      es: 'Para dividir sin calcular, se restan los exponentes de cada primo. Un exponente que da 0 hace desaparecer el primo.',
+      en: 'To divide without calculating, subtract the exponents of each prime. An exponent that gives 0 makes the prime disappear.',
+    },
+    respuesta: { es: 'La respuesta es', en: 'The answer is' },
+    no: { es: 'No', en: 'No' },
+    si_multiplica: {
+      es: (b, q) => `sí, y ${b} se multiplica por ${q}`,
+      en: (b, q) => `yes, and ${b} is multiplied by ${q}`,
+    },
+  },
   exponente_de: { es: p => `Exponente de ${p}`, en: p => `Exponent of ${p}` },
   producto_de: { es: (a, b) => `${a} · ${b}`, en: (a, b) => `${a} · ${b}` },
 

@@ -9,6 +9,7 @@ import { TX } from './textos.js';
 import {
   generarProducto, generarMultiplo, generarCociente,
   primosDe, factDe, esCorrecta, explicar, explicarNoMultiplo, EXPONENTE_MAXIMO,
+  explicaProducto, explicaMultiplo, explicaCociente,
 } from './logica.js';
 
 const datos = (fa, a, fb, b) => `
@@ -123,8 +124,8 @@ function montarCociente(contenedor, item, api) {
 arrancar({
   slug: 'factorizaciones',
   ejercicios: [
-    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto },
-    { nombre: TX.multiplo.nombre, detalle: TX.multiplo.detalle, introduccion: TX.multiplo.introduccion, generar: generarMultiplo, montar: montarMultiplo, enunciado: enunciadoMultiplo },
-    { nombre: TX.cociente.nombre, detalle: TX.cociente.detalle, introduccion: TX.cociente.introduccion, generar: generarCociente, montar: montarCociente, enunciado: enunciadoCociente },
+    { nombre: TX.producto.nombre, detalle: TX.producto.detalle, introduccion: TX.producto.introduccion, generar: generarProducto, montar: montarProducto, enunciado: enunciadoProducto, explicacion: explicaProducto, noLoSe: TX.no_se_hacerlo },
+    { nombre: TX.multiplo.nombre, detalle: TX.multiplo.detalle, introduccion: TX.multiplo.introduccion, generar: generarMultiplo, montar: montarMultiplo, enunciado: enunciadoMultiplo, explicacion: explicaMultiplo },
+    { nombre: TX.cociente.nombre, detalle: TX.cociente.detalle, introduccion: TX.cociente.introduccion, generar: generarCociente, montar: montarCociente, enunciado: enunciadoCociente, explicacion: explicaCociente, noLoSe: TX.no_se_hacerlo },
   ],
 });

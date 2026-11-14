@@ -197,4 +197,37 @@ export function explicar(item, exponentes, idioma) {
   return `${tuya}${prefijo}${lineas}. ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${resultado}`)}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
 }
 
+// --- «No lo sé»: la explicación de cada ejercicio (tarea 186) -------------------------
+
+const mayuscula = texto => texto.replace(/^[a-zñáéíóú]/, c => c.toUpperCase());
+const factorYValor = sol => { const q = valorDe(sol), f = htmlFact(sol); return f === String(q) ? `${q}` : `${f} = ${q}`; };
+
+/** Ejercicio 1: la regla, un renglón por primo, la factorización pedida y la comprobación. */
+export function explicaProducto(item, { idioma: l }) {
+  const { ayuda, expl } = TX;
+  const sol = item.solucion;
+  const partes = sol.map(([p, e]) => p ** e).join(' · ');
+  const lineas = mayuscula(lineasProducto(item, l).join('; '));
+  return `${ayuda.regla_producto[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(htmlFact(sol))}. ${expl.compruebalo[l]} ${cuenta(`${partes} = ${valorDe(sol)}`)}.`;
+}
+
+/** Ejercicio 2: si no es múltiplo, qué primo falla; si lo es, además por qué número se multiplica. */
+export function explicaMultiplo(item, { idioma: l }) {
+  const { ayuda, expl } = TX;
+  if (!item.esMultiplo) return `${ayuda.regla_multiplo[l]} ${explicarNoMultiplo(item, l)} ${ayuda.respuesta[l]} ${cuenta(ayuda.no[l])}.`;
+  const sol = item.solucion;
+  const q = valorDe(sol);
+  const lineas = mayuscula(lineasCociente(item, l).join('; '));
+  return `${expl.es_multiplo[l](item.a, item.b)}. ${lineas}. ${ayuda.respuesta[l]} ${ayuda.si_multiplica[l](item.b, cuenta(factorYValor(sol)))}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+}
+
+/** Ejercicio 3: la regla, un renglón por primo, el cociente y la comprobación. */
+export function explicaCociente(item, { idioma: l }) {
+  const { ayuda, expl } = TX;
+  const sol = item.solucion;
+  const q = valorDe(sol);
+  const lineas = mayuscula(lineasCociente(item, l).join('; '));
+  return `${ayuda.regla_cociente[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${factorYValor(sol)}`)}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+}
+
 export { multiplicarFact, dividirFact, esMultiploFact, htmlFact, valorDe };
