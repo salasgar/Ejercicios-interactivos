@@ -467,3 +467,25 @@ test('textos: ningún texto de alumno con ×, con «factor» entre números ni c
     }
   }
 });
+
+test('textos (reabierta 14-11): ningún feedback repite un número consigo mismo ni dice «quedan 1 amarilla» (una sola ficha); el m.c.d. sin parejas y el m.c.m. se explican con el ítem', () => {
+  const rep = /(?:= |^|[.;] )(\d+) = \1(?![\d ·])/, plural1 = /quedan 1 [^,;:y]+:|are left 1 [^,;:]+ \(\w+\):/;
+  const revisa = (txt, donde) => {
+    const plano = txt.replace(/<[^>]+>/g, '');
+    assert.ok(!rep.test(plano), `${donde}: «${plano}»`);
+    assert.ok(!plural1.test(plano), `${donde}: «${plano}»`);
+  };
+  const qu = items(generarQuita, 11).slice(0, 1000), re = items(generarRegla, 12).slice(0, 1000);
+  const m7 = items(generarMcd, 13).slice(0, 1000), m8 = items(generarMcm, 14).slice(0, 1000);
+  for (const idioma of ['es', 'en']) {
+    for (const it of qu) if (it.divide) revisa(TX.quita.buena[idioma](it.a, it.d), 'quita');
+    for (const it of re) if (it.divisible) revisa(TX.regla.buena[idioma](it.a, it.d), 'regla');
+    for (const it of m7) revisa(TX.mcd.buena[idioma](it.a, it.b), 'mcd');
+    for (const it of m8) {
+      const t = TX.mcm.buena[idioma](it.a, it.b);
+      revisa(t, 'mcm');
+      assert.ok(t.includes(String(valor(it.a))) && t.includes(String(valor(it.b))), 'mcm: nombra los dos números');
+    }
+  }
+  assert.match(TX.mcd.buena.es({ 2: 1 }, { 3: 1 }).replace(/<[^>]+>/g, ''), /no tienen ninguna ficha en común: el m\.c\.d\. = 1/);
+});

@@ -39,15 +39,28 @@ const LEYENDA = {
   en: `<strong>One counter for each prime factor</strong>: ${F(2)} green (verde) = 2, ${F(3)} blue (azul) = 3, ${F(5)} yellow (amarilla) = 5, ${F(7)} red (roja) = 7. For 11, 13… Pablo uses a white counter (blanca) with the number written on it. The number 1 is <strong>no counters at all</strong>.`,
 };
 
+/** «2 · 5 = 10», pero «5» y no «5 = 5» cuando las potencias ya son el número. */
+const potYValor = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${indice(m)} = ${valor(m)}`);
+/** «1 verde (green) y 2 azules (blue)»: las fichas de un montón, con «y» delante de la última. */
+function fichasTxt(m, idioma) {
+  const partes = colores(m).map(p => colorContado(p, exp(m, p), idioma));
+  if (!partes.length) return idioma === 'es' ? 'ninguna ficha (no counters)' : 'no counters (ninguna ficha)';
+  const y = idioma === 'es' ? ' y ' : ' and ';
+  return partes.length === 1 ? partes[0] : `${partes.slice(0, -1).join(', ')}${y}${partes.at(-1)}`;
+}
+/** «12 = 2² · 3», pero «7» y no «7 = 7». */
+const escrito = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${valor(m)} = ${indice(m)}`);
+
 /** Cuenta de lo que quita Pablo al dividir (compartida por los ejercicios 4 y 5). */
 const quedaTxt = {
   es: (a, d) => {
     const r = quitar(a, d);
-    return `${quien(a, d).n} quita ${desglose(d, 'es')}; ${nFichas(r) ? `quedan ${desglose(r, 'es')}` : 'no queda ninguna ficha'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
+    const queda = nFichas(r) === 1 ? 'queda' : 'quedan';
+    return `${quien(a, d).n} quita ${desglose(d, 'es')}; ${nFichas(r) ? `${queda} ${desglose(r, 'es')}` : 'no queda ninguna ficha'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${potYValor(r)}`)}`;
   },
   en: (a, d) => {
     const r = quitar(a, d);
-    return `${quien(a, d).n} takes away ${desglose(d, 'en')}; ${nFichas(r) ? `what is left is ${desglose(r, 'en')}` : 'no counters are left'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${nFichas(r) ? `${indice(r)} = ` : ''}${valor(r)}`)}`;
+    return `${quien(a, d).n} takes away ${desglose(d, 'en')}; ${nFichas(r) ? `what is left is ${desglose(r, 'en')}` : 'no counters are left'}: ${cuenta(`${valor(a)} : ${valor(d)} = ${potYValor(r)}`)}`;
   },
 };
 
@@ -345,13 +358,13 @@ export const TX = {
     buena: {
       es: (a, b) => {
         const g = comunes(a, b);
-        if (!nFichas(g)) return `${valor(a)} = ${indice(a)} y ${valor(b)} = ${indice(b)} no tienen ninguna ficha en común: ${cuenta('m.c.d. = 1')} (ninguna ficha).`;
+        if (!nFichas(g)) return `${escrito(a)} y ${escrito(b)} no tienen ninguna ficha en común: el ${cuenta('m.c.d. = 1')} (ninguna ficha).`;
         const todo = nFichas(g) === nFichas(a) ? ` Todas las fichas de ${valor(a)} tienen pareja: el m.c.d. es ${valor(a)}, el pequeño.` : '';
         return `Parejas: ${desglose(g, 'es')}. ${cuenta(`m.c.d.(${valor(a)}, ${valor(b)}) = ${cuentaDe(g)}`)}.${todo}`;
       },
       en: (a, b) => {
         const g = comunes(a, b);
-        if (!nFichas(g)) return `${valor(a)} = ${indice(a)} and ${valor(b)} = ${indice(b)} have no counter in common: ${cuenta('GCD = 1')} (no counters).`;
+        if (!nFichas(g)) return `${escrito(a)} and ${escrito(b)} have no counter in common: the ${cuenta('GCD = 1')} (no counters).`;
         const todo = nFichas(g) === nFichas(a) ? ` Every counter of ${valor(a)} has a pair: the GCD is ${valor(a)}, the smaller number.` : '';
         return `Pairs: ${desglose(g, 'en')}. ${cuenta(`GCD(${valor(a)}, ${valor(b)}) = ${cuentaDe(g)}`)}.${todo}`;
       },
@@ -391,8 +404,8 @@ export const TX = {
       en: (a, b) => `Build the smallest pile that contains <strong>${valor(a)}</strong> and <strong>${valor(b)}</strong>.`,
     },
     buena: {
-      es: (a, b) => `De cada color, el mayor número de fichas: ${cuenta(`m.c.m.(${valor(a)}, ${valor(b)}) = ${indice(montonMinimo(a, b))} = ${valor(montonMinimo(a, b))}`)}. Comprueba: ${cuenta(`${valor(montonMinimo(a, b))} = ${valor(a)} · ${valor(montonMinimo(a, b)) / valor(a)} = ${valor(b)} · ${valor(montonMinimo(a, b)) / valor(b)}`)}.`,
-      en: (a, b) => `From each colour, the largest number of counters: ${cuenta(`LCM(${valor(a)}, ${valor(b)}) = ${indice(montonMinimo(a, b))} = ${valor(montonMinimo(a, b))}`)}. Check: ${cuenta(`${valor(montonMinimo(a, b))} = ${valor(a)} · ${valor(montonMinimo(a, b)) / valor(a)} = ${valor(b)} · ${valor(montonMinimo(a, b)) / valor(b)}`)}.`,
+      es: (a, b) => `${valor(a)} pone ${fichasTxt(a, 'es')} y ${valor(b)} pone ${fichasTxt(b, 'es')}; de cada color se queda el montón del que más tiene y ${nFichas(montonMinimo(a, b)) === 1 ? 'queda' : 'quedan'} ${fichasTxt(montonMinimo(a, b), 'es')}: ${cuenta(`m.c.m.(${valor(a)}, ${valor(b)}) = ${potYValor(montonMinimo(a, b))}`)}. Comprueba: ${cuenta(`${valor(montonMinimo(a, b))} = ${valor(a)} · ${valor(montonMinimo(a, b)) / valor(a)} = ${valor(b)} · ${valor(montonMinimo(a, b)) / valor(b)}`)}.`,
+      en: (a, b) => `${valor(a)} puts ${fichasTxt(a, 'en')} and ${valor(b)} puts ${fichasTxt(b, 'en')}; from each colour you keep the larger pile, and what is left is ${fichasTxt(montonMinimo(a, b), 'en')}: ${cuenta(`LCM(${valor(a)}, ${valor(b)}) = ${potYValor(montonMinimo(a, b))}`)}. Check: ${cuenta(`${valor(montonMinimo(a, b))} = ${valor(a)} · ${valor(montonMinimo(a, b)) / valor(a)} = ${valor(b)} · ${valor(montonMinimo(a, b)) / valor(b)}`)}.`,
     },
     tuyas: {
       es: st => `Tu montón: ${cuenta(nFichas(st) ? `${indice(st)} = ${valor(st)}` : '1')}.`,
@@ -472,15 +485,6 @@ const REGLA = {
 
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
 const fin = (tt, txt) => ` ${tt(RESPUESTA)} ${txt}.`;
-/** «2 · 5 = 10», pero «5» y no «5 = 5» cuando las potencias ya son el número. */
-const potYValor = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${indice(m)} = ${valor(m)}`);
-/** «1 verde (green) y 2 azules (blue)»: las fichas de un montón, con «y» delante de la última. */
-function fichasTxt(m, idioma) {
-  const partes = colores(m).map(p => colorContado(p, exp(m, p), idioma));
-  if (!partes.length) return idioma === 'es' ? 'ninguna ficha (no counters)' : 'no counters (ninguna ficha)';
-  const y = idioma === 'es' ? ' y ' : ' and ';
-  return partes.length === 1 ? partes[0] : `${partes.slice(0, -1).join(', ')}${y}${partes.at(-1)}`;
-}
 const lista = (ns, idioma) => `${ns.slice(0, -1).join(', ')}${idioma === 'es' ? ' y ' : ' and '}${ns.at(-1)}`;
 /** «Quedan 1 verde (green) y 1 amarilla (yellow): 40 : 4 = 2 · 5 = 10», con «queda» si es una sola ficha. */
 function quedanTxt(a, d, idioma) {
@@ -555,8 +559,6 @@ export const explicaMcd = (item, { tt, idioma }) => {
   const { a, b } = item, g = comunes(a, b);
   if (!nFichas(g)) {
     const boton = idioma === 'es' ? `«${TX.mcd.ninguna.es}»` : `“${TX.mcd.ninguna.en}”`;
-    // «12 = 2² · 3 y 7», no «y 7 = 7» (el feedback sí lo escribe así).
-    const escrito = m => (indice(m) === `${valor(m)}` ? `${valor(m)}` : `${valor(m)} = ${indice(m)}`);
     return `${tt(REGLA.mcd)} ${tt({ es: `${escrito(a)} y ${escrito(b)} no tienen ninguna ficha en común, y ninguna ficha es el 1.`, en: `${escrito(a)} and ${escrito(b)} have no counter in common, and no counters is the number 1.` })}`
       + fin(tt, tt({ es: `${boton}, y el m.c.d. es 1`, en: `${boton}, and the GCD is 1` }));
   }
