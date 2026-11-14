@@ -163,6 +163,13 @@ c: solo en la portada, sin puntos), **Juan Luis ha elegido la (b)**. Por tanto:
 - (de la 196) El bot de clics al azar va lento con un `python3 -m http.server` (unos 25 s por recorrido; 66 recorridos, ~25 min): lánzalo en
   segundo plano nada más empezar, y mientras tanto lee. Y mientras corre, ese servidor tarda en responder a otra pestaña («Cargando…»).
 - (de la 196) La etiqueta de nivel enseña el nivel del alumno, no el del ítem (`elegirDeNivel` mezcla los inferiores): «mesa» con «Nivel 3» es lo diseñado.
+- (de la 196, segunda pasada, 14-11) **Los sustitutos de una reabierta se revisan como ítems nuevos**, no como «hecho»: en la tercera de la 135, *triunfo*
+  (por *Luis*) metió otra palabra con dos respuestas (*triunfó*) y la frase nueva de *proporcional* quedó sin concordancia. En los ej. 2 y 3 (palabra
+  suelta), la prueba es poner la tilde en cada vocal o sílaba y buscar cada forma en el DLE; en el ej. 4, leer la frase completa con la buena puesta.
+- (de la 196, segunda pasada) **El candado del hook sobrevive 30 min al cierre de la sesión anterior**: la ficha y la ENTREGA quedan reservadas por
+  ella aunque su reclamo esté CERRADO. Si reclamas la 196 justo después de otra pasada, deja estas dos ediciones para el final y espera con un Monitor
+  que compare `date -u +%H%M` (en las sesiones del lanzador, `sleep` en segundo plano vuelve al instante y un `sleep` largo en primer plano lo bloquea
+  el entorno). El `sleep 30` del reclamo puede no esperar: vuelve a listar `hechos/reclamos/` un rato después.
 
 ## Prohibido (propio de esta tarea)
 

@@ -6,6 +6,10 @@ Sesión `s-20261114T113316-d58f9cb4` (Opus 5.5, esfuerzo Alto), 14-11-2026, desd
 publica**: tercera reabierta de la 135 (`hechos/reabiertas/135--s-20261114T113316-d58f9cb4.md`), y la terminada de esta tarea empieza por
 `PARCIAL:`. Cuando esa reabierta esté cerrada, se vuelve a reclamar la 196 para revisar solo lo reabierto y publicar las tildes.
 
+> **Segunda pasada (14-11, 12:08Z, sesión `s-20261114T120759-e1c97fc9`)**: la tercera reabierta se cerró (3bc3808), pero dos de sus
+> sustitutos no valen. **Las tildes siguen sin publicar**: cuarta reabierta de la 135 (`hechos/reabiertas/135--s-20261114T120759-e1c97fc9.md`).
+> Detalle al final, «Segunda pasada».
+
 Commit del código: **ed3cc3f** (`hechos/terminadas/196--s-20261114T113316-d58f9cb4.md`). Ficheros: `practicas/_comun/catalogo.js`
 (solo `disponible: true` de las filas 67 y 68), `tests/practicas-ortografia-comun.test.js` (solo `PUBLICADOS`), `docs/practicas-ortografia.md`
 (§5: la decisión de la ampliación; §7: qué hay publicado) y `README.md` (el párrafo de la ortografía). Ningún `logica.js` tocado.
