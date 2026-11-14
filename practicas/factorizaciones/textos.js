@@ -95,7 +95,8 @@ export const TX = {
       en: 'To divide without calculating, subtract the exponents of each prime. An exponent that gives 0 makes the prime disappear.',
     },
     respuesta: { es: 'La respuesta es', en: 'The answer is' },
-    no: { es: 'No', en: 'No' },
+    no: { es: 'no', en: 'no' },   // en medio de la frase: «La respuesta es no.»
+    compruebalo: { es: 'compruébalo:', en: 'check it:' },
     si_multiplica: {
       es: (b, q) => `sí, y ${b} se multiplica por ${q}`,
       en: (b, q) => `yes, and ${b} is multiplied by ${q}`,

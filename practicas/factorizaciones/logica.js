@@ -202,32 +202,38 @@ export function explicar(item, exponentes, idioma) {
 const mayuscula = texto => texto.replace(/^[a-zñáéíóú]/, c => c.toUpperCase());
 const factorYValor = sol => { const q = valorDe(sol), f = htmlFact(sol); return f === String(q) ? `${q}` : `${f} = ${q}`; };
 
-/** Ejercicio 1: la regla, un renglón por primo, la factorización pedida y la comprobación. */
+// Revisión de la tarea 193: la respuesta cierra la tarjeta (la comprobación va dentro, entre paréntesis, y no
+// detrás); el «sí» del ej. 2 lleva también la regla delante; y «La respuesta es no», con minúscula.
+const comprobacion = (l, txt) => ` (${TX.ayuda.compruebalo[l]} ${cuenta(txt)})`;
+
+/** Ejercicio 1: la regla, un renglón por primo, y la factorización pedida con su comprobación. */
 export function explicaProducto(item, { idioma: l }) {
-  const { ayuda, expl } = TX;
+  const { ayuda } = TX;
   const sol = item.solucion;
   const partes = sol.map(([p, e]) => p ** e).join(' · ');
   const lineas = mayuscula(lineasProducto(item, l).join('; '));
-  return `${ayuda.regla_producto[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(htmlFact(sol))}. ${expl.compruebalo[l]} ${cuenta(`${partes} = ${valorDe(sol)}`)}.`;
+  return `${ayuda.regla_producto[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(htmlFact(sol))}${comprobacion(l, `${partes} = ${valorDe(sol)}`)}.`;
 }
 
 /** Ejercicio 2: si no es múltiplo, qué primo falla; si lo es, además por qué número se multiplica. */
 export function explicaMultiplo(item, { idioma: l }) {
   const { ayuda, expl } = TX;
-  if (!item.esMultiplo) return `${ayuda.regla_multiplo[l]} ${explicarNoMultiplo(item, l)} ${ayuda.respuesta[l]} ${cuenta(ayuda.no[l])}.`;
+  // El «No:»/«Sí:» con que empieza el feedback se quita: la respuesta ya lo dice al final.
+  const sinSiNo = txt => mayuscula(txt.replace(/^(No|Sí|Yes): /, ''));
+  if (!item.esMultiplo) return `${ayuda.regla_multiplo[l]} ${sinSiNo(explicarNoMultiplo(item, l))} ${ayuda.respuesta[l]} ${cuenta(ayuda.no[l])}.`;
   const sol = item.solucion;
   const q = valorDe(sol);
   const lineas = mayuscula(lineasCociente(item, l).join('; '));
-  return `${expl.es_multiplo[l](item.a, item.b)}. ${lineas}. ${ayuda.respuesta[l]} ${ayuda.si_multiplica[l](item.b, cuenta(factorYValor(sol)))}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+  return `${ayuda.regla_multiplo[l]} ${sinSiNo(expl.es_multiplo[l](item.a, item.b))}. ${lineas}. ${ayuda.respuesta[l]} ${ayuda.si_multiplica[l](item.b, cuenta(factorYValor(sol)))}${comprobacion(l, `${q} · ${item.b} = ${item.a}`)}.`;
 }
 
-/** Ejercicio 3: la regla, un renglón por primo, el cociente y la comprobación. */
+/** Ejercicio 3: la regla, un renglón por primo, y el cociente con su comprobación. */
 export function explicaCociente(item, { idioma: l }) {
-  const { ayuda, expl } = TX;
+  const { ayuda } = TX;
   const sol = item.solucion;
   const q = valorDe(sol);
   const lineas = mayuscula(lineasCociente(item, l).join('; '));
-  return `${ayuda.regla_cociente[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${factorYValor(sol)}`)}. ${expl.compruebalo[l]} ${cuenta(`${q} · ${item.b} = ${item.a}`)}.`;
+  return `${ayuda.regla_cociente[l]} ${lineas}. ${ayuda.respuesta[l]} ${cuenta(`${TX.cociente.enunciado[l](item.a, item.b)} = ${factorYValor(sol)}`)}${comprobacion(l, `${q} · ${item.b} = ${item.a}`)}.`;
 }
 
 export { multiplicarFact, dividirFact, esMultiploFact, htmlFact, valorDe };

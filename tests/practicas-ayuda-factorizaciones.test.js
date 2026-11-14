@@ -45,7 +45,7 @@ test('factorizaciones, ejercicio 2: sí o no, y por qué número se multiplica',
         assert.ok(plano(h).includes(`${q} · ${item.b} = ${item.a}`), 'la comprobación');
         assert.match(plano(h), k === 0 ? /sí, y/ : /yes, and/);
       } else {
-        assert.match(plano(h), k === 0 ? /La respuesta es No ?\./ : /The answer is No ?\./);
+        assert.match(plano(h), k === 0 ? /La respuesta es no ?\.$/ : /The answer is no ?\.$/);
         const { p } = item.primoQueFalla;
         assert.ok(plano(h).includes(`${p}`), 'nombra el primo que falla');
       }
@@ -67,5 +67,40 @@ test('factorizaciones, ejercicio 3: la explicación lleva el cociente y su compr
       assert.ok(plano(h).includes(`${q} · ${item.b} = ${item.a}`), 'la comprobación');
     });
     assert.notEqual(hs[0], hs[1]);
+  }
+});
+
+// ─── Revisión de la tarea 193 ─────────────────────────────────────────────────
+
+const FIN = ['La respuesta es', 'The answer is'];
+const REGLA = [
+  [/^Para multiplicar sin calcular/, /^To multiply without calculating/],
+  [/^Un número es múltiplo de otro si/, /^A number is a multiple of another if/],
+  [/^Para dividir sin calcular/, /^To divide without calculating/],
+];
+
+test('factorizaciones: la regla delante y la respuesta (con su comprobación) cierra la tarjeta, una sola vez', () => {
+  [[generarProducto, explicaProducto], [generarMultiplo, explicaMultiplo], [generarCociente, explicaCociente]].forEach(([gen, fn], ej) => {
+    for (const item of generar(gen, 1931 + ej)) {
+      IDIOMAS.forEach((idioma, k) => {
+        const h = fn(item, { idioma }), p = plano(h).trim();
+        assert.match(p, REGLA[ej][k], `regla delante: ${p}`);
+        assert.equal(p.split(FIN[k]).length - 1, 1, 'una sola respuesta');
+        const fin = p.slice(p.indexOf(FIN[k]));
+        // Tras la respuesta solo queda su comprobación, entre paréntesis, y el punto final.
+        if (item.tipo !== 'multiplo' || item.esMultiplo) assert.match(fin, k === 0 ? /\(compruébalo: [^()]+\) ?\.$/ : /\(check it: [^()]+\) ?\.$/, fin);
+        assert.doesNotMatch(p, /\. (Compruébalo|Check it):/, 'la comprobación no va detrás de la respuesta');
+      });
+    }
+  });
+});
+
+test('factorizaciones, ejercicio 2: el «sí»/«no» sale solo en la respuesta (sin el «No:»/«Sí:» del feedback)', () => {
+  for (const item of generar(generarMultiplo, 1934)) {
+    IDIOMAS.forEach((idioma, k) => {
+      const p = plano(explicaMultiplo(item, { idioma }));
+      assert.doesNotMatch(p, /(^|\. )(No|Sí|Yes): /, p);
+      if (item.esMultiplo) assert.ok(p.includes(k === 0 ? `Todos los primos de ${item.b} están en ${item.a}` : `All the primes of ${item.b} are in ${item.a}`), p);
+    });
   }
 });
