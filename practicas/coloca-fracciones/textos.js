@@ -1,6 +1,6 @@
 // Coloca los paréntesis. Con fracciones: textos propios, siempre { es, en }. Los de la interfaz
 // son los comunes de `../_comun/parentesis-textos.js`; aquí van las introducciones y el consejo
-// del «No lo sé». ESQUELETO de la tarea 199: la 201 los reescribe. En inglés, «brackets».
+// del «No lo sé». En inglés, «brackets».
 // En esta práctica no hay agrupaciones imposibles a la vista (el generador las descarta).
 
 import { crearPantalla } from '../_comun/parentesis-pantalla.js';

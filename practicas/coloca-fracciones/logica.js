@@ -1,10 +1,20 @@
 // Coloca los paréntesis. Con fracciones (U4): los generadores. Lógica pura, sin DOM ni red.
-// ESQUELETO de la tarea 199: cumple las cotas de la ficha 201 por `buscar`; la 201 lo rehace a su
-// gusto (casos del papel fuera, variedad medida, cotas finas). Todo lo demás (árboles, pasos,
-// escritura con raya, pistas, un chip por valor) es del motor común, `../_comun/parentesis-motor.js`.
+// Los casos del papel no salen (`papel.js`). Todo lo demás (árboles, pasos, escritura con raya,
+// pistas, un chip por valor) es del motor común, `../_comun/parentesis-motor.js`.
 
 import { crearMotor, aritmeticaFracciones } from '../_comun/parentesis-motor.js';
 import { fraccion } from '../_comun/fracciones.js';
+import { esCasoReservado } from '../combinadas-fracciones/logica.js';
+import { delPapel } from './papel.js';
+
+const SIMBOLO = { '+': '+', '-': '−', '*': '·', '/': ':' };
+
+/** ¿La cuenta sin paréntesis es un caso del papel? Por su clave en orden y, además, en cualquier orden de sumandos y factores. */
+export function esCasoDelPapel(e) {
+  if (delPapel(M.claveExpresion(e))) return true;
+  const texto = e.numeros.reduce((t, n, i) => (i === 0 ? M.clave(n) : `${t} ${SIMBOLO[e.operaciones[i - 1]]} ${M.clave(n)}`), '');
+  return esCasoReservado(texto);
+}
 
 /** Todo valor, intermedio o final, irreducible con denominador ≤ 36 y numerador entre −60 y 60. */
 export const TOPE_NUM = 60;
@@ -40,8 +50,8 @@ function generar1(rng, anterior) {
     if (!operaciones.includes('*')) operaciones[rng.entero(0, 1)] = '*';
     return { numeros: operandos(rng, 3, 1), operaciones, exponente: null };
   };
-  return M.buscar(rng, hacer, an => an.valores.length === 2 && an.invalidos.length === 0,
-    { numeros: [fraccion(3, 4), fraccion(1, 2), 3], operaciones: ['-', '*'], exponente: null }, { anterior });
+  return M.buscar(rng, hacer, (an, e) => an.valores.length === 2 && an.invalidos.length === 0 && !esCasoDelPapel(e),
+    { numeros: [fraccion(3, 4), fraccion(1, 2), fraccion(3, 1)], operaciones: ['-', '*'], exponente: null }, { anterior });
 }
 
 /** Ejercicio 2: cuatro operandos con + − · :, un «:» al menos; de 3 a 5 resultados; ninguna agrupación imposible. */
@@ -51,8 +61,8 @@ function generar2(rng, anterior) {
     if (!operaciones.includes('/')) operaciones[rng.entero(0, 2)] = '/';
     return { numeros: operandos(rng, 4, 2), operaciones, exponente: null };
   };
-  return M.buscar(rng, hacer, an => an.valores.length >= 3 && an.valores.length <= 5 && an.invalidos.length === 0,
-    { numeros: [fraccion(1, 2), fraccion(1, 3), 2, fraccion(1, 4)], operaciones: ['+', '/', '-'], exponente: null }, { anterior });
+  return M.buscar(rng, hacer, (an, e) => an.valores.length >= 3 && an.valores.length <= 5 && an.invalidos.length === 0 && !esCasoDelPapel(e),
+    { numeros: [fraccion(3, 4), fraccion(1, 2), fraccion(2, 3), fraccion(1, 6)], operaciones: ['-', '*', '/'], exponente: null }, { anterior });
 }
 
 /** Ejercicio 3: la diana. Cuatro operandos con + − · :; al menos 3 resultados y ninguna agrupación imposible. */
@@ -62,8 +72,8 @@ function generar3(rng, anterior) {
     operaciones: [0, 1, 2].map(() => rng.elegir(['+', '-', '*', '/'])),
     exponente: null,
   });
-  return M.buscar(rng, hacer, an => an.valores.length >= 3 && an.invalidos.length === 0,
-    { numeros: [fraccion(1, 2), fraccion(1, 3), 2, fraccion(1, 4)], operaciones: ['+', '*', '-'], exponente: null }, { anterior });
+  return M.buscar(rng, hacer, (an, e) => an.valores.length >= 3 && an.invalidos.length === 0 && !esCasoDelPapel(e),
+    { numeros: [fraccion(1, 2), fraccion(1, 3), fraccion(2, 1), fraccion(1, 4)], operaciones: ['+', '*', '-'], exponente: null }, { anterior });
 }
 
 /** El ítem del ejercicio `ejercicio` (1 a 3). En la diana, el objetivo no es el de sin paréntesis. */
