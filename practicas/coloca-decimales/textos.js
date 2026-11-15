@@ -1,6 +1,6 @@
 // Coloca los paréntesis. Con decimales: textos propios, siempre { es, en }. Los de la interfaz
 // son los comunes de `../_comun/parentesis-textos.js`; aquí van las introducciones y los consejos
-// del «No lo sé». ESQUELETO de la tarea 199: la 202 los reescribe. En inglés, «brackets» y el
+// del «No lo sé». En inglés, «brackets» y el
 // punto decimal (lo pone el motor según el idioma). Sin agrupaciones imposibles a la vista.
 
 import { crearPantalla } from '../_comun/parentesis-pantalla.js';
