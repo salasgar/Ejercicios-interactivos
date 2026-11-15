@@ -192,3 +192,9 @@ coordinadora en la terminada, y sigue con lo demás.
   herramientas de edición; `hechos/` sí se escribe desde el shell (un escritor).
 - Reescribir un fichero de `hechos/` (solo `>>`), editar un reclamo ajeno, o regenerar el tablón de memoria.
 - Dependencias nuevas (npm, CDN). Nombres de alumnos reales en ningún fichero.
+
+## Trampas conocidas
+- Dos fracciones equivalentes (3/4 y 6/8) son el mismo chip: se comparan por valor y los resultados salen irreducibles.
+- Los casos del papel se excluyen por clave en orden y, además, en cualquier orden de sumandos y factores (`esCasoReservado` de combinadas-fracciones).
+- Las reservas de `M.buscar` deben ser agrupaciones válidas y estar fuera del papel: el test las comprueba.
+- Sin prueba con clics hecha: 375 px con cuatro fracciones y ocho huecos queda para la 204.
