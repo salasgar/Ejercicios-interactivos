@@ -126,6 +126,10 @@ Sobre el motor y la pantalla de la 199 (`_comun/parentesis-motor.js`, `parentesi
 - (de la 19) Dos agrupaciones pueden dar el mismo valor: se cuentan una vez (chips por valor).
 - (de la 88) `.cuenta` no se parte (`nowrap`): las frases del feedback, como texto normal, o se salen de 375 px.
 - (de la coordinadora) Hay hasta doce sesiones en este árbol: no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
+- (de la 200) Si el filtro del `buscar` depende de un azar sorteado dentro del reintento (p. ej. el exponente), la proporción se
+  desvirtúa: sortéalo una vez fuera de `hacer` (cubos del ej. 2: 3 % → 14,8 %).
+- (de la 200) A ≤ 400 px, cuatro números con un negativo delante solo caben en un renglón con huecos de 22 px y fuente de 1,2 rem.
+- (de la 200) El main local diverge de origin: se empuja desde un worktree limpio sobre origin/main (cherry-pick), sin pull en el árbol compartido.
 
 ## Prohibido (propio de esta tarea)
 
