@@ -29,6 +29,13 @@ button.hueco-p--rojo { background: var(--error-claro); border-color: var(--error
 button.hueco-p--nuevo { box-shadow: 0 0 0 4px var(--aviso-claro); }
 button.hueco-p:disabled { opacity: 1; cursor: default; }
 
+/* Cuatro números con un negativo delante caben en un renglón a 375 px */
+@media (max-width: 400px) {
+  .expr { font-size: 1.2rem; }
+  button.hueco-p { min-width: 22px; width: 22px; }
+  button.hueco-p--puesto { min-width: 22px; }
+}
+
 .acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: .4rem 0 .8rem; }
 .acciones button { min-height: 44px; padding: .5rem 1rem; }
 

@@ -4,10 +4,14 @@
 // escritura, pistas) es del motor común, `../_comun/parentesis-motor.js`.
 
 import { crearMotor, aritmeticaEnteros } from '../_comun/parentesis-motor.js';
+import { delPapel } from './papel.js';
 
 /** Todo valor, intermedio o final, entre −200 y 200 (como `parentesis-enteros`). */
 export const TOPE = 200;
 export const M = crearMotor(aritmeticaEnteros({ tope: TOPE }));
+
+/** Un caso de las hojas o de los exámenes de la U3 (por números, operaciones y exponente). */
+export const reservado = e => delPapel(M.claveExpresion(e));
 
 /** ¿Alguna agrupación válida eleva un negativo, como (−2)² o (3 − 5)³? (U3-3C-10) */
 export function elevaNegativo(an) {
@@ -23,20 +27,21 @@ function generar1(rng, anterior) {
     operaciones: rng.elegir([['+', '*'], ['*', '+'], ['-', '*'], ['*', '-'], ['*', '*'], ['-', '-'], ['-', '+']]),
     exponente: null,
   });
-  return M.buscar(rng, hacer, an => an.valores.length === 2 && an.invalidos.length === 0,
+  return M.buscar(rng, hacer, (an, e) => an.valores.length === 2 && an.invalidos.length === 0 && !reservado(e),
     { numeros: [-4, 3, 7], operaciones: ['*', '+'], exponente: null }, { anterior });
 }
 
 /** Ejercicio 2: a ∘ b ∘ c² (³ en un 15 %); de 3 a 5 resultados; la mitad, con una base negativa. */
 function generar2(rng, anterior) {
   const conNegativa = rng.azar() < 0.5;
+  const exponente = rng.azar() < 0.15 ? 3 : 2;
   const hacer = () => ({
     numeros: [primero(rng, 9), rng.entero(2, 6), rng.entero(2, 5)],
     operaciones: [rng.elegir(['+', '-', '*']), rng.elegir(['+', '-', '*'])],
-    exponente: rng.azar() < 0.15 ? 3 : 2,
+    exponente,
   });
   return M.buscar(rng, hacer,
-    an => an.valores.length >= 3 && an.valores.length <= 5 && an.invalidos.length === 0 && (!conNegativa || elevaNegativo(an)),
+    (an, e) => an.valores.length >= 3 && an.valores.length <= 5 && an.invalidos.length === 0 && (!conNegativa || elevaNegativo(an)) && !reservado(e),
     { numeros: [-5, 2, 3], operaciones: ['+', '*'], exponente: 2 }, { anterior });
 }
 
@@ -48,7 +53,7 @@ function generar3(rng, anterior) {
     return { numeros: [primero(rng, 12), rng.entero(2, 12), rng.entero(2, 12), rng.entero(2, 12)], operaciones, exponente: null };
   };
   return M.buscar(rng, hacer,
-    an => an.valores.length >= 3 && an.valores.length <= 6 && an.invalidos.length >= 1 && !an.hayGrande,
+    (an, e) => an.valores.length >= 3 && an.valores.length <= 6 && an.invalidos.length >= 1 && !an.hayGrande && !reservado(e),
     { numeros: [-12, 6, 2, 3], operaciones: ['+', '/', '-'], exponente: null }, { anterior });
 }
 
