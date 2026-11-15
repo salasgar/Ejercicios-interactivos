@@ -128,6 +128,10 @@ Sobre el motor y la pantalla de la 199, con `aritmeticaDecimales({ cifras: 3, ne
   con los nombres viejos no lee ninguno y da cero coincidencias sin avisar. Cuenta los casos que lee de cada fichero.
 - (de la 88) `.cuenta` no se parte (`nowrap`): las frases del feedback, como texto normal, o se salen de 375 px.
 - (de la coordinadora) Hay varias sesiones en este árbol: no metas en tu commit nada que no sea tuyo, y nada de `git stash`.
+- (de la 202, 15-11) **Con las cotas, el `³` casi no sale solo** (~2-3 %): el generador lo sortea en la mitad de los intentos y pide el cubo a un número que lo permita (el 8 y los de dos decimales pasan de 500 o de 3 cifras). Sin eso, el ej. 2 es casi todo cuadrados.
+- (de la 202) El hash de un caso de examen se calcula fuera del repo; en ENTREGA y tests, solo recuentos. La clave de las hojas se extrae con un guion propio y se **cotejan a mano** los ejemplos del inventario que el guion se salta.
+- (de la 202) El script de navegador de la 199 (`nav.mjs`, CDP) se reutiliza quitando las páginas ajenas; si se lanza Chrome propio, `kill` por pid al acabar (un headless huérfano bloquea el Chrome normal). `timeout` no existe en este macOS: no usarlo.
+- (de la 202) `npm test` tarda ~10 min con todo el repo: lánzalo en segundo plano y no encadenes `sleep` largos.
 
 ## Prohibido (propio de esta tarea)
 
