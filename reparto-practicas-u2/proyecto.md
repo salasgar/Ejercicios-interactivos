@@ -1068,3 +1068,11 @@ dijo él, y lo que ha decidido la coordinadora (él puede cambiar cualquier punt
 - **Qué va a la vez**: la 205 puede ir en paralelo con la 203 y la 204 (ficheros distintos). La 206 y la 207, **nunca a la vez que la 203
   o la 204** (todas tocan `catalogo.js` y docs): en cadena.
 - **Orden de prioridad**: 205 ya; después 206 y 207, antes que la 204 (la U3 corre; la 203 tiene su plazo el jue 3-12).
+
+## Alta del 16-11: tarea 208 (coordinadora)
+
+Por encargo de Juan Luis (16-11). Una alumna escribió tres veces el 14-11 que en «Árbol de factores», ej. 2 «¿Está terminada?» (el
+«ej. 4» de la tarea semanal de la U2), tras pulsar «No» la página «lo pone bien» pero no pasa al siguiente, y que tenía que pulsar
+«No lo sé». **No es un fallo**: falta tocar el factor que no es primo, y Juan Luis se lo explicó. Pero el «No» se pinta de verde y el
+aviso del paso dos es una línea discreta: la 208 (MEDIO, 45 min, sin precondición, toca solo `practicas/arbol/` y su test) lo hace
+visible sin cambiar qué se puntúa. Puede ir en paralelo con la 205 (ficheros distintos).
