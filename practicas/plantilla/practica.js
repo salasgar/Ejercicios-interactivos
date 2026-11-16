@@ -32,6 +32,10 @@
 //     vidas               fallos que se admiten (por defecto 5): sin vidas, el ejercicio
 //                         vuelve a empezar desde 0 puntos (los fallos acumulados se conservan).
 //                         Las constantes viven en ../_comun/contador.js.
+//     sinVidas            opcional, true (tarea 205, para los retos): un fallo se
+//                         cuenta en `fallos` y corta la racha, pero no quita puntos
+//                         ni vidas ni reinicia; no salen corazones y el menú dice que
+//                         comprobar no cuesta nada. `penalizacion` y `vidas` no se usan.
 //     introduccion        opcional, { es: html, en: html }: una tarjeta con botón
 //                         «Empezar» que sale cada vez que se abre el ejercicio.
 //     generar(rng, sesion)  devuelve el ítem: DATOS puros (ver logica.js).
@@ -112,6 +116,25 @@
 //                     ver ../_comun/registro.js) con el ítem, el feedback en texto
 //                     plano y, si se pasan, estos dos campos, para el panel del
 //                     profesor. Sin ellos se registra igual; el alumno no ve nada.
+//                     Con `sinVidas`, el fallo dice «No pierdes nada» en vez de
+//                     «−penalización» y las vidas.
+//   api.sumar(k, { html, espera })   (tarea 205) en vez de `responder` en un acierto
+//                     que vale VARIOS puntos de golpe (un reto: 1 punto por pieza de
+//                     una tabla completa). `k` entero ≥ 1. Cierra el ítem como un
+//                     acierto: feedback verde con `html` y «+k puntos»; por defecto
+//                     espera a «Siguiente» (`espera: 'boton'`). En el contador cuenta
+//                     como UN acierto (no como k) y no mueve la racha; al llegar al
+//                     `objetivo`, el ejercicio queda terminado. Se guarda y se sube
+//                     como lo demás.
+//   api.intentoFallido({ html, error, respuesta })   (tarea 205) un intento que no
+//                     está bien y que NO cierra el ítem: la práctica enseña su propio
+//                     feedback (qué piezas no encajan) y el alumno sigue con el mismo
+//                     ítem. Se cuenta con las reglas del ejercicio (con `sinVidas`, no
+//                     quita nada; sin él, como un fallo de `responder`) y se registra
+//                     en `fallos` con `html` (texto o función de los textos, como en
+//                     `responder`), `error` y `respuesta`. Devuelve lo que ha pasado
+//                     en el contador ({ ganados, perdidos, extra, reinicio, vidas })
+//                     o null si el ítem ya estaba respondido.
 //
 // La base no toca nada de `contenedor` después de montar: marcar en verde o en
 // rojo lo elegido y bloquear los botones es cosa de `montar`, ANTES de llamar

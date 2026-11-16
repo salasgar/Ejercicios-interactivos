@@ -34,11 +34,19 @@
 //             Como mucho 10.
 //   elegir    los de elegir, igual. Como mucho 15.
 //   nElegir   cuántos de `elegir` hay que terminar (como mucho, todos).
+//   reto      opcional (tarea 205, 2026-11-16): retos, igual que `estrella`, como
+//             mucho 3 (`MAX_RETO`). No hacen falta para cumplir la tarea ni
+//             cuentan para los 100: lo que se lleve en ellos se suma ENCIMA
+//             (`extra`, ver `puntosExtra`), aunque la nota pase de 100. Un
+//             [slug, n] del reto no puede estar también en `estrella` ni en
+//             `elegir`. No viaja en el código de resultado de la tarea (que
+//             es de respaldo): el extra solo se sabe por la nube.
 //
 // Toda tarea vale 100 puntos (`PUNTOS_TAREA`), tenga los ejercicios que tenga:
 // cada ejercicio que cuenta (los ★ y los `nElegir` mejores de elegir) pesa lo
 // mismo. Por dentro cada ejercicio sigue contando 10 (`PUNTOS_POR_EJERCICIO`);
-// con 6 ★ y 4 a elegir, los puntos son los de siempre. `npm test` (tests/practicas-semana.test.js)
+// con 6 ★ y 4 a elegir, los puntos son los de siempre. Los del reto, encima
+// (`puntosExtra`). `npm test` (tests/practicas-semana.test.js)
 // comprueba que todo [slug, n] existe en el catálogo, que no hay repetidos
 // dentro de una tarea y los topes de arriba.
 //
@@ -147,9 +155,28 @@ export function puntosSobreCien(suma, n) {
   if (!(n > 0)) return 0;
   return Math.max(0, Math.min(PUNTOS_TAREA, Math.round(PUNTOS_TAREA * suma / (PUNTOS_POR_EJERCICIO * n))));
 }
-/** Topes que impone el código de resultado de la tarea (10 y 15 bits). */
+/**
+ * Puntos extra de una tarea por los retos (tarea 205): cada punto que el alumno
+ * lleve en los ejercicios del reto (`puntosReto`, los del contador de esos
+ * ejercicios, sin pasar a 10) pesa lo mismo que un punto de un ejercicio normal
+ * de esa tarea de `n` ejercicios que cuentan (★ + `nElegir`). Con 6 ★ y 4 a
+ * elegir, 1 punto del reto = 1 punto de la nota. Sin tope.
+ */
+export function puntosExtra(puntosReto, n) {
+  if (!(n > 0) || !(puntosReto > 0)) return 0;
+  return Math.round(PUNTOS_TAREA * puntosReto / (PUNTOS_POR_EJERCICIO * n));
+}
+/**
+ * ¿Suma el extra aunque la tarea no esté cumplida? Sí (decisión de la
+ * coordinadora del 16-11; Juan Luis puede cambiarla: con `false`, el extra
+ * solo cuenta en una tarea cumplida).
+ */
+export const RETO_SUMA_SIEMPRE = true;
+
+/** Topes que impone el código de resultado de la tarea (10 y 15 bits). El del reto es del diseño (no viaja en el código). */
 export const MAX_ESTRELLA = 10;
 export const MAX_ELEGIR = 15;
+export const MAX_RETO = 3;
 export const MAX_ID_TAREA = 1023;
 
 export function tareaPorId(id, tareas = TAREAS) {
@@ -217,6 +244,13 @@ export function fechaISO(fecha) {
  * elegir cuentan los `nElegir` que mejor lleve. La tarea está cumplida cuando
  * están terminados todos los ★ y al menos `nElegir` de los de elegir. Un
  * ejercicio terminado antes de que existiera la tarea cuenta igual.
+ *
+ * Con `reto` (tarea 205): `base` es la nota de siempre (sobre 100, con tope),
+ * `extra` lo que suman los retos (`puntosExtra`) y `puntos` = base + extra, la
+ * nota de la tarea (puede pasar de `maximo`). Cada fila del reto lleva además
+ * `puntosReto`, sus puntos del contador. El reto no cuenta para `cumplida`,
+ * `diaEntrega`, `fallos` ni `dia` (lo que también dice el código de la tarea);
+ * sí para `empezada`. Sin reto, `extra` es 0 y todo es como antes.
  */
 export function estadoTarea(tarea, progresoDe) {
   const fila = ([slug, n]) => {
@@ -229,6 +263,12 @@ export function estadoTarea(tarea, progresoDe) {
   };
   const estrella = tarea.estrella.map(fila);
   const elegir = tarea.elegir.map(fila);
+  // Los puntos del contador de un reto: los que lleve (los del objetivo, si está terminado).
+  const reto = (tarea.reto ?? []).map(par => {
+    const f = fila(par);
+    const crudos = f.terminado ? (f.ej?.objetivo ?? f.ej?.puntos ?? 0) : (f.ej?.puntos ?? 0);
+    return { ...f, puntosReto: Number.isFinite(crudos) && crudos > 0 ? crudos : 0 };
+  });
   const estrellaHechos = estrella.filter(e => e.terminado).length;
   const elegirHechos = elegir.filter(e => e.terminado).length;
   const mejores = elegir.map(e => e.puntos).sort((a, b) => b - a).slice(0, tarea.nElegir);
@@ -241,15 +281,23 @@ export function estadoTarea(tarea, progresoDe) {
   const diaEntrega = cumplida
     ? Math.max(0, ...estrella.map(dia), tarea.nElegir > 0 ? diasElegidos[tarea.nElegir - 1] : 0)
     : 0;
+  const n = estrella.length + tarea.nElegir;
+  const base = puntosSobreCien(estrella.reduce((s, e) => s + e.puntos, 0) + mejores.reduce((s, p) => s + p, 0), n);
+  const puntosReto = reto.reduce((s, e) => s + e.puntosReto, 0);
+  const extra = RETO_SUMA_SIEMPRE || cumplida ? puntosExtra(puntosReto, n) : 0;
   return {
     estrella,
     elegir,
+    reto,
     estrellaHechos,
     elegirHechos,
     cumplida,
     diaEntrega,
-    empezada: todos.some(e => e.empezado),
-    puntos: puntosSobreCien(estrella.reduce((s, e) => s + e.puntos, 0) + mejores.reduce((s, p) => s + p, 0), estrella.length + tarea.nElegir),
+    empezada: todos.some(e => e.empezado) || reto.some(e => e.empezado),
+    base,
+    extra,
+    puntosReto,
+    puntos: base + extra,
     maximo: PUNTOS_TAREA,
     fallos: todos.reduce((s, e) => s + (e.ej?.fallos ?? 0), 0),
     dia: Math.max(0, ...todos.filter(e => e.terminado).map(e => e.ej.dia ?? 0)),
@@ -292,8 +340,12 @@ export function erroresTareas(tareas = TAREAS, { tareaUnoAntigua = true } = {}) 
     if (t.elegir.length > MAX_ELEGIR) errores.push(`${nombre}: más de ${MAX_ELEGIR} ejercicios para elegir`);
     if (!Number.isInteger(t.nElegir) || t.nElegir < 0 || t.nElegir > t.elegir.length) errores.push(`${nombre}: «nElegir» tiene que estar entre 0 y ${t.elegir.length}`);
     if (!t.estrella.length && !t.nElegir) errores.push(`${nombre}: no pide nada`);
+    if (t.reto !== undefined) {
+      if (!Array.isArray(t.reto)) { errores.push(`${nombre}: «reto» tiene que ser una lista`); continue; }
+      if (t.reto.length > MAX_RETO) errores.push(`${nombre}: más de ${MAX_RETO} ejercicios de reto`);
+    }
     const vistos = new Set();
-    for (const par of [...t.estrella, ...t.elegir]) {
+    for (const par of [...t.estrella, ...t.elegir, ...(t.reto ?? [])]) {
       const [slug, n] = Array.isArray(par) ? par : [];
       const practica = practicaPorSlug(slug);
       if (!practica) errores.push(`${nombre}: «${slug}» no está en el catálogo`);

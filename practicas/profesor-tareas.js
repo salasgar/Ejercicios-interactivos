@@ -12,8 +12,8 @@
 //   cambiarConfig(config) avisa al panel de una configuración nueva ya guardada,
 //   alumnos(), resultados(), alCargar(fn), recargar().
 
-import { CATALOGO, UNIDADES, unidadesCon } from './_comun/catalogo.js';
-import { configAJSON, configPlantilla, erroresConfig, fechaISO, MAX_ESTRELLA, MAX_ELEGIR, MAX_ID_TAREA } from './_comun/tareas.js';
+import { CATALOGO, ID_PLANTILLA, UNIDADES, unidadesCon } from './_comun/catalogo.js';
+import { configAJSON, configPlantilla, erroresConfig, fechaISO, MAX_ESTRELLA, MAX_ELEGIR, MAX_RETO, MAX_ID_TAREA } from './_comun/tareas.js';
 
 // --- Lógica pura ------------------------------------------------------------------------
 
@@ -49,7 +49,9 @@ export function estaBloqueada(tarea, hoy) {
 
 /**
  * La tarea que resulta de guardar `editada` donde estaba `original`. Si `original` está
- * bloqueada, los ejercicios (y cuántos hay que elegir) se quedan como estaban.
+ * bloqueada, los ejercicios (y cuántos hay que elegir) se quedan como estaban. El reto
+ * (tarea 205) sí se puede poner o quitar: no viaja en el código de resultado. Un reto que
+ * repita un ★ o uno de elegir de la original no se guarda (lo avisa `avisosDeTarea`).
  */
 export function conservarSiBloqueada(original, editada, hoy) {
   if (!original || !estaBloqueada(original, hoy)) return editada;
@@ -104,6 +106,32 @@ export function ejerciciosDeUnidad(unidad) {
     .flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ slug: p.slug, n: i + 1, practica: p })));
 }
 
+/**
+ * Las filas del formulario de una tarea: los ejercicios de su unidad (`ejerciciosDeUnidad`) y, detrás, los
+ * de otra unidad que la tarea ya lleve (un repaso, o un reto de otra unidad, tarea 205), marcados con
+ * `otraUnidad`: así salen en la tabla y no se pierden al guardar.
+ */
+export function ejerciciosDelFormulario(tarea) {
+  const propios = ejerciciosDeUnidad(tarea.unidad);
+  const esta = new Set(propios.map(e => `${e.slug}/${e.n}`));
+  const otros = [...tarea.estrella, ...tarea.elegir, ...(tarea.reto ?? [])]
+    .filter(([slug, n]) => !esta.has(`${slug}/${n}`) && CATALOGO.some(p => p.slug === slug))
+    .map(([slug, n]) => ({ slug, n, practica: CATALOGO.find(p => p.slug === slug), otraUnidad: true }));
+  return [...propios, ...otros];
+}
+
+/**
+ * Lo que se puede añadir como reto de OTRA unidad (tarea 205: este curso, el reto de la U2 «Tabla de
+ * propiedades» va en una tarea de la U3): los ejercicios de las prácticas publicadas que no salen ya en
+ * el formulario, en el orden del catálogo.
+ */
+export function retosDeOtraUnidad(tarea) {
+  const ya = new Set(ejerciciosDelFormulario(tarea).map(e => `${e.slug}/${e.n}`));
+  return CATALOGO.filter(p => p.disponible && p.id !== ID_PLANTILLA)
+    .flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ slug: p.slug, n: i + 1, practica: p })))
+    .filter(e => !ya.has(`${e.slug}/${e.n}`));
+}
+
 /** El enlace «probar» de un ejercicio: abre ese ejercicio en modo de prueba (sin código, sin guardar nada). Relativo a `practicas/`. */
 export function enlaceProbar(practica, n) {
   return `${practica.ruta}?probar=1&ejercicio=${n}`;
@@ -111,7 +139,8 @@ export function enlaceProbar(practica, n) {
 
 /**
  * La tarea que resulta de las marcas del formulario. `marcas` es una lista de
- * `{ slug, n, tipo }` con `tipo` 'estrella' | 'elegir' | '' (sin marcar), en el orden del catálogo.
+ * `{ slug, n, tipo }` con `tipo` 'estrella' | 'elegir' | 'reto' | '' (sin marcar), en el orden del catálogo.
+ * Sin ningún reto marcado, la tarea no lleva el campo `reto`.
  */
 export function tareaDeFormulario(base, { tituloEs, tituloEn, unidad, desde, hasta, asignada, nElegir, marcas }) {
   const t = { id: base.id, unidad, titulo: { es: tituloEs.trim(), en: tituloEn.trim() } };
@@ -123,6 +152,8 @@ export function tareaDeFormulario(base, { tituloEs, tituloEn, unidad, desde, has
   t.estrella = marcas.filter(m => m.tipo === 'estrella').map(m => [m.slug, m.n]);
   t.elegir = marcas.filter(m => m.tipo === 'elegir').map(m => [m.slug, m.n]);
   t.nElegir = Math.max(0, Math.min(Number.isFinite(nElegir) ? nElegir : 0, t.elegir.length));
+  const reto = marcas.filter(m => m.tipo === 'reto').map(m => [m.slug, m.n]);
+  if (reto.length) t.reto = reto;
   return t;
 }
 
@@ -144,11 +175,11 @@ export function avisosDeTarea(config, tarea) {
   return avisos;
 }
 
-/** Resumen de la tarea para la lista: «6 ★ + 4 de 8 · desde 26-10 · plazo 29-10». */
+/** Resumen de la tarea para la lista: «6 ★ + 4 de 8 · desde 26-10 · plazo 29-10» (con «· reto 1» si lo lleva). */
 export function resumenTarea(t) {
   const corta = f => f.split('-').slice(1).reverse().join('-');
   const fechas = [t.desde ? `desde ${corta(t.desde)}` : 'sin fecha de comienzo', t.hasta ? `plazo ${corta(t.hasta)}` : null].filter(Boolean).join(' · ');
-  return `${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.asignada ? ' · asignada' : ''} · ${fechas}`;
+  return `${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.reto?.length ? ` · reto ${t.reto.length}` : ''}${t.asignada ? ' · asignada' : ''} · ${fechas}`;
 }
 
 // --- Pantalla ---------------------------------------------------------------------------
@@ -158,7 +189,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;',
 /** Monta el editor en `contenedor`. */
 export function montar(contenedor, contexto) {
   const nombres = new Map();      // 'slug/n' → { es, en }, se llena al cargar la declaración de cada práctica
-  let editando = null;            // { tarea, nueva } mientras el formulario está abierto
+  let editando = null;            // { tarea, nueva, original } mientras el formulario está abierto (`original`: la guardada)
   let mensaje = '';
   let ocupado = false;
 
@@ -169,9 +200,10 @@ export function montar(contenedor, contexto) {
   };
   const hoy = () => fechaISO(new Date());
 
-  async function cargarNombres(unidad) {
+  /** `otras`: prácticas de otras unidades que también salen en el formulario (repasos y retos). */
+  async function cargarNombres(unidad, otras = []) {
     const { declaracionDe } = await import('./_comun/base.js');
-    await Promise.all(practicasDeUnidad(unidad).map(async p => {
+    await Promise.all([...new Set([...practicasDeUnidad(unidad), ...otras])].map(async p => {
       const d = await declaracionDe(p);
       d?.ejercicios?.forEach((e, i) => nombres.set(`${p.slug}/${i + 1}`, e.nombre));
     }));
@@ -220,8 +252,8 @@ export function montar(contenedor, contexto) {
     }));
     contenedor.querySelectorAll('[data-editar]').forEach(b => b.addEventListener('click', async () => {
       const t = config().tareas.find(x => x.id === Number(b.dataset.editar));
-      await cargarNombres(t.unidad);
-      editando = { tarea: clonar(t), nueva: false }; mensaje = ''; pintar();
+      await cargarNombres(t.unidad, ejerciciosDelFormulario(t).filter(e => e.otraUnidad).map(e => e.practica));
+      editando = { tarea: clonar(t), original: clonar(t), nueva: false }; mensaje = ''; pintar();
     }));
     contenedor.querySelectorAll('[data-duplicar]').forEach(b => b.addEventListener('click', async () => {
       const c2 = config();
@@ -243,25 +275,37 @@ export function montar(contenedor, contexto) {
 
   function pintarFormulario() {
     const { tarea, nueva } = editando;
-    const bloqueada = !nueva && estaBloqueada(tarea, hoy());
-    const ejercicios = ejerciciosDeUnidad(tarea.unidad);
-    const tipoDe = (slug, n) => tarea.estrella.some(([s, k]) => s === slug && k === n) ? 'estrella' : tarea.elegir.some(([s, k]) => s === slug && k === n) ? 'elegir' : '';
-    const filas = ejercicios.map(e => `
-      <tr><td>${esc(e.practica.nombre.es)}</td><td>${e.n}. ${esc(nombreDe(e.slug, e.n))} <a class="pequeno" href="${esc(enlaceProbar(e.practica, e.n))}" target="_blank" rel="noopener">probar · <i>try it</i></a></td>
-        <td><select data-ej="${e.slug}/${e.n}" ${bloqueada ? 'disabled' : ''}>
-          ${[['', '—'], ['estrella', '★ obligatorio'], ['elegir', 'a elegir']].map(([v, r]) => `<option value="${v}" ${tipoDe(e.slug, e.n) === v ? 'selected' : ''}>${r}</option>`).join('')}
-        </select></td></tr>`).join('');
+    // Si está bloqueada lo dice la tarea guardada, no lo tecleado (una fecha cambiada antes de «Añadir como reto»).
+    const original = editando.original ?? tarea;
+    const bloqueada = !nueva && estaBloqueada(original, hoy());
+    const ejercicios = ejerciciosDelFormulario(tarea);
+    const esta = lista => (slug, n) => (lista ?? []).some(([s, k]) => s === slug && k === n);
+    const tipoDe = (slug, n) => esta(tarea.estrella)(slug, n) ? 'estrella' : esta(tarea.elegir)(slug, n) ? 'elegir' : esta(tarea.reto)(slug, n) ? 'reto' : '';
+    // En una tarea que ya ha empezado, los ★ y los de elegir no se tocan; el reto sí (no viaja en el código).
+    const opciones = tipo => (bloqueada && tipo !== 'estrella' && tipo !== 'elegir'
+      ? [['', '—'], ['reto', 'reto (opcional)']]
+      : [['', '—'], ['estrella', '★ obligatorio'], ['elegir', 'a elegir'], ['reto', 'reto (opcional)']]);
+    const filas = ejercicios.map(e => {
+      const tipo = tipoDe(e.slug, e.n);
+      return `
+      <tr><td>${esc(e.practica.nombre.es)}${e.otraUnidad ? ` <span class="pequeno">(${e.practica.unidad ? `unidad ${e.practica.unidad}` : 'otra sección'})</span>` : ''}</td><td>${e.n}. ${esc(nombreDe(e.slug, e.n))} <a class="pequeno" href="${esc(enlaceProbar(e.practica, e.n))}" target="_blank" rel="noopener">probar · <i>try it</i></a></td>
+        <td><select data-ej="${e.slug}/${e.n}" ${bloqueada && (tipo === 'estrella' || tipo === 'elegir') ? 'disabled' : ''}>
+          ${opciones(tipo).map(([v, r]) => `<option value="${v}" ${tipo === v ? 'selected' : ''}>${r}</option>`).join('')}
+        </select></td></tr>`;
+    }).join('');
     contenedor.innerHTML = `
       <h3>${nueva ? 'Tarea nueva' : `Tarea ${tarea.id}`} · unidad ${tarea.unidad}</h3>
-      ${bloqueada ? '<p class="aviso">🔒 Esta tarea ya ha empezado: puedes cambiar el título y las fechas, pero no los ejercicios. Para cambiarlos, duplícala.</p>' : ''}
+      ${bloqueada ? '<p class="aviso">🔒 Esta tarea ya ha empezado: puedes cambiar el título, las fechas y el reto, pero no los ★ ni los de elegir. Para cambiarlos, duplícala.</p>' : ''}
       <label>Título (español) <input type="text" id="f-es" value="${esc(tarea.titulo.es)}"></label>
       <label>Title (English) <input type="text" id="f-en" value="${esc(tarea.titulo.en)}"></label>
       <label>Visible desde <input type="date" id="f-desde" value="${tarea.desde ?? ''}"></label>
       <label>Plazo (hasta el final de ese día) <input type="date" id="f-hasta" value="${tarea.hasta ?? ''}"></label>
       <label><input type="checkbox" id="f-asignada" ${tarea.asignada ? 'checked' : ''}> Obligatoria solo para algunos alumnos (los marcas en «Asignar tareas»)</label>
       <div class="tabla"><table><thead><tr><th>Práctica</th><th>Ejercicio</th><th>En la tarea</th></tr></thead><tbody>${filas}</tbody></table></div>
-      <p class="pequeno">Hasta ${MAX_ESTRELLA} obligatorios y ${MAX_ELEGIR} a elegir. Salen en el orden del catálogo.</p>
+      <p class="pequeno">Hasta ${MAX_ESTRELLA} obligatorios, ${MAX_ELEGIR} a elegir y ${MAX_RETO} de reto. Salen en el orden del catálogo. El <strong>reto</strong> es opcional para el alumno: no hace falta para cumplir la tarea y lo que gane en él se suma encima de los 100 (cada punto del reto vale como un punto de un ejercicio de la tarea), así que la nota puede pasar de 100. No va en el código de resultado: se ve por la nube.</p>
       <label>Cuántos de los «a elegir» hay que terminar <input type="number" id="f-nelegir" min="0" max="${MAX_ELEGIR}" value="${tarea.nElegir}" ${bloqueada ? 'disabled' : ''}></label>
+      ${retosDeOtraUnidad(tarea).length ? `<label>Añadir como reto un ejercicio de otra unidad <select id="f-otro"><option value="">—</option>${retosDeOtraUnidad(tarea).map(e => `<option value="${e.slug}/${e.n}">${e.practica.unidad ? `U${e.practica.unidad}` : '·'} · ${esc(e.practica.nombre.es)} · ejercicio ${e.n}</option>`).join('')}</select></label>
+      <p class="botonera"><button type="button" class="secundario" id="f-otro-anadir">Añadir como reto</button></p>` : ''}
       <ul class="pequeno" id="f-avisos"></ul>
       <p class="botonera"><button type="button" id="f-guardar">Guardar</button> <button type="button" class="secundario" id="f-cancelar">Cancelar</button></p>`;
     const leerFormulario = () => {
@@ -271,7 +315,7 @@ export function montar(contenedor, contexto) {
         desde: contenedor.querySelector('#f-desde').value, hasta: contenedor.querySelector('#f-hasta').value,
         asignada: contenedor.querySelector('#f-asignada').checked, nElegir: Number(contenedor.querySelector('#f-nelegir').value), marcas,
       });
-      return nueva ? t : conservarSiBloqueada(editando.tarea, t, hoy());
+      return nueva ? t : conservarSiBloqueada(original, t, hoy());
     };
     const avisar = () => {
       const avisos = avisosDeTarea(config(), leerFormulario());
@@ -280,6 +324,16 @@ export function montar(contenedor, contexto) {
     };
     contenedor.querySelectorAll('input, select').forEach(el => el.addEventListener('input', avisar));
     contenedor.querySelector('#f-cancelar').addEventListener('click', () => { editando = null; pintar(); });
+    contenedor.querySelector('#f-otro-anadir')?.addEventListener('click', async () => {
+      const valor = contenedor.querySelector('#f-otro').value;
+      if (!valor) return;
+      const [slug, n] = [valor.split('/')[0], Number(valor.split('/')[1])];
+      // Lo tecleado hasta ahora se conserva: se lee el formulario, se añade el reto y se vuelve a pintar.
+      const t = leerFormulario();
+      editando = { ...editando, tarea: { ...t, reto: [...(t.reto ?? []), [slug, n]] } };
+      await cargarNombres(t.unidad, [CATALOGO.find(p => p.slug === slug)]);
+      pintar();
+    });
     contenedor.querySelector('#f-guardar').addEventListener('click', async () => {
       if (avisar().length) return;
       const t = leerFormulario();

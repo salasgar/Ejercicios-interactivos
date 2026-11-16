@@ -13,10 +13,14 @@
 //     a `fallos`. Corta la racha, y cada AYUDAS_POR_PUNTO ayudas quitan 1 punto
 //     (nunca por debajo de 0). Las ayudas se cuentan aparte, en `ayudas`, que
 //     solo existe cuando se ha pedido alguna.
+//   - Retos (tarea 205, 2026-11-16): un ejercicio puede dar varios puntos de
+//     golpe (`sumar`: al completar una tabla, 1 punto por pieza) y puede ser
+//     «sin vidas» (`sinVidas`): un intento fallido cuenta en `fallos` y corta la
+//     racha, pero no quita puntos ni vidas ni reinicia.
 //
 // Los valores están aquí, en un solo sitio, para ajustarlos cuando se vea
 // cómo reaccionan los alumnos. Un ejercicio puede declarar su propio
-// `objetivo`, `penalizacion` y `vidas` (ver ../plantilla/practica.js).
+// `objetivo`, `penalizacion`, `vidas` y `sinVidas` (ver ../plantilla/practica.js).
 export const OBJETIVO = 10;
 export const PENALIZACION = 1;
 export const VIDAS = 5;
@@ -38,9 +42,10 @@ export function ejercicioNuevo(objetivo = OBJETIVO, vidas = VIDAS) {
 /**
  * Anota una respuesta y devuelve el ejercicio nuevo (el de entrada no se toca).
  * Las `pistas` (ayudas usadas en el ítem) se suman a los fallos sin tocar los
- * puntos ni las vidas. `vidas` son las que se reponen al perderlas todas.
+ * puntos ni las vidas. `vidas` son las que se reponen al perderlas todas. Con
+ * `sinVidas`, un fallo solo se cuenta (y corta la racha): ni puntos ni vidas.
  */
-export function anotar(ej, acierto, dia = 0, { penalizacion = PENALIZACION, vidas = VIDAS, racha = RACHA, extra = EXTRA, pistas = 0 } = {}) {
+export function anotar(ej, acierto, dia = 0, { penalizacion = PENALIZACION, vidas = VIDAS, racha = RACHA, extra = EXTRA, pistas = 0, sinVidas = false } = {}) {
   if (ej.terminado) return ej;
   const sig = { ...ej };
   sig.fallos += pistas;
@@ -50,6 +55,9 @@ export function anotar(ej, acierto, dia = 0, { penalizacion = PENALIZACION, vida
     sig.puntos++;
     if (racha > 0 && sig.racha % racha === 0) sig.puntos += extra;
     if (sig.puntos >= sig.objetivo) { sig.puntos = sig.objetivo; sig.terminado = true; sig.dia = dia; }
+  } else if (sinVidas) {
+    sig.fallos++;
+    sig.racha = 0;
   } else {
     sig.fallos++;
     sig.racha = 0;
@@ -57,6 +65,20 @@ export function anotar(ej, acierto, dia = 0, { penalizacion = PENALIZACION, vida
     sig.vidas--;
     if (sig.vidas <= 0) { sig.puntos = 0; sig.aciertos = 0; sig.vidas = vidas; sig.reinicios++; }
   }
+  return sig;
+}
+
+/**
+ * Suma `k` puntos de golpe (un reto: 1 punto por pieza de una tabla completa) y
+ * devuelve el ejercicio nuevo (el de entrada no se toca). Cuenta como UN acierto
+ * (un ítem resuelto: así el ejercicio sale como empezado), no como `k`, y no
+ * mueve la racha. Al llegar al objetivo, el ejercicio queda terminado.
+ */
+export function sumar(ej, k, dia = 0) {
+  if (ej.terminado) return ej;
+  const n = Math.max(0, Math.floor(k) || 0);
+  const sig = { ...ej, aciertos: ej.aciertos + 1, puntos: ej.puntos + n };
+  if (sig.puntos >= sig.objetivo) { sig.puntos = sig.objetivo; sig.terminado = true; sig.dia = dia; }
   return sig;
 }
 
@@ -85,7 +107,8 @@ export function queHaPasado(antes, despues) {
   return {
     ganados: Math.max(0, despues.puntos - antes.puntos),
     perdidos: reinicio ? antes.puntos : Math.max(0, antes.puntos - despues.puntos),
-    extra: despues.aciertos > antes.aciertos && despues.puntos - antes.puntos > 1,
+    // Solo un acierto suelto mueve la racha: los puntos de golpe de `sumar` no son «extra».
+    extra: despues.aciertos > antes.aciertos && despues.racha > antes.racha && despues.puntos - antes.puntos > 1,
     reinicio,
     vidas: despues.vidas,
   };

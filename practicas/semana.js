@@ -1,6 +1,7 @@
 // Tarea de la semana (`practicas/semana.html?t=<id>`): los ejercicios de esa
-// semana (los ★ y los de elegir, de `_comun/tareas.js`), con su estado, un
-// marcador y un único código de resultado de la tarea.
+// semana (los ★, los de elegir y, si los hay, los retos, de `_comun/tareas.js`),
+// con su estado, un marcador y un único código de resultado de la tarea (el
+// reto no viaja en él: sus puntos extra se ven por la nube).
 //
 // La página no guarda nada suyo: el progreso lo lee de donde lo guarda la
 // base, en este navegador. Así no puede contradecir a las prácticas, y un
@@ -17,10 +18,10 @@ import { practicaPorSlug } from './_comun/catalogo.js';
 import { codigoTarea, formatoDeCodigo } from './_comun/codigos.js';
 import { leer, escribir, borrar, cerrarSesion, claveIdiomaFijo, modoIdioma, sincronizarGuardado, declaracionDe, URL_PORTADA } from './_comun/base.js';
 import { T, esc } from './_comun/textos.js';
-import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO, configDeJSON } from './_comun/tareas.js';
+import { TAREAS, tareaPorId, tareasPublicadas, estadoTarea, enlaceEjercicio, fechaISO, configDeJSON, puntosExtra } from './_comun/tareas.js';
 import { leerConfig } from './_comun/nube.js';
 import { PROFESOR_UID } from '../src/config.js';
-import { diaDe } from './_comun/contador.js';
+import { diaDe, OBJETIVO } from './_comun/contador.js';
 import { ambitoDeTarea, progresoDeTarea, asignacionGuardada, cargarAsignacion, asignadaAMi, vistaPlazo, ejercicioFueraDePlazo, esRepasoDeOtraUnidad, identificar } from './vista-tareas.js';
 
 const app = document.querySelector('#app');
@@ -39,6 +40,10 @@ let codigo = null, indice = null;
 let idioma = 'es';
 let asignacion = null;           // ids de las tareas asignadas a este alumno (copia del navegador o de la nube)
 const nombres = new Map();       // 'slug/n' → { es, en }: el nombre de cada ejercicio, de su práctica
+const objetivos = new Map();     // 'slug/n' → el objetivo de ese ejercicio (para lo que puede dar un reto)
+
+/** Las prácticas de la tarea: las de los ★, las de elegir y las del reto. */
+const slugsDe = t => [...new Set([...t.estrella, ...t.elegir, ...(t.reto ?? [])].map(([slug]) => slug))];
 
 /** Como en la base: `?idioma=es|en` lo fija para el alumno, `?idioma=alterno` lo quita. */
 function aplicarIdioma() {
@@ -55,7 +60,7 @@ let ultimaLectura = 0;
  * en las tareas v2, sus documentos de la tarea), y la asignación del alumno.
  */
 async function sincronizar() {
-  const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
+  const slugs = slugsDe(tarea);
   const suyo = codigo;
   const [, asignada] = await Promise.all([
     Promise.all(slugs.map(slug => sincronizarGuardado(slug, suyo, { tareaId: ambitoDeTarea(tarea), profesor }))),
@@ -149,13 +154,25 @@ function pintarEntrada(error = false) {
 
 // --- La tarea -------------------------------------------------------------------------
 
-function filaEjercicio(e, estrella, num, tipo) {
+/** Cuántos ejercicios cuentan para los 100 (★ + los que hay que elegir): de ahí sale el peso de un punto del reto. */
+const ejerciciosQueCuentan = () => tarea.estrella.length + tarea.nElegir;
+
+/** «No hace falta… hasta N puntos más»: N, con el objetivo de cada reto (el de su práctica, o el que guarda su progreso). */
+function textoRetoAyuda(est) {
+  const total = est.reto.reduce((s, e) => s + (objetivos.get(`${e.slug}/${e.n}`) ?? e.ej?.objetivo ?? OBJETIVO), 0);
+  return T[idioma].semana_reto_ayuda(puntosExtra(total, ejerciciosQueCuentan()));
+}
+
+/** `reto`: la fila es de un reto (`e.puntosReto`): lleva también lo que suma a la nota. */
+function filaEjercicio(e, estrella, num, tipo, reto = false) {
   const t = T[idioma];
   const ficha = practicaPorSlug(e.slug);
   const nombre = nombres.get(`${e.slug}/${e.n}`);
   const tarde = ejercicioFueraDePlazo(tarea, e.ej, tipo) ? ` <span class="etiqueta etiqueta--tarde">${t.tarea_ejercicio_fuera_de_plazo}</span>` : '';
-  const etiqueta = e.terminado ? `<span class="etiqueta etiqueta--ok">${t.semana_terminado(e.ej.fallos ?? 0)}</span>${tarde}`
-    : e.empezado ? `<span class="etiqueta">${t.puntos(e.ej.puntos ?? 0, e.ej.objetivo ?? 10)}</span>`
+  const extra = reto ? puntosExtra(e.puntosReto, ejerciciosQueCuentan()) : 0;
+  const deReto = extra ? ` <span class="etiqueta etiqueta--ok">${t.semana_reto_extra(extra)}</span>` : '';
+  const etiqueta = e.terminado ? `<span class="etiqueta etiqueta--ok">${t.semana_terminado(e.ej.fallos ?? 0)}</span>${deReto}${tarde}`
+    : e.empezado ? `<span class="etiqueta">${t.puntos(e.ej.puntos ?? 0, e.ej.objetivo ?? 10)}</span>${deReto}`
       : `<span class="pequeno">${t.semana_sin_empezar}</span>`;
   const boton = e.terminado ? t.repetir : e.empezado ? t.seguir : t.empezar;
   return `
@@ -186,6 +203,7 @@ function cajaCodigo(est) {
       <p class="pequeno">${t.semana_cumplida_texto}</p>
       <details class="pequeno">
         <summary>${t.resultado_desplegable}</summary>
+        ${tarea.reto?.length ? `<p class="pequeno">${t.semana_codigo_sin_reto}</p>` : ''}
         <div class="resultado__fila">
           <output class="resultado__codigo" id="codigo-resultado">${texto}</output>
           <button type="button" class="secundario" id="copiar">${t.copiar}</button>
@@ -203,7 +221,8 @@ function pintarTarea() {
   const marcador = [
     est.estrella.length ? `<span class="${est.estrellaHechos === est.estrella.length ? 'listo' : ''}">${t.semana_marcador_estrella(est.estrellaHechos, est.estrella.length)}</span>` : '',
     tarea.nElegir ? `<span class="${elegidos === tarea.nElegir ? 'listo' : ''}">${t.semana_marcador_elegir(elegidos, tarea.nElegir)}</span>` : '',
-    `<strong>${t.semana_marcador_puntos(est.puntos, est.maximo)}</strong>`,
+    // Con reto, la nota se enseña como «base + extra = total»; la barra es solo la base (sobre 100).
+    `<strong>${tarea.reto?.length ? t.semana_marcador_puntos_reto(est.base, est.maximo, est.extra) : t.semana_marcador_puntos(est.puntos, est.maximo)}</strong>`,
   ].join('');
   app.innerHTML = `
     <section>
@@ -212,7 +231,7 @@ function pintarTarea() {
       <p class="semana__objetivo">${t.semana_objetivo(est.estrella.length, tarea.nElegir, est.maximo)}</p>
       <div class="tarjeta">
         <div class="semana__marcador" aria-live="polite">${marcador}</div>
-        <div class="barra"><div style="width: ${Math.round(100 * est.puntos / Math.max(1, est.maximo))}%"></div></div>
+        <div class="barra"><div style="width: ${Math.round(100 * est.base / Math.max(1, est.maximo))}%"></div></div>
       </div>
       ${cajaCodigo(est)}
       ${est.estrella.length ? `
@@ -222,6 +241,10 @@ function pintarTarea() {
         <h3 class="semana__bloque">${t.semana_elegir(tarea.nElegir)}</h3>
         <p class="pequeno semana__ayuda">${t.semana_elegir_ayuda(tarea.nElegir)}</p>
         <ul class="lista">${est.elegir.map((e, i) => filaEjercicio(e, false, est.estrella.length + i + 1, plazo.tipo)).join('')}</ul>` : ''}
+      ${est.reto.length ? `
+        <h3 class="semana__bloque">${t.semana_reto}</h3>
+        <p class="pequeno semana__ayuda" data-reto-ayuda>${textoRetoAyuda(est)}</p>
+        <ul class="lista">${est.reto.map((e, i) => filaEjercicio(e, false, est.estrella.length + est.elegir.length + i + 1, plazo.tipo, true)).join('')}</ul>` : ''}
       <div class="pie-menu">
         <a class="enlace-portada" href="${URL_PORTADA}?c=${codigo}">${t.todas}</a>
         <button type="button" class="discreto" id="cambiar">${t.cambiar_codigo} (${codigo})</button>
@@ -250,15 +273,21 @@ function pintarTarea() {
 
 /** Los nombres de los ejercicios están en cada práctica: se cargan aparte y se ponen al llegar. */
 async function cargarNombres() {
-  const slugs = [...new Set([...tarea.estrella, ...tarea.elegir].map(([slug]) => slug))];
+  const slugs = slugsDe(tarea);
   await Promise.all(slugs.map(async slug => {
     const declaracion = await declaracionDe(practicaPorSlug(slug));
-    declaracion?.ejercicios?.forEach((e, i) => nombres.set(`${slug}/${i + 1}`, e.nombre));
+    declaracion?.ejercicios?.forEach((e, i) => {
+      nombres.set(`${slug}/${i + 1}`, e.nombre);
+      objetivos.set(`${slug}/${i + 1}`, e.objetivo ?? OBJETIVO);
+    });
     for (const span of app.querySelectorAll(`[data-nombre^="${slug}/"]`)) {
       const nombre = nombres.get(span.dataset.nombre);
       if (nombre) span.textContent = nombre[idioma];
     }
   }));
+  // Lo que puede dar el reto depende del objetivo de sus ejercicios, que dice su práctica.
+  const ayuda = app.querySelector('[data-reto-ayuda]');
+  if (ayuda && tarea.reto?.length) ayuda.textContent = textoRetoAyuda(estadoTarea(tarea, progresoDeTarea(tarea, codigo)));
 }
 
 function pintar() {

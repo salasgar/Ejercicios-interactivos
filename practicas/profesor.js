@@ -128,7 +128,7 @@ function pintarTablaTareas(lista, idDestino, idTabla, vacio = '') {
       <tbody>${lista.map(t => `
         <tr>
           <td class="num">${t.id}</td><td>${esc(t.titulo.es)}</td>
-          <td>${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.desde ? ` · en la portada desde el ${t.desde.split('-').reverse().join('/')}` : ''}${t.hasta ? ` · plazo ${t.hasta.split('-').reverse().join('/')}` : ''}${t.asignada ? ' · asignada' : ''}${t.progresoPorPractica ? '' : ' · progreso propio'}</td>
+          <td>${t.estrella.length} ★ + ${t.nElegir} de ${t.elegir.length}${t.reto?.length ? ` · reto ${t.reto.length}` : ''}${t.desde ? ` · en la portada desde el ${t.desde.split('-').reverse().join('/')}` : ''}${t.hasta ? ` · plazo ${t.hasta.split('-').reverse().join('/')}` : ''}${t.asignada ? ' · asignada' : ''}${t.progresoPorPractica ? '' : ' · progreso propio'}</td>
           <td class="celda-enlace"><code class="enlace">${enlaceComun(t)}</code></td>
           <td><button type="button" class="secundario" data-copiar-tarea="${t.id}">Copiar</button></td>
         </tr>`).join('')}</tbody>
@@ -257,11 +257,14 @@ function textoRetraso(c) {
   return c.cumplida ? ` · ${c.diasRetraso} d tarde` : ` · <span class="celda--no">${c.diasRetraso} d de retraso</span>`;
 }
 
+/** «112» o, con reto y extra, «112» y debajo «100 + 12 del reto»: la nota puede pasar de 100 (tarea 205). */
+const notaTarea = c => `<strong>${c.puntos}</strong> pt${c.extra ? ` <span class="pequeno">(${c.base} + ${c.extra} del reto)</span>` : ''}`;
+
 function celdaTarea(c) {
   // Tarea asignada a otros: «—» (o su avance voluntario en gris) y no cuenta.
   if (c.noAsignado) return `<td class="num celda--no">—${c.empezada ? ` <span class="pequeno">(voluntaria: ${c.cumplida ? 'cumplida' : `★ ${c.estrellaHechos} de ${c.nEstrella}`} · ${c.puntos} pt)</span>` : ''}</td>`;
-  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida · <strong>${c.puntos}</strong> pt${textoRetraso(c)}</td>`;
-  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir} · <strong>${c.puntos}</strong> pt${textoRetraso(c)}</td>`;
+  if (c.cumplida) return `<td class="num celda--ok">✓ cumplida · ${notaTarea(c)}${textoRetraso(c)}</td>`;
+  if (c.empezada) return `<td class="num celda--medio">★ ${c.estrellaHechos} de ${c.nEstrella} · ${c.elegirHechos} de ${c.nElegir} · ${notaTarea(c)}${textoRetraso(c)}</td>`;
   return `<td class="num celda--no">sin empezar${textoRetraso(c)}</td>`;
 }
 
@@ -298,18 +301,20 @@ function htmlTareas(validos, deTareas) {
       }).join('')}</tbody>
     </table>
     <p class="pequeno">«Obligatorias»: de las tareas ya publicadas que este alumno tenía que hacer (las que tienen plazo y, de las asignadas, aquellas en las que está marcado), cuántas ha entregado. «Repaso»: cuántas tareas voluntarias ha completado. Las tareas en gris aún no se han publicado (salen en la portada desde el día que dice) y no cuentan en nada.</p>
-    <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. ${tareas.some(t => t.progresoPorPractica) ? 'Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre.' : 'Cada tarea cuenta solo lo hecho dentro de la tarea.'} Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
+    <p class="pequeno">«★ x de 6 · y de 4 · N pt · D d tarde»: obligatorios terminados, de los de elegir cuántos ha terminado, los puntos de la tarea (sobre 100), los mismos que ve el alumno en su marcador: 10 por ejercicio terminado y, a medias, la parte proporcional (eso solo lo sabe la nube; de los de elegir cuentan los mejores), y los días de retraso sobre el plazo (en rojo, si todavía no la ha entregado). En una tarea con <strong>reto</strong>, los puntos son la nota con lo que suma el reto encima (puede pasar de 100: «112 pt (100 + 12 del reto)»); el reto no hace falta para cumplirla, no va en el código de la tarea y solo se sabe por la nube. Una tarea <strong>asignada</strong> es obligatoria solo para los alumnos marcados en «Asignar tareas»: para los demás sale «—» (su avance voluntario, en gris) y no cuenta. ${tareas.some(t => t.progresoPorPractica) ? 'Las tareas con progreso propio (todas menos la 1) cuentan solo lo hecho dentro de la tarea; la 1 cuenta también lo de la práctica libre.' : 'Cada tarea cuenta solo lo hecho dentro de la tarea.'} Un ejercicio cuenta si lo dice el código de la tarea <strong>o</strong> los datos de la nube. El CSV trae también los fallos, el día, el plazo, la fecha de entrega, los días de retraso y si fue a tiempo.</p>`;
 }
 
 function csvTareas(validos, deTareas) {
   const tareas = tareasDe();
   const filas = juntarTareas(nombres(), deTareas, validos, espacio.nube, tareas, opcionesTareas());
-  const cab = ['N.º', 'Alumno', 'Código', ...tareas.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`, `T${t.id} plazo`, `T${t.id} fecha de entrega`, `T${t.id} días de retraso`, `T${t.id} entrega`])];
+  // Una tarea con reto lleva dos columnas más detrás de sus puntos (que ya son la nota con el extra): las de las demás no cambian.
+  const conReto = t => Boolean(t.reto?.length);
+  const cab = ['N.º', 'Alumno', 'Código', ...tareas.flatMap(t => [`T${t.id} estado`, `T${t.id} puntos (de ${10 * (t.estrella.length + t.nElegir)})`, ...(conReto(t) ? [`T${t.id} base (de 100)`, `T${t.id} extra del reto`] : []), `T${t.id} ★ (de ${t.estrella.length})`, `T${t.id} a elegir (de ${t.nElegir})`, `T${t.id} fallos`, `T${t.id} día`, `T${t.id} fuente`, `T${t.id} plazo`, `T${t.id} fecha de entrega`, `T${t.id} días de retraso`, `T${t.id} entrega`])];
   return [cab, ...filas.map(f => [
     f.indice + 1, f.nombre, codigoVisible(f.indice),
-    ...f.tareas.flatMap(c => (c.noAsignado
-      ? ['no asignada', '', '', '', '', '', '', '', '', '', '']
-      : [estadoTareaCsv(c), c.puntos, c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, fechaCsv(c.dia), c.fuente, plazoCsv(c), fechaCsv(c.diaEntrega), c.conPlazo ? c.diasRetraso : '', c.entrega])),
+    ...f.tareas.flatMap((c, k) => (c.noAsignado
+      ? ['no asignada', '', ...(conReto(tareas[k]) ? ['', ''] : []), '', '', '', '', '', '', '', '', '']
+      : [estadoTareaCsv(c), c.puntos, ...(conReto(tareas[k]) ? [c.base, c.extra] : []), c.estrellaHechos, c.elegirHechos, `${c.fallos}${c.tope ? '+' : ''}`, fechaCsv(c.dia), c.fuente, plazoCsv(c), fechaCsv(c.diaEntrega), c.conPlazo ? c.diasRetraso : '', c.entrega])),
   ])];
 }
 
@@ -398,7 +403,7 @@ function ejerciciosDeVista(vista, practicas) {
   if (vista === FALLOS) return practicas.flatMap(p => Array.from({ length: p.nEjercicios }, (_, i) => ({ practica: p, n: i + 1, marca: '' })));
   const tarea = tareaDe(Number(vista.slice(FALLOS_TAREA.length)));
   if (!tarea) return [];
-  return [...tarea.estrella.map(par => [par, '★']), ...tarea.elegir.map(par => [par, 'elegir'])]
+  return [...tarea.estrella.map(par => [par, '★']), ...tarea.elegir.map(par => [par, 'elegir']), ...(tarea.reto ?? []).map(par => [par, 'reto'])]
     .map(([[slug, n], marca]) => ({ practica: practicaPorSlug(slug), n, marca }))
     .filter(e => e.practica);
 }
@@ -518,7 +523,7 @@ function filtroTareaRegistro() {
   if (valor === 'ninguna') return { tarea: 'ninguna' };
   const tarea = tareaDe(Number(valor));
   if (!tarea) return {};
-  return { tarea: tarea.id, ejercicios: tarea.progresoPorPractica ? [...tarea.estrella, ...tarea.elegir] : undefined };
+  return { tarea: tarea.id, ejercicios: tarea.progresoPorPractica ? [...tarea.estrella, ...tarea.elegir, ...(tarea.reto ?? [])] : undefined };
 }
 
 function filtrosRegistro() {

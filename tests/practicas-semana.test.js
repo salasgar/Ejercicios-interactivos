@@ -15,9 +15,9 @@ import {
   codigoAlumno, leerCodigoResultado, codigoTarea, leerCodigoTarea, leerCualquierCodigo, extraerCodigosResultado,
 } from '../practicas/_comun/codigos.js';
 import {
-  TAREAS, PUNTOS_POR_EJERCICIO, PUNTOS_TAREA, MAX_ESTRELLA, MAX_ELEGIR, tareaPorId, tareasPublicadas, estadoTarea, estadoPlazo, diaDeFecha, erroresTareas, enlaceEjercicio, fechaISO,
+  TAREAS, PUNTOS_POR_EJERCICIO, PUNTOS_TAREA, MAX_ESTRELLA, MAX_ELEGIR, MAX_RETO, RETO_SUMA_SIEMPRE, puntosExtra, tareaPorId, tareasPublicadas, estadoTarea, estadoPlazo, diaDeFecha, erroresTareas, enlaceEjercicio, fechaISO,
 } from '../practicas/_comun/tareas.js';
-import { declaracionDe, progresoGuardado, claveProgreso, urlSemana } from '../practicas/_comun/base.js';
+import { declaracionDe, progresoGuardado, claveProgreso, urlSemana, ambitoDe } from '../practicas/_comun/base.js';
 import { leerNumero } from '../practicas/_comun/piezas.js';
 import { juntarTareas } from '../practicas/resultados.js';
 
@@ -966,5 +966,112 @@ test('textos del código de 8: sin red y sin tareas, en los dos idiomas', () => 
     for (const clave of ['espacio_sin_red', 'espacio_sin_tareas', 'entrada_no_existe']) {
       assert.ok(typeof T[idioma][clave] === 'string' && T[idioma][clave].length > 10, `${idioma}.${clave}`);
     }
+  }
+});
+
+// --- Retos con puntos extra (tarea 205) ------------------------------------------------------
+
+test('reto: erroresTareas comprueba la lista, el tope de 3, el catálogo y que no repita un ★ ni uno de elegir', () => {
+  const buena = { id: 9, unidad: 2, titulo: { es: 'a', en: 'b' }, estrella: [['recta', 1]], elegir: [['recta', 2], ['recta', 3]], nElegir: 1 };
+  assert.deepEqual(erroresTareas([{ ...buena, reto: [['venn', 1]] }]), []);
+  assert.deepEqual(erroresTareas([{ ...buena, reto: [] }]), [], 'un reto vacío es como no tenerlo');
+  const mal = reto => erroresTareas([{ ...buena, reto }]).join(' | ');
+  assert.match(mal([['recta', 1]]), /recta\/1 está repetido/, 'un ★ no puede ser también reto');
+  assert.match(mal([['recta', 3]]), /recta\/3 está repetido/, 'uno de elegir no puede ser también reto');
+  assert.match(mal([['venn', 1], ['venn', 1]]), /venn\/1 está repetido/);
+  assert.match(mal([['venn', 1], ['venn', 2], ['venn', 3], ['venn', 4]]), new RegExp(`más de ${MAX_RETO} ejercicios de reto`));
+  assert.equal(MAX_RETO, 3);
+  assert.match(mal([['venn', 9]]), /venn no tiene ejercicio 9/);
+  assert.match(mal([['inventada', 1]]), /no está en el catálogo/);
+  assert.match(mal('venn'), /«reto» tiene que ser una lista/);
+});
+
+test('reto: el extra pesa como un punto normal de la tarea (6 ★ + 4: 1 = 1; 5 ★ + 0: 1 = 2) y suma encima de los 100', () => {
+  const diez = { id: 60, titulo: { es: 'x', en: 'x' },
+    estrella: Array.from({ length: 6 }, (_, i) => ['divisores', i + 1]), elegir: [['recta', 1], ['recta', 2], ['recta', 3], ['semaforo', 1]], nElegir: 4, reto: [['venn', 1]] };
+  const cinco = { id: 61, titulo: { es: 'x', en: 'x' }, estrella: Array.from({ length: 5 }, (_, i) => ['divisores', i + 1]), elegir: [], nElegir: 0, reto: [['venn', 1]] };
+  assert.equal(puntosExtra(1, 10), 1);
+  assert.equal(puntosExtra(54, 10), 54);
+  assert.equal(puntosExtra(1, 5), 2);
+  assert.equal(puntosExtra(54, 5), 108);
+  assert.equal(puntosExtra(7, 6), 12, 'redondeado: 100 · 7 / 60 = 11,67');
+  assert.equal(puntosExtra(0, 10), 0);
+  assert.equal(puntosExtra(5, 0), 0, 'sin ejercicios que cuenten no hay peso');
+
+  const todo = { ...Object.fromEntries(diez.estrella.map(([s, n]) => [`${s}/${n}`, hecho()])), ...Object.fromEntries(diez.elegir.map(([s, n]) => [`${s}/${n}`, hecho()])) };
+  const conReto = estadoTarea(diez, con({ ...todo, 'venn/1': medias(14, 54) }));
+  assert.deepEqual([conReto.base, conReto.extra, conReto.puntos, conReto.maximo, conReto.cumplida], [100, 14, 114, 100, true]);
+  assert.equal(conReto.reto[0].puntosReto, 14);
+  const terminado = estadoTarea(diez, con({ ...todo, 'venn/1': { puntos: 54, objetivo: 54, aciertos: 4, fallos: 3, terminado: true, dia: 50 } }));
+  assert.deepEqual([terminado.extra, terminado.puntos], [54, 154], 'el reto entero: todos sus puntos, sin tope');
+
+  const todoCinco = Object.fromEntries(cinco.estrella.map(([s, n]) => [`${s}/${n}`, hecho()]));
+  const deCinco = estadoTarea(cinco, con({ ...todoCinco, 'venn/1': medias(6, 54) }));
+  assert.deepEqual([deCinco.base, deCinco.extra, deCinco.puntos], [100, 12, 112]);
+});
+
+test('reto: sin empezar da 0; suma aunque la base no esté completa; no cuenta para cumplir, ni fallos, ni día de entrega', () => {
+  const tarea = { ...TAREA, reto: [['venn', 1]] };
+  const sinReto = estadoTarea(tarea, con({ 'recta/1': hecho() }));
+  assert.deepEqual([sinReto.extra, sinReto.puntos, sinReto.base, sinReto.reto[0].empezado], [0, 25, 25, false]);
+  assert.equal(RETO_SUMA_SIEMPRE, true);
+  const aMedias = estadoTarea(tarea, con({ 'recta/1': hecho(), 'venn/1': medias(6, 54, 5) }));
+  // TAREA cuenta 4 ejercicios: cada punto del reto vale 2,5 → 6 puntos = 15.
+  assert.deepEqual([aMedias.base, aMedias.extra, aMedias.puntos, aMedias.cumplida, aMedias.fallos], [25, 15, 40, false, 0]);
+  const soloReto = estadoTarea(tarea, con({ 'venn/1': { puntos: 6, objetivo: 54, aciertos: 1, fallos: 0, terminado: false, dia: 0 } }));
+  assert.deepEqual([soloReto.empezada, soloReto.puntos, soloReto.diaEntrega], [true, 15, 0], 'con solo el reto ya está empezada');
+  const cumplida = estadoTarea(tarea, con({ 'recta/1': hecho(0, 40), 'recta/2': hecho(0, 41), 'semaforo/1': hecho(0, 42), 'semaforo/2': hecho(0, 43),
+    'venn/1': { puntos: 54, objetivo: 54, aciertos: 4, fallos: 2, terminado: true, dia: 60 } }));
+  assert.deepEqual([cumplida.cumplida, cumplida.diaEntrega, cumplida.dia, cumplida.fallos, cumplida.puntos], [true, 43, 43, 0, 100 + 135]);
+});
+
+test('reto: una tarea sin reto da exactamente lo de antes (los mismos campos de siempre, extra 0 y base = puntos)', () => {
+  const casos = [{}, { 'recta/1': hecho() }, { 'recta/1': medias(5), 'semaforo/2': medias(7) }, { 'recta/1': hecho(), 'recta/2': hecho(2, 44), 'semaforo/1': hecho(), 'semaforo/3': hecho() },
+    { 'venn/1': medias(20, 54) }];
+  for (const c of casos) {
+    const sin = estadoTarea(TAREA, con(c));
+    const vacio = estadoTarea({ ...TAREA, reto: [] }, con(c));
+    assert.deepEqual(vacio, sin);
+    assert.deepEqual([sin.extra, sin.base, sin.reto], [0, sin.puntos, []]);
+    assert.ok(sin.puntos <= 100);
+  }
+});
+
+test('reto: la base abre el ejercicio del reto en el ámbito de la tarea', () => {
+  const tarea = { ...TAREA, reto: [['venn', 1]] };
+  assert.deepEqual(ambitoDe(50, tarea, 'venn', 1), { tipo: 'tarea', tareaId: 50, semana: 50 });
+  assert.deepEqual(ambitoDe(50, TAREA, 'venn', 1), { tipo: 'practica', tareaId: null, semana: null }, 'sin reto, venn 1 no está en la tarea');
+});
+
+test('reto: el panel lo lee de la nube de la tarea y la nota pasa de 100; sin reto, todo igual', () => {
+  const tarea = { ...TAREA, id: 7, reto: [['venn', 1]] };
+  const idDe = slug => practicaPorSlug(slug).id;
+  const deNubeTareas = [
+    { tarea: 7, practica: idDe('recta'), indice: 0, ej: [hecho(), hecho()] },
+    { tarea: 7, practica: idDe('semaforo'), indice: 0, ej: [hecho(), hecho()] },
+    { tarea: 7, practica: idDe('venn'), indice: 0, ej: [{ puntos: 54, objetivo: 54, aciertos: 4, fallos: 1, terminado: true, dia: 50 }] },
+    { tarea: 7, practica: idDe('venn'), indice: 1, ej: [{ puntos: 14, objetivo: 54, aciertos: 2, fallos: 3, terminado: false, dia: 0 }] },
+  ];
+  const filas = juntarTareas(['Ana', 'Luis'], [], [], [], [tarea], { deNubeTareas });
+  const [ana, luis] = filas.map(f => f.tareas[0]);
+  assert.deepEqual([ana.cumplida, ana.base, ana.extra, ana.puntos, ana.nReto, ana.fallos], [true, 100, 135, 235, 1, 0]);
+  assert.deepEqual([luis.cumplida, luis.empezada, luis.base, luis.extra, luis.puntos], [false, true, 0, 35, 35]);
+  // La misma nube sin el reto en la tarea: los números de siempre.
+  const sin = juntarTareas(['Ana', 'Luis'], [], [], [], [{ ...TAREA, id: 7 }], { deNubeTareas }).map(f => f.tareas[0]);
+  assert.deepEqual(sin.map(c => [c.puntos, c.base, c.extra, c.nReto, c.empezada]), [[100, 100, 0, 0, true], [0, 0, 0, 0, false]]);
+});
+
+test('reto: la página de la semana enseña su sección y la nota «base + extra»; el código de la tarea no lo lleva', () => {
+  const semana = readFileSync(new URL('../practicas/semana.js', import.meta.url), 'utf8');
+  assert.match(semana, /t\.semana_reto\b/);
+  assert.match(semana, /semana_marcador_puntos_reto\(est\.base, est\.maximo, est\.extra\)/);
+  assert.match(semana, /width: \$\{Math\.round\(100 \* est\.base/, 'la barra es solo la base, sobre 100');
+  assert.doesNotMatch(semana.slice(semana.indexOf('function cajaCodigo'), semana.indexOf('function pintarTarea')), /reto:/, 'codigoTarea no recibe el reto');
+  for (const idioma of ['es', 'en']) {
+    const t = T[idioma];
+    assert.match(t.semana_marcador_puntos_reto(100, 100, 12), /100.*100.*\+ 12.*= 112/);
+    assert.doesNotMatch(t.semana_marcador_puntos_reto(80, 100, 0), /=/);
+    assert.match(t.semana_reto_ayuda(54), /54/);
+    assert.match(t.semana_reto, idioma === 'es' ? /Reto \(opcional\)/ : /Challenge \(optional\)/);
   }
 });

@@ -308,9 +308,11 @@ function htmlTareas(t, tareas, actual) {
   const fila = tarea => {
     const est = codigo ? estadoTarea(tarea, progresoDeTarea(tarea, codigo)) : null;
     const plazo = est ? vistaPlazo(tarea, est, hoyDia, asignadaAMi(tarea, asignacion), t) : null;
+    // Con reto (tarea 205), lo que suma encima de los 100.
+    const extra = est?.extra ? ` <span class="etiqueta etiqueta--ok">${t.semana_reto_extra(est.extra)}</span>` : '';
     const etiqueta = !est?.empezada ? ''
-      : est.cumplida ? `<span class="etiqueta etiqueta--ok">✓ ${t.semana_cumplida}</span>`
-        : `<span class="etiqueta">${t.semana_marcador_puntos(est.puntos, est.maximo)}</span>`;
+      : est.cumplida ? `<span class="etiqueta etiqueta--ok">✓ ${t.semana_cumplida}</span>${extra}`
+        : `<span class="etiqueta">${t.semana_marcador_puntos(est.base, est.maximo)}</span>${extra}`;
     const tipo = plazo ? `<span class="etiqueta etiqueta--${plazo.tipo}">${plazo.etiqueta}</span>` : '';
     const frase = plazo?.frase ? `<span class="portada__plazo portada__plazo--${plazo.estado}">${plazo.frase}</span>` : '';
     return `

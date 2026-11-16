@@ -28,7 +28,7 @@
 
 import { practicaPorSlug, adaptarProgreso } from './catalogo.js';
 import { leerCodigoSecreto, formatoDeCodigo } from './codigos.js';
-import { ejercicioNuevo, anotar, ayudar, ayudasDelGrupo, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA, AYUDAS_POR_PUNTO } from './contador.js';
+import { ejercicioNuevo, anotar, sumar, ayudar, ayudasDelGrupo, queHaPasado, migrarProgreso, diaDe, OBJETIVO, PENALIZACION, VIDAS, RACHA, EXTRA, AYUDAS_POR_PUNTO } from './contador.js';
 import { resolverCodigo } from './espacio.js';
 import {
   leerNube, escribirNube, subirFusionado, fusionarProgreso, canonico,
@@ -70,6 +70,7 @@ export function validarPractica(practica) {
     if (e.noLoSe !== undefined && e.explicacion === undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «noLoSe» sin «explicacion» no hace nada`);
     if (e.sinAyuda !== undefined && (typeof e.sinAyuda !== 'string' || e.sinAyuda.trim().length < 10)) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «sinAyuda» es el motivo, en una frase, de que el ejercicio no lleve «No lo sé»`);
     if (e.sinAyuda !== undefined && e.explicacion !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: o «explicacion» o «sinAyuda», no las dos`);
+    if (e.sinVidas !== undefined && typeof e.sinVidas !== 'boolean') throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «sinVidas» tiene que ser true o false (o no ponerse)`);
     for (const viejo of ['inicial', 'maximo']) {
       if (e[viejo] !== undefined) throw new Error(`«${ficha.slug}», ejercicio ${i + 1}: «${viejo}» ya no existe; el contador es por puntos («objetivo», «penalizacion», «vidas»)`);
     }
@@ -84,12 +85,14 @@ export function validarPractica(practica) {
 /**
  * Parámetros del contador de un ejercicio, con sus valores por defecto:
  * llegar a 10 puntos, cada fallo quita 1 punto y una vida, y hay 5 vidas.
+ * `sinVidas: true` (tarea 205, solo si el ejercicio lo declara): un fallo no quita ni puntos ni vidas.
  */
 export function parametrosDe(ejercicio) {
   return {
     objetivo: ejercicio.objetivo ?? OBJETIVO,
     penalizacion: ejercicio.penalizacion ?? PENALIZACION,
     vidas: ejercicio.vidas ?? VIDAS,
+    ...(ejercicio.sinVidas === true && { sinVidas: true }),
   };
 }
 
@@ -115,7 +118,7 @@ export function ambitoDe(semana, tarea, slug, n) {
   if (semana === null || semana === undefined) return { tipo: 'practica', tareaId: null, semana: null };
   if (!tarea) return { tipo: 'practica', tareaId: null, semana };
   if (tarea.progresoPorPractica) return { tipo: 'practica', tareaId: tarea.id, semana };
-  const dentro = [...tarea.estrella, ...tarea.elegir].some(([s, k]) => s === slug && k === n);
+  const dentro = [...tarea.estrella, ...tarea.elegir, ...(tarea.reto ?? [])].some(([s, k]) => s === slug && k === n);
   return dentro ? { tipo: 'tarea', tareaId: tarea.id, semana } : { tipo: 'practica', tareaId: null, semana: null };
 }
 
@@ -636,8 +639,11 @@ export function arrancar(practica) {
   function htmlRegla() {
     const p = params[0];
     const iguales = params.every(q => Object.keys(p).every(c => q[c] === p[c]));
+    if (iguales && p.sinVidas) return t().menu_regla_sin_vidas(p.objetivo);
     return iguales ? t().menu_regla(p.objetivo, p.penalizacion, p.vidas, RACHA, EXTRA) : t().menu_regla_varia(RACHA, EXTRA);
   }
+  /** La regla de una fila del menú cuando los ejercicios no tienen todos la misma. */
+  const reglaFila = p => (p.sinVidas ? t().regla_fila_sin_vidas(p.objetivo) : t().regla_fila(p.objetivo, p.penalizacion, p.vidas));
 
   /** La frase del «No lo sé», si algún ejercicio de la práctica lo tiene. */
   const htmlReglaAyuda = () => (defs.some(d => d.explicacion) ? `<p>${t().menu_ayuda(AYUDAS_POR_PUNTO)}</p>` : '');
@@ -654,7 +660,7 @@ export function arrancar(practica) {
       const etiqueta = e.terminado
         ? `<span class="etiqueta etiqueta--ok">✓ ${t().hecho} · ${t().fallos(e.fallos)}</span>`
         : empezado ? `<span class="etiqueta">${t().puntos(e.puntos, e.objetivo)}</span>`
-          : varia ? `<span class="etiqueta">${t().regla_fila(params[n].objetivo, params[n].penalizacion, params[n].vidas)}</span>` : '';
+          : varia ? `<span class="etiqueta">${reglaFila(params[n])}</span>` : '';
       const boton = e.terminado ? t().repetir : empezado ? t().seguir : t().empezar;
       return `
         <li class="lista__item">
@@ -715,6 +721,8 @@ export function arrancar(practica) {
     app.querySelector('#puntos').textContent = t(idi).puntos(s.puntos, s.objetivo);
     app.querySelector('#barra').style.width = `${Math.round(100 * s.puntos / Math.max(1, s.objetivo))}%`;
     const vidas = app.querySelector('#vidas');
+    // Sin vidas (un reto): no hay corazones que enseñar.
+    if (params[actual.n].sinVidas) { vidas.textContent = ''; vidas.removeAttribute('aria-label'); return; }
     vidas.textContent = '♥'.repeat(Math.max(0, Math.min(total, s.vidas))) + '♡'.repeat(Math.max(0, total - s.vidas));
     vidas.setAttribute('aria-label', t(idi).vidas_quedan(s.vidas));
   }
@@ -786,6 +794,31 @@ export function arrancar(practica) {
         registrar(Boolean(acierto), Math.max(0, Math.floor(pistas) || 0));
         mostrarFeedback(Boolean(acierto), texto, espera);
         if (!acierto) anotarFallo({ html: texto, error, respuesta });
+      },
+      // Varios puntos de golpe (tarea 205): cierra el ítem como un acierto que da `k` puntos.
+      sumar: (k, { html = '', espera = 'boton' } = {}) => {
+        if (miTurno !== turno || actual.respondido) return;
+        const n = Math.floor(k);
+        if (!(n >= 1)) { console.error(`api.sumar: k tiene que ser un entero ≥ 1 (llega ${k})`); return; }
+        actual.feedback = typeof html === 'function' ? html : null;
+        let texto = '';
+        try { texto = actual.feedback ? actual.feedback(textosDe(idi)) : html; }
+        catch (e) { console.error(e); actual.feedback = null; }
+        app.querySelector('#ayuda').innerHTML = '';
+        registrarSuma(n);
+        mostrarFeedback(true, texto, espera, n);
+      },
+      // Un intento fallido que NO cierra el ítem (tarea 205): la práctica enseña su propio
+      // feedback y el alumno sigue con el mismo ítem. Se cuenta con las reglas del ejercicio
+      // (con `sinVidas`, no quita nada) y se registra para el profesor. Devuelve lo que ha
+      // pasado en el contador (`queHaPasado`), o null si ya no vale.
+      intentoFallido: ({ html = '', error, respuesta } = {}) => {
+        if (miTurno !== turno || actual.respondido) return null;
+        let texto = '';
+        try { texto = typeof html === 'function' ? html(textosDe(idi)) : html; } catch (e) { console.error(e); }
+        anotarRespuesta(false, 0);
+        anotarFallo({ html: texto, error, respuesta });
+        return { ...actual.cambio };
       },
     };
     try {
@@ -866,18 +899,35 @@ export function arrancar(practica) {
     boton.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
-  /** Anota la respuesta en el contador y lo guarda. */
+  /** Anota la respuesta en el contador y lo guarda: el ítem queda respondido. */
   function registrar(acierto, pistas) {
+    actual.respondido = true;
+    anotarRespuesta(acierto, pistas);
+  }
+
+  /** Anota una respuesta en el contador y lo guarda, sin cerrar el ítem (`intentoFallido`). */
+  function anotarRespuesta(acierto, pistas) {
     const p = params[actual.n];
+    const antes = actual.sesion;
+    actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()), { penalizacion: p.penalizacion, vidas: p.vidas, pistas, sinVidas: p.sinVidas });
+    contarIdioma(acierto);
+    guardarSesion(antes);
+  }
+
+  /** `api.sumar`: k puntos de golpe; el ítem queda respondido. */
+  function registrarSuma(k) {
     actual.respondido = true;
     const antes = actual.sesion;
-    actual.sesion = anotar(actual.sesion, acierto, diaDe(new Date()), { penalizacion: p.penalizacion, vidas: p.vidas, pistas });
-    // Para saber cuánto se ha hecho en inglés (no entra en el código de resultado).
-    if (actual.idioma === 'en') {
-      actual.sesion.en_aciertos = (actual.sesion.en_aciertos ?? 0) + (acierto ? 1 : 0);
-      actual.sesion.en_fallos = (actual.sesion.en_fallos ?? 0) + (acierto ? 0 : 1);
-    }
+    actual.sesion = sumar(actual.sesion, k, diaDe(new Date()));
+    contarIdioma(true);
     guardarSesion(antes);
+  }
+
+  /** Para saber cuánto se ha hecho en inglés (no entra en el código de resultado). */
+  function contarIdioma(acierto) {
+    if (actual.idioma !== 'en') return;
+    actual.sesion.en_aciertos = (actual.sesion.en_aciertos ?? 0) + (acierto ? 1 : 0);
+    actual.sesion.en_fallos = (actual.sesion.en_fallos ?? 0) + (acierto ? 0 : 1);
   }
 
   /** Guarda la sesión que acaba de cambiar (respuesta o ayuda), la sube cuando toca y repinta el contador. */
@@ -947,14 +997,16 @@ export function arrancar(practica) {
     });
   }
 
-  function mostrarFeedback(acierto, html, espera) {
+  /** `suma`: los puntos de golpe de `api.sumar` (0 en una respuesta normal). */
+  function mostrarFeedback(acierto, html, espera, suma = 0) {
     const idi = actual.idioma;
     const caja = app.querySelector('#feedback');
     const cambio = actual.cambio;
     if (acierto) {
       const tarjeta = (i, texto) => {
         const racha = cambio.extra ? `<p class="racha">${t(i).racha_extra(RACHA, cambio.ganados - 1)}</p>` : '';
-        return `<div class="feedback feedback--bien"><strong>✓ ${t(i).bien}</strong> ${texto}${racha}</div>`;
+        const sumados = suma ? `<p class="racha">${t(i).suma_puntos(suma)}</p>` : '';
+        return `<div class="feedback feedback--bien"><strong>✓ ${t(i).bien}</strong> ${texto}${sumados}${racha}</div>`;
       };
       // `espera: 'boton'`: también el acierto espera a «Siguiente», para que se lea la razón
       // (donde se puede acertar al azar o por la razón equivocada).
@@ -981,8 +1033,8 @@ export function arrancar(practica) {
     // El mismo ánimo en los dos idiomas (las listas son paralelas).
     const animo = rng.elegir(t(idi).animos.map((_, i) => i));
     const tarjeta = (i, texto) => {
-      const vidas = cambio.reinicio
-        ? `<p class="sin-vidas">${t(i).sin_vidas}</p>`
+      const vidas = params[actual.n].sinVidas ? `<p class="penalizacion">${t(i).sin_penalizacion}</p>`
+        : cambio.reinicio ? `<p class="sin-vidas">${t(i).sin_vidas}</p>`
         : `<p class="penalizacion">${t(i).penalizacion(cambio.perdidos)} · ${t(i).vidas_quedan(cambio.vidas)}</p><p class="animo">${t(i).animos[animo % t(i).animos.length]}</p>`;
       return `<div class="feedback feedback--mal"><strong>✗ ${t(i).mal}</strong> ${texto}${vidas}</div>`;
     };

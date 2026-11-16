@@ -7,6 +7,7 @@ import { estadoTarea, estadoPlazo, diaDeFecha } from './_comun/tareas.js';
 import { diaDe } from './_comun/contador.js';
 
 const hechosDe = ejercicios => ejercicios.filter(e => e.terminado).length;
+const numeroPositivo = x => (Number.isFinite(x) && x > 0 ? x : 0);
 
 /**
  * Resultados de UNA práctica.
@@ -80,9 +81,11 @@ export function juntarResumen(nombres, deCodigos, deNube, practicas) {
  * @param deCodigosTarea  [{ tarea, indice, estrella: [bool], elegir: [bool], fallos, tope, dia }]
  * @param deCodigos       [{ practica, indice, ejercicios: [{ terminado, fallos }], dia }]
  * @param deNube          [{ practica, indice, ej }]
- * Los puntos de cada tarea (siempre sobre `maximo`, 100) salen de
+ * Los puntos de cada tarea (sobre `maximo`, 100) salen de
  * `estadoTarea`, la misma función del marcador del alumno: cada ejercicio que
  * cuenta pesa lo mismo y, a medias, la parte proporcional (eso solo lo sabe la nube).
+ * Con reto (tarea 205), `puntos` = `base` + `extra` y puede pasar de 100; el
+ * extra solo lo sabe la nube.
  *
  * @param tareas          las columnas, en orden (de `_comun/tareas.js`)
  * @param opciones        { deNubeTareas: [{ tarea, practica, indice, ej }] (colección `progreso-tareas`, modelo v2),
@@ -94,7 +97,7 @@ export function juntarResumen(nombres, deCodigos, deNube, practicas) {
  * lo hecho en la práctica libre no le cuenta. La tarea 1 sigue como siempre
  * (códigos y nube de práctica).
  * @returns [{ indice, nombre, tareas: [{ id, estrellaHechos, nEstrella, elegirHechos, nElegir,
- *            cumplida, empezada, puntos, maximo, fallos, tope, dia, fuente,
+ *            cumplida, empezada, puntos, base, extra, nReto, maximo, fallos, tope, dia, fuente,
  *            tipo, noAsignado, conPlazo, plazo, diaEntrega, diasRetraso, entrega }] }]
  *          `noAsignado`: la tarea es `asignada` y este alumno no está marcado (no cuenta).
  *          `entrega`: '' (sin plazo para él), 'a tiempo', 'con retraso', 'sin entregar'
@@ -113,7 +116,7 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
   const anotar = (mapa, clave, n, e, dia) => {
     if (!mapa.has(clave)) mapa.set(clave, []);
     const lista = mapa.get(clave);
-    const previo = lista[n] ?? { terminado: false, empezado: false, fallos: 0, dia: 0, puntos: 0, objetivo: 0 };
+    const previo = lista[n] ?? { terminado: false, empezado: false, fallos: 0, dia: 0, puntos: 0, objetivo: 0, crudos: 0 };
     const fraccion = x => (x.objetivo > 0 ? x.puntos / x.objetivo : 0);
     const medias = !e?.terminado && e?.puntos > 0 && e?.objetivo > 0 && fraccion(e) > fraccion(previo) ? e : previo;
     lista[n] = {
@@ -123,6 +126,8 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
       dia: Math.max(previo.dia, e?.terminado ? (e.dia ?? dia ?? 0) : 0),
       puntos: medias.puntos,
       objetivo: medias.objetivo,
+      // Los puntos del contador tal cual (los del objetivo, si está terminado): los de un reto (tarea 205).
+      crudos: Math.max(previo.crudos, numeroPositivo(e?.terminado ? (e.objetivo ?? e.puntos) : e?.puntos)),
     };
   };
   for (const c of deCodigos) c.ejercicios.forEach((e, n) => anotarEj(c.practica, c.indice, n, e, c.dia));
@@ -131,7 +136,7 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
 
   const indices = new Set(nombres.map((nombre, i) => (nombre ? i : null)).filter(i => i !== null));
   for (const c of deCodigosTarea) indices.add(c.indice);
-  const enAlgunaTarea = new Set(tareas.flatMap(t => [...t.estrella, ...t.elegir]).map(([slug]) => practicaPorSlug(slug)?.id));
+  const enAlgunaTarea = new Set(tareas.flatMap(t => [...t.estrella, ...t.elegir, ...(t.reto ?? [])]).map(([slug]) => practicaPorSlug(slug)?.id));
   for (const d of [...deCodigos, ...deNube]) if (enAlgunaTarea.has(d.practica)) indices.add(d.indice);
   for (const d of deNubeTareas) indices.add(d.indice);
 
@@ -152,8 +157,14 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
     const conPracticas = practicas.some(p => p?.empezado);
     // Los puntos, con la función del marcador: lo que esa función espera de cada ejercicio.
     const hechoDe = new Map([...tarea.estrella.map(([s, n], i) => [`${s}/${n}`, estrella[i]]), ...tarea.elegir.map(([s, n], i) => [`${s}/${n}`, elegir[i]])]);
+    // Los retos solo los sabe la nube (no van en el código de la tarea): sus puntos del contador, tal cual.
+    const deReto = new Set((tarea.reto ?? []).map(([s, n]) => `${s}/${n}`));
     const marcador = estadoTarea(tarea, (slug, n) => {
       const p = dePractica([slug, n]);
+      if (deReto.has(`${slug}/${n}`)) {
+        const terminado = Boolean(p?.terminado);
+        return { terminado, puntos: p?.crudos ?? 0, objetivo: terminado ? p.crudos : (p?.objetivo ?? 0), aciertos: p?.empezado ? 1 : 0, fallos: p?.fallos ?? 0, dia: p?.dia ?? 0 };
+      }
       return { terminado: hechoDe.get(`${slug}/${n}`), puntos: p?.puntos ?? 0, objetivo: p?.objetivo ?? 0, fallos: p?.fallos ?? 0, dia: p?.dia ?? 0 };
     });
     const cumplida = estrellaHechos === tarea.estrella.length && elegirHechos >= tarea.nElegir;
@@ -172,8 +183,12 @@ export function juntarTareas(nombres, deCodigosTarea, deCodigos, deNube, tareas,
       elegirHechos,
       nElegir: tarea.nElegir,
       cumplida,
-      empezada: suyos.length > 0 || conPracticas,
+      empezada: suyos.length > 0 || conPracticas || marcador.reto.some(e => e.empezado),
+      // `puntos` es la nota (base + extra del reto; puede pasar de `maximo`); sin reto, extra = 0.
       puntos: marcador.puntos,
+      base: marcador.base,
+      extra: marcador.extra,
+      nReto: marcador.reto.length,
       maximo: marcador.maximo,
       fallos: Math.max(0, ...suyos.map(c => c.fallos), practicas.reduce((s, p) => s + (p?.fallos ?? 0), 0)),
       tope: suyos.some(c => c.tope),
