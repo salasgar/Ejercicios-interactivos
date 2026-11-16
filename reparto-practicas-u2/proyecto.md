@@ -999,3 +999,51 @@ primero, paso a paso, caza el error); U5 `multiplica-divide-decimales` ej. 6 (co
   vez** (las dos tocan `catalogo.js`, docs y `README.md`): en cadena, en cualquier orden. Ninguna toca una carpeta de las quince reabiertas
   del 14-11 ni de la 198.
 - **Orden de prioridad**: 199 en cuanto cierre la 197; después 200 (la U3 es la que corre) y 203; luego 201, 202 y 204.
+
+## Decisiones del 16-11: el reto «Tabla de propiedades» y los puntos extra (coordinadora s-20261116T124745-d0ed648f)
+
+Idea de Juan Luis (15-11), con una hoja de cálculo suya: etiquetas con propiedades («Primo», «Par», «Cuadrado perfecto», «> 50»…) y
+números que el alumno arrastra para formar una tabla de doble entrada: cada número en una casilla cuyas dos propiedades cumple. Lo que
+dijo él, y lo que ha decidido la coordinadora (él puede cambiar cualquier punto de lo segundo):
+
+**De Juan Luis (15/16-11)**
+- **Muchas soluciones, a propósito**: el alumno decide dónde van las etiquetas (filas o columnas, en qué orden) y los números. Se
+  corrige por propiedades, nunca contra una clave. Las etiquetas cambian de una tabla a otra (múltiplo de 7, divisor de 60, tiene 4
+  divisores…) y los números se eligen según las etiquetas.
+- **Reto opcional y por niveles**, de menos a más números (6, 8 o 9, 12): «puede que sea un ejercicio difícil». Etiquetas ya colocadas
+  en los primeros niveles y propiedades fáciles antes que las difíciles (aprobado).
+- **Práctica de la U2** (aunque la U2 ya ha terminado). Este curso, **como repaso en una tarea de una unidad que queda**; el que viene,
+  como ejercicio opcional en una tarea de la U2.
+- **Puntos**: al completar cada tabla, **1 punto por cada número y cada etiqueta colocados**; «si resuelve todos los retos, obtendrá
+  bastante más de 10 puntos. Es un premio». **Suman a la nota de la tarea aunque pase de 100.**
+- **Comprobar sin penalizar**: la tabla se comprueba las veces que haga falta; al quedar entera bien, todos los puntos. Tras cada
+  intento fallido, feedback que explica qué números no encajan y por qué.
+- **«Triangular»** (no se ha dado): solo en los niveles altos; antes del primer puzle que la lleve, una infografía y «¿Sabes ya lo que
+  es un número triangular?»: «Sí» → al puzle; «No» → explicación más detallada.
+- Arrastrar los rectángulos (etiquetas y números) para formar la tabla.
+
+**De la coordinadora**
+- **Dos piezas separadas**: el mecanismo general de retos con puntos extra (205, ALTO: toca el modelo de tareas, la base y las notas, y
+  cualquier práctica podrá ser reto) y la práctica (206, MEDIO). La 207 (ALTO) revisa con clics, publica y propone la tarea.
+- **Campo `reto` en la tarea** (`[slug, n]`, tope 3), fuera de la base de 100. **Extra = puntos del reto con el peso de un punto normal
+  de esa tarea**: `round(100 · puntosReto / (10 · n))`, n = ★ + `nElegir`. **Suma siempre**, aunque la base no esté completa. El reto no
+  viaja en el código de resultado de 20 caracteres (es de respaldo). Lo de fuera del repo que lea la nota (lanzador, `atender-correo`,
+  gestión) se lista, no se edita.
+- **Un solo ejercicio con cuatro niveles dentro** (`nEjercicios: 1`, `objetivo: 54`; el nivel sale de los puntos): 2 × 3 con las
+  etiquetas puestas (6 puntos), 2 × 4 (14), 3 × 3 (15) y 4 × 3 (19). Banco del 1 al 100 en tres grados; «tiene 2 divisores» no (es
+  «primo»). Sin «No lo sé» (`sinAyuda`): comprobar no cuesta nada y el feedback ya explica. Arrastrar con el dedo y con el ratón, y
+  también tocar-tocar.
+- **Este curso, en la tarea de la semana 3 de la U3** (desde el lun 30-11) como `reto`. Juan Luis la pone en el panel.
+- **Versión en papel** (etiquetas y números recortables): no es de este reparto; va con los apuntes cuando él la pida.
+
+**Lo dado de alta**
+
+| # | Tarea | Banda | Duración | Precondición | Plazo |
+|---|---|---|---|---|---|
+| 205 | Retos con puntos extra: `reto` en la tarea, `api.sumar` y `sinVidas` en la base, semana y panel con notas > 100 | ALTO | 2 h 30 min | nadie con `tareas.js`, `base.js`, `contador.js`, `semana.js`, `profesor*.js` | vie 20-11 |
+| 206 | `tabla-propiedades` (id 83, U2), cuatro niveles, infografía de «triangular» | MEDIO | 2 h 30 min | 205 LISTA; ni la 203 ni la 204 en curso | mié 25-11 |
+| 207 | Revisión con clics, publicación y propuesta de la tarea de la U3 | ALTO | 1 h 30 min | 205 y 206 LISTAS; ni la 203 ni la 204 en curso | vie 27-11 |
+
+- **Qué va a la vez**: la 205 puede ir en paralelo con la 203 y la 204 (ficheros distintos). La 206 y la 207, **nunca a la vez que la 203
+  o la 204** (todas tocan `catalogo.js` y docs): en cadena.
+- **Orden de prioridad**: 205 ya; después 206 y 207, antes que la 204 (la U3 corre; la 203 tiene su plazo el jue 3-12).
