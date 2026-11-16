@@ -127,6 +127,16 @@ y las publica, o reabre la que no pase (la otra se publica igual).
 - (de la 162) `npm test` con otras sesiones en la máquina puede tardar más de 20 min: estira la caducidad **antes** de lanzarlo.
 - (de la coordinadora, 5-11) `catalogo.js` lo comparten muchas tareas: edita, comitea con ruta explícita y suéltalo enseguida. Hay
   ENTREGA antiguas con casos de examen en claro: no copies a la tuya frases de otras sin leerlas.
+- (de la 204, 16-11) **Mira el renglón a 375 px lo primero**: con fracciones y decimales se partía en casi todos los ítems (las dos
+  `estilos.css` no tenían la regla de 375 px de `coloca-enteros`), y eso reabre sin más. Con fracciones, cuenta los renglones por el
+  **centro** de cada `.celda` (`top + height / 2`), no por su `top`: la fracción es más alta que un natural y el `top` da renglones de más.
+  Para saber cuánto falta, `flex-wrap: nowrap` y compara `scrollWidth` con `clientWidth` de `.expr`.
+- (de la 204, 16-11) Para el guion de clics, el ítem se lee del DOM: la fracción, de los dos hijos de `.frac` (el `textContent` los pega:
+  «34» es 3/4) y el signo, de delante; el decimal, con `deTexto` de `_comun/decimales.js`; el motor admite `{ num, den }` plano. El objetivo
+  de la diana, comparando el `textContent` de `M.htmlValor(v)` de cada valor con el de `.objetivo`. Una colocación toda a cero no dispara
+  la evaluación (no hay mensaje que esperar), y con todos los chips encendidos los huecos se bloquean: no se pueden esperar más mensajes.
+- (de la 204, 16-11) **Regla de git del 16-11**: se escribe, comitea y empuja desde el árbol compartido (CLAUDE.md). La 203 y el
+  principio de la 204 se hicieron en un worktree, y otra sesión tuvo que realinear el main.
 
 ## Prohibido (propio de esta tarea)
 
