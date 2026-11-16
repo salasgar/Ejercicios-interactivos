@@ -288,3 +288,13 @@ test('tarea 198: las puntas del árbol «son números primos», no «son primos�
     }
   }
 });
+
+test('terminada: el aviso del paso dos existe en los dos idiomas, va antes de la igualdad y el «No» no usa el verde de acierto', async () => {
+  const { TX } = await import('../practicas/arbol/textos.js');
+  assert.match(TX.terminada.toca.es, /Bien: no est/);
+  assert.match(TX.terminada.toca.en, /Right: it is not finished/);
+  const fs = await import('node:fs');
+  const js = fs.readFileSync(new URL('../practicas/arbol/practica.js', import.meta.url), 'utf8');
+  assert.ok(js.indexOf('class="instruccion paso-dos') < js.lastIndexOf('class="operacion igualdad"'));
+  assert.match(js, /eleccion--paso/);
+});

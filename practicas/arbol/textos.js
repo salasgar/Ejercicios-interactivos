@@ -71,7 +71,7 @@ export const TX = {
     },
     si: { es: 'Sí, terminada', en: 'Yes, finished' },
     no: { es: 'No', en: 'No' },
-    toca: { es: 'No está terminada. Toca el factor que no es primo.', en: 'It is not finished. Tap the factor that is not prime.' },
+    toca: { es: 'Bien: no está terminada. Ahora toca el factor que no es primo.', en: 'Right: it is not finished. Now tap the factor that is not prime.' },
     todos_primos: { es: lista => `Está terminada: ${lista} son primos`, en: lista => `It is finished: ${lista} are prime` },
     un_primo: { es: p => `Está terminada: ${p} es primo`, en: p => `It is finished: ${p} is prime` },
     seria: { es: (n, fact) => `Terminada sería ${cuenta(`${n} = ${fact}`)}`, en: (n, fact) => `The finished one is ${cuenta(`${n} = ${fact}`)}` },

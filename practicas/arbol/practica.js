@@ -185,8 +185,8 @@ function montarTerminada(contenedor, item, api) {
     `<button type="button" class="factor" data-i="${i}" aria-label="${tt(x.factor)(base, e)}" disabled>${base}${e > 1 ? `<sup>${e}</sup>` : ''}</button>`);
   contenedor.innerHTML = `
     <p class="instruccion">${tt(x.instruccion)}</p>
-    <div class="operacion igualdad">${item.n} = ${factores.join(' · ')}</div>
-    <p class="instruccion paso-dos" hidden>${tt(x.toca)}</p>`;
+    <p class="instruccion paso-dos" role="status" hidden>${tt(x.toca)}</p>
+    <div class="operacion igualdad">${item.n} = ${factores.join(' · ')}</div>`;
   const igualdad = contenedor.querySelector('.igualdad');
   const botonesFactor = [...igualdad.querySelectorAll('.factor')];
   const razonTerminada = textos => razonTerminadaDe(item, textos);
@@ -204,6 +204,11 @@ function montarTerminada(contenedor, item, api) {
         return api.responder({ acierto: false, html: razonNoTerminada });
       }
       // Ha dicho que no, y es verdad: ahora tiene que encontrar el compuesto.
+      // El «No» es un paso dado, no la respuesta terminada: nada de verde de acierto.
+      botones.elemento.querySelectorAll('.eleccion--correcta').forEach(b => {
+        b.classList.remove('eleccion--correcta');
+        b.classList.add('eleccion--paso');
+      });
       contenedor.querySelector('.paso-dos').hidden = false;
       igualdad.classList.add('igualdad--tocar');
       botonesFactor.forEach(b => { b.disabled = false; });

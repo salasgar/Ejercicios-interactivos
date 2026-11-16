@@ -52,7 +52,15 @@
 .igualdad--tocar .factor { background: #fff; border-color: var(--primario); cursor: pointer; }
 .igualdad .factor--bien { background: var(--correcto-claro); border-color: var(--correcto); color: var(--correcto); }
 .igualdad .factor--mal { background: var(--error-claro); border-color: var(--error); color: var(--error); }
-.paso-dos { color: var(--texto); font-weight: 600; }
+.paso-dos {
+  color: var(--texto); font-weight: 700; font-size: 1.1rem; margin: 0 0 .6rem; padding: .6rem .8rem;
+  background: var(--primario-claro); border: 2px solid var(--primario); border-radius: 10px;
+}
+.paso-dos[hidden] { display: none; }
+.si-no .eleccion--paso { border-color: var(--primario); background: var(--primario-claro); color: var(--texto); opacity: 1 !important; }
+.igualdad--tocar .factor { text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 5px; text-decoration-color: var(--primario); animation: factor-llama 1s ease-in-out 3; }
+@keyframes factor-llama { 50% { background: var(--primario-claro); } }
+@media (prefers-reduced-motion: reduce) { .igualdad--tocar .factor { animation: none; } }
 
 /* Ejercicio 3: huecos del árbol y fichas del banco */
 .arbol--huecos { --nodo: 44px; }
