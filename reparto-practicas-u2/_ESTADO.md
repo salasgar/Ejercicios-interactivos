@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-16T17:46Z por s-20261116T174456-e1193194 al cerrar la 208 (commit 02dc545; sin prueba en navegador): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-16T17:46Z por s-20261116T174541-c449f0b6 al reclamar la 203 (segunda pasada, tras la reabierta 200 cerrada en b7fa757): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-16T13:38Z por s-20261116T133830-c6a9a24f al dar de alta la tarea 208 (Árbol de factores: paso dos visible; coordinadora, sin reclamo): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-16T12:51Z por s-20261116T124745-d0ed648f al dar de alta las 
 Actualizado 2026-11-16T12:47Z por s-20261116T124345-d075acd5 al reclamar la 203 (y llevar a origin la 23, el cierre por relevo de la 200 y la 201, que solo estaban en el main local; npm test 2405/2405 en el worktree): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-15T02:21Z por s-20261115T000310-156b2801 al cerrar la 200 (LISTA, commit df60e29; npm test 2393/2393): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-15T01:49Z por s-20261115T000307-d5931620 cierre 202 (rebase sobre origin): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -341,7 +341,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 205 | Retos con puntos extra en las tareas de la semana (`reto` en la tarea, `api.sumar` y ejercicios sin vidas en la base) | tareas/tarea-205-reto-puntos-extra.md | nadie con `tareas.js`, `base.js`, `contador.js`, `semana.js`, `profesor*.js` · plazo vie 20-11 | 2 h 30 min | ALTO | ninguna (la 206 es MEDIO) | reparto-practicas-u2/salidas/205-reto-puntos-extra/ | EN CURSO | s-20261116T132219-1e827c44 · caduca 18:22:19Z (16-nov) |
 | 206 | Reto de la unidad 2 «Tabla de propiedades» (`tabla-propiedades`, id 83): arrastrar números y etiquetas para formar una tabla de doble entrada, por niveles | tareas/tarea-206-tabla-propiedades.md | **205 LISTA** · ni la 203 ni la 204 en curso (`catalogo.js`) · plazo mié 25-11 | 2 h 30 min | MEDIO | ninguna | reparto-practicas-u2/salidas/206-tabla-propiedades/ | BLOQUEADA | espera a 205 |
 | 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | BLOQUEADA | espera a 205, 206 |
-| 208 | «Árbol de factores» (`arbol`, id 5), ejercicio 2 «¿Está terminada?»: que se vea que, tras el «No», falta tocar el factor | tareas/tarea-208-arbol-paso-dos-visible.md | ninguna (nadie con `practicas/arbol/` sin comitear) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/208-arbol-paso-dos/ | LISTA | terminada 17:46Z (16-nov) |
+| 208 | «Árbol de factores» (`arbol`, id 5), ejercicio 2 «¿Está terminada?»: que se vea que, tras el «No», falta tocar el factor | tareas/tarea-208-arbol-paso-dos-visible.md | ninguna (nadie con `practicas/arbol/` sin comitear) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/208-arbol-paso-dos/ | LISTA | terminada 17:46Z (16-nov) · commit 02dc545 |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
@@ -387,7 +387,7 @@ Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
-LISTA · tarea 208 · 2026-11-16 17:46 · s-20261116T174456-e1193194 · 2026-11-16T17:46:19Z · — · —
+LISTA · tarea 208 · 2026-11-16 17:46 · s-20261116T174456-e1193194 · 02dc545 · — · ~3 min
 LISTA · tarea 202 · 2026-11-16 13:24 · s-20261116T131147-b14b1e18 · dbd2e4f · — · —
 LISTA · tarea 200 · 2026-11-16 13:24 · s-20261116T131147-b14b1e18 · b7fa757 · — · —
 LISTA · tarea 201 · 2026-11-16 13:24 · s-20261116T131147-b14b1e18 · 793cb7f · — · —
