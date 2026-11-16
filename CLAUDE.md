@@ -69,3 +69,24 @@ identificadores ni correos de alumnos reales: se usan **inventados**. Lo que lle
 vive en «Curso 2026-2027/» de los apuntes, fuera de git. El 2026-10-29 hubo que quitar
 de `tests/corrector.test.js` cinco nombres reales que llevaban un mes publicados.
 Lo comprueba `tests/sin-nombres-de-alumnos.test.js` con la lista de la carpeta de datos; se salta si la carpeta no está.
+
+## Git: se sube desde el mismo árbol en el que se escribe
+
+Regla de Juan Luis (2026-11-16), para **todas** las sesiones que trabajen en este repositorio, sean del
+reparto que sean (PU2, U5, U6…). Del 14 al 16-11 varias sesiones escribieron ficheros en esta carpeta
+y los comitearon y subieron desde worktrees: el `main` de aquí se separó de `origin/main` (los mismos
+cambios con otros hashes) y se llenó de copias sin versionar. El lanzador, que lee los repartos de
+esta carpeta, dejó de ver tareas nuevas, y una sesión dio por vivo un reclamo cerrado dos días antes.
+
+1. Lo normal: escribir aquí, comitear aquí con rutas explícitas (`git commit -m "…" -- rutas`; nunca
+   `git add .`, `-A`, `commit -a`, `stash`, `--autostash` ni `reset --hard`: el índice es compartido)
+   y empujar desde aquí.
+2. Si el push se rechaza y `pull --rebase` no se puede por ficheros ajenos a medias, se puede empujar
+   desde un worktree limpio, pero **después se realinea esta carpeta**: `git fetch`, comprobar con
+   `git cherry -v origin/main` que no queda nada propio sin subir, borrar las copias sin versionar de
+   tus ficheros que ya estén idénticas en `origin/main` y `git reset --keep origin/main` (conserva los
+   cambios sin comitear de los demás y se niega si alguno choca; si se niega, no se fuerza: se anota).
+3. Nunca escribir en un árbol y comitear desde otro.
+
+Quien vea `git status -sb` con «ahead N, behind M» lo realinea igual (punto 2). El detalle, en
+[reparto-practicas-u2/proyecto.md](reparto-practicas-u2/proyecto.md), apartado del repositorio git.
