@@ -115,7 +115,28 @@ Consecuencias:
   `pull --rebase --autostash` se llevó a un stash el trabajo sin comitear de seis sesiones. Si
   el push se rechaza y el árbol tiene ficheros ajenos a medias, se espera y se reintenta, o se
   empuja desde un worktree limpio (`git worktree add <tmp> origin/main`, cherry-pick del commit
-  propio, push desde allí).
+  propio, push desde allí) **y después se realinea el árbol compartido** (regla siguiente).
+- **Se sube desde el mismo árbol en el que se escribe** (Juan Luis, 2026-11-16, tras la incidencia
+  `hechos/incidencias/s-20261116T124345-d075acd5.md`). Del 14 al 16-11 varias sesiones escribieron
+  sus ficheros aquí y los comitearon y empujaron con copias desde worktrees: el `main` de este árbol
+  se separó de `origin/main` (37 commits por delante y 48 por detrás, los mismos cambios con otros
+  hashes) y se llenó de ficheros sin versionar idénticos a los de `origin`. Consecuencias: el
+  lanzador, que lee `hechos/` y `tareas/` de **este** árbol, no vio la 205; una sesión dio por vivo un
+  reclamo cerrado dos días antes; y cada `pull --rebase` traía unos 40 commits duplicados. Por eso:
+  1. Lo normal es lo de arriba: escribir aquí, comitear aquí con rutas explícitas y empujar desde
+     aquí. Tu reclamo y tus latidos se escriben aquí, para que las demás sesiones y el lanzador los vean.
+  2. Si el push se rechaza y no puedes hacer `pull --rebase` por ficheros ajenos a medias, la salida
+     del worktree sigue valiendo, pero **no acaba en el push**: en cuanto tu commit esté en `origin`,
+     vuelve a este árbol, `git fetch`, comprueba con `git cherry -v origin/main` que no queda ningún
+     «+» tuyo (ninguno sin subir), borra las copias sin versionar de tus ficheros que ya estén
+     idénticas en `origin/main` y realinea con **`git reset --keep origin/main`**. Ese reset conserva
+     los cambios sin comitear de los demás y se niega si alguno choca: si se niega, no fuerces nada;
+     apúntalo en tu terminada («árbol compartido sin realinear: …») y sigue.
+  3. No trabajes entera en un worktree escribiendo allí el código y aquí los rastros (o al revés):
+     cada fichero se comitea desde el árbol donde se escribió.
+  Quien vea el `main` de este árbol separado de `origin` (`git status -sb` con «ahead N, behind M»)
+  y sin cambios ajenos en los ficheros que difieren, lo realinea igual (pasos del punto 2) y lo anota
+  en su terminada o en una incidencia.
 - **Un fichero común con candado no se reparte entre sesiones en paralelo** (2026-10-08): ocho
   graves terminaron su código y no pudieron poner su `disponible: true` porque el candado de
   `practicas/_comun/catalogo.js` lo tuvo una sola sesión más de una hora. La próxima vez, ese
