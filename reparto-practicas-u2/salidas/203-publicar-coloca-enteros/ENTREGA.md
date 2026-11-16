@@ -1,4 +1,57 @@
-# Tarea 203 — revisión con clics de «Coloca los paréntesis. Con enteros» (`coloca-enteros`, id 80, U3)
+# Tarea 203 — revisión con clics y publicación de «Coloca los paréntesis. Con enteros» (`coloca-enteros`, id 80, U3)
+
+## Segunda pasada (17-11, sesión `s-20261116T230536-882771da`, relevo de `s-20261116T174541-c449f0b6`)
+
+**Veredicto: PUBLICADA.** Commit **e62574e**: `disponible: true` en la fila 80 de `catalogo.js` (nada más de ese fichero), la fila
+de `coloca-enteros` en la tabla de la unidad 3 del `README.md` (semanas 3-4) y el recuento («Trece prácticas», ids 33-44 y 80), y en
+`docs/practicas-unidad3.md` la línea de publicadas, la fila sin «Sin publicar» y «las trece prácticas». README y docs los dejó escritos
+sin comitear la sesión relevada; se han leído y se heredan (solo cambia la fecha: 17-11). Se ve en la portada, bloque de la semana 3
+de la U3, detrás de `parentesis-enteros` (`practicas/portada.js` ya la tenía en ese bloque desde la 199).
+
+Solo se revisa lo reabierto (la reabierta de la 200, `hechos/reabiertas/200--s-20261116T124345-d075acd5.md`, cerrada en b7fa757:
+en ≤ 400 px huecos de 20 px y `.num`/`.signo` sin relleno lateral). Lo demás quedó revisado en la primera pasada (abajo).
+
+### Navegador (Chrome headless por CDP, clics de ratón, «Probar sin código»; guion en el scratchpad)
+
+- **Renglón a 375 px** (375 × 800, móvil, DPR 2): 60 cargas por ejercicio e idioma (**360**): **0 renglones partidos, 0 desbordes**
+  (de la página ni de la `.expr`). En el ej. 3, 33 de las 120 cargas con dos o más números de dos cifras y 64 con el primero negativo.
+  A 1200 px, 60 cargas: 0 y 0.
+- **Peor caso forzado** (el de la reabierta: −12 y tres 12 escritos en el DOM, con `−`, `:` y `·`, o `÷` en inglés), sin paréntesis y
+  con «((» delante del primero y «)» detrás del segundo y del último puestos por clic, en los tres ejercicios y los dos idiomas: **12 de
+  12 en un renglón**, sin desborde (`scrollWidth` con `flex-wrap: nowrap` = `clientWidth` = 324 px).
+- **Huecos a 375 px**: 20 × 52 px (el alto para el pulgar, intacto).
+- **Recorrido con clics** a 375 y 1200 px, es y en, los tres ejercicios (12): «Probar sin código» → menú con 3 ejercicios; la pista
+  (2 toques encienden un chip nuevo, hueco resaltado), el borrar (0 paréntesis, 0 líneas), un «(» sin cerrar (aviso y hueco en rojo),
+  la agrupación que no se puede en el ej. 3 (línea en rojo y el motivo), **todos los chips encendidos por clic** con la colocación que
+  da cada uno (de `logica.js`, importada en la página), el mensaje final, el «No lo sé» (sale la explicación, el ítem siguiente es
+  otro), la expresión en un renglón y **consola limpia en los 12**. Las cuentas de los mensajes finales que se vieron, comprobadas.
+
+### Tests
+
+Paso 2 de la ficha: 181/181. `npm test`: 2422/2422.
+
+### Propuesta para la tarea de la semana 4 de la U3 (Juan Luis la cambia en el panel; no se ha tocado)
+
+Es la tarea **19** del panel (ENTREGA de la 116: «U3 · Semana 4 · Problemas, errores típicos y combinadas», del lun 7-12 al jue 10-12;
+5 ★ y `nElegir: 5`). Propuesta, igual que en la primera pasada: añadir **`['coloca-enteros', 2]`** (con una potencia: U3-3C-10, la base
+negativa) y **`['coloca-enteros', 3]`** (con división: U3-4A-04 y 4A-06) a **«a elegir»**, **sin cambiar `nElegir: 5`**. Sigue
+puntuando sobre 100: cuentan 5 ★ + 5 a elegir, y cada uno pesa 100 / 10 = 10 (tarea 166); añadir opciones a «a elegir» no cambia el
+peso. El ej. 1 (tres números, sin potencia) encaja más en la semana 3: si se quiere, a «a elegir» de la tarea 18, también sin tocar su
+`nElegir`. Como ★, solo si Juan Luis lo quiere (las combinadas con paréntesis se dan el mié 9-12, dentro de la semana).
+
+Para probarla: https://salasgar.github.io/Ejercicios-interactivos/practicas/coloca-enteros/?probar=1
+
+### Fuera de criterio (no obliga)
+
+- Sigue en pie lo de la primera pasada: `logica.js` y `textos.js` conservan en la cabecera «ESQUELETO de la tarea 199: la 200 lo
+  rehace», que ya no es verdad.
+- Las sesiones anteriores de la 203 dejaron vivos cuatro Chrome headless (puerto 9343, perfiles en `/tmp/scratch-203` y
+  `/tmp/pu2-203-c449`) y un servidor de Node (8743): matados al empezar. Su worktree `/tmp/wt-203-c449` (limpio, en eb9665b) sigue ahí.
+
+---
+
+## Primera pasada (16-11, sesión `s-20261116T124345-d075acd5`), sin cambios
+
 
 Sesión `s-20261116T124345-d075acd5` (16-11). **Veredicto: NO SE PUBLICA todavía.** Se reabre la 200 por un fallo en pantalla a 375 px
 (`hechos/reabiertas/200--s-20261116T124345-d075acd5.md`). Todo lo demás está bien; cuando cierre la reabierta, la 203 se vuelve a

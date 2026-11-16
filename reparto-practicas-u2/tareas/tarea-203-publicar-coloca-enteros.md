@@ -123,6 +123,10 @@ publicar. Esta tarea hace la revisión que no puede hacer un test —el signific
   números en el DOM con `flex-wrap: nowrap` para comparar `scrollWidth` con `clientWidth`.
 - (de la 203, 16-11) La pista pone **un paréntesis por toque**: hacen falta dos para encender un chip con un par. Y en `analizar` los
   árboles van en `.arbol` (no `.a`).
+- (de la 203, 17-11) **Las sesiones de esta tarea dejaron Chrome headless huérfanos** (cuatro en el puerto 9343 y un servidor de Node
+  en el 8743, de dos sesiones ya muertas): antes de lanzar el tuyo, `pgrep -fl "headless=new" | grep -v Helper` y mata los de perfiles
+  temporales de sesiones cerradas; en tu guion, `process.on('exit', () => chrome.kill('SIGKILL'))`. Un huérfano deja a Juan Luis sin
+  Chrome (memoria `chrome-headless-huerfano`). En macOS no hay `timeout`: lanza el guion en segundo plano sin él.
 
 ## Prohibido (propio de esta tarea)
 
