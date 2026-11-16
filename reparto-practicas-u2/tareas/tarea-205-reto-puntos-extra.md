@@ -133,7 +133,16 @@ puede hacer ninguna de las dos cosas: cada acierto da 1 (+1 de racha), y cada fa
 
 ## Trampas conocidas
 
-- (Ninguna aún. Quien encuentre una, la escribe aquí al cerrar.)
+- (s-20261116T184529-d4a7ae2f, 16-11) **`ejerciciosDe` de `herramientas/informe-actividad.mjs` no conoce el reto**: quien lo use para
+  saber qué prácticas leer (`~/.claude/lanzador/notas_tarea_app.mjs`) deja el extra a 0 sin avisar. Las prácticas de una tarea son
+  `[...estrella, ...elegir, ...(reto ?? [])]`.
+- (s-20261116T184529-d4a7ae2f) **En zsh, `F="a b c"; git commit -- $F` no separa las rutas**: falla con «pathspec … did not match».
+  Hay que usar un array, `F=(a b c); git add "${F[@]}" && git commit -- "${F[@]}"`. Un fichero nuevo, sin rastrear, necesita
+  `git add` en la misma orden que el commit.
+- (s-20261116T184529-d4a7ae2f) Con Chrome headless contra `python3 -m http.server`, la primera carga en frío de una página con muchos
+  módulos puede dar `ERR_CONNECTION_RESET` en algún `.js` y dejar la página sin pintar. Es del servidor: se repite la pasada.
+- (s-20261116T184529-d4a7ae2f) `profesor.html` pide entrar con Google y no se puede probar en headless. El editor de tareas sí se
+  prueba, montándolo en una página servida por `Fetch.fulfillRequest` (`/tmp/rev205/editor.mjs`).
 
 ## Prohibido
 
