@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-16T12:51Z por s-20261116T124745-d0ed648f al dar de alta las tareas 205-207 (reto «Tabla de propiedades» y puntos extra; coordinadora, sin reclamo): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-16T12:47Z por s-20261116T124345-d075acd5 al reclamar la 203 (y llevar a origin la 23, el cierre por relevo de la 200 y la 201, que solo estaban en el main local; npm test 2405/2405 en el worktree): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-15T02:21Z por s-20261115T000310-156b2801 al cerrar la 200 (LISTA, commit df60e29; npm test 2393/2393): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-14T23:08Z por s-20261114T230323-5099e2b1 al cerrar la 12 (LI
 Actualizado 2026-11-14T22:38Z por s-20261114T211653-2333dc16 al cerrar la 197 (LISTA; commit eabecac en origin; npm test 2323/2323; 375 px: de 98 signos sueltos a 0; 1200 px: 0): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-14T21:38Z por s-20261114T212714-761c8123 al dar de alta «Coloca los paréntesis» en la U3, la U4 y la U5 (coordinadora, sin reclamo): fichas 199 (motor y base, ALTO), 200-202 (prácticas, MEDIO) y 203-204 (publicación, ALTO); decisiones en proyecto.md, «Decisiones del 14-11: colocar paréntesis en la U3, la U4 y la U5»: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-14T21:17Z por s-20261114T211653-2333dc16 al reclamar la 197 (signos pegados a la cuenta; encadenada tras la 24): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -338,11 +338,14 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 202 | Práctica de la unidad 5 «Coloca los paréntesis. Con decimales» (`coloca-decimales`, id 82): todos los resultados con tres números, con un cuadrado, y una diana | tareas/tarea-202-coloca-decimales.md | **199 LISTA** · plazo vie 18-12 | 1 h 15 min | MEDIO | 200, 201 (misma banda, carpetas disjuntas) | practicas/coloca-decimales/*, tests/practicas-{,ayuda-}coloca-decimales.test.js; salidas/202-coloca-decimales/ | LISTA | terminada 01:44Z (15-nov) · commit 0cf70ac · **sin publicar** (`coloca-decimales`): la publica la 204 (PENDIENTE) |
 | 203 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con enteros» (`coloca-enteros`, 80), con la propuesta de dónde entra en la tarea semanal de la U3 | tareas/tarea-203-publicar-coloca-enteros.md | **200 LISTA** · no a la vez que la 204 (`catalogo.js`, `README.md`) · plazo jue 3-12 | 1 h | ALTO | 204 (si su precondición se cumple) | catalogo.js (disponible 80), docs U3, README; salidas/203-publicar-coloca-enteros/ | EN CURSO | s-20261116T124345-d075acd5 · caduca 14:43:45Z (16-nov) |
 | 204 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, 81) y «Con decimales» (`coloca-decimales`, 82), con la propuesta de dónde entran en las tareas semanales de la U4 y la U5 | tareas/tarea-204-publicar-coloca-fracciones-decimales.md | **201 LISTA** · **202 LISTA** · no a la vez que la 203 (`catalogo.js`, `README.md`) · plazo mar 22-12 | 1 h 15 min | ALTO | 203 (si su precondición se cumple) | catalogo.js (disponible 81, 82), docs U4 y U5, README; salidas/204-publicar-coloca-fracciones-decimales/ | PENDIENTE | — |
+| 205 | Retos con puntos extra en las tareas de la semana (`reto` en la tarea, `api.sumar` y ejercicios sin vidas en la base) | tareas/tarea-205-reto-puntos-extra.md | nadie con `tareas.js`, `base.js`, `contador.js`, `semana.js`, `profesor*.js` · plazo vie 20-11 | 2 h 30 min | ALTO | ninguna (la 206 es MEDIO) | reparto-practicas-u2/salidas/205-reto-puntos-extra/ | PENDIENTE | — |
+| 206 | Reto de la unidad 2 «Tabla de propiedades» (`tabla-propiedades`, id 83): arrastrar números y etiquetas para formar una tabla de doble entrada, por niveles | tareas/tarea-206-tabla-propiedades.md | **205 LISTA** · ni la 203 ni la 204 en curso (`catalogo.js`) · plazo mié 25-11 | 2 h 30 min | MEDIO | ninguna | reparto-practicas-u2/salidas/206-tabla-propiedades/ | BLOQUEADA | espera a 205 |
+| 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | BLOQUEADA | espera a 205, 206 |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-16 12:47Z**: BLOQUEADA 5 (156, 157, 158, 159, 160) · EN CURSO 1 (203) · LISTA 197 · PENDIENTE 1 (204).
+**Foto a 2026-11-16 12:51Z**: BLOQUEADA 7 (156, 157, 158, 159, 160, 206, 207) · EN CURSO 1 (203) · LISTA 197 · PENDIENTE 2 (204, 205).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -726,6 +729,7 @@ minutos reales frente a estimaciones de 30 minutos a 2 horas y media.
 
 Derivado de `hechos/incidencias/`: una línea por fichero, más reciente arriba.
 
+- `s-20261116T124345-d075acd5.md`: Al reclamar la 203, el main del árbol compartido y origin/main habían divergido desde 0a3e099 (14-11). Casi todos los commits · están en los dos lados con hashes distintos (mismo contenido; sesiones que comitearon en el árbol compartido y empujaron desde · wo…
 - `s-20261114T211653-2333dc16.md`: qué: a las 21:16Z la precondición de la 197 se cumplía (practicas/_comun/ limpio, sin reclamos vivos sobre base.js). A las 21:22Z una sesión de Claude Code fuera del reparto (47c73022, con Juan Luis delante) empezó a editar practicas/_comun/base.js (espera: '…
 - `s-20261113T170133-3d38e018.md`: Relevo de s-20261113T085456-88ebbbda, caducado a las 11:54Z sin cierre. Último latido 09:17Z («las 17 comiteadas; clics finales»); · ENTREGA.md escrita a las 09:29Z sin marcador; sin terminada. Dejó sin comitear (en el árbol, no en git) dos ficheros de su sid…
 - `s-20261112T230552-18e515b5.md`: - Edición de código con heredoc (traduce/textos.js y el final de es-solucion/textos.js) en vez de Edit/Write. Contenido revisado, probado y comiteado. · - El servidor local `python3 -m http.server 8175` fue denegado por el modo automático: no se hizo la prueb…
