@@ -32,8 +32,10 @@ button.hueco-p:disabled { opacity: 1; cursor: default; }
 /* Cuatro números con un negativo delante caben en un renglón a 375 px */
 @media (max-width: 400px) {
   .expr { font-size: 1.2rem; }
-  button.hueco-p { min-width: 22px; width: 22px; }
-  button.hueco-p--puesto { min-width: 22px; }
+  .num { padding: 0 .02em; }
+  .signo { padding: 0; }
+  button.hueco-p { min-width: 20px; width: 20px; }
+  button.hueco-p--puesto { min-width: 20px; }
 }
 
 .acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: .4rem 0 .8rem; }
