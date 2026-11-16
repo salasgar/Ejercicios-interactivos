@@ -74,7 +74,7 @@ export const CATALOGO = [
   { id: 40, slug: 'jerarquia-enteros', ruta: 'jerarquia-enteros/', unidad: 3, nombre: { es: '¿Qué se hace primero? Con enteros', en: 'What comes first? With integers' }, nEjercicios: 4, disponible: true },
   { id: 41, slug: 'parentesis-enteros', ruta: 'parentesis-enteros/', unidad: 3, nombre: { es: 'Paréntesis y corchetes', en: 'Brackets' }, nEjercicios: 5, disponible: true },
   // Coloca los paréntesis con enteros (PU2: fila y esqueleto de la 199, sobre `_comun/parentesis-motor.js`; la escribe la 200 y la publica la 203).
-  { id: 80, slug: 'coloca-enteros', ruta: 'coloca-enteros/', unidad: 3, nombre: { es: 'Coloca los paréntesis. Con enteros', en: 'Place the brackets: with integers' }, nEjercicios: 3, disponible: false },
+  { id: 80, slug: 'coloca-enteros', ruta: 'coloca-enteros/', unidad: 3, nombre: { es: 'Coloca los paréntesis. Con enteros', en: 'Place the brackets: with integers' }, nEjercicios: 3, disponible: true },
   { id: 42, slug: 'errores3', ruta: 'errores3/', unidad: 3, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 43, slug: 'variacion', ruta: 'variacion/', unidad: 3, nombre: { es: 'Subidas, bajadas y diferencias', en: 'Rises, falls and differences' }, nEjercicios: 5, disponible: true },
   { id: 44, slug: 'leelo3', ruta: 'leelo3/', unidad: 3, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },

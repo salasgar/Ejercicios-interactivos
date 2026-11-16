@@ -8,8 +8,9 @@ cómo se leen los resultados y qué destreza del inventario practica cada una. L
 el panel, los dos sistemas de códigos y los varios profesores son los de la unidad 2: están
 en ese documento, y aquí solo se cuenta lo que cambia.
 
-Son doce mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 3, **Números enteros**
-(ids 33-44 del catálogo, tareas 80-91 de PU2), con dos piezas comunes nuevas en
+Son trece mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 3, **Números enteros**
+(ids 33-44 del catálogo, tareas 80-91 de PU2, y `coloca-enteros`, id 80, tarea 200, sobre el
+motor común de la 199), con dos piezas comunes nuevas en
 `practicas/_comun/`:
 
 - `enteros.js`: cómo se escribe un entero (el menos es siempre U+2212), `leerEntero`, un
@@ -102,7 +103,7 @@ y, al publicarla, `disponible: true`. Lo propio de la unidad 3:
 4. Probarla en el navegador **pulsando cada botón con un clic** (un «Comprobar» que solo
    respondía a la tecla Intro pasó los tests de `dos-signos`; lo vio la tarea 94).
 
-## 6. Las doce prácticas
+## 6. Las trece prácticas
 
 `id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
 bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
@@ -119,14 +120,16 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 3 | `potencias-enteros` | 39 | 86 | Cuenta los negativos · Potencia de base negativa · ¿Cuál es la base? ((−a)ⁿ, −aⁿ, −(−a)ⁿ) · Cuadrados y raíces (con «No existe») | \|producto\| ≤ 500, \|potencia\| ≤ 1000, cuadrados 1-144 |
 | 3-4 | `jerarquia-enteros` | 40 | 87 | ¿Qué va primero? · Producto o potencia dentro de una suma · Cadenas de · y : (y el par `30 : (−5) · 2` / `30 : (−5 · 2)`) · Combinadas (sesión 13) | final ±100, pasos ±200 y nunca 0 |
 | 3-4 | `parentesis-enteros` | 41 | 88 | Quita el paréntesis · Calcula (operando dentro o quitando) · ¿Al paréntesis o al número? · De dentro afuera (corchetes) · Coloca los paréntesis (ej. 3-5, sesión 13) | todo valor ±200 |
-| 3-4 | `coloca-enteros` | 80 | 200 | Tres números (todos los resultados) · Con una potencia (base negativa al agrupar) · Con división (agrupaciones que no se pueden). **Sin publicar** (la publica la 203) | todo valor ±200 |
+| 3-4 | `coloca-enteros` | 80 | 200 | Tres números (todos los resultados) · Con una potencia (base negativa al agrupar) · Con división (agrupaciones que no se pueden) | todo valor ±200 |
 | 4 | `errores3` | 42 | 89 | ¿Dónde está el error? · ¿Qué error es? (distractores de otro grupo de errores) · ¿Error o no? (parejas válidas) | términos 1-9, todo ≤ 300 |
 | 4 | `variacion` | 43 | 90 | ¿Cuánto ha cambiado? (termómetro o recta) · La diferencia · El dato que falta · Antes y después de Cristo (cruza el año 0: se quita 1, regla de la hoja 4) · Del enunciado a la cuenta | temperatura de mediodía a mediodía −15…40 °C (cambio ≤ 15), plantas −5…20, saldo −50…300 €, buceo −40…−1 m; años 2700 a. C.-2026, ninguna moneda anterior al 600 a. C. |
 | toda | `leelo3` | 44 | 91 | Los enteros · Sumas, restas y productos · Potencias · Palabras y símbolos (cada ejercicio, de una semana) | temperaturas −30…45 °C; parejas de ciudades de un mismo día de invierno |
 
-**Publicadas** (a 2026-10-28): todas. `dos-signos` se publicó el 27-10 (tarea 115), tras su
+**Publicadas** (a 2026-11-17): todas. `dos-signos` se publicó el 27-10 (tarea 115), tras su
 reabierta; `variacion`, el 28-10 (reabierta de la 115), tras las reabiertas de la 96 y la 115
-(realismo de los ej. 1-4; `reparto-practicas-u2/hechos/reabiertas/`). El estado vivo es el campo
+(realismo de los ej. 1-4; `reparto-practicas-u2/hechos/reabiertas/`); `coloca-enteros`, la
+decimotercera, el 17-11 (tarea 203), tras la reabierta de la 200 (la expresión de cuatro números
+partida en dos renglones a 375 px). El estado vivo es el campo
 `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 3

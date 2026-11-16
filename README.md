@@ -218,8 +218,8 @@ en el catálogo), tras corregir lo que encontraron las dos revisiones.
 
 ## Prácticas de la unidad 3 (`practicas/`)
 
-Doce prácticas más sobre la misma base y el mismo panel, para la unidad 3,
-**Números enteros** (ids 33-44 del catálogo; la portada las enseña por semanas
+Trece prácticas más sobre la misma base y el mismo panel, para la unidad 3,
+**Números enteros** (ids 33-44 y 80 del catálogo; la portada las enseña por semanas
 desde el lunes 16-11-2026). Dos piezas comunes nuevas: `practicas/_comun/enteros.js`
 (escritura con el menos de verdad, un evaluador con la jerarquía de clase y los
 **errores típicos de la unidad**, de donde salen todos los distractores) y
@@ -237,6 +237,7 @@ una, cómo se amplía y qué destreza cubre: [docs/practicas-unidad3.md](docs/pr
 | 3 | `potencias-enteros` | Productos y potencias con signo | Signo de un producto, potencias de base negativa, −aⁿ y (−a)ⁿ, raíces (U3-3C-02 a 3C-15) |
 | 3-4 | `jerarquia-enteros` | ¿Qué se hace primero? Con enteros | Jerarquía con enteros paso a paso y cadenas (U3-3A-01 a 3A-03, 3C-20, 4A-01, 4A-02) |
 | 3-4 | `parentesis-enteros` | Paréntesis y corchetes | Quitar paréntesis precedidos de + y de −, corchetes, colocar paréntesis (U3-3A-04, 3C-16 a 3C-18, 4A-03 a 4A-07) |
+| 3-4 | `coloca-enteros` | Coloca los paréntesis. Con enteros | Encontrar todos los resultados colocando paréntesis: jerarquía, potencias de base negativa y agrupaciones que no dan un entero (U3-3A-01, 3C-10, 3C-16, 4A-04, 4A-06) |
 | 4 | `variacion` | Subidas, bajadas y diferencias | Variación, diferencia, dato que falta, años a. C. y d. C. (U3-3C-21, 4C-01 a 4C-10) |
 | 4 | `errores3` | Caza el error | Reconocer y nombrar los errores típicos, y lo que no es error (U3-2C-21, 3C-19, 4A-05, 4C-08, 4C-09) |
 | toda | `leelo3` | Léelo en inglés | Leer enteros, operaciones y potencias en inglés (U3-1B, 2B, 3B-02, 4B) |
