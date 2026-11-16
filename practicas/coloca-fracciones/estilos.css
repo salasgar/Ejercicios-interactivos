@@ -29,6 +29,15 @@ button.hueco-p--rojo { background: var(--error-claro); border-color: var(--error
 button.hueco-p--nuevo { box-shadow: 0 0 0 4px var(--aviso-claro); }
 button.hueco-p:disabled { opacity: 1; cursor: default; }
 
+/* A 375 px cuatro operandos caben en un renglón */
+@media (max-width: 400px) {
+  .expr { font-size: 1.1rem; }
+  .num { padding: 0 .02em; }
+  .signo { padding: 0; }
+  button.hueco-p { min-width: 18px; width: 18px; }
+  button.hueco-p--puesto { min-width: 18px; }
+}
+
 /* Con raya, los paréntesis puestos tienen que abarcar la fracción entera */
 button.hueco-p--puesto { font-size: 1.5em; font-weight: 400; }
 
