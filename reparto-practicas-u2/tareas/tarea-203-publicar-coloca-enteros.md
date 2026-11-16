@@ -114,6 +114,15 @@ publicar. Esta tarea hace la revisión que no puede hacer un test —el signific
 - (de la 162) `npm test` con otras sesiones en la máquina puede tardar más de 20 min: estira la caducidad **antes** de lanzarlo.
 - (de la coordinadora, 5-11) `catalogo.js` lo comparten muchas tareas: edita, comitea con ruta explícita y suéltalo enseguida.
 - (de la coordinadora, 5-11) Hay ENTREGA antiguas con casos de examen en claro: no copies a la tuya frases de otras sin leerlas.
+- (de la 203, 16-11) **El main del árbol compartido puede no ser origin/main**: el 16-11 iban 37 por delante y 42 por detrás, con commits
+  cerrados que nunca se empujaron (la 23, el relevo de la 200, la 201). Mira `git status -sb` antes de nada; si diverge, trabaja en un
+  worktree propio (`git worktree add --detach /tmp/wt-<sid> origin/main`) y lleva con cherry-pick lo cerrado que falte en origin. Ver
+  `hechos/incidencias/s-20261116T124345-d075acd5.md`.
+- (de la 203, 16-11) **«Cabe en un renglón» no se ve con un ítem**: con uno o tres del ej. 3 todo parecía bien; con 80 seguidos, 9 se
+  partían (dos o más números de dos cifras). Mide sobre 40+ ítems por idioma (tops de las `.celda`) y fuerza el peor caso escribiendo los
+  números en el DOM con `flex-wrap: nowrap` para comparar `scrollWidth` con `clientWidth`.
+- (de la 203, 16-11) La pista pone **un paréntesis por toque**: hacen falta dos para encender un chip con un par. Y en `analizar` los
+  árboles van en `.arbol` (no `.a`).
 
 ## Prohibido (propio de esta tarea)
 
