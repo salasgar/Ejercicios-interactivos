@@ -1,5 +1,66 @@
 # Tarea 204 — revisión con clics de «Coloca los paréntesis. Con fracciones» (81, U4) y «Con decimales» (82, U5)
 
+## Segunda pasada (17-11, sesión `s-20261116T231631-e7593747`, encadenada tras la 203)
+
+**Veredicto: `coloca-fracciones` PUBLICADA (commit d1088b9); `coloca-decimales` NO, se reabre otra vez la 202**
+(`hechos/reabiertas/202--s-20261116T231631-e7593747.md`). Solo se revisa lo reabierto el 16-11: las reglas de 375 px de
+793cb7f (201) y dbd2e4f (202): en ≤ 400 px, `.expr` a 1.1rem, huecos de 18 px y `.num`/`.signo` sin relleno lateral.
+
+Publicar: `disponible: true` en la fila 81 de `catalogo.js` (nada más), y en `docs/practicas-unidad4.md` «Son once…», «Las once
+prácticas», la fila sin «Sin publicar» y la línea de publicadas; en el `README.md`, «Once prácticas más» (ids 47-56 y 81) y la fila de
+`coloca-fracciones` en la semana 3. La U5 sigue sin sección en el README: no se crea. `docs/practicas-unidad5.md` no se toca (sigue
+diciendo «Sin publicar (la publica la 204)», que es verdad). La portada no enseña la U4 hasta el lun 14-12: publicarla ahora no la pone
+delante de nadie.
+
+### Navegador (Chrome headless por CDP, clics de ratón, «Probar sin código»; guiones en el scratchpad)
+
+**Renglón a 375 px** (375 × 800, móvil, DPR 2; renglones por el centro de cada `.celda` y `.signo`):
+
+| | cargas normales (60 por ej. e idioma) | ítems del generador pintados en la `.expr` | ancho máximo (hay 324 px) |
+|---|---|---|---|
+| `coloca-fracciones` ej. 1 / 2 / 3 | 0 / 0 / 0 partidos de 120 | 0 de 19 000 por ejercicio (9500 por idioma) | 234 / 312 / 312 px |
+| `coloca-decimales` ej. 1 / 2 / 3 | 0 / 0 / **1** partido de 120 (en inglés) | 0 / 0 / **7 de 3000** (6 en inglés, 0,4 %; 1 en español) | 261 / 234 / **340** px |
+
+«Pintados»: en la página de la práctica, ítems de `generar(ej, crearRng(…))` escritos en la `.expr` con `M.htmlValor` y `M.signo`, y
+medidos uno a uno. A 1200 px, 60 cargas de cada una: nada. Sin desbordamiento horizontal en ninguna medida. Huecos a 375 px: 18 × 52 px.
+
+**Peor caso inventado** (números escritos en el DOM; fuera de lo que sale del generador): en fracciones, cuatro de dos cifras arriba y
+abajo (−23/12 y tres 23/12) **no caben** en el ej. 2 ni en el ej. 3 (330-380 px), pero en 57 000 ítems del generador no ha salido
+ninguno así (las cotas de la 201 los descartan casi siempre): no reabre. En decimales, cuatro 9,99 en el ej. 3: 339 px (es) y 346 px (en);
+ese sí está en el rango del generador (decimales de una cifra entera y hasta dos decimales), y es lo que reabre.
+
+**Recorrido con clics** a 375 y 1200 px, es y en, los tres ejercicios de cada una (24): «Probar sin código» → menú con 3 ejercicios; en
+los «todos», la pista, el borrar, el «(» sin cerrar y **todos los chips encendidos por clic** (2/2, 5/5, 3/3, 4/4…); en la diana, el fallo
+sin paréntesis («Eso da …, no …» y una agrupación que sí lo da) y el acierto con la colocación del objetivo; el «No lo sé» (sale la
+explicación y el ítem siguiente es otro); **consola limpia en los 24**. Las cuentas de los mensajes finales que se vieron, comprobadas
+a mano (p. ej., 3/5 − (9/5 − 2) + 13/10 = 21/10; −5/4 : 3 − (2 + 3/2) = −47/12; 7.1 · (2.35 + 5 − 0.56) = 48.209).
+
+### Tests
+
+Paso 2 de la ficha: 181/181. `npm test`: 2422/2422.
+
+### Propuestas para las tareas semanales (Juan Luis las cambia en el panel; no se han tocado)
+
+- **U4, semana 3 (tarea 22 del panel, la de la ENTREGA de la 170; 7 ★ + 3 a elegir de 6)**: añadir **`['coloca-fracciones', 1]`,
+  `['coloca-fracciones', 2]` y `['coloca-fracciones', 3]`** a «a elegir», sin cambiar `nElegir: 3`. Siguen contando 7 ★ + 3 = 10
+  ejercicios, 10 puntos cada uno, 100 en total (tarea 166); añadir opciones a «a elegir» no cambia el peso. Es la semana de las
+  combinadas (sesión 10). Como ★, solo si Juan Luis lo quiere. Todo lo que cita está publicado.
+- **U5, semana 2 (tarea 24 del panel)**: la propuesta de la primera pasada (los tres ejercicios de `coloca-decimales` a «a elegir», sin
+  cambiar `nElegir: 2`) **espera** a que se publique `coloca-decimales`: no se añade nada mientras siga sin publicar.
+
+Para probarlas: https://salasgar.github.io/Ejercicios-interactivos/practicas/coloca-fracciones/?probar=1 y
+https://salasgar.github.io/Ejercicios-interactivos/practicas/coloca-decimales/?probar=1 (esta, sin publicar todavía).
+
+### Fuera de criterio (no obliga)
+
+- Siguen en pie los tres de la primera pasada (abajo): el `³` en el 9,7 % de los ítems de decimales, los paréntesis dentro de
+  paréntesis y el « · » entre frases de `base.js`.
+
+---
+
+## Primera pasada (16-11, sesión `s-20261116T125904-962c7f16`), sin cambios
+
+
 Sesión `s-20261116T125904-962c7f16` (16-11), encadenada tras la 203. **Veredicto: NO SE PUBLICA NINGUNA todavía.** Las dos se reabren por
 el mismo fallo en pantalla a 375 px (`hechos/reabiertas/201--s-20261116T125904-962c7f16.md` y `202--…`). Todo lo demás está bien; cuando
 cierren las reabiertas, la 204 se vuelve a reclamar para revisar solo eso y publicar. No se ha tocado `catalogo.js`, ni los docs, ni el README.

@@ -135,6 +135,10 @@ y las publica, o reabre la que no pase (la otra se publica igual).
   «34» es 3/4) y el signo, de delante; el decimal, con `deTexto` de `_comun/decimales.js`; el motor admite `{ num, den }` plano. El objetivo
   de la diana, comparando el `textContent` de `M.htmlValor(v)` de cada valor con el de `.objetivo`. Una colocación toda a cero no dispara
   la evaluación (no hay mensaje que esperar), y con todos los chips encendidos los huecos se bloquean: no se pueden esperar más mensajes.
+- (de la 204, 17-11) **60 cargas por idioma no bastan para un fallo del 0,4 %**: en decimales salió 1 de 120. Para medir la frecuencia,
+  pinta en la `.expr` de la página ítems del propio generador (`generar(ej, crearRng(s))`, `M.htmlValor(v, idioma, { detras: false })`
+  en cada `.num`, `M.signo(op, idioma)` en cada `.signo`) y mide 1500+ por idioma en un solo `Runtime.evaluate`: tarda segundos. Y el
+  peor caso inventado tiene que estar **en el rango del generador** (mira `unaFraccion`/`unDecimal`): 12,25 no sale nunca en la U5.
 - (de la 204, 16-11) **Regla de git del 16-11**: se escribe, comitea y empuja desde el árbol compartido (CLAUDE.md). La 203 y el
   principio de la 204 se hicieron en un worktree, y otra sesión tuvo que realinear el main.
 

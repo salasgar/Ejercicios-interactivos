@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-16T23:32Z por s-20261116T231631-e7593747 al cerrar la 204 (PARCIAL: coloca-fracciones publicada en d1088b9; reabierta la 202 por el ej. 3 partido a 375 px; npm test 2422/2422): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-16T23:17Z por s-20261116T231631-e7593747 al reclamar la 204 (encadenada tras la 203; segunda pasada tras su PARCIAL): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-16T23:15Z por s-20261116T230536-882771da al cerrar la 203 (LISTA, commit e62574e: coloca-enteros publicada; npm test 2422/2422; relevo de s-20261116T174541-c449f0b6): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-16T13:33Z por s-20261116T133235-a95571ce al reclamar la 156 
 Actualizado 2026-11-16T13:24Z por s-20261116T131147-b14b1e18 al cerrar la 200, 201 y 202 (reabiertas del 16-11: estilos.css a 375 px; commits b7fa757, 793cb7f, dbd2e4f; npm test 2405/2405; 0 renglones partidos en 360 cargas por práctica, es y en): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-16T13:23Z por s-20261116T132219-1e827c44 al reclamar la 205: **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-16T13:14Z por s-20261116T125904-962c7f16 al cerrar la 204 (PARCIAL: no se publica ninguna; reabiertas la 201 y la 202 por el renglón partido a 375 px; npm test 2405/2405): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -334,10 +334,10 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 198 | Retoques de una línea en el feedback de ocho prácticas de la U1 y la U2 (`rectangulos`, `arbol`, `divisiones`, `baldosas`, `leelo`, `jerarquia`, `raiz`, `distributiva`): concordancias, signos y unidades que encontró la 193 | tareas/tarea-198-retoques-feedback-u1-u2.md | ninguna · sus ocho carpetas no las toca ninguna reabierta del 14-11 | 1 h | MEDIO | ninguna | reparto-practicas-u2/salidas/198-retoques-feedback-u1-u2/ | LISTA | terminada 23:18Z (14-nov) |
 | 199 | Base de «Coloca los paréntesis» para la U3, la U4 y la U5: el motor de árboles de `parentesis` sacado a `_comun` con aritmética exacta (naturales, enteros, fracciones, decimales), la pantalla común, y las tres prácticas nuevas en el catálogo (ids 80-82, sin publicar) con su esqueleto | tareas/tarea-199-motor-coloca-parentesis.md | **197 LISTA** · nadie con `catalogo.js`, `portada.js`, `registro.js` ni docs U3-U5 · plazo mié 18-11 | 2 h 30 min | ALTO | — (las 200-202 son MEDIO: van en sesiones aparte, las tres a la vez) | practicas/_comun/parentesis-*.js, catálogo 80-82, esqueletos, tests…; salidas/199-motor-coloca-parentesis/ | LISTA | terminada 23:55Z (14-nov) · commit 9c849b0 |
 | 200 | Práctica de la unidad 3 «Coloca los paréntesis. Con enteros» (`coloca-enteros`, id 80): todos los resultados con tres números, con una potencia y con división | tareas/tarea-200-coloca-enteros.md | **199 LISTA** · plazo vie 27-11 | 1 h 15 min | MEDIO | 201, 202 (misma banda, carpetas disjuntas) | practicas/coloca-enteros/*, tests/practicas-{,ayuda-}coloca-enteros.test.js; salidas/200-coloca-enteros/ | LISTA | terminada 13:24Z (16-nov) · commit b7fa757 |
-| 201 | Práctica de la unidad 4 «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, id 81): todos los resultados con tres números, con división, y una diana | tareas/tarea-201-coloca-fracciones.md | **199 LISTA** · plazo vie 18-12 | 1 h 30 min | MEDIO | 200, 202 (misma banda, carpetas disjuntas) | practicas/coloca-fracciones/*, tests/practicas-{,ayuda-}coloca-fracciones.test.js; salidas/201-coloca-fraccio… | LISTA | terminada 13:24Z (16-nov) · commit 793cb7f · **sin publicar** (`coloca-fracciones`): la publica la 204 (EN CURSO) |
-| 202 | Práctica de la unidad 5 «Coloca los paréntesis. Con decimales» (`coloca-decimales`, id 82): todos los resultados con tres números, con un cuadrado, y una diana | tareas/tarea-202-coloca-decimales.md | **199 LISTA** · plazo vie 18-12 | 1 h 15 min | MEDIO | 200, 201 (misma banda, carpetas disjuntas) | practicas/coloca-decimales/*, tests/practicas-{,ayuda-}coloca-decimales.test.js; salidas/202-coloca-decimales/ | LISTA | terminada 13:24Z (16-nov) · commit dbd2e4f · **sin publicar** (`coloca-decimales`): la publica la 204 (EN CURSO) |
+| 201 | Práctica de la unidad 4 «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, id 81): todos los resultados con tres números, con división, y una diana | tareas/tarea-201-coloca-fracciones.md | **199 LISTA** · plazo vie 18-12 | 1 h 30 min | MEDIO | 200, 202 (misma banda, carpetas disjuntas) | practicas/coloca-fracciones/*, tests/practicas-{,ayuda-}coloca-fracciones.test.js; salidas/201-coloca-fraccio… | LISTA | terminada 13:24Z (16-nov) · commit 793cb7f |
+| 202 | Práctica de la unidad 5 «Coloca los paréntesis. Con decimales» (`coloca-decimales`, id 82): todos los resultados con tres números, con un cuadrado, y una diana | tareas/tarea-202-coloca-decimales.md | **199 LISTA** · plazo vie 18-12 | 1 h 15 min | MEDIO | 200, 201 (misma banda, carpetas disjuntas) | practicas/coloca-decimales/*, tests/practicas-{,ayuda-}coloca-decimales.test.js; salidas/202-coloca-decimales/ | REABIERTA | reabierta 23:30Z (16-nov): `hechos/reabiertas/202--s-20261116T231631-e7593747.md` |
 | 203 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con enteros» (`coloca-enteros`, 80), con la propuesta de dónde entra en la tarea semanal de la U3 | tareas/tarea-203-publicar-coloca-enteros.md | **200 LISTA** · no a la vez que la 204 (`catalogo.js`, `README.md`) · plazo jue 3-12 | 1 h | ALTO | 204 (si su precondición se cumple) | catalogo.js (disponible 80), docs U3, README; salidas/203-publicar-coloca-enteros/ | LISTA | terminada 23:15Z (16-nov) · commit e62574e |
-| 204 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, 81) y «Con decimales» (`coloca-decimales`, 82), con la propuesta de dónde entran en las tareas semanales de la U4 y la U5 | tareas/tarea-204-publicar-coloca-fracciones-decimales.md | **201 LISTA** · **202 LISTA** · no a la vez que la 203 (`catalogo.js`, `README.md`) · plazo mar 22-12 | 1 h 15 min | ALTO | 203 (si su precondición se cumple) | catalogo.js (disponible 81, 82), docs U4 y U5, README; salidas/204-publicar-coloca-fracciones-decimales/ | EN CURSO | s-20261116T231631-e7593747 · caduca 01:46:31Z (17-nov) |
+| 204 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, 81) y «Con decimales» (`coloca-decimales`, 82), con la propuesta de dónde entran en las tareas semanales de la U4 y la U5 | tareas/tarea-204-publicar-coloca-fracciones-decimales.md | **201 LISTA** · **202 LISTA** · no a la vez que la 203 (`catalogo.js`, `README.md`) · plazo mar 22-12 | 1 h 15 min | ALTO | 203 (si su precondición se cumple) | catalogo.js (disponible 81, 82), docs U4 y U5, README; salidas/204-publicar-coloca-fracciones-decimales/ | PARCIAL | PARCIAL: coloca-fracciones publicada (d1088b9); coloca-decimales NO, reabierta otra vez la 202 (hechos/reabiertas/202--s-20261116T231631-e7593747.md): a 375 px… · lo que falta: espera a 202 |
 | 205 | Retos con puntos extra en las tareas de la semana (`reto` en la tarea, `api.sumar` y ejercicios sin vidas en la base) | tareas/tarea-205-reto-puntos-extra.md | nadie con `tareas.js`, `base.js`, `contador.js`, `semana.js`, `profesor*.js` · plazo vie 20-11 | 2 h 30 min | ALTO | ninguna (la 206 es MEDIO) | reparto-practicas-u2/salidas/205-reto-puntos-extra/ | LISTA | terminada 18:57Z (16-nov) · commit df972d0 |
 | 206 | Reto de la unidad 2 «Tabla de propiedades» (`tabla-propiedades`, id 83): arrastrar números y etiquetas para formar una tabla de doble entrada, por niveles | tareas/tarea-206-tabla-propiedades.md | **205 LISTA** · ni la 203 ni la 204 en curso (`catalogo.js`) · plazo mié 25-11 | 2 h 30 min | MEDIO | ninguna | reparto-practicas-u2/salidas/206-tabla-propiedades/ | PENDIENTE | — |
 | 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | BLOQUEADA | espera a 206 |
@@ -346,7 +346,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-16 23:17Z**: BLOQUEADA 5 (157, 158, 159, 160, 207) · EN CURSO 1 (204) · LISTA 200 · PENDIENTE 1 (206) · RELEVABLE 1 (156).
+**Foto a 2026-11-16 23:32Z**: BLOQUEADA 5 (157, 158, 159, 160, 207) · LISTA 199 · PARCIAL 1 (204) · PENDIENTE 1 (206) · REABIERTA 1 (202) · RELEVABLE 1 (156).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -364,8 +364,7 @@ apartado 2): los decide la coordinadora.
 
 Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las fichas que lo cambian («Ficheros que toca»).
 
-- `coloca-fracciones` (tarea 201, LISTA): la publica la 204 (EN CURSO)
-- `coloca-decimales` (tarea 202, LISTA): la publica la 204 (EN CURSO)
+- `coloca-decimales` (tarea 202, REABIERTA): la publica la 204 (PARCIAL)
 - `traduce` (tarea 145, LISTA): la publica la 156 (RELEVABLE)
 - `valor-numerico` (tarea 146, LISTA): la publica la 156 (RELEVABLE)
 - `terminos-semejantes` (tarea 147, LISTA): la publica la 156 (RELEVABLE)
@@ -380,12 +379,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (341), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (342), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+PARCIAL · tarea 204 · 2026-11-16 23:32 · s-20261116T231631-e7593747 · d1088b9 · — · 15 min (estimada 1 h 15 min)
 LISTA · tarea 203 · 2026-11-16 23:15 · s-20261116T230536-882771da · e62574e · — · 10 min (estimada 1 h)
 LISTA · tarea 205 · 2026-11-16 18:57 · s-20261116T184529-d4a7ae2f · df972d0 · — · ~1 h 15 min de s-20261116T132219-1e827c44 (13:22-…
 LISTA · tarea 208 · 2026-11-16 17:46 · s-20261116T174456-e1193194 · 02dc545 · — · ~3 min
