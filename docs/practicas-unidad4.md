@@ -9,8 +9,9 @@ una. La base común, el panel, los dos sistemas de códigos y los varios profeso
 la unidad 2: están en [practicas-unidad2.md](practicas-unidad2.md), y aquí solo se cuenta lo
 que cambia.
 
-Son diez mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 4, **Fracciones**
-(ids 47-56 del catálogo, tareas 99-108 de PU2), con dos piezas comunes nuevas en
+Son once mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 4, **Fracciones**
+(ids 47-56 del catálogo, tareas 99-108 de PU2, y `coloca-fracciones`, id 81, tarea 201, sobre el
+motor común de la 199), con dos piezas comunes nuevas en
 `practicas/_comun/`:
 
 - `fracciones.js`: la fracción inmutable (el signo en el numerador; no se simplifica sola),
@@ -122,7 +123,7 @@ y, al publicarla, `disponible: true`. Lo propio de la unidad 4:
 5. Probarla en el navegador **pulsando cada botón con un clic**, a 375 px y en ancho, en los dos
    idiomas.
 
-## 6. Las diez prácticas
+## 6. Las once prácticas
 
 `id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
 bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
@@ -138,11 +139,11 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 2 | `suma-resta` | 52 | 104 | Mismo denominador · Distinto denominador, paso a paso · Con naturales · ¿Qué queda? · Caza el error | denominadores 2-12, m.c.m. ≤ 60 |
 | 3 | `multiplica-divide` | 53 | 105 | Multiplica (con «Simplifica antes») · La fracción de una fracción (cuadrícula) · La inversa · Divide (por la inversa o en cruz) · Potencias | términos 1-12; tableta y huerto ≤ 24 trozos, bandeja ≤ 20; potencias de base positiva hasta 9² y 5³ |
 | 3 | `combinadas-fracciones` | 54 | 106 | ¿Cuál primero? · Un paso cada vez · Caza el error (orden o cálculo) | 2-3 operaciones, denominadores 2-12, pasos ≤ 72, final con denominador ≤ 36 |
-| 3 | `coloca-fracciones` | 81 | 201 | Tres números (todos los resultados) · Con división (cuatro números) · Una sola diana. **Sin publicar** (la publica la 204) | todo valor irreducible con denominador ≤ 36 y numerador −60…60; solo el primero negativo; sin agrupaciones imposibles a la vista |
+| 3 | `coloca-fracciones` | 81 | 201 | Tres números (todos los resultados) · Con división (cuatro números) · Una sola diana | todo valor irreducible con denominador ≤ 36 y numerador −60…60; solo el primero negativo; sin agrupaciones imposibles a la vista |
 | 3 | `errores4` | 55 | 107 | ¿Bien o mal? (y el nombre del error) · La línea mala · Arréglalo | denominadores 2-8, todo número ≤ 600 |
 | toda | `leelo4` | 56 | 108 | Emparejar · La lectura · ¿Qué pide? · Dictado | dinero 20-600 €, pizza 4-12 trozos, clase 12-36, denominadores ≤ 12 |
 
-**Publicadas** (a 2026-11-12): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
+**Publicadas** (a 2026-11-17): `que-fraccion`, `simplifica` y `leelo4` (tarea 109, commit
 26306eb), `equivalentes` y `compara` (tarea 119, tras sus reabiertas del 30-10, cerradas el
 2-11), y `fraccion-de` y `suma-resta`, las dos de la semana 2 (tarea 169, tras las reabiertas
 del 6-11 de la tarea 162, cerradas ese mismo día: el ej. 4 `dos` y el ej. 2 de `fraccion-de` ya
@@ -153,7 +154,8 @@ casos de examen se excluyen por su huella, nunca en claro), y las tres de la sem
 clave de los casos reservados ya no depende de dónde va el menos), y `multiplica-divide` y
 `errores4` (tarea 170, tercera pasada del 12-11, tras sus segundas reabiertas del 12-11, cerradas
 ese mismo día: también excluyen los casos que la hoja 2 escribe en palabras, los productos del
-ej. 12a-b con «of» y las potencias del ej. 13 y de la hoja 3, ej. 1). Las diez prácticas de la U4
+ej. 12a-b con «of» y las potencias del ej. 13 y de la hoja 3, ej. 1). Y `coloca-fracciones`, la undécima, el 17-11 (tarea 204, segunda pasada), tras la
+reabierta de la 201 (la expresión partida en dos renglones a 375 px). Las once prácticas de la U4
 están publicadas. El estado vivo es el campo `disponible` de `catalogo.js`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 4
