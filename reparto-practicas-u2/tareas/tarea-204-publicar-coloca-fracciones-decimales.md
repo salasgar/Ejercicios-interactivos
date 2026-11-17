@@ -141,6 +141,13 @@ y las publica, o reabre la que no pase (la otra se publica igual).
   peor caso inventado tiene que estar **en el rango del generador** (mira `unaFraccion`/`unDecimal`): 12,25 no sale nunca en la U5.
 - (de la 204, 16-11) **Regla de git del 16-11**: se escribe, comitea y empuja desde el árbol compartido (CLAUDE.md). La 203 y el
   principio de la 204 se hicieron en un worktree, y otra sesión tuvo que realinear el main.
+- (de la 204, 17-11, cuarta pasada) **El ancho que falta no se mide con `scrollWidth`**: con `justify-content: center`, el `scrollWidth`
+  de la `.expr` nunca baja del `clientWidth` y da «324 de 324» en todos los ítems. Con `flex-wrap: nowrap` y `justify-content: flex-start`,
+  la distancia entre el `left` del primer hijo y el `right` del último.
+- (de la 204, 17-11) Para el guion de clics: el menú numera `data-ejercicio` **desde 0**; las líneas de la resolución salen de una en una
+  (400 ms por línea), así que tras poner una colocación se espera a que `#mensaje` tenga texto; en la diana el **acierto** pasa solo al
+  ítem siguiente a los 2,6 s, **sin** botón «Siguiente» (el fallo sí lo tiene); y en un ej. con 2 resultados la pista enciende el último
+  chip y acaba el ítem: el «(» sin cerrar y el borrar, antes de la pista.
 
 ## Prohibido (propio de esta tarea)
 

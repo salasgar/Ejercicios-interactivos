@@ -1,5 +1,72 @@
 # Tarea 204 — revisión con clics de «Coloca los paréntesis. Con fracciones» (81, U4) y «Con decimales» (82, U5)
 
+## Cuarta pasada (17-11, sesión `s-20261117T061533-12dd3186`, relevo de `s-20261117T031553-f80558bf`)
+
+La tercera pasada (`s-20261117T031553-f80558bf`, 03:16Z) caducó a las 05:46:30Z sin cierre y sin dejar nada sin comitear: esta la
+releva. **Veredicto: `coloca-decimales` PUBLICADA (commit 173b497).** Las dos prácticas de la tarea quedan publicadas. Solo se revisa
+lo reabierto el 16-11 (`hechos/reabiertas/202--s-20261116T231631-e7593747.md`): el arreglo de 537d7d5 (en ≤ 400 px, `.expr` a 1rem y
+huecos de 16 px; alto de 52 px intacto).
+
+Publicar: `disponible: true` en la fila 82 de `catalogo.js` (nada más), y en `docs/practicas-unidad5.md` «Son ocho…» (con id 82 y
+tarea 202), «Las ocho prácticas», la fila sin «Sin publicar» y la línea de publicadas («a 2026-11-17: las ocho»). El README sigue sin
+sección de la U5: no se crea. La portada no enseña la U5 hasta el lun 18-1: publicarla ahora no la pone delante de nadie.
+
+### Navegador (Chrome headless por CDP, clics de ratón, «Probar sin código»; guiones en el scratchpad)
+
+**Renglón a 375 px** (375 × 800, móvil, DPR 2), en la página de la práctica, ítems de `generar(ej, crearRng(…))` escritos en la `.expr`
+con el mismo marcado del editor (`M.htmlValor(v, idioma, { detras: false })`, `M.signo`, el `³`/`²` en su celda), cada uno medido sin
+paréntesis y con «((» y dos «)» puestos; renglones contados por el centro de cada `.celda` y `.signo`; ancho necesario medido con
+`flex-wrap: nowrap` por los extremos de los hijos (el `scrollWidth` no vale: con `justify-content: center` nunca baja del `clientWidth`):
+
+| | ítems por idioma | medidas por idioma | partidos (es / en) | ancho máximo (es / en; hay 324 px) |
+|---|---|---|---|---|
+| ej. 1 | 6000 | 12 000 | 0 / 0 | 230 / 236 px |
+| ej. 2 | 6000 | 12 000 | 0 / 0 | 212 / 212 px |
+| ej. 3 (diana, cuatro) | 6000 | 12 000 | 0 / 0 | 301 / 307 px |
+
+Sin desbordamiento horizontal en ninguna. **Peor caso inventado** dentro del rango de `unDecimal` (cuatro 9,99) con `+++`, `+·−`,
+`−−−`, `···` y `:+·`, sin y con paréntesis: 1 renglón, 301-318 px en los dos idiomas. Antes del arreglo la segunda pasada medía 7
+partidos de 3000 y 340 px. Huecos a 375 px: 16 × 52 px. Los `((` caben en el hueco de 16 px: con y sin paréntesis el ancho es el mismo.
+
+**Solo como dato** (no es criterio): a 360 px (`.expr` de 309 px), 0 partidos en 3000 medidas por ejercicio e idioma con el generador.
+El peor caso inventado sí se parte ahí con `+++`, `+·−` y `−−−` (312-318 px).
+
+**Recorrido con clics** a 375 y 1200 px, es y en, los tres ejercicios (12 casos), entrando desde la portada («Probar sin código» → menú
+con 3 ejercicios). Los clics se dan en el centro de cada botón, comprobando con `elementFromPoint` que nada lo tapa, también en los huecos
+de 16 px. En los «todos»: un «(» sin cerrar («Falta algún paréntesis…» / «A bracket is missing…»), el borrar (huecos vacíos), la pista
+en el ej. 2 (con 2 resultados, en el ej. 1, la pista acaba el ítem) y **todos los chips encendidos por clic** (2/2, 3/3, 4/4), con la
+colocación de cada chip sacada de `logica.js` importada en la página. En la diana: «(» sin cerrar + Comprobar (aviso), borrar, un
+**fallo** sin paréntesis («Eso da …, no …» y una agrupación que sí lo da, resuelta) y un **acierto** con la colocación del objetivo (pasa
+solo al siguiente a los 2,6 s, sin botón). El «No lo sé» en cada uno (sale la explicación y el ítem siguiente es otro). **Consola limpia
+en los 12.** Las cuentas de los 20 mensajes que salieron (4 fallos, 4 aciertos y 12 «No lo sé»), comprobadas a mano una a una: todas bien.
+
+### Tests
+
+Paso 2 de la ficha: 182/182. `npm test`: 2461/2461.
+
+### Papel
+
+Ningún `.tex` ni `.tsv` de `5. Decimals/` es más nuevo que el 16-11 a las 12:00, y `logica.js` no ha cambiado desde el 15-11: el barrido
+de casos del papel de la primera pasada sigue valiendo (537d7d5 solo toca `estilos.css`).
+
+### Propuesta para la tarea semanal (Juan Luis la cambia en el panel; no se ha tocado)
+
+- **U5, semana 2 (tarea 24 del panel, la de la ENTREGA de la 132: 8 ★ + 2 a elegir de 10)**: añadir **`['coloca-decimales', 1]`,
+  `['coloca-decimales', 2]` y `['coloca-decimales', 3]`** a «a elegir», sin cambiar `nElegir: 2`. Quedan 8 ★ + 2 de 13 = 10 ejercicios,
+  10 puntos cada uno, 100 (tarea 166); añadir opciones a «a elegir» no cambia el peso. Las combinadas con un cuadrado son de la sesión 6
+  (mar 26-1), dentro de esa semana. Como ★, solo si Juan Luis lo quiere. Todo lo que cita está publicado.
+- La de la **U4, semana 3** (`coloca-fracciones` 1-3 a «a elegir» de la tarea 22) es la de la segunda pasada, sin cambios.
+
+Para probarlas: https://salasgar.github.io/Ejercicios-interactivos/practicas/coloca-fracciones/?probar=1 y
+https://salasgar.github.io/Ejercicios-interactivos/practicas/coloca-decimales/?probar=1
+
+### Fuera de criterio (no obliga)
+
+- Siguen en pie los tres de la primera pasada (abajo). El « · » entre frases de la penalización (`base.js`) se ve en todos los fallos
+  de la diana.
+
+---
+
 ## Segunda pasada (17-11, sesión `s-20261116T231631-e7593747`, encadenada tras la 203)
 
 **Veredicto: `coloca-fracciones` PUBLICADA (commit d1088b9); `coloca-decimales` NO, se reabre otra vez la 202**
