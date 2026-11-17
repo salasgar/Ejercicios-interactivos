@@ -11,9 +11,8 @@
 // Ninguna falsa es otra forma válida de decir lo mismo, y dos opciones nunca valen lo mismo:
 // las expresiones, por forma canónica (`_comun/algebra.js`, aritmética exacta).
 //
-// Casos reservados: a 2026-11-09 no existían la hoja ni el examen de ninguna semana de la U6, así
-// que `RESERVADOS_HOJA` y `HUELLAS_EXAMEN` están vacíos; la tarea de publicación de cada semana
-// coteja y reabre si hace falta. `esReservado` ya los aplica al generar.
+// Casos reservados: los del papel de la U6 (hojas 1-4, exámenes, cuestionarios y finales) no salen en
+// ningún ejercicio con objeto algebraico; `esReservado` se aplica al generar. Nunca en claro.
 //
 // `sesion` es la primera sesión de la unidad en que el ítem tiene sentido (inventario propuesto:
 // 1B-01…1B-03 y 1C-03 en la 1; 1B-04 en la 2-3; 2B en la 5-6; 3B-02 en la 9; 3B-01 en la 10-11;
@@ -65,13 +64,37 @@ export const ESTA_DEFINIDO = id => Boolean(nombreDe(id));
 
 // ─── Casos reservados ─────────────────────────────────────────────────────────────────────
 
-export const HUELLAS_EXAMEN = new Set([]);
-export const RESERVADOS_HOJA = new Set([]);
+// Casos del papel de la unidad 6 (hojas por clave; exámenes, cuestionarios y finales por huella FNV-1a).
+export const HUELLAS_EXAMEN = new Set([
+  '10vpmjo', '13aym28', '13jlijv', '13py17k', '149x8li', '157fj6q', '15bgfzn', '15esx69', '15nus02',
+  '16htl2z', '16piur8', '171t9j8', '179i256', '189cebu', '18ln3fg', '1953i0d', '1aenpg3', '1fiawyh',
+  '1fy74bt', '1gy3t1q', '1hb14n2', '1hg84ta', '1iq359j', '1jufovk', '1n5nupg', '1nu9ebc', '1og9tmv',
+  '1pvi3a2', '1q6554v', '1q6fdz2', '1qkxg4h', '1qt2e9c', '1rff0t5', '1rhvu4t', '1rlxhe6', '1rp5j4x',
+  '1s1vgyu', '1s70eq7', '1t5ycga', '1utrhwk', '1v6o9zm', '1v9woss', '1wjb8uf', '1wulw5g', '1x1slqx',
+  '1x4lhuf', '2wjn4u', '463tl9', '4ee2k4', '4m8wmr', '8k5txc', '8l26ba', '93attq', '9jqe94', 'a8ffgo',
+  'as2nh4', 'bw1290', 'c2c1uq', 'ccbnjp', 'cwauxn', 'do8tpt', 'dq9o0k', 'f57bfs', 'g8mfh5', 'irq4ve',
+  'l5987n', 'mt6udh', 'nqlxl1', 'o0lja0', 'o4boti', 'oa5t6x', 'osahtx', 'ou2hf8', 'oukccx', 'r4efk8',
+  'ryd8n5', 'slmson', 'sn8ehp', 'th8ys6', 'vfkpj2', 'vwivy9', 'x0haq5', 'xx0vm8', 'zayw33', 'zylz0z',
+]);
+export const RESERVADOS_HOJA = new Set([
+  'x:1/2|b:-4', 'x:1/2|b:0=b:6', 'x:1/2|b:0=b:7', 'x:1/3|b:0=b:6', 'x:1/4|b:0', 'x:1/4|b:0=b:3', 'x:1/5|b:0',
+  'x:1|b:-2=b:7', 'x:1|b:-3', 'x:1|b:-5', 'x:1|b:-6', 'x:1|b:-7', 'x:1|b:-8=b:3', 'x:1|b:-9=b:4', 'x:1|b:3',
+  'x:1|b:3=b:14', 'x:1|b:4', 'x:1|b:5=b:12', 'x:1|b:5=b:13', 'x:1|b:6', 'x:1|b:6=b:10', 'x:1|b:6=b:11',
+  'x:1|b:6=b:14', 'x:1|b:6=b:2', 'x:1|b:7', 'x:1|b:8=b:21', 'x:1|b:9', 'x:1|b:9=b:15', 'x:1|b:9=b:21',
+  'x:2|b:-5', 'x:2|b:-9', 'x:2|b:3=b:14', 'x:2|b:4', 'x:2|b:7', 'x:2|b:8', 'x:3|b:-1', 'x:3|b:-5=b:16',
+  'x:3|b:-8', 'x:3|b:2=b:35', 'x:4|b:-12=b:20', 'x:4|b:-3=b:9', 'x:4|b:-7=b:13', 'x:4|b:0', 'x:4|b:0=b:20',
+  'x:4|b:1', 'x:4|b:12', 'x:4|b:1=x:4|b:6', 'x:4|b:3', 'x:4|b:9=b:1', 'x:5/12|b:0=b:10', 'x:5|b:-1',
+  'x:5|b:-2=b:18', 'x:5|b:-4=b:21', 'x:5|b:-7', 'x:5|b:-8=b:27', 'x:5|b:0', 'x:5|b:0=b:15', 'x:5|b:0=b:35',
+  'x:5|b:20', 'x:5|b:2=b:17', 'x:5|b:4', 'x:5|b:5', 'x:6|b:-5=b:13', 'x:6|b:0=b:9', 'x:6|b:1',
+  'x:6|b:7=b:31', 'x:7/10|b:0=b:14', 'x:7|b:-4', 'x:8|b:0=b:6',
+]);
 export const esReservado = x => {
-  try { return HUELLAS_EXAMEN.has(huellaCanonica(x)) || RESERVADOS_HOJA.has(x.clave()); } catch { return false; }
+  try { if (HUELLAS_EXAMEN.has(huellaCanonica(x))) return true; } catch { /* sin huella */ }
+  try { return RESERVADOS_HOJA.has(x.clave()); } catch { return false; }
 };
 
 class ItemPobre extends Error {}
+const libre = o => { if (esReservado(o)) throw new ItemPobre('reservado'); };
 
 /** Una falsa de cada error primero (al azar), luego las que sobren; sin textos repetidos. */
 function elegirFalsas(rng, falsas, n = 3) {
@@ -188,7 +211,7 @@ export function generarPalabra(rng) {
 
 // ─── Ejercicio 2 · Léelo ─────────────────────────────────────────────────────────────────
 
-const LETRAS = ['x', 'x', 'x', 'y', 'n', 't'];
+const LETRAS = ['x'];
 
 /** Una expresión de una letra: 2x, x/3, 3x + 5, 4x − 1, x − 3, x/2 + 4, −5x + 2. Nunca un caso reservado. */
 export function exprAzar(rng, letra) {
@@ -270,12 +293,14 @@ function distintas(o, lista) {
 }
 
 const aTextoDe = o => o.aTexto('es');
+const coma = t => t.replace(/\b(over|divided by|partido por|entre) ([\wáéíóúü-]+) (plus|minus|más|menos)\b/, '$1 $2, $3');
+const lee = (o, idioma) => coma(o.enPalabras(idioma));
 
 function itemLectura(rng, { plantilla, instruccion, objeto, idioma }) {
-  const dice = o => o.enPalabras(idioma);
+  const dice = o => lee(o, idioma);
   const falsas = distintas(objeto, variantesDe(objeto, rng))
-    .map(({ expr, error }) => ({ expr, error, texto: dice(expr) }))
-    .filter(f => !objeto.esLecturaValida(f.texto, idioma) && !objeto.lecturasValidas(idioma).includes(f.texto))
+    .map(({ expr, error }) => ({ expr, error, crudo: expr.enPalabras(idioma), texto: dice(expr) }))
+    .filter(f => !objeto.esLecturaValida(f.crudo, idioma) && !objeto.lecturasValidas(idioma).includes(f.crudo))
     .map(f => ({
       texto: f.texto, error: f.error,
       por_que: par(`«${f.texto}» es ${aTextoDe(f.expr)}, no ${aTextoDe(objeto)}: ${minus(nombreDe(f.error).es)}.`,
@@ -289,11 +314,11 @@ function itemLectura(rng, { plantilla, instruccion, objeto, idioma }) {
 }
 
 function itemEscritura(rng, { plantilla, objeto, idioma }) {
-  const lectura = objeto.enPalabras(idioma);
+  const lectura = lee(objeto, idioma);
   const falsas = distintas(objeto, variantesDe(objeto, rng)).map(({ expr, error }) => ({
     texto: aTextoDe(expr), html: expr.aHtml(), error,
-    por_que: par(`${aTextoDe(expr)} se lee «${expr.enPalabras(idioma)}», no «${lectura}»: ${minus(nombreDe(error).es)}.`,
-      `${aTextoDe(expr)} is read “${expr.enPalabras(idioma)}”, not “${lectura}”: ${minus(nombreDe(error).en)}.`),
+    por_que: par(`${aTextoDe(expr)} se lee «${lee(expr, idioma)}», no «${lectura}»: ${minus(nombreDe(error).es)}.`,
+      `${aTextoDe(expr)} is read “${lee(expr, idioma)}”, not “${lectura}”: ${minus(nombreDe(error).en)}.`),
   }));
   return armar(rng, {
     plantilla, instruccion: plantilla, notacion: frase(lectura, idioma),
@@ -365,11 +390,12 @@ export const GRUPOS_CONSIGNA = [
     { familia: 'resolver', en: () => 'Solve the equation and check your answer.', es: () => 'Resuelve la ecuación y comprueba la respuesta.' },
     { familia: 'resolver', en: d => `Check that ${l(d)} = ${d.s} is the solution of the equation.`, es: d => `Comprueba que ${l(d)} = ${d.s} es la solución de la ecuación.` },
     { familia: 'palabras', en: () => 'Write the equation in words.', es: () => 'Escribe la ecuación con palabras.' },
-    { familia: 'restar-lados', contraria: 'sumar-lados', valida: d => d.b > 0, en: d => `Subtract ${d.b} from both sides of the equation.`, es: d => `Resta ${d.b} a los dos miembros de la ecuación.` },
-    { familia: 'sumar-lados', contraria: 'restar-lados', valida: d => d.b < 0, en: d => `Add ${-d.b} to both sides of the equation.`, es: d => `Suma ${-d.b} a los dos miembros de la ecuación.` },
+    { familia: 'restar-lados', contraria: 'sumar-lados', valida: d => d.b > 0, evitar: d => d.b < 0, en: d => `Subtract ${d.b} from both sides of the equation.`, es: d => `Resta ${d.b} a los dos miembros de la ecuación.` },
+    { familia: 'sumar-lados', contraria: 'restar-lados', valida: d => d.b < 0, evitar: d => d.b > 0, en: d => `Add ${-d.b} to both sides of the equation.`, es: d => `Suma ${-d.b} a los dos miembros de la ecuación.` },
     { familia: 'dividir-lados', contraria: 'multiplicar-lados', en: d => `Divide both sides of the equation by ${d.a}.`, es: d => `Divide los dos miembros de la ecuación entre ${d.a}.` },
     { familia: 'multiplicar-lados', contraria: 'dividir-lados', valida: () => false, en: d => `Multiply both sides of the equation by ${d.a}.`, es: d => `Multiplica los dos miembros de la ecuación por ${d.a}.` },
     { familia: 'restar-lados', contraria: 'sumar-lados', valida: () => false, en: d => `Subtract ${Math.abs(d.b)} from both sides of the equation.`, es: d => `Resta ${Math.abs(d.b)} a los dos miembros de la ecuación.`, soloSiNo: d => d.b < 0 },
+    { familia: 'sumar-lados', contraria: 'restar-lados', valida: () => false, en: d => `Add ${d.b} to both sides of the equation.`, es: d => `Suma ${d.b} a los dos miembros de la ecuación.`, soloSiNo: d => d.b > 0 },
   ] },
   { id: 'parentesis', sesion: 10, construir: grupoParentesis, plantillas: [
     { familia: 'quitar-parentesis', en: () => 'Expand the brackets.', es: () => 'Quita los paréntesis multiplicando.' },
@@ -395,7 +421,7 @@ function generarConsignaDe(rng) {
   const d = g.construir(rng);
   const validas = g.plantillas.filter(p => p.valida === undefined ? true : p.valida(d));
   const t = rng.elegir(validas.filter(p => !p.soloSiNo));
-  const otras = g.plantillas.filter(p => p.familia !== t.familia && (!p.soloSiNo || p.soloSiNo(d)));
+  const otras = g.plantillas.filter(p => p.familia !== t.familia && (!p.soloSiNo || p.soloSiNo(d)) && !(p.evitar && p.evitar(d)));
   const vistas = new Set();
   const falsas = [];
   for (const p of otras) {
@@ -424,6 +450,7 @@ export const generarConsigna = (rng, sesion) => generarDe(rng, PLANTILLAS_CONSIG
 const HUECO = '<span class="hueco hueco--corto" aria-label="blank"></span>';
 const NOMBRES = ['Ana', 'Lucas', 'Sara', 'Marcos', 'Lucía', 'Hugo', 'Carmen', 'Pablo', 'Elena', 'Álvaro'];
 const GLOSA = {
+  'an expression': 'números y letras con operaciones, sin igual', 'a solution': 'el valor que cumple la ecuación', 'an identity': 'se cumple siempre', 'a coefficient': 'el número que multiplica a la letra',
   coefficient: 'el número que multiplica a la letra', 'constant term': 'el término sin letra', solution: 'el valor que cumple la ecuación',
   denominator: 'el número de abajo de una fracción', numerator: 'el número de arriba de una fracción', equation: 'una igualdad con una incógnita',
   expression: 'números y letras con operaciones, sin igual', 'like terms': 'términos con la misma letra', evaluate: 'calcular el valor sustituyendo',
@@ -451,6 +478,7 @@ const ESCRIBE = (L, a, b) => lineal(a, b, L).aHtml();
 
 function completaCoeficiente(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), b = rng.entero(1, 9);
+  libre(lineal(a, -b, L));
   const e = ESCRIBE(L, a, -b);
   return completa(rng, { plantilla: 'completa_coeficiente', sesion: 2,
     texto: `In ${e}, the ${HUECO} of <i>${L}</i> is ${a}.`, correcta: 'coefficient', falsas: ['solution', 'denominator', 'equation', 'identity'],
@@ -458,12 +486,14 @@ function completaCoeficiente(rng) {
 }
 function completaIndependiente(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), b = rng.entero(1, 9);
+  libre(lineal(a, -b, L));
   return completa(rng, { plantilla: 'completa_independiente', sesion: 2,
     texto: `In ${ESCRIBE(L, a, -b)}, the ${HUECO} is ${MENOS}${b} (the number without a letter).`, correcta: 'constant term', falsas: ['unknown', 'solution', 'equation', 'denominator'],
     solucion: sol(`The number without a letter is the constant term: ${MENOS}${b}.`, `El número sin letra es el término independiente: ${MENOS}${b}.`) });
 }
 function completaSemejantes(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), c = rng.entero(2, 9), b = rng.entero(1, 9);
+  libre(lineal(a + c, b, L));
   const ts = terminosAHtml([termino(a, L), termino(b), termino(c, L)]);
   return completa(rng, { plantilla: 'completa_semejantes', sesion: 2,
     texto: `In ${ts}, ${a}<i>${L}</i> and ${c}<i>${L}</i> are called ${HUECO}.`, correcta: 'like terms', falsas: ['denominators', 'equations', 'brackets', 'coefficients'].filter(x => x !== 'coefficients'),
@@ -471,6 +501,7 @@ function completaSemejantes(rng) {
 }
 function completaEvaluar(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), b = rng.entero(1, 9), v = rng.entero(...COTAS.valorDeX);
+  libre(lineal(a, b, L));
   return completa(rng, { plantilla: 'completa_evaluar', sesion: 3,
     texto: `To ${HUECO} ${ESCRIBE(L, a, b)} when <i>${L}</i> = ${v}, replace <i>${L}</i> by ${v} and calculate: ${a} · ${v} + ${b} = ${a * v + b}.`,
     correcta: 'evaluate', falsas: ['expand', 'solve', 'write'],
@@ -478,37 +509,45 @@ function completaEvaluar(rng) {
 }
 function completaSolucion(rng) {
   const L = rng.elegir(LETRAS), b = rng.entero(1, 9), s = rng.entero(2, 9);
+  libre(ecuacion(lineal(1, b, L), s + b));
   return completa(rng, { plantilla: 'completa_solucion', sesion: 5,
     texto: `<i>${L}</i> = ${s} is the ${HUECO} of ${lineal(1, b, L).aHtml()} = ${s + b}.`, correcta: 'solution', falsas: ['coefficient', 'denominator', 'expression'],
     solucion: sol(`${L} = ${s} makes the equation true (${s} + ${b} = ${s + b}): it is the solution.`, `${L} = ${s} hace cierta la ecuación (${s} + ${b} = ${s + b}): es la solución.`) });
 }
 function completaLados(rng) {
   const L = rng.elegir(LETRAS), b = rng.entero(1, 9), s = rng.entero(2, 9);
+  libre(ecuacion(lineal(1, b, L), s + b));
   return completa(rng, { plantilla: 'completa_lados', sesion: 6,
     texto: `To solve ${lineal(1, b, L).aHtml()} = ${s + b}, subtract ${b} from ${HUECO}.`, correcta: 'both sides', falsas: ['the coefficient', 'the denominator', 'the solution'],
     solucion: sol(`What you do on one side of the equation, you do on both sides.`, `Lo que haces en un miembro de la ecuación lo haces en los dos.`) });
 }
 function completaExpresion(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), b = rng.entero(1, 9);
+  libre(lineal(a, b, L));
   return completa(rng, { plantilla: 'completa_expresion', sesion: 5,
-    texto: `${ESCRIBE(L, a, b)} has no equals sign, so it is an ${HUECO}, not an equation.`, correcta: 'expression', falsas: ['solution', 'identity', 'coefficient'],
+    texto: `${ESCRIBE(L, a, b)} has no equals sign, so it is ${HUECO}, not an equation.`, correcta: 'an expression', falsas: ['a solution', 'an identity', 'a coefficient'],
     solucion: sol(`Without an equals sign it is an expression.`, `Sin signo igual es una expresión.`) });
 }
 function completaParentesis(rng) {
   const L = rng.elegir(LETRAS), k = rng.entero(2, 6), m = rng.entero(1, 6);
+  libre(lineal(k, k * m, L));
   return completa(rng, { plantilla: 'completa_parentesis', sesion: 10,
     texto: `To expand ${k}(<i>${L}</i> + ${m}), multiply every term inside the ${HUECO} by ${k}.`, correcta: 'brackets', falsas: ['denominator', 'solution', 'coefficient'],
     solucion: sol(`${k}(${L} + ${m}) = ${k}${L} + ${k * m}.`, `${k}(${L} + ${m}) = ${k}${L} + ${k * m}.`) });
 }
 function completaDenominador(rng) {
   const L = rng.elegir(LETRAS), n = rng.entero(...COTAS.denominador), c = rng.entero(2, 9);
+  const q = ecuacion(lineal(new Fraccion(1, n), 0, L), c);
+  libre(q);
   return completa(rng, { plantilla: 'completa_denominador', sesion: 10,
-    texto: `In <i>${L}</i>/${n} = ${c}, the ${HUECO} is ${n}.`, correcta: 'denominator', falsas: ['numerator', 'solution', 'equation', 'identity'],
+    texto: `In ${q.aHtml()}, the ${HUECO} is ${n}.`, correcta: 'denominator', falsas: ['numerator', 'solution', 'equation', 'identity'],
     solucion: sol(`The number below the fraction line is the denominator: ${n}.`, `El número de debajo de la raya de fracción es el denominador: ${n}.`) });
 }
 function completaNumeroSoluciones(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), b = rng.entero(1, 9), infinita = rng.azar() < 0.4;
-  const q = infinita ? `${lineal(a, b, L).aHtml()} = ${lineal(a, b, L).aHtml()}` : `${lineal(a, b, L).aHtml()} = ${lineal(a, b + rng.entero(1, 5), L).aHtml()}`;
+  const d = rng.entero(1, 5);
+  libre(ecuacion(lineal(a, b, L), lineal(a, infinita ? b : b + d, L)));
+  const q = infinita ? `${lineal(a, b, L).aHtml()} = ${lineal(a, b, L).aHtml()}` : `${lineal(a, b, L).aHtml()} = ${lineal(a, b + d, L).aHtml()}`;
   const buena = infinita ? 'infinitely many solutions' : 'no solution';
   return completa(rng, { plantilla: 'completa_soluciones', sesion: 9,
     texto: `${q}: this equation has ${HUECO}.`, correcta: buena,

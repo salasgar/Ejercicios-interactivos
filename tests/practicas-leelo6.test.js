@@ -8,8 +8,9 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
   VOCABULARIO, SINONIMOS, ERRORES_LEELO, generarPalabra, generarLeelo, generarConsigna, generarCompleta,
-  nombreDe, ESTA_DEFINIDO, esReservado, RESERVADOS_HOJA, HUELLAS_EXAMEN, claveItem, PLANTILLAS_LEELO,
+  nombreDe, ESTA_DEFINIDO, esReservado, RESERVADOS_HOJA, HUELLAS_EXAMEN, claveItem, PLANTILLAS_LEELO, PLANTILLAS_COMPLETA,
 } from '../practicas/leelo6/logica.js';
+import { deTexto, deEcuacion } from '../practicas/_comun/algebra.js';
 import { TX } from '../practicas/leelo6/textos.js';
 
 const N = 3000;
@@ -78,7 +79,7 @@ function leerEn(t) {
   const c = der === undefined ? null : DE.get(der);
   if (der !== undefined && c === undefined) return null;
   let b = 0, signo = 1;
-  const m = izq.match(/^(minus )?(?:(\S+) (?:times )?)?(\w) ?(?:(?:over|divided by) (\S+))?(?: (plus|minus) (\S+))?$/);
+  const m = izq.match(/^(minus )?(?:(\S+) (?:times )?)?(\w) ?(?:(?:over|divided by) ([^\s,]+),?)?(?: (plus|minus) (\S+))?$/);
   if (!m) return null;
   const [, neg, coef, , den, op, cons] = m;
   const k = coef === undefined ? 1 : DE.get(coef);
@@ -106,11 +107,65 @@ test('leelo6 · léelo: el lector de inglés confirma que la buena es la fórmul
   assert.ok(comprobadas > 1000, `comprobadas ${comprobadas}`);
 });
 
-test('leelo6 · sin casos reservados (hoy están vacíos) y errores bilingües', () => {
-  assert.equal(RESERVADOS_HOJA.size + HUELLAS_EXAMEN.size, 0);
+test('leelo6 · casos reservados: 69 claves y 85 huellas, y errores bilingües', () => {
+  assert.equal(RESERVADOS_HOJA.size, 69);
+  assert.equal(HUELLAS_EXAMEN.size, 85);
   assert.equal(esReservado({ clave: () => 'x' }), false);
+  assert.equal(esReservado({ clave: () => [...RESERVADOS_HOJA][0] }), true);
   for (const id of Object.keys(ERRORES_LEELO)) assert.ok(nombreDe(id).es && nombreDe(id).en, id);
   assert.ok(PLANTILLAS_LEELO.length >= 5);
+});
+
+test('leelo6 · léelo: ningún objeto del ítem es un caso reservado, y solo sale la letra x', () => {
+  let leidos = 0;
+  for (const it of items(generarLeelo, 22)) {
+    const s = it.solucion.es;
+    const texto = (s.startsWith('«') ? s.split('» se escribe ')[1] : s.split(' se lee «')[0]).replace(/\.$/, '');
+    const o = texto.includes('=') ? deEcuacion(texto) : deTexto(texto);
+    if (!o) continue;
+    leidos++;
+    assert.ok(!esReservado(o), `reservado: ${it.plantilla}`);
+    assert.ok(o.letra === 'x', `letra ${o.letra}`);
+  }
+  assert.ok(leidos > 0.9 * N, `leídos ${leidos}`);
+});
+
+test('leelo6 · con todo reservado, las plantillas con objeto no generan y las demás sí', () => {
+  const tiene = RESERVADOS_HOJA.has, tieneH = HUELLAS_EXAMEN.has;
+  RESERVADOS_HOJA.has = () => true;
+  try {
+    const rng = crearRng(5);
+    let sin = 0, con = 0;
+    for (const p of PLANTILLAS_COMPLETA) {
+      try { p(rng); con++; } catch { sin++; }
+    }
+    assert.equal(con, 2, 'solo completaTotal y completaHace no llevan objeto');
+    assert.equal(sin, PLANTILLAS_COMPLETA.length - 2);
+  } finally { RESERVADOS_HOJA.has = tiene; HUELLAS_EXAMEN.has = tieneH; }
+});
+
+test('leelo6 · consigna y completa: solo la letra x, sin casos reservados en las ecuaciones', () => {
+  for (const [gen, semilla] of [[generarConsigna, 33], [generarCompleta, 44]]) {
+    for (const it of items(gen, semilla)) {
+      const txt = plano(it.notacion);
+      assert.ok(!/when [ynt] =|[yt]\/\d|\b[ynt] = \d/.test(txt), txt);
+    }
+  }
+});
+
+test('leelo6 · consigna: ninguna opción lleva un número negativo y restar/sumar no se duplican', () => {
+  for (const it of items(generarConsigna, 33)) {
+    const ts = it.opciones.map(o => o.texto);
+    for (const t of ts) assert.ok(!/-\d|−\d/.test(t), t);
+    const ops = ts.map(t => t.match(/^(Resta|Suma) (\d+) a los dos/)).filter(Boolean).map(m => m[1]);
+    assert.equal(new Set(ops).size, ops.length, ts.join(' | '));
+  }
+});
+
+test('leelo6 · léelo: coma delante de plus/minus tras una fracción', () => {
+  const r = items(generarLeelo, 22).flatMap(i => i.opciones.map(o => o.texto));
+  assert.ok(r.some(t => /over \w+, (plus|minus)/.test(t)));
+  assert.ok(!r.some(t => /(over|partido por) [\wáéíóúü-]+ (plus|minus|más|menos)/.test(t)));
 });
 
 test('leelo6 · las plantillas de completa y consigna salen todas', () => {
