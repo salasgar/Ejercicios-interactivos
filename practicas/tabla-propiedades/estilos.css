@@ -1,0 +1,52 @@
+/* Tabla de propiedades: lo que no está en ../_comun/estilos.css.
+   Etiquetas (azul) en las cabeceras y números (blanco) en las casillas; todo cabe a 375 px. */
+
+.comprobar[disabled] { opacity: .5; cursor: default; }
+.comprobar[hidden] { display: none; }
+.tp-nivel { margin: 0 0 .5rem; font-size: .85rem; font-weight: 700; color: var(--texto-suave); }
+
+.tp-tabla {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) repeat(var(--tp-cols), minmax(0, 1fr));
+  gap: 4px; max-width: 640px; margin: 0 auto .8rem;
+}
+.tp-esquina { min-height: 2.6rem; }
+.tp-hueco {
+  display: flex; align-items: stretch; justify-content: center; min-width: 0; min-height: 2.8rem;
+  border: 2px dashed var(--borde); border-radius: 9px; background: rgba(255, 255, 255, .6);
+}
+.tp-hueco--etiqueta { min-height: 3rem; border-color: #93a8e6; }
+.tp-hueco--mal { border: 2px solid var(--error); background: var(--error-claro); }
+
+.tp-pieza {
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  min-width: 2.6rem; min-height: 2.6rem; padding: .15rem .15rem; margin: 0;
+  border-radius: 8px; font-weight: 700; line-height: 1.15; overflow-wrap: break-word; hyphens: none;
+  cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.tp-pieza--numero { background: #fff; color: var(--texto); border: 2px solid var(--texto-suave); box-shadow: 0 2px 0 var(--borde); font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.tp-pieza--etiqueta { background: var(--primario); color: #fff; box-shadow: 0 2px 0 var(--primario-oscuro); font-size: .74rem; }
+.tp-hueco .tp-pieza { width: 100%; box-shadow: none; }
+/* Cabeceras: la letra baja con el ancho (a 375 px, «Compuesto» en una columna de unos 66 px). */
+.tp-hueco--etiqueta .tp-pieza--etiqueta { font-size: clamp(.6rem, 2.9vw, .82rem); }
+.tp-pieza:disabled { opacity: 1; cursor: default; }
+.tp-pieza--fija { background: var(--primario-oscuro); }
+.tp-pieza--elegida { outline: 3px solid #facc15; outline-offset: 1px; transform: scale(1.04); }
+.tp-pieza--arrastrando { position: relative; z-index: 10; cursor: grabbing; box-shadow: 0 8px 18px rgba(0, 0, 0, .3); }
+
+.tp-bandeja { margin-bottom: .6rem; padding: .45rem .5rem .55rem; border: 2px dashed var(--borde); border-radius: 12px; background: var(--tarjeta); }
+.tp-bandeja__titulo { display: block; margin-bottom: .3rem; font-size: .8rem; font-weight: 700; color: var(--texto-suave); }
+.tp-bandeja__piezas { display: flex; flex-wrap: wrap; gap: .35rem; min-height: 2.8rem; }
+.tp-bandeja .tp-pieza--etiqueta { font-size: .85rem; padding: .3rem .55rem; }
+
+.tp-aviso { min-height: 1.4rem; margin: .2rem 0 .5rem; font-size: .9rem; color: var(--texto-suave); }
+.tp-fallo { margin-bottom: .8rem; padding: .7rem .9rem; border-radius: var(--radio); background: var(--error-claro); color: var(--texto); font-size: .92rem; }
+.tp-fallo p { margin: 0 0 .4rem; }
+.tp-razones { margin: 0 0 .5rem; padding-left: 1.1rem; }
+.tp-razones li { margin-bottom: .2rem; }
+
+/* Infografías (hoy, «triangular»). */
+.tp-info h2 { margin-top: 0; }
+.tp-dibujo { display: block; width: 100%; max-width: 360px; margin: .4rem auto .8rem; color: var(--primario-oscuro); }
+.tp-botones { display: flex; flex-wrap: wrap; gap: .5rem; }
+.tp-botones button { flex: 1 1 8rem; }
+.tp-cuentas { line-height: 2; }

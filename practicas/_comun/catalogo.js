@@ -62,6 +62,8 @@ export const CATALOGO = [
   { id: 32, slug: 'por-primos', ruta: 'por-primos/', unidad: 2, nombre: { es: 'Multiplica y divide por primos', en: 'Multiply and divide by primes' }, nEjercicios: 5, disponible: true },
   // El slug se queda (es la clave del progreso guardado y de las tareas); la carpeta y la URL, sin Pablo desde el 27-10.
   { id: 46, slug: 'fichas-de-pablo', ruta: 'fichas-del-parchis/', unidad: 2, nombre: { es: 'Las fichas del parchís', en: 'Ludo counters' }, nEjercicios: 8, disponible: true },
+  // Reto de la unidad 2 (PU2, tarea 206): se escribe sin publicar; la publica la 207.
+  { id: 83, slug: 'tabla-propiedades', ruta: 'tabla-propiedades/', unidad: 2, nombre: { es: 'Tabla de propiedades (reto)', en: 'Properties table (challenge)' }, nEjercicios: 1, disponible: false },
   // Unidad 3, Integers (PU2, tareas 80-91; filas puestas por la 79 el 2026-10-25, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (93-96).
   { id: 33, slug: 'termometro', ruta: 'termometro/', unidad: 3, nombre: { es: 'La recta y el termómetro', en: 'The number line and the thermometer' }, nEjercicios: 5, disponible: true },

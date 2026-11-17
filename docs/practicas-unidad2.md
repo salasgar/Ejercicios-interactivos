@@ -436,6 +436,7 @@ portada.
 | 4 | `errores` | 13 | ¿Hay un error? · Señala el paso · Nombra el error |
 | toda | `leelo` | 14 | Escúchalo · ¿Cómo se lee? · Completa la frase |
 | toda | `divisores` | 0 | «De» o «entre» · Con multiplicaciones · Con divisiones · Mezcla · Arrastrar a «__ es múltiplo de __» · ¿Quién miente? (juego con bichos, 2026-10-08) |
+| toda | `tabla-propiedades` | 83 | Un solo ejercicio con cuatro niveles (2 × 3 con las etiquetas puestas, 2 × 4, 3 × 3 y 4 × 3): reto opcional (tarea 206, 2026-11-17) en el que se arrastran etiquetas de propiedades (primo, par, divisor de 60, triangular…) y números a una tabla de doble entrada; muchas soluciones, se corrige por propiedades. **Sin publicar** (la publica la 207) |
 
 **`fichas-de-pablo`** (id 46, tarea 97 de PU2, 2026-10-25) no está en la tabla de arriba: es el refuerzo
 de la unidad 2, **«Las fichas del parchís» / «Ludo counters»** (hasta la tarea 114 se llamaba «Las fichas
