@@ -4,11 +4,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { leerExpresion, hayEquivalentes, aLineal } from '../practicas/_comun/algebra.js';
+import { leerExpresion, hayEquivalentes, aLineal, huella, sumarNoSemejantes } from '../practicas/_comun/algebra.js';
 import {
   generarSemejantes, generarCoeficiente, generarReducir, generarErrores, corregirReducir, candidatosDe,
   ESTA_DEFINIDO, explicaError, claveItem, CASOS_HOJA, HUELLAS_EXAMEN, reservado, sinReducirAun,
-  clavePar, claveCoeficiente, claveSuma, claveError,
+  clavePar, claveCoeficiente, claveSuma, claveError, explicaErrorConTermino,
 } from '../practicas/terminos-semejantes/logica.js';
 
 const N = 3000;
@@ -183,9 +183,18 @@ test('casos reservados: la hoja en claro, los exámenes por huella', () => {
   assert.equal(reservado(claveSuma(terms('1 + 2x + 4 + 3x'))), true, 'el orden de los términos no cambia el caso');
   assert.equal(reservado(claveSuma(terms('x + x + x'))), true, 'x + x + x sin reducir, no solo lo que reduce a 3x');
   assert.equal(reservado(claveError(terms('x + x + x'), '3x')), true);
-  // Un caso de examen y su ficha por huella: nunca en claro en el repositorio.
-  assert.equal(reservado(claveSuma(terms('2x − 7x'))), true);
-  assert.equal(reservado(claveSuma(terms('−2x + 9 + 5x'))), true);
+  // Los casos de examen no se escriben aquí: se prueba el mecanismo con una suma inventada cuya huella se añade
+  // al conjunto solo durante el test.
+  const inventada = claveSuma(terms('5x − 11 + 4y'));
+  assert.equal(reservado(inventada), false);
+  HUELLAS_EXAMEN.add(huella(inventada));
+  try {
+    assert.equal(reservado(inventada), true);
+    assert.equal(reservado(claveSuma(terms('4y + 5x − 11'))), true, 'el orden no cambia el caso');
+  } finally {
+    HUELLAS_EXAMEN.delete(huella(inventada));
+  }
+  assert.equal(reservado(inventada), false);
   // Lo que no es un caso, sale.
   assert.equal(reservado(claveSuma(terms('3x + 8 + 6x'))), false);
   assert.equal(reservado(clavePar('3x', '5y')), false);
@@ -193,10 +202,87 @@ test('casos reservados: la hoja en claro, los exámenes por huella', () => {
 });
 
 test('ningún ítem de los cuatro ejercicios es un caso reservado (3000 de cada uno, es decir, ya comprobado arriba)', () => {
-  // Las comprobaciones están en cada test de ejercicio; aquí, que un caso de examen se descarta de verdad.
+  // Las comprobaciones están en cada test de ejercicio; aquí, que un caso de la hoja se descarta de verdad.
   const rng = crearRng(99);
+  const deLaHoja = claveSuma(terms('2x + 7 − 5x − 3'));
   for (let i = 0; i < N; i++) {
     const it = generarReducir(rng);
-    assert.notEqual(it.origen.replace(/ /g, ''), '2x−7x');
+    assert.notEqual(claveSuma(terms(it.origen)), deLaHoja);
   }
+});
+
+// Independiente de `candidatosDe`: las tres familias de error con TODAS sus variantes, calculadas a mano.
+const flip = (ts, i) => ts.map((u, j) => (j === i ? { ...u, coef: { ...u.coef, num: -u.coef.num } } : u));
+const familias = ts => {
+  const unos = ts.map((t, i) => (t.letra && Math.abs(t.coef.num) === 1 ? i : -1)).filter(i => i >= 0);
+  const ceros = [];
+  for (let m = 1; m < 2 ** unos.length; m++) {
+    const cero = new Set(unos.filter((_, k) => m & (1 << k)));
+    ceros.push(aLineal(ts.filter((_, i) => !cero.has(i))));
+  }
+  return {
+    'suma-no-semejantes': [sumarNoSemejantes(aLineal(ts))].filter(Boolean),
+    'perder-signo': ts.flatMap((t, i) => (i > 0 && t.coef.num < 0 ? [aLineal(flip(ts, i))] : [])),
+    'x-sin-coeficiente': ceros,
+  };
+};
+const explican = (ts, valor) => Object.entries(familias(ts)).filter(([, vs]) => vs.some(v => v.equals(valor))).map(([id]) => id);
+
+test('caza el error: con las familias amplias, el resultado mostrado sale de UN solo error y no de la cuenta buena', () => {
+  for (const semilla of [31, 32]) {
+    for (const it of items(generarErrores, semilla)) {
+      if (it.error === null) continue;
+      const ts = terms(it.origen);
+      const rhs = val(it.resultado);
+      assert.ok(!rhs.equals(aLineal(ts)), claveItem(it));
+      assert.deepEqual(explican(ts, rhs), [it.error], claveItem(it));
+    }
+  }
+});
+
+test('reduce: ningún error con nombre que el alumno puede teclear lo explican dos errores', () => {
+  for (const it of items(generarReducir, 33)) {
+    const ts = terms(it.origen);
+    for (const x of it.errores) assert.deepEqual(explican(ts, val(x.texto)), [x.error], `${claveItem(it)} → ${x.texto}`);
+  }
+});
+
+test('el feedback de «un menos como un más» nombra el término y no hay dos «:» seguidos ni avisos repetidos', () => {
+  const signo = { antes: '−x', despues: '+x' };
+  assert.match(explicaErrorConTermino('perder-signo', 'es', signo), /^Has leído un menos como un más: restar no es sumar \(.*−x.* se ha sumado como .*\+x.*\)$/);
+  assert.match(explicaErrorConTermino('perder-signo', 'en', signo), /^You read a minus as a plus: subtracting is not adding \(.*−x.* was added as .*\+x.*\)$/);
+  const its = items(generarErrores, 34);
+  for (const it of its) {
+    for (const idioma of ['es', 'en']) {
+      const plano = it.solucion[idioma].replace(/<[^>]+>/g, '');
+      assert.doesNotMatch(plano, /:[^.;]*:[^.;]*:/, plano);
+      assert.doesNotMatch(plano, /: [A-ZÁÉÍÓÚ]/, plano);
+      assert.doesNotMatch(plano, /(No hay ningún error|There is no mistake)[^]*(No hay ningún error|There is no mistake)/, plano);
+    }
+  }
+  assert.ok(its.some(i => i.error === 'perder-signo'));
+  const ej3 = items(generarReducir, 35);
+  for (const it of ej3) {
+    for (const x of it.errores) {
+      if (x.error === 'perder-signo') assert.ok(x.signo && x.signo.antes.startsWith('−') && x.signo.despues.startsWith('+'), claveItem(it));
+    }
+  }
+  const it = ej3.find(i => i.errores.some(x => x.error === 'perder-signo'));
+  const x = it.errores.find(y => y.error === 'perder-signo');
+  assert.deepEqual(corregirReducir(it, x.texto), { valida: true, acierto: false, error: 'perder-signo', signo: x.signo });
+});
+
+test('ej. 2: el porqué del 0 y la solución no repiten la frase', () => {
+  let vistos = 0;
+  for (const it of items(generarCoeficiente, 37)) {
+    const cero = it.opciones.find(o => o.error === 'x-sin-coeficiente');
+    if (!cero) continue;
+    vistos++;
+    for (const idioma of ['es', 'en']) {
+      const a = cero.por_que[idioma];
+      const b = it.solucion[idioma].replace(/<[^>]+>/g, '');
+      assert.ok(!b.includes(a) && !a.includes(b), `${a} / ${b}`);
+    }
+  }
+  assert.ok(vistos > 100, `opción 0: ${vistos}`);
 });

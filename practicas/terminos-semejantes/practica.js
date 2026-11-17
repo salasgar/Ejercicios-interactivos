@@ -7,7 +7,7 @@ import { elecciones } from '../_comun/piezas.js';
 import { TX, NO_SE_HACERLO, explicaSemejantes, explicaCoeficiente, explicaReduce, explicaErrores } from './textos.js';
 import {
   generarSemejantes, generarCoeficiente, generarReducir, generarErrores, corregirReducir, claveItem,
-  explicaError, OPCIONES_ERROR,
+  explicaErrorConTermino, explicaError, OPCIONES_ERROR,
 } from './logica.js';
 
 const cuenta = h => `<span class="cuenta">${h}</span>`;
@@ -78,7 +78,7 @@ function montarErrores(contenedor, item, api) {
   const opciones = ids.map(id => ({ valor: id, html: api.esc(api.tt(TX.errores[id])) }));
   montarElegir(contenedor, item, api, enunciadoErrores, opciones, 'elecciones elecciones--1', valor => {
     const acierto = valor === item.correcta;
-    const aviso = acierto ? null : item.error === null ? TX.errores.noHayError : valor === 'ninguno' ? TX.errores.haError : TX.errores.otroError;
+    const aviso = acierto ? null : item.error === null ? null : valor === 'ninguno' ? TX.errores.haError : TX.errores.otroError;
     return {
       correctas: [item.correcta],
       respuesta: {
@@ -124,7 +124,7 @@ function montarReduce(contenedor, item, api) {
       error: r.acierto ? undefined : r.error,
       respuesta: campo.value.trim(),
       espera: 2200,
-      html: ({ tt: t, idioma }) => `${r.acierto ? '' : `${r.error === 'otra-expresion' ? '' : `${explicaError(r.error, idioma)}. `}`}${t(item.solucion)}`,
+      html: ({ tt: t, idioma }) => `${r.acierto ? '' : `${r.error === 'otra-expresion' ? '' : `${explicaErrorConTermino(r.error, idioma, r.signo)}. `}`}${t(item.solucion)}`,
     });
   }
   campo.addEventListener('input', actualizar);

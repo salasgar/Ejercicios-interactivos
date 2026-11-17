@@ -44,6 +44,16 @@ export const ESTA_DEFINIDO = id => Boolean(nombreDe(id));
 const segunda = { es: t => t.replace(/^Ha /, 'Has '), en: t => `You ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
 export const explicaError = (id, idioma) => segunda[idioma](nombreDe(id)[idioma]);
 
+/** El error con el término del ítem entre paréntesis, si lo hay («−x se ha sumado como +x»). */
+export function explicaErrorConTermino(id, idioma, signo = null) {
+  const base = explicaError(id, idioma);
+  if (!signo) return base;
+  const c = html => `<span class="cuenta">${html}</span>`;
+  return idioma === 'es'
+    ? `${base} (${c(signo.antes)} se ha sumado como ${c(signo.despues)})`
+    : `${base} (${c(signo.antes)} was added as ${c(signo.despues)})`;
+}
+
 // ─── Casos reservados ──────────────────────────────────────────────────────────────────────────
 
 /** Claves en claro de los casos de la hoja de la semana 1 (se rellenan al final del módulo). */
@@ -198,7 +208,7 @@ function intentoCoeficiente(rng) {
     const signoFuera = opcion(num(-c), 'signo-fuera', c < 0
       ? { es: `En ${tt} el signo menos también es del coeficiente.`, en: `In ${tt} the minus sign is part of the coefficient.` }
       : { es: `${tt} no lleva signo menos.`, en: `${tt} has no minus sign.` });
-    const cero = opcion('0', 'x-sin-coeficiente', { es: `${tt} es ${num(c)}${letra}: el coeficiente es ${num(c)}, no 0.`, en: `${tt} is ${num(c)}${letra}: the coefficient is ${num(c)}, not 0.` });
+    const cero = opcion('0', 'x-sin-coeficiente', { es: 'Sin número delante, la letra no vale 0: lleva un número escondido.', en: 'With no number in front, the letter is not worth 0: it has a hidden number.' });
     ops = abs(c) === 1 ? [buena, signoFuera, cero, dePorLetra] : c < 0 ? [buena, signoFuera, dePorLetra, entero] : [buena, dePorLetra, entero];
     void signo;
     solucion = abs(c) === 1
@@ -261,7 +271,7 @@ function valida(ts) {
  * - suma-no-semejantes: 3x + 2 = 5x.
  * - perder-signo: UN término que resta (escrito con «−» entre términos, no el primero) se lee como «+»:
  *   −x se suma como +x. Una entrada por término; `signo` dice cuál (para el feedback con los números del ítem).
- * - x-sin-coeficiente: las letras sin número (x, −x) cuentan como 0.
+ * - x-sin-coeficiente: cualquier subconjunto no vacío de las letras sin número (x, −x) cuenta como 0.
  */
 export function candidatosDe(ts) {
   const terms = aTerminos(ts);
@@ -276,8 +286,10 @@ export function candidatosDe(ts) {
       signo: { antes: terminosAHtml([t]), despues: `+${terminosAHtml([mas])}` },
     });
   });
-  if (terms.some(t => t.letra !== null && abs(t.coef.num) === 1)) {
-    lista.push({ error: 'x-sin-coeficiente', valor: aLineal(terms.map(t => (t.letra !== null && abs(t.coef.num) === 1 ? termino(0, t.letra) : t))) });
+  const unos = terms.map((t, i) => (t.letra !== null && abs(t.coef.num) === 1 ? i : -1)).filter(i => i >= 0);
+  for (let m = 1; m < 2 ** unos.length; m++) {
+    const cero = new Set(unos.filter((_, k) => m & (1 << k)));
+    lista.push({ error: 'x-sin-coeficiente', valor: aLineal(terms.map((t, i) => (cero.has(i) ? termino(0, t.letra) : t))) });
   }
   return lista.map(c => ({ ...c, valor: c.valor && !c.valor.equals(e) ? c.valor : null })).filter(c => c.valor);
 }
@@ -343,7 +355,7 @@ function erroresDe(ts, e) {
     if (c.valor.equals(e) || vistos.some(v => v.valor.equals(c.valor))) continue;
     if (cands.some(o => o.error !== c.error && o.valor.equals(c.valor))) continue; // lo explicarían dos errores
     vistos.push(c);
-    salida.push({ texto: c.valor.aTexto(), error: c.error });
+    salida.push({ texto: c.valor.aTexto(), error: c.error, ...(c.signo ? { signo: c.signo } : {}) });
   }
   return salida;
 }
@@ -372,7 +384,7 @@ export function corregirReducir(item, texto) {
   const buena = leerExpresion(item.correcta, { variasLetras: true }).valor;
   if (r.valor.equals(buena)) return { valida: true, acierto: true };
   const e = item.errores.find(x => leerExpresion(x.texto, { variasLetras: true }).valor.equals(r.valor));
-  return { valida: true, acierto: false, error: e?.error ?? 'otra-expresion' };
+  return { valida: true, acierto: false, error: e?.error ?? 'otra-expresion', ...(e?.signo ? { signo: e.signo } : {}) };
 }
 
 // ─── Ejercicio 4 · Caza el error (U6-1C-15) ────────────────────────────────────────────────────
@@ -423,12 +435,10 @@ function solucionErrores(ts, rhs, error, idioma, signo = null) {
     return idioma === 'es' ? `No hay ningún error: ${lo} = ${bien} (${pasos}).` : `There is no mistake: ${lo} = ${bien} (${pasos}).`;
   }
   const mal = cuenta(rhs.aHtml());
-  const quien = signo
-    ? (idioma === 'es' ? ` (${cuenta(signo.antes)} se ha sumado como ${cuenta(signo.despues)})` : ` (${cuenta(signo.antes)} was added as ${cuenta(signo.despues)})`)
-    : '';
+  const porQue = explicaErrorConTermino(error, idioma, signo);
   return idioma === 'es'
-    ? `${lo} no es ${mal}: ${explicaError(error, 'es')}${quien}. Bien hecho: ${pasos}; el resultado es ${bien}.`
-    : `${lo} is not ${mal}: ${explicaError(error, 'en')}${quien}. Done properly: ${pasos}; the result is ${bien}.`;
+    ? `${lo} no es ${mal}. ${porQue}. Bien hecho: ${pasos}; el resultado es ${bien}.`
+    : `${lo} is not ${mal}. ${porQue}. Done properly: ${pasos}; the result is ${bien}.`;
 }
 
 export const claveItem = item => `${item.plantilla}|${item.clave}`;

@@ -83,7 +83,6 @@ export const TX = {
     'x-sin-coeficiente': { es: 'Ha contado como 0 una letra sin número', en: 'Counted a letter with no number as 0' },
     haError: { es: 'Sí tiene un error.', en: 'It does have a mistake.' },
     otroError: { es: 'Ese no es el error.', en: 'That is not the mistake.' },
-    noHayError: { es: 'No hay ningún error.', en: 'There is no mistake.' },
   },
 };
 
