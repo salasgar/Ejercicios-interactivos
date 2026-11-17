@@ -4,10 +4,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { leerExpresion, huellaCanonica, lineal, hayEquivalentes } from '../practicas/_comun/algebra.js';
+import { leerExpresion, hayEquivalentes, aLineal } from '../practicas/_comun/algebra.js';
 import {
   generarSemejantes, generarCoeficiente, generarReducir, generarErrores, corregirReducir, candidatosDe,
   ESTA_DEFINIDO, explicaError, claveItem, CASOS_HOJA, HUELLAS_EXAMEN, reservado, sinReducirAun,
+  clavePar, claveCoeficiente, claveSuma, claveError,
 } from '../practicas/terminos-semejantes/logica.js';
 
 const N = 3000;
@@ -17,6 +18,8 @@ const items = (generar, semilla) => {
 };
 const limpio = t => !/[()^²×]|\b1[xy]|\+ −|\.\d/.test(t);
 const val = t => leerExpresion(t, { variasLetras: true }).valor;
+const textoSinHtml = t => `${t.coef.num < 0 ? '−' : ''}${Math.abs(t.coef.num) === 1 && t.letra ? '' : Math.abs(t.coef.num)}${t.letra ?? ''}`;
+const terms = t => leerExpresion(t, { variasLetras: true }).terminos;
 
 test('¿Semejantes?: la respuesta cuadra con la parte literal y los dos casos salen', () => {
   const its = items(generarSemejantes, 21);
@@ -31,6 +34,14 @@ test('¿Semejantes?: la respuesta cuadra con la parte literal y los dos casos sa
   assert.ok(si > N * 0.25 && si < N * 0.75, `sí: ${si}`);
   assert.ok(its.some(i => i.letraA === null && i.letraB === null), 'faltan dos números');
   assert.ok(its.some(i => i.letraA === 'x' && i.letraB === 'y'), 'faltan letras distintas');
+  // La y no delata la respuesta: entre las parejas con y, ni «sí» ni «no» pasan del 80 %.
+  const conY = its.filter(i => i.letraA === 'y' || i.letraB === 'y');
+  const siY = conY.filter(i => i.correcta === 'si').length;
+  assert.ok(conY.length > N * 0.2, `parejas con y: ${conY.length}`);
+  assert.ok(siY / conY.length > 0.2 && siY / conY.length < 0.8, `sí entre las parejas con y: ${siY}/${conY.length}`);
+  assert.ok(its.some(i => i.correcta === 'si' && i.letraA === 'y' && i.letraB === 'y'), 'faltan semejantes con y');
+  // Nada reservado.
+  for (const it of its) assert.equal(reservado(clavePar(it.a, it.b)), false, claveItem(it));
 });
 
 test('coeficiente y parte literal: una buena, opciones distintas y errores con nombre', () => {
@@ -51,6 +62,13 @@ test('coeficiente y parte literal: una buena, opciones distintas y errores con n
   }
   assert.ok(its.some(i => i.pregunta === 'literal') && its.some(i => i.pregunta === 'coeficiente'));
   assert.ok(its.some(i => /^−?x$|^−?y$/.test(i.termino)), 'faltan x e −x sin número');
+  for (const it of its) {
+    if (it.pregunta === 'coeficiente') assert.equal(reservado(claveCoeficiente(terms(it.termino)[0])), false, claveItem(it));
+  }
+  // x y −x (coeficiente ±1 sin número) no se reservan: son «x es 1x», no un caso.
+  assert.equal(claveCoeficiente(terms('x')[0]), null);
+  assert.equal(claveCoeficiente(terms('−x')[0]), null);
+  assert.equal(claveCoeficiente(terms('7')[0]), null);
 });
 
 test('reduce: la buena está reducida, no es 0 y los errores tipo no son equivalentes', () => {
@@ -67,6 +85,12 @@ test('reduce: la buena está reducida, no es 0 y los errores tipo no son equival
     for (const x of it.errores) assert.ok(ESTA_DEFINIDO(x.error));
     assert.ok(it.solucion.es && it.solucion.en);
     assert.equal(corregirReducir(it, it.correcta).acierto, true);
+    assert.equal(reservado(claveSuma(terms(it.origen))), false, claveItem(it));
+    // Ningún valor de error lo explican dos errores distintos.
+    for (const x of it.errores) {
+      const quienes = candidatosDe(terms(it.origen)).filter(c => c.valor.equals(val(x.texto)));
+      assert.deepEqual([...new Set(quienes.map(c => c.error))], [x.error], claveItem(it));
+    }
   }
   assert.ok(its.some(i => i.dosLetras) && its.some(i => !i.dosLetras));
 });
@@ -92,17 +116,53 @@ test('caza el error: cada error se reconoce de forma única y la buena está bie
     const e = val(it.origen);
     const rhs = val(it.resultado);
     assert.ok(limpio(it.origen) && limpio(it.resultado), claveItem(it));
+    assert.equal(reservado(claveError(terms(it.origen), it.resultado)), false, claveItem(it));
     if (it.error === null) {
       assert.ok(e.equals(rhs), claveItem(it));
     } else {
       assert.ok(!e.equals(rhs), claveItem(it));
       assert.ok(ESTA_DEFINIDO(it.error));
-      const quienes = candidatosDe(leerExpresion(it.origen, { variasLetras: true }).terminos).filter(c => c.valor && c.valor.equals(rhs));
-      assert.deepEqual(quienes.map(c => c.error), [it.error], claveItem(it));
+      // Tres errores calculados sobre la suma: el resultado mostrado es de UNO solo.
+      const quienes = candidatosDe(terms(it.origen)).filter(c => c.valor.equals(rhs));
+      assert.deepEqual([...new Set(quienes.map(c => c.error))], [it.error], claveItem(it));
     }
     assert.ok(it.solucion.es && it.solucion.en);
   }
   assert.deepEqual([...vistos].sort(), ['ninguno', 'perder-signo', 'suma-no-semejantes', 'x-sin-coeficiente']);
+});
+
+test('«un menos leído como un más»: solo con una resta de verdad, y el feedback nombra el término', () => {
+  const its = items(generarErrores, 25).filter(i => i.error === 'perder-signo');
+  assert.ok(its.length > N / 8, `perder-signo: ${its.length}`);
+  for (const it of its) {
+    const ts = terms(it.origen);
+    // Hay un término que resta y no es el primero: no se «pierde» un signo que no hay.
+    assert.ok(ts.some((t, i) => i > 0 && t.coef.num < 0), claveItem(it));
+    assert.ok(it.signo && it.signo.antes.startsWith('−') && it.signo.despues.startsWith('+'), claveItem(it));
+    assert.match(it.solucion.es, /se ha sumado como/);
+    assert.match(it.solucion.en, /was added as/);
+    // El resultado mostrado es exactamente leer ese término con el signo contrario.
+    const antes = it.signo.antes.replace(/<[^>]+>/g, '');
+    const cambiado = ts.map(t => (t.coef.num < 0 && textoSinHtml(t) === antes ? { ...t, coef: { ...t.coef, num: -t.coef.num } } : t));
+    assert.ok(cambiado.length === ts.length, claveItem(it));
+    assert.ok(ts.some(t => t.coef.num < 0 && textoSinHtml(t) === antes), claveItem(it));
+  }
+  // Sin restas intermedias no hay error de ese tipo: −x + 6x + 7x no lo tiene.
+  assert.equal(candidatosDe(terms('−x + 6x + 7x')).filter(c => c.error === 'perder-signo').length, 0);
+  assert.equal(candidatosDe(terms('−4x + x + x')).filter(c => c.error === 'perder-signo').length, 0);
+  // Y con una resta, el valor es cambiar ese signo: −8x − x + x tiene que ser exactamente un candidato.
+  const c = candidatosDe(terms('3x − 2x + 5')).filter(c => c.error === 'perder-signo');
+  assert.deepEqual(c.map(x => x.valor.aTexto()), ['5x + 5']);
+});
+
+test('«−8x − x − x = −8x» tiene dos explicaciones y el generador lo descarta', () => {
+  // Quitar las x sin número da −8x; leer un − como + (−8x + x − x) también: el ítem no vale.
+  const c = candidatosDe(terms('−8x − x − x'));
+  const quienes = c.filter(x => x.valor.equals(val('−8x'))).map(x => x.error);
+  assert.deepEqual([...new Set(quienes)].sort(), ['perder-signo', 'x-sin-coeficiente']);
+  for (const it of items(generarErrores, 26)) {
+    if (it.origen === '−8x − x − x') assert.notEqual(it.resultado, '−8x', 'ítem con dos respuestas correctas');
+  }
 });
 
 test('los errores con nombre se explican en los dos idiomas', () => {
@@ -112,11 +172,31 @@ test('los errores con nombre se explican en los dos idiomas', () => {
   }
 });
 
-test('casos reservados: hooks vacíos pero operativos', () => {
-  assert.equal(CASOS_HOJA.size, 0);
-  const e = lineal(2, 3);
-  HUELLAS_EXAMEN.add(huellaCanonica(e));
-  assert.equal(reservado(e), true);
-  HUELLAS_EXAMEN.delete(huellaCanonica(e));
-  assert.equal(reservado(e), false);
+test('casos reservados: la hoja en claro, los exámenes por huella', () => {
+  assert.ok(CASOS_HOJA.size >= 40, `claves de la hoja: ${CASOS_HOJA.size}`);
+  assert.ok(HUELLAS_EXAMEN.size >= 100, `huellas de examen: ${HUELLAS_EXAMEN.size}`);
+  // Casos de la hoja (en claro): parejas, coeficientes y reducciones, con sus datos.
+  assert.equal(reservado(clavePar('4x', '−x')), true);
+  assert.equal(reservado(clavePar('7', '4x')), true);
+  assert.equal(reservado(claveCoeficiente(terms('2x')[0])), true);
+  assert.equal(reservado(claveSuma(terms('3x + 4 + 2x + 1'))), true);
+  assert.equal(reservado(claveSuma(terms('1 + 2x + 4 + 3x'))), true, 'el orden de los términos no cambia el caso');
+  assert.equal(reservado(claveSuma(terms('x + x + x'))), true, 'x + x + x sin reducir, no solo lo que reduce a 3x');
+  assert.equal(reservado(claveError(terms('x + x + x'), '3x')), true);
+  // Un caso de examen y su ficha por huella: nunca en claro en el repositorio.
+  assert.equal(reservado(claveSuma(terms('2x − 7x'))), true);
+  assert.equal(reservado(claveSuma(terms('−2x + 9 + 5x'))), true);
+  // Lo que no es un caso, sale.
+  assert.equal(reservado(claveSuma(terms('3x + 8 + 6x'))), false);
+  assert.equal(reservado(clavePar('3x', '5y')), false);
+  assert.equal(reservado(null), false);
+});
+
+test('ningún ítem de los cuatro ejercicios es un caso reservado (3000 de cada uno, es decir, ya comprobado arriba)', () => {
+  // Las comprobaciones están en cada test de ejercicio; aquí, que un caso de examen se descarta de verdad.
+  const rng = crearRng(99);
+  for (let i = 0; i < N; i++) {
+    const it = generarReducir(rng);
+    assert.notEqual(it.origen.replace(/ /g, ''), '2x−7x');
+  }
 });

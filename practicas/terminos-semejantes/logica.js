@@ -3,11 +3,19 @@
 // toca a un solo término). Sin DOM. Todo exacto: los coeficientes son enteros o `Fraccion` de `_comun/algebra.js`.
 //
 // Alcance: SIN x² (ni como pareja «x y x²»: el punto (d) del acta no está), SIN paréntesis, SIN productos de
-// letras. Una letra (x) o dos (x, y; solo reducir y cazar el error). Coeficientes enteros de 1 a 9.
+// letras. Una letra (x o y) o dos (x e y; solo reducir y cazar el error). La y sale en los cuatro ejercicios sin
+// que el enunciado la defina (la usan la hoja 1 y la destreza U6-1C-15: «3x + 2y no se reduce»). Coeficientes
+// enteros de 1 a 9.
+//
+// Casos reservados (los de la hoja, los exámenes y los finales no salen nunca): la clave es la TAREA CON SUS
+// DATOS, no la expresión reducida: ej. 1, la pareja sin orden; ej. 2, la pregunta y el término (solo
+// «coeficiente»; los términos con coeficiente ±1 sin número, x y −x, y los números sueltos NO se reservan: son
+// la destreza U6-1C-01 misma, «x es 1x», no un caso); ej. 3, la suma SIN reducir (los términos ordenados); ej. 4,
+// esa suma y el resultado mostrado. Las claves de la hoja van en claro; las de examen, por huella FNV-1a.
 
 import {
   termino, reducir, aLineal, Lineal, leerExpresion, huellaCanonica, terminosATexto, terminosAHtml,
-  sumarNoSemejantes, ERRORES_TIPICOS,
+  sumarNoSemejantes, ERRORES_TIPICOS, aTerminos, huella,
 } from '../_comun/algebra.js';
 
 const MENOS = '−';
@@ -26,7 +34,7 @@ export const ERRORES_PROPIOS = {
   'termino-entero': { es: 'Ha dicho el término entero', en: 'Said the whole term' },
   'coeficiente-como-literal': { es: 'Ha dicho el número en vez de la letra', en: 'Said the number instead of the letter' },
   'otra-letra': { es: 'Ha elegido una letra que no está en el término', en: 'Chose a letter that is not in the term' },
-  'perder-signo': { es: 'Ha perdido un signo: restar no es sumar', en: 'Lost a sign: subtracting is not adding' },
+  'perder-signo': { es: 'Ha leído un menos como un más: restar no es sumar', en: 'Read a minus as a plus: subtracting is not adding' },
   'otra-expresion': { es: 'Otra expresión', en: 'Another expression' },
 };
 export const nombreDe = id => (ERRORES_PROPIOS[id] ?? ERRORES_TIPICOS[id])?.nombre ?? ERRORES_PROPIOS[id];
@@ -36,25 +44,53 @@ export const ESTA_DEFINIDO = id => Boolean(nombreDe(id));
 const segunda = { es: t => t.replace(/^Ha /, 'Has '), en: t => `You ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
 export const explicaError = (id, idioma) => segunda[idioma](nombreDe(id)[idioma]);
 
-// ─── Casos reservados (la hoja y el examen de la semana 1 no existían al escribirla) ───────────
+// ─── Casos reservados ──────────────────────────────────────────────────────────────────────────
 
-/** Formas canónicas (`Lineal.clave()`, en claro) de los casos de la hoja de la semana 1. */
+/** Claves en claro de los casos de la hoja de la semana 1 (se rellenan al final del módulo). */
 export const CASOS_HOJA = new Set();
-/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen de la semana 1: nunca en claro. */
-export const HUELLAS_EXAMEN = new Set();
-export const reservado = expr => {
-  const e = aLineal(expr);
-  return CASOS_HOJA.has(e.clave()) || HUELLAS_EXAMEN.has(huellaCanonica(e));
-};
+/** Huellas FNV-1a de las claves de los casos de examen (semanas 1-4 y finales): nunca en claro. */
+export const HUELLAS_EXAMEN = new Set([
+  '102s6nf', '10kll3p', '11bjkbg', '11fwcxu', '11hs9i5', '11tw9p0', '12131m4', '129emax', '13e5hg2', '13ht2me',
+  '13k7u91', '157rpel', '15coqwu', '15d3qd', '15gxti8', '16kngx6', '16m8l3t', '17025jy', '17wymgr', '17xeb8h',
+  '17yekqi', '1859sxk', '186w0gf', '18gw2m7', '18l3lna', '19c6drv', '19lh85c', '19ovpf8', '19sqcdw', '19uktj9',
+  '19x83ml', '1a9cyz6', '1admkbg', '1b28w8t', '1biaglk', '1c29nzi', '1cg6uyq', '1daujwm', '1dgt26r', '1e7btry',
+  '1f8we8', '1fljsnh', '1fzxspz', '1gkjye', '1gz8tot', '1h079v5', '1h44b7c', '1hpn9qv', '1i7q9cb', '1i8haus',
+  '1ic7ji5', '1je5rcf', '1jnwn6q', '1js0hu7', '1jxhfwa', '1kk53fp', '1klgdx8', '1lombx5', '1m4x0xz', '1m7zn4b',
+  '1mqjwhg', '1n1kce9', '1n96rby', '1nin300', '1nwongo', '1o2mady', '1o8uidn', '1ogpoow', '1ouy730', '1p06wz7',
+  '1p5igx9', '1p6kbq7', '1p9fkiy', '1phxwj8', '1pisi4j', '1py20pe', '1q0ec2d', '1q5y8m2', '1qdnvd0', '1qiqlz9',
+  '1r3gh3u', '1r8ik4n', '1rohawa', '1rrzsey', '1s3snux', '1sw8a2d', '1tk1nly', '1un046k', '1v6l7cx', '1w5q0qi',
+  '1xgndal', '1ypz7q7', '1ys2th', '3a3tic', '3e64lo', '3ouz9j', '3u7oy6', '4v60vz', '4y3a03', '57k5zs',
+  '6eiaiz', '6s54xr', '7qtqpv', '7vbf99', '7ywct3', '827cj3', '8ia8as', '8lbk2c', '8menci', '8mf9m', '8miqu4',
+  '968ycy', '9n10h0', '9orqg4', '9qjtul', '9xdsww', 'aapp7y', 'an28it', 'avxblx', 'ayedjw', 'bjbt05', 'bot6nf',
+  'bp1ui8', 'bv3eh4', 'c1ndxt', 'cj1cde', 'cy1eg', 'd9xxuy', 'dekyi4', 'dndfrg', 'e1mvt9', 'e5rx66', 'e9y6y5',
+  'eihnmw', 'ex0y5h', 'f1rvvn', 'f8mh', 'fm5eve', 'g2y62', 'gmi6gj', 'h2xurv', 'hdenh4', 'iavnze', 'ilqz23',
+  'izvdgy', 'jkzxb9', 'jz9hod', 'k1t30k', 'k5vdfv', 'lau8qe', 'lfx51a', 'm5rsqx', 'mecevg', 'n5dzz0', 'ns30kp',
+  'nvzcdc', 'o0dn39', 'qrs6ba', 'saezdh', 'u09318', 'ubpaiv', 'v5i95s', 'vpns0a', 'wd3oqp', 'xb8zbs', 'xm2x80',
+  'xyqyia', 'ynfk7m', 'ynk0po', 'yyzy9e', 'z02lki', 'zetml', 'zfmz6i', 'zn95b6', 'zw9pxg',
+]);
 
+const textoUno = t => terminosATexto([t]);
+const ordenados = ts => [...aTerminos(ts)].sort((p, q) => {
+  const lp = p.letra ?? '~', lq = q.letra ?? '~';
+  return lp < lq ? -1 : lp > lq ? 1 : p.coef.num - q.coef.num;
+});
+/** Ej. 1: la pareja sin orden («4x~9x»). */
+export const clavePar = (a, b) => `par|${[a, b].sort().join('~')}`;
+/** Ej. 2: la pregunta y el término. Los de coeficiente ±1 sin número y los números sueltos no se reservan (null). */
+export const claveCoeficiente = t => (t.letra === null || Math.abs(t.coef.num) === 1 ? null : `coeficiente|${textoUno(t)}`);
+/** Ej. 3: la suma sin reducir, con los términos ordenados (2x + 7 − 5x − 3 y 7 − 3 + 2x − 5x son lo mismo). */
+export const claveSuma = ts => `suma|${terminosATexto(ordenados(ts))}`;
+/** Ej. 4: la suma y el resultado mostrado. */
+export const claveError = (ts, resultado) => `error|${terminosATexto(ordenados(ts))}|${resultado}`;
+export const reservado = clave => clave !== null && (CASOS_HOJA.has(clave) || HUELLAS_EXAMEN.has(huella(clave)));
+
+/** Genera hasta que el ítem no sea un caso reservado (cada ítem trae su `reserva`, que no sale al alumno). */
 function sinReservar(generar) {
-  let it;
-  for (let i = 0; i < 60; i++) {
-    it = generar();
-    if (!it.expr || !reservado(it.expr)) break;
+  for (let i = 0; i < 300; i++) {
+    const { reserva, ...item } = generar();
+    if (!reservado(reserva)) return item;
   }
-  const { expr: _e, ...item } = it;
-  return item;
+  throw new Error('sinReservar: no encuentro un ítem que no sea un caso reservado');
 }
 
 // ─── Cosas comunes ─────────────────────────────────────────────────────────────────────────────
@@ -75,15 +111,18 @@ const htmlDe = t => terminosAHtml([t]);
 
 // ─── Ejercicio 1 · ¿Semejantes? (U6-1C-12) ─────────────────────────────────────────────────────
 
-/** Dos términos; la respuesta es 'si' o 'no'. */
-export function generarSemejantes(rng) {
+/** La letra del ítem: la y sale a menudo, para que no sea ella la que delata la respuesta. */
+const letraDe = rng => (rng.azar() < 0.4 ? 'y' : 'x');
+
+function intentoSemejantes(rng) {
   const tipo = rng.elegir(['misma-letra', 'misma-letra', 'dos-numeros', 'letra-y-numero', 'letras-distintas']);
-  let a, b, si, error = null, expr = null;
+  let a, b, si, error = null;
+  const L = letraDe(rng);
   if (tipo === 'misma-letra') {
     const c1 = coef(rng, { uno: 0.25 });
     let c2 = coef(rng, { uno: 0.25 });
     if (c2 === c1) c2 = c1 > 0 ? -c1 : abs(c1) + (abs(c1) < 9 ? 1 : -1);
-    [a, b, si] = [T(c1), T(c2), true];
+    [a, b, si] = [T(c1, L), T(c2, L), true];
     error = 'no-ve-semejantes';
   } else if (tipo === 'dos-numeros') {
     const n1 = rng.entero(1, 9) * (rng.azar() < 0.4 ? -1 : 1);
@@ -94,7 +133,7 @@ export function generarSemejantes(rng) {
     const c1 = coef(rng, { uno: 0.15 });
     const mismo = rng.azar() < 0.5;
     const n = mismo ? abs(c1) : rng.entero(1, 9);
-    [a, b, si] = [T(c1), N(rng.azar() < 0.3 ? -n : n), false];
+    [a, b, si] = [T(c1, L), N(rng.azar() < 0.3 ? -n : n), false];
     error = (abs(b.coef.num) === abs(c1)) ? 'semejantes-por-el-numero' : 'semejantes-ignorando-la-letra';
     if (rng.azar() < 0.5) [a, b] = [b, a];
   } else {
@@ -105,25 +144,34 @@ export function generarSemejantes(rng) {
     error = (c1 === c2 || abs(c1) === abs(c2)) ? 'semejantes-por-el-numero' : 'semejantes-ignorando-la-letra';
     if (rng.azar() < 0.5) [a, b] = [b, a];
   }
-  if (a.coef.num === b.coef.num && a.letra === b.letra) return generarSemejantes(rng);
+  if (a.coef.num === b.coef.num && a.letra === b.letra) return null;
   return {
-    expr, plantilla: tipo, clave: `${textoDe(a)}|${textoDe(b)}`,
+    reserva: clavePar(textoDe(a), textoDe(b)), plantilla: tipo, clave: `${textoDe(a)}|${textoDe(b)}`,
     a: textoDe(a), b: textoDe(b), htmlA: htmlDe(a), htmlB: htmlDe(b),
     correcta: si ? 'si' : 'no', error, solucion: solucionSemejantes(a, b, si),
     letraA: a.letra, letraB: b.letra, sesion: 3,
   };
 }
 
-const literal = t => (t.letra === null ? { es: 'sin letra', en: 'no letter' } : { es: `la parte literal es ${t.letra}`, en: `the variable part is ${t.letra}` });
+/** Dos términos; la respuesta es 'si' o 'no'. */
+export function generarSemejantes(rng) {
+  return sinReservar(() => {
+    for (;;) { const it = intentoSemejantes(rng); if (it) return it; }
+  });
+}
+
+/** Qué parte literal tiene cada término, con el término delante (−1 no tiene letra; x tiene la x). */
+const quePartes = (t, ct, idioma) => (t.letra === null
+  ? (idioma === 'es' ? `${ct} no tiene letra` : `${ct} has no letter`)
+  : (idioma === 'es' ? `${ct} tiene la letra <i>${t.letra}</i>` : `${ct} has the letter <i>${t.letra}</i>`));
 
 function solucionSemejantes(a, b, si) {
   const ca = cuenta(htmlDe(a)), cb = cuenta(htmlDe(b));
   if (si && a.letra === null) return { es: `${ca} y ${cb} son semejantes: los dos números, sin letra, son semejantes entre sí.`, en: `${ca} and ${cb} are like terms: two numbers with no letter are like terms.` };
   if (si) return { es: `${ca} y ${cb} son semejantes: los dos llevan la misma parte literal (<i>${a.letra}</i>); lo que cambia es el coeficiente.`, en: `${ca} and ${cb} are like terms: both have the same variable part (<i>${a.letra}</i>); only the coefficient changes.` };
-  const dice = (t, i) => literal(t)[i];
   return {
-    es: `${ca} y ${cb} no son semejantes: en ${ca} ${dice(a, 'es')} y en ${cb} ${dice(b, 'es')}. Se mira la parte literal, no el número.`,
-    en: `${ca} and ${cb} are not like terms: in ${ca} ${dice(a, 'en')} and in ${cb} ${dice(b, 'en')}. Look at the variable part, not at the number.`,
+    es: `${ca} y ${cb} no son semejantes: ${quePartes(a, ca, 'es')} y ${quePartes(b, cb, 'es')}. Se mira la parte literal, no el número.`,
+    en: `${ca} and ${cb} are not like terms: ${quePartes(a, ca, 'en')} and ${quePartes(b, cb, 'en')}. Look at the variable part, not at the number.`,
   };
 }
 
@@ -132,7 +180,7 @@ function solucionSemejantes(a, b, si) {
 const opcion = (texto, error, porQue, html = null) => ({ valor: texto, texto, html: html ?? cuenta(texto), correcta: error === null, error, por_que: porQue });
 const italica = l => cuenta(`<i>${l}</i>`);
 
-export function generarCoeficiente(rng) {
+function intentoCoeficiente(rng) {
   const letra = rng.elegir(['x', 'x', 'y']);
   const pregunta = rng.azar() < 0.65 ? 'coeficiente' : 'literal';
   const c = coef(rng, { uno: pregunta === 'coeficiente' ? 0.3 : 0 });
@@ -166,10 +214,13 @@ export function generarCoeficiente(rng) {
     solucion = { es: `En ${ct} la letra es <strong><i>${letra}</i></strong>: esa es la parte literal.`, en: `In ${ct} the letter is <strong><i>${letra}</i></strong>: that is the variable part.` };
   }
   return {
+    reserva: pregunta === 'coeficiente' ? claveCoeficiente(t) : null,
     plantilla: pregunta, clave: `${pregunta}|${tt}`, pregunta, termino: tt, htmlTermino: htmlDe(t),
     opciones: rng.barajar(ops), solucion, sesion: 3,
   };
 }
+
+export const generarCoeficiente = rng => sinReservar(() => intentoCoeficiente(rng));
 
 // ─── Reducir: expresiones sin reducir ──────────────────────────────────────────────────────────
 
@@ -205,26 +256,30 @@ function valida(ts) {
   return !r.grupos.some(g => g.total.coef.num === 0);
 }
 
-/** Lo que daría cada error con esta suma de términos: { error, valor: Lineal | null }. */
+/**
+ * Lo que daría cada error con esta suma de términos: [{ error, valor: Lineal, signo? }].
+ * - suma-no-semejantes: 3x + 2 = 5x.
+ * - perder-signo: UN término que resta (escrito con «−» entre términos, no el primero) se lee como «+»:
+ *   −x se suma como +x. Una entrada por término; `signo` dice cuál (para el feedback con los números del ítem).
+ * - x-sin-coeficiente: las letras sin número (x, −x) cuentan como 0.
+ */
 export function candidatosDe(ts) {
-  const e = aLineal(ts);
-  const { grupos } = reducir(ts);
-  const sumaPerdiendoSigno = grupos.reduce((acc, g) => {
-    const primero = g.terminos[0].coef.num < 0 ? -1 : 1;
-    const s = primero * g.terminos.reduce((t, x) => t + abs(x.coef.num), 0);
-    if (g.letra === null) acc.b = s; else acc.coefs[g.letra] = s;
-    return acc;
-  }, { coefs: {}, b: 0 });
-  const perder = new Lineal(sumaPerdiendoSigno.coefs, sumaPerdiendoSigno.b, e.letra);
-  const sinUno = ts.some(t => t.letra !== null && abs(t.coef.num) === 1)
-    ? aLineal(ts.map(t => (t.letra !== null && abs(t.coef.num) === 1 ? termino(0, t.letra) : t)))
-    : null;
-  const lista = [
-    { error: 'suma-no-semejantes', valor: sumarNoSemejantes(e) },
-    { error: 'perder-signo', valor: perder },
-    { error: 'x-sin-coeficiente', valor: sinUno },
-  ];
-  return lista.map(c => ({ ...c, valor: c.valor && !c.valor.equals(e) ? c.valor : null }));
+  const terms = aTerminos(ts);
+  const e = aLineal(terms);
+  const lista = [{ error: 'suma-no-semejantes', valor: sumarNoSemejantes(e) }];
+  terms.forEach((t, i) => {
+    if (i === 0 || t.coef.num >= 0) return;
+    const mas = termino(-t.coef.num, t.letra);
+    lista.push({
+      error: 'perder-signo',
+      valor: aLineal(terms.map((u, j) => (j === i ? mas : u))),
+      signo: { antes: terminosAHtml([t]), despues: `+${terminosAHtml([mas])}` },
+    });
+  });
+  if (terms.some(t => t.letra !== null && abs(t.coef.num) === 1)) {
+    lista.push({ error: 'x-sin-coeficiente', valor: aLineal(terms.map(t => (t.letra !== null && abs(t.coef.num) === 1 ? termino(0, t.letra) : t))) });
+  }
+  return lista.map(c => ({ ...c, valor: c.valor && !c.valor.equals(e) ? c.valor : null })).filter(c => c.valor);
 }
 
 const gruposTexto = (ts, idioma) => {
@@ -247,6 +302,12 @@ export function solucionReducir(ts, idioma) {
   const agrupados = terminosAHtml(r.agrupados);
   const res = r.resultado.aHtml();
   const pasos = gruposTexto(ts, idioma).join('; ');
+  const yaJuntos = terminosATexto(ts) === terminosATexto(r.agrupados);
+  if (yaJuntos) {
+    return idioma === 'es'
+      ? `${cuenta(origen)}: los semejantes ya están juntos; se suman sus coeficientes (${pasos}). Resultado: ${cuenta(res)}.`
+      : `${cuenta(origen)}: the like terms are already together; add their coefficients (${pasos}). Result: ${cuenta(res)}.`;
+  }
   return idioma === 'es'
     ? `${cuenta(origen)} = ${cuenta(agrupados)}: se juntan los semejantes y se suman sus coeficientes (${pasos}). Resultado: ${cuenta(res)}.`
     : `${cuenta(origen)} = ${cuenta(agrupados)}: group the like terms and add their coefficients (${pasos}). Result: ${cuenta(res)}.`;
@@ -264,14 +325,27 @@ export function generarReducir(rng) {
     }
     const e = aLineal(ts);
     const dosLetras = e.letras().length > 1;
-    const errores = candidatosDe(ts).filter(c => c.valor).map(c => ({ texto: c.valor.aTexto(), error: c.error }));
     return {
-      expr: e, plantilla, clave: textoDeTerminos(ts), dosLetras, letras: dosLetras ? ['x', 'y'] : ['x'],
+      reserva: claveSuma(ts), plantilla, clave: textoDeTerminos(ts), dosLetras, letras: dosLetras ? ['x', 'y'] : ['x'],
       origen: textoDeTerminos(ts), htmlOrigen: htmlDeTerminos(ts),
-      correcta: e.aTexto(), errores,
+      correcta: e.aTexto(), errores: erroresDe(ts, e),
       solucion: { es: solucionReducir(ts, 'es'), en: solucionReducir(ts, 'en') }, sesion: 3,
     };
   });
+}
+
+/** Los errores con nombre que el alumno puede teclear: un valor por error, distinto de la buena y de los demás. */
+function erroresDe(ts, e) {
+  const cands = candidatosDe(ts);
+  const vistos = [];
+  const salida = [];
+  for (const c of cands) {
+    if (c.valor.equals(e) || vistos.some(v => v.valor.equals(c.valor))) continue;
+    if (cands.some(o => o.error !== c.error && o.valor.equals(c.valor))) continue; // lo explicarían dos errores
+    vistos.push(c);
+    salida.push({ texto: c.valor.aTexto(), error: c.error });
+  }
+  return salida;
 }
 
 /** ¿Hay dos términos con la misma letra (o dos números) sin juntar? Entonces aún no está reducida. */
@@ -305,7 +379,10 @@ export function corregirReducir(item, texto) {
 
 export const OPCIONES_ERROR = ['suma-no-semejantes', 'perder-signo', 'x-sin-coeficiente'];
 
-/** Una reducción escrita en una línea: la buena (un tercio) o con un error de los tres. */
+/**
+ * Una reducción escrita en una línea: la buena (un tercio) o con un error de los tres. El resultado mal escrito
+ * encaja con UN solo error (y con ese, aunque dos términos lo den igual): si lo explicaran dos, se descarta.
+ */
 export function generarErrores(rng) {
   return sinReservar(() => {
     const quiere = rng.elegir([null, 'suma-no-semejantes', 'perder-signo', 'x-sin-coeficiente']);
@@ -314,30 +391,30 @@ export function generarErrores(rng) {
       const ts = terminosDePlantilla(rng, plantilla);
       if (!valida(ts)) continue;
       const e = aLineal(ts);
-      const cands = candidatosDe(ts);
       let mal = null;
+      let signo = null;
       if (quiere !== null) {
-        const c = cands.find(x => x.error === quiere);
-        if (!c || !c.valor) continue;
-        // El resultado mal escrito encaja con UN solo error y no es la respuesta buena.
-        if (cands.filter(x => x.valor && x.valor.equals(c.valor)).length !== 1) continue;
-        if (c.valor.equals(e)) continue;
+        const cands = candidatosDe(ts).filter(x => x.error === quiere);
+        if (!cands.length) continue;
+        const c = rng.elegir(cands);
+        if (candidatosDe(ts).some(x => x.error !== quiere && x.valor.equals(c.valor))) continue;
         mal = c.valor;
+        signo = c.signo ?? null;
       }
       const rhs = mal ?? e;
       const origen = textoDeTerminos(ts);
       return {
-        expr: e, plantilla: quiere ?? 'bien', clave: `${origen}|${quiere ?? 'bien'}`,
+        reserva: claveError(ts, rhs.aTexto()), plantilla: quiere ?? 'bien', clave: `${origen}|${quiere ?? 'bien'}|${rhs.aTexto()}`,
         origen, htmlOrigen: htmlDeTerminos(ts), resultado: rhs.aTexto(), htmlResultado: rhs.aHtml(),
-        error: quiere, correcta: quiere ?? 'ninguno',
-        solucion: { es: solucionErrores(ts, rhs, quiere, 'es'), en: solucionErrores(ts, rhs, quiere, 'en') }, sesion: 3,
+        error: quiere, correcta: quiere ?? 'ninguno', signo,
+        solucion: { es: solucionErrores(ts, rhs, quiere, 'es', signo), en: solucionErrores(ts, rhs, quiere, 'en', signo) }, sesion: 3,
       };
     }
     throw new Error('generarErrores: no encuentro un ítem');
   });
 }
 
-function solucionErrores(ts, rhs, error, idioma) {
+function solucionErrores(ts, rhs, error, idioma, signo = null) {
   const buena = aLineal(ts);
   const lo = cuenta(terminosAHtml(ts));
   const bien = cuenta(buena.aHtml());
@@ -346,9 +423,46 @@ function solucionErrores(ts, rhs, error, idioma) {
     return idioma === 'es' ? `No hay ningún error: ${lo} = ${bien} (${pasos}).` : `There is no mistake: ${lo} = ${bien} (${pasos}).`;
   }
   const mal = cuenta(rhs.aHtml());
+  const quien = signo
+    ? (idioma === 'es' ? ` (${cuenta(signo.antes)} se ha sumado como ${cuenta(signo.despues)})` : ` (${cuenta(signo.antes)} was added as ${cuenta(signo.despues)})`)
+    : '';
   return idioma === 'es'
-    ? `${lo} no es ${mal}: ${explicaError(error, 'es')}. Bien hecho: ${pasos}; el resultado es ${bien}.`
-    : `${lo} is not ${mal}: ${explicaError(error, 'en')}. Done properly: ${pasos}; the result is ${bien}.`;
+    ? `${lo} no es ${mal}: ${explicaError(error, 'es')}${quien}. Bien hecho: ${pasos}; el resultado es ${bien}.`
+    : `${lo} is not ${mal}: ${explicaError(error, 'en')}${quien}. Done properly: ${pasos}; the result is ${bien}.`;
 }
 
 export const claveItem = item => `${item.plantilla}|${item.clave}`;
+
+// ─── Los casos de la hoja 1 (en claro; `hoja-unidad6-semana1.tex`, ejercicios de «Like terms and simplifying») ───
+
+const leerTerminos = texto => {
+  const r = leerExpresion(texto.replaceAll('-', MENOS), { variasLetras: true });
+  if (!r.ok) throw new Error(`CASOS_HOJA: no leo «${texto}»`);
+  return r.terminos;
+};
+(function cargarHoja() {
+  // Ej. 1a: las parejas de 4x con 9x, 4, −x, 7 y 4y.
+  for (const otro of ['9x', '4', '-x', '7', '4y']) CASOS_HOJA.add(clavePar('4x', otro.replaceAll('-', MENOS)));
+  // Ej. 1 (términos): el coeficiente de 7x, 2x y −6x (−x no: ±1 sin número no se reserva).
+  for (const t of ['7x', '2x', '-6x']) CASOS_HOJA.add(claveCoeficiente(leerTerminos(t)[0]));
+  // Sumas de la hoja (ej. 3 y 4): cada una con su resultado bien hecho.
+  const sumas = [
+    '4x+6x', '9x-2x', '10x-x', 'x-7x', '-3x+8x', '2x+x-4x', '7x-7x', '-x-x',                    // 1b
+    '3x+4+2x+1', '6x-2-x+9', '2x+7-5x-3', '4-x+6x-4', '8x+2-3x-5x', '-x+5-2x-8',                // Simplify a-f
+    '3x+5+2x', '7x+3', '8+x+1', '4x+3y', 'x+x+x', '5x+4-2x',                                      // lo que no se reduce y Leo
+    'x+x+x+6+x+6', 'x+x+3+2x-1',                                                                  // perímetros
+  ];
+  for (const e of sumas) {
+    const ts = leerTerminos(e);
+    CASOS_HOJA.add(claveSuma(ts));
+    CASOS_HOJA.add(claveError(ts, aLineal(ts).aTexto()));
+  }
+  // Resultados mal escritos que enseña la hoja: «10x», «5x + 5», «6x + 5», «3x + 7» (A-D de 3x + 5 + 2x), «4x + 5 = 9x»,
+  // «2x + 3 = 5x», «6x + 1 = 7x», «8x − x = 8x» y «5x + 4 − 2x = 3x + 4» (ya está arriba).
+  const malos = [['3x+5+2x', ['10x', '5x+5', '6x+5', '3x+7']], ['4x+5', ['9x']], ['2x+3', ['5x']], ['6x+1', ['7x']], ['8x-x', ['8x']]];
+  for (const [e, rs] of malos) {
+    const ts = leerTerminos(e);
+    CASOS_HOJA.add(claveSuma(ts));
+    for (const r of rs) CASOS_HOJA.add(claveError(ts, aLineal(leerTerminos(r)).aTexto()));
+  }
+})();

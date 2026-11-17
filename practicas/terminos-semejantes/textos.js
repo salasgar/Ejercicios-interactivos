@@ -79,7 +79,7 @@ export const TX = {
   errores: {
     ninguno: { es: 'No hay error', en: 'No mistake' },
     'suma-no-semejantes': { es: 'Ha sumado términos que no son semejantes', en: 'Added terms that are not like terms' },
-    'perder-signo': { es: 'Ha perdido un signo', en: 'Lost a sign' },
+    'perder-signo': { es: 'Ha leído un menos como un más', en: 'Read a minus as a plus' },
     'x-sin-coeficiente': { es: 'Ha contado como 0 una letra sin número', en: 'Counted a letter with no number as 0' },
     haError: { es: 'Sí tiene un error.', en: 'It does have a mistake.' },
     otroError: { es: 'Ese no es el error.', en: 'That is not the mistake.' },
@@ -160,10 +160,10 @@ export function explicaReduce(item, { idioma, tt }) {
 // «A = A» cuando los semejantes ya estaban juntos, y el «Resultado: R» que repite la respuesta.
 const UNA_CUENTA = '<span class="cuenta">(?:(?!<span class="cuenta">).)*</span>';
 function pasosReduce(solucion, idioma) {
-  const m = solucion.match(new RegExp(`^(${UNA_CUENTA}) = (${UNA_CUENTA}): .*?\\((.*)\\)\\. (?:Resultado|Result): ${UNA_CUENTA}\\.$`));
+  const m = solucion.match(new RegExp(`^(${UNA_CUENTA})(?: = (${UNA_CUENTA}))?: .*?\\((.*)\\)\\. (?:Resultado|Result): ${UNA_CUENTA}\\.$`));
   if (!m) return solucion;
   const [, origen, agrupados, pasos] = m;
-  const juntos = origen === agrupados
+  const juntos = agrupados === undefined || origen === agrupados
     ? { es: 'Los semejantes ya están juntos', en: 'The like terms are already together' }[idioma]
     : { es: `Se ordenan: ${origen} = ${agrupados}`, en: `Reorder them: ${origen} = ${agrupados}` }[idioma];
   return `${juntos}; ${pasos}.`;
