@@ -96,6 +96,14 @@ de repaso de la U2 dentro de una tarea de la U3**; el curso que viene, como reto
   sale cortada. Se mide con la pieza real: meter cada una de las 38 etiquetas en una cabecera de columna y de fila y comparar el ancho de
   su palabra más larga (un `span` con la misma `font`) con el ancho útil de la pieza, a 320, 360 y 375 px, es y en. Los niveles 3 y 4
   (3 columnas) caben a 360 px y más.
+- **(s-20261117T222512-242d1d37, segunda pasada)** Medir en anchos sueltos no basta: el arreglo de la 206 (30c0a08) es un
+  `@media (max-width: 400px)` y a 401-520 px «Compuesto» vuelve a cortarse en el nivel 2 (+12 px a 412). Se mide **todo el tramo de 300 a
+  800 px cada 4 px**, niveles 1-4, es y en, columna y fila, y se mira una captura del nivel 2 a 412 px (Android típico) y a 430 (iPhone Pro Max).
+- **Al publicar, el test de la 206 exige `disponible: false`** (`tests/practicas-tabla-propiedades.test.js`, «catálogo: id 83…»): esa aserción se
+  cambia a `true` en el mismo commit de la publicación (precedente: la 140, d7561ed), o `npm test` falla y no se despliega.
+- Los guiones de CDP de la primera pasada dejaron diez procesos de Chrome headless huérfanos (padre `launchd`) desde las 07:56: matar el
+  grupo en `cerrar()` no basta si el guion muere antes. Registrar la muerte del Chrome en `process.on('exit' | 'SIGINT' | 'uncaughtException')`
+  y, al terminar, `pgrep -fl 'headless=new'` vacío (memoria `chrome-headless-huerfano`: bloquean el Chrome normal de Juan Luis).
 - Para jugar con una solución **distinta** de la del generador hay que conocer el diseño: servir `logica.js` cambiado por `Fetch` (que
   `generarNivel` guarde cada ítem en `globalThis`) y buscar en Node otro reparto de etiquetas con solución. Para forzar un nivel o
   «triangular», cambiar en el mismo `logica.js` servido `nivelDePuntos` (parámetro de la URL) y `PROB_TRIANGULAR`.

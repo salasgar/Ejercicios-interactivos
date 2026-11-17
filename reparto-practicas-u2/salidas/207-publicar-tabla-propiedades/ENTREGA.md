@@ -1,8 +1,43 @@
 # ENTREGA · Tarea 207 · Revisión con clics y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83)
 
+## Segunda pasada — s-20261117T222512-242d1d37 (Opus 5.5, esfuerzo Alto), 17-11, 22:25Z-23:00Z. Revisa el commit `30c0a08` de la 206.
+
+### Veredicto: NO SE PUBLICA todavía
+
+`disponible: false` sigue en la fila 83; no se ha tocado `catalogo.js`, `docs/practicas-unidad2.md` ni `README.md`. **Reabierta de la 206**:
+`hechos/reabiertas/206--s-20261117T222512-242d1d37.md`. Lo que pedía la reabierta anterior está arreglado (de 320 a 400 px todo cabe), pero
+el arreglo vive en `@media (max-width: 400px)` y **entre 401 y unos 520 px «Compuesto» vuelve a salirse de su cabecera en el nivel 2**
+(+12 px a 412-414 px, +11,5 a 428-430, +9 a 480; a 540, todo cabe). Es el ancho de muchos móviles (Android de 412 px, iPhone de 414-430) y
+«Compuesto» sale en el 93 % de las tablas del nivel 2. Niveles 1, 3 y 4: bien en todos los anchos. Arreglo propuesto en la reabierta (solo
+`estilos.css`); la próxima pasada de la 207 mide de 300 a 800 px cada 4 px, mira una captura a 412 y publica. El plazo (vie 27-11) da.
+
+### Lo revisado en esta pasada (bien)
+
+- **Tests**: `practicas-comun`, `practicas-tabla-propiedades` y `practicas-semana`, 125/125; `npm test` 2465/2465 (una pasada anterior
+  dio un fallo en `tests/herramientas-informe.test.js`, a medio escribir por la 209 en el mismo árbol; no es de esta práctica).
+- **Cabeceras** (las 38 etiquetas con la pieza real, columna y fila, es y en, niveles 1-4): todo cabe a 320, 360, 375, 390, 400 y 768 px;
+  a 300, Compuesto +3,4 en el nivel 2 (no se pedía). Mal de 401 a ~520 px en el nivel 2 (arriba). Sin scroll horizontal en ningún ancho.
+- **Pantalla a 320 y 375 px** (capturas): casillas de 56 y 65 px de ancho; márgenes laterales de 5 y 8,5 px, justos pero legibles.
+- **Reservas**: las cuatro, comprobadas a mano casilla por casilla: sin números repetidos y cada número cumple las dos propiedades.
+- **Recorrido con el dedo a 375 px, español**: los cuatro niveles con una solución distinta de la del generador, devolver piezas, intento
+  fallido; «Falta 1 pieza por colocar.», «46 : 3 no es exacta (da 15 y sobra 1)»; 6, 20, 35 y 54 puntos; consola limpia.
+
+### Para la pasada que publique
+
+- **El test de la 206 exige `disponible: false`** (`tests/practicas-tabla-propiedades.test.js`, test «catálogo: id 83…», línea `assert.equal(fila.disponible,
+  false)`): al publicar hay que cambiar esa aserción a `true` en el mismo commit, o `npm test` falla y GitHub Actions no despliega. Hay
+  precedente: la 140 hizo lo mismo con los de ortografía (d7561ed).
+- Lo pendiente fuera del repo y la propuesta de tarea, abajo (primera pasada), siguen igual, salvo lo que haya cambiado la coordinadora el 17-11:
+  según `proyecto.md` («Alta del 17-11: tarea 209»), los puntos 1 y 2 (lanzador y `atender-correo`) **ya están hechos**; el 3 (informe de actividad) es la
+  tarea 209, en curso; el 4 (párrafo del reto en `docs/practicas-guia-profesor.md`) sigue sin hacer.
+
+---
+
+## Primera pasada — s-20261117T064522-40c5ab61
+
 Sesión s-20261117T064522-40c5ab61 (Opus 5.5, esfuerzo Alto), 17-11, 06:45Z-08:30Z. Revisa el commit `d956422` de la 206.
 
-## Veredicto: NO SE PUBLICA todavía
+### Veredicto: NO SE PUBLICA todavía
 
 `disponible: false` sigue en la fila 83; no se ha tocado `catalogo.js`, `docs/practicas-unidad2.md` ni `README.md`.
 **Reabierta de la 206**: `hechos/reabiertas/206--s-20261117T064522-40c5ab61.md`. El motivo es de pantalla, no de corrección: a 360-375 px,
@@ -11,7 +46,7 @@ de las tablas de ese nivel. Van con ella dos faltas en castellano («Faltan 1 pi
 (no ha salido nunca, pero dejaría al alumno sin poder terminar). Con eso arreglado, la próxima pasada de la 207 solo revisa esos puntos y publica;
 el plazo (vie 27-11) da de sobra: el reto no se usa hasta el lun 30-11.
 
-## Lo que sí está bien (no hace falta repetirlo)
+### Lo que sí está bien (no hace falta repetirlo)
 
 **Tests**: `node --test` de `practicas-comun`, `practicas-tabla-propiedades` y `practicas-semana`, 124/124; `npm test` 2461/2461.
 
@@ -52,7 +87,7 @@ puntos + 6 del reto = 106» y, con el reto completo, **«100 de 100 puntos + 54 
 sin cortarse en 100 ni desbordar. **Panel**: pide entrar con Google, así que se probó en Node con `juntarTareas` y la `celdaTarea` de
 `profesor.js`: «✓ cumplida · 154 pt (100 + 54 del reto)», «120 pt (100 + 20 del reto)» y, sin la base, «35 pt (0 + 35 del reto)».
 
-## La propuesta para la tarea semanal (decide y la pone Juan Luis)
+### La propuesta para la tarea semanal (decide y la pone Juan Luis)
 
 - **Tarea 18**, «U3 · Semana 3 · Potencias, jerarquía y paréntesis» (desde el lun 30-11, plazo jue 3-12), con
   `reto: [['tabla-propiedades', 1]]`. En el editor del panel: «Añadir como reto un ejercicio de otra unidad» → «Tabla de propiedades (reto)»
@@ -63,7 +98,7 @@ sin cortarse en 100 ni desbordar. **Panel**: pide entrar con Google, así que se
 - Ojo con la fórmula si se pone en otra tarea: en una de menos ejercicios pesa más (con 3 ★ + 1, el reto completo daría +135). Es el hallazgo 1
   de la ENTREGA de la 205, sin decidir.
 
-## Lo pendiente fuera del repositorio (de la 205; sigue sin hacer a 17-11)
+### Lo pendiente fuera del repositorio (de la 205; sigue sin hacer a 17-11)
 
 Sin esto, la nota de más de 100 no llega a Classroom:
 1. `~/.claude/lanzador/notas_tarea_app.mjs`, línea 17: los `slugs` salen de `ejerciciosDe(tarea)`, que no incluye el reto, y **el extra sale 0
@@ -75,7 +110,7 @@ Sin esto, la nota de más de 100 no llega a Classroom:
 4. `docs/practicas-guia-profesor.md`: sigue sin el párrafo del reto que propuso la 205.
 Reglas de Firestore: no hace falta publicar nada (lo dijo la 205).
 
-## Hallazgos fuera de criterio (deciden Juan Luis o la coordinadora; no bloquean)
+### Hallazgos fuera de criterio (deciden Juan Luis o la coordinadora; no bloquean)
 
 1. **«Compuesto» sale en casi todas las tablas**: en el 93 % del nivel 2 y en el 99 % de los niveles 3 y 4 («Múltiplo de 3», en el 78-84 %; «Tiene
    4 divisores», en el 80 % del nivel 4). Es efecto de los pesos del generador (las etiquetas con muchos números pesan más). No es un error, pero
