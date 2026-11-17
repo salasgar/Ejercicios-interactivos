@@ -28,3 +28,14 @@ Corregido lo que reabrió `hechos/reabiertas/147--s-20261116T233507-987369cb-rev
 6. Cabecera de `logica.js` corregida (la y, la reserva y lo que no se reserva).
 
 Pruebas: `node --test tests/practicas-comun.test.js tests/practicas-terminos-semejantes.test.js tests/practicas-ayuda-terminos-semejantes.test.js` 66/66. `npm test`: solo fallan tests ajenos (otras tareas a medias: `tabla-propiedades` sin ocultar «Comprobar», portada). Navegador (localhost:8080, «Probar sin código»): 8 cargas (4 ejercicios × es/en) a 375 px sin desbordes y un acierto del ej. 4 con la etiqueta nueva; el feedback del fallo solo comprobado por test (el cuadro de la pestaña no admite menos de 570 px, se usó un iframe de 375). No se tocó `catalogo.js` ni `_comun/`.
+
+## Tercera entrega (revisión de la 156, sesión s-20261117T030519-b53fc08f)
+Corregido lo que reabrió `hechos/reabiertas/147--s-20261117T023530-f7aa1ea7-revision.md`:
+1. **Casos de examen fuera del test**: la reserva de examen se prueba con `HUELLAS_EXAMEN.size` y con una suma inventada cuya huella se añade al conjunto solo dentro del test (y se quita); el último test usa un caso de la hoja. Comprobado con grep (todas las expresiones de los `casos-examen-semana*.tsv` y de los finales, normalizadas) contra `practicas/terminos-semejantes/`, el test y esta ENTREGA: ninguna aparece en claro fuera de lo que ya figura en la hoja (`CASOS_HOJA`).
+2. **Ej. 4 y ej. 3, una sola explicación**: `candidatosDe` prueba «contar como 0» con **cualquier subconjunto no vacío** de los términos ±1 y «un menos como un más» con cada término que resta; el ítem se descarta si el resultado sale de dos errores. Test independiente de 2 × 3000 ítems con esas familias calculadas a mano (ej. 4) y 3000 del ej. 3 (lo tecleable lo explica un solo error; si lo explican dos, queda como «otra expresión»).
+3. **Ej. 3**: el feedback de «un menos como un más» lleva el término («−x se ha sumado como +x»), en es y en (`explicaErrorConTermino`; `corregirReducir` devuelve `signo`).
+4. **Ej. 4**: «No hay ningún error» sale una sola vez (el aviso previo se quita: lo dice la solución).
+5. **Ej. 4**: ya no hay dos «:» seguidos ni mayúscula tras los dos puntos: «… no es 15x. Has leído un menos como un más: … (…). Bien hecho: …».
+6. **Ej. 2**: el porqué del 0 («Sin número delante, la letra no vale 0: lleva un número escondido.») ya no repite la solución.
+Barrido de 20000 ítems por ejercicio (semillas 156002-156003): 0 casos de los defectos 4, 5 y 6. `npm test` 2456/2456; `node --test tests/practicas-comun.test.js tests/practicas-terminos-semejantes.test.js` en verde.
+**Sin probar con clics a 375 px**: esta sesión no pudo lanzar un Chrome con depuración (el sistema lo denegó) y no lo ha forzado. Lo único de interfaz que cambia es texto del feedback y la quita del aviso del ej. 4 (`practica.js`, 3 líneas); la 156 debe hacer la prueba con clics, es y en, al publicar. No se tocó `catalogo.js` ni `_comun/`.
