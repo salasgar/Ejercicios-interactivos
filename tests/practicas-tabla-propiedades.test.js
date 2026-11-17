@@ -314,8 +314,8 @@ test('textos: los dos idiomas tienen lo mismo, con producto de punto y división
   assert.deepEqual(ENTRE, { es: ':', en: '÷' });
 });
 
-test('catálogo: id 83, un ejercicio, sin publicar hasta que lo revise la 207', () => {
+test('catálogo: id 83, un ejercicio, publicada (tarea 207)', () => {
   const fila = CATALOGO.find(p => p.slug === 'tabla-propiedades');
   assert.deepEqual([fila.id, fila.unidad, fila.nEjercicios], [83, 2, 1]);
-  assert.equal(fila.disponible, false);
+  assert.equal(fila.disponible, true);
 });

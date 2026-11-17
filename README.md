@@ -92,8 +92,9 @@ del profesor: lo que sigue vale también para ella.
 
 ## Prácticas de la unidad 2 (`practicas/`)
 
-Treinta y una mini-aplicaciones sin cuentas sobre una **base común** (dieciséis
-de la unidad 2 y quince de repaso de la unidad 1), cada una con una interacción
+Treinta y dos mini-aplicaciones sin cuentas sobre una **base común** (diecisiete
+de la unidad 2, una de ellas el reto opcional «Tabla de propiedades», y quince de
+repaso de la unidad 1), cada una con una interacción
 propia y con feedback que dice qué ha pasado con los números de ese ítem:
 portada en https://salasgar.github.io/Ejercicios-interactivos/practicas/ y
 **un solo panel del profesor** en `practicas/profesor.html`. Español e inglés.
@@ -120,6 +121,7 @@ resultados y qué práctica cubre qué destreza del inventario.
 | 4 | `errores` | Caza el error | Reconocer y nombrar el error, y lo que no es un error (U2-4C-01, 4C-02) |
 | toda | `leelo` | Léelo en inglés | Leer factorizaciones, m.c.d. y m.c.m.; vocabulario (U2-1B, 2B-03, 3B-03) |
 | toda | `divisores` | Divisor, múltiplo, divisible | No confundir múltiplo, divisor y divisible (U2-1B-01, 1C-02) |
+| toda | `tabla-propiedades` | Tabla de propiedades (reto) | Reto opcional por niveles: números y etiquetas (primo, compuesto, múltiplo, divisor, número de divisores…) en una tabla de doble entrada; muchas soluciones (U2-1C-03, 1C-13, 2C-01 a 2C-07) |
 | U1 | `jerarquia` | ¿Qué se hace primero? | Jerarquía paso a paso, con potencias, raíces y paréntesis |
 | U1 | `parentesis` | Coloca los paréntesis | Qué resultados salen según dónde va el paréntesis |
 | U1 | `exponente` | El exponente y su base | A qué afecta el exponente, potencia como producto repetido, cuadrado de la suma |
@@ -137,7 +139,8 @@ resultados y qué práctica cubre qué destreza del inventario.
 | U1 | `propiedades` | Propiedades de las potencias | Ampliación: misma base, potencia de potencia, última cifra |
 
 Desde el 2026-10-09 las 31 están publicadas en la portada (`disponible: true`
-en el catálogo), tras corregir lo que encontraron las dos revisiones.
+en el catálogo), tras corregir lo que encontraron las dos revisiones; el reto
+`tabla-propiedades`, desde el 2026-11-18 (tarea 207).
 
 - **Tarea de la semana** (desde el 2026-10-15): `practicas/semana.html?t=<id>`
   abre los ejercicios de esa semana (unos obligatorios con ★ y otros a elegir),
