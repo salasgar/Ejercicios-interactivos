@@ -415,3 +415,61 @@ test('sin --espacio no hay informe (tarea 71: el modo antiguo ya no existe): uso
   const fuente = (await import('node:fs')).readFileSync(ruta, 'utf8');
   assert.doesNotMatch(fuente, /'practicas-tareas'|'practicas-asignaciones'|COLECCION_/, 'no lee las colecciones viejas');
 });
+
+// --- Ejercicios de reto (tarea 209) ------------------------------------------------------------
+
+const TAREA_RETO = { ...TAREA_V2, id: 78, reto: [['venn', 1]], hasta: undefined };
+
+test('ejerciciosDe: el reto va al final, marcado, y una tarea sin reto sigue igual', () => {
+  const e = ejerciciosDe(TAREA_RETO);
+  assert.equal(e.length, 5);
+  assert.deepEqual(e.at(-1), { slug: 'venn', n: 1, estrella: false, reto: true });
+  assert.ok(e.slice(0, 4).every(x => x.reto === false));
+  assert.equal(ejerciciosDe({ ...TAREA_V2 }).length, 4);
+});
+
+test('agregar con reto: cuenta para existe/activo, no para puntos ni alertas; nota con el extra; formatear lo marca', () => {
+  const entradas = [
+    // 0: solo el reto (6 puntos del contador, 30 fallos).
+    ...docsTarea(TAREA_RETO, 0, { venn: [ej(6, { aciertos: 6, fallos: 30, reinicios: 4 })] }, AHORA),
+    // 1: la tarea completa y el reto terminado.
+    ...docsTarea(TAREA_RETO, 1, { recta: [ej(10), ej(10)], semaforo: [ej(10)], venn: [ej(10)] }, AHORA),
+  ];
+  // Seis alumnos más con el reto fallado a tope: sin alertas de «difícil» ni de «reinicios».
+  for (let i = 3; i < 9; i++) entradas.push(...docsTarea(TAREA_RETO, i, { venn: [ej(0, { aciertos: 1, fallos: 9, reinicios: 1 })] }, AHORA));
+  const r = agregar({ docs: new Map(entradas), tarea: TAREA_RETO, alumnos: 10, desde: AHORA - 3600e3, ahora: AHORA, grupos: leerGrupos('G:1-10') });
+  const [a0, a1, a2] = r.alumnos;
+  assert.equal(a0.existe, true);
+  assert.equal(a0.activo, true);
+  assert.equal(a0.puntos, 0);
+  assert.equal(a0.fallos, 0);
+  assert.equal(a0.puntosReto, 6);
+  assert.equal(a0.nota, 20);         // 6 pt de reto sobre 3 ejercicios que cuentan (2 ★ + 1 a elegir): +20
+  assert.equal(a0.retoProbado, true);
+  assert.equal(a0.retoTerminado, false);
+  assert.equal(a1.puntos, 30);        // los del informe son brutos (10 por ejercicio que cuenta), sin el reto
+  assert.equal(a1.completa, true);
+  assert.equal(a1.puntosReto, 10);
+  assert.ok(a1.nota > 100);
+  assert.equal(a1.retoTerminado, true);
+  assert.equal(a2.existe, false);
+  assert.equal(a2.nota, 0);
+  assert.equal(r.ejercicios.at(-1).reto, true);
+  assert.equal(r.ejercicios.at(-1).intentan, 8);
+  assert.equal(r.ejercicios.at(-1).terminan, 1);
+  assert.ok(!r.alertas.some(a => a.includes('venn')), r.alertas.join('\n'));
+  assert.ok(!r.alertas.some(a => a.includes('0 puntos')), r.alertas.join('\n'));
+  const texto = formatear(r, { tarea: TAREA_RETO, ahora: AHORA });
+  assert.match(texto, /venn ej\. 1 \(reto\) \| 8 \| 1 \|/);
+  assert.match(texto, /Reto: lo han probado 8 alumnos; lo han terminado \(todos sus ejercicios\) 1\./);
+  assert.match(texto, /· nota \d+ · reto \+6 pt ·/);
+});
+
+test('agregar sin reto: el informe no cambia (sin línea de reto, sin marca) y la nota es la de la tarea', () => {
+  const docs = new Map(docsTarea(TAREA_V2, 0, { recta: [ej(10), ej(10)], semaforo: [ej(10)] }, AHORA_TARDE));
+  const r = agregar({ docs, tarea: TAREA_V2, alumnos: 2, desde: AHORA_TARDE - 3600e3, ahora: AHORA_TARDE });
+  assert.equal(r.alumnos[0].nota, 100);
+  assert.equal(r.alumnos[0].puntosReto, 0);
+  const texto = formatear(r, { tarea: TAREA_V2, ahora: AHORA_TARDE });
+  assert.doesNotMatch(texto, /\(reto\)|Reto:|reto \+/);
+});

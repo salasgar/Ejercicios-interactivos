@@ -69,11 +69,12 @@ export function resumirEjercicio(e, objetivo = PUNTOS_POR_EJERCICIO) {
   };
 }
 
-/** Los ejercicios de una tarea: [{ slug, n, estrella }], n desde 1. */
+/** Los ejercicios de una tarea: [{ slug, n, estrella, reto }], n desde 1. Los del reto (tarea 205) van al final y no puntúan en la tarea. */
 export function ejerciciosDe(tarea) {
   return [
-    ...tarea.estrella.map(([slug, n]) => ({ slug, n, estrella: true })),
-    ...tarea.elegir.map(([slug, n]) => ({ slug, n, estrella: false })),
+    ...tarea.estrella.map(([slug, n]) => ({ slug, n, estrella: true, reto: false })),
+    ...tarea.elegir.map(([slug, n]) => ({ slug, n, estrella: false, reto: false })),
+    ...(tarea.reto ?? []).map(([slug, n]) => ({ slug, n, estrella: false, reto: true })),
   ];
 }
 
@@ -165,25 +166,33 @@ export function agregar({ docs, tarea, alumnos, lista = null, listaCompleta = tr
       porSlug.set(slug, Array.isArray(d.ej) ? d.ej : []);
     }
     let puntosEstrella = 0, terminadosEstrella = 0, fallos = 0, reinicios = 0, terminadosHoy = 0;
+    let retoProbado = false, retoTerminado = false;
+    const nReto = ejercicios.filter(e => e.reto).length;
+    let retoHechos = 0;
     const puntosElegir = [];
     let terminadosElegir = 0;
     ejercicios.forEach((e, k) => {
       const r = resumirEjercicio(porSlug.get(e.slug)?.[e.n - 1]);
-      fallos += r.fallos; reinicios += r.reinicios;
-      if (r.terminado && r.dia >= diaDesde) terminadosHoy++;
-      if (e.estrella) { puntosEstrella += r.puntos; if (r.terminado) terminadosEstrella++; }
+      // El reto no puntúa en la tarea ni cuenta en sus fallos, reinicios ni terminados (solo en `existe`, `activo` y `ultima`).
+      if (!e.reto) {
+        fallos += r.fallos; reinicios += r.reinicios;
+        if (r.terminado && r.dia >= diaDesde) terminadosHoy++;
+      }
+      if (e.reto) { if (r.intentado) retoProbado = true; if (r.terminado) retoHechos++; }
+      else if (e.estrella) { puntosEstrella += r.puntos; if (r.terminado) terminadosEstrella++; }
       else { puntosElegir.push(r.puntos); if (r.terminado) terminadosElegir++; }
       const pe = porEjercicio[k];
       if (r.intentado) { pe.intentan++; pe.aciertos += r.aciertos; pe.fallos += r.fallos; pe.reinicios += r.reinicios; if (r.reinicios > 0) pe.reinician++; }
       if (r.terminado) pe.terminan++;
     });
+    retoTerminado = nReto > 0 && retoHechos === nReto;
     puntosElegir.sort((a, b) => b - a);
     const puntos = puntosEstrella + puntosElegir.slice(0, tarea.nElegir).reduce((a, b) => a + b, 0);
     const estado = estadoTarea(tarea, (slug, n) => porSlug.get(slug)?.[n - 1] ?? null);
     const entrega = estadoPlazo(tarea, estado, hoyDia, true);
     filas.push({
       numero, codigo, ...(nombres?.get(numero) && { nombre: nombres.get(numero) }), grupo: numero ? grupoDe(numero, grupos) : '?', existe, activo: existe && ultima >= desde, ultima, entrega,
-      puntos, terminadosEstrella, terminadosElegir: Math.min(terminadosElegir, tarea.nElegir), terminadosHoy, fallos, reinicios,
+      puntos, puntosReto: estado.puntosReto, nota: estado.puntos, retoProbado, retoTerminado, terminadosEstrella, terminadosElegir: Math.min(terminadosElegir, tarea.nElegir), terminadosHoy, fallos, reinicios,
       completa: terminadosEstrella === tarea.estrella.length && terminadosElegir >= tarea.nElegir,
     });
   }
@@ -206,6 +215,7 @@ export function agregar({ docs, tarea, alumnos, lista = null, listaCompleta = tr
     }
   }
   for (const pe of porEjercicio) {
+    if (pe.reto) continue; // el reto es difícil a propósito, se comprueba sin penalizar y no tiene vidas
     if (pe.intentan < umbrales.minimoIntentos) continue;
     const nombre = `${pe.slug} ej. ${pe.n}${pe.estrella ? ' ★' : ''}`;
     if (pe.ratioFallos >= umbrales.ratioFallosAlto) {
@@ -274,18 +284,21 @@ export function formatear(r, { tarea, ahora = Date.now(), horas = 24, motivo = n
     L.push('|---|---|---|---|---|---|');
     for (const [g, v] of porGrupo) L.push(`| ${g} | ${v.total} | ${v.entrado} | ${v.activos} | ${v.completas} | ${(v.puntos / v.total).toFixed(1)} |`);
   }
+  if (r.ejercicios.some(e => e.reto)) {
+    L.push(`- Reto: lo han probado ${r.alumnos.filter(f => f.retoProbado).length} alumnos; lo han terminado (todos sus ejercicios) ${r.alumnos.filter(f => f.retoTerminado).length}.`);
+  }
   L.push('');
   L.push('## Ejercicios de la tarea');
   L.push('| Ejercicio | Prueban | Terminan | Fallos | Reinician |');
   L.push('|---|---|---|---|---|');
   for (const e of r.ejercicios) {
-    L.push(`| ${e.slug} ej. ${e.n}${e.estrella ? ' ★' : ''} | ${e.intentan} | ${e.terminan} | ${pct(e.fallos, e.aciertos + e.fallos)} (${e.fallos}) | ${e.reinician} |`);
+    L.push(`| ${e.slug} ej. ${e.n}${e.estrella ? ' ★' : e.reto ? ' (reto)' : ''} | ${e.intentan} | ${e.terminan} | ${pct(e.fallos, e.aciertos + e.fallos)} (${e.fallos}) | ${e.reinician} |`);
   }
   L.push('');
-  L.push('## Alumnos (número de lista · grupo · puntos de la tarea · ★ terminadas · fallos · última actividad)');
+  L.push('## Alumnos (número de lista · grupo · pt = puntos de la tarea, sin el reto' + (r.ejercicios.some(e => e.reto) ? ' · nota = la que ve el alumno, con el extra del reto · reto +X pt = contador del reto' : '') + ' · ★ terminadas · fallos · última actividad)');
   const orden = [...r.alumnos].filter(f => f.existe).sort((a, b) => b.puntos - a.puntos || a.numero - b.numero);
   for (const f of orden) {
-    L.push(`- ${f.numero ?? f.codigo} · ${f.grupo} · ${f.puntos} pt · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}${textoEntrega(f.entrega) ? ` · ${textoEntrega(f.entrega)}` : ''}`);
+    L.push(`- ${f.numero ?? f.codigo} · ${f.grupo} · ${f.puntos} pt${r.ejercicios.some(e => e.reto) ? ` · nota ${f.nota}${f.puntosReto > 0 ? ` · reto +${f.puntosReto} pt` : ''}` : ''} · ${f.terminadosEstrella}/${r.ejercicios.filter(e => e.estrella).length} ★ + ${f.terminadosElegir} · ${f.fallos} fallos · ${fecha(f.ultima)}${f.activo ? ' ✓ (activo en la ventana)' : ''}${textoEntrega(f.entrega) ? ` · ${textoEntrega(f.entrega)}` : ''}`);
   }
   if (!orden.length) L.push('- (nadie ha entrado todavía)');
   const nunca = r.alumnos.filter(f => !f.existe).map(f => f.numero);

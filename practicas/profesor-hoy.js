@@ -106,7 +106,7 @@ function pintar(contenedor, hoy) {
   for (const e of r.ejercicios) {
     const fila = el('tr');
     const fallos = (e.aciertos + e.fallos > 0 ? `${Math.round((100 * e.fallos) / (e.aciertos + e.fallos))} % (${e.fallos})` : '—') + (e.ayudas > 0 ? ` · ?${e.ayudas}` : '');
-    for (const c of [`${e.slug} ej. ${e.n}${e.estrella ? ' ★' : ''}`, e.intentan, e.terminan, fallos, e.reinician]) fila.append(el('td', String(c)));
+    for (const c of [`${e.slug} ej. ${e.n}${e.estrella ? ' ★' : e.reto ? ' (reto)' : ''}`, e.intentan, e.terminan, fallos, e.reinician]) fila.append(el('td', String(c)));
     tabla.append(fila);
   }
   contenedor.append(el('h3', 'Ejercicios de la tarea'));
