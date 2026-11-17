@@ -1,5 +1,57 @@
 # ENTREGA · Tarea 207 · Revisión con clics y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83)
 
+## Tercera pasada — s-20261117T231500-7815143e (Opus 5.5, esfuerzo Alto), 17-11, 23:15Z-23:35Z. Revisa el commit `1efb384` de la 206.
+
+### Veredicto: PUBLICADA
+
+Commit **`c871c11`**: `disponible: true` en la fila 83 de `catalogo.js` (nada más de ese fichero), la fila y la línea de publicadas en
+`docs/practicas-unidad2.md`, la fila de la tabla de la unidad 2 y el recuento («Treinta y dos… diecisiete de la unidad 2») en `README.md`,
+y la aserción `disponible` del test de la 206 a `true`. **Fuera de la ficha, necesario:** `tests/practicas-semana.test.js` cuenta los bloques
+publicados de la U2 en la portada; con el reto pasan de 6 a 7 y las prácticas de 18 a 19 (las dos cifras, una línea; sin eso `npm test` falla).
+Enlace: https://salasgar.github.io/Ejercicios-interactivos/practicas/tabla-propiedades/ (en la portada, U2, bloque «Para toda la unidad · Reto opcional»).
+
+### Lo revisado en esta pasada
+
+- **Tests**: paso 2, 125/125; `npm test` 2465/2465 antes y después de publicar.
+- **Cabeceras, medida propia** (guion fuera del repo, Chrome headless, `mobile`, la pieza real con el CSS real; cada una de las 38 etiquetas en la
+  cabecera de columna `c0` y en la de fila `f0`; fallo = la palabra más larga, con la misma `font`, más ancha que el ancho útil de la pieza, sin
+  margen de tolerancia; también se miran `scrollWidth` de la pieza y del documento): **de 300 a 800 px cada 4 px, más 400, 401, 560, 561 y 562
+  (129 anchos), niveles 1-4, es y en: 1032 medidas. De 320 a 800 px, 0 cortes y 0 scroll horizontal**; letra mínima 9,0 px (a 300-320).
+  Por debajo de 320 (no se pedía): «Compuesto» en la columna del nivel 2, +3,4 px a 300, +2,4 a 304, +1,4 a 308, +0,4 a 312 y 316; «Composite»
+  +0,4 a 300. Control con una carga nueva por ancho (316, 320, 360, 375, 390, 401, 412, 414, 430, 480, 520, 560, 561, 564, 600, 768, 800): lo mismo.
+- **Capturas del nivel 2** con «Compuesto»/«Composite» en la cabecera de columna a 412 y 430 px (es y en) y a 320: la palabra cabe entera dentro de
+  la pieza; a 320 va justa, pero entera.
+- **Recorridos completos** (el guion de la primera pasada sobre el CSS nuevo): 412 px con el dedo en español, 430 px con el dedo en inglés (con
+  infografía de «triangular» y «Sí») y 1200 px con el ratón en inglés: los cuatro niveles con una solución distinta de la del generador, devolver
+  piezas, un intento fallido por nivel, 6/20/35/54 puntos, «Comprobar» oculto al acertar; **sin problemas y consola limpia** en los tres.
+- **Portada** tras publicar (375 es, 1200 en): sale el bloque «Para toda la unidad · Reto opcional» con «Tabla de propiedades (reto)», sin scroll.
+- Ningún Chrome headless huérfano al terminar (`pgrep -fl 'headless=new'` vacío); servidor local cerrado.
+
+### La propuesta para la tarea semanal (decide y la pone Juan Luis)
+
+- **Tarea 18**, «U3 · Semana 3 · Potencias, jerarquía y paréntesis» (desde el lun 30-11, plazo jue 3-12), con `reto: [['tabla-propiedades', 1]]`.
+  En el editor del panel: «Añadir como reto un ejercicio de otra unidad» → «Tabla de propiedades (reto)», que ya sale porque está publicada.
+- **Releída de la nube el 17-11 a las 23:31Z** (cuenta lectora, `informe-actividad.mjs --tarea 18`): 5 ★ (potencias-enteros 1-3, jerarquia-enteros 3,
+  ortografia 3) y 6 a elegir, con un máximo de 100 puntos, o sea `nElegir` 5; sin reto todavía. n = 10 y cada punto del reto vale un punto de la nota:
+  `round(100 · 54 / (10 · 10))` = **+54** con el reto completo (nota máxima 154); por niveles, +6, +20, +35 y +54.
+- Una línea para los alumnos: «**Reto opcional: suma puntos por encima de 100.**»
+- Ojo si se pone en otra tarea: en una de menos ejercicios pesa más (con 3 ★ + 1, el reto completo daría +135). Es el hallazgo 1 de la ENTREGA de la 205.
+
+### Lo pendiente fuera del repositorio, a 17-11 23:30Z
+
+1. Lanzador (`~/.claude/lanzador/notas_tarea_app.mjs`): **hecho** (lee los slugs del reto; comprobado en la línea 18).
+2. `atender-correo` (`referencias/calificar.md`): **hecho** («Con reto puede pasar de 100», «base 100»).
+3. Informe de actividad: **hecho** en la tarea 209 (32cf2ea).
+4. **Sin hacer**: el párrafo del reto en `docs/practicas-guia-profesor.md` (en el repositorio, sin tarea que lo tenga; no es de esta ficha).
+Reglas de Firestore: nada que publicar (lo dijo la 205).
+
+### Hallazgos que siguen abiertos (de la primera pasada; no bloquean)
+
+«Compuesto» sale en casi todas las tablas (93-99 %) y el 21 en el 44 % de las del nivel 4: si se quiere más variedad, la 206 propuso sacar
+«triangular» del azar o añadir etiquetas difíciles con muchos números. Lo decide Juan Luis.
+
+---
+
 ## Segunda pasada — s-20261117T222512-242d1d37 (Opus 5.5, esfuerzo Alto), 17-11, 22:25Z-23:00Z. Revisa el commit `30c0a08` de la 206.
 
 ### Veredicto: NO SE PUBLICA todavía

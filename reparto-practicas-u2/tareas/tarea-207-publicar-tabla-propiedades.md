@@ -101,6 +101,9 @@ de repaso de la U2 dentro de una tarea de la U3**; el curso que viene, como reto
   800 px cada 4 px**, niveles 1-4, es y en, columna y fila, y se mira una captura del nivel 2 a 412 px (Android típico) y a 430 (iPhone Pro Max).
 - **Al publicar, el test de la 206 exige `disponible: false`** (`tests/practicas-tabla-propiedades.test.js`, «catálogo: id 83…»): esa aserción se
   cambia a `true` en el mismo commit de la publicación (precedente: la 140, d7561ed), o `npm test` falla y no se despliega.
+- **(s-20261117T231500-7815143e, tercera pasada)** No es la única aserción que cambia al publicar: `tests/practicas-semana.test.js`
+  («portada: los bloques de la unidad 2…») cuenta los bloques publicados de la U2 y sus prácticas (6 y 18 sin el reto; 7 y 19 con él). Se cambian
+  en el mismo commit (c871c11). Antes de publicar cualquier práctica con bloque propio en la portada, `npm test` con `disponible: true` puesto.
 - Los guiones de CDP de la primera pasada dejaron diez procesos de Chrome headless huérfanos (padre `launchd`) desde las 07:56: matar el
   grupo en `cerrar()` no basta si el guion muere antes. Registrar la muerte del Chrome en `process.on('exit' | 'SIGINT' | 'uncaughtException')`
   y, al terminar, `pgrep -fl 'headless=new'` vacío (memoria `chrome-headless-huerfano`: bloquean el Chrome normal de Juan Luis).
