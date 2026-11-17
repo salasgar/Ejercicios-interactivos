@@ -91,7 +91,20 @@ de repaso de la U2 dentro de una tarea de la U3**; el curso que viene, como reto
 
 ## Trampas conocidas
 
-- (Ninguna aún. Quien encuentre una, la escribe aquí al cerrar.)
+- **(s-20261117T064522-40c5ab61, primera pasada)** El «cabe a 375 px» no es solo el scroll horizontal: a 360-375 px la tabla de **2 × 4
+  (nivel 2)** no desborda, pero una palabra de la cabecera (`Compuesto`, `Composite`, `Cuadrado perfecto`) es más ancha que la pieza y
+  sale cortada. Se mide con la pieza real: meter cada una de las 38 etiquetas en una cabecera de columna y de fila y comparar el ancho de
+  su palabra más larga (un `span` con la misma `font`) con el ancho útil de la pieza, a 320, 360 y 375 px, es y en. Los niveles 3 y 4
+  (3 columnas) caben a 360 px y más.
+- Para jugar con una solución **distinta** de la del generador hay que conocer el diseño: servir `logica.js` cambiado por `Fetch` (que
+  `generarNivel` guarde cada ítem en `globalThis`) y buscar en Node otro reparto de etiquetas con solución. Para forzar un nivel o
+  «triangular», cambiar en el mismo `logica.js` servido `nivelDePuntos` (parámetro de la URL) y `PROB_TRIANGULAR`.
+- La página de la semana solo enseña el reto si la fila del catálogo está `disponible: true`: para probar la tarea con `reto` antes de
+  publicar, se pone en el árbol durante la prueba y se deshace si no se publica (`git checkout -- practicas/_comun/catalogo.js`, solo
+  si nadie más tiene cambios en ese fichero).
+- El servidor `python3 -m http.server` en frío da `ERR_CONNECTION_RESET` en algunas cargas (ya lo vieron la 205 y la 206): repetir la
+  pasada antes de dar nada por fallo de la práctica.
+- En zsh, `for a in "375 es dedo" …; do node x.mjs $a` pasa la cadena entera como un solo argumento: `${=a}`.
 
 ## Prohibido
 
