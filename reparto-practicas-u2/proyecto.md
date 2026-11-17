@@ -1076,3 +1076,12 @@ Por encargo de Juan Luis (16-11). Una alumna escribió tres veces el 14-11 que e
 «No lo sé». **No es un fallo**: falta tocar el factor que no es primo, y Juan Luis se lo explicó. Pero el «No» se pinta de verde y el
 aviso del paso dos es una línea discreta: la 208 (MEDIO, 45 min, sin precondición, toca solo `practicas/arbol/` y su test) lo hace
 visible sin cambiar qué se puntúa. Puede ir en paralelo con la 205 (ficheros distintos).
+
+## Alta del 17-11: tarea 209 (coordinadora s-20261116T124745-d0ed648f)
+
+Por encargo de Juan Luis (17-11), del punto 3 de «Fuera del repositorio» de la ENTREGA de la 205: el informe de actividad (rutina
+de las 21:30 y pestaña «Hoy» del panel) no lee los ejercicios de reto, así que quien solo hace el reto sale como que no ha entrado.
+La 209 (MEDIO, 1 h, plazo vie 27-11, toca `herramientas/informe-actividad.mjs`, su test y, si hace falta, `practicas/profesor-hoy.js`)
+los incluye marcados, cuenta su actividad sin meterlos en los puntos ni en «completa», no lanza alertas de dificultad por un reto y
+añade la nota de la app (base + extra) a cada alumno. Los puntos 1 y 2 de esa lista (lanzador y `atender-correo`) los hizo la
+coordinadora el 17-11, fuera del repositorio. Sigue sin hacer el párrafo del reto en `docs/practicas-guia-profesor.md`.
