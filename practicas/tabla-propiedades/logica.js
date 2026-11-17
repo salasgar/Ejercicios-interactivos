@@ -245,12 +245,15 @@ export function generarNivel(rng, nivel, anterior = null) {
 }
 
 /** Una tabla a mano por nivel, por si el azar no diera con ninguna (el test comprueba que nunca hace falta). */
-function reserva(nivel) {
+export function reserva(nivel) {
+  // Sacadas del propio generador (semillas fijas): cada casilla tiene 4 o más números posibles, cada número
+  // aparece una sola vez (las piezas se identifican por su valor) y el nivel 4 lleva etiquetas difíciles.
+  // El test las pasa por las mismas reglas que las tablas del generador.
   const tablas = {
-    1: { filas: ['par', 'impar'], cols: ['menor:50', 'mayor:50', 'multiplo:5'], celdas: [[4, 60, 10], [3, 51, 15]] },
-    2: { filas: ['par', 'impar'], cols: ['primo', 'compuesto', 'menor:30', 'mayor:60'], celdas: [[2, 4, 8, 62], [3, 9, 5, 65]] },
-    3: { filas: ['par', 'impar', 'primo'], cols: ['menor:50', 'mayor:50', 'multiplo:3'], celdas: [[4, 52, 6], [9, 51, 3], [7, 53, 3]] },
-    4: { filas: ['par', 'impar', 'primo', 'cuadrado'], cols: ['menor:50', 'mayor:50', 'multiplo:3'], celdas: [[4, 52, 6], [9, 51, 3], [7, 53, 3], [1, 64, 9]] },
+    1: { filas: ['mayor:50', 'menor:70'], cols: ['par', 'multiplo:5', 'impar'], celdas: [[58, 80, 83], [38, 10, 43]] },
+    2: { filas: ['mayor:40', 'compuesto'], cols: ['multiplo:3', 'impar', 'mayor:80', 'par'], celdas: [[51, 79, 93, 96], [27, 91, 92, 74]] },
+    3: { filas: ['compuesto', 'impar', 'multiplo:6'], cols: ['menor:40', 'multiplo:9', 'mayor:50'], celdas: [[26, 54, 70], [31, 81, 57], [30, 72, 84]] },
+    4: { filas: ['multiplo:3', 'impar', 'multiplo:7', 'menor:70'], cols: ['mayor:40', 'compuesto', 'ndivisores:4'], celdas: [[87, 33, 57], [43, 55, 27], [84, 70, 21], [44, 52, 14]] },
   }[nivel];
   const { nF, nC, fijas, puntos } = NIVELES[nivel - 1];
   const ids = [...tablas.filas, ...tablas.cols];

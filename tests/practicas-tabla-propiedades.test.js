@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
   NIVELES, OBJETIVO, MAXIMO, ETIQUETAS, TRIANGULARES, nivelDePuntos, cumple, nombreEtiqueta, razon, etiquetaPorId,
-  corregir, estaCompleta, generarNivel, generar, clave, infografiasDe, divisoresDe,
+  corregir, estaCompleta, generarNivel, generar, reserva, clave, infografiasDe, divisoresDe,
 } from '../practicas/tabla-propiedades/logica.js';
 import { TX, ENTRE } from '../practicas/tabla-propiedades/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
@@ -116,6 +116,34 @@ test('generador: cada nivel con su tamaño, sus piezas y su dificultad; nunca ha
       assert.equal(item.etiquetas.includes('triangular'), nivel === 4 && item.etiquetas.includes('triangular'));
       JSON.parse(JSON.stringify(item));
     }
+  }
+});
+
+test('reserva: las cuatro tablas de reserva pasan las mismas reglas que las del generador', () => {
+  for (const { nivel, nF, nC, fijas, puntos } of NIVELES) {
+    const item = reserva(nivel);
+    const { filas, cols, celdas } = item.diseno;
+    assert.deepEqual([item.nF, item.nC, item.fijas, item.puntos], [nF, nC, fijas, puntos]);
+    assert.equal(filas.length, nF);
+    assert.equal(cols.length, nC);
+    assert.equal(item.numeros.length, nF * nC);
+    // Las piezas se identifican por su valor: sin números repetidos, o quedaría una casilla sin pieza.
+    assert.equal(new Set(item.numeros).size, item.numeros.length, `nivel ${nivel}: números repetidos`);
+    assert.ok(item.numeros.every(n => Number.isInteger(n) && n >= 1 && n <= MAXIMO));
+    assert.deepEqual(celdas.flat().sort((a, b) => a - b), [...item.numeros].sort((a, b) => a - b));
+    assert.ok(corregir(item, item.diseno).ok, `nivel ${nivel}: la reserva tiene que ser solución`);
+    for (let i = 0; i < nF; i++) for (let j = 0; j < nC; j++) {
+      assert.ok(cumple(filas[i], celdas[i][j]) && cumple(cols[j], celdas[i][j]), `nivel ${nivel}: ${celdas[i][j]} en ${filas[i]} × ${cols[j]}`);
+    }
+    for (const f of filas) for (const c of cols) assert.ok(todos.filter(n => cumple(f, n) && cumple(c, n)).length >= 4, `nivel ${nivel}: ${f} × ${c}`);
+    assert.ok(!(filas.includes('par') && cols.includes('impar')) && !(filas.includes('impar') && cols.includes('par')));
+    for (const id of item.etiquetas) assert.ok(!item.numeros.every(n => cumple(id, n)), `nivel ${nivel}: ${id} no separa nada`);
+    const E = item.etiquetas.map(etiquetaPorId);
+    for (let i = 0; i < E.length; i++) for (let j = i + 1; j < E.length; j++) assert.notDeepEqual(E[i].tiene, E[j].tiene, `${E[i].id} y ${E[j].id}`);
+    const grados = E.map(e => e.dificultad);
+    if (nivel === 1) assert.ok(grados.every(g => g === 'facil'));
+    if (nivel === 2 || nivel === 3) assert.ok(grados.every(g => g !== 'dificil') && grados.includes('media'));
+    if (nivel === 4) assert.ok(grados.includes('dificil'), 'el nivel 4 de reserva necesita una etiqueta difícil');
   }
 });
 
@@ -261,6 +289,11 @@ test('feedback: las frases del reparto (51 = 3 · 17, 36 tiene 9 divisores, 45 y
   assert.equal(razon('triangular', 16, 'es'), '16 no es triangular: los triangulares hasta 100 son 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78 y 91');
   assert.equal(razon('cuadrado', 20, 'es'), '20 no es un cuadrado perfecto: está entre 4 · 4 = 16 y 5 · 5 = 25');
   assert.equal(razon('multiplo:7', 52, 'es'), '52 no es múltiplo de 7: 52 : 7 no es exacta (da 7 y sobran 3)');
+  assert.equal(razon('multiplo:7', 15, 'es'), '15 no es múltiplo de 7: 15 : 7 no es exacta (da 2 y sobra 1)');
+  assert.match(razon('divisor:60', 65, 'es'), /\(65 es mayor que 60\)$/);
+  assert.match(razon('divisor:60', 65, 'en'), /\(65 is greater than 60\)$/);
+  assert.equal(TX.pantalla.faltan.es(1), 'Falta 1 pieza por colocar.');
+  assert.equal(TX.pantalla.faltan.es(3), 'Faltan 3 piezas por colocar.');
   assert.equal(razon('multiplo:11', 5, 'en'), '5 is not a multiple of 11: 5 ÷ 11 is not exact (5 is less than 11)');
   assert.equal(razon('par', 37, 'es'), '37 no es par: acaba en 7');
   assert.equal(razon('mayor:50', 50, 'es'), '50 no es mayor que 50: es igual que 50');

@@ -41,7 +41,7 @@ export const TX = {
       en: (n, p, igual) => `${n} is not less than ${p}: ${igual ? `it is equal to ${p}` : `${n} > ${p}`}`,
     },
     multiplo: {
-      es: (n, p, q, r, e) => `${n} no es múltiplo de ${p}: ${n} ${e} ${p} no es exacta${q === 0 ? ` (${n} es menor que ${p})` : ` (da ${q} y sobran ${r})`}`,
+      es: (n, p, q, r, e) => `${n} no es múltiplo de ${p}: ${n} ${e} ${p} no es exacta${q === 0 ? ` (${n} es menor que ${p})` : ` (da ${q} y ${r === 1 ? 'sobra' : 'sobran'} ${r})`}`,
       en: (n, p, q, r, e) => `${n} is not a multiple of ${p}: ${n} ${e} ${p} is not exact${q === 0 ? ` (${n} is less than ${p})` : ` (${q} remainder ${r})`}`,
     },
     primo: { es: (n, d, c) => `${n} no es primo: ${n} = ${d} · ${c}`, en: (n, d, c) => `${n} is not prime: ${n} = ${d} · ${c}` },
@@ -58,8 +58,8 @@ export const TX = {
       en: (n, k, a, k1, b) => `${n} is not a perfect square: it is between ${k} · ${k} = ${a} and ${k1} · ${k1} = ${b}`,
     },
     divisor: {
-      es: (n, p, e) => `${n} no es divisor de ${p}: ${p} ${e} ${n} no es exacta`,
-      en: (n, p, e) => `${n} is not a divisor of ${p}: ${p} ${e} ${n} is not exact`,
+      es: (n, p, e) => `${n} no es divisor de ${p}: ${p} ${e} ${n} no es exacta${n > p ? ` (${n} es mayor que ${p})` : ''}`,
+      en: (n, p, e) => `${n} is not a divisor of ${p}: ${p} ${e} ${n} is not exact${n > p ? ` (${n} is greater than ${p})` : ''}`,
     },
     ndivisores: {
       es: (n, k, m, l) => `${n} no tiene ${k} divisores: tiene ${m} ${sn(m, 'divisor', 'divisores')} (${l})`,
@@ -104,7 +104,7 @@ export const TX = {
     numeros: { es: 'Números', en: 'Numbers' },
     hueco: { es: 'hueco', en: 'space' },
     faltan: {
-      es: k => `Faltan ${k} ${sn(k, 'pieza', 'piezas')} por colocar.`,
+      es: k => (k === 1 ? 'Falta 1 pieza por colocar.' : `Faltan ${k} piezas por colocar.`),
       en: k => `${k} ${sn(k, 'piece is', 'pieces are')} still to be placed.`,
     },
     listo: { es: 'Todo colocado: pulsa «Comprobar».', en: 'Everything is placed: press "Check".' },

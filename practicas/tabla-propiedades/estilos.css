@@ -28,6 +28,20 @@
 .tp-hueco .tp-pieza { width: 100%; box-shadow: none; }
 /* Cabeceras: la letra baja con el ancho (a 375 px, «Compuesto» en una columna de unos 66 px). */
 .tp-hueco--etiqueta .tp-pieza--etiqueta { font-size: clamp(.6rem, 2.9vw, .82rem); }
+/* Móvil (320-400 px): la tabla de 4 columnas (nivel 2) deja unos 60 px por cabecera y «Compuesto» tiene que caber entera
+   (el test de la 206 mide las 38 etiquetas en es y en): márgenes laterales más estrechos, cabeceras con borde y relleno
+   mínimos y la letra de la cabecera baja con el ancho, sin bajar de 9 px (.53rem). */
+@media (max-width: 400px) {
+  .app { padding-left: .5rem; padding-right: .5rem; }
+  .tarjeta.ejercicio { padding-left: .5rem; padding-right: .5rem; }
+  .tp-tabla { gap: 3px; }
+  .tp-hueco--etiqueta { border-width: 1px; }
+  .tp-hueco--etiqueta .tp-pieza--etiqueta { padding: .1rem 0; font-size: clamp(.53rem, 2.5vw, .82rem); }
+}
+@media (max-width: 340px) {
+  .app { padding-left: .3rem; padding-right: .3rem; }
+  .tarjeta.ejercicio { padding-left: .35rem; padding-right: .35rem; }
+}
 .tp-pieza:disabled { opacity: 1; cursor: default; }
 .tp-pieza--fija { background: var(--primario-oscuro); }
 .tp-pieza--elegida { outline: 3px solid #facc15; outline-offset: 1px; transform: scale(1.04); }
