@@ -122,6 +122,7 @@ Sobre el motor y la pantalla de la 199, con `aritmeticaDecimales({ cifras: 3, ne
 - (de la coordinadora) `1 : 0,3` o `2 : 3` no dan un decimal exacto: con «todas las agrupaciones se pueden», la expresión se
   descarta. Con los divisores de la U5 (2, 4, 5, 8, 0,5, 0,25, 0,2) el generador encuentra ítems enseguida; con cualquier divisor,
   cae mucho en la reserva. Cuenta las caídas.
+- (de la 202, 17-11) **Para medir a 375 px en Chrome headless no hace falta CDP**: `--window-size` se queda en ~700 px. Una página con un `<iframe style="width:375px">` que cargue un marco con los CSS reales y pinte el editor (`P.crearEditor` con `api = {tt, idioma}`) aplica el `@media (max-width: 400px)`; el marco escribe el resultado en `document.title` y se lee con `--dump-dom --virtual-time-budget`. Servidor: `python3 -m http.server` sobre una carpeta del scratchpad con enlaces simbólicos a `practicas/` y `css/`. Detecta «renglón partido» por la altura de `.expr` (los `top` de las celdas difieren siempre por el `align-items: center`).
 - (de la 130, 13-11) **Un ejemplo inventado puede ser un caso de examen**: antes de comitear la ENTREGA o un test, busca tus decimales
   en las claves de los exámenes (pasó tres veces en la 130).
 - (de la coordinadora, 13-11) Los `.tex` de los exámenes semanales de la U5 se llaman `examen-u5-semanaN*.tex` desde el 9-11: un guion
