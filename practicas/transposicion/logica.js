@@ -10,6 +10,7 @@
 
 import { Fraccion } from '../_comun/fracciones.js';
 import { deEcuacion, ERRORES_TIPICOS, huella } from '../_comun/algebra.js';
+import { HUELLAS_ECUACIONES, HUELLAS_EJ1 } from './reserva.js';
 
 const MENOS = '−';
 
@@ -63,12 +64,11 @@ export const ERRORES_PROPIOS = {
 export const nombreError = id => ERRORES_TIPICOS[id]?.nombre ?? ERRORES_PROPIOS[id];
 
 // ─── Casos reservados (hoja y examen) ─────────────────────────────────────────────────────────
-// A fecha 2026-11-09 la hoja y el examen de la semana 2 de la U6 no existen (no hay carpeta
-// `hojas-de-ejercicios/` ni `exámenes-semanales/`): no hay nada que excluir. Si se escriben, sus
-// ecuaciones se añaden aquí por la huella FNV-1a de su forma canónica (`huellaCanonica` de
-// `_comun/algebra.js`), calculada fuera del repositorio y sin escribir nunca el caso en claro.
+// Hoja 2 y exámenes de la semana 2 (y las hojas 1 y 3): solo por huella FNV-1a, en `reserva.js`; nunca el caso en claro.
 
-export const HUELLAS_RESERVADAS = new Set([]);
+export const HUELLAS_RESERVADAS = HUELLAS_ECUACIONES;
+export const HUELLAS_RESERVADAS_EJ1 = HUELLAS_EJ1;
+export const esReservadoEj1 = partida => HUELLAS_EJ1.has(huella(partida));
 /** La huella de una ecuación escrita como texto (forma canónica: `x + 3 = 10` y `3 + x = 10`, la misma). */
 export const huellaDe = texto => huella(deEcuacion(texto).clave());
 export const esReservado = texto => HUELLAS_RESERVADAS.has(huellaDe(texto));
@@ -125,6 +125,7 @@ export function generarOperador(rng) {
     const a = forma === 'suma' || forma === 'resta' ? rng.entero(2, 15) : rng.entero(2, 9);
     const b = forma === 'suma' || forma === 'resta' ? rng.entero(2, 15) : rng.entero(2, 9);
     const f = FORMAS_OP[forma](a, b);
+    if (esReservadoEj1(f.partida(f.c))) continue;
     // Una sola operación de las cuatro tiene que hacer verdadera la igualdad de llegada.
     if (OPS.filter(op => verdadera(op, f.izq, f.der, f.b)).length !== 1) continue;
     return {
@@ -156,7 +157,7 @@ export function generarHueco(rng) {
       const c = rng.entero(2, Math.min(12, p - 1)), d = p - c;
       it = { partida: `${a} · ${b} ${MENOS} ${c} = ${d}`, llegada: `${a} · ${b} = ${d} + ${HUECO}`, respuesta: c };
     }
-    if (it.respuesta >= 2) return { tipo: 'hueco', forma, ...it, visibles: (it.partida.match(/\d+/g) ?? []).map(Number) };
+    if (it.respuesta >= 2 && !esReservadoEj1(it.partida)) return { tipo: 'hueco', forma, ...it, visibles: (it.partida.match(/\d+/g) ?? []).map(Number) };
   }
   throw new Error('transposicion: no sale un ítem del ejercicio 1 (hueco)');
 }

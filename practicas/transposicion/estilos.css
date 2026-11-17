@@ -21,3 +21,6 @@ input.campo-numero--valor { display: block; margin: .4rem auto 1rem; --cifras: 6
 }
 .elecciones--operaciones { margin-top: 1rem; }
 .elecciones--operaciones .eleccion { font-size: 1.6rem; }
+
+/* Las ecuaciones de los botones no se parten por dentro (el «−» no se queda solo al final de la línea). */
+.eleccion .cuenta { white-space: nowrap; overflow-wrap: normal; }

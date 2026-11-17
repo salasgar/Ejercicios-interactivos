@@ -87,30 +87,28 @@ const hizo = {
     return i === 'es' ? `has pasado el ${k} sin cambiar la operación.` : `you moved the ${k} without changing the operation.`;
   }),
   'olvida-pasar': bi((i, it) => {
-    if (it.forma === 'cociente') return i === 'es' ? `has olvidado pasar el ${it.n}: la x aún está dividida entre ${it.n}.` : `you forgot to move the ${it.n}: x is still divided by ${it.n}.`;
+    if (it.forma === 'cociente') return i === 'es' ? `has olvidado pasar el ${it.n}, así que la x aún está dividida entre ${it.n}.` : `you forgot to move the ${it.n}, so x is still divided by ${it.n}.`;
     const k = Math.abs(it.k);
-    return i === 'es' ? `has olvidado pasar el ${k} al otro lado: la x aún no está sola.` : `you forgot to move the ${k} across: x is not alone yet.`;
+    return i === 'es' ? `has olvidado pasar el ${k} al otro lado, así que la x aún no está sola.` : `you forgot to move the ${k} across, so x is not alone yet.`;
   }),
   'signo-de-la-solucion': bi((i, it) => {
-    const s = solucionDe(it);
-    return i === 'es' ? `has perdido el signo: ${c(ital(linea(it)))} es negativo (${val(s)}).` : `you lost the sign: ${c(ital(linea(it)))} is negative (${val(s)}).`;
+    return i === 'es' ? `has perdido el signo. La cuenta bien hecha es ${c(ital(linea(it)))}.` : `you lost the sign. The correct calculation is ${c(ital(linea(it)))}.`;
   }),
   'signo-cambiado': bi((i, it) => {
-    const s = solucionDe(it);
-    return i === 'es' ? `has cambiado el signo: ${c(ital(linea(it)))} es positivo (${val(s)}).` : `you changed the sign: ${c(ital(linea(it)))} is positive (${val(s)}).`;
+    return i === 'es' ? `has cambiado el signo. La cuenta bien hecha es ${c(ital(linea(it)))}.` : `you changed the sign. The correct calculation is ${c(ital(linea(it)))}.`;
   }),
   'pasar-factor-restando': bi((i, it) => (i === 'es'
-    ? `un número que multiplica a la x no pasa restando: pasa dividiendo.`
-    : `a number that multiplies x does not move across as a subtraction: it moves across as a division.`)),
+    ? `un número que multiplica a la x no pasa restando, sino dividiendo.`
+    : `a number that multiplies x does not move across as a subtraction, but as a division.`)),
   'multiplicar-en-vez-de-dividir': bi(i => (i === 'es'
     ? `un número que multiplica a la x pasa dividiendo, no multiplicando.`
     : `a number that multiplies x moves across as a division, not as a multiplication.`)),
   'invertir-coeficiente': bi((i, it) => (i === 'es'
-    ? `has dividido al revés. Se divide el número de la derecha entre el que multiplica a la x: ${c(`${num(it.c)} : ${sub(it.A)}`)}.`
-    : `you divided the wrong way round. You divide the number on the right by the one that multiplies x: ${c(`${num(it.c)} : ${sub(it.A)}`)}.`)),
+    ? `has dividido al revés. Se divide el número que está solo entre el que multiplica a la x, es decir, ${c(`${num(it.c)} : ${sub(it.A)}`)}.`
+    : `you divided the wrong way round. You divide the number that is on its own by the one that multiplies x, that is, ${c(`${num(it.c)} : ${sub(it.A)}`)}.`)),
   'signo-al-dividir': bi((i, it) => (i === 'es'
-    ? `el ${num(it.A)} pasa dividiendo con su signo: ${c(`${num(it.c)} : ${sub(it.A)}`)}.`
-    : `${num(it.A)} moves across as a division with its sign: ${c(`${num(it.c)} : ${sub(it.A)}`)}.`)),
+    ? `el ${num(it.A)} pasa dividiendo con su signo, es decir, ${c(`${num(it.c)} : ${sub(it.A)}`)}.`
+    : `${num(it.A)} moves across as a division with its sign, that is, ${c(`${num(it.c)} : ${sub(it.A)}`)}.`)),
   'dividir-en-vez-de-multiplicar': bi(i => (i === 'es'
     ? `un número que divide a la x pasa multiplicando, no dividiendo.`
     : `a number that divides x moves across as a multiplication, not as a division.`)),
@@ -120,11 +118,13 @@ const hizo = {
 };
 
 /** Por qué sale ese valor (quien lo usa pone antes lo que ha escrito el alumno). */
+const mayus = t => t.charAt(0).toUpperCase() + t.slice(1);
+
 function porQueDe(i, it, error, valor) {
   const V = val(valor);
   if (error === 'otra-respuesta' || !hizo[error]) return i === 'es' ? `${V} no es la solución. ` : `${V} is not the solution. `;
-  const cuenta = error === 'signo-cambiado' || error === 'signo-de-la-solucion' ? '' : `${cl(ital(linea(it, error)))}: `;
-  return `${V} ${i === 'es' ? 'sale así' : 'comes from this'}: ${cuenta}${hizo[error][i](it, valor)} `;
+  const cuenta = error === 'signo-cambiado' || error === 'signo-de-la-solucion' ? '' : `${cl(ital(linea(it, error)))}. `;
+  return `${V} ${i === 'es' ? 'sale así' : 'comes from this'}: ${cuenta ? `${cuenta}${mayus(hizo[error][i](it, valor))}` : hizo[error][i](it, valor)} `;
 }
 
 const bien = (i, it) => `${regla(it.forma, i)}: ${cl(ital(linea(it)))}. ${i === 'es' ? 'Comprobación' : 'Check'}: ${c(comprobacion(it))} ✓.`;
@@ -189,13 +189,13 @@ export const TX = {
       es: `<h2>Cómo se hace</h2>
         <p>Una igualdad sigue siendo verdadera si <strong>pasas</strong> un número al otro lado y pones la <strong>operación contraria</strong>: lo que suma pasa restando, lo que resta pasa sumando, lo que multiplica pasa dividiendo y lo que divide pasa multiplicando.</p>
         <p>Ejemplo: ${c('3 + 2 = 5')} → ${c('3 = 5 − 2')}. Se comprueba con las cuentas: ${c('5 − 2 = 3')}.</p>
-        <p>Otros ejemplos: ${c('3 · 2 = 6')} → ${c('3 = 6 : 2')}; ${c('6 : 2 = 3')} → ${c('6 = 3 · 2')}.</p>
+        <p>Otros ejemplos: ${c('4 · 2 = 8')} → ${c('4 = 8 : 2')}; ${c('6 : 2 = 3')} → ${c('6 = 3 · 2')}.</p>
         <p>Si hay que pasar varios números, se hace uno a uno: ${c('9 − 2 = 4 + 3')} → ${c('9 − 3 = 4 + 2')}. Y se pasa antes lo que suma o resta que lo que multiplica: ${c('3 · 2 + 4 = 10')} → ${c('3 · 2 = 10 − 4')}.</p>
         <p>Elige la operación, o escribe el número que falta y pulsa <strong>Comprobar</strong>.</p>`,
       en: `<h2>How it works</h2>
         <p>An equality stays true if you <strong>move</strong> (pasar) a number to the other side and use the <strong>opposite operation</strong>: what is added moves across as a subtraction, what is subtracted moves across as an addition, what multiplies moves across as a division and what divides moves across as a multiplication.</p>
         <p>Example: ${c('3 + 2 = 5')} → ${c('3 = 5 − 2')}. Check it with the calculations: ${c('5 − 2 = 3')}.</p>
-        <p>More examples: ${c('3 · 2 = 6')} → ${c('3 = 6 : 2')}; ${c('6 : 2 = 3')} → ${c('6 = 3 · 2')}.</p>
+        <p>More examples: ${c('4 · 2 = 8')} → ${c('4 = 8 : 2')}; ${c('6 : 2 = 3')} → ${c('6 = 3 · 2')}.</p>
         <p>If you have to move several numbers, do it one by one: ${c('9 − 2 = 4 + 3')} → ${c('9 − 3 = 4 + 2')}. And move what is added or subtracted before what is multiplied: ${c('3 · 2 + 4 = 10')} → ${c('3 · 2 = 10 − 4')}.</p>
         <p>Choose the operation, or write the missing number and press <strong>Check</strong>.</p>`,
     },
@@ -215,14 +215,14 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Para <strong>resolver</strong> una ecuación hay que dejar la ${x_} sola. El número que le acompaña pasa al otro lado con la <strong>operación contraria</strong>:</p>
-        <p>${cx('x + 7 = 12')} → ${cx('x = 12 − 7 = 5')}<br>${cx('x − 4 = 10')} → ${cx('x = 10 + 4 = 14')}<br>${cx('3x = 21')} → ${cx('x = 21 : 3 = 7')}<br>${cx('x/5 = 4')} → ${cx('x = 4 · 5 = 20')}</p>
+        <p>${cx('x + 9 = 14')} → ${cx('x = 14 − 9 = 5')}<br>${cx('x − 4 = 10')} → ${cx('x = 10 + 4 = 14')}<br>${cx('3x = 21')} → ${cx('x = 21 : 3 = 7')}<br>${cx('x/5 = 4')} → ${cx('x = 4 · 5 = 20')}</p>
         <p>La solución puede ser negativa: ${cx('x + 9 = 4')} → ${cx('x = 4 − 9 = −5')}.</p>
-        <p><strong>Comprueba siempre</strong>: ${c('5 + 7 = 12')} ✓. Puedes escribir 5 o ${x_} = 5. Pulsa <strong>Comprobar</strong>.</p>`,
+        <p><strong>Comprueba siempre</strong>: ${c('5 + 9 = 14')} ✓. Puedes escribir 5 o ${x_} = 5. Pulsa <strong>Comprobar</strong>.</p>`,
       en: `<h2>How it works</h2>
         <p>To <strong>solve</strong> (resolver) an equation you have to get ${x_} alone. The number next to it moves to the other side with the <strong>opposite operation</strong>:</p>
-        <p>${cx('x + 7 = 12')} → ${cx('x = 12 − 7 = 5')}<br>${cx('x − 4 = 10')} → ${cx('x = 10 + 4 = 14')}<br>${cx('3x = 21')} → ${cx('x = 21 : 3 = 7')}<br>${cx('x/5 = 4')} → ${cx('x = 4 · 5 = 20')}</p>
+        <p>${cx('x + 9 = 14')} → ${cx('x = 14 − 9 = 5')}<br>${cx('x − 4 = 10')} → ${cx('x = 10 + 4 = 14')}<br>${cx('3x = 21')} → ${cx('x = 21 : 3 = 7')}<br>${cx('x/5 = 4')} → ${cx('x = 4 · 5 = 20')}</p>
         <p>The solution can be negative: ${cx('x + 9 = 4')} → ${cx('x = 4 − 9 = −5')}.</p>
-        <p><strong>Always check</strong>: ${c('5 + 7 = 12')} ✓. You can write 5 or ${x_} = 5. Press <strong>Check</strong>.</p>`,
+        <p><strong>Always check</strong>: ${c('5 + 9 = 14')} ✓. You can write 5 or ${x_} = 5. Press <strong>Check</strong>.</p>`,
     },
     instruccion: {
       escribir: { es: 'Resuelve la ecuación. Escribe el valor de x.', en: 'Solve the equation. Write the value of x.' },
@@ -277,7 +277,7 @@ export const TX = {
         <p>Press <strong>Check</strong>.</p>`,
     },
     instruccion: {
-      escribir: { es: 'Resuelve la ecuación. Escribe la solución como número entero o como fracción irreducible.', en: 'Solve the equation. Write the solution as a whole number or as a fraction in its simplest form.' },
+      escribir: { es: 'Resuelve la ecuación. Escribe la solución como número entero o como fracción irreducible (también vale el decimal exacto).', en: 'Solve the equation. Write the solution as a whole number or as a fraction in its simplest form (an exact decimal is also fine).' },
       elegir: { es: '¿Cuál es la solución de la ecuación? Todas las fracciones están simplificadas.', en: 'What is the solution of the equation? All the fractions are in their simplest form.' },
     },
     correcto: bi((i, item) => frente(i, item)),
@@ -306,9 +306,9 @@ export const TX = {
     },
     segunda: { es: 'Escribe la solución correcta.', en: 'Write the correct solution.' },
     /** Estaba bien. */
-    estabaBien: bi((i, item) => `${i === 'es' ? 'Estaba bien' : 'It was right'}: ${bien(i, item)}`),
+    estabaBien: bi((i, item) => `${i === 'es' ? 'Estaba bien' : 'It was right'}. ${bien(i, item)}`),
     /** Estaba mal (con o sin que el alumno la haya corregido bien). */
-    estabaMal: bi((i, item) => `${i === 'es' ? 'Estaba mal' : 'It was wrong'}: ${porQueDe(i, item, item.error, F(item.mostrada))}${bien(i, item)}`),
+    estabaMal: bi((i, item) => `${i === 'es' ? 'Estaba mal' : 'It was wrong'}. ${porQueDe(i, item, item.error, F(item.mostrada))}${bien(i, item)}`),
     /** Estaba mal, lo vio, pero la solución que escribe tampoco vale. */
     correccionMal: bi((i, item, error, valor) => `${porQueDe(i, item, error, valor)}${bien(i, item)}`),
   },

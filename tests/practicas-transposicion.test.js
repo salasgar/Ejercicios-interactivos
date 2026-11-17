@@ -7,12 +7,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { ERRORES_TIPICOS, deEcuacion } from '../practicas/_comun/algebra.js';
+import { ERRORES_TIPICOS, deEcuacion, huella } from '../practicas/_comun/algebra.js';
 import { leerFraccion } from '../practicas/_comun/fracciones.js';
 import { TX, lineaFrente } from '../practicas/transposicion/textos.js';
 import {
   F, solTexto, textoEcuacion, solucionDe, candidatos, linea, comprobacion, leerSolucion,
-  ERRORES_PROPIOS, nombreError, buenos, OPS, HUECO, HUELLAS_RESERVADAS, huellaDe, esReservado,
+  ERRORES_PROPIOS, nombreError, buenos, OPS, HUECO, HUELLAS_RESERVADAS, HUELLAS_RESERVADAS_EJ1, esReservadoEj1, huellaDe, esReservado,
   generarConNumeros, generarOperador, generarHueco, generarUnaOperacion, generarDosOperaciones, generarFrente, generarComprueba,
   errorDeConNumeros, errorDeUnaOperacion, errorDeDosOperaciones, errorDeFrente, errorDeCorrige, segundoPaso, textoFrente, claveDe,
 } from '../practicas/transposicion/logica.js';
@@ -474,6 +474,8 @@ test('las introducciones y los textos fijos están en los dos idiomas y respetan
 test('los casos reservados no salen nunca (por huella de la forma canónica) y la huella no depende del orden', () => {
   assert.equal(huellaDe('x + 7 = 12'), huellaDe('7 + x = 12'));
   assert.notEqual(huellaDe('x + 7 = 12'), huellaDe('x + 7 = 13'));
+  const guardadas = [...HUELLAS_RESERVADAS];
+  HUELLAS_RESERVADAS.clear();
   const SEMILLA = 61;
   const casosDe = (generar, n) => lote(generar, SEMILLA, n).map(it => (it.ecuacion ? it.ecuacion : it.otra ? textoFrente(it) : textoEcuacion(it)));
   const reservado = 'x + 7 = 12';
@@ -491,8 +493,7 @@ test('los casos reservados no salen nunca (por huella de la forma canónica) y l
     const par = '3x = 12', g = huellaDe(par);
     HUELLAS_RESERVADAS.add(g);
     assert.equal(casosDe(generarFrente, 20000).filter(t => huellaDe(t) === g).length, 0, 'ej4 saca un caso reservado');
-    HUELLAS_RESERVADAS.delete(f); HUELLAS_RESERVADAS.delete(g);
-  } finally { HUELLAS_RESERVADAS.clear(); }
+  } finally { HUELLAS_RESERVADAS.clear(); for (const h of guardadas) HUELLAS_RESERVADAS.add(h); }
 });
 
 test('la clave de cada ítem distingue ítems distintos y es estable', () => {
@@ -518,20 +519,22 @@ test('ni «×», ni «1x», ni dos letras, ni otra incógnita que x en las ecuac
 
 // ─── Revisión 191 (hallazgo 1): el signo que nombra el feedback es el del número que nombra ────
 
-test('el feedback de signo dice «positivo/negativo» según el signo de la solución, en las cuatro formas y los dos idiomas', () => {
-  const PALABRA = /\b(es|is) (positivo|negativo|positive|negative) \(([^)]*)\)/g;
+test('el feedback de signo enseña la cuenta bien hecha, con el signo de la solución, en las cuatro formas y los dos idiomas', () => {
+  const FRASE = /(?:es|is) (x = [^.]*?)\. /;
   const signoDeTexto = t => (/^[−-]/.test(t.trim()) ? -1 : 1);
   let vistos = 0, vistosProducto = 0, negativosProducto = 0;
   const formas = new Set();
   const revisa = (it, error, valor, donde) => {
     for (const idioma of ['es', 'en']) {
       const t = sinHtml(TX.ej2.por_que[idioma](it, error, valor));
-      for (const m of t.matchAll(PALABRA)) {
-        const dice = /^(positivo|positive)$/.test(m[2]) ? 1 : -1;
-        assert.equal(dice, signoDeTexto(m[3]), `${donde} ${idioma}: «${m[0]}» en ${t}`);
-        assert.equal(dice, Math.sign(solucionDe(it).num), `${donde} ${idioma}: signo de la solución en ${t}`);
-        vistos++;
-      }
+      const m = FRASE.exec(t);
+      assert.ok(m, `${donde} ${idioma}: sin la cuenta bien hecha en ${t}`);
+      const resultado = m[1].split(' = ').pop();
+      assert.equal(signoDeTexto(resultado), Math.sign(solucionDe(it).num), `${donde} ${idioma}: signo de la cuenta en ${t}`);
+      const palabra = error === 'signo-de-la-solucion' ? /perdido|lost/ : /cambiado|changed/;
+      assert.ok(palabra.test(t), `${donde} ${idioma}: el error no se nombra en ${t}`);
+      assert.ok(!/positiv|negativ/.test(t), `${donde} ${idioma}: repite el signo en ${t}`);
+      vistos++;
     }
   };
   for (const item of lote(generarUnaOperacion, 61)) {
@@ -555,4 +558,59 @@ test('el feedback de signo dice «positivo/negativo» según el signo de la solu
   }
   assert.ok(vistos > 200, `pocos casos de signo: ${vistos}`);
   assert.ok(formas.has('producto') && vistosProducto > 50 && negativosProducto > 10, `producto: ${vistosProducto}/${negativosProducto}`);
+});
+
+// ─── Reabierta de la 157: la hoja 2, el examen 2 y las hojas 1 y 3 no salen (solo huellas) ────
+
+test('la reserva real está cargada y ningún caso reservado sale en 20000 ítems por ejercicio, ej. 1 incluido', () => {
+  assert.ok(HUELLAS_RESERVADAS.size > 100 && HUELLAS_RESERVADAS_EJ1.size > 50, `reserva vacía: ${HUELLAS_RESERVADAS.size}/${HUELLAS_RESERVADAS_EJ1.size}`);
+  const N2 = 20000;
+  const ecs = [
+    ...lote(generarUnaOperacion, 157102, N2).map(textoEcuacion), ...lote(generarDosOperaciones, 157103, N2).map(i => i.ecuacion),
+    ...lote(generarFrente, 157104, N2).map(textoFrente), ...lote(generarComprueba, 157105, N2).map(textoEcuacion),
+  ];
+  assert.equal(ecs.filter(esReservado).length, 0, 'sale una ecuación reservada');
+  const ej1 = lote(generarConNumeros, 157101, N2);
+  assert.equal(ej1.filter(i => HUELLAS_RESERVADAS_EJ1.has(huella(i.partida))).length, 0, 'el ej. 1 saca una igualdad reservada');
+  assert.ok(new Set(ej1.map(claveDe)).size > 150, 'el ej. 1 se queda sin variedad');
+  for (const [gen, sem] of [[generarUnaOperacion, 3], [generarDosOperaciones, 4], [generarFrente, 5], [generarComprueba, 6]]) {
+    assert.ok(new Set(lote(gen, 157200 + sem, 3000).map(claveDe)).size > 150, 'sin variedad');
+  }
+});
+
+test('el gancho del ej. 1 funciona (con una huella inventada, no un caso)', () => {
+  const rng = crearRng(9);
+  const vistas = lote(generarOperador, 9, 3000).map(i => i.partida);
+  const elegida = vistas[0];
+  assert.ok(vistas.filter(p => p === elegida).length > 3, 'la partida de prueba no sale sin reservar');
+  const h = huella(elegida);
+  HUELLAS_RESERVADAS_EJ1.add(h);
+  try {
+    assert.ok(esReservadoEj1(elegida));
+    assert.equal(lote(generarOperador, 9, 3000).filter(i => i.partida === elegida).length, 0);
+    const hu = lote(generarHueco, 10, 3000);
+    const e2 = hu[0].partida; HUELLAS_RESERVADAS_EJ1.add(huella(e2));
+    assert.equal(lote(generarHueco, 10, 3000).filter(i => i.partida === e2).length, 0);
+    HUELLAS_RESERVADAS_EJ1.delete(huella(e2));
+  } finally { HUELLAS_RESERVADAS_EJ1.delete(h); }
+});
+
+test('el feedback no encadena dos puntos ni deja mayúscula tras ellos, y «el número de la derecha» solo se dice con la x a la izquierda', () => {
+  for (const idioma of ['es', 'en']) {
+    for (const item of [...lote(generarUnaOperacion, 301, 800), ...lote(generarFrente, 302, 800).map(i => ({ forma: 'producto', A: i.A, c: i.c, ...{} }))]) {
+      for (const c of candidatos(item).filter(k => k.valor)) {
+        const t = sinHtml(TX.ej2.por_que[idioma](item, c.error, c.valor));
+        assert.ok(((t.match(/:/g) ?? []).length) <= 1 + (/ : /.test(t) ? (t.match(/ : /g) ?? []).length : 0), `dos puntos encadenados: ${t}`);
+        assert.ok(!/: [A-ZÁÉÍÓÚ]/.test(t.replace(/^[^:]*: /, '')), `mayúscula tras dos puntos: ${t}`);
+        assert.ok(!/de la derecha|on the right/.test(t) || !item.delante, t);
+      }
+    }
+  }
+  for (const item of lote(generarComprueba, 303, 1500)) {
+    for (const idioma of ['es', 'en']) {
+      const t = sinHtml(item.buena ? TX.ej5.estabaBien[idioma](item) : TX.ej5.estabaMal[idioma](item));
+      assert.ok(!/^[^.]*: [A-ZÁÉÍÓÚ]/.test(t), `mayúscula tras «:»: ${t}`);
+      assert.ok(!/de la derecha|on the right/.test(t), `lado fijo en el feedback: ${t}`);
+    }
+  }
 });
