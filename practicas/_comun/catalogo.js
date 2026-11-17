@@ -126,8 +126,8 @@ export const CATALOGO = [
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // Unidad 6, Algebra (PU2, tareas 145-155; filas puestas por la 144 el 2026-11-08, con un esqueleto en
   // cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de la semana (156-159).
-  { id: 69, slug: 'traduce', ruta: 'traduce/', unidad: 6, nombre: { es: 'Del enunciado al álgebra', en: 'From words to algebra' }, nEjercicios: 4, disponible: false },
-  { id: 70, slug: 'valor-numerico', ruta: 'valor-numerico/', unidad: 6, nombre: { es: 'Valor numérico', en: 'Evaluate' }, nEjercicios: 3, disponible: false },
+  { id: 69, slug: 'traduce', ruta: 'traduce/', unidad: 6, nombre: { es: 'Del enunciado al álgebra', en: 'From words to algebra' }, nEjercicios: 4, disponible: true },
+  { id: 70, slug: 'valor-numerico', ruta: 'valor-numerico/', unidad: 6, nombre: { es: 'Valor numérico', en: 'Evaluate' }, nEjercicios: 3, disponible: true },
   { id: 71, slug: 'terminos-semejantes', ruta: 'terminos-semejantes/', unidad: 6, nombre: { es: 'Términos semejantes', en: 'Like terms' }, nEjercicios: 4, disponible: false },
   { id: 72, slug: 'es-solucion', ruta: 'es-solucion/', unidad: 6, nombre: { es: '¿Es solución?', en: 'Is it a solution?' }, nEjercicios: 4, disponible: false },
   { id: 73, slug: 'transposicion', ruta: 'transposicion/', unidad: 6, nombre: { es: 'Pasa al otro lado', en: 'Move it across' }, nEjercicios: 5, disponible: false },
