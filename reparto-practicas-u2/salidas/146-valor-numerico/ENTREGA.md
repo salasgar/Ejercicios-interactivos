@@ -4,7 +4,7 @@ Commit: a0ebb74. Ficheros: `practicas/valor-numerico/{index.html,practica.js,log
 Probar en 1 minuto: `npm run servir` → http://localhost:8080/practicas/valor-numerico/?probar=1 (sin código) → Empezar.
 
 ## Ejercicios
-1. **Sustituye y calcula**: escribir (número, decimal o fracción; se lee con `deTexto`) o elegir entre cuatro. Expresiones `3x + 2`, `2 + 3x`, `3x − 2`, `10 − 2x`, `2(x − 1)`. x natural, negativo (entre paréntesis al sustituir) o decimal 0,5 / 1,5 / 2,5. Feedback con la cuenta paso a paso del ítem.
+1. **Sustituye y calcula**: escribir (número, decimal o fracción; se lee con `deTexto`) o elegir entre cuatro. Expresiones `3x + 2`, `2 + 3x`, `3x − 2`, `10 − 2x`. x natural, negativo (entre paréntesis al sustituir) o decimal 0,5 / 1,5 / 2,5. Feedback con la cuenta paso a paso del ítem.
 2. **La tabla**: cuatro valores de x distintos (paso 1 o 2), dos huecos; cada hueco se comprueba exacto y se pinta bien/mal; sin valores repetidos en la tabla.
 3. **¿Qué valor?**: «con x = 5, ¿qué expresión vale 15?» entre cuatro expresiones; solo una lo da y cada falsa es una expresión que da N si se calcula con un error típico (trampa a medida).
 

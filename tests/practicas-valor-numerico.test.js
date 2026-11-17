@@ -310,3 +310,15 @@ test('valorDe coincide con el evaluador propio en todas las formas', () => {
     assert.ok(igualR(deItem({ num: valorDe(item.e, item.v).num, den: valorDe(item.e, item.v).den }), evaluar(textoDe(item.e), deItem(item.v))));
   }
 });
+
+test('ej. 1: el texto de la jerarquía dice sumar o restar antes de multiplicar según la expresión', () => {
+  const texto = (e, i) => porQueDe['jerarquia-al-sustituir'][i]({ e, v: F({ num: 2, den: 1 }) }, F({ num: 1, den: 1 }));
+  const mas = { forma: 'lineal', a: 3, b: 2, delante: false };
+  const menos = { forma: 'lineal', a: 3, b: -2, delante: false };
+  const delante = { forma: 'lineal', a: -2, b: 10, delante: true };
+  assert.match(texto(mas, 'es'), /sumar antes de multiplicar/);
+  assert.match(texto(mas, 'en'), /adding before multiplying/);
+  assert.match(texto(menos, 'es'), /restar antes de multiplicar/);
+  assert.match(texto(menos, 'en'), /subtracting before multiplying/);
+  for (const i of ['es', 'en']) assert.doesNotMatch(texto(delante, i), /antes de multiplicar|before multiplying/);
+});

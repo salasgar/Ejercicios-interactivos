@@ -50,10 +50,11 @@ const hizo = {
       : `substituting x by ${numTexto(f.opuesta(), i)} instead of ${numTexto(f, i)}. A negative number is substituted whole, in brackets: ${sustituido(f, i)}. `;
   }),
   // Con el número delante (2 + 3x, 10 − 2x) el error es operar de izquierda a derecha; con el número detrás
-  // (3x + 2) es sumar antes de multiplicar (3 · (x + 2)).
+  // (3x + 2) es sumar antes de multiplicar (3 · (x + 2)) y con 3x − 2, restar antes de multiplicar.
   'jerarquia-al-sustituir': bi((i, e) => {
     const delante = e.delante || e.a < 0;
     if (delante) return i === 'es' ? 'operar de izquierda a derecha. Primero se multiplica; después se suma o se resta. ' : 'working from left to right. First multiply; then add or subtract. ';
+    if (e.b < 0) return i === 'es' ? 'restar antes de multiplicar. Primero se multiplica; después se suma o se resta. ' : 'subtracting before multiplying. First multiply; then add or subtract. ';
     return i === 'es' ? 'sumar antes de multiplicar. Primero se multiplica; después se suma o se resta. ' : 'adding before multiplying. First multiply; then add or subtract. ';
   }),
   'suma-en-vez-de-multiplicar': bi((i, e) => {
