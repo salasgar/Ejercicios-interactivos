@@ -14,6 +14,8 @@ Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
 Actualizado 2026-11-17T00:03Z por s-20261117T000012-5998c175 al cerrar la 202 (LISTA, commit 537d7d5: coloca-decimales cabe a 375 px, 0 partidos en 3000 ítems por idioma; npm test 2422/2422; relevo de s-20261116T233442-f8b796af): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
+Actualizado 2026-11-17T00:10Z por s-20261117T000020-8de6cc06 / s-20261117T000420-3ced434e al cerrar la 145 (b3b0532) y la 146 (1b19e09), reabiertas del 16-11 de la revisión de la 156; npm test 2433/2433: **retoque de las filas 145 y 146** (hay otras sesiones en el árbol; sin regeneración completa).
+
 Actualizado 2026-11-16T23:35Z por s-20261116T233507-987369cb al reclamar la 156 (relevo de s-20261116T133235-a95571ce, caducado 16:02Z sin cierre y sin nada comiteado; precondiciones: 145, 146, 147, 155 LISTAS): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-16T23:32Z por s-20261116T231631-e7593747 al cerrar la 204 (PARCIAL: coloca-fracciones publicada en d1088b9; reabierta la 202 por el ej. 3 partido a 375 px; npm test 2422/2422): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).

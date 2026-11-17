@@ -21,3 +21,10 @@ Destrezas: U6-1C-05, 1C-06 y 1C-07 (los ids son provisionales: F0 sin firmar).
 
 ## Pruebas
 15 tests propios (3000 ítems por ejercicio, evaluador propio con BigInt): valor exacto de lo que se ve, una sola buena, falsas con error nombrado y valor distinto, sin repetidos en la tabla, sin ×, %, 1x, «+ −», x², guion por menos ni separador decimal del otro idioma. `npm test` 1699/1699. Probada en Chrome headless a 375 px y 1100 px, ES y EN, acierto y fallo en los tres ejercicios.
+
+## Reabierta del 16-11 (revisión de la 156)
+- **Sin paréntesis con letra**: `expresion` ya no sortea la forma `parentesis` (es de la sesión 10); quedan A, B y C en los tres ejercicios. El código de la forma sigue en el módulo, sin uso. Los textos del «No lo sé» ya no la nombran. Tests: ningún ítem de 3000 por ejercicio con esa forma.
+- `HUELLAS_RESERVADAS`: **24** huellas (hoja 1, examen 1, repaso del examen 2 y final). Comprobadas contra los ficheros: 22 las reproduzco desde las expresiones de la hoja (11 de 12; 4x + 12 con x = 9 no la puede sacar el generador), del examen 1 (6), del repaso del examen 2 (3) y del final (2); las otras dos las dejo tal como las dio la 156. Test: tamaño 24 y 3000 ítems por ejercicio sin ningún caso reservado.
+- **Feedback de `jerarquia-al-sustituir`**: con el número delante (2 + 3x, 10 − 2x) «operar de izquierda a derecha»; con el número detrás (3x + 2) «sumar antes de multiplicar» (*adding before multiplying*). Test por forma.
+- No se tocan las 11 huellas opcionales (sucesiones, recuadros): lo decide Juan Luis.
+- `npm test` 2433/2433. **Sin probar en navegador**: la sesión no pudo levantar un servidor local; solo cambian lógica y textos, no el DOM. Falta mirar 375 px y ES/EN a ojo.
