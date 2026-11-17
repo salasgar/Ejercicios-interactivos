@@ -72,7 +72,7 @@ export const CASOS_HOJA = new Set([
 ]);
 /** Huellas FNV-1a (`huella`) de las claves de los casos de examen (examen 1 y final): nunca en claro. */
 export const HUELLAS_EXAMEN = new Set([
-  '14cnhm', '154v8ld', '14awfig', '1kjstr4', '18d08kl', '18wzfyj', 'drndjo', 'e1mz8n', 'd7o65q', '1ov6x3m', '1o5nnrr',
+  '14cnhm', '14awfig', '1kjstr4', '18d08kl', '18wzfyj', 'e1mz8n', 'd7o65q', '1ov6x3m',
 ]);
 export const reservado = clave => clave != null && (CASOS_HOJA.has(clave) || HUELLAS_EXAMEN.has(huella(clave)));
 
@@ -164,9 +164,12 @@ function candidatosDeFrase(f, n, correcta) {
   return { tipicas, reserva };
 }
 
+const FRASES_S1_CON_NUMERO = FRASES_S1.filter(f => CON_NUMERO.has(f.id));
+const FRASES_S1_SIN_NUMERO = FRASES_S1.filter(f => !CON_NUMERO.has(f.id));
+
 export function generarElige(rng) {
+  const f = rng.elegir(rng.azar() < 0.5 ? FRASES_S1_CON_NUMERO : FRASES_S1_SIN_NUMERO);
   return sinReservar(() => {
-    const f = rng.elegir(FRASES_S1);
     const n = rng.entero(2, 12);
     const expr = f.expresion(n, L0);
     const { tipicas, reserva } = candidatosDeFrase(f, n, expr);
@@ -461,27 +464,27 @@ const CANTIDADES = [
   { id: 'hermano', n: [2, 9],
     es: n => `Sara tiene x años y su hermano Andrés tiene ${n} años más que ella. ¿Cuántos años tiene Andrés?`,
     en: n => `Sara is x years old and her brother Andrés is ${n} years older than her. How old is Andrés?`,
-    glosa: 'older than (mayor que)', correcta: n => x(1, n), paso: n => `Sara: x; ${n} más: x + ${n}`, paso_en: n => `Sara: x; ${n} more: x + ${n}`,
+    glosa: 'older than (mayor que)', correcta: n => x(1, n), paso: n => `Sara: x; ${n} más`, paso_en: n => `Sara: x; ${n} more`,
     falsas: n => [[x(n), 'mas-como-por'], [x(1, -n), 'mas-y-menos-confundidos'], [x(n + 1), 'otra-expresion']] },
   { id: 'dentro', n: [2, 20],
     es: n => `Sara tiene x años. ¿Cuántos años tendrá dentro de ${n} años?`,
     en: n => `Sara is x years old. How old will she be in ${n} years' time?`,
-    glosa: "in n years' time (dentro de n años)", correcta: n => x(1, n), paso: n => `dentro de ${n} años se suman ${n}: x + ${n}`, paso_en: n => `in ${n} years you add ${n}: x + ${n}`,
+    glosa: "in n years' time (dentro de n años)", correcta: n => x(1, n), paso: n => `dentro de ${n} años se suman ${n}`, paso_en: n => `in ${n} years you add ${n}`,
     falsas: n => [[x(n), 'mas-como-por'], [x(1, -n), 'dentro-y-hace-confundidos'], [x(-1, n), 'menos-que-al-reves']] },
   { id: 'hace', n: [2, 10],
     es: n => `Sara tiene x años. ¿Cuántos años tenía hace ${n} años?`,
     en: n => `Sara is x years old. How old was she ${n} years ago?`,
-    glosa: 'n years ago (hace n años)', correcta: n => x(1, -n), paso: n => `hace ${n} años se restan ${n}: x − ${n}`, paso_en: n => `${n} years ago you take away ${n}: x − ${n}`,
+    glosa: 'n years ago (hace n años)', correcta: n => x(1, -n), paso: n => `hace ${n} años se restan ${n}`, paso_en: n => `${n} years ago you take away ${n}`,
     falsas: n => [[x(1, n), 'dentro-y-hace-confundidos'], [x(n), 'menos-como-por'], [x(-1, n), 'menos-que-al-reves']] },
   { id: 'cuadernos', n: [2, 9],
     es: n => `Un cuaderno cuesta x euros. ¿Cuántos euros cuestan ${n} cuadernos?`,
     en: n => `A notebook costs x euros. How many euros do ${n} notebooks cost?`,
-    glosa: null, correcta: n => x(n), paso: n => `${n} cuadernos de x euros: ${n}x`, paso_en: n => `${n} notebooks at x euros each: ${n}x`,
+    glosa: null, correcta: n => x(n), paso: n => `${n} cuadernos de x euros cada uno`, paso_en: n => `${n} notebooks at x euros each`,
     falsas: n => [[x(1, n), 'por-como-mas'], [x(fraccion(1, n)), 'multiplicar-como-dividir'], [x(1, -n), 'multiplicar-como-restar']] },
   { id: 'caramelos', n: [2, 4],
     es: n => `Emilio tiene x caramelos y José tiene ${n === 2 ? 'el doble' : n === 3 ? 'el triple' : 'el cuádruple'}. ¿Cuántos caramelos tienen entre los dos?`,
     en: n => `Emilio has x sweets and José has ${n === 2 ? 'twice as many' : n === 3 ? 'three times as many' : 'four times as many'}. How many sweets do they have altogether?`,
-    glosa: 'altogether (en total)', correcta: n => x(n + 1), paso: n => `José: ${n}x; entre los dos: x + ${n}x = ${n + 1}x`, paso_en: n => `José: ${n}x; both: x + ${n}x = ${n + 1}x`,
+    glosa: 'altogether (en total)', correcta: n => x(n + 1), paso: n => `José: ${n}x; entre los dos: x + ${n}x`, paso_en: n => `José: ${n}x; both: x + ${n}x`,
     falsas: n => [[x(n), 'solo-uno'], [x(1, n), 'por-como-mas'], [x(1), 'solo-uno']] },
 ];
 

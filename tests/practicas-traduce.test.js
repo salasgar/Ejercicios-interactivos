@@ -104,9 +104,10 @@ test('el alumno puede cambiar de letra al escribir (una sola letra)', () => {
   assert.equal(leerEscrito('2x+3y').ok, false);
 });
 
-test('casos reservados: la clave es la tarea con sus datos y hay 15 de hoja y 11 huellas de examen', () => {
+test('casos reservados: la clave es la tarea con sus datos y hay 15 de hoja y 8 huellas de examen', () => {
   assert.equal(CASOS_HOJA.size, 15);
-  assert.equal(HUELLAS_EXAMEN.size, 11);
+  assert.equal(HUELLAS_EXAMEN.size, 8);
+  for (const k of CASOS_HOJA) assert.equal(HUELLAS_EXAMEN.has(huella(k)), false, 'una huella de examen repite un caso de la hoja');
   assert.equal(reservado('mas-que:9'), true);
   assert.equal(reservado('mas-que:10'), false);
   assert.equal(reservado(null), false);
@@ -203,4 +204,31 @@ test('situaciones: el dinero siempre con dos decimales y sin «veces más»', ()
     vistos++;
   }
   assert.ok(vistos > 1000);
+});
+
+test('variedad: en ningún ejercicio una misma tarea con sus datos pasa del 10 % de 20000 ítems', () => {
+  const M = 20000;
+  for (const [g, semilla] of [[generarElige, 1561], [generarEscribe, 1562], [generarFrase, 1563], [generarSituacion, 1564]]) {
+    const rng = crearRng(semilla);
+    const cuentas = new Map();
+    for (let i = 0; i < M; i++) { const it = g(rng); const k = claveItem(it); cuentas.set(k, (cuentas.get(k) ?? 0) + 1); }
+    for (const [k, c] of cuentas) assert.ok(c / M <= 0.10, `${g.name}: ${k} sale en el ${(100 * c / M).toFixed(1)} %`);
+    if (g === generarElige) {
+      const por = new Map();
+      for (const [k, c] of cuentas) { const pl = k.split('|')[0]; por.set(pl, (por.get(pl) ?? 0) + c); }
+      for (const f of FRASES_S1.filter(f => !['mas-que', 'menos-que', 'doble-mas', 'mitad-menos'].includes(f.id))) {
+        const p = (por.get(f.id) ?? 0) / M;
+        assert.ok(p > 0.07 && p < 0.10, `${f.id} sin número sale en el ${(100 * p).toFixed(1)} %`);
+      }
+    }
+  }
+});
+
+test('la solución de una situación no repite la expresión («E: E»)', () => {
+  for (const it of items(generarSituacion, 73)) {
+    for (const idioma of ['es', 'en']) {
+      const partes = sinTags(it.solucion[idioma]).replace(/\.$/, '').split(': ');
+      for (let i = 1; i < partes.length; i++) assert.notEqual(partes[i], partes[i - 1], `${it.clave}: ${it.solucion[idioma]}`);
+    }
+  }
 });
