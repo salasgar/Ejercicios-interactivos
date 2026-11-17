@@ -88,6 +88,17 @@ Las 4 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - `catalogo.js` lo tocan varias tareas de publicación (130, 131, 140-142, y las 156-159 entre sí): nunca a la vez; mira `.claude/sesiones/` y `git log -3 -- practicas/_comun/catalogo.js`.
 - La portada oculta la U6 hasta el 1-2 (`UNIDADES.desde`): para verla, fecha de prueba en `unidadActual`.
 - Con álgebra, «el mismo caso» es la misma forma canónica (coeficientes como fracciones irreducibles) o la misma ecuación equivalente: la huella se calcula sobre eso, no sobre el texto.
+- (17-11, s-20261117T023530-f7aa1ea7) Tres sesiones para cerrarla: dos se cortaron sin cierre con el cotejo a medias. Lo que se ve en /tmp
+  sobrevive, pero un servidor huérfano de la primera seguía ocupando el puerto 8156 con una copia vieja, y la segunda hizo sus clics contra
+  esa copia sin darse cuenta (su `servidor.log` decía «Address already in use»). Copia de HEAD nueva y puerto libre cada vez (`lsof -iTCP:<puerto>`).
+- Las reabiertas que arreglan deprisa (15-25 min, sin navegador) hay que volver a cotejarlas enteras: la 147 metió casos de examen en claro
+  en su test justo al cumplir «la reserva por huella», y la regla de oro del ej. 4 seguía rota en otra familia de ítems. `grep` del test
+  contra el TSV del examen antes de publicar.
+- Un cotejo por práctica en un subagente (20000 ítems, ~6-17 min cada uno) va bien en paralelo con los clics; `leelo6`, de toda la unidad,
+  contra todo el papel (hojas, exámenes y cuestionarios 1-4, finales), es el más largo.
+- El script de clics elige la buena por `opciones[].correcta`; en las prácticas cuyo ítem lleva `correcta` como cadena (`terminos-semejantes`
+  ej. 1 y 4) da «quería bien, salió mal» falsos: mapea el valor al orden de los botones.
+- Una práctica «para toda la unidad» que no filtra por `sesion` no va en la semana 1: como `leelo5`, con la semana en que ya se ha dado su contenido.
 
 ## Prohibido (propio de esta tarea)
 
