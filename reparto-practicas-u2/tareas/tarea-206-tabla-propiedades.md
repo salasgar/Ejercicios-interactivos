@@ -176,7 +176,11 @@ pieza ya colocada, devolverla a la bandeja, la infografía de «triangular» con
 
 ## Trampas conocidas
 
-- (Ninguna aún. Quien encuentre una, la escribe aquí al cerrar.)
+- **Una etiqueta de pocos números (cuadrado perfecto: 10; triangular: 13) obliga a que 3-4 casillas se llenen con esos pocos**, y el tope del 15 % por número no se cumple en los niveles 3 y 4
+  (≈ 22 % y 46 %); está explicado en la ENTREGA y el test fija topes por nivel. Quien toque el generador: mide con 3000 tablas por nivel antes y después.
+- Un `api.sumar` en el nivel 4 siempre deja 54 puntos (el nivel sale de los puntos y 35 + 19 = 54): la frase de «has completado los cuatro niveles» no necesita leer el contador.
+- Repetir un ejercicio terminado lo reinicia con 0 puntos (lo hace la base), así que la repetición empieza por el nivel 1.
+- El servidor de Python en frío da `ERR_CONNECTION_RESET` en alguna carga; repetir la pasada del navegador.
 
 ## Prohibido
 
