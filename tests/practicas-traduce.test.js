@@ -5,10 +5,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { leerExpresion, huellaCanonica, lineal } from '../practicas/_comun/algebra.js';
+import { leerExpresion, huella, lineal } from '../practicas/_comun/algebra.js';
 import {
   generarElige, generarEscribe, generarFrase, generarSituacion, corregirEscribe, leerEscrito,
-  ESTA_DEFINIDO, COTAS, claveItem, fraseDe, FRASES_S1, CASOS_HOJA, HUELLAS_EXAMEN, reservado,
+  ESTA_DEFINIDO, COTAS, claveItem, fraseDe, FRASES_S1, CASOS_HOJA, HUELLAS_EXAMEN, reservado, esDe,
 } from '../practicas/traduce/logica.js';
 
 const N = 3000;
@@ -104,13 +104,74 @@ test('el alumno puede cambiar de letra al escribir (una sola letra)', () => {
   assert.equal(leerEscrito('2x+3y').ok, false);
 });
 
-test('casos reservados: hooks vacíos pero operativos', () => {
-  assert.equal(CASOS_HOJA.size >= 0, true);
-  const e = lineal(2, 3);
-  HUELLAS_EXAMEN.add(huellaCanonica(e));
-  assert.equal(reservado(e), true);
-  HUELLAS_EXAMEN.delete(huellaCanonica(e));
-  assert.equal(reservado(e), false);
+test('casos reservados: la clave es la tarea con sus datos y hay 15 de hoja y 11 huellas de examen', () => {
+  assert.equal(CASOS_HOJA.size, 15);
+  assert.equal(HUELLAS_EXAMEN.size, 11);
+  assert.equal(reservado('mas-que:9'), true);
+  assert.equal(reservado('mas-que:10'), false);
+  assert.equal(reservado(null), false);
+  // una huella de examen se reconoce por la clave sin que esta esté escrita en el repositorio
+  const k = 'prueba-huella:1';
+  HUELLAS_EXAMEN.add(huella(k));
+  assert.equal(reservado(k), true);
+  HUELLAS_EXAMEN.delete(huella(k));
+  assert.equal(reservado(k), false);
+});
+
+test('ningún ítem de los cuatro ejercicios (3000 cada uno) es un caso reservado', () => {
+  for (const [g, semilla] of [[generarElige, 31], [generarEscribe, 32], [generarFrase, 33], [generarSituacion, 34]]) {
+    for (const it of items(g, semilla)) assert.equal(reservado(it.reserva), false, `${g.name}: ${it.reserva}`);
+  }
+});
+
+test('la reserva es la misma en los dos sentidos y no toca el vocabulario sin número propio', () => {
+  const claves = new Set();
+  for (const [g, semilla] of [[generarElige, 41], [generarEscribe, 42], [generarFrase, 43]]) {
+    for (const it of items(g, semilla)) claves.add(it.reserva);
+  }
+  for (const k of ['mas-que:3', 'menos-que:3', 'doble-mas:3', 'mitad-menos:3', 'doble-menos:3', 'triple-mas:3']) assert.ok(claves.has(k), k);
+  // las construcciones sin número propio no llevan clave
+  for (const it of items(generarElige, 44)) {
+    if (['doble', 'triple', 'mitad', 'tercio', 'siguiente', 'anterior'].includes(it.plantilla)) assert.equal(it.reserva, null, it.plantilla);
+  }
+  for (const it of items(generarEscribe, 45)) if (it.plantilla.startsWith('pareja-')) assert.equal(it.reserva, null);
+});
+
+test('las plantillas de los ejercicios 1 y 2 siguen saliendo todas', () => {
+  for (const [g, semilla] of [[generarElige, 51], [generarEscribe, 52]]) {
+    const vistas = new Set(items(g, semilla).map(i => i.plantilla));
+    for (const f of FRASES_S1) assert.ok(vistas.has(f.id), `${g.name}: falta ${f.id}`);
+  }
+});
+
+test('en español, las frases de dos operaciones llevan coma (una sola lectura)', () => {
+  const textos = [];
+  for (const it of items(generarElige, 61)) textos.push(it.frase.es, it.solucion.es);
+  for (const it of items(generarEscribe, 62)) textos.push(it.frase.es, it.solucion.es);
+  for (const it of items(generarFrase, 63)) for (const o of it.opciones) textos.push(o.frases.es, o.por_que?.es ?? '');
+  assert.ok(textos.length > 9000);
+  for (const t of textos) assert.ok(!/un número (más|menos) /.test(t), t);
+  assert.equal(esDe(FRASES_S1.find(f => f.id === 'doble-mas'), 7), 'el doble de un número, más siete');
+  assert.equal(esDe(FRASES_S1.find(f => f.id === 'mitad-menos'), 4), 'la mitad de un número, menos cuatro');
+  assert.equal(esDe(FRASES_S1.find(f => f.id === 'menos-que'), 4), 'cuatro menos que un número');
+});
+
+test('realismo: la entrada de la feria, de 3,00 € en adelante', () => {
+  assert.ok(COTAS.feria.f[0] >= 3);
+  for (const it of items(generarSituacion, 71)) {
+    if (!it.clave.startsWith('tarifa|feria|') && !it.clave.startsWith('valor|feria|')) continue;
+    assert.ok(+it.clave.split('|')[2] >= 3, it.clave);
+  }
+});
+
+test('situaciones: la solución de las tarifas lleva € y dos decimales, y no hay «yuxtaponer»', () => {
+  for (const it of items(generarSituacion, 72)) {
+    if (it.tipo === 'expresion') {
+      assert.match(it.solucion.es, /La parte fija es \d+,\d\d € y la que depende de \w es \d+,\d\d € por/, claveItem(it));
+      assert.match(it.solucion.en, /The fixed part is €\d+\.\d\d and the part that depends on \w is €\d+\.\d\d times/, claveItem(it));
+    }
+    for (const o of it.opciones) assert.notEqual(o.error, 'yuxtaponer-al-sustituir');
+  }
 });
 
 test('frases: sin ambigüedad en lo que lleva dos operaciones', () => {

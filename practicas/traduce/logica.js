@@ -17,13 +17,20 @@
 //    equivaler a otra ni a la correcta (se comprueba por forma canónica, `Lineal.clave()`).
 //  - Nada de paréntesis con letras (el doble de la suma… es la sesión 10) ni de reducir (x + x).
 //  - Ni sucesiones ni coeficientes decimales: el acta (F0) no está firmada.
-//  - Casos de hoja o de examen: `CASOS_HOJA` (en claro) y `HUELLAS_EXAMEN` (FNV-1a de la forma
-//    canónica, nunca en claro). Al escribirla no existían la hoja ni el examen de la semana 1.
+//  - Casos de hoja o de examen (regla 9): la CLAVE de la reserva es la tarea con sus datos
+//    (`mas-que:9`, `doble-menos:8`, `hermano:4`…), no la expresión, y es la misma en los dos
+//    sentidos (frase → expresión y expresión → frase). `CASOS_HOJA` lleva las claves de la hoja
+//    en claro; `HUELLAS_EXAMEN`, la huella FNV-1a (`huella`) de la clave de cada caso de examen,
+//    nunca en claro. Las construcciones SIN número propio (el doble, el triple, la mitad, la
+//    tercera parte, el siguiente, el anterior, dos consecutivos, dos pares consecutivos, un
+//    número y su triple) NO se reservan: son el vocabulario de la sesión 1, no un caso (como una
+//    palabra en `leelo6`). Cada ítem lleva su `reserva` (la clave, o null).
+//  - En español, las frases de dos operaciones llevan coma («el doble de un número, más siete»).
 
 import { numeroAIngles, numeroAEspanol } from '../../src/ejercicios/palabras.js';
 import { fraccion } from '../_comun/fracciones.js';
 import {
-  lineal, Lineal, FRASES, ERRORES_TIPICOS, distractores, huellaCanonica, leerExpresion,
+  lineal, Lineal, FRASES, ERRORES_TIPICOS, distractores, huella, leerExpresion,
 } from '../_comun/algebra.js';
 
 // ─── Errores propios de la práctica (los de `ERRORES_TIPICOS` se usan tal cual) ───────────
@@ -56,23 +63,32 @@ export const ESTA_DEFINIDO = id => Boolean(nombreDe(id));
 const segunda = { es: t => t.replace(/^Ha /, 'Has '), en: t => `You ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
 const explicaError = (id, idioma) => segunda[idioma](nombreDe(id)[idioma]);
 
-// ─── Casos reservados (hoja y examen de la semana 1: aún no existían al escribirla) ───────
+// ─── Casos reservados (hoja 1, exámenes y final de la unidad 6) ───────────────────────────
 
-/** Formas canónicas (`Lineal.clave()`, en claro) de los casos de la hoja de la semana 1. */
-export const CASOS_HOJA = new Set();
-/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen de la semana 1: nunca en claro. */
-export const HUELLAS_EXAMEN = new Set();
-export const reservado = expr => CASOS_HOJA.has(expr.clave()) || HUELLAS_EXAMEN.has(huellaCanonica(expr));
+/** Claves (tarea con sus datos, en claro) de los casos de la hoja de la semana 1. */
+export const CASOS_HOJA = new Set([
+  'mas-que:9', 'menos-que:6', 'menos-que:11', 'doble-mas:7', 'mitad-menos:4', 'triple-menos:8', 'doble-menos:5', 'triple-menos:6',
+  'menos-que:10', 'doble-menos:9', 'hermano:4', 'dentro:6', 'hace:3', 'cuadernos:5', 'caramelos:2',
+]);
+/** Huellas FNV-1a (`huella`) de las claves de los casos de examen (examen 1 y final): nunca en claro. */
+export const HUELLAS_EXAMEN = new Set([
+  '14cnhm', '154v8ld', '14awfig', '1kjstr4', '18d08kl', '18wzfyj', 'drndjo', 'e1mz8n', 'd7o65q', '1ov6x3m', '1o5nnrr',
+]);
+export const reservado = clave => clave != null && (CASOS_HOJA.has(clave) || HUELLAS_EXAMEN.has(huella(clave)));
 
 function sinReservar(generar) {
   let it;
   for (let i = 0; i < 60; i++) {
     it = generar();
-    if (!reservado(it.expr)) break;
+    if (!reservado(it.reserva)) break;
   }
   const { expr: _e, ...item } = it;
   return item;
 }
+
+/** La clave de reserva de una frase de los ejercicios 1 y 2: solo las construcciones con número propio. */
+const CON_NUMERO = new Set(['mas-que', 'menos-que', 'doble-mas', 'mitad-menos']);
+const reservaDeFrase = (f, n) => (CON_NUMERO.has(f.id) ? `${f.id}:${n}` : null);
 
 // ─── Cosas comunes ────────────────────────────────────────────────────────────────────────
 
@@ -116,6 +132,10 @@ const opcionDeExpresion = (e, error, frase, opts = {}) => {
 // ─── Ejercicio 1 · Elige la expresión (U6-1A-01, 1A-02, 1B-02) ────────────────────────────
 
 /** Las frases de la semana 1: sin parejas (van en el 2), sin paréntesis (sesión 10) y sin reducir (sesión 3). */
+/** La frase en español; las de dos operaciones llevan coma antes de «más» / «menos» (la lectura es única). */
+export const esDe = (f, n) => (f.id === 'doble-mas' ? f.es(n).replace(' más ', ', más ')
+  : f.id === 'mitad-menos' ? f.es(n).replace(' menos ', ', menos ') : f.es(n));
+
 export const FRASES_S1 = FRASES.filter(f => f.expresion(2) !== null && !['doble-de-la-suma', 'suma-consecutivos'].includes(f.id));
 
 const PASO_BASE = { 'doble-mas': { base: () => lineal(2, 0, L0), es: 'el doble', en: 'twice', mas: 'más', plus: 'plus' },
@@ -128,7 +148,7 @@ function solucionDeFrase(f, n, expr) {
     en: ` (${p.en}: ${cuenta(p.base())}; ${p.plus} ${n}: ${cuenta(expr)})`,
   } : { es: '', en: '' };
   return {
-    es: `«${f.es(n)}» se escribe ${cuenta(expr)}${pasos.es}.`,
+    es: `«${esDe(f, n)}» se escribe ${cuenta(expr)}${pasos.es}.`,
     en: `“${f.en(n)}” is written ${cuenta(expr)}${pasos.en}.`,
   };
 }
@@ -155,8 +175,8 @@ export function generarElige(rng) {
       ...falsas(rng, expr, tipicas, reserva).map(({ valor, error }) => opcionDeExpresion(valor, error)),
     ]);
     return {
-      expr, plantilla: f.id, clave: `${f.id}|${n}`, instruccion: 'elige',
-      frase: { es: f.es(n), en: f.en(n) }, glosa: f.glosa,
+      expr, plantilla: f.id, clave: `${f.id}|${n}`, reserva: reservaDeFrase(f, n), instruccion: 'elige',
+      frase: { es: esDe(f, n), en: f.en(n) }, glosa: f.glosa,
       opciones, solucion: solucionDeFrase(f, n, expr), sesion: 1,
     };
   });
@@ -189,7 +209,7 @@ export function generarEscribe(rng) {
       const p = rng.elegir(PAREJAS_S1);
       const expr = p.expresion();
       return {
-        expr, plantilla: `pareja-${p.id}`, clave: `pareja|${p.id}`, instruccion: 'escribe',
+        expr, plantilla: `pareja-${p.id}`, clave: `pareja|${p.id}`, reserva: null, instruccion: 'escribe',
         frase: { es: p.es, en: p.en }, glosa: p.glosa, correcta: expr.aTexto(),
         errores: p.errores().map(([e, error]) => ({ texto: e.aTexto(), error })),
         solucion: { es: `${cuenta(expr)}: ${p.paso.es}.`, en: `${cuenta(expr)}: ${p.paso.en}.` }, sesion: 1,
@@ -200,8 +220,8 @@ export function generarEscribe(rng) {
     const expr = f.expresion(n, L0);
     const { tipicas, reserva } = candidatosDeFrase(f, n, expr);
     return {
-      expr, plantilla: f.id, clave: `${f.id}|${n}`, instruccion: 'escribe',
-      frase: { es: f.es(n), en: f.en(n) }, glosa: f.glosa, correcta: expr.aTexto(),
+      expr, plantilla: f.id, clave: `${f.id}|${n}`, reserva: reservaDeFrase(f, n), instruccion: 'escribe',
+      frase: { es: esDe(f, n), en: f.en(n) }, glosa: f.glosa, correcta: expr.aTexto(),
       errores: [...tipicas, ...reserva].map(({ valor, error }) => ({ texto: valor.aTexto(), error })),
       solucion: solucionDeFrase(f, n, expr), sesion: 1,
     };
@@ -232,6 +252,10 @@ export function corregirEscribe(item, texto) {
 // op '0' (solo k), '+' (kx + n), '-' (kx − n) o 'n-' (n − kx).
 const exprDe = s => (s.op === '0' ? lineal(fr(s.k), 0, L0) : s.op === '+' ? lineal(fr(s.k), s.n, L0)
   : s.op === '-' ? lineal(fr(s.k), -s.n, L0) : lineal(fr(s.k).opuesta(), s.n, L0));
+const NOMBRE_RESERVA = { '1': { '+': 'mas-que', '-': 'menos-que' }, 2: { '+': 'doble-mas', '-': 'doble-menos' },
+  3: { '+': 'triple-mas', '-': 'triple-menos' }, '1/2': { '+': 'mitad-mas', '-': 'mitad-menos' } };
+/** La misma clave que en los ejercicios 1 y 2 (`mas-que:9`); sin ella, lo que no tiene número propio. */
+const reservaDeS = s => { const nom = NOMBRE_RESERVA[s.k]?.[s.op]; return nom ? `${nom}:${s.n}` : null; };
 const claveFrase = s => `${s.k}|${s.n}|${s.op}`;
 
 const MULT = {
@@ -308,7 +332,7 @@ export function generarFrase(rng) {
     };
     const frase = { es: fraseDe(s, 'es'), en: fraseDe(s, 'en') };
     return {
-      expr, plantilla: 'frase', clave: claveFrase(s), instruccion: 'frase',
+      expr, plantilla: 'frase', clave: claveFrase(s), reserva: reservaDeS(s), instruccion: 'frase',
       expresion: mostrar(expr).html, texto: mostrar(expr).texto,
       opciones: rng.barajar([opcion(s, null), ...buenas.map(b => opcion(b.t, b.error))]),
       solucion: { es: `${cuenta(expr)} se lee «${frase.es}».`, en: `${cuenta(expr)} is read “${frase.en}”.` }, sesion: 1,
@@ -328,7 +352,7 @@ const eur = n => ({ es: `${dos(n, 'es')} €`, en: `€${dos(n, 'en')}` });
 export const COTAS = {
   movil: { f: [5, 15], p: [1, 3], c: [2, 12], tope: 60, letra: 'g' },
   taxi: { f: [3, 5], p: [1, 2], c: [2, 30], tope: 70, letra: 'k' },
-  feria: { f: [2, 10], p: [1, 3], c: [2, 10], tope: 40, letra: 'a' },
+  feria: { f: [3, 10], p: [1, 3], c: [2, 10], tope: 40, letra: 'a' },
   bici: { f: [2, 6], p: [2, 4], c: [2, 8], tope: 40, letra: 'h' },
   lapices: { f: [2, 6], p: [1, 2], c: [2, 20], tope: 50, letra: 'n' },
 };
@@ -390,12 +414,12 @@ function generarTarifaExpresion(rng, id, cot) {
     ...falsas(rng, correcta, [], reserva).map(({ valor, error }) => opcionDeExpresion(valor, error, null, o)),
   ]);
   return {
-    expr: correcta, plantilla: `tarifa-${id}`, clave: `tarifa|${id}|${f}|${p}`, tipo: 'expresion', instruccion: 'situacion-expresion', glosa: ctx.glosa,
+    expr: correcta, plantilla: `tarifa-${id}`, clave: `tarifa|${id}|${f}|${p}`, reserva: `${id}:${f}:${p}`, tipo: 'expresion', instruccion: 'situacion-expresion', glosa: ctx.glosa,
     enunciado: unaFrase(ctx.intro(f, p), { es: '', en: '' }), letra: L,
     pregunta: ctx.pregunta(L), opciones,
     solucion: {
-      es: `La parte fija es ${f} y la que depende de ${L} es ${p} por ${L}: ${cuenta(correcta, o)}.`,
-      en: `The fixed part is ${f} and the part that depends on ${L} is ${p} times ${L}: ${cuenta(correcta, o)}.`,
+      es: `La parte fija es ${eur(f).es} y la que depende de ${L} es ${eur(p).es} por ${L}: ${cuenta(correcta, o)}.`,
+      en: `The fixed part is ${eur(f).en} and the part that depends on ${L} is ${eur(p).en} times ${L}: ${cuenta(correcta, o)}.`,
     }, sesion: 1,
   };
 }
@@ -408,7 +432,6 @@ function generarTarifaValor(rng, id, cot) {
   const d = (v, i) => dos(v, i);
   const pool = [
     [(f + p) * c, 'jerarquia-al-sustituir', i => `(${d(f, i)} + ${d(p, i)}) · ${c} = ${d((f + p) * c, i)}`],
-    [f + num(`${p}${c}`), 'yuxtaponer-al-sustituir', i => `${d(f, i)} + ${p}${c} = ${d(f + num(`${p}${c}`), i)}`],
     [p * c, 'solo-lo-variable', i => `${d(p, i)} · ${c} = ${d(p * c, i)}`],
     [f + p + c, 'suma-todo', i => `${d(f, i)} + ${d(p, i)} + ${c} = ${d(f + p + c, i)}`],
     [p + f * c, 'fijo-y-variable-al-reves', i => `${d(p, i)} + ${d(f, i)} · ${c} = ${d(p + f * c, i)}`],
@@ -421,9 +444,10 @@ function generarTarifaValor(rng, id, cot) {
     falsasN.push(opcionNumero(v, error, texto));
     if (falsasN.length === 3) break;
   }
+  if (falsasN.length < 3) return generarTarifaValor(rng, id, cot); // datos que dejan menos de tres errores distintos: otro sorteo
   const expr = new Lineal({ [L]: p }, f, L);
   return {
-    expr, plantilla: `valor-${id}`, clave: `valor|${id}|${f}|${p}|${c}`, tipo: 'valor', instruccion: 'situacion-valor', glosa: ctx.glosa,
+    expr, plantilla: `valor-${id}`, clave: `valor|${id}|${f}|${p}|${c}`, reserva: `${id}:${f}:${p}:${c}`, tipo: 'valor', instruccion: 'situacion-valor', glosa: ctx.glosa,
     enunciado: unaFrase(ctx.intro(f, p), { es: '', en: '' }), letra: L,
     pregunta: ctx.pregunta(c), opciones: rng.barajar([opcionNumero(buena, null, () => ''), ...falsasN]),
     solucion: ['es', 'en'].reduce((o, i) => ({ ...o, [i]: `<span class="cuenta">${d(f, i)} + ${d(p, i)} · ${c} = ${d(f, i)} + ${d(p * c, i)} = ${d(buena, i)}</span>.` }), {}),
@@ -472,7 +496,7 @@ function generarCantidad(rng) {
   ]);
   const pregunta = { es: c.es(n), en: c.en(n) };
   return {
-    expr: correcta, plantilla: `cantidad-${c.id}`, clave: `cantidad|${c.id}|${n}`, tipo: 'cantidad', instruccion: 'situacion-cantidad', glosa: c.glosa,
+    expr: correcta, plantilla: `cantidad-${c.id}`, clave: `cantidad|${c.id}|${n}`, reserva: `${c.id}:${n}`, tipo: 'cantidad', instruccion: 'situacion-cantidad', glosa: c.glosa,
     enunciado: pregunta, pregunta: null, opciones,
     solucion: { es: `${c.paso(n)}: ${cuenta(correcta)}.`, en: `${c.paso_en(n)}: ${cuenta(correcta)}.` }, sesion: 1,
   };
