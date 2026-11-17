@@ -323,3 +323,4 @@ Si paras sin terminar: `$R/hechos/fallos/147--<sid>.md` con hasta dónde llegast
   respuestas correctas; casos de examen en claro en el repositorio.
 
 Duración real (147): ~7 min frente a 1 h estimada; trampa nueva: «perder un signo» solo existe si hay algún negativo detrás del primero de su grupo, y cada error debe caer en un único candidato (el test lo comprueba).
+- (revisión de la 156, 17-11) La clave de la reserva es la **tarea con sus datos**, no la expresión reducida (`x + x + x` de la hoja no quita todo lo que reduce a `3x`); ±1 sin número y los números sueltos no se reservan en el ej. 2. «Perder un signo» = un menos leído como un más en UN término que resta; el ítem del ej. 4 se descarta si dos errores dan el mismo resultado (`−8x − x − x = −8x`). Si cambias el formato de `solucionReducir`, `pasosReduce` de textos.js tiene una regex sobre él.
