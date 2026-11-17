@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-17T08:32Z por s-20261117T082711-35fd2b0f al cerrar la 206 (LISTA, commit 30c0a082: tabla-propiedades a 320-375 px, reserva y textos; npm test 2462/2462; reabierta de la 207): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-17T08:22Z por s-20261117T064522-40c5ab61 al cerrar la 207 (PARCIAL: tabla-propiedades sin publicar; reabierta la 206 por las cabeceras a 375 px; npm test 2461/2461): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-17T06:46Z por s-20261117T064522-40c5ab61 al reclamar la 207 (205 y 206 LISTAS; ni la 203 ni la 204 en curso; catalogo.js, docs y README sin cambios): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-17T02:36Z por s-20261117T023530-f7aa1ea7 al reclamar la 156 
 Actualizado 2026-11-17T00:26Z por s-20261116T235955-7bf1c8ea al cerrar la 206 (LISTA, commit d956422: tabla-propiedades escrita, sin publicar; npm test 2449/2449): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-17T00:03Z por s-20261117T000012-5998c175 al cerrar la 202 (LISTA, commit 537d7d5: coloca-decimales cabe a 375 px, 0 partidos en 3000 ítems por idioma; npm test 2422/2422; relevo de s-20261116T233442-f8b796af): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-17T00:10Z por s-20261117T000020-8de6cc06 / s-20261117T000420-3ced434e al cerrar la 145 (b3b0532) y la 146 (1b19e09), reabiertas del 16-11 de la revisión de la 156; npm test 2433/2433: **retoque de las filas 145 y 146** (hay otras sesiones en el árbol; sin regeneración completa).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -339,14 +339,14 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 203 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con enteros» (`coloca-enteros`, 80), con la propuesta de dónde entra en la tarea semanal de la U3 | tareas/tarea-203-publicar-coloca-enteros.md | **200 LISTA** · no a la vez que la 204 (`catalogo.js`, `README.md`) · plazo jue 3-12 | 1 h | ALTO | 204 (si su precondición se cumple) | catalogo.js (disponible 80), docs U3, README; salidas/203-publicar-coloca-enteros/ | LISTA | terminada 23:15Z (16-nov) · commit e62574e |
 | 204 | Revisión a mano (con clics) y publicación de «Coloca los paréntesis. Con fracciones» (`coloca-fracciones`, 81) y «Con decimales» (`coloca-decimales`, 82), con la propuesta de dónde entran en las tareas semanales de la U4 y la U5 | tareas/tarea-204-publicar-coloca-fracciones-decimales.md | **201 LISTA** · **202 LISTA** · no a la vez que la 203 (`catalogo.js`, `README.md`) · plazo mar 22-12 | 1 h 15 min | ALTO | 203 (si su precondición se cumple) | catalogo.js (disponible 81, 82), docs U4 y U5, README; salidas/204-publicar-coloca-fracciones-decimales/ | LISTA | terminada 06:35Z (17-nov) · commit 173b497 |
 | 205 | Retos con puntos extra en las tareas de la semana (`reto` en la tarea, `api.sumar` y ejercicios sin vidas en la base) | tareas/tarea-205-reto-puntos-extra.md | nadie con `tareas.js`, `base.js`, `contador.js`, `semana.js`, `profesor*.js` · plazo vie 20-11 | 2 h 30 min | ALTO | ninguna (la 206 es MEDIO) | reparto-practicas-u2/salidas/205-reto-puntos-extra/ | LISTA | terminada 18:57Z (16-nov) · commit df972d0 |
-| 206 | Reto de la unidad 2 «Tabla de propiedades» (`tabla-propiedades`, id 83): arrastrar números y etiquetas para formar una tabla de doble entrada, por niveles | tareas/tarea-206-tabla-propiedades.md | **205 LISTA** · ni la 203 ni la 204 en curso (`catalogo.js`) · plazo mié 25-11 | 2 h 30 min | MEDIO | ninguna | reparto-practicas-u2/salidas/206-tabla-propiedades/ | REABIERTA | reabierta 08:21Z (17-nov): `hechos/reabiertas/206--s-20261117T064522-40c5ab61.md` |
-| 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | PARCIAL | PARCIAL: tabla-propiedades NO se publica; reabierta la 206 (hechos/reabiertas/206--s-20261117T064522-40c5ab61.md): a 360-375 px, en la tabla de 2 × 4 del nivel… · lo que falta: espera a 206 |
+| 206 | Reto de la unidad 2 «Tabla de propiedades» (`tabla-propiedades`, id 83): arrastrar números y etiquetas para formar una tabla de doble entrada, por niveles | tareas/tarea-206-tabla-propiedades.md | **205 LISTA** · ni la 203 ni la 204 en curso (`catalogo.js`) · plazo mié 25-11 | 2 h 30 min | MEDIO | ninguna | reparto-practicas-u2/salidas/206-tabla-propiedades/ | LISTA | terminada 08:32Z (17-nov) · commit 30c0a08 |
+| 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | PARCIAL | PARCIAL: tabla-propiedades NO se publica; reabierta la 206 (hechos/reabiertas/206--s-20261117T064522-40c5ab61.md): a 360-375 px, en la tabla de 2 × 4 del nivel… |
 | 208 | «Árbol de factores» (`arbol`, id 5), ejercicio 2 «¿Está terminada?»: que se vea que, tras el «No», falta tocar el factor | tareas/tarea-208-arbol-paso-dos-visible.md | ninguna (nadie con `practicas/arbol/` sin comitear) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/208-arbol-paso-dos/ | LISTA | terminada 17:46Z (16-nov) · commit 02dc545 |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-17 08:22Z**: BLOQUEADA 4 (157, 158, 159, 160) · LISTA 201 · PARCIAL 2 (156, 207) · REABIERTA 1 (206).
+**Foto a 2026-11-17 08:32Z**: BLOQUEADA 4 (157, 158, 159, 160) · LISTA 202 · PARCIAL 2 (156, 207).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -364,7 +364,7 @@ apartado 2): los decide la coordinadora.
 
 Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las fichas que lo cambian («Ficheros que toca»).
 
-- `tabla-propiedades` (tarea ?, ?): la publica la 206 (REABIERTA), 207 (PARCIAL)
+- `tabla-propiedades` (tarea ?, ?): la publica la 207 (PARCIAL)
 - `terminos-semejantes` (tarea 147, LISTA): la publica la 156 (PARCIAL)
 - `es-solucion` (tarea 148, LISTA): la publica la 157 (BLOQUEADA)
 - `transposicion` (tarea 149, LISTA): la publica la 157 (BLOQUEADA)
@@ -377,12 +377,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (354), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (355), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 206 · 2026-11-17 08:32 · s-20261117T082711-35fd2b0f · 30c0a082 · — · —
 PARCIAL · tarea 207 · 2026-11-17 08:22 · s-20261117T064522-40c5ab61 · ninguno de código (no se publica nada; catalogo.j… · — · ~1 h 45 min (estimada 1 h 30 min)
 LISTA · tarea 204 · 2026-11-17 06:35 · s-20261117T061533-12dd3186 · 173b497 · — · —
 LISTA · tarea 155 · 2026-11-17 05:16 · s-20261117T051449-40636de1 · 5374976 · practicas/leelo6/logica.js, tests/practicas-leelo6.test.js · abierto 05:14Z, terminada 05:16Z

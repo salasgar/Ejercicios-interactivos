@@ -182,6 +182,8 @@ pieza ya colocada, devolverla a la bandeja, la infografía de «triangular» con
 - Repetir un ejercicio terminado lo reinicia con 0 puntos (lo hace la base), así que la repetición empieza por el nivel 1.
 - El servidor de Python en frío da `ERR_CONNECTION_RESET` en alguna carga; repetir la pasada del navegador.
 
+- (de la 206, 17-11) **Las cabeceras de 4 columnas a 360-375 px no caben con los márgenes por defecto**: la tarjeta y `.app` quitan ~67 px. Se miden con un marco (`<iframe style="width:375px">`) con el CSS y las piezas reales, partiendo cada etiqueta en palabras y midiendo cada palabra con un `<span>` `nowrap` dentro de la pieza (con `overflow-wrap: break-word` una palabra partida no da `scrollWidth`). Con el CSS de móvil de `estilos.css` caben las 38 etiquetas a 320, 360 y 375 px. **Una tabla de reserva tiene que pasar las mismas reglas que las del generador** (números distintos: las piezas se identifican por su valor); lo comprueba el test `reserva`.
+
 ## Prohibido
 
 - Corregir contra una solución fija: cualquier colocación que cumpla las propiedades es buena.
