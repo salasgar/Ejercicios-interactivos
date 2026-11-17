@@ -31,11 +31,11 @@ button.hueco-p:disabled { opacity: 1; cursor: default; }
 
 /* A 375 px cuatro operandos caben en un renglón */
 @media (max-width: 400px) {
-  .expr { font-size: 1.1rem; }
+  .expr { font-size: 1rem; }
   .num { padding: 0 .02em; }
   .signo { padding: 0; }
-  button.hueco-p { min-width: 18px; width: 18px; }
-  button.hueco-p--puesto { min-width: 18px; }
+  button.hueco-p { min-width: 16px; width: 16px; }
+  button.hueco-p--puesto { min-width: 16px; }
 }
 
 .acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .6rem; margin: .4rem 0 .8rem; }
