@@ -120,7 +120,7 @@ export const CATALOGO = [
   { id: 59, slug: 'suma-resta-decimales', ruta: 'suma-resta-decimales/', unidad: 5, nombre: { es: 'Suma y resta decimales', en: 'Add and subtract decimals' }, nEjercicios: 4, disponible: true },
   { id: 60, slug: 'multiplica-divide-decimales', ruta: 'multiplica-divide-decimales/', unidad: 5, nombre: { es: 'Multiplica y divide decimales', en: 'Multiply and divide decimals' }, nEjercicios: 6, disponible: true },
   // Coloca los paréntesis con decimales (PU2: fila y esqueleto de la 199; la escribe la 202 y la publica la 204).
-  { id: 82, slug: 'coloca-decimales', ruta: 'coloca-decimales/', unidad: 5, nombre: { es: 'Coloca los paréntesis. Con decimales', en: 'Place the brackets: with decimals' }, nEjercicios: 3, disponible: false },
+  { id: 82, slug: 'coloca-decimales', ruta: 'coloca-decimales/', unidad: 5, nombre: { es: 'Coloca los paréntesis. Con decimales', en: 'Place the brackets: with decimals' }, nEjercicios: 3, disponible: true },
   { id: 61, slug: 'fraccion-decimal', ruta: 'fraccion-decimal/', unidad: 5, nombre: { es: 'De fracción a decimal y vuelta', en: 'Fractions and decimals' }, nEjercicios: 4, disponible: true },
   { id: 62, slug: 'errores5', ruta: 'errores5/', unidad: 5, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 63, slug: 'leelo5', ruta: 'leelo5/', unidad: 5, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },

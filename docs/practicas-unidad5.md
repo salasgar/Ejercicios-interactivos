@@ -8,9 +8,10 @@ revisar la semana 1, y la tarea 131 completa lo de la semana 2, con el mismo esp
 dos sistemas de códigos y los varios profesores son los de la unidad 2: están en
 [practicas-unidad2.md](practicas-unidad2.md), y aquí solo se cuenta lo que cambia.
 
-Son siete mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 5, **Números decimales**
-(ids 57-63 del catálogo, tareas 123-129 de PU2; la portada las enseña por semanas desde el
-lunes 18-1-2027), con dos piezas comunes nuevas en `practicas/_comun/`:
+Son ocho mini-aplicaciones para 1.º ESO bilingüe sobre la unidad 5, **Números decimales**
+(ids 57-63 del catálogo, tareas 123-129 de PU2, y `coloca-decimales`, id 82, tarea 202, sobre el
+motor común de la 199; la portada las enseña por semanas desde el lunes 18-1-2027), con dos
+piezas comunes nuevas en `practicas/_comun/`:
 
 - `decimales.js`: el decimal como **entero escalado** (`{ m, k }` = m / 10^k; nunca un `Number`
   con coma flotante), inmutable y sin normalizarse solo (2,50 se queda 2,50), sumar, restar,
@@ -133,7 +134,7 @@ y, al publicarla, `disponible: true`. Lo propio de la unidad 5:
 5. Probarla en el navegador **pulsando cada botón con un clic**, a 375 px y en ancho, en los dos
    idiomas.
 
-## 6. Las siete prácticas
+## 6. Las ocho prácticas
 
 `id` es el del catálogo; «Semana» es la de la unidad en que se dan sus destrezas, y la de su
 bloque en la portada. Las cotas y los errores de cada una, con más detalle, en la `ENTREGA.md`
@@ -145,17 +146,19 @@ de su tarea (`reparto-practicas-u2/salidas/NN-<slug>/`).
 | 1 | `compara-decimales` | 58 | 124 | ¿Cuál es mayor? (`<`, `=`, `>`; la trampa de las cifras, ceros, iguales, negativos) · Ordena (4-5 decimales) · Entre dos (escribir o elegir) · Redondea (a la unidad, la décima o la centésima; el 9 que arrastra) | parte entera 0-20, hasta 3 cifras decimales, negativos hasta −20 |
 | 1 | `suma-resta-decimales` | 59 | 125 | Alinea la coma (dos o tres términos, también con naturales) · En el súper (fruta al peso y gasolina; total o la vuelta) · Medidas (listón, botella y vasos, estaturas, paquetes) · Mueve la coma (·/: por 10, 100 y 1000) | fruta 0,50-15,00 € cada importe y 40 € en total; repostaje 6-48 €; billete de 5, 10, 20 o 50 € que cubre el total; listón 1-3 m; botella 1-2 L y vasos 0,20-0,33 L; persona 1,20-2,10 m; paquete 0,1-30 kg |
 | 2 | `multiplica-divide-decimales` | 60 | 126 | Coloca la coma (el producto y ·/: por 0,1, 0,01 y 0,001) · Divide hasta el final (entre un natural) · Entre un decimal (o la división equivalente) · ¿Está bien hecha? (cociente con dos decimales, resto y prueba) · Problemas (fruta al peso, gasolina, gasolina de un viaje entre varios) · Combinadas (2-3 operaciones, con y sin paréntesis) | fruta 0,80-6,00 €/kg y 0,5-5 kg; gasolina 1,20-2,00 €/L y 5-70 L; viaje 15-60 L entre 2 y 5 personas |
-| 2 | `coloca-decimales` | 82 | 202 | Tres números (todos los resultados) · Con un cuadrado (³ a veces) · Una sola diana. **Sin publicar** (la publica la 204) | todo valor ≥ 0, ≤ 3 cifras decimales, divisiones exactas, ≤ 500; sin agrupaciones imposibles a la vista |
+| 2 | `coloca-decimales` | 82 | 202 | Tres números (todos los resultados) · Con un cuadrado (³ a veces) · Una sola diana | todo valor ≥ 0, ≤ 3 cifras decimales, divisiones exactas, ≤ 500; sin agrupaciones imposibles a la vista |
 | 2 | `fraccion-decimal` | 61 | 127 | De fracción a decimal (exacto o periódico, con «…») · De decimal a fracción (irreducible; las impropias, impropias) · Los que hay que saberse (los pares de memoria) · ¿Fracción o decimal? (`<`, `=`, `>`) | sin contextos; fracción ≤ 3, denominadores ≤ 1000 |
 | 2 | `errores5` | 62 | 128 | ¿Dónde está el error? (la línea mala o «todo bien») · ¿Qué error es? (cuatro nombres, uno verdadero) · Corrígelo (el resultado bueno) | sin contextos; hasta cuatro cifras enteras |
 | toda | `leelo5` | 63 | 129 | La palabra (32 términos) · Léelo (decimales, dinero, palabras a cifras y cuentas) · La consigna (de examen, en inglés) · Completa (la frase con un hueco) | dinero 0,05-59,99 €; libro 3-30 €; gasolina 1,20-2,00 €/L y 5-70 L; paquete 0,1-30 kg; recién nacido 2,5-4,5 kg |
 
-**Publicadas** (a 2026-11-13): **las siete**. `leelo5`, `fraccion-decimal` y `errores5` el 8-11
+**Publicadas** (a 2026-11-17): **las ocho**. `leelo5`, `fraccion-decimal` y `errores5` el 8-11
 (tarea 131, tras sus reabiertas del 8-11); `lee-decimales`, `compara-decimales`,
 `suma-resta-decimales` y `multiplica-divide-decimales` el 13-11 (tarea 195), tras las reabiertas
 que les abrieron la 130 y la 131 el 8-11 por casos de examen que sus generadores producían (se
 escribieron antes que los exámenes; cerradas el 8-11 y el 9-11) y un barrido nuevo de la 195 contra
-los exámenes 1 y 2, las hojas 1 y 2 y los cinco finales. **`leelo5` va con la semana 2**, no con la
+los exámenes 1 y 2, las hojas 1 y 2 y los cinco finales. Y `coloca-decimales`, la octava, el 17-11
+(tarea 204, cuarta pasada), tras dos reabiertas de la 202 (la expresión partida en dos renglones
+a 375 px). **`leelo5` va con la semana 2**, no con la
 1: lleva vocabulario y cuentas de las sesiones 5 y 6 (*quotient*, *remainder*, *recurring*,
 *simplest form*); la portada la enseña desde el 18-1 en «Para toda la unidad». `leelo5` tiene
 abierta desde el 13-11 una reabierta de la 129 (las opciones del ej. 3 «La consigna» enseñan el
