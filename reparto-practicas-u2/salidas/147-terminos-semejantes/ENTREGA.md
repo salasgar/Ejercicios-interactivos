@@ -39,3 +39,11 @@ Corregido lo que reabrió `hechos/reabiertas/147--s-20261117T023530-f7aa1ea7-rev
 6. **Ej. 2**: el porqué del 0 («Sin número delante, la letra no vale 0: lleva un número escondido.») ya no repite la solución.
 Barrido de 20000 ítems por ejercicio (semillas 156002-156003): 0 casos de los defectos 4, 5 y 6. `npm test` 2456/2456; `node --test tests/practicas-comun.test.js tests/practicas-terminos-semejantes.test.js` en verde.
 **Sin probar con clics a 375 px**: esta sesión no pudo lanzar un Chrome con depuración (el sistema lo denegó) y no lo ha forzado. Lo único de interfaz que cambia es texto del feedback y la quita del aviso del ej. 4 (`practica.js`, 3 líneas); la 156 debe hacer la prueba con clics, es y en, al publicar. No se tocó `catalogo.js` ni `_comun/`.
+
+## Cuarta entrega (reabierta de la 157, sesión s-20261117T235432-e85bc156)
+
+- **Examen 1, U6-1C-17**: las seis sumas de «equivalente a» (variantes 1-4, extra1 y extra2) y cada una con sus resultados (la buena, la que junta el número con las x y la que pierde la x sola) entran en `HUELLAS_EXAMEN` por huella (24 más, calculadas fuera del repo). Barrido de 20000 ítems por ejercicio en los ej. 3 y 4 (semillas 157203 y 157204): 0 apariciones. Ningún caso de examen en claro en código, test, ENTREGA ni mensajes.
+- **Ej. 4, «:» doble**: la solución ya no dice «Bien hecho: x: …» sino «Bien hecho (x: …)» / «Done properly (x: …)»; test nuevo.
+- **Ej. 4, ítem «bien» ambiguo**: `cerosDanLaBuena` descarta el ítem sin error cuyo resultado sale también de contar como 0 una letra sin número (`5x + 7x + x − x = 12x`); test nuevo con tres sumas y 3000 ítems.
+- Los cuestionarios semanales (Forms) no se reservan (decisión de Juan Luis pendiente, no se toca): la ENTREGA anterior decía que se incluían y es inexacto.
+- `npm test` 2469/2469; comun + terminos-semejantes en verde.

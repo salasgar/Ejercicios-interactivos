@@ -77,6 +77,8 @@ export const HUELLAS_EXAMEN = new Set([
   'izvdgy', 'jkzxb9', 'jz9hod', 'k1t30k', 'k5vdfv', 'lau8qe', 'lfx51a', 'm5rsqx', 'mecevg', 'n5dzz0', 'ns30kp',
   'nvzcdc', 'o0dn39', 'qrs6ba', 'saezdh', 'u09318', 'ubpaiv', 'v5i95s', 'vpns0a', 'wd3oqp', 'xb8zbs', 'xm2x80',
   'xyqyia', 'ynfk7m', 'ynk0po', 'yyzy9e', 'z02lki', 'zetml', 'zfmz6i', 'zn95b6', 'zw9pxg',
+  '17mjtrt', '1c8uff1', '1d9xeel', '1jbl6ka', '1o0ng4l', 'cb94mb', '605wqd', 'q6qjwa', 'blpfms', '1la0f5t', 'z7arxt', '873brg',
+  '1loit8m', 't6osnr', 'o3yy03', '1k6i8l4', 'w2fsqm', '1ggjh1z', 'toeeq7', '1qf6jm0', '1oqefvb', '121qvc1', '1pnu1rx', '1cml60i',
 ]);
 
 const textoUno = t => terminosATexto([t]);
@@ -266,6 +268,24 @@ function valida(ts) {
   return !r.grupos.some(g => g.total.coef.num === 0);
 }
 
+/** Los resultados de contar como 0 cada subconjunto no vacío de letras sin número (x, −x), iguales o no a la buena. */
+function contarComoCero(terms) {
+  const unos = terms.map((t, i) => (t.letra !== null && abs(t.coef.num) === 1 ? i : -1)).filter(i => i >= 0);
+  const salida = [];
+  for (let m = 1; m < 2 ** unos.length; m++) {
+    const cero = new Set(unos.filter((_, k) => m & (1 << k)));
+    salida.push(aLineal(terms.map((t, i) => (cero.has(i) ? termino(0, t.letra) : t))));
+  }
+  return salida;
+}
+
+/** ¿La reducción bien hecha sale también de contar como 0 una letra sin número? Entonces no vale como «sin error». */
+export const cerosDanLaBuena = ts => {
+  const terms = aTerminos(ts);
+  const e = aLineal(terms);
+  return contarComoCero(terms).some(v => v.equals(e));
+};
+
 /**
  * Lo que daría cada error con esta suma de términos: [{ error, valor: Lineal, signo? }].
  * - suma-no-semejantes: 3x + 2 = 5x.
@@ -286,11 +306,7 @@ export function candidatosDe(ts) {
       signo: { antes: terminosAHtml([t]), despues: `+${terminosAHtml([mas])}` },
     });
   });
-  const unos = terms.map((t, i) => (t.letra !== null && abs(t.coef.num) === 1 ? i : -1)).filter(i => i >= 0);
-  for (let m = 1; m < 2 ** unos.length; m++) {
-    const cero = new Set(unos.filter((_, k) => m & (1 << k)));
-    lista.push({ error: 'x-sin-coeficiente', valor: aLineal(terms.map((t, i) => (cero.has(i) ? termino(0, t.letra) : t))) });
-  }
+  for (const valor of contarComoCero(terms)) lista.push({ error: 'x-sin-coeficiente', valor });
   return lista.map(c => ({ ...c, valor: c.valor && !c.valor.equals(e) ? c.valor : null })).filter(c => c.valor);
 }
 
@@ -413,6 +429,7 @@ export function generarErrores(rng) {
         mal = c.valor;
         signo = c.signo ?? null;
       }
+      if (quiere === null && cerosDanLaBuena(ts)) continue;
       const rhs = mal ?? e;
       const origen = textoDeTerminos(ts);
       return {
@@ -437,8 +454,8 @@ function solucionErrores(ts, rhs, error, idioma, signo = null) {
   const mal = cuenta(rhs.aHtml());
   const porQue = explicaErrorConTermino(error, idioma, signo);
   return idioma === 'es'
-    ? `${lo} no es ${mal}. ${porQue}. Bien hecho: ${pasos}; el resultado es ${bien}.`
-    : `${lo} is not ${mal}. ${porQue}. Done properly: ${pasos}; the result is ${bien}.`;
+    ? `${lo} no es ${mal}. ${porQue}. Bien hecho (${pasos}); el resultado es ${bien}.`
+    : `${lo} is not ${mal}. ${porQue}. Done properly (${pasos}); the result is ${bien}.`;
 }
 
 export const claveItem = item => `${item.plantilla}|${item.clave}`;

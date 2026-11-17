@@ -8,7 +8,7 @@ import { leerExpresion, hayEquivalentes, aLineal, huella, sumarNoSemejantes } fr
 import {
   generarSemejantes, generarCoeficiente, generarReducir, generarErrores, corregirReducir, candidatosDe,
   ESTA_DEFINIDO, explicaError, claveItem, CASOS_HOJA, HUELLAS_EXAMEN, reservado, sinReducirAun,
-  clavePar, claveCoeficiente, claveSuma, claveError, explicaErrorConTermino,
+  clavePar, claveCoeficiente, claveSuma, claveError, explicaErrorConTermino, cerosDanLaBuena,
 } from '../practicas/terminos-semejantes/logica.js';
 
 const N = 3000;
@@ -285,4 +285,19 @@ test('ej. 2: el porqué del 0 y la solución no repiten la frase', () => {
     }
   }
   assert.ok(vistos > 100, `opción 0: ${vistos}`);
+});
+
+test('ej. 4: sin «:» pegado a «Bien hecho» y el ítem sin error no se explica también por contar la letra como 0', () => {
+  assert.equal(cerosDanLaBuena(terms('5x + 7x + x − x')), true);
+  assert.equal(cerosDanLaBuena(terms('x − x + 7x')), true);
+  assert.equal(cerosDanLaBuena(terms('3x + 2 + x')), false);
+  let bien = 0;
+  for (const it of items(generarErrores, 38)) {
+    for (const idioma of ['es', 'en']) assert.doesNotMatch(it.solucion[idioma], /(Bien hecho|Done properly):/);
+    if (it.error === null) {
+      bien++;
+      assert.equal(cerosDanLaBuena(terms(it.origen)), false, claveItem(it));
+    }
+  }
+  assert.ok(bien > 100, `ítems sin error: ${bien}`);
 });
