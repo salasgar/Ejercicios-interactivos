@@ -8,7 +8,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { ERRORES_TIPICOS } from '../practicas/_comun/algebra.js';
-import { TX, cuenta, solucionTabla, xIgual } from '../practicas/valor-numerico/textos.js';
+import { TX, cuenta, solucionTabla, xIgual, porQueDe } from '../practicas/valor-numerico/textos.js';
 import {
   F, numTexto, textoDe, htmlDe, valorDe, claveExpr, candidatos, ERRORES_PROPIOS, nombreError,
   HUELLAS_RESERVADAS, huellaCaso, esReservado, generarSustituye, generarTabla, generarQueValor,
@@ -136,12 +136,12 @@ test('ej. 1: los errores salen con las cuentas que dice la ficha (yuxtaponer, je
 test('ej. 1: salen todas las formas, los tres tipos de valor y todos los errores', () => {
   const items = lote(generarSustituye, 15);
   const formas = new Set(items.map(i => (i.e.forma === 'parentesis' ? 'P' : i.e.a < 0 ? 'C' : i.e.b < 0 ? 'B' : i.e.delante ? 'A-delante' : 'A')));
-  assert.deepEqual([...formas].sort(), ['A', 'A-delante', 'B', 'C', 'P']);
+  assert.deepEqual([...formas].sort(), ['A', 'A-delante', 'B', 'C']);
   assert.ok(items.some(i => i.v.den === 1 && i.v.num > 0));
   assert.ok(items.some(i => i.v.num < 0));
   assert.ok(items.some(i => i.v.den === 2));
   const errores = new Set(items.flatMap(i => (i.opciones ?? []).filter(o => !o.correcta).map(o => o.error)));
-  for (const id of ['yuxtaponer-al-sustituir', 'signo-al-sustituir', 'jerarquia-al-sustituir', 'suma-en-vez-de-multiplicar', 'resta-al-reves', 'multiplica-solo-el-primero', 'olvida-el-factor']) {
+  for (const id of ['yuxtaponer-al-sustituir', 'signo-al-sustituir', 'jerarquia-al-sustituir', 'suma-en-vez-de-multiplicar', 'resta-al-reves']) {
     assert.ok(errores.has(id), `no sale el error ${id}`);
   }
   assert.ok(new Set(items.map(claveDe)).size > 300, 'poca variedad');
@@ -259,8 +259,8 @@ test('ej. 3: los textos no llevan nada prohibido y el feedback es coherente', ()
 
 // ─── Comunes ──────────────────────────────────────────────────────────────────────────────────
 
-test('casos reservados: hoy no hay hoja ni examen, y una huella añadida excluye el caso', () => {
-  assert.equal(HUELLAS_RESERVADAS.size, 0);
+test('casos reservados: 24 huellas, una huella añadida excluye el caso y 3000 ítems por ejercicio no sacan ninguno', () => {
+  assert.equal(HUELLAS_RESERVADAS.size, 24);
   const e = { forma: 'lineal', a: 3, b: 2, delante: false }, v = { num: 4, den: 1 };
   assert.equal(esReservado(e, v), false);
   HUELLAS_RESERVADAS.add(huellaCaso(e, v));
@@ -268,6 +268,32 @@ test('casos reservados: hoy no hay hoja ni examen, y una huella añadida excluye
   assert.equal(esReservado({ ...e, delante: true }, v), true, '2 + 3x es la misma expresión que 3x + 2');
   assert.equal(esReservado(e, { num: 5, den: 1 }), false);
   HUELLAS_RESERVADAS.delete(huellaCaso(e, v));
+  assert.equal(HUELLAS_RESERVADAS.size, 24);
+  for (const it of lote(generarSustituye, 301)) assert.equal(esReservado(it.e, it.v), false);
+  for (const it of lote(generarTabla, 302)) for (const x of it.xs) assert.equal(esReservado(it.e, { num: x, den: 1 }), false);
+  for (const it of lote(generarQueValor, 303)) {
+    const buena = it.opciones.find(o => o.correcta);
+    assert.equal(esReservado(buena.e, it.v), false);
+  }
+});
+
+test('el texto de «jerarquía al sustituir» depende de dónde va el número', () => {
+  const v = { num: -3, den: 1 };
+  const detras = { forma: 'lineal', a: 3, b: 2, delante: false }, delante = { forma: 'lineal', a: 3, b: 2, delante: true };
+  const resta = { forma: 'lineal', a: -2, b: 10, delante: true };
+  const t = (e, i) => porQueDe['jerarquia-al-sustituir'][i]({ e, v }, { num: 1, den: 1 });
+  assert.match(t(detras, 'es'), /sumar antes de multiplicar/);
+  assert.match(t(detras, 'en'), /adding before multiplying/);
+  for (const e of [delante, resta]) {
+    assert.match(t(e, 'es'), /izquierda a derecha/);
+    assert.match(t(e, 'en'), /left to right/);
+  }
+});
+
+test('sin paréntesis con letra en los tres ejercicios (es de la sesión 10)', () => {
+  for (const it of lote(generarSustituye, 311)) assert.equal(it.e.forma, 'lineal');
+  for (const it of lote(generarTabla, 312)) assert.equal(it.e.forma, 'lineal');
+  for (const it of lote(generarQueValor, 313)) for (const o of it.opciones) assert.equal(o.e.forma, 'lineal');
 });
 
 test('las semillas dan siempre los mismos ítems', () => {

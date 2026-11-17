@@ -1,7 +1,8 @@
 // LÓGICA PURA de «Valor numérico» (unidad 6, semana 1, sesión 2): sustituir la letra por un número y
 // calcular (U6-1C-05, 1C-06, 1C-07). Sin DOM. Todo exacto, con Fraccion: nunca coma flotante ni eval.
 //
-// Alcance (ver ENTREGA de la tarea 146): expresiones 3x + 2, 2 + 3x, 3x − 2, 10 − 2x y 2(x − 1);
+// Alcance (ver ENTREGA de la tarea 146): expresiones 3x + 2, 2 + 3x, 3x − 2 y 10 − 2x; SIN paréntesis con letra
+// (la forma `parentesis` sigue en el código pero `expresion` ya no la sortea: es la sesión 10, no la 1-2);
 // SIN x² (1C-09 sigue siendo propuesta pendiente) y SIN ecuaciones (el ejercicio 3 busca la
 // expresión que vale N, no resuelve nada). Valores de x: natural, negativo (entre paréntesis al
 // sustituir) o decimal sencillo (0,5; 1,5; 2,5).
@@ -69,7 +70,7 @@ export const claveExpr = e => (e.forma === 'parentesis' ? `p:${e.k}:${e.c}` : li
 
 /** Una expresión de la forma pedida (o al azar). */
 export function expresion(rng, forma = null) {
-  const f = forma ?? rng.elegir(['A', 'A', 'B', 'C', 'P']);
+  const f = forma ?? rng.elegir(['A', 'A', 'B', 'C']);
   switch (f) {
     case 'A': return { forma: 'lineal', a: rng.entero(2, 9), b: rng.entero(1, 9), delante: rng.entero(0, 1) === 1 };
     case 'B': return { forma: 'lineal', a: rng.entero(2, 9), b: -rng.entero(1, 9), delante: false };
@@ -141,10 +142,13 @@ export function clasificar(cands, correcta, valor) {
 }
 
 // ─── Casos reservados (hoja y examen) ─────────────────────────────────────────────────────────
-// A fecha 2026-11-09 la hoja y el examen de la U6 no existen: no hay nada que excluir. Si se
-// escriben, sus casos se añaden aquí por huella (FNV-1a de «expresión@valor»), sin escribirlos.
+// Casos de la hoja 1, del examen 1, del repaso del examen 2 y del final: 24 huellas (FNV-1a de
+// «expresión@valor», la expresión en forma canónica: 3x + 2 y 2 + 3x son la misma). Nunca en claro.
 
-export const HUELLAS_RESERVADAS = new Set([]);
+export const HUELLAS_RESERVADAS = new Set([
+  '1oz11rd', '1pdspui', 'mu1n84', '3jtfob', '1whp8ek', 'xrp2ct', 'vl7orf', '118zjun', '3wy741', 'ecwppr', '18uoxvi', '1b503d0',
+  '15y5dbj', 'dpi8g', '1927084', 'y7v0yc', 'qtqg6l', '14epwnb', '1n32jwe', '22otab', '16l1fyh', 'sxzfya', 'hb3wwx', '7hnbj0',
+]);
 export const huellaCaso = (e, v) => huella(`${claveExpr(e)}@${plano(v instanceof Fraccion ? v : F(v)).num}/${plano(v instanceof Fraccion ? v : F(v)).den}`);
 export const esReservado = (e, v) => HUELLAS_RESERVADAS.has(huellaCaso(e, v));
 

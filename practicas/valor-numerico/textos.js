@@ -49,9 +49,13 @@ const hizo = {
     return i === 'es' ? `sustituir x por ${numTexto(f.opuesta(), i)} en vez de por ${numTexto(f, i)}. Un número negativo se sustituye entero y entre paréntesis: ${sustituido(f, i)}. `
       : `substituting x by ${numTexto(f.opuesta(), i)} instead of ${numTexto(f, i)}. A negative number is substituted whole, in brackets: ${sustituido(f, i)}. `;
   }),
-  'jerarquia-al-sustituir': bi(i => (i === 'es'
-    ? 'operar de izquierda a derecha. Primero se multiplica; después se suma o se resta. '
-    : 'working from left to right. First multiply; then add or subtract. ')),
+  // Con el número delante (2 + 3x, 10 − 2x) el error es operar de izquierda a derecha; con el número detrás
+  // (3x + 2) es sumar antes de multiplicar (3 · (x + 2)).
+  'jerarquia-al-sustituir': bi((i, e) => {
+    const delante = e.delante || e.a < 0;
+    if (delante) return i === 'es' ? 'operar de izquierda a derecha. Primero se multiplica; después se suma o se resta. ' : 'working from left to right. First multiply; then add or subtract. ';
+    return i === 'es' ? 'sumar antes de multiplicar. Primero se multiplica; después se suma o se resta. ' : 'adding before multiplying. First multiply; then add or subtract. ';
+  }),
   'suma-en-vez-de-multiplicar': bi((i, e) => {
     const n = e.forma === 'parentesis' ? e.k : Math.abs(e.a);
     const q = e.forma === 'parentesis' ? '(…)' : 'x';
@@ -71,7 +75,7 @@ const hizo = {
     : `forgetting the ${e.k} outside: ${e.k}(…) means ${e.k} · (…). `)),
 };
 
-const porQueDe = {};
+export const porQueDe = {};
 for (const id of Object.keys(hizo)) {
   porQueDe[id] = bi((i, item, valor) => (i === 'es'
     ? `${numTexto(valor, i)} sale de ${hizo[id][i](item.e, item.v)}`
@@ -172,13 +176,8 @@ const respuestaFinal = (tt, texto) => `${tt({ es: 'La respuesta es', en: 'The an
 
 /** «No lo sé» del ejercicio 1: sustituir y calcular. */
 export function explicaSustituye(item, { idioma, tt }) {
-  // Con paréntesis, el orden es otro, y el negativo ya va dentro del paréntesis que hay (revisión 191).
-  const parentesis = item.e.forma === 'parentesis';
-  const negativo = fr(item.v).num < 0 && !parentesis;
-  const regla = tt(parentesis ? {
-    es: 'Sustituye la letra por el número y calcula: primero el paréntesis; después se multiplica.',
-    en: 'Replace the letter with the number and work it out: first the brackets; then multiply.',
-  } : {
+  const negativo = fr(item.v).num < 0;
+  const regla = tt({
     es: `Sustituye la letra por el número y calcula: primero se multiplica; después se suma o se resta.${negativo ? ' Un número negativo se sustituye entre paréntesis.' : ''}`,
     en: `Replace the letter with the number and work it out: first multiply; then add or subtract.${negativo ? ' A negative number goes in brackets.' : ''}`,
   });
