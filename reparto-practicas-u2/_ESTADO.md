@@ -282,7 +282,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 146 | Práctica de la unidad 6 «Valor numérico» (valor-numerico) | tareas/tarea-146-valor-numerico.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 20 min | MEDIO | — | practicas/valor-numerico/*, tests/practicas-valor-numerico.test.js; salidas/146-valor-numerico/ | LISTA | terminada 03:07Z (17-nov) · commit a5a9e17 |
 | 147 | Práctica de la unidad 6 «Términos semejantes» (terminos-semejantes) | tareas/tarea-147-terminos-semejantes.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h | MEDIO | — | practicas/terminos-semejantes/*, tests/practicas-terminos-semejantes.test.js; salidas/147-terminos-semejantes/ | LISTA | terminada 23:58Z (17-nov) · commit 714ff62 |
 | 148 | Práctica de la unidad 6 «¿Es solución?» (es-solucion) | tareas/tarea-148-es-solucion.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h | MEDIO | — | practicas/es-solucion/*, tests/practicas-es-solucion.test.js; salidas/148-es-solucion/ | LISTA | terminada 00:39Z (18-nov) · commit 8c5aebf · **sin publicar** (`es-solucion`): la publica la 157 (PARCIAL) |
-| 149 | Práctica de la unidad 6 «Pasa al otro lado» (transposicion) | tareas/tarea-149-transposicion.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h 15 min | MEDIO | — | practicas/transposicion/*, tests/practicas-transposicion.test.js; salidas/149-transposicion/ | EN CURSO | s-20261117T235426-40021ed6 · caduca 02:24:26Z (18-nov) |
+| 149 | Práctica de la unidad 6 «Pasa al otro lado» (transposicion) | tareas/tarea-149-transposicion.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h 15 min | MEDIO | — | practicas/transposicion/*, tests/practicas-transposicion.test.js; salidas/149-transposicion/ | LISTA | terminada 07:5xZ (18-nov) · commit 96b46da |
 | 150 | Práctica de la unidad 6 «Resuelve» (resuelve) | tareas/tarea-150-resuelve.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h | MEDIO | — | practicas/resuelve/*, tests/practicas-resuelve.test.js; salidas/150-resuelve/ | LISTA | terminada 10:55Z (9-nov) · commit a7f60eb · **sin publicar** (`resuelve`): la publica la 158 (BLOQUEADA) |
 | 151 | Práctica de la unidad 6 «Paréntesis» (parentesis-algebra) | tareas/tarea-151-parentesis-algebra.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h | MEDIO | — | practicas/parentesis-algebra/*, tests/practicas-parentesis-algebra.test.js; salidas/151-parentesis-algebra/ | LISTA | terminada 17:06Z (13-nov) · commit cf464c3 · **sin publicar** (`parentesis-algebra`): la publica la 158 (BLOQUEADA) |
 | 152 | Práctica de la unidad 6 «Quita denominadores» (denominadores) | tareas/tarea-152-denominadores.md | 144 LISTA · mejor con la hoja y el examen de su semana ya LISTOS en el reparto de la U6: si existen, excluye sus casos desde el principio; si no, dil… | 1 h | MEDIO | — | practicas/denominadores/*, tests/practicas-denominadores.test.js; salidas/152-denominadores/ | LISTA | terminada 09:07Z (10-nov) · commit 5041ad5 · **sin publicar** (`denominadores`): la publica la 158 (BLOQUEADA) |
@@ -347,7 +347,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-18 00:41Z**: BLOQUEADA 3 (158, 159, 160) · EN CURSO 1 (149) · LISTA 203 · PARCIAL 2 (156, 157).
+**Foto a 2026-11-18 00:41Z**: BLOQUEADA 3 (158, 159, 160) · EN CURSO 0 (149 cerrada 18-nov) · LISTA 203 · PARCIAL 2 (156, 157).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -366,7 +366,7 @@ apartado 2): los decide la coordinadora.
 Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las fichas que lo cambian («Ficheros que toca»).
 
 - `es-solucion` (tarea 148, LISTA): la publica la 157 (PARCIAL)
-- `transposicion` (tarea 149, EN CURSO): la publica la 157 (PARCIAL)
+- `transposicion` (tarea 149, LISTA tras la segunda reabierta, 96b46da): la publica la 157 (PARCIAL)
 - `resuelve` (tarea 150, LISTA): la publica la 158 (BLOQUEADA)
 - `parentesis-algebra` (tarea 151, LISTA): la publica la 158 (BLOQUEADA)
 - `denominadores` (tarea 152, LISTA): la publica la 158 (BLOQUEADA)
@@ -385,6 +385,7 @@ se cerró. Su estado de hoy es el de la tabla.
 PARCIAL · tarea 157 · 2026-11-18 00:40 · s-20261117T233504-6c5e5c74 · 52ad72e · docs/practicas-unidad6.md, practicas/_comun/catalogo.js (git show --stat: 2 fil… · de 23:35:04Z a 00:40Z (estimada 1 h; dos pasadas,…
 LISTA · tarea 148 · 2026-11-18 00:39 · s-20261118T003437-6d4c097c · 8c5aebf · practicas/es-solucion/{logica.js,textos.js,reserva.js,index.html}, tests/practi… · abierto 00:34Z, terminada 00:39Z
 LISTA · tarea 149 · 2026-11-18 00:09 · s-20261117T235426-40021ed6 · ab3a6da · practicas/transposicion/{reserva,logica,textos}.js, practicas/transposicion/est… · —
+LISTA · tarea 149 · 2026-11-18 07:5x · s-20261118T074345-758e1c9c · 96b46da · practicas/transposicion/logica.js, tests/practicas-transposicion.test.js (reabierta revision2: ej. 1 reservado en los dos órdenes de lados) · —
 LISTA · tarea 147 · 2026-11-17 23:58 · s-20261117T235432-e85bc156 · 714ff62 · practicas/terminos-semejantes/logica.js, tests/practicas-terminos-semejantes.te… · abierto 23:54Z, terminada 23:58Z
 LISTA · tarea 207 · 2026-11-17 23:32 · s-20261117T231500-7815143e · c871c11 (publicada tabla-propiedades: catalogo.js… · — · ~20 min (estimada 1 h 30 min; tercera pasada cort…
 LISTA · tarea 206 · 2026-11-17 23:07 · s-20261117T230421-119b8a8a · 1efb384 · — · —

@@ -37,3 +37,6 @@ En «producto», `candidatos` elige ahora `signo-de-la-solucion` (solución nega
 - Textos: `porQueDe`, `estabaBien` y `estabaMal` sin «:» encadenados ni mayúscula tras «:»; signo sin repetir el número («es positivo (12)» fuera); `invertir-coeficiente` dice «el número que está solo»; ej. 4 admite explícitamente el decimal exacto; introducciones sin casos reservados (`x + 9 = 14`, `4 · 2 = 8`).
 - CSS: las ecuaciones de los botones no se parten (`.eleccion .cuenta { white-space: nowrap }`). Sin comprobar en navegador (sesión no atendida).
 - Tests propios 28/28; `npm test` 2469/2469. Commit ab3a6da.
+
+## Reabierta revision2 (s-20261118T074345-758e1c9c, commit 96b46da)
+ej. 1: reserva por igualdad en los dos órdenes de lados, sobre partida y llegada completada; test independiente por forma canónica.
