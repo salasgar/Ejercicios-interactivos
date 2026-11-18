@@ -1,10 +1,47 @@
 # ENTREGA tarea 157 · Revisión y publicación de la semana 2 de la unidad 6
 
+**Al cierre de la tercera pasada (s-20261118T082459-455aef79, 18-11), LISTA**: publicadas `terminos-semejantes`, `transposicion` (8501c5e) y `es-solucion` (b4d950f); ver «Tercera pasada».
+
 Sesión s-20261117T233504-6c5e5c74 (18-11, de 23:35Z a ~00:50Z). **PARCIAL**: se publica `terminos-semejantes` (de la semana 1; la 157
 la publica junto con las suyas, propuesta 1 de la 156). `es-solucion` y `transposicion` siguen sin publicar: están reabiertas.
 
 Commit: 52ad72e (`practicas/_comun/catalogo.js`: `disponible: true` de la id 71; `docs/practicas-unidad6.md`: la semana 2 en §6 con
 sus cotas y la línea «**Publicadas**»). `npm test` 2474/2474.
+
+## Tercera pasada (18-11, s-20261118T082459-455aef79, encadenada desde la 156)
+
+Se repite la revisión sobre una copia de ed82f09, con las semillas y el criterio de abajo. Los scripts están en /tmp/pu2-4c9a/ (llevan
+casos de examen en claro y no salen de /tmp).
+
+| Práctica | Casos del papel | Regla de oro | Variedad (máx.) | Clics | Veredicto |
+|---|---|---|---|---|---|
+| `transposicion` (149, 96b46da) | 0 en los cinco ejercicios. En el ej. 1: hoja 2, 23 casos del papel, 0 salen; examen 2 y extra, 48 y 0. En el resto: 0 | 0 fallos en 5 × 20000 | 0,98 % (ej. 4) | bien | **publicada** (8501c5e) |
+| `es-solucion` (148, 8c5aebf + ed82f09 → 63c6253) | Ítems: 0 (examen 2 y extra, repasos, finales, hojas 1-3). Ejemplo fijo de la introducción del ej. 3: era de la hoja 2; tras 63c6253, 0 de 27 fijos | 0 fallos en 4 × 20000 | 4,3 % (ej. 4) | bien (también sobre 63c6253) | reabierta (`hechos/reabiertas/148--s-20261118T082459-455aef79-revision.md`), atendida en 63c6253 y **publicada** (b4d950f) |
+
+- `transposicion`: el grep de los casos del examen 2 en su código y sus tests da 0, por texto (en los dos órdenes de lados) y por forma
+  canónica, también en los comentarios. En los campos, ninguna escritura correcta se rechaza ni se acepta ninguna incorrecta. Las cuentas
+  del feedback son exactas. Tests 79/79. Quedan dos detalles menores, que no impiden publicar:
+  - en `signo-cambiado` y `signo-de-la-solucion` la cuenta buena sale dos veces seguidas («x = −11 : 7 = −11/7. x = −11 : 7 = −11/7.»);
+  - el feedback en inglés del ej. 1 usa comillas españolas: «With «−» you get…».
+- `es-solucion`: los ocho puntos de la reabierta de la 157 están resueltos. Las 124 huellas de `reserva.js` son exactamente las de las
+  notas, las cuentas son exactas y `index.html` ya carga `./estilos.css`. Tests 72/72. Queda **un bloqueo de dos líneas**: el ejemplo
+  de la introducción del ej. 3 es la misma identidad que la hoja 2, ej. 2 c), con los miembros cambiados. El resto de lo que señala la
+  reabierta es recomendable, pero no bloquea.
+- En los clics, el ej. 4 de `es-solucion` dio alguna vez «sin feedback» al fallar. Lo causaba el script, no la práctica: tras un acierto,
+  la práctica pasa sola al ítem siguiente a los 3,6 s, y a veces la espera del script se quedaba corta. Repetido con más espera, el
+  acierto y el fallo salen bien en los cuatro casos (es/en, 375/1100).
+
+- Segunda vuelta sobre 63c6253, que solo cambia `textos.js`: el ejemplo de la introducción del ej. 3 pasa a 4x + 2x = 6x, y la cuenta
+  del primer término negativo pasa de «−3 · (−3) = −(−9) = 9» a «(−3) · (−3) = 9». Resultados:
+  - los 27 ejemplos fijos, 0 en el papel (solo el ej. 4 con s = 8, que no se puede evitar porque el único dato es la solución);
+  - las cuentas del feedback siguen siendo exactas en 4 × 20000, y el paso «−(−n)» ya no sale en los ej. 1-2;
+  - tests 72/72;
+  - clics en los 16 casos, con acierto y fallo, sin errores de JavaScript ni desbordes. Las dos cargas que fallaron con
+    `ERR_CONNECTION_RESET` eran del servidor de pruebas y se repitieron.
+- No se han hecho los puntos 2 y 4 de la reabierta, que no bloquean: la notación del eco en el ej. 4 y «Izquierda: (−3) = −3». Quedan
+  para una pasada futura.
+
+**Tarea semanal 2: plan A** (abajo): ya están publicadas las tres prácticas.
 
 ## Qué se ha revisado y cómo
 

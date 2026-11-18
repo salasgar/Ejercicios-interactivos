@@ -93,6 +93,13 @@ Las 2 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - (157, 18-11) Las sesiones de las reabiertas las lanza el lanzador enseguida: la 147 y la 149 se cerraron en 20 minutos, con la 157 aún abierta. Si te queda caducidad, una segunda pasada sobre el código nuevo publica en la misma sesión; no cierres sin mirar `git log` y `hechos/terminadas/`.
 - (157, 18-11) Las notas de huellas no pueden decir qué caso de la hoja está también en el examen (una huella con fuentes «H2; E2» junto a la lista de la hoja en claro lo delata): en las notas, las huellas que también son de la hoja llevan solo la fuente de la hoja.
 - (157, 18-11) Un `node clics.mjs … | cut` en segundo plano no enseña nada hasta el final: vuelca la salida a un fichero.
+- (157, tercera pasada, 18-11) Los ejemplos fijos de las introducciones también se cotejan, no solo los ítems: el de `es-solucion` era una
+  identidad de la hoja 2 con los miembros cambiados, y tres revisiones no lo vieron. Además, el script de clics de /tmp falla de dos
+  maneras que no son de la práctica:
+  - da «sin feedback» tras un acierto cuando la práctica pasa sola al ítem siguiente (`espera: 3600`): hay que esperar más de 3,6 s;
+  - `python3 -m http.server` corta a veces una carga (`ERR_CONNECTION_RESET`): se repite ese caso.
+  Con reabiertas de 2 líneas, el lanzador las atiende en 5-10 min, así que da tiempo a esperar dentro de la caducidad y publicar en la
+  misma sesión.
 
 ## Prohibido (propio de esta tarea)
 
