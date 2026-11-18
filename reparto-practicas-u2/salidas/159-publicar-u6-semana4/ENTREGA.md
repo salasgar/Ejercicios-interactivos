@@ -177,3 +177,31 @@ Si el lun 22-2 están publicadas las tres, plan A; si falta alguna, el plan que 
 
 `npm run servir` y http://localhost:8080/practicas/leelo6/?probar=1 (y `problemas-ecuaciones/`, `errores6/`), con «Probar sin código». La
 portada no enseña la U6 hasta el 1-2-2027 (`UNIDADES.desde`).
+
+## Segunda pasada (s-20261118T140330-da0f6f36, 18-11, de 14:03Z a 16:17:Z): PARCIAL, no se publica nada
+
+Tras las reabiertas 153 (07442a5) y 154 (1aede25). Sin commit de código: `catalogo.js` y `docs/practicas-unidad6.md` no cambian.
+
+| Práctica | Casos del papel (20000 ítems por ejercicio, semillas 159001-159008) | Regla de oro | Variedad (máx.) | Clics | Veredicto |
+|---|---|---|---|---|---|
+| `problemas-ecuaciones` (07442a5) | en los 5 ejercicios: de 19 a 23 casos y de 260 a 282 ítems por ejercicio (hojas 2 y 4, exámenes 2-4 con extra, finales) | 0 fallos | 0,27 % | 20/20 | **reabierta** (tercera vez) |
+| `errores6` (1aede25) | 0 en los 3 ejercicios | 0 fallos | 0,27 % | 12/12 | **reabierta** (notación) |
+
+- **`problemas-ecuaciones`**: la lista que dio la primera pasada (198 claves y 168 huellas) solo recogía las preguntas de problemas. Su propio
+  barrido contaba además las ecuaciones de los enunciados (hoja 4, línea 139) y las de otras destrezas que, reducidas, son iguales. Con la lista
+  de `errores6` (298 claves y 662 huellas), simulada en /tmp sin tocar el código: **0 casos** en los cinco ejercicios, variedad máx. 0,28 % y
+  ninguna excepción. Además, en el feedback del ej. 2 con dinero sale el guion del teclado («x = -4,00», 268 de 20000 ítems), y `decimalDe`
+  rompe los negativos con céntimos.
+- **`errores6`**: en las pistas de `distribuir-solo-primero` y `signo-solo-primero` el factor negativo va sin paréntesis («6 · −4»,
+  «−3 · −8»), en un 8 % de los ítems.
+- Comprobado y bien: lo demás de la reabierta anterior de la 153 (marcapáginas, «Has contestado con…», el guion en lo que no es feedback).
+  Tests 82/82 (las dos y la común).
+- Clics con ratón de verdad (CDP) sobre una copia de HEAD 67b115a en /tmp/pu2-159b, servida en 8459: 32 de 32 recorridos bien (es/en,
+  375/1100 px, acierto y fallo), sin errores ni desbordes.
+
+Reabiertas: `hechos/reabiertas/153--s-20261118T140330-da0f6f36-revision.md` y `hechos/reabiertas/154--s-20261118T140330-da0f6f36-revision.md`, las dos MEDIO, de unos 10 min.
+**Tercera pasada**: cuando cierren las dos, repetir `node p159-barrido.mjs`, `node p159-oro.mjs` y el barrido de feedbacks (las funciones,
+no solo el ítem), y los clics con `/tmp/pu2-158/clics159b.mjs` (rehacer `/tmp/pu2-159b/arbol` desde HEAD con el parche de `window.__item`).
+Después, publicar las dos.
+
+La propuesta de la tarea semanal 4 de arriba sigue valiendo: plan A con las tres, o el plan B que toque.
