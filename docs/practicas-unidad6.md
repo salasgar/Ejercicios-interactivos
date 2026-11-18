@@ -154,8 +154,8 @@ completan aquí las tareas 157-159.
 | toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | (159) |
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
-**Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion` y
-`transposicion`: las semanas 1 y 2 enteras.
+**Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion`,
+`transposicion`, `resuelve`, `parentesis-algebra` y `denominadores`: las semanas 1, 2 y 3 enteras.
 `traduce` y `valor-numerico` las publicó la tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel. Las dos tienen abierta desde el 17-11 una
@@ -177,13 +177,15 @@ papel en sus cinco ejercicios, tampoco en el 1, cuya huella dependía del orden 
 ejemplo fijo de la introducción del ej. 3, que era una identidad de la hoja 2; se cambió tras una reabierta
 corta. Lo demás estaba bien en
 las tres: regla de oro, campos, variedad y clics a 375 y 1100 px, en español y en inglés. **Semana 3** (tarea 158,
-18-11): **no se publica ninguna**. `resuelve`, `parentesis-algebra` y `denominadores` se escribieron antes que la hoja 3 y el
-examen 3, con las listas de reserva vacías, y sacan casos de la hoja 3, del examen 3 y su extra, del examen 4 y de los finales
-en casi todos sus ejercicios (en `parentesis-algebra` y `denominadores`, cientos de ítems de cada 20000). Las tres están
-reabiertas con las listas ya calculadas (las de los exámenes, como huellas). `parentesis-algebra` tiene además ítems del
-ej. 4 con dos respuestas defendibles y personas mezcladas en el feedback en español; `resuelve`, dos detalles de notación.
-Lo demás está bien en las tres: regla de oro, variedad y clics a 375 y 1100 px, en español y en inglés. Las publica una
-segunda pasada de la 158 cuando se cierren sus reabiertas. La semana 4 la publica la tarea 159. La portada enseña la unidad 6 desde el
+18-11): en la primera pasada no se publicó ninguna. `resuelve`, `parentesis-algebra` y `denominadores` se escribieron antes
+que la hoja 3 y el examen 3, con las listas de reserva vacías, y sacaban casos de la hoja 3, del examen 3 y su extra, del
+examen 4 y de los finales en casi todos sus ejercicios. Se reabrieron con las listas ya calculadas (las de los exámenes, como
+huellas), y en la segunda pasada se publican las tres: **`resuelve`** (0289880), **`parentesis-algebra`** (421218b) y
+**`denominadores`** (c00bd13). Ya no sacan ningún caso del papel (20000 ítems por ejercicio, con los miembros en cualquier
+orden), el ej. 4 de `parentesis-algebra` ya no tiene ítems con dos respuestas defendibles, y el feedback ya no mezcla personas
+ni lleva el guion del teclado. Regla de oro, variedad y clics a 375 y 1100 px, en español y en inglés, bien en las tres.
+`parentesis-algebra` tiene una reabierta corta que no la despublica: en el ej. 4, cuando no hay error, el feedback empieza
+«Está bien: En…», con mayúscula tras los dos puntos. La semana 4 la publica la tarea 159. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 
