@@ -93,6 +93,7 @@ Las 3 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - `Ecuacion.clave()` depende del orden de los miembros (`izq=der`): una reserva hecha con un solo orden deja pasar `20 = 4(x − 3)` si el papel tiene `4(x − 3) = 20` (lección de la 149 en la 157). Las notas llevan los dos órdenes; en la segunda pasada, barre con los miembros en cualquier orden.
 - En `denominadores`, «el mismo caso» por miembro reducido (la clave de la práctica) junta `x/3 + x/6 = 6` con `x/2 = 6`: reserva de más, que no hace daño. Para contar coincidencias de verdad, compara también término a término (en la primera pasada, 5 casos del examen 3 por ejercicio).
 - Los scripts de la primera pasada (en /tmp/pu2-158/: papel, barrido, regla de oro, clics) llevan casos de examen en claro y se pierden al reiniciar el Mac; el modelo que queda en el repositorio es la ENTREGA de la 157 y la de esta.
+- (158, segunda pasada, s-20261118T131928-cf1250cf) Con los scripts aún en /tmp, la segunda pasada fueron 12 min: rehacer `arbol/` con `git archive HEAD | tar -x` y volver a meter `window.__item = actual.item;` delante del `montar` de `base.js`, solo en la copia. `python3 -m http.server` corta a veces una petición (ERR_CONNECTION_RESET) y un recorrido sale «sin ítem»: se repite y ya está, no es de la práctica. macOS no trae `timeout`. Un barrido de los textos del ítem (todas las cadenas, con regex: «: Mayúscula», guion del teclado, «: −») encuentra en un segundo lo que los clics, con un ítem por ejercicio, no ven.
 
 ## Prohibido (propio de esta tarea)
 

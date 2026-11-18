@@ -1,5 +1,72 @@
 # ENTREGA tarea 158 · Revisión y publicación de la semana 3 de la unidad 6
 
+**Al cierre de la segunda pasada (s-20261118T131928-cf1250cf, 18-11), LISTA**: publicadas `resuelve`, `parentesis-algebra` y
+`denominadores` (08197e9). La semana 3 de la U6 está entera. Detalles en «Segunda pasada»; lo de debajo es la primera pasada, tal como se entregó.
+
+## Segunda pasada (18-11, de 13:19Z a 13:32Z, s-20261118T131928-cf1250cf)
+
+Commit: **08197e9**. `practicas/_comun/catalogo.js`: `disponible: true` en las ids 74, 75 y 76. `docs/practicas-unidad6.md`: el párrafo
+«Semana 3» de §6 y la línea «**Publicadas**». `npm test` 2481/2481. Tests propios (comun, las tres prácticas y sus ayudas): 102/102.
+
+Precondiciones comprobadas: las tres reabiertas de la primera pasada están cerradas LISTAS:
+- 150 en 0289880 (s-20261118T090058-f9be4c5d);
+- 151 en 421218b (s-20261118T090057-4da5731a);
+- 152 en c00bd13 (s-20261118T091101-e7f14bb3).
+
+Nada a medias en `catalogo.js` ni en `docs/practicas-unidad6.md` (su último commit era ba0a3ba, de la primera pasada). El papel de la U6
+no ha cambiado desde la primera pasada: se volvió a leer y sale idéntico (hojas 1-4, exámenes 3 y 4 con sus extra, cuestionarios 3 y 4,
+los cinco finales).
+
+### Qué se ha revisado
+
+Se usaron los mismos scripts de la primera pasada, que seguían en /tmp/pu2-158/, sobre el código de HEAD dcc3245.
+- **Cotejo de casos**: 20000 ítems por ejercicio, con las mismas semillas (158001-158012) y la misma idea de «mismo caso» (cada miembro
+  reducido, coeficientes exactos, miembros en cualquier orden). **0 casos** en los 12 ejercicios, comparando con:
+  - las hojas 3 y 4;
+  - el examen 3 y su extra;
+  - el examen 4 y su extra;
+  - los cinco finales.
+
+  En `denominadores` también se hizo la comprobación término a término: 0 en los cuatro ejercicios.
+  Lo único que sigue saliendo es lo que no se reserva, igual que en la 156 y la 157: los recuadros de ejemplo de las hojas y los
+  cuestionarios Forms 3 y 4 (de 1 a 28 casos por ejercicio).
+- **Regla de oro** (aritmética propia, 20000 ítems por ejercicio): **0 fallos**. Esto incluye el ej. 4 de `parentesis-algebra` con ecuación: ya
+  no hay ningún ítem en el que la línea «equivocada» tenga la misma solución que la de arriba.
+- **Variedad**: ningún ítem sale más del 0,53 % de las veces (`denominadores` ej. 1). En `parentesis-algebra`, los ej. 1 y 2 siguen generando
+  unas 2600 expresiones distintas de cada 20000.
+- **Clics** (CDP, ratón de verdad, Chrome sin ventana, sobre una copia de HEAD con `base.js` parcheado solo en la copia): los 4 ejercicios de
+  cada práctica, en español y en inglés, a 375 y a 1100 px, con un ítem acertado y uno fallado. **48 de 48 recorridos bien**: sin errores de
+  JavaScript, sin diálogos y sin desbordes horizontales. Un recorrido (`resuelve` ej. 4, es, 1100 px) se repitió porque el servidor de Python
+  cortó la carga de `src/config.js`; en la repetición salió bien. Se leyeron los feedbacks de fallo a 375 px y se miraron las capturas.
+  - `resuelve`: «−2 : (−2)» con paréntesis y raya.
+  - `parentesis-algebra`: el ej. 4 va en tercera persona («Ha cambiado el signo…»).
+  - El enunciado de `parentesis-algebra` ej. 4 ya no se parte después del «=».
+- **Barrido de textos**: 3000 ítems por ejercicio, en todos los textos del ítem. Se ha buscado:
+  - el guion del teclado como signo;
+  - «: −» y «· −» sin paréntesis;
+  - dobles espacios, «×» y punto decimal;
+  - mayúscula tras los dos puntos.
+
+  Solo sale lo de abajo.
+
+### Resultado
+
+| Práctica | Casos del papel | Regla de oro | Variedad (máx.) | Clics | Veredicto |
+|---|---|---|---|---|---|
+| `resuelve` (150, 0289880) | 0 en los 4 ejercicios | 0 fallos | 0,12 % | 16/16 | **publicada** |
+| `parentesis-algebra` (151, 421218b) | 0 en los 4 ejercicios | 0 fallos | 0,29 % | 16/16 | **publicada**, con reabierta corta |
+| `denominadores` (152, c00bd13) | 0 en los 4 (y 0 término a término) | 0 fallos | 0,53 % | 16/16 | **publicada** |
+
+**Reabierta corta, que no despublica** (`hechos/reabiertas/151--s-20261118T131928-cf1250cf-revision.md`; MEDIO, ~10 min; antes del 1-2-2027).
+En el ej. 4 de `parentesis-algebra`, cuando la línea no tiene error, el feedback dice «¡Bien! Está bien: En 6(3 + 3x)…», con mayúscula tras los
+dos puntos; en inglés, «It is right: In…». La ayuda ya lo corrige, pero el feedback del ítem no. Se publica igual, como `traduce` en la 156,
+porque es una mayúscula y la U6 no se ve en la portada hasta el 1-2-2027.
+
+### Propuesta de la tarea semanal 3
+
+Es el **plan A** de abajo, sin cambios, porque están publicadas las tres: 8 ★ + 2 a elegir, 100 puntos, con `['ortografia-puntuacion', 1]`.
+Sale el lun 15-2 a las 8:00 y se entrega el jue 18-2 a las 23:59. Los planes B y C ya no hacen falta, salvo que se despublique alguna antes.
+
 Sesión s-20261118T084149-af8e25f2 (18-11, de 08:41Z a 09:00Z). **PARCIAL: no se publica ninguna.** `resuelve` (150),
 `parentesis-algebra` (151) y `denominadores` (152) se escribieron antes que la hoja 3 y el examen 3. Tienen las listas de reserva vacías y
 sacan casos del papel en casi todos sus ejercicios. Las tres quedan **reabiertas**, y sus listas de reserva ya están calculadas.
