@@ -6,7 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
-import { ERRORES_TIPICOS, aEcuacion } from '../practicas/_comun/algebra.js';
+import { ERRORES_TIPICOS, aEcuacion, huellaCanonica } from '../practicas/_comun/algebra.js';
 import { Fraccion, leerFraccion } from '../practicas/_comun/fracciones.js';
 import * as L from '../practicas/errores6/logica.js';
 import { TX } from '../practicas/errores6/textos.js';
@@ -226,9 +226,21 @@ test('los nombres y los textos están en los dos idiomas', () => {
   }
 });
 
-test('hoja y examen: el mecanismo de exclusión funciona (al escribirla no existían ni la hoja ni el examen)', () => {
-  assert.equal(L.HOJA.size, 0);
-  assert.equal(L.HUELLAS_EXAMEN.size, 0);
+test('hoja y examen: las listas de la tarea 159 están enteras y ningún enunciado las toca', () => {
+  assert.equal(L.HOJA.size, 298);
+  assert.equal(L.HUELLAS_EXAMEN.size, 662);
+  for (const [fn, sem] of [[L.generarDonde, 111], [L.generarQue, 112], [L.generarCorrige, 113]]) {
+    const rng = crearRng(sem);
+    for (let i = 0; i < 3000; i++) {
+      const it = fn(rng);
+      const q = L.PLANTILLA_POR_ID[it.plantilla].caso(it.params);
+      assert.ok(!L.HOJA.has(q.clave()), 'salió un enunciado de la hoja');
+      assert.ok(!L.HUELLAS_EXAMEN.has(huellaCanonica(q)), 'salió un enunciado de examen');
+    }
+  }
+});
+
+test('hoja y examen: el mecanismo de exclusión funciona', () => {
   const it = generar(L.generarDonde, 91)[0];
   const q = aEcuacion(it.lineas[0].ec ?? L.PLANTILLA_POR_ID[it.plantilla].caso(it.params).aTexto());
   assert.equal(L.reservado(q), false);
