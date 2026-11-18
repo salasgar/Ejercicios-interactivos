@@ -1,0 +1,271 @@
+# Huellas a reservar. Ecuaciones: huellaDe(texto) de logica.js (FNV-1a de la forma canónica), para HUELLAS_RESERVADAS.
+# ej1: huella(partida) de _comun/algebra.js sobre la igualdad en el formato de la app («7 + 5 = 12»); HOY NO HAY GANCHO en el ej. 1.
+# Columnas: huella  ejercicio  veces-en-20000(semilla 157100+ej)  fuentes (fichero + destreza/posición/variante; sin el caso)
+djfwy5	ej1	98	Q2-forms U6-2C-06 práctica 2 preg.18
+1n2hx3i	ej1	98	Q2-forms U6-2C-06 práctica 2 preg.18
+125th0w	ej1	95	E2-tsv U6-2C-06 pos.10 var.4; E2-tex U6-2C-06
+7sa6r3	ej1	95	E2-tsv U6-2C-06 pos.10 var.4; E2-tex U6-2C-06
+20sgxm	ej1	90	H2 ej.7
+1deyqp2	ej1	88	E2-tex U6-2C-06
+vx9sl7	ej1	87	E2-tex U6-2C-06
+13651x3	ej1	85	E2-tex U6-2C-06
+1539u97	ej1	81	H2 ej.7
+z81pow	ej1	81	E2x-tex U6-2C-06
+i73l9m	ej1	80	H2 ej.8
+nh96gh	ej1	80	H2 ej.8
+surfpw	ej1	79	E2x-tex U6-2C-06
+14dw2vx	ej1	79	Q2-forms U6-2C-06 práctica 3 preg.3
+1us0pum	ej1	79	Q2-forms U6-2C-06 práctica 3 preg.3
+brghd1	ej1	76	E2-tex U6-2C-06
+9zaqnm	ej1	75	E2-tsv U6-2C-06 pos.10 var.extra2; E2x-tex U6-2C-06
+b1wzt5	ej1	75	E2-tsv U6-2C-06 pos.10 var.extra2; E2x-tex U6-2C-06
+1ycksw1	ej1	74	H2 ej.8
+x3560y	ej1	72	H2 ej.1
+zrs7wo	ej1	69	H2 ej.8
+61ctcr	ej1	66	E2-tsv U6-2C-06 pos.10 var.3; E2-tex U6-2C-06
+8b6k6s	ej1	66	E2-tsv U6-2C-06 pos.10 var.3; E2-tex U6-2C-06
+krru0a	ej1	38	E2x-tex U6-2C-06
+h3amjo	ej1	36	H2 ej.8
+14jlwdj	ej1	36	H2 ej.8
+16ri6ee	ej1	31	E2-tsv U6-2C-06 pos.10 var.2; E2-tex U6-2C-06
+57grh1	ej1	31	E2-tsv U6-2C-06 pos.10 var.2; E2-tex U6-2C-06
+1aluodm	ej1	31	E2-tex U6-2C-06
+11tin56	ej1	27	H2 ej.7
+gw4ula	ej1	27	H2 ej.8
+flp6li	ej1	26	E2x-tex U6-2C-06; Q2-forms U6-2C-06 práctica 1 preg.12
+1rm1t29	ej1	26	Q2-forms U6-2C-06 práctica 1 preg.12
+1f0nim6	ej1	20	E2-tex U6-2C-06
+5b8if1	ej1	20	E2-tex U6-2C-06
+5lod81	ej1	19	H2 ej.7
+4k9i7a	ej1	19	E2-tex U6-2C-06
+mtsapw	ej1	14	H2 ej.7
+1btwro6	ej1	7	Q2-forms U6-2C-06 práctica 4 preg.16
+1i6u015	ej1	7	Q2-forms U6-2C-06 práctica 4 preg.16
+17kzqtu	ej1	6	E2-tex U6-2C-06
+rphwqm	ej1	5	E2-tsv U6-2C-06 pos.10 var.1; E2-tex U6-2C-06
+1b2jqxt	ej1	5	E2-tsv U6-2C-06 pos.10 var.1; E2-tex U6-2C-06
+1js8zh6	ej1	4	E2-tex U6-2C-06
+ieb4b4	ej1	3	E2-tsv U6-2C-06 pos.10 var.extra1; E2x-tex U6-2C-06
+1hm89pd	ej1	3	E2-tsv U6-2C-06 pos.10 var.extra1; E2x-tex U6-2C-06
+24c9rq	ej1	3	E2x-tex U6-2C-06
+2ufxhg	ej1	2	H2 ej.7
+xub5sa	ej1	2	E2-tex U6-2C-06
+1lk7k4	ej1	1	E2-tex U6-2C-06
+bevfb1	ej1	1	E2x-tex U6-2C-06
+97rsi6	ej1	0	H1 ej.10
+yt0n4c	ej1	0	H2 ej.8
+s0m2r0	ej1	0	H2 ej.8
+14nyr13	ej1	0	H2 ej.8
+irrezq	ej1	0	H2 ej.8; H2 ej.8
+kveefd	ej1	0	H2 ej.8
+18w51l1	ej1	0	H2 ej.8
+1nkjv5y	ej1	0	H2 ej.17
+1u1ub6v	ej1	0	E2-tsv U2-3C-04 pos.19 var.1; E2-tex U2-3C-04
+ych6ti	ej1	0	E2-tsv U2-3C-04 pos.19 var.4; E2-tex U2-3C-04
+1wzvkwe	ej1	0	E2-tex U6-2C-06
+quy27i	ej1	0	E2-tex U6-2C-06
+8dst7d	ej1	0	E2-tex U6-2C-06
+intffr	ej1	0	E2-tex U6-2C-06
+y5xtdf	ej1	0	E2-tex U6-2C-06
+1s9htym	ej1	0	E2-tex U6-2C-06
+1bxoqjs	ej1	0	E2-tex U6-2C-06
+1gf5trf	ej1	0	E2-tex U6-2C-06
+ocoist	ej1	0	E2-tex U6-2C-06
+1qi0c2q	ej1	0	E2-tex U6-2C-06
+15b1ge	ej1	0	E2-tex U6-2C-06
+nofkfr	ej1	0	E2-tex U6-2C-06
+12g1uin	ej1	0	E2x-tex U6-2C-06
+1r31n4e	ej1	0	E2x-tex U6-2C-06
+11bh5by	ej1	0	E2x-tex U6-2C-06
+695c1v	ej1	0	E2x-tex U6-2C-06
+1nhhmw4	ej1	0	E2x-tex U6-2C-06
+5zjf5z	ej1	0	E2x-tex U6-2C-06
+ljf0nh	ej1	0	Q2-forms U2-3C-04 práctica 2 preg.6
+17vbswa	ej1	0	Q2-forms U2-3C-04 práctica 4 preg.1
+cwpu0f	ej2/4/5	150	H2 ej.13
+4m8wmr	ej2/4/5	118	E4-tsv U6-2C-11 pos.15 var.3
+1bn0f5m	ej2/4/5	88	E2-tsv U6-2C-11 pos.15 var.1; E2-tex U6-2C-11
+1nm7y4x	ej2/4/5	68	E4-tsv U6-2C-11 pos.15 var.4
+2q0u5b	ej2/4/5	67	H2 ej.13
+18b56ty	ej2/4/5	66	Q2-forms U6-2C-11 práctica 3 preg.14
+7e4xkh	ej2/4/5	58	H2 ej.13
+3a01j9	ej2/4/5	58	E2-tsv U6-2C-11 pos.15 var.4; E2-tex U6-2C-11
+1gy3t1q	ej2/4/5	50	E4-tsv U6-2C-11 pos.15 var.2
+1s70eq7	ej2/4/5	42	Q2-forms U6-2C-11 práctica 1 preg.20
+sn8ehp	ej2/4/5	39	E2-tsv U6-2C-11 pos.15 var.3; E2-tex U6-2C-11
+1eit5vr	ej2/4/5	32	E2-tsv U6-2C-08 pos.12 var.2; E2-tex U6-2C-08
+19zrew9	ej2/4/5	31	H2 ej.10
+zc4mz3	ej2/4/5	30	H2 ej.10
+n9iw0j	ej2/4/5	29	H2 ej.13
+1ut3tm7	ej2/4/5	28	E2-tsv U6-2C-08 pos.12 var.1; E2-tex U6-2C-08
+rjq9oz	ej2/4/5	28	E4-tsv U6-2C-11 pos.15 var.extra1
+einvng	ej2/4/5	27	H3 ej.4
+1p9vv32	ej2/4/5	26	H2 ej.13
+1rhvu4t	ej2/4/5	26	E2-tsv U6-2B-03 pos.6 var.1; E2-tex U6-2B-03
+1e8bl35	ej2/4/5	26	Q2-forms U6-2C-08 práctica 1 preg.2
+18ln3fg	ej2/4/5	26	Q2-forms U6-2C-11 práctica 4 preg.3
+1rlxhe6	ej2/4/5	25	E2-tsv U6-2B-03 pos.6 var.3; E2-tex U6-2B-03
+105ggu0	ej2/4/5	25	E2-tsv U6-2C-08 pos.12 var.4; E2-tex U6-2C-08
+g8mfh5	ej2/4/5	25	Q2-forms U6-2B-03 práctica 3 preg.5
+1bxzjfn	ej2/4/5	24	H2 ej.10
+hz3b0o	ej2/4/5	21	E2-tsv U6-2C-08 pos.12 var.3; E2-tex U6-2C-08
+e0fd3z	ej2/4/5	19	H2 ej.10
+cmq8bg	ej2/4/5	19	Q2-forms U6-2C-11 práctica 2 preg.20
+d6pfpe	ej2/4/5	17	E2-tsv U6-2C-11 pos.15 var.2; E2-tex U6-2C-11
+vqphyw	ej2/4/5	16	E2-tsv U6-2C-11 pos.15 var.extra2; E2x-tex U6-2C-11
+w0p3nv	ej2/4/5	15	E4-tsv U6-2C-11 pos.15 var.1
+kkxbtm	ej2/4/5	9	E2-tsv U6-2C-11 pos.15 var.extra1; E2x-tex U6-2C-11
+hmlh63	ej2/4/5	7	E4-tsv U6-2C-11 pos.15 var.extra2
+dz9sv4	ej2/4/5	0	H2 ej.10
+c501w4	ej2/4/5	0	H2 ej.13
+1b6ehun	ej2/4/5	0	H2 ej.13
+fgatvh	ej2/4/5	0	H3 ej.3
+1hb14n2	ej2/4/5	0	E2-tsv U6-2B-03 pos.6 var.extra1; E2x-tex U6-2B-03
+9q8jw3	ej2/4/5	0	E2-tsv U6-2C-08 pos.12 var.extra1; E2x-tex U6-2C-08
+1x3cs9d	ej2/4/5	0	E2-tsv U6-2C-08 pos.12 var.extra2; E2x-tex U6-2C-08
+1qt2e9c	ej2/4/5	0	Q2-forms U6-2B-03 práctica 1 preg.1
+5rddyl	ej2/4/5	0	Q2-forms U6-2C-08 práctica 2 preg.17
+43frsr	ej2/4/5	0	Q2-forms U6-2C-08 práctica 3 preg.7
+i13uzg	ej2/4/5	0	Q2-forms U6-2C-08 práctica 4 preg.13
+1q6fdz2	ej2/5	92	Q2-forms U6-2B-03 práctica 4 preg.19
+miz25z	ej2/5	64	H2 ej.10
+1dou60n	ej2/5	62	H2 ej.9
+h3sipk	ej2/5	48	H3 ej.16
+gt4xlm	ej2/5	44	H2 ej.9
+189cebu	ej2/5	43	E2-tsv U6-2B-03 pos.6 var.2; E2-tex U6-2B-03
+irq4ve	ej2/5	43	E2-tsv U6-2C-07 pos.11 var.3; E2-tex U6-2C-07
+fp6itq	ej2/5	41	H2 ej.3
+gj5bwn	ej2/5	41	E2-tex U6-2C-03
+bl33w9	ej2/5	40	H2 ej.4
+x6y0av	ej2/5	39	H2 ej.1
+en7w3	ej2/5	39	E2-tex U6-2C-03
+v4dw1a	ej2/5	39	Q2-forms U6-2C-07 práctica 2 preg.15
+s8rwet	ej2/5	38	H2 ej.3
+17zcsmv	ej2/5	38	H3 ej.16
+9gvmaf	ej2/5	36	H2 ej.9
+h34jal	ej2/5	35	H1 ej.7
+1re790d	ej2/5	35	Q2-forms U6-2C-07 práctica 3 preg.15
+h4s09q	ej2/5	34	H2 ej.9
+zylz0z	ej2/5	33	E2-tsv U6-2B-03 pos.6 var.4; E2-tex U6-2B-03
+13t9aqd	ej2/5	33	E2-tex U6-2C-03
+bb3i7a	ej2/5	33	E2x-tex U6-2C-03
+f57bfs	ej2/5	33	Q2-forms U6-2C-07 práctica 4 preg.7
+ycegg0	ej2/5	32	H2 ej.9
+vo9xx9	ej2/5	32	E2-tsv U6-2C-07 pos.11 var.4; E2-tex U6-2C-07
+2wjn4u	ej2/5	31	E2-tsv U6-2C-07 pos.11 var.2; E2-tex U6-2C-07
+ywdnty	ej2/5	29	E2-tex U6-2C-03
+1xsh51n	ej2/5	28	E2-tsv U6-2C-07 pos.11 var.1; E2-tex U6-2C-07
+1xihjco	ej2/5	26	H2 ej.9
+1d61ql1	ej2/5	0	H2 ej.9
+ex1myq	ej2/5	0	H2 ej.10
+iyp9f5	ej2/5	0	H3 ej.16
+1pvi3a2	ej2/5	0	E2-tsv U6-2B-03 pos.6 var.extra2; E2x-tex U6-2B-03
+1q4g0s6	ej2/5	0	E2-tsv U6-2C-07 pos.11 var.extra1; E2x-tex U6-2C-07
+14jld9x	ej2/5	0	E2-tsv U6-2C-07 pos.11 var.extra2; E2x-tex U6-2C-07
+7a099e	ej2/5	0	Q2-forms U6-2C-07 práctica 1 preg.6
+1rff0t5	ej2/5	0	Q2-forms U6-2B-03 práctica 2 preg.9
+u5oqhq	ej3	14	Q2-forms U6-2C-09 práctica 2 preg.5
+rxkf7r	ej3	12	H2 ej.11
+463tl9	ej3	11	E2-tsv U6-2C-01 pos.7 var.3; E2-tex U6-2C-01
+1rp5j4x	ej3	10	E2-tsv U6-2C-01 pos.7 var.4; E2-tex U6-2C-01
+1szebey	ej3	9	H2 ej.2; H2 ej.5
+1r4khul	ej3	9	H2 ej.6
+1hg84ta	ej3	9	E2-tsv U6-2A-01 pos.1 var.1; E2-tex U6-2A-01
+l6yvdr	ej3	9	E2-tsv U6-2C-01 pos.7 var.extra2; E2x-tex U6-2C-01
+1j08e0r	ej3	9	E2-tsv U6-2C-09 pos.13 var.2; E2-tex U6-2C-09
+1o6plgt	ej3	8	H2 ej.11
+1og9tmv	ej3	8	E2-tsv U6-2A-01 pos.1 var.2; E2-tex U6-2A-01
+8l26ba	ej3	8	E2-tsv U6-2A-01 pos.1 var.3; E2-tex U6-2A-01
+13aym28	ej3	8	E2-tsv U6-2C-01 pos.7 var.extra1; E2x-tex U6-2C-01
+1cht4md	ej3	7	H2 ej.11
+jhk3qc	ej3	7	E2-tsv U6-2C-09 pos.13 var.3; E2-tex U6-2C-09
+1qkxg4h	ej3	7	E2-tsv U6-2C-09 pos.13 var.extra1; E2x-tex U6-2C-09
+9jqe94	ej3	7	Q2-forms U6-2A-01 práctica 3 preg.8
+1avdyxp	ej3	6	H2 ej.1
+z3ieye	ej3	6	H2 ej.2
+cnmhz3	ej3	6	H3 ej.13
+1v9woss	ej3	6	E2-tsv U6-2A-01 pos.1 var.extra2; E2x-tex U6-2A-01
+1q6554v	ej3	6	E2-tsv U6-2C-01 pos.7 var.2; E2-tex U6-2C-01
+15esx69	ej3	6	E3-tsv U6-2A-01 pos.18 var.1
+1wjb8uf	ej3	6	E3-tsv U6-2A-01 pos.18 var.2
+1jufovk	ej3	5	E2-tsv U6-2C-01 pos.7 var.1; E2-tex U6-2C-01
+x0haq5	ej3	5	Q2-forms U6-2C-09 práctica 4 preg.15
+oa5t6x	ej3	5	Q2-forms U6-2C-01 práctica 4 preg.20
+a8ffgo	ej3	5	E3-tsv U6-2A-01 pos.18 var.4
+10vpmjo	ej3	5	F-adaptado-A U6-2C-09, U6-2C-13, U6-2C-02; F-modeloK-dislexia sin destreza
+14suzut	ej3	4	H3 ej.16
+13jlijv	ej3	4	E2-tsv U6-2A-01 pos.1 var.extra1; E2x-tex U6-2A-01
+1t5ycga	ej3	3	E4-tsv U6-2C-09 pos.14 var.2
+1fiawyh	ej3	2	Q2-forms U6-2A-01 práctica 4 preg.8
+147p6uw	ej3	1	H2 ej.11
+1ekkzo7	ej3	1	H3 ej.13
+9lim2b	ej3	0	H2 ej.1
+1azf0kk	ej3	0	H2 ej.2
+nukoap	ej3	0	H2 ej.2
+dxnfr2	ej3	0	H2 ej.5
+dbz6aj	ej3	0	H2 ej.5
+1s058u0	ej3	0	H2 ej.5
+1nmkv31	ej3	0	H2 ej.6
+18conz8	ej3	0	H2 ej.11
+8312z7	ej3	0	H2 ej.11
+157fj6q	ej3	0	E2-tsv U6-2A-01 pos.1 var.4; E2-tex U6-2A-01
+2nl9m	ej3	0	E2-tsv U6-2B-02 pos.5 var.1; E2-tex U6-2B-02
+c42st	ej3	0	E2-tsv U6-2B-02 pos.5 var.2; E2-tex U6-2B-02
+1tyqyof	ej3	0	E2-tsv U6-2B-02 pos.5 var.3; E2-tex U6-2B-02
+ooffue	ej3	0	E2-tsv U6-2B-02 pos.5 var.4; E2-tex U6-2B-02
+1drl813	ej3	0	E2-tsv U6-2B-02 pos.5 var.extra1; E2x-tex U6-2B-02
+1jdhdun	ej3	0	E2-tsv U6-2B-02 pos.5 var.extra2; E2x-tex U6-2B-02
+1opwi0j	ej3	0	E2-tsv U6-2C-02 pos.8 var.1; E2-tex U6-2C-02
+1wjw9es	ej3	0	E2-tsv U6-2C-02 pos.8 var.2; E2-tex U6-2C-02
+m1co19	ej3	0	E2-tsv U6-2C-02 pos.8 var.3; E2-tex U6-2C-02
+1gmpuiu	ej3	0	E2-tsv U6-2C-02 pos.8 var.4; E2-tex U6-2C-02
+w8ikga	ej3	0	E2-tsv U6-2C-09 pos.13 var.1; E2-tex U6-2C-09
+vclysq	ej3	0	E2-tsv U6-2C-09 pos.13 var.4; E2-tex U6-2C-09
+1ifyg1b	ej3	0	E2-tsv U6-2C-09 pos.13 var.extra2; E2x-tex U6-2C-09
+1hswjiz	ej3	0	E2-tex U6-2A-01
+shjmlp	ej3	0	E2-tex U6-2A-01
+qkwrp2	ej3	0	E2-tex U6-2C-02
+tmsebr	ej3	0	E2-tex U6-2C-02
+s8uduw	ej3	0	E2-tex U6-2C-02
+13j4v0u	ej3	0	E2-tex U6-2C-02
+1tib1bv	ej3	0	E2-tex U6-2C-02
+1u2a8pt	ej3	0	E2-tex U6-2C-02
+f7jv9g	ej3	0	E2-tex U6-2A-01
+28p0yy	ej3	0	E2-tex U6-2A-01
+1l0lstm	ej3	0	E2-tex U6-2C-02
+1jwne1q	ej3	0	E2-tex U6-2C-02
+12obp3w	ej3	0	E2-tex U6-2C-02
+hz81i8	ej3	0	E2-tex U6-2A-01
+h5i1sc	ej3	0	E2-tex U6-2A-01
+1lt7aac	ej3	0	E2-tex U6-2A-01
+qnvog4	ej3	0	E2-tex U6-2A-01
+1ff6ld1	ej3	0	E2-tex U6-2C-02
+mpkzm0	ej3	0	E2-tex U6-2C-02
+qjcwpb	ej3	0	E2-tex U6-2C-02
+1sq822e	ej3	0	E2x-tex U6-2A-01
+t5p7ig	ej3	0	E2x-tex U6-2A-01
+2uzw1v	ej3	0	E2x-tex U6-2A-01
+nyuwbh	ej3	0	E2x-tex U6-2A-01
+8tgg1f	ej3	0	Q2-forms U6-2B-02 práctica 1 preg.3
+1rew8lh	ej3	0	Q2-forms U6-2C-01 práctica 1 preg.5
+1wakxj1	ej3	0	Q2-forms U6-2C-09 práctica 1 preg.7
+izgvfn	ej3	0	Q2-forms U6-2A-01 práctica 1 preg.16
+13xh3wo	ej3	0	Q2-forms U6-2C-02 práctica 1 preg.17
+1mm48mc	ej3	0	Q2-forms U6-2A-01 práctica 2 preg.1
+1kwiqig	ej3	0	Q2-forms U6-2C-01 práctica 2 preg.3
+182el4s	ej3	0	Q2-forms U6-2B-02 práctica 2 preg.7
+w76fs9	ej3	0	Q2-forms U6-2C-02 práctica 2 preg.14
+qt45ah	ej3	0	Q2-forms U6-2C-01 práctica 3 preg.6
+1pb6j40	ej3	0	Q2-forms U6-2C-09 práctica 3 preg.10
+12h8tsl	ej3	0	Q2-forms U6-2C-02 práctica 3 preg.17
+1ytv71q	ej3	0	Q2-forms U6-2B-02 práctica 3 preg.20
+z3oeds	ej3	0	Q2-forms U6-2C-02 práctica 4 preg.4
+48k43y	ej3	0	Q2-forms U6-2B-02 práctica 4 preg.9
+1n5nupg	ej3	0	E3-tsv U6-2A-01 pos.18 var.3
+nwoir6	ej3	0	E3-tsv U6-2A-01 pos.18 var.extra1
+1evd6ka	ej3	0	E3-tsv U6-2A-01 pos.18 var.extra2
+o488rt	ej3	0	E4-tsv U6-2C-09 pos.14 var.1
+1lpxlq0	ej3	0	E4-tsv U6-2C-09 pos.14 var.3
+dovkej	ej3	0	E4-tsv U6-2C-09 pos.14 var.4
+150n21r	ej3	0	E4-tsv U6-2C-09 pos.14 var.extra1
+1d7gnik	ej3	0	E4-tsv U6-2C-09 pos.14 var.extra2

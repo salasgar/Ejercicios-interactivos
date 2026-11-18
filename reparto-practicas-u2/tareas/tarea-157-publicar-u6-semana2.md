@@ -88,6 +88,11 @@ Las 2 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - `catalogo.js` lo tocan varias tareas de publicación (130, 131, 140-142, y las 156-159 entre sí): nunca a la vez; mira `.claude/sesiones/` y `git log -3 -- practicas/_comun/catalogo.js`.
 - La portada oculta la U6 hasta el 1-2 (`UNIDADES.desde`): para verla, fecha de prueba en `unidadActual`.
 - Con álgebra, «el mismo caso» es la misma forma canónica (coeficientes como fracciones irreducibles) o la misma ecuación equivalente: la huella se calcula sobre eso, no sobre el texto.
+- (157, 18-11) **Multiplicar la ecuación por una constante no sirve como criterio de «mismo caso»**: hace iguales todas las `ax = c` con la misma solución (`6x = 42` y `2x = 14`). Se usa la ecuación reducida con coeficientes exactos, sin orden de términos ni de miembros.
+- (157, 18-11) **Una huella que depende del orden de los lados no reserva nada**: las huellas del ej. 1 de `transposicion` se calcularon con la igualdad en el orden del papel y la app la genera al revés. Al proponer huellas, calcúlalas sobre una forma canónica sin orden de lados, sobre la igualdad de partida y la de llegada completada, y pruébalas cargadas en la práctica (0 en 20000) antes de dárselas a nadie.
+- (157, 18-11) Las sesiones de las reabiertas las lanza el lanzador enseguida: la 147 y la 149 se cerraron en 20 minutos, con la 157 aún abierta. Si te queda caducidad, una segunda pasada sobre el código nuevo publica en la misma sesión; no cierres sin mirar `git log` y `hechos/terminadas/`.
+- (157, 18-11) Las notas de huellas no pueden decir qué caso de la hoja está también en el examen (una huella con fuentes «H2; E2» junto a la lista de la hoja en claro lo delata): en las notas, las huellas que también son de la hoja llevan solo la fuente de la hoja.
+- (157, 18-11) Un `node clics.mjs … | cut` en segundo plano no enseña nada hasta el final: vuelca la salida a un fichero.
 
 ## Prohibido (propio de esta tarea)
 
