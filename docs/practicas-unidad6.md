@@ -155,8 +155,8 @@ completan aquí las tareas 157-159.
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
 **Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion`,
-`transposicion`, `resuelve`, `parentesis-algebra`, `denominadores` y `leelo6`: las semanas 1, 2 y 3 enteras
-y una de las tres de la semana 4. **Sin publicar**: `problemas-ecuaciones` y `errores6` (reabiertas; abajo).
+`transposicion`, `resuelve`, `parentesis-algebra`, `denominadores`, `leelo6` y `errores6`: las semanas 1, 2 y 3 enteras
+y dos de las tres de la semana 4. **Sin publicar**: `problemas-ecuaciones` (reabierta; abajo).
 `traduce` y `valor-numerico` las publicó la tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel. Las dos tienen abierta desde el 17-11 una
@@ -191,7 +191,14 @@ dos arreglos están bien: ninguna opción del ej. 3 repite a otra y no sale «on
 y sacan casos de las hojas, de los exámenes 2-4 y de los finales en todos sus ejercicios (`errores6`, que es de toda la unidad,
 de las cuatro hojas). Están reabiertas, con las listas ya calculadas (las de los exámenes, como huellas). `problemas-ecuaciones`
 tiene además dos concordancias mal en el feedback en español y, en `pienso`, algún «-» del teclado. Lo demás está bien en las
-dos: regla de oro, variedad y clics. Las publica una segunda pasada de la 159 cuando cierren sus reabiertas. La portada enseña la unidad 6 desde el
+dos: regla de oro, variedad y clics. En la segunda pasada (18-11) se reabrieron otra vez: a `problemas-ecuaciones` le
+faltaban reservas (las ecuaciones de los enunciados y las de otras destrezas que, reducidas, coinciden con la planteada), y en
+`errores6` el factor negativo de dos pistas iba sin paréntesis. En la tercera pasada (18-11) se publica **`errores6`**
+(b837244): 0 casos del papel en sus tres ejercicios (20000 ítems por ejercicio, reducidos y término a término), regla de oro,
+feedbacks (también los que se calculan al corregir) y clics a 375 y 1100 px, en español y en inglés, bien. `problemas-ecuaciones`
+(e62b43a) ya no saca ningún caso del papel, pero se reabre por cuarta vez: en el ej. 2, el porqué de una ecuación falsa con
+dinero escribe la solución en céntimos y con el separador colgando («x = 188,» por 1,88 €), en un 17 % de los ítems. La publica
+la 159 cuando cierre esa reabierta. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 

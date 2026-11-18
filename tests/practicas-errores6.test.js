@@ -54,7 +54,7 @@ const MANO = {
 test('el catálogo declara tres ejercicios y cada plantilla tiene su error con nombre', () => {
   const fila = CATALOGO.find(f => f.slug === 'errores6');
   assert.equal(fila.nEjercicios, 3);
-  assert.equal(fila.disponible, false, 'la publica la tarea de la semana, no esta');
+  assert.equal(fila.disponible, true, 'la publicó la tarea de la semana 4 (159, tercera pasada)');
   assert.equal(L.PLANTILLAS.length, 12);
   for (const pl of L.PLANTILLAS) {
     const e = ERRORES_TIPICOS[pl.id];
