@@ -150,24 +150,24 @@ completan aquí las tareas 157-159.
 | 3 | `resuelve` | 74 | 150 | El primer paso · Paso a paso · Resuélvela · ¿Está bien resuelta? | sin contextos; sin paréntesis ni denominadores; \|coeficiente de x\| ≤ 9, números sueltos ≤ 12 (hasta 40 en «reducir», ej. 2); solución entera \|s\| ≤ 12, o fracción con denominador ≤ 9 y \|numerador\| ≤ 20; x = 0 en los ej. 2 y 3 |
 | 3 | `parentesis-algebra` | 75 | 151 | Quita el paréntesis · ¿Cuál es el desarrollo? · Resuelve con paréntesis · Caza el error | sin contextos; un paréntesis por miembro; número delante del paréntesis de 1 a 6, positivo o negativo (o solo el signo menos), coeficientes dentro de 1 a 5, números 1-9, término delante hasta 9 (hasta 40 en el segundo miembro de las ecuaciones); solución entera casi siempre (fracción en ~12 %, \|numerador\| ≤ 40, denominador ≤ 6) |
 | 3 | `denominadores` | 76 | 152 | ¿Por cuánto multiplico? · Sin denominadores · Resuélvela · Paso a paso | sin contextos; denominadores 2-12 con m.c.m. ≤ 30; hasta tres fracciones; sin paréntesis en los numeradores; solución entera casi siempre |
-| 4 | `problemas-ecuaciones` | 77 | 153 | ¿Qué es x? · ¿Qué ecuación? · Resuelve y contesta · ¿Qué pide? · ¿Tiene sentido? | (159) |
-| toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | (159) |
+| 4 | `problemas-ecuaciones` | 77 | 153 | ¿Qué es x? · ¿Qué ecuación? · Resuelve y contesta · ¿Qué pide? · ¿Tiene sentido? | ocho contextos: consecutivos (el menor de 5 a 120), reparto «el doble, el triple…» (3-40 cada uno, total ≤ 200), reparto de tres (3-30, sobran 2-9), hermanos (el menor 6-16, diferencia 2-8), entradas (3-25 €, extra 2-12 €), cuadernos y bolígrafo (0,50-6,00 € y 0,50-4,00 €, de 5 en 5 céntimos), perímetro con palabras (lados ≤ 50), «pienso un número» (2-60, resultado positivo); solución natural o dinero exacto al céntimo |
+| toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | sin contextos; doce plantillas, una por error típico; coeficientes 1-12, soluciones −12…15, constantes ≤ 30, denominadores 2-7, factor del paréntesis 1-6; ningún número de las líneas pasa de 1500 |
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
 **Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion`,
-`transposicion`, `resuelve`, `parentesis-algebra` y `denominadores`: las semanas 1, 2 y 3 enteras.
+`transposicion`, `resuelve`, `parentesis-algebra`, `denominadores` y `leelo6`: las semanas 1, 2 y 3 enteras
+y una de las tres de la semana 4. **Sin publicar**: `problemas-ecuaciones` y `errores6` (reabiertas; abajo).
 `traduce` y `valor-numerico` las publicó la tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel. Las dos tienen abierta desde el 17-11 una
 reabierta corta que no las despublica (en `traduce`, la variedad del ej. 1 y una solución que repite la
 expresión en el ej. 4; en `valor-numerico`, «sumar antes de multiplicar» cuando la cuenta resta).
 `terminos-semejantes` se quedó sin publicar en la 156 (el ej. 4 tenía todavía ítems con dos respuestas
-buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). **Sin publicar**: `leelo6`. Su reabierta del 17-11 (casos del
-papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define) quedó
-atendida, y ya no saca ningún caso del papel. Pero la revisión del 18-11 la reabrió otra vez: en el ej. 3
-salían dos opciones falsas que decían lo mismo, y en el ej. 4, «One years ago». Está arreglado en 7c36e41,
-pero falta revisarlo. Además, tiene
-vocabulario de los problemas (semana 4) y no filtra por sesión, así que no va en la semana 1: la publica
+buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). `leelo6` tuvo una reabierta el 17-11 (casos del
+papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define), que quedó
+atendida, y ya no saca ningún caso del papel. La revisión del 18-11 la reabrió otra vez: en el ej. 3
+salían dos opciones falsas que decían lo mismo, y en el ej. 4, «One years ago». Se arregló en 7c36e41. Como tiene
+vocabulario de los problemas (semana 4) y no filtra por sesión, no va en la semana 1: la publica
 la tarea de la semana 4 (159), igual que `leelo5` salió con la semana 2. **Semana 2** (tarea 157, 18-11): se publica **`terminos-semejantes`** (la 157 la publica junto
 con las suyas, tras su cuarta entrega, 714ff62: 0 casos del papel y ningún ítem con dos respuestas buenas).
 `es-solucion` y `transposicion` se escribieron antes que la hoja 2 y el examen 2, no reservaban nada y se
@@ -185,7 +185,13 @@ huellas), y en la segunda pasada se publican las tres: **`resuelve`** (0289880),
 orden), el ej. 4 de `parentesis-algebra` ya no tiene ítems con dos respuestas defendibles, y el feedback ya no mezcla personas
 ni lleva el guion del teclado. Regla de oro, variedad y clics a 375 y 1100 px, en español y en inglés, bien en las tres.
 `parentesis-algebra` tiene una reabierta corta que no la despublica: en el ej. 4, cuando no hay error, el feedback empieza
-«Está bien: En…», con mayúscula tras los dos puntos. La semana 4 la publica la tarea 159. La portada enseña la unidad 6 desde el
+«Está bien: En…», con mayúscula tras los dos puntos. **Semana 4** (tarea 159, 18-11): se publica **`leelo6`** (7c36e41). Sus
+dos arreglos están bien: ninguna opción del ej. 3 repite a otra y no sale «one years» en 20000 ítems del ej. 4. Los clics, bien
+(es/en, 375/1100 px). `problemas-ecuaciones` y `errores6` se escribieron antes que el papel, con las listas de reserva vacías,
+y sacan casos de las hojas, de los exámenes 2-4 y de los finales en todos sus ejercicios (`errores6`, que es de toda la unidad,
+de las cuatro hojas). Están reabiertas, con las listas ya calculadas (las de los exámenes, como huellas). `problemas-ecuaciones`
+tiene además dos concordancias mal en el feedback en español y, en `pienso`, algún «-» del teclado. Lo demás está bien en las
+dos: regla de oro, variedad y clics. Las publica una segunda pasada de la 159 cuando cierren sus reabiertas. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 
