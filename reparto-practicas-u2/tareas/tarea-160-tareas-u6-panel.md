@@ -85,6 +85,7 @@ Las tareas de las semanas publicadas en el panel con los campos de la propuesta,
 - Claude en Chrome necesita la pestaña activa y visible; el editor de tareas del panel es el de la tarea 67 (ampliado el 2-11 para la ortografía transversal): si falla, reabierta de la 67 y plan B (él teclea, la sesión dicta).
 - (U4, 121) Se puede montar solo la semana 1 y volver: dilo en la ENTREGA y deja la tarea A MEDIAS con su nota; cada vuelta, reclamo nuevo.
 - (U6, 160, 18-11) La extensión de Chrome puede caerse a mitad de un formulario («Couldn't determine which page this action targets»; `list_connected_browsers` vacío). Al reconectarse, la pestaña se recarga y el formulario se pierde. Antes de rellenarlo otra vez, mira en la lista de la unidad qué tareas hay guardadas, para no duplicar ninguna. Rellenar y guardar con un solo `javascript_tool` sobre los controles del propio editor (`[data-nueva]`, `#f-es`, `select[data-ej="slug/n"]`, `#f-nelegir`, `#f-guardar`) es rápido y deja menos tiempo expuesto. Solo se pulsa «Guardar» si `#f-avisos` está vacío y salen las marcas esperadas.
+- (U6, 160, 18-11) Si se monta una semana nada más publicarse sus prácticas, el editor puede seguir con el `catalogo.js` viejo, que Chrome tiene en caché (GitHub Pages lo sirve con caché de 10 min). Se nota porque salen menos filas y las prácticas nuevas no aparecen. Antes, comprueba con `curl` que Pages ya sirve `disponible: true`. Si el editor no las lista, cancela, pide el catálogo con `fetch(url, {cache: 'reload'})` y recarga.
 
 ## Prohibido (propio de esta tarea)
 
