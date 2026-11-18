@@ -30,3 +30,10 @@ Pura aritmética, sin contextos. Ej. 1: números de 2 a 100 y lados naturales. E
 
 ## Reabierta del 13-11 (sesión s-20261113T170200-9bb8cd51)
 En «producto», `candidatos` elige ahora `signo-de-la-solucion` (solución negativa) o `signo-cambiado` (positiva), como suma/resta. Test nuevo: «el feedback de signo dice positivo/negativo según el signo de la solución» (3000 ítems del ej. 2 y del ej. 5, cuatro formas, ES/EN). Commit 251487a. El atajo de `explicaComprueba` (Revisión 191) se queda. Sin navegador.
+
+## Reabierta del 17-11 (sesión s-20261117T235426-40021ed6, por la revisión de la 157)
+- **Reserva**: `practicas/transposicion/reserva.js` con 151 huellas de ecuaciones (`huellaDe`) y 72 del ej. 1 (`huella` de la igualdad de partida): hoja 2, examen 2 (+extra), repaso del examen 4, final y hojas 1 y 3. Solo huellas, ningún caso en claro. Gancho nuevo en el ej. 1 (`esReservadoEj1` en `generarOperador` y `generarHueco`). Los casos del cuestionario Forms (Q2-forms, 45 huellas) **no se reservan**: sin decisión de Juan Luis; si decide reservarlos, se añaden a `reserva.js`.
+- Test nuevo: 0 casos reservados en 20000 ítems de cada ejercicio (ej. 1 incluido), con variedad, y el gancho del ej. 1 con una huella inventada. El test antiguo de reserva ya no vacía la reserva real.
+- Textos: `porQueDe`, `estabaBien` y `estabaMal` sin «:» encadenados ni mayúscula tras «:»; signo sin repetir el número («es positivo (12)» fuera); `invertir-coeficiente` dice «el número que está solo»; ej. 4 admite explícitamente el decimal exacto; introducciones sin casos reservados (`x + 9 = 14`, `4 · 2 = 8`).
+- CSS: las ecuaciones de los botones no se parten (`.eleccion .cuenta { white-space: nowrap }`). Sin comprobar en navegador (sesión no atendida).
+- Tests propios 28/28; `npm test` 2469/2469. Commit ab3a6da.
