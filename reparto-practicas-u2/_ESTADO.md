@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-18T13:21Z por s-20261118T131939-9628e635 al reclamar la 160 (las tareas semanales 1 y 2 de la U6 en el panel, con Juan Luis delante; la 3 y la 4 esperan a la 158 y la 159): **retoque de su fila**, no regeneración completa (otras dos sesiones en el árbol).
+
 Actualizado 2026-11-18T13:20Z por s-20261118T131928-cf1250cf al reclamar la 158 (segunda pasada: 150, 151 y 152 cerradas LISTAS tras sus reabiertas): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-18T09:05Z por s-20261118T090058-f9be4c5d al cerrar la 150 (LISTA, commit 0289880: resuelve con la hoja y los exámenes reservados y la notación del feedback; retoque de su fila, no regeneración completa porque hay otras sesiones en el árbol; npm test 2481/2481).
