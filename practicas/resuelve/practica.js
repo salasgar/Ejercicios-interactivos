@@ -12,7 +12,7 @@ import { aTexto as textoFraccion, fraccion } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
 import {
   cuenta, htmlEc, htmlDatos, htmlSol, entreParentesis, comprobacion, resolucionHtml, sumaDeNumeros,
-  explicaPrimerPaso, explicaPasoAPaso, explicaResuelve, explicaResolucion,
+  explicaPrimerPaso, explicaPasoAPaso, explicaResuelve, explicaResolucion, feedback2, feedback3,
 } from './ayuda.js';
 import {
   generarPrimerPaso, generarPasoAPaso, generarResuelve, generarResolucion,
@@ -99,27 +99,6 @@ const enunciado2 = (item, { tt }) => {
     </div>`;
 };
 
-function feedback2(item, mios, { tt }) {
-  const ec = ecDe(item);
-  const s = solDe(item);
-  const l1 = htmlEc(ecuacionAC(item.A, item.C));
-  const l2 = htmlSol(s);
-  const hueco = huecoMalo(item, mios);
-  if (hueco === null) {
-    const nota = mios.sol.mismaForma(s) ? '' : tt(TX.ej3.simplifica)(textoFraccion(s));
-    return `${tt(TX.ej2.bien)(l1, l2)}${nota} ${comprobacion(ec, s, tt)}`;
-  }
-  const previas = lineasPrevias(item);
-  const ultima = previas[previas.length - 1];
-  if (hueco === 'A') return tt(TX.ej2.mal_x)(sumaDeNumeros(ultima.terminosIzq), item.A, l1);
-  if (hueco === 'C') {
-    if (ultima.terminosDer.length < 2) return tt(TX.ej2.copia)(l1);
-    return tt(TX.ej2.mal_n)(sumaDeNumeros(ultima.terminosDer), item.C, l1);
-  }
-  const div = `${item.C} : ${entreParentesis(fraccion(item.A, 1))}`;
-  return tt(TX.ej2.mal_sol)(l1, div, l2);
-}
-
 function montar2(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `${enunciado2(item, api)}
@@ -159,29 +138,6 @@ function montar2(contenedor, item, api) {
 
 const enunciado3 = (item, { tt }) => `<p class="instruccion">${tt(item.modo === 'elegir' ? TX.ej3.instruccion_elegir : TX.ej3.instruccion_escribir)}</p>
   <div class="operacion">${htmlDatos(item)}</div>`;
-
-function feedback3(item, valor, error, textos) {
-  const { tt } = textos;
-  const ec = ecDe(item);
-  const s = solDe(item);
-  const res = `${tt(TX.ej3.resolucion)} ${resolucionHtml(ec)}.`;
-  const comp = comprobacion(ec, s, tt);
-  if (error === null) {
-    const nota = valor.mismaForma(s) ? '' : tt(TX.ej3.simplifica)(textoFraccion(s));
-    return `${tt(TX.ej3.bien)(res, comp)}${nota}`;
-  }
-  const { A, C } = ec.forma();
-  const extra = {
-    'transponer-sin-signo': () => tt(TX.ej3.mal[error])(),
-    'pasar-factor-restando': () => tt(TX.ej3.mal[error])(textoFraccion(A), textoFraccion(C)),
-    'multiplicar-en-vez-de-dividir': () => tt(TX.ej3.mal[error])(textoFraccion(A), textoFraccion(C)),
-    'invertir-coeficiente': () => tt(TX.ej3.mal[error])(entreParentesis(A), textoFraccion(C)),
-    'signo-al-dividir': () => tt(TX.ej3.mal[error])(entreParentesis(A), textoFraccion(C), textoFraccion(s)),
-    'signo-de-la-solucion': () => tt(TX.ej3.mal[error])(textoFraccion(s)),
-    'otra-respuesta': () => '',
-  }[error]();
-  return `${extra} ${res} ${comp}`.trim();
-}
 
 function montar3(contenedor, item, api) {
   const { tt } = api;

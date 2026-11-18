@@ -9,7 +9,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { Ecuacion, termino, huellaCanonica, ERRORES_TIPICOS } from '../practicas/_comun/algebra.js';
+import { Ecuacion, termino, huellaCanonica, deEcuacion, ERRORES_TIPICOS } from '../practicas/_comun/algebra.js';
 import { Fraccion, fraccion } from '../practicas/_comun/fracciones.js';
 import {
   generarPrimerPaso, generarPasoAPaso, generarResuelve, generarResolucion, ecDe, ecuacionAC, solDe, datosDe,
@@ -18,6 +18,7 @@ import {
   COEF_MAX, NUM_MAX, NUM_MAX_REDUCIR, SOL_ENTERA_MAX, SOL_NUM_MAX, SOL_DEN_MAX, tipoSol,
 } from '../practicas/resuelve/logica.js';
 import { TX } from '../practicas/resuelve/textos.js';
+import { feedback2, feedback3 } from '../practicas/resuelve/ayuda.js';
 
 const N = 3000;
 const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => generar(rng)); };
@@ -265,6 +266,7 @@ test('los casos reservados (hoja en claro, examen por huella) y los ejemplos de 
   const generadores = [[generarPrimerPaso, 6501], [generarPasoAPaso, 6502], [generarResuelve, 6503], [generarResolucion, 6504]];
   const ecDeItem = it => (it.lineas ? ecDe(it.lineas[0]) : ecDe(it));
   const hojaAntes = CASOS_HOJA.length;
+  const huellasAntes = [...HUELLAS_EXAMEN];
   try {
     for (const [generar, semilla] of generadores) {
       const rng = crearRng(semilla);
@@ -276,9 +278,60 @@ test('los casos reservados (hoja en claro, examen por huella) y los ejemplos de 
         assert.ok(!esReservada(e), `salió una reservada: ${e.aTexto()}`);
       }
     }
-    assert.ok(HUELLAS_EXAMEN.size > 100 && CASOS_HOJA.length > hojaAntes + 100, `${HUELLAS_EXAMEN.size} huellas, ${CASOS_HOJA.length} de la hoja`);
+    assert.ok(HUELLAS_EXAMEN.size > huellasAntes.length + 100 && CASOS_HOJA.length > hojaAntes + 100, `${HUELLAS_EXAMEN.size} huellas, ${CASOS_HOJA.length} de la hoja`);
   } finally {
     CASOS_HOJA.length = hojaAntes;
     HUELLAS_EXAMEN.clear();
+    huellasAntes.forEach(h => HUELLAS_EXAMEN.add(h));
+  }
+});
+
+// --- Reserva real (la hoja 3 y la 4 en claro; los exámenes, solo huellas) ---------------------------------------
+
+test('la reserva está completa y ningún ítem (ni la ecuación de partida del ej. 4) es de la hoja ni de un examen', () => {
+  assert.equal(CASOS_HOJA.length, 34);
+  assert.equal(HUELLAS_EXAMEN.size, 146);
+  const cambiada = e => `${e.der.clave()}=${e.izq.clave()}`;
+  const claves = new Set();
+  for (const t of CASOS_HOJA) { const e = deEcuacion(t); assert.ok(e, `no se lee: ${t}`); claves.add(e.clave()); claves.add(cambiada(e)); }
+  const enClaro = ec => claves.has(ec.clave()) || claves.has(cambiada(ec));
+  const porHuella = ec => HUELLAS_EXAMEN.has(huellaCanonica(ec)) || HUELLAS_EXAMEN.has(huellaCanonica(new Ecuacion(ec.terminosDer, ec.terminosIzq)));
+  const generadores = [[generarPrimerPaso, 7001], [generarPasoAPaso, 7002], [generarResuelve, 7003], [generarResolucion, 7004]];
+  for (const [generar, semilla] of generadores) {
+    const rng = crearRng(semilla);
+    for (let i = 0; i < N; i++) {
+      const it = generar(rng);
+      const ec = ecDe(it.lineas ? it.lineas[0] : it);
+      assert.ok(!enClaro(ec), `de la hoja: ${ec.aTexto()}`);
+      assert.ok(!porHuella(ec), 'de un examen (huella)');
+    }
+  }
+});
+
+// --- Notación del feedback ----------------------------------------------------------------------------------------
+
+test('ningún feedback de los ejercicios 2 y 3 lleva «-» del teclado, ni «: −» ni «· −» sin paréntesis', () => {
+  const plano = s => s.replace(/<[^>]+>/g, '');
+  const revisar = (s, donde) => {
+    const t = plano(s);
+    assert.ok(!/(^|[\s(=:·])-\d/.test(t), `«-» del teclado en ${donde}: ${t}`);
+    assert.ok(!/ [:·] −/.test(t), `signo sin paréntesis en ${donde}: ${t}`);
+  };
+  const errores = ['transponer-sin-signo', 'pasar-factor-restando', 'multiplicar-en-vez-de-dividir', 'invertir-coeficiente', 'signo-al-dividir', 'signo-de-la-solucion', 'otra-respuesta'];
+  for (const idioma of ['es', 'en']) {
+    const textos = { idioma, tt: o => o[idioma] };
+    for (const it of lote(generarPasoAPaso, 7101)) {
+      const s = solDe(it), A = fraccion(it.A, 1), C = fraccion(it.C, 1);
+      const mal = [
+        { A: fraccion(it.A + 1, 1), C, sol: s }, { A, C: fraccion(it.C + 1, 1), sol: s },
+        { A, C, sol: s.mismaForma(fraccion(1, 1)) ? fraccion(2, 1) : fraccion(1, 1) }, { A, C, sol: s },
+      ];
+      for (const mios of mal) revisar(feedback2(it, mios, textos), `ej. 2 ${JSON.stringify(it)}`);
+    }
+    for (const it of lote(generarResuelve, 7102)) {
+      const s = solDe(it);
+      for (const error of errores) revisar(feedback3(it, s, error, textos), `ej. 3 (${error}) ${JSON.stringify(it)}`);
+      revisar(feedback3(it, s, null, textos), `ej. 3 bien ${JSON.stringify(it)}`);
+    }
   }
 });

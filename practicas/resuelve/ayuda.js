@@ -5,11 +5,12 @@ import { terminosAHtml, terminosATexto, termino, MENOS } from '../_comun/algebra
 import { aTexto as textoFraccion, fraccion, htmlFraccion } from '../_comun/fracciones.js';
 import { TX } from './textos.js';
 import {
-  ecDe, ecuacionAC, ecuacionSolucion, solDe, nombreDe, movimientos, lineasPrevias, lineasDeResolucion, solucionDe,
+  ecDe, ecuacionAC, ecuacionSolucion, solDe, nombreDe, movimientos, lineasPrevias, lineasDeResolucion, solucionDe, huecoMalo,
 } from './logica.js';
 
 export const cuenta = html => `<span class="cuenta">${html}</span>`;
-export const htmlEc = ec => ec.aHtml();
+// El signo de un término va pegado a su número (espacio duro): una ecuación larga solo se parte entre términos o por el «=».
+export const htmlEc = ec => ec.aHtml().replace(/([+−]) (?=[\d<])/g, '$1\u00a0');
 export const htmlDatos = datos => htmlEc(ecDe(datos));
 export const htmlSol = s => htmlEc(ecuacionSolucion(s));
 
@@ -123,4 +124,49 @@ export function explicaResolucion(item, { idioma, tt }) {
     ? `El paso ${k} no sale de la línea de arriba. Tendría que ser ${cuenta(htmlDatos(item.correcta))}. Error: ${nombre}.`
     : `Step ${k} does not follow from the line above. It should be ${cuenta(htmlDatos(item.correcta))}. Mistake: ${nombre}.`;
   return `${frase} ${respuesta(idioma, comillas(idioma, tt(TX.ej4.paso)(k)))}${consejo}`;
+}
+
+// Feedback de los ejercicios 2 y 3 (aquí, y no en practica.js, para que un test pueda leerlo sin DOM).
+export function feedback2(item, mios, { tt }) {
+  const ec = ecDe(item);
+  const s = solDe(item);
+  const l1 = htmlEc(ecuacionAC(item.A, item.C));
+  const l2 = htmlSol(s);
+  const hueco = huecoMalo(item, mios);
+  if (hueco === null) {
+    const nota = mios.sol.mismaForma(s) ? '' : tt(TX.ej3.simplifica)(textoFraccion(s));
+    return `${tt(TX.ej2.bien)(l1, l2)}${nota} ${comprobacion(ec, s, tt)}`;
+  }
+  const previas = lineasPrevias(item);
+  const ultima = previas[previas.length - 1];
+  if (hueco === 'A') return tt(TX.ej2.mal_x)(sumaDeNumeros(ultima.terminosIzq), textoFraccion(fraccion(item.A, 1)), l1);
+  if (hueco === 'C') {
+    if (ultima.terminosDer.length < 2) return tt(TX.ej2.copia)(l1);
+    return tt(TX.ej2.mal_n)(sumaDeNumeros(ultima.terminosDer), textoFraccion(fraccion(item.C, 1)), l1);
+  }
+  const div = `${textoFraccion(fraccion(item.C, 1))} : ${entreParentesis(fraccion(item.A, 1))}`;
+  return tt(TX.ej2.mal_sol)(l1, div, l2);
+}
+
+export function feedback3(item, valor, error, textos) {
+  const { tt } = textos;
+  const ec = ecDe(item);
+  const s = solDe(item);
+  const res = `${tt(TX.ej3.resolucion)} ${resolucionHtml(ec)}.`;
+  const comp = comprobacion(ec, s, tt);
+  if (error === null) {
+    const nota = valor.mismaForma(s) ? '' : tt(TX.ej3.simplifica)(textoFraccion(s));
+    return `${tt(TX.ej3.bien)(res, comp)}${nota}`;
+  }
+  const { A, C } = ec.forma();
+  const extra = {
+    'transponer-sin-signo': () => tt(TX.ej3.mal[error])(),
+    'pasar-factor-restando': () => tt(TX.ej3.mal[error])(textoFraccion(A), textoFraccion(C), entreParentesis(A)),
+    'multiplicar-en-vez-de-dividir': () => tt(TX.ej3.mal[error])(textoFraccion(A), textoFraccion(C), entreParentesis(A)),
+    'invertir-coeficiente': () => tt(TX.ej3.mal[error])(entreParentesis(A), textoFraccion(C)),
+    'signo-al-dividir': () => tt(TX.ej3.mal[error])(entreParentesis(A), textoFraccion(C), textoFraccion(s)),
+    'signo-de-la-solucion': () => tt(TX.ej3.mal[error])(textoFraccion(s)),
+    'otra-respuesta': () => '',
+  }[error]();
+  return `${extra} ${res} ${comp}`.trim();
 }

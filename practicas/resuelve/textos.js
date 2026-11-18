@@ -120,12 +120,12 @@ export const TX = {
         en: () => 'When a term moves to the other side, its sign changes.',
       },
       'pasar-factor-restando': {
-        es: (A, C) => `El <span class="cuenta">${A}</span> que multiplica a la x pasa <strong>dividiendo</strong>, no restando: x = ${C} : ${A}.`,
-        en: (A, C) => `The <span class="cuenta">${A}</span> in front of x moves across by <strong>dividing</strong>, not by subtracting: x = ${C} : ${A}.`,
+        es: (A, C, Ap) => `El <span class="cuenta">${A}</span> que multiplica a la x pasa <strong>dividiendo</strong>, no restando: x = ${C} : ${Ap}.`,
+        en: (A, C, Ap) => `The <span class="cuenta">${A}</span> in front of x moves across by <strong>dividing</strong>, not by subtracting: x = ${C} : ${Ap}.`,
       },
       'multiplicar-en-vez-de-dividir': {
-        es: (A, C) => `El <span class="cuenta">${A}</span> pasa <strong>dividiendo</strong>, no multiplicando: x = ${C} : ${A}.`,
-        en: (A, C) => `The <span class="cuenta">${A}</span> moves across by <strong>dividing</strong>, not by multiplying: x = ${C} : ${A}.`,
+        es: (A, C, Ap) => `El <span class="cuenta">${A}</span> pasa <strong>dividiendo</strong>, no multiplicando: x = ${C} : ${Ap}.`,
+        en: (A, C, Ap) => `The <span class="cuenta">${A}</span> moves across by <strong>dividing</strong>, not by multiplying: x = ${C} : ${Ap}.`,
       },
       'invertir-coeficiente': {
         es: (A, C) => `Se divide el número del segundo miembro entre el de la x: ${C} : ${A}, no al revés.`,

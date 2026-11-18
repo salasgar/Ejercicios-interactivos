@@ -39,13 +39,69 @@ export const ERRORES_PROPIOS = {
 /** El nombre de un error (propio o de `algebra.js`), o null. */
 export const nombreDe = id => ERRORES_PROPIOS[id]?.nombre ?? ERRORES_TIPICOS[id]?.nombre ?? null;
 
-// --- Casos que se dejan libres para la hoja (en claro) y para los exámenes (por huella FNV-1a) -----
-// Al escribir esta práctica no existían ni la hoja ni el examen de la semana 3 de la unidad 6 (se dice en
-// la ENTREGA): la tarea de publicación de su semana los coteja y rellena estas dos listas. La hoja va en
-// claro, como ecuaciones tecleadas; el examen, SOLO como huella de la forma canónica de la ecuación
-// (`huellaCanonica`, calculada fuera del repositorio), nunca en claro: el repositorio es público.
-export const CASOS_HOJA = [];
-export const HUELLAS_EXAMEN = new Set();
+// --- Casos reservados: la hoja 3 y la 4 (en claro) y los exámenes de la U6 (por huella FNV-1a) ---------
+// CASOS_HOJA: los enunciados de las hojas 3 y 4 de la unidad 6, como ecuaciones tecleadas (el papel es del
+// alumno y no es secreto). HUELLAS_EXAMEN: la huella de la forma canónica (`huellaCanonica`, calculada fuera
+// del repositorio, en los dos órdenes de miembros) de las ecuaciones del examen 3 y su extra, el examen 4 y
+// su extra y los cinco finales. Los exámenes NUNCA se escriben en claro: el repositorio es público.
+// Listas calculadas por la tarea de publicación de la semana 3 (158, 18-11) y copiadas aquí por la 150.
+export const CASOS_HOJA = [
+  '8x + 3 = x + 45',
+  '9x − 7 = 2x + 21',
+  'x + 14 = 3x − 2',
+  '9 − 3x = x + 1',
+  '3x + 5 + 2x = x + 49',
+  '5x + 4 = 2x + 13',
+  '3x + 7 = x − 5',
+  '4x − 1 = 10x + 2',
+  '2x + 9 = 8x + 1',
+  '5 − x = 4x + 8',
+  '9x − 4 = 3x + 6',
+  '3x − 2 = 7x + 4',
+  '4x + 1 = 4x + 6',
+  '2x = 8x',
+  '6 − 3x + 2 = 8 − 3x',
+  '6x − 1 = x + 39',
+  'x + 7 − 3x = 2 − 2x + 4',
+  '−6x = 0',
+  '10x − 3 = 4x + 27',
+  '10x − 4x = 27 − 3',
+  'x + 2 = 20',
+  'x + 8 = 5',
+  'x + 8 = 20',
+  '1.5x − 2 = 0.5x + 3',
+  '0.4x + 1 = 2.2',
+  '2.3x − 1 = 0.3x + 7',
+  '9 − x = 20',
+  'x − 9 = 20',
+  'x + 9 = 20',
+  '9x = 20',
+  '4x = 85',
+  'x + 4x = 85',
+  '4x − x = 85',
+  'x + x + 6 = 32',
+];
+export const HUELLAS_EXAMEN = new Set([
+  '125chs5', '1s833h5', 'y9y7dw', 'evejpc', '133qotf', '3wb4qj', 'tzt85v', 'g05nih',
+  'oi4i36', 'k7ania', '10wgk30', '1jfxpd0', 'l50pi3', 'yttz83', '1nxawbt', '467uw1',
+  'bhrbrd', 'r0cntr', '1hcv1u7', 'w5yx15', 'miypyy', '18cefui', 'rikt47', '1wvy2it',
+  'w9yw1l', 'usmcqt', '10cd0rb', 'eobflb', '1953i0d', '15tfxk1', 'ntycbm', 'rbdjb0',
+  'mx6h9x', 'f6penj', 'oflf0x', '6lgkab', 'aiuii9', '1bkknih', '7irbjm', '7a0f0a',
+  'g2v09g', 'yx8xo8', '2x9efg', '1q6e5c4', 'm8z49z', 'm0wz93', 'd3p3wt', '1uusb5x',
+  'qdvx90', '1yfgbp2', '18tys2y', '1bns943', 'wdn40n', 'dnggr9', '1pg3m7l', '1dlpv8',
+  '1hrni0c', '1iavr6d', '1rhcy1d', 'wrnp2d', 'e8jr6h', 'sy5c70', '139icy4', 'yb3fld',
+  'chs5vn', '1qkymrn', 'yp1wot', '8ofkv9', '6iy4vx', 'lyzil0', '8qneio', '37904f',
+  '5mmdqj', 't1456k', '1qrkgm8', '3x8bqx', 'ugjk8j', '1ygt3v0', 'ctkp60', '1fvx4vb',
+  '1jg5bp7', 'qbqrxy', 'u0laze', '1dkaj96', 'q492sm', 'th3gzc', 'nthglv', '1oomzhn',
+  '1nm7y4x', '1csd2gl', '1t5ycga', '1mus0rm', 'rb3sil', '1xwh2kh', '4m8wmr', '10ztukv',
+  '5egqbc', '1lpxlq0', '1pdi6x3', '1mm2go9', '19uql2z', 'o488rt', '1gy3t1q', '1drwaje',
+  'w0p3nv', '1tcsmy5', '188lso3', '7qrcgz', 'dovkej', '980qip', '1d7gnik', '1dym51g',
+  'hgevgv', '1xozyrr', 'rjq9oz', '1ljrqrf', '15n5exb', '1sew7dp', 'hmlh63', 'krc12f',
+  '150n21r', '52qrst', '17ejtb7', '15v2xa3', 'spvo2g', '10vpmjo', '49nnle', '8tzolu',
+  'zl4wda', 'ql7ptq', 'ns057p', '15kfwqp', '1t88q6f', '1aenpg3', '1tpnzi1', '17zpwhn',
+  'dwzahb', 'wcq3g5', 'h5cwd2', 'io0uk6', 'r9qo00', '1hjx52w', '8epcuc', '1b4a1ks',
+  'y9jzff', '1lhgwcb',
+]);
 
 // Los ejemplos de las introducciones (textos.js) tampoco salen como ítem.
 export const EJEMPLOS_INTRO = ['6x − 2 = 2x + 14', '4x − 3 = 7x − 18'];
@@ -54,7 +110,13 @@ const clavesHoja = new WeakMap();
 function clavesDe(lista) {
   const guardado = clavesHoja.get(lista);
   if (guardado && guardado.n === lista.length) return guardado.claves;
-  const claves = new Set(lista.map(t => deEcuacion(t)?.clave()).filter(Boolean));
+  const claves = new Set();
+  for (const t of lista) {
+    const e = deEcuacion(t);
+    if (!e) continue;
+    claves.add(e.clave());
+    claves.add(`${e.der.clave()}=${e.izq.clave()}`);
+  }
   clavesHoja.set(lista, { n: lista.length, claves });
   return claves;
 }
