@@ -130,7 +130,7 @@ export const CATALOGO = [
   { id: 70, slug: 'valor-numerico', ruta: 'valor-numerico/', unidad: 6, nombre: { es: 'Valor numérico', en: 'Evaluate' }, nEjercicios: 3, disponible: true },
   { id: 71, slug: 'terminos-semejantes', ruta: 'terminos-semejantes/', unidad: 6, nombre: { es: 'Términos semejantes', en: 'Like terms' }, nEjercicios: 4, disponible: true },
   { id: 72, slug: 'es-solucion', ruta: 'es-solucion/', unidad: 6, nombre: { es: '¿Es solución?', en: 'Is it a solution?' }, nEjercicios: 4, disponible: false },
-  { id: 73, slug: 'transposicion', ruta: 'transposicion/', unidad: 6, nombre: { es: 'Pasa al otro lado', en: 'Move it across' }, nEjercicios: 5, disponible: false },
+  { id: 73, slug: 'transposicion', ruta: 'transposicion/', unidad: 6, nombre: { es: 'Pasa al otro lado', en: 'Move it across' }, nEjercicios: 5, disponible: true },
   { id: 74, slug: 'resuelve', ruta: 'resuelve/', unidad: 6, nombre: { es: 'Resuelve', en: 'Solve it' }, nEjercicios: 4, disponible: false },
   { id: 75, slug: 'parentesis-algebra', ruta: 'parentesis-algebra/', unidad: 6, nombre: { es: 'Paréntesis', en: 'Brackets' }, nEjercicios: 4, disponible: false },
   { id: 76, slug: 'denominadores', ruta: 'denominadores/', unidad: 6, nombre: { es: 'Quita denominadores', en: 'Clear the fractions' }, nEjercicios: 4, disponible: false },
