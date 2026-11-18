@@ -160,10 +160,12 @@ generadores producían: se escribieron antes que el papel). Las dos tienen abier
 reabierta corta que no las despublica (en `traduce`, la variedad del ej. 1 y una solución que repite la
 expresión en el ej. 4; en `valor-numerico`, «sumar antes de multiplicar» cuando la cuenta resta).
 `terminos-semejantes` se quedó sin publicar en la 156 (el ej. 4 tenía todavía ítems con dos respuestas
-buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). **Sin publicar**: `leelo6` (reabierta el 17-11: casos del
-papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define; y como
-no filtra por sesión, la propuesta es publicarla con la semana 4, igual que `leelo5` salió con la
-semana 2). **Semana 2** (tarea 157, 18-11): se publica **`terminos-semejantes`** (la 157 la publica junto
+buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). **Sin publicar**: `leelo6`. Su reabierta del 17-11 (casos del
+papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define) quedó
+atendida, y ya no saca ningún caso del papel. Pero la revisión del 18-11 la reabrió otra vez: en el ej. 3
+salen dos opciones falsas que dicen lo mismo, y en el ej. 4 sale «One years ago». Además, tiene
+vocabulario de los problemas (semana 4) y no filtra por sesión, así que no va en la semana 1: la publica
+la tarea de la semana 4 (159), igual que `leelo5` salió con la semana 2. **Semana 2** (tarea 157, 18-11): se publica **`terminos-semejantes`** (la 157 la publica junto
 con las suyas, tras su cuarta entrega, 714ff62: 0 casos del papel y ningún ítem con dos respuestas buenas).
 `es-solucion` y `transposicion` **siguen sin publicar**: se escribieron antes que la hoja 2 y el examen 2 y no
 reservaban nada. `es-solucion` además hacía cuentas falsas con coeficientes no enteros y no cargaba su hoja
