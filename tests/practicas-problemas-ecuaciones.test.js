@@ -262,9 +262,9 @@ test('la resolución escrita termina en x = valor', () => {
   }
 });
 
-test('casos reservados: las claves de las hojas 1-4 y las huellas de los exámenes (198 y 168), y ningún ítem las usa', () => {
-  assert.equal(CASOS_HOJA.size, 198);
-  assert.equal(HUELLAS_EXAMEN.size, 168);
+test('casos reservados: las claves de las hojas 1-4 y las huellas de los exámenes (298 y 662), y ningún ítem las usa', () => {
+  assert.equal(CASOS_HOJA.size, 298);
+  assert.equal(HUELLAS_EXAMEN.size, 662);
   const parse = 'x + 2x = 30';
   HUELLAS_EXAMEN.add(huellaCanonica(parse));
   assert.equal(reservado(parse), true);
@@ -374,4 +374,20 @@ test('ej. 4: cada pedido que no es la x enseña la cuenta con los números del �
   }
   assert.ok(conCuenta > 1000, `pocos pedidos que no son x: ${conCuenta}`);
   assert.ok(tipos.size >= 7, [...tipos].join(','));
+});
+
+test('decimalDe: el signo va aparte (−4,50, −0,50, −0,05) y ningún «-» del teclado en el porqué de las ecuaciones falsas', () => {
+  assert.equal(decimalDe(-450, 'es'), '−4,50');
+  assert.equal(decimalDe(-50, 'es'), '−0,50');
+  assert.equal(decimalDe(-5, 'en'), '−0.05');
+  assert.equal(decimalDe(0, 'es'), '0,00');
+  for (const item of items(generarEcuacion, 153302)) {
+    for (const idioma of IDIOMAS) {
+      for (const op of item.opciones ?? []) {
+        if (!op.sol) continue;
+        const t = plano(porQueEcuacion(item, op, idioma) ?? '');
+        assert.doesNotMatch(t, /(?:^|[=(\s])-(?=[\dx])/, `guion en ${item.clave}: ${t}`);
+      }
+    }
+  }
 });
