@@ -12,7 +12,9 @@ Sesión `s-20261109T104413-a16205de`, 2026-11-09. Commit del código: **`a7f60eb
 |coef. de x| ≤ 9; números sueltos ≤ 12 (en «reducir», el del otro miembro ≤ 40); solución entera |s| ≤ 12, fracción con denominador ≤ 9 y |numerador| ≤ 20. Sin contextos.
 
 ## Casos de hoja y de examen
-**No existían** la hoja ni el examen de la semana 3 de la U6 al escribirla. `CASOS_HOJA` (ecuaciones en claro) y `HUELLAS_EXAMEN` (FNV-1a de la forma canónica, nunca en claro) están vacíos y el generador ya los aplica (`esReservada`, probado con 400 casos). **La tarea de publicación de la semana tiene que cotejar y rellenarlos.** También se excluyen los dos ejemplos de las introducciones.
+Reserva completa desde la segunda pasada (reabierta por la 158, 18-11). `CASOS_HOJA`: 34 ecuaciones de las hojas 3 y 4 de la U6, en claro; `esReservada` compara cada una en los dos órdenes de miembros. `HUELLAS_EXAMEN`: 146 huellas FNV-1a de la forma canónica (examen 3 y su extra, examen 4 y su extra, los cinco finales; ya con los dos órdenes), nunca en claro. Las listas salen de `hechos/notas/s-20261118T084149-af8e25f2-resuelve-reserva.txt` (calculada por la 158 fuera del repositorio). Tests: 3000 ítems por ejercicio, también la ecuación de partida del ej. 4, sin ninguna reservada; `CASOS_HOJA.length` = 34 y `HUELLAS_EXAMEN.size` = 146. También se excluyen los dos ejemplos de las introducciones.
+
+Segunda pasada: (1) el feedback del ej. 2 y del ej. 3 escribe los signos con «−» y la división con el divisor negativo entre paréntesis («−5 : (−7)»); `feedback2` y `feedback3` pasan a `ayuda.js` para poder probarlos sin DOM, con un test que recorre los dos idiomas; (2) `htmlEc` pega el signo de cada término a su número con un espacio duro, para que a 375 px la ecuación solo se parta entre términos o por el «=» (no comprobado con clics en navegador en esta pasada: queda para la publicación).
 
 ## Cómo probarlo en 1 minuto
 `npm run servir` → http://localhost:8080/practicas/resuelve/ → «Probar sin código»; `node --test tests/practicas-resuelve.test.js` (9 en verde). Probado en Chrome (ej. 1-4, 375 px sin desbordar, ES/EN).
