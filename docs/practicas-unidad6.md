@@ -154,7 +154,8 @@ completan aquí las tareas 157-159.
 | toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | (159) |
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
-**Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes` y `transposicion`.
+**Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion` y
+`transposicion`: las semanas 1 y 2 enteras.
 `traduce` y `valor-numerico` las publicó la tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel. Las dos tienen abierta desde el 17-11 una
@@ -164,15 +165,17 @@ expresión en el ej. 4; en `valor-numerico`, «sumar antes de multiplicar» cuan
 buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). **Sin publicar**: `leelo6`. Su reabierta del 17-11 (casos del
 papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define) quedó
 atendida, y ya no saca ningún caso del papel. Pero la revisión del 18-11 la reabrió otra vez: en el ej. 3
-salen dos opciones falsas que dicen lo mismo, y en el ej. 4 sale «One years ago». Además, tiene
+salían dos opciones falsas que decían lo mismo, y en el ej. 4, «One years ago». Está arreglado en 7c36e41,
+pero falta revisarlo. Además, tiene
 vocabulario de los problemas (semana 4) y no filtra por sesión, así que no va en la semana 1: la publica
 la tarea de la semana 4 (159), igual que `leelo5` salió con la semana 2. **Semana 2** (tarea 157, 18-11): se publica **`terminos-semejantes`** (la 157 la publica junto
 con las suyas, tras su cuarta entrega, 714ff62: 0 casos del papel y ningún ítem con dos respuestas buenas).
 `es-solucion` y `transposicion` se escribieron antes que la hoja 2 y el examen 2, no reservaban nada y se
 reabrieron. En la tercera pasada (18-11) se publica **`transposicion`** (96b46da): ya no saca ningún caso del
-papel en sus cinco ejercicios, tampoco en el 1, cuya huella dependía del orden de los lados. `es-solucion`
-**sigue sin publicar**: tras 8c5aebf no saca ningún caso del papel y sus cuentas son exactas, pero el ejemplo
-fijo de la introducción del ej. 3 es una identidad de la hoja 2 (reabierta corta). Lo demás estaba bien en
+papel en sus cinco ejercicios, tampoco en el 1, cuya huella dependía del orden de los lados. Y se publica
+**`es-solucion`** (63c6253): desde 8c5aebf no saca ningún caso del papel y sus cuentas son exactas. Quedaba el
+ejemplo fijo de la introducción del ej. 3, que era una identidad de la hoja 2; se cambió tras una reabierta
+corta. Lo demás estaba bien en
 las tres: regla de oro, campos, variedad y clics a 375 y 1100 px, en español y en inglés. Las de las semanas 3-4, las publican las tareas 158-159. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
