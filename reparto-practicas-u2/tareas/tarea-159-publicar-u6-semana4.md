@@ -90,6 +90,10 @@ Las 2 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - Con álgebra, «el mismo caso» es la misma forma canónica (coeficientes como fracciones irreducibles) o la misma ecuación equivalente: la huella se calcula sobre eso, no sobre el texto.
 - El ★ de ortografía de esta semana es un bloque nuevo (`ortografia-puntuacion` o `ortografia-letras`, tareas 137/136 publicadas por la 140 antes del jue 11-2): si al cerrar la 140 no ha cerrado, propón la tarea con `['ortografia', 11]` de reserva y dilo en la ENTREGA.
 
+- (159, 18-11, s-20261118T131928-cf1250cf) `problemas-ecuaciones` y `errores6` se escribieron antes que el papel, con las reservas vacías: la primera pasada solo pudo reabrirlas, con las listas en `hechos/notas/`. En un problema de enunciado la ecuación **no está en el enunciado**: el caso es la ecuación planteada, que se saca de las soluciones (primera línea de cada `\res`/`\resp`/`\respw` de las hojas, primera ecuación del `\modelo` del resuelto-explicado de los exámenes, con la destreza de su `\barra`, y la fase 3 de las soluciones de los finales). Los scripts, en /tmp/pu2-158/p159-*.mjs; se pierden al reiniciar el Mac.
+- `leelo6` la publica esta tarea, aunque «Ficheros que toca» no la nombre (ENTREGA de la 156, propuesta 1): se publicó en la primera pasada (3287b96).
+- El regenerador de la coordinadora (`s-20261111T215225-39c1f4f5-regenerar-tablon.py`) da las 156-159 por bloqueadas en lo externo, con una nota del 11-11: usa la copia `hechos/notas/s-20261118T131928-cf1250cf-regenerar-tablon.py`, que las da por cumplidas.
+
 ## Prohibido (propio de esta tarea)
 
 - Corregir tú una práctica ajena: reabierta con lo exacto.

@@ -1,0 +1,821 @@
+# Reserva de errores6 propuesta por la tarea 159 (s-20261118T131928-cf1250cf, 2026-11-18). Calculada fuera del repositorio con aritmética propia (BigInt) y
+# convertida a objetos de practicas/_comun/algebra.js; comprobado sobre 80000 ítems de problemas-ecuaciones y errores6 que la clave y la huella
+# coinciden con las que calcula la práctica. «Mismo caso» = la misma forma canónica: cada miembro reducido, coeficientes exactos.
+# Cómo se usa: HOJA (logica.js ~38) es un Set de CLAVES que reservado compara con q.clave() (q = plantilla.caso(p), la ecuación del enunciado, ya sin paréntesis); esa clave depende del orden de los miembros, por eso van las dos. HUELLAS_EXAMEN (~40): las huellas de abajo tal cual (ya van los dos órdenes).
+# Fuentes: hoja = todas las ecuaciones de los enunciados (no recuadros) de las hojas 1-4 de la U6 y la primera línea de cada resolución de sus soluciones; exámenes = todas las ecuaciones de las líneas \item de los exámenes 1-4 y sus extra, la primera ecuación de cada modelo de respuesta (resuelto-explicado) y todas las ecuaciones de los cinco finales (versión del alumno y fase 3 de las soluciones). Los cuestionarios Forms y los recuadros de ejemplo de las hojas no se reservan (como en la 156-158).
+# Recuentos: 151 ecuaciones de las hojas (298 claves), 662 huellas de examen.
+## Hoja (en claro): dónde · cómo está escrita · clave · clave con los miembros cambiados
+hoja-unidad6-semana1.tex:92	x+6=15	x:1|b:6=b:15	b:15=x:1|b:6
+hoja-unidad6-semana1.tex:136	4x+5=9x	x:4|b:5=x:9|b:0	x:9|b:0=x:4|b:5
+hoja-unidad6-semana1.tex:136	x+x=2x	x:2|b:0=x:2|b:0
+hoja-unidad6-semana1.tex:136	8x−x=8x	x:7|b:0=x:8|b:0	x:8|b:0=x:7|b:0
+hoja-unidad6-semana2.tex:73	5x−2=18	x:5|b:-2=b:18	b:18=x:5|b:-2
+hoja-unidad6-semana2.tex:73	14=x+3	b:14=x:1|b:3	x:1|b:3=b:14
+hoja-unidad6-semana2.tex:73	9−2x=3	x:-2|b:9=b:3	b:3=x:-2|b:9
+hoja-unidad6-semana2.tex:76	4x−7=13	x:4|b:-7=b:13	b:13=x:4|b:-7
+hoja-unidad6-semana2.tex:76	2x+3=14	x:2|b:3=b:14	b:14=x:2|b:3
+hoja-unidad6-semana2.tex:76	5x+23=3	x:5|b:23=b:3	b:3=x:5|b:23
+hoja-unidad6-semana2.tex:76	6x−5=13	x:6|b:-5=b:13	b:13=x:6|b:-5
+hoja-unidad6-semana2.tex:79	4x−x=3x	x:3|b:0=x:3|b:0
+hoja-unidad6-semana2.tex:79	x+6=10	x:1|b:6=b:10	b:10=x:1|b:6
+hoja-unidad6-semana2.tex:79	5x=3x+2x	x:5|b:0=x:5|b:0
+hoja-unidad6-semana2.tex:79	x−2=7	x:1|b:-2=b:7	b:7=x:1|b:-2
+hoja-unidad6-semana2.tex:82	x+9=21	x:1|b:9=b:21	b:21=x:1|b:9
+hoja-unidad6-semana2.tex:85	7−4x=13	x:-4|b:7=b:13	b:13=x:-4|b:7
+hoja-unidad6-semana2.tex:85	4x+7=13	x:4|b:7=b:13	b:13=x:4|b:7
+hoja-unidad6-semana2.tex:85	7x−4=13	x:7|b:-4=b:13	b:13=x:7|b:-4
+hoja-unidad6-semana2.tex:88	5x−8=27	x:5|b:-8=b:27	b:27=x:5|b:-8
+hoja-unidad6-semana2.tex:88	−20x+16=74	x:-20|b:16=b:74	b:74=x:-20|b:16
+hoja-unidad6-semana2.tex:117	x+5=13	x:1|b:5=b:13	b:13=x:1|b:5
+hoja-unidad6-semana2.tex:117	x−8=3	x:1|b:-8=b:3	b:3=x:1|b:-8
+hoja-unidad6-semana2.tex:117	x+12=4	x:1|b:12=b:4	b:4=x:1|b:12
+hoja-unidad6-semana2.tex:117	6+x=2	x:1|b:6=b:2	b:2=x:1|b:6
+hoja-unidad6-semana2.tex:117	x−3=−10	x:1|b:-3=b:-10	b:-10=x:1|b:-3
+hoja-unidad6-semana2.tex:117	15=x+9	b:15=x:1|b:9	x:1|b:9=b:15
+hoja-unidad6-semana2.tex:117	x+6=14	x:1|b:6=b:14	b:14=x:1|b:6
+hoja-unidad6-semana2.tex:120	6x=42	x:6|b:0=b:42	b:42=x:6|b:0
+hoja-unidad6-semana2.tex:120	frac{x}{3}=6	x:1/3|b:0=b:6	b:6=x:1/3|b:0
+hoja-unidad6-semana2.tex:120	−5x=30	x:-5|b:0=b:30	b:30=x:-5|b:0
+hoja-unidad6-semana2.tex:120	7x=−21	x:7|b:0=b:-21	b:-21=x:7|b:0
+hoja-unidad6-semana2.tex:120	frac{x}{5}=−2	x:1/5|b:0=b:-2	b:-2=x:1/5|b:0
+hoja-unidad6-semana2.tex:120	5x=35	x:5|b:0=b:35	b:35=x:5|b:0
+hoja-unidad6-semana2.tex:120	−4x=20	x:-4|b:0=b:20	b:20=x:-4|b:0
+hoja-unidad6-semana2.tex:131	3x+2=35	x:3|b:2=b:35	b:35=x:3|b:2
+hoja-unidad6-semana2.tex:131	5x−4=21	x:5|b:-4=b:21	b:21=x:5|b:-4
+hoja-unidad6-semana2.tex:131	4x+9=1	x:4|b:9=b:1	b:1=x:4|b:9
+hoja-unidad6-semana2.tex:131	frac{x}{2}−3=4	x:1/2|b:-3=b:4	b:4=x:1/2|b:-3
+hoja-unidad6-semana2.tex:131	31=6x+7	b:31=x:6|b:7	x:6|b:7=b:31
+hoja-unidad6-semana2.tex:131	7x+20=−1	x:7|b:20=b:-1	b:-1=x:7|b:20
+hoja-unidad6-semana2.tex:134	−x=6	x:-1|b:0=b:6	b:6=x:-1|b:0
+hoja-unidad6-semana2.tex:134	8−x=3	x:-1|b:8=b:3	b:3=x:-1|b:8
+hoja-unidad6-semana2.tex:134	−x+2=9	x:-1|b:2=b:9	b:9=x:-1|b:2
+hoja-unidad6-semana2.tex:134	10−x=18	x:-1|b:10=b:18	b:18=x:-1|b:10
+hoja-unidad6-semana2.tex:134	11−x=5	x:-1|b:11=b:5	b:5=x:-1|b:11
+hoja-unidad6-semana2.tex:134	−x=5−11	x:-1|b:0=b:-6	b:-6=x:-1|b:0
+hoja-unidad6-semana2.tex:137	4x=20	x:4|b:0=b:20	b:20=x:4|b:0
+hoja-unidad6-semana2.tex:137	20x=4	x:20|b:0=b:4	b:4=x:20|b:0
+hoja-unidad6-semana2.tex:137	6x=9	x:6|b:0=b:9	b:9=x:6|b:0
+hoja-unidad6-semana2.tex:137	10x=4	x:10|b:0=b:4	b:4=x:10|b:0
+hoja-unidad6-semana2.tex:137	−8x=20	x:-8|b:0=b:20	b:20=x:-8|b:0
+hoja-unidad6-semana2.tex:137	9x=−12	x:9|b:0=b:-12	b:-12=x:9|b:0
+hoja-unidad6-semana2.tex:137	15x=5	x:15|b:0=b:5	b:5=x:15|b:0
+hoja-unidad6-semana2.tex:140	3x+4x=35	x:7|b:0=b:35	b:35=x:7|b:0
+hoja-unidad6-semana2.tex:140	5x−2x+1=37	x:3|b:1=b:37	b:37=x:3|b:1
+hoja-unidad6-semana2.tex:140	44=9x+4−5x	b:44=x:4|b:4	x:4|b:4=b:44
+hoja-unidad6-semana2.tex:140	x+x−6=12	x:2|b:-6=b:12	b:12=x:2|b:-6
+soluciones-unidad6-semana2.tex:294	4x+7=39	x:4|b:7=b:39	b:39=x:4|b:7
+soluciones-unidad6-semana2.tex:295	frac{x}{3}−2=5	x:1/3|b:-2=b:5	b:5=x:1/3|b:-2
+soluciones-unidad6-semana2.tex:296	5x−9=26	x:5|b:-9=b:26	b:26=x:5|b:-9
+soluciones-unidad6-semana2.tex:309	4x+3=23	x:4|b:3=b:23	b:23=x:4|b:3
+soluciones-unidad6-semana2.tex:310	12x+15=87	x:12|b:15=b:87	b:87=x:12|b:15
+soluciones-unidad6-semana2.tex:311	2x+10=38	x:2|b:10=b:38	b:38=x:2|b:10
+hoja-unidad6-semana3.tex:76	8x+3=x+45	x:8|b:3=x:1|b:45	x:1|b:45=x:8|b:3
+hoja-unidad6-semana3.tex:76	9x−7=2x+21	x:9|b:-7=x:2|b:21	x:2|b:21=x:9|b:-7
+hoja-unidad6-semana3.tex:76	x+14=3x−2	x:1|b:14=x:3|b:-2	x:3|b:-2=x:1|b:14
+hoja-unidad6-semana3.tex:76	9−3x=x+1	x:-3|b:9=x:1|b:1	x:1|b:1=x:-3|b:9
+hoja-unidad6-semana3.tex:76	3x+5+2x=x+49	x:5|b:5=x:1|b:49	x:1|b:49=x:5|b:5
+hoja-unidad6-semana3.tex:76	5x+4=2x+13	x:5|b:4=x:2|b:13	x:2|b:13=x:5|b:4
+hoja-unidad6-semana3.tex:79	3x+7=x−5	x:3|b:7=x:1|b:-5	x:1|b:-5=x:3|b:7
+hoja-unidad6-semana3.tex:79	4x−1=10x+2	x:4|b:-1=x:10|b:2	x:10|b:2=x:4|b:-1
+hoja-unidad6-semana3.tex:79	2x+9=8x+1	x:2|b:9=x:8|b:1	x:8|b:1=x:2|b:9
+hoja-unidad6-semana3.tex:79	5−x=4x+8	x:-1|b:5=x:4|b:8	x:4|b:8=x:-1|b:5
+hoja-unidad6-semana3.tex:79	9x−4=3x+6	x:9|b:-4=x:3|b:6	x:3|b:6=x:9|b:-4
+hoja-unidad6-semana3.tex:79	3x−2=7x+4	x:3|b:-2=x:7|b:4	x:7|b:4=x:3|b:-2
+hoja-unidad6-semana3.tex:82	4x+1=4x+6	x:4|b:1=x:4|b:6	x:4|b:6=x:4|b:1
+hoja-unidad6-semana3.tex:82	2x=8x	x:2|b:0=x:8|b:0	x:8|b:0=x:2|b:0
+hoja-unidad6-semana3.tex:82	6−3x+2=8−3x	x:-3|b:8=x:-3|b:8
+hoja-unidad6-semana3.tex:82	6x−1=x+39	x:6|b:-1=x:1|b:39	x:1|b:39=x:6|b:-1
+hoja-unidad6-semana3.tex:82	x+7−3x=2−2x+4	x:-2|b:7=x:-2|b:6	x:-2|b:6=x:-2|b:7
+hoja-unidad6-semana3.tex:82	−6x=0	x:-6|b:0=b:0	b:0=x:-6|b:0
+hoja-unidad6-semana3.tex:85	10x−3=4x+27	x:10|b:-3=x:4|b:27	x:4|b:27=x:10|b:-3
+hoja-unidad6-semana3.tex:85	10x−4x=27−3	x:6|b:0=b:24	b:24=x:6|b:0
+hoja-unidad6-semana3.tex:114	4(x−3)=20	x:4|b:-12=b:20	b:20=x:4|b:-12
+hoja-unidad6-semana3.tex:114	2(x+5)=6	x:2|b:10=b:6	b:6=x:2|b:10
+hoja-unidad6-semana3.tex:114	−3(x−2)=15	x:-3|b:6=b:15	b:15=x:-3|b:6
+hoja-unidad6-semana3.tex:114	7−(x+4)=2x	x:-1|b:3=x:2|b:0	x:2|b:0=x:-1|b:3
+hoja-unidad6-semana3.tex:114	5x−2(x+1)=10	x:3|b:-2=b:10	b:10=x:3|b:-2
+hoja-unidad6-semana3.tex:114	3(2x−1)=x+7	x:6|b:-3=x:1|b:7	x:1|b:7=x:6|b:-3
+hoja-unidad6-semana3.tex:117	3−(x−5)=2(x+1)	x:-1|b:8=x:2|b:2	x:2|b:2=x:-1|b:8
+hoja-unidad6-semana3.tex:117	1−(x+4)=−10+2(−3x+5)	x:-1|b:-3=x:-6|b:0	x:-6|b:0=x:-1|b:-3
+hoja-unidad6-semana3.tex:131	frac{x}{5}=frac{12}{5}	x:1/5|b:0=b:12/5	b:12/5=x:1/5|b:0
+hoja-unidad6-semana3.tex:131	frac{3x}{4}=6	x:3/4|b:0=b:6	b:6=x:3/4|b:0
+hoja-unidad6-semana3.tex:131	frac{x}{2}+5=13	x:1/2|b:5=b:13	b:13=x:1/2|b:5
+hoja-unidad6-semana3.tex:131	frac{5x}{3}−2=8	x:5/3|b:-2=b:8	b:8=x:5/3|b:-2
+hoja-unidad6-semana3.tex:131	4=frac{x}{3}−1	b:4=x:1/3|b:-1	x:1/3|b:-1=b:4
+hoja-unidad6-semana3.tex:134	frac{x}{3}+frac{x}{6}=6	x:1/2|b:0=b:6	b:6=x:1/2|b:0
+hoja-unidad6-semana3.tex:134	frac{x}{3}−frac{x}{5}=2	x:2/15|b:0=b:2	b:2=x:2/15|b:0
+hoja-unidad6-semana3.tex:134	frac{x}{2}+frac{x}{3}+frac{x}{6}=4	x:1|b:0=b:4	b:4=x:1|b:0
+hoja-unidad6-semana3.tex:134	frac{3x}{5}+frac{x}{2}=22	x:11/10|b:0=b:22	b:22=x:11/10|b:0
+hoja-unidad6-semana3.tex:134	frac{x}{2}−frac{x}{5}+1=10	x:3/10|b:1=b:10	b:10=x:3/10|b:1
+hoja-unidad6-semana3.tex:137	frac{x}{3}+1=frac{x}{2}−1	x:1/3|b:1=x:1/2|b:-1	x:1/2|b:-1=x:1/3|b:1
+hoja-unidad6-semana3.tex:137	3−frac{x}{4}=frac{1}{2}+x	x:-1/4|b:3=x:1|b:1/2	x:1|b:1/2=x:-1/4|b:3
+hoja-unidad6-semana3.tex:137	1−frac{2x}{3}+frac{1}{6}=2−x	x:-2/3|b:7/6=x:-1|b:2	x:-1|b:2=x:-2/3|b:7/6
+hoja-unidad6-semana3.tex:143	frac{x}{4}+2=5	x:1/4|b:2=b:5	b:5=x:1/4|b:2
+hoja-unidad6-semana3.tex:143	x+2=20	x:1|b:2=b:20	b:20=x:1|b:2
+hoja-unidad6-semana3.tex:143	x+8=5	x:1|b:8=b:5	b:5=x:1|b:8
+hoja-unidad6-semana3.tex:143	x+8=20	x:1|b:8=b:20	b:20=x:1|b:8
+hoja-unidad6-semana3.tex:146	1.5x−2=0.5x+3	x:3/2|b:-2=x:1/2|b:3	x:1/2|b:3=x:3/2|b:-2
+hoja-unidad6-semana3.tex:146	0.4x+1=2.2	x:2/5|b:1=b:11/5	b:11/5=x:2/5|b:1
+hoja-unidad6-semana3.tex:146	2.3x−1=0.3x+7	x:23/10|b:-1=x:3/10|b:7	x:3/10|b:7=x:23/10|b:-1
+hoja-unidad6-semana3.tex:155	frac{x+1}{2}−frac{x−2}{3}=2	x:1/6|b:7/6=b:2	b:2=x:1/6|b:7/6
+soluciones-unidad6-semana3.tex:147	6x−7=x+38	x:6|b:-7=x:1|b:38	x:1|b:38=x:6|b:-7
+soluciones-unidad6-semana3.tex:148	x+30=4x	x:1|b:30=x:4|b:0	x:4|b:0=x:1|b:30
+soluciones-unidad6-semana3.tex:149	2x+14=5x−10	x:2|b:14=x:5|b:-10	x:5|b:-10=x:2|b:14
+soluciones-unidad6-semana3.tex:284	frac{x}{2}+frac{x}{4}=15	x:3/4|b:0=b:15	b:15=x:3/4|b:0
+soluciones-unidad6-semana3.tex:285	frac{x}{2}+frac{x}{3}+6=x	x:5/6|b:6=x:1|b:0	x:1|b:0=x:5/6|b:6
+soluciones-unidad6-semana3.tex:286	frac{x}{3}+4=frac{x}{2}	x:1/3|b:4=x:1/2|b:0	x:1/2|b:0=x:1/3|b:4
+hoja-unidad6-semana4.tex:137	9−x=20	x:-1|b:9=b:20	b:20=x:-1|b:9
+hoja-unidad6-semana4.tex:137	x−9=20	x:1|b:-9=b:20	b:20=x:1|b:-9
+hoja-unidad6-semana4.tex:137	x+9=20	x:1|b:9=b:20	b:20=x:1|b:9
+hoja-unidad6-semana4.tex:137	9x=20	x:9|b:0=b:20	b:20=x:9|b:0
+hoja-unidad6-semana4.tex:138	4x=85	x:4|b:0=b:85	b:85=x:4|b:0
+hoja-unidad6-semana4.tex:138	x+4x=85	x:5|b:0=b:85	b:85=x:5|b:0
+hoja-unidad6-semana4.tex:138	x+(x+4)=85	x:2|b:4=b:85	b:85=x:2|b:4
+hoja-unidad6-semana4.tex:138	4x−x=85	x:3|b:0=b:85	b:85=x:3|b:0
+hoja-unidad6-semana4.tex:139	x+x+6=32	x:2|b:6=b:32	b:32=x:2|b:6
+hoja-unidad6-semana4.tex:147	4(x−1)−(2x+3)=5	x:2|b:-7=b:5	b:5=x:2|b:-7
+hoja-unidad6-semana4.tex:147	5−2(x+3)=3x+4	x:-2|b:-1=x:3|b:4	x:3|b:4=x:-2|b:-1
+hoja-unidad6-semana4.tex:147	frac{x}{5}+frac{x}{2}=14	x:7/10|b:0=b:14	b:14=x:7/10|b:0
+hoja-unidad6-semana4.tex:147	frac{2x}{3}−1=frac{x}{2}+1	x:2/3|b:-1=x:1/2|b:1	x:1/2|b:1=x:2/3|b:-1
+hoja-unidad6-semana4.tex:147	8−(x−2)=4x+1	x:-1|b:10=x:4|b:1	x:4|b:1=x:-1|b:10
+soluciones-unidad6-semana4.tex:90	x+3x=72	x:4|b:0=b:72	b:72=x:4|b:0
+soluciones-unidad6-semana4.tex:91	x+5x=48	x:6|b:0=b:48	b:48=x:6|b:0
+soluciones-unidad6-semana4.tex:98	x+x+1+x+2=99	x:3|b:3=b:99	b:99=x:3|b:3
+soluciones-unidad6-semana4.tex:99	x+x+2=74	x:2|b:2=b:74	b:74=x:2|b:2
+soluciones-unidad6-semana4.tex:100	x+x+1=−27	x:2|b:1=b:-27	b:-27=x:2|b:1
+soluciones-unidad6-semana4.tex:102	5x−8=x+36	x:5|b:-8=x:1|b:36	x:1|b:36=x:5|b:-8
+soluciones-unidad6-semana4.tex:113	x+2x+2x+3=38	x:5|b:3=b:38	b:38=x:5|b:3
+soluciones-unidad6-semana4.tex:114	x+x+10=64	x:2|b:10=b:64	b:64=x:2|b:10
+soluciones-unidad6-semana4.tex:115	x+3x+3x−8=90	x:7|b:-8=b:90	b:90=x:7|b:-8
+soluciones-unidad6-semana4.tex:126	x+x+3+x+5=38	x:3|b:8=b:38	b:38=x:3|b:8
+soluciones-unidad6-semana4.tex:145	x+30=3(x+4)	x:1|b:30=x:3|b:12	x:3|b:12=x:1|b:30
+soluciones-unidad6-semana4.tex:156	3x−4=4(x−4)	x:3|b:-4=x:4|b:-16	x:4|b:-16=x:3|b:-4
+soluciones-unidad6-semana4.tex:165	20x+50(16−x)=530	x:-30|b:800=b:530	b:530=x:-30|b:800
+soluciones-unidad6-semana4.tex:166	2x+4(30−x)=86	x:-2|b:120=b:86	b:86=x:-2|b:120
+soluciones-unidad6-semana4.tex:177	74−x=38+x	x:-1|b:74=x:1|b:38	x:1|b:38=x:-1|b:74
+soluciones-unidad6-semana4.tex:178	15+x=2(45−x)	x:1|b:15=x:-2|b:90	x:-2|b:90=x:1|b:15
+soluciones-unidad6-semana4.tex:185	4x+3{,}20=7{,}00	x:4|b:16/5=b:7	b:7=x:4|b:16/5
+soluciones-unidad6-semana4.tex:186	16{,}50+3x=22{,}20	x:3|b:33/2=b:111/5	b:111/5=x:3|b:33/2
+## Exámenes (huellaCanonica; nunca en claro): huella · de dónde (prueba y destreza)
+197m7do	E1 U6-1C-13, E1x U6-1C-13
+1rtmzyg	E1 U6-1C-13
+7vtpvu	E1 U6-1C-13
+2o7txu	E1 U6-1C-15, E1x U6-1C-15, E3 U6-1C-15, E3x U6-1C-15
+177hi2y	E1x U6-1C-13
+vo9xx9	E2 U6-2C-07
+ewg0mr	E2 U6-2C-07
+16omlz5	E2 U6-2C-12
+85t25f	E2 U6-2C-12
+1jufovk	E2 U6-2C-01
+5twtpg	E2 U6-2C-01
+c42st	E2 U6-2B-02
+10cwm2f	E2 U6-2B-02
+189cebu	E2 U6-2B-03
+1ml3t2i	E2 U6-2B-03
+10yve64	E2 U6-2C-10
+gtbrrg	E2 U6-2C-10
+w8ikga	E2 U6-2C-09
+12e49eq	E2 U6-2C-09
+1ut3tm7	E2 U6-2C-08
+15o517l	E2 U6-2C-08
+3a01j9	E2 U6-2C-11
+19xla7z	E2 U6-2C-11
+1bn0f5m	E2 U6-2C-11
+qobgku	E2 U6-2C-11
+1tyqyof	E2 U6-2B-02
+1dewtkv	E2 U6-2B-02
+1rhvu4t	E2 U6-2B-03
+1nz1e87	E2 U6-2B-03
+1421vkk	E2 U6-2C-09
+jhk3qc	E2 U6-2C-09
+105ggu0	E2 U6-2C-08
+j0xowq	E2 U6-2C-08
+umwhor	E2 U6-2C-01
+463tl9	E2 U6-2C-01
+1xsh51n	E2 U6-2C-07
+1nzr3wv	E2 U6-2C-07
+e9kt0t	E2 U6-2C-10
+bh5l6x	E2 U6-2C-10
+nnudlv	E2 U6-2C-12
+skol6p	E2 U6-2C-12
+hz3b0o	E2 U6-2C-08
+1ofhva8	E2 U6-2C-08
+2wjn4u	E2 U6-2C-07
+1frow5q	E2 U6-2C-07
+1j08e0r	E2 U6-2C-09
+1oxlkwx	E2 U6-2C-09
+d6pfpe	E2 U6-2C-11
+du63p8	E2 U6-2C-11
+c8bbza	E2 U6-2C-12
+b9u9nq	E2 U6-2C-12
+1sbozxy	E2 U6-2C-10
+1g0citi	E2 U6-2C-10
+iqlup1	E2 U6-2C-01
+1rp5j4x	E2 U6-2C-01
+zylz0z	E2 U6-2B-03
+d5savj	E2 U6-2B-03
+2nl9m	E2 U6-2B-02
+f77e0a	E2 U6-2B-02
+exblb2	E2 U6-2C-12
+1ggfowu	E2 U6-2C-12
+1q6554v	E2 U6-2C-01
+cqqmux	E2 U6-2C-01
+1rlxhe6	E2 U6-2B-03
+r1vhu4	E2 U6-2B-03
+irq4ve	E2 U6-2C-07
+bxofre	E2 U6-2C-07
+rzc64i	E2 U6-2C-09
+vclysq	E2 U6-2C-09
+ooffue	E2 U6-2B-02
+9s2rq0	E2 U6-2B-02
+sn8ehp	E2 U6-2C-11
+l818e3	E2 U6-2C-11
+1eit5vr	E2 U6-2C-08
+317k53	E2 U6-2C-08
+q8c984	E2 U6-2C-10
+1ddk0t0	E2 U6-2C-10
+1hg84ta	E2 U6-2A-01
+im14xm	E2 U6-2A-01
+1og9tmv	E2 U6-2A-01
+po43r5	E2 U6-2A-01
+8l26ba	E2 U6-2A-01
+xjmo9u	E2 U6-2A-01
+157fj6q	E2 U6-2A-01
+1yyg3o2	E2 U6-2A-01
+1u0t1k7	E2 U6-2A-02
+1xvoas1	E2 U6-2A-02
+1scp4ef	E2 U6-2A-02
+1gak9cl	E2 U6-2A-02
+1ot9qgp	E2 U6-2A-02
+19s3o3b	E2 U6-2A-02
+1n58ysw	E2 U6-2A-02
+3614as	E2 U6-2A-02
+kogekm	E2 U6-2A-03
+1ch033k	E2 U6-2A-03
+1r23jsa	E2 U6-2A-03
+1uwmcai	E2 U6-2A-03
+gubfkn	E2 U6-2A-03
+djs8j7	E2 U6-2A-03
+1v0e92w	E2 U6-2A-03
+13h8lk8	E2 U6-2A-03
+129y86	E2 U6-2C-03, E2x U6-2C-12
+11j0dfe	E2 U6-2C-03, E2 U6-2C-12
+13s09yy	E2 U6-2C-03, E2 U6-2C-12
+g6mryl	E2 U6-2C-07, E2 U6-2C-08
+g2vach	E2 U6-2C-07, E2 U6-2C-08
+12lumc7	E2 U6-2C-07, E2 U6-2C-08
+nfrjz	E2 U6-2C-07, E2 U6-2C-08
+fmnkkn	E2 U6-2C-07
+1k0q1lr	E2 U6-2C-07
+ztyleh	E2 U6-2C-07
+13hvhcd	E2 U6-2C-07
+casc8z	E2 U6-2C-08
+tn1qtn	E2 U6-2C-08
+10xx06d	E2 U6-2C-08
+19a2vu1	E2 U6-2C-08
+1sgn8hf	E2 U6-2C-10
+15xkykj	E2 U6-2C-10
+lv5m45	E2 U6-2C-10
+zuhzj3	E2 U6-2C-10
+1wcho71	E2 U6-2C-10
+msfr0l	E2 U6-2C-10
+m557t4	E2 U6-2C-10
+vmavvk	E2 U6-2C-10
+e5f3ay	E2 U6-2C-12
+1l3rhj2	E2 U6-2C-12
+1c3tpdx	E2x U6-2C-12
+17ciuqf	E2x U6-2C-12
+1qkxg4h	E2x U6-2C-09
+1i53krr	E2x U6-2C-09
+vqphyw	E2x U6-2C-11
+1vt4kh6	E2x U6-2C-11
+1q4g0s6	E2x U6-2C-07
+bm2ab2	E2x U6-2C-07
+1drl813	E2x U6-2B-02
+1c4n2kn	E2x U6-2B-02
+ngg8ae	E2x U6-2C-10
+cb4e9u	E2x U6-2C-10
+1hb14n2	E2x U6-2B-03
+1sk0ipq	E2x U6-2B-03
+1x3cs9d	E2x U6-2C-08
+1ndye5v	E2x U6-2C-08
+l6yvdr	E2x U6-2C-01
+bl7o05	E2x U6-2C-01
+183uu34	E2x U6-2C-01
+13aym28	E2x U6-2C-01
+14jld9x	E2x U6-2C-07
+t0i80j	E2x U6-2C-07
+9q8jw3	E2x U6-2C-08
+1igw9t9	E2x U6-2C-08
+kkxbtm	E2x U6-2C-11
+trewni	E2x U6-2C-11
+71m0zf	E2x U6-2C-10
+1qwozwb	E2x U6-2C-10
+p7sqq8	E2x U6-2C-12
+1kkazos	E2x U6-2C-12
+18p8h85	E2x U6-2C-09
+1ifyg1b	E2x U6-2C-09
+1pvi3a2	E2x U6-2B-03
+r4egl4	E2x U6-2B-03
+1jdhdun	E2x U6-2B-02
+1cfbwtr	E2x U6-2B-02
+13jlijv	E2x U6-2A-01
+1qihik9	E2x U6-2A-01
+1v9woss	E2x U6-2A-01
+ezv2pk	E2x U6-2A-01
+1scs9we	E2x U6-2A-02
+17o7xgo	E2x U6-2A-02
+1uasn96	E2x U6-2A-02
+zn06io	E2x U6-2A-02
+3a2x77	E2x U6-2A-03
+1ektngf	E2x U6-2A-03
+1cc35rx	E2x U6-2A-03
+1lqlimp	E2x U6-2A-03
+1lz5mju	E2x U6-2C-03
+h3601w	E2x U6-2C-03
+fwn69m	E2x U6-2C-07, E2x U6-2C-08
+kdz0h6	E2x U6-2C-07, E2x U6-2C-08
+yzzsbk	E2x U6-2C-07
+f3piqc	E2x U6-2C-07
+zjyzpi	E2x U6-2C-08
+2ic9na	E2x U6-2C-08
+1w2i2i2	E2x U6-2C-10
+1u3iqak	E2x U6-2C-10
+mp4f72	E2x U6-2C-10
+1gr0kuq	E2x U6-2C-10
+156hjew	E2x U6-2C-12
+1emekwo	E3 U6-3C-12
+jo48ga	E3 U6-3C-12
+125chs5	E3 U6-3C-01
+1s833h5	E3 U6-3C-01
+y9y7dw	E3 U6-3C-15
+evejpc	E3 U6-3C-15
+t7z2dc	E3 U6-3B-01
+19vxo1s	E3 U6-3B-01
+211mm	E3 U6-3C-09
+woei52	E3 U6-3C-09
+1h3vx75	E3 U6-3C-13
+1xfuzxh	E3 U6-3C-13
+133qotf	E3 U6-3C-04/3C-03
+3wb4qj	E3 U6-3C-04/3C-03
+tzt85v	E3 U6-3C-02
+g05nih	E3 U6-3C-02
+oi4i36	E3 U6-3C-05
+k7ania	E3 U6-3C-05
+10wgk30	E3 U6-3C-05
+1jfxpd0	E3 U6-3C-05
+l50pi3	E3 U6-3C-05
+yttz83	E3 U6-3C-05
+8ozh27	E3 U6-3C-11
+wueylz	E3 U6-3C-11
+1nxawbt	E3 U6-3C-01
+467uw1	E3 U6-3C-01
+t71ygt	E3 U6-3C-13
+udvzhx	E3 U6-3C-13
+y6btqa	E3 U6-3C-09
+1o4i15e	E3 U6-3C-09
+bhrbrd	E3 U6-3C-05
+r0cntr	E3 U6-3C-05
+1hcv1u7	E3 U6-3C-05
+w5yx15	E3 U6-3C-05
+miypyy	E3 U6-3C-05
+18cefui	E3 U6-3C-05
+yybe1l	E3 U6-3B-01
+1msw2oz	E3 U6-3B-01
+rikt47	E3 U6-3C-02
+1wvy2it	E3 U6-3C-02
+w9yw1l	E3 U6-3C-04/3C-03
+usmcqt	E3 U6-3C-04/3C-03
+p9o9bj	E3 U6-3C-12
+1btl76h	E3 U6-3C-12
+wzxl23	E3 U6-3C-11
+15bj4bf	E3 U6-3C-11
+10cd0rb	E3 U6-3C-15
+eobflb	E3 U6-3C-15
+1bey0dv	E3 U6-3C-11
+msbvkr	E3 U6-3C-11
+1fjnjgl	E3 U6-3C-12
+1klew83	E3 U6-3C-12
+vfkpj2	E3 U6-3C-09
+wv0uni	E3 U6-3C-09
+q56i01	E3 U6-3B-01
+n0rirf	E3 U6-3B-01
+1953i0d	E3 U6-3C-04/3C-03
+15tfxk1	E3 U6-3C-04/3C-03
+13wqio4	E3 U6-3C-13
+2zjpe8	E3 U6-3C-13
+ntycbm	E3 U6-3C-01
+rbdjb0	E3 U6-3C-01
+mx6h9x	E3 U6-3C-15
+f6penj	E3 U6-3C-15
+oflf0x	E3 U6-3C-02
+6lgkab	E3 U6-3C-02
+u10fjk	E3 U6-3C-09
+zrglwo	E3 U6-3C-09
+q7dyp8	E3 U6-3C-13
+m951j0	E3 U6-3C-13
+aiuii9	E3 U6-3C-01
+1bkknih	E3 U6-3C-01
+7irbjm	E3 U6-3C-05
+7a0f0a	E3 U6-3C-05
+g2v09g	E3 U6-3C-05
+yx8xo8	E3 U6-3C-05
+2x9efg	E3 U6-3C-05
+1q6e5c4	E3 U6-3C-05
+m8z49z	E3 U6-3C-05
+m0wz93	E3 U6-3C-05
+194elfv	E3 U6-3C-12
+f68viz	E3 U6-3C-12
+d3p3wt	E3 U6-3C-15
+1uusb5x	E3 U6-3C-15
+qdvx90	E3 U6-3C-02
+1yfgbp2	E3 U6-3C-02
+1adtdtk	E3 U6-3C-11
+39d3j4	E3 U6-3C-11
+18tys2y	E3 U6-3C-04/3C-03
+1bns943	E3 U6-3C-05
+wdn40n	E3 U6-3C-05
+dnggr9	E3 U6-3C-05
+1pg3m7l	E3 U6-3C-05
+1dlpv8	E3 U6-3C-05
+1hrni0c	E3 U6-3C-05
+76x36n	E3 U6-3B-01
+afyep	E3 U6-3B-01
+sq6903	E3 U6-3A-01
+16vznl9	E3 U6-3A-01
+qfdxdl	E3 U6-3A-01
+3ju88b	E3 U6-3A-01
+1brqi04	E3 U6-3A-01
+lvtpo	E3 U6-3A-01
+16wvcmx	E3 U6-3A-01
+zds6jb	E3 U6-3A-01
+4jve5h	E3 U6-3A-03
+1tj7fet	E3 U6-3A-03
+1k479rz	E3 U6-3A-03
+zmu2ex	E3 U6-3A-03
+d9ws8v	E3 U6-3A-03
+nc7xib	E3 U6-3A-03
+73370h	E3 U6-3A-03
+9jnd4f	E3 U6-3A-03
+1musds6	E3 U6-3C-01
+1htbwsm	E3 U6-3C-01
+1rap6dp	E3 U6-3C-01
+k117y7	E3 U6-3C-01
+1p2p7by	E3 U6-3C-01
+16tdpb2	E3 U6-3C-01
+7yws7r	E3 U6-3C-02
+1twfllj	E3 U6-3C-02
+1pty7yz	E3 U6-3C-02
+ov5pat	E3 U6-3C-02
+1pqw96k	E3 U6-3C-02, E3x U6-3C-02
+1y7z0r0	E3 U6-3C-02, E3x U6-3C-02
+1v3e8ro	E3 U6-3C-02
+15uksks	E3 U6-3C-02
+1ju82il	E3 U6-3C-02
+14h7fad	E3 U6-3C-02
+1iga21q	E3 U6-3C-02, E3x U6-3C-02
+d9ivam	E3 U6-3C-02
+1xad8n4	E3 U6-3C-02
+lozww1	E3 U6-3C-02
+2sk56l	E3 U6-3C-02
+xjr2pq	E3 U6-3C-06
+w4pnxw	E3 U6-3C-06
+t7vhhg	E3 U6-3C-06
+ofln6y	E3 U6-3C-06
+104m6qw	E3 U6-3C-11
+18iien4	E3 U6-3C-11
+9fm1st	E3 U6-3C-11
+1b0qoz3	E3 U6-3C-11
+9wzbsk	E3 U6-3C-11
+jq9lw8	E3 U6-3C-11
+1fsmqel	E3 U6-3C-11
+h0lxez	E3 U6-3C-11
+emcqli	E3 U6-3C-12
+ooenrq	E3 U6-3C-12
+4v7wpw	E3 U6-3C-12
+1x5qi28	E3 U6-3C-12
+gb9lrx	E3 U6-3C-12
+k96tq9	E3 U6-3C-12
+7k8wkt	E3 U6-3C-12
+8n66rt	E3 U6-3C-12
+9ddykx	E3 U6-3C-13
+1k3j739	E3 U6-3C-13
+131chh6	E3 U6-3C-13
+1tndvma	E3 U6-3C-13
+1hfsodd	E3 U6-3C-13
+199ywgn	E3 U6-3C-13
+emqdnz	E3 U6-3C-13
+rwotpt	E3 U6-3C-13
+j73hna	E3 U6-3C-15
+149og8u	E3 U6-3C-15
+1ge4lns	E3 U6-3C-15, E3x U6-3C-15
+1l8sn4g	E3 U6-3C-15, E3x U6-3C-15
+1fa66vw	E3 U6-3C-15
+rb5x18	E3 U6-3C-15
+88zjep	E3 U6-3C-15
+1yfnzc9	E3 U6-3C-15
+15esx69	E3 U6-2A-01
+fosmyb	E3 U6-2A-01
+1wjb8uf	E3 U6-2A-01
+vm3fd1	E3 U6-2A-01
+1n5nupg	E3 U6-2A-01
+1to8kng	E3 U6-2A-01
+a8ffgo	E3 U6-2A-01
+683fm8	E3 U6-2A-01
+1syqjf7	E3x U6-3C-09
+1w8wro3	E3x U6-3C-09
+1iavr6d	E3x U6-3C-04/3C-03
+1rhcy1d	E3x U6-3C-04/3C-03
+1h4w4r1	E3x U6-3C-12
+1hug0fv	E3x U6-3C-12
+t7vwvd	E3x U6-3B-01
+14mxbb7	E3x U6-3B-01
+wrnp2d	E3x U6-3C-15
+e8jr6h	E3x U6-3C-15
+sy5c70	E3x U6-3C-02
+139icy4	E3x U6-3C-02
+9lyw3v	E3x U6-3C-11
+u2g709	E3x U6-3C-11
+yb3fld	E3x U6-3C-01
+chs5vn	E3x U6-3C-01
+h3stz9	E3x U6-3C-13
+15a6615	E3x U6-3C-13
+1qkymrn	E3x U6-3C-05
+yp1wot	E3x U6-3C-05
+8ofkv9	E3x U6-3C-05
+6iy4vx	E3x U6-3C-05
+lyzil0	E3x U6-3C-05
+8qneio	E3x U6-3C-05
+37904f	E3x U6-3C-05
+5mmdqj	E3x U6-3C-05
+11gaysb	E3x U6-3B-01
+1b0z4vp	E3x U6-3B-01
+sngxjo	E3x U6-3C-13
+rg1bmo	E3x U6-3C-13
+1iz9nno	E3x U6-3C-12
+m1lvt4	E3x U6-3C-12
+t1456k	E3x U6-3C-15
+1qrkgm8	E3x U6-3C-15
+savqzt	E3x U6-3C-11
+1hmeelz	E3x U6-3C-11
+3x8bqx	E3x U6-3C-02
+ugjk8j	E3x U6-3C-02
+1ygt3v0	E3x U6-3C-01
+ctkp60	E3x U6-3C-01
+1fvx4vb	E3x U6-3C-05
+1jg5bp7	E3x U6-3C-05
+qbqrxy	E3x U6-3C-05
+u0laze	E3x U6-3C-05
+1dkaj96	E3x U6-3C-05
+q492sm	E3x U6-3C-05
+1tspci4	E3x U6-3C-09
+k5fb28	E3x U6-3C-09
+th3gzc	E3x U6-3C-04/3C-03
+3rdcfv	E3x U6-3A-01
+13w9c29	E3x U6-3A-01
+14tzbf	E3x U6-3A-01
+phlsix	E3x U6-3A-01
+1ipkz7j	E3x U6-3A-03
+19t4ecd	E3x U6-3A-03
+1vc7jk7	E3x U6-3A-03
+1uau39n	E3x U6-3A-03
+mf4ti3	E3x U6-3C-01
+8aah2h	E3x U6-3C-01
+y1u143	E3x U6-3C-01, E4 U6-3C-01
+sy5hpt	E3x U6-3C-01, E4 U6-3C-01
+1e5olst	E3x U6-3C-02
+5ex5sh	E3x U6-3C-02
+1ja8v4n	E3x U6-3C-02
+1g4tu5v	E3x U6-3C-02
+1tbcsxm	E3x U6-3C-06
+1ulthay	E3x U6-3C-06
+130bobq	E3x U6-3C-11
+lcvohq	E3x U6-3C-11
+1nojdue	E3x U6-3C-11
+19k5m4u	E3x U6-3C-11
+1xyossh	E3x U6-3C-12
+mz2rul	E3x U6-3C-12
+lhynb	E3x U6-3C-12
+1nhhbyv	E3x U6-3C-12
+1s62h6x	E3x U6-3C-13
+1ewg9st	E3x U6-3C-13
+1kk5ypd	E3x U6-3C-13
+1swzl5p	E3x U6-3C-13
+6v1ixu	E3x U6-3C-15
+v9o7h2	E3x U6-3C-15
+nwoir6	E3x U6-2A-01
+1eljfme	E3x U6-2A-01
+1evd6ka	E3x U6-2A-01
+1mlmmaq	E3x U6-2A-01
+nthglv	E4 U6-3C-01
+1oomzhn	E4 U6-3C-01
+1w8f7rb	E4 U6-3C-09
+1btsqw1	E4 U6-3C-09
+1nm7y4x	E4 U6-2C-11
+1csd2gl	E4 U6-2C-11
+zcl3x8	E4 U6-3C-12
+11gysi6	E4 U6-3C-12
+1t5ycga	E4 U6-2C-09
+1mus0rm	E4 U6-2C-09
+bv5t22	E4 U6-3C-12
+turbwi	E4 U6-3C-12
+rb3sil	E4 U6-3C-01
+1xwh2kh	E4 U6-3C-01
+161fp93	E4 U6-3C-09
+1xl20mp	E4 U6-3C-09
+4m8wmr	E4 U6-2C-11
+10ztukv	E4 U6-2C-11
+5egqbc	E4 U6-2C-09
+1lpxlq0	E4 U6-2C-09
+nktr5n	E4 U6-3C-12
+17ytlw1	E4 U6-3C-12
+2umacb	E4 U6-3C-09
+1hkkrb7	E4 U6-3C-09
+1pdi6x3	E4 U6-3C-01
+1mm2go9	E4 U6-3C-01
+19uql2z	E4 U6-2C-09
+o488rt	E4 U6-2C-09
+1gy3t1q	E4 U6-2C-11
+1drwaje	E4 U6-2C-11
+w0p3nv	E4 U6-2C-11
+1tcsmy5	E4 U6-2C-11
+1lr14l6	E4 U6-3C-09
+1plzotu	E4 U6-3C-09
+ezvw7r	E4 U6-3C-12
+1tkxzjb	E4 U6-3C-12
+188lso3	E4 U6-3C-01
+7qrcgz	E4 U6-3C-01
+dovkej	E4 U6-2C-09
+980qip	E4 U6-2C-09
+1dmaj0h	E4 U6-4A-01
+1nvmlgl	E4 U6-4A-01
+uixr3v	E4 U6-4A-01
+h66fqz	E4 U6-4A-01
+pk1ftf	E4 U6-4A-01
+24t5tv	E4 U6-4A-01
+18hzmhs	E4 U6-4A-01
+718c2s	E4 U6-4A-01
+jv15h1	E4 U6-4A-02
+1gnkygh	E4 U6-4A-02
+ouqugk	E4 U6-4A-02
+a6wxu4	E4 U6-4A-02
+kf3icy	E4 U6-4A-02
+13y5ghe	E4 U6-4A-02
+t5xxu4	E4 U6-4A-02
+1rxyrro	E4 U6-4A-02
+139d9qq	E4 U6-4A-03
+ll4rdq	E4 U6-4A-03
+1shjd56	E4 U6-4A-03
+1l6irne	E4 U6-4A-03
+1ry24uv	E4 U6-4A-03
+42ncad	E4 U6-4A-03
+1nhh25r	E4 U6-4A-03
+njywe5	E4 U6-4A-03
+xl4v1v	E4 U6-4A-04
+momrbd	E4 U6-4A-04
+ajidg4	E4 U6-4A-04
+gbjc4g	E4 U6-4A-04
+1a56hfk	E4 U6-4A-04
+177zh5w	E4 U6-4A-04
+f2kcuf	E4 U6-4A-04
+zgiowj	E4 U6-4A-04
+1r0q22n	E4 U6-4A-05
+hm7sft	E4 U6-4A-05
+1x3pued	E4 U6-4A-05
+idamsz	E4 U6-4A-05
+7xfuzu	E4 U6-4A-05
+1cvj8uq	E4 U6-4A-05
+mvcmil	E4 U6-4A-05
+vgm13	E4 U6-4A-05
+182c7sw	E4 U6-4A-07
+1uei6zg	E4 U6-4A-07
+1nl6rlc	E4 U6-4A-07
+fblizk	E4 U6-4A-07
+1odq907	E4 U6-4A-07
+lilr2v	E4 U6-4A-07
+pu0urk	E4 U6-4A-07
+1m9acy2	E4 U6-4A-07
+1iwzimi	E4 U6-4A-09
+5e3gyy	E4 U6-4A-09
+b86wq2	E4 U6-4A-09
+1dk0uyo	E4 U6-4A-09
+kw5d8z	E4 U6-4A-09
+1t2oxkl	E4 U6-4A-09
+1decrek	E4 U6-4A-09
+1v3cbrq	E4 U6-4A-09
+1mup8a7	E4 U6-3C-01
+ay6sgh	E4 U6-3C-01
+109qunv	E4 U6-3C-01
+7at1zt	E4 U6-3C-01
+ylt8i1	E4 U6-3C-01
+el6af	E4 U6-3C-01
+1c1dfnm	E4 U6-3C-12
+174iirq	E4 U6-3C-12
+1gge1gk	E4 U6-3C-12
+10ets7s	E4 U6-3C-12
+19mj5va	E4 U6-3C-12, E4x U6-4A-01
+fwwmli	E4 U6-3C-12, E4x U6-4A-01
+168pv6l	E4 U6-3C-12
+tiapmh	E4 U6-3C-12
+1oedqsz	E4x U6-3C-12
+p86eq3	E4x U6-3C-12
+1d7gnik	E4x U6-2C-09
+1dym51g	E4x U6-2C-09
+hgevgv	E4x U6-3C-01
+1xozyrr	E4x U6-3C-01
+tj2gu9	E4x U6-3C-09
+l0fjd1	E4x U6-3C-09
+rjq9oz	E4x U6-2C-11
+1ljrqrf	E4x U6-2C-11
+15n5exb	E4x U6-3C-01
+1sew7dp	E4x U6-3C-01
+hmlh63	E4x U6-2C-11
+krc12f	E4x U6-2C-11
+1j9sqy7	E4x U6-3C-09
+48jxan	E4x U6-3C-09
+12omn8u	E4x U6-3C-12
+16fy4x4	E4x U6-3C-12
+150n21r	E4x U6-2C-09
+52qrst	E4x U6-2C-09
+18tcxsc	E4x U6-4A-01
+1g99s2g	E4x U6-4A-01
+140vihm	E4x U6-4A-02
+wcmnii	E4x U6-4A-02
+169jrmy	E4x U6-4A-02
+1a43zlm	E4x U6-4A-02
+1qa1d72	E4x U6-4A-03
+1yerjxi	E4x U6-4A-03
+r5jv1f	E4x U6-4A-03
+19qg6x9	E4x U6-4A-03
+yoezq6	E4x U6-4A-04
+11uo9pw	E4x U6-4A-04
+15mjbmx	E4x U6-4A-04
+1q5bts7	E4x U6-4A-04
+1fhu1kg	E4x U6-4A-05
+l2gsfg	E4x U6-4A-05
+foktpe	E4x U6-4A-05
+17l6wya	E4x U6-4A-05
+1nejwvm	E4x U6-4A-07
+t63nwg	E4x U6-4A-07
+1mali3q	E4x U6-4A-07
+v8gso4	E4x U6-4A-07
+1jwov4m	E4x U6-4A-09
+1inugqc	E4x U6-4A-09
+1ghgxkn	E4x U6-4A-09
+1hvzhxj	E4x U6-4A-09
+1j6syqe	E4x U6-3C-01
+14lvqu6	E4x U6-3C-01
+z5sfvz	E4x U6-3C-01
+8qwvpp	E4x U6-3C-01
+w8lo1x	E4x U6-3C-12
+ifbrc1	E4x U6-3C-12
+eholmt	E4x U6-3C-12
+mb7izr	E4x U6-3C-12
+17ejtb7	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+15v2xa3	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+spvo2g	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+10vpmjo	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+49nnle	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+8tzolu	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+zl4wda	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+ql7ptq	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+1vn7zey	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+xm2fxe	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+zgjje7	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+1b9hcj7	F-adaptado-A, F-modelo1, F-modeloK-dislexia
+jfykso	F-adaptado-A, F-modelo1
+1upb7dk	F-adaptado-A, F-modelo1
+ku407q	F-modelo1
+w4lx2m	F-modelo1
+ns057p	F-modelo2
+15kfwqp	F-modelo2
+1t88q6f	F-modelo2
+1aenpg3	F-modelo2
+1tpnzi1	F-modelo2
+17zpwhn	F-modelo2
+dwzahb	F-modelo2
+wcq3g5	F-modelo2
+1gdw06c	F-modelo2
+hhev4s	F-modelo2
+16vsp3m	F-modelo2
+1q3en7u	F-modelo2
+125wji1	F-modelo2
+1upn80t	F-modelo2
+1trdace	F-modelo2
+d3e7vi	F-modelo2
+h5cwd2	F-ejemplo
+io0uk6	F-ejemplo
+r9qo00	F-ejemplo
+1hjx52w	F-ejemplo
+8epcuc	F-ejemplo
+1b4a1ks	F-ejemplo
+y9jzff	F-ejemplo
+1lhgwcb	F-ejemplo
+166ojgp	F-ejemplo
+eoix6r	F-ejemplo
+3dtqhz	F-ejemplo
+dqlikl	F-ejemplo
+1vtyg3h	F-ejemplo
+od29n7	F-ejemplo
+1a0pnam	F-ejemplo
+elwdq8	F-ejemplo
