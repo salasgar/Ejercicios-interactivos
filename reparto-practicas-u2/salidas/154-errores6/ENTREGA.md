@@ -18,7 +18,7 @@ Doce plantillas, una por error de `ERRORES_TIPICOS`: transponer-sin-signo, pasar
 - Cotas: coeficientes 1-12, soluciones −12…15, constantes ≤ 30, denominadores 2-7, factores del paréntesis 1-6; ningún número de las líneas > 1500 (test).
 
 ## Hoja y examen
-**No existían** al escribirla (`6. Algebra/` no tiene `hojas-de-ejercicios/` ni `exámenes-semanales/`). `HOJA` y `HUELLAS_EXAMEN` están vacíos y el mecanismo (clave canónica del enunciado / `huellaCanonica`) está probado; la tarea de publicación de la semana 4 (159) coteja y, si hace falta, reabre.
+Al escribirla no existían la hoja ni el examen. Desde la reapertura del 18-11 (tarea 159) `HOJA` (298 claves: 151 ecuaciones de las hojas 1-4 y de la primera línea de sus soluciones, con los dos órdenes de los miembros) y `HUELLAS_EXAMEN` (662 huellas de los exámenes 1-4, sus extra y los finales, sin casos en claro) salen de `hechos/notas/s-20261118T131928-cf1250cf-errores6-reserva.txt`, calculada fuera del repositorio. Un test con 3000 ítems por ejercicio comprueba que ningún enunciado coincide y que los tamaños son 298 y 662; `conParams` no se queda sin números.
 
 ## Cómo probarlo en 1 minuto
 `python3 -m http.server 8154` desde la raíz → http://localhost:8154/practicas/errores6/ → «Probar sin código». Probado en Chrome en ventana ancha, ejercicios 1 y 3 (ES y EN, acierto y fallo). **No probado a 375 px** (la ventana no cambió de ancho al redimensionarla) ni el ejercicio 2 con clics.
