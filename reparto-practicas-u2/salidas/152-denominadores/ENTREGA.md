@@ -15,7 +15,7 @@ Sesión `s-20261109T144439-82cd7321` (relevo de `s-20261109T104442-6bacb3fc`, cu
 Denominadores de 2 a 12, hasta 3 fracciones por ecuación, una sola letra, sin x², soluciones enteras casi siempre. Sin ×, %, `1x` ni `+ −` en los textos (lo comprueba un test). U6-3C-13 queda fuera: es solo una propuesta, no destreza del inventario.
 
 ## Casos de hoja y examen
-**No existían** la hoja 3 ni el examen 3 de la U6 (ni acta) al escribirla. `CASOS_HOJA` y `HUELLAS_EXAMEN` están vacíos pero operativos (forma canónica con huella FNV-1a). Lo coteja la tarea de publicación de la semana 3 (158).
+**Casos reservados (segunda pasada, 18-11):** `CASOS_HOJA` (34 claves: 17 enunciados de las hojas 3 y 4 de la U6, con los dos órdenes de miembros) y `HUELLAS_EXAMEN` (66 huellas FNV-1a de los exámenes 3 y 4, sus extras y los cinco finales, ambos órdenes; nunca en claro) salen de `hechos/notas/s-20261118T084149-af8e25f2-denominadores-reserva.txt`, calculada por la 158. El test genera 3000 ítems por ejercicio y comprueba que ninguno cae en ellas, en los dos órdenes, y que los tamaños son 34 y 66.
 
 ## Incidencias de proceso
 Dos ediciones menores con `sed -i`/`python3` en vez de Edit (`estilos.css`, `index.html`, y un ajuste de `logica.js`); sin consecuencias, revisadas con `git diff`.
