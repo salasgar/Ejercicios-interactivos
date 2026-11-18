@@ -89,6 +89,10 @@ Las 3 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - La portada oculta la U6 hasta el 1-2 (`UNIDADES.desde`): para verla, fecha de prueba en `unidadActual`.
 - Con álgebra, «el mismo caso» es la misma forma canónica (coeficientes como fracciones irreducibles) o la misma ecuación equivalente: la huella se calcula sobre eso, no sobre el texto.
 - El ★ de ortografía de esta semana es un bloque nuevo (`ortografia-puntuacion` o `ortografia-letras`, tareas 137/136 publicadas por la 140 antes del jue 11-2): si al cerrar la 140 no ha cerrado, propón la tarea con `['ortografia', 11]` de reserva y dilo en la ENTREGA.
+- (158, 18-11, s-20261118T084149-af8e25f2) Las tres prácticas se escribieron antes que el papel, con `CASOS_HOJA` y `HUELLAS_EXAMEN` vacíos: la primera pasada solo pudo reabrirlas. Deja las listas calculadas en `hechos/notas/` (la hoja en claro, los exámenes como huella) para que la reabierta sea pegar y probar, y comprueba que tu clave coincide con la de la práctica sobre ítems generados.
+- `Ecuacion.clave()` depende del orden de los miembros (`izq=der`): una reserva hecha con un solo orden deja pasar `20 = 4(x − 3)` si el papel tiene `4(x − 3) = 20` (lección de la 149 en la 157). Las notas llevan los dos órdenes; en la segunda pasada, barre con los miembros en cualquier orden.
+- En `denominadores`, «el mismo caso» por miembro reducido (la clave de la práctica) junta `x/3 + x/6 = 6` con `x/2 = 6`: reserva de más, que no hace daño. Para contar coincidencias de verdad, compara también término a término (en la primera pasada, 5 casos del examen 3 por ejercicio).
+- Los scripts de la primera pasada (en /tmp/pu2-158/: papel, barrido, regla de oro, clics) llevan casos de examen en claro y se pierden al reiniciar el Mac; el modelo que queda en el repositorio es la ENTREGA de la 157 y la de esta.
 
 ## Prohibido (propio de esta tarea)
 

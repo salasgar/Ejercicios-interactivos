@@ -1,0 +1,91 @@
+# Reserva de parentesis-algebra propuesta por la tarea 158 (s-20261118T084149-af8e25f2, 2026-11-18). Calculada fuera del repositorio con aritmética propia (BigInt) y
+# convertida a objetos de practicas/_comun/algebra.js; comprobado sobre 80000 ítems de resuelve y denominadores que la clave y la huella
+# coinciden con las que calcula la práctica. «Mismo caso» = la misma forma canónica: cada miembro reducido, coeficientes exactos.
+# Cómo se usa: CASOS_HOJA (logica.js ~56) es un Set de CLAVES (clave() del desarrollo o de la ecuación expandida): las de la columna 3 (y la 4, el otro orden de miembros). HUELLAS_EXAMEN (~58): las huellas de abajo tal cual (ya van los dos órdenes).
+# Fuentes: hoja = enunciados (no recuadros) de las hojas 3 y 4 de la U6; exámenes = examen 3 y extra, examen 4 y extra, los cinco finales.
+## Hoja (en claro): dónde · cómo está escrita · clave · clave con los miembros cambiados
+hoja-unidad6-semana3.tex:102	4(x + 3)	x:4|b:12
+hoja-unidad6-semana3.tex:102	5(2x − 1)	x:10|b:-5
+hoja-unidad6-semana3.tex:102	−3(x + 4)	x:-3|b:-12
+hoja-unidad6-semana3.tex:102	−2(5 − 3x)	x:6|b:-10
+hoja-unidad6-semana3.tex:102	7(3 − x)	x:-7|b:21
+hoja-unidad6-semana3.tex:102	−6(−x − 2)	x:6|b:12
+hoja-unidad6-semana3.tex:105	−(x + 5)	x:-1|b:-5
+hoja-unidad6-semana3.tex:105	−(4 − x)	x:1|b:-4
+hoja-unidad6-semana3.tex:105	9 − (x + 2)	x:-1|b:7
+hoja-unidad6-semana3.tex:105	6 − (3 − 2x)	x:2|b:3
+hoja-unidad6-semana3.tex:105	x − (5 − x)	x:2|b:-5
+hoja-unidad6-semana3.tex:105	10 − (−x + 4)	x:1|b:6
+hoja-unidad6-semana3.tex:108	5 + 3(x − 2)	x:3|b:-1
+hoja-unidad6-semana3.tex:108	3(x + 2) + 2(x − 4)	x:5|b:-2
+hoja-unidad6-semana3.tex:108	7x − 3(x + 1)	x:4|b:-3
+hoja-unidad6-semana3.tex:108	2(3x − 1) − (x + 5)	x:5|b:-7
+hoja-unidad6-semana3.tex:114	4(x − 3) = 20	x:4|b:-12=b:20	b:20=x:4|b:-12
+hoja-unidad6-semana3.tex:114	2(x + 5) = 6	x:2|b:10=b:6	b:6=x:2|b:10
+hoja-unidad6-semana3.tex:114	−3(x − 2) = 15	x:-3|b:6=b:15	b:15=x:-3|b:6
+hoja-unidad6-semana3.tex:114	7 − (x + 4) = 2x	x:-1|b:3=x:2|b:0	x:2|b:0=x:-1|b:3
+hoja-unidad6-semana3.tex:114	5x − 2(x + 1) = 10	x:3|b:-2=b:10	b:10=x:3|b:-2
+hoja-unidad6-semana3.tex:114	3(2x − 1) = x + 7	x:6|b:-3=x:1|b:7	x:1|b:7=x:6|b:-3
+hoja-unidad6-semana3.tex:117	3 − (x − 5) = 2(x + 1)	x:-1|b:8=x:2|b:2	x:2|b:2=x:-1|b:8
+hoja-unidad6-semana3.tex:117	1 − (x + 4) = −10 + 2(−3x + 5)	x:-1|b:-3=x:-6|b:0	x:-6|b:0=x:-1|b:-3
+hoja-unidad6-semana3.tex:141	−2(x − 4)	x:-2|b:8
+hoja-unidad6-semana4.tex:138	x + (x + 4) = 85	x:2|b:4=b:85	b:85=x:2|b:4
+hoja-unidad6-semana4.tex:147	4(x − 1) − (2x + 3) = 5	x:2|b:-7=b:5	b:5=x:2|b:-7
+hoja-unidad6-semana4.tex:147	5 − 2(x + 3) = 3x + 4	x:-2|b:-1=x:3|b:4	x:3|b:4=x:-2|b:-1
+hoja-unidad6-semana4.tex:147	8 − (x − 2) = 4x + 1	x:-1|b:10=x:4|b:1	x:4|b:1=x:-1|b:10
+## Exámenes (huellaCanonica; nunca en claro): huella · de dónde (prueba y destreza)
+1iq2xu6	E3 U6-3C-08
+ree197	E3 U6-3C-07
+hz7unt	E3 U6-3C-06
+211mm	E3 U6-3C-09
+woei52	E3 U6-3C-09
+1th1639	E3 U6-3C-08
+y6btqa	E3 U6-3C-09
+1o4i15e	E3 U6-3C-09
+y70hb7	E3 U6-3C-06
+kv9mio	E3 U6-3C-07, E4x U6-3C-07
+d4uq9a	E3 U6-3C-08
+vfkpj2	E3 U6-3C-09
+wv0uni	E3 U6-3C-09
+3afns8	E3 U6-3C-07
+6leekz	E3 U6-3C-06
+u10fjk	E3 U6-3C-09
+zrglwo	E3 U6-3C-09
+1ps6m65	E3 U6-3C-07
+m0mghg	E3 U6-3C-08
+1i9pt8v	E3 U6-3C-06
+1syqjf7	E3x U6-3C-09
+1w8wro3	E3x U6-3C-09
+17vrlju	E3x U6-3C-07
+1oc19nf	E3x U6-3C-08
+i97gcs	E3x U6-3C-06
+jtdtvk	E3x U6-3C-08
+rodmy6	E3x U6-3C-07
+1tspci4	E3x U6-3C-09
+k5fb28	E3x U6-3C-09
+1krm8hm	E3x U6-3C-06
+1w8f7rb	E4 U6-3C-09
+1btsqw1	E4 U6-3C-09
+1u9saim	E4 U6-3C-07
+161fp93	E4 U6-3C-09
+1xl20mp	E4 U6-3C-09
+cg09my	E4 U6-3C-07
+2umacb	E4 U6-3C-09
+1hkkrb7	E4 U6-3C-09
+1lr14l6	E4 U6-3C-09
+1plzotu	E4 U6-3C-09
+c60nxz	E4 U6-3C-07
+15dvnde	E4 U6-3C-07
+tj2gu9	E4x U6-3C-09
+l0fjd1	E4x U6-3C-09
+1j9sqy7	E4x U6-3C-09
+48jxan	E4x U6-3C-09
+t2bnf1	E4x U6-3C-07
+eujpxz	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+1vn7zey	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+xm2fxe	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+1hx48nj	F-modelo2
+1gdw06c	F-modelo2
+hhev4s	F-modelo2
+166ojgp	F-ejemplo
+eoix6r	F-ejemplo

@@ -1,0 +1,90 @@
+# Reserva de denominadores propuesta por la tarea 158 (s-20261118T084149-af8e25f2, 2026-11-18). Calculada fuera del repositorio con aritmética propia (BigInt) y
+# convertida a objetos de practicas/_comun/algebra.js; comprobado sobre 80000 ítems de resuelve y denominadores que la clave y la huella
+# coinciden con las que calcula la práctica. «Mismo caso» = la misma forma canónica: cada miembro reducido, coeficientes exactos.
+# Cómo se usa: CASOS_HOJA (logica.js ~54) es un Set de CLAVES (q.clave(), cada miembro reducido): las de la columna 3 (y la 4, el otro orden de miembros). HUELLAS_EXAMEN (~56): las huellas de abajo tal cual (ya van los dos órdenes).
+# Fuentes: hoja = enunciados (no recuadros) de las hojas 3 y 4 de la U6; exámenes = examen 3 y extra, examen 4 y extra, los cinco finales.
+## Hoja (en claro): dónde · cómo está escrita · clave · clave con los miembros cambiados
+hoja-unidad6-semana3.tex:131	x/5 = 12/5	x:1/5|b:0=b:12/5	b:12/5=x:1/5|b:0
+hoja-unidad6-semana3.tex:131	3x/4 = 6	x:3/4|b:0=b:6	b:6=x:3/4|b:0
+hoja-unidad6-semana3.tex:131	x/2 + 5 = 13	x:1/2|b:5=b:13	b:13=x:1/2|b:5
+hoja-unidad6-semana3.tex:131	5x/3 − 2 = 8	x:5/3|b:-2=b:8	b:8=x:5/3|b:-2
+hoja-unidad6-semana3.tex:131	4 = x/3 − 1	b:4=x:1/3|b:-1	x:1/3|b:-1=b:4
+hoja-unidad6-semana3.tex:134	x/3 + x/6 = 6	x:1/2|b:0=b:6	b:6=x:1/2|b:0
+hoja-unidad6-semana3.tex:134	x/3 − x/5 = 2	x:2/15|b:0=b:2	b:2=x:2/15|b:0
+hoja-unidad6-semana3.tex:134	x/2 + x/3 + x/6 = 4	x:1|b:0=b:4	b:4=x:1|b:0
+hoja-unidad6-semana3.tex:134	3x/5 + x/2 = 22	x:11/10|b:0=b:22	b:22=x:11/10|b:0
+hoja-unidad6-semana3.tex:134	x/2 − x/5 + 1 = 10	x:3/10|b:1=b:10	b:10=x:3/10|b:1
+hoja-unidad6-semana3.tex:137	x/3 + 1 = x/2 − 1	x:1/3|b:1=x:1/2|b:-1	x:1/2|b:-1=x:1/3|b:1
+hoja-unidad6-semana3.tex:137	3 − x/4 = 1/2 + x	x:-1/4|b:3=x:1|b:1/2	x:1|b:1/2=x:-1/4|b:3
+hoja-unidad6-semana3.tex:137	1 − 2x/3 + 1/6 = 2 − x	x:-2/3|b:7/6=x:-1|b:2	x:-1|b:2=x:-2/3|b:7/6
+hoja-unidad6-semana3.tex:143	x/4 + 2 = 5	x:1/4|b:2=b:5	b:5=x:1/4|b:2
+hoja-unidad6-semana3.tex:155	x + 1/2 − x − 2/3 = 2	x:1/6|b:7/6=b:2	b:2=x:1/6|b:7/6
+hoja-unidad6-semana4.tex:147	x/5 + x/2 = 14	x:7/10|b:0=b:14	b:14=x:7/10|b:0
+hoja-unidad6-semana4.tex:147	2x/3 − 1 = x/2 + 1	x:2/3|b:-1=x:1/2|b:1	x:1/2|b:1=x:2/3|b:-1
+## Exámenes (huellaCanonica; nunca en claro): huella · de dónde (prueba y destreza)
+1emekwo	E3 U6-3C-12
+jo48ga	E3 U6-3C-12
+t7z2dc	E3 U6-3B-01
+19vxo1s	E3 U6-3B-01
+1h3vx75	E3 U6-3C-13
+1xfuzxh	E3 U6-3C-13
+8ozh27	E3 U6-3C-11
+wueylz	E3 U6-3C-11
+t71ygt	E3 U6-3C-13
+udvzhx	E3 U6-3C-13
+yybe1l	E3 U6-3B-01
+1msw2oz	E3 U6-3B-01
+p9o9bj	E3 U6-3C-12
+1btl76h	E3 U6-3C-12
+wzxl23	E3 U6-3C-11
+15bj4bf	E3 U6-3C-11
+1bey0dv	E3 U6-3C-11
+msbvkr	E3 U6-3C-11
+1fjnjgl	E3 U6-3C-12
+1klew83	E3 U6-3C-12
+q56i01	E3 U6-3B-01
+n0rirf	E3 U6-3B-01
+13wqio4	E3 U6-3C-13
+2zjpe8	E3 U6-3C-13
+q7dyp8	E3 U6-3C-13
+m951j0	E3 U6-3C-13
+194elfv	E3 U6-3C-12
+f68viz	E3 U6-3C-12
+1adtdtk	E3 U6-3C-11
+39d3j4	E3 U6-3C-11
+76x36n	E3 U6-3B-01
+afyep	E3 U6-3B-01
+1h4w4r1	E3x U6-3C-12
+1hug0fv	E3x U6-3C-12
+t7vwvd	E3x U6-3B-01
+14mxbb7	E3x U6-3B-01
+9lyw3v	E3x U6-3C-11
+u2g709	E3x U6-3C-11
+h3stz9	E3x U6-3C-13
+15a6615	E3x U6-3C-13
+11gaysb	E3x U6-3B-01
+1b0z4vp	E3x U6-3B-01
+sngxjo	E3x U6-3C-13
+rg1bmo	E3x U6-3C-13
+1iz9nno	E3x U6-3C-12
+m1lvt4	E3x U6-3C-12
+savqzt	E3x U6-3C-11
+1hmeelz	E3x U6-3C-11
+zcl3x8	E4 U6-3C-12
+11gysi6	E4 U6-3C-12
+bv5t22	E4 U6-3C-12
+turbwi	E4 U6-3C-12
+nktr5n	E4 U6-3C-12
+17ytlw1	E4 U6-3C-12
+ezvw7r	E4 U6-3C-12
+1tkxzjb	E4 U6-3C-12
+1oedqsz	E4x U6-3C-12
+p86eq3	E4x U6-3C-12
+12omn8u	E4x U6-3C-12
+16fy4x4	E4x U6-3C-12
+zgjje7	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+1b9hcj7	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+16vsp3m	F-modelo2
+1q3en7u	F-modelo2
+3dtqhz	F-ejemplo
+dqlikl	F-ejemplo

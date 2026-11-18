@@ -1,0 +1,187 @@
+# Reserva de resuelve propuesta por la tarea 158 (s-20261118T084149-af8e25f2, 2026-11-18). Calculada fuera del repositorio con aritmética propia (BigInt) y
+# convertida a objetos de practicas/_comun/algebra.js; comprobado sobre 80000 ítems de resuelve y denominadores que la clave y la huella
+# coinciden con las que calcula la práctica. «Mismo caso» = la misma forma canónica: cada miembro reducido, coeficientes exactos.
+# Cómo se usa: CASOS_HOJA (logica.js ~47) es una lista de TEXTOS que esReservada lee con deEcuacion(t).clave(), y esa clave depende del orden de los miembros: o se meten los dos órdenes de cada ecuación, o esReservada compara también la clave con los miembros cambiados. HUELLAS_EXAMEN (~48): las huellas de abajo tal cual (ya van los dos órdenes).
+# Fuentes: hoja = enunciados (no recuadros) de las hojas 3 y 4 de la U6; exámenes = examen 3 y extra, examen 4 y extra, los cinco finales.
+## Hoja (en claro): dónde · cómo está escrita · clave · clave con los miembros cambiados
+hoja-unidad6-semana3.tex:76	8x + 3 = x + 45	x:8|b:3=x:1|b:45	x:1|b:45=x:8|b:3
+hoja-unidad6-semana3.tex:76	9x − 7 = 2x + 21	x:9|b:-7=x:2|b:21	x:2|b:21=x:9|b:-7
+hoja-unidad6-semana3.tex:76	x + 14 = 3x − 2	x:1|b:14=x:3|b:-2	x:3|b:-2=x:1|b:14
+hoja-unidad6-semana3.tex:76	9 − 3x = x + 1	x:-3|b:9=x:1|b:1	x:1|b:1=x:-3|b:9
+hoja-unidad6-semana3.tex:76	3x + 5 + 2x = x + 49	x:5|b:5=x:1|b:49	x:1|b:49=x:5|b:5
+hoja-unidad6-semana3.tex:76	5x + 4 = 2x + 13	x:5|b:4=x:2|b:13	x:2|b:13=x:5|b:4
+hoja-unidad6-semana3.tex:79	3x + 7 = x − 5	x:3|b:7=x:1|b:-5	x:1|b:-5=x:3|b:7
+hoja-unidad6-semana3.tex:79	4x − 1 = 10x + 2	x:4|b:-1=x:10|b:2	x:10|b:2=x:4|b:-1
+hoja-unidad6-semana3.tex:79	2x + 9 = 8x + 1	x:2|b:9=x:8|b:1	x:8|b:1=x:2|b:9
+hoja-unidad6-semana3.tex:79	5 − x = 4x + 8	x:-1|b:5=x:4|b:8	x:4|b:8=x:-1|b:5
+hoja-unidad6-semana3.tex:79	9x − 4 = 3x + 6	x:9|b:-4=x:3|b:6	x:3|b:6=x:9|b:-4
+hoja-unidad6-semana3.tex:79	3x − 2 = 7x + 4	x:3|b:-2=x:7|b:4	x:7|b:4=x:3|b:-2
+hoja-unidad6-semana3.tex:82	4x + 1 = 4x + 6	x:4|b:1=x:4|b:6	x:4|b:6=x:4|b:1
+hoja-unidad6-semana3.tex:82	2x = 8x	x:2|b:0=x:8|b:0	x:8|b:0=x:2|b:0
+hoja-unidad6-semana3.tex:82	6 − 3x + 2 = 8 − 3x	x:-3|b:8=x:-3|b:8
+hoja-unidad6-semana3.tex:82	6x − 1 = x + 39	x:6|b:-1=x:1|b:39	x:1|b:39=x:6|b:-1
+hoja-unidad6-semana3.tex:82	x + 7 − 3x = 2 − 2x + 4	x:-2|b:7=x:-2|b:6	x:-2|b:6=x:-2|b:7
+hoja-unidad6-semana3.tex:82	−6x = 0	x:-6|b:0=b:0	b:0=x:-6|b:0
+hoja-unidad6-semana3.tex:85	10x − 3 = 4x + 27	x:10|b:-3=x:4|b:27	x:4|b:27=x:10|b:-3
+hoja-unidad6-semana3.tex:85	10x − 4x = 27 − 3	x:6|b:0=b:24	b:24=x:6|b:0
+hoja-unidad6-semana3.tex:143	x + 2 = 20	x:1|b:2=b:20	b:20=x:1|b:2
+hoja-unidad6-semana3.tex:143	x + 8 = 5	x:1|b:8=b:5	b:5=x:1|b:8
+hoja-unidad6-semana3.tex:143	x + 8 = 20	x:1|b:8=b:20	b:20=x:1|b:8
+hoja-unidad6-semana3.tex:146	1.5x − 2 = 0.5x + 3	x:3/2|b:-2=x:1/2|b:3	x:1/2|b:3=x:3/2|b:-2
+hoja-unidad6-semana3.tex:146	0.4x + 1 = 2.2	x:2/5|b:1=b:11/5	b:11/5=x:2/5|b:1
+hoja-unidad6-semana3.tex:146	2.3x − 1 = 0.3x + 7	x:23/10|b:-1=x:3/10|b:7	x:3/10|b:7=x:23/10|b:-1
+hoja-unidad6-semana4.tex:137	9 − x = 20	x:-1|b:9=b:20	b:20=x:-1|b:9
+hoja-unidad6-semana4.tex:137	x − 9 = 20	x:1|b:-9=b:20	b:20=x:1|b:-9
+hoja-unidad6-semana4.tex:137	x + 9 = 20	x:1|b:9=b:20	b:20=x:1|b:9
+hoja-unidad6-semana4.tex:137	9x = 20	x:9|b:0=b:20	b:20=x:9|b:0
+hoja-unidad6-semana4.tex:138	4x = 85	x:4|b:0=b:85	b:85=x:4|b:0
+hoja-unidad6-semana4.tex:138	x + 4x = 85	x:5|b:0=b:85	b:85=x:5|b:0
+hoja-unidad6-semana4.tex:138	4x − x = 85	x:3|b:0=b:85	b:85=x:3|b:0
+hoja-unidad6-semana4.tex:139	x + x + 6 = 32	x:2|b:6=b:32	b:32=x:2|b:6
+## Exámenes (huellaCanonica; nunca en claro): huella · de dónde (prueba y destreza)
+125chs5	E3 U6-3C-01
+1s833h5	E3 U6-3C-01
+y9y7dw	E3 U6-3C-15
+evejpc	E3 U6-3C-15
+133qotf	E3 U6-3C-04/3C-03
+3wb4qj	E3 U6-3C-04/3C-03
+tzt85v	E3 U6-3C-02
+g05nih	E3 U6-3C-02
+oi4i36	E3 U6-3C-05
+k7ania	E3 U6-3C-05
+10wgk30	E3 U6-3C-05
+1jfxpd0	E3 U6-3C-05
+l50pi3	E3 U6-3C-05
+yttz83	E3 U6-3C-05
+1nxawbt	E3 U6-3C-01
+467uw1	E3 U6-3C-01
+bhrbrd	E3 U6-3C-05
+r0cntr	E3 U6-3C-05
+1hcv1u7	E3 U6-3C-05
+w5yx15	E3 U6-3C-05
+miypyy	E3 U6-3C-05
+18cefui	E3 U6-3C-05
+rikt47	E3 U6-3C-02
+1wvy2it	E3 U6-3C-02
+w9yw1l	E3 U6-3C-04/3C-03
+usmcqt	E3 U6-3C-04/3C-03
+10cd0rb	E3 U6-3C-15
+eobflb	E3 U6-3C-15
+1953i0d	E3 U6-3C-04/3C-03
+15tfxk1	E3 U6-3C-04/3C-03
+ntycbm	E3 U6-3C-01
+rbdjb0	E3 U6-3C-01
+mx6h9x	E3 U6-3C-15
+f6penj	E3 U6-3C-15
+oflf0x	E3 U6-3C-02
+6lgkab	E3 U6-3C-02
+aiuii9	E3 U6-3C-01
+1bkknih	E3 U6-3C-01
+7irbjm	E3 U6-3C-05
+7a0f0a	E3 U6-3C-05
+g2v09g	E3 U6-3C-05
+yx8xo8	E3 U6-3C-05
+2x9efg	E3 U6-3C-05
+1q6e5c4	E3 U6-3C-05
+m8z49z	E3 U6-3C-05
+m0wz93	E3 U6-3C-05
+d3p3wt	E3 U6-3C-15
+1uusb5x	E3 U6-3C-15
+qdvx90	E3 U6-3C-02
+1yfgbp2	E3 U6-3C-02
+18tys2y	E3 U6-3C-04/3C-03
+1bns943	E3 U6-3C-05
+wdn40n	E3 U6-3C-05
+dnggr9	E3 U6-3C-05
+1pg3m7l	E3 U6-3C-05
+1dlpv8	E3 U6-3C-05
+1hrni0c	E3 U6-3C-05
+1iavr6d	E3x U6-3C-04/3C-03
+1rhcy1d	E3x U6-3C-04/3C-03
+wrnp2d	E3x U6-3C-15
+e8jr6h	E3x U6-3C-15
+sy5c70	E3x U6-3C-02
+139icy4	E3x U6-3C-02
+yb3fld	E3x U6-3C-01
+chs5vn	E3x U6-3C-01
+1qkymrn	E3x U6-3C-05
+yp1wot	E3x U6-3C-05
+8ofkv9	E3x U6-3C-05
+6iy4vx	E3x U6-3C-05
+lyzil0	E3x U6-3C-05
+8qneio	E3x U6-3C-05
+37904f	E3x U6-3C-05
+5mmdqj	E3x U6-3C-05
+t1456k	E3x U6-3C-15
+1qrkgm8	E3x U6-3C-15
+3x8bqx	E3x U6-3C-02
+ugjk8j	E3x U6-3C-02
+1ygt3v0	E3x U6-3C-01
+ctkp60	E3x U6-3C-01
+1fvx4vb	E3x U6-3C-05
+1jg5bp7	E3x U6-3C-05
+qbqrxy	E3x U6-3C-05
+u0laze	E3x U6-3C-05
+1dkaj96	E3x U6-3C-05
+q492sm	E3x U6-3C-05
+th3gzc	E3x U6-3C-04/3C-03
+nthglv	E4 U6-3C-01
+1oomzhn	E4 U6-3C-01
+1nm7y4x	E4 U6-2C-11
+1csd2gl	E4 U6-2C-11
+1t5ycga	E4 U6-2C-09
+1mus0rm	E4 U6-2C-09
+rb3sil	E4 U6-3C-01
+1xwh2kh	E4 U6-3C-01
+4m8wmr	E4 U6-2C-11
+10ztukv	E4 U6-2C-11
+5egqbc	E4 U6-2C-09
+1lpxlq0	E4 U6-2C-09
+1pdi6x3	E4 U6-3C-01
+1mm2go9	E4 U6-3C-01
+19uql2z	E4 U6-2C-09
+o488rt	E4 U6-2C-09
+1gy3t1q	E4 U6-2C-11
+1drwaje	E4 U6-2C-11
+w0p3nv	E4 U6-2C-11
+1tcsmy5	E4 U6-2C-11
+188lso3	E4 U6-3C-01
+7qrcgz	E4 U6-3C-01
+dovkej	E4 U6-2C-09
+980qip	E4 U6-2C-09
+1d7gnik	E4x U6-2C-09
+1dym51g	E4x U6-2C-09
+hgevgv	E4x U6-3C-01
+1xozyrr	E4x U6-3C-01
+rjq9oz	E4x U6-2C-11
+1ljrqrf	E4x U6-2C-11
+15n5exb	E4x U6-3C-01
+1sew7dp	E4x U6-3C-01
+hmlh63	E4x U6-2C-11
+krc12f	E4x U6-2C-11
+150n21r	E4x U6-2C-09
+52qrst	E4x U6-2C-09
+17ejtb7	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+15v2xa3	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+spvo2g	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+10vpmjo	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+49nnle	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+8tzolu	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+zl4wda	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+ql7ptq	F-modelo1, F-adaptado-A, F-modeloK-dislexia
+ns057p	F-modelo2
+15kfwqp	F-modelo2
+1t88q6f	F-modelo2
+1aenpg3	F-modelo2
+1tpnzi1	F-modelo2
+17zpwhn	F-modelo2
+dwzahb	F-modelo2
+wcq3g5	F-modelo2
+h5cwd2	F-ejemplo
+io0uk6	F-ejemplo
+r9qo00	F-ejemplo
+1hjx52w	F-ejemplo
+8epcuc	F-ejemplo
+1b4a1ks	F-ejemplo
+y9jzff	F-ejemplo
+1lhgwcb	F-ejemplo
