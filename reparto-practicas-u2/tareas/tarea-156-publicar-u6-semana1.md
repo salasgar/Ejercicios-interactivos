@@ -99,6 +99,10 @@ Las 4 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
 - El script de clics elige la buena por `opciones[].correcta`; en las prácticas cuyo ítem lleva `correcta` como cadena (`terminos-semejantes`
   ej. 1 y 4) da «quería bien, salió mal» falsos: mapea el valor al orden de los botones.
 - Una práctica «para toda la unidad» que no filtra por `sesion` no va en la semana 1: como `leelo5`, con la semana en que ya se ha dado su contenido.
+- (18-11, s-20261118T075702-4c9a28a4) Antes de revisar, `gh run list --limit 3`. La publicación llevaba siete horas en rojo porque la 148
+  importaba un `reserva.js` nuevo que no había comiteado (un fichero nuevo no entra en `git commit -- rutas` si no se nombra), y con
+  ella tampoco había salido lo que la 157 dio por publicado. Además, en la regla de oro hay que mirar también las parejas de opciones
+  **falsas** equivalentes entre sí, no solo las «dos buenas»: en `leelo6` se escaparon a dos revisiones.
 
 ## Prohibido (propio de esta tarea)
 

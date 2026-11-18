@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-18T08:24Z por s-20261118T075702-4c9a28a4 al cerrar la 156 (LISTA, commit 753a956: traduce, valor-numerico y terminos-semejantes publicadas; leelo6 reabierta, atendida en 7c36e41, y con la semana 4, la 159; ed82f09 arregla la publicación en rojo desde 8c5aebf; npm test 2476/2476): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-18T08:24Z por s-20261118T075702-4c9a28a4 al cerrar la 156 (LISTA, commit 753a956: traduce, valor-numerico y terminos-semejantes publicadas; leelo6 reabierta y con la semana 4, la 159; ed82f09 arregla la publicación en rojo desde 8c5aebf; npm test 2476/2476): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-18T08:24Z por s-20261118T082125-77656d5a al cerrar la 155 (reabierta 4c9a28a4 atendida, commit 7c36e41; npm test 2476/2476): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -33,8 +35,6 @@ Actualizado 2026-11-17T23:07Z por s-20261117T230421-119b8a8a al cerrar la 206 (L
 Actualizado 2026-11-17T22:40Z por s-20261117T222512-242d1d37 al cerrar la 207 (PARCIAL, segunda pasada: tabla-propiedades sin publicar; reabierta la 206 por las cabeceras del nivel 2 a 401-520 px; npm test 2465/2465): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-17T22:31Z por s-20261117T222500-f87f0806 al cerrar la 209 (LISTA, commit 32cf2ea: el informe y «Hoy» ven los ejercicios de reto; npm test 2465/2465): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-17T22:25Z por s-20261117T222512-242d1d37 al reclamar la 207 (segunda pasada: la 206 cerró la reabierta en 30c0a08; ni la 203 ni la 204 en curso; catalogo.js, docs y README sin cambios): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 

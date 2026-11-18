@@ -5,6 +5,31 @@ dos cerró). **PARCIAL**: se publican `traduce` y `valor-numerico`; `terminos-se
 
 Commits: 0d2a58d (`practicas/_comun/catalogo.js`, `docs/practicas-unidad6.md`). `npm test` 2449/2449 (antes y después del commit).
 
+## Cuarta pasada (18-11, s-20261118T075702-4c9a28a4): la 156 queda LISTA
+
+Quedaba una práctica, `leelo6`, porque `terminos-semejantes` la publicó la 157 el 18-11 (52ad72e). `leelo6` se ha vuelto a revisar
+después de 5374976, sobre una copia de ed82f09, con el mismo criterio y la misma semilla que abajo.
+- **Cotejo**: ya no sale ningún caso de las hojas 1-4, los exámenes 1-4, los cuestionarios 1-4 ni los finales en los ej. 2-4. Tampoco
+  sale ninguno recorriendo todo el espacio de los generadores con la x (16853 casos, 370 de ellos reservados). Solo coincide el
+  vocabulario, que no se reserva: 2x, 3x, x/2, x/3, x ± 1 y x + 2, en 2439 ítems.
+- **Bien**: sale solo la x, ningún ítem pasa del 1,5 %, ningún ítem tiene dos opciones buenas y los tests pasan (65/65). Los clics, a 375 y
+  1100 px, en español y en inglés, con un acierto y un fallo por ejercicio, salen sin errores de JavaScript ni desbordes.
+- **No se publica: está reabierta** (`hechos/reabiertas/155--s-20261118T075702-4c9a28a4-revision.md`), por dos fallos:
+  - en el ej. 3, dos opciones falsas que dicen lo mismo, en 3600 de 20000 ítems (por ejemplo «Simplifica la expresión.» y
+    «Simplifica la expresión agrupando los términos semejantes.»);
+  - en el ej. 4, «One years ago» (h = 1).
+- **Y no va en la semana 1 aunque se arregle.** La trampa de esta ficha dice que una práctica de toda la unidad que no filtra por sesión
+  no va en la semana 1, y `leelo6` tiene vocabulario de los problemas de la sesión 13: unos 7000 de los 40000 ítems de los ej. 1 y 4. La
+  publica la **159** (semana 4), como proponían esta ENTREGA (propuesta 1) y la terminada de la 155. **Falta añadirlo a la ficha 159**,
+  y eso le toca a la coordinadora.
+
+Con esto, la semana 1 queda resuelta: `traduce`, `valor-numerico` y `terminos-semejantes` están publicadas. **La tarea semanal 1 va con el
+plan A** (abajo): ya no hace falta el plan B.
+
+De paso, la publicación de GitHub Pages llevaba en rojo desde las 00:40Z del 18-11. La 148 (8c5aebf) importaba
+`practicas/es-solucion/reserva.js` sin haberlo comiteado, y por eso tampoco se había publicado `terminos-semejantes`. Se ha subido en
+ed82f09.
+
 ## Qué se ha revisado y cómo
 
 Dos pasadas. La primera (s-20261116T233507-987369cb, 16-11 noche) reabrió 145, 146 y 147
