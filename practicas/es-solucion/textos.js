@@ -31,8 +31,13 @@ export function cuentaMiembro(terminos, v, idioma) {
     if (uno) producto = sx;
     else if (abs.den === 1 || !decimal.includes('/')) producto = `${decimal} · ${sx}`;
     else producto = abs.num === 1 ? `${sx} : ${abs.den}` : `${abs.num} · ${sx} : ${abs.den}`;
-    paso1.push([neg, producto]);
     const prod = x.multiplicar(abs).simplificar();
+    if (neg && paso1.length === 0 && prod.num < 0 && producto === `${decimal} · ${sx}`) {
+      paso1.push([false, `(${MENOS}${decimal}) · ${sx}`]);
+      paso2.push([false, numTexto(prod.multiplicar(new Fraccion(-1, 1)).simplificar(), idioma)]);
+      continue;
+    }
+    paso1.push([neg, producto]);
     paso2.push([neg, uno ? sx : paso2.length === 0 && !neg ? numTexto(prod, idioma) : sustituido(prod, idioma)]);
   }
   const R = numTexto(valorMiembro(terminos, x), idioma);
@@ -153,11 +158,11 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Una <strong>ecuación</strong> solo se cumple con algunos valores de ${x_} (su solución). Una <strong>identidad</strong> se cumple con <strong>cualquier</strong> valor, porque los dos miembros son lo mismo escrito de otra manera.</p>
-        <p>Ejemplo: 2${x_} + 3${x_} = 5${x_}. Con ${x_} = 1: ${c('2 + 3 = 5')}. Con ${x_} = 4: ${c('8 + 12 = 20')}. Siempre coinciden: es una identidad.</p>
+        <p>Ejemplo: 4${x_} + 2${x_} = 6${x_}. Con ${x_} = 1: ${c('4 + 2 = 6')}. Con ${x_} = 4: ${c('16 + 8 = 24')}. Siempre coinciden: es una identidad.</p>
         <p>Ejemplo: ${x_} + 5 = 9. Con ${x_} = 4 se cumple, con ${x_} = 6 no: es una ecuación.</p>`,
       en: `<h2>How it works</h2>
         <p>An <strong>equation</strong> (ecuación) is true only for some values of ${x_} (its solution). An <strong>identity</strong> (identidad) is true for <strong>any</strong> value, because both sides are the same thing written in a different way.</p>
-        <p>Example: 2${x_} + 3${x_} = 5${x_}. When ${x_} = 1: ${c('2 + 3 = 5')}. When ${x_} = 4: ${c('8 + 12 = 20')}. They always match: it is an identity.</p>
+        <p>Example: 4${x_} + 2${x_} = 6${x_}. When ${x_} = 1: ${c('4 + 2 = 6')}. When ${x_} = 4: ${c('16 + 8 = 24')}. They always match: it is an identity.</p>
         <p>Example: ${x_} + 5 = 9. It is true when ${x_} = 4, not when ${x_} = 6: it is an equation.</p>`,
     },
     instruccion: {

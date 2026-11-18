@@ -14,7 +14,7 @@ Destrezas: U6-2C-02 (1, 2), 2C-03 (3), 2C-04 (4); ids provisionales: F0 sin firm
 ## Decisiones a revisar
 - **Ejercicio 3 (identidad)** depende del punto (f) de F0, que no está firmado. Si F0 lo rechaza: quitar el ejercicio (basta sacarlo de `ejercicios` en `practica.js`) o cambiarlo por un segundo ítem del 1.
 - **«Nada que no se haya dado»**: la ficha pedía incluir paréntesis y x en los dos miembros; en los ejercicios 1, 2 y 4-ejemplos las ecuaciones llevan la x en UN miembro y sin paréntesis (los dos aún no se han dado en la semana 2). Solo el ejercicio 3 pone la x en los dos miembros, porque no se despeja: se sustituye.
-- **Papel reservado (reabierta 148 de la 157)**: `reserva.js` lleva por huella (`huellaEcuacion`) las 124 ecuaciones de la hoja 2, sus recuadros, las hojas 1 y 3 y los exámenes, también cuando la misma ecuación sale en otra tarea del papel (el feedback enseña su solución). Los cuestionarios Forms no se reservan (sin decisión de Juan Luis). Los casos no están en claro.
+- **Papel reservado (reabierta 148 de la 157)**: `reserva.js` lleva por huella (`huellaEcuacion`) las 124 ecuaciones de los ejercicios de la hoja 2 (no sus recuadros de ejemplo), las hojas 1 y 3 y los exámenes, también cuando la misma ecuación sale en otra tarea del papel (el feedback enseña su solución). Los cuestionarios Forms no se reservan (sin decisión de Juan Luis). Los casos no están en claro.
 - Ejercicio 4: **los paréntesis se rechazan** con el aviso «Escríbelo sin paréntesis» (no gasta intento; son de la semana 3). La x en los dos miembros sí se acepta; se corrige igual (solo importa la solución).
 - Ejercicio 4: `x = s` (la solución pedida, escrita tal cual) es el aviso «ya es la solución»; `x = otro número` es un fallo con su explicación.
 
