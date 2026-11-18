@@ -15,7 +15,13 @@ Sesión `s-20261109T104438-79926dd7`, 2026-11-09. Commit del código: **`2efcbbd
 Coeficientes del paréntesis 1-5, números 1-9, k de 2 a 6 (o −1); término delante hasta 9 (x hasta 8). Sin x², una sola letra, un paréntesis por miembro. Con k = −1 los errores `distribuir-solo-primero` y `multiplicar-solo-la-x` no se usan (no se multiplica por ningún número). En Caza el error la familia del error tiene que ser única (se comprueba con todos los candidatos sin quitar duplicados).
 
 ## Casos de hoja y examen
-**No existían** la hoja ni el examen de la semana 3 al escribirla (no hay `hojas-de-ejercicios/` ni `exámenes-semanales/` en «6. Algebra/»). `CASOS_HOJA` y `HUELLAS_EXAMEN` están vacíos pero operativos (`reservado` por forma canónica del desarrollo o de la ecuación expandida, probado). Lo coteja la tarea de publicación de la semana 3.
+Segunda pasada (sesión `s-20261118T090057-4da5731a`, 2026-11-18), tras la reabierta de la 158. Las listas vienen de la nota `hechos/notas/s-20261118T084149-af8e25f2-parentesis-algebra-reserva.txt` de la 158, calculada sobre las hojas 3 y 4 de la unidad 6 (enunciados) y sobre los exámenes 3 y 4 con sus extras y los cinco finales (solo huellas). `CASOS_HOJA`: 41 claves (29 casos; las ecuaciones, con los dos órdenes de miembros). `HUELLAS_EXAMEN`: 55 huellas (ya con los dos órdenes). El test comprueba que 3000 ítems por ejercicio (semillas fijas) no tocan ni una, en los dos órdenes, y los tamaños de las listas.
+
+## Segunda pasada: lo corregido
+- Reserva de hoja y examen (arriba).
+- Caza el error con ecuación: se descarta el ítem si la ecuación «equivocada» tiene la misma solución que la de arriba (test con 20000 ítems, semilla 158108).
+- Español: «Has multiplicado bien, pero te has equivocado en el signo del segundo término» en los ej. 1-3. En el ej. 4 el feedback va en tercera persona («Ha multiplicado solo el primer término…»; en inglés, «They multiplied only…»).
+- Ej. 4 con ecuación: cada lado del enunciado lleva `white-space: nowrap`, para que solo pueda partirse en la flecha.
 
 ## Propuestas (no decididas aquí)
 - **Ejercicio 3 pide solo la solución**, no «elegir el primer paso» como decía la ficha: dos respuestas por ítem no caben en un `api.responder`. El primer paso se enseña en el feedback. Si Juan Luis quiere elegir paso, es un ejercicio nuevo.
