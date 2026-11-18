@@ -205,3 +205,35 @@ no solo el ítem), y los clics con `/tmp/pu2-158/clics159b.mjs` (rehacer `/tmp/p
 Después, publicar las dos.
 
 La propuesta de la tarea semanal 4 de arriba sigue valiendo: plan A con las tres, o el plan B que toque.
+
+## Tercera y cuarta pasada (s-20261118T214819-b3d2ac7b, 18-11, de 21:48Z a 22:14Z): LISTA, la semana 4 entera
+
+Commits: **9bd566e** (publicada `errores6`, id 78, sobre b837244) y **ee3c0ac** (publicada `problemas-ecuaciones`, id 77, sobre 6f5ac4b).
+`catalogo.js` (`disponible: true` de las dos) y `docs/practicas-unidad6.md` (la línea «**Publicadas**» y el párrafo de la semana 4). En 9bd566e
+va también una línea de `tests/practicas-errores6.test.js`, fuera de «Ficheros que toca»: la aserción `disponible, false` («la publica la tarea
+de la semana») pasa a `true`, como hizo la 207 con la suya en c871c11. Sin ese cambio `npm test` sale en rojo al publicar. `npm test` 2489/2489.
+
+| Práctica | Casos del papel (20000 ítems por ejercicio, semillas 159001-159008) | Regla de oro | Feedbacks | Variedad (máx.) | Clics | Veredicto |
+|---|---|---|---|---|---|---|
+| `errores6` (b837244) | 0 en los 3 ejercicios, reducidos y término a término | 0 fallos | limpios | 0,27 % | 12/12 | **publicada** (9bd566e) |
+| `problemas-ecuaciones` (e62b43a) | 0 en los 5 ejercicios | 0 fallos | ej. 2 con dinero mal | 0,28 % | 19/20 (*) | **reabierta** (cuarta) |
+| `problemas-ecuaciones` (6f5ac4b) | 0 en los 5 ejercicios | 0 fallos | limpios | 0,28 % | 20/20 | **publicada** (ee3c0ac) |
+
+(*) Un recorrido se quedó sin ítem porque el servidor de Python cortó la carga de un módulo (`ERR_CONNECTION_RESET`), igual que en la primera pasada.
+En la repetición, sobre 6f5ac4b, bien.
+
+- **Feedbacks** (nuevo en esta pasada, como pedía la trampa de la segunda): un barrido que llama a todas las funciones que escriben explicaciones,
+  con todas las opciones falsas y respuestas mal tecleadas (3000 ítems por ejercicio y por idioma). Busca el guion del teclado, el factor negativo
+  sin paréntesis, «×», dobles espacios, porcentajes, `undefined`/`NaN`, «one years», decimales rotos y el separador colgando. Funciones de
+  `problemas-ecuaciones`: `solucionIncognita`, `porQueDato`, `solucionEcuacion`, `porQueEcuacion`, `feedbackResuelve` (con y sin `corregirResuelve`),
+  `solucionPide`, `porQuePide`, `solucionSentido` y `absurdo`. De `errores6`: `porque`, `htmlLinea` de las líneas del compañero y de las buenas, y
+  `corregirCorrige`. Los guiones que quedan están en `valor`, `parse` y `clave`, que son internos y no se ven. El script está en el scratchpad de
+  la sesión (`feedbacks.mjs`).
+- **Lo que sacaron los clics y no los barridos**: en el ej. 2 de `problemas-ecuaciones`, el porqué de una ecuación falsa con dinero escribía la
+  solución en céntimos y con el separador colgando («Esa ecuación da x = 188,, y…» por 1,88 €; en inglés «x = 970., and»). Afectaba a 6534 de
+  14739 opciones falsas con dinero, en 3482 de 20000 ítems (17 %). Ya estaba antes de hoy. Reabierta
+  `hechos/reabiertas/153--s-20261118T214819-b3d2ac7b-revision.md`, arreglada en 6f5ac4b (el porqué usa `solTexto`, como el ej. 5).
+  Comprobado después: 0 de 14739.
+
+**La propuesta de la tarea semanal 4 de arriba vale tal cual: plan A**, con las tres publicadas (`leelo6`, `errores6`, `problemas-ecuaciones`):
+8 ★ + 2 a elegir = 100 puntos, ★ de ortografía `['ortografia-letras', 1]`, del lun 22-2 al jue 25-2. La monta la 160 en el panel.
