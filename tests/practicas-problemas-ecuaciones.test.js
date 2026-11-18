@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { huellaCanonica, deEcuacion } from '../practicas/_comun/algebra.js';
+import { huellaCanonica, deEcuacion, aEcuacion } from '../practicas/_comun/algebra.js';
 import {
   generarIncognita, generarEcuacion, generarResuelve, generarPide, generarSentido, corregirResuelve, leerCantidad,
   feedbackResuelve, solucionSentido, solucionPide, solucionEcuacion, solucionIncognita, porQueEcuacion, porQuePide,
@@ -262,15 +262,62 @@ test('la resolución escrita termina en x = valor', () => {
   }
 });
 
-test('casos reservados: hooks vacíos pero operativos', () => {
-  assert.equal(CASOS_HOJA.size, 0);
-  assert.equal(HUELLAS_EXAMEN.size, 0);
+test('casos reservados: las claves de las hojas 1-4 y las huellas de los exámenes (198 y 168), y ningún ítem las usa', () => {
+  assert.equal(CASOS_HOJA.size, 198);
+  assert.equal(HUELLAS_EXAMEN.size, 168);
   const parse = 'x + 2x = 30';
   HUELLAS_EXAMEN.add(huellaCanonica(parse));
   assert.equal(reservado(parse), true);
-  assert.equal(reservado('3x + 2 = 5'), false);
   HUELLAS_EXAMEN.delete(huellaCanonica(parse));
   assert.equal(reservado(parse), false);
+  const rng = crearRng(159001);
+  for (let i = 0; i < N; i++) {
+    const P = problema(rng);
+    assert.ok(!CASOS_HOJA.has(aEcuacion(P.eq.parse).clave()), 'clave de hoja');
+    assert.ok(!HUELLAS_EXAMEN.has(huellaCanonica(P.eq.parse)), 'huella de examen');
+    assert.ok(!reservado(P.eq.parse));
+  }
+});
+
+test('marcapáginas en masculino en todo el reparto de tres; el resto, en femenino', () => {
+  for (let semilla = 1; semilla <= 4000; semilla++) {
+    const P = problema(crearRng(semilla));
+    if (!/marcapáginas/.test(P.enun.es)) continue;
+    const textos = [P.enun.es, P.xDef.es, ...P.datos.map(d => d.es), ...P.pedidos.flatMap(p => [p.pregunta?.es ?? '', p.frase.es]), ...P.cantidades.map(c => c.nombre.es)];
+    for (const t of textos) assert.ok(!/\blas marcapáginas|Cuántas ha|cuántas marcapáginas|\blas de (los tres|[A-Z])/.test(t), t);
+  }
+});
+
+test('«Has contestado con …, pero se pregunta por …» concuerda con todas las cantidades', () => {
+  const rng = crearRng(7777);
+  const vistos = new Set();
+  for (let i = 0; i < N; i++) {
+    const P = problema(rng);
+    for (const c of P.cantidades) vistos.add(c.nombre.es);
+  }
+  assert.ok(vistos.size > 8);
+  for (let i = 0; i < 400; i++) {
+    for (const g of [generarResuelve, generarPide]) {
+      const it = g(rng);
+      assert.ok(!/Ese número es/.test(JSON.stringify(it)));
+    }
+  }
+});
+
+test('ningún «-» del teclado como signo en lo que ve el alumno (ecuaciones, opciones, pienso)', () => {
+  const rng = crearRng(159002);
+  for (let i = 0; i < N; i++) {
+    const P = problema(rng);
+    for (const idioma of IDIOMAS) {
+      for (const t of [P.eq.txt[idioma], ...P.errores.map(e => e.txt[idioma])]) assert.ok(!/(^|[=(\s])-(?=[\dx])|\d-\d| - /.test(t), t);
+    }
+  }
+  // Los ítems enteros (opciones, feedback, ecuación del ej. 5), sin los campos de máquina.
+  const oculto = (k, v) => ['parse', 'valor', 'clave', 'sol', 'id', 'error'].includes(k) ? undefined : v;
+  for (const g of [generarIncognita, generarEcuacion, generarResuelve, generarPide, generarSentido]) {
+    const r = crearRng(159005);
+    for (let i = 0; i < N; i++) assert.ok(!/(?:[=(\s]|\\")-(?=[\dx])/.test(JSON.stringify(g(r), oculto)));
+  }
 });
 
 // ─── Revisión 191 (hallazgos 4 y 5) ─────────────────────────────────────────────────────────────
