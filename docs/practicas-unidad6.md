@@ -147,9 +147,9 @@ completan aquí las tareas 157-159.
 | 1 | `terminos-semejantes` | 71 | 147 | ¿Semejantes? (sí o no) · Coeficiente y parte literal · Reduce (teclear el resultado) · Caza el error (una reducción: bien, o qué error tiene) | sin contextos; coeficientes enteros de 1 a 9 |
 | 2 | `es-solucion` | 72 | 148 | Compruébalo (¿es x = v solución?, sí o no) · ¿Qué ecuación? (la única de cuatro que tiene esa solución) · ¿Identidad o ecuación? · Inventa una (cualquier ecuación con esa solución; se corrige resolviéndola) | sin contextos; x en un solo miembro y sin paréntesis salvo en el ej. 3; coeficientes 2-9 (−2…−5 si es negativo), constantes 1-12 (hasta 20 en `b − ax`); soluciones −6…12, nunca 0; \|c\| y el valor probado ≤ 60 |
 | 2 | `transposicion` | 73 | 149 | Con números (la operación que falta o el número del hueco) · Una operación · Dos operaciones, paso a paso (el primer paso y la solución) · 3x = 12 frente a 12x = 3 · Comprueba y corrige | sin contextos; ej. 1 con números de 2 a 100; ej. 2 y 5, coeficientes 2-9, términos 2-12, `x/n` con n 2-9; ej. 3, c de 1 a 100 y solución natural ≤ 48; ej. 4, números 2-15 (solución entera o fracción; vale el decimal exacto) |
-| 3 | `resuelve` | 74 | 150 | El primer paso · Paso a paso · Resuélvela · ¿Está bien resuelta? | (158) |
-| 3 | `parentesis-algebra` | 75 | 151 | Quita el paréntesis · ¿Cuál es el desarrollo? · Resuelve con paréntesis · Caza el error | (158) |
-| 3 | `denominadores` | 76 | 152 | ¿Por cuánto multiplico? · Sin denominadores · Resuélvela · Paso a paso | (158) |
+| 3 | `resuelve` | 74 | 150 | El primer paso · Paso a paso · Resuélvela · ¿Está bien resuelta? | sin contextos; sin paréntesis ni denominadores; \|coeficiente de x\| ≤ 9, números sueltos ≤ 12 (hasta 40 en «reducir», ej. 2); solución entera \|s\| ≤ 12, o fracción con denominador ≤ 9 y \|numerador\| ≤ 20; x = 0 en los ej. 2 y 3 |
+| 3 | `parentesis-algebra` | 75 | 151 | Quita el paréntesis · ¿Cuál es el desarrollo? · Resuelve con paréntesis · Caza el error | sin contextos; un paréntesis por miembro; número delante del paréntesis de 1 a 6, positivo o negativo (o solo el signo menos), coeficientes dentro de 1 a 5, números 1-9, término delante hasta 9 (hasta 40 en el segundo miembro de las ecuaciones); solución entera casi siempre (fracción en ~12 %, \|numerador\| ≤ 40, denominador ≤ 6) |
+| 3 | `denominadores` | 76 | 152 | ¿Por cuánto multiplico? · Sin denominadores · Resuélvela · Paso a paso | sin contextos; denominadores 2-12 con m.c.m. ≤ 30; hasta tres fracciones; sin paréntesis en los numeradores; solución entera casi siempre |
 | 4 | `problemas-ecuaciones` | 77 | 153 | ¿Qué es x? · ¿Qué ecuación? · Resuelve y contesta · ¿Qué pide? · ¿Tiene sentido? | (159) |
 | toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | (159) |
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
@@ -176,7 +176,14 @@ papel en sus cinco ejercicios, tampoco en el 1, cuya huella dependía del orden 
 **`es-solucion`** (63c6253): desde 8c5aebf no saca ningún caso del papel y sus cuentas son exactas. Quedaba el
 ejemplo fijo de la introducción del ej. 3, que era una identidad de la hoja 2; se cambió tras una reabierta
 corta. Lo demás estaba bien en
-las tres: regla de oro, campos, variedad y clics a 375 y 1100 px, en español y en inglés. Las de las semanas 3-4, las publican las tareas 158-159. La portada enseña la unidad 6 desde el
+las tres: regla de oro, campos, variedad y clics a 375 y 1100 px, en español y en inglés. **Semana 3** (tarea 158,
+18-11): **no se publica ninguna**. `resuelve`, `parentesis-algebra` y `denominadores` se escribieron antes que la hoja 3 y el
+examen 3, con las listas de reserva vacías, y sacan casos de la hoja 3, del examen 3 y su extra, del examen 4 y de los finales
+en casi todos sus ejercicios (en `parentesis-algebra` y `denominadores`, cientos de ítems de cada 20000). Las tres están
+reabiertas con las listas ya calculadas (las de los exámenes, como huellas). `parentesis-algebra` tiene además ítems del
+ej. 4 con dos respuestas defendibles y personas mezcladas en el feedback en español; `resuelve`, dos detalles de notación.
+Lo demás está bien en las tres: regla de oro, variedad y clics a 375 y 1100 px, en español y en inglés. Las publica una
+segunda pasada de la 158 cuando se cierren sus reabiertas. La semana 4 la publica la tarea 159. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 
