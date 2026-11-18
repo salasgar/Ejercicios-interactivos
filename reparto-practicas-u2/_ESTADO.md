@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-18T22:09Z por s-20261118T220737-035b1f6f al cerrar la 153 (LISTA, commit 6f5ac4b: el porqué del ej. 2 escribe el dinero con solTexto; npm test 2489/2489; la publica la 159): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real: unos 10 min.
+
 Actualizado 2026-11-18T22:03Z por s-20261118T214819-b3d2ac7b durante la 159 (tercera pasada): publicada errores6 (9bd566e, 154 LISTA en b837244); 153 reabierta por cuarta vez (céntimos en el porqué del ej. 2, MEDIO, ~10 min); la 159 espera: **retoque de las filas 153, 154 y 159 y de «Prácticas sin publicar»**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-18T21:49Z por s-20261118T214819-b3d2ac7b al reclamar la 159 (tercera pasada; 153 y 154 EN CURSO desde las 21:47Z en otras dos sesiones del árbol): **retoque de las filas 153, 154 y 159**, no regeneración completa (otras sesiones en el árbol).
