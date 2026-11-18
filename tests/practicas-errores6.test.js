@@ -213,6 +213,18 @@ test('ningún texto del alumno lleva ×, %, x², 1x, dos letras ni signos seguid
   for (const [id, e] of Object.entries(ERRORES_TIPICOS)) { if (L.CLASE_DE[id]) { revisa(e.nombre.es, id); revisa(e.nombre.en, id); } }
 });
 
+test('un factor negativo va entre paréntesis en las pistas y las líneas: nunca «· −4» ni «: −4»', () => {
+  const MAL = /(·|\d :) [−-]\d/; // «paréntesis: −4 · 2» lleva dos puntos de puntuación: no cuenta
+  for (const [fn, sem] of [[L.generarDonde, 81], [L.generarQue, 82], [L.generarCorrige, 83]]) {
+    for (const it of generar(fn, sem)) {
+      for (const idioma of ['es', 'en']) {
+        assert.ok(!MAL.test(L.porque(it, idioma)), `porque ${it.plantilla}: ${L.porque(it, idioma)}`);
+        for (const l of it.lineas) assert.ok(!MAL.test(L.htmlLinea(l, idioma, false)), `línea: ${L.htmlLinea(l, idioma, false)}`);
+      }
+    }
+  }
+});
+
 test('los nombres y los textos están en los dos idiomas', () => {
   const comprueba = (x, ruta) => {
     if (x && typeof x === 'object' && ('es' in x || 'en' in x)) {

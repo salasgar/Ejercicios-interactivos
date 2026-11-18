@@ -26,6 +26,7 @@ const X = 'x';
 const T = (c, l = null) => termino(c, l);
 const MENOS = '−';
 const num = v => (v < 0 ? `${MENOS}${-v}` : `${v}`);
+const par = v => (v < 0 ? `(${MENOS}${-v})` : `${v}`); // factor negativo entre paréntesis: 6 · (−4)
 const mcd = (a, b) => (b === 0 ? a : mcd(b, a % b));
 const sinCero = (rng, lo, hi) => { let v; do v = rng.entero(lo, hi); while (v === 0); return v; };
 const conSigno = (rng, max) => (rng.azar() < 0.5 ? -1 : 1) * rng.entero(1, max);
@@ -389,8 +390,8 @@ nueva({
     const w = new Ecuacion([T(p.k, X), T(p.n)], [T(p.c)]);
     return { lineas: [l1, L(w), ...seguir(w)], falsa: 1 };
   },
-  hint: (p, i) => (i === 'en' ? `${p.k} multiplies every term in the brackets: ${p.k} · ${num(p.n)} = ${num(p.k * p.n)}.`
-    : `El ${p.k} multiplica a todos los términos del paréntesis: ${p.k} · ${num(p.n)} = ${num(p.k * p.n)}.`),
+  hint: (p, i) => (i === 'en' ? `${p.k} multiplies every term in the brackets: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`
+    : `El ${p.k} multiplica a todos los términos del paréntesis: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`),
 });
 
 // 12 · −(x − 2) → −x − 2 (el signo menos solo cambia el primer término)
@@ -405,8 +406,8 @@ nueva({
     const w = new Ecuacion([T(-p.k, X), T(p.k * p.n)], [T(p.c)]);
     return { lineas: [l1, L(w), ...seguir(w)], falsa: 1 };
   },
-  hint: (p, i) => (i === 'en' ? `The minus sign changes every term in the brackets: ${MENOS}${p.k} · ${num(p.n)} = ${num(-p.k * p.n)}.`
-    : `El signo menos cambia todos los términos del paréntesis: ${MENOS}${p.k} · ${num(p.n)} = ${num(-p.k * p.n)}.`),
+  hint: (p, i) => (i === 'en' ? `The minus sign changes every term in the brackets: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`
+    : `El signo menos cambia todos los términos del paréntesis: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`),
 });
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
