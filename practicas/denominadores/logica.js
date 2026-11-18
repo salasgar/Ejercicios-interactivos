@@ -48,12 +48,27 @@ export const explicaError = (id, idioma) => segunda[idioma](nombreDe(id)[idioma]
 const SIN_EXPLICAR = new Set(['otra-solucion']);
 export const explicaSiHace = (id, idioma) => (id && !SIN_EXPLICAR.has(id) ? `${explicaError(id, idioma).replace(/\.$/, '')}. ` : '');
 
-// ─── Casos reservados (la hoja y el examen de la semana 3 no existían al escribirla) ────────────
+// ─── Casos reservados (hojas 3 y 4 de la U6 y exámenes de las semanas 3 y 4 y finales) ─────────
 
-/** Formas canónicas (`clave()`, en claro) de los casos de la hoja de la semana 3. */
-export const CASOS_HOJA = new Set();
-/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen de la semana 3: nunca en claro. */
-export const HUELLAS_EXAMEN = new Set();
+/** Claves (`clave()`) de los enunciados de las hojas 3 y 4, con los dos órdenes de miembros. */
+export const CASOS_HOJA = new Set([
+  'b:10=x:3/10|b:1', 'b:12/5=x:1/5|b:0', 'b:13=x:1/2|b:5', 'b:14=x:7/10|b:0', 'b:22=x:11/10|b:0', 'b:2=x:1/6|b:7/6',
+  'b:2=x:2/15|b:0', 'b:4=x:1/3|b:-1', 'b:4=x:1|b:0', 'b:5=x:1/4|b:2', 'b:6=x:1/2|b:0', 'b:6=x:3/4|b:0',
+  'b:8=x:5/3|b:-2', 'x:-1/4|b:3=x:1|b:1/2', 'x:-1|b:2=x:-2/3|b:7/6', 'x:-2/3|b:7/6=x:-1|b:2', 'x:1/2|b:-1=x:1/3|b:1',
+  'x:1/2|b:0=b:6', 'x:1/2|b:1=x:2/3|b:-1', 'x:1/2|b:5=b:13', 'x:1/3|b:-1=b:4', 'x:1/3|b:1=x:1/2|b:-1',
+  'x:1/4|b:2=b:5', 'x:1/5|b:0=b:12/5', 'x:1/6|b:7/6=b:2', 'x:11/10|b:0=b:22', 'x:1|b:0=b:4', 'x:1|b:1/2=x:-1/4|b:3',
+  'x:2/15|b:0=b:2', 'x:2/3|b:-1=x:1/2|b:1', 'x:3/10|b:1=b:10', 'x:3/4|b:0=b:6', 'x:5/3|b:-2=b:8', 'x:7/10|b:0=b:14',
+]);
+/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen, con los dos órdenes de miembros: nunca en claro. */
+export const HUELLAS_EXAMEN = new Set([
+  '11gaysb', '11gysi6', '12omn8u', '13wqio4', '14mxbb7', '15a6615', '15bj4bf', '16fy4x4', '16vsp3m', '17ytlw1',
+  '194elfv', '19vxo1s', '1adtdtk', '1b0z4vp', '1b9hcj7', '1bey0dv', '1btl76h', '1emekwo', '1fjnjgl', '1h3vx75',
+  '1h4w4r1', '1hmeelz', '1hug0fv', '1iz9nno', '1klew83', '1msw2oz', '1oedqsz', '1q3en7u', '1tkxzjb', '1xfuzxh',
+  '2zjpe8', '39d3j4', '3dtqhz', '76x36n', '8ozh27', '9lyw3v', 'afyep', 'bv5t22', 'dqlikl', 'ezvw7r', 'f68viz',
+  'h3stz9', 'jo48ga', 'm1lvt4', 'm951j0', 'msbvkr', 'n0rirf', 'nktr5n', 'p86eq3', 'p9o9bj', 'q56i01', 'q7dyp8',
+  'rg1bmo', 'savqzt', 'sngxjo', 't71ygt', 't7vwvd', 't7z2dc', 'turbwi', 'u2g709', 'udvzhx', 'wueylz', 'wzxl23',
+  'yybe1l', 'zcl3x8', 'zgjje7',
+]);
 export const reservado = q => CASOS_HOJA.has(q.clave()) || HUELLAS_EXAMEN.has(huellaCanonica(q));
 
 // ─── Generar la ecuación ───────────────────────────────────────────────────────────────────────

@@ -203,8 +203,16 @@ test('textos: cada instrucción e introducción en los dos idiomas, sin × ni %'
   for (const o of Object.values(TX.instrucciones)) assert.ok(o.es && o.en);
 });
 
-test('casos reservados: hooks vacíos pero operativos', () => {
-  assert.equal(CASOS_HOJA.size, 0);
+test('casos reservados: las listas están completas y ningún ítem las toca, con los miembros en cualquier orden', () => {
+  assert.equal(CASOS_HOJA.size, 34);
+  assert.equal(HUELLAS_EXAMEN.size, 66);
+  for (const [generar, semilla] of [[generarMcm, 31], [generarSin, 32], [generarResuelve, 33], [generarPasos, 34]]) {
+    for (const it of items(generar, semilla)) {
+      const [izq, der] = it.origen.split(' = ');
+      assert.ok(!reservado(eq(it.origen)), it.origen);
+      assert.ok(!reservado(eq(`${der} = ${izq}`)), it.origen);
+    }
+  }
   const e = ecuacion('x/2 + x/3', 5);
   assert.equal(reservado(e), false);
   HUELLAS_EXAMEN.add(huellaCanonica(e));
