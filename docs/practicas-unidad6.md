@@ -155,8 +155,8 @@ completan aquí las tareas 157-159.
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
 **Publicadas** (a 2026-11-18): `traduce`, `valor-numerico`, `terminos-semejantes`, `es-solucion`,
-`transposicion`, `resuelve`, `parentesis-algebra`, `denominadores`, `leelo6` y `errores6`: las semanas 1, 2 y 3 enteras
-y dos de las tres de la semana 4. **Sin publicar**: `problemas-ecuaciones` (reabierta; abajo).
+`transposicion`, `resuelve`, `parentesis-algebra`, `denominadores`, `leelo6`, `errores6` y `problemas-ecuaciones`: las
+doce de la unidad, las cuatro semanas enteras.
 `traduce` y `valor-numerico` las publicó la tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel. Las dos tienen abierta desde el 17-11 una
@@ -197,8 +197,10 @@ faltaban reservas (las ecuaciones de los enunciados y las de otras destrezas que
 (b837244): 0 casos del papel en sus tres ejercicios (20000 ítems por ejercicio, reducidos y término a término), regla de oro,
 feedbacks (también los que se calculan al corregir) y clics a 375 y 1100 px, en español y en inglés, bien. `problemas-ecuaciones`
 (e62b43a) ya no saca ningún caso del papel, pero se reabre por cuarta vez: en el ej. 2, el porqué de una ecuación falsa con
-dinero escribe la solución en céntimos y con el separador colgando («x = 188,» por 1,88 €), en un 17 % de los ítems. La publica
-la 159 cuando cierre esa reabierta. La portada enseña la unidad 6 desde el
+dinero escribe la solución en céntimos y con el separador colgando («x = 188,» por 1,88 €), en un 17 % de los ítems. Arreglado
+en 6f5ac4b (el porqué usa `solTexto`, como el ej. 5). En la cuarta pasada (18-11) se publica **`problemas-ecuaciones`**:
+0 casos del papel en sus cinco ejercicios, ninguna opción falsa con dinero mal escrita en 20000 ítems del ej. 2, regla de oro,
+feedbacks y clics (es/en, 375/1100 px) bien. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 
