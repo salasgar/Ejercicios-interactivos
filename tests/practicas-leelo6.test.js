@@ -174,3 +174,28 @@ test('leelo6 · las plantillas de completa y consigna salen todas', () => {
   const pc = new Set(items(generarConsigna, 33).map(i => i.plantilla));
   assert.equal(pc.size, 4, [...pc].join());
 });
+
+const FAMILIA_ES = [
+  [/^Simplifica/, 'simplificar'], [/^(Calcula el valor|Sustituye)/, 'evaluar'], [/^Escribe .* con palabras/, 'palabras'],
+  [/^Rodea/, 'semejantes'], [/^(Resuelve|Comprueba)/, 'resolver'], [/^(Quita los paréntesis|Desarrolla los paréntesis)/, 'parentesis'],
+  [/^Resta /, 'restar'], [/^Suma /, 'sumar'], [/^Divide /, 'dividir'], [/^Multiplica los dos miembros por/, 'multiplicar'],
+  [/^Multiplica los dos miembros (por|entre)/, 'multiplicar'], [/^Halla/, 'mcm'],
+];
+test('leelo6 · consigna: dos opciones nunca piden lo mismo (ni una lleva dentro a otra)', () => {
+  for (const it of items(generarConsigna, 33)) {
+    const fams = it.opciones.map(o => (FAMILIA_ES.find(([re]) => re.test(o.texto)) ?? [null, o.texto])[1]);
+    assert.equal(new Set(fams).size, fams.length, it.opciones.map(o => o.texto).join(' | '));
+    for (const m of [it.solucion.es, it.solucion.en, ...it.opciones.filter(o => !o.correcta).map(o => o.por_que.es)]) assert.ok(!/\.[»”]\./.test(m), m);
+  }
+});
+
+test('leelo6 · completa: sin «One years ago» ni «1 años», y a ≠ c en los términos semejantes', () => {
+  for (const it of items(generarCompleta, 44)) {
+    const txt = [it.notacion, it.solucion.es, it.solucion.en].join(' ');
+    assert.ok(!/\b(One|1) years\b|\b1 años/.test(txt), txt);
+    if (it.plantilla === 'completa_semejantes') {
+      const m = plano(it.notacion).match(/(\d+)\w and (\d+)\w are called/);
+      assert.ok(m && m[1] !== m[2], plano(it.notacion));
+    }
+  }
+});

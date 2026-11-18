@@ -32,7 +32,7 @@ const frase = (texto, lang = 'en') => `<p class="texto-en" lang="${lang}">${text
 
 export const COTAS = {
   coeficiente: [2, 9], constante: [1, 9], denominador: [2, 6], valorDeX: [2, 6], solucion: [2, 9],
-  lapices: [5, 30], edad: [8, 16], hace: [1, 5],
+  lapices: [5, 30], edad: [8, 16], hace: [2, 5],
 };
 
 // ─── Errores propios de la práctica ───────────────────────────────────────────────────────
@@ -345,6 +345,7 @@ const num = n => String(n).replace('-', MENOS);
 
 function grupoExpresion(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), c = rng.entero(2, 9), b = rng.elegir([1, -1]) * rng.entero(1, 9);
+  if (a === c) throw new ItemPobre('consigna');
   const ts = [termino(a, L), termino(b), termino(c, L)];
   if (esReservado(lineal(a + c, b, L))) throw new ItemPobre('consigna');
   return { L, v: rng.entero(...COTAS.valorDeX), html: terminosAHtml(ts), cuenta: terminosATexto(ts) };
@@ -416,21 +417,23 @@ export const GRUPOS_CONSIGNA = [
   ] },
 ];
 
+const sinPunto = x => x.replace(/\.$/, '');
+
 function generarConsignaDe(rng) {
   const g = rng.elegir(GRUPOS_CONSIGNA);
   const d = g.construir(rng);
   const validas = g.plantillas.filter(p => p.valida === undefined ? true : p.valida(d));
   const t = rng.elegir(validas.filter(p => !p.soloSiNo));
   const otras = g.plantillas.filter(p => p.familia !== t.familia && (!p.soloSiNo || p.soloSiNo(d)) && !(p.evitar && p.evitar(d)));
-  const vistas = new Set();
+  const porFamilia = new Map();
+  for (const p of otras) porFamilia.set(p.familia, [...(porFamilia.get(p.familia) ?? []), p]);
   const falsas = [];
-  for (const p of otras) {
-    if (vistas.has(p.es(d))) continue;
-    vistas.add(p.es(d));
+  for (const variantes of porFamilia.values()) {
+    const p = rng.elegir(variantes);
     const error = t.contraria === p.familia ? 'operacion-contraria' : 'consigna-confundida';
     falsas.push({
       texto: p.es(d), error,
-      por_que: par(`«${p.es(d)}» sería «${p.en(d)}» en inglés, no «${t.en(d)}».`, `“${p.es(d)}” would be “${p.en(d)}” in English, not “${t.en(d)}”.`),
+      por_que: par(`«${sinPunto(p.es(d))}» sería «${sinPunto(p.en(d))}» en inglés, no «${sinPunto(t.en(d))}».`, `“${sinPunto(p.es(d))}” would be “${sinPunto(p.en(d))}” in English, not “${sinPunto(t.en(d))}”.`),
     });
   }
   // de la misma familia que la correcta no puede salir ninguna (ya filtradas por `otras`)
@@ -439,7 +442,7 @@ function generarConsignaDe(rng) {
     plantilla: `consigna_${g.id}`, instruccion: 'consigna',
     notacion: `${frase(t.en(d))}<div class="operacion">${d.html}</div>`,
     correcta: { texto: t.es(d) }, falsas, fijas, sesion: g.sesion,
-    solucion: par(`«${t.en(d)}» significa «${t.es(d)}».`, `“${t.en(d)}” means “${t.es(d)}”.`),
+    solucion: par(`«${sinPunto(t.en(d))}» significa «${sinPunto(t.es(d))}».`, `“${sinPunto(t.en(d))}” means “${sinPunto(t.es(d))}”.`),
   });
 }
 export const PLANTILLAS_CONSIGNA = [generarConsignaDe];
@@ -493,6 +496,7 @@ function completaIndependiente(rng) {
 }
 function completaSemejantes(rng) {
   const L = rng.elegir(LETRAS), a = rng.entero(2, 9), c = rng.entero(2, 9), b = rng.entero(1, 9);
+  if (a === c) throw new ItemPobre('completa_semejantes');
   libre(lineal(a + c, b, L));
   const ts = terminosAHtml([termino(a, L), termino(b), termino(c, L)]);
   return completa(rng, { plantilla: 'completa_semejantes', sesion: 2,
