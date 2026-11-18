@@ -622,12 +622,10 @@ export const solucionEcuacion = item => ({
 
 /** Por qué falla una ecuación equivocada, con su solución. */
 export function porQueEcuacion(item, op, idioma) {
-  const f = op.sol;
-  const sol = fraccionATexto(item.dinero ? { num: f.num * 100, den: f.den } : f, idioma);
-  const solTxt = item.dinero && f.den === 1 && (f.num * 100) % 1 === 0 ? decimalDe(Math.round(f.num * 100 / f.den), idioma) : sol;
+  const sol = solTexto({ dinero: item.dinero }, op.sol, idioma);
   return {
-    es: `${explicaError(op.error, 'es')}. Esa ecuación da <i>x</i> = ${item.dinero ? solTxt : sol}, y con ese valor no se cumple el enunciado.`,
-    en: `${explicaError(op.error, 'en')}. That equation gives <i>x</i> = ${item.dinero ? solTxt : sol}, and with that value the statement is not true.`,
+    es: `${explicaError(op.error, 'es')}. Esa ecuación da <i>x</i> = ${sol}, y con ese valor no se cumple el enunciado.`,
+    en: `${explicaError(op.error, 'en')}. That equation gives <i>x</i> = ${sol}, and with that value the statement is not true.`,
   }[idioma];
 }
 

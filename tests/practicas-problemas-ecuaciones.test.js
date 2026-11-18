@@ -391,3 +391,24 @@ test('decimalDe: el signo va aparte (−4,50, −0,50, −0,05) y ningún «-» 
     }
   }
 });
+
+test('ej. 2 con dinero: el porqué de una ecuación falsa da la solución en euros, con dos decimales y €, sin separador colgando', () => {
+  assert.match(porQueEcuacion({ dinero: true }, { sol: { num: 47, den: 25 }, error: 'olvida-aparte' }, 'es'), /1,88 €/);
+  assert.match(porQueEcuacion({ dinero: true }, { sol: { num: 47, den: 25 }, error: 'olvida-aparte' }, 'en'), /€1\.88/);
+  let vistos = 0;
+  for (const item of items(generarEcuacion, 159102)) {
+    for (const idioma of IDIOMAS) {
+      for (const op of item.opciones ?? []) {
+        if (!op.sol) continue;
+        const t = plano(porQueEcuacion(item, op, idioma) ?? '');
+        assert.doesNotMatch(t, /\d[,.][,.]/, `separador colgando: ${t}`);
+        if (item.dinero && (op.sol.num * 100) % op.sol.den === 0) {
+          const c = (op.sol.num * 100) / op.sol.den;
+          assert.ok(t.includes(eurosDe(Math.abs(c), idioma)), `falta ${eurosDe(Math.abs(c), idioma)} en: ${t}`);
+          vistos++;
+        }
+      }
+    }
+  }
+  assert.ok(vistos > 100, `pocos casos con dinero: ${vistos}`);
+});
