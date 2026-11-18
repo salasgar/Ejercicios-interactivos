@@ -363,7 +363,15 @@ test('el feedback del desarrollo: cada igualdad que escribe es cierta en dos val
   for (const it of items(generarQuita, 71)) revisa(it, it.solucion, `ej1 ${it.origen}`);
   for (const it of items(generarDesarrollo, 72)) revisa(it, it.solucion, `ej2 ${it.origen}`);
   for (const it of items(generarErrores, 73)) {
-    if (it.correcta === 'ninguno') revisa({ origen: it.origen }, { es: it.solucion.es.replace(/^Está bien: /, ''), en: it.solucion.en.replace(/^It is right: /, '') }, `ej4 ${it.origen}`);
+    if (it.correcta === 'ninguno') revisa({ origen: it.origen }, { es: it.solucion.es.replace(/^Está bien[:.] /, ''), en: it.solucion.en.replace(/^It is right[:.] /, '') }, `ej4 ${it.origen}`);
   }
   assert.ok(conDelante > 500 && sinDelante > 500 && productos > 1000, `casos: ${conDelante}/${sinDelante}/${productos}`);
+});
+
+test('caza el error: tras los dos puntos del feedback nunca va mayúscula', () => {
+  for (const it of items(generarErrores, 4242).slice(0, 300)) {
+    for (const idioma of ['es', 'en']) {
+      assert.ok(!/: \p{Lu}/u.test(it.solucion[idioma]), it.solucion[idioma]);
+    }
+  }
 });

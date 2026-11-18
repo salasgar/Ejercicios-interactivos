@@ -498,7 +498,7 @@ export function generarErrores(rng) {
       origen, resultado, htmlOrigen, htmlResultado,
       correcta: error === null ? 'ninguno' : familiaDe(error), error,
       solucion: error === null
-        ? { es: `Está bien: ${solucionDeDesarrollo(caso).es}`, en: `It is right: ${solucionDeDesarrollo(caso).en}` }
+        ? { es: `Está bien. ${solucionDeDesarrollo(caso).es}`, en: `It is right. ${solucionDeDesarrollo(caso).en}` }
         : solucionDeError(caso, valor, error),
       sesion: 10,
     };
