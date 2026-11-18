@@ -1085,3 +1085,13 @@ La 209 (MEDIO, 1 h, plazo vie 27-11, toca `herramientas/informe-actividad.mjs`, 
 los incluye marcados, cuenta su actividad sin meterlos en los puntos ni en «completa», no lanza alertas de dificultad por un reto y
 añade la nota de la app (base + extra) a cada alumno. Los puntos 1 y 2 de esa lista (lanzador y `atender-correo`) los hizo la
 coordinadora el 17-11, fuera del repositorio. Sigue sin hacer el párrafo del reto en `docs/practicas-guia-profesor.md`.
+
+## Alta del 18-11: tarea 210 (coordinadora s-20261118T222927-cc5dc2ff)
+
+Por encargo de Juan Luis (18-11), tras agotarse la cuota diaria de lecturas de Firestore (plan Spark, ~50 000/día, renovación a las 9:00 de
+Madrid) hacia las 23:07 con 35 ejecuciones en 90 s de `herramientas/informe-actividad.mjs` y `~/.claude/lanzador/notas_tarea_app.mjs` en
+bucles de un subagente: cada una baja enteras `progreso-libre` y `progreso-tareas` (~1 300 lecturas y creciendo). La 210 (ALTO, 2 h 30 min,
+sin plazo pero urgente, precondición 209 LISTA) pone varias tareas por lectura, caché local incremental fuera del repo (como el panel:
+`runQuery` con `where actualizado > …` y margen de 2 días), parada clara ante 429/5xx, y decide —con la razón escrita— si `subirFusionado`
+(`nube.js`) debe no escribir cuando la lectura falló por cuota o servidor. Toca además `~/.claude/lanzador/notas_tarea_app.mjs`, fuera
+del repo. El plan de pago queda descartado por Juan Luis. Banda ALTO porque toca el código de la app de los alumnos.
