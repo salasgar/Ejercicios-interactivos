@@ -28,7 +28,7 @@ const sgn = (rng, p = 0.45) => (rng.azar() < p ? -1 : 1);
 
 /** Errores propios de la práctica; los demás salen de `ERRORES_TIPICOS` de la base. */
 export const ERRORES_PROPIOS = {
-  'signo-del-segundo': { es: 'Ha multiplicado bien pero se ha equivocado en el signo del segundo término', en: 'Multiplied correctly but got the sign of the second term wrong' },
+  'signo-del-segundo': { es: 'Ha multiplicado bien, pero se ha equivocado en el signo del segundo término', en: 'Multiplied correctly, but got the sign of the second term wrong' },
   'signo-solo-segundo': { es: 'Ha cambiado el signo solo del segundo término del paréntesis', en: 'Changed the sign of the second term in the brackets only' },
   'sin-multiplicar': { es: 'Ha quitado el paréntesis sin multiplicar por el número de delante', en: 'Removed the brackets without multiplying by the number in front' },
   'menos-olvidado': { es: 'Ha quitado el paréntesis sin cambiar ningún signo', en: 'Removed the brackets without changing any sign' },
@@ -38,8 +38,11 @@ export const ERRORES_PROPIOS = {
 export const nombreDe = id => ERRORES_TIPICOS[id]?.nombre ?? ERRORES_PROPIOS[id];
 export const ESTA_DEFINIDO = id => Boolean(nombreDe(id));
 /** «Ha sumado…» → «Has sumado…»; «Added…» → «You added…». */
-const segunda = { es: t => t.replace(/^Ha /, 'Has '), en: t => `You ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
+const segunda = { es: t => t.replace(/^Ha /, 'Has ').replace(' se ha ', ' te has '), en: t => `You ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
 export const explicaError = (id, idioma) => segunda[idioma](nombreDe(id)[idioma]);
+/** Para «Caza el error», donde el error es de otro: «Ha sumado…» tal cual; «Added…» → «They added…». */
+const tercera = { es: t => t, en: t => `They ${t.charAt(0).toLowerCase()}${t.slice(1)}` };
+export const explicaErrorAjeno = (id, idioma) => tercera[idioma](nombreDe(id)[idioma]);
 
 /** Las familias de «Caza el error»: cada error con nombre pertenece a una. */
 export const FAMILIAS = {
@@ -50,12 +53,110 @@ export const FAMILIAS = {
 export const OPCIONES_ERROR = Object.keys(FAMILIAS);
 export const familiaDe = id => OPCIONES_ERROR.find(f => FAMILIAS[f].includes(id)) ?? null;
 
-// ─── Casos reservados (la hoja y el examen de la semana 3 no existían al escribirla) ────────────
+// ─── Casos reservados (hojas 3 y 4, exámenes 3 y 4 con sus extras y finales de la unidad 6) ─────
 
-/** Formas canónicas (`clave()`, en claro) de los casos de la hoja de la semana 3. */
-export const CASOS_HOJA = new Set();
-/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen de la semana 3: nunca en claro. */
-export const HUELLAS_EXAMEN = new Set();
+/** Formas canónicas (`clave()`, en claro) de los casos de las hojas 3 y 4; las ecuaciones, con los dos órdenes de miembros. */
+export const CASOS_HOJA = new Set([
+  'b:10=x:3|b:-2',
+  'b:15=x:-3|b:6',
+  'b:20=x:4|b:-12',
+  'b:5=x:2|b:-7',
+  'b:6=x:2|b:10',
+  'b:85=x:2|b:4',
+  'x:-1|b:-3=x:-6|b:0',
+  'x:-1|b:-5',
+  'x:-1|b:10=x:4|b:1',
+  'x:-1|b:3=x:2|b:0',
+  'x:-1|b:7',
+  'x:-1|b:8=x:2|b:2',
+  'x:-2|b:-1=x:3|b:4',
+  'x:-2|b:8',
+  'x:-3|b:-12',
+  'x:-3|b:6=b:15',
+  'x:-6|b:0=x:-1|b:-3',
+  'x:-7|b:21',
+  'x:1|b:-4',
+  'x:1|b:6',
+  'x:1|b:7=x:6|b:-3',
+  'x:10|b:-5',
+  'x:2|b:-5',
+  'x:2|b:-7=b:5',
+  'x:2|b:0=x:-1|b:3',
+  'x:2|b:10=b:6',
+  'x:2|b:2=x:-1|b:8',
+  'x:2|b:3',
+  'x:2|b:4=b:85',
+  'x:3|b:-1',
+  'x:3|b:-2=b:10',
+  'x:3|b:4=x:-2|b:-1',
+  'x:4|b:-12=b:20',
+  'x:4|b:-3',
+  'x:4|b:1=x:-1|b:10',
+  'x:4|b:12',
+  'x:5|b:-2',
+  'x:5|b:-7',
+  'x:6|b:-10',
+  'x:6|b:-3=x:1|b:7',
+  'x:6|b:12',
+]);
+/** Huellas FNV-1a (`huellaCanonica`) de los casos de examen, ya con los dos órdenes de miembros: nunca en claro. */
+export const HUELLAS_EXAMEN = new Set([
+  '15dvnde',
+  '161fp93',
+  '166ojgp',
+  '17vrlju',
+  '1btsqw1',
+  '1gdw06c',
+  '1hkkrb7',
+  '1hx48nj',
+  '1i9pt8v',
+  '1iq2xu6',
+  '1j9sqy7',
+  '1krm8hm',
+  '1lr14l6',
+  '1o4i15e',
+  '1oc19nf',
+  '1plzotu',
+  '1ps6m65',
+  '1syqjf7',
+  '1th1639',
+  '1tspci4',
+  '1u9saim',
+  '1vn7zey',
+  '1w8f7rb',
+  '1w8wro3',
+  '1xl20mp',
+  '211mm',
+  '2umacb',
+  '3afns8',
+  '48jxan',
+  '6leekz',
+  'c60nxz',
+  'cg09my',
+  'd4uq9a',
+  'eoix6r',
+  'eujpxz',
+  'hhev4s',
+  'hz7unt',
+  'i97gcs',
+  'jtdtvk',
+  'k5fb28',
+  'kv9mio',
+  'l0fjd1',
+  'm0mghg',
+  'ree197',
+  'rodmy6',
+  't2bnf1',
+  'tj2gu9',
+  'u10fjk',
+  'vfkpj2',
+  'woei52',
+  'wv0uni',
+  'xm2fxe',
+  'y6btqa',
+  'y70hb7',
+  'zrglwo',
+]);
 /** ¿Esta expresión (o ecuación) es de la hoja o del examen? Por forma canónica del desarrollo, no del texto. */
 export const reservado = x => {
   const clave = x instanceof Ecuacion ? x.clave() : aLineal(x).clave();
@@ -386,6 +487,8 @@ export function generarErrores(rng) {
       resultado = `${mostrado.aTexto()} = ${numT(c0)}`;
       htmlResultado = `${mostrado.aHtml()} = ${numT(c0)}`;
       if (reservado(new Ecuacion(valor, c0))) continue;
+      // Dos ecuaciones con la misma solución son la misma respuesta: «No hay error» también valdría.
+      if (error !== null && mismaSolucion(new Ecuacion(valor, c0), new Ecuacion(mostrado, c0))) continue;
     } else {
       origen = textoDeCaso(caso); htmlOrigen = textoDeCaso(caso, true);
       resultado = mostrado.aTexto(); htmlResultado = mostrado.aHtml();
@@ -403,12 +506,18 @@ export function generarErrores(rng) {
   throw new Error('generarErrores');
 }
 
+const mismaSolucion = (a, b) => {
+  const sa = a.resolver(), sb = b.resolver();
+  if (!sa || !sb || sa.tipo || sb.tipo) return false;
+  return aFraccion(sa).simplificar().equals(aFraccion(sb).simplificar());
+};
+
 function solucionDeError(caso, valor, error) {
   const bien = cuenta(valor.aHtml());
   const origen = cuenta(textoDeCaso(caso, true));
   return {
-    es: `${explicaError(error, 'es')}. ${origen} bien hecho es ${bien}.`,
-    en: `${explicaError(error, 'en')}. ${origen} done right is ${bien}.`,
+    es: `${explicaErrorAjeno(error, 'es')}. ${origen} bien hecho es ${bien}.`,
+    en: `${explicaErrorAjeno(error, 'en')}. ${origen} done right is ${bien}.`,
   };
 }
 

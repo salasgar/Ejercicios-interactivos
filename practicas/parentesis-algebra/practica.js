@@ -28,7 +28,7 @@ const enunciadoResuelve = (item, { tt }) => `
 
 const enunciadoErrores = (item, { tt }) => `
     <p class="instruccion">${tt(TX.instrucciones.errores)}</p>
-    <p class="frase">${cuenta(`${item.htmlOrigen} → ${item.htmlResultado}`)}</p>`;
+    <p class="frase">${cuenta(`<span class="lado">${item.htmlOrigen}</span> → <span class="lado">${item.htmlResultado}</span>`)}</p>`;
 
 function montarElegir(contenedor, item, api, enunciado, opciones, clase, alElegir) {
   contenedor.innerHTML = `${enunciado(item, api)}<div id="caja-elecciones"></div>`;

@@ -4,10 +4,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { deTexto, leerExpresion, hayEquivalentes, huellaCanonica, lineal, ecuacion } from '../practicas/_comun/algebra.js';
+import { deTexto, leerExpresion, hayEquivalentes, huellaCanonica, lineal, ecuacion, aEcuacion } from '../practicas/_comun/algebra.js';
+import { aFraccion } from '../practicas/_comun/fracciones.js';
 import {
   generarQuita, generarDesarrollo, generarResuelve, generarErrores, corregirQuita, corregirResuelve, leerSolucion,
-  ESTA_DEFINIDO, explicaError, claveItem, FAMILIAS, OPCIONES_ERROR, familiaDe, CASOS_HOJA, HUELLAS_EXAMEN, reservado,
+  ESTA_DEFINIDO, explicaError, explicaErrorAjeno, claveItem, FAMILIAS, OPCIONES_ERROR, familiaDe, CASOS_HOJA, HUELLAS_EXAMEN, reservado,
   textoDeCaso, valorDeCaso, candidatosDe,
 } from '../practicas/parentesis-algebra/logica.js';
 import { TX } from '../practicas/parentesis-algebra/textos.js';
@@ -255,15 +256,78 @@ test('textos: cada instrucción e introducción en los dos idiomas, sin × ni %'
   for (const e of TX.ejercicios) assert.ok(e.introduccion.es && e.introduccion.en && e.nombre.es && e.nombre.en);
 });
 
-test('casos reservados: hooks vacíos pero operativos', () => {
-  assert.equal(CASOS_HOJA.size, 0);
+/** Un miembro con paréntesis, desarrollado: se evalúa en x = 0 y x = 1. */
+function ladoALineal(texto) {
+  const en = x => evaluarEntero(texto.replace(/−/g, '-').replace(/(\d)\(/g, '$1*(').replace(/(\d)x/g, `$1*${x}`).replace(/(?<![\d*])x/g, `${x}`));
+  const b = en(0);
+  return lineal(Number(en(1) - b), Number(b));
+}
+const ecuacionDeTexto = t => { const [a, b] = t.split(' = '); return ecuacion(ladoALineal(a), ladoALineal(b)); };
+const alReves = q => ecuacion(q.der, q.izq);
+
+test('casos reservados: las listas de la hoja y del examen tienen el tamaño de la nota y operan', () => {
+  assert.equal(CASOS_HOJA.size, 41);
+  assert.equal(HUELLAS_EXAMEN.size, 55);
   const e = lineal(3, -6);
   HUELLAS_EXAMEN.add(huellaCanonica(e));
   assert.equal(reservado(e), true);
   HUELLAS_EXAMEN.delete(huellaCanonica(e));
   assert.equal(reservado(e), false);
-  const q = ecuacion('3x - 6', 12);
-  assert.equal(reservado(q), false);
+  assert.equal(reservado(ecuacion('3x - 6', 12)), false);
+  assert.equal(reservado(deTexto('4x + 12')), true);
+  assert.equal(reservado(aEcuacion('4x - 12 = 20')), true);
+  assert.equal(reservado(aEcuacion('20 = 4x - 12')), true);
+});
+
+test('ningún ítem (3000 por ejercicio) es de la hoja ni del examen, en los dos órdenes de miembros', () => {
+  const malo = x => {
+    if (HUELLAS_EXAMEN.has(huellaCanonica(x))) return true;
+    return reservado(x);
+  };
+  const dosOrdenes = (izq, der) => { const q = ecuacionDeTexto(`${izq} = ${der}`); return [q, alReves(q)]; };
+  for (const it of items(generarQuita, 701)) assert.ok(!malo(deTexto(it.correcta)), it.clave);
+  for (const it of items(generarDesarrollo, 702)) {
+    const ok = it.opciones.find(o => o.correcta);
+    assert.ok(!malo(deTexto(ok.valor)), it.clave);
+  }
+  for (const it of items(generarResuelve, 703)) {
+    const [izq, der] = it.origen.split(' = ');
+    for (const q of dosOrdenes(izq, der)) assert.ok(!malo(q), it.clave);
+  }
+  for (const it of items(generarErrores, 704)) {
+    if (it.ecuacion) {
+      const [izq, der] = it.origen.split(' = ');
+      for (const q of dosOrdenes(izq, der)) assert.ok(!malo(q), it.clave);
+    } else assert.ok(!malo(ladoALineal(it.origen)), it.clave);
+  }
+});
+
+test('Caza el error con ecuación: la «equivocada» nunca tiene la misma solución que la de arriba (20000 ítems)', () => {
+  const rng = crearRng(158108);
+  let vistas = 0;
+  for (let i = 0; i < 20000; i++) {
+    const it = generarErrores(rng);
+    if (!it.ecuacion || it.error === null) continue;
+    vistas++;
+    const s1 = ecuacionDeTexto(it.origen).resolver(), s2 = ecuacionDeTexto(it.resultado).resolver();
+    if (!s1 || !s2 || s1.tipo || s2.tipo) continue;
+    assert.ok(!aFraccion(s1).equals(aFraccion(s2)), `${it.origen} → ${it.resultado}`);
+  }
+  assert.ok(vistas > 1000);
+});
+
+test('feedback en español sin personas mezcladas; en «Caza el error», en tercera persona', () => {
+  assert.equal(explicaError('signo-del-segundo', 'es'), 'Has multiplicado bien, pero te has equivocado en el signo del segundo término');
+  for (const id of ['distribuir-solo-primero', 'multiplicar-solo-la-x', 'signo-solo-primero', 'signo-solo-segundo', 'sin-multiplicar', 'menos-olvidado']) {
+    assert.doesNotMatch(explicaError(id, 'es'), /\bse ha\b/, id);
+  }
+  assert.equal(explicaErrorAjeno('distribuir-solo-primero', 'es'), 'Ha multiplicado solo el primer término del paréntesis');
+  assert.match(explicaErrorAjeno('distribuir-solo-primero', 'en'), /^They multiplied only/);
+  for (const it of items(generarErrores, 705)) {
+    if (it.error === null) continue;
+    assert.doesNotMatch(it.solucion.es, /\bHas \w+|\bte has\b/, it.clave);
+    assert.doesNotMatch(it.solucion.en, /\bYou\b/, it.clave);
+  }
 });
 
 // ─── Revisión 191 (hallazgo 2): toda igualdad que escribe el feedback del desarrollo es cierta ─────────────

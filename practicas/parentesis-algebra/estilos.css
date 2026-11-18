@@ -19,3 +19,5 @@
 .campo-expresion--bien { border-color: var(--correcto); background: var(--correcto-claro); }
 .campo-expresion--mal { border-color: var(--error); background: var(--error-claro); }
 .aviso-campo { color: var(--error); font-size: .92rem; min-height: 1.3rem; margin: 0 0 .4rem; }
+
+.lado { white-space: nowrap; }
