@@ -145,8 +145,8 @@ completan aquí las tareas 157-159.
 | 1 | `traduce` | 69 | 145 | Elige la expresión (de una frase a su expresión) · Escríbela (teclear la expresión de una frase) · Elige la frase (de una expresión a su frase) · Situaciones (edades, precios y tarifas con una letra) | tarifas: móvil 5-15 € + 1-3 €/GB y 2-12 GB, taxi 3-5 € + 1-2 €/km y 2-30 km, feria 3-10 € + 1-3 € y 2-10 atracciones, bici 2-6 € + 2-4 €/h y 2-8 h, carpeta 2-6 € + lápices a 1-2 €; hermano 2-9 años mayor, «dentro de» 2-20 años, «hace» 2-10 años; de 2 a 9 cuadernos; el dinero con dos decimales |
 | 1 | `valor-numerico` | 70 | 146 | Sustituye y calcula (escribir o elegir) · La tabla (la expresión con dos o tres valores) · ¿Qué valor? (qué expresión vale N) | sin contextos; \|resultado\| ≤ 60; coeficientes 2-9, constantes 1-9 (6-20 en `b − ax`); x natural 2-9, negativo −1…−6, o 0,5 / 1,5 / 2,5 |
 | 1 | `terminos-semejantes` | 71 | 147 | ¿Semejantes? (sí o no) · Coeficiente y parte literal · Reduce (teclear el resultado) · Caza el error (una reducción: bien, o qué error tiene) | sin contextos; coeficientes enteros de 1 a 9 |
-| 2 | `es-solucion` | 72 | 148 | Compruébalo · ¿Qué ecuación? · ¿Identidad o ecuación? · Inventa una | (157) |
-| 2 | `transposicion` | 73 | 149 | Con números · Una operación · Dos operaciones, paso a paso · 3x = 12 frente a 12x = 3 · Comprueba y corrige | (157) |
+| 2 | `es-solucion` | 72 | 148 | Compruébalo (¿es x = v solución?, sí o no) · ¿Qué ecuación? (la única de cuatro que tiene esa solución) · ¿Identidad o ecuación? · Inventa una (cualquier ecuación con esa solución; se corrige resolviéndola) | sin contextos; x en un solo miembro y sin paréntesis salvo en el ej. 3; coeficientes 2-9 (−2…−5 si es negativo), constantes 1-12 (hasta 20 en `b − ax`); soluciones −6…12, nunca 0; \|c\| y el valor probado ≤ 60 |
+| 2 | `transposicion` | 73 | 149 | Con números (la operación que falta o el número del hueco) · Una operación · Dos operaciones, paso a paso (el primer paso y la solución) · 3x = 12 frente a 12x = 3 · Comprueba y corrige | sin contextos; ej. 1 con números de 2 a 100; ej. 2 y 5, coeficientes 2-9, términos 2-12, `x/n` con n 2-9; ej. 3, c de 1 a 100 y solución natural ≤ 48; ej. 4, números 2-15 (solución entera o fracción; vale el decimal exacto) |
 | 3 | `resuelve` | 74 | 150 | El primer paso · Paso a paso · Resuélvela · ¿Está bien resuelta? | (158) |
 | 3 | `parentesis-algebra` | 75 | 151 | Quita el paréntesis · ¿Cuál es el desarrollo? · Resuelve con paréntesis · Caza el error | (158) |
 | 3 | `denominadores` | 76 | 152 | ¿Por cuánto multiplico? · Sin denominadores · Resuélvela · Paso a paso | (158) |
@@ -154,16 +154,23 @@ completan aquí las tareas 157-159.
 | toda | `errores6` | 78 | 154 | ¿Dónde está el error? · ¿Qué error es? · Corrígelo | (159) |
 | toda | `leelo6` | 79 | 155 | La palabra (38 términos, del inglés al español y al revés) · Léelo (leer y escribir expresiones y ecuaciones) · La consigna (de examen, en inglés) · Completa (la palabra que falta) | coeficientes 2-9, constantes 1-9, denominadores 2-6, x de 2 a 6; lápices 5-30, edades 8-16, «hace» 1-5 años |
 
-**Publicadas** (a 2026-11-17): `traduce` y `valor-numerico` (tarea 156, tras las reabiertas que les
+**Publicadas** (a 2026-11-18): `traduce` y `valor-numerico` (tarea 156, tras las reabiertas que les
 abrió la primera pasada de la 156 el 16-11 por casos de la hoja 1, del examen 1 y del final que sus
 generadores producían: se escribieron antes que el papel). Las dos tienen abierta desde el 17-11 una
 reabierta corta que no las despublica (en `traduce`, la variedad del ej. 1 y una solución que repite la
 expresión en el ej. 4; en `valor-numerico`, «sumar antes de multiplicar» cuando la cuenta resta).
-**Sin publicar**: `terminos-semejantes` (reabierta el 17-11: el ej. 4 tiene todavía ítems con dos
-respuestas buenas, y su test escribía casos de examen en claro) y `leelo6` (reabierta el 17-11: casos del
+`terminos-semejantes` se quedó sin publicar en la 156 (el ej. 4 tenía todavía ítems con dos respuestas
+buenas, y su test escribía casos de examen en claro) y la publica la 157 (abajo). **Sin publicar**: `leelo6` (reabierta el 17-11: casos del
 papel en tres ejercicios, dos respuestas buenas en el ej. 3, letras que el enunciado no define; y como
 no filtra por sesión, la propuesta es publicarla con la semana 4, igual que `leelo5` salió con la
-semana 2). Las de las semanas 2-4, las publican las tareas 157-159. La portada enseña la unidad 6 desde el
+semana 2). **Semana 2** (tarea 157, 18-11): se publica **`terminos-semejantes`** (la 157 la publica junto
+con las suyas, tras su cuarta entrega, 714ff62: 0 casos del papel y ningún ítem con dos respuestas buenas).
+`es-solucion` y `transposicion` **siguen sin publicar**: se escribieron antes que la hoja 2 y el examen 2 y no
+reservaban nada. `es-solucion` además hacía cuentas falsas con coeficientes no enteros y no cargaba su hoja
+de estilos; está reabierta. `transposicion` ya reserva en los ejercicios 2-5 y tiene el feedback arreglado
+(ab3a6da), pero su ejercicio 1 sigue sacando casos de la hoja 2 y del examen 2: la huella depende del orden de
+los lados. Tiene una segunda reabierta corta. Lo demás estaba bien en las tres: regla de oro, campos, variedad
+y clics a 375 y 1100 px, en español y en inglés. Las de las semanas 3-4, las publican las tareas 158-159. La portada enseña la unidad 6 desde el
 lunes 1-2-2027. Las reabiertas están en `reparto-practicas-u2/hechos/reabiertas/`. El estado vivo es el
 campo `disponible` de `catalogo.js`.
 
