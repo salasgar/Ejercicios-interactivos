@@ -571,7 +571,13 @@ test('la reserva real está cargada y ningún caso reservado sale en 20000 ítem
   ];
   assert.equal(ecs.filter(esReservado).length, 0, 'sale una ecuación reservada');
   const ej1 = lote(generarConNumeros, 157101, N2);
-  assert.equal(ej1.filter(i => HUELLAS_RESERVADAS_EJ1.has(huella(i.partida))).length, 0, 'el ej. 1 saca una igualdad reservada');
+  // Comprobación independiente de `esReservadoEj1`: la forma canónica de cada igualdad (partida y llegada completada)
+  // se calcula aquí, con los lados en los dos órdenes, y se busca en las huellas del papel.
+  const lados = t => t.split(' = ').map(l => l.trim());
+  const variantes = t => { const [a, b] = lados(t); return [`${a} = ${b}`, `${b} = ${a}`]; };
+  const igualdades = i => [i.partida, i.tipo === 'hueco' ? i.llegada.replace(HUECO, String(i.respuesta)) : `${i.izq} = ${i.der} ${i.respuesta} ${i.bnum}`];
+  const sale = ej1.filter(i => igualdades(i).some(t => variantes(t).some(v => HUELLAS_RESERVADAS_EJ1.has(huella(v)))));
+  assert.equal(sale.length, 0, `el ej. 1 saca ${sale.length} ítems con una igualdad reservada (en algún orden de lados)`);
   assert.ok(new Set(ej1.map(claveDe)).size > 150, 'el ej. 1 se queda sin variedad');
   for (const [gen, sem] of [[generarUnaOperacion, 3], [generarDosOperaciones, 4], [generarFrente, 5], [generarComprueba, 6]]) {
     assert.ok(new Set(lote(gen, 157200 + sem, 3000).map(claveDe)).size > 150, 'sin variedad');
@@ -592,6 +598,12 @@ test('el gancho del ej. 1 funciona (con una huella inventada, no un caso)', () =
     const e2 = hu[0].partida; HUELLAS_RESERVADAS_EJ1.add(huella(e2));
     assert.equal(lote(generarHueco, 10, 3000).filter(i => i.partida === e2).length, 0);
     HUELLAS_RESERVADAS_EJ1.delete(huella(e2));
+    // con la igualdad de llegada completada y los lados al revés
+    const l3 = hu[1].llegada.replace(HUECO, String(hu[1].respuesta)).split(' = ');
+    const h3 = huella(`${l3[1]} = ${l3[0]}`); HUELLAS_RESERVADAS_EJ1.add(h3);
+    assert.ok(esReservadoEj1(hu[1].partida, l3.join(' = ')));
+    assert.equal(lote(generarHueco, 10, 3000).filter(i => i.partida === hu[1].partida).length, 0);
+    HUELLAS_RESERVADAS_EJ1.delete(h3);
   } finally { HUELLAS_RESERVADAS_EJ1.delete(h); }
 });
 

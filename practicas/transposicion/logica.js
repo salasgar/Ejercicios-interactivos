@@ -68,7 +68,10 @@ export const nombreError = id => ERRORES_TIPICOS[id]?.nombre ?? ERRORES_PROPIOS[
 
 export const HUELLAS_RESERVADAS = HUELLAS_ECUACIONES;
 export const HUELLAS_RESERVADAS_EJ1 = HUELLAS_EJ1;
-export const esReservadoEj1 = partida => HUELLAS_EJ1.has(huella(partida));
+/** Una igualdad con los lados en los dos órdenes: la reserva no depende de cómo se escriba (`3 + 4 = 7` y `7 = 3 + 4`). */
+const aDosOrdenes = igualdad => { const [i, d] = igualdad.split(' = '); return [`${i} = ${d}`, `${d} = ${i}`]; };
+/** ¿Está reservada alguna de las igualdades dadas (partida, llegada completada), en cualquier orden de los lados? */
+export const esReservadoEj1 = (...igualdades) => igualdades.some(t => aDosOrdenes(t).some(v => HUELLAS_EJ1.has(huella(v))));
 /** La huella de una ecuación escrita como texto (forma canónica: `x + 3 = 10` y `3 + x = 10`, la misma). */
 export const huellaDe = texto => huella(deEcuacion(texto).clave());
 export const esReservado = texto => HUELLAS_RESERVADAS.has(huellaDe(texto));
@@ -125,7 +128,7 @@ export function generarOperador(rng) {
     const a = forma === 'suma' || forma === 'resta' ? rng.entero(2, 15) : rng.entero(2, 9);
     const b = forma === 'suma' || forma === 'resta' ? rng.entero(2, 15) : rng.entero(2, 9);
     const f = FORMAS_OP[forma](a, b);
-    if (esReservadoEj1(f.partida(f.c))) continue;
+    if (esReservadoEj1(f.partida(f.c), `${f.izq} = ${f.der} ${f.correcta} ${f.b}`)) continue;
     // Una sola operación de las cuatro tiene que hacer verdadera la igualdad de llegada.
     if (OPS.filter(op => verdadera(op, f.izq, f.der, f.b)).length !== 1) continue;
     return {
@@ -157,7 +160,7 @@ export function generarHueco(rng) {
       const c = rng.entero(2, Math.min(12, p - 1)), d = p - c;
       it = { partida: `${a} · ${b} ${MENOS} ${c} = ${d}`, llegada: `${a} · ${b} = ${d} + ${HUECO}`, respuesta: c };
     }
-    if (it.respuesta >= 2 && !esReservadoEj1(it.partida)) return { tipo: 'hueco', forma, ...it, visibles: (it.partida.match(/\d+/g) ?? []).map(Number) };
+    if (it.respuesta >= 2 && !esReservadoEj1(it.partida, it.llegada.replace(HUECO, it.respuesta))) return { tipo: 'hueco', forma, ...it, visibles: (it.partida.match(/\d+/g) ?? []).map(Number) };
   }
   throw new Error('transposicion: no sale un ítem del ejercicio 1 (hueco)');
 }
@@ -333,7 +336,7 @@ export function linea(it, error = null) {
   }
 }
 
-/** La comprobación sustituyendo la solución correcta: «5 + 7 = 12». */
+/** La comprobación: la cuenta con la solución correcta puesta en el lugar de la x. */
 export function comprobacion(it) {
   const s = plano(solucionDe(it)), sn = s.num; // la solución de estos ítems es siempre entera
   switch (it.forma) {
