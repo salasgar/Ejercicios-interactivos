@@ -7,7 +7,7 @@
 
 import { Fraccion } from '../_comun/fracciones.js';
 import {
-  F, numTexto, sustituido, ecuacionDe, htmlDe, ecuacionesConSolucion, nombreError, valorMiembro, solucionDe, ecuacion3,
+  F, numTexto, sustituido, ecuacionDe, htmlDe, ecuacionDeEjemplo, valorMiembro, solucionDe, ecuacion3,
 } from './logica.js';
 
 const MENOS = '−';
@@ -17,23 +17,40 @@ const cl = t => `<span class="cuenta-frac">${t}</span>`;
 const x_ = '<i>x</i>';
 const fr = p => (p instanceof Fraccion ? p : typeof p === 'number' ? new Fraccion(p, 1) : F(p));
 
-/** «3 · 4 + 2 = 12 + 2 = 14»: la cuenta de un miembro (lista de términos) con x = v. */
+/** «3 · 4 + 2 = 12 + 2 = 14»: la cuenta de un miembro (lista de términos) con x = v; coeficientes y constantes exactos. */
 export function cuentaMiembro(terminos, v, idioma) {
   const x = fr(v), sx = sustituido(x, idioma);
   const unir = partes => partes.map(([neg, cuerpo], i) => (i === 0 ? `${neg ? MENOS : ''}${cuerpo}` : ` ${neg ? MENOS : '+'} ${cuerpo}`)).join('').replace(/^ /, '');
   const paso1 = [], paso2 = [];
   for (const t of terminos) {
-    const co = t.coef.simplificar(), neg = co.num < 0, abs = Math.abs(co.num);
-    if (!t.letra) { paso1.push([neg, `${abs}`]); paso2.push([neg, `${abs}`]); continue; }
-    paso1.push([neg, abs === 1 ? sx : `${abs} · ${sx}`]);
+    const co = t.coef.simplificar(), neg = co.num < 0, abs = new Fraccion(Math.abs(co.num), co.den);
+    if (!t.letra) { const n = numTexto(abs, idioma); paso1.push([neg, n]); paso2.push([neg, n]); continue; }
+    const uno = abs.num === 1 && abs.den === 1;
+    const decimal = numTexto(abs, idioma);
+    let producto;
+    if (uno) producto = sx;
+    else if (abs.den === 1 || !decimal.includes('/')) producto = `${decimal} · ${sx}`;
+    else producto = abs.num === 1 ? `${sx} : ${abs.den}` : `${abs.num} · ${sx} : ${abs.den}`;
+    paso1.push([neg, producto]);
     const prod = x.multiplicar(abs).simplificar();
-    paso2.push([neg, abs === 1 ? sx : paso2.length === 0 && !neg ? numTexto(prod, idioma) : sustituido(prod, idioma)]);
+    paso2.push([neg, uno ? sx : paso2.length === 0 && !neg ? numTexto(prod, idioma) : sustituido(prod, idioma)]);
   }
   const R = numTexto(valorMiembro(terminos, x), idioma);
   const a = unir(paso1), b = unir(paso2);
   if (terminos.length === 1 && !terminos[0].letra) return R;
   return [...new Set([a, b])].join(' = ') + (b === R ? '' : ` = ${R}`);
 }
+
+/** Por qué sale un valor equivocado de x, dicho al alumno. */
+const CAUSA = {
+  'transponer-sin-signo': { es: 'se pasa un número al otro miembro sin cambiarle el signo', en: 'you move a number to the other side without changing its sign' },
+  'pasar-factor-restando': { es: 'se resta el número que multiplica a la x en vez de dividir', en: 'you subtract the number that multiplies x instead of dividing' },
+  'multiplicar-en-vez-de-dividir': { es: 'se multiplica en vez de dividir', en: 'you multiply instead of dividing' },
+  'invertir-coeficiente': { es: 'se divide al revés', en: 'you divide the wrong way round' },
+  'signo-al-dividir': { es: 'se pierde el signo del número por el que se divide', en: 'you lose the sign of the number you divide by' },
+  'signo-de-la-solucion': { es: 'se pierde el signo de la solución', en: 'you lose the sign of the solution' },
+};
+const causa = (error, i) => CAUSA[error][i];
 
 const xIgual = (v, idioma) => `${x_} = ${numTexto(v, idioma)}`;
 
@@ -94,10 +111,9 @@ export const TX = {
       if (item.esSolucion) {
         return `${k.texto}. ${i === 'es' ? 'Los dos miembros son iguales, así que sí es solución. ' : 'Both sides are equal, so it is a solution. '}`;
       }
-      const n = nombreError(error);
       return `${k.texto}. ${i === 'es'
-        ? `Los miembros no son iguales, así que ${numTexto(item.v, i)} no es solución (viene de: ${n.es.charAt(0).toLowerCase()}${n.es.slice(1)}). La solución es ${xIgual(item.s, i)}. `
-        : `The sides are not equal, so ${numTexto(item.v, i)} is not a solution (it comes from: ${n.en.charAt(0).toLowerCase()}${n.en.slice(1)}). The solution is ${xIgual(item.s, i)}. `}`;
+        ? `Los miembros no son iguales, así que ${numTexto(item.v, i)} no es solución (ese valor sale si ${causa(error, i)}). La solución es ${xIgual(item.s, i)}. `
+        : `The sides are not equal, so ${numTexto(item.v, i)} is not a solution (you get that value if ${causa(error, i)}). The solution is ${xIgual(item.s, i)}. `}`;
     }),
   },
 
@@ -118,17 +134,15 @@ export const TX = {
       : `Which of these equations has the solution ${xIgual(item.s, i)}?`)),
     correcto: bi((i, item) => {
       const b = item.opciones.find(o => o.correcta).e;
-      return `${htmlDe(b)}: ${comprobacion(ecuacionDe(b), item.s, i).texto}.`;
+      return `${i === 'es' ? 'Con' : 'When'} ${xIgual(item.s, i)}, ${htmlDe(b)}. ${comprobacion(ecuacionDe(b), item.s, i).texto}.`;
     }),
-    /** (item, elegida) */
+    /** (item, elegida): solo lo que falla en la elegida; después se añade `correcto`. */
     por_que: bi((i, item, elegida) => {
       const q = ecuacionDe(elegida.e), sol = solucionDe(elegida.e);
       const k = comprobacion(q, item.s, i);
-      const n = nombreError(elegida.error);
-      const b = item.opciones.find(o => o.correcta).e;
       return i === 'es'
-        ? `${htmlDe(elegida.e)} con ${xIgual(item.s, i)}: ${k.texto}. Su solución es ${xIgual(sol, i)}; el ${numTexto(item.s, i)} sale de: ${n.es.charAt(0).toLowerCase()}${n.es.slice(1)}. La buena es ${htmlDe(b)}. `
-        : `${htmlDe(elegida.e)} when ${xIgual(item.s, i)}: ${k.texto}. Its solution is ${xIgual(sol, i)}; the ${numTexto(item.s, i)} comes from: ${n.en.charAt(0).toLowerCase()}${n.en.slice(1)}. The right one is ${htmlDe(b)}. `;
+        ? `${htmlDe(elegida.e)} con ${xIgual(item.s, i)}. ${k.texto}. Su solución es ${xIgual(sol, i)}; el ${numTexto(item.s, i)} sale si ${causa(elegida.error, i)}. La buena es otra. `
+        : `${htmlDe(elegida.e)} when ${xIgual(item.s, i)}. ${k.texto}. Its solution is ${xIgual(sol, i)}; you get the ${numTexto(item.s, i)} if ${causa(elegida.error, i)}. The right one is another. `;
     }),
   },
 
@@ -179,7 +193,7 @@ export const TX = {
     }),
     correcto: bi((i, item, q) => {
       const k = comprobacion(q, item.s, i);
-      return `${htmlDe0(q)} ${i === 'es' ? 'con' : 'when'} ${xIgual(item.s, i)}: ${k.texto}. ${i === 'es' ? 'Se cumple: vale.' : 'It works.'}`;
+      return `${htmlDe0(q)} ${i === 'es' ? 'con' : 'when'} ${xIgual(item.s, i)}. ${k.texto}. ${i === 'es' ? 'Se cumple: vale.' : 'It works.'}`;
     }),
     /** (item, q, error) */
     por_que: bi((i, item, q, error) => {
@@ -187,16 +201,16 @@ export const TX = {
       if (error === 'solucion-distinta') {
         const sol = q.resolver();
         return i === 'es'
-          ? `${htmlDe0(q)} con ${xIgual(item.s, i)}: ${k.texto}. Esa ecuación tiene por solución ${xIgual(sol, i)}, no ${xIgual(item.s, i)}. `
-          : `${htmlDe0(q)} when ${xIgual(item.s, i)}: ${k.texto}. That equation has the solution ${xIgual(sol, i)}, not ${xIgual(item.s, i)}. `;
+          ? `${htmlDe0(q)} con ${xIgual(item.s, i)}. ${k.texto}. Esa ecuación tiene por solución ${xIgual(sol, i)}, no ${xIgual(item.s, i)}. `
+          : `${htmlDe0(q)} when ${xIgual(item.s, i)}. ${k.texto}. That equation has the solution ${xIgual(sol, i)}, not ${xIgual(item.s, i)}. `;
       }
       return i === 'es'
-        ? `${htmlDe0(q)} no tiene una única solución: con ${xIgual(item.s, i)}, ${k.texto}. Hace falta que la ${x_} aparezca y que su valor cambie la igualdad. `
-        : `${htmlDe0(q)} does not have a single solution: when ${xIgual(item.s, i)}, ${k.texto}. The ${x_} has to appear and its value has to change the equality. `;
+        ? `${htmlDe0(q)} no tiene una única solución: con ${xIgual(item.s, i)}. ${k.texto}. Hace falta que la ${x_} aparezca y que no se vaya al operar: así, cada valor de ${x_} da un resultado distinto. `
+        : `${htmlDe0(q)} does not have a single solution: when ${xIgual(item.s, i)}. ${k.texto}. The ${x_} has to appear and not cancel out: that way, each value of ${x_} gives a different result. `;
     }),
     /** Un ejemplo bueno, para la solución. */
     ejemplo: bi((i, item) => {
-      const e = ecuacionesConSolucion(item.s).find(o => o.a >= 2 && o.b > 0 && !o.delante);
+      const e = ecuacionDeEjemplo(item.s);
       return i === 'es' ? `Por ejemplo: ${htmlDe(e)}. ` : `For example: ${htmlDe(e)}. `;
     }),
   },
@@ -208,7 +222,7 @@ function explica3(item, idioma) {
   const q = ecuacion3(item);
   const [v1, v2] = item.valores;
   const k1 = comprobacion(q, v1, idioma), k2 = comprobacion(q, v2, idioma);
-  const con = (v, k) => `${idioma === 'es' ? 'Con' : 'When'} ${xIgual(v, idioma)}: ${k.texto}.`;
+  const con = (v, k) => `${idioma === 'es' ? 'Con' : 'When'} ${xIgual(v, idioma)}. ${k.texto}.`;
   if (item.tipo === 'identidad') {
     return idioma === 'es'
       ? `${con(v1, k1)} ${con(v2, k2)} Coinciden siempre: es una identidad. `
@@ -222,6 +236,7 @@ function explica3(item, idioma) {
 export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 
 const LA_RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
+const minuscula = t => t.charAt(0).toLowerCase() + t.slice(1);
 const sinEspacioFinal = t => t.trim();
 
 const REGLAS = {
@@ -248,13 +263,13 @@ const REGLAS = {
 /** «No lo sé» del ejercicio 1: la sustitución en los dos miembros y el sí o el no. */
 export function explicaComprueba(item, { idioma, tt }) {
   const k = comprobacion(ecuacionDe(item), item.v, idioma);
-  return `${tt(REGLAS.comprueba)} ${k.texto}. ${tt(LA_RESPUESTA)} ${c(tt(item.esSolucion ? SI : NO))}.`;
+  return `${tt(REGLAS.comprueba)} ${k.texto}. ${tt(LA_RESPUESTA)} ${c(minuscula(tt(item.esSolucion ? SI : NO)))}.`;
 }
 
 /** «No lo sé» del ejercicio 2: la comprobación de la ecuación buena. */
 export function explicaQueEcuacion(item, { idioma, tt }) {
   const b = item.opciones.find(o => o.correcta).e;
-  return `${tt(REGLAS.queEcuacion)} ${htmlDe(b)}: ${comprobacion(ecuacionDe(b), item.s, idioma).texto}. ${tt(LA_RESPUESTA)} ${htmlDe(b)}.`;
+  return `${tt(REGLAS.queEcuacion)} ${idioma === 'es' ? 'Con' : 'When'} ${xIgual(item.s, idioma)}, ${htmlDe(b)}. ${comprobacion(ecuacionDe(b), item.s, idioma).texto}. ${tt(LA_RESPUESTA)} ${htmlDe(b)}.`;
 }
 
 /** «No lo sé» del ejercicio 3: los dos valores de prueba y lo que concluyen. */
@@ -265,8 +280,8 @@ export function explicaIdentidad(item, { idioma, tt }) {
 
 /** «No lo sé» del ejercicio 4: la regla y una ecuación buena, comprobada con la solución. */
 export function explicaInventa(item, { idioma, tt }) {
-  const e = ecuacionesConSolucion(item.s).find(o => o.a >= 2 && o.b > 0 && !o.delante);
+  const e = ecuacionDeEjemplo(item.s);
   const k = comprobacion(ecuacionDe(e), item.s, idioma);
   const una = idioma === 'es' ? 'Una ecuación que sirve es' : 'An equation that works is';
-  return `${tt(REGLAS.inventa)} ${idioma === 'es' ? 'Con' : 'When'} ${xIgual(item.s, idioma)}: ${k.texto}. ${una} ${htmlDe(e)}.`;
+  return `${tt(REGLAS.inventa)} ${una} ${htmlDe(e)}. ${idioma === 'es' ? 'Con' : 'When'} ${xIgual(item.s, idioma)}. ${k.texto}.`;
 }

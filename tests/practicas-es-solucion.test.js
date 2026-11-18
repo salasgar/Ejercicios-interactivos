@@ -12,7 +12,7 @@ import { TX, cuentaMiembro } from '../practicas/es-solucion/textos.js';
 import {
   F, ecuacionDe, textoDe, valorMiembro, solucionDe, ERRORES_PROPIOS, nombreError, HUELLAS_RESERVADAS, esReservado,
   generarComprueba, generarQueEcuacion, generarIdentidad, generarInventa, errorDeComprueba, errorDeIdentidad,
-  errorDeInventa, validar, ecuacion3, claveDe, ecuacionesConSolucion,
+  errorDeInventa, validar, ecuacion3, claveDe, ecuacionesConSolucion, huellaEcuacion, candidatos,
 } from '../practicas/es-solucion/logica.js';
 
 const N = 3000;
@@ -30,7 +30,7 @@ const igualR = (a, b) => a[0] === b[0] && a[1] === b[1];
 const entero = n => R(BigInt(n));
 
 function evaluar(texto, x) {
-  const toks = texto.replace(/−/g, '-').replace(/·/g, '*').match(/\d+(?:[.,]\d+)?|x|[()+\-*]/g);
+  const toks = texto.replace(/−/g, '-').replace(/·/g, '*').match(/\d+(?:[.,]\d+)?|x|[()+\-*:]/g);
   let i = 0;
   const expr = () => {
     let v = term();
@@ -39,7 +39,9 @@ function evaluar(texto, x) {
   };
   const term = () => {
     let v = factor();
-    while (i < toks.length && !['+', '-', ')'].includes(toks[i])) { if (toks[i] === '*') i++; v = por(v, factor()); }
+    while (i < toks.length && !['+', '-', ')'].includes(toks[i])) {
+      if (toks[i] === ':') { i++; const d = factor(); v = R(v[0] * d[1], v[1] * d[0]); } else { if (toks[i] === '*') i++; v = por(v, factor()); }
+    }
     return v;
   };
   const factor = () => {
@@ -83,7 +85,7 @@ const tt = (x, i) => (typeof x === 'object' && 'es' in x ? x[i] : x);
 
 test('los errores propios y los textos del reparto no están vacíos', () => {
   for (const [id, e] of Object.entries(ERRORES_PROPIOS)) assert.ok(e.es && e.en, id);
-  assert.equal(HUELLAS_RESERVADAS.size, 0);
+  assert.ok(HUELLAS_RESERVADAS.size > 100);
 });
 
 // ─── Ejercicio 1 ──────────────────────────────────────────────────────────────────────────────
@@ -281,5 +283,74 @@ test('el pool de ecuaciones con cada solución es suficiente y todas las ecuacio
     const lista = ecuacionesConSolucion(s);
     assert.ok(lista.length > 50, `s = ${s}: ${lista.length}`);
     for (const e of lista) assert.ok(seCumple(textoDe(e), s));
+  }
+});
+
+// ─── Revisión de la reabierta de la 157 ───────────────────────────────────────────────────────
+
+test('reserva: ninguna ecuación del papel sale en 20000 ítems de cada ejercicio, y la reserva funciona', () => {
+  assert.ok(HUELLAS_RESERVADAS.size >= 120, `${HUELLAS_RESERVADAS.size}`);
+  const rng = crearRng(148001);
+  for (let n = 0; n < 20000; n++) {
+    const a = generarComprueba(rng);
+    assert.ok(!HUELLAS_RESERVADAS.has(huellaEcuacion(ecuacionDe(a))));
+    const b = generarQueEcuacion(rng);
+    for (const o of b.opciones) assert.ok(!esReservado(o.e));
+    const c = generarIdentidad(rng);
+    assert.ok(!HUELLAS_RESERVADAS.has(huellaEcuacion(ecuacion3(c))));
+  }
+  const inventada = { a: 3, b: 2, c: 14, delante: false };
+  assert.equal(esReservado(inventada), false);
+  HUELLAS_RESERVADAS.add(huellaEcuacion(ecuacionDe(inventada)));
+  assert.equal(esReservado(inventada), true);
+  HUELLAS_RESERVADAS.delete(huellaEcuacion(ecuacionDe(inventada)));
+});
+
+test('cuentaMiembro con fracciones y decimales: lo que se ve cuadra', () => {
+  const casos = [['x/5 = 1', 5], ['0,5x = 2,5', 5], ['x + 0,5 = 5,5', 5], ['2x/3 = 4', 6], ['x/4 + 1 = 3', 8], ['1/2 + x = 4', 3]];
+  for (const [txt, v] of casos) {
+    const r = validar(txt, { s: v, requisito: 'libre' });
+    assert.ok(r.ok, txt);
+    for (const idioma of ['es', 'en']) for (const ts of [r.q.terminosIzq, r.q.terminosDer]) {
+      const cad = sinHtml(cuentaMiembro(ts, v, idioma));
+      const real = valorMiembro(ts, F({ num: v, den: 1 }));
+      for (const parte of cad.split('=')) assert.ok(igualR(evaluar(parte.trim(), entero(v)), R(BigInt(real.num), BigInt(real.den))), `${txt}: ${cad}`);
+    }
+  }
+});
+
+test('ej4: x = s es «talcual»; x = otro número es un fallo con explicación', () => {
+  const it = { s: 5, requisito: 'libre' };
+  assert.equal(validar('x = 5', it).motivo, 'talcual');
+  assert.equal(validar('5 = x', it).motivo, 'talcual');
+  const r = validar('x = 3', it);
+  assert.ok(r.ok);
+  assert.equal(errorDeInventa(r.q, it), 'solucion-distinta');
+});
+
+test('ej1: «pasar restando el factor» no sale con coeficiente 1 o −1', () => {
+  const rng = crearRng(148002);
+  for (let n = 0; n < 4000; n++) {
+    const it = generarComprueba(rng);
+    if (Math.abs(it.a) === 1) assert.notEqual(it.error, 'pasar-factor-restando');
+  }
+  assert.ok(!candidatos({ a: -1, b: 8, c: 9, delante: true }).some(c => c.error === 'pasar-factor-restando'));
+});
+
+test('los feedback no encadenan dos «:» ni repiten la ecuación ni escriben el nombre del error en tercera persona', () => {
+  const rng = crearRng(148003);
+  for (const idioma of ['es', 'en']) for (let n = 0; n < 500; n++) {
+    const a = generarComprueba(rng), b = generarQueEcuacion(rng), c = generarIdentidad(rng);
+    const textos = [
+      TX.ej1.por_que[idioma](a, a.error ?? 'transponer-sin-signo'), TX.ej1.correcto[idioma](a),
+      TX.ej2.correcto[idioma](b), TX.ej3.por_que[idioma](c),
+    ];
+    const mala = b.opciones.find(o => !o.correcta);
+    textos.push(TX.ej2.por_que[idioma](b, mala));
+    for (const t of textos) {
+      const s = sinHtml(t);
+      assert.ok(!/: [^.]*: [A-ZÁ-Ú]/.test(s) || !/\d: (Izquierda|Left)/.test(s), s);
+      assert.ok(!/(viene de|comes from|Ha |Took|Said)/.test(s), s);
+    }
   }
 });

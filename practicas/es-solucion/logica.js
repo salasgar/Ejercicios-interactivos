@@ -1,6 +1,6 @@
 // LÓGICA PURA de «¿Es solución?» (unidad 6, semana 2, sesión 5): comprobar si un número es solución sustituyendo
 // en los dos miembros (U6-2C-02), reconocer qué ecuación tiene una solución dada, identidad frente a ecuación
-// (U6-2C-03, propuesta pendiente de F0) y escribir una ecuación con una solución dada (U6-2C-04). Sin DOM.
+// (U6-2C-03, acta de la 02 de la U6) y escribir una ecuación con una solución dada (U6-2C-04). Sin DOM.
 // Todo exacto, con Fraccion: nunca coma flotante ni eval.
 //
 // Alcance: ecuaciones de la sesión 5, con la x en un solo miembro (x + 3 = 10, 3x = 12, 3x − 5 = 7, 5 − 2x = 1);
@@ -11,6 +11,7 @@ import { Fraccion } from '../_comun/fracciones.js';
 import {
   Ecuacion, termino, ERRORES_TIPICOS, huella, leerEcuacion, MENSAJES,
 } from '../_comun/algebra.js';
+import { HUELLAS_ECUACIONES } from './reserva.js';
 
 const MENOS = '−';
 
@@ -79,6 +80,9 @@ export function ecuacionesConSolucion(s) {
   return lista;
 }
 
+/** Una ecuación buena de ejemplo para esa solución (la primera con a ≥ 2, b > 0, sin la x delante, no reservada). */
+export const ecuacionDeEjemplo = s => ecuacionesConSolucion(s).find(o => o.a >= 2 && o.b > 0 && !o.delante && !esReservado(o));
+
 /** Una ecuación al azar con esa solución. */
 export const ecuacionAlAzar = (rng, s) => rng.elegir(ecuacionesConSolucion(s));
 
@@ -98,12 +102,15 @@ const ERRORES_DE_VALOR = [
   'transponer-sin-signo', 'pasar-factor-restando', 'multiplicar-en-vez-de-dividir', 'invertir-coeficiente',
   'signo-al-dividir', 'signo-de-la-solucion',
 ];
+// Con coeficiente 1 o −1, «restar el número que multiplica» no es un error creíble (8 − x = 9 → 2).
+const SIN_COEFICIENTE_UNO = new Set(['pasar-factor-restando']);
 
 /** Los valores equivocados de x que salen de un error típico con esta ecuación: [{ error, valor }] (enteros, creíbles). */
 export function candidatos(e) {
   const q = ecuacionDe(e), s = solucionDe(e);
   const salida = [];
   for (const id of ERRORES_DE_VALOR) {
+    if (SIN_COEFICIENTE_UNO.has(id) && Math.abs(e.a) === 1) continue;
     const mala = ERRORES_TIPICOS[id].fn(q);
     const v = mala && mala.resolver();
     if (!(v instanceof Fraccion) || v.den !== 1 || v.equals(s) || Math.abs(v.num) > MAX_C) continue;
@@ -116,10 +123,10 @@ export function candidatos(e) {
 export const errorDeValor = (e, valor) => candidatos(e).find(c => c.valor === valor)?.error ?? 'otra-respuesta';
 
 // ─── Casos reservados (hoja y examen) ─────────────────────────────────────────────────────────
-// A fecha 2026-11-09 la hoja y el examen de la U6 no existen: no hay nada que excluir. Si se escriben, sus
-// ecuaciones se añaden aquí por huella FNV-1a de la forma canónica (`huellaCanonica`), calculada fuera del repo.
+// Las ecuaciones del papel de la U6 (hoja 2 y exámenes) están en `reserva.js` por huella FNV-1a de la forma
+// canónica (`huellaEcuacion`), calculada fuera del repo.
 
-export const HUELLAS_RESERVADAS = new Set([]);
+export const HUELLAS_RESERVADAS = HUELLAS_ECUACIONES;
 export const huellaEcuacion = q => huella(q.clave());
 export const esReservado = e => HUELLAS_RESERVADAS.has(huellaEcuacion(ecuacionDe(e)));
 
@@ -259,7 +266,9 @@ export function validar(texto, item) {
   const r = leerEcuacion(texto, { letras: ['x'] });
   if (!r.ok) return { ok: false, motivo: r.motivo, mensaje: r.mensaje };
   const q = r.valor;
-  if ((esLaX(q.terminosIzq) && sinLetra(q.terminosDer)) || (esLaX(q.terminosDer) && sinLetra(q.terminosIzq))) return { ok: false, motivo: 'talcual', mensaje: MENSAJES_4.talcual };
+  const talcual = (esLaX(q.terminosIzq) && sinLetra(q.terminosDer) && valorMiembro(q.terminosDer, 0).equals(item.s))
+    || (esLaX(q.terminosDer) && sinLetra(q.terminosIzq) && valorMiembro(q.terminosIzq, 0).equals(item.s));
+  if (talcual) return { ok: false, motivo: 'talcual', mensaje: MENSAJES_4.talcual };
   const conCoef = [...q.terminosIzq, ...q.terminosDer].some(t => t.letra && !t.coef.equals(1) && !t.coef.equals(-1) && !t.coef.esCero());
   if (item.requisito === 'coeficiente' && !conCoef) return { ok: false, motivo: 'sin-coeficiente', mensaje: MENSAJES_4.sinCoeficiente };
   return { ok: true, q };

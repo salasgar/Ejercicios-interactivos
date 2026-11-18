@@ -34,7 +34,7 @@ test('es-solucion, «compruébalo»: la explicación termina en el sí o el no q
     assert.equal(errorDeComprueba(item, item.esSolucion ? 'si' : 'no'), null, 'lo que se da por bueno');
     const html = explicaComprueba(item, ctx);
     const que = `${idioma}: ${plano(html)}`;
-    assert.ok(html.endsWith(`<span class="cuenta">${(item.esSolucion ? SI : NO)[idioma]}</span>.`), que);
+    assert.ok(html.endsWith(`<span class="cuenta">${(item.esSolucion ? SI : NO)[idioma].replace(/^./, m => m.toLowerCase())}</span>.`), que);
     assert.ok(plano(html).includes(item.esSolucion ? ' = ' : ' ≠ '), que);
     assert.doesNotMatch(html, /undefined|NaN|×/, que);
   });
@@ -75,7 +75,7 @@ test('es-solucion, «inventa una»: la ecuación del ejemplo tiene la solución 
     const e = ecuacionesConSolucion(item.s).find(o => o.a >= 2 && o.b > 0 && !o.delante);
     assert.ok(e, `hay ejemplo para x = ${item.s}`);
     assert.equal(errorDeInventa(ecuacionDe(e), item), null, 'el ejemplo tiene la solución pedida');
-    assert.ok(html.endsWith(`${htmlDe(e)}.`), que);
+    assert.ok(plano(html).includes(plano(htmlDe(e))), que);
     assert.ok(plano(html).includes(' = '), que);
     assert.doesNotMatch(html, /undefined|NaN|×/, que);
   });
