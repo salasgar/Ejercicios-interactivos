@@ -152,7 +152,7 @@ export const CATALOGO = [
   { id: 93, slug: 'descuentos', ruta: 'descuentos/', unidad: 7, nombre: { es: 'Descuentos y aumentos', en: 'Discounts and increases' }, nEjercicios: 5, disponible: false },
   { id: 94, slug: 'escalas', ruta: 'escalas/', unidad: 7, nombre: { es: 'Escalas', en: 'Scales' }, nEjercicios: 4, disponible: false },
   { id: 95, slug: 'unidades', ruta: 'unidades/', unidad: 7, nombre: { es: 'Cambia de unidad', en: 'Converting units' }, nEjercicios: 5, disponible: false },
-  { id: 96, slug: 'problemas-proporcion', ruta: 'problemas-proporcion/', unidad: 7, nombre: { es: 'Problemas de toda la unidad', en: 'Mixed problems' }, nEjercicios: 5, disponible: false },
+  { id: 96, slug: 'problemas-proporcion', ruta: 'problemas-proporcion/', unidad: 7, nombre: { es: 'Problemas de toda la unidad', en: 'Mixed problems' }, nEjercicios: 3, disponible: false },
   { id: 97, slug: 'errores7', ruta: 'errores7/', unidad: 7, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
   { id: 98, slug: 'leelo7', ruta: 'leelo7/', unidad: 7, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
