@@ -123,6 +123,8 @@ Ejemplos con las cuentas hechas (no son casos fijos: los números los saca el ge
 
 ## Trampas conocidas
 
+- (217) Con a·b = 2 (razón 1 : 2) `partes-multiplicadas` y `contar-personas` dan el mismo número, y con a = 2 `T : a` = `T : 2`: gana el primero de la lista, y los tests no deben exigir el segundo. `repartoMalo` devuelve null si no sale entero; el generador reintenta.
+- (217) Para que ninguna línea mezcle razón y división, la división se escribe «÷» y «:» solo es la razón; el test busca `\d : \d` y `÷` por párrafo (¡un «60 €: 2» o «€60: 2» salta como falso positivo!).
 - Los personajes llevan nombres inventados y la lista de nombres de la práctica se coteja contra los alumnos reales si la sesión llega a la carpeta de datos (si no, nombres poco habituales); nunca un nombre de alumno real en el repositorio público.
 - `.cuenta` no se parte (`nowrap`): solo cuentas cortas; las frases del feedback van como texto normal o se salen de 375 px. Con fracciones (`htmlFraccion`) comprueba la altura. Del signo de puntuación que sigue a una cuenta se ocupa la base (`pegarSignos` de `piezas.js`, que llama ella, no la práctica): no lo parchees a mano.
 - `-` y `−`, `*` y `·` se parecen: en los tests busca por código; lo que teclea el alumno pasa por `deTexto`, que los normaliza.
