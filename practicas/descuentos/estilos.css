@@ -1,0 +1,11 @@
+/* Práctica «Descuentos y aumentos» (unidad 7): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+.comprobar[hidden] { display: none; }
+
+.respuesta-linea { display: flex; align-items: center; justify-content: center; gap: .5rem; flex-wrap: wrap; margin: .4rem 0 .8rem; }
+.respuesta-linea input.campo-reparto { display: inline-block; margin: 0; width: 7rem; max-width: 100%; text-align: center; }
+.etiqueta-campo { font-weight: 700; color: var(--primario-oscuro); }
+input.campo-reparto--bien { border-color: #16a34a; background: #f0fdf4; }
+input.campo-reparto--mal { border-color: #dc2626; background: #fef2f2; }
+
