@@ -1095,3 +1095,93 @@ sin plazo pero urgente, precondición 209 LISTA) pone varias tareas por lectura,
 `runQuery` con `where actualizado > …` y margen de 2 días), parada clara ante 429/5xx, y decide —con la razón escrita— si `subirFusionado`
 (`nube.js`) debe no escribir cuando la lectura falló por cuota o servidor. Toca además `~/.claude/lanzador/notas_tarea_app.mjs`, fuera
 del repo. El plan de pago queda descartado por Juan Luis. Banda ALTO porque toca el código de la app de los alumnos.
+
+## Tareas 211-233: la unidad 7 (Proportionality and percentages) en la app (2026-11-18, s-20261118T221619-b66ec280)
+
+Dadas de alta el 18-11 por la misma sesión que montó el reparto de la unidad 7
+(`apuntes-1eso-bilingue/7. Proportionality/reparto-unidad7/`), por la regla de Juan Luis del 2-11 («las piezas de la app se dan de
+alta como fichas en `reparto-practicas-u2/`, no en el reparto de la unidad») y con los ids de catálogo que él dio (desde el 84). **Las tareas empiezan en la 211 y no en la
+210 que él dijo**: la 210 la dio de alta otra coordinadora esa misma noche, a las 23:30 (lecturas de Firestore), mientras
+se montaba esto, y aquí no se renumera nunca. La unidad 7 se da del **lun 1-3 al vie 23-4-2027** (23 clases; vacaciones del 19-3 al 2-4; **cinco
+paquetes**: pruebas tipo test los viernes 5-3, 12-3, 9-4 y 16-4; tipo test 5 sin día; examen final el **viernes 23-4**). **El
+paquete 3 es doble** (porcentajes: sesiones 9-11, del 15 al 18 de marzo, y 12-14, del 5 al 8 de abril; un solo examen, el vie
+9-4), y por eso **la app lleva seis tareas semanales, una por lunes lectivo** (1-3, 8-3, 15-3, 5-4, 12-4 y 19-4), aunque los
+paquetes sean cinco. Sus destrezas se citan con los ids de `7. Proportionality/inventario-unidad7.tsv`, **que aún no existe**: lo
+propone la tarea 01 de aquel reparto y lo aprueba la 02 con Juan Luis (firma F0; acta
+`7. Proportionality/inventario-unidad7-revision.md`). Las fichas 212-226 citan las destrezas por descripción y la 211 pone los
+ids definitivos en `DESTREZAS` y en el §7 de `docs/practicas-unidad7.md`. **Todo el contenido de estas fichas es la propuesta de
+partida de la montadora hasta el acta**; son puntos a decidir de la 02 de la U7, y hasta entonces no entran en ninguna práctica:
+la proporcionalidad inversa más allá de reconocerla, las tablas y los problemas de un paso; los repartos inversos; los
+porcentajes encadenados y «el precio antes de la rebaja»; el interés; **si las unidades de medida van en la U7 o en la U8**
+(de eso depende que exista la práctica `unidades`); las unidades de volumen y de tiempo; la velocidad y el cambio de moneda; la
+calculadora. Si el acta quita un contenido, su práctica (o su ejercicio) no se escribe: la coordinadora marca la tarea como
+SUSTITUIDA o recorta la ficha, sin renumerar; si añade uno, entra como ejercicio de la práctica que toque (propuesta en la
+ENTREGA), no como práctica nueva.
+
+| id | slug | nombre (es / en) | nEjercicios | paquete (bloque de la portada) | destrezas (descripción; ids tras F0) |
+|---|---|---|---|---|---|
+| 84 | `razones` | Razones y proporciones / Ratios and proportions | 4 | 1 | escribir la razón de una situación (parte-parte y parte-todo: 2 chicos por cada 3 chicas → 2/5 de la clase son chicos); razones equivalentes y la más sencilla; ¿forman proporción? (productos cruzados); el término que falta (`3/4 = x/20`) |
+| 85 | `tabla-proporcional` | Tablas de proporcionalidad / Proportion tables | 4 | 1 | ¿es una tabla de proporcionalidad directa? (cociente constante; cazar la que suma en vez de multiplicar); completar la tabla; la constante (el precio por unidad); situaciones que son o no son directamente proporcionales (kilos y precio, sí; edad y altura, no) |
+| 86 | `regla-de-tres` | Problemas de proporcionalidad directa / Direct proportion problems | 4 | 1 | reducción a la unidad (¿cuánto cuesta 1?); elegir el planteamiento correcto de la regla de tres; resolver y contestar con la unidad (campo); ¿tiene sentido la respuesta? |
+| 87 | `inversa` | Proporcionalidad inversa / Inverse proportion | 4 | 2 | ¿es una tabla de proporcionalidad inversa? (producto constante); completar la tabla; problemas de un paso (obreros y días, grifos y horas, velocidad y tiempo: todos al mismo ritmo, dicho en el enunciado); cazar el error de tratarla como directa |
+| 88 | `directa-o-inversa` | ¿Directa, inversa o ninguna? / Direct, inverse or neither? | 3 | 2 | clasificar situaciones (tres casillas); clasificar tablas; elegir el planteamiento que corresponde a un problema |
+| 89 | `repartos` | Repartos proporcionales / Sharing in a ratio | 4 | 2 | cuántas partes hay en total; cuánto vale una parte; repartir una cantidad en la razón 2 : 3 (dos campos); comprobar que las partes suman el total; cazar el error de repartir a partes iguales |
+| 90 | `tres-escrituras` | Porcentaje, fracción y decimal / Percentage, fraction, decimal | 4 | 3 (tarea del 15-3) | pasar de porcentaje a fracción irreducible y a decimal y al revés; emparejar las tres escrituras; ordenar; los porcentajes fáciles (50, 25, 10, 20, 75 y 1 %) como fracción |
+| 91 | `tanto-por-ciento` | El tanto por ciento de una cantidad / Percentage of an amount | 4 | 3 (tarea del 15-3) | cálculo mental (10 %, 50 %, 25 %, 1 % y sus múltiplos); con el decimal (`0,15 · 80`); elegir la operación que lo calcula; problemas de un paso |
+| 92 | `que-porcentaje` | ¿Qué porcentaje? ¿De cuánto? / What percentage? Of how much? | 4 | 3 (tarea del 15-3) | qué porcentaje es una cantidad de otra; hallar el total cuando se conoce el porcentaje; ¿cuál de los tres problemas es? (la parte, el porcentaje o el total); problemas de un paso |
+| 93 | `descuentos` | Descuentos y aumentos / Discounts and increases | 5 | 3 (tarea del 5-4) | el descuento y el precio final en dos pasos; el precio final en un paso (multiplicar por 0,80 o por 1,21); el IVA (4, 10 y 21 %); ¿piden el descuento o el precio final?; cazar el error («sube un 20 % y baja un 20 %: se queda igual») |
+| 94 | `escalas` | Escalas / Scales | 4 | 4 | del plano a la realidad (con el cambio de unidad); de la realidad al plano; hallar la escala; elegir la escala sensata para un plano, un mapa o una maqueta |
+| 95 | `unidades` | Cambia de unidad / Converting units | 5 | 4 | longitud; masa y capacidad (con dam, hm, dag, hg, daL, hL); superficie (cada salto, por 100); de complejo a incomplejo y al revés; elegir la unidad sensata. **Solo si el acta deja las unidades de medida en la U7** |
+| 96 | `problemas-proporcion` | Problemas de toda la unidad / Mixed problems | 5 | 5 | ¿qué tipo de problema es? (directa, inversa, porcentaje, reparto, escala); velocidad, tiempo y distancia; cambio de moneda; el precio por unidad (la mejor oferta); interpretar la respuesta (la unidad, el redondeo, si tiene sentido) |
+| 97 | `errores7` | Caza el error / Spot the mistake | 3 | 5 (toda la unidad) | los errores típicos de la unidad como resoluciones con un paso mal (sumar en vez de multiplicar, la inversa tratada como directa, `20 % = 0,02`, dar el descuento por el precio final, la escala sin cambio de unidad, el salto de superficie por 10) |
+| 98 | `leelo7` | Léelo en inglés / Say it in English | 4 | toda la unidad (se publica con el paquete 1; sus ítems se filtran por fecha, cada paquete desde su lunes) | vocabulario: ratio, proportion, directly / inversely proportional, unit rate, per, for every, out of, percentage, discount, increase, decrease, sale price, VAT, scale, share in the ratio; leer `3/4` como razón (*three to four*), `20%` (*twenty per cent*) y `1 : 50 000` (*one to fifty thousand*); las consignas de examen |
+
+- **211** base de la unidad 7 (ALTO): `_comun/proporcion.js` (cantidades con unidad y razones con **fracciones exactas** de
+  `fracciones.js`; `deTexto` sin `eval` para lo que teclea el alumno, que acepta `20 %`, `20%`, `0,2`, `1/5`, `12 €` y `12,00 €`;
+  `aTexto`/`aHtml` con la notación de la unidad en los dos idiomas (`20 %` / `20%`, coma o punto decimal, espacio fino en los
+  miles); `mismoValor` (la comparación por valor que evita dos opciones equivalentes); `proporcionDirecta`, `proporcionInversa`,
+  `porcentajeDe`, `aplicarPorcentaje`, `repartir`, `escala`, `cambiarUnidad` con sus pasos; `redondear` al más cercano, mitad hacia
+  arriba; `ERRORES_TIPICOS`; `CONTEXTOS` con la cota de cada uno, como `src/ejercicios/contextos_mcd_mcm.js`), catálogo (ids
+  **84-98**, `disponible: false`; `UNIDADES` con la U7 desde el 1-3), portada (seis bloques: los cinco paquetes y «toda la
+  unidad»), `DESTREZAS`, esqueletos, tests (también `practicas-editor` y `practicas-espacio`, que cuentan unidades: lección de la
+  98).
+- **212-226** las quince prácticas (MEDIO; carpetas disjuntas; todas en paralelo con la 211 LISTA): 212 `razones`, 213
+  `tabla-proporcional`, 214 `regla-de-tres` (paquete 1); 215 `inversa`, 216 `directa-o-inversa`, 217 `repartos` (paquete 2); 218
+  `tres-escrituras`, 219 `tanto-por-ciento`, 220 `que-porcentaje`, 221 `descuentos` (paquete 3); 222 `escalas`, 223 `unidades`
+  (paquete 4); 224 `problemas-proporcion` (paquete 5); 225 `errores7`, 226 `leelo7` (toda la unidad). **Mejor con la hoja y el
+  examen de su paquete ya cerrados** en el reparto de la U7 (lección de la U4): si existen, excluyen sus casos desde el
+  principio (hoja en claro; examen por huella FNV-1a del caso normalizado por valor, nunca en claro). Todas llevan el botón «No
+  lo sé» (M22) desde el principio.
+- **227 → 228 → 229 → 230 → 231** revisión con clics y publicación por paquete (ALTO, en cadena por `catalogo.js`), con el cotejo
+  contra las hojas y los exámenes de la U7 y la propuesta de las tareas semanales (con su ★ de ortografía, el que toque según
+  `comun/CALENDARIO-CURSO-2026-27.md` de los apuntes, que la tarea 03 de la U7 pone al día): 227 publica el paquete 1 y `leelo7`
+  antes del **mié 24-2** (tarea del lun 1-3); 228, el paquete 2 antes del **jue 4-3** (lun 8-3); 229, **las cuatro del paquete 3
+  antes del jue 11-3** (propone dos tareas: la del lun 15-3 con `tres-escrituras`, `tanto-por-ciento` y `que-porcentaje`, y la
+  del lun 5-4 con `descuentos` y repaso de las otras tres); 230, el paquete 4 antes del **jue 8-4** (lun 12-4; mejor antes de las
+  vacaciones, jue 18-3); 231, el paquete 5 y `errores7` antes del **jue 15-4** (lun 19-4). La portada no enseña la U7 hasta el 1-3.
+- **232** las seis tareas de la U7 en el panel, con Juan Luis delante (ALTO, MANUAL), calcada de la 116, la 121, la 132 y la 160;
+  se puede montar por paquetes; **cómo se llaman las seis lo decide él allí** (propuesta: «U7 · 1», «U7 · 2», «U7 · 3a», «U7 · 3b»,
+  «U7 · 4» y «U7 · 5», para que cuadren con los paquetes del papel); desbloquea la tarea 40 del reparto de la U7 (Classroom,
+  firma F13).
+- **233** los generadores `src/ejercicios/proporcionalidad.js` y `porcentajes.js` de la app principal (ya existen, de antes de las
+  decisiones del curso) al día con el inventario (MEDIO; con F0), como la 112 con `fracciones_*`, la 133 con `decimales.js` y la
+  161 con los de álgebra: `items`, distractores de errores típicos, nunca opciones equivalentes por valor, fracciones exactas en
+  vez de `redondear`, y cada contexto con su cota.
+
+**Reglas de contenido de la unidad 7**: en cada ficha 211-233 (sección propia) y en `7. Proportionality/reparto-unidad7/proyecto.md`.
+La trampa propia de la unidad, heredera de la de las fracciones equivalentes, las escrituras de un decimal y las expresiones
+equivalentes: **una razón, una fracción, un decimal y un porcentaje que valen lo mismo son la misma respuesta** (`3/4`, `0,75`,
+`75 %`; `2,5 km` y `2500 m`; comparación por valor con fracciones exactas, nunca coma flotante ni `eval`), y dos métodos
+correctos nunca se enfrentan; la notación de la unidad (`20 %` con espacio en español y `20%` en inglés; `1 : 50 000` solo en
+escalas y repartos); y el realismo, que aquí pesa más que en ninguna otra unidad: cada contexto con su cota y **el resultado
+exacto** (personas enteras, dinero al céntimo, porcentajes que salen exactos).
+
+## Orden de prioridad de la unidad 7 (por los plazos de publicación)
+
+1. **211** (base; ALTO) con la propuesta de inventario de la 01 de la U7 (con F0 firmada, mejor: ids definitivos), y a la vez
+   **233** (MEDIO; con F0).
+2. **Paquete 1**: 212, 213, 214, 226 → **227** publica antes del mié 24-2.
+3. **Paquete 2**: 215, 216, 217 → **228** (jue 4-3). **Paquete 3**: 218, 219, 220, 221 → **229** (jue 11-3).
+4. **Paquete 4**: 222, 223 → **230** (jue 8-4). **Paquete 5**: 224, 225 → **231** (jue 15-4).
+5. **232** con Juan Luis, por paquetes, cuando cada publicación diga qué queda publicado (la primera tarea antes del mié 24-2).
+Las tareas de Classroom de cada semana las programa la tarea 40 del reparto de la U7 cuando la 232 las haya montado.
