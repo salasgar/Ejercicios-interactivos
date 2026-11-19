@@ -1,0 +1,46 @@
+/* Práctica «Porcentaje, fracción y decimal» (unidad 7): solo lo que no está ya en ../_comun/estilos.css. */
+
+.comprobar { width: 100%; display: block; }
+.comprobar[hidden] { display: none; }
+
+input.campo-numero--decimal { display: block; margin: .4rem auto 1rem; --cifras: 7; }
+.frac input.campo-numero { margin: 0 auto; font-size: 1.1rem; --cifras: 4; }
+
+.hueco-tp {
+  display: inline-block; min-width: 1.6em; padding: 0 .25em; margin: 0 .15em; text-align: center;
+  border-bottom: 3px solid var(--primario); color: var(--primario-oscuro); font-weight: 700;
+}
+
+.parejas__titulo { color: var(--texto-suave); font-size: .9rem; margin: .6rem 0 .3rem; text-align: center; }
+.pareja-ficha {
+  background: #fff; color: var(--texto); border: 3px solid var(--borde); min-height: 52px;
+  font-size: 1.2rem; font-variant-numeric: tabular-nums; padding: .3rem .6rem;
+  -webkit-tap-highlight-color: transparent;
+}
+.pareja-ficha .frac { font-size: 1.05rem; }
+.pareja-ficha--usada { opacity: .35; }
+
+/* Ejercicio 3: una fila por fracción con dos huecos; debajo, las fichas. */
+.une__fila { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+.une__fila--titulos { color: var(--texto-suave); font-size: .9rem; text-align: center; margin-bottom: .3rem; }
+.une__frac { text-align: center; font-size: 1.2rem; }
+.une__hueco {
+  min-height: 52px; background: #fff; color: var(--texto); border: 3px dashed var(--borde);
+  font-size: 1.15rem; font-variant-numeric: tabular-nums; padding: .2rem .4rem;
+}
+.une__hueco--elegido { border-style: solid; border-color: var(--primario); background: var(--primario-claro); }
+.une__hueco--bien { border-style: solid; border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); opacity: 1 !important; }
+.une__hueco--mal { border-style: solid; border-color: var(--error); background: var(--error-claro); color: var(--error); opacity: 1 !important; }
+.une__vacio { color: var(--texto-suave); font-size: .8rem; }
+.une__fichas, .ordena__fichas { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-bottom: .5rem; }
+.ordena__fichas { margin: 1rem 0; }
+
+/* Ejercicio 4: la secuencia de cuatro casillas y las fichas. */
+.ordena__secuencia { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; justify-content: center; margin: .8rem 0; }
+.ordena__casilla {
+  min-width: 3.6rem; min-height: 52px; display: inline-flex; align-items: center; justify-content: center;
+  border: 3px dashed var(--borde); border-radius: 8px; padding: 0 .4rem; background: #fff; font-variant-numeric: tabular-nums;
+}
+.ordena__casilla--bien { border-style: solid; border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.ordena__casilla--mal { border-style: solid; border-color: var(--error); background: var(--error-claro); color: var(--error); }
+.ordena__signo { font-weight: 700; color: var(--texto-suave); }
