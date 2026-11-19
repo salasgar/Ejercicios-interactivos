@@ -1,0 +1,7 @@
+/* «El tanto por ciento de una cantidad»: solo lo que no está ya en ../_comun/estilos.css. */
+
+.fila-campo { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: 0 0 .9rem; }
+.fila-campo input.campo-numero { margin: 0; }
+.fila-campo__etiqueta { font-weight: 600; }
+.unidad-campo { font-weight: 600; color: var(--texto-suave); }
+.eleccion--marcada { border-color: var(--primario); background: var(--primario-claro); }
