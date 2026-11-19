@@ -123,6 +123,7 @@ Modelo de interfaz: `practicas/fraccion-de/` de la U4 (su ejercicio 3, «¿Qué 
 - (U6, tarea 153, reabierta del 13-11) En contextos de dinero, ninguna línea ni solución con fracción: se descarta el caso si no son céntimos exactos y las líneas de `ERRORES_TIPICOS` se pasan a decimales.
 - (U6, tarea 146) En zsh `git add $F` no separa palabras: usa un array `F=(ruta1 ruta2)` y `"${F[@]}"`. Chrome headless cachea los módulos: tras corregir, `Network.setCacheDisabled` o ves el fallo viejo.
 - (previsión de la montadora, sin comprobar) El espacio del `15 %` español es de no separación (`&nbsp;`): un test que lo busque con un espacio normal no lo encuentra; busca por código.
+- (220, 19-11) `limpio` con `/\s+/` convierte el espacio duro de «15 %» en espacio normal y el test del `%` falla: en textos usa `/[ \t\n\r]+/`. Los ítems de contexto guardan total/parte como cadenas «n/d»: `trioDe` ya las acepta. Duración real de la 220: ≈ 1 h de reloj (estimada 1 h 15 min).
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min; en la U6, la 145 (4 ejercicios) duró unos 40 min, **sin** las explicaciones del «No lo sé».
 
 ## Prohibido (propio de esta tarea)
