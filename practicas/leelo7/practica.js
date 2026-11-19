@@ -1,25 +1,52 @@
-// ESQUELETO de «Léelo en inglés» de la unidad 7 (PU2, tarea 211). Solo existe para que su fila del
-// catálogo cargue (`disponible: false`: no la ve nadie). La tarea 226
-// (`reparto-practicas-u2/tareas/tarea-226-leelo7.md`) sustituye esta carpeta entera, empezando por
-// `logica.js` y su test, y cambia cada `sinAyuda` por su `explicacion` («No lo sé», M22).
+// Práctica «Léelo en inglés» de la unidad 7 (Proportionality and percentages): el vocabulario de las razones, las
+// proporciones, los porcentajes y las escalas; leer y escribir razones, porcentajes y escalas; entender una consigna
+// de examen en inglés y completar una frase. Los cuatro ejercicios son de elegir una opción. Contrato de la base en
+// `../_comun/base.js` y `../plantilla/practica.js`; la lógica (ítems, distractores, filtro por fecha) está en `logica.js`.
 
 import { arrancar } from '../_comun/base.js';
+import { elecciones } from '../_comun/piezas.js';
+import { TX, explicaLeelo } from './textos.js';
+import { generarPalabra, generarLeelo, generarConsigna, generarCompleta, claveItem } from './logica.js';
 
-const EN_PREPARACION = { es: 'Este ejercicio está en preparación.', en: 'This exercise is not ready yet.' };
-const ejercicio = (es, en) => ({
-  nombre: { es, en },
-  detalle: EN_PREPARACION,
-  sinAyuda: 'Esqueleto en preparación: la explicación la escribe la tarea 226.',
-  generar: () => ({}),
-  montar(contenedor, item, api) { contenedor.innerHTML = `<p class="instruccion">${api.tt(EN_PREPARACION)}</p>`; },
+const enunciadoElegir = (item, { tt }) => `
+    <p class="instruccion">${tt(TX.instrucciones[item.instruccion])}</p>
+    ${item.notacion}`;
+
+function montarElegir(contenedor, item, api) {
+  contenedor.innerHTML = `${enunciadoElegir(item, api)}<div id="caja-elecciones"></div>`;
+  const botones = elecciones(contenedor.querySelector('#caja-elecciones'), {
+    clase: 'elecciones elecciones--1',
+    opciones: item.opciones.map(o => ({ valor: o.texto, html: o.html ?? api.esc(o.texto) })),
+    alElegir(valor) {
+      if (api.respondido()) return;
+      const elegida = item.opciones.find(o => o.texto === valor);
+      const buenas = item.opciones.filter(o => o.correcta).map(o => o.texto);
+      botones.marcar(buenas, valor);
+      api.responder({
+        acierto: elegida.correcta,
+        error: elegida.error ?? undefined,
+        respuesta: elegida.texto,
+        espera: 2200,
+        html: ({ tt }) => (elegida.correcta ? '' : `${tt(elegida.por_que)} `) + tt(item.solucion),
+      });
+    },
+  });
+}
+
+const ejercicio = (i, generar) => ({
+  explicacion: explicaLeelo(i),
+  nombre: TX.ejercicios[i].nombre,
+  detalle: TX.ejercicios[i].detalle,
+  introduccion: TX.ejercicios[i].introduccion,
+  generar, clave: claveItem, montar: montarElegir, enunciado: enunciadoElegir,
 });
 
 arrancar({
   slug: 'leelo7',
   ejercicios: [
-    ejercicio('La palabra', 'The word'),
-    ejercicio('Léelo', 'Say it'),
-    ejercicio('La consigna', 'The instruction'),
-    ejercicio('Completa', 'Fill in'),
+    ejercicio(0, generarPalabra),
+    ejercicio(1, generarLeelo),
+    ejercicio(2, generarConsigna),
+    ejercicio(3, generarCompleta),
   ],
 });
