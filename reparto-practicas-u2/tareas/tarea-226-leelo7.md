@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-19 (adaptada a la unidad 7 por un subagente de la montadora: ejercicios, bancos, tests y trampas; **todo su contenido es propuesta hasta el acta de la 02 de la U7**). Antes: 2026-11-18 (alta de la montadora del reparto de la unidad 7, s-20261118T221619-b66ec280, a partir de la ficha 155 de la unidad 6, con sus trampas)
 Precondición: 211 LISTA · mejor con las hojas y los exámenes ya LISTOS en el reparto de la U7 (es de toda la unidad, pero **se publica con el paquete 1**: al menos la hoja 1 y el examen 1, tareas 06 y 14 de aquel reparto; después, las demás hojas, 07 a 11, y los exámenes 17, 20, 23 y 26): los que existan, excluye sus casos desde el principio (hoja en claro, examen por huella FNV-1a del caso normalizado por valor); los que no, dilo en la ENTREGA y lo coteja la tarea de publicación (la 227 con el paquete 1 y, para lo que se escriba después, la de cada paquete) · Disparo: MANUAL (sesión atendida) · **Plazo: vie 29-1 (ideal); límite vie 12-2**
-Duración esperada: 45 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 15 min (tiempo de sesión, no de persona) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/226-leelo7/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/leelo7/*` (sustituye el esqueleto que deja la 211: desde que la 211 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-leelo7.test.js` (nuevo), `tests/practicas-ayuda-leelo7.test.js` (nuevo: el del botón «No lo sé»)
 
@@ -390,3 +390,4 @@ Si paras sin terminar: `$R/hechos/fallos/226--<sid>.md` con hasta dónde llegast
   área) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones con el mismo valor** (`0,2` y `20 %`; `2,5 km` y `2500 m`; dos métodos correctos enfrentados), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+- (226) Un par de «sinónimos» mal puesto (*percentage* / *per cent* no lo son; sí *percent* / *per cent*) hace fallar el test o, peor, esconde un par válido: revisa cada par de `SINONIMOS` contra el hueco. Las razones con raya salen como `a/b` en `texto` pero con HTML en `html`: el lector de los tests debe usar `texto`. Una explicación como «se escribe 18016» lleva cinco cifras sin espacio fino a propósito: la comprobación de cifras solo vale para enunciado y opciones.
