@@ -358,7 +358,9 @@ test('resolverCodigo: un código de 4 calculable sin red, sin permiso o con la n
   const sinRed = fetchFalso({ [ANTIGUO]: new Error('sin red') });
   const prohibido = fetchFalso({ [ANTIGUO]: { status: 403 } });
   const caida = fetchFalso({ [ANTIGUO]: { status: 500 } });
-  for (const f of [sinRed, prohibido, caida]) {
+  // Tarea 210: con la cuota de lecturas agotada (429) pasa lo mismo que sin red (resolverCodigo no escribe nada en la nube).
+  const sinCuota = fetchFalso({ [ANTIGUO]: { status: 429 } });
+  for (const f of [sinRed, prohibido, caida, sinCuota]) {
     const almacen = almacenFalso();
     assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: f, almacen, config: CONFIG }), { error: 'sin-red' });
     assert.equal(almacen.datos.size, 0, 'sin respuesta de la nube no se recuerda nada');
@@ -370,6 +372,8 @@ test('resolverCodigo: un código de 4 calculable sin red, sin permiso o con la n
   assert.equal(r.modo, 'nuevo');
   assert.equal(r.desdeCache, true);
   assert.equal(r.n, 60);
+  const r429 = await resolverCodigo(ANTIGUO, { fetch: sinCuota, almacen, config: CONFIG });
+  assert.deepEqual([r429.desdeCache, r429.n], [true, 60], 'con la cuota agotada, la copia del navegador');
   // Sin almacén (navegación privada), tampoco rompe.
   assert.deepEqual(await resolverCodigo(ANTIGUO, { fetch: sinRed, almacen: null, config: CONFIG }), { error: 'sin-red' });
 });

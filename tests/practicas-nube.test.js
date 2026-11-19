@@ -16,6 +16,7 @@ import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import {
   fusionarEjercicio, fusionarProgreso, canonico, leerNube, escribirNube, subirFusionado, urlDocumento, leerDocumentoRest,
   idDocumentoTarea, idDocumentoPractica, claveProgresoTarea, urlAsignacion, leerAsignacion, leerAsignacionRest, coleccionEspacio,
+  motivoDeFallo, leerConfig,
 } from '../practicas/_comun/nube.js';
 import { sincronizarGuardado, adoptarIdioma, claveProgreso, claveIdiomaFijo, progresoGuardado } from '../practicas/_comun/base.js';
 import { juntarTareas, juntarFallos } from '../practicas/resultados.js';
@@ -251,6 +252,64 @@ test('nube: dos aparatos que suben por turnos no se machacan (cada subida lee y 
   const sinGet = nubeFalsa({ prohibido: true });
   await subirFusionado('recta', 'ABCD', ordenador, 'alterno', { fetch: sinGet.fetch, config: CONFIG, coleccion: LIBRE, ultimo: movil });
   assert.equal(sinGet.ej('recta--ABCD')[0].terminado, true);
+});
+
+/** Una nube que contesta `status` a las lecturas (429: cuota de lecturas agotada; 5xx) y deja escribir (las escrituras son otra cuota). */
+function nubeSinLecturas(status) {
+  const nube = nubeFalsa();
+  const fetch = async (url, opciones = {}) => (opciones.method === 'GET' ? { ok: false, status, json: async () => ({}) } : nube.fetch(url, opciones));
+  return { ...nube, fetch };
+}
+
+test('nube (tarea 210): un 429 o un 5xx al leer da «error» con su motivo; sin red, sin motivo', async () => {
+  const op = f => ({ fetch: f, config: CONFIG, coleccion: LIBRE });
+  assert.deepEqual(await leerNube('recta', 'ABCD', op(nubeSinLecturas(429).fetch)), { estado: 'error', ej: null, idioma: null, motivo: 'cuota' });
+  assert.deepEqual(await leerNube('recta', 'ABCD', op(nubeSinLecturas(503).fetch)), { estado: 'error', ej: null, idioma: null, motivo: 'servidor' });
+  assert.deepEqual(await leerNube('recta', 'ABCD', op(async () => { throw new TypeError('sin red'); })), { estado: 'error', ej: null, idioma: null });
+  assert.deepEqual(await leerNube('recta', 'ABCD', op(async () => ({ ok: false, status: 400 }))), { estado: 'error', ej: null, idioma: null }, 'otro 4xx: sin motivo');
+  assert.deepEqual([429, 500, 599, 404, 400, 600].map(motivoDeFallo), ['cuota', 'servidor', 'servidor', null, null, null]);
+  const config = await leerConfig(UID, { fetch: nubeSinLecturas(429).fetch, config: CONFIG });
+  assert.deepEqual(config, { estado: 'error', json: null, motivo: 'cuota' });
+  assert.deepEqual(await leerConfig(UID, { fetch: async () => { throw new TypeError('sin red'); }, config: CONFIG }), { estado: 'error', json: null });
+});
+
+test('nube (tarea 210): con la cuota agotada y sin saber nada de la nube, subirFusionado NO escribe (no machaca otro aparato)', async () => {
+  for (const status of [429, 500, 503]) {
+    const nube = nubeSinLecturas(status);
+    const op = { fetch: nube.fetch, config: CONFIG, coleccion: LIBRE };
+    // Lo que subió el móvil antes de agotarse la cuota.
+    const movil = [tras(Array(10).fill(true)), tras([true, true]), null];
+    await escribirNube('recta', 'ABCD', movil, 'es', op);
+    const escriturasAntes = nube.peticiones.filter(([m]) => m === 'PATCH').length;
+    // El ordenador entra después, no ha podido leer nunca (ultimo null) e intenta subir lo suyo.
+    const ordenador = [tras([true]), null, null];
+    const r = await subirFusionado('recta', 'ABCD', ordenador, 'es', op);
+    assert.equal(r.pendiente, true, `HTTP ${status}: queda pendiente de subir`);
+    assert.equal(r.ej, null, 'lo que queda en la nube no se sabe: sigue siendo «lo último que se supo» (nada)');
+    assert.equal(r.lectura.motivo, status === 429 ? 'cuota' : 'servidor');
+    assert.equal(nube.peticiones.filter(([m]) => m === 'PATCH').length, escriturasAntes, `HTTP ${status}: ninguna escritura`);
+    assert.equal(nube.ej('recta--ABCD')[0].terminado, true, 'lo del móvil sigue intacto en la nube');
+    // Con lo último leído conocido, se escribe la fusión con eso, como siempre.
+    const r2 = await subirFusionado('recta', 'ABCD', ordenador, 'es', { ...op, ultimo: movil });
+    assert.equal(r2.pendiente, undefined);
+    assert.equal(nube.peticiones.filter(([m]) => m === 'PATCH').length, escriturasAntes + 1);
+    assert.equal(nube.ej('recta--ABCD')[0].terminado, true);
+    assert.equal(nube.ej('recta--ABCD')[1].puntos, 2);
+  }
+});
+
+test('nube (tarea 210): sin red, subirFusionado se comporta como hasta ahora (intenta escribir lo de aquí con lo último sabido)', async () => {
+  const escrituras = [];
+  const sinRedAlLeer = async (url, opciones = {}) => {
+    if (opciones.method === 'GET') throw new TypeError('sin red');
+    escrituras.push(JSON.parse(opciones.body));
+    return { ok: true, status: 200, json: async () => ({}) };
+  };
+  const ej = [tras([true]), null];
+  const r = await subirFusionado('recta', 'ABCD', ej, 'es', { fetch: sinRedAlLeer, config: CONFIG, coleccion: LIBRE });
+  assert.equal(r.pendiente, undefined);
+  assert.equal(escrituras.length, 1, 'sin motivo (no hay red): se intenta la escritura, como antes');
+  assert.equal(r.ej[0].puntos, 1);
 });
 
 // --- La página de la semana: navegador y nube de acuerdo ------------------------------------------

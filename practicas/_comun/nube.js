@@ -172,7 +172,23 @@ export function leerConfigRest(json) {
   return typeof texto === 'string' ? texto : null;
 }
 
-/** GET con tiempo máximo: { estado: 'ok', json } | 'vacio' (404) | 'prohibido' (403) | 'error'. Nunca lanza. */
+/**
+ * Por qué ha fallado una respuesta HTTP que no es ok, cuando importa distinguirlo
+ * de «sin red» (tarea 210): 'cuota' (429, la cuota diaria de lecturas de Firestore
+ * agotada: el servidor contesta, pero no lee) o 'servidor' (5xx). null en lo demás.
+ * Va en el campo `motivo`, junto a `estado: 'error'`, que sigue siendo el mismo
+ * para quien no lo mire: sin red no hay `motivo`.
+ */
+export function motivoDeFallo(status) {
+  if (status === 429) return 'cuota';
+  if (status >= 500 && status <= 599) return 'servidor';
+  return null;
+}
+
+/** `{ motivo }` si el fallo es de cuota o del servidor; si no, nada (para esparcirlo en el resultado). */
+const conMotivo = status => { const motivo = motivoDeFallo(status); return motivo ? { motivo } : {}; };
+
+/** GET con tiempo máximo: { estado: 'ok', json } | 'vacio' (404) | 'prohibido' (403) | 'error' (con `motivo` si es 429 o 5xx). Nunca lanza. */
 async function pedirJson(url, { fetch: pedir = globalThis.fetch, espera = ESPERA_LECTURA } = {}) {
   if (!url || typeof pedir !== 'function') return { estado: 'error', json: null };
   const control = typeof AbortController === 'function' ? new AbortController() : null;
@@ -182,7 +198,7 @@ async function pedirJson(url, { fetch: pedir = globalThis.fetch, espera = ESPERA
     const respuesta = await Promise.race([pedir(url, { method: 'GET', signal: control?.signal, cache: 'no-store' }), tiempo]);
     if (respuesta.status === 404) return { estado: 'vacio', json: null };
     if (respuesta.status === 403) return { estado: 'prohibido', json: null };
-    if (!respuesta.ok) return { estado: 'error', json: null };
+    if (!respuesta.ok) return { estado: 'error', json: null, ...conMotivo(respuesta.status) };
     return { estado: 'ok', json: await Promise.race([respuesta.json(), tiempo]) };
   } catch {
     return { estado: 'error', json: null };
@@ -202,7 +218,7 @@ export async function leerBusqueda(codigo, { config = firebaseConfig, ...opcione
 /** Lee la configuración de tareas de un profesor: { estado, json } con el texto JSON sin interpretar. */
 export async function leerConfig(uid, { config = firebaseConfig, ...opciones } = {}) {
   const r = await pedirJson(urlConfig(uid, config), opciones);
-  if (r.estado !== 'ok') return { estado: r.estado, json: null };
+  if (r.estado !== 'ok') return { estado: r.estado, json: null, ...(r.motivo && { motivo: r.motivo }) };
   const texto = leerConfigRest(r.json);
   return texto === null ? { estado: 'error', json: null } : { estado: 'ok', json: texto };
 }
@@ -254,7 +270,9 @@ export function leerDocumentoRest(json) {
  *   'ok'        el documento existe (ej e idioma, lo que dice);
  *   'vacio'     no existe (alumno que no ha subido nada de esa práctica);
  *   'prohibido' las reglas no dejan leerlo;
- *   'error'     sin red, tiempo agotado, documento ilegible u otro fallo.
+ *   'error'     sin red, tiempo agotado, documento ilegible u otro fallo; con
+ *               `motivo: 'cuota'` (429) o `'servidor'` (5xx) si el servidor ha
+ *               contestado que no (`motivoDeFallo`), sin `motivo` si no hay red.
  * Nunca lanza. El `ej` leído ya viene adaptado a los ejercicios de hoy
  * (`adaptarProgreso`: una lista guardada antes de quitar un ejercicio); si
  * se ha adaptado, además `adaptado: true` (el documento hay que reescribirlo).
@@ -269,7 +287,7 @@ export async function leerNube(slug, codigo, { fetch: pedir = globalThis.fetch, 
     const respuesta = await Promise.race([pedir(url, { method: 'GET', signal: control?.signal, cache: 'no-store' }), tiempo]);
     if (respuesta.status === 404) return { estado: 'vacio', ej: null, idioma: null };
     if (respuesta.status === 403) return { estado: 'prohibido', ej: null, idioma: null };
-    if (!respuesta.ok) return { estado: 'error', ej: null, idioma: null };
+    if (!respuesta.ok) return { estado: 'error', ej: null, idioma: null, ...conMotivo(respuesta.status) };
     const leido = leerDocumentoRest(await Promise.race([respuesta.json(), tiempo]));
     if (!leido) return { estado: 'error', ej: null, idioma: null };
     const ej = adaptarProgreso(slug, leido.ej);
@@ -307,9 +325,24 @@ export function escribirNube(slug, codigo, ej, idioma, { fetch: pedir = globalTh
  * respecto de la nube). Si no se ha podido leer, escribe `ej` fusionado con lo
  * último que se supo de la nube (`ultimo`). Devuelve { ej: lo que queda en la
  * nube (o se intentó), lectura: el resultado de leerNube }.
+ *
+ * Excepción (tarea 210): si la lectura ha fallado porque el SERVIDOR ha dicho que
+ * no (429, cuota de lecturas agotada, o 5xx) y no se sabe nada de la nube
+ * (`ultimo` null), NO escribe y devuelve además `pendiente: true`, con `ej: ultimo`.
+ * Con la cuota de lecturas agotada las escrituras siguen entrando (son otra cuota):
+ * escribir lo de este aparato sin haber leído nunca la nube machacaría allí lo
+ * hecho en otro aparato, y el profesor vería menos de lo que hay. Lo de este
+ * aparato no se pierde: ya está guardado en el navegador (base.js guarda antes de
+ * subir), la siguiente subida vuelve a intentarlo, y al volver a entrar
+ * `leerYFusionar` lee, fusiona y sube lo que falte. El día de cada ejercicio va
+ * dentro del progreso, así que subirlo tarde no lo vuelve «fuera de plazo».
+ * Con `ultimo` conocido se escribe como siempre (la fusión con lo último leído
+ * solo puede perder lo que otro aparato subiera justo entretanto, el mismo
+ * riesgo de siempre), y sin red también: ahí la escritura tampoco llega.
  */
 export async function subirFusionado(slug, codigo, ej, idioma, { ultimo = null, ...opciones } = {}) {
   const lectura = await leerNube(slug, codigo, opciones);
+  if (lectura.estado === 'error' && lectura.motivo && ultimo === null) return { ej: ultimo, lectura, pendiente: true };
   const remoto = lectura.estado === 'ok' ? lectura.ej : ultimo;
   const fusion = fusionarProgreso(ej, remoto);
   if (lectura.estado !== 'ok' || lectura.adaptado || canonico(fusion) !== canonico(lectura.ej)) await escribirNube(slug, codigo, fusion, idioma, opciones);

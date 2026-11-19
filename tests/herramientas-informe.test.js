@@ -7,6 +7,7 @@ import assert from 'node:assert/strict';
 import {
   resumirEjercicio, ejerciciosDe, leerGrupos, agregar, formatear, UMBRALES, claveDocumento, tareaVigente, fechaMadrid, textoEntrega,
   documentosAMapa, asignacionesAMapa, listaDeCodigos, leerCsvCodigos, listaDeDocumentos, listarSubcoleccion,
+  ErrorFirestore, codigoDeSalida, consultarDesde, leerEspacio, leerIdsTareas, informesDeTareas, notasDeTarea, listaDeSiempre,
 } from '../herramientas/informe-actividad.mjs';
 import { calcularHoy, etiqueta } from '../practicas/profesor-hoy.js';
 import { tareaPorId, diaDeFecha } from '../practicas/_comun/tareas.js';
@@ -395,6 +396,86 @@ test('listarSubcoleccion: pagina, devuelve los crudos de siempre y avisa si la c
   assert.deepEqual(asignaciones, [{ id: 'K7QMP3XA', estado: undefined, actualizado: 0, tareas: [77] }]);
   await assert.rejects(listarSubcoleccion('U1', 'fallos', 'T', { pedir: async () => ({ ok: false, status: 403 }), config }), /403.*no es lectora/);
   await assert.rejects(listarSubcoleccion('U1', 'privado', 'T', { pedir, config }), /subcolección desconocida/);
+});
+
+// --- Tarea 210: lecturas de Firestore (parada en 429/5xx, runQuery, varias tareas) ---------------
+
+const docRest = (id, actualizado, ejs = [ej(5)]) => ({ name: `projects/p/databases/(default)/documents/practicas-espacios/U1/progreso-tareas/${id}`, fields: { estado: { stringValue: estadoDe(ejs) }, actualizado: { integerValue: String(actualizado) } } });
+
+test('listarSubcoleccion (210): una página con 429 o 500 hace parar con ErrorFirestore, nunca una lista corta', async () => {
+  for (const [status, motivo, salida, texto] of [[429, 'cuota', 3, /Cuota de Firestore agotada hasta las 9:00 de Madrid.*NO reintentes/], [500, 'servidor', 4, /servidor de Firestore \(HTTP 500/]]) {
+    let n = 0;
+    const pedir = async () => (++n === 1
+      ? { ok: true, status: 200, json: async () => ({ documents: [docRest('t77--recta--K7QMP3XA', 1)], nextPageToken: 'SIGUE' }) }
+      : { ok: false, status, json: async () => ({}) });
+    const e = await listarSubcoleccion('U1', 'progreso-tareas', 'T', { pedir, config: { projectId: 'p' } }).then(() => null, x => x);
+    assert.ok(e instanceof ErrorFirestore, `HTTP ${status}: lanza`);
+    assert.equal(e.motivo, motivo);
+    assert.equal(codigoDeSalida(e), salida);
+    assert.match(e.message, texto);
+    assert.doesNotMatch(e.message, /\n/, 'una sola línea');
+  }
+  assert.equal(codigoDeSalida(new Error('otra cosa')), 1);
+});
+
+test('consultarDesde (210): runQuery con where actualizado > desde, los crudos de siempre, y parada en 429', async () => {
+  const pedidas = [];
+  const pedir = async (url, op) => {
+    pedidas.push({ url, op, cuerpo: JSON.parse(op.body) });
+    return { ok: true, status: 200, json: async () => [{ document: docRest('t77--recta--K7QMP3XA', 500) }, { readTime: 'x' }] };
+  };
+  const docs = await consultarDesde('U1', 'progreso-tareas', 'TOKEN', 123.7, { pedir, config: { projectId: 'p' } });
+  assert.deepEqual(docs.map(d => [d.id, d.actualizado]), [['t77--recta--K7QMP3XA', 500]]);
+  assert.equal(pedidas[0].url, 'https://firestore.googleapis.com/v1/projects/p/databases/(default)/documents/practicas-espacios/U1:runQuery');
+  assert.equal(pedidas[0].op.method, 'POST');
+  assert.equal(pedidas[0].op.headers.Authorization, 'Bearer TOKEN');
+  assert.deepEqual(pedidas[0].cuerpo.structuredQuery, {
+    from: [{ collectionId: 'progreso-tareas' }],
+    where: { fieldFilter: { field: { fieldPath: 'actualizado' }, op: 'GREATER_THAN', value: { integerValue: '123' } } },
+  });
+  // Sin resultados, Firestore devuelve solo [{ readTime }].
+  assert.deepEqual(await consultarDesde('U1', 'asignaciones', 'T', 0, { pedir: async () => ({ ok: true, status: 200, json: async () => [{ readTime: 'x' }] }), config: { projectId: 'p' } }), []);
+  const e429 = await consultarDesde('U1', 'progreso-libre', 'T', 0, { pedir: async () => ({ ok: false, status: 429, json: async () => ({}) }), config: { projectId: 'p' } }).then(() => null, x => x);
+  assert.equal(e429?.motivo, 'cuota');
+  // Un error dentro del flujo (RESOURCE_EXHAUSTED a media respuesta) también para.
+  const enFlujo = await consultarDesde('U1', 'progreso-libre', 'T', 0, { pedir: async () => ({ ok: true, status: 200, json: async () => [{ document: docRest('a--K7QM', 1) }, { error: { code: 8, message: 'Quota exceeded' } }] }), config: { projectId: 'p' } }).then(() => null, x => x);
+  assert.equal(enFlujo?.motivo, 'cuota');
+});
+
+test('leerEspacio sin caché (210): enteras, como siempre (la ruta de la rutina de la nube)', async () => {
+  const urls = [];
+  const pedir = async url => { urls.push(url); return { ok: true, status: 200, json: async () => ({ documents: [docRest('t77--recta--K7QMP3XA', 1)] }) }; };
+  const { docs, lectura } = await leerEspacio('U1', ['progreso-libre', 'progreso-tareas'], 'T', { pedir, config: { projectId: 'p' } });
+  assert.equal(lectura, null);
+  assert.deepEqual(Object.keys(docs), ['progreso-libre', 'progreso-tareas']);
+  assert.ok(urls.every(u => u.includes('?pageSize=300')) && urls.length === 2, 'solo listados, ningún runQuery');
+});
+
+test('varias tareas con una lectura (210): leerIdsTareas, informesDeTareas y notasDeTarea', () => {
+  assert.deepEqual(leerIdsTareas('1,2, 15 2'), [1, 2, 15]);
+  assert.equal(leerIdsTareas('1,x'), null);
+  assert.equal(leerIdsTareas(''), null);
+  const t2 = { ...TAREA_V2, id: 79 };
+  const tareas = [TAREA_V2, t2];
+  const lista = listaDeSiempre(3);
+  const [a, b] = lista.map(x => x.codigo);
+  const docs = new Map([
+    [claveDocumento(TAREA_V2, TAREA_V2.estrella[0][0], a), { ej: [ej(10)], actualizado: AHORA }],
+    [claveDocumento(t2, t2.estrella[0][0], b), { ej: [ej(10)], actualizado: AHORA }],
+  ]);
+  const informes = informesDeTareas({ tareas, ids: [79, TAREA_V2.id], docs, asignaciones: new Map(), listaFija: lista, ahora: AHORA });
+  assert.deepEqual(informes.map(i => i.tarea.id), [79, TAREA_V2.id], 'en el orden pedido');
+  assert.deepEqual(informes.map(i => i.resumen.hanEntrado), [1, 1]);
+  assert.equal(informes[0].resumen.alumnos.find(f => f.existe).codigo, b);
+  assert.equal(informes[1].resumen.alumnos.find(f => f.existe).codigo, a);
+  assert.ok(informes.every(i => i.texto.startsWith('# Actividad en las prácticas')));
+  assert.throws(() => informesDeTareas({ tareas, ids: [999], docs, asignaciones: new Map(), ahora: AHORA }), /no tiene la tarea 999/);
+  // Las notas (para notas_tarea_app.mjs): una por alumno de la lista, la que ve en la app.
+  const n = notasDeTarea(t2, docs, lista);
+  assert.equal(n.titulo, t2.titulo.es);
+  assert.deepEqual(n.alumnos.map(x => [x.numero, x.existe]), [[1, false], [2, true], [3, false]]);
+  assert.ok(n.alumnos[1].hechos >= 1 && n.alumnos[1].de === t2.estrella.length);
+  assert.deepEqual(Object.keys(n.alumnos[0]), ['numero', 'existe', 'puntos', 'base', 'extra', 'cumplida', 'hechos', 'de'], 'la salida de siempre de notas_tarea_app');
 });
 
 test('el informe también lo importa el navegador: ninguna importación de node:* ni uso de process fuera de main', async () => {

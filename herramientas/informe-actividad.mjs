@@ -26,16 +26,31 @@
 //              Sin ninguno de los dos, el informe no sabe quién no ha entrado.
 //   --tarea    id de una tarea del profesor. Sin él, la tarea obligatoria vigente
 //              por fecha (ver `tareaVigente`).
+//   --tareas   1,2,3: varias tareas con UNA sola lectura de los documentos (tarea 210);
+//              los informes salen uno tras otro, separados por «---», y con --json la
+//              última línea es { "tareas": [{ id, titulo, resumen }, …] }. Con --tarea N
+//              (o sin ninguno), el JSON es el resumen de siempre.
 //   --horas    ventana de «actividad reciente» (desde hace tantas horas)
 //   --grupos   nombre:desde-hasta por grupo, con los números de lista
 //   --json     además del informe, el resumen completo en JSON (última línea)
+//   --cache    lee a través de la caché local (herramientas/cache-lecturas.mjs, fuera del
+//              repo, en ~/.claude/cache/firestore-practicas/): la primera vez todo; después
+//              solo lo cambiado (menos 2 días de margen); nada si la última lectura es de
+//              hace menos de 10 min; todo otra vez cada 7 días. Sin --cache, todo cada vez
+//              (así va la rutina diaria de la nube, que no tiene disco propio).
+//   --leer-todo  como --cache, pero lee todo ahora y rehace la caché.
+//
+// CUOTA (tarea 210): cada lectura completa son ~1 300 lecturas de las ~50 000 diarias del plan
+// gratuito. Para varias tareas, --tareas, nunca un bucle. Ante un 429 (cuota agotada hasta las
+// 9:00 de Madrid) o un 5xx, para con una línea clara y código de salida 3 (cuota) o 4 (servidor),
+// sin informe a medias ni caché a medias: no se reintenta.
 //
 // Las funciones de cálculo (resumirEjercicio, agregar, formatear) son puras y
 // están probadas en tests/herramientas-informe.test.js.
 
 import { codigoAlumno } from '../practicas/_comun/codigos.js';
 import { TAREAS, tareaPorId, PUNTOS_POR_EJERCICIO, estadoTarea, estadoPlazo, diaDeFecha, configDeJSON } from '../practicas/_comun/tareas.js';
-import { idDocumentoPractica, idDocumentoTarea, leerConfig, leerAsignacionRest, coleccionEspacio } from '../practicas/_comun/nube.js';
+import { idDocumentoPractica, idDocumentoTarea, leerConfig, leerAsignacionRest, coleccionEspacio, motivoDeFallo } from '../practicas/_comun/nube.js';
 import { firebaseConfig } from '../src/config.js';
 import { diaDe, fechaDeDia } from '../practicas/_comun/contador.js';
 
@@ -417,28 +432,148 @@ async function iniciarSesion(email, clave) {
   return json.idToken;
 }
 
-/** Todos los documentos de una subcolección del espacio, crudos como los da el SDK; 403 si la cuenta no es lectora. */
+/**
+ * Un fallo de Firestore que no se arregla reintentando (tarea 210): 429 (cuota diaria de lecturas
+ * agotada; se renueva a las 9:00 de Madrid) o 5xx. `motivo`: 'cuota' | 'servidor' | null.
+ * Quien lo recibe para: ningún resultado a medias (una página que falla no deja una lista corta).
+ */
+export class ErrorFirestore extends Error {
+  constructor(status, que) {
+    const motivo = motivoDeFallo(status);
+    super(motivo === 'cuota'
+      ? `Cuota de Firestore agotada hasta las 9:00 de Madrid (HTTP 429 al leer «${que}»): NO reintentes.`
+      : motivo === 'servidor'
+        ? `Error del servidor de Firestore (HTTP ${status} al leer «${que}»): no reintentes en bucle; prueba dentro de un rato.`
+        : `HTTP ${status} al leer «${que}»`);
+    this.name = 'ErrorFirestore';
+    this.status = status;
+    this.motivo = motivo;
+  }
+}
+
+/** Código de salida de un programa que para por `e`: 3 cuota agotada, 4 error del servidor, 1 lo demás. */
+export const codigoDeSalida = e => (e?.motivo === 'cuota' ? 3 : e?.motivo === 'servidor' ? 4 : 1);
+
+/** Un documento REST de una subcolección del espacio → crudo como lo da el SDK ({ id, estado, actualizado } o, en asignaciones, + tareas). */
+function docDeRest(d, sub) {
+  const f = d.fields ?? {};
+  return {
+    id: d.name.split('/').at(-1),
+    estado: f.estado?.stringValue,
+    actualizado: Number(f.actualizado?.integerValue) || 0,
+    ...(sub === 'asignaciones' ? leerAsignacionRest(d) : {}),
+  };
+}
+
+function comprobarRespuesta(r, sub) {
+  if (r.status === 403) throw new Error(`Sin permiso para leer «${sub}» del espacio (403): la cuenta no es lectora de ese espacio`);
+  if (!r.ok) throw new ErrorFirestore(r.status, sub);
+}
+
+/**
+ * Todos los documentos de una subcolección del espacio, crudos como los da el SDK; 403 si la cuenta no es lectora.
+ * Si una página falla (429, 5xx…), lanza: nunca devuelve una lista corta que parezca completa.
+ */
 export async function listarSubcoleccion(uid, sub, token, { pedir = globalThis.fetch, config = firebaseConfig } = {}) {
   const base = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${coleccionEspacio(uid, sub)}`;
   const docs = [];
   let pagina = '';
   do {
     const r = await pedir(`${base}?pageSize=300${pagina}`, { headers: { Authorization: `Bearer ${token}` } });
-    if (r.status === 403) throw new Error(`Sin permiso para leer «${sub}» del espacio (403): la cuenta no es lectora de ese espacio`);
-    if (!r.ok) throw new Error(`HTTP ${r.status} al leer «${sub}»`);
+    comprobarRespuesta(r, sub);
     const json = await r.json();
-    for (const d of json.documents ?? []) {
-      const f = d.fields ?? {};
-      docs.push({
-        id: d.name.split('/').at(-1),
-        estado: f.estado?.stringValue,
-        actualizado: Number(f.actualizado?.integerValue) || 0,
-        ...(sub === 'asignaciones' ? leerAsignacionRest(d) : {}),
-      });
-    }
+    for (const d of json.documents ?? []) docs.push(docDeRest(d, sub));
     pagina = json.nextPageToken ? `&pageToken=${encodeURIComponent(json.nextPageToken)}` : '';
   } while (pagina);
   return docs;
+}
+
+/**
+ * Los documentos de una subcolección del espacio con `actualizado` > `desde` (ms), por REST
+ * (`runQuery`, como `leerDesde` del panel con el SDK). Cada documento devuelto cuenta una lectura
+ * (y la consulta, al menos una aunque no devuelva nada). Lanza como `listarSubcoleccion`.
+ */
+export async function consultarDesde(uid, sub, token, desde, { pedir = globalThis.fetch, config = firebaseConfig } = {}) {
+  const padre = coleccionEspacio(uid, sub).split('/').slice(0, -1).join('/');
+  const url = `https://firestore.googleapis.com/v1/projects/${config.projectId}/databases/(default)/documents/${padre}:runQuery`;
+  const cuerpo = {
+    structuredQuery: {
+      from: [{ collectionId: sub }],
+      where: { fieldFilter: { field: { fieldPath: 'actualizado' }, op: 'GREATER_THAN', value: { integerValue: String(Math.floor(desde)) } } },
+    },
+  };
+  const r = await pedir(url, { method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) });
+  comprobarRespuesta(r, sub);
+  const json = await r.json();
+  const filas = Array.isArray(json) ? json : [json];
+  const fallo = filas.find(x => x?.error);
+  if (fallo) throw new ErrorFirestore(Number(fallo.error.code) === 8 ? 429 : 500, sub);   // 8 = RESOURCE_EXHAUSTED
+  return filas.filter(x => x?.document).map(x => docDeRest(x.document, sub));
+}
+
+/**
+ * Las subcolecciones `subs` del espacio. Sin `cache`, enteras (lo de siempre: así va la rutina de la
+ * nube, que no tiene disco propio). Con `cache`, a través de `herramientas/cache-lecturas.mjs` (solo
+ * lo nuevo, ver su cabecera); `leerTodo` fuerza la lectura completa. Devuelve { docs: { sub: [...] },
+ * lectura (lo que ha hecho la caché, o null) }. Si algo falla, lanza (ErrorFirestore en 429/5xx).
+ */
+export async function leerEspacio(uid, subs, token, { cache = false, leerTodo = false, pedir = globalThis.fetch, config = firebaseConfig, dir, ahora } = {}) {
+  const op = { pedir, config };
+  if (!cache) {
+    const listas = await Promise.all(subs.map(s => listarSubcoleccion(uid, s, token, op)));
+    return { docs: Object.fromEntries(subs.map((s, i) => [s, listas[i]])), lectura: null };
+  }
+  const { leerConCache } = await import('./cache-lecturas.mjs');
+  const lectura = await leerConCache({
+    uid, subs, leerTodo, ...(dir && { dir }), ...(ahora && { ahora }),
+    leerTodoDe: s => listarSubcoleccion(uid, s, token, op),
+    leerDesdeDe: (s, desde) => consultarDesde(uid, s, token, desde, op),
+  });
+  return { docs: lectura.docs, lectura };
+}
+
+/**
+ * Las notas de una tarea, como las saca `~/.claude/lanzador/notas_tarea_app.mjs` para calificar
+ * (skill atender-correo): por alumno, la nota que ve en la app (`estadoTarea`, base + extra del reto).
+ */
+export function notasDeTarea(tarea, docs, lista = listaDeSiempre(51)) {
+  const slugs = [...new Set(ejerciciosDe(tarea).map(e => e.slug))];
+  const alumnos = [];
+  for (const { numero, codigo } of lista) {
+    const porSlug = new Map(); let existe = false;
+    for (const slug of slugs) {
+      const d = docs.get(claveDocumento(tarea, slug, codigo));
+      if (d) { existe = true; porSlug.set(slug, Array.isArray(d.ej) ? d.ej : []); }
+    }
+    const e = estadoTarea(tarea, (slug, n) => porSlug.get(slug)?.[n - 1] ?? null);
+    alumnos.push({ numero, existe, puntos: e.puntos, base: e.base, extra: e.extra, cumplida: e.cumplida, hechos: e.estrellaHechos, de: tarea.estrella.length });
+  }
+  return { titulo: tarea.titulo.es, hasta: tarea.hasta, alumnos };
+}
+
+/** «1,2, 15» → [1, 2, 15] (enteros ≥ 1, sin repetir); null si hay algo que no lo es. */
+export function leerIdsTareas(texto) {
+  const partes = String(texto ?? '').split(/[\s,]+/).filter(Boolean);
+  const ids = partes.map(Number);
+  if (!ids.length || !ids.every(n => Number.isInteger(n) && n >= 1)) return null;
+  return [...new Set(ids)];
+}
+
+/**
+ * Los informes de varias tareas con una sola lectura de los documentos (tarea 210):
+ * [{ tarea, motivo, resumen, texto }], en el orden pedido. `ids` null: la vigente.
+ * Lanza si un id no es de una tarea del espacio.
+ */
+export function informesDeTareas({ tareas, ids = null, docs, asignaciones, listaFija = [], horas = 24, grupos = [], ahora = Date.now(), fuente = null }) {
+  const elegidas = ids === null ? [tareaVigente(fechaMadrid(ahora), tareas)] : ids.map(id => ({ tarea: tareaPorId(id, tareas), motivo: null, id }));
+  const falta = elegidas.find(e => !e.tarea);
+  if (falta) throw new Error(falta.id === undefined ? 'Ese espacio no tiene ninguna tarea' : `Ese espacio no tiene la tarea ${falta.id}`);
+  const listaCompleta = listaFija.length > 0;
+  return elegidas.map(({ tarea, motivo }) => {
+    const lista = listaCompleta ? listaFija : listaDeDocumentos(docs, tarea.asignada ? asignaciones : null);
+    const resumen = agregar({ docs, tarea, lista, listaCompleta, desde: ahora - horas * 3600 * 1000, grupos, asignaciones, ahora });
+    return { tarea, motivo, resumen, texto: formatear(resumen, { tarea, ahora, horas, motivo, fuente }) };
+  });
 }
 
 function argumento(nombre, porDefecto) {
@@ -455,30 +590,43 @@ async function mainEspacio(uid) {
   const grupos = leerGrupos(argumento('grupos', ''));
   const ahora = Date.now();
   const lectura = await leerConfig(uid);
-  if (lectura.estado !== 'ok') { console.error(`No se ha podido leer la configuración de tareas del espacio (${lectura.estado})`); process.exit(1); }
+  if (lectura.estado !== 'ok') {
+    if (lectura.motivo) { const e = new ErrorFirestore(lectura.motivo === 'cuota' ? 429 : 500, 'config/tareas'); console.error(e.message); process.exit(codigoDeSalida(e)); }
+    console.error(`No se ha podido leer la configuración de tareas del espacio (${lectura.estado})`); process.exit(1);
+  }
   const tareas = configDeJSON(lectura.json)?.tareas ?? [];
-  const idPedido = argumento('tarea', null);
-  const elegida = idPedido === null ? tareaVigente(fechaMadrid(ahora), tareas) : { tarea: tareaPorId(Number(idPedido), tareas), motivo: null };
-  const { tarea, motivo } = elegida;
-  if (!tarea) { console.error('Ese espacio no tiene esa tarea (o no tiene ninguna)'); process.exit(2); }
+  // --tareas 1,2,3 (varias con una sola lectura) o --tarea N (una); sin ninguno, la vigente.
+  const textoIds = argumento('tareas', null) ?? argumento('tarea', null);
+  const ids = textoIds === null ? null : leerIdsTareas(textoIds);
+  if (textoIds !== null && !ids) { console.error(`--tareas: «${textoIds}» no es una lista de números de tarea`); process.exit(2); }
+  const faltan = (ids ?? []).filter(id => !tareaPorId(id, tareas));
+  if (faltan.length || !tareas.length) { console.error(`Ese espacio no tiene ${faltan.length ? `la tarea ${faltan.join(', ')}` : 'ninguna tarea'}`); process.exit(2); }
   const token = await iniciarSesion(email, clave);
-  const [libre, deTareas, crudasAsignaciones] = await Promise.all(['progreso-libre', 'progreso-tareas', 'asignaciones'].map(s => listarSubcoleccion(uid, s, token)));
-  const docs = documentosAMapa(libre, deTareas);
-  const asignaciones = asignacionesAMapa(crudasAsignaciones);
+  const conCache = process.argv.includes('--cache') || process.argv.includes('--leer-todo');
+  const { docs: crudos, lectura: deCache } = await leerEspacio(uid, ['progreso-libre', 'progreso-tareas', 'asignaciones'], token,
+    { cache: conCache, leerTodo: process.argv.includes('--leer-todo') });
+  if (deCache) console.error((await import('./cache-lecturas.mjs')).textoLectura(deCache));
+  const docs = documentosAMapa(crudos['progreso-libre'], crudos['progreso-tareas']);
+  const asignaciones = asignacionesAMapa(crudos.asignaciones);
   const csv = argumento('codigos', null);
   // `node:fs` solo se pide aquí: este módulo también lo importa el navegador (pestaña «Hoy»).
   const listaCsv = csv ? leerCsvCodigos((await import('node:fs')).readFileSync(csv, 'utf8')) : [];
   // `--alumnos N` (sin CSV): los códigos de siempre 1..N, los del espacio de Juan Luis (tarea 70).
   const alumnos = Number(argumento('alumnos', 0));
   const listaFija = listaCsv.length ? listaCsv : alumnos > 0 ? listaDeSiempre(alumnos) : [];
-  const listaCompleta = listaFija.length > 0;
-  const lista = listaCompleta ? listaFija : listaDeDocumentos(docs, tarea.asignada ? asignaciones : null);
-  const resumen = agregar({ docs, tarea, lista, listaCompleta, desde: ahora - horas * 3600 * 1000, grupos, asignaciones, ahora });
-  console.log(formatear(resumen, { tarea, ahora, horas, motivo, fuente: `practicas-espacios/${uid}/progreso-tareas y progreso-libre (cuenta lectora)` }));
-  if (process.argv.includes('--json')) console.log(JSON.stringify(resumen));
+  const informes = informesDeTareas({ tareas, ids, docs, asignaciones, listaFija, horas, grupos, ahora,
+    fuente: `practicas-espacios/${uid}/progreso-tareas y progreso-libre (cuenta lectora)` });
+  console.log(informes.map(i => i.texto).join('\n\n---\n\n'));
+  if (process.argv.includes('--json')) {
+    // Con una tarea (o la vigente), el resumen como siempre; con --tareas de varias, { tareas: [{ id, titulo, resumen }] }.
+    console.log(JSON.stringify(informes.length === 1 && argumento('tareas', null) === null
+      ? informes[0].resumen
+      : { tareas: informes.map(i => ({ id: i.tarea.id, titulo: i.tarea.titulo.es, resumen: i.resumen })) }));
+  }
 }
 
-const USO = 'Uso: node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>] [--grupos "1.º A:1-29,…"] [--tarea N] [--horas 24] [--json]\n'
+const USO = 'Uso: node herramientas/informe-actividad.mjs --espacio <uid> [--alumnos 51 | --codigos <CSV>] [--grupos "1.º A:1-29,…"]\n'
+  + '       [--tarea N | --tareas 1,2,3] [--horas 24] [--json] [--cache | --leer-todo]\n'
   + '(con LECTOR_EMAIL y LECTOR_CLAVE de la cuenta lectora en el entorno). Desde la tarea 71 no hay modo sin --espacio.';
 
 async function main() {
@@ -489,5 +637,6 @@ async function main() {
 
 // En el navegador (pestaña «Hoy») `process` no existe: solo se ejecuta como programa en Node.
 if (typeof process !== 'undefined' && process.argv?.[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href) {
-  main().catch(e => { console.error(e); process.exit(1); });
+  // Un 429 o un 5xx: una línea clara y un código de salida propio (3 cuota, 4 servidor), sin volcar la pila.
+  main().catch(e => { console.error(e instanceof ErrorFirestore ? e.message : e); process.exit(codigoDeSalida(e)); });
 }
