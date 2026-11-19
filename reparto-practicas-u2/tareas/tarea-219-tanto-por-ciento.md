@@ -115,6 +115,9 @@ Modelo de interfaz: `practicas/fraccion-de/` de la U4 (la fracción de una canti
 
 ## Trampas conocidas
 
+- (219, hecha) En ES el «%» va con espacio duro (`15\u00a0%`) y en EN pegado (`15%`): también en los textos escritos a mano de `textos.js`; el test lo comprueba sobre el HTML sin normalizar.
+- (219, hecha) `leerCampo` devuelve una Cantidad: compara `.valor`; en el ej. 3 los valores de las cuatro cuentas deben ser distintos y decimales exactos, o se vuelve a sortear.
+
 - Los personajes llevan nombres inventados y la lista de nombres de la práctica se coteja contra los alumnos reales si la sesión llega a la carpeta de datos (si no, nombres poco habituales); nunca un nombre de alumno real en el repositorio público.
 - `.cuenta` no se parte (`nowrap`): solo cuentas cortas; las frases del feedback van como texto normal o se salen de 375 px. Con fracciones (`htmlFraccion`, la opción `15/100 · 80` del ejercicio 3) comprueba la altura. Del signo de puntuación que sigue a una cuenta se ocupa la base (`pegarSignos` de `piezas.js`, que llama ella, no la práctica): no lo parchees a mano.
 - `-` y `−`, `*` y `·` se parecen: en los tests busca por código; lo que teclea el alumno pasa por `deTexto`, que los normaliza.
