@@ -68,6 +68,10 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
     [69, 'traduce', 4], [70, 'valor-numerico', 3], [71, 'terminos-semejantes', 4], [72, 'es-solucion', 4], [73, 'transposicion', 5],
     [74, 'resuelve', 4], [75, 'parentesis-algebra', 4], [76, 'denominadores', 4], [77, 'problemas-ecuaciones', 5], [78, 'errores6', 3],
     [79, 'leelo6', 4],
+    // Unidad 7 (tarea 211).
+    [84, 'razones', 4], [85, 'tabla-proporcional', 4], [86, 'regla-de-tres', 4], [87, 'inversa', 4], [88, 'directa-o-inversa', 3],
+    [89, 'repartos', 4], [90, 'tres-escrituras', 4], [91, 'tanto-por-ciento', 4], [92, 'que-porcentaje', 4], [93, 'descuentos', 5],
+    [94, 'escalas', 4], [95, 'unidades', 5], [96, 'problemas-proporcion', 5], [97, 'errores7', 3], [98, 'leelo7', 4],
     [31, 'plantilla', 2],
   ]);
   const u3 = CATALOGO.filter(p => p.id >= 33 && p.id <= 44);
@@ -82,6 +86,9 @@ test('catálogo: los ids y los slugs fijados por el reparto, sin repetir', () =>
   const u6 = CATALOGO.filter(p => p.id >= 69 && p.id <= 79);
   assert.ok(u6.every(p => p.unidad === 6 && !p.transversal), 'las once de la unidad 6');
   assert.equal(u6.reduce((s, p) => s + p.nEjercicios, 0), 44, 'número de ejercicios fijado por el reparto (44 en total)');
+  const u7 = CATALOGO.filter(p => p.id >= 84 && p.id <= 98);
+  assert.ok(u7.every(p => p.unidad === 7 && !p.transversal), 'las quince de la unidad 7');
+  assert.equal(u7.reduce((s, p) => s + p.nEjercicios, 0), 61, 'número de ejercicios fijado por el reparto (61 en total; 56 sin `unidades`)');
   assert.equal(new Set(CATALOGO.map(p => p.id)).size, CATALOGO.length, 'ids distintos');
   assert.equal(new Set(CATALOGO.map(p => p.slug)).size, CATALOGO.length, 'slugs distintos');
   for (const p of CATALOGO) {

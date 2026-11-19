@@ -150,6 +150,38 @@ export const BLOQUES = [
     titulo: { es: 'Para toda la unidad · Errores y vocabulario', en: 'For the whole unit · Mistakes and vocabulary' },
     slugs: ['errores6', 'leelo6'],
   },
+  // Unidad 7 (PU2, tarea 211): cada práctica sale en su bloque cuando su tarea de publicación la publica (227-231).
+  // «Semana N» es el paquete N; el bloque 3 dura dos semanas de clase, con las vacaciones en medio.
+  {
+    unidad: 7,
+    titulo: { es: 'Semana 1 · Razones, proporciones y proporcionalidad directa', en: 'Week 1 · Ratios, proportions and direct proportion' },
+    slugs: ['razones', 'tabla-proporcional', 'regla-de-tres'],
+  },
+  {
+    unidad: 7,
+    titulo: { es: 'Semana 2 · Proporcionalidad inversa y repartos', en: 'Week 2 · Inverse proportion and sharing in a ratio' },
+    slugs: ['inversa', 'directa-o-inversa', 'repartos'],
+  },
+  {
+    unidad: 7,
+    titulo: { es: 'Semana 3 · Porcentajes', en: 'Week 3 · Percentages' },
+    slugs: ['tres-escrituras', 'tanto-por-ciento', 'que-porcentaje', 'descuentos'],
+  },
+  {
+    unidad: 7,
+    titulo: { es: 'Semana 4 · Escalas y unidades de medida', en: 'Week 4 · Scales and units' },
+    slugs: ['escalas', 'unidades'],
+  },
+  {
+    unidad: 7,
+    titulo: { es: 'Semana 5 · Problemas de toda la unidad', en: 'Week 5 · Mixed problems' },
+    slugs: ['problemas-proporcion'],
+  },
+  {
+    unidad: 7,
+    titulo: { es: 'Para toda la unidad · Errores y vocabulario', en: 'For the whole unit · Mistakes and vocabulary' },
+    slugs: ['errores7', 'leelo7'],
+  },
 ];
 const OTRAS = { es: 'Otras', en: 'Others' };
 
@@ -234,6 +266,22 @@ export const DESCRIPCION = {
   'problemas-ecuaciones': { es: 'Problemas de números, consecutivos, repartos y edades: qué es la x, qué ecuación los plantea, la respuesta a lo que se pregunta y si tiene sentido.', en: 'Problems about numbers, consecutive numbers, sharing and ages: what x is, which equation fits, the answer to the question and whether it makes sense.' },
   errores6: { es: 'Resoluciones de la unidad 6 con un paso mal: dónde está el error, qué error es y cómo se corrige.', en: 'Worked solutions from unit 6 with one wrong step: where the mistake is, what the mistake is and how to fix it.' },
   leelo6: { es: 'El vocabulario del álgebra en inglés: la palabra, lee expresiones y ecuaciones, entiende la consigna y completa la frase.', en: 'Algebra vocabulary in English: learn the words, read expressions and equations, understand the instruction and fill in the sentence.' },
+  // Unidad 7 (tarea 211), sacadas de las fichas 212-226.
+  razones: { es: 'Escribe la razón entre dos cantidades, parte con parte y parte con el total, busca razones equivalentes y la más sencilla, mira si forman proporción y halla el término que falta.', en: 'Write the ratio of two amounts, part to part and part to whole, find equivalent ratios and the simplest one, check whether they form a proportion and find the missing term.' },
+  'tabla-proporcional': { es: 'Mira si una tabla es de proporcionalidad directa, complétala, calcula el precio por unidad y decide qué situaciones son proporcionales.', en: 'Check whether a table shows direct proportion, complete it, work out the unit rate and decide which situations are proportional.' },
+  'regla-de-tres': { es: 'Problemas de proporcionalidad directa: cuánto cuesta uno, qué planteamiento les va, la respuesta con su unidad y si tiene sentido.', en: 'Direct proportion problems: how much one costs, which set-up fits, the answer with its unit and whether it makes sense.' },
+  inversa: { es: 'Mira si una tabla es de proporcionalidad inversa, complétala, resuelve problemas de obreros, grifos y viajes y caza el error de tratarla como directa.', en: 'Check whether a table shows inverse proportion, complete it, solve problems about workers, taps and journeys and catch the mistake of treating it as direct.' },
+  'directa-o-inversa': { es: 'Decide si una situación o una tabla es de proporcionalidad directa, inversa o de ninguna de las dos, y elige el planteamiento de un problema.', en: 'Decide whether a situation or a table shows direct proportion, inverse proportion or neither, and choose the set-up for a problem.' },
+  repartos: { es: 'Reparte una cantidad en una razón: cuántas partes hay, cuánto vale cada una, cuánto le toca a cada uno y si el reparto está bien hecho.', en: 'Share an amount in a ratio: how many parts there are, how much each part is worth, how much each person gets and whether the sharing is right.' },
+  'tres-escrituras': { es: 'Pasa un porcentaje a fracción y a decimal y al revés, aprende los porcentajes fáciles, une las tres escrituras y ordénalas.', en: 'Turn a percentage into a fraction and a decimal and back, learn the easy percentages, match the three ways of writing them and put them in order.' },
+  'tanto-por-ciento': { es: 'Calcula el tanto por ciento de una cantidad de cabeza y con el decimal, elige la operación que lo calcula y resuelve problemas.', en: 'Work out a percentage of an amount in your head and with the decimal, choose the calculation that gives it and solve problems.' },
+  'que-porcentaje': { es: 'Qué porcentaje es una cantidad de otra, cuál es el total si sabes una parte y su porcentaje, y cuál de los tres problemas te piden.', en: 'What percentage one amount is of another, what the total is when you know a part and its percentage, and which of the three problems you are asked.' },
+  descuentos: { es: 'Rebajas y subidas en dos pasos y en uno, el IVA, qué te piden, el descuento o lo que se paga, y el error de subir y bajar lo mismo.', en: 'Discounts and increases in two steps and in one, VAT, what you are asked, the discount or the price you pay, and the mistake of going up and down by the same amount.' },
+  escalas: { es: 'Del plano o el mapa a la realidad y al revés, con el cambio de unidad, halla la escala y elige la escala sensata.', en: 'From a plan or a map to real life and back, changing the unit, find the scale and choose a sensible scale.' },
+  unidades: { es: 'Cambia de unidad de longitud, de masa, de capacidad y de superficie, pasa de complejo a incomplejo y elige la unidad sensata.', en: 'Convert units of length, mass, capacity and area, change between mixed and single units and choose a sensible unit.' },
+  'problemas-proporcion': { es: 'Problemas de toda la unidad: qué tipo de problema es, velocidad, tiempo y distancia, cambio de moneda, la mejor oferta y si la respuesta tiene sentido.', en: 'Problems from the whole unit: what kind of problem it is, speed, time and distance, changing money, the best buy and whether the answer makes sense.' },
+  errores7: { es: 'Resoluciones de la unidad 7 con un paso mal: dónde está el error, qué error es y cómo se corrige.', en: 'Worked solutions from unit 7 with one wrong step: where the mistake is, what the mistake is and how to fix it.' },
+  leelo7: { es: 'El vocabulario de la proporcionalidad y los porcentajes en inglés: la palabra, lee razones, porcentajes y escalas, entiende la consigna y completa la frase.', en: 'Proportion and percentage vocabulary in English: learn the words, read ratios, percentages and scales, understand the instruction and fill in the sentence.' },
   // La sección «Ortografía» (tarea 134): las prácticas van solo en español; la descripción, en los dos idiomas.
   ortografia: { es: 'Lo que más se escribe mal: a o ha, e o he, echo o hecho, porque o por qué, las comas, los signos ¿ ¡ y las tildes de qué, cómo, tú, él…', en: 'The most common slips in Spanish: a or ha, e or he, echo or hecho, porque or por qué, commas, ¿ ¡ and the accents on qué, cómo, tú, él…' },
   'ortografia-tildes': { es: 'La sílaba tónica, cuándo lleva tilde una palabra, diptongos e hiatos, y las palabras de Matemáticas.', en: 'The stressed syllable, when a word takes an accent, diphthongs and hiatus, and maths words.' },

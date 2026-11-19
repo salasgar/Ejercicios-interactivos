@@ -137,6 +137,24 @@ export const CATALOGO = [
   { id: 77, slug: 'problemas-ecuaciones', ruta: 'problemas-ecuaciones/', unidad: 6, nombre: { es: 'Problemas con ecuaciones', en: 'Word problems' }, nEjercicios: 5, disponible: true },
   { id: 78, slug: 'errores6', ruta: 'errores6/', unidad: 6, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: true },
   { id: 79, slug: 'leelo6', ruta: 'leelo6/', unidad: 6, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
+  // Unidad 7, Proportionality and percentages (PU2, tareas 212-226; filas puestas por la 211 el 2026-11-19, con un
+  // esqueleto en cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de publicación (227-231).
+  // `unidades` (95) depende del acta de la 02 de la U7 (punto n): si manda las unidades de medida a la U8, no se publica.
+  { id: 84, slug: 'razones', ruta: 'razones/', unidad: 7, nombre: { es: 'Razones y proporciones', en: 'Ratios and proportions' }, nEjercicios: 4, disponible: false },
+  { id: 85, slug: 'tabla-proporcional', ruta: 'tabla-proporcional/', unidad: 7, nombre: { es: 'Tablas de proporcionalidad', en: 'Proportion tables' }, nEjercicios: 4, disponible: false },
+  { id: 86, slug: 'regla-de-tres', ruta: 'regla-de-tres/', unidad: 7, nombre: { es: 'Problemas de proporcionalidad directa', en: 'Direct proportion problems' }, nEjercicios: 4, disponible: false },
+  { id: 87, slug: 'inversa', ruta: 'inversa/', unidad: 7, nombre: { es: 'Proporcionalidad inversa', en: 'Inverse proportion' }, nEjercicios: 4, disponible: false },
+  { id: 88, slug: 'directa-o-inversa', ruta: 'directa-o-inversa/', unidad: 7, nombre: { es: '¿Directa, inversa o ninguna?', en: 'Direct, inverse or neither?' }, nEjercicios: 3, disponible: false },
+  { id: 89, slug: 'repartos', ruta: 'repartos/', unidad: 7, nombre: { es: 'Repartos proporcionales', en: 'Sharing in a ratio' }, nEjercicios: 4, disponible: false },
+  { id: 90, slug: 'tres-escrituras', ruta: 'tres-escrituras/', unidad: 7, nombre: { es: 'Porcentaje, fracción y decimal', en: 'Percentage, fraction, decimal' }, nEjercicios: 4, disponible: false },
+  { id: 91, slug: 'tanto-por-ciento', ruta: 'tanto-por-ciento/', unidad: 7, nombre: { es: 'El tanto por ciento de una cantidad', en: 'Percentage of an amount' }, nEjercicios: 4, disponible: false },
+  { id: 92, slug: 'que-porcentaje', ruta: 'que-porcentaje/', unidad: 7, nombre: { es: '¿Qué porcentaje? ¿De cuánto?', en: 'What percentage? Of how much?' }, nEjercicios: 4, disponible: false },
+  { id: 93, slug: 'descuentos', ruta: 'descuentos/', unidad: 7, nombre: { es: 'Descuentos y aumentos', en: 'Discounts and increases' }, nEjercicios: 5, disponible: false },
+  { id: 94, slug: 'escalas', ruta: 'escalas/', unidad: 7, nombre: { es: 'Escalas', en: 'Scales' }, nEjercicios: 4, disponible: false },
+  { id: 95, slug: 'unidades', ruta: 'unidades/', unidad: 7, nombre: { es: 'Cambia de unidad', en: 'Converting units' }, nEjercicios: 5, disponible: false },
+  { id: 96, slug: 'problemas-proporcion', ruta: 'problemas-proporcion/', unidad: 7, nombre: { es: 'Problemas de toda la unidad', en: 'Mixed problems' }, nEjercicios: 5, disponible: false },
+  { id: 97, slug: 'errores7', ruta: 'errores7/', unidad: 7, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
+  { id: 98, slug: 'leelo7', ruta: 'leelo7/', unidad: 7, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];
@@ -147,7 +165,7 @@ export const ID_PLANTILLA = 31;
 /**
  * Las unidades del curso. `desde` ('AAAA-MM-DD') es el día en que la portada
  * pasa a tenerla por unidad actual. Las fechas de la 1 y la 2 son de relleno
- * (importan las de las unidades 3 a 6: el 16-11, el 14-12, el 18-1 y el 1-2 la portada cambia sola). Una
+ * (importan las de las unidades 3 a 7: el 16-11, el 14-12, el 18-1, el 1-2 y el 1-3 la portada cambia sola). Una
  * unidad sin prácticas ni tareas publicadas no sale.
  */
 export const UNIDADES = [
@@ -157,6 +175,7 @@ export const UNIDADES = [
   { n: 4, desde: '2026-12-14', titulo: { es: 'Fracciones', en: 'Fractions' } },
   { n: 5, desde: '2027-01-18', titulo: { es: 'Números decimales', en: 'Decimals' } },
   { n: 6, desde: '2027-02-01', titulo: { es: 'Álgebra', en: 'Algebra' } },
+  { n: 7, desde: '2027-03-01', titulo: { es: 'Proporcionalidad y porcentajes', en: 'Proportionality and percentages' } },
 ];
 
 /**

@@ -85,7 +85,7 @@ test('tareas: erroresTareas avisa de lo que está mal', () => {
   assert.match(mal({ id: 0 }), /id/);
   assert.match(mal({ titulo: 'solo' }), /titulo/);
   assert.match(mal({ desde: '19/10/2026' }), /desde/);
-  assert.match(mal({ unidad: 7 }), /unidad/);
+  assert.match(mal({ unidad: 9 }), /unidad/);
   assert.match(mal({ unidad: undefined }), /unidad/);
   assert.match(mal({ hasta: '22/10/2026' }), /hasta/);
   assert.match(mal({ desde: '2026-10-20', hasta: '2026-10-19' }), /hasta.*anterior/);
@@ -206,7 +206,7 @@ test('estadoPlazo: repaso, obligatoria y obligatoria para ti, con los días de r
 });
 
 test('unidades: la actual es la última cuyo desde ha llegado, y todas las filas del catálogo tienen la suya', () => {
-  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3, 4, 5, 6]);
+  assert.deepEqual(UNIDADES.map(u => u.n), [1, 2, 3, 4, 5, 6, 7]);
   assert.equal(unidadActual('2026-10-15'), 2);
   assert.equal(unidadActual('2026-11-15'), 2);
   assert.equal(unidadActual('2026-11-16'), 3);
@@ -215,6 +215,8 @@ test('unidades: la actual es la última cuyo desde ha llegado, y todas las filas
   assert.equal(unidadActual('2027-01-18'), 5);
   assert.equal(unidadActual('2027-01-31'), 5);
   assert.equal(unidadActual('2027-02-01'), 6);
+  assert.equal(unidadActual('2027-02-28'), 6);
+  assert.equal(unidadActual('2027-03-01'), 7);
   assert.equal(unidadActual('2026-09-01'), 1, 'antes del curso: la primera');
   for (const u of UNIDADES) assert.ok(u.titulo.es && u.titulo.en && /^\d{4}-\d{2}-\d{2}$/.test(u.desde));
   assert.deepEqual(CATALOGO.filter(p => p.id <= 15).map(p => p.unidad), Array(16).fill(2));
@@ -645,7 +647,7 @@ test('portada: tareas de la unidad actual, de la más nueva a la más antigua; l
 
 test('portada: los bloques de la unidad 2 se conservan y la unidad 1 va en una lista sin subtítulos', async () => {
   const { bloquesPublicados, BLOQUES } = await import('../practicas/portada.js');
-  assert.ok(BLOQUES.every(b => b.unidad >= 2 && b.unidad <= 6), 'ya no hay bloque «Repaso de la unidad 1»');
+  assert.ok(BLOQUES.every(b => b.unidad >= 2 && b.unidad <= 7), 'ya no hay bloque «Repaso de la unidad 1»');
   assert.deepEqual(BLOQUES.filter(b => b.unidad === 2).map(b => b.slugs), [
     ['semaforo', 'rectangulos', 'recta'], ['criba', 'arbol', 'divisiones', 'fabrica', 'factorizaciones'],
     ['venn', 'imposibles', 'por-primos'], ['clasificador', 'reloj', 'baldosas', 'errores'], ['leelo', 'divisores'],
@@ -785,6 +787,36 @@ test('portada: los cinco bloques de la unidad 6 (tarea 144), con las once práct
   const bloques = bloquesPublicados(publicadas, 6);
   assert.equal(bloques.length, 5);
   assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['resuelve', 'parentesis-algebra', 'denominadores']);
+});
+
+test('portada: los seis bloques de la unidad 7 (tarea 211), con las quince prácticas, ninguna publicada todavía', async () => {
+  const { bloquesPublicados, BLOQUES, DESCRIPCION } = await import('../practicas/portada.js');
+  const u7 = BLOQUES.filter(b => b.unidad === 7);
+  assert.deepEqual(u7.map(b => b.titulo.es), [
+    'Semana 1 · Razones, proporciones y proporcionalidad directa', 'Semana 2 · Proporcionalidad inversa y repartos', 'Semana 3 · Porcentajes',
+    'Semana 4 · Escalas y unidades de medida', 'Semana 5 · Problemas de toda la unidad', 'Para toda la unidad · Errores y vocabulario',
+  ]);
+  assert.deepEqual(u7.map(b => b.slugs), [
+    ['razones', 'tabla-proporcional', 'regla-de-tres'], ['inversa', 'directa-o-inversa', 'repartos'],
+    ['tres-escrituras', 'tanto-por-ciento', 'que-porcentaje', 'descuentos'], ['escalas', 'unidades'], ['problemas-proporcion'], ['errores7', 'leelo7'],
+  ]);
+  const quince = CATALOGO.filter(p => p.unidad === 7);
+  assert.equal(quince.length, 15);
+  assert.deepEqual(quince.map(p => p.slug).sort(), u7.flatMap(b => b.slugs).sort());
+  for (const p of quince) {
+    const d = DESCRIPCION[p.slug];
+    assert.ok(d?.es && d?.en, p.slug);
+    assert.ok(!/-\d|×|\d\/\d|%|\^|²|\d\s*:\s*\d/.test(d.es + d.en), `${p.slug}: el menos es −, el producto ·, ninguna fracción con barra, porcentaje, potencia ni razón con dos puntos`);
+  }
+  // Cada una se publica en su tarea de publicación (227-231): la portada enseña justo las publicadas.
+  assert.deepEqual(bloquesPublicados(CATALOGO, 7).flatMap(b => b.practicas.map(p => p.slug)).sort(),
+    CATALOGO.filter(p => p.unidad === 7 && p.disponible).map(p => p.slug).sort());
+  const sinPublicar = CATALOGO.map(p => (p.unidad === 7 ? { ...p, disponible: false } : p));
+  assert.deepEqual(bloquesPublicados(sinPublicar, 7), [], 'sin publicadas, la unidad 7 no enseña ninguna');
+  const publicadas = CATALOGO.map(p => (p.unidad === 7 ? { ...p, disponible: true } : p));
+  const bloques = bloquesPublicados(publicadas, 7);
+  assert.equal(bloques.length, 6);
+  assert.deepEqual(bloques[2].practicas.map(p => p.slug), ['tres-escrituras', 'tanto-por-ciento', 'que-porcentaje', 'descuentos']);
 });
 
 test('portada: se recuerda qué unidades plegables ha abierto el alumno', () => conAlmacen(() => {
