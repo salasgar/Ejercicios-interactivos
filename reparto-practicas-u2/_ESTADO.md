@@ -12,6 +12,10 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-19T18:44Z por s-20261119T184002-bcbd58ef al cerrar la 210 (LISTA como relevo de s-20261119T131255-2fa96690; código en 6c618b7; pasada 2 incremental: 159 documentos frente a 1 308; npm test 2504/2504): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
+Actualizado 2026-11-19T18:46Z por s-20261119T184017-5bf93867 al reclamar la 211 (base de la U7; su precondición se cumple: tarea 01 del reparto de la U7 LISTA, s-20261119T132624-ca28a38b, e `inventario-unidad7.tsv` existe, F0 sin firmar; la 210 la ha relevado s-20261119T184002-bcbd58ef): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
+
 Actualizado 2026-11-19T13:24Z por s-20261118T221619-b66ec280 alta de las tareas 211-233 (la unidad 7 en la app; todas BLOQUEADAS hasta que avance el reparto de la U7): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-18T22:29Z por s-20261118T222927-cc5dc2ff al dar de alta la 210 (lecturas de Firestore, ALTO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -29,12 +33,6 @@ Actualizado 2026-11-18T22:03Z por s-20261118T214819-b3d2ac7b durante la 159 (ter
 Actualizado 2026-11-18T21:49Z por s-20261118T214819-b3d2ac7b al reclamar la 159 (tercera pasada; 153 y 154 EN CURSO desde las 21:47Z en otras dos sesiones del árbol): **retoque de las filas 153, 154 y 159**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-18T21:53Z por s-20261118T214744-36afccaa al cerrar la 154 (LISTA, commit b837244: factor negativo entre paréntesis en las dos pistas; npm test 2488/2488; la publica la 159): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real: unos 10 min (estimada 45).
-
-Actualizado 2026-11-18T16:17Z por s-20261118T140330-da0f6f36 al cerrar la 159 (PARCIAL, segunda pasada, sin commit de código: 153 y 154 reabiertas otra vez, MEDIO, ~10 min cada una; nadie las ha cogido en dos horas porque el lanzador llegó a su tope de hoy a las 14:12Z): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real: unos 15 min de trabajo y 2 h de espera (estimada 1 h).
-
-Actualizado 2026-11-18T14:22Z por s-20261118T140330-da0f6f36 durante la 159 (segunda pasada): reabiertas 153 (lista de reserva completa; guion en el feedback) y 154 (paréntesis del factor negativo); la 159 espera: **retoque de las filas 153, 154 y 159**, no regeneración completa (otras sesiones en el árbol).
-
-Actualizado 2026-11-18T14:05Z por s-20261118T140330-da0f6f36 al reclamar la 159 (segunda pasada: 153 y 154 cerradas LISTAS en 07442a5 y 1aede25; al cerrarla encadena la 160, semana 4): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -343,8 +341,8 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 207 | Revisión a mano (con clics) y publicación del reto «Tabla de propiedades» (`tabla-propiedades`, 83), con la propuesta de en qué tarea de la U3 entra como reto | tareas/tarea-207-publicar-tabla-propiedades.md | **205 y 206 LISTAS** · ni la 203 ni la 204 en curso · plazo vie 27-11 | 1 h 30 min | ALTO | 203 o 204 (si su precondición se cumple) | reparto-practicas-u2/salidas/207-publicar-tabla-propiedades/ | LISTA | terminada 23:32Z (17-nov) · commit c871c11 |
 | 208 | «Árbol de factores» (`arbol`, id 5), ejercicio 2 «¿Está terminada?»: que se vea que, tras el «No», falta tocar el factor | tareas/tarea-208-arbol-paso-dos-visible.md | ninguna (nadie con `practicas/arbol/` sin comitear) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/208-arbol-paso-dos/ | LISTA | terminada 17:46Z (16-nov) · commit 02dc545 |
 | 209 | El informe de actividad (y la pestaña «Hoy» del panel) también ve los ejercicios de reto | tareas/tarea-209-informe-con-reto.md | 205 LISTA (lo está: df972d0) · ningún reclamo vivo sobre los «Ficheros que toca» · `git status --short herramientas/informe-actividad.mjs practicas/profesor-ho… | 1 h | MEDIO | — | reparto-practicas-u2/salidas/209-informe-con-reto/ | LISTA | terminada 22:30Z (17-nov) · commit 32cf2ea |
-| 210 | Menos lecturas de Firestore en las herramientas del profesor, y la app de los alumnos protegida ante una cuota agotada | tareas/tarea-210-lecturas-firestore.md | no antes del 2026-11-19T08:30Z · 209 LISTA (lo está: 32cf2ea; la 210 toca el mismo `informe-actividad.mjs`) · ningún reclamo vivo sobre los «Ficheros que toca» (a 18-11 22:30Z no había ninguno… | 2 h 30 min | ALTO (toca el código de la app de los alumnos: un error aquí pierde progreso de alumnos y es caro de detectar) | — | reparto-practicas-u2/salidas/210-lecturas-firestore/ | EN CURSO | s-20261119T131255-2fa96690 · caduca 18:12:55Z (19-nov) |
-| 211 | Base de la unidad 7: catálogo, portada, destrezas y `_comun/proporcion.js` (razones, porcentajes y cantidades con unidad con fracciones exactas, lo que teclea el alumno, errores típicos, contextos con su cota) | tareas/tarea-211-base-unidad7.md | tarea 01 del reparto de la unidad 7 LISTA (existe la propuesta de inventario `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ES… | 1 h 30 min | ALTO | — | reparto-practicas-u2/salidas/211-base-unidad7/ | BLOQUEADA | tarea 01 del reparto de la U7 LISTA (propuesta de inventario); mejor con F0 firmada |
+| 210 | Menos lecturas de Firestore en las herramientas del profesor, y la app de los alumnos protegida ante una cuota agotada | tareas/tarea-210-lecturas-firestore.md | no antes del 2026-11-19T08:30Z · 209 LISTA (lo está: 32cf2ea; la 210 toca el mismo `informe-actividad.mjs`) · ningún reclamo vivo sobre los «Ficheros que toca» (a 18-11 22:30Z no había ninguno… | 2 h 30 min | ALTO (toca el código de la app de los alumnos: un error aquí pierde progreso de alumnos y es caro de detectar) | — | reparto-practicas-u2/salidas/210-lecturas-firestore/ | LISTA | terminada 18:43Z (19-nov) · commit 6c618b7 |
+| 211 | Base de la unidad 7: catálogo, portada, destrezas y `_comun/proporcion.js` (razones, porcentajes y cantidades con unidad con fracciones exactas, lo que teclea el alumno, errores típicos, contextos con su cota) | tareas/tarea-211-base-unidad7.md | tarea 01 del reparto de la unidad 7 LISTA (existe la propuesta de inventario `/Users/salasgar/Library/Mobile Documents/com~apple~CloudDocs/ex Dropbox/mat/1º ES… | 1 h 30 min | ALTO | — | reparto-practicas-u2/salidas/211-base-unidad7/ | EN CURSO | s-20261119T184017-5bf93867 · caduca 21:40:17Z (19-nov) |
 | 212 | Práctica de la unidad 7 «Razones y proporciones» (razones) | tareas/tarea-212-razones.md | 211 LISTA · mejor con la hoja y el examen de su paquete ya LISTOS en el reparto de la U7 (paquete 1: tareas 06 y 14 de aquel reparto): si existen, excluye sus… | 1 h | MEDIO | — | reparto-practicas-u2/salidas/212-razones/ | BLOQUEADA | espera a 211 |
 | 213 | Práctica de la unidad 7 «Tablas de proporcionalidad» (tabla-proporcional) | tareas/tarea-213-tabla-proporcional.md | 211 LISTA · mejor con la hoja y el examen de su paquete ya LISTOS en el reparto de la U7 (paquete 1: tareas 06 y 14 de aquel reparto): si existen, excluye sus… | 1 h | MEDIO | — | reparto-practicas-u2/salidas/213-tabla-proporcional/ | BLOQUEADA | espera a 211 |
 | 214 | Práctica de la unidad 7 «Problemas de proporcionalidad directa» (regla-de-tres) | tareas/tarea-214-regla-de-tres.md | 211 LISTA · mejor con la hoja y el examen de su paquete ya LISTOS en el reparto de la U7 (paquete 1: tareas 06 y 14 de aquel reparto): si existen, excluye sus… | 1 h 15 min | MEDIO | — | reparto-practicas-u2/salidas/214-regla-de-tres/ | BLOQUEADA | espera a 211 |
@@ -371,7 +369,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-19 13:24Z**: BLOQUEADA 23 (211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233) · EN CURSO 1 (210) · LISTA 209.
+**Foto a 2026-11-19 18:44Z**: BLOQUEADA 22 (212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233) · EN CURSO 1 (211) · LISTA 210.
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -392,12 +390,13 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (385), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (386), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 210 · 2026-11-19 18:43 · s-20261119T184002-bcbd58ef · 6c618b7 · herramientas/{cache-lecturas,informe-actividad}.mjs, practicas/_comun/nube.js,… · unos 25 min de trabajo (13:12-13:24Z de s-2026111…
 LISTA · tarea 160 · 2026-11-18 22:24 · s-20261118T221435-7e460307 · — · salidas/160-tareas-u6-panel/ENTREGA.md (ampliada con la semana 4) y su marcador… · de 22:14:35Z a 22:24Z (unos 3 min esperando a que…
 LISTA · tarea 159 · 2026-11-18 22:13 · s-20261118T214819-b3d2ac7b · 9bd566e (errores6 publicada; docs/practicas-unida… · — · de 2026-11-18T21:48:19Z a 2026-11-18T22:13:46Z (u…
 LISTA · tarea 153 · 2026-11-18 22:09 · s-20261118T220737-035b1f6f · 6f5ac4b · — · —

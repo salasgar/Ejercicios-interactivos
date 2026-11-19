@@ -98,6 +98,9 @@ Latidos con `printf -- '- %s latido: <qué>\n' "$(date -u +%H:%M:%SZ)" >> $R/hec
 - `listaDeSiempre(51)`, `claveDocumento`, `documentosAMapa` y `ejerciciosDe` los usan los dos scripts y la 209 acaba de tocar
   `ejerciciosDe`: lee su ENTREGA antes de editar.
 - Ningún nombre de alumno en ningún fichero del repo, tampoco en los tests ni en los ejemplos de la caché (el repo es público).
+- (s-20261119T184002-bcbd58ef, 19-11) La orden del paso 3 de «Antes de empezar» **no comitea el reclamo**: `git commit -- <fichero nuevo>`
+  falla con «pathspec … did not match» porque el fichero aún no está en git. Hace falta `git add <reclamo> && git commit -m … -- <reclamo>`.
+  El reclamo sí queda escrito (y vale); solo falta el commit.
 
 ## Al terminar
 
