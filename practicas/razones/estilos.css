@@ -1,0 +1,14 @@
+/* Práctica «Razones y proporciones»: solo lo que no esté ya en ../_comun/estilos.css. */
+
+.botones-fracciones button { min-width: 72px; min-height: 80px; font-size: 1.3rem; }
+
+/* Ejercicio 2 (b): la razón en dos campos, uno sobre otro. */
+.respuesta-razon { display: flex; justify-content: center; margin: 1rem 0; }
+.respuesta-razon .campo-numero { margin: .15rem auto; }
+.respuesta-razon .frac { font-size: 1rem; }
+.respuesta-razon .frac > span { padding: .15em .25em; }
+
+/* Ejercicio 4: «x =» y su campo. */
+.respuesta-x { display: flex; align-items: center; justify-content: center; gap: .6rem; margin: 1rem 0; font-size: 1.4rem; font-weight: 700; }
+.campo-numero.respuesta--bien { border-color: var(--correcto); background: var(--correcto-claro); color: var(--correcto); }
+.campo-numero.respuesta--mal { border-color: var(--error); background: var(--error-claro); color: var(--error); }
