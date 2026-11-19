@@ -385,3 +385,7 @@ Si paras sin terminar: `$R/hechos/fallos/214--<sid>.md` con hasta dónde llegast
 Heredadas de la ficha de la U6 de la que sale esta (las de la app, los tests y el proceso; las de álgebra se han quitado). Quien ejecute la 214 añade aquí las suyas.
 
 - (U6, tarea 153, reabierta del 13-11 por los hallazgos 4 y 5 de la revisión 191) **En contextos de dinero, ninguna línea ni solución con fracción**: se descarta el caso si no son céntimos exactos, y las líneas de los errores típicos se pasan a decimales. Y un valor pedido que no es el que sale directamente de la cuenta enseña su cuenta en el feedback.
+- (214) **En zsh, `git commit -- $VARIABLE` no separa palabras**: pasa las rutas en la propia línea. Los ficheros nuevos necesitan `git add -- rutas` antes del `commit -- rutas`.
+- (214) **El contexto del coche lleva `porCada: 100`**: su `k` es L/100 km, no L/km; todo test de «k = b : a» ha de multiplicar por `ctx.porCada`. En el ej. 1 no sale (1 km no se compra).
+- (214) **Comparar textos con unidad en los tests**: `aTexto` usa espacio duro; normaliza los blancos antes de `includes`.
+- (214) **«unidad equivocada» en el ej. 4** solo es inequívoca si el valor bueno es creíble también en la unidad del otro lado (si no, es a la vez «demasiado grande»).
