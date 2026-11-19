@@ -1,0 +1,15 @@
+/* «Problemas de proporcionalidad directa»: solo lo que no está ya en ../_comun/estilos.css. */
+
+.fila-campo { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem; margin: 0 0 .9rem; }
+.fila-campo input.campo-numero { margin: 0; }
+.fila-campo__etiqueta { font-weight: 600; }
+.unidad-campo { font-weight: 600; color: var(--texto-suave); }
+
+/* Un planteamiento (ejercicio 2): dos filas y la cuenta, una debajo de otra. */
+.plan { display: flex; flex-direction: column; gap: .2rem; text-align: left; }
+.plan__fila { font-variant-numeric: tabular-nums; }
+.plan__calc { font-weight: 700; padding-top: .2rem; border-top: 1px solid var(--borde); }
+
+/* La unidad elegida (ejercicio 3) antes de comprobar. */
+.eleccion--marcada { border-color: var(--primario); background: var(--primario-claro); }
+.dado { font-size: 1.15rem; margin: .4rem 0 .8rem; }
