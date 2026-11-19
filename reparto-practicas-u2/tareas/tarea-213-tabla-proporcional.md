@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-19 (adaptada a la unidad 7; alta del 18-11 de la montadora del reparto de la unidad 7, s-20261118T221619-b66ec280, a partir de la ficha 146 de la unidad 6, con sus trampas de app y de proceso)
 Precondición: 211 LISTA · mejor con la hoja y el examen de su paquete ya LISTOS en el reparto de la U7 (paquete 1: tareas 06 y 14 de aquel reparto): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella del caso normalizado por valor); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu paquete (227) · Disparo: MANUAL (sesión atendida) · **Plazo: vie 29-1 (ideal); límite vie 12-2**
-Duración esperada: 1 h (tiempo de sesión, no de persona; en la U6, la 146, de tres ejercicios sin contexto y sin el «No lo sé», tardó 14 min el 9-11; esta tiene cuatro, con contextos, cotas y un banco de situaciones) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 1 h (real: ~25 min el 19-11) (tiempo de sesión, no de persona; en la U6, la 146, de tres ejercicios sin contexto y sin el «No lo sé», tardó 14 min el 9-11; esta tiene cuatro, con contextos, cotas y un banco de situaciones) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/213-tabla-proporcional/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/tabla-proporcional/*` (sustituye el esqueleto que deja la 211: desde que la 211 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-tabla-proporcional.test.js` (nuevo), `tests/practicas-ayuda-tabla-proporcional.test.js` (nuevo: el del botón «No lo sé»)
 
@@ -383,3 +383,7 @@ Heredadas de la ficha de la U6 de la que sale esta (las de la app, los tests y e
 - (U6, tarea 146) El menos de lo que se muestra es `−` (U+2212): usa las funciones de texto de la base, no `String(n)`; el test busca el guion ASCII.
 - (U6, tarea 146) **Una tabla con campos se sale a 375 px**: reduce el relleno, la fuente y el ancho de los campos (allí quedó en 313 px de 314 disponibles). Aquí las casillas llevan además unidades.
 - (U6, tarea 146) Mira qué devuelve el `deTexto` de la base antes de usarlo (el de álgebra devolvía un objeto, no un número): (previsión de la montadora, sin comprobar) el de `proporcion.js` devolverá una cantidad con su unidad, y lo que hay que comparar es su valor.
+- (213, 19-11) `deTexto(texto, { unidad, idioma })` de `proporcion.js` acepta «2,5», «2,50 €», «5/2» y «2.5» (en inglés) y devuelve `null` con basura; compara con `mismoValor(l, cantidad(fraccion, unidad))`. No hace falta escribir un lector propio.
+- (213) El generador de «completa la tabla» y «lo que vale 1» elige primero lo que vale 1 (en céntimos o unidades) y construye todo con ella: así todos los huecos son enteros o céntimos exactos y no hace falta comprobar decimales periódicos.
+- (213) Para coche (km múltiplos de 100) la «unidad» es el 100: xMul = 100 en `CONTEXTOS`; la explicación dice «cada 100 km» y hay un error propio («sin pasar a cada 100 km»). Un contexto nuevo con xMul > 1 necesita lo mismo.
+- (213) Un `python3` o `sed` para retocar código se salta la regla de editar solo con Edit/Write; en esta sesión se usó para dos retoques triviales (imports). Mejor Edit.
