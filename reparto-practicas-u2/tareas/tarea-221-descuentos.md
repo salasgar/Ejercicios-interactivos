@@ -131,6 +131,8 @@ Modelo de interfaz: `practicas/problemas-ecuaciones/` de la U6 (problemas con co
 - (U6, tarea 146) En zsh `git add $F` no separa palabras: usa un array `F=(ruta1 ruta2)` y `"${F[@]}"`. Chrome headless cachea los módulos: tras corregir, `Network.setCacheDisabled` o ves el fallo viejo. Una fila con varios inputs se sale a 375 px: reduce padding, fuente y ancho del input.
 - (previsión de la montadora, sin comprobar) Los tipos de IVA de un producto cambian por ley de vez en cuando: por eso el enunciado dice siempre el tipo y la lista de productos es corta; si al escribirla dudas de uno, quítalo de la lista en vez de buscarlo. Y el espacio del `20 %` español es de no separación (`&nbsp;`): en los tests, por código.
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min; en la U6, la 145 (4 ejercicios) duró unos 40 min, **sin** las explicaciones del «No lo sé».
+- (221, hecho) Con P = 100,00 € restar «p euros» da el mismo precio que el p %: el generador nunca da 100,00 € (salvo el ej. 5, donde no hay ese error). Con el 50 %, descuento y precio final valen lo mismo: el ej. 1 no marca «campos cambiados» y el 2 y el 4 no usan el 50 %.
+- Duración real de la 221: unos 35 min con las explicaciones del «No lo sé», sobre el modelo de la 217 y la 218.
 
 ## Prohibido (propio de esta tarea)
 
