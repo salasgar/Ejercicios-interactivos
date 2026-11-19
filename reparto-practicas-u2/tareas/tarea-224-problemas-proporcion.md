@@ -132,6 +132,8 @@ Modelo de interfaz: `practicas/problemas-ecuaciones/` de la U6 (el más cercano:
 - (U6, tarea 153, reabierta del 18-11) Concordancias que solo se ven leyendo muchos ítems (el género de un objeto del banco, «Ese número es…» con una cantidad que no era un número): cada cosa del banco declara su género y su plural, y las frases del feedback se leen con todas.
 - (U6, tarea 153) Una clase CSS propia chocó con `.pasos` de la base: mira `practicas/_comun/estilos.css` antes de poner nombre a las tuyas. Y no se pudo probar a 375 px porque la ventana no cambió de ancho: si te pasa, dilo en la ENTREGA; lo mira la revisión con clics de la 231.
 - Duración real de una práctica de 4 ejercicios en la U4 sobre la base ya hecha: 11-30 min; en la U6, la primera pasada de la 153 duró 14 min, pero se reabrió cinco veces (acta, dinero, reserva, concordancias).
+- (U7, tarea 224) Sin el acta de la 02, el catálogo decía 5 ejercicios y la práctica declaraba 3: `practicas-comun.test.js` y el test de «declaran lo que dice el catálogo» se ponen rojos para todas las sesiones. Si dejas ejercicios sin escribir, ajusta `nEjercicios` (y el total de la unidad en `practicas-comun.test.js`) en el mismo commit y dilo en la terminada, aunque la ficha prohíba tocar `catalogo.js`.
+- (U7, tarea 224) Con casos que el generador descarta con `continue` (ganador, empate), decide el tipo de caso **antes** del bucle de reintentos: si no, lo que sobrevive más a las restricciones sale sobrerrepresentado (los empates salían al 27 % en vez de al 15 %).
 
 ## Prohibido (propio de esta tarea)
 
