@@ -20,8 +20,8 @@ export const TX = {
   },
   introduccion: {
     donde: {
-      es: '<p>Cada ejercicio te enseña el cálculo de un alumno, con las líneas numeradas. Cada línea tiene que valer lo mismo que la anterior.</p><p><strong>Ejemplo:</strong><br>1. 6 + 4 · 2<br>2. = 10 · 2<br>3. = 20</p><p>El error está en la <strong>línea 2</strong>: el producto va antes que la suma. Lo bien hecho es 6 + 8 = 14.</p><p>Toca la línea donde está el error.</p>',
-      en: '<p>Each exercise shows a student\'s calculation, with numbered lines. Each line has to be worth the same as the line before.</p><p><strong>Example:</strong><br>1. 6 + 4 · 2<br>2. = 10 · 2<br>3. = 20</p><p>The mistake is in <strong>line 2</strong>: multiplication comes before addition. The right way is 6 + 8 = 14.</p><p>Tap the line where the mistake is.</p>',
+      es: '<p>Cada ejercicio te enseña el cálculo de un alumno, línea a línea. Cada línea tiene que valer lo mismo que la anterior.</p><p><strong>Ejemplo:</strong><br>6 + 4 · 2<br>= 10 · 2<br>= 20</p><p>El error está en la <strong>segunda línea</strong>: el producto va antes que la suma. Lo bien hecho es 6 + 8 = 14.</p><p>Toca la línea donde está el error.</p>',
+      en: '<p>Each exercise shows a student\'s calculation, line by line. Each line has to be worth the same as the line before.</p><p><strong>Example:</strong><br>6 + 4 · 2<br>= 10 · 2<br>= 20</p><p>The mistake is in the <strong>second line</strong>: multiplication comes before addition. The right way is 6 + 8 = 14.</p><p>Tap the line where the mistake is.</p>',
     },
     cual: {
       es: '<p>Ahora sabes dónde está el error; hay que ponerle <strong>nombre</strong>.</p><p><strong>Ejemplo:</strong> 5 − 2 = 3 y 7 − 9 = 2. En 7 − 9 el alumno ha restado bien (9 − 7 = 2), pero ha olvidado el signo menos del resultado: es −2.</p><p>Elige entre tres nombres: solo uno describe lo que ha hecho el alumno.</p>',
@@ -35,7 +35,7 @@ export const TX = {
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
-  la_linea_es: { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` },
+  la_linea_es: { es: 'El error está en esta línea:', en: 'The mistake is in this line:' },
   correcta: { es: 'Bien hecho sería:', en: 'The right way is:' },
   se_llama: { es: 'Se llama:', en: 'It is called:' },
 };
@@ -56,8 +56,7 @@ export const linea = (expr, i) => `${i ? '= ' : ''}${htmlEntero(expr)}`;
 export function explicacion(item, { tt }) {
   if (item.falsa === null) return texto(tt(VALIDA_POR_ID[item.plantilla].porque(item.params)));
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  const n = item.falsa + 1;
-  return `${tt(TX.la_linea_es)(n)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
+  return `${tt(TX.la_linea_es)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
     + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
     + `<br>${texto(tt(plantilla.porque(item.params)))}`
     + `<br>${tt(TX.correcta)} <span class="linea-mala">= ${htmlEntero(plantilla.corregida(item.params))}</span>`;
@@ -80,13 +79,17 @@ const fin = (tt, respuesta) => `<br>${tt(FIN)} <strong>${respuesta}</strong>.`;
 function cuerpo(item, tt) {
   if (item.falsa === null) return texto(tt(VALIDA_POR_ID[item.plantilla].porque(item.params)));
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  return `${tt(TX.la_linea_es)(item.falsa + 1)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
+  return `${tt(TX.la_linea_es)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
     + `<br>${texto(tt(plantilla.porque(item.params)))}`
     + `<br>${tt(TX.correcta)} <span class="linea-mala">= ${htmlEntero(plantilla.corregida(item.params))}</span>`;
 }
 
+/** «La segunda línea»: las líneas no llevan número (parecía uno más de la cuenta), así que se cuentan con ordinales. */
+const ORDINAL = { es: ['primera', 'segunda', 'tercera', 'cuarta', 'quinta', 'sexta'], en: ['first', 'second', 'third', 'fourth', 'fifth', 'sixth'] };
+export const lineaN = (i, idioma) => idioma === 'es' ? `la ${ORDINAL.es[i]} línea` : `the ${ORDINAL.en[i]} line`;
+
 export const explicaDonde = (item, { tt, idioma }) =>
-  `${tt(REGLA.donde)}<br>${cuerpo(item, tt)}${fin(tt, idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`)}`;
+  `${tt(REGLA.donde)}<br>${cuerpo(item, tt)}${fin(tt, lineaN(item.solucion, idioma))}`;
 
 /** La opción entre comillas: «…» en español y “…” en inglés. */
 const cita = (tt, texto) => tt({ es: `«${texto}»`, en: `“${texto}”` });

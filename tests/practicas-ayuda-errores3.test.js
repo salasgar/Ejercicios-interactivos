@@ -44,7 +44,7 @@ test('ej. 1: acaba con la línea falsa y enseña cómo queda bien', () => {
   for (const item of items(L.generarDonde, 1)) {
     assert.notEqual(item.falsa, null);
     for (const idioma of IDIOMAS) {
-      const esperado = idioma === 'es' ? `la línea ${item.falsa + 1}` : `line ${item.falsa + 1}`;
+      const esperado = X.lineaN(item.falsa, idioma);
       const html = X.explicaDonde(item, ctx(idioma));
       comprobar(html, idioma, esperado, `ej1 ${idioma}`);
       comprobarCuerpo(item, html, idioma, `ej1 ${idioma}`);

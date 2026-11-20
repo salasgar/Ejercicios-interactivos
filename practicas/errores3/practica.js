@@ -9,7 +9,7 @@ import { generarDonde, generarCual, generarSiNo, claveItem, VALIDA_POR_ID } from
 
 function procedimiento(item) {
   const filas = item.lineas.map((l, i) =>
-    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${linea(l, i)}</span></li>`);
+    `<li class="procedimiento__linea"><span>${linea(l, i)}</span></li>`);
   return `<ol class="procedimiento">${filas.join('')}</ol>`;
 }
 
@@ -26,7 +26,7 @@ function montarDonde(contenedor, item, api) {
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.donde)}</p>`;
   const botones = elecciones(contenedor, {
     clase: 'procedimiento procedimiento--botones',
-    opciones: item.lineas.map((l, i) => ({ valor: i, html: `<span class="procedimiento__n">${i + 1}</span>${linea(l, i)}` })),
+    opciones: item.lineas.map((l, i) => ({ valor: i, html: linea(l, i) })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);

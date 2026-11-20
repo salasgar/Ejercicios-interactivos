@@ -1,4 +1,5 @@
-/* Práctica «Caza el error» (unidad 3): el cálculo del alumno, con líneas numeradas. */
+/* Práctica «Caza el error» (unidad 3): el cálculo del alumno, una línea por recuadro, sin numerar
+   (el número parecía uno más de la cuenta). */
 .procedimiento {
   list-style: none; margin: 0 0 1rem; padding: 0; text-align: left;
   display: grid; gap: .45rem;
@@ -9,10 +10,8 @@
   border-radius: 10px; padding: .55rem .8rem; font-size: 1.15rem; line-height: 1.45;
   overflow-wrap: anywhere; font-variant-numeric: tabular-nums;
 }
-.procedimiento__n { font-weight: 700; flex: none; opacity: .7; }
 .procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
 .procedimiento--botones .eleccion { text-align: left; font-size: 1.15rem; line-height: 1.45; min-height: 52px; }
-.procedimiento--botones .eleccion .procedimiento__n { margin-right: .5rem; }
 /* La línea mala es una frase entera: se parte (`.cuenta` no lo hace y ensanchaba la página en 375 px). */
 .linea-mala { font-weight: 700; overflow-wrap: anywhere; }
 .feedback { overflow-wrap: anywhere; }
