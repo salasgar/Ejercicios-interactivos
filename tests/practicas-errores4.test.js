@@ -91,7 +91,7 @@ test('ejercicio 2: tres líneas, exactamente una falsa, y es la marcada', () => 
     const falsas = item.lineas.map((l, i) => (i > 0 && !val(l).equals(val(item.lineas[i - 1])) ? i : -1)).filter(i => i >= 0);
     assert.deepEqual(falsas, [item.falsa], item.lineas.join(' | '));
     assert.equal(item.solucion, item.falsa);
-    assert.deepEqual(item.opciones, [0, 1, 2]);
+    assert.deepEqual(item.opciones, [1, 2]);   // el enunciado (línea 0) no se puede pulsar (JL, 22-11);
     // Las líneas anteriores a la mala son verdaderas respecto a L0.
     assert.ok(val(item.lineas[0]).equals(val(item.lineas[item.falsa - 1])));
     posiciones.add(item.falsa);

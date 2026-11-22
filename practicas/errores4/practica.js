@@ -4,7 +4,8 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
-import { TX, explicaBienMal, explicaLinea, explicaArregla } from './textos.js';
+import { TX, explicaBienMal, explicaLinea, explicaArregla, regla } from './textos.js';
+import { lista, lineasPulsables, errorEnLinea, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 import { campoFraccion } from './campo.js';
@@ -15,17 +16,18 @@ import {
 
 const REL = { '<': '&lt;', '>': '&gt;', '=': '=' };
 const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
+/** El nombre del error como frase («Ha dividido solo el numerador.»), sin «Se llama:» delante (JL, 22-11). */
+const frase = (id, tt) => `${nombreError(id, tt)}.`;
+/** La regla de la operación, en negrita. */
+const reglaRota = (item, tt) => reglaEnNegrita(tt(regla(item.plantilla)));
 /** La igualdad (o la comparación) en línea: `izq rel der`. */
 const cuenta = (izq, rel, der) => `<span class="cuenta-frac">${ex(izq)} ${REL[rel]} ${ex(der)}</span>`;
 const esComparacion = item => Boolean(COMPARACION_POR_ID[item.plantilla]);
 
 /** Las tres líneas del cálculo; la primera tal cual y las demás con «= » delante. */
 const linea = (expr, i) => `${i ? '= ' : ''}${ex(expr)}`;
-function procedimiento(item, clase = 'procedimiento') {
-  const filas = item.lineas.map((l, i) =>
-    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${linea(l, i)}</span></li>`);
-  return `<ol class="${clase}">${filas.join('')}</ol>`;
-}
+/** El cálculo sin números de línea (se confundían con los de la cuenta); la primera línea es el enunciado. */
+const procedimiento = item => lista(item.lineas.map(linea));
 
 /** Por qué está mal, con los números del ítem (la explicación de la plantilla o la de la comparación). */
 const porque = item => (esComparacion(item) ? porqueComparacion(item.plantilla, item.params) : PLANTILLA_POR_ID[item.plantilla].porque(item.params));
@@ -35,8 +37,8 @@ function explicacionBienMal(item, { tt }) {
   if (item.verdadera) return `${tt(TX.es_verdadera)} ${cuenta(item.izq, item.rel, item.der)}`;
   const bien = esComparacion(item)
     ? `${tt(TX.verdadera_cmp)} ${cuenta(item.izq, relacionBuena(item.params), item.der)}`
-    : `${tt(TX.bien_es)} ${cuenta(item.izq, '=', aTexto(PLANTILLA_POR_ID[item.plantilla].bien(item.params)))}`;
-  return `${tt(TX.es_falsa)} ${cuenta(item.izq, item.rel, item.der)}<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}<br>${tt(porque(item))}<br>${bien}`;
+    : `${tt(LO_CORRECTO)} ${cuenta(item.izq, '=', aTexto(PLANTILLA_POR_ID[item.plantilla].bien(item.params)))}`;
+  return `${tt(TX.es_falsa)} ${cuenta(item.izq, item.rel, item.der)}<br>${frase(item.error, tt)}${reglaRota(item, tt)}${tt(porque(item))}<br>${bien}`;
 }
 
 const enunciadoBienMal = (item, { tt }) =>
@@ -81,13 +83,11 @@ function montarBienMal(contenedor, item, api) {
 
 // ─── Ejercicio 2 ───────────────────────────────────────────────────────────────
 
-function explicacionLinea(item, { tt }) {
+function explicacionLinea(item, { tt, idioma }) {
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  const n = item.falsa + 1;
-  return `${tt(TX.la_linea_es)(n)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
-    + `<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}`
-    + `<br>${tt(plantilla.porque(item.params))}`
-    + `<br>${tt(TX.bien_es)} <span class="linea-mala">${linea(plantilla.corregida(item.params), item.falsa)}</span>`;
+  return `${errorEnLinea(item.falsa, idioma)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
+    + `<br>${frase(item.error, tt)}${reglaRota(item, tt)}${tt(plantilla.porque(item.params))}`
+    + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">${linea(plantilla.corregida(item.params), item.falsa)}</span>`;
 }
 
 const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>${procedimiento(item)}`;
@@ -95,9 +95,9 @@ const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruc
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
-  const botones = elecciones(contenedor, {
-    clase: 'procedimiento procedimiento--botones',
-    opciones: item.lineas.map((l, i) => ({ valor: i, html: `<span class="procedimiento__n">${i + 1}</span>${linea(l, i)}` })),
+  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
+  const botones = lineasPulsables(contenedor, {
+    lineasHtml: item.lineas.map(linea),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);
@@ -117,8 +117,8 @@ function explicacionArregla(item, resultado, escrito, { tt }) {
   const tuyo = escrito ? `${tt(TX.tu_resultado)} ${ex(aTexto(escrito))}. ` : '';
   const cabecera = resultado.error === 'sin-simplificar'
     ? `${tuyo}${tt(TX.es_irreducible)} ${cuenta(item.izq, '=', bien)}`
-    : `${tuyo}${resultado.error === 'repite-el-error' ? `${tt(TX.repite)} ` : ''}${tt(TX.bien_es)} ${cuenta(item.izq, '=', bien)}`;
-  return `${cabecera}<br>${tt(TX.se_llama)} ${nombreError(item.error, tt)}<br>${tt(plantilla.porque(item.params))}`;
+    : `${tuyo}${resultado.error === 'repite-el-error' ? `${tt(TX.repite)} ` : ''}${tt(LO_CORRECTO)} ${cuenta(item.izq, '=', bien)}`;
+  return `${cabecera}<br>${frase(item.error, tt)}${reglaRota(item, tt)}${tt(plantilla.porque(item.params))}`;
 }
 
 const enunciadoArregla = (item, { tt }) =>

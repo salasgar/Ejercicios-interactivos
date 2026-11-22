@@ -5,7 +5,7 @@
 .igualdad--campo { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .4rem .6rem; }
 .instruccion--siguiente { margin-top: 1.1rem; }
 
-/* El cálculo del compañero, con las líneas numeradas. */
+/* El cálculo del compañero, sin números de línea. */
 .procedimiento {
   list-style: none; margin: 0 0 1rem; padding: 0; text-align: left;
   display: grid; gap: .45rem;
@@ -16,11 +16,9 @@
   border-radius: 10px; padding: .55rem .8rem; font-size: 1.15rem; line-height: 1.45;
   overflow-wrap: anywhere; font-variant-numeric: tabular-nums;
 }
-.procedimiento__n { font-weight: 700; flex: none; opacity: .7; }
 .procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
 .procedimiento--botones .eleccion { text-align: left; font-size: 1.15rem; line-height: 1.45; min-height: 60px; }
-.procedimiento--botones .eleccion .procedimiento__n { margin-right: .5rem; }
-.linea-mala { font-weight: 700; overflow-wrap: anywhere; }
+.procedimiento--botones .eleccion .linea-mala { font-weight: 700; overflow-wrap: anywhere; }
 .feedback { overflow-wrap: anywhere; }
 .si-no { margin-top: .2rem; }
 .nombres { grid-template-columns: 1fr; }

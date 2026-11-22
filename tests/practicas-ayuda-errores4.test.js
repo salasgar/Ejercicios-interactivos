@@ -6,6 +6,7 @@
 // tras los dos puntos) y sin el consejo vago «el método bueno».
 
 import test from 'node:test';
+import { lineaN } from '../practicas/_comun/procedimiento.js';
 import assert from 'node:assert/strict';
 import { T } from '../practicas/_comun/textos.js';
 import { crearRng } from '../practicas/_comun/rng.js';
@@ -75,7 +76,8 @@ test('errores4, ejercicio 2: la línea mala al final, con la línea bien hecha',
     const html = X.explicaLinea(item, textosDe(idioma));
     sano(html, `linea ${idioma}`);
     const texto = plano(html);
-    termina(texto, idioma === 'es' ? `La respuesta es la línea ${item.falsa + 1}.` : `The answer is line ${item.falsa + 1}.`);
+    termina(texto, `${idioma === 'es' ? 'La respuesta es' : 'The answer is'} ${lineaN(item.falsa, idioma)}.`);
+    assert.doesNotMatch(texto, /línea \d|line \d/, 'sin números de línea (JL, 22-11)');
     const corregida = L.PLANTILLA_POR_ID[item.plantilla].corregida(item.params);
     assert.ok(html.includes(`= ${L.ex(corregida)}`), texto);
     // La línea corregida vale lo mismo que la primera.

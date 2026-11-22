@@ -526,7 +526,7 @@ export function generarLinea(rng) {
   const p = rng.elegir(PLANTILLAS);
   const params = conParams(p, rng);
   const { lineas, falsa } = p.mala(params);
-  return { tipo: 'linea', plantilla: p.id, params, lineas, falsa, error: p.error, opciones: lineas.map((_, i) => i), solucion: falsa };
+  return { tipo: 'linea', plantilla: p.id, params, lineas, falsa, error: p.error, opciones: lineas.slice(1).map((_, i) => i + 1), solucion: falsa };
 }
 
 /** Ejercicio 3: arréglalo. La igualdad falsa y el alumno escribe el resultado bueno. */

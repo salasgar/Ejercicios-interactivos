@@ -5,6 +5,7 @@
 import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
 import { mcd, mcm } from '../_comun/aritmetica.js';
 import { ex, PLANTILLA_POR_ID, COMPARACION_POR_ID, GRUPO_DE, relacionBuena } from './logica.js';
+import { lineaN } from '../_comun/procedimiento.js';
 
 // ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────
 // La tarjeta va así: la regla de esa operación delante; la cuenta bien hecha, paso a paso, con los
@@ -17,8 +18,8 @@ const lineaAyuda = (expr, i) => `${i ? '= ' : ''}${ex(expr)}`;
 const cuenta = html => `<span class="cuenta">${html}</span>`;
 const unir = exprs => cuenta(exprs.map(ex).join(' = '));
 
-/** La regla de la operación de una plantilla, en una frase. */
-function regla(id) {
+/** La regla de la operación de una plantilla, en una frase (también va en negrita en el feedback). */
+export function regla(id) {
   if (COMPARACION_POR_ID[id]) return { es: 'Para comparar dos fracciones, se ponen con el mismo denominador y se comparan los numeradores.', en: 'To compare two fractions, write them with the same denominator and compare the numerators.' };
   if (id === 'signo-perdido' || GRUPO_DE[id] === 'suma') return { es: 'Para sumar o restar fracciones, se ponen con el mismo denominador (el m.c.m.) y se suman o restan solo los numeradores.', en: 'To add or subtract fractions, write them with the same denominator (the LCM) and add or subtract only the numerators.' };
   if (GRUPO_DE[id] === 'simplificar') return { es: 'Para simplificar, se dividen el numerador y el denominador entre el mismo número; con su m.c.d., sale la irreducible de una vez.', en: 'To simplify, divide the numerator and the denominator by the same number; with their GCD you get lowest terms in one step.' };
@@ -91,11 +92,10 @@ export function explicaBienMal(item, { idioma, tt }) {
 export function explicaLinea(item, { idioma, tt }) {
   const es = idioma === 'es';
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  const n = item.falsa + 1;
   const consejo = es ? 'Cada línea tiene que valer lo mismo que la anterior: la mala es la primera que cambia el valor.' : 'Each line has to be worth the same as the line before: the wrong one is the first that changes the value.';
   const bien = cuenta(lineaAyuda(plantilla.corregida(item.params), item.falsa));
-  const linea = es ? `Bien hecha, la línea ${n} queda así: ${bien}.` : `Done right, line ${n} reads ${bien}.`;
-  const fin = es ? `La respuesta es la línea ${n}.` : `The answer is line ${n}.`;
+  const linea = es ? `Bien hecha, esa línea queda así: ${bien}.` : `Done right, that line reads ${bien}.`;
+  const fin = es ? `La respuesta es ${lineaN(item.falsa, 'es')}.` : `The answer is ${lineaN(item.falsa, 'en')}.`;
   return `${consejo} ${tt(plantilla.porque(item.params))} ${linea} ${fin}`;
 }
 
@@ -133,8 +133,8 @@ export const TX = {
       en: `<p>You will see an equality with fractions. Sometimes it is right and sometimes it has a mistake.</p><p><strong>Example:</strong> ${ex('1/2 + 1/3')} = ${ex('2/5')}. It is <strong>false</strong>: the numerators were added and the denominators too. The right way: ${ex('3/6 + 2/6')} = ${ex('5/6')}.</p><p>If it is false, then choose the name of the mistake. Careful: if the result is right, the equality is true.</p>`,
     },
     linea: {
-      es: `<p>Verás el cálculo de un compañero, con las líneas numeradas. Cada línea tiene que valer lo mismo que la anterior. Una no.</p><p><strong>Ejemplo:</strong><br>1. ${ex('12/18')}<br>2. = ${ex('6/18')}<br>3. = ${ex('1/3')}</p><p>El error está en la <strong>línea 2</strong>: se ha dividido solo el numerador, y la fracción ha cambiado. Bien hecho: ${ex('6/9')}.</p><p>Toca la línea donde está el error.</p>`,
-      en: `<p>You will see a student's calculation, with numbered lines. Each line has to be worth the same as the line before. One is not.</p><p><strong>Example:</strong><br>1. ${ex('12/18')}<br>2. = ${ex('6/18')}<br>3. = ${ex('1/3')}</p><p>The mistake is in <strong>line 2</strong>: only the numerator was divided, and the fraction changed. The right way: ${ex('6/9')}.</p><p>Tap the line where the mistake is.</p>`,
+      es: `<p>Verás el cálculo de un compañero, línea a línea. La primera es el enunciado. Cada línea tiene que valer lo mismo que la anterior. Una no.</p><p><strong>Ejemplo:</strong><br>${ex('12/18')}<br>= ${ex('6/18')}<br>= ${ex('1/3')}</p><p>El error está en la <strong>segunda línea</strong>: se ha dividido solo el numerador, y la fracción ha cambiado. Bien hecho: ${ex('6/9')}.</p><p>Toca la línea donde está el error.</p>`,
+      en: `<p>You will see a student's calculation, line by line. The first line is the question. Each line has to be worth the same as the line before. One is not.</p><p><strong>Example:</strong><br>${ex('12/18')}<br>= ${ex('6/18')}<br>= ${ex('1/3')}</p><p>The mistake is in <strong>the second line</strong>: only the numerator was divided, and the fraction changed. The right way: ${ex('6/9')}.</p><p>Tap the line where the mistake is.</p>`,
     },
     arregla: {
       es: `<p>Ya sabes cazar errores; ahora toca <strong>arreglarlos</strong>. Verás una igualdad falsa y escribirás el resultado bien.</p><p><strong>Ejemplo:</strong> ${ex('5/6 : 10/9')} = ${ex('25/27')} es falsa (no se ha invertido la segunda fracción). Bien hecho: ${ex('5/6 · 9/10')} = ${ex('45/60')} = ${ex('3/4')}. Escribe 3 arriba y 4 abajo.</p><p>El resultado tiene que ser una fracción irreducible. Si es negativo, pulsa «+/−».</p>`,
@@ -145,9 +145,6 @@ export const TX = {
   falsa: { es: 'Falsa', en: 'False' },
   es_verdadera: { es: 'Es verdadera:', en: 'It is true:' },
   es_falsa: { es: 'Es falsa:', en: 'It is false:' },
-  la_linea_es: { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` },
-  se_llama: { es: 'Se llama:', en: 'It is called:' },
-  bien_es: { es: 'Bien hecho es:', en: 'The right way is:' },
   es_irreducible: { es: 'Es lo mismo, pero hay que simplificarla hasta la irreducible:', en: 'It is the same value, but it has to be simplified to lowest terms:' },
   tu_resultado: { es: 'Has escrito', en: 'You wrote' },
   repite: { es: 'Es el mismo resultado equivocado.', en: 'That is the same wrong result as in the equality.' },
