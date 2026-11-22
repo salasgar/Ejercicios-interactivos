@@ -8,8 +8,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { generarHay, generarLinea, generarNombre, nombresExcluidos } from '../practicas/errores/logica.js';
-import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores/textos.js';
+import { generarHay, generarColumnas, generarNombre, nombresExcluidos, FAMILIAS, FAMILIA_POR_ID, columnasPosibles } from '../practicas/errores/logica.js';
+import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES, RUTAS, rutaDe } from '../practicas/errores/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 
 // ─── Definiciones independientes ─────────────────────────────────────────────
@@ -127,7 +127,96 @@ const VERIFICADORES = {
     return [nums(l0)[0] === h && nums(l0)[1] === m && nums(l0)[2] === d, nums(l1).at(-1) === T, 120 + x === T,
       nums(l3)[0] === h && nums(l3)[1] === 2 && nums(l3)[2] === h + 2 && nums(l3).at(-2) === h + 2 && nums(l3).at(-1) === x];
   },
+  // ── rutas propias de las columnas del ejercicio 2 (sin el enunciado) ──
+  'c-mcd-divisores': ({ a, b }, [l0, l1, l2]) => {
+    const [com, resto] = l2.split('. El mayor es ');
+    const comunesBF = divsBF(a).filter(d => b % d === 0);
+    return [nums(l0).slice(1).join() === divsBF(a).join(), nums(l1).slice(1).join() === divsBF(b).join(),
+      nums(com).join() === comunesBF.join() && nums(resto)[0] === gcdBF(a, b) && nums(resto).at(-1) === gcdBF(a, b)];
+  },
+  'c-mcd-1-divisores': ({ a, b }, [l0, l1, l2]) => [
+    nums(l0).slice(1).join() === divsBF(a).join(), nums(l1).slice(1).join() === divsBF(b).join(),
+    /^El único divisor común es el 1/.test(l2) && divsBF(a).filter(d => b % d === 0).join() === '1' && nums(l2).at(-1) === gcdBF(a, b)],
+  'c-mcd-1-primos': ({ a, b }, [l0, l1, l2]) => {
+    const [, x, fx, y, fy] = l0.match(/^(\d+) = (.+) y (\d+) = (.+)$/);
+    const primos = f => f.split(' · ').map(t => Number(t.split('^')[0]));
+    return [valor(fx) === +x && valor(fy) === +y && +x === a && +y === b && [...primos(fx), ...primos(fy)].every(primoBF),
+      !primos(fx).some(p => primos(fy).includes(p)), nums(l2).at(-1) === gcdBF(a, b)];
+  },
+  'c-mcm-multiplos': ({ a, b }, [l0, l1, l2]) => {
+    const l = lcmBF(a, b), [, ...m1] = nums(l0), [, ...m2] = nums(l1);
+    return [m1.every((x, i) => x === a * (i + 1)) && m1.at(-1) === l, m2.every((x, i) => x === b * (i + 1)) && m2.at(-1) === l,
+      nums(l2)[0] === l && nums(l2).at(-1) === l && m1.filter(x => m2.includes(x))[0] === l];
+  },
+  'c-mcm-cruzado': ({ a, b }, [l0, l1, l2]) => {
+    const [, x, fx, y, fy] = l0.match(/^(\d+) = (.+) y (\d+) = (.+)$/);
+    const claim = valor(tras(l1, ': '));
+    return [valor(fx) === +x && valor(fy) === +y && +x === a && +y === b, claim === lcmBF(a, b), nums(l2).at(-1) === claim];
+  },
+  'c-arbol-1': (p, l) => VERIFICADORES.arbol(p, l),
+  'c-arbol-2': (p, l) => VERIFICADORES.arbol(p, l),
+  arbol: ({ n }, [l0, l1, l2]) => {
+    const [, t, c, d] = l0.match(/^(\d+) = (\d+) · (\d+)$/).map(Number);
+    const partes = l1.split(' y ').map(s => {
+      const primo = s.match(/^(\d+) es primo$/);
+      if (primo) return primoBF(+primo[1]) ? +primo[1] : NaN;
+      const [, x, fs] = s.match(/^(\d+) = (.+)$/), f = fs.split(' · ').map(Number);
+      return f.every(primoBF) && f.reduce((u, v) => u * v, 1) === +x ? +x : NaN;
+    });
+    return [t === n && c * d === n && c > 1 && d > 1, partes.join() === [c, d].join(),
+      valor(tras(l2, ' = ')) === n && tras(l2, ' = ').split(' · ').every(f => primoBF(+f.split('^')[0]))];
+  },
+  'c-divisiones': ({ n }, [l0, l1]) => {
+    const pasos = l0.split('; ').map(s => s.match(/^(\d+) : (\d+) = (\d+)$/).slice(1).map(Number));
+    const cadena = pasos.every(([y, p, z], i) => primoBF(p) && y === p * z && (i === 0 ? y === n : y === pasos[i - 1][2])) && pasos.at(-1)[2] === 1;
+    const usados = pasos.map(([, p]) => p).sort((u, v) => u - v).join();
+    const enF = tras(l1, ' = ').split(' · ').flatMap(f => { const [p, e = '1'] = f.split('^'); return Array(+e).fill(+p); }).join();
+    return [cadena, valor(tras(l1, ' = ')) === n && usados === enF];
+  },
+  'c-div3-suma': ({ n }, [l0, l1, l2]) => [
+    sumaBF(n) === nums(l0).at(-1) && nums(l0).slice(1, -1).join() === cifrasBF(n).join(), sumaBF(n) % 3 !== 0 && nums(l1)[0] === sumaBF(n), n % 3 !== 0],
+  'c-div3-division': ({ n }, [l0, l1]) => {
+    const [x, d, q, r] = nums(l0);
+    return [x === n && d === 3 && q * 3 + r === n && r >= 0 && r < 3, r !== 0 && n % 3 !== 0];
+  },
+  'c-3y9-division': ({ n }, [l0, l1, l2]) => {
+    const ok = (l, dd) => { const [x, d, q, r] = nums(l); return x === n && d === dd && q * d + r === n && r >= 0 && r < d; };
+    return [ok(l0, 3) && nums(l0)[3] === 0, ok(l1, 9) && nums(l1)[3] !== 0, n % 3 === 0 && n % 9 !== 0];
+  },
+  'c-3y9-tres-nueve': ({ n }, [l0, l1, l2]) => [sumaBF(n) === nums(l0).at(-1), sumaBF(n) % 3 === 0 && n % 3 === 0, n % 9 === 0],
+  'c-3y9-ultima-cifra': ({ n }, [l0, l1, l2]) => {
+    const d = n % 10;
+    // La línea 0 vale si el criterio de la última cifra diera bien con este número; la 2 es consecuencia de las anteriores.
+    return [(n % 3 === 0) === (d % 3 === 0), nums(l1)[0] === d && d % 3 !== 0, true];
+  },
+  'c-divisores-probando': ({ n }, [l0, l1]) => [
+    nums(l0)[0] === n && nums(tras(l0, 'entre ')).join() === divsBF(n).join(), nums(l1).slice(1).join() === divsBF(n).join()],
+  'c-primo-divisores': ({ n }, [l0, l1]) => [nums(l0).slice(1).join() === divsBF(n).join(), divsBF(n).length > 2 && !primoBF(n)],
+  'c-minutos-horas-primero': ({ h, m, d }, [l0, l1, l2]) => {
+    const [d0, una, x] = nums(l0), [h1, m1, H, M] = nums(l1), [x2, H2, M2, HH, MM] = nums(l2);
+    return [d0 === d && una === 1 && 60 + x === d, h1 === h && m1 === m && H === h + 1 && M === m,
+      x2 === x && H2 === H && M2 === M && HH * 60 + MM === H * 60 + M + x && HH * 60 + MM === h * 60 + m + d && MM < 60];
+  },
+  'c-minutos-hasta-la-hora': ({ h, m, d }, [l0, l1, l2]) => {
+    const [h0, m0, H, cero, y] = nums(l0), [d1, y1, z, una, w] = nums(l1), [HH, MM] = nums(l2);
+    return [h0 === h && m0 === m && H === h + 1 && cero === 0 && y === 60 - m,
+      d1 === d && y1 === y && z === d - y && una === 1 && 60 + w === z,
+      HH * 60 + MM === h * 60 + m + d && MM < 60];
+  },
+  'c-relacion-multiplo': ({ a, b, k }, [l0, l1]) => [nums(l0).join() === [a, b, k].join() && a === b * k, nums(l1).join() === [a, b].join() && a % b === 0],
+  'c-relacion-divisor': ({ a, b }, [l0, l1]) => {
+    const [x, y, q, r] = nums(l0);
+    return [x === a && y === b && q * b + r === a && r === 0, nums(l1).join() === [b, a].join() && a % b === 0];
+  },
 };
+
+/** Válida por línea de una columna (con el enunciado en la 0, que siempre vale). */
+function validasColumna(c, params) {
+  const pl = PLANTILLA_POR_ID[c.ruta];
+  const desfase = pl && !pl.enunciado ? 0 : 1;   // e-minutos y b-minutos-ok llevan el enunciado en sus líneas
+  return [...Array(desfase).fill(true), ...VERIFICADORES[c.ruta](params, c.lineas.slice(desfase).map(l => l.es))];
+}
+const falsasDe = v => v.map((x, j) => (x ? -1 : j)).filter(j => j >= 0);
 
 /** Válida por línea del ítem: el enunciado que la plantilla pone aparte (línea 0) no se verifica, siempre vale. */
 function validas(item) {
@@ -249,25 +338,114 @@ test('ejercicio 1: salen todas las plantillas', () => {
   assert.equal(vistas.size, PLANTILLAS.length);
 });
 
-// ─── Ejercicio 2 ──────────────────────────────────────────────────────────────
+// ─── Ejercicio 2 en columnas (JL, 22-11) ────────────────────────────────────────
 
-test('ejercicio 2: solo procedimientos con error; la línea correcta es la única falsa (fuerza bruta)', () => {
-  const rng = crearRng(201);
-  for (let i = 0; i < 2000; i++) {
-    const item = generarLinea(rng);
-    assert.ok(item.error);
-    const v = validas(item);
-    assert.deepEqual(v.map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [item.solucion]);
-    // El enunciado (línea 0) no se puede pulsar (JL, 22-11).
-    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));
+const columnas = (semilla, n = 3000) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => generarColumnas(rng)); };
+
+test('ejercicio 2: 2-4 columnas que empiezan por el enunciado; 1-2 bien (todas sus líneas verdaderas) y 1-2 con UNA línea falsa (fuerza bruta)', () => {
+  const combinaciones = {}, familias = new Set();
+  for (const item of columnas(201)) {
+    assert.equal(item.tipo, 'columnas');
+    familias.add(item.plantilla);
+    const cols = item.columnas;
+    assert.ok(cols.length >= 2 && cols.length <= 4, cols.length);
+    const bien = cols.filter(c => !c.error), mal = cols.filter(c => c.error);
+    assert.ok(bien.length >= 1 && bien.length <= 2 && mal.length >= 1 && mal.length <= 2, `${bien.length} bien, ${mal.length} mal`);
+    combinaciones[`${bien.length}+${mal.length}`] = (combinaciones[`${bien.length}+${mal.length}`] ?? 0) + 1;
+    assert.equal(new Set(mal.map(c => c.error)).size, mal.length, 'dos columnas con el mismo error');
+    assert.equal(new Set(cols.map(c => c.ruta)).size, cols.length, 'dos columnas de la misma ruta');
+    assert.equal(new Set(cols.map(c => JSON.stringify(c.lineas))).size, cols.length, 'dos columnas iguales');
+    for (const c of cols) {
+      assert.deepEqual(c.lineas[0], item.enunciado, 'todas empiezan por el enunciado');
+      assert.ok(c.lineas.length >= 3, `${c.ruta}: al menos dos pasos`);
+      const v = validasColumna(c, item.params);
+      assert.equal(v.length, c.lineas.length, c.ruta);
+      assert.deepEqual(falsasDe(v), c.error ? [c.falsa] : [], `${c.ruta} ${JSON.stringify(item.params)}: ${c.lineas.map(l => l.es).join(' | ')}`);
+      if (c.error) {
+        assert.ok(c.falsa >= 1, 'el enunciado nunca es la línea mala');
+        assert.equal(c.error, rutaDe(c.ruta).error.nombre);
+        assert.ok(NOMBRES[c.error], c.error);
+      }
+      for (const l of c.lineas) assert.deepEqual(nums(l.es), nums(l.en), `${c.ruta}: números distintos entre idiomas: ${l.es} / ${l.en}`);
+    }
+    assert.deepEqual(item.solucion, cols.map(c => c.falsa));
+    assert.deepEqual(JSON.parse(JSON.stringify(item)), item, 'datos puros');
+  }
+  assert.equal(familias.size, FAMILIAS.length, 'salen todas las familias');
+  for (const k of ['1+1', '1+2', '2+1', '2+2']) assert.ok(combinaciones[k] > 3000 * 0.02, `combinación ${k}: ${combinaciones[k]}`);
+  assert.ok(3000 - combinaciones['1+1'] > 3000 * 0.3, `con 3 o 4 columnas: ${3000 - combinaciones['1+1']} de 3000`);
+});
+
+test('ejercicio 2: sale cada ruta de cada familia, buena o mala (ninguna se queda sin ver)', () => {
+  const vistas = new Set();
+  for (const item of columnas(202)) for (const c of item.columnas) vistas.add(`${item.plantilla}/${c.ruta}`);
+  for (const fa of FAMILIAS) for (const id of [...fa.bien, ...fa.mal]) assert.ok(vistas.has(`${fa.id}/${id}`), `${fa.id}/${id} no sale nunca`);
+  // Y todas las rutas propias están en alguna familia.
+  const enFamilias = new Set(FAMILIAS.flatMap(fa => [...fa.bien, ...fa.mal]));
+  for (const r of RUTAS) assert.ok(enFamilias.has(r.id), `${r.id} no está en ninguna familia`);
+});
+
+test('ejercicio 2: las rutas buenas de una familia son buenas y las malas, malas (ninguna cambia de lado)', () => {
+  for (const fa of FAMILIAS) {
+    for (const id of fa.bien) assert.equal(rutaDe(id).error, null, `${fa.id}: ${id} está entre las buenas y tiene error`);
+    for (const id of fa.mal) assert.ok(rutaDe(id).error, `${fa.id}: ${id} está entre las malas y no tiene error`);
   }
 });
 
-test('ejercicio 2: ninguna posición es la correcta en más del 70 % de los ítems', () => {
-  const rng = crearRng(202);
-  const cuenta = {};
-  for (let i = 0; i < 3000; i++) { const s = generarLinea(rng).solucion; cuenta[s] = (cuenta[s] ?? 0) + 1; }
-  for (const [pos, c] of Object.entries(cuenta)) assert.ok(c / 3000 <= 0.7, `posición ${pos}: ${c}`);
+test('ejercicio 2: una pregunta por columna mala, con el nombre bueno y dos que no pueden describirla (regla de oro)', () => {
+  const posiciones = new Set();
+  for (const item of columnas(203)) {
+    const malas = item.columnas.map((c, j) => (c.error ? j : -1)).filter(j => j >= 0);
+    assert.deepEqual(item.preguntas.map(q => q.col), malas);
+    for (const q of item.preguntas) {
+      const c = item.columnas[q.col];
+      assert.equal(q.solucion, c.error);
+      assert.equal(q.opciones.length, 3);
+      assert.equal(new Set(q.opciones).size, 3);
+      assert.ok(q.opciones.includes(c.error));
+      posiciones.add(q.opciones.indexOf(c.error));
+      const fuera = nombresExcluidos(rutaDe(c.ruta));
+      for (const o of q.opciones) {
+        assert.ok(o in NOMBRES, o);
+        if (o !== c.error) assert.ok(!fuera.has(o), `${c.ruta}: ${o} describe también la columna`);
+      }
+    }
+  }
+  assert.equal(posiciones.size, 3, 'la respuesta buena sale en las tres posiciones');
+});
+
+test('ejercicio 2: «ya no puedo seguir» y «el m.c.m. con los primos del m.c.d.» no salen como distractores de sus parecidos', () => {
+  // c-mcm-cruzado y e-mcm-comunes pueden ir en el mismo ítem; cada pregunta excluye a la otra (son confundibles).
+  assert.ok(nombresExcluidos(rutaDe('c-mcm-cruzado')).has('mcmComunes'));
+  assert.ok(nombresExcluidos(rutaDe('c-3y9-tres-nueve')).has('ultimaCifra3'));
+  assert.ok(nombresExcluidos(rutaDe('c-3y9-ultima-cifra')).has('tres9'));
+});
+
+test('ejercicio 2: el ejemplo de la introducción, m.c.d. de 12 y 18, sale con sus columnas', () => {
+  const { bien, mal } = columnasPosibles(FAMILIA_POR_ID.mcd, { a: 12, b: 18 });
+  assert.deepEqual(bien.map(c => c.ruta), ['b-mcd-ok', 'c-mcd-divisores']);
+  assert.deepEqual(mal.map(c => [c.ruta, c.lineas[c.falsa].es]), [['e-cruzado', 'Para el m.c.d. cojo los primos comunes con el mayor exponente: 2^2 · 3^2']]);
+  assert.equal(mal[0].lineas.at(-1).es, 'm.c.d.(12, 18) = 36');
+});
+
+test('ejercicio 2: con dos alumnos que lo hacen bien, los dos llegan a lo mismo; las horas y los números, creíbles', () => {
+  for (const item of columnas(204)) {
+    const bien = item.columnas.filter(c => !c.error);
+    // La última línea de cada columna buena termina en el mismo número (el resultado), salvo en las de sí/no.
+    if (['mcd', 'mcd-1', 'mcm'].includes(item.plantilla)) assert.equal(new Set(bien.map(c => nums(c.lineas.at(-1).es).at(-1))).size, 1, JSON.stringify(bien));
+    if (item.plantilla === 'horas') {
+      const { h, m, d } = item.params;
+      assert.ok(m + d > 120 && m + d < 160 && h >= 8 && h <= 15, JSON.stringify(item.params));
+      for (const c of bien) assert.ok(c.lineas.at(-1).es.endsWith(`${h + 2}:${String(m + d - 120).padStart(2, '0')}.`), c.lineas.at(-1).es);
+    }
+    for (const c of item.columnas) for (const l of c.lineas) {
+      assert.ok(!l.es.includes('×') && !l.en.includes('×'), l.es);
+      assert.ok(!/["']/.test(l.es) && !/["]/.test(l.en), l.en);
+      assert.doesNotMatch(l.es + l.en, /undefined|NaN|null|HCF|línea \d|line \d/, l.es);
+      // Hasta 1000: el mayor es el m.c.d. «cruzado» de 52 y 338 (2^2 · 13^2 = 676), el resultado de un error.
+      for (const x of nums(l.es)) assert.ok(x <= 1000, `número poco creíble: ${l.es}`);
+    }
+  }
 });
 
 // ─── Ejercicio 3 ──────────────────────────────────────────────────────────────

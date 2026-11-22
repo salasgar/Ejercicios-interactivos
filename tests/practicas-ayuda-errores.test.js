@@ -5,9 +5,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { T, esc } from '../practicas/_comun/textos.js';
-import { generarHay, generarLinea, generarNombre } from '../practicas/errores/logica.js';
-import { explicaItem, explicaHay, explicaLinea, explicaNombre, NOMBRES, REGLAS, PLANTILLAS, PLANTILLA_POR_ID, html } from '../practicas/errores/textos.js';
-import { errorEnLinea, lineaN } from '../practicas/_comun/procedimiento.js';
+import { generarHay, generarColumnas, generarNombre } from '../practicas/errores/logica.js';
+import { explicaItem, explicaHay, explicaNombre, explicacionColumnas, explicaColumnas, NOMBRES, REGLAS, PLANTILLAS, PLANTILLA_POR_ID, TX, LETRAS, rutaDe, html } from '../practicas/errores/textos.js';
+import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
 
 const IDIOMAS = ['es', 'en'];
 const textosDe = idioma => ({ idioma, t: T[idioma], tt: obj => obj[idioma], esc });
@@ -33,7 +33,7 @@ function comun(item, idioma, h) {
   }
 }
 
-for (const [nombre, generador, semilla] of [['hay', generarHay, 1861], ['linea', generarLinea, 1862], ['nombre', generarNombre, 1863]]) {
+for (const [nombre, generador, semilla] of [['hay', generarHay, 1861], ['nombre', generarNombre, 1863]]) {
   test(`errores, ejercicio «${nombre}»: la explicación lleva la solución del ítem (${N} ítems, es y en)`, () => {
     const rng = crearRng(semilla);
     let conError = 0;
@@ -44,7 +44,6 @@ for (const [nombre, generador, semilla] of [['hay', generarHay, 1861], ['linea',
       comun(item, 'es', es);
       comun(item, 'en', en);
       assert.notEqual(es, en);
-      if (nombre === 'linea') assert.equal(item.solucion, item.error.linea, 'la solución es la línea del error');
       if (nombre === 'nombre') assert.equal(item.solucion, item.error.nombre);
     }
     if (nombre === 'hay') assert.ok(conError > N * 0.4 && conError < N * 0.6, 'sale de los dos tipos');
@@ -68,7 +67,6 @@ test('errores: todas las plantillas dan explicación en los dos idiomas', () => 
 
 const REGLA_DE = {
   hay: { es: /^Repasa cada línea/, en: /^Check each line/ },
-  linea: { es: /^Repasa las líneas en orden/, en: /^Check the lines in order/ },
   nombre: { es: /^Busca la línea mala/, en: /^Find the wrong line/ },
 };
 const cuenta = (h, txt) => h.split(txt).length - 1;
@@ -89,8 +87,6 @@ function tarjeta(nombre, item, idioma, h) {
   if (nombre === 'hay') {
     const buena = esc((item.solucion === 'error' ? { es: 'Hay un error', en: 'There is a mistake' } : { es: 'Está bien', en: 'It is right' })[idioma]);
     assert.ok(resp.includes(idioma === 'es' ? `«${buena}»` : `“${buena}”`), `respuesta del ej. 1: ${p}`);
-  } else if (nombre === 'linea') {
-    assert.ok(resp.includes(`${lineaN(item.solucion, idioma)}</strong>.`), `respuesta del ej. 2: ${p}`);
   } else {
     const nom = esc(NOMBRES[item.solucion][idioma]).replace(/(?<!m\.c\.[dm])\.$/, '');
     assert.ok(resp.includes(idioma === 'es' ? `«${nom}»` : `“${nom}”`), `respuesta del ej. 3: ${p}`);
@@ -107,11 +103,11 @@ function tarjeta(nombre, item, idioma, h) {
   for (const x of numeros) assert.ok(p.includes(x), `lleva el ${x} de la cuenta bien hecha: ${p}`);
   assert.doesNotMatch(h, /linea-mala">\d+\. |Es la primera línea que falla|first line that is wrong/, 'sin «3.» delante ni «la primera línea que falla»');
   assert.ok(h.includes(`<strong class="regla-rota">${esc(REGLAS[item.error.nombre][idioma])}</strong>`), 'la regla rota, en negrita');
-  if (nombre !== 'linea') assert.ok(h.includes(errorEnLinea(item.error.linea, idioma)), 'dice en qué línea está');
+  assert.ok(h.includes(errorEnLinea(item.error.linea, idioma)), 'dice en qué línea está');
 }
 
-const EXPLICA = { hay: explicaHay, linea: explicaLinea, nombre: explicaNombre };
-for (const [nombre, generador, semilla] of [['hay', generarHay, 1931], ['linea', generarLinea, 1932], ['nombre', generarNombre, 1933]]) {
+const EXPLICA = { hay: explicaHay, nombre: explicaNombre };
+for (const [nombre, generador, semilla] of [['hay', generarHay, 1931], ['nombre', generarNombre, 1933]]) {
   test(`errores, tarjeta del ej. «${nombre}»: regla delante, línea mala, cuenta bien hecha y la respuesta al final (${N} ítems, es y en)`, () => {
     const rng = crearRng(semilla);
     for (let i = 0; i < N; i++) {
@@ -121,14 +117,14 @@ for (const [nombre, generador, semilla] of [['hay', generarHay, 1931], ['linea',
   });
 }
 
-test('errores, tarjeta: todas las plantillas, en el ej. 1 (y las de error, en el 2 y el 3)', () => {
+test('errores, tarjeta: todas las plantillas, en el ej. 1 (y las de error, en el 3)', () => {
   const rng = crearRng(1934);
   for (const p of PLANTILLAS) {
     for (let i = 0; i < 30; i++) {
       const params = p.numeros(rng);
       const base = { plantilla: p.id, params, lineas: p.lineas(params), error: p.error };
       const casos = [['hay', { ...base, solucion: p.error ? 'error' : 'bien' }]];
-      if (p.error) casos.push(['linea', { ...base, solucion: p.error.linea }], ['nombre', { ...base, solucion: p.error.nombre }]);
+      if (p.error) casos.push(['nombre', { ...base, solucion: p.error.nombre }]);
       for (const [nombre, item] of casos) for (const idioma of IDIOMAS) tarjeta(nombre, item, idioma, EXPLICA[nombre](item, textosDe(idioma)));
     }
   }
@@ -150,4 +146,75 @@ test('errores, tarjeta: comillas inglesas “” (no rectas) en «lowest/least c
   const params = p.numeros(crearRng(1936));
   const h = explicaHay({ plantilla: p.id, params, lineas: p.lineas(params), error: null, solucion: 'bien' }, textosDe('en'));
   assert.match(h, /“Lowest” and “least”/);
+});
+
+// ─── Ejercicio 2 en columnas (JL, 22-11): feedback y tarjeta, columna a columna ─────────────────
+
+/** Los trozos de la explicación, uno por columna. */
+const trozos = h => h.match(/<p class="columna-explica">.*?<\/p>/g) ?? [];
+
+function columnaAColumna(item, idioma, h) {
+  const p = plano(h);
+  assert.doesNotMatch(h, /undefined|NaN|\[object|null|×|&quot;/, p);
+  assert.doesNotMatch(p, /"/, `comillas rectas: ${p}`);
+  const ts = trozos(h);
+  // Sin números de línea ni ordinales: en una columna, «la segunda línea» contaría el enunciado, que va arriba.
+  assert.doesNotMatch(plano(ts.join(' ')), /Se llama|It is called|línea \d|line \d|(primera|segunda|tercera|cuarta) línea|(first|second|third|fourth) line/, p);
+  assert.equal(ts.length, item.columnas.length, 'un trozo por columna');
+  item.columnas.forEach((c, j) => {
+    const t = ts[j], r = rutaDe(c.ruta);
+    assert.ok(t.includes(`<strong>${TX.columna[idioma]} ${LETRAS[j]}.</strong>`), `cabeza de la columna ${LETRAS[j]}`);
+    if (!c.error) {
+      assert.match(plano(t), /Está bien|It is right/, plano(t));
+      assert.ok(plano(t).includes(plano(html(r.porque(item.params)[idioma])).replace(/"/g, '').slice(12)), `lleva el porqué: ${plano(t)}`);
+      assert.doesNotMatch(t, /regla-rota/, 'una columna buena no rompe ninguna regla');
+      return;
+    }
+    assert.ok(t.includes(TX.la_linea_es[idioma]), 'dice que esa es la línea del error');
+    assert.ok(t.includes(`<span class="linea-mala">${html(c.lineas[c.falsa][idioma])}</span>`), 'cita la línea mala');
+    assert.ok(t.includes(esc(NOMBRES[c.error][idioma])), 'el error como frase');
+    assert.ok(t.includes(`<strong class="regla-rota">${esc(REGLAS[c.error][idioma])}</strong>`), 'la regla rota, en negrita');
+    for (const x of plano(html(r.corregida(item.params)[idioma])).match(/\d+/g) ?? []) assert.ok(plano(t).includes(x), `lleva el ${x} de lo correcto: ${plano(t)}`);
+  });
+}
+
+test(`errores, ejercicio 2 en columnas: el feedback explica cada columna (${N} ítems, es y en)`, () => {
+  const rng = crearRng(2341);
+  for (let i = 0; i < N; i++) {
+    const item = generarColumnas(rng);
+    const es = explicacionColumnas(item, textosDe('es')), en = explicacionColumnas(item, textosDe('en'));
+    columnaAColumna(item, 'es', es);
+    columnaAColumna(item, 'en', en);
+    assert.notEqual(es, en);
+  }
+});
+
+test(`errores, tarjeta del ej. 2: la regla delante, cada columna y al final dónde está el error (${N} ítems, es y en)`, () => {
+  const rng = crearRng(2342);
+  for (let i = 0; i < N; i++) {
+    const item = generarColumnas(rng);
+    const malas = item.columnas.map((c, j) => (c.error ? LETRAS[j] : null)).filter(Boolean);
+    for (const idioma of IDIOMAS) {
+      const h = explicaColumnas(item, textosDe(idioma));
+      assert.match(h, idioma === 'es' ? /^Repasa cada columna en orden/ : /^Check each column in order/);
+      assert.ok(h.includes(explicacionColumnas(item, textosDe(idioma))), 'lleva la explicación de cada columna');
+      columnaAColumna(item, idioma, h);
+      const y = idioma === 'es' ? ' y ' : ' and ';
+      const donde = malas.length === 1
+        ? (idioma === 'es' ? `la columna ${malas[0]}` : `column ${malas[0]}`)
+        : (idioma === 'es' ? `las columnas ${malas.join(y)}` : `columns ${malas.join(y)}`);
+      assert.ok(h.endsWith(`${idioma === 'es' ? 'El error está en' : 'The mistake is in'} <strong>${donde}</strong>.`), plano(h).slice(-80));
+    }
+  }
+});
+
+test('errores, ejercicio 2: el porqué de una columna buena y lo correcto de una mala no repiten la regla rota', () => {
+  const rng = crearRng(2343);
+  for (let i = 0; i < 500; i++) {
+    const item = generarColumnas(rng);
+    for (const c of item.columnas.filter(c => c.error)) {
+      const corr = rutaDe(c.ruta).corregida(item.params);
+      for (const idioma of IDIOMAS) assert.ok(!corr[idioma].includes(REGLAS[c.error][idioma]), `${c.ruta}: ${corr[idioma]}`);
+    }
+  }
 });

@@ -20,7 +20,7 @@
 // Queda como propuesta en la terminada.
 
 import { esc } from '../_comun/textos.js';
-import { errorEnLinea, lineaN, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
+import { errorEnLinea, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 import { factorizar, valorDe, textoFact, mcd, mcm, divisores, parejasDivisores, esPrimo, PRIMOS, sumaCifras, cifras } from '../_comun/aritmetica.js';
 
 // ─── Nombres de los errores (lista cerrada) ────────────────────────────────────
@@ -81,22 +81,36 @@ export const TX = {
   },
   detalle: {
     hay: { es: 'Un procedimiento de un alumno: ¿está bien o no?', en: 'A student\'s work: is it right or not?' },
-    linea: { es: 'Este procedimiento tiene un error: toca la PRIMERA línea que está mal', en: 'This work has a mistake: tap the FIRST line that is wrong' },
+    linea: { es: 'El mismo ejercicio hecho por varios alumnos: toca la PRIMERA línea mala de cada columna con error y di qué error es', en: 'The same exercise done by several students: tap the FIRST wrong line in each column with a mistake and say what it is' },
     nombre: { es: 'Este procedimiento tiene un error: ¿cuál es?', en: 'This work has a mistake: which one is it?' },
   },
   instruccion: {
     hay: { es: 'Mira el procedimiento. ¿Está bien o hay un error?', en: 'Look at the work. Is it right or is there a mistake?' },
-    linea: { es: 'Hay un error. Toca la <strong>PRIMERA línea</strong> que está mal.', en: 'There is a mistake. Tap the <strong>FIRST line</strong> that is wrong.' },
+    linea: { es: 'Varios alumnos han hecho el mismo ejercicio, cada uno en una columna. Algunas columnas tienen un error. En cada columna que esté mal, toca la <strong>PRIMERA línea</strong> que está mal y pulsa «Comprobar».', en: 'Some students did the same exercise, one in each column. Some columns have a mistake. In each column with a mistake, tap the <strong>FIRST line</strong> that is wrong and press “Check”.' },
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
   },
   introduccion: {
     es: '<p>Cada ejercicio te enseña el trabajo de un alumno, línea a línea. La primera línea es lo que se pide. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, el orden de los factores no importa).</p>',
     en: '<p>Each exercise shows a student\'s work, line by line. The first line is the question. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, the order of the factors does not matter).</p>',
   },
+  // Ejercicio 2 en columnas (JL, 22-11).
+  introduccion_columnas: {
+    es: '<p>Verás el mismo ejercicio hecho por varios alumnos, cada uno en una columna. Unas columnas están bien y otras tienen <strong>un error</strong>; no se dice cuántas.</p><p><strong>Ejemplo:</strong> Calcula el m.c.d. de 12 y 18.<br>A: 12 = 2<sup>2</sup> · 3 y 18 = 2 · 3<sup>2</sup>. Para el m.c.d. cojo los primos comunes, con el menor exponente: 2 · 3. m.c.d.(12, 18) = 6<br>B: Divisores de 12: 1, 2, 3, 4, 6, 12. Divisores de 18: 1, 2, 3, 6, 9, 18. Divisores comunes: 1, 2, 3, 6. El mayor es 6.<br>C: 12 = 2<sup>2</sup> · 3 y 18 = 2 · 3<sup>2</sup>. Para el m.c.d. cojo los primos comunes con el mayor exponente: 2<sup>2</sup> · 3<sup>2</sup>. m.c.d.(12, 18) = 36</p><p>A y B están bien: hay más de una forma de hacerlo. C está mal en «con el mayor exponente»: para el m.c.d. se coge el menor.</p><p>En cada columna que esté mal, toca la primera línea mala; deja sin tocar las que estén bien y pulsa «Comprobar». Después dirás qué error es.</p>',
+    en: '<p>You will see the same exercise done by several students, one in each column. Some columns are right and some have <strong>a mistake</strong>; you are not told how many.</p><p><strong>Example:</strong> Find the GCD of 12 and 18.<br>A: 12 = 2<sup>2</sup> · 3 and 18 = 2 · 3<sup>2</sup>. For the GCD I take the common primes, with the smallest exponent: 2 · 3. GCD(12, 18) = 6<br>B: Divisors of 12: 1, 2, 3, 4, 6, 12. Divisors of 18: 1, 2, 3, 6, 9, 18. Common divisors: 1, 2, 3, 6. The greatest is 6.<br>C: 12 = 2<sup>2</sup> · 3 and 18 = 2 · 3<sup>2</sup>. For the GCD I take the common primes with the biggest exponent: 2<sup>2</sup> · 3<sup>2</sup>. GCD(12, 18) = 36</p><p>A and B are right: there is more than one way to do it. C is wrong in “with the biggest exponent”: for the GCD you take the smallest one.</p><p>In each column with a mistake, tap the first wrong line; leave the right ones alone and press “Check”. Then you will say what the mistake is.</p>',
+  },
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
+  la_linea_es: { es: 'El error está en esta línea:', en: 'The mistake is in this line:' },
+  comprobar: { es: 'Comprobar', en: 'Check' },
+  col_bien: { es: 'bien', en: 'right' },
+  col_mal: { es: 'error', en: 'mistake' },
+  columna: { es: 'Columna', en: 'Column' },
+  pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
 };
+
+/** Las letras de las columnas del ejercicio 2. */
+export const LETRAS = ['A', 'B', 'C', 'D'];
 
 // ─── Ayudas aritméticas del banco ──────────────────────────────────────────────
 
@@ -568,6 +582,269 @@ export const PLANTILLAS = [
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
 
+// ─── Ejercicio 2 en columnas (JL, 22-11): las rutas propias ────────────────────
+//
+// El mismo enunciado, resuelto por varios alumnos, uno por columna. Las columnas salen de plantillas de arriba
+// (sus pasos, sin el enunciado) y de estas rutas, que solo se ven en el ejercicio 2: no cuentan en el banco de
+// los ejercicios 1 y 3. Tienen la forma de una plantilla, sin `enunciado` ni `numeros` (los pone la familia, en
+// logica.js), y con `vale(params)` si solo tienen sentido con algunos números. Las buenas son OTRA forma correcta
+// de hacerlo (no la misma con otras palabras); las malas, un error de NOMBRES con otro procedimiento.
+// Ningún paso bueno escribe una igualdad falsa: una división con resto se dice con palabras («el cociente es 47
+// y el resto es 2»), no «143 : 3 = 47».
+
+const coma = ns => ns.join(', ');
+const yLista = (ns, y) => (ns.length === 1 ? String(ns[0]) : `${ns.slice(0, -1).join(', ')} ${y} ${ns.at(-1)}`);
+const comunes = (a, b) => divisores(a).filter(d => b % d === 0);
+const multiplosHasta = (x, l) => Array.from({ length: l / x }, (_, i) => x * (i + 1));
+const descompone = (a, b) => L(`${a} = ${F(a)} y ${b} = ${F(b)}`, `${a} = ${F(a)} and ${b} = ${F(b)}`);
+const listaDivisores = n => L(`Divisores de ${n}: ${coma(divisores(n))}`, `Divisors of ${n}: ${coma(divisores(n))}`);
+const sumaDeCifras = n => L(`Suma de las cifras de ${n}: ${suma(cifras(n))} = ${sumaCifras(n)}.`, `Sum of the digits of ${n}: ${suma(cifras(n))} = ${sumaCifras(n)}.`);
+const divido = (n, d) => L(`Divido ${n} entre ${d}: el cociente es ${Math.floor(n / d)} y el resto es ${n % d}.`, `I divide ${n} by ${d}: the quotient is ${Math.floor(n / d)} and the remainder is ${n % d}.`);
+
+/** Un árbol de factores en una columna: «60 = 6 · 10», «6 = 2 · 3 y 10 = 2 · 5», «60 = 2^2 · 3 · 5». */
+function arbol(k) {
+  const parte = x => (esPrimo(x) ? L(`${x} es primo`, `${x} is prime`) : L(`${x} = ${expandir(x).join(' · ')}`, `${x} = ${expandir(x).join(' · ')}`));
+  return {
+    id: `c-arbol-${k + 1}`,
+    error: null,
+    lineas: ({ n, arboles }) => {
+      const [c, d] = arboles[k], pc = parte(c), pd = parte(d);
+      return [
+        L(`${n} = ${c} · ${d}`, `${n} = ${c} · ${d}`),
+        L(`${pc.es} y ${pd.es}`, `${pc.en} and ${pd.en}`),
+        L(`${n} = ${F(n)}`, `${n} = ${F(n)}`),
+      ];
+    },
+    porque: ({ n, arboles }) => L(
+      `Está bien: empezar por ${arboles[k].join(' · ')} es una forma de hacer el árbol, y se sigue hasta que todos los factores son primos: ${n} = ${F(n)}.`,
+      `It is right: starting with ${arboles[k].join(' · ')} is one way to make the tree, and it goes on until all the factors are prime: ${n} = ${F(n)}.`),
+  };
+}
+
+export const RUTAS = [
+  // ── m.c.d. (pares con todos los primos comunes) ──
+  {
+    id: 'c-mcd-divisores',
+    error: null,
+    lineas: ({ a, b }) => [
+      listaDivisores(a),
+      listaDivisores(b),
+      L(`Divisores comunes: ${coma(comunes(a, b))}. El mayor es ${mcd(a, b)}: m.c.d.(${a}, ${b}) = ${mcd(a, b)}`,
+        `Common divisors: ${coma(comunes(a, b))}. The greatest is ${mcd(a, b)}: GCD(${a}, ${b}) = ${mcd(a, b)}`),
+    ],
+    porque: ({ a, b }) => L(
+      `Está bien: ${mcd(a, b)} es el mayor de los divisores comunes (${coma(comunes(a, b))}).`,
+      `It is right: ${mcd(a, b)} is the greatest of the common divisors (${coma(comunes(a, b))}).`),
+  },
+  // ── m.c.d. de dos números sin primos comunes ──
+  {
+    id: 'c-mcd-1-divisores',
+    error: null,
+    lineas: ({ a, b }) => [
+      listaDivisores(a),
+      listaDivisores(b),
+      L(`El único divisor común es el 1: m.c.d.(${a}, ${b}) = 1`, `The only common divisor is 1: GCD(${a}, ${b}) = 1`),
+    ],
+    porque: ({ a, b }) => L(
+      `Está bien: el 1 es el único divisor que tienen en común ${a} y ${b}.`,
+      `It is right: 1 is the only divisor that ${a} and ${b} have in common.`),
+  },
+  {
+    id: 'c-mcd-1-primos',
+    error: null,
+    lineas: ({ a, b }) => [
+      descompone(a, b),
+      L('No tienen ningún primo común.', 'They have no prime in common.'),
+      L(`m.c.d.(${a}, ${b}) = 1`, `GCD(${a}, ${b}) = 1`),
+    ],
+    porque: ({ a, b }) => L(
+      `Está bien: ${a} y ${b} no tienen primos comunes, así que su único divisor común es el 1.`,
+      `It is right: ${a} and ${b} have no common primes, so their only common divisor is 1.`),
+  },
+  // ── m.c.m. (pares con algún primo no común) ──
+  {
+    id: 'c-mcm-multiplos',
+    error: null,
+    // Las listas, cortas: el m.c.m. es como mucho 7 veces el menor (12 y 10, 18 y 15, 75 y 30).
+    vale: ({ a, b }) => mcm(a, b) / Math.min(a, b) <= 7,
+    lineas: ({ a, b }) => {
+      const l = mcm(a, b);
+      return [
+        L(`Múltiplos de ${a}: ${coma(multiplosHasta(a, l))}`, `Multiples of ${a}: ${coma(multiplosHasta(a, l))}`),
+        L(`Múltiplos de ${b}: ${coma(multiplosHasta(b, l))}`, `Multiples of ${b}: ${coma(multiplosHasta(b, l))}`),
+        L(`El menor múltiplo común distinto de cero es ${l}: m.c.m.(${a}, ${b}) = ${l}`, `The smallest common multiple other than zero is ${l}: LCM(${a}, ${b}) = ${l}`),
+      ];
+    },
+    porque: ({ a, b }) => L(
+      `Está bien: ${mcm(a, b)} es el primer número que sale en las dos listas.`,
+      `It is right: ${mcm(a, b)} is the first number that is in both lists.`),
+  },
+  {
+    id: 'c-mcm-cruzado',
+    error: { linea: 1, nombre: 'cruzado' },
+    lineas: ({ a, b }) => [
+      descompone(a, b),
+      L(`Para el m.c.m. cojo los primos comunes, con el menor exponente: ${textoFact(mcdF(a, b))}`, `For the LCM I take the common primes, with the smallest exponent: ${textoFact(mcdF(a, b))}`),
+      L(`m.c.m.(${a}, ${b}) = ${mcd(a, b)}`, `LCM(${a}, ${b}) = ${mcd(a, b)}`),
+    ],
+    corregida: ({ a, b }) => L(
+      `${textoFact(mcmF(a, b))} = ${mcm(a, b)}, así que m.c.m.(${a}, ${b}) = ${mcm(a, b)}.`,
+      `${textoFact(mcmF(a, b))} = ${mcm(a, b)}, so LCM(${a}, ${b}) = ${mcm(a, b)}.`),
+  },
+  // ── Descomposición en factores primos: dos árboles distintos son dos columnas buenas ──
+  arbol(0),
+  arbol(1),
+  {
+    id: 'c-divisiones',
+    error: null,
+    lineas: ({ n }) => {
+      const pasos = [];
+      let x = n;
+      for (const p of expandir(n)) { pasos.push([x, p, x / p]); x /= p; }
+      const cadena = div => pasos.map(([y, p, z]) => `${y} ${div} ${p} = ${z}`).join('; ');
+      return [L(cadena(DIV.es), cadena(DIV.en)), L(`${n} = ${F(n)}`, `${n} = ${F(n)}`)];
+    },
+    porque: ({ n }) => L(
+      `Está bien: ha dividido entre primos hasta llegar a 1, y esos primos son los factores: ${n} = ${F(n)}.`,
+      `It is right: dividing by primes until you get 1 gives the factors: ${n} = ${F(n)}.`),
+  },
+  // ── ¿Es divisible entre 3? (números que no lo son) ──
+  {
+    id: 'c-div3-suma',
+    error: null,
+    lineas: ({ n }) => [
+      sumaDeCifras(n),
+      L(`${sumaCifras(n)} no es múltiplo de 3.`, `${sumaCifras(n)} is not a multiple of 3.`),
+      L(`Luego ${n} no es divisible entre 3.`, `So ${n} is not divisible by 3.`),
+    ],
+    porque: ({ n }) => L(
+      `Está bien: la suma de las cifras es ${sumaCifras(n)}, que no es múltiplo de 3.`,
+      `It is right: the sum of the digits is ${sumaCifras(n)}, which is not a multiple of 3.`),
+  },
+  {
+    id: 'c-div3-division',
+    error: null,
+    lineas: ({ n }) => [
+      divido(n, 3),
+      L(`El resto no es 0, luego ${n} no es divisible entre 3.`, `The remainder is not 0, so ${n} is not divisible by 3.`),
+    ],
+    porque: ({ n }) => L(
+      `Está bien: al dividir ${n} entre 3 sobra ${n % 3}, así que la división no es exacta.`,
+      `It is right: when you divide ${n} by 3, ${n % 3} is left over, so the division is not exact.`),
+  },
+  // ── ¿Es divisible entre 3? ¿Y entre 9? (múltiplos de 3 que no lo son de 9) ──
+  {
+    id: 'c-3y9-division',
+    error: null,
+    lineas: ({ n }) => [
+      divido(n, 3),
+      divido(n, 9),
+      L(`Luego ${n} es divisible entre 3 y no es divisible entre 9.`, `So ${n} is divisible by 3 and it is not divisible by 9.`),
+    ],
+    porque: ({ n }) => L(
+      `Está bien: la división entre 3 es exacta, y al dividir entre 9 sobra ${n % 9}.`,
+      `It is right: the division by 3 is exact, and when you divide by 9, ${n % 9} is left over.`),
+  },
+  {
+    id: 'c-3y9-tres-nueve',
+    error: { linea: 2, nombre: 'tres9' },
+    lineas: ({ n }) => [
+      sumaDeCifras(n),
+      L(`${sumaCifras(n)} es divisible entre 3: ${n} es divisible entre 3.`, `${sumaCifras(n)} is divisible by 3: ${n} is divisible by 3.`),
+      L(`Como ${sumaCifras(n)} es divisible entre 3, ${n} también es divisible entre 9.`, `As ${sumaCifras(n)} is divisible by 3, ${n} is divisible by 9 too.`),
+    ],
+    corregida: ({ n }) => L(
+      `${sumaCifras(n)} no es divisible entre 9, así que ${n} es divisible entre 3, pero no entre 9.`,
+      `${sumaCifras(n)} is not divisible by 9, so ${n} is divisible by 3, but not by 9.`),
+  },
+  {
+    id: 'c-3y9-ultima-cifra',
+    error: { linea: 0, nombre: 'ultimaCifra3' },
+    // Solo si la última cifra da la respuesta equivocada (21, 24, 57…): con 33 o 30 acertaría por casualidad.
+    vale: ({ n }) => (n % 10) % 3 !== 0,
+    lineas: ({ n }) => [
+      L(`Criterio del 3: miro la última cifra de ${n}.`, `Rule for 3: I look at the last digit of ${n}.`),
+      L(`La última cifra es ${n % 10} y ${n % 10} no es divisible entre 3.`, `The last digit is ${n % 10} and ${n % 10} is not divisible by 3.`),
+      L(`Luego ${n} no es divisible entre 3 ni entre 9.`, `So ${n} is not divisible by 3 or by 9.`),
+    ],
+    corregida: ({ n }) => L(
+      `${suma(cifras(n))} = ${sumaCifras(n)}, que es múltiplo de 3 y no de 9, así que ${n} es divisible entre 3 y no entre 9.`,
+      `${suma(cifras(n))} = ${sumaCifras(n)}, which is a multiple of 3 and not of 9, so ${n} is divisible by 3 and not by 9.`),
+  },
+  // ── Todos los divisores ──
+  {
+    id: 'c-divisores-probando',
+    error: null,
+    lineas: ({ n }) => [
+      L(`Divido ${n} entre 1, 2, 3… hasta ${n}. Son exactas las divisiones entre ${yLista(divisores(n), 'y')}.`,
+        `I divide ${n} by 1, 2, 3… up to ${n}. There is no remainder when I divide by ${yLista(divisores(n), 'and')}.`),
+      listaDivisores(n),
+    ],
+    porque: ({ n }) => L(
+      `Está bien: ha probado todos los números del 1 al ${n}.`,
+      `It is right: all the numbers from 1 to ${n} were tried.`),
+  },
+  // ── ¿Es primo? (impares compuestos) ──
+  {
+    id: 'c-primo-divisores',
+    error: null,
+    lineas: ({ n }) => [
+      listaDivisores(n),
+      L(`Tiene más de dos divisores, luego ${n} no es primo.`, `It has more than two divisors, so ${n} is not prime.`),
+    ],
+    porque: ({ n }) => L(
+      `Está bien: ${n} tiene ${divisores(n).length} divisores.`,
+      `It is right: ${n} has ${divisores(n).length} divisors.`),
+  },
+  // ── Las horas ──
+  {
+    id: 'c-minutos-horas-primero',
+    error: null,
+    lineas: ({ h, m, d }) => [
+      L(`${d} minutos son 1 hora y ${d - 60} minutos.`, `${d} minutes are 1 hour and ${d - 60} minutes.`),
+      L(`Una hora después de las ${hm(h, m)} son las ${hm(h + 1, m)}.`, `One hour after ${hm(h, m)} it is ${hm(h + 1, m)}.`),
+      L(`Llega ${d - 60} minutos después de las ${hm(h + 1, m)}: a las ${hm(h + 2, m + d - 120)}.`, `It arrives ${d - 60} minutes after ${hm(h + 1, m)}: at ${hm(h + 2, m + d - 120)}.`),
+    ],
+    porque: ({ d }) => L(
+      `Está bien: primero ha pasado los ${d} minutos a 1 hora y ${d - 60} minutos, y después los ha sumado.`,
+      `It is right: first the ${d} minutes were changed into 1 hour and ${d - 60} minutes, and then they were added.`),
+  },
+  {
+    id: 'c-minutos-hasta-la-hora',
+    error: null,
+    lineas: ({ h, m, d }) => [
+      L(`De las ${hm(h, m)} a las ${hm(h + 1, 0)} hay ${60 - m} minutos.`, `From ${hm(h, m)} to ${hm(h + 1, 0)} there are ${60 - m} minutes.`),
+      L(`Quedan ${d} − ${60 - m} = ${m + d - 60} minutos, que son 1 hora y ${m + d - 120} minutos.`, `There are ${d} − ${60 - m} = ${m + d - 60} minutes left, which are 1 hour and ${m + d - 120} minutes.`),
+      L(`Llega a las ${hm(h + 2, m + d - 120)}.`, `It arrives at ${hm(h + 2, m + d - 120)}.`),
+    ],
+    porque: ({ h, m }) => L(
+      `Está bien: primero ha llegado hasta las ${hm(h + 1, 0)} (${60 - m} minutos) y después ha sumado lo que queda.`,
+      `It is right: first it went up to ${hm(h + 1, 0)} (${60 - m} minutes) and then it added the rest.`),
+  },
+  // ── Múltiplo y divisor ──
+  {
+    id: 'c-relacion-multiplo',
+    error: null,
+    lineas: ({ a, b, k }) => [
+      L(`${a} = ${b} · ${k}`, `${a} = ${b} · ${k}`),
+      L(`Luego ${a} es múltiplo de ${b}.`, `So ${a} is a multiple of ${b}.`),
+    ],
+    porque: ({ a, b, k }) => L(`Está bien: ${a} es ${b} multiplicado por ${k}.`, `It is right: ${a} is ${b} times ${k}.`),
+  },
+  {
+    id: 'c-relacion-divisor',
+    error: null,
+    lineas: ({ a, b }) => [
+      divido(a, b),
+      L(`Luego ${b} es divisor de ${a}.`, `So ${b} is a divisor of ${a}.`),
+    ],
+    porque: ({ a, b }) => L(`Está bien: la división de ${a} entre ${b} es exacta.`, `It is right: the division of ${a} by ${b} is exact.`),
+  },
+];
+export const RUTA_POR_ID = Object.fromEntries(RUTAS.map(r => [r.id, r]));
+/** Una ruta de columna: una plantilla del banco o una ruta propia. */
+export const rutaDe = id => PLANTILLA_POR_ID[id] ?? RUTA_POR_ID[id];
+
 // ─── La explicación del ítem (feedback de acierto/fallo y botón «No lo sé») ────
 //
 // Con error (JL, 22-11): la línea con ordinal y sin su número delante («El error está en la tercera línea:»), el
@@ -601,16 +878,14 @@ export function explicaItem(item, { tt, idioma }) {
 
 // ─── «No lo sé»: la regla del ejercicio, la línea mala y cómo se hace bien, y la respuesta (tarea 193) ───
 //
-// La tarjeta lleva delante cómo se busca el error y al final la respuesta, una sola vez. En el ej. 2 la respuesta
-// es la línea («la tercera línea»): en el cuerpo no se dice cuál es, solo se cita. En el ej. 3 la respuesta es el
-// nombre del error, así que en el cuerpo no sale.
+// La tarjeta lleva delante cómo se busca el error y al final la respuesta, una sola vez. En el ej. 3 la respuesta es
+// el nombre del error, así que en el cuerpo no sale. La del ej. 2 (columnas) está al final del fichero.
 
 const REGLA = {
   hay: { es: 'Repasa cada línea: sus cuentas y la regla que usa. Si alguna falla, hay un error.', en: 'Check each line: its calculations and the rule it uses. If one of them fails, there is a mistake.' },
-  linea: { es: 'Repasa las líneas en orden y para en la primera cuya cuenta o regla falla.', en: 'Check the lines in order and stop at the first one with a wrong calculation or a wrong rule.' },
   nombre: { es: 'Busca la línea mala y compárala con cómo se hace bien: lo que cambia da el nombre del error.', en: 'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.' },
+  columnas: { es: 'Repasa cada columna en orden y para en la primera línea cuya cuenta o regla falla. Una columna puede estar bien aunque lo haga de otra forma.', en: 'Check each column in order and stop at the first line with a wrong calculation or a wrong rule. A column can be right even if it does it another way.' },
 };
-const FALLA = { es: 'Esta línea falla:', en: 'This line is wrong:' };
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
 const cierre = (idioma, txt) => `<br>${RESPUESTA[idioma]} <strong>${txt}</strong>.`;
 const entreComillas = (idioma, txt) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
@@ -632,15 +907,45 @@ export function explicaHay(item, ctx) {
   return `${tt(REGLA.hay)}<br>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.error ? TX.error : TX.bien))))}`;
 }
 
-/** Ejercicio 2: la primera línea que está mal. */
-export function explicaLinea(item, ctx) {
-  const { tt, idioma } = ctx;
-  return `${tt(REGLA.linea)}<br>${tt(FALLA)} ${lineaMala(item, tt)}<br>${nombre(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}${cierre(idioma, lineaN(item.solucion, idioma))}`;
-}
-
 /** Ejercicio 3: el nombre del error. */
 export function explicaNombre(item, ctx) {
   const { tt, idioma } = ctx;
   const resp = entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion]))));
   return `${tt(REGLA.nombre)}<br>${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}${cierre(idioma, resp)}`;
+}
+
+// ─── Ejercicio 2 en columnas: la explicación columna a columna ─────────────────
+//
+// La línea mala se cita, sin ordinal: en una columna, «la segunda línea» contaría el enunciado, que va arriba.
+
+/**
+ * El feedback del ejercicio 2: cada columna, si está bien (y por qué) o su línea mala, el error, la regla rota en
+ * negrita y lo correcto.
+ */
+export function explicacionColumnas(item, { tt }) {
+  return item.columnas.map((c, j) => {
+    const r = rutaDe(c.ruta);
+    const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
+    if (!c.error) {
+      const porque = comillasIn(tt(r.porque(item.params)));
+      const txt = /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
+      return `<p class="columna-explica">${cabeza} ${txt}</p>`;
+    }
+    return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">${html(tt(c.lineas[c.falsa]))}</span>`
+      + `<br>${esc(tt(NOMBRES[c.error]))}${reglaEnNegrita(esc(tt(REGLAS[c.error])))}`
+      + `${tt(LO_CORRECTO)} ${html(minuscula(tt(r.corregida(item.params))))}</p>`;
+  }).join('');
+}
+
+/** Las columnas malas: «la columna B» / «las columnas B y D» (en inglés, «column B» / «columns B and D»). */
+function columnasMalas(item, idioma) {
+  const l = item.columnas.map((c, j) => (c.error ? LETRAS[j] : null)).filter(Boolean);
+  const lista = yLista(l, idioma === 'en' ? 'and' : 'y');
+  return idioma === 'en' ? `${l.length > 1 ? 'columns' : 'column'} ${lista}` : `${l.length > 1 ? 'las columnas' : 'la columna'} ${lista}`;
+}
+
+/** Ejercicio 2, tarjeta del «No lo sé»: cómo se busca, cada columna y, al final, dónde está el error. */
+export function explicaColumnas(item, ctx) {
+  const { tt, idioma } = ctx;
+  return `${tt(REGLA.columnas)}${explicacionColumnas(item, ctx)}${tt({ es: 'El error está en', en: 'The mistake is in' })} <strong>${columnasMalas(item, idioma)}</strong>.`;
 }
