@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-22T12:20Z por s-20261122T120759-c8f40585 al cerrar la 239 (LISTA, commit 7ad5076: errores6, el error en las líneas de en medio; tests propios 68 en verde): **retoque de su fila y de la foto**, no regeneración completa (otras sesiones en el árbol).
+
 Actualizado 2026-11-22T12:03Z por s-20261122T120314-344f1477 alta de las tareas 234-239 («Caza el error» en columnas, fase 2; la fase 1 en main, c36041d): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
 
 Actualizado 2026-11-19T19:51Z por s-20261119T194012-e876f220 al cerrar la 217 (LISTA, commit e15e28e: repartos; npm test 2609/2609; sin prueba en navegador).
@@ -372,12 +374,12 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 236 | «Caza el error» de la unidad 4 (errores4), ejercicio 2 en columnas | tareas/tarea-236-errores4-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/236-errores4-columnas/ | PENDIENTE | — |
 | 237 | «Caza el error» de la unidad 5 (errores5), ejercicio 1 en columnas | tareas/tarea-237-errores5-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/237-errores5-columnas/ | PENDIENTE | — |
 | 238 | «Caza el error» de la unidad 7 (errores7), ejercicio 1 en columnas | tareas/tarea-238-errores7-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/238-errores7-columnas/ | PENDIENTE | — |
-| 239 | «Caza el error» de la unidad 6 (errores6): el error también en las líneas de en medio | tareas/tarea-239-errores6-lineas-intermedias.md | — (fase 1 en `main`, c36041d) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/239-errores6-lineas-intermedias/ | PENDIENTE | — |
+| 239 | «Caza el error» de la unidad 6 (errores6): el error también en las líneas de en medio | tareas/tarea-239-errores6-lineas-intermedias.md | — (fase 1 en `main`, c36041d) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/239-errores6-lineas-intermedias/ | LISTA | — |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-22 12:03Z**: BLOQUEADA 5 (228, 229, 230, 231, 232) · LISTA 223 · PENDIENTE 11 (215, 216, 223, 227, 233, 234, 235, 236, 237, 238, 239).
+**Foto a 2026-11-22 12:03Z**: BLOQUEADA 5 (228, 229, 230, 231, 232) · LISTA 223 · LISTA 239 · PENDIENTE 10 (215, 216, 223, 227, 233, 234, 235, 236, 237, 238).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
