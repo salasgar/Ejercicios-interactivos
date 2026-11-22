@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import * as L from '../practicas/errores1/logica.js';
 import * as X from '../practicas/errores1/textos.js';
-import { lineaN, entreLineas } from '../practicas/_comun/procedimiento.js';
+import { entreLineas } from '../practicas/_comun/procedimiento.js';
 
 const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
@@ -31,16 +31,27 @@ test('errores1 · ejercicio 1: la explicación dice si hay error o no', () => {
   }
 });
 
-test('errores1 · ejercicio 2: la explicación señala la línea del error', () => {
-  for (const idioma of IDIOMAS) for (const item of generar(L.generarLinea, 2)) {
-    const t = plano(X.explicaLinea(item, ctx(idioma)));
-    assert.equal(item.solucion, item.error.linea);
-    alFinal(t, idioma, lineaN(item.error.linea, idioma));
-    // JL, 22-11: ni «It is the first line that is wrong» ni «3.» delante de la línea; la regla rota, en negrita.
-    assert.doesNotMatch(t, /first line that is wrong|primera línea que falla|\b\d\. =/, t);
-    assert.ok(X.explicaLinea(item, ctx(idioma)).includes(`<strong class="regla-rota">${X.html(X.REGLAS[item.error.nombre][idioma])}</strong>`), t);
-    assert.ok(t.includes(plano(X.html(item.lineas[item.error.linea][idioma]))), t);
-    assert.ok(!/undefined|NaN/.test(t), t);
+test('errores1 · ejercicio 2 (columnas): consejo, todas las columnas explicadas y dónde está el error, en los dos idiomas', () => {
+  for (const idioma of IDIOMAS) for (const item of generar(L.generarColumnas, 2)) {
+    const html = X.explicaLinea(item, ctx(idioma));
+    const t = plano(html);
+    assert.ok(/^<p>[^<]+<\/p>/.test(html), html);   // el consejo, en su párrafo, delante
+    assert.equal((html.match(/class="columna-explica"/g) ?? []).length, item.columnas.length);
+    const malas = [];
+    for (const [j, c] of item.columnas.entries()) {
+      assert.ok(t.includes(`${X.TX.columna[idioma]} ${X.LETRAS[j]}.`), t);
+      if (!c.error) { assert.ok(t.includes(plano(X.html(c.porque[idioma]))), t); continue; }
+      malas.push(X.LETRAS[j]);
+      assert.ok(html.includes(`<strong class="regla-rota">${X.html(X.REGLAS[c.error][idioma])}</strong>`), t);
+      assert.ok(t.includes(plano(X.html(c.lineas[c.falsa][idioma])).trim()), t);
+      assert.ok(t.includes(X.NOMBRES[c.error][idioma]), t);
+    }
+    // «Lo correcto es»: la cuenta bien hecha, en minúscula tras los dos puntos, una por columna mala
+    assert.equal(t.split(idioma === 'es' ? 'Lo correcto es:' : 'The right way is:').length - 1, malas.length, t);
+    assert.ok(new RegExp(`${malas.at(-1)}\\s?\\.$`).test(t.trim()), `termina en la última columna mala: ${t}`);
+    assert.ok(t.includes(idioma === 'es' ? 'El error está en' : 'The mistake is in'), t);
+    assert.ok(!/undefined|NaN|\[object/.test(t), t);
+    assert.ok(!t.includes('..'), t);
   }
 });
 
@@ -74,7 +85,7 @@ test('errores1 · ejercicio 4: la explicación dice si falta un paso', () => {
 });
 
 test('errores1 · ejercicios 1-3: regla delante; con error, la línea mala y la cuenta bien hecha, en minúscula tras «sería:»', () => {
-  const fns = [[X.explicaHay, L.generarHay], [X.explicaLinea, L.generarLinea], [X.explicaNombre, L.generarNombre]];
+  const fns = [[X.explicaHay, L.generarHay], [X.explicaNombre, L.generarNombre]];
   for (const [explica, gen] of fns) for (const idioma of IDIOMAS) for (const item of generar(gen, 5)) {
     const html = explica(item, ctx(idioma));
     const t = plano(html);

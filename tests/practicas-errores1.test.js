@@ -12,7 +12,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { generarHay, generarLinea, generarNombre, generarPasos, clavePasos, nombresExcluidos } from '../practicas/errores1/logica.js';
+import { generarHay, generarColumnas, columnasPosibles, generarNombre, generarPasos, clavePasos, nombresExcluidos } from '../practicas/errores1/logica.js';
 import { PLANTILLAS, PLANTILLA_POR_ID, PASOS, PASOS_POR_ID, TX, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores1/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 
@@ -346,22 +346,125 @@ test('ejercicio 1: salen todas las plantillas', () => {
 
 // ─── Ejercicio 2 ──────────────────────────────────────────────────────────────
 
-test('ejercicio 2: solo procedimientos con error; la línea correcta es la única falsa (fuerza bruta)', () => {
-  const rng = crearRng(201);
-  for (let i = 0; i < 2000; i++) {
-    const item = generarLinea(rng);
-    assert.ok(item.error);
-    const v = validas(item);
-    assert.deepEqual(v.map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [item.solucion]);
-    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));   // sin el enunciado
+import { FAMILIAS, evaluar } from '../practicas/errores1/familias.js';
+import { LETRAS } from '../practicas/errores1/textos.js';
+
+const IDS_FAMILIA = FAMILIAS.map(f => f.id);
+
+test('ejercicio 2: el evaluador entiende las líneas de las familias', () => {
+  assert.equal(evaluar('5 + 8 · 4'), 37);
+  assert.equal(evaluar('(2 + 3)^2'), 25);
+  assert.equal(evaluar('18 − (5 + 3) − 2'), 8);
+  assert.equal(evaluar('√36 + 2 · 3'), 12);
+  assert.equal(evaluar('36 : 2 + 3'), 21);
+  assert.equal(evaluar('36 ÷ 2 + 3'), 21);
+  assert.ok(Number.isNaN(evaluar('5 +')));
+});
+
+test('ejercicio 2: cada familia tiene al menos 2 rutas buenas y 1 mala, con errores del catálogo y sin repetir id', () => {
+  for (const f of FAMILIAS) {
+    assert.ok(f.bien.length >= 2, f.id);
+    assert.ok(f.mal.length >= 1, f.id);
+    assert.equal(new Set([...f.bien, ...f.mal].map(r => r.id)).size, f.bien.length + f.mal.length, `ids repetidos en ${f.id}`);
+    for (const r of f.mal) assert.ok(r.error.nombre in NOMBRES && r.error.linea >= 1, `${f.id}/${r.id}`);
+    assert.equal(new Set(f.mal.map(r => r.error.nombre)).size, f.mal.length, `${f.id}: errores repetidos`);
   }
 });
 
-test('ejercicio 2: ninguna posición es la correcta en más del 70 % de los ítems', () => {
+test('ejercicio 2: en columnas, cada línea buena vale lo mismo que el enunciado y la mala es la primera que cambia (fuerza bruta)', () => {
+  const rng = crearRng(201);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarColumnas(rng);
+    assert.equal(item.tipo, 'columnas');
+    assert.ok(item.columnas.length >= 2 && item.columnas.length <= 4);
+    assert.equal(item.solucion.length, item.columnas.length);
+    const valor = evaluar(item.enunciado.es);
+    assert.ok(Number.isFinite(valor));
+    for (const [j, c] of item.columnas.entries()) {
+      assert.equal(c.lineas[0].es, item.enunciado.es, 'todas las columnas empiezan por el mismo enunciado');
+      assert.ok(c.lineas.length >= 2 && c.lineas.length <= 5, `${item.plantilla}/${c.ruta}`);
+      const vs = c.lineas.map(l => evaluar(l.es));
+      assert.ok(vs.every(Number.isFinite), `${item.plantilla}/${c.ruta}: ${c.lineas.map(l => l.es).join(' | ')}`);
+      assert.deepEqual(c.lineas.map(l => l.en.replace(/÷/g, ':')), c.lineas.map(l => l.es), 'solo cambia la división');
+      const primeraMala = vs.findIndex(v => v !== valor);
+      if (c.error) {
+        assert.equal(primeraMala, c.falsa, `${item.plantilla}/${c.ruta}: ${c.lineas.map(l => l.es).join(' | ')}`);
+        assert.equal(item.solucion[j], c.falsa);
+        assert.ok(c.falsa >= 1, 'el enunciado no se puede marcar');
+        assert.ok(c.error in NOMBRES);
+        for (const v of vs.slice(c.falsa)) assert.equal(v, vs[c.falsa], 'tras el error, el resto sigue su valor falso');
+        assert.equal(c.porque, null);
+      } else {
+        assert.equal(primeraMala, -1, `${item.plantilla}/${c.ruta}: ${c.lineas.map(l => l.es).join(' | ')}`);
+        assert.equal(item.solucion[j], null);
+        assert.ok(c.porque?.es && c.porque?.en, c.ruta);
+      }
+    }
+  }
+});
+
+test('ejercicio 2: siempre hay una columna buena y una mala; no hay columnas repetidas ni errores repetidos', () => {
   const rng = crearRng(202);
-  const cuenta = {};
-  for (let i = 0; i < 3000; i++) { const s = generarLinea(rng).solucion; cuenta[s] = (cuenta[s] ?? 0) + 1; }
-  for (const [pos, c] of Object.entries(cuenta)) assert.ok(c / 3000 <= 0.7, `posición ${pos}: ${c}`);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarColumnas(rng);
+    const malas = item.columnas.filter(c => c.error), buenas = item.columnas.filter(c => !c.error);
+    assert.ok(malas.length >= 1 && malas.length <= 2, item.plantilla);
+    assert.ok(buenas.length >= 1 && buenas.length <= 2, item.plantilla);
+    assert.equal(new Set(item.columnas.map(c => c.lineas.map(l => l.es).join('|'))).size, item.columnas.length, 'columnas repetidas');
+    assert.equal(new Set(item.columnas.map(c => c.ruta)).size, item.columnas.length, 'rutas repetidas');
+    assert.equal(new Set(malas.map(c => c.error)).size, malas.length, 'errores repetidos');
+    assert.equal(item.preguntas.length, malas.length);
+  }
+});
+
+test('ejercicio 2: preguntas: nombre bueno + 2 que no pueden describir la columna ni se confunden con ella', () => {
+  const rng = crearRng(203);
+  for (let i = 0; i < 3000; i++) {
+    const item = generarColumnas(rng);
+    const nombresMalos = item.columnas.filter(c => c.error).map(c => c.error);
+    for (const q of item.preguntas) {
+      const c = item.columnas[q.col];
+      assert.ok(c.error, 'se pregunta por una columna mala');
+      assert.equal(q.solucion, c.error);
+      assert.equal(q.opciones.length, 3);
+      assert.equal(new Set(q.opciones).size, 3);
+      assert.ok(q.opciones.includes(q.solucion));
+      const ruta = FAMILIAS.find(f => f.id === item.plantilla).mal.find(r => r.id === c.ruta);
+      const fuera = new Set([...nombresMalos, ...(ruta.excluidos ?? [])]);
+      for (const n of nombresMalos) for (const [a, b] of CONFUNDIBLES) { if (a === n) fuera.add(b); if (b === n) fuera.add(a); }
+      for (const o of q.opciones) {
+        assert.ok(o in NOMBRES, o);
+        if (o !== q.solucion) assert.ok(!fuera.has(o), `${item.plantilla}/${c.ruta}: ${o}`);
+      }
+    }
+  }
+});
+
+test('ejercicio 2: salen todas las familias, y 2, 3 y 4 columnas (ninguna cuenta menos del 8 %)', () => {
+  const rng = crearRng(204);
+  const familias = new Set(), cuantas = {};
+  for (let i = 0; i < 3000; i++) {
+    const item = generarColumnas(rng);
+    familias.add(item.plantilla);
+    cuantas[item.columnas.length] = (cuantas[item.columnas.length] ?? 0) + 1;
+  }
+  assert.deepEqual([...familias].sort(), [...IDS_FAMILIA].sort());
+  for (const n of [2, 3, 4]) assert.ok((cuantas[n] ?? 0) / 3000 >= 0.08, `${n} columnas: ${cuantas[n]}`);
+});
+
+test('ejercicio 2: de verdad hay dos distractores disponibles en cada familia (no se queda corto)', () => {
+  const rng = crearRng(205);
+  for (const f of FAMILIAS) {
+    const { mal } = columnasPosibles(f, f.numeros(rng));
+    const fuera = new Set(f.mal.flatMap(r => [r.error.nombre, ...(r.excluidos ?? [])]));
+    for (const r of f.mal) for (const [a, b] of CONFUNDIBLES) { if (a === r.error.nombre) fuera.add(b); if (b === r.error.nombre) fuera.add(a); }
+    assert.ok(CLAVES_NOMBRES.filter(c => !fuera.has(c)).length >= 2, f.id);
+    assert.ok(mal.length >= 1, f.id);
+  }
+});
+
+test('ejercicio 2: el nombre de la columna mala sigue siendo el de la ruta (distintas letras A-D)', () => {
+  assert.deepEqual(LETRAS, ['A', 'B', 'C', 'D']);
 });
 
 // ─── Ejercicio 3 ──────────────────────────────────────────────────────────────
@@ -443,7 +546,7 @@ test('saltoPaso ya no existe: ni como nombre de error, ni como plantilla de los 
   // y todo desarrollo en cadena que quede en el banco es válido paso a paso salvo en la línea con error
   const rng = crearRng(31);
   for (let i = 0; i < 3000; i++) {
-    for (const item of [generarHay(rng), generarLinea(rng), generarNombre(rng)]) {
+    for (const item of [generarHay(rng), generarNombre(rng)]) {
       assert.notEqual(item.error?.nombre, 'saltoPaso');
       assert.ok(!item.opciones.includes('saltoPaso'));
     }
@@ -537,12 +640,11 @@ test('ejercicio 4: textos en los dos idiomas, sin ×, sin letras, producto con �
 import { explicacion, REGLAS } from '../practicas/errores1/textos.js';
 import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
 
-test('ejercicio 2: el enunciado (línea 0) no se puede pulsar (JL, 22-11)', () => {
+test('ejercicio 2: el enunciado (línea 0) no se puede pulsar y la línea marcable es siempre >= 1 (JL, 22-11)', () => {
   const rng = crearRng(2211);
   for (let i = 0; i < 1000; i++) {
-    const item = generarLinea(rng);
-    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));
-    assert.ok(item.solucion >= 1);
+    const item = generarColumnas(rng);
+    for (const f of item.solucion) assert.ok(f === null || f >= 1);
   }
 });
 
@@ -554,7 +656,8 @@ test('feedback con error: minúscula tras «Lo correcto es:», la línea con ord
   const rng = crearRng(3232);
   const tt = (x, idioma) => (typeof x === 'function' ? x : x[idioma]);
   for (let i = 0; i < 1500; i++) {
-    const item = (i % 2 ? generarLinea : generarNombre)(rng);
+    const item = (i % 2 ? generarHay : generarNombre)(rng);
+    if (!item.error) continue;
     for (const idioma of ['es', 'en']) {
       const html = explicacion(item, { tt: x => tt(x, idioma), idioma });
       const donde = `${idioma} ${item.plantilla}: ${html}`;

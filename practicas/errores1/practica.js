@@ -3,16 +3,16 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { lista, lineasPulsables } from '../_comun/procedimiento.js';
+import { lista, columnasPulsables, columnasFijas } from '../_comun/procedimiento.js';
 import { esc } from '../_comun/textos.js';
-import { TX, NOMBRES, html, explicacion, explicacionPasos, explicaHay, explicaLinea, explicaNombre, explicaPasos } from './textos.js';
-import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clavePasos } from './logica.js';
+import { TX, NOMBRES, html, explicacion, explicacionPasos, explicaHay, explicaLinea, explicaNombre, explicaPasos, explicacionColumnas, enunciadoColumnas, columnasDe, LETRAS } from './textos.js';
+import { generarHay, generarColumnas, generarNombre, generarPasos, claveItem, clavePasos } from './logica.js';
 
 /** El procedimiento sin números de línea (se confundían con los de la cuenta); la primera línea es el enunciado. */
 const procedimiento = (item, { tt }) => lista(item.lineas.map(l => html(tt(l))));
 
 const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
-const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
+const enunciadoLinea = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.linea)}</p>${columnasFijas(enunciadoColumnas(item, textos), columnasDe(item, textos))}`;
 const enunciadoNombre = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.nombre)}</p>${procedimiento(item, textos)}`;
 const enunciadoPasos = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.pasos)}</p>${procedimiento(item, textos)}`;
 
@@ -30,18 +30,47 @@ function montarHay(contenedor, item, api) {
   });
 }
 
+/** Lo marcado en las columnas, para el registro del profesor: «A:2 B:- C:1». */
+const marcasEnTexto = marcas => marcas.map((m, j) => `${LETRAS[j]}:${m ?? '-'}`).join(' ');
+
+/** Una sola llamada a `api.responder`: el primer fallo termina el ítem con la explicación de todas las columnas. */
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
-  contenedor.innerHTML = enunciadoLinea(item, api);
-  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
-  const botones = lineasPulsables(contenedor, {
-    lineasHtml: item.lineas.map(l => html(tt(l))),
-    alElegir(valor) {
+  contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
+  const cuerpo = textos => explicacionColumnas(item, textos);
+  const columnas = columnasPulsables(contenedor, {
+    enunciadoHtml: enunciadoColumnas(item, api),
+    columnas: columnasDe(item, api),
+    textoComprobar: tt(TX.comprobar),
+    alComprobar(marcas) {
       if (api.respondido()) return;
-      botones.marcar([item.solucion], valor);
-      api.responder({ acierto: valor === item.solucion, html: textos => explicacion(item, textos), espera: 3200 });
+      columnas.corregir(item.solucion, { bien: tt(TX.col_bien), mal: tt(TX.col_mal) });
+      const fallo = marcas.findIndex((m, j) => m !== item.solucion[j]);
+      if (fallo >= 0) {
+        api.responder({ acierto: false, html: cuerpo, espera: 'boton', error: item.columnas[fallo].error ?? 've-un-error-donde-no-lo-hay', respuesta: marcasEnTexto(marcas) });
+        return;
+      }
+      preguntar(0);
     },
   });
+
+  function preguntar(k) {
+    if (api.respondido()) return;
+    if (k === item.preguntas.length) { api.responder({ acierto: true, html: cuerpo, espera: 'boton' }); return; }
+    const q = item.preguntas[k];
+    contenedor.insertAdjacentHTML('beforeend', `<p class="instruccion instruccion--siguiente">${tt(TX.pregunta_col)(LETRAS[q.col])}</p>`);
+    const nombres = elecciones(contenedor, {
+      clase: 'elecciones nombres',
+      opciones: q.opciones.map(clave => ({ valor: clave, html: esc(tt(NOMBRES[clave])) })),
+      alElegir(clave) {
+        if (api.respondido()) return;
+        nombres.marcar([q.solucion], clave);
+        if (clave !== q.solucion) { api.responder({ acierto: false, html: cuerpo, espera: 'boton', error: q.solucion, respuesta: clave }); return; }
+        preguntar(k + 1);
+      },
+    });
+    nombres.elemento.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 function montarNombre(contenedor, item, api) {
@@ -88,7 +117,7 @@ arrancar({
     {
       nombre: TX.nombre.linea,
       detalle: TX.detalle.linea,
-      generar: generarLinea,
+      generar: generarColumnas,
       clave: claveItem,
       montar: montarLinea,
       enunciado: enunciadoLinea,

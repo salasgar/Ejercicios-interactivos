@@ -71,13 +71,13 @@ export const TX = {
   },
   detalle: {
     hay: { es: 'Un procedimiento de un alumno: ¿está bien o no?', en: 'A student\'s work: is it right or not?' },
-    linea: { es: 'Este procedimiento tiene un error: toca la línea donde está', en: 'This work has a mistake: tap the line where it is' },
+    linea: { es: 'El mismo cálculo hecho por varios alumnos: toca el error de cada columna mala y di qué error es', en: 'The same calculation done by several students: tap the mistake in each wrong column and say what it is' },
     nombre: { es: 'Este procedimiento tiene un error: ¿cuál es?', en: 'This work has a mistake: which one is it?' },
     pasos: { es: 'Las cuentas están bien: ¿se ha saltado algún paso?', en: 'The sums are right: is any step missing?' },
   },
   instruccion: {
     hay: { es: 'Mira el procedimiento. ¿Está bien o hay un error?', en: 'Look at the work. Is it right or is there a mistake?' },
-    linea: { es: 'Hay un error. Toca la línea donde está.', en: 'There is a mistake. Tap the line where it is.' },
+    linea: { es: 'Varios alumnos han hecho el mismo cálculo, cada uno en una columna. Algunas columnas tienen un error. Toca la línea del error en cada columna que esté mal y pulsa «Comprobar».', en: 'Some students did the same calculation, one in each column. Some columns have a mistake. Tap the wrong line in each column that has a mistake and press “Check”.' },
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
     pasos: { es: 'Mira el procedimiento. ¿Se ha saltado algún paso?', en: 'Look at the work. Is any step missing?' },
   },
@@ -97,6 +97,12 @@ export const TX = {
     es: '<p>Cada ejercicio te enseña el trabajo de un alumno, línea a línea. La primera línea es lo que se pide. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, un paréntesis que sobra, o hacer dos productos independientes en el mismo paso).</p>',
     en: '<p>Each exercise shows a student\'s work, line by line. The first line is the question. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, brackets that are not needed, or doing two independent multiplications in the same step).</p>',
   },
+  comprobar: { es: 'Comprobar', en: 'Check' },
+  col_bien: { es: 'bien', en: 'right' },
+  col_mal: { es: 'error', en: 'mistake' },
+  columna: { es: 'Columna', en: 'Column' },
+  la_linea_es: { es: 'La línea del error es', en: 'The line with the mistake is' },
+  pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
@@ -661,7 +667,10 @@ export const PASOS_POR_ID = Object.fromEntries(PASOS.map(p => [p.id, p]));
 // ─── Explicaciones («No lo sé» y feedback) ─────────────────────────────────────
 
 import { esc } from '../_comun/textos.js';
-import { errorEnLinea, lineaN, entreLineas, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
+import { errorEnLinea, entreLineas, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
+import { FAMILIA_POR_ID } from './familias.js';
+
+export const LETRAS = ['A', 'B', 'C', 'D'];
 
 /** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
 export const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
@@ -703,14 +712,13 @@ export function explicacionPasos(item, { tt }) {
 
 const REGLA = {
   hay: { es: 'Repasa cada línea: sus cuentas y la regla que usa. Si alguna falla, hay un error.', en: 'Check each line: its calculations and the rule it uses. If one of them fails, there is a mistake.' },
-  linea: { es: 'Repasa las líneas en orden y para en la primera cuya cuenta o regla falla.', en: 'Check the lines in order and stop at the first one with a wrong calculation or a wrong rule.' },
+  linea: { es: 'Repasa cada columna línea a línea: cada línea tiene que valer lo mismo que la anterior. Una columna puede estar bien aunque lo haga de otra forma.', en: 'Check each column line by line: each line has to be worth the same as the line before. A column can be right even if it does it another way.' },
   nombre: { es: 'Busca la línea mala y compárala con cómo se hace bien: lo que cambia da el nombre del error.', en: 'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.' },
   pasos: {
     es: 'En un paso caben varias operaciones si ninguna necesita el resultado de otra; si lo necesita, ese resultado se escribe antes, en su propia línea.',
     en: 'A step can have several operations if none of them needs the result of another one; if it does, that result is written first, in its own line.',
   },
 };
-const FALLA = { es: 'Esta línea falla:', en: 'This line is wrong:' };
 const FALTA_LINEA = {
   es: k => `${mayuscula(entreLineas(k - 1, k, 'es'))} falta esta:`,
   en: k => `This line is missing ${entreLineas(k - 1, k, 'en')}:`,
@@ -728,7 +736,7 @@ const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0]
  * la respuesta: aquí se cita sin decir cuál es. En el ej. 3 el nombre del error es la respuesta: aquí no sale.
  */
 function malaYBuena(item, { tt, idioma }, ej = 'hay') {
-  const mala = ej === 'linea' ? `${tt(FALLA)} ${lineaMala(item, tt)}` : `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}`;
+  const mala = `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}`;
   const nombre = ej === 'nombre' ? '' : `<br>${esc(tt(NOMBRES[item.error.nombre]))}`;
   return `<p>${mala}${nombre}${regla(item, tt)}${loCorrecto(item, tt)}</p>`;
 }
@@ -746,10 +754,44 @@ export function explicaHay(item, ctx) {
   return `<p>${tt(REGLA.hay)}</p>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.error ? TX.error : TX.bien))))}`;
 }
 
-/** «No lo sé» del ejercicio 2: la primera línea que está mal. */
-export function explicaLinea(item, ctx) {
-  const { tt, idioma } = ctx;
-  return `<p>${tt(REGLA.linea)}</p>${malaYBuena(item, ctx, 'linea')}${cierre(idioma, lineaN(item.solucion, idioma))}`;
+// ─── Ejercicio 2 en columnas (tarea 235) ───────────────────────────────────────
+
+/** Una línea en columna, como en clase: «= 25 + 12 =» (la última, sin el «=» del final). */
+const lineaColumna = (texto, ultima) => `= ${html(texto)}${ultima ? '' : ' ='}`;
+export const enunciadoColumnas = (item, { tt }) => `${html(tt(item.enunciado))} =`;
+export const columnasDe = (item, { tt }) => item.columnas.map((c, j) => ({
+  letra: LETRAS[j], lineasHtml: c.lineas.slice(1).map((l, k, todas) => lineaColumna(tt(l), k === todas.length - 1)),
+}));
+
+/** La cuenta bien hecha de la familia, para «Lo correcto es»: la primera ruta buena. */
+const cuentaBuena = (item, tt) => {
+  const familia = FAMILIA_POR_ID[item.plantilla];
+  const lineas = familia.bien[0].lineas(item.params).map(l => tt({ es: l, en: l.replace(/:/g, '÷') }));
+  return html(lineas.join(' = '));
+};
+
+/** Columna a columna: si está bien (y por qué) o dónde está el error, cuál es, la regla rota y lo correcto. */
+export function explicacionColumnas(item, { tt }) {
+  return item.columnas.map((c, j) => {
+    const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
+    if (!c.error) return `<p class="columna-explica">${cabeza} ${html(tt(c.porque))}</p>`;
+    return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">= ${html(tt(c.lineas[c.falsa]))}</span>`
+      + `<br>${esc(tt(NOMBRES[c.error]))}${reglaEnNegrita(html(tt(REGLAS[c.error])))}`
+      + `${tt(LO_CORRECTO)} ${cuentaBuena(item, tt)}</p>`;
+  }).join('');
+}
+
+/** «las columnas B y D» / «columns B and D». */
+function columnasMalas(item, idioma) {
+  const l = item.columnas.map((c, j) => (c.error ? LETRAS[j] : null)).filter(Boolean);
+  const lista = l.length === 1 ? l[0] : `${l.slice(0, -1).join(', ')} ${idioma === 'en' ? 'and' : 'y'} ${l.at(-1)}`;
+  return idioma === 'en' ? `${l.length > 1 ? 'columns' : 'column'} ${lista}` : `${l.length > 1 ? 'las columnas' : 'la columna'} ${lista}`;
+}
+
+/** «No lo sé» del ejercicio 2: el consejo, todas las columnas explicadas y dónde está el error. */
+export function explicaLinea(item, { tt, idioma }) {
+  return `<p>${tt(REGLA.linea)}</p>${explicacionColumnas(item, { tt })}`
+    + `<p><strong>${tt({ es: 'El error está en', en: 'The mistake is in' })} ${columnasMalas(item, idioma)}.</strong></p>`;
 }
 
 /** «No lo sé» del ejercicio 3: el nombre del error (solo al final). */
