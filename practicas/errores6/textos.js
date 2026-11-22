@@ -68,6 +68,9 @@ export const nombreError = (id, tt) => tt(ERRORES_TIPICOS[id].nombre);
 export const cuenta = html => `<span class="cuenta">${html}</span>`;
 const linea = (l, idioma) => cuenta(htmlLinea(l, idioma));
 
+/** Errores cuyo porqué no lleva números y solo repetiría la regla: con la regla y lo correcto basta. */
+export const SOLO_REGLA = new Set(['transponer-sin-signo']);
+
 /** El nombre del error como frase, sin «Se llama:» delante (JL, 22-11). */
 const frase = (id, tt) => `${nombreError(id, tt)}.`;
 
@@ -77,7 +80,7 @@ export function explicacion(item, { tt, idioma }, { escrito = null, resultado = 
   const tuyo = escrito !== null ? `${tt(TX.has_escrito)} ${cuenta(fracATexto(escrito))}. ` : '';
   const aviso = resultado?.error === 'repite-el-error' ? `${tt(TX.repite)} ` : '';
   return `${tuyo}${aviso}${errorEnLinea(item.falsa, idioma)} <span class="linea-mala">${linea(item.lineas[item.falsa], idioma)}</span>`
-    + `<br>${frase(item.error, tt)}${reglaEnNegrita(tt(REGLAS[item.error]))}${porque(item, idioma)}`
+    + `<br>${frase(item.error, tt)}${reglaEnNegrita(tt(REGLAS[item.error]))}${SOLO_REGLA.has(item.error) ? '' : porque(item, idioma)}`
     + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">${linea(lineaBuena(item), idioma)}</span>`;
 }
 

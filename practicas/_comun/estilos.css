@@ -306,4 +306,17 @@ html:lang(en) body::after {
   font-weight: 600; margin-bottom: .5rem;
 }
 div.procedimiento__enunciado { display: block; border-radius: 10px; padding: .55rem .8rem; text-align: left; overflow-wrap: anywhere; }
-.regla-rota { display: block; margin: .25rem 0; }
+/* `.ejercicio .feedback strong` (base) la pondría en línea: hace falta la misma especificidad o más. */
+.regla-rota, .ejercicio .feedback strong.regla-rota, .tarjeta strong.regla-rota { display: block; margin: .25rem 0; }
+
+/* Columnas de «Caza el error» (columnasPulsables): en el móvil caben dos por fila; con más, pasan abajo. */
+.columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .7rem; margin: .2rem 0 1rem; }
+.columna { display: grid; gap: .4rem; align-content: start; min-width: 0; padding: .45rem; border: 2px solid var(--borde); border-radius: 12px; }
+.columna__letra { font-weight: 700; text-align: center; color: var(--texto-suave); }
+.columna .eleccion, .columna__linea { text-align: left; font-size: 1rem; line-height: 1.4; min-height: 44px; padding: .45rem .55rem; overflow-wrap: anywhere; }
+div.columna__linea { border-radius: 10px; background: var(--primario-claro); color: var(--primario-oscuro); }
+.eleccion--marcada { border-color: var(--primario); background: var(--primario-claro); color: var(--primario-oscuro); font-weight: 700; }
+.columna--bien { border-color: var(--correcto); }
+.columna--mal { border-color: var(--error); }
+.columnas__comprobar { margin-bottom: .6rem; }
+.columna-explica { margin: .35rem 0; }

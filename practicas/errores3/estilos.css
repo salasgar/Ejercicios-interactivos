@@ -18,3 +18,4 @@
 .si-no { margin-top: .2rem; }
 .nombres { grid-template-columns: 1fr; }
 .nombres .eleccion { text-align: left; }
+.instruccion--siguiente { margin-top: 1.1rem; }

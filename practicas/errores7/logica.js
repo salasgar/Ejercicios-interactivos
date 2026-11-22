@@ -137,8 +137,8 @@ function porcentajeDecimal(id, ps, cs, divisor) {
       };
     },
     hint: (p, i) => (i === 'en'
-      ? `${p.p}% = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}. Per cent means out of 100, not out of ${divisor}. Then ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`
-      : `${p.p} % = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}. «Por ciento» es entre 100, no entre ${divisor}. Después ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`),
+      ? `${p.p}% = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, not ${p.p} : ${divisor}. Then ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`
+      : `${p.p} % = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, no ${p.p} : ${divisor}. Después ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`),
   });
 }
 const multiplos = (paso, desde, hasta) => Array.from({ length: Math.floor((hasta - desde) / paso) + 1 }, (_, k) => desde + k * paso);

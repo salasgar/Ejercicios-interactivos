@@ -271,8 +271,8 @@ export const PLANTILLAS = [
       L(`Dejo las centenas como están: ${Math.floor(n / 100) * 100}.`, `I keep the hundreds as they are: ${Math.floor(n / 100) * 100}.`),
     ],
     corregida: ({ n }) => L(
-      `Se redondea hacia arriba, a la centena siguiente: ${n} ≈ ${aCentenas(n)}.`,
-      `You round up, to the next hundred: ${n} ≈ ${aCentenas(n)}.`),
+      `${n} se redondea a ${aCentenas(n)}.`,
+      `${n} rounds to ${aCentenas(n)}.`),
   },
   {
     id: 'e-redondeo-decenas',
@@ -284,8 +284,8 @@ export const PLANTILLAS = [
       L(`Dejo las decenas como están: ${Math.floor(n / 10) * 10}.`, `I keep the tens as they are: ${Math.floor(n / 10) * 10}.`),
     ],
     corregida: ({ n }) => L(
-      `Se redondea hacia arriba, a la decena siguiente: ${n} ≈ ${aDecenas(n)}.`,
-      `You round up, to the next ten: ${n} ≈ ${aDecenas(n)}.`),
+      `${n} se redondea a ${aDecenas(n)}.`,
+      `${n} rounds to ${aDecenas(n)}.`),
   },
   {
     id: 'e-olvida-parentesis-suma',

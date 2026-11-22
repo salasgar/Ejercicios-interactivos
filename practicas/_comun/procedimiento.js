@@ -65,3 +65,69 @@ export function lineasPulsables(contenedor, { lineasHtml, alElegir, extra = [] }
     alElegir,
   });
 }
+
+// ─── Columnas (JL, 22-11): el mismo cálculo resuelto por varios alumnos ───────────────────────────────────
+//
+// El enunciado va una sola vez arriba (no se puede pulsar) y debajo, una columna por alumno con sus pasos como
+// botones. Se marca como mucho una línea por columna (tocar otra la mueve; tocar la marcada la quita) y se pulsa
+// «Comprobar». No se dice cuántas columnas tienen error: las que están bien se dejan sin marcar.
+
+/** Las columnas sin botones (para la traducción y la tarjeta): `columnas` = [{ letra, lineasHtml }]. */
+export function columnasFijas(enunciadoHtml, columnas) {
+  const cols = columnas.map(c => `<div class="columna"><div class="columna__letra">${c.letra}</div>`
+    + `${c.lineasHtml.map(h => `<div class="procedimiento__linea columna__linea">${h}</div>`).join('')}</div>`);
+  return `<div class="procedimiento__linea procedimiento__enunciado">${enunciadoHtml}</div><div class="columnas">${cols.join('')}</div>`;
+}
+
+/**
+ * Las columnas pulsables. `columnas` = [{ letra, lineasHtml }] (los pasos, sin el enunciado); el valor de cada
+ * línea es su índice contando el enunciado (la primera de la columna es la 1). `alComprobar(marcas)` recibe, por
+ * columna, la línea marcada o null. Devuelve `corregir(solucion, { bien, mal })`, que bloquea y pinta: en verde
+ * la línea mala de cada columna con error, en rojo lo marcado que no lo era, y a cada columna su etiqueta.
+ */
+export function columnasPulsables(contenedor, { enunciadoHtml, columnas, textoComprobar, alComprobar }) {
+  const enunciado = document.createElement('div');
+  enunciado.className = 'procedimiento__linea procedimiento__enunciado';
+  enunciado.innerHTML = enunciadoHtml;
+  const caja = document.createElement('div');
+  caja.className = 'columnas';
+  const marcas = columnas.map(() => null);
+  const botones = columnas.map((c, j) => {
+    const col = document.createElement('div');
+    col.className = 'columna';
+    col.innerHTML = `<div class="columna__letra">${c.letra}</div>`
+      + c.lineasHtml.map((h, k) => `<button type="button" class="eleccion columna__linea" data-i="${k + 1}">${h}</button>`).join('');
+    caja.append(col);
+    const bs = [...col.querySelectorAll('button')];
+    bs.forEach(b => b.addEventListener('click', () => {
+      if (b.disabled) return;
+      const i = Number(b.dataset.i);
+      marcas[j] = marcas[j] === i ? null : i;
+      bs.forEach(x => x.classList.toggle('eleccion--marcada', Number(x.dataset.i) === marcas[j]));
+    }));
+    return { col, bs };
+  });
+  const comprobar = document.createElement('button');
+  comprobar.type = 'button';
+  comprobar.className = 'ancho columnas__comprobar';
+  comprobar.textContent = textoComprobar;
+  comprobar.addEventListener('click', () => { if (!comprobar.disabled) alComprobar([...marcas]); });
+  contenedor.append(enunciado, caja, comprobar);
+  return {
+    corregir(solucion, { bien, mal }) {
+      comprobar.disabled = true;
+      comprobar.remove();   // `hidden` no basta: `button.ancho` lo pone en bloque
+      botones.forEach(({ col, bs }, j) => {
+        col.classList.add(solucion[j] === null ? 'columna--bien' : 'columna--mal');
+        col.querySelector('.columna__letra').insertAdjacentHTML('beforeend', ` · ${solucion[j] === null ? bien : mal}`);
+        bs.forEach(b => {
+          const i = Number(b.dataset.i);
+          b.disabled = true;
+          b.classList.remove('eleccion--marcada');
+          if (i === solucion[j]) b.classList.add('eleccion--correcta');
+          else if (i === marcas[j]) b.classList.add('eleccion--mal');
+        });
+      });
+    },
+  };
+}

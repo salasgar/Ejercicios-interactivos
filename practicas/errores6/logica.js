@@ -267,9 +267,11 @@ nueva({
   cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
   hint(p, i) {
     const { A, C } = this.caso(p).forma();
+    // Solo los números (la regla va en negrita); el divisor negativo, entre paréntesis.
+    const dv = f => (f.num < 0 ? `(${fracATexto(f)})` : fracATexto(f));
     return i === 'en'
-      ? `x = ${fracATexto(C)} : ${fracATexto(A)}: the number that multiplies x divides the number on the other side, not the other way round.`
-      : `x = ${fracATexto(C)} : ${fracATexto(A)}: el número que multiplica a la x divide al del otro lado, no al revés.`;
+      ? `x = ${fracATexto(C)} : ${dv(A)}, not ${fracATexto(A)} : ${dv(C)}.`
+      : `x = ${fracATexto(C)} : ${dv(A)}, no ${fracATexto(A)} : ${dv(C)}.`;
   },
 });
 
@@ -314,8 +316,9 @@ nueva({
   cadena(p, mal) { const q0 = this.caso(p); return cadenaPrimera(q0, mal, mal ? E[this.id].fn(q0) : null); },
   hint(p, i) {
     const m = this.caso(p).mcmDenominadores();
-    return i === 'en' ? `Every term is multiplied by ${m}, also the ones without a denominator.`
-      : `Se multiplican todos los términos por ${m}, también los que no tienen denominador.`;
+    // Solo los números: la regla ya va en negrita (JL, 22-11).
+    return i === 'en' ? `The LCM is ${m}: the terms without a denominator are multiplied by ${m} too.`
+      : `El m.c.m. es ${m}: los términos sin denominador también se multiplican por ${m}.`;
   },
 });
 
@@ -373,8 +376,8 @@ nueva({
     const w = lin(E[this.id].fn(aLineal(q0.izq)), p.e);
     return { lineas: [L(q0), L(w), ...seguir(w)], falsa: 1 };
   },
-  hint: (p, i) => (i === 'en' ? `Only the terms with x are added; ${num(p.b)} has no x, so it stays apart.`
-    : `Solo se suman los términos con x; el ${num(p.b)} no tiene x y se queda aparte.`),
+  hint: (p, i) => (i === 'en' ? `${num(p.b)} has no x, so it stays apart.`
+    : `El ${num(p.b)} no tiene x y se queda aparte.`),
 });
 
 // 11 · 3(x − 2) → 3x − 2 (multiplica solo el primer término)
@@ -390,8 +393,8 @@ nueva({
     const w = new Ecuacion([T(p.k, X), T(p.n)], [T(p.c)]);
     return { lineas: [l1, L(w), ...seguir(w)], falsa: 1 };
   },
-  hint: (p, i) => (i === 'en' ? `${p.k} multiplies every term in the brackets: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`
-    : `El ${p.k} multiplica a todos los términos del paréntesis: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`),
+  hint: (p, i) => (i === 'en' ? `The second term too: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`
+    : `También el segundo término: ${p.k} · ${par(p.n)} = ${num(p.k * p.n)}.`),
 });
 
 // 12 · −(x − 2) → −x − 2 (el signo menos solo cambia el primer término)
@@ -406,8 +409,8 @@ nueva({
     const w = new Ecuacion([T(-p.k, X), T(p.k * p.n)], [T(p.c)]);
     return { lineas: [l1, L(w), ...seguir(w)], falsa: 1 };
   },
-  hint: (p, i) => (i === 'en' ? `The minus sign changes every term in the brackets: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`
-    : `El signo menos cambia todos los términos del paréntesis: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`),
+  hint: (p, i) => (i === 'en' ? `The second term too: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`
+    : `También el segundo término: ${MENOS}${p.k} · ${par(p.n)} = ${num(-p.k * p.n)}.`),
 });
 
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));

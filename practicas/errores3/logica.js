@@ -13,7 +13,7 @@
 //   'cual'   opciones: 3 ids de error; solucion = error
 //   'si-no'  opciones ['bien', 'error']; solucion = falsa === null ? 'bien' : 'error'
 
-import { fmt, fmtPar, ERRORES_TIPICOS } from '../_comun/enteros.js';
+import { fmt, fmtPar, ERRORES_TIPICOS, evaluar } from '../_comun/enteros.js';
 
 const f = ERRORES_TIPICOS;
 
@@ -49,6 +49,8 @@ export const GRUPO_DE = Object.fromEntries(Object.entries(GRUPOS).flatMap(([g, i
 function dosTerminos(error, valido, porque) {
   return {
     id: error, error,
+    /** ¿Estos números dan este error? (lo usan las familias de columnas). */
+    valido: ([a, b]) => valido(a, b) && f[error].fn(a, b) !== null,
     numeros(rng) {
       const a = signado(rng, 1, 9), b = signado(rng, 1, 9), c = signado(rng, 1, 9);
       return valido(a, b) && f[error].fn(a, b) !== null ? [a, b, c] : null;
@@ -65,19 +67,26 @@ function dosTerminos(error, valido, porque) {
 const L = (es, en) => ({ es, en });
 const MENOS_ANTES = (a, b) => `${fmt(a)} ${b < 0 ? '−' : '+'} ${Math.abs(b)}`;
 
+/**
+ * «−9 + 4 = −5: 9 − 4 = 5, con el signo del 9» o, si la cuenta ya es la resta de los valores absolutos
+ * («8 − 3»), solo «8 − 3 = 5» (antes decía «8 − 3 = 5, y el resultado es 5»).
+ */
+function restaDeAbsolutos(a, b) {
+  const [M, m] = [Math.max(Math.abs(a), Math.abs(b)), Math.min(Math.abs(a), Math.abs(b))];
+  const mayor = Math.abs(a) >= Math.abs(b) ? a : b;
+  if (MENOS_ANTES(a, b) === `${M} − ${m}`) return L(`${M} − ${m} = ${fmt(a + b)}.`, `${M} − ${m} = ${fmt(a + b)}.`);
+  return L(`${MENOS_ANTES(a, b)} = ${fmt(a + b)}: ${M} − ${m} = ${Math.abs(a + b)}, con el signo del ${fmt(mayor)}.`,
+    `${MENOS_ANTES(a, b)} = ${fmt(a + b)}: ${M} − ${m} = ${Math.abs(a + b)}, with the sign of ${fmt(mayor)}.`);
+}
+
 export const PLANTILLAS = [
+  // Los porqués solo llevan los números del ítem: la regla va aparte, en negrita (JL, 22-11).
   dosTerminos('regla-signos-en-suma', (a, b) => a < 0 && b < 0,
-    ([a, b]) => L(`${MENOS_ANTES(a, b)}: vas hacia abajo dos veces; ${-a} + ${-b} = ${-a - b}, y el resultado es ${fmt(a + b)}. La regla de los signos es de los productos, no de las sumas.`,
-      `${MENOS_ANTES(a, b)}: you go down twice; ${-a} + ${-b} = ${-a - b}, and the result is ${fmt(a + b)}. The rule of signs is for products, not for additions.`)),
-  dosTerminos('suma-valores-absolutos', (a, b) => a < 0 !== b < 0,
-    ([a, b]) => L(`${MENOS_ANTES(a, b)}: con signos distintos se resta, no se suma: ${Math.max(Math.abs(a), Math.abs(b))} − ${Math.min(Math.abs(a), Math.abs(b))} = ${Math.abs(a + b)}, y el resultado es ${fmt(a + b)}.`,
-      `${MENOS_ANTES(a, b)}: with different signs you subtract, not add: ${Math.max(Math.abs(a), Math.abs(b))} − ${Math.min(Math.abs(a), Math.abs(b))} = ${Math.abs(a + b)}, and the result is ${fmt(a + b)}.`)),
-  dosTerminos('olvida-el-signo', (a, b) => a + b < 0,
-    ([a, b]) => L(`${MENOS_ANTES(a, b)}: la cuenta sale ${Math.abs(a + b)}, pero el de mayor valor absoluto es negativo; el resultado es ${fmt(a + b)}.`,
-      `${MENOS_ANTES(a, b)}: the sum comes to ${Math.abs(a + b)}, but the number with the greater absolute value is negative; the result is ${fmt(a + b)}.`)),
-  dosTerminos('signo-del-primero', () => true,
-    ([a, b]) => L(`${MENOS_ANTES(a, b)}: el signo es el del número de mayor valor absoluto, no el del primero: el resultado es ${fmt(a + b)}.`,
-      `${MENOS_ANTES(a, b)}: the sign is the one of the number with the greater absolute value, not the first one: the result is ${fmt(a + b)}.`)),
+    ([a, b]) => L(`${MENOS_ANTES(a, b)}: vas hacia abajo dos veces, ${-a} + ${-b} = ${-a - b}, así que da ${fmt(a + b)}.`,
+      `${MENOS_ANTES(a, b)}: you go down twice, ${-a} + ${-b} = ${-a - b}, so it is ${fmt(a + b)}.`)),
+  dosTerminos('suma-valores-absolutos', (a, b) => a < 0 !== b < 0, ([a, b]) => restaDeAbsolutos(a, b)),
+  dosTerminos('olvida-el-signo', (a, b) => a + b < 0, ([a, b]) => restaDeAbsolutos(a, b)),
+  dosTerminos('signo-del-primero', () => true, ([a, b]) => restaDeAbsolutos(a, b)),
 
   {
     id: 'restar-negativo', error: 'restar-negativo',
@@ -122,8 +131,8 @@ export const PLANTILLAS = [
       return [`${a} − (${terminos([b, c])})`, terminos([a, -b, c]), fmt(a - b + c)];
     },
     corregida: ([a, b, c]) => terminos([a, -b, -c]),
-    porque: ([a, b, c]) => L(`${a} − (${terminos([b, c])}): el menos cambia el signo de TODO lo que hay dentro: ${a} − ${b} ${c < 0 ? '+' : '−'} ${Math.abs(c)} = ${fmt(a - b - c)}.`,
-      `${a} − (${terminos([b, c])}): the minus changes the sign of EVERYTHING inside: ${a} − ${b} ${c < 0 ? '+' : '−'} ${Math.abs(c)} = ${fmt(a - b - c)}.`),
+    porque: ([a, b, c]) => L(`${a} − (${terminos([b, c])}) = ${a} − ${b} ${c < 0 ? '+' : '−'} ${Math.abs(c)} = ${fmt(a - b - c)}: también cambia el signo del ${Math.abs(c)}.`,
+      `${a} − (${terminos([b, c])}) = ${a} − ${b} ${c < 0 ? '+' : '−'} ${Math.abs(c)} = ${fmt(a - b - c)}: the sign of ${Math.abs(c)} changes too.`),
   },
   {
     id: 'mismo-signo-dos-veces', error: 'mismo-signo-dos-veces',
@@ -148,8 +157,8 @@ export const PLANTILLAS = [
       return [l0, l1, fmt(w + c)];
     },
     corregida: ([a, b, c]) => resto(c, fmt(a * b))[0],
-    porque: ([a, b]) => L(`${fmt(a)} · ${fmtPar(b)}: los signos son distintos, así que el producto es negativo; el signo del mayor no cuenta aquí. ${Math.abs(a)} · ${Math.abs(b)} = ${Math.abs(a * b)} y sale ${fmt(a * b)}.`,
-      `${fmt(a)} · ${fmtPar(b)}: the signs are different, so the product is negative; the sign of the bigger number does not matter here. ${Math.abs(a)} · ${Math.abs(b)} = ${Math.abs(a * b)} and it comes to ${fmt(a * b)}.`),
+    porque: ([a, b]) => L(`${fmt(a)} · ${fmtPar(b)}: ${Math.abs(a)} · ${Math.abs(b)} = ${Math.abs(a * b)}, con signos distintos: ${fmt(a * b)}. El signo del mayor no cuenta aquí.`,
+      `${fmt(a)} · ${fmtPar(b)}: ${Math.abs(a)} · ${Math.abs(b)} = ${Math.abs(a * b)}, with different signs: ${fmt(a * b)}. The sign of the bigger number does not matter here.`),
   },
   {
     id: 'signo-del-mayor-cociente', error: 'signo-del-mayor-cociente',
@@ -164,8 +173,8 @@ export const PLANTILLAS = [
       return [l0, l1, fmt(w + c)];
     },
     corregida: ([a, b, c]) => resto(c, fmt(a / b))[0],
-    porque: ([a, b]) => L(`${fmt(a)} : ${fmtPar(b)}: los signos son distintos, así que el cociente es negativo. ${Math.abs(a)} : ${Math.abs(b)} = ${Math.abs(a / b)} y sale ${fmt(a / b)}.`,
-      `${fmt(a)} : ${fmtPar(b)}: the signs are different, so the quotient is negative. ${Math.abs(a)} : ${Math.abs(b)} = ${Math.abs(a / b)} and it comes to ${fmt(a / b)}.`),
+    porque: ([a, b]) => L(`${fmt(a)} : ${fmtPar(b)}: ${Math.abs(a)} : ${Math.abs(b)} = ${Math.abs(a / b)}, con signos distintos: ${fmt(a / b)}.`,
+      `${fmt(a)} : ${fmtPar(b)}: ${Math.abs(a)} : ${Math.abs(b)} = ${Math.abs(a / b)}, with different signs: ${fmt(a / b)}.`),
   },
 
   // Potencias: (base, exponente) con bases y exponentes que dejan potencias razonables (hasta 256).
@@ -369,10 +378,240 @@ function sinError(rng, plantilla = rng.elegir(VALIDAS)) {
   return { plantilla: plantilla.id, params, lineas, falsa, error: null };
 }
 
-/** Ejercicio 1: ¿dónde está el error? La línea falsa es la 1 o la 2 (la 0 es el enunciado). Cada línea es una opción. */
+// ─── Ejercicio 1 en columnas (JL, 22-11) ────────────────────────────────────────
+//
+// El mismo cálculo resuelto por varios alumnos, uno por columna: de 2 a 4 columnas, 1 o 2 bien y 1 o 2 con un
+// error (errores distintos). El alumno toca la línea mala de cada columna que esté mal (no se le dice cuántas
+// hay) y después nombra el error de cada una. Antes era un solo cálculo de tres líneas, y el error se deducía:
+// si la última cuenta cuadra, tiene que estar en la segunda.
+//
+// Una FAMILIA es una forma de cálculo con sus números (`numeros`) y sus rutas: plantillas con error y parejas
+// válidas de arriba que, con esos números, empiezan por la misma expresión (`mapa` pasa los números de la
+// familia a los de la plantilla, o da null si no vale), y rutas propias (`propia`). Todas las columnas de un
+// ítem empiezan por la misma línea: el enunciado.
+
+/** Una ruta propia (sin plantilla): { id, error, lineas(params) → [expresiones tras la 0], falsa, corregida, porque }. */
+const propia = r => ({ propia: true, ...r });
+
+const PARENTESIS_RESTAR = propia({
+  // 5 − (3 − 7) = 5 − (−4) = 5 − 4 = 1: opera bien dentro y luego resta el negativo como si fuera positivo.
+  id: 'parentesis-restar-negativo', error: 'restar-negativo',
+  vale: ([, b, c]) => b + c < 0,
+  lineas: ([a, b, c]) => [`${a} − (${fmt(b + c)})`, `${a} − ${-(b + c)}`, fmt(a + b + c)],
+  falsa: 2,
+  corregida: ([a, b, c]) => `${a} + ${-(b + c)}`,
+  porque: ([a, b, c]) => PLANTILLA_POR_ID['restar-negativo'].porque([a, b + c]),
+});
+const PARENTESIS_OPERAR = propia({
+  // 5 − (3 − 7) = 5 − (−4) = 5 + 4 = 9 (o 5 − (3 + 4) = 5 − 7 = −2): opera dentro del paréntesis.
+  id: 'parentesis-operar-dentro', error: null,
+  vale: ([, b, c]) => b + c !== 0,
+  lineas: ([a, b, c]) => (b + c < 0 ? [`${a} − (${fmt(b + c)})`, `${a} + ${-(b + c)}`, fmt(a - b - c)] : [`${a} − ${b + c}`, fmt(a - b - c)]),
+  porque: ([a, b, c]) => L(`Está bien: primero lo de dentro del paréntesis, ${terminos([b, c])} = ${fmt(b + c)}, y después ${a} − ${fmtPar(b + c)} = ${fmt(a - b - c)}.`,
+    `It is right: first what is inside the brackets, ${terminos([b, c])} = ${fmt(b + c)}, and then ${a} − ${fmtPar(b + c)} = ${fmt(a - b - c)}.`),
+});
+const PARENTESIS_QUITAR = propia({
+  // 5 − (3 − 7) = 5 − 3 + 7 = 2 + 7 = 9: quita el paréntesis cambiando los signos de dentro.
+  id: 'parentesis-quitar', error: null,
+  lineas: ([a, b, c]) => [terminos([a, -b, -c]), terminos([a - b, -c]), fmt(a - b - c)],
+  porque: ([a, b, c]) => VALIDA_POR_ID['quitar-parentesis'].porque([a, b, c]),
+});
+const PARENTESIS_MENOS = propia({
+  // 5 − (3 − 7) = 5 − 3 − 7 = 2 − 7 = −5: el menos solo cambia el primer término.
+  id: 'parentesis-menos-solo-al-primero', error: 'menos-solo-al-primero',
+  vale: ([a, b, c]) => f['menos-solo-al-primero'].fn(a, b, c) !== null,
+  lineas: ([a, b, c]) => [terminos([a, -b, c]), terminos([a - b, c]), fmt(a - b + c)],
+  falsa: 1,
+  corregida: ([a, b, c]) => terminos([a, -b, -c]),
+  porque: p => PLANTILLA_POR_ID['menos-solo-al-primero'].porque(p),
+});
+const SUMAR_NEGATIVO_BIEN = propia({
+  id: 'sumar-negativo-bien', error: null,
+  lineas: ([a, b, c]) => { const [l1] = resto(c, `${a} − ${-b}`); return [l1, fmt(a + b + c)]; },
+  porque: ([a, b]) => L(`Está bien: sumar ${fmt(b)} es restar ${-b}. ${a} − ${-b} = ${fmt(a + b)}.`, `It is right: adding ${fmt(b)} is subtracting ${-b}. ${a} − ${-b} = ${fmt(a + b)}.`),
+});
+const DE_GOLPE_RESTAR = propia({
+  // 2 − (−6) + 3 = 8 + 3 = 11: hace la resta del negativo de una vez.
+  id: 'restar-negativo-de-golpe', error: null,
+  lineas: ([a, b, c]) => [`${fmt(a - b)} ${cs(c)}`, fmt(a - b + c)],
+  porque: ([a, b]) => L(`Está bien: restar ${fmt(b)} es sumar ${-b}, así que ${a} − (${fmt(b)}) = ${fmt(a - b)}.`, `It is right: subtracting ${fmt(b)} is adding ${-b}, so ${a} − (${fmt(b)}) = ${fmt(a - b)}.`),
+});
+const DE_GOLPE_SUMAR = propia({
+  // 6 + (−8) − 2 = −2 − 2 = −4: hace la suma del negativo de una vez.
+  id: 'sumar-negativo-de-golpe', error: null,
+  lineas: ([a, b, c]) => [`${fmt(a + b)} ${cs(c)}`, fmt(a + b + c)],
+  porque: ([a, b]) => L(`Está bien: sumar ${fmt(b)} es restar ${-b}, así que ${a} + (${fmt(b)}) = ${fmt(a + b)}.`, `It is right: adding ${fmt(b)} is subtracting ${-b}, so ${a} + (${fmt(b)}) = ${fmt(a + b)}.`),
+});
+const AGRUPAR_TRES = propia({
+  // −3 + 8 − 2 = 8 − 5 = 3: junta los negativos (vale cuando hay dos del mismo signo y uno del otro).
+  id: 'agrupar-tres', error: null,
+  // Si los dos del mismo signo van delante, sale igual que de izquierda a derecha y la columna se descarta.
+  vale: t => t.some(x => x > 0) && t.some(x => x < 0),
+  lineas: t => {
+    const p = t.filter(x => x > 0).reduce((s, x) => s + x, 0), n = -t.filter(x => x < 0).reduce((s, x) => s + x, 0);
+    return [`${p} − ${n}`, fmt(p - n)];
+  },
+  porque: t => {
+    const pos = t.filter(x => x > 0), neg = t.filter(x => x < 0).map(x => -x);
+    const p = pos.reduce((s, x) => s + x, 0), n = neg.reduce((s, x) => s + x, 0);
+    // Con 3 términos, un signo tiene dos números y el otro uno: solo se juntan los dos.
+    const [dos, es, en] = pos.length > 1 ? [pos, 'los positivos', 'the positive numbers'] : [neg, 'los negativos', 'the negative ones'];
+    return L(`Está bien: se pueden juntar ${es} (${dos.join(' + ')} = ${dos[0] + dos[1]}): ${p} − ${n} = ${fmt(p - n)}.`,
+      `It is right: you can put ${en} together (${dos.join(' + ')} = ${dos[0] + dos[1]}): ${p} − ${n} = ${fmt(p - n)}.`);
+  },
+});
+
+/** Ruta que es una plantilla o una pareja válida de arriba, con sus números a partir de los de la familia. */
+const ruta = (id, mapa = x => x) => ({ id, mapa });
+
+export const FAMILIAS = [
+  {
+    // a + b + c con signos: de izquierda a derecha o juntando; mal, los cuatro errores de signos y el de
+    // derecha a izquierda.
+    id: 'suma-tres',
+    numeros: rng => [signado(rng, 1, 9), signado(rng, 1, 9), signado(rng, 1, 9)],
+    enunciado: t => terminos(t),
+    bien: [ruta('izquierda-a-derecha'), AGRUPAR_TRES],
+    mal: [ruta('regla-signos-en-suma'), ruta('suma-valores-absolutos'), ruta('olvida-el-signo'), ruta('signo-del-primero'),
+      ruta('derecha-a-izquierda', ([a, b, c]) => (b < 0 && c > 0 ? [a, -b, c] : null))],
+  },
+  {
+    // a − (b ± c): el ejemplo de Juan Luis, 5 − (3 − 7).
+    id: 'parentesis',
+    numeros(rng) { const a = rng.entero(1, 9), b = rng.entero(1, 9), c = signado(rng, 2, 9); return b + c === 0 ? null : [a, b, c]; },
+    enunciado: ([a, b, c]) => `${a} − (${terminos([b, c])})`,
+    bien: [PARENTESIS_QUITAR, PARENTESIS_OPERAR],
+    mal: [PARENTESIS_MENOS, PARENTESIS_RESTAR],
+  },
+  {
+    // a − (−b) ± c
+    id: 'restar-negativo',
+    numeros: rng => [rng.entero(2, 9), -rng.entero(2, 9), signado(rng, 1, 9)],
+    enunciado: ([a, b, c]) => resto(c, `${a} − (${fmt(b)})`)[0],
+    bien: [ruta('restar-negativo-bien'), DE_GOLPE_RESTAR],
+    mal: [ruta('restar-negativo')],
+  },
+  {
+    // a + (−b) ± c
+    id: 'sumar-negativo',
+    numeros: rng => [rng.entero(2, 9), -rng.entero(2, 9), signado(rng, 1, 9)],
+    enunciado: ([a, b, c]) => resto(c, `${a} + (${fmt(b)})`)[0],
+    bien: [SUMAR_NEGATIVO_BIEN, DE_GOLPE_SUMAR],
+    mal: [ruta('sumar-negativo')],
+  },
+  {
+    // a ± b · c: el producto primero; mal, sin jerarquía o (con la resta) poniendo el menos dos veces.
+    id: 'jerarquia',
+    numeros(rng) { const a = signado(rng, 1, 9), b = rng.entero(2, 6), c = rng.entero(2, 6), s = rng.elegir([1, -1]); return a + s * b === 0 ? null : [a, b, c, s]; },
+    enunciado: ([a, b, c, s]) => `${fmt(a)} ${s < 0 ? '−' : '+'} ${b} · ${c}`,
+    bien: [ruta('jerarquia-bien')],
+    mal: [ruta('sin-jerarquia'), ruta('mismo-signo-dos-veces', ([a, b, c, s]) => (s < 0 ? [a, b, c] : null))],
+  },
+  {
+    // a · (−b) ± c con signos distintos
+    id: 'producto',
+    numeros(rng) { const a = signado(rng, 2, 9), b = (a < 0 ? 1 : -1) * rng.entero(2, 9); return Math.abs(a) === Math.abs(b) ? null : [a, b, signado(rng, 1, 9)]; },
+    enunciado: ([a, b, c]) => resto(c, `${fmt(a)} · ${fmtPar(b)}`)[0],
+    bien: [ruta('producto-bien')],
+    mal: [ruta('signo-del-mayor-producto')],
+  },
+  {
+    // (−b)^n ± c con n par
+    id: 'potencia-par',
+    numeros: rng => (rng.azar() < 0.3 ? [-rng.elegir([2, 3]), 4, signado(rng, 1, 9)] : [-rng.entero(2, 9), 2, signado(rng, 1, 9)]),
+    enunciado: ([b, n, c]) => resto(c, `(${fmt(b)})^${n}`)[0],
+    bien: [ruta('potencia-bien')],
+    mal: [ruta('potencia-par-negativa'), ruta('base-por-exponente', ([b, n, c]) => (Math.abs(b) >= 3 && Math.abs(b) <= 5 && n <= 3 ? [b, n, c] : null))],
+  },
+  {
+    // −a^n ± c
+    id: 'menos-en-la-base',
+    numeros: rng => [rng.entero(2, 9), 2, signado(rng, 1, 9)],
+    enunciado: ([a, n, c]) => resto(c, `−${a}^${n}`)[0],
+    bien: [ruta('menos-en-la-base-bien')],
+    mal: [ruta('menos-en-la-base')],
+  },
+];
+export const FAMILIA_POR_ID = Object.fromEntries(FAMILIAS.map(fa => [fa.id, fa]));
+/** Las familias con más rutas salen más (dan 3 y 4 columnas). */
+const PESOS = { 'suma-tres': 3, parentesis: 3, jerarquia: 2, 'potencia-par': 2, producto: 1, 'restar-negativo': 1, 'sumar-negativo': 1, 'menos-en-la-base': 1 };
+const SORTEO = FAMILIAS.flatMap(fa => Array(PESOS[fa.id]).fill(fa));
+
+/**
+ * La columna de una ruta con los números de la familia, o null si no vale: { ruta, params, lineas (con la 0),
+ * falsa, error }. Comprueba que empieza por el enunciado.
+ */
+export function columnaDe(familia, r, params) {
+  const enunciado = familia.enunciado(params);
+  if (r.propia) {
+    if (r.vale && !r.vale(params)) return null;
+    const lineas = [enunciado, ...r.lineas(params)], falsa = r.error ? r.falsa : null;
+    const falsas = lineas.map((l, i) => (i && evaluar(l) !== evaluar(lineas[i - 1]) ? i : -1)).filter(i => i >= 0);
+    if (falsas.join() !== (falsa === null ? '' : String(falsa))) return null;
+    return { ruta: r.id, params, lineas, falsa, error: r.error };
+  }
+  const p = r.mapa(params);
+  if (!p) return null;
+  const plantilla = PLANTILLA_POR_ID[r.id] ?? VALIDA_POR_ID[r.id];
+  if (plantilla.valido && !plantilla.valido(p)) return null;
+  let lineas;
+  try { lineas = plantilla.lineas(p); } catch { return null; }
+  if (lineas[0] !== enunciado || lineas.some(l => /null|undefined|NaN/.test(l))) return null;
+  const falsa = plantilla.error ? 1 : null;
+  // Con error, exactamente la línea 1 es falsa; sin error, ninguna (el error típico puede no aplicarse a esos números).
+  const falsas = lineas.map((l, i) => (i && evaluar(l) !== evaluar(lineas[i - 1]) ? i : -1)).filter(i => i >= 0);
+  if (falsas.join() !== (falsa === null ? '' : String(falsa))) return null;
+  return { ruta: r.id, params: p, lineas, falsa, error: plantilla.error ?? null };
+}
+
+/** Las columnas posibles de una familia con unos números: { bien: [...], mal: [...] } (sin dos iguales). */
+export function columnasPosibles(familia, params) {
+  const vistas = new Set();
+  const sinRepetir = c => { if (!c) return false; const k = c.lineas.join('|'); if (vistas.has(k)) return false; vistas.add(k); return true; };
+  const bien = familia.bien.map(r => columnaDe(familia, r, params)).filter(sinRepetir);
+  const errores = new Set();
+  const mal = familia.mal.map(r => columnaDe(familia, r, params)).filter(c => sinRepetir(c) && !errores.has(c.error) && errores.add(c.error));
+  return { bien, mal };
+}
+
+const PROPIAS = [PARENTESIS_RESTAR, PARENTESIS_OPERAR, PARENTESIS_QUITAR, PARENTESIS_MENOS, SUMAR_NEGATIVO_BIEN, DE_GOLPE_RESTAR, DE_GOLPE_SUMAR, AGRUPAR_TRES];
+const PROPIA_POR_ID = Object.fromEntries(PROPIAS.map(r => [r.id, r]));
+
+/** Lo que explica una columna con sus números: { porque: { es, en }, corregida: expresión | null }. */
+export function explicaColumna(c) {
+  const r = PROPIA_POR_ID[c.ruta] ?? PLANTILLA_POR_ID[c.ruta] ?? VALIDA_POR_ID[c.ruta];
+  return { porque: r.porque(c.params), corregida: c.error ? r.corregida(c.params) : null };
+}
+
+/** Las LETRAS de las columnas. */
+export const LETRAS = ['A', 'B', 'C', 'D'];
+
+/**
+ * Ejercicio 1: el mismo cálculo en 2-4 columnas, 1-2 bien y 1-2 mal. La respuesta (`solucion`) es, por columna,
+ * el índice de la línea mala o null; después, una pregunta por cada columna mala con el nombre bueno y dos de
+ * otro grupo (como en el ejercicio 2).
+ */
 export function generarDonde(rng) {
-  const base = conError(rng);
-  return { ...base, tipo: 'donde', opciones: base.lineas.map((_, i) => i), solucion: base.falsa };
+  for (let intento = 0; intento < 500; intento++) {
+    const familia = rng.elegir(SORTEO);
+    const params = familia.numeros(rng);
+    if (!params) continue;
+    const { bien, mal } = columnasPosibles(familia, params);
+    if (!bien.length || !mal.length) continue;
+    const dos = () => (rng.azar() < 0.6 ? 2 : 1);
+    const nBien = Math.min(bien.length, dos()), nMal = Math.min(mal.length, dos());
+    const columnas = rng.barajar([...rng.barajar(bien).slice(0, nBien), ...rng.barajar(mal).slice(0, nMal)]);
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error).map(({ c, col }) => {
+      const grupo = GRUPO_DE[c.error];
+      const otros = rng.barajar(PLANTILLAS.map(p => p.error).filter(id => GRUPO_DE[id] !== grupo)).slice(0, 2);
+      return { col, opciones: rng.barajar([c.error, ...otros]), solucion: c.error };
+    });
+    return {
+      tipo: 'donde', plantilla: familia.id, params, enunciado: familia.enunciado(params), columnas, preguntas,
+      solucion: columnas.map(c => c.falsa),
+    };
+  }
+  throw new Error('generarDonde: no salen columnas');
 }
 
 /**

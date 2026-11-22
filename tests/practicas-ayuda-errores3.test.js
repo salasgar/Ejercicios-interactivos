@@ -38,16 +38,24 @@ function comprobarCuerpo(item, html, idioma, que) {
   assert.equal(evaluar(corregida), evaluar(item.lineas[item.falsa - 1]), `${que}: la línea corregida no vale lo de antes`);
   assert.ok(html.includes(`${T_CORRECTA[idioma]} <span class="linea-mala">= ${htmlEntero(corregida)}</span>`), `${que}: falta cómo queda bien — ${plano(html)}`);
 }
-const T_CORRECTA = { es: 'Bien hecho sería:', en: 'The right way is:' };
+const T_CORRECTA = { es: 'Lo correcto es:', en: 'The right way is:' };
 
-test('ej. 1: acaba con la línea falsa y enseña cómo queda bien', () => {
+test('ej. 1 (columnas): cada columna dice si está bien o su línea mala, el error, la regla en negrita y lo correcto; al final, qué columnas', () => {
   for (const item of items(L.generarDonde, 1)) {
-    assert.notEqual(item.falsa, null);
     for (const idioma of IDIOMAS) {
-      const esperado = X.lineaN(item.falsa, idioma);
       const html = X.explicaDonde(item, ctx(idioma));
-      comprobar(html, idioma, esperado, `ej1 ${idioma}`);
-      comprobarCuerpo(item, html, idioma, `ej1 ${idioma}`);
+      assert.doesNotMatch(html, /undefined|NaN|\[object|null|×|Se llama|It is called|línea \d|line \d/, plano(html));
+      const letras = item.columnas.map((c, j) => (c.error ? L.LETRAS[j] : null)).filter(Boolean);
+      const lista = letras.length === 1 ? letras[0] : `${letras[0]} ${idioma === 'es' ? 'y' : 'and'} ${letras[1]}`;
+      const fin = idioma === 'es' ? `El error está en <strong>${letras.length === 1 ? 'la columna' : 'las columnas'} ${lista}</strong>.` : `The mistake is in <strong>${letras.length === 1 ? 'column' : 'columns'} ${lista}</strong>.`;
+      assert.ok(html.endsWith(fin), `${idioma}: ${plano(html)}`);
+      item.columnas.forEach((c, j) => {
+        assert.ok(html.includes(`${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.`), plano(html));
+        if (!c.error) return;
+        assert.ok(html.includes(`= ${htmlEntero(c.lineas[c.falsa])}</span>`), `falta la línea mala de ${L.LETRAS[j]}`);
+        assert.ok(html.includes(X.REGLAS[c.error][idioma].replace(/\^(\d+)/g, '<sup>$1</sup>')), 'la regla');
+        assert.ok(html.includes(`${T_CORRECTA[idioma]} <span class="linea-mala">= ${htmlEntero(L.explicaColumna(c).corregida)}</span>`), 'lo correcto');
+      });
     }
   }
 });

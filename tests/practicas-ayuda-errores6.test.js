@@ -29,7 +29,7 @@ test('errores6 · ejercicio 1: dice la línea mala, el error y cómo queda; o qu
         assert.doesNotMatch(html, /línea \d|line \d|Se llama|It is called/, 'sin números de línea ni «Se llama:»');
         assert.ok(html.includes(`<strong class="regla-rota">${X.REGLAS[item.error][idioma]}</strong>`), 'la regla rota, en negrita');
         assert.ok(html.includes(ERRORES_TIPICOS[item.error].nombre[idioma]), 'el nombre del error');
-        assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))), 'el porqué con los números');
+        if (!X.SOLO_REGLA.has(item.error)) assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))), 'el porqué con los números');
         assert.doesNotMatch(html, /· −\d/, 'un negativo detrás de «·» va entre paréntesis');
       }
     }
@@ -55,7 +55,7 @@ test('errores6 · ejercicio 3: la explicación acaba en el valor de x que se ace
       const html = X.explicaCorrige(item, ctx(idioma));
       // Revisión 191: la solución con raya, el porqué sin «· −6», y las líneas buenas desde la corregida hasta la x.
       assert.ok(html.endsWith(`<span class="cuenta"><i>x</i> = ${htmlFraccion(bueno)}</span>.`), 'el valor de x');
-      assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))));
+      if (!X.SOLO_REGLA.has(item.error)) assert.ok(html.includes(sinDosSignos(L.porque(item, idioma))));
       assert.doesNotMatch(html, /· −\d/);
       const ultima = L.lineasBuenas(item).filter(l => !l.t).at(-1);
       if (L.lineasBuenas(item).length > item.falsa + 1) assert.ok(html.includes(L.htmlLinea(ultima, idioma)), `la última línea buena — ${html}`);
