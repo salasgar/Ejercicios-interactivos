@@ -1185,3 +1185,26 @@ exacto** (personas enteras, dinero al céntimo, porcentajes que salen exactos).
 4. **Paquete 4**: 222, 223 → **230** (jue 8-4). **Paquete 5**: 224, 225 → **231** (jue 15-4).
 5. **232** con Juan Luis, por paquetes, cuando cada publicación diga qué queda publicado (la primera tarea antes del mié 24-2).
 Las tareas de Classroom de cada semana las programa la tarea 40 del reparto de la U7 cuando la 232 las haya montado.
+
+## Alta del 22-11: tareas 234-239, «Caza el error» en columnas (coordinadora s-20261122T120314-344f1477)
+
+Juan Luis probó el 22-11 los ejercicios de señalar la línea del error y pidió: sin números de línea (se confundían con
+los de la cuenta), el enunciado sin poderse pulsar, el feedback sin «Se llama:» y con la regla rota en negrita, y, donde
+el error se deducía porque solo podía estar en la segunda línea, **el mismo cálculo resuelto por varios alumnos en
+columnas** (2-4 columnas, 1-2 bien y 1-2 mal; no se dice cuántas están mal; una pregunta tipo test por cada columna mala).
+La fase 1 (todo lo anterior en las siete prácticas, y las columnas en errores3) está en `main` (commits 82bb0c4 a
+c36041d; pieza común `practicas/_comun/procedimiento.js`). La fase 2 son estas tareas, todas sin precondición y con
+ficheros disjuntos, así que pueden ir las seis a la vez:
+
+| Tarea | Práctica | Qué | Banda |
+|---|---|---|---|
+| 234 | errores (U2) | ej. 2 en columnas (líneas en frases) | ALTO |
+| 235 | errores1 (U1) | ej. 2 en columnas | MEDIO |
+| 236 | errores4 (U4) | ej. 2 en columnas | MEDIO |
+| 237 | errores5 (U5) | ej. 1 en columnas (sin «Todo está bien») | MEDIO |
+| 238 | errores7 (U7) | ej. 1 en columnas (problemas: repaso de realismo) | ALTO |
+| 239 | errores6 (U6) | sin columnas: el error también en líneas intermedias | MEDIO |
+
+Orden de prioridad (por lo que se da antes): 236 (la U4 es la siguiente unidad), 237, 239, 238; después 235 y 234 (unidades
+ya dadas, que salen en el repaso). Ninguna toca `practicas/_comun/`: si a una le falta algo de `procedimiento.js`, lo
+propone en su terminada.
