@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-22 (alta de la coordinadora de la fase 2 de «Caza el error», a petición de Juan Luis)
 Precondición: — (la fase 1 está en `main`: commits 82bb0c4, 601be04, c8c9afa, 39d6d39, 96554fb y c36041d) · Disparo: MANUAL (sesión atendida)
-Duración esperada: 75 min (tiempo de sesión, no de persona) · Banda de modelo: ALTO · Encadenable con: —
+Duración esperada: 75 min (tiempo de sesión, no de persona; real: ~16 min sin la prueba en navegador) · Banda de modelo: ALTO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/234-errores-columnas/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/errores/*`, `tests/practicas-errores.test.js`, `tests/practicas-ayuda-errores.test.js`
 
@@ -142,6 +142,18 @@ sostiene, fuera y dicho en la ENTREGA.
 - (De la fase 1) Ninguna igualdad falsa en una columna buena: un paso que no es una igualdad («Sin comas: 212 · 9 =
   1908») no se escribe con «=» delante ni detrás. Lo comprueba un test que evalúa cada línea.
 - La base sortea el idioma del ítem: prueba siempre los dos.
+- (De la 234, 22-11) Con frases, en una columna mala las líneas que siguen al error se deducen de él («Luego 106 es
+  divisible entre 3» tras usar la última cifra): la instrucción tiene que seguir pidiendo la PRIMERA línea mala de cada
+  columna, y los verificadores del test dan por buena la consecuencia de una línea falsa.
+- (De la 234) En las columnas, la línea mala se cita («El error está en esta línea: …»), sin ordinal: «la segunda línea»
+  contaría el enunciado, que va arriba. La regla de delante de la tarjeta sí dice «la primera línea» (la de cada columna):
+  el test de ordinales mira solo los trozos de las columnas.
+- (De la 234) Dos rutas malas con el mismo nombre de error (`e-olvida-1-n` y `e-olvida-n`) no pueden ir juntas:
+  `columnasPosibles` se queda con la primera, así que hay que barajar las rutas antes (`orden`) para que salgan las dos.
+- (De la 234) Una ruta mala solo vale si el error lleva a una respuesta equivocada: con el criterio de la última cifra,
+  33 acierta por casualidad. Cada ruta así lleva su `vale(params)` y un test exige que todas las rutas salgan alguna vez.
+- (De la 234) En la sesión automática, el clasificador de permisos denegó la prueba con Chrome headless (servidor local +
+  CDP con `practica.js` interceptado): sin herramientas de Chrome en la sesión, la prueba en navegador queda para Juan Luis.
 
 ## Prohibido (propio de esta tarea)
 
