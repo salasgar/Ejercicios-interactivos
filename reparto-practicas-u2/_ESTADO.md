@@ -13,7 +13,7 @@ Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
 Actualizado 2026-11-22T12:18Z por s-20261122T121724-12f10dae al reclamar la 234 (errores, ej. 2 en columnas): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
-Actualizado 2026-11-22T12:35Z por s-20261122T120758-f3e25fcd al cerrar la 236 (LISTA, commit 4ce133d: errores4, ejercicio 2 en columnas; sin probar en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
+Actualizado 2026-11-22T12:40Z por s-20261122T120758-f6f541d1 al cerrar la 237 (LISTA, commit 3c3d307: errores5, ejercicio 1 en columnas; sin probar en navegador): retoque de su fila. Antes: por s-20261122T120758-f3e25fcd al cerrar la 236 (LISTA, commit 4ce133d: errores4, ejercicio 2 en columnas; sin probar en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-22T12:20Z por s-20261122T120759-c8f40585 al cerrar la 239 (LISTA, commit 7ad5076: errores6, el error en las líneas de en medio; tests propios 68 en verde): **retoque de su fila y de la foto**, no regeneración completa (otras sesiones en el árbol).
 
@@ -375,7 +375,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 234 | «Caza el error» de la unidad 2 (errores), ejercicio 2 en columnas | tareas/tarea-234-errores-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/234-errores-columnas/ | EN CURSO | s-20261122T121724-12f10dae · caduca 14:47Z |
 | 235 | «Caza el error» de la unidad 1 (errores1), ejercicio 2 en columnas | tareas/tarea-235-errores1-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/235-errores1-columnas/ | PENDIENTE | — |
 | 236 | «Caza el error» de la unidad 4 (errores4), ejercicio 2 en columnas | tareas/tarea-236-errores4-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/236-errores4-columnas/ | LISTA | terminada (22-nov) · commit 4ce133d |
-| 237 | «Caza el error» de la unidad 5 (errores5), ejercicio 1 en columnas | tareas/tarea-237-errores5-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/237-errores5-columnas/ | PENDIENTE | — |
+| 237 | «Caza el error» de la unidad 5 (errores5), ejercicio 1 en columnas | tareas/tarea-237-errores5-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/237-errores5-columnas/ | LISTA | terminada (22-nov) · commit 3c3d307 |
 | 238 | «Caza el error» de la unidad 7 (errores7), ejercicio 1 en columnas | tareas/tarea-238-errores7-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/238-errores7-columnas/ | PENDIENTE | — |
 | 239 | «Caza el error» de la unidad 6 (errores6): el error también en las líneas de en medio | tareas/tarea-239-errores6-lineas-intermedias.md | — (fase 1 en `main`, c36041d) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/239-errores6-lineas-intermedias/ | LISTA | — |
 

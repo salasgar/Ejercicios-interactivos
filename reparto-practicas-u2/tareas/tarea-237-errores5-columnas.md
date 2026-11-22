@@ -130,6 +130,8 @@ de otra `CLASE_DE` que, aplicados a los números de la columna, darían otro res
 - (De la fase 1) Ninguna igualdad falsa en una columna buena: un paso que no es una igualdad («Sin comas: 212 · 9 =
   1908») no se escribe con «=» delante ni detrás. Lo comprueba un test que evalúa cada línea.
 - La base sortea el idioma del ítem: prueba siempre los dos.
+- (Tarea 237) Un porqué con `htmlFraccion` pega los dígitos ("2925") y salta la regla de 5 cifras: en las rutas buenas, redáctalo sin fracciones. Un resultado que es número (comparación) no pasa un `!valor`: comprueba null y `typeof`.
+- (Tarea 237) Con solo los errores con plantilla salen pocas columnas 4: añade al catálogo los errores sin plantilla como `EXTRA` (misma interfaz).
 
 ## Prohibido (propio de esta tarea)
 
