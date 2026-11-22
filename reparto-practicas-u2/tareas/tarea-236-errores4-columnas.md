@@ -128,6 +128,10 @@ La regla en negrita ya la da `regla(id)` de `textos.js`. Preguntas: el nombre bu
 - (De la fase 1) Ninguna igualdad falsa en una columna buena: un paso que no es una igualdad («Sin comas: 212 · 9 =
   1908») no se escribe con «=» delante ni detrás. Lo comprueba un test que evalúa cada línea.
 - La base sortea el idioma del ítem: prueba siempre los dos.
+- (De la 236) Elige la familia UNA vez y reintenta los números dentro de ella: si se sortea la familia en cada intento,
+  las que fallan más (división, resta) casi no salen. Las columnas buenas pueden no llevar fracciones en su porqué
+  (`cantidad-divide-primero`): el test que pide `class="frac"` va solo para las malas.
+- (De la 236) No edites con scripts del shell: el candado de sesiones no los ve (Edit/Write).
 
 ## Prohibido (propio de esta tarea)
 
