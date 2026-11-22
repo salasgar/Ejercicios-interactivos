@@ -2,6 +2,7 @@
 // en «Corrígelo», el resultado que el ejercicio da por bueno. 1200 ítems por ejercicio, dos idiomas.
 
 import test from 'node:test';
+import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { ERRORES_TIPICOS, aTexto } from '../practicas/_comun/proporcion.js';
@@ -21,7 +22,10 @@ test('errores7 · ejercicio 1: dice la línea mala, el error y cómo queda; o qu
         sinError++;
         assert.ok(html.includes(X.TX.todo_bien_es[idioma]));
       } else {
-        assert.ok(html.includes(X.TX.la_linea_es[idioma](item.falsa + 1)), 'el número de línea');
+        // JL, 22-11: la línea con ordinal, sin números de línea ni «Se llama:», y la regla rota en negrita.
+        assert.ok(html.includes(errorEnLinea(item.falsa, idioma)), 'la línea, con ordinal');
+        assert.doesNotMatch(html, /línea \d|line \d|Se llama|It is called/, 'sin números de línea ni «Se llama:»');
+        assert.ok(html.includes(`<strong class="regla-rota">${X.REGLAS[item.error][idioma]}</strong>`), 'la regla rota, en negrita');
         assert.ok(html.includes(ERRORES_TIPICOS[item.error].nombre[idioma]), 'el nombre del error');
         assert.ok(html.includes(L.porque(item, idioma)), 'el porqué con los números');
       }
@@ -35,7 +39,7 @@ test('errores7 · ejercicio 2: la explicación lleva el nombre del error que el 
     for (const idioma of IDIOMAS) {
       const html = X.explicaQue(item, ctx(idioma));
       assert.ok(html.includes(ERRORES_TIPICOS[item.solucion].nombre[idioma]));
-      assert.ok(html.includes(X.TX.la_linea_es[idioma](item.falsa + 1)));
+      assert.ok(html.includes(errorEnLinea(item.falsa, idioma)));
     }
   }
 });

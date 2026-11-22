@@ -1,6 +1,6 @@
 /* Práctica «Caza el error» (unidad 6): solo lo que no esté ya en ../_comun/estilos.css. */
 
-/* La resolución del compañero, con las líneas numeradas. */
+/* La resolución del compañero, sin números de línea. */
 .procedimiento {
   list-style: none; margin: 0 0 1rem; padding: 0; text-align: left;
   display: grid; gap: .45rem;
@@ -11,11 +11,9 @@
   border-radius: 10px; padding: .55rem .8rem; font-size: 1.15rem; line-height: 1.6;
   overflow-wrap: anywhere;
 }
-.procedimiento__n { font-weight: 700; flex: none; opacity: .7; }
 .procedimiento--botones { display: grid; gap: .5rem; grid-template-columns: 1fr; }
 .procedimiento--botones .eleccion { text-align: left; font-size: 1.15rem; line-height: 1.6; min-height: 60px; display: flex; gap: .6rem; align-items: center; }
-.procedimiento--botones .eleccion .procedimiento__n { margin-right: .2rem; }
-.procedimiento--botones .eleccion--todo { justify-content: center; text-align: center; font-weight: 700; }
+.procedimiento--botones .eleccion .procedimiento--botones .eleccion--todo { justify-content: center; text-align: center; font-weight: 700; }
 .linea-mala { font-weight: 700; overflow-wrap: anywhere; }
 .feedback { overflow-wrap: anywhere; }
 .nombres { grid-template-columns: 1fr; }

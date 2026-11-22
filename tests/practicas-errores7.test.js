@@ -63,7 +63,7 @@ test('ejercicio 1: tres líneas, el error en una sola, un tercio sin error; la �
     const [b, m] = MANO[it.plantilla](it.params);
     const ultima = it.lineas[2].es;
     const tiene = x => ultima.includes(new Intl.NumberFormat('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 6, useGrouping: false }).format(x));
-    if (it.falsa === null) { sinError++; assert.equal(it.error, null); assert.ok(tiene(b) || it.plantilla === 'razonar-sumando' || true); }
+    if (it.falsa === null) { sinError++; assert.equal(it.error, null); assert.ok(tiene(b), `sin error, la última línea da el resultado bueno: ${ultima}`); }
     else assert.equal(it.error, it.plantilla);
     const buena = L.lineasBuenas(it);
     if (it.falsa !== null) {
@@ -202,4 +202,25 @@ test('variedad: ningún ítem por encima del 10 % y ninguna plantilla por encima
     assert.ok(Math.max(...plantillas.values()) <= N / 3, 'una plantilla domina');
     assert.ok(claves.size > 300, `poca variedad: ${claves.size}`);
   }
+});
+
+// ─── JL, 22-11: los bolígrafos ────────────────────────────────────────────────────────────────
+
+test('razonar-sumando: la línea mala es falsa de verdad (no «9 − 3 = 6») y la tercera suma euros con euros', () => {
+  const p = L.PLANTILLA_POR_ID['razonar-sumando'];
+  const rng = crearRng(2211);
+  for (let i = 0; i < 300; i++) {
+    const params = p.params(rng);
+    const mal = p.cadena(params, true), c = params.a * params.k;
+    assert.equal(mal.falsa, 1);
+    const [, l2, l3] = mal.lineas.map(f => f('es').replace(/\s/g, ' '));   // el € va tras un espacio duro
+    // «Son 6 bolígrafos más, así que cuestan 6,00 € más»: falso, porque cada uno cuesta 2 € o más.
+    assert.match(l2, new RegExp(`^Son ${c - params.a} .+ más, así que cuestan ${c - params.a},00 € más\\.$`), l2);
+    assert.ok(params.u >= 2, 'con 1 € por unidad, la línea «mala» sería verdad');
+    assert.match(l3, /^\d+,\d\d € \+ \d+,\d\d € = \d+,\d\d €$/, l3);
+    assert.doesNotMatch(l2 + l3, /veces más|al doble le corresponde/, 'sin «k veces más» (ambiguo)');
+    const bien = p.cadena(params, false).lineas.map(f => f('es'));
+    assert.doesNotMatch(bien.join(' '), /veces más/, bien.join(' | '));
+  }
+  assert.doesNotMatch(ERRORES_TIPICOS['razonar-sumando'].nombre.es, /doble/);
 });

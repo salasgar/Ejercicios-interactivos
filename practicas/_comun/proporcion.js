@@ -1195,7 +1195,8 @@ const E = (fn, devuelve, ejemplo, es, en) => ({
 
 export const ERRORES_TIPICOS = Object.freeze({
   'razonar-sumando': E(razonarSumando, 'cantidad', '2 cuestan 5 € → 4 cuestan 7 € (son 10 €)',
-    'Ha sumado en vez de multiplicar: al doble le corresponde el doble', 'Added instead of multiplying: twice as much means twice the price'),
+    // JL, 22-11: «al doble le corresponde el doble» no valía cuando el factor era 3 (u otro): el nombre es general.
+    'Ha sumado en vez de multiplicar', 'Added instead of multiplying'),
   'invertir-razon': E(invertirRazon, 'cantidad', '3 a 4 escrito como 4/3',
     'Ha escrito la razón al revés', 'Wrote the ratio the wrong way round'),
   'parte-parte-como-parte-todo': E(parteParteComoParteTodo, 'cantidad', 'chicos y chicas 2 a 3 → «2/3 de la clase» (son 2/5)',

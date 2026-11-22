@@ -70,19 +70,39 @@ nueva({
   mal: p => E['razonar-sumando'].fn(...PLANTILLAS[0].args(p)),
   cadena(p, mal) {
     const o = COSAS[p.cosa], c = p.a * p.k, B = C(p.a * p.u, '€'), bien = this.bien(p), m = this.mal(p);
+    // JL, 22-11: antes la línea «mala» era «9 − 3 = 6», que es verdad, y la 3.ª sumaba bolígrafos a euros
+    // («6,00 € + 6»). Ahora la mala dice el razonamiento equivocado (falso: cada unidad cuesta 2 € o más, así que
+    // «c − a más» no cuesta «c − a €» más), y la 3.ª sigue de ella con euros.
+    const dif = C(c - p.a, '€');
     return {
       lineas: [
         i => (i === 'en' ? `${p.a} ${o.en} cost ${A(B, i)}. How much do ${c} cost?` : `${p.a} ${o.es} cuestan ${A(B, i)}. ¿Cuánto cuestan ${c}?`),
-        mal ? i => `${c} ${MENOS} ${p.a} = ${c - p.a}` : i => `${c} : ${p.a} = ${p.k}`,
-        mal ? i => `${A(B, i)} + ${c - p.a} = ${A(m, i)}` : i => `${p.k} · ${A(B, i)} = ${A(bien, i)}`,
+        mal
+          ? i => (i === 'en' ? `There are ${c - p.a} more ${o.en}, so they cost ${A(dif, i)} more.` : `Son ${c - p.a} ${o.es} más, así que cuestan ${A(dif, i)} más.`)
+          : i => (i === 'en' ? `${c} is ${veces(p.k, 'en')} ${p.a}, so they cost ${veces(p.k, 'en', p.a)}.` : `${c} es ${veces(p.k, 'es')} ${p.a}, así que cuestan ${veces(p.k, 'es', p.a)}.`),
+        mal ? i => `${A(B, i)} + ${A(dif, i)} = ${A(m, i)}` : i => `${p.k} · ${A(B, i)} = ${A(bien, i)}`,
       ],
       falsa: 1,
     };
   },
+  // Solo la cuenta: el razonamiento bueno ya es la línea que se enseña como «Lo correcto es:».
   hint: (p, i) => (i === 'en'
-    ? `${p.a * p.k} is ${p.k} times ${p.a}, so it costs ${p.k} times as much: ${p.k} · ${A(C(p.a * p.u, '€'), i)} = ${A(C(p.a * p.u * p.k, '€'), i)}. Do not add.`
-    : `${p.a * p.k} es ${p.k} veces ${p.a}, así que cuesta ${p.k} veces más: ${p.k} · ${A(C(p.a * p.u, '€'), i)} = ${A(C(p.a * p.u * p.k, '€'), i)}. No se suma.`),
+    ? `They cost ${p.k} · ${A(C(p.a * p.u, '€'), i)} = ${A(C(p.a * p.u * p.k, '€'), i)}.`
+    : `Cuestan ${p.k} · ${A(C(p.a * p.u, '€'), i)} = ${A(C(p.a * p.u * p.k, '€'), i)}.`),
 });
+
+/**
+ * «el triple de» / «three times» y, con `a` (lo que cuestan a unidades), «el triple» / «three times as much». Nunca
+ * «k veces más», que en español es ambiguo (JL, 22-11): de 4 en adelante, «4 veces» y «4 veces lo que cuestan 3».
+ */
+function veces(k, i, a = null) {
+  if (i === 'en') {
+    const v = k === 2 ? 'twice' : `${['', '', '', 'three', 'four', 'five', 'six'][k]} times`;
+    return a === null ? v : `${v} as much`;
+  }
+  if (k <= 3) return `${k === 2 ? 'el doble' : 'el triple'}${a === null ? ' de' : ''}`;
+  return a === null ? `${k} veces` : `${k} veces lo que cuestan ${a}`;
+}
 
 // 2, 3 y 4 · el porcentaje de una cantidad con un decimal mal pasado
 const CONTEXTOS_PORCENTAJE = [
