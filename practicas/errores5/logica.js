@@ -131,8 +131,8 @@ nueva({
     const [a, b, op] = [D(p[0]), D(p[1]), p[2]], k = Math.max(a.k, b.k), T = x => aTexto(x, i);
     const pa = T(a.conCifras(k)), pb = T(b.conCifras(k));
     return i === 'en'
-      ? `${T(a)} ${op} ${T(b)}: the decimal points go one under the other and the gaps are filled with zeros: ${pa} ${op} ${pb} = ${T(this.bien(p))}. Adding ${a.m} and ${b.m} without looking at the points gives another number.`
-      : `${T(a)} ${op} ${T(b)}: las comas van una debajo de otra y los huecos se rellenan con ceros: ${pa} ${op} ${pb} = ${T(this.bien(p))}. Operar ${a.m} y ${b.m} sin mirar las comas da otro número.`;
+      ? `${T(a)} ${op} ${T(b)} = ${pa} ${op} ${pb} = ${T(this.bien(p))}. Working with ${a.m} and ${b.m} without looking at the points gives another number.`
+      : `${T(a)} ${op} ${T(b)} = ${pa} ${op} ${pb} = ${T(this.bien(p))}. Operar ${a.m} y ${b.m} sin mirar las comas da otro número.`;
   },
 });
 
@@ -148,9 +148,11 @@ nueva({
   caso: p => claveCaso('producto', [p[0], p[1]], true),
   cadena(p, mal) {
     const [a, b] = [D(p[0]), D(p[1])];
-    const l1 = [sd(a), ' · ', sd(b)], l2 = ['= ', `${a.m} · ${b.m} = ${a.m * b.m}`];
-    if (!mal) return { lineas: [l1, l2, ['= ', sd(p[2] ? this.bien(p).normalizar() : this.bien(p))]], falsa: null };
-    return { lineas: [l1, l2, ['= ', sd(this.malFinal(p))]], falsa: 2 };
+    // JL, 22-11: «2,12 · 0,9 = 212 · 9» es falso. El paso sin comas no se escribe como igualdad, y la última
+    // línea vuelve a escribir la cuenta con su resultado.
+    const l1 = [sd(a), ' · ', sd(b)], l2 = [st('Sin comas: ', 'Without the points: '), `${a.m} · ${b.m} = ${a.m * b.m}`];
+    if (!mal) return { lineas: [l1, l2, [...l1, ' = ', sd(p[2] ? this.bien(p).normalizar() : this.bien(p))]], falsa: null };
+    return { lineas: [l1, l2, [...l1, ' = ', sd(this.malFinal(p))]], falsa: 2 };
   },
   bien: p => multiplicar(p[0], p[1]),
   malFinal: p => E['coma-mal-puesta'].fn(D(p[0]), D(p[1])).normalizar(),
@@ -159,8 +161,8 @@ nueva({
   porque(p, i) {
     const [a, b] = [D(p[0]), D(p[1])], T = x => aTexto(x, i);
     return i === 'en'
-      ? `${T(a)} · ${T(b)}: multiply as whole numbers (${a.m} · ${b.m} = ${a.m * b.m}). The product has as many decimal places as the two factors together: ${a.k} + ${b.k} = ${a.k + b.k}. So it is ${T(this.bien(p))}.`
-      : `${T(a)} · ${T(b)}: se multiplica como si fueran enteros (${a.m} · ${b.m} = ${a.m * b.m}). El producto lleva tantas cifras decimales como los dos factores juntos: ${a.k} + ${b.k} = ${a.k + b.k}. Sale ${T(this.bien(p))}.`;
+      ? `${T(a)} · ${T(b)}: ${a.m} · ${b.m} = ${a.m * b.m}, with ${a.k} + ${b.k} = ${a.k + b.k} decimal places: ${T(this.bien(p))}.`
+      : `${T(a)} · ${T(b)}: ${a.m} · ${b.m} = ${a.m * b.m}, con ${a.k} + ${b.k} = ${a.k + b.k} cifras decimales: ${T(this.bien(p))}.`;
   },
 });
 
@@ -226,14 +228,14 @@ function redondeo(id) {
       const orden = ORDEN[c].t[i];
       if (id === 'redondea-truncando') {
         return i === 'en'
-          ? `${T(s)} ${orden}: look at the next digit (${digitoSiguiente(s, c)}); if it is 5 or more, the last digit goes up. So it is ${T(r)}, not ${T(this.malFinal(p))}: cutting is not rounding.`
-          : `${T(s)} ${orden}: se mira la cifra siguiente (${digitoSiguiente(s, c)}); si es 5 o más, la última sube. Sale ${T(r)}, no ${T(this.malFinal(p))}: cortar no es redondear.`;
+          ? `${T(s)} ${orden}: the next digit is ${digitoSiguiente(s, c)}, so it is ${T(r)}, not ${T(this.malFinal(p))}. Cutting is not rounding.`
+          : `${T(s)} ${orden}: la cifra siguiente es ${digitoSiguiente(s, c)}, así que sale ${T(r)}, no ${T(this.malFinal(p))}. Cortar no es redondear.`;
       }
       const pasos = [T(s)];
       for (let k = s.k - 1; k >= c; k--) pasos.push(T(redondear(s, k)));
       return i === 'en'
-        ? `${T(s)} ${orden}: round only once, from the original number, looking at the next digit (${digitoSiguiente(s, c)}): ${T(r)}. Rounding digit by digit (${pasos.join(' → ')}) gives ${T(this.malFinal(p))}.`
-        : `${T(s)} ${orden}: se redondea una sola vez, desde el número original, mirando solo la cifra siguiente (${digitoSiguiente(s, c)}): ${T(r)}. Redondear cifra a cifra (${pasos.join(' → ')}) da ${T(this.malFinal(p))}.`;
+        ? `${T(s)} ${orden}: the next digit is ${digitoSiguiente(s, c)}, so it is ${T(r)}. Rounding digit by digit (${pasos.join(' → ')}) gives ${T(this.malFinal(p))}.`
+        : `${T(s)} ${orden}: la cifra siguiente es ${digitoSiguiente(s, c)}, así que sale ${T(r)}. Redondear cifra a cifra (${pasos.join(' → ')}) da ${T(this.malFinal(p))}.`;
     },
   });
 }
@@ -252,8 +254,9 @@ nueva({
   caso: p => claveCaso('division', [p[0], p[1]]),
   cadena(p, mal) {
     const [a, b] = [D(p[0]), D(p[1])], q = this.bien(p);
-    const l1 = [sd(a), ' : ', sd(b)], l2 = ['= ', `${a.m} : ${b.m} = ${q.m}`];
-    return { lineas: [l1, l2, ['= ', mal ? `${q.m}` : sd(q)]], falsa: mal ? 2 : null };
+    // JL, 22-11: «10,14 : 6 = 1014 : 6» es falso; el paso sin coma no es una igualdad (como en el producto).
+    const l1 = [sd(a), ' : ', sd(b)], l2 = [st('Sin la coma: ', 'Without the point: '), `${a.m} : ${b.m} = ${q.m}`];
+    return { lineas: [l1, l2, [...l1, ' = ', mal ? `${q.m}` : sd(q)]], falsa: mal ? 2 : null };
   },
   bien: p => dividir(p[0], p[1]).cociente,
   malFinal: p => E['olvida-coma-cociente'].fn(D(p[0]), D(p[1])),
@@ -262,8 +265,8 @@ nueva({
   porque(p, i) {
     const [a, b] = [D(p[0]), D(p[1])], q = this.bien(p), T = x => aTexto(x, i);
     return i === 'en'
-      ? `${T(a)} : ${T(b)}: divide as if there were no point (${a.m} : ${b.m} = ${q.m}); the point goes in the quotient when you bring down the first decimal digit. The quotient is ${T(q)}.`
-      : `${T(a)} : ${T(b)}: se divide como si no hubiera coma (${a.m} : ${b.m} = ${q.m}); la coma va en el cociente al bajar la primera cifra decimal. El cociente es ${T(q)}.`;
+      ? `${T(a)} : ${T(b)}: ${a.m} : ${b.m} = ${q.m}, and with the point in its place the quotient is ${T(q)}.`
+      : `${T(a)} : ${T(b)}: ${a.m} : ${b.m} = ${q.m}, y con la coma en su sitio el cociente es ${T(q)}.`;
   },
 });
 
@@ -288,8 +291,8 @@ nueva({
   porque(p, i) {
     const [a, b] = [D(p[0]), D(p[1])], q = this.bien(p), T = x => aTexto(x, i);
     return i === 'en'
-      ? `${T(a)} : ${T(b)}: the point moves in the dividend and in the divisor, the same number of places: ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}. Moving it only in the divisor gives ${T(this.malFinal(p))}.`
-      : `${T(a)} : ${T(b)}: la coma se mueve en el dividendo y en el divisor, el mismo número de lugares: ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}. Moverla solo en el divisor da ${T(this.malFinal(p))}.`;
+      ? `${T(a)} : ${T(b)} = ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}. Moving it only in the divisor gives ${T(this.malFinal(p))}.`
+      : `${T(a)} : ${T(b)} = ${T(porPotenciaDe10(a, b.k))} : ${b.m} = ${T(q)}. Moverla solo en el divisor da ${T(this.malFinal(p))}.`;
   },
 });
 
@@ -351,8 +354,8 @@ nueva({
   porque(p, i) {
     const [n, d] = p, T = x => aTexto(x, i);
     return i === 'en'
-      ? `${htmlFraccion(fraccion(n, d))} means ${n} : ${d}, the numerator divided by the denominator: ${T(this.bien(p))}. Dividing ${d} : ${n} gives ${T(this.malFinal(p))}.`
-      : `${htmlFraccion(fraccion(n, d))} significa ${n} : ${d}, el numerador entre el denominador: ${T(this.bien(p))}. Dividir ${d} : ${n} da ${T(this.malFinal(p))}.`;
+      ? `${htmlFraccion(fraccion(n, d))} = ${n} : ${d} = ${T(this.bien(p))}. Dividing ${d} : ${n} gives ${T(this.malFinal(p))}.`
+      : `${htmlFraccion(fraccion(n, d))} = ${n} : ${d} = ${T(this.bien(p))}. Dividir ${d} : ${n} da ${T(this.malFinal(p))}.`;
   },
 });
 
@@ -428,8 +431,8 @@ const COMO_SE_HACE = {
     const [a, b] = [D(p[0]), D(p[1])], r = multiplicar(a, b), rn = r.normalizar();
     const igual = rn.k !== r.k ? (i === 'en' ? `, that is, ${T(rn)}` : `, o sea, ${T(rn)}`) : '';
     return i === 'en'
-      ? `${T(a)} · ${T(b)}: multiply with no decimal points (${a.m} · ${b.m} = ${a.m * b.m}); the product has as many decimal places as both factors together, ${a.k} + ${b.k} = ${a.k + b.k}: ${T(r)}${igual}.`
-      : `${T(a)} · ${T(b)}: se multiplica sin comas (${a.m} · ${b.m} = ${a.m * b.m}) y el producto lleva tantas cifras decimales como los dos factores juntos, ${a.k} + ${b.k} = ${a.k + b.k}: ${T(r)}${igual}.`;
+      ? `${T(a)} · ${T(b)}: ${a.m} · ${b.m} = ${a.m * b.m}, with ${a.k} + ${b.k} = ${a.k + b.k} decimal places: ${T(r)}${igual}.`
+      : `${T(a)} · ${T(b)}: ${a.m} · ${b.m} = ${a.m * b.m}, con ${a.k} + ${b.k} = ${a.k + b.k} cifras decimales: ${T(r)}${igual}.`;
   },
   'por-diez-anadiendo-cero'(p, i, T) {
     const [d, n, c] = [D(p[0]), p[1], p[2]], x = porPotenciaDe10(d, n);

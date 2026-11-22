@@ -3,6 +3,7 @@
 // comprueba que la explicación lleva justo esa respuesta, en los dos idiomas.
 
 import test from 'node:test';
+import { lineaN } from '../practicas/_comun/procedimiento.js';
 import assert from 'node:assert/strict';
 import { T } from '../practicas/_comun/textos.js';
 import { crearRng } from '../practicas/_comun/rng.js';
@@ -57,7 +58,7 @@ test('ej. 1: acaba con la línea mala, o con «Todo está bien» como el botón;
     for (const idioma of IDIOMAS) {
       const esperado = item.falsa === null
         ? OPCION[idioma](X.TX.todo_bien[idioma])
-        : { es: `la línea ${item.falsa + 1}`, en: `line ${item.falsa + 1}` }[idioma];
+        : lineaN(item.falsa, idioma);   // «la tercera línea» (JL, 22-11: sin números de línea)
       const html = X.explicaDonde(item, ctx(idioma));
       comprobar(html, idioma, esperado, `ej1 ${idioma}`);
       enseña(item, html, idioma, `ej1 ${item.plantilla} ${idioma}`);

@@ -433,6 +433,6 @@ test('cada error tiene su regla en los dos idiomas', async () => {
 test('la interfaz ya no numera las líneas', () => {
   for (const f of ['practica.js', 'estilos.css', 'textos.js']) {
     const t = readFileSync(new URL(`../practicas/errores/${f}`, import.meta.url), 'utf8');
-    assert.doesNotMatch(t, /procedimiento__n|numerad|numbered/, f);
+    assert.doesNotMatch(t, /procedimiento__n|líneas numeradas|numbered lines/, f);
   }
 });

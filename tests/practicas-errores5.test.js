@@ -75,6 +75,8 @@ const MANO = {
   },
 };
 const finalDe = (item, idioma = 'es') => L.textoLinea(item.lineas.at(-1), idioma);
+/** El resultado de una línea: lo que sigue a «= » o «≈ » al principio, o al último « = » («2,12 · 0,9 = 1,908»). */
+const resultado = t => (/^[=≈] /.test(t) ? t.slice(2) : t.includes(' = ') ? t.slice(t.lastIndexOf(' = ') + 3) : t);
 
 test('hay una plantilla por cada error que enseña la práctica, con nombre y cálculo a mano', () => {
   assert.equal(L.PLANTILLAS.length, 11);
@@ -135,7 +137,7 @@ test('ejercicio 1: la línea mala es la marcada; las anteriores están bien y el
       assert.deepEqual(item.lineas, buena.lineas);
       if (MANO[p.id](item.params).bien && p.id !== 'compara-por-cifras') {
         // El resultado de la última línea vale lo bueno (aunque lleve ceros al final).
-        const fin = D(finalDe(item).replace(/^[=≈] /, '').split(' ')[0].replace(/…$/, ''));
+        const fin = D(resultado(finalDe(item)).split(' ')[0].replace(/…$/, ''));
         assert.ok(fin === null || mismoValor(fin, p.bien(item.params)) || p.id === 'resto-sin-deshacer' || p.id === 'redondea-truncando', `${p.id}: ${finalDe(item)}`);
       }
     } else {
@@ -159,7 +161,7 @@ test('el resultado malo que se ve es el del error de la plantilla (última líne
     const p = L.PLANTILLA_POR_ID[item.plantilla];
     const mal = L.textoLinea(item.lineas.at(-1), 'es');
     if (['por-diez-anadiendo-cero', 'coma-solo-en-divisor', 'fraccion-al-reves'].includes(p.id)) continue;   // el error está en la línea 2; la 3 sigue de él
-    const texto = mal.replace(/^= /, '').replace(/^≈ /, '').replace(/ \(.*\)$/, '');
+    const texto = resultado(mal).replace(/ \(.*\)$/, '');
     if (p.id === 'compara-por-cifras') { assert.match(texto, /[<>]/); continue; }
     if (p.id === 'resto-sin-deshacer') { assert.ok(mismoValor(D(mal.split(': ')[1]), p.malFinal(item.params))); continue; }
     if (p.id === 'alinea-a-la-derecha' || p.id === 'olvida-coma-cociente') { assert.ok(mismoValor(D(texto), p.malFinal(item.params)), `${p.id}: ${mal}`); continue; }
@@ -327,4 +329,29 @@ test('los números son de hasta cuatro cifras enteras y el resto, sin contextos 
     }
   }
   assert.ok(MENOS === '−');
+});
+
+// ─── JL, 22-11: «2,12 · 0,9 = 212 · 9 = 1908 = 1,908» encadenaba igualdades falsas ────────────────
+
+test('ninguna cadena iguala la cuenta con comas y la cuenta sin comas (ni en los ejemplos de la introducción)', async () => {
+  const { TX } = await import('../practicas/errores5/textos.js');
+  const falsa = /\d[,.]\d+ [·:] \d+([,.]\d+)?\s*(<br>)?\s*=\s*\d+ [·:]/;
+  for (const gen of [L.generarDonde, L.generarQue, L.generarCorrige]) for (const item of generar(gen, 22)) {
+    const p = L.PLANTILLA_POR_ID[item.plantilla];
+    for (const mal of [false, true]) {
+      const lineas = p.cadena(item.params, mal).lineas;
+      for (const idioma of ['es', 'en']) {
+        const textos = lineas.map(l => L.textoLinea(l, idioma));
+        assert.doesNotMatch(textos.join(' = '), /Sin (las )?comas?: .* = = |Without the points?: .* = = /, p.id);
+        textos.forEach((t, i) => {
+          if (i && /^(Sin|Without)/.test(textos[i - 1])) assert.doesNotMatch(t, /^= /, `${p.id}: «${textos[i - 1]}» seguida de «${t}»`);
+          if (i === 1 && ['coma-mal-puesta', 'olvida-coma-cociente'].includes(p.id)) assert.doesNotMatch(t, /^= /, `${p.id}: ${t}`);
+        });
+      }
+    }
+  }
+  for (const ej of Object.values(TX.introduccion)) for (const t of [ej.es, ej.en]) {
+    assert.doesNotMatch(t.replace(/<br>/g, ' '), falsa, t);
+    assert.doesNotMatch(t, /<br>\d\. |líneas numeradas|numbered lines/, 'sin números de línea');
+  }
 });

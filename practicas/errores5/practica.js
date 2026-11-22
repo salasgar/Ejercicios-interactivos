@@ -3,6 +3,7 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
+import { lista, lineasPulsables } from '../_comun/procedimiento.js';
 import { aTexto } from '../_comun/decimales.js';
 import { TX, explicacionDe, linea, nombreError, explicaDonde, explicaQue, explicaCorrige } from './textos.js';
 import { campoDecimal } from './campo.js';
@@ -13,11 +14,8 @@ import {
 
 const cuenta = html => `<span class="cuenta">${html}</span>`;
 
-function procedimiento(item, idioma) {
-  const filas = item.lineas.map((l, i) =>
-    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${linea(l, idioma)}</span></li>`);
-  return `<ol class="procedimiento">${filas.join('')}</ol>`;
-}
+/** El cálculo sin números de línea (se confundían con los de la cuenta: «2= 212 · 9»); la primera es el enunciado. */
+const procedimiento = (item, idioma) => lista(item.lineas.map(l => linea(l, idioma)));
 
 /** La explicación del ítem (vive en textos.js, para que el «No lo sé» la reutilice). */
 const explicacion = explicacionDe;
@@ -30,12 +28,10 @@ function montarDonde(contenedor, item, api) {
   const { tt, idioma } = api;
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.donde)}</p>`;
   const correcta = item.falsa ?? 'ok';
-  const botones = elecciones(contenedor, {
-    clase: 'procedimiento procedimiento--botones',
-    opciones: [
-      ...item.lineas.map((l, i) => ({ valor: i, html: `<span class="procedimiento__n">${i + 1}</span>${linea(l, idioma)}` })),
-      { valor: 'ok', html: tt(TX.todo_bien) },
-    ],
+  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
+  const botones = lineasPulsables(contenedor, {
+    lineasHtml: item.lineas.map(l => linea(l, idioma)),
+    extra: [{ valor: 'ok', html: tt(TX.todo_bien) }],
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([correcta], valor);
