@@ -196,25 +196,58 @@ const REDUCIR = ['suma-no-semejantes'];
 export const CLASES = { ecuacion: ECUACION, denominadores: DENOMINADORES, parentesis: PARENTESIS, reducir: REDUCIR };
 export const CLASE_DE = Object.fromEntries(Object.entries(CLASES).flatMap(([c, ids]) => ids.map(id => [id, c])));
 
+/** Un término entero (|c| ≥ 2) como dos que suman lo mismo, o null. Determinista: 7 → 2 + 5, −7 → −2 − 5. */
+function partirTermino(t) {
+  const c = t.coef.simplificar();
+  if (c.den !== 1 || Math.abs(c.num) < 2) return null;
+  const k = Math.abs(c.num), s = Math.sign(c.num), u = 1 + ((k * 7) % (k - 1));
+  return [T(s * u, t.letra), T(s * (k - u), t.letra)];
+}
+/** La ecuación con un término (el último que se pueda) del lado `lado` y con/sin letra partido en dos; o null. */
+function partidaEn(q, lado, conLetra) {
+  const ts = [...(lado === 'der' ? q.terminosDer : q.terminosIzq)];
+  for (let i = ts.length - 1; i >= 0; i--) {
+    if ((ts[i].letra !== null) !== conLetra) continue;
+    const dos = partirTermino(ts[i]);
+    if (!dos) continue;
+    ts.splice(i, 1, ...dos);
+    return lado === 'der' ? new Ecuacion(q.terminosIzq, ts) : new Ecuacion(ts, q.terminosDer);
+  }
+  return null;
+}
+/**
+ * Líneas buenas anteriores a `q0` (la primera hace de enunciado): `q0` escrito sin reducir, para que el error
+ * no caiga siempre en la segunda línea. v = 0 ninguna; 1 una constante partida; 2 un coeficiente de x partido;
+ * 3 las dos cosas, reducidas una a una.
+ */
+function previas(q0, v) {
+  if (!v) return [];
+  const der = partidaEn(q0, 'der', false), izqX = partidaEn(q0, 'izq', true), izqC = partidaEn(q0, 'izq', false);
+  if (v === 3 && der && izqX) return [partidaEn(der, 'izq', true), der];
+  const una = v === 2 ? (izqX ?? der ?? izqC) : (der ?? izqC ?? izqX);
+  return una ? [una] : [];
+}
+
 /** Cadena genérica: se sustituye la ÚLTIMA línea de los pasos (el despeje) por la que da el error. */
-function cadenaFinal(q0, mal, id) {
+function cadenaFinal(q0, mal, id, v = 0) {
   const ps = q0.pasos().map(p => p.ecuacion);
-  const buenas = [q0, ...ps];
+  const buenas = [...previas(q0, v), q0, ...ps];
   if (!mal) return { lineas: buenas.map(q => L(q)), falsa: null };
   const w = E[id].fn(ps.at(-2));
   if (!w) throw new Error('el error no se aplica');
   const lineas = [...buenas.slice(0, -1), w].map(q => L(q));
   return { lineas, falsa: lineas.length - 1 };
 }
-/** Cadena genérica: la primera línea tras el enunciado (`paso`) se sustituye por la errónea y se sigue de ella. */
-function cadenaPrimera(q0, mal, w) {
-  if (!mal) return { lineas: [L(q0), ...seguir(q0)], falsa: null };
-  return { lineas: [L(q0), L(w), ...seguir(w)], falsa: 1 };
+/** Cadena genérica: la línea tras `q0` se sustituye por la errónea y se sigue de ella (antes de `q0`, líneas buenas sin reducir). */
+function cadenaPrimera(q0, mal, w, v = 0) {
+  const pre = previas(q0, v).map(q => L(q));
+  if (!mal) return { lineas: [...pre, L(q0), ...seguir(q0)], falsa: null };
+  return { lineas: [...pre, L(q0), L(w), ...seguir(w)], falsa: pre.length + 1 };
 }
 
 // 1 · Transponer sin cambiar el signo (x + 3 = 10 → x = 10 + 3)
 nueva({
-  id: 'transponer-sin-signo', corrige: true,
+  id: 'transponer-sin-signo', corrige: true, vMin: 1,
   params(rng) {
     const a = rng.entero(1, 6), s = sinCero(rng, -9, 12), b = conSigno(rng, 12);
     if (rng.azar() < 0.5) return { a, b, c: a * s + b, d: 0, dos: false };
@@ -226,7 +259,7 @@ nueva({
     : new Ecuacion([T(p.a, X), T(p.b)], [T(p.c)])),
   cadena(p, mal) {
     const q0 = this.caso(p);
-    return cadenaPrimera(q0, mal, mal ? E['transponer-sin-signo'].fn(q0) : null);
+    return cadenaPrimera(q0, mal, mal ? E['transponer-sin-signo'].fn(q0) : null, p.v);
   },
   hint: (p, i) => (i === 'en'
     ? 'A term that adds goes to the other side subtracting, and one that subtracts goes adding: it changes sign when it changes side.'
@@ -238,7 +271,7 @@ const paramsProducto = rng => { const a = rng.entero(2, 9), s = sinCero(rng, -9,
 const casoProducto = p => new Ecuacion(p.orden ? [T(p.b), T(p.a, X)] : [T(p.a, X), T(p.b)], [T(p.c)]);
 nueva({
   id: 'pasar-factor-restando', corrige: true, params: paramsProducto, caso: casoProducto,
-  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
+  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id, p.v); },
   hint(p, i) {
     const { A, C } = this.caso(p).forma();
     return i === 'en'
@@ -250,7 +283,7 @@ nueva({
 // 3 · 3x = 12 → x = 36 (multiplica en vez de dividir)
 nueva({
   id: 'multiplicar-en-vez-de-dividir', corrige: true, params: paramsProducto, caso: casoProducto,
-  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
+  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id, p.v); },
   hint(p, i) {
     const { A, C } = this.caso(p).forma();
     return i === 'en'
@@ -264,7 +297,7 @@ nueva({
   id: 'invertir-coeficiente', corrige: true,
   params(rng) { const a = rng.entero(4, 12), C = sinCero(rng, -3, 6), b = conSigno(rng, 10); return C === a || C === -a ? null : { a, b, c: b + C }; },
   caso: p => new Ecuacion([T(p.a, X), T(p.b)], [T(p.c)]),
-  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
+  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id, p.v); },
   hint(p, i) {
     const { A, C } = this.caso(p).forma();
     // Solo los números (la regla va en negrita); el divisor negativo, entre paréntesis.
@@ -280,7 +313,7 @@ nueva({
   id: 'signo-al-dividir', corrige: true,
   params(rng) { const a = rng.entero(2, 9), s = sinCero(rng, -9, 12); return { a, b: rng.entero(1, 20), c: 0, s, orden: rng.entero(0, 1) }; },
   caso(p) { return new Ecuacion(p.orden ? [T(-p.a, X), T(p.b)] : [T(p.b), T(-p.a, X)], [T(p.b - p.a * p.s)]); },
-  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
+  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id, p.v); },
   hint(p, i) {
     const { A, C } = this.caso(p).forma();
     return i === 'en'
@@ -294,7 +327,7 @@ nueva({
   id: 'signo-de-la-solucion', corrige: true,
   params(rng) { const a = rng.entero(1, 4), s = rng.entero(-12, -1), b = rng.entero(1, 20); return { a, b, c: a * s + b }; },
   caso: p => new Ecuacion([T(p.a, X), T(p.b)], [T(p.c)]),
-  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id); },
+  cadena(p, mal) { return cadenaFinal(this.caso(p), mal, this.id, p.v); },
   hint(p, i) {
     const s = this.caso(p).resolver();
     return i === 'en' ? `The sign counts: the result is ${fracATexto(s)}, not ${fracATexto(s.opuesta())}.`
@@ -304,7 +337,7 @@ nueva({
 
 // 7 · x/2 + 1 = x/3 → 3x + 1 = 2x (multiplica solo los términos con denominador)
 nueva({
-  id: 'mcm-solo-denominadores', corrige: true,
+  id: 'mcm-solo-denominadores', corrige: true, vMin: 1,
   params(rng) {
     const d1 = rng.elegir([2, 3, 4, 5, 6]), d2 = rng.elegir([2, 3, 4, 5, 6]);
     if (d1 === d2) return null;
@@ -313,7 +346,7 @@ nueva({
     return s instanceof Fraccion && s.den === 1 && s.num !== 0 && E['mcm-solo-denominadores'].fn(this.caso(p)) ? p : null;
   },
   caso: p => new Ecuacion([T(fraccion(1, p.d1), X), T(p.b)], sinCeros([T(fraccion(1, p.d2), X), T(p.c)])),
-  cadena(p, mal) { const q0 = this.caso(p); return cadenaPrimera(q0, mal, mal ? E[this.id].fn(q0) : null); },
+  cadena(p, mal) { const q0 = this.caso(p); return cadenaPrimera(q0, mal, mal ? E[this.id].fn(q0) : null, p.v); },
   hint(p, i) {
     const m = this.caso(p).mcmDenominadores();
     // Solo los números: la regla ya va en negrita (JL, 22-11).
@@ -324,7 +357,7 @@ nueva({
 
 // 8 · 3x/4 por 12 → 3x (olvida multiplicar por el numerador)
 nueva({
-  id: 'olvidar-numerador', corrige: true,
+  id: 'olvidar-numerador', corrige: true, vMin: 1,
   params(rng) {
     const d1 = rng.elegir([4, 5, 6, 7]), a = rng.elegir([2, 3, 4, 5].filter(k => mcd(k, d1) === 1));
     const d2 = rng.elegir([2, 3, 4, 5, 6].filter(d => d !== d1)), dos = rng.azar() < 0.7;
@@ -337,7 +370,7 @@ nueva({
     return E['olvidar-numerador'].fn(this.caso(p)) ? p : null;
   },
   caso: p => new Ecuacion(sinCeros([T(fraccion(p.a, p.d1), X), ...(p.d2 ? [T(fraccion(1, p.d2), X)] : []), T(p.b)]), [T(p.c)]),
-  cadena(p, mal) { const q0 = this.caso(p); return cadenaPrimera(q0, mal, mal ? E[this.id].fn(q0) : null); },
+  cadena(p, mal) { const q0 = this.caso(p); return cadenaPrimera(q0, mal, mal ? E[this.id].fn(q0) : null, p.v); },
   hint(p, i) {
     const m = this.caso(p).mcmDenominadores();
     return i === 'en'
@@ -353,7 +386,7 @@ nueva({
   caso: p => new Ecuacion([T(p.a, X), T(p.b)], [T(p.a, X), T(p.c)]),
   cadena(p, mal) {
     const q0 = this.caso(p), ps = q0.pasos().filter(x => x.tipo === 'transponer' || x.tipo === 'reducir').map(x => x.ecuacion);
-    const base = [q0, ...ps].map(q => L(q));
+    const base = [...previas(q0, p.v), q0, ...ps].map(q => L(q));
     if (!mal) return { lineas: [...base, L(null, { t: { es: 'No tiene solución', en: 'It has no solution' } })], falsa: null };
     return { lineas: [...base, L(E[this.id].fn(q0))], falsa: base.length };
   },
@@ -366,15 +399,15 @@ nueva({
 
 // 10 · 3x + 2 + x → 5x (suma el número con las x)
 nueva({
-  id: 'suma-no-semejantes', corrige: true,
+  id: 'suma-no-semejantes', corrige: true, vMin: 1,
   params(rng) { const a = rng.entero(2, 6), c = rng.entero(1, 4), b = conSigno(rng, 12), s = rng.entero(1, 10); return Math.abs(a + c + b) <= 1 ? null : { a, b, c, e: (a + c) * s + b }; },
   caso: p => new Ecuacion([T(p.a, X), T(p.b), T(p.c, X)], [T(p.e)]),
   junta: p => new Ecuacion([T(p.a + p.c, X), T(p.b)], [T(p.e)]),
   cadena(p, mal) {
-    const q0 = this.caso(p), bien = this.junta(p);
-    if (!mal) return { lineas: [L(q0), L(bien), ...seguir(bien)], falsa: null };
+    const q0 = this.caso(p), bien = this.junta(p), pre = previas(q0, p.v).map(q => L(q));
+    if (!mal) return { lineas: [...pre, L(q0), L(bien), ...seguir(bien)], falsa: null };
     const w = lin(E[this.id].fn(aLineal(q0.izq)), p.e);
-    return { lineas: [L(q0), L(w), ...seguir(w)], falsa: 1 };
+    return { lineas: [...pre, L(q0), L(w), ...seguir(w)], falsa: pre.length + 1 };
   },
   hint: (p, i) => (i === 'en' ? `${num(p.b)} has no x, so it stays apart.`
     : `El ${num(p.b)} no tiene x y se queda aparte.`),
@@ -473,9 +506,14 @@ function conParams(plantilla, rng) {
   for (let i = 0; i < 800; i++) {
     const p = plantilla.params(rng);
     if (!p) continue;
+    p.v = rng.entero(plantilla.vMin ?? 0, 3);
     const q = plantilla.caso(p);
     if (reservado(q)) continue;
-    try { if (plantilla.cadena(p, true).lineas.some(l => l.q === null && !l.t) || !plantilla.cadena(p, false).lineas) continue; } catch { continue; }
+    try {
+      const mala = plantilla.cadena(p, true);
+      if (mala.lineas.some(l => l.q === null && !l.t) || !plantilla.cadena(p, false).lineas) continue;
+      if (mala.lineas.length < 3 || (plantilla.vMin && mala.falsa < 2)) continue;
+    } catch { continue; }
     // el cálculo malo tiene que acabar en otra solución que el bueno
     if (clave(solucionDe(ultimaEcuacion(plantilla, p, true))) === clave(solucionDe(ultimaEcuacion(plantilla, p, false)))
       && plantilla.id !== 'cero-x-como-x') continue;
@@ -491,7 +529,10 @@ const baseItem = (tipo, plantilla, p, mal, extra = {}) => {
 
 /** Ejercicio 1: ¿dónde está el error? Un tercio de los ítems no tiene ninguno. */
 export function generarDonde(rng) {
-  const pl = rng.elegir(PLANTILLAS), p = conParams(pl, rng);
+  // Las de paréntesis no admiten líneas previas (solo el enunciado lleva paréntesis): salen la mitad de veces.
+  let pl = rng.elegir(PLANTILLAS);
+  if (CLASE_DE[pl.id] === 'parentesis' && rng.azar() < 0.5) pl = rng.elegir(PLANTILLAS.filter(x => CLASE_DE[x.id] !== 'parentesis'));
+  const p = conParams(pl, rng);
   return baseItem('donde', pl, p, rng.azar() >= 1 / 3);
 }
 

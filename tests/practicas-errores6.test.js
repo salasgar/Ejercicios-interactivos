@@ -110,6 +110,20 @@ test('ejercicio 1: solo la línea marcada deja de ser equivalente a la anterior;
   assert.ok(sinError > N * 0.28 && sinError < N * 0.38, `sin error: ${sinError}`);
 });
 
+test('ejercicio 1: el error cae en posiciones variadas, también en medio (ninguna pasa del 50 %, más del 30 % ni segunda ni última)', () => {
+  const its = generar(L.generarDonde, 32).filter(it => it.falsa !== null);
+  const porPosicion = {};
+  let enMedio = 0;
+  for (const it of its) {
+    assert.ok(it.lineas.length <= 7, L.claveItem(it));
+    porPosicion[it.falsa] = (porPosicion[it.falsa] ?? 0) + 1;
+    if (it.falsa !== 1 && it.falsa !== it.lineas.length - 1) enMedio++;
+  }
+  assert.ok(Object.keys(porPosicion).length >= 4, `posiciones: ${JSON.stringify(porPosicion)}`);
+  for (const [pos, n] of Object.entries(porPosicion)) assert.ok(n <= its.length * 0.5, `la posición ${pos} pasa del 50 %: ${n}/${its.length}`);
+  assert.ok(enMedio > its.length * 0.3, `en medio: ${enMedio}/${its.length}`);
+});
+
 test('ejercicio 2: cuatro nombres, solo uno verdadero; ningún otro llevaría al mismo resultado', () => {
   const its = generar(L.generarQue, 41);
   for (const it of its) {
