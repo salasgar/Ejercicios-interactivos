@@ -7,9 +7,11 @@
 // todo número.
 //
 // Una plantilla es un procedimiento de alumno de 2 a 4 líneas:
-//   { id, error, excluidos?, numeros(rng) → params, lineas(params) → [{ es, en }],
+//   { id, error, excluidos?, enunciado?(params) → { es, en }, numeros(rng) → params, lineas(params) → [{ es, en }],
 //     corregida(params) | porque(params) → { es, en } }
-// `error` es null (el procedimiento está bien) o { linea (desde 0), nombre }.
+// `error` es null (el procedimiento está bien) o { linea (desde 0, en `lineas`), nombre }.
+// `enunciado` (22-11): lo que se pide, que el ítem pone delante como primera línea y que NO se puede pulsar.
+// Las plantillas sin él ya empiezan por el enunciado («Calcula 2^3 · 5.», «Sale a las…»).
 // Los exponentes se escriben `2^3`; la interfaz los pinta con <sup>.
 //
 // NO hay plantilla «divisible between» (U2-1B-02): en español su texto sería
@@ -18,6 +20,7 @@
 // Queda como propuesta en la terminada.
 
 import { esc } from '../_comun/textos.js';
+import { errorEnLinea, lineaN, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 import { factorizar, valorDe, textoFact, mcd, mcm, divisores, parejasDivisores, esPrimo, PRIMOS, sumaCifras, cifras } from '../_comun/aritmetica.js';
 
 // ─── Nombres de los errores (lista cerrada) ────────────────────────────────────
@@ -37,6 +40,22 @@ export const NOMBRES = {
   trozos: { es: 'Ha dado el m.c.d. como número de trozos.', en: 'Gave the GCD as the number of pieces.' },
 };
 export const CLAVES_NOMBRES = Object.keys(NOMBRES);
+
+/** La regla que rompe cada error, para recordarla en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
+export const REGLAS = {
+  cruzado: { es: 'El m.c.d. coge los primos comunes con el menor exponente, y el m.c.m., todos los primos con el mayor.', en: 'The GCD takes the common primes with the smallest exponent, and the LCM takes all the primes with the biggest one.' },
+  mcmComunes: { es: 'El m.c.m. coge todos los primos, comunes y no comunes, con el mayor exponente.', en: 'The LCM takes all the primes, common or not, with the biggest exponent.' },
+  potencia: { es: 'Una potencia es un producto de factores iguales: el exponente dice cuántas veces se multiplica la base.', en: 'A power is a product of equal factors: the exponent says how many times you multiply the base.' },
+  ultimaCifra3: { es: 'Un número es divisible entre 3 si la suma de sus cifras es múltiplo de 3.', en: 'A number is divisible by 3 if the sum of its digits is a multiple of 3.' },
+  tres9: { es: 'Para el 9, la suma de las cifras tiene que ser múltiplo de 9, no de 3.', en: 'For 9, the sum of the digits has to be a multiple of 9, not of 3.' },
+  sinTerminar: { es: 'La descomposición en factores primos no termina hasta que todos los factores son primos.', en: 'The factorisation is not finished until all the factors are prime.' },
+  multiploDivisor: { es: 'El número grande es múltiplo del pequeño, y el pequeño es divisor del grande.', en: 'The bigger number is a multiple of the smaller one, and the smaller one is a divisor of the bigger one.' },
+  mcdCero: { es: 'El 1 es divisor de todos los números, así que el m.c.d. nunca es 0.', en: '1 is a divisor of every number, so the GCD is never 0.' },
+  olvida1: { es: 'El 1 y el propio número son siempre divisores de un número.', en: '1 and the number itself are always divisors of a number.' },
+  minutos: { es: 'Una hora son 60 minutos, no 100.', en: 'One hour is 60 minutes, not 100.' },
+  imparPrimo: { es: 'Un número es primo si solo tiene dos divisores: el 1 y él mismo. Ser impar no basta.', en: 'A number is prime if it has only two divisors: 1 and itself. Being odd is not enough.' },
+  trozos: { es: 'El m.c.d. dice cuánto mide cada trozo; para saber cuántos trozos salen, se divide cada cuerda entre el m.c.d.', en: 'The GCD says how long each piece is; to know how many pieces there are, divide each rope by the GCD.' },
+};
 
 /**
  * Pares de nombres que podrían confundirse sobre un mismo procedimiento: ninguno
@@ -71,17 +90,12 @@ export const TX = {
     nombre: { es: 'Hay un error. ¿Qué error ha cometido?', en: 'There is a mistake. What mistake was made?' },
   },
   introduccion: {
-    es: '<p>Cada ejercicio te enseña el trabajo de un alumno, con las líneas numeradas. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, el orden de los factores no importa).</p>',
-    en: '<p>Each exercise shows a student\'s work, with numbered lines. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, the order of the factors does not matter).</p>',
+    es: '<p>Cada ejercicio te enseña el trabajo de un alumno, línea a línea. La primera línea es lo que se pide. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, el orden de los factores no importa).</p>',
+    en: '<p>Each exercise shows a student\'s work, line by line. The first line is the question. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, the order of the factors does not matter).</p>',
   },
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
-  linea: { es: 'Línea', en: 'Line' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
-  hay_error_en: { es: n => `Hay un error, en la línea ${n}.`, en: n => `There is a mistake, in line ${n}.` },
-  la_linea_es: { es: n => `El error está en la línea ${n}.`, en: n => `The mistake is in line ${n}.` },
-  era: { es: 'Era:', en: 'It was:' },
-  correcta: { es: 'Bien hecho sería:', en: 'The right way is:' },
 };
 
 // ─── Ayudas aritméticas del banco ──────────────────────────────────────────────
@@ -139,6 +153,7 @@ export const PLANTILLAS = [
   // ── Con error ──
   {
     id: 'e-cruzado',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.d. de ${a} y ${b}.`, `Find the GCD of ${a} and ${b}.`),
     error: { linea: 1, nombre: 'cruzado' },
     numeros: rng => { const [a, b] = rng.elegir(PARES_COMUNES); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -147,11 +162,12 @@ export const PLANTILLAS = [
       L(`m.c.d.(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`, `GCD(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`),
     ],
     corregida: ({ a, b }) => L(
-      `El m.c.d. coge los primos comunes con el menor exponente: ${textoFact(mcdF(a, b))}. m.c.d.(${a}, ${b}) = ${mcd(a, b)}.`,
-      `The GCD takes the common primes with the smallest exponent: ${textoFact(mcdF(a, b))}. GCD(${a}, ${b}) = ${mcd(a, b)}.`),
+      `${textoFact(mcdF(a, b))} = ${mcd(a, b)}, así que m.c.d.(${a}, ${b}) = ${mcd(a, b)}.`,
+      `${textoFact(mcdF(a, b))} = ${mcd(a, b)}, so GCD(${a}, ${b}) = ${mcd(a, b)}.`),
   },
   {
     id: 'e-mcm-comunes',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.m. de ${a} y ${b}.`, `Find the LCM of ${a} and ${b}.`),
     error: { linea: 1, nombre: 'mcmComunes' },
     numeros: rng => { const [a, b] = rng.elegir(PARES_NO_COMUNES); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -160,15 +176,15 @@ export const PLANTILLAS = [
       L(`m.c.m.(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`, `LCM(${a}, ${b}) = ${valorDe(comunesMaxF(a, b))}`),
     ],
     corregida: ({ a, b }) => L(
-      `El m.c.m. coge todos los primos, con el mayor exponente: ${textoFact(mcmF(a, b))}. m.c.m.(${a}, ${b}) = ${mcm(a, b)}.`,
-      `The LCM takes all the primes, with the biggest exponent: ${textoFact(mcmF(a, b))}. LCM(${a}, ${b}) = ${mcm(a, b)}.`),
+      `${textoFact(mcmF(a, b))} = ${mcm(a, b)}, así que m.c.m.(${a}, ${b}) = ${mcm(a, b)}.`,
+      `${textoFact(mcmF(a, b))} = ${mcm(a, b)}, so LCM(${a}, ${b}) = ${mcm(a, b)}.`),
   },
   {
     id: 'e-potencia',
     error: { linea: 1, nombre: 'potencia' },
     numeros: rng => ({ b: rng.elegir([2, 3, 5]), e: rng.elegir([3, 4]), k: rng.elegir([3, 5, 7]) }),
     lineas: ({ b, e, k }) => [
-      L(`Calculo ${b}^${e} · ${k}.`, `I work out ${b}^${e} · ${k}.`),
+      L(`Calcula ${b}^${e} · ${k}.`, `Work out ${b}^${e} · ${k}.`),
       L(`${b}^${e} = ${b} · ${e} = ${b * e}`, `${b}^${e} = ${b} · ${e} = ${b * e}`),
       L(`${b * e} · ${k} = ${b * e * k}`, `${b * e} · ${k} = ${b * e * k}`),
     ],
@@ -178,6 +194,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'e-ultima-cifra-3',
+    enunciado: ({ n }) => L(`¿Es ${n} divisible entre 3?`, `Is ${n} divisible by 3?`),
     error: { linea: 0, nombre: 'ultimaCifra3' },
     numeros: rng => ({ n: rng.elegir(NO_MULT3_ACABA_3_6_9) }),
     lineas: ({ n }) => [
@@ -186,11 +203,12 @@ export const PLANTILLAS = [
       L(`Luego ${n} es divisible entre 3.`, `So ${n} is divisible by 3.`),
     ],
     corregida: ({ n }) => L(
-      `El criterio del 3 usa la suma de las cifras: ${suma(cifras(n))} = ${sumaCifras(n)}, y ${sumaCifras(n)} no es divisible entre 3: ${n} no es divisible entre 3.`,
-      `The rule for 3 uses the sum of the digits: ${suma(cifras(n))} = ${sumaCifras(n)}, and ${sumaCifras(n)} is not divisible by 3: ${n} is not divisible by 3.`),
+      `${suma(cifras(n))} = ${sumaCifras(n)}, que no es múltiplo de 3, así que ${n} no es divisible entre 3.`,
+      `${suma(cifras(n))} = ${sumaCifras(n)}, which is not a multiple of 3, so ${n} is not divisible by 3.`),
   },
   {
     id: 'e-tres-nueve',
+    enunciado: ({ n }) => L(`¿Es ${n} divisible entre 9?`, `Is ${n} divisible by 9?`),
     error: { linea: 2, nombre: 'tres9' },
     numeros: rng => ({ n: rng.elegir(MULT3_NO9) }),
     lineas: ({ n }) => [
@@ -204,6 +222,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'e-sin-terminar',
+    enunciado: ({ n }) => L(`Descompón ${n} en factores primos.`, `Write ${n} as a product of prime factors.`),
     error: { linea: 1, nombre: 'sinTerminar' },
     numeros: rng => { const [n, a, b] = rng.elegir([[60, 6, 10], [36, 4, 9], [72, 8, 9], [90, 9, 10], [100, 4, 25], [242, 2, 121], [286, 2, 143], [338, 2, 169], [363, 3, 121]]); return { n, a, b }; },
     lineas: ({ n, a, b }) => [
@@ -219,6 +238,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'e-multiplo-divisor-a',
+    enunciado: ({ a, b }) => L(`¿Qué relación hay entre ${a} y ${b}?`, `How are ${a} and ${b} related?`),
     error: { linea: 1, nombre: 'multiploDivisor' },
     numeros: rng => { const b = rng.entero(2, 13), k = rng.entero(2, 9); return { a: b * k, b, k }; },
     lineas: ({ a, b, k }) => [
@@ -229,6 +249,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'e-multiplo-divisor-b',
+    enunciado: ({ a, b }) => L(`¿Qué relación hay entre ${a} y ${b}?`, `How are ${a} and ${b} related?`),
     error: { linea: 1, nombre: 'multiploDivisor' },
     numeros: rng => { const b = rng.entero(2, 13), k = rng.entero(2, 9); return { a: b * k, b, k }; },
     lineas: ({ a, b, k }) => [
@@ -239,6 +260,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'e-mcd-cero',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.d. de ${a} y ${b}.`, `Find the GCD of ${a} and ${b}.`),
     error: { linea: 2, nombre: 'mcdCero' },
     numeros: rng => { const [a, b] = rng.elegir(PARES_SIN_COMUN); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -247,11 +269,12 @@ export const PLANTILLAS = [
       L(`m.c.d.(${a}, ${b}) = 0`, `GCD(${a}, ${b}) = 0`),
     ],
     corregida: ({ a, b }) => L(
-      `El único divisor que tienen en común ${a} y ${b} es el 1, así que m.c.d.(${a}, ${b}) = 1. El m.c.d. nunca es 0.`,
-      `The only divisor that ${a} and ${b} have in common is 1, so GCD(${a}, ${b}) = 1. The GCD is never 0.`),
+      `El único divisor que tienen en común ${a} y ${b} es el 1, así que m.c.d.(${a}, ${b}) = 1.`,
+      `The only divisor that ${a} and ${b} have in common is 1, so GCD(${a}, ${b}) = 1.`),
   },
   {
     id: 'e-olvida-1-n',
+    enunciado: ({ n }) => L(`Escribe todos los divisores de ${n}.`, `Write all the divisors of ${n}.`),
     error: { linea: 1, nombre: 'olvida1' },
     numeros: rng => ({ n: rng.elegir(DIVISORES_DE) }),
     lineas: ({ n }) => [
@@ -259,11 +282,12 @@ export const PLANTILLAS = [
       L(`Divisores de ${n}: ${divisores(n).slice(1, -1).join(', ')}`, `Divisors of ${n}: ${divisores(n).slice(1, -1).join(', ')}`),
     ],
     corregida: ({ n }) => L(
-      `Faltan el 1 y el ${n}: divisores de ${n}: ${divisores(n).join(', ')}.`,
-      `1 and ${n} are missing: divisors of ${n}: ${divisores(n).join(', ')}.`),
+      `Divisores de ${n}: ${divisores(n).join(', ')}.`,
+      `Divisors of ${n}: ${divisores(n).join(', ')}.`),
   },
   {
     id: 'e-olvida-n',
+    enunciado: ({ n }) => L(`Escribe todos los divisores de ${n}.`, `Write all the divisors of ${n}.`),
     error: { linea: 1, nombre: 'olvida1' },
     numeros: rng => ({ n: rng.elegir(DIVISORES_DE) }),
     lineas: ({ n }) => [
@@ -271,25 +295,26 @@ export const PLANTILLAS = [
       L(`Divisores de ${n}: ${divisores(n).slice(0, -1).join(', ')}`, `Divisors of ${n}: ${divisores(n).slice(0, -1).join(', ')}`),
     ],
     corregida: ({ n }) => L(
-      `Falta el propio ${n}: ${n} = 1 · ${n}. Divisores de ${n}: ${divisores(n).join(', ')}.`,
-      `${n} itself is missing: ${n} = 1 · ${n}. Divisors of ${n}: ${divisores(n).join(', ')}.`),
+      `${n} = 1 · ${n}, así que el ${n} también es divisor. Divisores de ${n}: ${divisores(n).join(', ')}.`,
+      `${n} = 1 · ${n}, so ${n} is a divisor too. Divisors of ${n}: ${divisores(n).join(', ')}.`),
   },
   {
     id: 'e-minutos',
     error: { linea: 2, nombre: 'minutos' },
     numeros: numerosMinutos,
     lineas: ({ h, m, d }) => [
-      L(`Sale a las ${hm(h, m)} y tarda ${d} minutos.`, `It leaves at ${hm(h, m)} and takes ${d} minutes.`),
+      L(`Sale a las ${hm(h, m)} y tarda ${d} minutos. ¿A qué hora llega?`, `It leaves at ${hm(h, m)} and takes ${d} minutes. What time does it arrive?`),
       L(`${m} + ${d} = ${m + d} minutos.`, `${m} + ${d} = ${m + d} minutes.`),
       L(`${m + d} minutos son 1 hora y ${m + d - 100} minutos.`, `${m + d} minutes are 1 hour and ${m + d - 100} minutes.`),
       L(`${h} + 1 = ${h + 1}: llega a las ${hm(h + 1, m + d - 100)}.`, `${h} + 1 = ${h + 1}: it arrives at ${hm(h + 1, m + d - 100)}.`),
     ],
     corregida: ({ h, m, d }) => L(
-      `${m + d} minutos son 2 horas y ${m + d - 120} minutos (una hora son 60 minutos). Llega a las ${hm(h + 2, m + d - 120)}.`,
-      `${m + d} minutes are 2 hours and ${m + d - 120} minutes (one hour is 60 minutes). It arrives at ${hm(h + 2, m + d - 120)}.`),
+      `${m + d} minutos son 2 horas y ${m + d - 120} minutos, así que llega a las ${hm(h + 2, m + d - 120)}.`,
+      `${m + d} minutes are 2 hours and ${m + d - 120} minutes, so it arrives at ${hm(h + 2, m + d - 120)}.`),
   },
   {
     id: 'e-impar-primo',
+    enunciado: ({ n }) => L(`¿Es ${n} un número primo?`, `Is ${n} a prime number?`),
     error: { linea: 1, nombre: 'imparPrimo' },
     numeros: rng => ({ n: rng.elegir(IMPARES_COMPUESTOS) }),
     lineas: ({ n }) => [
@@ -299,7 +324,7 @@ export const PLANTILLAS = [
     ],
     corregida: ({ n }) => {
       const p = factorizar(n)[0][0];
-      return L(`Hay impares que no son primos: ${n} = ${p} · ${n / p}.`, `Some odd numbers are not prime: ${n} = ${p} · ${n / p}.`);
+      return L(`${n} = ${p} · ${n / p}, así que ${n} no es primo.`, `${n} = ${p} · ${n / p}, so ${n} is not prime.`);
     },
   },
   {
@@ -315,14 +340,15 @@ export const PLANTILLAS = [
     corregida: ({ a, b }) => {
       const g = mcd(a, b);
       return L(
-        `${g} es lo que mide cada trozo, no cuántos salen. Trozos: ${a} ${DIV.es} ${g} + ${b} ${DIV.es} ${g} = ${a / g} + ${b / g} = ${a / g + b / g}.`,
-        `${g} is the length of each piece, not how many there are. Pieces: ${a} ${DIV.en} ${g} + ${b} ${DIV.en} ${g} = ${a / g} + ${b / g} = ${a / g + b / g}.`);
+        `Cada trozo mide ${g} m, y salen ${a} ${DIV.es} ${g} + ${b} ${DIV.es} ${g} = ${a / g} + ${b / g} = ${a / g + b / g} trozos.`,
+        `Each piece is ${g} m long, and there are ${a} ${DIV.en} ${g} + ${b} ${DIV.en} ${g} = ${a / g} + ${b / g} = ${a / g + b / g} pieces.`);
     },
   },
 
   // ── Sin error (incluidos los «no errores» de U2-4C-02) ──
   {
     id: 'b-orden-factores',
+    enunciado: ({ n }) => L(`Descompón ${n} en factores primos.`, `Write ${n} as a product of prime factors.`),
     error: null,
     numeros: rng => {
       const n = rng.elegir(FACTORIZADOS), f = factorizar(n);
@@ -340,6 +366,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-dos-arboles',
+    enunciado: ({ n }) => L(`Descompón ${n} en factores primos.`, `Write ${n} as a product of prime factors.`),
     error: null,
     numeros: rng => { const [n, a, b, c, d] = rng.elegir([[36, 4, 9, 6, 6], [60, 6, 10, 4, 15], [72, 8, 9, 6, 12], [90, 9, 10, 6, 15], [48, 6, 8, 4, 12]]); return { n, a, b, c, d }; },
     lineas: ({ n, a, b, c, d }) => [
@@ -353,6 +380,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-mcd-hcf',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.d. de ${a} y ${b}.`, `Find the GCD of ${a} and ${b}.`),
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_MIXTOS); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -365,6 +393,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-lcm-nombres',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.m. de ${a} y ${b}.`, `Find the LCM of ${a} and ${b}.`),
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_MULTIPLOS); return { a, b }; },
     lineas: ({ a, b }) => {
@@ -383,6 +412,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-divisible-por',
+    enunciado: ({ n }) => L(`¿Es ${n} divisible entre 3?`, `Is ${n} divisible by 3?`),
     error: null,
     numeros: rng => ({ n: rng.elegir(MULT3_NO9) }),
     lineas: ({ n }) => [
@@ -395,6 +425,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-criterio-3-no-9',
+    enunciado: ({ n }) => L(`¿Es ${n} divisible entre 3? ¿Y entre 9?`, `Is ${n} divisible by 3? And by 9?`),
     error: null,
     numeros: rng => ({ n: rng.elegir(MULT3_NO9) }),
     lineas: ({ n }) => [
@@ -408,6 +439,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-factores-11-13',
+    enunciado: ({ n }) => L(`Descompón ${n} en factores primos.`, `Write ${n} as a product of prime factors.`),
     error: null,
     numeros: rng => ({ n: rng.elegir([242, 286, 338, 363]) }),
     lineas: ({ n }) => {
@@ -428,6 +460,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-mcm-ok',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.m. de ${a} y ${b}.`, `Find the LCM of ${a} and ${b}.`),
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_NO_COMUNES); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -441,6 +474,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-mcd-ok',
+    enunciado: ({ a, b }) => L(`Calcula el m.c.d. de ${a} y ${b}.`, `Find the GCD of ${a} and ${b}.`),
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_MIXTOS); return { a, b }; },
     lineas: ({ a, b }) => [
@@ -454,6 +488,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-divisores-ok',
+    enunciado: ({ n }) => L(`Escribe todos los divisores de ${n}.`, `Write all the divisors of ${n}.`),
     error: null,
     numeros: rng => ({ n: rng.elegir(DIVISORES_DE) }),
     lineas: ({ n }) => [
@@ -466,6 +501,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-impar-no-primo',
+    enunciado: ({ n }) => L(`¿Es ${n} un número primo?`, `Is ${n} a prime number?`),
     error: null,
     numeros: rng => ({ n: rng.elegir(IMPARES_COMPUESTOS) }),
     lineas: ({ n }) => {
@@ -481,6 +517,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-primo-ok',
+    enunciado: ({ n }) => L(`¿Es ${n} un número primo?`, `Is ${n} a prime number?`),
     error: null,
     numeros: rng => ({ n: rng.elegir(PRIMOS_PEQUENOS) }),
     lineas: ({ n }) => {
@@ -497,6 +534,7 @@ export const PLANTILLAS = [
   },
   {
     id: 'b-razonable',
+    enunciado: ({ a, b, cantidad }) => (cantidad === 'mcd' ? L(`Calcula el m.c.d. de ${a} y ${b}.`, `Find the GCD of ${a} and ${b}.`) : L(`Calcula el m.c.m. de ${a} y ${b}.`, `Find the LCM of ${a} and ${b}.`)),
     error: null,
     numeros: rng => { const [a, b] = rng.elegir(PARES_MIXTOS); return { a, b, cantidad: rng.elegir(['mcd', 'mcm']) }; },
     lineas: ({ a, b, cantidad }) => cantidad === 'mcd'
@@ -517,7 +555,7 @@ export const PLANTILLAS = [
     error: null,
     numeros: numerosMinutos,
     lineas: ({ h, m, d }) => [
-      L(`Sale a las ${hm(h, m)} y tarda ${d} minutos.`, `It leaves at ${hm(h, m)} and takes ${d} minutes.`),
+      L(`Sale a las ${hm(h, m)} y tarda ${d} minutos. ¿A qué hora llega?`, `It leaves at ${hm(h, m)} and takes ${d} minutes. What time does it arrive?`),
       L(`${m} + ${d} = ${m + d} minutos.`, `${m} + ${d} = ${m + d} minutes.`),
       L(`${m + d} minutos son 2 horas y ${m + d - 120} minutos.`, `${m + d} minutes are 2 hours and ${m + d - 120} minutes.`),
       L(`${h} + 2 = ${h + 2}: llega a las ${hm(h + 2, m + d - 120)}.`, `${h} + 2 = ${h + 2}: it arrives at ${hm(h + 2, m + d - 120)}.`),
@@ -531,62 +569,53 @@ export const PLANTILLAS = [
 export const PLANTILLA_POR_ID = Object.fromEntries(PLANTILLAS.map(p => [p.id, p]));
 
 // ─── La explicación del ítem (feedback de acierto/fallo y botón «No lo sé») ────
+//
+// Con error (JL, 22-11): la línea con ordinal y sin su número delante («El error está en la tercera línea:»), el
+// error como frase, la regla rota en negrita y lo correcto. Sin «Se llama:» ni números de línea.
 
 /** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
 export const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
 
-/** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
-export function explicaItem(item, { tt }) {
+/** Minúscula tras dos puntos, sin tocar siglas (GCD, LCM). */
+const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0].toLowerCase() + txt.slice(1) : txt);
+/** Comillas inglesas “” en lugar de las rectas que traen algunos `porque`. */
+const comillasIn = txt => txt.replace(/"([^"]+)"/g, '“$1”');
+
+/** La línea mala del ítem, en un <span>, sin número. */
+const lineaMala = (item, tt) => `<span class="linea-mala">${html(tt(item.lineas[item.error.linea]))}</span>`;
+/** «Lo correcto es: …» con la cuenta bien hecha de la plantilla. */
+const loCorrecto = (item, tt) => `${tt(LO_CORRECTO)} ${html(minuscula(tt(PLANTILLA_POR_ID[item.plantilla].corregida(item.params))))}`;
+const regla = (item, tt) => reglaEnNegrita(esc(tt(REGLAS[item.error.nombre])));
+const nombre = (item, tt) => esc(tt(NOMBRES[item.error.nombre]));
+
+/** La explicación del ítem, con sus números: dónde está el error y cómo se hace bien, o por qué no era error. */
+export function explicaItem(item, { tt, idioma }) {
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
   if (!item.error) {
     // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
     const porque = tt(plantilla.porque(item.params));
     return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
   }
-  const n = item.error.linea + 1;
-  const mala = `<span class="linea-mala">${n}. ${html(tt(item.lineas[item.error.linea]))}</span>`;
-  return `${tt(TX.la_linea_es)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(tt(plantilla.corregida(item.params)))}`;
+  return `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}<br>${nombre(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}`;
 }
 
 // ─── «No lo sé»: la regla del ejercicio, la línea mala y cómo se hace bien, y la respuesta (tarea 193) ───
 //
-// La tarjeta no copia `explicaItem` (el feedback): le faltaban la regla delante y la respuesta al final, en el
-// ej. 3 el nombre del error salía en el cuerpo y otra vez como respuesta, y en «m.c.d. = 0» su porqué («el 1 es
-// divisor de los dos números, así que el m.c.d. es 1») vale para cualquier pareja de números.
+// La tarjeta lleva delante cómo se busca el error y al final la respuesta, una sola vez. En el ej. 2 la respuesta
+// es la línea («la tercera línea»): en el cuerpo no se dice cuál es, solo se cita. En el ej. 3 la respuesta es el
+// nombre del error, así que en el cuerpo no sale.
 
 const REGLA = {
   hay: { es: 'Repasa cada línea: sus cuentas y la regla que usa. Si alguna falla, hay un error.', en: 'Check each line: its calculations and the rule it uses. If one of them fails, there is a mistake.' },
   linea: { es: 'Repasa las líneas en orden y para en la primera cuya cuenta o regla falla.', en: 'Check the lines in order and stop at the first one with a wrong calculation or a wrong rule.' },
   nombre: { es: 'Busca la línea mala y compárala con cómo se hace bien: lo que cambia da el nombre del error.', en: 'Find the wrong line and compare it with the right way: what is different gives the name of the mistake.' },
 };
-const PRIMERA_MALA = { es: 'Es la primera línea que falla:', en: 'It is the first line that is wrong:' };
+const FALLA = { es: 'Esta línea falla:', en: 'This line is wrong:' };
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
 const cierre = (idioma, txt) => `<br>${RESPUESTA[idioma]} <strong>${txt}</strong>.`;
 const entreComillas = (idioma, txt) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
 /** «Ha tratado la potencia como un producto.» → sin el punto final (sí el de «m.c.m.»), que va fuera de las comillas. */
 const sinPunto = txt => txt.replace(/(?<!m\.c\.[dm])\.$/, '');
-/** Minúscula tras dos puntos, sin tocar siglas (GCD, LCM). */
-const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0].toLowerCase() + txt.slice(1) : txt);
-/** Comillas inglesas “” en lugar de las rectas que traen algunos `porque`. */
-const comillasIn = txt => txt.replace(/"([^"]+)"/g, '“$1”');
-
-/** La cuenta bien hecha de la tarjeta: la `corregida` de la plantilla, salvo donde enseñaba algo falso en general. */
-// Vacía desde la reabierta del 14-11: la `corregida` de `e-mcd-cero` ya dice «el único divisor común» y vale tal cual.
-const CORREGIDA_TARJETA = {};
-export const corregidaTarjeta = item => (CORREGIDA_TARJETA[item.plantilla] ?? PLANTILLA_POR_ID[item.plantilla].corregida)(item.params);
-
-const ESTA_EN = { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` };
-
-/**
- * La línea mala y cómo queda bien hecha. En el ej. 2 el número de la línea es la respuesta: va al final y aquí
- * solo delante de la línea; en los otros se dice antes («El error está en la línea 2:») y no se repite.
- */
-function malaYBuena(item, { tt }, esElEj2 = false) {
-  const n = item.error.linea + 1;
-  const texto = html(tt(item.lineas[item.error.linea]));
-  const mala = esElEj2 ? `${tt(PRIMERA_MALA)} <span class="linea-mala">${n}. ${texto}</span>` : `${tt(ESTA_EN)(n)} <span class="linea-mala">${texto}</span>`;
-  return `${mala}<br>${tt(TX.correcta)} ${html(minuscula(tt(corregidaTarjeta(item))))}`;
-}
 
 /** Sin error: el porqué de la plantilla sin su «Está bien:» (la respuesta ya lo dice al final). */
 function porQueEstaBien(item, { tt }) {
@@ -597,20 +626,21 @@ function porQueEstaBien(item, { tt }) {
 /** Ejercicio 1: ¿está bien o hay un error? */
 export function explicaHay(item, ctx) {
   const { tt, idioma } = ctx;
-  const cuerpo = item.error ? malaYBuena(item, ctx) : porQueEstaBien(item, ctx);
+  const cuerpo = item.error
+    ? `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}<br>${nombre(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}`
+    : porQueEstaBien(item, ctx);
   return `${tt(REGLA.hay)}<br>${cuerpo}${cierre(idioma, entreComillas(idioma, esc(tt(item.error ? TX.error : TX.bien))))}`;
 }
 
 /** Ejercicio 2: la primera línea que está mal. */
 export function explicaLinea(item, ctx) {
   const { tt, idioma } = ctx;
-  const resp = idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`;
-  return `${tt(REGLA.linea)}<br>${malaYBuena(item, ctx, true)}${cierre(idioma, resp)}`;
+  return `${tt(REGLA.linea)}<br>${tt(FALLA)} ${lineaMala(item, tt)}<br>${nombre(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}${cierre(idioma, lineaN(item.solucion, idioma))}`;
 }
 
 /** Ejercicio 3: el nombre del error. */
 export function explicaNombre(item, ctx) {
   const { tt, idioma } = ctx;
   const resp = entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion]))));
-  return `${tt(REGLA.nombre)}<br>${malaYBuena(item, ctx)}${cierre(idioma, resp)}`;
+  return `${tt(REGLA.nombre)}<br>${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}${regla(item, tt)}${loCorrecto(item, tt)}${cierre(idioma, resp)}`;
 }

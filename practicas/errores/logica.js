@@ -3,9 +3,9 @@
 //
 // Ítem: { tipo: 'hay' | 'linea' | 'nombre', plantilla, params, lineas, error,
 //         opciones, solucion }
-//   lineas   [{ es, en }, …] el procedimiento (2 a 4 líneas)
-//   error    null o { linea (desde 0), nombre (clave de NOMBRES) }
-//   opciones 'hay': ['bien', 'error'] · 'linea': [0, 1, …] · 'nombre': 4 claves
+//   lineas   [{ es, en }, …] el enunciado y el procedimiento (3 a 5 líneas); la 0 es el enunciado
+//   error    null o { linea (índice en `lineas`, desde 1), nombre (clave de NOMBRES) }
+//   opciones 'hay': ['bien', 'error'] · 'linea': [1, 2, …] (el enunciado no se puede pulsar) · 'nombre': 4 claves
 //   solucion la opción correcta (la misma forma que las opciones)
 
 import { PLANTILLAS, PLANTILLA_POR_ID, CLAVES_NOMBRES, CONFUNDIBLES } from './textos.js';
@@ -13,8 +13,16 @@ import { PLANTILLAS, PLANTILLA_POR_ID, CLAVES_NOMBRES, CONFUNDIBLES } from './te
 const CON_ERROR = PLANTILLAS.filter(p => p.error);
 const SIN_ERROR = PLANTILLAS.filter(p => !p.error);
 
+/** Las líneas que ve el alumno: el enunciado de la plantilla (si lo tiene aparte) y los pasos. */
+export function lineasDe(plantilla, params) {
+  const pasos = plantilla.lineas(params);
+  return plantilla.enunciado ? [plantilla.enunciado(params), ...pasos] : pasos;
+}
+/** El error de la plantilla con la línea contada en `lineasDe` (el enunciado aparte la corre un puesto). */
+export const errorDe = plantilla => plantilla.error && { ...plantilla.error, linea: plantilla.error.linea + (plantilla.enunciado ? 1 : 0) };
+
 function ficha(plantilla, params, tipo, opciones, solucion) {
-  return { tipo, plantilla: plantilla.id, params, lineas: plantilla.lineas(params), error: plantilla.error, opciones, solucion };
+  return { tipo, plantilla: plantilla.id, params, lineas: lineasDe(plantilla, params), error: errorDe(plantilla), opciones, solucion };
 }
 
 /** Nombres que NO se pueden dar como distractores de un error: él mismo, sus excluidos y los confundibles. */
@@ -35,12 +43,12 @@ export function generarHay(rng) {
   return ficha(plantilla, plantilla.numeros(rng), 'hay', ['bien', 'error'], conError ? 'error' : 'bien');
 }
 
-/** Ejercicio 2: solo procedimientos con error; cada línea es una opción. */
+/** Ejercicio 2: solo procedimientos con error; cada línea, salvo el enunciado, es una opción. */
 export function generarLinea(rng) {
   const plantilla = rng.elegir(CON_ERROR);
   const params = plantilla.numeros(rng);
-  const lineas = plantilla.lineas(params);
-  return ficha(plantilla, params, 'linea', lineas.map((_, i) => i), plantilla.error.linea);
+  const lineas = lineasDe(plantilla, params);
+  return ficha(plantilla, params, 'linea', lineas.slice(1).map((_, i) => i + 1), errorDe(plantilla).linea);
 }
 
 /** Ejercicio 3: el nombre correcto y tres que no pueden aplicarse a ese procedimiento. */

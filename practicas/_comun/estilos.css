@@ -298,3 +298,12 @@ input.campo-numero--malo { border-color: #d97706; background: var(--aviso-claro)
 html:lang(en) body::after {
   content: "\0000A9  2026 Juan Luis Salas Garc\0000EDa. All rights reserved.";
 }
+
+/* «Caza el error» (_comun/procedimiento.js): el enunciado no es un paso del alumno ni se puede pulsar,
+   así que va sin fondo y con borde; los pasos (botones o recuadros) siguen debajo. */
+.procedimiento__enunciado {
+  background: transparent !important; border: 2px dashed var(--borde); color: var(--texto) !important;
+  font-weight: 600; margin-bottom: .5rem;
+}
+div.procedimiento__enunciado { display: block; border-radius: 10px; padding: .55rem .8rem; text-align: left; overflow-wrap: anywhere; }
+.regla-rota { display: block; margin: .25rem 0; }

@@ -6,6 +6,7 @@
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { generarHay, generarLinea, generarNombre, nombresExcluidos } from '../practicas/errores/logica.js';
 import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores/textos.js';
@@ -128,8 +129,10 @@ const VERIFICADORES = {
   },
 };
 
+/** Válida por línea del ítem: el enunciado que la plantilla pone aparte (línea 0) no se verifica, siempre vale. */
 function validas(item) {
-  return VERIFICADORES[item.plantilla](item.params, item.lineas.map(l => l.es));
+  const desfase = PLANTILLA_POR_ID[item.plantilla].enunciado ? 1 : 0;
+  return [...Array(desfase).fill(true), ...VERIFICADORES[item.plantilla](item.params, item.lineas.slice(desfase).map(l => l.es))];
 }
 
 // ─── El banco ────────────────────────────────────────────────────────────────
@@ -255,8 +258,8 @@ test('ejercicio 2: solo procedimientos con error; la línea correcta es la únic
     assert.ok(item.error);
     const v = validas(item);
     assert.deepEqual(v.map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [item.solucion]);
-    assert.equal(item.opciones.length, item.lineas.length);
-    assert.deepEqual(item.opciones, item.lineas.map((_, j) => j));
+    // El enunciado (línea 0) no se puede pulsar (JL, 22-11).
+    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));
   }
 });
 
@@ -285,7 +288,7 @@ test('ejercicio 3: cuatro nombres distintos; los tres falsos no están excluidos
       if (o !== item.solucion) assert.ok(!fuera.has(o), `${plantilla.id}: ${o}`);
     }
     // El procedimiento sigue siendo el de la plantilla y tiene su error (fuerza bruta).
-    assert.deepEqual(validas(item).map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [plantilla.error.linea]);
+    assert.deepEqual(validas(item).map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [item.error.linea]);
   }
 });
 
@@ -395,5 +398,41 @@ test('textos del banco: sin comillas rectas en lo que ve el alumno (en inglés �
       const textos = [...p.lineas(params), p.corregida?.(params), p.porque?.(params)].filter(Boolean);
       for (const t of textos) for (const idioma of ['es', 'en']) assert.ok(!/["']/.test(t[idioma].replace(/\b\w+'\w+\b/g, '')), `${p.id} ${idioma}: ${t[idioma]}`);
     }
+  }
+});
+
+// ─── Revisión de Juan Luis (22-11): enunciado aparte, sin números, la regla rota ────────────────
+
+test('cada ítem empieza por el enunciado (lo que se pide), que nunca es la línea del error', async () => {
+  const { lineasDe, errorDe } = await import('../practicas/errores/logica.js');
+  const rng = crearRng(2211);
+  for (const p of PLANTILLAS) {
+    const params = p.numeros(rng);
+    const [enun] = lineasDe(p, params);
+    for (const idioma of ['es', 'en']) assert.match(enun[idioma], /^(Calcula|Descompón|Escribe|¿|Sale|Hay que|Find|Write|Work out|Is |How are|It leaves|Two ropes)/, `${p.id}: ${enun[idioma]}`);
+    assert.match(enun.es, /\?|\.$/, p.id);
+    if (p.error) assert.ok(errorDe(p).linea >= 1, p.id);
+    if (p.enunciado) assert.deepEqual(nums(p.enunciado(params).es), nums(p.enunciado(params).en), `${p.id}: números distintos entre idiomas`);
+  }
+});
+
+test('los enunciados de problemas llevan su pregunta (las horas: «¿A qué hora llega?»)', () => {
+  for (const id of ['e-minutos', 'b-minutos-ok']) {
+    const p = PLANTILLA_POR_ID[id];
+    const [l0] = p.lineas(p.numeros(crearRng(7)));
+    assert.match(l0.es, /¿A qué hora llega\?$/);
+    assert.match(l0.en, /What time does it arrive\?$/);
+  }
+});
+
+test('cada error tiene su regla en los dos idiomas', async () => {
+  const { REGLAS } = await import('../practicas/errores/textos.js');
+  for (const c of CLAVES_NOMBRES) assert.ok(REGLAS[c]?.es && REGLAS[c]?.en, c);
+});
+
+test('la interfaz ya no numera las líneas', () => {
+  for (const f of ['practica.js', 'estilos.css', 'textos.js']) {
+    const t = readFileSync(new URL(`../practicas/errores/${f}`, import.meta.url), 'utf8');
+    assert.doesNotMatch(t, /procedimiento__n|numerad|numbered/, f);
   }
 });

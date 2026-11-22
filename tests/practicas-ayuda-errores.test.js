@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { T, esc } from '../practicas/_comun/textos.js';
 import { generarHay, generarLinea, generarNombre } from '../practicas/errores/logica.js';
-import { explicaItem, explicaHay, explicaLinea, explicaNombre, NOMBRES, PLANTILLAS, PLANTILLA_POR_ID, html } from '../practicas/errores/textos.js';
+import { explicaItem, explicaHay, explicaLinea, explicaNombre, NOMBRES, REGLAS, PLANTILLAS, PLANTILLA_POR_ID, html } from '../practicas/errores/textos.js';
+import { errorEnLinea, lineaN } from '../practicas/_comun/procedimiento.js';
 
 const IDIOMAS = ['es', 'en'];
 const textosDe = idioma => ({ idioma, t: T[idioma], tt: obj => obj[idioma], esc });
@@ -21,10 +22,13 @@ function comun(item, idioma, h) {
     assert.ok(/Está bien|It is right/.test(h), `sin error: «${plano(h)}»`);
     assert.ok(h.includes(html(plantilla.porque(item.params)[idioma])), 'lleva el porqué de la plantilla');
   } else {
-    const n = item.error.linea + 1;
-    assert.ok(h.includes(idioma === 'es' ? `en la línea ${n}.` : `in line ${n}.`), `lleva la línea ${n}: ${plano(h)}`);
+    // La línea con ordinal (22-11): «El error está en la tercera línea:», sin «3.» delante de la línea.
+    assert.ok(h.includes(errorEnLinea(item.error.linea, idioma)), `lleva la línea: ${plano(h)}`);
+    assert.doesNotMatch(h, /linea-mala">\d+\. /, 'sin el número delante de la línea');
+    assert.doesNotMatch(h, /Se llama|It is called|línea \d|line \d/, plano(h));
     assert.ok(h.includes(html(item.lineas[item.error.linea][idioma])), 'cita la línea que está mal');
-    assert.ok(h.includes(html(plantilla.corregida(item.params)[idioma])), 'lleva la cuenta bien hecha');
+    assert.ok(plano(h).includes(plano(html(plantilla.corregida(item.params)[idioma])).slice(1)), 'lleva la cuenta bien hecha');
+    assert.ok(h.includes(`<strong class="regla-rota">${esc(REGLAS[item.error.nombre][idioma])}</strong>`), 'la regla rota, en negrita');
     assert.ok(h.includes(esc(NOMBRES[item.error.nombre][idioma])), 'lleva el nombre del error');
   }
 }
@@ -86,7 +90,7 @@ function tarjeta(nombre, item, idioma, h) {
     const buena = esc((item.solucion === 'error' ? { es: 'Hay un error', en: 'There is a mistake' } : { es: 'Está bien', en: 'It is right' })[idioma]);
     assert.ok(resp.includes(idioma === 'es' ? `«${buena}»` : `“${buena}”`), `respuesta del ej. 1: ${p}`);
   } else if (nombre === 'linea') {
-    assert.ok(resp.includes(idioma === 'es' ? `la línea ${item.solucion + 1}</strong>.` : `line ${item.solucion + 1}</strong>.`), `respuesta del ej. 2: ${p}`);
+    assert.ok(resp.includes(`${lineaN(item.solucion, idioma)}</strong>.`), `respuesta del ej. 2: ${p}`);
   } else {
     const nom = esc(NOMBRES[item.solucion][idioma]).replace(/(?<!m\.c\.[dm])\.$/, '');
     assert.ok(resp.includes(idioma === 'es' ? `«${nom}»` : `“${nom}”`), `respuesta del ej. 3: ${p}`);
@@ -101,8 +105,9 @@ function tarjeta(nombre, item, idioma, h) {
   const corr = plano(html(plantilla.corregida(item.params)[idioma]));
   const numeros = corr.match(/\d+/g) ?? [];
   for (const x of numeros) assert.ok(p.includes(x), `lleva el ${x} de la cuenta bien hecha: ${p}`);
-  if (nombre === 'linea') assert.equal(cuenta(p, `${item.error.linea + 1}. `) >= 1, true);
-  else assert.ok(h.includes(idioma === 'es' ? `en la línea ${item.error.linea + 1}:` : `in line ${item.error.linea + 1}:`), 'dice en qué línea está');
+  assert.doesNotMatch(h, /linea-mala">\d+\. |Es la primera línea que falla|first line that is wrong/, 'sin «3.» delante ni «la primera línea que falla»');
+  assert.ok(h.includes(`<strong class="regla-rota">${esc(REGLAS[item.error.nombre][idioma])}</strong>`), 'la regla rota, en negrita');
+  if (nombre !== 'linea') assert.ok(h.includes(errorEnLinea(item.error.linea, idioma)), 'dice en qué línea está');
 }
 
 const EXPLICA = { hay: explicaHay, linea: explicaLinea, nombre: explicaNombre };
