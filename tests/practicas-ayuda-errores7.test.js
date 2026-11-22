@@ -2,7 +2,7 @@
 // en «Corrígelo», el resultado que el ejercicio da por bueno. 1200 ítems por ejercicio, dos idiomas.
 
 import test from 'node:test';
-import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
+import { errorEnLinea, LO_CORRECTO } from '../practicas/_comun/procedimiento.js';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { ERRORES_TIPICOS, aTexto } from '../practicas/_comun/proporcion.js';
@@ -13,25 +13,26 @@ const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
 const items = (fn, semilla, n = 1200) => { const rng = crearRng(semilla); return Array.from({ length: n }, () => fn(rng)); };
 
-test('errores7 · ejercicio 1: dice la línea mala, el error y cómo queda; o que todo está bien', () => {
-  let sinError = 0;
+test('errores7 · ejercicio 1 (columnas): cada columna dice si está bien o su línea mala, el error, la regla en negrita y lo correcto; al final, qué columnas', () => {
   for (const item of items(L.generarDonde, 701)) {
     for (const idioma of IDIOMAS) {
       const html = X.explicaDonde(item, ctx(idioma));
-      if (item.falsa === null) {
-        sinError++;
-        assert.ok(html.includes(X.TX.todo_bien_es[idioma]));
-      } else {
-        // JL, 22-11: la línea con ordinal, sin números de línea ni «Se llama:», y la regla rota en negrita.
-        assert.ok(html.includes(errorEnLinea(item.falsa, idioma)), 'la línea, con ordinal');
-        assert.doesNotMatch(html, /línea \d|line \d|Se llama|It is called/, 'sin números de línea ni «Se llama:»');
-        assert.ok(html.includes(`<strong class="regla-rota">${X.REGLAS[item.error][idioma]}</strong>`), 'la regla rota, en negrita');
-        assert.ok(html.includes(ERRORES_TIPICOS[item.error].nombre[idioma]), 'el nombre del error');
-        assert.ok(html.includes(L.porque(item, idioma)), 'el porqué con los números');
-      }
+      // JL, 22-11: sin números de línea ni «Se llama:», y la regla rota en negrita.
+      assert.doesNotMatch(html, /undefined|NaN|\[object|null|×|línea \d|line \d|Se llama|It is called|Todo está bien|All correct/, html);
+      const letras = item.columnas.map((c, j) => (c.error ? L.LETRAS[j] : null)).filter(Boolean);
+      const lista = letras.length === 1 ? letras[0] : `${letras[0]} ${idioma === 'es' ? 'y' : 'and'} ${letras[1]}`;
+      const fin = idioma === 'es' ? `El error está en <strong>${letras.length === 1 ? 'la columna' : 'las columnas'} ${lista}</strong>.`
+        : `The mistake is in <strong>${letras.length === 1 ? 'column' : 'columns'} ${lista}</strong>.`;
+      assert.ok(html.endsWith(fin), `${idioma}: ${html}`);
+      item.columnas.forEach((c, j) => {
+        assert.ok(html.includes(`<strong>${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.</strong> ${c.error ? '' : c.porque[idioma]}`), `columna ${L.LETRAS[j]}`);
+        if (!c.error) return;
+        assert.ok(html.includes(`<span class="linea-mala">${X.cuenta(L.htmlLinea(c.lineas[c.falsa], idioma))}</span>`), `falta la línea mala de ${L.LETRAS[j]}`);
+        assert.ok(html.includes(`${ERRORES_TIPICOS[c.error].nombre[idioma]}.<strong class="regla-rota">${X.REGLAS[c.error][idioma]}</strong>${c.porque[idioma]}`), 'el error, la regla en negrita y el porqué');
+        assert.ok(html.includes(`${LO_CORRECTO[idioma]} <span class="linea-mala">${X.cuenta(L.htmlLinea(c.corregida, idioma))}</span>`), 'lo correcto');
+      });
     }
   }
-  assert.ok(sinError > 100, 'hay ítems sin error');
 });
 
 test('errores7 · ejercicio 2: la explicación lleva el nombre del error que el ejercicio da por bueno', () => {

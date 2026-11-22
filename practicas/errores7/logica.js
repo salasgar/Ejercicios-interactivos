@@ -5,8 +5,10 @@
 // ella. Los ítems son DATOS (JSON): las líneas se guardan ya escritas en {es, en}, así que la base puede volver a
 // montar el mismo ítem al cambiar de idioma.
 //
-// Ítem: { tipo: 'donde' | 'que' | 'corrige', plantilla, params, lineas: [{es, en}], falsa (índice o null), error,
+// Ítem de los ej. 2 y 3: { tipo: 'que' | 'corrige', plantilla, params, lineas: [{es, en}], falsa, error,
 //         [opciones, solucion] (ej. 2) }.
+// Ítem del ej. 1 (en columnas, JL 22-11): { tipo: 'donde', plantilla (la base de la familia), familia, params,
+//         enunciado: {es, en}, columnas: [{ ruta, lineas, falsa, error, porque, corregida }], preguntas, solucion }.
 //
 // Casos de la hoja y del examen: CASOS_HOJA y HUELLAS_EXAMEN están vacíos porque a 19-11-2026 no existen aún las
 // hojas ni los exámenes de la unidad 7 (la tarea 231 los coteja y los rellena). Todos los generadores ya
@@ -54,8 +56,10 @@ const VECINOS = { 'porcentaje-entre-mil': ['porcentaje-entre-diez'], 'porcentaje
 
 // 1 · 2 cuestan 5 €; 4 cuestan 5 + 2 = 7 € (en vez de 10 €)
 const COSAS = [
-  { es: 'cuadernos', en: 'notebooks', u: [2, 5] }, { es: 'bolígrafos', en: 'pens', u: [2, 4] },
-  { es: 'entradas', en: 'tickets', u: [3, 9] }, { es: 'bocadillos', en: 'sandwiches', u: [3, 6] },
+  { es: 'cuadernos', en: 'notebooks', uno: { es: 'Un cuaderno', en: 'One notebook' }, u: [2, 5] },
+  { es: 'bolígrafos', en: 'pens', uno: { es: 'Un bolígrafo', en: 'One pen' }, u: [2, 4] },
+  { es: 'entradas', en: 'tickets', uno: { es: 'Una entrada', en: 'One ticket' }, u: [3, 9] },
+  { es: 'bocadillos', en: 'sandwiches', uno: { es: 'Un bocadillo', en: 'One sandwich' }, u: [3, 6] },
 ];
 nueva({
   id: 'razonar-sumando', corrige: true,
@@ -137,8 +141,8 @@ function porcentajeDecimal(id, ps, cs, divisor) {
       };
     },
     hint: (p, i) => (i === 'en'
-      ? `${p.p}% = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, not ${p.p} : ${divisor}. Then ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`
-      : `${p.p} % = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, no ${p.p} : ${divisor}. Después ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`),
+      ? `${A(pct(p.p), i)} = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, not ${p.p} : ${divisor}. Then ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`
+      : `${A(pct(p.p), i)} = ${p.p} : 100 = ${N(fraccion(p.p, 100), i)}, no ${p.p} : ${divisor}. Después ${N(fraccion(p.p, 100), i)} · ${A(cantidadDe(p, p.c), i)} = ${A(bienPorcentaje(p), i)}.`),
   });
 }
 const multiplos = (paso, desde, hasta) => Array.from({ length: Math.floor((hasta - desde) / paso) + 1 }, (_, k) => desde + k * paso);
@@ -166,8 +170,8 @@ nueva({
     };
   },
   hint: (p, i) => (i === 'en'
-    ? `${p.p}% means ${p.p} out of every 100: first divide by 100 and then multiply by ${p.p}. ${A(cantidadDe(p, p.c), i)} : 100 · ${p.p} = ${A(bienPorcentaje(p), i)}.`
-    : `${p.p} % son ${p.p} de cada 100: se divide entre 100 y se multiplica por ${p.p}. ${A(cantidadDe(p, p.c), i)} : 100 · ${p.p} = ${A(bienPorcentaje(p), i)}.`),
+    ? `${A(pct(p.p), i)} means ${p.p} out of every 100: first divide by 100 and then multiply by ${p.p}. ${A(cantidadDe(p, p.c), i)} : 100 · ${p.p} = ${A(bienPorcentaje(p), i)}.`
+    : `${A(pct(p.p), i)} son ${p.p} de cada 100: se divide entre 100 y se multiplica por ${p.p}. ${A(cantidadDe(p, p.c), i)} : 100 · ${p.p} = ${A(bienPorcentaje(p), i)}.`),
 });
 
 // 5 y 6 · descuentos
@@ -314,10 +318,315 @@ const baseItem = (tipo, plantilla, p, mal, extra = {}) => {
   return { tipo, plantilla: plantilla.id, params: p, lineas: lineas.map(L), falsa: mal ? falsa : null, error: mal ? plantilla.id : null, ...extra };
 };
 
-/** Ejercicio 1: ¿dónde está el error? Un tercio de los ítems no tiene ninguno. */
+// ─── Ejercicio 1 en columnas (JL, 22-11) ────────────────────────────────────────
+//
+// El mismo problema resuelto por varios alumnos, uno por columna: de 2 a 4 columnas, 1 o 2 bien (de formas
+// distintas) y 1 o 2 con un error (errores distintos). Antes era una sola resolución de tres líneas con «Todo está
+// bien», y el error se deducía. Una FAMILIA es un tipo de problema: sus números tienen la forma de los de su
+// plantilla `base` (que da el enunciado y la reserva de casos), pero salen de `params` y pasan su `cota` de
+// realismo. Sus RUTAS son { id, error (null si está bien), vale?(p), cadena(p) → { lineas: [i => texto] (sin el
+// enunciado), falsa (contando el enunciado) }, valor(p) → la cantidad con que acaba, porque(p, i), corregida?(p) →
+// i => texto (la línea mala bien hecha) }. Las rutas con error son las plantillas de arriba (`dePlantilla`) o
+// errores del catálogo sin plantilla, escritos aquí. En las columnas buenas ninguna igualdad es falsa y en las malas
+// la línea mala es falsa de verdad (una cuenta mal o una frase falsa): lo comprueba el test evaluando cada igualdad.
+
+const PL = id => PLANTILLA_POR_ID[id];
+const lineasBien = (id, p) => PL(id).cadena(p, false).lineas.slice(1);
+const valorNum = x => x.valor.num / x.valor.den;
+const de = i => (i === 'en' ? 'of' : 'de');
+
+/** Una ruta con error que es una plantilla de arriba, con los números de la familia. */
+const dePlantilla = (id, vale = () => true) => ({
+  id, error: id, vale,
+  cadena(p) { const c = PL(id).cadena(p, true); return { lineas: c.lineas.slice(1), falsa: c.falsa }; },
+  valor: p => PL(id).mal(p),
+  porque: (p, i) => PL(id).hint(p, i),
+  corregida: p => PL(id).cadena(p, false).lineas[PL(id).cadena(p, true).falsa],
+});
+
+// Proporción directa: «3 bolígrafos cuestan 6,00 €. ¿Cuánto cuestan 9?»
+const dir = p => ({ o: COSAS[p.cosa], c: p.a * p.k, B: C(p.a * p.u, '€'), U: C(p.u, '€'), R: C(p.a * p.u * p.k, '€') });
+const PARTE = {
+  es: ['', '', 'la mitad', 'la tercera parte', 'la cuarta parte', 'la quinta parte', 'la sexta parte'],
+  en: ['', '', 'half as much', 'a third as much', 'a quarter as much', 'a fifth as much', 'a sixth as much'],
+};
+const unoCuesta = p => i => {
+  const { o, B, U } = dir(p);
+  return i === 'en' ? `${o.uno.en} costs ${A(B, i)} : ${p.a} = ${A(U, i)}.` : `${o.uno.es} cuesta ${A(B, i)} : ${p.a} = ${A(U, i)}.`;
+};
+const porUno = p => i => { const { c, U, R } = dir(p); return `${c} · ${A(U, i)} = ${A(R, i)}`; };
+
+const DIRECTA_FACTOR = {
+  id: 'directa-factor', error: null,
+  cadena: p => ({ lineas: lineasBien('razonar-sumando', p) }),
+  valor: p => dir(p).R,
+  porque: (p, i) => (i === 'en' ? `It is right: ${dir(p).c} : ${p.a} = ${p.k}, so the price is also multiplied by ${p.k}.`
+    : `Está bien: ${dir(p).c} : ${p.a} = ${p.k}, así que el precio también se multiplica por ${p.k}.`),
+};
+const DIRECTA_UNIDAD = {
+  id: 'directa-unidad', error: null,
+  cadena: p => ({ lineas: [unoCuesta(p), porUno(p)] }),
+  valor: p => dir(p).R,
+  porque: (p, i) => (i === 'en' ? `It is right: first the price of one, ${A(dir(p).U, i)}, and then times ${dir(p).c}.`
+    : `Está bien: primero lo que cuesta uno, ${A(dir(p).U, i)}, y después por ${dir(p).c}.`),
+};
+const DIRECTA_REGLA = {
+  // La regla de tres con la x, como en la práctica `regla-de-tres` de la unidad.
+  id: 'directa-regla-de-tres', error: null,
+  cadena(p) {
+    const { o, c, B, R } = dir(p);
+    return { lineas: [i => `${p.a} ${o[i]} → ${A(B, i)}`, i => `${c} ${o[i]} → x`, i => `x = ${A(B, i)} · ${c} : ${p.a} = ${A(R, i)}`] };
+  },
+  valor: p => dir(p).R,
+  porque: (p, i) => (i === 'en' ? `It is right: it is the rule of three; multiply across and divide by ${p.a}.`
+    : `Está bien: es la regla de tres; se multiplica en cruz y se divide entre ${p.a}.`),
+};
+const DIRECTA_INVERSA = {
+  // «9 es el triple de 3, así que cuestan la tercera parte»: la frase es falsa y la cuenta sigue de ella.
+  id: 'inversa-en-directa', error: 'inversa-en-directa',
+  cadena(p) {
+    const { c, B } = dir(p), M = this.valor(p);
+    return {
+      lineas: [
+        i => (i === 'en' ? `${c} is ${veces(p.k, 'en')} ${p.a}, so they cost ${PARTE.en[p.k]}.` : `${c} es ${veces(p.k, 'es')} ${p.a}, así que cuestan ${PARTE.es[p.k]}.`),
+        i => `${A(B, i)} : ${p.k} = ${A(M, i)}`,
+      ],
+      falsa: 1,
+    };
+  },
+  valor: p => E['inversa-en-directa'].fn(p.a, dir(p).B, dir(p).c),
+  porque: (p, i) => PL('razonar-sumando').hint(p, i),
+  corregida: p => lineasBien('razonar-sumando', p)[0],
+};
+const DIRECTA_PRECIO_DE_UNO = {
+  // Calcula bien lo que cuesta uno y da eso como respuesta.
+  id: 'contestar-precio-de-uno', error: 'contestar-otra-cosa',
+  cadena(p) {
+    const { o, c, U } = dir(p);
+    return { lineas: [unoCuesta(p), i => (i === 'en' ? `Answer: ${c} ${o.en} cost ${A(U, i)}.` : `Respuesta: ${c} ${o.es} cuestan ${A(U, i)}.`)], falsa: 2 };
+  },
+  valor: p => E['contestar-otra-cosa'].fn(dir(p).U, dir(p).R),
+  porque(p, i) {
+    const { c, U, R } = dir(p);
+    return i === 'en' ? `${A(U, i)} is the price of one, but the question asks for ${c}: ${c} · ${A(U, i)} = ${A(R, i)}.`
+      : `${A(U, i)} es lo que cuesta uno, pero piden ${c}: ${c} · ${A(U, i)} = ${A(R, i)}.`;
+  },
+  corregida: p => porUno(p),
+};
+
+// El porcentaje de una cantidad: «En un centro hay 150 alumnos y el 20 % va en autobús.»
+const pc = p => ({ P: pct(p.p), Cc: cantidadDe(p, p.c), prod: cantidadDe(p, p.p * p.c), R: bienPorcentaje(p) });
+const PCT_DECIMAL = {
+  id: 'porcentaje-decimal', error: null,
+  cadena: p => ({ lineas: lineasBien('porcentaje-entre-mil', p) }),
+  valor: bienPorcentaje,
+  porque(p, i) {
+    const { P, Cc } = pc(p), d = N(fraccion(p.p, 100), i);
+    return i === 'en' ? `It is right: ${A(P, i)} is ${d}, multiplied by ${A(Cc, i)}.` : `Está bien: el ${A(P, i)} es ${d} y se multiplica por ${A(Cc, i)}.`;
+  },
+};
+const PCT_UNO_POR_CIENTO = {
+  id: 'porcentaje-uno-por-ciento', error: null,
+  cadena: p => ({ lineas: lineasBien('dividir-entre-el-porcentaje', p) }),
+  valor: bienPorcentaje,
+  porque: (p, i) => (i === 'en' ? `It is right: ${A(pc(p).Cc, i)} : 100 is ${A(pct(1), i)}, then times ${p.p}.`
+    : `Está bien: ${A(pc(p).Cc, i)} : 100 es el ${A(pct(1), i)}, y se multiplica por ${p.p}.`),
+};
+const PCT_PRODUCTO = {
+  id: 'porcentaje-producto', error: null,
+  cadena(p) {
+    const { P, Cc, prod, R } = pc(p);
+    return { lineas: [i => `${A(P, i)} ${de(i)} ${A(Cc, i)} = ${p.p} · ${A(Cc, i)} : 100`, i => `${p.p} · ${A(Cc, i)} = ${A(prod, i)}`, i => `${A(prod, i)} : 100 = ${A(R, i)}`] };
+  },
+  valor: bienPorcentaje,
+  porque: (p, i) => (i === 'en' ? `It is right: multiply by ${p.p} and divide by 100.` : `Está bien: se multiplica por ${p.p} y se divide entre 100.`),
+};
+const PCT_SIN_DIVIDIR = {
+  id: 'porcentaje-sin-dividir', error: 'porcentaje-sin-dividir',
+  cadena(p) {
+    const { P, Cc, prod } = pc(p);
+    return { lineas: [i => `${A(P, i)} ${de(i)} ${A(Cc, i)} = ${p.p} · ${A(Cc, i)}`, i => `${p.p} · ${A(Cc, i)} = ${A(prod, i)}`], falsa: 1 };
+  },
+  valor: p => E['porcentaje-sin-dividir'].fn(p.p, cantidadDe(p, p.c)),
+  porque: (p, i) => `${p.p} · ${A(pc(p).Cc, i)} : 100 = ${A(pc(p).R, i)}.`,
+  corregida: p => PCT_PRODUCTO.cadena(p).lineas[0],
+};
+
+// Descuentos: «Un jersey cuesta 50,00 € y tiene un 20 % de descuento. ¿Cuánto se paga?»
+const sePaga = (p, signo) => i => {
+  const cien = A(pct(100), i), P = A(pct(p.p), i), T = A(pct(100 + signo * p.p), i), op = signo < 0 ? MENOS : '+';
+  return i === 'en' ? `You pay ${cien} ${op} ${P} = ${T}.` : `Se paga el ${cien} ${op} ${P} = ${T}.`;
+};
+const DESC_RESTANDO = {
+  id: 'descuento-restando', error: null,
+  cadena: p => ({ lineas: lineasBien('restar-el-porcentaje-como-numero', p) }),
+  valor: p => descuento(p).final,
+  porque: (p, i) => (i === 'en' ? `It is right: the discount is ${A(descuento(p).cambio, i)}, taken away from the price.`
+    : `Está bien: el descuento son ${A(descuento(p).cambio, i)} y se restan del precio.`),
+};
+const DESC_LO_QUE_SE_PAGA = {
+  id: 'descuento-lo-que-se-paga', error: null,
+  cadena: p => ({ lineas: [sePaga(p, -1), i => `${A(pct(100 - p.p), i)} ${de(i)} ${A(C(p.c, '€'), i)} = ${A(descuento(p).final, i)}`] }),
+  valor: p => descuento(p).final,
+  porque: (p, i) => (i === 'en' ? `It is right: with a ${A(pct(p.p), i)} discount you pay ${A(pct(100 - p.p), i)} of the price.`
+    : `Está bien: con un ${A(pct(p.p), i)} de descuento se paga el ${A(pct(100 - p.p), i)} del precio.`),
+};
+const DESC_SUMANDO = {
+  // «Se paga el 100 % + 20 % = 120 %»: suma el descuento.
+  id: 'descuento-sumando', error: 'aumento-por-descuento',
+  cadena(p) {
+    const M = this.valor(p);
+    return { lineas: [sePaga(p, 1), i => `${A(pct(100 + p.p), i)} ${de(i)} ${A(C(p.c, '€'), i)} = ${A(M, i)}`], falsa: 1 };
+  },
+  valor: p => E['aumento-por-descuento'].fn(C(p.c, '€'), p.p, 'descuento'),
+  porque: (p, i) => `${A(pct(100 - p.p), i)} ${de(i)} ${A(C(p.c, '€'), i)} = ${A(descuento(p).final, i)}.`,
+  corregida: p => sePaga(p, -1),
+};
+
+// Escalas: «En un plano a escala 1 : 50 000, dos pueblos están a 3 cm. ¿Qué distancia real hay, en km?»
+const dPlano = p => fraccion(Math.round(p.d * 2), 2);
+const realKm = p => realidad(CM(p.d), p.n, 'km').resultado;
+const ESCALA_AL_FINAL = {
+  id: 'escala-al-final', error: null,
+  cadena: p => ({ lineas: lineasBien('escala-sin-cambio-de-unidad', p) }),
+  valor: realKm,
+  porque: (p, i) => (i === 'en' ? `It is right: ${A(CM(p.d), i)} · ${N(p.n, i)} gives centimetres, then they are changed to km.`
+    : `Está bien: ${A(CM(p.d), i)} · ${N(p.n, i)} da centímetros, y después se pasan a km.`),
+};
+const ESCALA_PRIMERO = {
+  id: 'escala-primero', error: null,
+  cadena(p) {
+    const k1 = C(fraccion(p.n, 100000), 'km');
+    return {
+      lineas: [
+        i => (i === 'en' ? `1 cm on the map is ${N(p.n, i)} cm = ${A(k1, i)}.` : `1 cm del plano son ${N(p.n, i)} cm = ${A(k1, i)}.`),
+        i => `${N(dPlano(p), i)} · ${A(k1, i)} = ${A(realKm(p), i)}`,
+      ],
+    };
+  },
+  valor: realKm,
+  porque: (p, i) => (i === 'en' ? `It is right: first change what 1 cm on the map is worth to km, then multiply by ${N(dPlano(p), i)}.`
+    : `Está bien: primero se pasa a km lo que vale 1 cm del plano y después se multiplica por ${N(dPlano(p), i)}.`),
+};
+
+/** Los porcentajes del ejercicio 1: los de las tres plantillas de porcentaje juntos (cada error elige los suyos con `vale`). */
+const PCT_COLUMNAS = [2, 3, 4, 5, 6, 8, 10, 15, 20, 25, 30, 40, 50, 60, 75, 80];
+
+export const FAMILIAS = [
+  {
+    id: 'directa', base: 'razonar-sumando', peso: 3,
+    params: rng => PL('razonar-sumando').params(rng),
+    cota: () => true,   // las de `razonar-sumando`: de 2 a 5 unidades, hasta 30, y el precio de cada cosa
+    bien: [DIRECTA_FACTOR, DIRECTA_UNIDAD, DIRECTA_REGLA],
+    mal: [dePlantilla('razonar-sumando'), DIRECTA_INVERSA, DIRECTA_PRECIO_DE_UNO],
+  },
+  {
+    id: 'porcentaje', base: 'porcentaje-entre-mil', peso: 3,
+    params: rng => ({ ctx: rng.entero(0, CONTEXTOS_PORCENTAJE.length - 1), p: rng.elegir(PCT_COLUMNAS), c: rng.elegir(multiplos(20, 100, 800)) }),
+    // Un centro de 100 a 800 alumnos y una clase que recauda de 100 a 800 €; alumnos enteros, dinero al céntimo.
+    cota: p => decimales(bienPorcentaje(p)) <= (CONTEXTOS_PORCENTAJE[p.ctx].unidad ? 2 : 0),
+    bien: [PCT_DECIMAL, PCT_UNO_POR_CIENTO, PCT_PRODUCTO],
+    // Como en las plantillas: 20 % = 0,02 con porcentajes de dos cifras, 5 % = 0,5 con los de una, y 150 : 20 desde el 20 %.
+    mal: [dePlantilla('porcentaje-entre-mil', p => p.p >= 10), dePlantilla('porcentaje-entre-diez', p => p.p < 10),
+      dePlantilla('dividir-entre-el-porcentaje', p => p.p >= 20), PCT_SIN_DIVIDIR],
+  },
+  {
+    id: 'descuento', base: 'restar-el-porcentaje-como-numero', peso: 2,
+    // Ropa, mochilas y relojes de 20 a 150 € con descuentos del 10 al 60 %.
+    params: rng => ({ art: rng.entero(0, ARTICULOS.length - 1), p: rng.elegir([10, 15, 20, 25, 30, 40, 50, 60]), c: rng.elegir(multiplos(10, 20, 150)) }),
+    cota: p => decimales(descuento(p).final) <= 2,
+    bien: [DESC_RESTANDO, DESC_LO_QUE_SE_PAGA],
+    mal: [dePlantilla('restar-el-porcentaje-como-numero', p => p.c > p.p), dePlantilla('descuento-por-precio-final'), DESC_SUMANDO],
+  },
+  {
+    id: 'escala', base: 'escala-sin-cambio-de-unidad', peso: 1,
+    params: rng => PL('escala-sin-cambio-de-unidad').params(rng),
+    // Dos pueblos: de 1 a 30 km (la plantilla deja 0,2 km, que son dos casas, no dos pueblos).
+    cota: p => decimales(realKm(p)) <= 2 && valorNum(realKm(p)) >= 1 && valorNum(realKm(p)) <= 30,
+    bien: [ESCALA_AL_FINAL, ESCALA_PRIMERO],
+    mal: [dePlantilla('escala-sin-cambio-de-unidad')],
+  },
+];
+export const FAMILIA_POR_ID = Object.fromEntries(FAMILIAS.map(fa => [fa.id, fa]));
+const SORTEO = FAMILIAS.flatMap(fa => Array(fa.peso).fill(fa));
+
+/**
+ * Las columnas posibles de una familia con unos números: { bien: [...], mal: [...] }, cada una { ruta, lineas (con
+ * el enunciado, en {es, en}), falsa, error, porque, corregida }, sin dos iguales ni dos con el mismo error. Las
+ * buenas acaban en el resultado bueno y las malas en otro, exacto y con dos decimales como mucho.
+ */
+export function columnasPosibles(familia, p) {
+  const base = PL(familia.base), bien = base.bien(p), enunciado = base.cadena(p, false).lineas[0];
+  const vistas = new Set(), errores = new Set();
+  const columna = r => {
+    if (r.vale && !r.vale(p)) return null;
+    let cadena, valor;
+    try { cadena = r.cadena(p); valor = r.valor(p); } catch { return null; }
+    if (!valor || !valor.esExacta() || decimales(valor) > 2 || mismoValor(valor, bien) === Boolean(r.error)) return null;
+    const lineas = [enunciado, ...cadena.lineas].map(L), k = JSON.stringify(lineas);
+    if (vistas.has(k)) return null;
+    vistas.add(k);
+    return {
+      ruta: r.id, lineas, falsa: r.error ? cadena.falsa : null, error: r.error,
+      porque: L(i => r.porque(p, i)), corregida: r.error ? L(r.corregida(p)) : null,
+    };
+  };
+  const buenas = familia.bien.map(columna).filter(Boolean);
+  const malas = familia.mal.map(columna).filter(c => c && !errores.has(c.error) && errores.add(c.error));
+  return { bien: buenas, mal: malas };
+}
+
+/** El tipo de problema de cada error de las columnas: los distractores de una pregunta son de OTRO tipo. */
+export const CLASE_COLUMNA = {
+  'razonar-sumando': 'directa', 'inversa-en-directa': 'directa', 'contestar-otra-cosa': 'directa',
+  'porcentaje-entre-mil': 'porcentaje', 'porcentaje-entre-diez': 'porcentaje', 'dividir-entre-el-porcentaje': 'porcentaje', 'porcentaje-sin-dividir': 'porcentaje',
+  'restar-el-porcentaje-como-numero': 'descuento', 'descuento-por-precio-final': 'descuento', 'aumento-por-descuento': 'descuento',
+  'escala-sin-cambio-de-unidad': 'escala',
+};
+/**
+ * Nombres que nunca son distractor porque podrían describir columnas de otro tipo: «Ha contestado otra cosa» (dar
+ * el descuento por el precio también lo es), «Ha restado donde había que sumar (o al revés)» y «La ha resuelto como
+ * inversa» (150 : 20 en vez de 0,2 · 150 se podría leer así).
+ */
+export const NUNCA_DISTRACTOR = new Set(['contestar-otra-cosa', 'aumento-por-descuento', 'inversa-en-directa']);
+/** Y los que no van con un error concreto: en «Se paga el 100 % + 20 %» ha sumado, aunque no «en vez de multiplicar». */
+const NO_PARA = { 'aumento-por-descuento': ['razonar-sumando'] };
+
+/** ¿Daría el error `d` la línea mala de la columna? Solo «20 % de 50,00 € = 20,00 €» parece un porcentaje mal calculado. */
+function podriaSer(d, c, p) {
+  if (c.error !== 'restar-el-porcentaje-como-numero' || CLASE_COLUMNA[d] !== 'porcentaje') return false;
+  const v = E[d].fn(p.p, C(p.c, '€'));
+  return v !== null && mismoValor(v, C(p.p, '€'));
+}
+
+/** Los distractores posibles de la pregunta de una columna mala. */
+export const distractoresDe = (c, p) => Object.keys(CLASE_COLUMNA).filter(d => CLASE_COLUMNA[d] !== CLASE_COLUMNA[c.error]
+  && !NUNCA_DISTRACTOR.has(d) && !(NO_PARA[c.error] ?? []).includes(d) && !podriaSer(d, c, p));
+
+/** Las LETRAS de las columnas. */
+export const LETRAS = ['A', 'B', 'C', 'D'];
+
+/**
+ * Ejercicio 1: el mismo problema en 2-4 columnas, 1-2 bien y 1-2 mal. La respuesta (`solucion`) es, por columna, el
+ * índice de la línea mala (contando el enunciado) o null; después, una pregunta por cada columna mala con el nombre
+ * bueno y dos de otro tipo de problema.
+ */
 export function generarDonde(rng) {
-  const pl = rng.elegir(PLANTILLAS), p = conParams(pl, rng);
-  return baseItem('donde', pl, p, rng.azar() >= 1 / 3);
+  for (let intento = 0; intento < 500; intento++) {
+    const familia = rng.elegir(SORTEO), p = familia.params(rng);
+    if (esReservado(...PL(familia.base).caso(p)) || !familia.cota(p)) continue;
+    const { bien, mal } = columnasPosibles(familia, p);
+    if (!bien.length || !mal.length) continue;
+    const dos = () => (rng.azar() < 0.6 ? 2 : 1);
+    const columnas = rng.barajar([...rng.barajar(bien).slice(0, dos()), ...rng.barajar(mal).slice(0, dos())]);
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error)
+      .map(({ c, col }) => ({ col, opciones: rng.barajar([c.error, ...rng.barajar(distractoresDe(c, p)).slice(0, 2)]), solucion: c.error }));
+    return {
+      tipo: 'donde', plantilla: familia.base, familia: familia.id, params: p, enunciado: columnas[0].lineas[0], columnas, preguntas,
+      solucion: columnas.map(c => c.falsa),
+    };
+  }
+  throw new Error('generarDonde: no salen columnas');
 }
 
 /** Ejercicio 2: ¿qué error es? Siempre hay error; cuatro nombres, uno solo verdadero. */
@@ -355,7 +664,9 @@ export const porque = (item, idioma) => PLANTILLA_POR_ID[item.plantilla].hint(it
 export const lineasBuenas = item => PLANTILLA_POR_ID[item.plantilla].cadena(item.params, false).lineas.map(L);
 export const lineaBuena = item => lineasBuenas(item)[item.falsa];
 
-export const claveItem = item => `${item.plantilla}|${JSON.stringify(item.params)}|${item.falsa ?? 'x'}`;
+export const claveItem = item => (item.columnas
+  ? `${item.familia}|${JSON.stringify(item.params)}|${item.columnas.map(c => c.ruta).join(',')}`
+  : `${item.plantilla}|${JSON.stringify(item.params)}|${item.falsa ?? 'x'}`);
 
 // ─── Pintar las líneas ─────────────────────────────────────────────────────────
 
