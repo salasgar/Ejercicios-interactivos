@@ -4,13 +4,13 @@
 import { arrancar } from '../_comun/base.js';
 import { elecciones, campoNumero } from '../_comun/piezas.js';
 import { ERRORES_TIPICOS, fraccion, aTexto } from '../_comun/fracciones.js';
-import { TX, explicaBienMal, explicaLinea, explicaArregla, regla } from './textos.js';
-import { lista, lineasPulsables, errorEnLinea, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
+import { TX, explicaBienMal, explicaLinea, explicaArregla, regla, explicacionColumnas, enunciadoColumnas, columnasDe } from './textos.js';
+import { columnasPulsables, columnasFijas, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
 import { campoFraccion } from './campo.js';
 import {
-  ex, generarBienMal, generarLinea, generarArregla, corregirArregla, claveItem,
+  ex, generarBienMal, generarColumnas, LETRAS, generarArregla, corregirArregla, claveItem,
   PLANTILLA_POR_ID, COMPARACION_POR_ID, porqueComparacion, relacionBuena,
 } from './logica.js';
 
@@ -23,11 +23,6 @@ const reglaRota = (item, tt) => reglaEnNegrita(tt(regla(item.plantilla)));
 /** La igualdad (o la comparación) en línea: `izq rel der`. */
 const cuenta = (izq, rel, der) => `<span class="cuenta-frac">${ex(izq)} ${REL[rel]} ${ex(der)}</span>`;
 const esComparacion = item => Boolean(COMPARACION_POR_ID[item.plantilla]);
-
-/** Las tres líneas del cálculo; la primera tal cual y las demás con «= » delante. */
-const linea = (expr, i) => `${i ? '= ' : ''}${ex(expr)}`;
-/** El cálculo sin números de línea (se confundían con los de la cuenta); la primera línea es el enunciado. */
-const procedimiento = item => lista(item.lineas.map(linea));
 
 /** Por qué está mal, con los números del ítem (la explicación de la plantilla o la de la comparación). */
 const porque = item => (esComparacion(item) ? porqueComparacion(item.plantilla, item.params) : PLANTILLA_POR_ID[item.plantilla].porque(item.params));
@@ -83,30 +78,50 @@ function montarBienMal(contenedor, item, api) {
 
 // ─── Ejercicio 2 ───────────────────────────────────────────────────────────────
 
-function explicacionLinea(item, { tt, idioma }) {
-  const plantilla = PLANTILLA_POR_ID[item.plantilla];
-  return `${errorEnLinea(item.falsa, idioma)} <span class="linea-mala">${linea(item.lineas[item.falsa], item.falsa)}</span>`
-    + `<br>${frase(item.error, tt)}${reglaRota(item, tt)}${tt(plantilla.porque(item.params))}`
-    + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">${linea(plantilla.corregida(item.params), item.falsa)}</span>`;
-}
+/** Lo marcado en las columnas, para el registro del profesor: «A:2 B:- C:1». */
+const marcasEnTexto = marcas => marcas.map((m, j) => `${LETRAS[j]}:${m ?? '-'}`).join(' ');
 
-const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>${procedimiento(item)}`;
+const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>${columnasFijas(enunciadoColumnas(item), columnasDe(item))}`;
 
+/** Una sola llamada a `api.responder`: el primer fallo termina el ítem con la explicación de todas las columnas. */
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
-  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
-  const botones = lineasPulsables(contenedor, {
-    lineasHtml: item.lineas.map(linea),
-    alElegir(valor) {
+  const html = textos => explicacionColumnas(item, textos);
+  const columnas = columnasPulsables(contenedor, {
+    enunciadoHtml: enunciadoColumnas(item),
+    columnas: columnasDe(item),
+    textoComprobar: tt(TX.comprobar),
+    alComprobar(marcas) {
       if (api.respondido()) return;
-      botones.marcar([item.solucion], valor);
-      api.responder({
-        acierto: valor === item.solucion, html: textos => explicacionLinea(item, textos), espera: 3600,
-        error: item.error, respuesta: `linea-${valor + 1}`,
-      });
+      columnas.corregir(item.solucion, { bien: tt(TX.col_bien), mal: tt(TX.col_mal) });
+      const fallo = marcas.findIndex((m, j) => m !== item.solucion[j]);
+      if (fallo >= 0) {
+        const col = item.columnas[fallo];
+        api.responder({ acierto: false, html, espera: 'boton', error: col.error ?? 've-un-error-donde-no-lo-hay', respuesta: marcasEnTexto(marcas) });
+        return;
+      }
+      preguntar(0);
     },
   });
+
+  function preguntar(k) {
+    if (api.respondido()) return;
+    if (k === item.preguntas.length) { api.responder({ acierto: true, html, espera: 'boton' }); return; }
+    const q = item.preguntas[k];
+    contenedor.insertAdjacentHTML('beforeend', `<p class="instruccion instruccion--siguiente">${tt(TX.pregunta_col)(LETRAS[q.col])}</p>`);
+    const nombres = elecciones(contenedor, {
+      clase: 'elecciones nombres',
+      opciones: q.opciones.map(id => ({ valor: id, html: nombreError(id, tt) })),
+      alElegir(id) {
+        if (api.respondido()) return;
+        nombres.marcar([q.solucion], id);
+        if (id !== q.solucion) { api.responder({ acierto: false, html, espera: 'boton', error: q.solucion, respuesta: id }); return; }
+        preguntar(k + 1);
+      },
+    });
+    nombres.elemento.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 // ─── Ejercicio 3 ───────────────────────────────────────────────────────────────
@@ -161,7 +176,7 @@ arrancar({
   slug: 'errores4',
   ejercicios: [
     { nombre: TX.nombre.bienmal, detalle: TX.detalle.bienmal, introduccion: TX.introduccion.bienmal, generar: generarBienMal, clave: claveItem, montar: montarBienMal, enunciado: enunciadoBienMal, explicacion: explicaBienMal },
-    { nombre: TX.nombre.linea, detalle: TX.detalle.linea, introduccion: TX.introduccion.linea, generar: generarLinea, clave: claveItem, montar: montarLinea, enunciado: enunciadoLinea, explicacion: explicaLinea },
+    { nombre: TX.nombre.linea, detalle: TX.detalle.linea, introduccion: TX.introduccion.linea, generar: generarColumnas, clave: claveItem, montar: montarLinea, enunciado: enunciadoLinea, explicacion: explicaLinea },
     { nombre: TX.nombre.arregla, detalle: TX.detalle.arregla, introduccion: TX.introduccion.arregla, generar: generarArregla, clave: claveItem, montar: montarArregla, enunciado: enunciadoArregla, explicacion: explicaArregla, noLoSe: NO_SE_HACERLO },
   ],
 });

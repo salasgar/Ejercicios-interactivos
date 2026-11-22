@@ -14,6 +14,9 @@ import { TX } from '../practicas/errores4/textos.js';
 const N = 3000;
 const generar = (fn, semilla = 17) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => fn(rng)); };
 const val = texto => evaluar(analizar(texto));
+/** Las columnas malas de los ítems del ejercicio 2, una por una, con la forma de una plantilla: { plantilla, params, lineas, falsa, error }. */
+const malasPlanas = (semilla, n = N) => generar(L.generarColumnas, semilla).slice(0, n)
+  .flatMap(it => it.columnas.filter(c => c.error).map(c => ({ plantilla: c.ruta, params: c.params, lineas: c.lineas, falsa: c.falsa, error: c.error })));
 const mcd = (a, b) => (b === 0 ? Math.abs(a) : mcd(b, a % b));
 const mcm = (a, b) => (a / mcd(a, b)) * b;
 const igual = (x, [n, d]) => x.num * d === n * x.den;
@@ -82,23 +85,59 @@ test('cada plantilla: el valor bueno es el de L0, el malo es el de la última l�
   }
 });
 
-test('ejercicio 2: tres líneas, exactamente una falsa, y es la marcada', () => {
-  const items = generar(L.generarLinea);
-  const posiciones = new Set(), vistas = new Set();
-  for (const item of items) {
-    assert.equal(item.tipo, 'linea');
-    assert.equal(item.lineas.length, 3);
-    const falsas = item.lineas.map((l, i) => (i > 0 && !val(l).equals(val(item.lineas[i - 1])) ? i : -1)).filter(i => i >= 0);
-    assert.deepEqual(falsas, [item.falsa], item.lineas.join(' | '));
-    assert.equal(item.solucion, item.falsa);
-    assert.deepEqual(item.opciones, [1, 2]);   // el enunciado (línea 0) no se puede pulsar (JL, 22-11)
-    // Las líneas anteriores a la mala son verdaderas respecto a L0.
-    assert.ok(val(item.lineas[0]).equals(val(item.lineas[item.falsa - 1])));
-    posiciones.add(item.falsa);
-    vistas.add(item.plantilla);
+test('ejercicio 2 en columnas: 2-4 columnas, 1-2 bien y 1-2 mal, cada columna mala con una sola línea falsa', () => {
+  const posiciones = new Set(), familias = new Set(), nCols = new Set(), rutasMalas = new Set(), rutasBuenas = new Set();
+  for (const item of generar(L.generarColumnas)) {
+    assert.equal(item.tipo, 'columnas');
+    assert.ok(item.columnas.length >= 2 && item.columnas.length <= 4, `${item.columnas.length} columnas`);
+    nCols.add(item.columnas.length);
+    const malas = item.columnas.filter(c => c.error), buenas = item.columnas.filter(c => !c.error);
+    assert.ok(malas.length >= 1 && malas.length <= 2 && buenas.length >= 1 && buenas.length <= 2, 'una o dos de cada');
+    assert.equal(new Set(item.columnas.map(c => c.lineas.join('|'))).size, item.columnas.length, 'dos columnas iguales');
+    assert.equal(new Set(malas.map(c => c.error)).size, malas.length, 'dos columnas con el mismo error');
+    assert.equal(new Set(buenas.map(c => c.ruta)).size, buenas.length, 'dos columnas bien de la misma forma');
+    for (const c of item.columnas) {
+      assert.equal(c.lineas[0], item.enunciado, 'todas empiezan por el enunciado');
+      const falsas = c.lineas.map((l, i) => (i > 0 && !val(l).equals(val(c.lineas[i - 1])) ? i : -1)).filter(i => i >= 0);
+      assert.deepEqual(falsas, c.falsa === null ? [] : [c.falsa], c.lineas.join(' | '));
+      assert.ok(val(c.lineas.at(-1)).equals(val(item.enunciado)) === !c.error, 'el resultado de una columna es el del enunciado solo si está bien');
+      if (c.error) { posiciones.add(c.falsa); rutasMalas.add(c.ruta); } else rutasBuenas.add(c.ruta);
+    }
+    assert.deepEqual(item.solucion, item.columnas.map(c => c.falsa));
+    assert.equal(item.preguntas.length, malas.length);
+    item.preguntas.forEach(q => {
+      assert.equal(q.solucion, item.columnas[q.col].error);
+      assert.equal(q.opciones.length, 3);
+      assert.ok(q.opciones.includes(q.solucion));
+    });
+    familias.add(item.plantilla);
   }
   assert.deepEqual([...posiciones].sort(), [1, 2], 'el error no puede estar siempre en la misma línea');
-  assert.equal(vistas.size, L.PLANTILLAS.length, 'todas las plantillas salen');
+  assert.equal(familias.size, L.FAMILIAS.length, 'todas las familias salen');
+  assert.deepEqual([...nCols].sort(), [2, 3, 4]);
+  for (const p of L.PLANTILLAS) assert.ok(rutasMalas.has(p.id), `la plantilla ${p.id} no sale como columna mala`);
+  for (const fa of L.FAMILIAS) for (const r of fa.bien) assert.ok(rutasBuenas.has(r.id), `la ruta buena ${r.id} no sale`);
+});
+
+test('ejercicio 2 en columnas: los números de cada familia son los de sus plantillas y las malas no repiten la línea del enunciado', () => {
+  for (const item of generar(L.generarColumnas, 23)) {
+    const fa = L.FAMILIA_POR_ID[item.plantilla];
+    assert.equal(fa.enunciado(item.params), item.enunciado);
+    for (const c of item.columnas.filter(c => c.error)) assert.equal(L.PLANTILLA_POR_ID[c.error].l0(c.params), item.enunciado);
+  }
+});
+
+test('ejercicio 2 en columnas: ningún nombre ofrecido como falso explica el resultado de la columna (fuerza bruta)', () => {
+  let preguntas = 0;
+  for (const item of generar(L.generarColumnas, 29)) {
+    for (const q of item.preguntas) {
+      preguntas++;
+      const c = item.columnas[q.col];
+      const explican = L.erroresQueExplican(c.error, c.params, val(c.lineas.at(-1)));
+      for (const id of q.opciones) if (id !== q.solucion) assert.ok(!explican.has(id), `${c.lineas.join(' | ')}: «${id}» también lo explica`);
+    }
+  }
+  assert.ok(preguntas > 3000);
 });
 
 test('ejercicio 1: mitad verdaderas y mitad falsas; el valor falso es distinto del verdadero y el error tiene nombre', () => {
@@ -196,7 +235,7 @@ test('ejercicio 3: corregirArregla distingue acierto, sin simplificar, repetir e
 });
 
 test('realismo y nada que no se haya dado: números pequeños, cantidades que dan enteros, sin decimales ni mixtos', () => {
-  for (const item of [...generar(L.generarLinea, 31), ...generar(L.generarArregla, 32), ...generar(L.generarBienMal, 33)]) {
+  for (const item of [...malasPlanas(31), ...generar(L.generarArregla, 32), ...generar(L.generarBienMal, 33)]) {
     const expresiones = item.lineas ?? [item.izq, item.der];
     for (const e of expresiones) {
       assert.match(e, /^[\d\s+−·:()^/]+$/, `solo cifras y signos: ${e}`);
@@ -217,7 +256,7 @@ test('realismo y nada que no se haya dado: números pequeños, cantidades que da
 });
 
 test('simplificar: los términos del enunciado dan fracciones que cabe escribir (hasta 90) y la mala todavía se simplifica', () => {
-  for (const item of generar(L.generarLinea, 41).filter(i => /^simplifica/.test(i.plantilla))) {
+  for (const item of malasPlanas(41).filter(i => /^simplifica/.test(i.plantilla))) {
     const [n, d] = item.params;
     assert.ok(n <= 90 && d <= 90);
     assert.ok(mcd(n, d) >= 4);
@@ -253,15 +292,17 @@ test('todos los textos, en los dos idiomas: sin ×, sin fracciones con barra, si
 });
 
 test('las explicaciones citan los números del ítem, en los dos idiomas', () => {
-  for (const item of generar(L.generarLinea, 77).slice(0, 1000)) {
-    const texto = L.PLANTILLA_POR_ID[item.plantilla].porque(item.params);
-    for (const idioma of ['es', 'en']) assert.match(texto[idioma].replace(/<[^>]*>/g, ''), /\d/, item.plantilla);
-    assert.equal((texto.es.match(/class="frac"/g) ?? []).length > 0, true);
+  for (const item of generar(L.generarColumnas, 77).slice(0, 1000)) {
+    for (const c of item.columnas) {
+      const texto = L.explicaColumna(c).porque;
+      for (const idioma of ['es', 'en']) assert.match(texto[idioma].replace(/<[^>]*>/g, ''), /\d/, c.ruta);
+      if (c.error) assert.equal((texto.es.match(/class="frac"/g) ?? []).length > 0, true, c.ruta);
+    }
   }
 });
 
 test('claveItem distingue los ítems y el catálogo declara 3 ejercicios', () => {
-  const [a, b] = generar(L.generarLinea, 9);
+  const [a, b] = generar(L.generarColumnas, 9);
   assert.equal(L.claveItem(a), L.claveItem(a));
   assert.notEqual(L.claveItem(a), L.claveItem({ ...b, params: [...b.params, 1] }));
   assert.equal(CATALOGO.find(f => f.slug === 'errores4').nEjercicios, 3);
@@ -291,7 +332,7 @@ test('las listas de la hoja y de examen no están vacías y detectan de verdad, 
 test('ningún ítem, en ninguno de los tres ejercicios, repite un caso de la hoja o de examen', () => {
   const clave = item => L.claveParams(item.plantilla, item.params);
   for (const item of [
-    ...generar(L.generarBienMal, 71), ...generar(L.generarLinea, 72), ...generar(L.generarArregla, 73),
+    ...generar(L.generarBienMal, 71), ...malasPlanas(72), ...generar(L.generarArregla, 73),
   ]) {
     if (L.COMPARACION_POR_ID[item.plantilla]) continue;
     assert.ok(!L.PARAMS_HOJA.has(clave(item)), `caso de la hoja: ${JSON.stringify(item)}`);
@@ -326,13 +367,13 @@ test('la clave de lo que se ve no depende de la plantilla ni, en + y ·, del ord
 
 test('ningún ítem, en los tres ejercicios, es un caso de las hojas o de los exámenes por lo que VE el alumno (3000 por ejercicio, 3 semillas)', () => {
   for (const semilla of [163, 7, 11]) {
-    for (const fn of [L.generarBienMal, L.generarLinea, L.generarArregla]) {
+    for (const fn of [L.generarBienMal, L.generarColumnas, L.generarArregla]) {
       for (const item of generar(fn, semilla)) {
         if (L.COMPARACION_POR_ID[item.plantilla]) {
           assert.ok(!L.HUELLAS_COMPARACION.has(L.huella(L.claveComparacion(item.params))), `comparación de examen en ${item.plantilla}`);
           continue;
         }
-        const k = L.claveVista(L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
+        const k = L.claveVista(item.enunciado ?? L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
         if (k === null) continue;
         assert.ok(!L.CLAVES_HOJA.has(k), `caso de la hoja: ${k}`);
         assert.ok(!L.HUELLAS_VISTA_EXAMEN.has(L.huella(k)), `caso de examen (huella ${L.huella(k)}) en la plantilla ${item.plantilla}`);
@@ -346,10 +387,10 @@ test('las potencias de las hojas 2 (ej. 13a-h) y 3 (ej. 1c-1f), también las esc
   for (const k of potencias) assert.ok(L.CLAVES_HOJA.has(k), k);
   const prohibidas = new Set(potencias);
   for (const semilla of [163, 7, 11]) {
-    for (const fn of [L.generarBienMal, L.generarLinea, L.generarArregla]) {
+    for (const fn of [L.generarBienMal, L.generarColumnas, L.generarArregla]) {
       for (const item of generar(fn, semilla)) {
         if (L.COMPARACION_POR_ID[item.plantilla]) continue;
-        const k = L.claveVista(L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
+        const k = L.claveVista(item.enunciado ?? L.PLANTILLA_POR_ID[item.plantilla].l0(item.params));
         assert.ok(!prohibidas.has(k), `potencia de la hoja: ${k}`);
       }
     }
@@ -393,7 +434,7 @@ test('comparaciones falsas: nunca «=» mostrado y, en las de numeradores o deno
 });
 
 test('ejercicio 2: el error de la potencia está en la línea 2 y se ve (el numerador repetido)', () => {
-  for (const item of generar(L.generarLinea, 8).filter(i => i.plantilla === 'eleva-solo-el-numerador')) {
+  for (const item of malasPlanas(8).filter(i => i.plantilla === 'eleva-solo-el-numerador')) {
     assert.equal(item.falsa, 1);
     assert.match(item.lineas[1], /^\d+( · \d+)+\/\d+$/);
   }

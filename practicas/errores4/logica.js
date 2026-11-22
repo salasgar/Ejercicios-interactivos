@@ -521,12 +521,284 @@ export function generarBienMal(rng) {
   };
 }
 
-/** Ejercicio 2: la línea mala. Tres líneas, una falsa (la 2 o la 3). */
-export function generarLinea(rng) {
-  const p = rng.elegir(PLANTILLAS);
-  const params = conParams(p, rng);
-  const { lineas, falsa } = p.mala(params);
-  return { tipo: 'linea', plantilla: p.id, params, lineas, falsa, error: p.error, opciones: lineas.slice(1).map((_, i) => i + 1), solucion: falsa };
+// ─── Ejercicio 2 en columnas (JL, 22-11) ────────────────────────────────────────
+//
+// El mismo cálculo resuelto por varios alumnos, uno por columna: de 2 a 4 columnas, 1 o 2 bien (de formas
+// distintas) y 1 o 2 con un error (errores distintos). El alumno toca la línea mala de cada columna que esté mal
+// (no se le dice cuántas hay) y después nombra el error de cada una. Antes era un solo cálculo de tres líneas con
+// el error casi siempre en la segunda, y se deducía.
+//
+// Una FAMILIA es una forma de cálculo con sus números (`numeros`) y sus rutas: las buenas (`BUENAS`, con sus líneas
+// y su porqué) y las malas, que son las plantillas de arriba (`mala()` da sus líneas; `vale` descarta los números
+// con los que la columna sería rara). Todas las columnas empiezan por el enunciado (`l0`).
+
+/** Una ruta mala: una plantilla de arriba, con una condición extra sobre los números de la familia. */
+const mal = (id, vale = () => true) => ({ id, vale });
+/** Una ruta buena: { id, vale, lineas(params) → [expresiones tras el enunciado], porque(params) → { es, en } }. */
+const buena = r => ({ vale: () => true, ...r });
+/** Las líneas con el resultado simplificado al final si hace falta (aTexto no simplifica). */
+const conSimplificada = (lineas, x) => { const s = aTexto(x.simplificar()); return lineas.at(-1) === s ? lineas : [...lineas, s]; };
+const sumaDe = ([p, q, r, s]) => { const m = mcm(q, s); return { m, A: p * (m / q), B: r * (m / s) }; };
+const primos = n => { const r = []; for (let k = 2; n > 1; k++) while (n % k === 0) { r.push(k); n /= k; } return r; };
+/** «, y se simplifica: …» solo si el resultado aún se simplifica. */
+const simplifica2 = (x, es) => { const s = x.simplificar(); return s.equals(x) && x.esIrreducible() ? '' : (es ? `, y se simplifica a ${ex(aTexto(s))}` : `, and it simplifies to ${ex(aTexto(s))}`); };
+
+const SUMA_MCM = buena({
+  id: 'suma-con-el-mcm',
+  lineas([p, q, r, s]) { const { m, A, B } = sumaDe([p, q, r, s]); return conSimplificada([`${A}/${m} + ${B}/${m}`, aTexto(f(A + B, m))], f(A + B, m)); },
+  porque([p, q, r, s]) {
+    const { m, A, B } = sumaDe([p, q, r, s]), x = f(A + B, m);
+    return L(`Está bien: con denominador ${m} (el m.c.m. de ${q} y ${s}), ${ex(`${A}/${m} + ${B}/${m}`)}; se suman los numeradores, ${A} + ${B} = ${A + B}${simplifica2(x, true)}.`,
+      `It is right: with denominator ${m} (the LCM of ${q} and ${s}), ${ex(`${A}/${m} + ${B}/${m}`)}; only the numerators are added, ${A} + ${B} = ${A + B}${simplifica2(x, false)}.`);
+  },
+});
+const SUMA_PRODUCTO = buena({
+  id: 'suma-con-el-producto',
+  vale: ([, q, , s]) => mcm(q, s) !== q * s,
+  lineas([p, q, r, s]) { const x = f(p * s + r * q, q * s); return conSimplificada([`${p * s}/${q * s} + ${r * q}/${q * s}`, aTexto(x)], x); },
+  porque([p, q, r, s]) {
+    const x = f(p * s + r * q, q * s);
+    return L(`Está bien: también vale el denominador ${q} · ${s} = ${q * s}, aunque no sea el m.c.m.: ${ex(`${p * s}/${q * s} + ${r * q}/${q * s}`)}; ${p * s} + ${r * q} = ${p * s + r * q}${simplifica2(x, true)}.`,
+      `It is right: the denominator ${q} · ${s} = ${q * s} also works, even if it is not the LCM: ${ex(`${p * s}/${q * s} + ${r * q}/${q * s}`)}; ${p * s} + ${r * q} = ${p * s + r * q}${simplifica2(x, false)}.`);
+  },
+});
+const RESTA_MCM = buena({
+  id: 'resta-con-el-mcm',
+  lineas([p, q, r, s]) { const { m, A, B } = sumaDe([p, q, r, s]), x = f(A - B, m); return conSimplificada([`${A}/${m} − ${B}/${m}`, aTexto(x)], x); },
+  porque([p, q, r, s]) {
+    const { m, A, B } = sumaDe([p, q, r, s]), x = f(A - B, m);
+    return L(`Está bien: con denominador ${m}, ${ex(`${A}/${m} − ${B}/${m}`)}; ${A} − ${B} = −${B - A}, con el menos delante${simplifica2(x, true)}.`,
+      `It is right: with denominator ${m}, ${ex(`${A}/${m} − ${B}/${m}`)}; ${A} − ${B} = −${B - A}, with the minus sign in front${simplifica2(x, false)}.`);
+  },
+});
+const RESTA_PRODUCTO = buena({
+  id: 'resta-con-el-producto',
+  vale: ([, q, , s]) => mcm(q, s) !== q * s,
+  lineas([p, q, r, s]) { const x = f(p * s - r * q, q * s); return conSimplificada([`${p * s}/${q * s} − ${r * q}/${q * s}`, aTexto(x)], x); },
+  porque([p, q, r, s]) {
+    const x = f(p * s - r * q, q * s);
+    return L(`Está bien: también vale el denominador ${q} · ${s} = ${q * s}: ${ex(`${p * s}/${q * s} − ${r * q}/${q * s}`)}; ${p * s} − ${r * q} = −${r * q - p * s}${simplifica2(x, true)}.`,
+      `It is right: the denominator ${q} · ${s} = ${q * s} also works: ${ex(`${p * s}/${q * s} − ${r * q}/${q * s}`)}; ${p * s} − ${r * q} = −${r * q - p * s}${simplifica2(x, false)}.`);
+  },
+});
+const SIMPLIFICA_DE_UNA_VEZ = buena({
+  id: 'simplifica-de-una-vez',
+  lineas: ([n, d]) => [aTexto(f(n, d).simplificar())],
+  porque([n, d]) {
+    const g = mcd(n, d);
+    return L(`Está bien: el m.c.d. de ${n} y ${d} es ${g}; arriba y abajo entre ${g} sale ${ex(aTexto(f(n, d).simplificar()))}, que ya no se simplifica.`,
+      `It is right: the GCD of ${n} and ${d} is ${g}; top and bottom divided by ${g} gives ${ex(aTexto(f(n, d).simplificar()))}, which cannot be simplified any more.`);
+  },
+});
+const pasosSimplificar = ([n, d]) => { let k = 1; return primos(mcd(n, d)).map(p => { k *= p; return aTexto(f(n / k, d / k)); }); };
+const SIMPLIFICA_POR_PASOS = buena({
+  id: 'simplifica-por-pasos',
+  lineas: pasosSimplificar,
+  porque([n, d]) {
+    const ps = primos(mcd(n, d)), pasos = pasosSimplificar([n, d]);
+    return L(`Está bien: arriba y abajo entre ${ps.join(', luego entre ')}: ${ex(`${n}/${d}`)} = ${pasos.map(ex).join(' = ')}. La última ya no se simplifica.`,
+      `It is right: top and bottom divided by ${ps.join(', then by ')}: ${ex(`${n}/${d}`)} = ${pasos.map(ex).join(' = ')}. The last one cannot be simplified any more.`);
+  },
+});
+const CANTIDAD_DIVIDE_PRIMERO = buena({
+  id: 'cantidad-divide-primero',
+  lineas: ([p, d, n]) => [`${n} : ${d} · ${p}`, `${n / d} · ${p}`, `${n / d * p}`],
+  porque: ([p, d, n]) => L(`Está bien: ${n} : ${d} = ${n / d} (una parte) y se toman ${p} partes: ${n / d} · ${p} = ${n / d * p}.`,
+    `It is right: ${n} : ${d} = ${n / d} (one part) and you take ${p} parts: ${n / d} · ${p} = ${n / d * p}.`),
+});
+const CANTIDAD_MULTIPLICA_PRIMERO = buena({
+  id: 'cantidad-multiplica-primero',
+  lineas: ([p, d, n]) => [`${n} · ${p} : ${d}`, `${n * p} : ${d}`, `${n * p / d}`],
+  porque: ([p, d, n]) => L(`Está bien: el orden da igual con estos números. ${n} · ${p} = ${n * p} y ${n * p} : ${d} = ${n * p / d}.`,
+    `It is right: with these numbers the order does not matter. ${n} · ${p} = ${n * p} and ${n * p} : ${d} = ${n * p / d}.`),
+});
+const UNITARIA_FRACCION = buena({
+  id: 'unitaria-como-fraccion',
+  lineas: ([, d, n]) => [`${n}/${d}`, `${n / d}`],
+  porque: ([, d, n]) => L(`Está bien: ${ex(`1/${d} · ${n}`)} = ${ex(`${n}/${d}`)} = ${n / d}.`, `It is right: ${ex(`1/${d} · ${n}`)} = ${ex(`${n}/${d}`)} = ${n / d}.`),
+});
+const UNITARIA_DIVIDE = buena({
+  id: 'unitaria-dividiendo',
+  lineas: ([, d, n]) => [`${n} : ${d}`, `${n / d}`],
+  porque: ([, d, n]) => L(`Está bien: una de las ${d} partes iguales de ${n} es ${n} : ${d} = ${n / d}.`,
+    `It is right: one of the ${d} equal parts of ${n} is ${n} : ${d} = ${n / d}.`),
+});
+const DIVISION_INVERSA = buena({
+  id: 'division-por-la-inversa',
+  lineas([p, q, r, s]) { const x = f(p * s, q * r); return conSimplificada([`${p}/${q} · ${s}/${r}`, aTexto(x)], x); },
+  porque([p, q, r, s]) {
+    const x = f(p * s, q * r);
+    return L(`Está bien: se multiplica por la inversa de la segunda, ${ex(`${p}/${q} · ${s}/${r}`)} = ${ex(aTexto(x))}${simplifica2(x, true)}.`,
+      `It is right: you multiply by the reciprocal of the second one, ${ex(`${p}/${q} · ${s}/${r}`)} = ${ex(aTexto(x))}${simplifica2(x, false)}.`);
+  },
+});
+const DIVISION_EN_CRUZ = buena({
+  id: 'division-en-cruz',
+  lineas([p, q, r, s]) { const x = f(p * s, q * r); return conSimplificada([aTexto(x)], x); },
+  porque([p, q, r, s]) {
+    const x = f(p * s, q * r);
+    return L(`Está bien: en cruz, ${p} · ${s} = ${p * s} arriba y ${q} · ${r} = ${q * r} abajo: ${ex(aTexto(x))}${simplifica2(x, true)}.`,
+      `It is right: cross-multiplying, ${p} · ${s} = ${p * s} on top and ${q} · ${r} = ${q * r} on the bottom: ${ex(aTexto(x))}${simplifica2(x, false)}.`);
+  },
+});
+const POTENCIA_DIRECTA = buena({
+  id: 'potencia-arriba-y-abajo',
+  lineas: ([p, q, n]) => [`${p ** n}/${q ** n}`],
+  porque: ([p, q, n]) => L(`Está bien: se elevan los dos términos, ${Array(n).fill(p).join(' · ')} = ${p ** n} y ${Array(n).fill(q).join(' · ')} = ${q ** n}: ${ex(`${p ** n}/${q ** n}`)}.`,
+    `It is right: both terms are raised, ${Array(n).fill(p).join(' · ')} = ${p ** n} and ${Array(n).fill(q).join(' · ')} = ${q ** n}: ${ex(`${p ** n}/${q ** n}`)}.`),
+});
+const POTENCIA_PRODUCTO = buena({
+  id: 'potencia-como-producto',
+  lineas: ([p, q, n]) => [Array(n).fill(`${p}/${q}`).join(' · '), `${p ** n}/${q ** n}`],
+  porque: ([p, q, n]) => L(`Está bien: la potencia es la fracción multiplicada ${n} veces, ${ex(Array(n).fill(`${p}/${q}`).join(' · '))} = ${ex(`${p ** n}/${q ** n}`)}.`,
+    `It is right: the power is the fraction multiplied ${n} times, ${ex(Array(n).fill(`${p}/${q}`).join(' · '))} = ${ex(`${p ** n}/${q ** n}`)}.`),
+});
+const BUENAS = [SUMA_MCM, SUMA_PRODUCTO, RESTA_MCM, RESTA_PRODUCTO, SIMPLIFICA_DE_UNA_VEZ, SIMPLIFICA_POR_PASOS, CANTIDAD_DIVIDE_PRIMERO,
+  CANTIDAD_MULTIPLICA_PRIMERO, UNITARIA_FRACCION, UNITARIA_DIVIDE, DIVISION_INVERSA, DIVISION_EN_CRUZ, POTENCIA_DIRECTA, POTENCIA_PRODUCTO];
+const BUENA_POR_ID = Object.fromEntries(BUENAS.map(r => [r.id, r]));
+
+const simplificaMal = (id, [n, d, p]) => { const m = err(id, f(n, d), p); return Boolean(m) && !m.esIrreducible(); };
+const divisionMal = (id, [p, q, r, s]) => {
+  const a = f(p, q), b = f(r, s), malo = err(id, a, b);
+  return Boolean(malo) && noEntera(malo.simplificar()) && !malo.equals(a.dividir(b));
+};
+
+export const FAMILIAS = [
+  {
+    id: 'suma',
+    numeros(rng) { const d = dosDistintas(rng, [2, 3, 4, 5, 6, 8]); return d && noEntera(d.a.sumar(d.b).simplificar()) ? [d.a.num, d.a.den, d.b.num, d.b.den] : null; },
+    enunciado: ([p, q, r, s]) => `${p}/${q} + ${r}/${s}`,
+    bien: [SUMA_MCM, SUMA_PRODUCTO],
+    mal: [mal('suma-arriba-y-abajo', ([p, q, r, s]) => Boolean(err('suma-arriba-y-abajo', f(p, q), f(r, s)))),
+      mal('suma-multiplicando-denominadores', ([p, q, r, s]) => { const m = err('suma-multiplicando-denominadores', f(p, q), f(r, s)); return q <= 6 && s <= 6 && Boolean(m) && !m.esIrreducible(); })],
+  },
+  {
+    id: 'resta',
+    numeros(rng) { const d = dosDistintas(rng, [2, 3, 4, 5, 6, 8]); return d && comparar(d.a, d.b) < 0 && noEntera(d.a.restar(d.b).simplificar()) ? [d.a.num, d.a.den, d.b.num, d.b.den] : null; },
+    enunciado: ([p, q, r, s]) => `${p}/${q} − ${r}/${s}`,
+    bien: [RESTA_MCM, RESTA_PRODUCTO],
+    mal: [mal('signo-perdido')],
+  },
+  {
+    id: 'simplificar',
+    numeros(rng) {
+      const g = rng.elegir([4, 6, 9, 10, 12]), p = [2, 3].find(x => g % x === 0);
+      const u = rng.entero(1, 7), v = rng.entero(2, 8);
+      return coprimos(u, v) && u * g <= 90 && v * g <= 90 && noEntera(f(u, v)) ? [u * g, v * g, p] : null;
+    },
+    enunciado: ([n, d]) => `${n}/${d}`,
+    bien: [SIMPLIFICA_DE_UNA_VEZ, SIMPLIFICA_POR_PASOS],
+    mal: [mal('simplifica-solo-numerador', p => simplificaMal('simplifica-solo-numerador', p)), mal('simplifica-solo-denominador', p => simplificaMal('simplifica-solo-denominador', p))],
+  },
+  {
+    // p/d de n con p ≥ 2; n es múltiplo de d y del m.c.m. de p y d (si no, «al revés» no da un entero)
+    id: 'cantidad',
+    numeros: rng => PLANTILLA_POR_ID['fraccion-de-al-reves'].numeros(rng),
+    enunciado: ([p, d, n]) => `${p}/${d} · ${n}`,
+    bien: [CANTIDAD_DIVIDE_PRIMERO, CANTIDAD_MULTIPLICA_PRIMERO],
+    mal: [mal('se-queda-en-la-unitaria'), mal('fraccion-de-al-reves')],
+  },
+  {
+    // 1/d de n: el error de la fracción de numerador 1 es multiplicar por el denominador
+    id: 'unitaria',
+    numeros: rng => PLANTILLA_POR_ID['multiplica-por-el-denominador'].numeros(rng),
+    enunciado: ([p, d, n]) => `${p}/${d} · ${n}`,
+    bien: [UNITARIA_FRACCION, UNITARIA_DIVIDE],
+    mal: [mal('multiplica-por-el-denominador')],
+  },
+  {
+    id: 'division',
+    numeros(rng) {
+      const a = propia(rng, [2, 3, 4, 5, 6], 1), b = propia(rng, [2, 3, 4, 5, 6], 1);
+      return a && b && !a.equals(b) && a.num > 1 && b.num > 1 && noEntera(a.dividir(b).simplificar()) ? [a.num, a.den, b.num, b.den] : null;
+    },
+    enunciado: ([p, q, r, s]) => `${p}/${q} : ${r}/${s}`,
+    bien: [DIVISION_INVERSA, DIVISION_EN_CRUZ],
+    mal: ['invierte-la-primera', 'no-invierte', 'invierte-las-dos'].map(id => mal(id, p => divisionMal(id, p))),
+  },
+  {
+    id: 'potencia',
+    numeros: rng => PLANTILLA_POR_ID['eleva-solo-el-numerador'].numeros(rng),
+    enunciado: ([p, q, n]) => `(${p}/${q})^${n}`,
+    bien: [POTENCIA_DIRECTA, POTENCIA_PRODUCTO],
+    mal: [mal('eleva-solo-el-numerador')],
+  },
+];
+export const FAMILIA_POR_ID = Object.fromEntries(FAMILIAS.map(fa => [fa.id, fa]));
+/** Las familias con más rutas salen más (dan 3 y 4 columnas). */
+const PESOS = { suma: 3, resta: 2, simplificar: 2, cantidad: 2, unitaria: 1, division: 3, potencia: 1 };
+const SORTEO = FAMILIAS.flatMap(fa => Array(PESOS[fa.id]).fill(fa));
+
+const valorDe = l => evaluar(analizar(l));
+/** Las líneas (desde la 1) cuyo valor no es el de la anterior. */
+const lineasFalsas = lineas => lineas.map((l, i) => (i && !valorDe(l).equals(valorDe(lineas[i - 1])) ? i : -1)).filter(i => i >= 0);
+
+/**
+ * La columna de una ruta con los números de la familia, o null si no vale: { ruta, params, lineas (con el
+ * enunciado), falsa (índice o null), error }. Comprueba que, con error, exactamente la línea `falsa` es falsa y,
+ * sin error, ninguna.
+ */
+export function columnaDe(familia, r, params) {
+  if (!r.vale(params)) return null;
+  const enunciado = familia.enunciado(params);
+  const esBuena = Boolean(r.lineas);
+  let lineas, falsa = null;
+  if (esBuena) lineas = [enunciado, ...r.lineas(params)];
+  else {
+    const m = PLANTILLA_POR_ID[r.id].mala(params);
+    lineas = m.lineas; falsa = m.falsa;
+    if (lineas[0] !== enunciado) return null;
+  }
+  if (lineas.some(l => /null|undefined|NaN/.test(l))) return null;
+  if (lineasFalsas(lineas).join() !== (falsa === null ? '' : String(falsa))) return null;
+  return { ruta: r.id, params, lineas, falsa, error: esBuena ? null : r.id };
+}
+
+/** Las columnas posibles de una familia con unos números: { bien: [...], mal: [...] } (sin dos iguales). */
+export function columnasPosibles(familia, params) {
+  const vistas = new Set();
+  const sinRepetir = c => { if (!c) return false; const k = c.lineas.join('|'); if (vistas.has(k)) return false; vistas.add(k); return true; };
+  return {
+    bien: familia.bien.map(r => columnaDe(familia, r, params)).filter(sinRepetir),
+    mal: familia.mal.map(r => columnaDe(familia, r, params)).filter(sinRepetir),
+  };
+}
+
+/** Lo que explica una columna con sus números: { porque: { es, en }, corregida: expresión | null }. */
+export function explicaColumna(c) {
+  if (!c.error) return { porque: BUENA_POR_ID[c.ruta].porque(c.params), corregida: null };
+  const p = PLANTILLA_POR_ID[c.ruta];
+  return { porque: p.porque(c.params), corregida: p.corregida(c.params) };
+}
+
+/** Las LETRAS de las columnas. */
+export const LETRAS = ['A', 'B', 'C', 'D'];
+
+/**
+ * Ejercicio 2: el mismo cálculo en 2-4 columnas, 1-2 bien y 1-2 mal. La respuesta (`solucion`) es, por columna, el
+ * índice de la línea mala (contando el enunciado como la 0) o null; después, una pregunta por cada columna mala con
+ * el nombre bueno y dos de otro grupo que no expliquen su resultado (`opcionesDeNombre`).
+ */
+export function generarColumnas(rng) {
+  const familia = rng.elegir(SORTEO);
+  for (let intento = 0; intento < 500; intento++) {
+    const params = familia.numeros(rng);
+    if (!params || familia.mal.some(r => prohibido(r.id, params))) continue;
+    const { bien, mal: malas } = columnasPosibles(familia, params);
+    if (!bien.length || !malas.length) continue;
+    const dos = () => (rng.azar() < 0.6 ? 2 : 1);
+    const nBien = Math.min(bien.length, dos()), nMal = Math.min(malas.length, dos());
+    const columnas = rng.barajar([...rng.barajar(bien).slice(0, nBien), ...rng.barajar(malas).slice(0, nMal)]);
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error).map(({ c, col }) => ({
+      col, solucion: c.error,
+      opciones: opcionesDeNombre(rng, c.error, { plantilla: c.error, params: c.params, mostrado: valorDe(c.lineas.at(-1)) }),
+    }));
+    return {
+      tipo: 'columnas', plantilla: familia.id, params, enunciado: familia.enunciado(params), columnas, preguntas,
+      solucion: columnas.map(c => c.falsa),
+    };
+  }
+  throw new Error('generarColumnas: no salen columnas');
 }
 
 /** Ejercicio 3: arréglalo. La igualdad falsa y el alumno escribe el resultado bueno. */

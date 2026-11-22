@@ -6,7 +6,6 @@
 // tras los dos puntos) y sin el consejo vago «el método bueno».
 
 import test from 'node:test';
-import { lineaN } from '../practicas/_comun/procedimiento.js';
 import assert from 'node:assert/strict';
 import { T } from '../practicas/_comun/textos.js';
 import { crearRng } from '../practicas/_comun/rng.js';
@@ -71,17 +70,25 @@ test('errores4, ejercicio 1: la cuenta o la comparación bien hecha, y al final 
   assert.ok(verdaderas > 300 && falsas > 300, 'salen de las dos clases');
 });
 
-test('errores4, ejercicio 2: la línea mala al final, con la línea bien hecha', () => {
-  for (const idioma of IDIOMAS) for (const item of items(L.generarLinea, 2)) {
+test('errores4, ejercicio 2 en columnas: cada columna explicada, la regla rota en negrita y al final dónde está el error', () => {
+  for (const idioma of IDIOMAS) for (const item of items(L.generarColumnas, 2)) {
     const html = X.explicaLinea(item, textosDe(idioma));
-    sano(html, `linea ${idioma}`);
-    const texto = plano(html);
-    termina(texto, `${idioma === 'es' ? 'La respuesta es' : 'The answer is'} ${lineaN(item.falsa, idioma)}.`);
+    sano(html, `columnas ${idioma}`);
+    const texto = plano(html).replace(/\s+\.$/, '.');
+    const malas = item.columnas.map((c, j) => (c.error ? L.LETRAS[j] : null)).filter(Boolean);
+    const lista = malas.length === 1 ? malas[0] : `${malas.slice(0, -1).join(', ')} ${idioma === 'es' ? 'y' : 'and'} ${malas.at(-1)}`;
+    termina(texto, `${idioma === 'es' ? (malas.length > 1 ? 'las columnas' : 'la columna') : (malas.length > 1 ? 'columns' : 'column')} ${lista}.`);
     assert.doesNotMatch(texto, /línea \d|line \d/, 'sin números de línea (JL, 22-11)');
-    const corregida = L.PLANTILLA_POR_ID[item.plantilla].corregida(item.params);
-    assert.ok(html.includes(`= ${L.ex(corregida)}`), texto);
-    // La línea corregida vale lo mismo que la primera.
-    assert.ok(evaluar(analizar(corregida)).equals(evaluar(analizar(item.lineas[0]))), corregida);
+    assert.equal((html.match(/class="columna-explica"/g) ?? []).length, item.columnas.length, 'una explicación por columna');
+    item.columnas.forEach((c, j) => {
+      assert.ok(html.includes(`${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.`), texto);
+      if (!c.error) return;
+      assert.ok(html.includes('class="regla-rota"'), 'la regla rota, en negrita');
+      const corregida = L.PLANTILLA_POR_ID[c.error].corregida(c.params);
+      assert.ok(html.includes(`= ${L.ex(corregida)}`), texto);
+      assert.ok(evaluar(analizar(corregida)).equals(evaluar(analizar(item.enunciado))), corregida);
+      assert.ok(html.includes(ERRORES_TIPICOS[c.error].nombre[idioma]), texto);
+    });
   }
 });
 
