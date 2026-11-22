@@ -6,7 +6,7 @@
 // Ejercicio 4: { tipo: 'pasos', plantilla, params, lineas, salta, opciones: ['si', 'no'], solucion }
 //   lineas   [{ es, en }, …] el procedimiento (2 a 4 líneas)
 //   error    null o { linea (desde 0), nombre (clave de NOMBRES) }
-//   opciones 'hay': ['bien', 'error'] · 'linea': [0, 1, …] · 'nombre': 4 claves
+//   opciones 'hay': ['bien', 'error'] · 'linea': [1, 2, …] (la 0 es el enunciado) · 'nombre': 4 claves
 //   solucion la opción correcta (la misma forma que las opciones)
 
 import { PLANTILLAS, PLANTILLA_POR_ID, PASOS, PASOS_POR_ID, CLAVES_NOMBRES, CONFUNDIBLES } from './textos.js';
@@ -41,7 +41,8 @@ export function generarLinea(rng) {
   const plantilla = rng.elegir(CON_ERROR);
   const params = plantilla.numeros(rng);
   const lineas = plantilla.lineas(params);
-  return ficha(plantilla, params, 'linea', lineas.map((_, i) => i), plantilla.error.linea);
+  // La línea 0 es el enunciado: no se puede pulsar (JL, 22-11).
+  return ficha(plantilla, params, 'linea', lineas.slice(1).map((_, i) => i + 1), plantilla.error.linea);
 }
 
 /** Ejercicio 3: el nombre correcto y tres que no pueden aplicarse a ese procedimiento. */

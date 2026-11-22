@@ -34,6 +34,20 @@ export const NOMBRES = {
 };
 export const CLAVES_NOMBRES = Object.keys(NOMBRES);
 
+/** La regla que rompe cada error, para recordarla en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
+export const REGLAS = {
+  sumaAntes: { es: 'La multiplicación se hace antes que la suma.', en: 'Multiplication comes before addition.' },
+  restaAntes: { es: 'Primero se hace lo que hay dentro del paréntesis.', en: 'First you work out what is inside the brackets.' },
+  restaDerIzq: { es: 'Las sumas y las restas se hacen de izquierda a derecha.', en: 'Additions and subtractions go from left to right.' },
+  potencia: { es: 'Una potencia es un producto de factores iguales: el exponente dice cuántas veces se multiplica la base.', en: 'A power is a product of equal factors: the exponent says how many times you multiply the base.' },
+  expSuma: { es: 'El exponente de un paréntesis no se reparte entre los sumandos: primero se suma y después se eleva.', en: 'The exponent of a bracket is not shared between the numbers you add: first add, then raise to the power.' },
+  expProducto: { es: 'El exponente solo afecta al número que lleva justo debajo, y la potencia va antes que la multiplicación.', en: 'The exponent only applies to the number right below it, and the power comes before the multiplication.' },
+  raizMitad: { es: 'La raíz cuadrada de un número es el número que, multiplicado por sí mismo, da el primero.', en: 'The square root of a number is the number that, multiplied by itself, gives the first one.' },
+  restoMayor: { es: 'El resto de una división siempre es menor que el divisor.', en: 'The remainder of a division is always smaller than the divisor.' },
+  redondeo: { es: 'Si la cifra siguiente es 5 o más, se redondea hacia arriba.', en: 'If the next digit is 5 or more, you round up.' },
+  olvidaParentesis: { es: 'Si el enunciado pide hacer una suma o una resta antes, esa operación va entre paréntesis.', en: 'If the problem asks you to add or subtract first, that operation goes in brackets.' },
+};
+
 /**
  * Pares de nombres que podrían confundirse sobre un mismo procedimiento: ninguno
  * sale como distractor del otro (regla de oro: todo distractor, inequívocamente falso).
@@ -73,23 +87,19 @@ export const TX = {
   },
   si: { es: 'Sí, falta un paso', en: 'Yes, a step is missing' },
   no: { es: 'No, está paso a paso', en: 'No, it is step by step' },
+  // `k` es el número de la línea (desde 1): falta un paso entre la línea k y la siguiente.
   falta_paso: {
-    es: k => `Sí se ha saltado un paso, entre las líneas ${k} y ${k + 1}. Faltaría:`,
-    en: k => `Yes, a step is missing, between lines ${k} and ${k + 1}. This line is missing:`,
+    es: k => `Sí se ha saltado un paso, ${entreLineas(k - 1, k, 'es')}. Faltaría:`,
+    en: k => `Yes, a step is missing, ${entreLineas(k - 1, k, 'en')}. This line is missing:`,
   },
   paso_a_paso: { es: 'No se ha saltado ninguno.', en: 'No step is missing.' },
   introduccion: {
-    es: '<p>Cada ejercicio te enseña el trabajo de un alumno, con las líneas numeradas. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, un paréntesis que sobra, o hacer dos productos independientes en el mismo paso).</p>',
-    en: '<p>Each exercise shows a student\'s work, with numbered lines. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, brackets that are not needed, or doing two independent multiplications in the same step).</p>',
+    es: '<p>Cada ejercicio te enseña el trabajo de un alumno, línea a línea. La primera línea es lo que se pide. Hay trabajos con <strong>un solo error</strong> y trabajos <strong>sin error</strong>.</p><p>Ojo: hay cosas que parecen un error y no lo son (por ejemplo, un paréntesis que sobra, o hacer dos productos independientes en el mismo paso).</p>',
+    en: '<p>Each exercise shows a student\'s work, line by line. The first line is the question. Some work has <strong>exactly one mistake</strong> and some has <strong>no mistake</strong>.</p><p>Careful: some things look like a mistake and are not (for example, brackets that are not needed, or doing two independent multiplications in the same step).</p>',
   },
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
-  linea: { es: 'Línea', en: 'Line' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
-  hay_error_en: { es: n => `Hay un error, en la línea ${n}.`, en: n => `There is a mistake, in line ${n}.` },
-  la_linea_es: { es: n => `El error está en la línea ${n}.`, en: n => `The mistake is in line ${n}.` },
-  era: { es: 'Era:', en: 'It was:' },
-  correcta: { es: 'Bien hecho sería:', en: 'The right way is:' },
 };
 
 // ─── Ayudas del banco ──────────────────────────────────────────────────────────
@@ -222,20 +232,20 @@ export const PLANTILLAS = [
       L(`${d * q + r0} − ${d * (q - 1)} = ${r0 + d}, así que el cociente es ${q - 1} y el resto es ${r0 + d}.`, `${d * q + r0} − ${d * (q - 1)} = ${r0 + d}, so the quotient is ${q - 1} and the remainder is ${r0 + d}.`),
     ],
     corregida: ({ d, q, r0 }) => L(
-      `El resto ${r0 + d} no es menor que ${d}: aún cabe otro ${d}. Bien: cociente ${q} y resto ${r0}, porque ${d} · ${q} + ${r0} = ${d * q + r0}.`,
-      `The remainder ${r0 + d} is not smaller than ${d}: another ${d} still fits. Right: quotient ${q} and remainder ${r0}, because ${d} · ${q} + ${r0} = ${d * q + r0}.`),
+      `Cociente ${q} y resto ${r0}, porque ${d} · ${q} + ${r0} = ${d * q + r0}. Con resto ${r0 + d}, aún cabía otro ${d}.`,
+      `Quotient ${q} and remainder ${r0}, because ${d} · ${q} + ${r0} = ${d * q + r0}. With a remainder of ${r0 + d}, another ${d} still fitted.`),
   },
   {
     id: 'e-resto-mayor-cajas',
     error: { linea: 1, nombre: 'restoMayor' },
     numeros: rng => { const d = rng.entero(3, 9); return { d, q: rng.entero(3, 9), r0: rng.entero(1, d - 1) }; },
     lineas: ({ d, q, r0 }) => [
-      L(`Tengo ${d * q + r0} caramelos y los meto en cajas de ${d}: lleno todas las cajas que puedo.`, `I have ${d * q + r0} sweets and I put them in boxes of ${d}: I fill as many boxes as I can.`),
+      L(`Tengo ${d * q + r0} caramelos y los meto en cajas de ${d}. ¿Cuántas cajas lleno y cuántos caramelos sobran?`, `I have ${d * q + r0} sweets and I put them in boxes of ${d}. How many boxes do I fill and how many sweets are left?`),
       L(`Lleno ${q - 1} cajas y sobran ${r0 + d} caramelos, porque ${d} · ${q - 1} + ${r0 + d} = ${d * q + r0}.`, `I fill ${q - 1} boxes and ${r0 + d} sweets are left, because ${d} · ${q - 1} + ${r0 + d} = ${d * q + r0}.`),
     ],
     corregida: ({ d, q, r0 }) => L(
-      `Si sobran ${r0 + d}, aún cabe otra caja de ${d}. Bien: ${q} cajas llenas y sobran ${r0}, porque ${d} · ${q} + ${r0} = ${d * q + r0}.`,
-      `If ${r0 + d} are left, another box of ${d} still fits. Right: ${q} full boxes and ${r0} left, because ${d} · ${q} + ${r0} = ${d * q + r0}.`),
+      `Lleno ${q} cajas y sobran ${r0}, porque ${d} · ${q} + ${r0} = ${d * q + r0}. Con ${r0 + d} caramelos, aún cabía otra caja de ${d}.`,
+      `I fill ${q} boxes and ${r0} are left, because ${d} · ${q} + ${r0} = ${d * q + r0}. With ${r0 + d} sweets, another box of ${d} still fitted.`),
   },
   {
     id: 'e-suma-antes-3',
@@ -261,8 +271,8 @@ export const PLANTILLAS = [
       L(`Dejo las centenas como están: ${Math.floor(n / 100) * 100}.`, `I keep the hundreds as they are: ${Math.floor(n / 100) * 100}.`),
     ],
     corregida: ({ n }) => L(
-      `Con 5 o más se redondea hacia arriba, a la centena siguiente: ${n} ≈ ${aCentenas(n)}.`,
-      `With 5 or more you round up, to the next hundred: ${n} ≈ ${aCentenas(n)}.`),
+      `Se redondea hacia arriba, a la centena siguiente: ${n} ≈ ${aCentenas(n)}.`,
+      `You round up, to the next hundred: ${n} ≈ ${aCentenas(n)}.`),
   },
   {
     id: 'e-redondeo-decenas',
@@ -274,8 +284,8 @@ export const PLANTILLAS = [
       L(`Dejo las decenas como están: ${Math.floor(n / 10) * 10}.`, `I keep the tens as they are: ${Math.floor(n / 10) * 10}.`),
     ],
     corregida: ({ n }) => L(
-      `Con 5 o más se redondea hacia arriba, a la decena siguiente: ${n} ≈ ${aDecenas(n)}.`,
-      `With 5 or more you round up, to the next ten: ${n} ≈ ${aDecenas(n)}.`),
+      `Se redondea hacia arriba, a la decena siguiente: ${n} ≈ ${aDecenas(n)}.`,
+      `You round up, to the next ten: ${n} ≈ ${aDecenas(n)}.`),
   },
   {
     id: 'e-olvida-parentesis-suma',
@@ -651,23 +661,27 @@ export const PASOS_POR_ID = Object.fromEntries(PASOS.map(p => [p.id, p]));
 // ─── Explicaciones («No lo sé» y feedback) ─────────────────────────────────────
 
 import { esc } from '../_comun/textos.js';
+import { errorEnLinea, lineaN, entreLineas, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 /** Texto de una línea a HTML seguro, con los exponentes `2^3` como <sup>. */
 export const html = texto => esc(texto).replace(/\^(\d+)/g, '<sup>$1</sup>');
 
+/** La línea mala del ítem, en un <span>, sin número. */
+const lineaMala = (item, tt) => `<span class="linea-mala">${html(tt(item.lineas[item.error.linea]))}</span>`;
+/** «Lo correcto es: …» con la cuenta bien hecha de la plantilla. */
+const loCorrecto = (item, tt) => `${tt(LO_CORRECTO)} ${html(minuscula(tt(PLANTILLA_POR_ID[item.plantilla].corregida(item.params))))}`;
+const regla = (item, tt) => reglaEnNegrita(html(tt(REGLAS[item.error.nombre])));
+
 /** La explicación del ítem, con sus números: la corrección (con error) o por qué no era error (sin error). */
-export function explicacion(item, { tt }) {
+export function explicacion(item, { tt, idioma }) {
   const plantilla = PLANTILLA_POR_ID[item.plantilla];
   if (!item.error) {
     // Los `porque` ya empiezan por «Está bien: …»: no se repite el arranque.
     const porque = tt(plantilla.porque(item.params));
     return /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
   }
-  // Reabierta del 14-11: el número de línea una sola vez («El error está en la línea 2:») y minúscula tras «Bien hecho sería:»,
-  // como la tarjeta (`ESTA_EN` y `minuscula`, más abajo).
-  const n = item.error.linea + 1;
-  const mala = `<span class="linea-mala">${html(tt(item.lineas[item.error.linea]))}</span>`;
-  return `${tt(ESTA_EN)(n)} ${mala}<br>${esc(tt(NOMBRES[item.error.nombre]))}<br>${tt(TX.correcta)} ${html(minuscula(tt(plantilla.corregida(item.params))))}`;
+  // JL, 22-11: la línea con ordinal y sin número delante, el error como frase, la regla rota en negrita y lo correcto.
+  return `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}<br>${esc(tt(NOMBRES[item.error.nombre]))}${regla(item, tt)}${loCorrecto(item, tt)}`;
 }
 
 /** Feedback del ejercicio 4: la línea que falta con sus números, o por qué caben las operaciones en un paso. */
@@ -696,12 +710,12 @@ const REGLA = {
     en: 'A step can have several operations if none of them needs the result of another one; if it does, that result is written first, in its own line.',
   },
 };
-const PRIMERA_MALA = { es: 'Es la primera línea que falla:', en: 'It is the first line that is wrong:' };
-const ESTA_EN = { es: n => `El error está en la línea ${n}:`, en: n => `The mistake is in line ${n}:` };
+const FALLA = { es: 'Esta línea falla:', en: 'This line is wrong:' };
 const FALTA_LINEA = {
-  es: k => `Entre las líneas ${k} y ${k + 1} falta esta:`,
-  en: k => `This line is missing between lines ${k} and ${k + 1}:`,
+  es: k => `${mayuscula(entreLineas(k - 1, k, 'es'))} falta esta:`,
+  en: k => `This line is missing ${entreLineas(k - 1, k, 'en')}:`,
 };
+const mayuscula = t => t[0].toUpperCase() + t.slice(1);
 const RESPUESTA = { es: 'La respuesta es', en: 'The answer is' };
 const cierre = (idioma, txt) => `<p><strong>${RESPUESTA[idioma]} ${txt}.</strong></p>`;
 const entreComillas = (idioma, txt) => (idioma === 'es' ? `«${txt}»` : `“${txt}”`);
@@ -709,12 +723,14 @@ const sinPunto = txt => txt.replace(/\.$/, '');
 /** Minúscula tras dos puntos («Bien hecho sería: con 5 o más…»). */
 const minuscula = txt => (/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(txt) ? txt[0].toLowerCase() + txt.slice(1) : txt);
 
-/** La línea mala y cómo queda bien hecha. En el ej. 2 el número de la línea es la respuesta: aquí solo va delante de la línea. */
-function malaYBuena(item, { tt }, esElEj2 = false) {
-  const n = item.error.linea + 1;
-  const texto = html(tt(item.lineas[item.error.linea]));
-  const mala = esElEj2 ? `${tt(PRIMERA_MALA)} <span class="linea-mala">${n}. ${texto}</span>` : `${tt(ESTA_EN)(n)} <span class="linea-mala">${texto}</span>`;
-  return `<p>${mala}<br>${tt(TX.correcta)} ${html(minuscula(tt(PLANTILLA_POR_ID[item.plantilla].corregida(item.params))))}</p>`;
+/**
+ * La línea mala, qué error es, la regla rota en negrita y cómo queda bien hecha (JL, 22-11). En el ej. 2 la línea es
+ * la respuesta: aquí se cita sin decir cuál es. En el ej. 3 el nombre del error es la respuesta: aquí no sale.
+ */
+function malaYBuena(item, { tt, idioma }, ej = 'hay') {
+  const mala = ej === 'linea' ? `${tt(FALLA)} ${lineaMala(item, tt)}` : `${errorEnLinea(item.error.linea, idioma)} ${lineaMala(item, tt)}`;
+  const nombre = ej === 'nombre' ? '' : `<br>${esc(tt(NOMBRES[item.error.nombre]))}`;
+  return `<p>${mala}${nombre}${regla(item, tt)}${loCorrecto(item, tt)}</p>`;
 }
 
 /** Sin error: el porqué de la plantilla sin su «Está bien:» (la respuesta ya lo dice al final). */
@@ -733,14 +749,13 @@ export function explicaHay(item, ctx) {
 /** «No lo sé» del ejercicio 2: la primera línea que está mal. */
 export function explicaLinea(item, ctx) {
   const { tt, idioma } = ctx;
-  const resp = idioma === 'es' ? `la línea ${item.solucion + 1}` : `line ${item.solucion + 1}`;
-  return `<p>${tt(REGLA.linea)}</p>${malaYBuena(item, ctx, true)}${cierre(idioma, resp)}`;
+  return `<p>${tt(REGLA.linea)}</p>${malaYBuena(item, ctx, 'linea')}${cierre(idioma, lineaN(item.solucion, idioma))}`;
 }
 
 /** «No lo sé» del ejercicio 3: el nombre del error (solo al final). */
 export function explicaNombre(item, ctx) {
   const { tt, idioma } = ctx;
-  return `<p>${tt(REGLA.nombre)}</p>${malaYBuena(item, ctx)}${cierre(idioma, entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion])))))}`;
+  return `<p>${tt(REGLA.nombre)}</p>${malaYBuena(item, ctx, 'nombre')}${cierre(idioma, entreComillas(idioma, esc(sinPunto(tt(NOMBRES[item.solucion])))))}`;
 }
 
 /** «No lo sé» del ejercicio 4: ¿falta un paso? La línea que falta con sus números, o por qué caben en un paso. */

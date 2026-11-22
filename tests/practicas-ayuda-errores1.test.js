@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import * as L from '../practicas/errores1/logica.js';
 import * as X from '../practicas/errores1/textos.js';
+import { lineaN, entreLineas } from '../practicas/_comun/procedimiento.js';
 
 const IDIOMAS = ['es', 'en'];
 const ctx = idioma => ({ idioma, tt: o => o[idioma], esc: x => x });
@@ -34,7 +35,10 @@ test('errores1 · ejercicio 2: la explicación señala la línea del error', () 
   for (const idioma of IDIOMAS) for (const item of generar(L.generarLinea, 2)) {
     const t = plano(X.explicaLinea(item, ctx(idioma)));
     assert.equal(item.solucion, item.error.linea);
-    alFinal(t, idioma, `${idioma === 'es' ? 'la línea' : 'line'} ${item.error.linea + 1}`);
+    alFinal(t, idioma, lineaN(item.error.linea, idioma));
+    // JL, 22-11: ni «It is the first line that is wrong» ni «3.» delante de la línea; la regla rota, en negrita.
+    assert.doesNotMatch(t, /first line that is wrong|primera línea que falla|\b\d\. =/, t);
+    assert.ok(X.explicaLinea(item, ctx(idioma)).includes(`<strong class="regla-rota">${X.html(X.REGLAS[item.error.nombre][idioma])}</strong>`), t);
     assert.ok(t.includes(plano(X.html(item.lineas[item.error.linea][idioma]))), t);
     assert.ok(!/undefined|NaN/.test(t), t);
   }
@@ -61,7 +65,8 @@ test('errores1 · ejercicio 4: la explicación dice si falta un paso', () => {
       // La línea que falta, con sus números, y el número de la línea tras la que va
       const p = L.PASOS_POR_ID[item.plantilla];
       const k = p.entre ?? item.lineas.length - 1;
-      assert.ok(t.includes(idioma === 'es' ? `Entre las líneas ${k} y ${k + 1} falta esta:` : `between lines ${k} and ${k + 1}:`), t);
+      const entre = entreLineas(k - 1, k, idioma);
+      assert.ok(t.includes(idioma === 'es' ? `${entre[0].toUpperCase()}${entre.slice(1)} falta esta:` : `missing ${entre}:`), t);
       assert.ok(t.includes(plano(X.html(`= ${p.falta(item.params)}`)).trim()), t);
     }
     assert.ok(!/undefined|NaN/.test(t), t);
@@ -78,7 +83,7 @@ test('errores1 · ejercicios 1-3: regla delante; con error, la línea mala y la 
     const corregida = plano(X.html(L.PLANTILLA_POR_ID[item.plantilla].corregida(item.params)[idioma])).trim();
     assert.ok(t.toLowerCase().includes(corregida.toLowerCase()), t);
     assert.ok(t.includes(plano(X.html(item.lineas[item.error.linea][idioma])).trim()), t);
-    const tras = t.split(X.TX.correcta[idioma])[1].trim();
+    const tras = t.split(idioma === 'es' ? 'Lo correcto es:' : 'The right way is:')[1].trim();
     assert.ok(!/^[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(tras), t);
   }
 });

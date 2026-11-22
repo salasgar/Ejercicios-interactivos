@@ -3,15 +3,13 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
+import { lista, lineasPulsables } from '../_comun/procedimiento.js';
 import { esc } from '../_comun/textos.js';
 import { TX, NOMBRES, html, explicacion, explicacionPasos, explicaHay, explicaLinea, explicaNombre, explicaPasos } from './textos.js';
 import { generarHay, generarLinea, generarNombre, generarPasos, claveItem, clavePasos } from './logica.js';
 
-function procedimiento(item, { tt }) {
-  const filas = item.lineas.map((l, i) =>
-    `<li class="procedimiento__linea"><span class="procedimiento__n">${i + 1}</span><span>${html(tt(l))}</span></li>`);
-  return `<ol class="procedimiento">${filas.join('')}</ol>`;
-}
+/** El procedimiento sin números de línea (se confundían con los de la cuenta); la primera línea es el enunciado. */
+const procedimiento = (item, { tt }) => lista(item.lineas.map(l => html(tt(l))));
 
 const enunciadoHay = (item, textos) => `<p class="instruccion">${textos.tt(TX.instruccion.hay)}</p>${procedimiento(item, textos)}`;
 const enunciadoLinea = (item, { tt }) => `<p class="instruccion">${tt(TX.instruccion.linea)}</p>`;
@@ -35,12 +33,9 @@ function montarHay(contenedor, item, api) {
 function montarLinea(contenedor, item, api) {
   const { tt } = api;
   contenedor.innerHTML = enunciadoLinea(item, api);
-  const botones = elecciones(contenedor, {
-    clase: 'procedimiento procedimiento--botones',
-    opciones: item.lineas.map((l, i) => ({
-      valor: i,
-      html: `<span class="procedimiento__n">${i + 1}</span>${html(tt(l))}`,
-    })),
+  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
+  const botones = lineasPulsables(contenedor, {
+    lineasHtml: item.lineas.map(l => html(tt(l))),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.solucion], valor);

@@ -353,8 +353,7 @@ test('ejercicio 2: solo procedimientos con error; la línea correcta es la únic
     assert.ok(item.error);
     const v = validas(item);
     assert.deepEqual(v.map((x, j) => (x ? -1 : j)).filter(j => j >= 0), [item.solucion]);
-    assert.equal(item.opciones.length, item.lineas.length);
-    assert.deepEqual(item.opciones, item.lineas.map((_, j) => j));
+    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));   // sin el enunciado
   }
 });
 
@@ -404,11 +403,11 @@ test('ejercicio 3: de verdad hay tres distractores disponibles para cada plantil
 
 // ─── Reabierta de la tarea 32 (2026-10-08) ───────────────────────────────────
 
-test('e-resto-mayor-cajas: el enunciado dice que se llenan todas las cajas posibles, en los dos idiomas', () => {
+test('e-resto-mayor-cajas: el enunciado pregunta cuántas cajas se llenan y cuántos caramelos sobran (JL, 22-11)', () => {
   const p = PLANTILLA_POR_ID['e-resto-mayor-cajas'];
   const l0 = p.lineas(p.numeros(crearRng(3)))[0];
-  assert.match(l0.es, /todas las cajas que puedo/);
-  assert.match(l0.en, /as many boxes as I can/);
+  assert.match(l0.es, /¿Cuántas cajas lleno y cuántos caramelos sobran\?$/);
+  assert.match(l0.en, /How many boxes do I fill and how many sweets are left\?$/);
 });
 
 test('e-suma-antes-3: la corrección va de una operación en una operación (cada «=» cambia una sola cosa)', () => {
@@ -529,26 +528,42 @@ test('ejercicio 4: textos en los dos idiomas, sin ×, sin letras, producto con �
       assert.deepEqual(nums(p.porque(params).es), nums(p.porque(params).en), p.id);
     }
   }
-  assert.match(TX.falta_paso.es(2), /líneas 2 y 3/);
-  assert.match(TX.falta_paso.en(2), /lines 2 and 3/);
+  assert.match(TX.falta_paso.es(2), /entre la segunda y la tercera línea/);
+  assert.match(TX.falta_paso.en(2), /between the second and the third line/);
 });
 
 // ─── Reapertura de la tarea 32 (decisiones del 14-11) ───────────────────────
 
-import { explicacion } from '../practicas/errores1/textos.js';
+import { explicacion, REGLAS } from '../practicas/errores1/textos.js';
+import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
 
-test('feedback con error: minúscula tras «Bien hecho sería:» y el número de línea una sola vez, en los dos idiomas', () => {
+test('ejercicio 2: el enunciado (línea 0) no se puede pulsar (JL, 22-11)', () => {
+  const rng = crearRng(2211);
+  for (let i = 0; i < 1000; i++) {
+    const item = generarLinea(rng);
+    assert.deepEqual(item.opciones, item.lineas.slice(1).map((_, j) => j + 1));
+    assert.ok(item.solucion >= 1);
+  }
+});
+
+test('cada error tiene su regla en los dos idiomas', () => {
+  for (const c of CLAVES_NOMBRES) assert.ok(REGLAS[c]?.es && REGLAS[c]?.en, c);
+});
+
+test('feedback con error: minúscula tras «Lo correcto es:», la línea con ordinal y sin números de línea, en los dos idiomas', () => {
   const rng = crearRng(3232);
   const tt = (x, idioma) => (typeof x === 'function' ? x : x[idioma]);
   for (let i = 0; i < 1500; i++) {
     const item = (i % 2 ? generarLinea : generarNombre)(rng);
     for (const idioma of ['es', 'en']) {
-      const html = explicacion(item, { tt: x => tt(x, idioma) });
+      const html = explicacion(item, { tt: x => tt(x, idioma), idioma });
       const donde = `${idioma} ${item.plantilla}: ${html}`;
-      assert.ok(!/(Bien hecho sería|The right way is):<\/?[a-z]*>? ?[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
-      assert.ok(!/(Bien hecho sería|The right way is): [A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
-      assert.equal((html.match(/línea \d|line \d/g) ?? []).length, 1, donde);
+      assert.ok(!/(Lo correcto es|The right way is):<\/?[a-z]*>? ?[A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
+      assert.ok(!/(Lo correcto es|The right way is): [A-ZÁÉÍÓÚ][a-záéíóúñ]/.test(html), donde);
+      assert.equal((html.match(/línea \d|line \d/g) ?? []).length, 0, donde);
       assert.ok(!/linea-mala">\d+\. /.test(html), donde);
+      assert.ok(html.includes(errorEnLinea(item.error.linea, idioma)), donde);
+      assert.ok(html.includes(`<strong class="regla-rota">${REGLAS[item.error.nombre][idioma]}</strong>`), `la regla rota en negrita: ${donde}`);
     }
   }
 });
