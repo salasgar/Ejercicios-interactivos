@@ -130,6 +130,17 @@ como si uno fuera un error. `CONTEXTOS` de `proporcion.js` lleva la cota de cada
 - (De la fase 1) Ninguna igualdad falsa en una columna buena: un paso que no es una igualdad («Sin comas: 212 · 9 =
   1908») no se escribe con «=» delante ni detrás. Lo comprueba un test que evalúa cada línea.
 - La base sortea el idioma del ítem: prueba siempre los dos.
+- (Tarea 238) Las líneas de errores7 son texto, no expresiones: el test lleva su propio lector de igualdades (de cada
+  lado del «=», la cuenta más larga que se pueda leer, con €, %, cm y km, y «de» como producto). Una línea mala que sea
+  una cuenta verdadera («100 % + 20 % = 120 %») no vale: se escribe como frase falsa («Se paga el 100 % + 20 %…»).
+- (Tarea 238) Un nombre del catálogo general («Ha contestado otra cosa…», «Ha restado donde había que sumar (o al revés)»,
+  «La ha resuelto como inversa») no puede ser distractor: describe columnas de otro tipo. Están en `NUNCA_DISTRACTOR`.
+- (Tarea 238) En español el % va con espacio duro: escribir siempre `aTexto(pct(p), i)`, nunca `${p} %` a mano (dos
+  porqués de las plantillas lo hacían mal y el test de textos solo miraba las líneas).
+- (Tarea 238) A 375 px el `.columnas` común da una columna por fila (sobra ~1 px para dos), también en errores3: propuesta
+  en la terminada, no se parchea en la práctica.
+- (Tarea 238) Para acertar por CDP hace falta la solución del ítem que se ve: se sirve `logica.js` con `Fetch` añadiendo
+  `{ const g = generarDonde; generarDonde = rng => (globalThis.__item = g(rng)); }` al final, sin tocar el fichero.
 
 ## Prohibido (propio de esta tarea)
 
