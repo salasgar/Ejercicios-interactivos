@@ -403,7 +403,7 @@ nueva({
   valorError(p) { return this.malFinal(p); },
   args: (id, p) => [[D(p[0]), D(p[1])]],
   porque(p, i) {
-    const [a, b] = [D(p[0]), D(p[1])], k = Math.max(a.k, b.k), T = x => aTexto(x, i), r = cmpTexto(this.bien(p));
+    const [a, b] = [D(p[0]), D(p[1])], k = Math.max(a.k, b.k), T = x => aTexto(x, i), r = ESC_CMP[cmpTexto(this.bien(p))];
     return i === 'en'
       ? `${T(a)} and ${T(b)}: with the same number of decimal places, ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}, so ${T(a)} ${r} ${T(b)}. The decimal parts are not compared as whole numbers (${a.m % pot10(a.k)} and ${b.m % pot10(b.k)}).`
       : `${T(a)} y ${T(b)}: con las mismas cifras decimales, ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}, luego ${T(a)} ${r} ${T(b)}. No se comparan las partes decimales como números enteros (${a.m % pot10(a.k)} y ${b.m % pot10(b.k)}).`;
@@ -540,10 +540,330 @@ const baseItem = (tipo, p, params, mal, extra = {}) => {
   return { tipo, plantilla: p.id, params, lineas, falsa, error: mal ? p.id : null, ...extra };
 };
 
-/** Ejercicio 1: ¿dónde está el error? Un tercio de los ítems no tiene ninguno. */
+// ─── Ejercicio 1 en columnas (JL, 22-11) ────────────────────────────────────────
+//
+// El mismo cálculo resuelto por varios alumnos, uno por columna: de 2 a 4 columnas, 1 o 2 bien (de formas
+// distintas) y 1 o 2 con un error (errores distintos). Una FAMILIA es un tipo de cálculo: sus números salen de
+// una plantilla (`plantillas`), las columnas malas son plantillas con error que se aplican a esos números
+// (`mal`) y las buenas son rutas (`bien`: lineas(p) → líneas con el enunciado, o null si no valen con esos
+// números; porque(p, idioma) → qué ha hecho). Todas las columnas de un ítem empiezan por el mismo enunciado.
+
+const PL = id => PLANTILLA_POR_ID[id];
+const bienLineas = (id, p) => PL(id).cadena(p, false).lineas;
+
+/** Errores del catálogo sin plantilla propia: se aplican a los números de la plantilla `base` (misma interfaz que ella). */
+const EXTRA = {
+  'numerador-como-decimas': {
+    base: 'fraccion-al-reves',
+    valorError(p) { const v = E['numerador-como-decimas'].fn(fraccion(p[0], p[1])); return v && v.m % 10 !== 0 ? v : null; },
+    cadena(p, mal) { return mal ? { lineas: [[sf(p[0], p[1])], ['= ', sd(this.valorError(p))]], falsa: 1 } : PL(this.base).cadena(p, false); },
+    bien: p => PL('fraccion-al-reves').bien(p),
+    porque(p, i) {
+      const [n, d] = p, T = x => aTexto(x, i);
+      return i === 'en' ? `${htmlFraccion(fraccion(n, d))} = ${n} : ${d} = ${T(this.bien(p))}. Writing ${n} and ${d} after the point (${T(this.valorError(p))}) is not dividing.`
+        : `${htmlFraccion(fraccion(n, d))} = ${n} : ${d} = ${T(this.bien(p))}. Escribir el ${n} y el ${d} detrás de la coma (${T(this.valorError(p))}) no es dividir.`;
+    },
+  },
+  'redondea-otro-orden': {
+    base: 'redondea-truncando',
+    valorError(p) { return E['redondea-otro-orden'].fn(sumar(p[0], p[1]), p[2]); },
+    cadena(p, mal) {
+      if (!mal) return PL(this.base).cadena(p, false);
+      const [a, b, c] = [D(p[0]), D(p[1]), p[2]];
+      return { lineas: [[sd(a), ' + ', sd(b)], ['= ', sd(sumar(a, b))], ['≈ ', sd(this.valorError(p)), ' (', ORDEN[c], ')']], falsa: 2 };
+    },
+    bien: p => PL('redondea-truncando').bien(p),
+    porque(p, i) {
+      const s = sumar(p[0], p[1]), c = p[2], T = x => aTexto(x, i), orden = ORDEN[c].t[i];
+      return i === 'en' ? `${T(s)} ${orden}: the next digit is ${digitoSiguiente(s, c)}, so it is ${T(this.bien(p))}. ${T(this.valorError(p))} is rounded to another place.`
+        : `${T(s)} ${orden}: la cifra siguiente es ${digitoSiguiente(s, c)}, así que sale ${T(this.bien(p))}. ${T(this.valorError(p))} está redondeado a otro orden.`;
+    },
+  },
+};
+const MAL = id => EXTRA[id] ?? PL(id);
+
+const SUMA_CEROS = {
+  id: 'suma-con-ceros', lineas: p => bienLineas('alinea-a-la-derecha', p),
+  porque(p, i) {
+    const [a, b, op] = [D(p[0]), D(p[1]), p[2]], k = Math.max(a.k, b.k), T = x => aTexto(x, i);
+    return i === 'en' ? `Zeros fill the gaps so the points are one under the other: ${T(a.conCifras(k))} ${op} ${T(b.conCifras(k))}.`
+      : `Los ceros rellenan los huecos y las comas quedan una debajo de otra: ${T(a.conCifras(k))} ${op} ${T(b.conCifras(k))}.`;
+  },
+};
+/** Separa el segundo número en su parte entera y su parte decimal: 4,7 + 3,25 = 4,7 + 3 + 0,25. */
+function partesDe(p) {
+  const [a, b, op] = [D(p[0]), D(p[1]), p[2]];
+  if (b.k === 0) return null;
+  const e = decimal(Math.floor(b.m / pot10(b.k)), 0), f = decimal(b.m % pot10(b.k), b.k);
+  if (e.m === 0 || f.m === 0) return null;
+  const x = op === '+' ? sumar(a, e) : restar(a, e), r = op === '+' ? sumar(x, f) : restar(x, f);
+  return { a, b, op, e, f, x, r };
+}
+const SUMA_PARTES = {
+  id: 'suma-por-partes',
+  lineas(p) {
+    const q = partesDe(p);
+    if (!q) return null;
+    const { a, b, op, e, f, x, r } = q;
+    return [[sd(a), ` ${op} `, sd(b)], ['= ', sd(a), ` ${op} `, sd(e), ` ${op} `, sd(f)], ['= ', sd(x), ` ${op} `, sd(f)], ['= ', sd(r)]];
+  },
+  porque(p, i) {
+    const { b, e, f } = partesDe(p), T = x => aTexto(x, i);
+    return i === 'en' ? `${T(b)} is split into ${T(e)} and ${T(f)}, and each part is added or subtracted in turn.`
+      : `${T(b)} se separa en ${T(e)} y ${T(f)}, y cada parte se suma o se resta por separado.`;
+  },
+};
+
+const PRODUCTO_SIN_COMAS = {
+  id: 'producto-sin-comas', lineas: p => bienLineas('coma-mal-puesta', p),
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])];
+    return i === 'en' ? `Without the points: ${a.m} · ${b.m} = ${a.m * b.m}, and the product has ${a.k} + ${b.k} = ${a.k + b.k} decimal places.`
+      : `Sin comas: ${a.m} · ${b.m} = ${a.m * b.m}, y el producto lleva ${a.k} + ${b.k} = ${a.k + b.k} cifras decimales.`;
+  },
+};
+const PRODUCTO_ENTRE = {
+  id: 'producto-entre-potencia',
+  lineas(p) {
+    const [a, b] = [D(p[0]), D(p[1])], k = pot10(b.k), r = multiplicar(a, b);
+    return [[sd(a), ' · ', sd(b)], ['= ', sd(a), ` · ${b.m} : ${k}`], ['= ', sd(multiplicar(a, b.m)), ` : ${k}`], ['= ', sd(p[2] ? r.normalizar() : r)]];
+  },
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], T = x => aTexto(x, i);
+    return i === 'en' ? `${T(b)} is ${b.m} : ${pot10(b.k)}: first ${T(a)} · ${b.m} = ${T(multiplicar(a, b.m))}, and then it is divided by ${pot10(b.k)}.`
+      : `${T(b)} es ${b.m} : ${pot10(b.k)}: primero ${T(a)} · ${b.m} = ${T(multiplicar(a, b.m))}, y después se divide entre ${pot10(b.k)}.`;
+  },
+};
+
+const POR10_COMA = {
+  id: 'por-diez-mueve-la-coma', lineas: p => bienLineas('por-diez-anadiendo-cero', p),
+  porque(p, i) {
+    const [d, n] = [D(p[0]), p[1]], T = x => aTexto(x, i);
+    return i === 'en' ? `The decimal point moves ${lugaresTxt(n, i)} to the right: ${T(porPotenciaDe10(d, n))}.`
+      : `La coma se mueve ${lugaresTxt(n, i)} a la derecha: ${T(porPotenciaDe10(d, n))}.`;
+  },
+};
+const POR10_PASOS = {
+  id: 'por-diez-de-diez-en-diez',
+  lineas(p) {
+    const [d, n, c] = [D(p[0]), p[1], p[2]];
+    if (n < 2) return null;
+    const l = [[sd(d), ` · ${pot10(n)} + ${c}`]];
+    for (let j = 1; j <= n; j++) l.push(['= ', sd(porPotenciaDe10(d, j)), ' · 10'.repeat(n - j), ` + ${c}`]);
+    l.push(['= ', sd(sumar(porPotenciaDe10(d, n), c))]);
+    return l;
+  },
+  porque(p, i) {
+    const [d, n] = [D(p[0]), p[1]];
+    return i === 'en' ? `${pot10(n)} is ${n} tens, and each · 10 moves the point one place to the right: ${aTexto(porPotenciaDe10(d, n), i)}.`
+      : `${pot10(n)} son ${n} dieces, y cada · 10 mueve la coma un lugar a la derecha: ${aTexto(porPotenciaDe10(d, n), i)}.`;
+  },
+};
+
+const DIV_ENTERA_SIN_COMA = {
+  id: 'division-sin-la-coma', lineas: p => bienLineas('olvida-coma-cociente', p),
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], q = dividir(a, b).cociente;
+    return i === 'en' ? `Without the point: ${a.m} : ${b.m} = ${q.m}, and the quotient has the decimal places of ${aTexto(a, i)}.`
+      : `Sin la coma: ${a.m} : ${b.m} = ${q.m}, y el cociente lleva las cifras decimales de ${aTexto(a, i)}.`;
+  },
+};
+const DIV_ENTERA_ENTRE = {
+  id: 'division-entre-potencia',
+  lineas(p) {
+    const [a, b] = [D(p[0]), D(p[1])], q = dividir(a, b).cociente, k = pot10(a.k);
+    return [[sd(a), ' : ', sd(b)], ['= ', sd(decimal(a.m, 0)), ' : ', sd(b), ` : ${k}`], ['= ', sd(decimal(q.m, 0)), ` : ${k}`], ['= ', sd(q)]];
+  },
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], q = dividir(a, b).cociente;
+    return i === 'en' ? `${aTexto(a, i)} is ${a.m} : ${pot10(a.k)}: ${a.m} : ${b.m} = ${q.m}, and then it is divided by ${pot10(a.k)}.`
+      : `${aTexto(a, i)} es ${a.m} : ${pot10(a.k)}: ${a.m} : ${b.m} = ${q.m}, y después se divide entre ${pot10(a.k)}.`;
+  },
+};
+
+const DIV_DECIMAL_MOVER = {
+  id: 'division-quita-la-coma', lineas: p => bienLineas('coma-solo-en-divisor', p),
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], T = x => aTexto(x, i);
+    return i === 'en' ? `The point moves ${lugaresTxt(b.k, i)} to the right in both numbers: ${T(porPotenciaDe10(a, b.k))} : ${b.m}.`
+      : `La coma se mueve ${lugaresTxt(b.k, i)} a la derecha en los dos números: ${T(porPotenciaDe10(a, b.k))} : ${b.m}.`;
+  },
+};
+const DIV_DECIMAL_DIRECTA = {
+  id: 'division-directa',
+  lineas(p) {
+    const [a, b] = [D(p[0]), D(p[1])];
+    return [[sd(a), ' : ', sd(b)], ['= ', sd(dividir(a, b).cociente)]];
+  },
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], q = dividir(a, b).cociente, T = x => aTexto(x, i);
+    return i === 'en' ? `Directly: ${T(b)} · ${T(q)} = ${T(a)}.` : `Directamente: ${T(b)} · ${T(q)} = ${T(a)}.`;
+  },
+};
+
+const DIV_RESTO = {
+  id: 'division-resto-original', lineas: p => bienLineas('resto-sin-deshacer', p),
+  porque: (p, i) => PL('resto-sin-deshacer').porque(p, i),
+};
+
+const REDONDEO_SUMA = {
+  id: 'redondeo-de-la-suma', lineas: p => bienLineas('redondea-truncando', p),
+  porque(p, i) { return comoRedondear(p, i, x => aTexto(x, i)); },
+};
+const REDONDEO_CIFRA = {
+  id: 'redondeo-cifra-siguiente',
+  lineas(p) {
+    const [a, b, c] = [D(p[0]), D(p[1]), p[2]], s = sumar(a, b), dig = digitoSiguiente(s, c);
+    return [[sd(a), ' + ', sd(b)], ['= ', sd(s)],
+      [st('Cifra siguiente: ', 'Next digit: '), `${dig} `, dig >= 5 ? st('(5 o más: se sube)', '(5 or more: round up)') : st('(menos de 5: se deja)', '(less than 5: leave it)')],
+      ['≈ ', sd(redondear(s, c)), ' (', ORDEN[c], ')']];
+  },
+  porque(p, i) {
+    const s = sumar(p[0], p[1]);
+    return i === 'en' ? `Only the next digit counts: ${digitoSiguiente(s, p[2])}.` : `Solo cuenta la cifra siguiente: ${digitoSiguiente(s, p[2])}.`;
+  },
+};
+
+const FRACCION_DIVIDE = {
+  id: 'fraccion-numerador-entre-denominador', lineas: p => bienLineas('fraccion-al-reves', p),
+  porque: (p, i) => (i === 'en' ? `${htmlFraccion(fraccion(p[0], p[1]))} is ${p[0]} : ${p[1]}.` : `${htmlFraccion(fraccion(p[0], p[1]))} es ${p[0]} : ${p[1]}.`),
+};
+/** El número por el que se multiplica el denominador para llegar a una potencia de 10 (o null si ya lo es). */
+const haciaPotencia10 = d => { for (let k = 1; k <= 3; k++) if (pot10(k) % d === 0) return pot10(k) / d; return null; };
+const FRACCION_EQUIVALENTE = {
+  id: 'fraccion-con-denominador-10',
+  lineas(p) {
+    const [n, d] = p, m = haciaPotencia10(d);
+    if (!m || m === 1) return null;
+    return [[sf(n, d)], ['= ', sf(n * m, d * m)], ['= ', sd(deFraccion(fraccion(n, d)))]];
+  },
+  porque(p, i) {
+    const [n, d] = p, m = haciaPotencia10(d), v = aTexto(deFraccion(fraccion(n, d)), i);
+    return i === 'en' ? `Multiplying the top and the bottom by ${m}, the denominator is ${d * m} and it can be read straight off: ${v}.`
+      : `Multiplicando arriba y abajo por ${m}, el denominador es ${d * m} y se lee directamente: ${v}.`;
+  },
+};
+const FRACCION_PERIODICA = {
+  id: 'fraccion-periodica', lineas: p => bienLineas('periodico-por-redondeo', p),
+  porque: (p, i) => COMO_SE_HACE['periodico-por-redondeo'](p, i),
+};
+
+const COMPARA_IGUALANDO = {
+  id: 'compara-igualando-cifras', lineas: p => bienLineas('compara-por-cifras', p),
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], k = Math.max(a.k, b.k), T = x => aTexto(x, i), r = ESC_CMP[cmpTexto(comparar(a, b))];
+    return i === 'en' ? `With the same number of decimal places: ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}.` : `Con las mismas cifras decimales: ${T(a.conCifras(k))} ${r} ${T(b.conCifras(k))}.`;
+  },
+};
+const LUGARES = [st('las décimas', 'the tenths'), st('las centésimas', 'the hundredths'), st('las milésimas', 'the thousandths'), st('las diezmilésimas', 'the ten-thousandths')];
+/** La primera cifra decimal en la que difieren dos decimales, con las cifras de cada uno. */
+function primeraDistinta(a, b) {
+  const k = Math.max(a.k, b.k), da = String(a.conCifras(k).m % pot10(k)).padStart(k, '0'), db = String(b.conCifras(k).m % pot10(k)).padStart(k, '0');
+  const i = [...da].findIndex((x, j) => x !== db[j]);
+  return i < 0 ? null : { i, x: da[i], y: db[i] };
+}
+const COMPARA_CIFRA = {
+  id: 'compara-cifra-a-cifra',
+  lineas(p) {
+    const [a, b] = [D(p[0]), D(p[1])], q = primeraDistinta(a, b);
+    if (!q) return null;
+    return [[sd(a), st(' y ', ' and '), sd(b)], [st(`Primera cifra distinta: `, 'First different digit: '), LUGARES[q.i], `, ${q.x} `, st('y', 'and'), ` ${q.y}`],
+      ['= ', sd(a), ` ${cmpTexto(comparar(a, b))} `, sd(b)]];
+  },
+  porque(p, i) {
+    const [a, b] = [D(p[0]), D(p[1])], q = primeraDistinta(a, b), T = x => aTexto(x, i);
+    const r = ESC_CMP[cmpTexto(comparar(a, b))];
+    return i === 'en' ? `The first different digit is in ${LUGARES[q.i].t.en}: ${q.x} and ${q.y}, so ${T(a)} ${r} ${T(b)}.`
+      : `La primera cifra distinta está en ${LUGARES[q.i].t.es}: ${q.x} y ${q.y}, luego ${T(a)} ${r} ${T(b)}.`;
+  },
+};
+
+export const FAMILIAS = [
+  { id: 'suma', plantillas: ['alinea-a-la-derecha'], bien: [SUMA_CEROS, SUMA_PARTES], mal: ['alinea-a-la-derecha'], peso: 3 },
+  { id: 'producto', plantillas: ['coma-mal-puesta'], bien: [PRODUCTO_SIN_COMAS, PRODUCTO_ENTRE], mal: ['coma-mal-puesta'], peso: 2 },
+  { id: 'por10', plantillas: ['por-diez-anadiendo-cero'], bien: [POR10_COMA, POR10_PASOS], mal: ['por-diez-anadiendo-cero'], peso: 2 },
+  { id: 'division-entera', plantillas: ['olvida-coma-cociente'], bien: [DIV_ENTERA_SIN_COMA, DIV_ENTERA_ENTRE], mal: ['olvida-coma-cociente'], peso: 2 },
+  { id: 'division-decimal', plantillas: ['coma-solo-en-divisor'], bien: [DIV_DECIMAL_MOVER, DIV_DECIMAL_DIRECTA], mal: ['coma-solo-en-divisor'], peso: 2 },
+  { id: 'division-resto', plantillas: ['resto-sin-deshacer'], bien: [DIV_RESTO], mal: ['resto-sin-deshacer'], peso: 1 },
+  { id: 'redondeo', plantillas: ['redondea-truncando', 'redondea-en-cadena'], bien: [REDONDEO_SUMA, REDONDEO_CIFRA], mal: ['redondea-truncando', 'redondea-en-cadena', 'redondea-otro-orden'], peso: 3 },
+  { id: 'fraccion', plantillas: ['fraccion-al-reves'], bien: [FRACCION_DIVIDE, FRACCION_EQUIVALENTE], mal: ['fraccion-al-reves', 'numerador-como-decimas'], peso: 3 },
+  { id: 'fraccion-periodica', plantillas: ['periodico-por-redondeo'], bien: [FRACCION_PERIODICA], mal: ['periodico-por-redondeo'], peso: 1 },
+  { id: 'comparacion', plantillas: ['compara-por-cifras'], bien: [COMPARA_IGUALANDO, COMPARA_CIFRA], mal: ['compara-por-cifras'], peso: 2 },
+];
+export const FAMILIA_POR_ID = Object.fromEntries(FAMILIAS.map(fa => [fa.id, fa]));
+const SORTEO = FAMILIAS.flatMap(fa => Array(fa.peso).fill(fa));
+const RUTAS_BIEN = Object.fromEntries(FAMILIAS.flatMap(fa => fa.bien).map(r => [r.id, r]));
+
+/**
+ * Las columnas posibles de una familia con unos números: { bien: [...], mal: [...] }, cada una
+ * { ruta, lineas (con el enunciado), falsa, error }, sin dos iguales ni dos con el mismo error.
+ */
+export function columnasPosibles(familia, params) {
+  const base = PL(familia.plantillas[0]), enunciado = JSON.stringify(base.cadena(params, false).lineas[0]);
+  const vistas = new Set();
+  const nueva = c => { const k = JSON.stringify(c.lineas); if (vistas.has(k)) return false; vistas.add(k); return true; };
+  const bien = [];
+  for (const r of familia.bien) {
+    const lineas = r.lineas(params);
+    if (lineas && JSON.stringify(lineas[0]) === enunciado) {
+      const c = { ruta: r.id, lineas, falsa: null, error: null };
+      if (nueva(c)) bien.push(c);
+    }
+  }
+  const mal = [];
+  for (const id of familia.mal) {
+    const p = MAL(id);
+    let valor, cadena;
+    try { valor = p.valorError(params); cadena = p.cadena(params, true); } catch { continue; }
+    const buenoFinal = p.bien(params);
+    if (valor === null || valor === undefined) continue;
+    if (buenoFinal !== null && buenoFinal !== undefined && (typeof valor === 'number' ? valor === buenoFinal : mismoValor(valor, buenoFinal))) continue;
+    if (JSON.stringify(cadena.lineas[0]) !== enunciado) continue;
+    const c = { ruta: id, lineas: cadena.lineas, falsa: cadena.falsa, error: id };
+    if (nueva(c)) mal.push(c);
+  }
+  return { bien, mal };
+}
+
+/** Las LETRAS de las columnas. */
+export const LETRAS = ['A', 'B', 'C', 'D'];
+
+/** Lo que explica una columna: { porque (idioma), corregida: línea buena | null }. */
+export function explicaColumna(item, c) {
+  if (c.error) return { porque: i => (COMO_SE_HACE[c.error] ?? MAL(c.error).porque.bind(MAL(c.error)))(item.params, i, x => aTexto(x, i)), corregida: MAL(c.error).cadena(item.params, false).lineas[c.falsa] };
+  return { porque: i => RUTAS_BIEN[c.ruta].porque(item.params, i), corregida: null };
+}
+
+/** ¿Acaba en cero tras la coma (3,50) la última línea de la columna? */
+export const columnaConCeros = c => c.lineas.at(-1).some(s => s && s.d !== undefined && conCerosFinales(D(s.d)));
+
+/** Un error de otro tipo de cálculo que no puede describir esta columna (dos de ellos van con el bueno). */
+function nombresPara(rng, error) {
+  const otros = Object.keys(CLASE_DE).filter(id => CLASE_DE[id] !== CLASE_DE[error]);
+  return rng.barajar([error, ...rng.barajar(otros).slice(0, 2)]);
+}
+
+/**
+ * Ejercicio 1: ¿dónde está el error? El mismo cálculo en 2-4 columnas, 1-2 bien y 1-2 mal. La respuesta
+ * (`solucion`) es, por columna, el índice de la línea mala (contando el enunciado) o null; después, una pregunta
+ * por cada columna mala con el nombre bueno y dos que no pueden describirla.
+ */
 export function generarDonde(rng) {
-  const p = rng.elegir(PLANTILLAS), params = conParams(p, rng);
-  return baseItem('donde', p, params, rng.azar() >= 1 / 3);
+  for (let intento = 0; intento < 500; intento++) {
+    const familia = rng.elegir(SORTEO);
+    const base = PL(rng.elegir(familia.plantillas)), params = conParams(base, rng);
+    const { bien, mal } = columnasPosibles(familia, params);
+    if (!bien.length || !mal.length) continue;
+    const dos = () => (rng.azar() < 0.6 ? 2 : 1);
+    const columnas = rng.barajar([...rng.barajar(bien).slice(0, dos()), ...rng.barajar(mal).slice(0, dos())]);
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error)
+      .map(({ c, col }) => ({ col, opciones: nombresPara(rng, c.error), solucion: c.error }));
+    return {
+      tipo: 'donde', plantilla: base.id, familia: familia.id, params, enunciado: columnas[0].lineas[0], columnas, preguntas,
+      solucion: columnas.map(c => c.falsa),
+    };
+  }
+  throw new Error('generarDonde: no salen columnas');
 }
 
 /** Ejercicio 2: ¿qué error es? Siempre hay error; cuatro nombres, uno solo verdadero. */
@@ -575,11 +895,5 @@ export function corregirCorrige(item, escrito) {
   return { acierto: false, error: 'otro-resultado' };
 }
 
-/** ¿Alguna línea acaba en cero tras la coma (3,50)? Entonces el feedback de «todo bien» lo recuerda. */
-export function tieneCerosFinales(item) {
-  const ultima = item.lineas.at(-1);
-  return ultima.some(s => s && s.d !== undefined && conCerosFinales(D(s.d)));
-}
-
 /** Clave para que la base no repita el ítem anterior. */
-export const claveItem = item => `${item.plantilla}|${item.params.join(',')}|${item.falsa ?? 'x'}`;
+export const claveItem = item => `${item.plantilla}|${item.params.join(',')}|${item.falsa === undefined ? 'x' : item.falsa}`;

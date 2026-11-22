@@ -120,40 +120,124 @@ test('cada plantilla: el valor bueno y el malo coinciden con el cálculo a mano 
   }
 });
 
-test('ejercicio 1: la línea mala es la marcada; las anteriores están bien y el resultado malo es el de la plantilla', () => {
+// ─── Ejercicio 1 en columnas (tarea 237, JL 22-11) ────────────────────────────────────────────
+
+/** Un evaluador independiente (racionales con BigInt) para las líneas «= expr» y «a = b»: sin decimales.js. */
+const mcd = (a, b) => (b === 0n ? (a < 0n ? -a : a) : mcd(b, a % b));
+const racional = (n, d) => { const g = mcd(n, d) || 1n; return d < 0n ? [-n / g, -d / g] : [n / g, d / g]; };
+const suma = ([a, b], [c, d]) => racional(a * d + c * b, b * d);
+const prod = ([a, b], [c, d]) => racional(a * c, b * d);
+const cociR = ([a, b], [c, d]) => racional(a * d, b * c);
+const num = s => { const [e, f = ''] = s.split(','); return racional(B(e + f), p10(f.length)); };
+function evalua(texto) {
+  const toks = texto.match(/\d+(?:,\d+)?|[+−·:/]/g);
+  if (!toks || toks.join('').length < texto.replace(/\s/g, '').length) return null;
+  let i = 0;
+  const termino = () => {
+    let v = num(toks[i++]);
+    while (i < toks.length && '·:/'.includes(toks[i])) { const o = toks[i++]; const w = num(toks[i++]); v = o === '·' ? prod(v, w) : cociR(v, w); }
+    return v;
+  };
+  let v = termino();
+  while (i < toks.length) { const o = toks[i++]; const w = termino(); v = o === '+' ? suma(v, w) : suma(v, [-w[0], w[1]]); }
+  return v;
+}
+const iguales = (x, y) => x[0] * y[1] === y[0] * x[1];
+const NO_EVALUABLE = /≈|<|>|resto|Resto|remainder|Remainder|Cifra|digit|Primera|First|cociente|quotient|…/;
+/** Lo que dice una línea evaluable: { partes: [valores separados por « = »], desdeIgual } o null. */
+function valoresDeLinea(texto) {
+  if (NO_EVALUABLE.test(texto)) return null;
+  const sinPrefijo = texto.replace(/^(Sin comas|Sin la coma|Without the points?): /, '');
+  const desdeIgual = sinPrefijo.startsWith('= ');
+  const partes = (desdeIgual ? sinPrefijo.slice(2) : sinPrefijo).split(' = ').map(evalua);
+  return partes.includes(null) ? null : { partes, desdeIgual };
+}
+const lineaEsCierta = (texto, V0) => {
+  const v = valoresDeLinea(texto);
+  if (!v) return null;
+  return v.partes.every(x => iguales(x, v.partes[0])) && (!v.desdeIgual || iguales(v.partes[0], V0));
+};
+
+test('ejercicio 1: de 2 a 4 columnas, 1 o 2 bien y 1 o 2 mal; cada línea cierta salvo la marcada de las malas', () => {
   const items = generar(L.generarDonde);
-  const posiciones = new Set(), vistas = new Set();
-  let sinError = 0;
+  const porColumnas = {}, combos = {}, familias = new Set(), ceros = { n: 0 };
   for (const item of items) {
     assert.equal(item.tipo, 'donde');
-    assert.equal(item.lineas.length, 3);
-    const p = L.PLANTILLA_POR_ID[item.plantilla];
-    const buena = p.cadena(item.params, false);
-    assert.equal(buena.falsa, null);
-    vistas.add(item.plantilla);
-    if (item.falsa === null) {
-      sinError++;
-      assert.equal(item.error, null);
-      assert.deepEqual(item.lineas, buena.lineas);
-      if (MANO[p.id](item.params).bien && p.id !== 'compara-por-cifras') {
-        // El resultado de la última línea vale lo bueno (aunque lleve ceros al final).
-        const fin = D(resultado(finalDe(item)).split(' ')[0].replace(/…$/, ''));
-        assert.ok(fin === null || mismoValor(fin, p.bien(item.params)) || p.id === 'resto-sin-deshacer' || p.id === 'redondea-truncando', `${p.id}: ${finalDe(item)}`);
+    const cols = item.columnas;
+    assert.ok(cols.length >= 2 && cols.length <= 4, `${cols.length} columnas`);
+    porColumnas[cols.length] = (porColumnas[cols.length] ?? 0) + 1;
+    const bien = cols.filter(c => !c.error), mal = cols.filter(c => c.error);
+    assert.ok(bien.length >= 1 && bien.length <= 2 && mal.length >= 1 && mal.length <= 2, `${bien.length}+${mal.length}`);
+    combos[`${bien.length}+${mal.length}`] = (combos[`${bien.length}+${mal.length}`] ?? 0) + 1;
+    familias.add(item.familia);
+    assert.deepEqual(item.solucion, cols.map(c => c.falsa));
+    assert.equal(new Set(cols.map(c => JSON.stringify(c.lineas))).size, cols.length, 'dos columnas iguales');
+    assert.equal(new Set(mal.map(c => c.error)).size, mal.length, 'dos columnas con el mismo error');
+    assert.equal(new Set(bien.map(c => c.ruta)).size, bien.length, 'dos columnas bien por el mismo camino');
+    const V0 = evalua(L.textoLinea(item.enunciado, 'es'));
+    assert.deepEqual(item.enunciado, L.PLANTILLA_POR_ID[item.plantilla].cadena(item.params, false).lineas[0]);
+    for (const c of cols) {
+      assert.deepEqual(c.lineas[0], item.enunciado, 'todas empiezan por el mismo enunciado');
+      assert.ok(c.lineas.length >= 2 && c.lineas.length <= 5, 'de una a cuatro líneas de cálculo');
+      if (c.error) {
+        assert.ok(c.falsa >= 1 && c.falsa < c.lineas.length, 'la línea 0 es el enunciado y nunca está mal');
+        assert.ok(L.CLASE_DE[c.error], c.error);
+      } else {
+        assert.equal(c.falsa, null);
+        ceros.n += L.columnaConCeros(c) ? 1 : 0;
       }
-    } else {
-      assert.ok(item.falsa === 1 || item.falsa === 2, 'la línea 1 es el enunciado y nunca está mal');
-      assert.equal(item.error, p.id);
-      posiciones.add(item.falsa);
-      // Antes de la mala, igual que la buena; la mala, distinta (en los dos idiomas); el resto sigue de ella.
-      for (let i = 0; i < item.falsa; i++) assert.deepEqual(item.lineas[i], buena.lineas[i]);
-      for (const idioma of ['es', 'en']) {
-        assert.notEqual(L.textoLinea(item.lineas[item.falsa], idioma), L.textoLinea(buena.lineas[item.falsa], idioma), `${p.id}: ${item.params}`);
-      }
+      c.lineas.forEach((l, i) => {
+        if (i === 0) return;
+        const cierta = lineaEsCierta(L.textoLinea(l, 'es'), V0);
+        if (c.error && i === c.falsa) assert.notEqual(cierta, true, `${c.ruta}: la línea marcada es cierta: ${L.textoLinea(l, 'es')}`);
+        else if (!c.error || i < c.falsa) assert.notEqual(cierta, false, `${c.ruta}: línea falsa: ${L.textoLinea(l, 'es')} (${item.params})`);
+      });
+    }
+    // Las malas con plantilla propia son exactamente su cadena con error, y lo correcto es su cadena buena.
+    for (const c of mal) {
+      const p = L.PLANTILLA_POR_ID[c.error];
+      if (!p) continue;
+      assert.deepEqual(c.lineas, p.cadena(item.params, true).lineas);
+      assert.equal(c.falsa, p.cadena(item.params, true).falsa);
+    }
+    // Las dos preguntas: el nombre bueno y dos de otro tipo de cálculo.
+    assert.equal(item.preguntas.length, mal.length);
+    item.preguntas.forEach(q => {
+      const c = cols[q.col];
+      assert.equal(q.solucion, c.error);
+      assert.equal(q.opciones.length, 3);
+      assert.equal(new Set(q.opciones).size, 3);
+      assert.ok(q.opciones.includes(q.solucion));
+      for (const id of q.opciones) { assert.ok(ERRORES_TIPICOS[id], id); if (id !== q.solucion) assert.notEqual(L.CLASE_DE[id], L.CLASE_DE[c.error], `${id} es del mismo tipo que ${c.error}`); }
+    });
+  }
+  const tantoPorCiento = x => (x ?? 0) / N;
+  assert.ok(tantoPorCiento((porColumnas[3] ?? 0) + (porColumnas[4] ?? 0)) > 0.3, `3-4 columnas: ${JSON.stringify(porColumnas)}`);
+  assert.ok(porColumnas[2] > N * 0.2 && porColumnas[4] > N * 0.02, JSON.stringify(porColumnas));
+  for (const k of ['1+1', '1+2', '2+1', '2+2']) assert.ok(combos[k] > N * 0.02, `${k}: ${JSON.stringify(combos)}`);
+  assert.equal(familias.size, L.FAMILIAS.length, 'salen todas las familias');
+  assert.ok(ceros.n > 20, 'salen columnas buenas con ceros al final');
+});
+
+test('ejercicio 1: cada plantilla sale como error de alguna columna y las dos de catálogo sin plantilla también', () => {
+  const errores = new Set();
+  for (const item of generar(L.generarDonde, 29)) for (const c of item.columnas) if (c.error) errores.add(c.error);
+  for (const p of L.PLANTILLAS) assert.ok(errores.has(p.id), `no sale ${p.id}`);
+  assert.ok(errores.has('numerador-como-decimas') && errores.has('redondea-otro-orden'));
+});
+
+test('ejercicio 1: los dos errores de catálogo sin plantilla se recalculan a mano', () => {
+  for (const item of generar(L.generarDonde, 37)) for (const c of item.columnas) {
+    if (c.error === 'numerador-como-decimas') {
+      const [n, d] = item.params;
+      assert.equal(L.textoLinea(c.lineas[1], 'es'), `= 0,${n}${d}`);
+    }
+    if (c.error === 'redondea-otro-orden') {
+      const [a, b, o] = item.params, A = D(a), Bb = D(b), k = Math.max(A.k, Bb.k);
+      const S = B(A.m) * p10(k - A.k) + B(Bb.m) * p10(k - Bb.k), dos = p10(k - o - 1);
+      assert.ok(igual(D(resultado(L.textoLinea(c.lineas[2], 'es')).replace(/ \(.*\)$/, '')), [cociente(S + dos / 2n, dos), p10(o + 1)]));
     }
   }
-  assert.deepEqual([...posiciones].sort(), [1, 2], 'el error no puede estar siempre en la misma línea');
-  assert.equal(vistas.size, L.PLANTILLAS.length, 'todas las plantillas salen');
-  assert.ok(sinError > N * 0.28 && sinError < N * 0.38, `sin error: ${sinError} de ${N} (un tercio)`);
 });
 
 test('el resultado malo que se ve es el del error de la plantilla (última línea o paso marcado)', () => {
@@ -268,23 +352,19 @@ test('los casos de la hoja de la semana (en claro) y los del examen (por huella)
   }
 });
 
-test('sin error, algunos resultados llevan ceros al final y el feedback lo recuerda', () => {
-  const items = generar(L.generarDonde, 31).filter(i => i.falsa === null);
-  assert.ok(items.some(L.tieneCerosFinales), 'tiene que salir algún 3,50 sin error');
-  assert.ok(items.some(i => !L.tieneCerosFinales(i)));
-});
-
 test('los ítems son JSON (la base los guarda) y se pintan igual después de ida y vuelta', () => {
   for (const fn of [L.generarDonde, L.generarQue, L.generarCorrige]) {
     for (const item of generar(fn, 41).slice(0, 300)) {
       const copia = JSON.parse(JSON.stringify(item));
       assert.deepEqual(copia, item);
-      for (const idioma of ['es', 'en']) assert.deepEqual(copia.lineas.map(l => L.htmlLinea(l, idioma)), item.lineas.map(l => L.htmlLinea(l, idioma)));
+      for (const idioma of ['es', 'en']) assert.deepEqual(lineasDe(copia).map(l => L.htmlLinea(l, idioma)), lineasDe(item).map(l => L.htmlLinea(l, idioma)));
       assert.equal(L.claveItem(copia), L.claveItem(item));
     }
   }
 });
 
+/** Todas las líneas de un ítem (el ej. 1 las tiene por columna). */
+const lineasDe = item => item.lineas ?? item.columnas.flatMap(c => c.lineas);
 const sinHtml = s => s.replace(/<[^>]*>/g, '');
 /** Las reglas de la unidad en un texto que lee el alumno. */
 function reglasDeTexto(texto, idioma, donde) {
@@ -304,9 +384,10 @@ test('ningún texto de alumno con ×, porcentajes, millares, letras ni coma en i
     for (const item of generar(fn, 53).slice(0, 1200)) {
       const p = L.PLANTILLA_POR_ID[item.plantilla];
       for (const idioma of ['es', 'en']) {
-        for (const l of item.lineas) reglasDeTexto(L.textoLinea(l, idioma), idioma, `${p.id} línea`);
+        for (const l of lineasDe(item)) reglasDeTexto(L.textoLinea(l, idioma), idioma, `${p.id} línea`);
         reglasDeTexto(p.porque(item.params, idioma), idioma, `${p.id} porque`);
-        if (item.falsa !== null) for (const l of p.cadena(item.params, false).lineas) reglasDeTexto(L.textoLinea(l, idioma), idioma, `${p.id} buena`);
+        for (const c of item.columnas ?? []) reglasDeTexto(L.explicaColumna(item, c).porque(idioma), idioma, `${c.ruta} porque`);
+        if (item.falsa !== undefined) for (const l of p.cadena(item.params, false).lineas) reglasDeTexto(L.textoLinea(l, idioma), idioma, `${p.id} buena`);
       }
     }
   }
@@ -322,7 +403,7 @@ test('ningún texto de alumno con ×, porcentajes, millares, letras ni coma en i
 test('los números son de hasta cuatro cifras enteras y el resto, sin contextos que acotar', () => {
   for (const fn of [L.generarDonde, L.generarQue, L.generarCorrige]) {
     for (const item of generar(fn, 61)) {
-      for (const l of item.lineas) for (const s of l) {
+      for (const l of lineasDe(item)) for (const s of l) {
         if (s && s.d !== undefined) assert.ok(Math.abs(D(s.d).valor()) < 10000, `${item.plantilla}: ${s.d}`);
       }
       for (const x of item.params) if (typeof x === 'string' && /,/.test(x)) assert.ok(Math.abs(D(x).valor()) < 10000);

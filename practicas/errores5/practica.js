@@ -3,13 +3,13 @@
 
 import { arrancar } from '../_comun/base.js';
 import { elecciones } from '../_comun/piezas.js';
-import { lista, lineasPulsables } from '../_comun/procedimiento.js';
+import { lista, columnasPulsables, columnasFijas } from '../_comun/procedimiento.js';
 import { aTexto } from '../_comun/decimales.js';
-import { TX, explicacionDe, linea, nombreError, explicaDonde, explicaQue, explicaCorrige } from './textos.js';
+import { TX, explicacionDe, explicacionColumnas, enunciadoColumnas, columnasDe, linea, nombreError, explicaDonde, explicaQue, explicaCorrige } from './textos.js';
 import { campoDecimal } from './campo.js';
 import {
   generarDonde, generarQue, generarCorrige, claveItem,
-  corregirCorrige, resultadoBueno,
+  corregirCorrige, resultadoBueno, LETRAS,
 } from './logica.js';
 
 const cuenta = html => `<span class="cuenta">${html}</span>`;
@@ -22,27 +22,52 @@ const explicacion = explicacionDe;
 
 // ─── Ejercicio 1: ¿dónde está el error? ────────────────────────────────────────
 
-const enunciadoDonde = (item, { tt, idioma }) => `<p class="instruccion">${tt(TX.instruccion.donde)}</p>${procedimiento(item, idioma)}`;
+const enunciadoDonde = (item, { tt, idioma }) => `<p class="instruccion">${tt(TX.instruccion.donde)}</p>${columnasFijas(enunciadoColumnas(item, idioma), columnasDe(item, idioma))}`;
 
+/** Lo marcado en las columnas, para el registro del profesor: «A:2 B:- C:1». */
+const marcasEnTexto = marcas => marcas.map((m, j) => `${LETRAS[j]}:${m ?? '-'}`).join(' ');
+
+// El mismo cálculo en 2-4 columnas (JL, 22-11): se marca la línea mala de cada columna con error y se pulsa
+// «Comprobar»; si está bien, se pregunta qué error hay en cada columna mala. Una sola llamada a `api.responder`:
+// el primer fallo termina el ítem con la explicación de todas las columnas.
 function montarDonde(contenedor, item, api) {
   const { tt, idioma } = api;
   contenedor.innerHTML = `<p class="instruccion">${tt(TX.instruccion.donde)}</p>`;
-  const correcta = item.falsa ?? 'ok';
-  // El enunciado va fijo arriba: no se puede pulsar (en el enunciado no hay error).
-  const botones = lineasPulsables(contenedor, {
-    lineasHtml: item.lineas.map(l => linea(l, idioma)),
-    extra: [{ valor: 'ok', html: tt(TX.todo_bien) }],
-    alElegir(valor) {
+  const html = textos => explicacionColumnas(item, textos);
+  const columnas = columnasPulsables(contenedor, {
+    enunciadoHtml: enunciadoColumnas(item, idioma),
+    columnas: columnasDe(item, idioma),
+    textoComprobar: tt(TX.comprobar),
+    alComprobar(marcas) {
       if (api.respondido()) return;
-      botones.marcar([correcta], valor);
-      const acierto = valor === correcta;
-      api.responder({
-        acierto, html: textos => explicacion(item, textos), espera: 3600,
-        ...(acierto ? {} : { error: item.error ?? 've-un-error-donde-no-lo-hay', respuesta: valor === 'ok' ? 'todo-bien' : `linea-${valor + 1}` }),
-      });
+      columnas.corregir(item.solucion, { bien: tt(TX.col_bien), mal: tt(TX.col_mal) });
+      const fallo = marcas.findIndex((m, j) => m !== item.solucion[j]);
+      if (fallo >= 0) {
+        api.responder({ acierto: false, html, espera: 'boton', error: item.columnas[fallo].error ?? 've-un-error-donde-no-lo-hay', respuesta: marcasEnTexto(marcas) });
+        return;
+      }
+      preguntar(0);
     },
   });
-  botones.elemento.lastElementChild.classList.add('eleccion--todo');
+
+  /** La pregunta k: qué error hay en la columna mala k-ésima. Al acabar todas, acierto. */
+  function preguntar(k) {
+    if (api.respondido()) return;
+    if (k === item.preguntas.length) { api.responder({ acierto: true, html, espera: 'boton' }); return; }
+    const q = item.preguntas[k];
+    contenedor.insertAdjacentHTML('beforeend', `<p class="instruccion instruccion--siguiente">${tt(TX.pregunta_col)(LETRAS[q.col])}</p>`);
+    const nombres = elecciones(contenedor, {
+      clase: 'elecciones nombres',
+      opciones: q.opciones.map(id => ({ valor: id, html: nombreError(id, tt) })),
+      alElegir(id) {
+        if (api.respondido()) return;
+        nombres.marcar([q.solucion], id);
+        if (id !== q.solucion) { api.responder({ acierto: false, html, espera: 'boton', error: q.solucion, respuesta: id }); return; }
+        preguntar(k + 1);
+      },
+    });
+    nombres.elemento.scrollIntoView?.({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 // ─── Ejercicio 2: ¿qué error es? ───────────────────────────────────────────────

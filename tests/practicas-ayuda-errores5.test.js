@@ -27,16 +27,19 @@ const FIN = { es: 'La respuesta es', en: 'The answer is' };
  * escapar, sin «Se llama:» (en el ej. 2 repetía la respuesta) y sin las frases del feedback que enseñan mal
  * («añadir un cero» con · 100 o · 1000; la cadena de redondeos con «→»).
  */
-function comprobar(html, idioma, esperado, que) {
+function comprobar(html, idioma, esperado, que, nombres = []) {
   assert.doesNotMatch(html, /undefined|NaN|\[object|null|×/, `${que}: ${plano(html)}`);
   assert.doesNotMatch(html, /\d\/\d/, `${que}: fracción con barra — ${plano(html)}`);
   assert.doesNotMatch(html, /\s[<>]\s/, `${que}: signo sin escapar — ${plano(html)}`);
   // (lo de antes de la respuesta: el nombre del error del ej. 2 sí puede decir «añadiendo un cero»)
-  assert.doesNotMatch(html.split(FIN[idioma])[0], /Se llama:|It is called:|→|[Aa]ñadir un cero|[Aa]dding a zero/, `${que}: ${plano(html)}`);
+  // (en el ej. 1 el nombre del error de cada columna mala sí puede decir «adding a zero»: es lo que hizo el alumno)
+  const previo = nombres.reduce((h, n) => h.split(n).join(''), html.split(FIN[idioma])[0]);
+  assert.doesNotMatch(previo, /Se llama:|It is called:|→|[Aa]ñadir un cero|[Aa]dding a zero/, `${que}: ${plano(html)}`);
   const m = html.match(new RegExp(`${FIN[idioma]} <strong>(.*?)</strong>\\.$`));
   assert.ok(m, `${que}: no acaba con la respuesta — ${plano(html)}`);
   assert.equal(m[1], esperado, `${que}: ${plano(html)}`);
 }
+const E_NOMBRE = (id, idioma) => ERRORES_TIPICOS[id].nombre[idioma].split(': ')[0];
 const OPCION = { es: t => `«${t}»`, en: t => `“${t}”` };
 
 /** Lo que tiene que enseñar siempre: la línea mala y la buena (si hay error) y el resultado bueno del cálculo. */
@@ -50,22 +53,36 @@ function enseña(item, html, idioma, que) {
   assert.ok(html.includes(buena), `${que}: falta la línea buena ${buena}`);
 }
 
-test('ej. 1: acaba con la línea mala, o con «Todo está bien» como el botón; y enseña cómo se hace, también sin error', () => {
-  let sinError = 0;
+test('ej. 1: acaba con las columnas malas y explica cada columna: la mala con su línea y la buena, la buena con su porqué', () => {
   for (const item of items(L.generarDonde, 1)) {
-    assert.equal(item.falsa === null, item.error === null);
-    if (item.falsa === null) sinError++;
+    const malas = item.columnas.map((c, j) => (c.error ? L.LETRAS[j] : null)).filter(Boolean);
     for (const idioma of IDIOMAS) {
-      const esperado = item.falsa === null
-        ? OPCION[idioma](X.TX.todo_bien[idioma])
-        : lineaN(item.falsa, idioma);   // «la tercera línea» (JL, 22-11: sin números de línea)
+      const lista = malas.length === 1 ? malas[0] : `${malas.slice(0, -1).join(', ')} ${idioma === 'en' ? 'and' : 'y'} ${malas.at(-1)}`;
+      const esperado = idioma === 'en' ? `${malas.length > 1 ? 'columns' : 'column'} ${lista}` : `${malas.length > 1 ? 'las columnas' : 'la columna'} ${lista}`;
       const html = X.explicaDonde(item, ctx(idioma));
-      comprobar(html, idioma, esperado, `ej1 ${idioma}`);
-      enseña(item, html, idioma, `ej1 ${item.plantilla} ${idioma}`);
-      assert.ok(html.includes(L.comoSeHace(item, idioma)), `ej1 ${idioma}: falta cómo se hace`);
+      comprobar(html, idioma, esperado, `ej1 ${idioma}`, item.columnas.filter(c => c.error).map(c => E_NOMBRE(c.error, idioma)));
+      item.columnas.forEach((c, j) => {
+        assert.ok(html.includes(`<strong>${idioma === 'en' ? 'Column' : 'Columna'} ${L.LETRAS[j]}.</strong>`), `ej1 ${idioma}: falta la columna ${L.LETRAS[j]}`);
+        if (!c.error) return;
+        const { corregida } = L.explicaColumna(item, c);
+        assert.ok(html.includes(L.htmlLinea(c.lineas[c.falsa], idioma)), `ej1 ${idioma}: falta la línea mala de ${L.LETRAS[j]}`);
+        assert.ok(html.includes(L.htmlLinea(corregida, idioma)), `ej1 ${idioma}: falta la línea buena de ${L.LETRAS[j]}`);
+        assert.ok(html.includes('class="regla-rota"') || html.includes('regla-rota'), `ej1 ${idioma}: falta la regla en negrita`);
+      });
     }
   }
-  assert.ok(sinError > 100 && sinError < N - 100, 'salen ítems con y sin error');
+});
+
+test('ej. 1: una columna buena que acaba en cero final lo recuerda, y una mala nunca habla de «Todo está bien»', () => {
+  let con = 0;
+  for (const item of items(L.generarDonde, 7)) for (const idioma of IDIOMAS) {
+    const html = X.explicaDonde(item, ctx(idioma));
+    assert.doesNotMatch(html, /Todo está bien|All correct/);
+    const hay = item.columnas.some(c => !c.error && L.columnaConCeros(c));
+    if (hay) { con++; assert.ok(html.includes(X.TX.ceros[idioma]), `${idioma}: falta la nota de los ceros`); }
+    else assert.ok(!html.includes(X.TX.ceros[idioma]));
+  }
+  assert.ok(con > 20);
 });
 
 test('ej. 2: acaba con el nombre del error verdadero, con sus fracciones con raya', () => {
@@ -93,7 +110,7 @@ test('ej. 3: acaba con el resultado bien, con las cifras decimales que pide la l
 });
 
 test('cómo se hace: el redondeo sube o se deja según la cifra siguiente, y las cuentas que dice son verdad', () => {
-  for (const item of items(L.generarDonde, 4)) {
+  for (const item of items(L.generarQue, 4)) {
     for (const idioma of IDIOMAS) {
       const t = plano(L.comoSeHace(item, idioma));
       const r = t.match(idioma === 'es' ? /cifra siguiente, (\d): como es (5 o más|menor que 5)/ : /next digit, (\d): it is (5 or more|less than 5)/);
