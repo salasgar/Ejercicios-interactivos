@@ -132,6 +132,12 @@ Mismo esquema y tests que errores3 (ver «Contexto»); las preguntas, con el nom
 - (De la fase 1) Ninguna igualdad falsa en una columna buena: un paso que no es una igualdad («Sin comas: 212 · 9 =
   1908») no se escribe con «=» delante ni detrás. Lo comprueba un test que evalúa cada línea.
 - La base sortea el idioma del ítem: prueba siempre los dos.
+- (De la 235) Con solo un error posible en una familia, nunca salen 4 columnas: para que haya 2 malas hacen falta dos errores
+  DISTINTOS en la misma expresión (`a · b^2`: potencia y expProducto; `(a + b)^2`: expSuma y potencia). Un `evaluar` de líneas
+  (en `familias.js`) en los tests comprueba que cada línea buena vale lo mismo y que la mala es la primera que cambia.
+- (De la 235) Los distractores de una pregunta no pueden ser NINGUNO de los errores de las columnas malas del ítem ni sus
+  `CONFUNDIBLES`: se excluyen todos, no solo el de esa columna.
+- (De la 235) `git commit -- ruta` no vale con un fichero nuevo: primero `git add <ruta>` de ese fichero (solo él).
 
 ## Prohibido (propio de esta tarea)
 
