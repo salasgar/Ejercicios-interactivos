@@ -95,6 +95,7 @@ Fracciones. El fallo de cuenta cambia **el numerador** del resultado en ±1 o ±
   funciones del catálogo de la unidad, no a ojo.
 - (Del modelo) La corrección de la columna de la cuenta es solo un número: si un test pide textos de más de 3
   caracteres, exclúyela ahí.
+- (Aprendida en la 242) Solo hay cuenta donde la línea de antes lleva una operación (` + `, ` − `, ` · `, ` : `) y la línea es una fracción o un entero: `simplificar` y la potencia directa no tienen. Con una sola ruta buena de sobra, el fallo de cuenta obliga a dejar una sola columna bien; si no, solo sale en el ~8 %.
 - Si una familia no tiene ninguna ruta buena que no salga en el ítem, ese ítem va sin fallo de cuenta: no lo fuerces.
 
 ## Prohibido (propio de esta tarea)
