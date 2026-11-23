@@ -90,6 +90,14 @@ Abreviatura: **`WEB`**. Una tarea: `WEB T08 (MEDIO)` · una cadena: `WEB T01+T05
 
 ## Decisiones de reparto que conviene no rediscutir
 
+- **No se quita contenido de Juan Luis sin su sí (añadido el 23-11-2026 tras la tarea 14).** Los veredictos «RETIRAR»
+  y «quitar» de `docs/web-google-sites-inventario.md` son **propuestas de la sesión que hizo el inventario, no
+  decisiones suyas**. Él solo aprobó retirar las páginas con datos (`z_Backup`, `WWW.MATEMATICO.ES`, «Actividades
+  extraescolares») y renombrar los temas. Sin preguntarle solo se quita un enlace **roto y comprobado** (404 o sin
+  respuesta), anotando su texto y su URL en `cambios.md`. Todo lo demás (noticias, vídeos, páginas, textos, por
+  viejos que parezcan) se deja donde está y se le propone en la lista de pendientes. Vale también para la tarea 18:
+  su criterio «nada de lo marcado RETIRAR sigue ahí» se limita a las tres páginas con datos.
+
 - **Aprobado por Juan Luis el 2026-11-23**: retirar `z_Backup`, `WWW.MATEMATICO.ES` y «Actividades extraescolares» (hecho en
   el borrador); renombrar los temas a las unidades de este curso (hecho: T7→Unidad 6, T6→Unidad 7, T8→«Estadística y
   probabilidad», nueva «Unidad 8. Geometría»); y que el catálogo de acertijos sea una página con filtros incrustada
