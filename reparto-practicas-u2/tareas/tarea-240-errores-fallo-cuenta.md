@@ -96,6 +96,13 @@ Las columnas de errores (tarea 234) son frases. El fallo de cuenta solo vale don
 - (Del modelo) La corrección de la columna de la cuenta es solo un número: si un test pide textos de más de 3
   caracteres, exclúyela ahí.
 - Si una familia no tiene ninguna ruta buena que no salga en el ítem, ese ítem va sin fallo de cuenta: no lo fuerces.
+- (s-20261123T123904-c9b7e2ff, 23-11) En la U2 los trozos (`e-trozos`) no están en el ejercicio 2, así que el fallo de
+  cuenta sale solo en mcd, mcm y horas. En mcm sale poco (9 % de sus ítems): casi siempre lleva dos columnas malas con
+  nombre, y entonces no cabe. Para encontrar un ítem con fallo de cuenta en Chrome sin ir a ciegas: un `javascript_exec`
+  que compare la última línea de cada `.columna` con el producto de la anterior (los `<sup>` se leen del `innerHTML`) y
+  pulse «No lo sé» y «Siguiente» hasta dar con uno; con menos de 30 vueltas por llamada, que a los 45 s se corta.
+- (Ídem) `resize_window` no estrechó la ventana (seguía a 1414 px): los 375 px se prueban metiendo la práctica en un
+  `<iframe>` de 375 px desde la propia página de localhost.
 
 ## Prohibido (propio de esta tarea)
 
