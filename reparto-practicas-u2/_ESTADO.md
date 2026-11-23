@@ -12,8 +12,12 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-23T10:57Z por s-20261123T105616-5abfb78b alta de las tareas 240-244 (el fallo de cuenta en las columnas de «Caza el error»; modelo en errores3, 8ef414a): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
+
 Actualizado 2026-11-22T12:53Z por s-20261122T122731-0722f6b1 al cerrar la 238 (LISTA, commit bab276f: errores7, ejercicio 1 en columnas; tests propios 34/34, npm test 2745/2745; probada en Chrome headless a 375 y 1200 px, es y en): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real ~25 min (estimada 75 min). Con ella, las seis de la fase 2 (234-239) están LISTAS.
+
 Actualizado 2026-11-22T12:35Z por s-20261122T122714-8c8e0765 al cerrar la 235 (LISTA, commit 5fddf43: errores1, ejercicio 2 en columnas; tests propios 94/94, npm test 2738/2738; sin prueba en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real ~8 min (estimada 60 min). Antes: Actualizado 2026-11-22T12:34Z por s-20261122T121724-12f10dae al cerrar la 234 (LISTA, commit 31c9710: errores, ejercicio 2 en columnas; tests propios 95/95, npm test 2732/2732; sin prueba en navegador: la denegó el clasificador de permisos): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real ~16 min (estimada 75 min). Antes, 12:18Z, la misma sesión al reclamarla.
+
 Actualizado 2026-11-22T12:40Z por s-20261122T120758-f6f541d1 al cerrar la 237 (LISTA, commit 3c3d307: errores5, ejercicio 1 en columnas; sin probar en navegador): retoque de su fila. Antes: por s-20261122T120758-f3e25fcd al cerrar la 236 (LISTA, commit 4ce133d: errores4, ejercicio 2 en columnas; sin probar en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-22T12:20Z por s-20261122T120759-c8f40585 al cerrar la 239 (LISTA, commit 7ad5076: errores6, el error en las líneas de en medio; tests propios 68 en verde): **retoque de su fila y de la foto**, no regeneración completa (otras sesiones en el árbol).
@@ -31,16 +35,6 @@ Actualizado 2026-11-19T18:44Z por s-20261119T184002-bcbd58ef al cerrar la 210 (L
 Actualizado 2026-11-19T18:46Z por s-20261119T184017-5bf93867 al reclamar la 211 (base de la U7; su precondición se cumple: tarea 01 del reparto de la U7 LISTA, s-20261119T132624-ca28a38b, e `inventario-unidad7.tsv` existe, F0 sin firmar; la 210 la ha relevado s-20261119T184002-bcbd58ef): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-19T13:24Z por s-20261118T221619-b66ec280 alta de las tareas 211-233 (la unidad 7 en la app; todas BLOQUEADAS hasta que avance el reparto de la U7): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-18T22:29Z por s-20261118T222927-cc5dc2ff al dar de alta la 210 (lecturas de Firestore, ALTO): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
-
-Actualizado 2026-11-18T22:24Z por s-20261118T221435-7e460307 al cerrar la 160 (LISTA: la semana 4 de la U6 en el panel como tarea 28, con el visto bueno de Juan Luis; con la 25, 26 y 27, las cuatro): **retoque de su fila y del registro**, no regeneración completa (otras sesiones en el árbol).
-
-Actualizado 2026-11-18T22:15Z por s-20261118T221435-7e460307 al reclamar la 160 (tercera vuelta: la semana 4, tras la 159 LISTA): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
-
-Actualizado 2026-11-18T22:14Z por s-20261118T214819-b3d2ac7b al cerrar la 159 (LISTA, commits 9bd566e y ee3c0ac: la semana 4 de la U6 entera; 153 LISTA en 6f5ac4b y 154 en b837244; npm test 2489/2489; encadena la 160): **retoque de las filas 153, 154 y 159, de «Prácticas sin publicar» y del registro**, no regeneración completa (otras sesiones en el árbol). Duración real: ~25 min (estimada 1 h).
-
-Actualizado 2026-11-18T22:09Z por s-20261118T220737-035b1f6f al cerrar la 153 (LISTA, commit 6f5ac4b: el porqué del ej. 2 escribe el dinero con solTexto; npm test 2489/2489; la publica la 159): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Duración real: unos 10 min.
 
 Las líneas «Actualizado» anteriores están en git y, hasta el 11-11, en `hechos/notas/s-20261111T215225-39c1f4f5-historial-tablon.md` (no derivadas).
 
@@ -373,17 +367,22 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 231 | Revisión a mano (con clics) y publicación de las prácticas del paquete 5 de la unidad 7 (`problemas-proporcion`, `errores7`, y `leelo7` si la 227 no la publicó), con la propuesta de la tarea semanal del lun 19-4 | tareas/tarea-231-publicar-u7-semana5.md | 224 y 225 LISTAS · la hoja 5, el tipo test 5 y el examen final (tareas 11, 26 y 29) LISTOS en el reparto de la U7 (para el cotejo de casos) · no en paralelo co… | 1 h | ALTO | 230 (antes), 232 (después, si Juan Luis está delante) | reparto-practicas-u2/salidas/231-publicar-u7-semana5/ | BLOQUEADA | espera a 230 |
 | 232 | Montar en el panel de la app las seis tareas semanales de la unidad 7, con Juan Luis delante (Claude en Chrome) | tareas/tarea-232-tareas-u7-panel.md | **227 LISTA** para la primera tarea (y 228, 229, 230 y 231 para las siguientes: las propuestas de tarea dependen de qué prácticas quedan publicadas; se puede m… | 1 h | ALTO | la publicación que acabe de cerrar (227-231), en la misma sesión, si… | reparto-practicas-u2/salidas/232-tareas-u7-panel/ | BLOQUEADA | espera a 227 |
 | 233 | Generadores `proporcionalidad.js` y `porcentajes.js` de la app principal al día con el inventario de la U7 (`items`, distractores = errores típicos, nunca dos opciones con el mismo valor, aritmética exacta, cada contexto con su cota) | tareas/tarea-233-generadores-proporcionalidad.md | F0 del reparto de la U7 firmada (ids definitivos y acta `7. Proportionality/inventario-unidad7-revision.md`: qué entra, el método, las cotas) · no en paralelo… | 1 h 15 min | MEDIO | — | reparto-practicas-u2/salidas/233-generadores-proporcionalidad/ | PENDIENTE | — |
-| 234 | «Caza el error» de la unidad 2 (errores), ejercicio 2 en columnas | tareas/tarea-234-errores-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/234-errores-columnas/ | LISTA | terminada 12:34Z (22-nov) · commit 31c9710 · sin prueba en navegador |
-| 235 | «Caza el error» de la unidad 1 (errores1), ejercicio 2 en columnas | tareas/tarea-235-errores1-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/235-errores1-columnas/ | LISTA | terminada 12:35Z (22-nov) · commit 5fddf43 · sin prueba en navegador |
-| 236 | «Caza el error» de la unidad 4 (errores4), ejercicio 2 en columnas | tareas/tarea-236-errores4-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/236-errores4-columnas/ | LISTA | terminada (22-nov) · commit 4ce133d |
-| 237 | «Caza el error» de la unidad 5 (errores5), ejercicio 1 en columnas | tareas/tarea-237-errores5-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/237-errores5-columnas/ | LISTA | terminada (22-nov) · commit 3c3d307 |
-| 238 | «Caza el error» de la unidad 7 (errores7), ejercicio 1 en columnas | tareas/tarea-238-errores7-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/238-errores7-columnas/ | LISTA (bab276f, s-20261122T122731-0722f6b1) | — |
-| 239 | «Caza el error» de la unidad 6 (errores6): el error también en las líneas de en medio | tareas/tarea-239-errores6-lineas-intermedias.md | — (fase 1 en `main`, c36041d) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/239-errores6-lineas-intermedias/ | LISTA | — |
+| 234 | «Caza el error» de la unidad 2 (errores), ejercicio 2 en columnas | tareas/tarea-234-errores-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/234-errores-columnas/ | LISTA | terminada 12:34Z (22-nov) · commit 31c9710 |
+| 235 | «Caza el error» de la unidad 1 (errores1), ejercicio 2 en columnas | tareas/tarea-235-errores1-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/235-errores1-columnas/ | LISTA | terminada 12:35Z (22-nov) · commit 5fddf43 |
+| 236 | «Caza el error» de la unidad 4 (errores4), ejercicio 2 en columnas | tareas/tarea-236-errores4-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/236-errores4-columnas/ | LISTA | terminada 12:19Z (22-nov) · commit 4ce133d |
+| 237 | «Caza el error» de la unidad 5 (errores5), ejercicio 1 en columnas | tareas/tarea-237-errores5-columnas.md | — (fase 1 en `main`, c36041d) | 60 min | MEDIO | — | reparto-practicas-u2/salidas/237-errores5-columnas/ | LISTA | terminada 12:22Z (22-nov) · commit 3c3d307 |
+| 238 | «Caza el error» de la unidad 7 (errores7), ejercicio 1 en columnas | tareas/tarea-238-errores7-columnas.md | — (fase 1 en `main`, c36041d) | 75 min | ALTO | — | reparto-practicas-u2/salidas/238-errores7-columnas/ | LISTA | terminada 12:50Z (22-nov) · commit bab276f |
+| 239 | «Caza el error» de la unidad 6 (errores6): el error también en las líneas de en medio | tareas/tarea-239-errores6-lineas-intermedias.md | — (fase 1 en `main`, c36041d) | 45 min | MEDIO | — | reparto-practicas-u2/salidas/239-errores6-lineas-intermedias/ | LISTA | terminada 12:15Z (22-nov) · commit 7ad5076 |
+| 240 | «Caza el error» de la unidad 2 (errores): el fallo de cuenta en las columnas | tareas/tarea-240-errores-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/240-errores-fallo-cuenta/ | PENDIENTE | — |
+| 241 | «Caza el error» de la unidad 1 (errores1): el fallo de cuenta en las columnas | tareas/tarea-241-errores1-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/241-errores1-fallo-cuenta/ | PENDIENTE | — |
+| 242 | «Caza el error» de la unidad 4 (errores4): el fallo de cuenta en las columnas | tareas/tarea-242-errores4-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/242-errores4-fallo-cuenta/ | PENDIENTE | — |
+| 243 | «Caza el error» de la unidad 5 (errores5): el fallo de cuenta en las columnas | tareas/tarea-243-errores5-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/243-errores5-fallo-cuenta/ | PENDIENTE | — |
+| 244 | «Caza el error» de la unidad 7 (errores7): el fallo de cuenta en las columnas | tareas/tarea-244-errores7-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/244-errores7-fallo-cuenta/ | PENDIENTE | — |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).
 
-**Foto a 2026-11-22 12:03Z**: BLOQUEADA 5 (228, 229, 230, 231, 232) · LISTA 223 · LISTA 239 · PENDIENTE 10 (215, 216, 223, 227, 233, 234, 235, 236, 237, 238).
+**Foto a 2026-11-23 10:57Z**: BLOQUEADA 5 (228, 229, 230, 231, 232) · LISTA 229 · PENDIENTE 10 (215, 216, 223, 227, 233, 240, 241, 242, 243, 244).
 
 Lo que la 37 deja propuesto (que seis prácticas adopten el campo numérico de la base) serían
 tareas nuevas de banda MEDIO, una por práctica, si Juan Luis las quiere.
@@ -419,12 +418,18 @@ Derivado de `disponible: false` en `practicas/_comun/catalogo.js` y de las ficha
 
 ## Registro de finalizaciones
 
-Derivado de `hechos/terminadas/`: una línea por fichero (399), más reciente arriba.
+Derivado de `hechos/terminadas/`: una línea por fichero (405), más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · commit · ficheros · duración real` (lo que diga la terminada).
 
 El registro cuenta terminadas: una tarea REABIERTA sigue teniendo aquí su línea de cuando
 se cerró. Su estado de hoy es el de la tabla.
 
+LISTA · tarea 238 · 2026-11-22 12:50 · s-20261122T122731-0722f6b1 · bab276f · practicas/errores7/estilos.css, practicas/errores7/logica.js, practicas/errores… · ~25 min (de 12:27 a 12:52 UTC; estimada 75 min)
+LISTA · tarea 235 · 2026-11-22 12:35 · s-20261122T122714-8c8e0765 · 5fddf43 · practicas/errores1/{familias.js (nuevo),logica.js,practica.js,textos.js,estilos… · ~8 min de reloj (abierto 12:27:14Z); estimada 60…
+LISTA · tarea 234 · 2026-11-22 12:34 · s-20261122T121724-12f10dae · 31c9710 · practicas/errores/estilos.css (+1), practicas/errores/logica.js, practicas/erro… · ~16 min de reloj (abierto 12:17:24Z); estimada 75…
+LISTA · tarea 237 · 2026-11-22 12:22 · s-20261122T120758-f6f541d1 · 3c3d307 · practicas/errores5/{logica.js,textos.js,practica.js}, tests/practicas-errores5.… · abierto 12:07Z
+LISTA · tarea 236 · 2026-11-22 12:19 · s-20261122T120758-f3e25fcd · 4ce133d · practicas/errores4/{logica.js,textos.js,practica.js}, tests/practicas-errores4.… · abierto 12:07Z, terminada 12:19Z
+LISTA · tarea 239 · 2026-11-22 12:15 · s-20261122T120759-c8f40585 · 7ad5076 · practicas/errores6/logica.js, tests/practicas-errores6.test.js · ~15 min (estimada 45)
 LISTA · tarea 225 · 2026-11-19 20:23 · s-20261119T200941-230fa4ec · — · — · abierto 20:09:41Z (estimada 45 min)
 LISTA · tarea 224 · 2026-11-19 20:23 · s-20261119T200934-21028b13 · — · — · abierto 20:09:34Z (estimada 1 h 15 min)
 LISTA · tarea 222 · 2026-11-19 20:21 · s-20261119T200932-4c6bd15b · — · — · abierto 20:09:32Z (estimada 1 h 15 min)
@@ -834,6 +839,7 @@ minutos reales frente a estimaciones de 30 minutos a 2 horas y media.
 
 Derivado de `hechos/incidencias/`: una línea por fichero, más reciente arriba.
 
+- `s-20261122T120758-f6f541d1.md`: - Prueba en navegador no hecha: el lanzamiento de Chrome headless fue denegado por el clasificador de permisos. No se reintentó por otra vía; no quedó ningún Chrome ni servidor en marcha.
 - `212--s-20261119T191939-f09e9b6e.md`: tarea: 212 · 2026-11-19T19:33Z: main va ahead 4 de origin/main con commits de otras sesiones (210, 211) sin subir; no empujo. Ayuda a quien pueda: git fetch, git cherry -v origin/main, push desde aquí (regla de «Git: se sube desde el mismo árbol»). Mi commit…
 - `s-20261119T191935-a6526529.md`: tarea: 214 · qué: main va 9 commits por delante de origin/main, con commits de otras sesiones (211, 210, 212, 213) sin subir; no empujo. · qué hace falta: que Juan Luis dé el visto bueno y alguien haga, desde este árbol, «git push origin main» (ver también la…
 - `s-20261119T184017-5bf93867.md`: tarea: 211 · qué: main de este árbol va 4 commits por delante de origin/main y ninguna sesión lo empuja, porque cada una ve en él un commit ajeno sin subir. · c9bab2c ya estaba en origin. Sin subir, en este orden: · - df9a89e (211, esta sesión): la base de la…

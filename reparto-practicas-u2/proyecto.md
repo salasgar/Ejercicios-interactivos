@@ -1208,3 +1208,11 @@ ficheros disjuntos, así que pueden ir las seis a la vez:
 Orden de prioridad (por lo que se da antes): 236 (la U4 es la siguiente unidad), 237, 239, 238; después 235 y 234 (unidades
 ya dadas, que salen en el repaso). Ninguna toca `practicas/_comun/`: si a una le falta algo de `procedimiento.js`, lo
 propone en su terminada.
+
+## Alta del 23-11: tareas 240-244, el fallo de cuenta en las columnas (coordinadora s-20261123T105616-5abfb78b)
+
+Juan Luis (23-11): en las columnas de «Caza el error» puede salir una columna con un error sin nombre, un **fallo de
+cuenta**; se marca como las demás pero no lleva la pregunta tipo test ni regla en negrita. Modelo en errores3 (commit
+8ef414a). Tareas, sin precondición y con ficheros disjuntos (pueden ir a la vez): 240 errores (ALTO), 241 errores1
+(MEDIO), 242 errores4 (MEDIO), 243 errores5 (MEDIO; la que más lo necesita), 244 errores7 (ALTO). Prioridad: 242, 243,
+244, 241, 240.
