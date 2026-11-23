@@ -240,6 +240,21 @@ nueva({
   hint: hintDescuento,
 });
 
+/**
+ * El contexto según la escala (JL, 23-11): con 1 : 10 000 y 1 : 25 000 la distancia real puede bajar a 0,2 km, que
+ * no son dos pueblos: es un plano de la ciudad, con el instituto y la biblioteca (de 0,2 a 3,75 km). Con las
+ * escalas de mapa (1 : 50 000 en adelante), dos pueblos (de 1 a 30 km).
+ */
+function enunciadoEscala(p, plano, i) {
+  const e = escalaATexto(p.n), d = A(plano, i);
+  if (p.n <= 25000) {
+    return i === 'en' ? `On a town map with scale ${e}, the school and the library are ${d} apart. How far apart are they in real life, in km?`
+      : `En un plano de la ciudad a escala ${e}, el instituto y la biblioteca están a ${d}. ¿Qué distancia real hay, en km?`;
+  }
+  return i === 'en' ? `On a map with scale ${e}, two towns are ${d} apart. How far apart are they in real life, in km?`
+    : `En un mapa a escala ${e}, dos pueblos están a ${d}. ¿Qué distancia real hay, en km?`;
+}
+
 // 7 · 3 cm a 1 : 50 000 → «150 000 km» (son 1,5 km)
 nueva({
   id: 'escala-sin-cambio-de-unidad', corrige: true,
@@ -252,8 +267,7 @@ nueva({
     const plano = CM(p.d), cm = C(fraccion(Math.round(p.d * 2) * p.n, 2), 'cm'), bien = this.bien(p), m = this.mal(p);
     return {
       lineas: [
-        i => (i === 'en' ? `On a map with scale ${escalaATexto(p.n)}, two towns are ${A(plano, i)} apart. How far apart are they in real life, in km?`
-          : `En un plano a escala ${escalaATexto(p.n)}, dos pueblos están a ${A(plano, i)}. ¿Qué distancia real hay, en km?`),
+        i => enunciadoEscala(p, plano, i),
         i => `${A(plano, i)} · ${N(p.n, i)} = ${A(cm, i)}`,
         i => `${A(cm, i)} = ${A(mal ? m : bien, i)}`,
       ],
@@ -541,8 +555,9 @@ export const FAMILIAS = [
   {
     id: 'escala', base: 'escala-sin-cambio-de-unidad', peso: 1,
     params: rng => PL('escala-sin-cambio-de-unidad').params(rng),
-    // Dos pueblos: de 1 a 30 km (la plantilla deja 0,2 km, que son dos casas, no dos pueblos).
-    cota: p => decimales(realKm(p)) <= 2 && valorNum(realKm(p)) >= 1 && valorNum(realKm(p)) <= 30,
+    // Desde el 23-11 el enunciado cambia de contexto con la escala (`enunciadoEscala`): el instituto y la biblioteca
+    // de 0,2 a 3,75 km en un plano de la ciudad, y dos pueblos de 1 a 30 km. Ya no hace falta la cota de 1 km.
+    cota: p => decimales(realKm(p)) <= 2 && valorNum(realKm(p)) <= 30,
     bien: [ESCALA_AL_FINAL, ESCALA_PRIMERO],
     mal: [dePlantilla('escala-sin-cambio-de-unidad')],
   },

@@ -436,3 +436,17 @@ test('ninguna cadena iguala la cuenta con comas y la cuenta sin comas (ni en los
     assert.doesNotMatch(t, /<br>\d\. |líneas numeradas|numbered lines/, 'sin números de línea');
   }
 });
+
+test('alinea-a-la-derecha: una sola línea mala (antes «3,81 + 7,9 = 381 + 79 = 4,60» tenía dos; JL, 23-11)', () => {
+  const p = L.PLANTILLA_POR_ID['alinea-a-la-derecha'];
+  const rng = crearRng(2311);
+  for (let i = 0; i < 300; i++) {
+    const params = p.params(rng);
+    if (!params) continue;
+    const { lineas, falsa } = p.cadena(params, true);
+    assert.equal(falsa, 1);
+    assert.equal(lineas.length, 2, 'el enunciado y el resultado equivocado');
+    const resultado = L.textoLinea(lineas[1], 'es').replace(/^= /, '');
+    assert.ok(mismoValor(D(resultado), p.malFinal(params)), resultado);
+  }
+});

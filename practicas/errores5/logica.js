@@ -121,7 +121,9 @@ nueva({
     const k = Math.max(a.k, b.k);
     const l1 = [sd(a), ` ${op} `, sd(b)];
     if (!mal) return { lineas: [l1, ['= ', sd(a.conCifras(k)), ` ${op} `, sd(b.conCifras(k))], ['= ', sd(this.bien(p))]], falsa: null };
-    return { lineas: [l1, ['= ', `${a.m} ${op} ${b.m}`], ['= ', sd(this.malFinal(p))]], falsa: 1 };
+    // JL, 23-11: antes «3,81 + 7,9 = 381 + 79 = 4,60» tenía DOS líneas falsas (381 + 79 no es 4,60). El alumno
+    // que alinea a la derecha hace la cuenta en vertical y escribe directamente el resultado: una sola línea mala.
+    return { lineas: [l1, ['= ', sd(this.malFinal(p))]], falsa: 1 };
   },
   bien: p => (p[2] === '+' ? sumar(p[0], p[1]) : restar(p[0], p[1])),
   malFinal: p => E['alinea-a-la-derecha'].fn(D(p[0]), D(p[1]), p[2]),

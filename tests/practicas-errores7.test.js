@@ -334,7 +334,12 @@ test('realismo del ejercicio 1: todos los números que salen son creíbles en su
         assert.ok(p.c >= 20 && p.c <= 150 && p.p >= 10 && p.p <= 60 && centimos(bueno), JSON.stringify(p));
         break;
       case 'escala':
-        assert.ok(bueno >= 1 && bueno <= 30, `dos pueblos a ${bueno} km`);
+        // JL, 23-11: con escala de plano (hasta 1 : 25 000), el instituto y la biblioteca, de 0,2 a 4 km; con escala de
+        // mapa, dos pueblos, de 1 a 30 km. Y el enunciado dice lo que toca.
+        if (p.n <= 25000) assert.ok(bueno >= 0.2 && bueno <= 4, `el instituto y la biblioteca a ${bueno} km`);
+        else assert.ok(bueno >= 1 && bueno <= 30, `dos pueblos a ${bueno} km`);
+        assert.match(item.enunciado.es, p.n <= 25000 ? /plano de la ciudad.*instituto y la biblioteca/ : /mapa.*dos pueblos/, item.enunciado.es);
+        assert.match(item.enunciado.en, p.n <= 25000 ? /school and the library/ : /two towns/, item.enunciado.en);
         assert.ok(p.d >= 2 && p.d <= 15);
         break;
       default: assert.fail(item.familia);
