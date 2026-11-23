@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:27:45Z · por la sesión s-20261123T182647-7f338c08 (WEB T10+T16: cierre de la 10 y reclamo de la 16)
+Regenerado: 2026-11-23T18:29:36Z · por la sesión s-20261123T180832-22cae863 (WEB T08, cierre)
 
 ## Antes de hacer nada
 
@@ -235,22 +235,22 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | BLOQUEADA | |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
-| 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | EN CURSO (último latido: BLOQUEADA por permiso) | s-20261123T180832-22cae863 · 2026-11-23T20:13:41Z |
+| 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA (último latido: BLOQUEADA por permiso) | |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA | |
 | 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
 | 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | LISTA (103 entradas: 89 claras, 14 en duda; U7 sin material) | |
 | 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | BLOQUEADA | |
 | 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis, y 12 LISTA | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | BLOQUEADA (10 LISTA, pero falta aprobar la plantilla; y falta la 12) | |
-| 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | PENDIENTE | |
+| 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | EN CURSO | s-20261123T182806-6e8d9a11 · 2026-11-23T19:48:06Z |
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | BLOQUEADA | |
-| 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | EN CURSO | s-20261123T182647-7f338c08 · 2026-11-23T19:26:47Z |
+| 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | LISTA (borrador + 9 preguntas para Juan Luis; no va a la web hasta que lo apruebe) | |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
 | 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | BLOQUEADA | |
 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 5.5, esfuerzo Medio.
 
-Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre. Lo usan las tareas 10, 13, 14 y 15.
+Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: OCUPADO por s-20261123T182806-6e8d9a11 (tarea 14) desde 2026-11-23T18:30Z. Lo usan las tareas 10, 13, 14 y 15.
 
 ## Registro de finalizaciones
 
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 16 · 2026-11-23 18:29 · s-20261123T182647-7f338c08 · borrador de la página «Familias» (7 de 7 puntos) + 9 preguntas · salidas/16-borrador-familias/
 LISTA · tarea 10 · 2026-11-23 18:26 · s-20261123T180825-ade12f2f · plantilla de 7 apartados (propuesta) + portada y piloto U2 en el borrador, 7 capturas · salidas/10-plantilla-y-piloto/
 LISTA · tarea 11 · 2026-11-23 18:28 · s-20261123T182516-30e9adcb · 103 entradas (89 claras, 14 en duda) · salidas/11-manifiesto-materiales/
 LISTA · tarea 05 · 2026-11-23 18:25 · s-20261123T181741-730ebb0b · 61 enlaces, todos 200 (Canguro 25, SEMRM 36) · salidas/05-enlaces-concursos/
