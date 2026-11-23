@@ -6,7 +6,8 @@ import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { T, esc } from '../practicas/_comun/textos.js';
 import { generarHay, generarColumnas, generarNombre } from '../practicas/errores/logica.js';
-import { explicaItem, explicaHay, explicaNombre, explicacionColumnas, explicaColumnas, NOMBRES, REGLAS, PLANTILLAS, PLANTILLA_POR_ID, TX, LETRAS, rutaDe, html } from '../practicas/errores/textos.js';
+import { explicaItem, explicaHay, explicaNombre, explicacionColumnas, explicaColumnas, NOMBRES, REGLAS, PLANTILLAS, PLANTILLA_POR_ID, TX, LETRAS, rutaDe, html, CUENTA, CUENTAS, porqueCuenta } from '../practicas/errores/textos.js';
+import { LO_CORRECTO } from '../practicas/_comun/procedimiento.js';
 import { errorEnLinea } from '../practicas/_comun/procedimiento.js';
 
 const IDIOMAS = ['es', 'en'];
@@ -172,6 +173,15 @@ function columnaAColumna(item, idioma, h) {
     }
     assert.ok(t.includes(TX.la_linea_es[idioma]), 'dice que esa es la línea del error');
     assert.ok(t.includes(`<span class="linea-mala">${html(c.lineas[c.falsa][idioma])}</span>`), 'cita la línea mala');
+    if (c.error === CUENTA) {
+      // El fallo de cuenta (JL, 23-11): sin nombre ni regla rota; la cuenta bien hecha y la última línea correcta.
+      assert.ok(t.includes(TX.fallo_cuenta[idioma]), 'dice que es un fallo de cuenta');
+      assert.doesNotMatch(t, /regla-rota/, 'el fallo de cuenta no rompe ninguna regla');
+      assert.ok(t.includes(html(porqueCuenta(c, item.params)[idioma])), `la cuenta bien hecha: ${plano(t)}`);
+      const correcta = html(CUENTAS[c.ruta].ultima(item.params, c.cuenta.bien)[idioma]);
+      assert.ok(t.includes(`${LO_CORRECTO[idioma]} ${correcta}`), `lo correcto: ${plano(t)}`);
+      return;
+    }
     assert.ok(t.includes(esc(NOMBRES[c.error][idioma])), 'el error como frase');
     assert.ok(t.includes(`<strong class="regla-rota">${esc(REGLAS[c.error][idioma])}</strong>`), 'la regla rota, en negrita');
     for (const x of plano(html(r.corregida(item.params)[idioma])).match(/\d+/g) ?? []) assert.ok(plano(t).includes(x), `lleva el ${x} de lo correcto: ${plano(t)}`);
@@ -212,7 +222,7 @@ test('errores, ejercicio 2: el porqué de una columna buena y lo correcto de una
   const rng = crearRng(2343);
   for (let i = 0; i < 500; i++) {
     const item = generarColumnas(rng);
-    for (const c of item.columnas.filter(c => c.error)) {
+    for (const c of item.columnas.filter(c => c.error && c.error !== CUENTA)) {
       const corr = rutaDe(c.ruta).corregida(item.params);
       for (const idioma of IDIOMAS) assert.ok(!corr[idioma].includes(REGLAS[c.error][idioma]), `${c.ruta}: ${corr[idioma]}`);
     }

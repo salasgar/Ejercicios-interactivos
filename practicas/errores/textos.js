@@ -107,6 +107,7 @@ export const TX = {
   col_mal: { es: 'error', en: 'mistake' },
   columna: { es: 'Columna', en: 'Column' },
   pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
+  fallo_cuenta: { es: 'Se ha equivocado al hacer la cuenta.', en: 'Made a mistake in the calculation.' },
 };
 
 /** Las letras de las columnas del ejercicio 2. */
@@ -845,6 +846,58 @@ export const RUTA_POR_ID = Object.fromEntries(RUTAS.map(r => [r.id, r]));
 /** Una ruta de columna: una plantilla del banco o una ruta propia. */
 export const rutaDe = id => PLANTILLA_POR_ID[id] ?? RUTA_POR_ID[id];
 
+// ─── El fallo de cuenta en las columnas (JL, 23-11) ────────────────────────────
+//
+// Un error que no está en NOMBRES: aplica bien el método y se equivoca en la última cuenta. Su columna no lleva
+// pregunta tipo test ni regla en negrita. Solo sale de las rutas buenas cuya última línea es una cuenta: el producto
+// de potencias del m.c.d. y del m.c.m. y la suma de las horas. No de una lista de divisores o de múltiplos (quitar
+// un divisor es «ha olvidado el 1 o el propio número»), ni de una factorización, ni de un sí/no de divisibilidad.
+//
+// Por ruta: la cuenta (lo que se opera), su valor bueno, la última línea con un valor cualquiera, los valores
+// cercanos que puede dar el despiste y los que NO puede dar porque son los de un error con nombre aplicado a esa
+// cuenta (o el resultado de otra columna de la familia): con ellos la columna se leería como otro error.
+
+export const CUENTA = 'fallo-de-cuenta';
+
+/** «2^3 · 3» como si la potencia fuera un producto (2 · 3 · 3 = 18): lo que da el error «potencia». */
+const comoProducto = f => f.reduce((v, [p, e]) => v * (e > 1 ? p * e : p), 1);
+/** ±1 y ±2, y ±10 si el resultado tiene ya dos cifras (2 · 3 = 16 no es un despiste creíble). */
+const cercanos = n => [1, -1, 2, -2, ...(n >= 20 ? [10, -10] : [])].map(d => n + d).filter(x => x >= 2);
+
+export const CUENTAS = {
+  'b-mcd-ok': {
+    cuenta: ({ a, b }) => textoFact(mcdF(a, b)),
+    bien: ({ a, b }) => mcd(a, b),
+    ultima: ({ a, b }, x) => L(`m.c.d.(${a}, ${b}) = ${x}`, `GCD(${a}, ${b}) = ${x}`),
+    cercanos: ({ a, b }) => cercanos(mcd(a, b)),
+    // Cruzado (los comunes con el mayor exponente, o el m.c.m.), la potencia como producto, el m.c.d. 0, y ni el 1
+    // (parecería que no tienen primos comunes) ni uno de los datos.
+    conNombre: ({ a, b }) => [valorDe(comunesMaxF(a, b)), mcm(a, b), comoProducto(mcdF(a, b)), 0, 1, a, b],
+  },
+  'b-mcm-ok': {
+    cuenta: ({ a, b }) => textoFact(mcmF(a, b)),
+    bien: ({ a, b }) => mcm(a, b),
+    ultima: ({ a, b }, x) => L(`m.c.m.(${a}, ${b}) = ${x}`, `LCM(${a}, ${b}) = ${x}`),
+    cercanos: ({ a, b }) => cercanos(mcm(a, b)),
+    // Cruzado (el m.c.d.), solo los comunes, la potencia como producto, y ni el producto de los datos ni uno de ellos.
+    conNombre: ({ a, b }) => [mcd(a, b), valorDe(comunesMaxF(a, b)), comoProducto(mcmF(a, b)), a * b, a, b],
+  },
+  'b-minutos-ok': {
+    cuenta: ({ h }) => `${h} + 2`,
+    bien: ({ h }) => h + 2,
+    ultima: ({ h, m, d }, x) => L(`${h} + 2 = ${x}: llega a las ${hm(x, m + d - 120)}.`, `${h} + 2 = ${x}: it arrives at ${hm(x, m + d - 120)}.`),
+    cercanos: ({ h }) => [1, -1, 2, -2].map(dif => h + 2 + dif),
+    // h + 1 es la hora del error «de cien en cien» (e-minutos), y h, no haber sumado nada.
+    conNombre: ({ h }) => [h + 1, h],
+  },
+};
+
+/** «2^2 · 3 = 12, no 13.»: la cuenta de la columna bien hecha. */
+export const porqueCuenta = (c, params) => {
+  const k = CUENTAS[c.ruta], op = k.cuenta(params);
+  return L(`${op} = ${c.cuenta.bien}, no ${c.cuenta.mal}.`, `${op} = ${c.cuenta.bien}, not ${c.cuenta.mal}.`);
+};
+
 // ─── La explicación del ítem (feedback de acierto/fallo y botón «No lo sé») ────
 //
 // Con error (JL, 22-11): la línea con ordinal y sin su número delante («El error está en la tercera línea:»), el
@@ -931,8 +984,14 @@ export function explicacionColumnas(item, { tt }) {
       const txt = /^(Está bien|It is right)/.test(porque) ? html(porque) : `${tt(TX.esta_bien)} ${html(porque)}`;
       return `<p class="columna-explica">${cabeza} ${txt}</p>`;
     }
-    return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">${html(tt(c.lineas[c.falsa]))}</span>`
-      + `<br>${esc(tt(NOMBRES[c.error]))}${reglaEnNegrita(esc(tt(REGLAS[c.error])))}`
+    const mala = `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">${html(tt(c.lineas[c.falsa]))}</span>`;
+    // El fallo de cuenta no tiene nombre en el catálogo ni regla rota: solo la cuenta bien hecha (JL, 23-11).
+    if (c.error === CUENTA) {
+      const correcta = tt(CUENTAS[c.ruta].ultima(item.params, c.cuenta.bien)).replace(/([^.])$/, '$1.');
+      return `${mala}<br>${esc(tt(TX.fallo_cuenta))}<br>${html(tt(porqueCuenta(c, item.params)))}`
+        + `<br>${tt(LO_CORRECTO)} ${html(minuscula(correcta))}</p>`;
+    }
+    return `${mala}<br>${esc(tt(NOMBRES[c.error]))}${reglaEnNegrita(esc(tt(REGLAS[c.error])))}`
       + `${tt(LO_CORRECTO)} ${html(minuscula(tt(r.corregida(item.params))))}</p>`;
   }).join('');
 }

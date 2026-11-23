@@ -8,8 +8,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { generarHay, generarColumnas, generarNombre, nombresExcluidos, FAMILIAS, FAMILIA_POR_ID, columnasPosibles } from '../practicas/errores/logica.js';
-import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES, RUTAS, rutaDe } from '../practicas/errores/textos.js';
+import { generarHay, generarColumnas, generarNombre, nombresExcluidos, FAMILIAS, FAMILIA_POR_ID, columnasPosibles, columnaDe, CUENTA } from '../practicas/errores/logica.js';
+import { PLANTILLAS, PLANTILLA_POR_ID, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES, RUTAS, rutaDe, CUENTAS, TX } from '../practicas/errores/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 
 // ─── Definiciones independientes ─────────────────────────────────────────────
@@ -363,8 +363,12 @@ test('ejercicio 2: 2-4 columnas que empiezan por el enunciado; 1-2 bien (todas s
       assert.deepEqual(falsasDe(v), c.error ? [c.falsa] : [], `${c.ruta} ${JSON.stringify(item.params)}: ${c.lineas.map(l => l.es).join(' | ')}`);
       if (c.error) {
         assert.ok(c.falsa >= 1, 'el enunciado nunca es la línea mala');
-        assert.equal(c.error, rutaDe(c.ruta).error.nombre);
-        assert.ok(NOMBRES[c.error], c.error);
+        // El fallo de cuenta (JL, 23-11) sale de una ruta buena y no tiene nombre en el catálogo.
+        if (c.error === CUENTA) assert.equal(rutaDe(c.ruta).error, null);
+        else {
+          assert.equal(c.error, rutaDe(c.ruta).error.nombre);
+          assert.ok(NOMBRES[c.error], c.error);
+        }
       }
       for (const l of c.lineas) assert.deepEqual(nums(l.es), nums(l.en), `${c.ruta}: números distintos entre idiomas: ${l.es} / ${l.en}`);
     }
@@ -395,8 +399,10 @@ test('ejercicio 2: las rutas buenas de una familia son buenas y las malas, malas
 test('ejercicio 2: una pregunta por columna mala, con el nombre bueno y dos que no pueden describirla (regla de oro)', () => {
   const posiciones = new Set();
   for (const item of columnas(203)) {
-    const malas = item.columnas.map((c, j) => (c.error ? j : -1)).filter(j => j >= 0);
+    // Solo las columnas con un error con nombre llevan pregunta; la del fallo de cuenta, no (JL, 23-11).
+    const malas = item.columnas.map((c, j) => (c.error && c.error !== CUENTA ? j : -1)).filter(j => j >= 0);
     assert.deepEqual(item.preguntas.map(q => q.col), malas);
+    assert.ok(malas.length >= 1, 'siempre hay al menos un error con nombre');
     for (const q of item.preguntas) {
       const c = item.columnas[q.col];
       assert.equal(q.solucion, c.error);
@@ -446,6 +452,71 @@ test('ejercicio 2: con dos alumnos que lo hacen bien, los dos llegan a lo mismo;
       for (const x of nums(l.es)) assert.ok(x <= 1000, `número poco creíble: ${l.es}`);
     }
   }
+});
+
+/** Exponente de p en n. */
+const expBF = (n, p) => { let e = 0; while (n % p === 0) { n /= p; e++; } return e; };
+const primosDeBF = n => divsBF(n).filter(primoBF);
+/** Los comunes con el mayor exponente: el «cruzado» del m.c.d. y el «solo los comunes» del m.c.m. */
+const comunesMaxBF = (a, b) => primosDeBF(a).filter(p => b % p === 0).reduce((v, p) => v * p ** Math.max(expBF(a, p), expBF(b, p)), 1);
+/** La potencia tratada como producto (2^3 → 2 · 3) en la factorización de n. */
+const comoProductoBF = n => primosDeBF(n).reduce((v, p) => v * (expBF(n, p) > 1 ? p * expBF(n, p) : p), 1);
+/** El resultado de una columna: el último número (m.c.d., m.c.m.) o la hora de llegada en minutos (horas). */
+const resultado = (familia, c) => {
+  const l = c.lineas.at(-1).es;
+  if (familia !== 'horas') return nums(l).at(-1);
+  const [, H, M] = l.match(/(\d+):(\d+)\.$/);
+  return Number(H) * 60 + Number(M);
+};
+
+test('ejercicio 2: el fallo de cuenta (sin nombre), como mucho uno por ítem, en la última cuenta, cerca del bueno y nunca un error con nombre', () => {
+  let conCuenta = 0;
+  const familias = new Set();
+  const items = columnas(205);
+  for (const item of items) {
+    const cuentas = item.columnas.filter(c => c.error === CUENTA);
+    assert.ok(cuentas.length <= 1);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    const [c] = cuentas, fa = item.plantilla, p = item.params;
+    familias.add(fa);
+    const otras = item.columnas.filter(o => o !== c);
+    // Solo con una columna mala con nombre (así siguen siendo 1-2 malas) y en las familias con la cuenta al final.
+    assert.equal(otras.filter(o => o.error).length, 1, 'una sola columna mala con nombre');
+    assert.ok(['mcd', 'mcm', 'horas'].includes(fa), fa);
+    assert.ok(CUENTAS[c.ruta] && FAMILIA_POR_ID[fa].bien.includes(c.ruta), c.ruta);
+    // Es esa ruta buena con la última línea cambiada, y la buena no sale en el ítem: no es un calco de otra columna.
+    const origen = columnaDe(FAMILIA_POR_ID[fa], c.ruta, p);
+    assert.equal(c.falsa, c.lineas.length - 1, 'la última cuenta');
+    assert.deepEqual(c.lineas.slice(0, -1), origen.lineas.slice(0, -1));
+    assert.deepEqual(CUENTAS[c.ruta].ultima(p, c.cuenta.bien), origen.lineas.at(-1), 'la última línea buena es la de la ruta');
+    for (const o of otras) {
+      assert.notEqual(o.ruta, c.ruta);
+      assert.notDeepEqual(o.lineas.slice(0, -1), c.lineas.slice(0, -1), 'no es un calco');
+    }
+    // La cuenta: la de la línea anterior (m.c.d., m.c.m.) o «h + 2» (horas), bien hecha, y el valor malo cerca.
+    const mal = fa === 'horas' ? nums(c.lineas.at(-1).es)[2] : nums(c.lineas.at(-1).es).at(-1);
+    const bien = fa === 'horas' ? p.h + 2 : valor(tras(c.lineas.at(-2).es, ': '));
+    assert.equal(bien, fa === 'mcd' ? gcdBF(p.a, p.b) : fa === 'mcm' ? lcmBF(p.a, p.b) : p.h + 2);
+    assert.deepEqual(c.cuenta, { bien, mal });
+    const dif = Math.abs(mal - bien);
+    assert.ok(fa === 'horas' ? [1, 2].includes(dif) : [1, 2].includes(dif) || (dif === 10 && bien >= 20), `${bien} → ${mal}`);
+    // Distinta del resultado de las demás columnas y de lo que daría un error con nombre en esa cuenta.
+    for (const o of otras) assert.notEqual(resultado(fa, o), resultado(fa, c), c.lineas.map(l => l.es).join(' | '));
+    const prohibidos = fa === 'horas'
+      ? [p.h + 1, p.h]   // la hora del error «de cien en cien», y no haber sumado
+      : [comunesMaxBF(p.a, p.b), gcdBF(p.a, p.b), lcmBF(p.a, p.b), comoProductoBF(bien), 0, 1, p.a, p.b, p.a * p.b];
+    for (const x of prohibidos) assert.notEqual(mal, x, `${fa} ${JSON.stringify(p)}: ${mal}`);
+    if (fa === 'horas') assert.ok(mal <= 23 && c.lineas.at(-1).es.endsWith(`${mal}:${String(p.m + p.d - 120).padStart(2, '0')}.`), c.lineas.at(-1).es);
+  }
+  assert.deepEqual([...familias].sort(), ['horas', 'mcd', 'mcm'], 'sale en las tres familias');
+  assert.ok(conCuenta > items.length * 0.08, `con fallo de cuenta: ${conCuenta} de ${items.length}`);
+});
+
+test('ejercicio 2: el texto del fallo de cuenta, en los dos idiomas y sin regla', () => {
+  assert.equal(TX.fallo_cuenta.es, 'Se ha equivocado al hacer la cuenta.');
+  assert.equal(TX.fallo_cuenta.en, 'Made a mistake in the calculation.');
+  assert.ok(!(CUENTA in NOMBRES), 'el fallo de cuenta no es un nombre del catálogo (no sale como opción tipo test)');
 });
 
 // ─── Ejercicio 3 ──────────────────────────────────────────────────────────────
