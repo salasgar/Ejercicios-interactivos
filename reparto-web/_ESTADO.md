@@ -259,8 +259,8 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
 LISTA · tarea 16 · 2026-11-23 18:29 · s-20261123T182647-7f338c08 · borrador de la página «Familias» (7 de 7 puntos) + 9 preguntas · salidas/16-borrador-familias/
-LISTA · tarea 10 · 2026-11-23 18:26 · s-20261123T180825-ade12f2f · plantilla de 7 apartados (propuesta) + portada y piloto U2 en el borrador, 7 capturas · salidas/10-plantilla-y-piloto/
 LISTA · tarea 11 · 2026-11-23 18:28 · s-20261123T182516-30e9adcb · 103 entradas (89 claras, 14 en duda) · salidas/11-manifiesto-materiales/
+LISTA · tarea 10 · 2026-11-23 18:26 · s-20261123T180825-ade12f2f · plantilla de 7 apartados (propuesta) + portada y piloto U2 en el borrador, 7 capturas · salidas/10-plantilla-y-piloto/
 LISTA · tarea 05 · 2026-11-23 18:25 · s-20261123T181741-730ebb0b · 61 enlaces, todos 200 (Canguro 25, SEMRM 36) · salidas/05-enlaces-concursos/
 LISTA · tarea 17 · 2026-11-23 18:17 · s-20261123T181241-700b3a38 · 83 enunciados de proporcionalidad + 47 de ecuaciones · salidas/17-cantera-problemas/
 LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · 541 archivos: 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido · salidas/01-dropbox-extraccion/
