@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:34:00Z · por la sesión s-20261123T182806-6e8d9a11 (WEB T14: cierre de la 14)
+Regenerado: 2026-11-23T18:40:00Z · por la sesión s-20261123T182556-ba3c87df (WEB T02: cierre de la 02)
 
 ## Antes de hacer nada
 
@@ -229,11 +229,11 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 |---|---|---|---|---|---|---|---|---|---|---|
 | 00 | Fichas de Classroom (hecha antes del reparto) | — | — | — | — | — | salidas/00-classroom/ | — | ENTRADA (solo lectura) | |
 | 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | LISTA | |
-| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | EN CURSO | s-20261123T182556-ba3c87df · 2026-11-23T20:25:56Z |
+| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | LISTA (165 fichas: 125 nuevas, 40 duplicados de Classroom con aportes; 82 nuevas sin solución) | |
 | 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | LISTA (38 de 73 adjuntos recuperados, 35 faltan; 8 enunciados transcritos) | |
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
-| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | BLOQUEADA | |
+| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | PENDIENTE | |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA | |
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 02 · 2026-11-23 18:39 · s-20261123T182556-ba3c87df · 165 fichas (125 nuevas, 40 duplicados de Classroom) · salidas/02-fichas-dropbox/
 LISTA · tarea 03 · 2026-11-23 18:32 · s-20261123T182608-89ae2d8c · 73 adjuntos: 38 recuperados en local, 35 faltan; 8 transcripciones · salidas/03-adjuntos-classroom/
 LISTA · tarea 16 · 2026-11-23 18:29 · s-20261123T182647-7f338c08 · borrador de la página «Familias» (7 de 7 puntos) + 9 preguntas · salidas/16-borrador-familias/
 LISTA · tarea 11 · 2026-11-23 18:28 · s-20261123T182516-30e9adcb · 103 entradas (89 claras, 14 en duda) · salidas/11-manifiesto-materiales/

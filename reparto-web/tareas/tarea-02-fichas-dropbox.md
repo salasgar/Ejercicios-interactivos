@@ -74,6 +74,9 @@ fallo `mal cortada` y avisa.
 - Hay un libro ajeno entero («Los 100 mejores juegos de ingenio») y exámenes de oposición: no se fichan.
 - Es una tarea **larga**, no mal cortada: si no cabe, deja hechas las carpetas que quepan y dilo en el fallo.
 
+- (Sesión s-20261123T182556-ba3c87df) Tres .txt del banco están en MacRoman/cp1252 mezclado con UTF-8 («Acertijos clasificados por tipo», «Acertijos lógicos por inducción», «12 bolas de billar»): leer el original, no el convertido. Los nombres de archivo del banco vienen en NFD: comparar normalizados.
+- Las imágenes de `Acertijos/` y `Puzles/` del banco son los adjuntos de Classroom que la API no veía (ver `aporta.adjuntos_locales`); la tarea 03 puede ahorrarse buscarlas en Drive.
+
 ## Prohibido
 - No escribir fuera de la carpeta de salida de esta tarea (y de los «Ficheros que toca», si los hay).
 - No hacer `git add .`, `-A`, `commit -a`, `stash` ni `reset --hard`: el índice es compartido (CLAUDE.md, «Git»).
