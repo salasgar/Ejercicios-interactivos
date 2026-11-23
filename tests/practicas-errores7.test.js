@@ -131,7 +131,7 @@ const MAL_COL = {
 };
 /** Errores cuya línea mala es una cuenta falsa (en los demás es una frase falsa: «así que cuestan 6,00 € más»). */
 const CUENTA_FALSA = new Set(['porcentaje-entre-mil', 'porcentaje-entre-diez', 'dividir-entre-el-porcentaje', 'porcentaje-sin-dividir',
-  'restar-el-porcentaje-como-numero', 'escala-sin-cambio-de-unidad']);
+  'restar-el-porcentaje-como-numero', 'escala-sin-cambio-de-unidad', L.CUENTA]);
 
 test('ejercicio 1: 2-4 columnas que empiezan por el enunciado; 1-2 bien (de formas distintas) y 1-2 con errores distintos', () => {
   const combinaciones = {}, familias = new Set(), rutas = new Set();
@@ -152,8 +152,11 @@ test('ejercicio 1: 2-4 columnas que empiezan por el enunciado; 1-2 bien (de form
       assert.ok(c.lineas.length >= 3, c.lineas.map(l => l.es).join(' | '));
       if (c.error) {
         assert.ok(c.falsa >= 1 && c.falsa < c.lineas.length, 'el enunciado nunca es la línea mala');
-        assert.ok(ERRORES_TIPICOS[c.error], `${c.error}: no está en el catálogo`);
-        assert.ok(X.REGLAS[c.error], `${c.error}: sin regla`);
+        // El fallo de cuenta (JL, 23-11) no está en el catálogo ni tiene regla: tiene su test abajo.
+        if (c.error !== L.CUENTA) {
+          assert.ok(ERRORES_TIPICOS[c.error], `${c.error}: no está en el catálogo`);
+          assert.ok(X.REGLAS[c.error], `${c.error}: sin regla`);
+        }
         assert.notDeepEqual(c.corregida, c.lineas[c.falsa], `${c.ruta}: lo correcto es la línea mala`);
       } else assert.equal(c.falsa, null);
     }
@@ -189,7 +192,10 @@ test('ejercicio 1: las buenas acaban en el resultado bueno y cada mala en el de 
     for (const c of item.columnas) {
       const fin = ultimoNumero(c.lineas.at(-1).es);
       if (!c.error) assert.ok(iguales(fin, bueno), `${c.ruta}: acaba en ${fin} y no en ${bueno}`);
-      else {
+      else if (c.error === L.CUENTA) {
+        assert.ok(iguales(c.cuenta.bien, bueno) && iguales(fin, c.cuenta.mal), `${c.ruta}: ${c.lineas.at(-1).es}`);
+        assert.ok(!iguales(fin, bueno), `${c.ruta}: el fallo de cuenta acaba en el resultado bueno`);
+      } else {
         assert.ok(MAL_COL[c.error], `${c.error} sin cálculo a mano`);
         assert.ok(iguales(fin, MAL_COL[c.error](p)), `${c.ruta}: acaba en ${fin} y no en ${MAL_COL[c.error](p)}`);
         assert.ok(!iguales(fin, bueno), `${c.ruta}: la columna mala acaba en el resultado bueno`);
@@ -198,10 +204,108 @@ test('ejercicio 1: las buenas acaban en el resultado bueno y cada mala en el de 
   }
 });
 
+// ─── JL, 23-11: el fallo de cuenta ─────────────────────────────────────────────
+//
+// Todo se recalcula aquí a mano: lo que daría cada error con nombre de la familia, la última cuenta (leída del texto
+// de la línea buena) con otra operación, y los números que ya salen en la columna.
+
+/** Los errores con nombre de cada familia (sus resultados, en MAL_COL) y otros del catálogo con los mismos números. */
+const ERRORES_FAMILIA = {
+  directa: ['razonar-sumando', 'inversa-en-directa', 'contestar-otra-cosa'],
+  porcentaje: ['porcentaje-entre-mil', 'porcentaje-entre-diez', 'dividir-entre-el-porcentaje', 'porcentaje-sin-dividir'],
+  descuento: ['restar-el-porcentaje-como-numero', 'descuento-por-precio-final', 'aumento-por-descuento'],
+  escala: ['escala-sin-cambio-de-unidad'],
+};
+const OTROS_A_MANO = { descuento: p => [p.c + p.p], escala: p => [p.d / p.n / 100000, p.d * p.n * 100000] };
+/** Lo que se puede apartar del bueno: en euros, 10 céntimos o un euro; en alumnos, uno o dos; en km, una décima o uno. */
+const SALTOS = { '€': [0.1, 1], alumnos: [1, 2], km: [0.1, 1] };
+const unidadDe = item => (item.familia === 'escala' ? 'km' : item.familia === 'porcentaje' && item.params.ctx === 0 ? 'alumnos' : '€');
+/** La última cuenta de una línea buena, «x = 15,00 € · 20 : 5 = 60,00 €» → [15, '·', 20, ':', 5] (sin unidades; % entre 100). */
+function ultimaCuenta(linea) {
+  const t = [];
+  for (const w of palabras(normal(linea).split(' = ').at(-2))) {
+    if (/^\d+(,\d+)?$/.test(w)) t.push(Number(w.replace(',', '.')));
+    else if (w === '%') t[t.length - 1] /= 100;
+    else if (['·', ':', '+', '−', 'de'].includes(w)) t.push(w === 'de' ? '·' : w);
+  }
+  return t;
+}
+const OP = { '+': (a, b) => a + b, '−': (a, b) => a - b, '·': (a, b) => a * b, ':': (a, b) => a / b };
+function conOtraOperacion(t) {
+  const evalua = u => {
+    let v = u[0];
+    for (let k = 1; k < u.length; k += 2) v = OP[u[k]](v, u[k + 1]);
+    return u.length === 5 ? [v, OP[u[1]](u[0], OP[u[3]](u[2], u[4]))] : [v];
+  };
+  const r = [];
+  for (let k = 1; k < t.length; k += 2) {
+    for (const op of Object.keys(OP)) if (op !== t[k]) r.push(...evalua([...t.slice(0, k), op, ...t.slice(k + 1)]));
+    if (t[k] === ':') r.push(...evalua([...t.slice(0, k - 1), t[k + 1], ':', t[k - 1], ...t.slice(k + 2)]));
+  }
+  return r;
+}
+
+test('ejercicio 1: el fallo de cuenta (sin nombre), como mucho uno por ítem, cerca del bueno y nunca un error con nombre', () => {
+  let conCuenta = 0;
+  const familias = new Set(), rutas = new Set();
+  for (const item of generar(L.generarDonde, 31)) {
+    const cuentas = item.columnas.filter(c => c.error === L.CUENTA);
+    assert.ok(cuentas.length <= 1);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    familias.add(item.familia);
+    const [c] = cuentas, p = item.params, otras = item.columnas.filter(o => o !== c), donde = c.lineas.map(l => l.es).join(' | ');
+    assert.equal(otras.filter(o => o.error).length, 1, 'solo con una columna mala con nombre');
+    rutas.add(c.ruta);
+    // La última cuenta, cerca del bueno: un salto creíble en su unidad, y nunca la mitad o más.
+    assert.equal(c.falsa, c.lineas.length - 1, 'la última cuenta');
+    const bien = BIEN_COL[item.familia](p), mal = ultimoNumero(c.lineas.at(-1).es);
+    assert.ok(iguales(mal, c.cuenta.mal) && iguales(bien, c.cuenta.bien), donde);
+    const salto = Math.abs(mal - bien);
+    assert.ok(SALTOS[unidadDe(item)].some(s => iguales(salto, s)), `${bien} → ${mal}: ${donde}`);
+    assert.ok(mal > 0 && salto * 2 < bien, `demasiado lejos: ${bien} → ${mal}`);
+    if (unidadDe(item) === 'alumnos') assert.ok(Number.isInteger(mal), `alumnos no enteros: ${mal}`);
+    // Solo cambia el resultado: lo de antes es la ruta buena y la línea buena es «lo correcto».
+    assert.deepEqual(c.lineas.slice(0, -1).concat([c.corregida]), L.columnasPosibles(L.FAMILIA_POR_ID[item.familia], p).bien.find(b => b.ruta === c.ruta).lineas);
+    assert.equal(igualdades(c.corregida.es).length >= 1, true);
+    // Ni el resultado de otra columna, ni el de un error con nombre de la familia, ni la última cuenta con otra
+    // operación, ni un número que ya sale en la columna («ha contestado otra cosa»).
+    for (const o of otras) assert.ok(!iguales(ultimoNumero(o.lineas.at(-1).es), mal), `igual que otra columna: ${donde}`);
+    for (const id of ERRORES_FAMILIA[item.familia]) assert.ok(!iguales(MAL_COL[id](p), mal), `${id}: ${donde}`);
+    for (const v of OTROS_A_MANO[item.familia]?.(p) ?? []) assert.ok(!iguales(v, mal), `${v}: ${donde}`);
+    const t = ultimaCuenta(c.corregida.es);
+    assert.ok(t.length >= 1 && t.every((x, k) => (k % 2 ? x in OP : Number.isFinite(x))), `no se lee la cuenta: ${c.corregida.es}`);
+    for (const v of conOtraOperacion(t)) assert.ok(!iguales(v, mal), `${t.join(' ')} con otra operación da ${v}: ${donde}`);
+    for (const l of c.lineas.slice(0, -1)) for (const m of normal(l.es).matchAll(/\d+(?:,\d+)?/g)) assert.ok(!iguales(Number(m[0].replace(',', '.')), mal), `${mal} ya sale: ${donde}`);
+    // Sale de una ruta buena que no está en el ítem: no es un calco de otra columna.
+    assert.ok(!otras.some(o => o.ruta === c.ruta), `la ruta ${c.ruta} ya sale`);
+    // La explicación: la cuenta bien hecha, sin regla.
+    assert.match(c.porque.es, /= .+, no .+\.$/, c.porque.es);
+    assert.match(c.porque.en, /= .+, not .+\.$/, c.porque.en);
+  }
+  assert.ok(conCuenta > N * 0.08, `con fallo de cuenta: ${conCuenta} de ${N}`);
+  assert.equal(familias.size, L.FAMILIAS.length, `sale en todas las familias: ${[...familias]}`);
+  assert.equal(rutas.size, L.FAMILIAS.flatMap(fa => fa.bien).length, `sale de todas las rutas buenas: ${[...rutas]}`);
+});
+
+test('el fallo de cuenta: «5 · 1 km» nunca da 6 km (5 + 1) ni 4 km (5 − 1)', () => {
+  const fa = L.FAMILIA_POR_ID.escala;
+  for (let s = 0; s < 400; s++) {
+    const item = L.generarDonde(crearRng(9000 + s));
+    const c = item.columnas.find(x => x.error === L.CUENTA && x.ruta === 'escala-primero');
+    if (!c || item.params.n !== 100000) continue;
+    const d = item.params.d;
+    assert.ok(!iguales(c.cuenta.mal, d + 1) && !iguales(c.cuenta.mal, d - 1), `${d} · 1 km = ${c.cuenta.mal} km`);
+  }
+  assert.ok(fa);
+});
+
 test('ejercicio 1: una pregunta por columna mala, con el nombre bueno y dos de otro tipo de problema (regla de oro)', () => {
   for (const item of generar(L.generarDonde, 34)) {
-    const malas = item.columnas.map((c, j) => (c.error ? j : -1)).filter(j => j >= 0);
+    // Solo las columnas con un error con nombre llevan pregunta; la del fallo de cuenta, no (JL, 23-11).
+    const malas = item.columnas.map((c, j) => (c.error && c.error !== L.CUENTA ? j : -1)).filter(j => j >= 0);
     assert.deepEqual(item.preguntas.map(q => q.col), malas);
+    assert.ok(malas.length >= 1, 'siempre hay al menos un error con nombre');
     for (const q of item.preguntas) {
       const c = item.columnas[q.col];
       assert.equal(q.solucion, c.error);

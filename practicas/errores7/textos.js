@@ -4,7 +4,7 @@
 
 import { ERRORES_TIPICOS } from '../_comun/proporcion.js';
 import { aTexto } from '../_comun/proporcion.js';
-import { htmlLinea, lineaBuena, lineasBuenas, porque, resultadoBueno, LETRAS } from './logica.js';
+import { htmlLinea, lineaBuena, lineasBuenas, porque, resultadoBueno, LETRAS, CUENTA } from './logica.js';
 import { errorEnLinea, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 /** La regla que rompe cada error, en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
@@ -58,6 +58,7 @@ export const TX = {
   col_mal: { es: 'error', en: 'mistake' },
   columna: { es: 'Columna', en: 'Column' },
   pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
+  fallo_cuenta: { es: 'Se ha equivocado al hacer la cuenta.', en: 'Made a mistake in the calculation.' },
   la_linea_es: { es: 'El error está en esta línea:', en: 'The mistake is in this line:' },
   resultado_bien: { es: 'El resultado correcto es:', en: 'The right answer is:' },
   has_escrito: { es: 'Has escrito', en: 'You wrote' },
@@ -94,8 +95,10 @@ export function explicacionColumnas(item, { tt, idioma }) {
   return item.columnas.map((c, j) => {
     const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
     if (!c.error) return `<p class="columna-explica">${cabeza} ${c.porque[idioma]}</p>`;
+    // El fallo de cuenta no tiene nombre en el catálogo ni regla rota: solo la cuenta bien hecha (JL, 23-11).
+    const que = c.error === CUENTA ? `${tt(TX.fallo_cuenta)}<br>` : `${frase(c.error, tt)}${reglaEnNegrita(tt(REGLAS[c.error]))}`;
     return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">${linea(c.lineas[c.falsa], idioma)}</span>`
-      + `<br>${frase(c.error, tt)}${reglaEnNegrita(tt(REGLAS[c.error]))}${c.porque[idioma]}`
+      + `<br>${que}${c.porque[idioma]}`
       + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">${linea(c.corregida, idioma)}</span></p>`;
   }).join('');
 }

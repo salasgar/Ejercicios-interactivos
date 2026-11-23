@@ -28,7 +28,12 @@ test('errores7 · ejercicio 1 (columnas): cada columna dice si está bien o su l
         assert.ok(html.includes(`<strong>${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.</strong> ${c.error ? '' : c.porque[idioma]}`), `columna ${L.LETRAS[j]}`);
         if (!c.error) return;
         assert.ok(html.includes(`<span class="linea-mala">${X.cuenta(L.htmlLinea(c.lineas[c.falsa], idioma))}</span>`), `falta la línea mala de ${L.LETRAS[j]}`);
-        assert.ok(html.includes(`${ERRORES_TIPICOS[c.error].nombre[idioma]}.<strong class="regla-rota">${X.REGLAS[c.error][idioma]}</strong>${c.porque[idioma]}`), 'el error, la regla en negrita y el porqué');
+        // El fallo de cuenta no tiene nombre ni regla rota: dice que es un fallo de cuenta y la cuenta bien hecha (JL, 23-11).
+        if (c.error === L.CUENTA) {
+          assert.ok(html.includes(`${X.TX.fallo_cuenta[idioma]}<br>${c.porque[idioma]}`), 'el fallo de cuenta y el porqué');
+          const parrafo = html.split('<p class="columna-explica">').find(t => t.startsWith(`<strong>${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.`));
+          assert.doesNotMatch(parrafo, /regla-rota/, 'sin regla en la columna de la cuenta');
+        } else assert.ok(html.includes(`${ERRORES_TIPICOS[c.error].nombre[idioma]}.<strong class="regla-rota">${X.REGLAS[c.error][idioma]}</strong>${c.porque[idioma]}`), 'el error, la regla en negrita y el porqué');
         assert.ok(html.includes(`${LO_CORRECTO[idioma]} <span class="linea-mala">${X.cuenta(L.htmlLinea(c.corregida, idioma))}</span>`), 'lo correcto');
       });
     }

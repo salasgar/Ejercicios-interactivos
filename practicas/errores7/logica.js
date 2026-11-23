@@ -374,6 +374,7 @@ const DIRECTA_FACTOR = {
   id: 'directa-factor', error: null,
   cadena: p => ({ lineas: lineasBien('razonar-sumando', p) }),
   valor: p => dir(p).R,
+  cuenta: p => [p.k, '·', valorNum(dir(p).B)],
   porque: (p, i) => (i === 'en' ? `It is right: ${dir(p).c} : ${p.a} = ${p.k}, so the price is also multiplied by ${p.k}.`
     : `Está bien: ${dir(p).c} : ${p.a} = ${p.k}, así que el precio también se multiplica por ${p.k}.`),
 };
@@ -381,6 +382,7 @@ const DIRECTA_UNIDAD = {
   id: 'directa-unidad', error: null,
   cadena: p => ({ lineas: [unoCuesta(p), porUno(p)] }),
   valor: p => dir(p).R,
+  cuenta: p => [dir(p).c, '·', p.u],
   porque: (p, i) => (i === 'en' ? `It is right: first the price of one, ${A(dir(p).U, i)}, and then times ${dir(p).c}.`
     : `Está bien: primero lo que cuesta uno, ${A(dir(p).U, i)}, y después por ${dir(p).c}.`),
 };
@@ -392,6 +394,7 @@ const DIRECTA_REGLA = {
     return { lineas: [i => `${p.a} ${o[i]} → ${A(B, i)}`, i => `${c} ${o[i]} → x`, i => `x = ${A(B, i)} · ${c} : ${p.a} = ${A(R, i)}`] };
   },
   valor: p => dir(p).R,
+  cuenta: p => [valorNum(dir(p).B), '·', dir(p).c, ':', p.a],
   porque: (p, i) => (i === 'en' ? `It is right: it is the rule of three; multiply across and divide by ${p.a}.`
     : `Está bien: es la regla de tres; se multiplica en cruz y se divide entre ${p.a}.`),
 };
@@ -434,6 +437,7 @@ const PCT_DECIMAL = {
   id: 'porcentaje-decimal', error: null,
   cadena: p => ({ lineas: lineasBien('porcentaje-entre-mil', p) }),
   valor: bienPorcentaje,
+  cuenta: p => [p.p / 100, '·', p.c],
   porque(p, i) {
     const { P, Cc } = pc(p), d = N(fraccion(p.p, 100), i);
     return i === 'en' ? `It is right: ${A(P, i)} is ${d}, multiplied by ${A(Cc, i)}.` : `Está bien: el ${A(P, i)} es ${d} y se multiplica por ${A(Cc, i)}.`;
@@ -443,6 +447,7 @@ const PCT_UNO_POR_CIENTO = {
   id: 'porcentaje-uno-por-ciento', error: null,
   cadena: p => ({ lineas: lineasBien('dividir-entre-el-porcentaje', p) }),
   valor: bienPorcentaje,
+  cuenta: p => [p.c, ':', 100, '·', p.p],
   porque: (p, i) => (i === 'en' ? `It is right: ${A(pc(p).Cc, i)} : 100 is ${A(pct(1), i)}, then times ${p.p}.`
     : `Está bien: ${A(pc(p).Cc, i)} : 100 es el ${A(pct(1), i)}, y se multiplica por ${p.p}.`),
 };
@@ -453,6 +458,7 @@ const PCT_PRODUCTO = {
     return { lineas: [i => `${A(P, i)} ${de(i)} ${A(Cc, i)} = ${p.p} · ${A(Cc, i)} : 100`, i => `${p.p} · ${A(Cc, i)} = ${A(prod, i)}`, i => `${A(prod, i)} : 100 = ${A(R, i)}`] };
   },
   valor: bienPorcentaje,
+  cuenta: p => [p.p * p.c, ':', 100],
   porque: (p, i) => (i === 'en' ? `It is right: multiply by ${p.p} and divide by 100.` : `Está bien: se multiplica por ${p.p} y se divide entre 100.`),
 };
 const PCT_SIN_DIVIDIR = {
@@ -475,6 +481,7 @@ const DESC_RESTANDO = {
   id: 'descuento-restando', error: null,
   cadena: p => ({ lineas: lineasBien('restar-el-porcentaje-como-numero', p) }),
   valor: p => descuento(p).final,
+  cuenta: p => [p.c, '−', valorNum(descuento(p).cambio)],
   porque: (p, i) => (i === 'en' ? `It is right: the discount is ${A(descuento(p).cambio, i)}, taken away from the price.`
     : `Está bien: el descuento son ${A(descuento(p).cambio, i)} y se restan del precio.`),
 };
@@ -482,6 +489,7 @@ const DESC_LO_QUE_SE_PAGA = {
   id: 'descuento-lo-que-se-paga', error: null,
   cadena: p => ({ lineas: [sePaga(p, -1), i => `${A(pct(100 - p.p), i)} ${de(i)} ${A(C(p.c, '€'), i)} = ${A(descuento(p).final, i)}`] }),
   valor: p => descuento(p).final,
+  cuenta: p => [(100 - p.p) / 100, '·', p.c],
   porque: (p, i) => (i === 'en' ? `It is right: with a ${A(pct(p.p), i)} discount you pay ${A(pct(100 - p.p), i)} of the price.`
     : `Está bien: con un ${A(pct(p.p), i)} de descuento se paga el ${A(pct(100 - p.p), i)} del precio.`),
 };
@@ -504,6 +512,7 @@ const ESCALA_AL_FINAL = {
   id: 'escala-al-final', error: null,
   cadena: p => ({ lineas: lineasBien('escala-sin-cambio-de-unidad', p) }),
   valor: realKm,
+  cuenta: p => [Math.round(p.d * 2) / 2 * p.n, ':', 100000],
   porque: (p, i) => (i === 'en' ? `It is right: ${A(CM(p.d), i)} · ${N(p.n, i)} gives centimetres, then they are changed to km.`
     : `Está bien: ${A(CM(p.d), i)} · ${N(p.n, i)} da centímetros, y después se pasan a km.`),
 };
@@ -519,6 +528,7 @@ const ESCALA_PRIMERO = {
     };
   },
   valor: realKm,
+  cuenta: p => [Math.round(p.d * 2) / 2, '·', p.n / 100000],
   porque: (p, i) => (i === 'en' ? `It is right: first change what 1 cm on the map is worth to km, then multiply by ${N(dPlano(p), i)}.`
     : `Está bien: primero se pasa a km lo que vale 1 cm del plano y después se multiplica por ${N(dPlano(p), i)}.`),
 };
@@ -621,10 +631,78 @@ export const distractoresDe = (c, p) => Object.keys(CLASE_COLUMNA).filter(d => C
 /** Las LETRAS de las columnas. */
 export const LETRAS = ['A', 'B', 'C', 'D'];
 
+// ─── El fallo de cuenta (JL, 23-11) ─────────────────────────────────────────────
+//
+// Un error que no está en el catálogo, así que no tiene nombre y su columna no lleva pregunta tipo test: una ruta
+// buena que no sale en el ítem, con la última cuenta mal hecha. El resultado queda cerca del bueno y es creíble en
+// su contexto (en euros, 10 céntimos o un euro; en alumnos, uno o dos; en km, una décima o un kilómetro), y nunca es
+// lo que daría un error con nombre: ni el resultado de otra columna posible, ni el de un error del catálogo con los
+// números del problema, ni la última cuenta con otra operación («3 · 2,00 € = 5,00 €» es «ha sumado en vez de
+// multiplicar»), ni un número que ya sale en la columna («ha contestado otra cosa»).
+
+export const CUENTA = 'fallo-de-cuenta';
+/** Lo que se aparta del bueno, en la unidad del resultado (null: alumnos). */
+const CERCANOS = { '€': [1, -1, 0.1, -0.1], null: [1, -1, 2, -2], km: [0.1, -0.1, 1, -1] };
+const centesimas = x => Math.round((typeof x === 'number' ? x : valorNum(x)) * 100);
+
+/** Errores del catálogo que no son columnas, pero que con los números del problema dan un resultado con nombre. */
+const OTROS_CON_NOMBRE = {
+  descuento: p => [E['sumar-el-porcentaje-como-numero'].fn(C(p.c, '€'), p.p), E['precio-final-por-descuento'].fn(C(p.c, '€'), p.p)],
+  escala: p => [E['escala-al-reves'].fn(CM(p.d), p.n, 'realidad', 'km'), E['subir-por-bajar'].fn(C(fraccion(Math.round(p.d * 2) * p.n, 2), 'cm'), 'km')],
+};
+
+const OPERAR = { '+': (a, b) => a + b, '−': (a, b) => a - b, '·': (a, b) => a * b, ':': (a, b) => a / b };
+/** La cuenta `[a, op, b, op, c…]` de izquierda a derecha y, con tres números, también agrupando los dos últimos. */
+function evaluaciones(t) {
+  let v = t[0];
+  for (let k = 1; k < t.length; k += 2) v = OPERAR[t[k]](v, t[k + 1]);
+  return t.length === 5 ? [v, OPERAR[t[1]](t[0], OPERAR[t[3]](t[2], t[4]))] : [v];
+}
+/** Lo que da la última cuenta con una operación cambiada (o la división al revés), y el bueno por o entre 10, 100 y 1000. */
+function cuentasConNombre(t, bien) {
+  const valores = [bien * 10, bien / 10, bien * 100, bien / 100, bien * 1000, bien / 1000];
+  for (let k = 1; k < t.length; k += 2) {
+    for (const op of Object.keys(OPERAR)) if (op !== t[k]) valores.push(...evaluaciones([...t.slice(0, k), op, ...t.slice(k + 1)]));
+    if (t[k] === ':') valores.push(...evaluaciones([...t.slice(0, k - 1), t[k + 1], ':', t[k - 1], ...t.slice(k + 2)]));
+  }
+  return valores;
+}
+/** Los números que salen en unas líneas (en español: «150 000», «6,00», «0,2»). */
+const numerosDe = lineas => lineas.flatMap(l => [...l.es.replace(/[   ]/g, ' ').replace(/(\d) (?=\d{3}(?!\d))/g, '$1')
+  .matchAll(/\d+(?:,\d+)?/g)].map(m => Number(m[0].replace(',', '.'))));
+
 /**
- * Ejercicio 1: el mismo problema en 2-4 columnas, 1-2 bien y 1-2 mal. La respuesta (`solucion`) es, por columna, el
- * índice de la línea mala (contando el enunciado) o null; después, una pregunta por cada columna mala con el nombre
- * bueno y dos de otro tipo de problema.
+ * La columna del fallo de cuenta, sacada de la primera de `libres` (columnas buenas que no salen en el ítem) que
+ * tenga un resultado cercano seguro; null si ninguna lo tiene (ese ítem va sin fallo de cuenta).
+ */
+function columnaDeCuenta(rng, familia, p, libres) {
+  const nombrados = [...familia.bien, ...familia.mal].map(r => { try { return r.valor(p); } catch { return null; } });
+  nombrados.push(...(OTROS_CON_NOMBRE[familia.id]?.(p) ?? []));
+  const conNombre = nombrados.filter(v => v && !Array.isArray(v)).map(centesimas);
+  for (const origen of libres) {
+    const r = familia.bien.find(x => x.id === origen.ruta), bien = r.valor(p), cent = centesimas(bien), t = r.cuenta(p);
+    // Sin los números de la última cuenta no se puede comprobar que el fallo no tenga nombre: esa ruta no vale.
+    if (!t.every((x, k) => (k % 2 ? x in OPERAR : Number.isFinite(x)))) continue;
+    const prohibidos = new Set([...conNombre, ...cuentasConNombre(t, valorNum(bien)).map(centesimas), ...numerosDe(origen.lineas).map(centesimas)]);
+    const posibles = CERCANOS[bien.unidad].map(d => cent + Math.round(d * 100))
+      .filter(x => x > 0 && Math.abs(x - cent) * 2 < cent && !prohibidos.has(x));
+    const ultima = origen.lineas.at(-1), fin = i => ` = ${A(bien, i)}`;
+    if (!posibles.length || !['es', 'en'].every(i => ultima[i].endsWith(fin(i)))) continue;
+    const mal = C(fraccion(rng.elegir(posibles), 100), bien.unidad);
+    const izq = i => ultima[i].slice(0, -fin(i).length);
+    return {
+      ruta: origen.ruta, lineas: [...origen.lineas.slice(0, -1), L(i => `${izq(i)} = ${A(mal, i)}`)], falsa: origen.lineas.length - 1, error: CUENTA,
+      porque: L(i => `${izq(i)} = ${A(bien, i)}, ${i === 'en' ? 'not' : 'no'} ${A(mal, i)}.`), corregida: ultima,
+      cuenta: { bien: cent / 100, mal: centesimas(mal) / 100 },
+    };
+  }
+  return null;
+}
+
+/**
+ * Ejercicio 1: el mismo problema en 2-4 columnas, 1-2 bien y 1-2 mal (como mucho una, con un fallo de cuenta). La
+ * respuesta (`solucion`) es, por columna, el índice de la línea mala (contando el enunciado) o null; después, una
+ * pregunta por cada columna mala con nombre, con el nombre bueno y dos de otro tipo de problema.
  */
 export function generarDonde(rng) {
   for (let intento = 0; intento < 500; intento++) {
@@ -633,8 +711,16 @@ export function generarDonde(rng) {
     const { bien, mal } = columnasPosibles(familia, p);
     if (!bien.length || !mal.length) continue;
     const dos = () => (rng.azar() < 0.6 ? 2 : 1);
-    const columnas = rng.barajar([...rng.barajar(bien).slice(0, dos()), ...rng.barajar(mal).slice(0, dos())]);
-    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error)
+    const buenas = rng.barajar(bien), nBien = Math.min(buenas.length, dos()), malas = rng.barajar(mal).slice(0, dos());
+    const elegidas = [...buenas.slice(0, nBien), ...malas];
+    // Con una sola columna mala con nombre, a veces otra con un fallo de cuenta, sacada de una ruta buena que no sale.
+    if (malas.length === 1 && buenas.length > nBien && rng.azar() < 0.8) {
+      const cuenta = columnaDeCuenta(rng, familia, p, buenas.slice(nBien));
+      if (cuenta) elegidas.push(cuenta);
+    }
+    const columnas = rng.barajar(elegidas);
+    // Pregunta tipo test solo para los errores con nombre: el fallo de cuenta no se puede nombrar (JL, 23-11).
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error && c.error !== CUENTA)
       .map(({ c, col }) => ({ col, opciones: rng.barajar([c.error, ...rng.barajar(distractoresDe(c, p)).slice(0, 2)]), solucion: c.error }));
     return {
       tipo: 'donde', plantilla: familia.base, familia: familia.id, params: p, enunciado: columnas[0].lineas[0], columnas, preguntas,
@@ -680,7 +766,7 @@ export const lineasBuenas = item => PLANTILLA_POR_ID[item.plantilla].cadena(item
 export const lineaBuena = item => lineasBuenas(item)[item.falsa];
 
 export const claveItem = item => (item.columnas
-  ? `${item.familia}|${JSON.stringify(item.params)}|${item.columnas.map(c => c.ruta).join(',')}`
+  ? `${item.familia}|${JSON.stringify(item.params)}|${item.columnas.map(c => (c.error === CUENTA ? `${c.ruta}*${c.cuenta.mal}` : c.ruta)).join(',')}`
   : `${item.plantilla}|${JSON.stringify(item.params)}|${item.falsa ?? 'x'}`);
 
 // ─── Pintar las líneas ─────────────────────────────────────────────────────────
