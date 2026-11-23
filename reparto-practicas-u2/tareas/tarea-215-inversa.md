@@ -2,7 +2,7 @@
 
 Actualizado: 2026-11-19 (adaptada a la unidad 7; alta del 18-11 de la montadora del reparto de la unidad 7, s-20261118T221619-b66ec280, a partir de la ficha 146 de la unidad 6, con sus trampas de app y de proceso)
 Precondición: 211 LISTA · **el acta de la 02 de la U7 deja dentro la proporcionalidad inversa** (es punto a decidir: si la quita, esta tarea no se hace y la coordinadora la marca SUSTITUIDA; si la recorta, se recorta la ficha) · mejor con la hoja y el examen de su paquete ya LISTOS en el reparto de la U7 (paquete 2: tareas 07 y 17 de aquel reparto): si existen, excluye sus casos desde el principio (hoja en claro, examen por huella del caso normalizado por valor); si no, dilo en la ENTREGA y lo coteja la tarea de publicación de tu paquete (228) · Disparo: MANUAL (sesión atendida) · **Plazo: vie 29-1 (ideal); límite vie 19-2**
-Duración esperada: 1 h (tiempo de sesión, no de persona; en la U6, la 146, de tres ejercicios sin contexto y sin el «No lo sé», tardó 14 min el 9-11; esta tiene cuatro, con contextos y cotas) · Banda de modelo: MEDIO · Encadenable con: —
+Duración esperada: 1 h (real en la 215: ~70 min con un corte de contexto; tiempo de sesión, no de persona; en la U6, la 146, de tres ejercicios sin contexto y sin el «No lo sé», tardó 14 min el 9-11; esta tiene cuatro, con contextos y cotas) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `reparto-practicas-u2/salidas/215-inversa/` (solo `ENTREGA.md` y su marcador; el código va en los ficheros de abajo)
 Ficheros que toca (ninguna otra tarea en paralelo los toca): `practicas/inversa/*` (sustituye el esqueleto que deja la 211: desde que la 211 está LISTA, la dueña de esa carpeta es esta tarea), `tests/practicas-inversa.test.js` (nuevo), `tests/practicas-ayuda-inversa.test.js` (nuevo: el del botón «No lo sé»)
 
@@ -391,3 +391,7 @@ Heredadas de la ficha de la U6 de la que sale esta (las de la app, los tests y e
 - (U6, tarea 146) **Una tabla con campos se sale a 375 px**: reduce el relleno, la fuente y el ancho de los campos (allí quedó en 313 px de 314 disponibles). Aquí las casillas llevan además unidades.
 - (U6, tarea 146) Mira qué devuelve el `deTexto` de la base antes de usarlo (el de álgebra devolvía un objeto, no un número): (previsión de la montadora, sin comprobar) el de `proporcion.js` devolverá una cantidad con su unidad, y lo que hay que comparar es su valor.
 - (U6, tarea 153, reabierta del 13-11) En contextos de dinero, ninguna línea ni solución con fracción: se descarta el caso si no son céntimos exactos, y las líneas de los errores típicos se pasan a decimales.
+- (U7, tarea 215) La ficha decía `directa-por-inversa`, pero `proporcion.js` ya trae `directa-en-inversa` e `inversa-en-directa`: usa esos ids de la base.
+- (U7, tarea 215) En macOS `sed -i` pide `''` (`sed -i '' 's/a/b/' f`); sin él falla y, encadenado con `&&`, se salta lo siguiente.
+- (U7, tarea 215) `deTexto` rechaza unidades que no conoce («días», «horas»): esos campos no llevan unidad dentro, solo la etiqueta al lado; el dinero sí acepta `€`.
+- (U7, tarea 215) El permiso de Chrome headless puede denegarse en sesiones automáticas: no insistir por otra vía y decirlo en «No comprobado» de la ENTREGA.
