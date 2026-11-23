@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acertijos y retos</title>
+  <link rel="stylesheet" href="estilos.css">
+  <script type="module" src="pagina.js"></script>
+</head>
+<body>
+  <main class="pagina">
+    <h1 class="titulo">Acertijos y retos</h1>
+    <form class="filtros" id="filtros" role="search" onsubmit="return false">
+      <label class="filtro filtro--texto">Buscar
+        <input type="search" id="f-texto" placeholder="Palabra del enunciado…" autocomplete="off">
+      </label>
+      <label class="filtro">Tipo <select id="f-tipo"><option value="">Todos</option></select></label>
+      <label class="filtro">Nivel <select id="f-nivel"><option value="">Todos</option></select></label>
+      <label class="filtro">Unidad <select id="f-unidad"><option value="">Todas</option></select></label>
+      <label class="filtro">Idioma <select id="f-idioma"><option value="">Todos</option></select></label>
+    </form>
+    <div class="barra">
+      <p class="contador" id="contador" aria-live="polite"></p>
+      <button type="button" id="b-azar" class="boton">Uno al azar</button>
+      <button type="button" id="b-limpiar" class="boton boton--suave">Quitar filtros</button>
+    </div>
+    <div id="lista" class="lista"></div>
+  </main>
+  <noscript><p class="aviso">Esta página necesita JavaScript.</p></noscript>
+</body>
+</html>

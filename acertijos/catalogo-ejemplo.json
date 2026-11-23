@@ -1,0 +1,37 @@
+[
+  {
+    "id": "ej01", "titulo": "Los tres interruptores",
+    "enunciado": "En un pasillo hay tres interruptores y, en una habitación cerrada, una bombilla. Solo puedes entrar una vez en la habitación. ¿Cómo averiguas qué interruptor enciende la bombilla?",
+    "pista": "Una bombilla encendida no solo da luz.",
+    "solucion": "Enciende el primero unos minutos, apágalo, enciende el segundo y entra. Si la bombilla está encendida, es el segundo; si está apagada pero caliente, el primero; si está fría, el tercero.",
+    "tipo": "T", "nivel": "★★", "unidad": 8, "idioma": "es", "orden": 1, "fuente": "Ejemplo inventado"
+  },
+  {
+    "id": "ej02", "titulo": "La suma de los cien primeros",
+    "enunciado": "Suma todos los números del 1 al 100 sin hacer cien sumas.",
+    "pista": "Empareja el 1 con el 100, el 2 con el 99…",
+    "solucion": "Hay 50 parejas y cada una suma 101: 50 · 101 = 5050.",
+    "tipo": "N", "nivel": "★", "unidad": 2, "idioma": "es", "orden": 2, "fuente": "Ejemplo inventado"
+  },
+  {
+    "id": "ej03", "titulo": "Las jarras de cinco y de tres",
+    "enunciado": "Tienes una jarra de 5 litros, otra de 3 y una fuente. ¿Cómo mides exactamente 4 litros?",
+    "pista": "Llena la grande y vierte en la pequeña.",
+    "solucion": "Llena la de 5 y vierte 3 en la de 3: quedan 2. Vacía la de 3 y echa los 2. Llena la de 5 y completa la de 3 (le cabe 1): quedan 4.",
+    "tipo": "P", "nivel": "★★", "unidad": 3, "idioma": "es", "orden": 3, "fuente": "Ejemplo inventado"
+  },
+  {
+    "id": "ej04", "titulo": "What comes next?",
+    "enunciado": "Find the next number: 2, 3, 5, 8, 12, 17, …",
+    "pista": "Look at the differences between neighbours.",
+    "solucion": "The differences are 1, 2, 3, 4, 5, so the next number is 17 + 6 = 23.",
+    "tipo": "S", "nivel": "★", "unidad": 6, "idioma": "en", "orden": 4, "fuente": "Ejemplo inventado"
+  },
+  {
+    "id": "ej05", "titulo": "Apretón de manos",
+    "enunciado": "En una reunión hay 6 personas y todas se saludan con un apretón de manos, una sola vez cada pareja. ¿Cuántos apretones hay en total?",
+    "pista": "Cada persona saluda a otras 5, pero así cuentas cada apretón dos veces.",
+    "solucion": "6 · 5 : 2 = 15 apretones.",
+    "tipo": "C", "nivel": "★★★", "unidad": 4, "idioma": "es", "orden": 5, "fuente": "Ejemplo inventado"
+  }
+]

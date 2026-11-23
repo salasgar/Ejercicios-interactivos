@@ -1,0 +1,33 @@
+/* Página de acertijos: una columna, sin dependencias; pensada para un marco estrecho de Google Sites y para el móvil. */
+:root { --fondo:#f5f6fa; --tarjeta:#fff; --texto:#1f2933; --suave:#52606d; --borde:#d9dee5; --primario:#1d4ed8; --claro:#dbeafe; --aviso:#fef3c7; --ok:#dcfce7; color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin:0; font-family: system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; font-size:16px; line-height:1.45; background:var(--fondo); color:var(--texto); }
+.pagina { max-width:760px; margin:0 auto; padding:12px; }
+.titulo { font-size:1.4rem; margin:.2rem 0 .8rem; }
+.filtros { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px; }
+.filtro { display:flex; flex-direction:column; gap:2px; font-size:.85rem; color:var(--suave); }
+.filtro--texto { grid-column:1 / -1; }
+.filtro input, .filtro select { font:inherit; color:var(--texto); padding:8px; border:1px solid var(--borde); border-radius:8px; background:#fff; min-height:40px; }
+.barra { display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin:12px 0; }
+.contador { flex:1 1 100%; margin:0; font-weight:600; }
+.boton { font:inherit; padding:8px 14px; min-height:40px; border:0; border-radius:8px; background:var(--primario); color:#fff; cursor:pointer; }
+.boton--suave { background:#fff; color:var(--primario); border:1px solid var(--primario); }
+.boton:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline:3px solid #f59e0b; outline-offset:2px; }
+.lista { display:flex; flex-direction:column; gap:12px; }
+.tarjeta { background:var(--tarjeta); border:1px solid var(--borde); border-radius:12px; padding:12px 14px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.tarjeta:target, .tarjeta--marcada { border-color:var(--primario); box-shadow:0 0 0 3px var(--claro); }
+.tarjeta h2 { font-size:1.1rem; margin:0 0 4px; display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; }
+.tarjeta h2 a { color:inherit; text-decoration:none; }
+.estrellas { color:#b45309; letter-spacing:1px; }
+.etiquetas { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 8px; padding:0; list-style:none; font-size:.78rem; color:var(--suave); }
+.etiquetas li { background:var(--claro); border-radius:999px; padding:1px 8px; }
+.enunciado { margin:0 0 8px; white-space:pre-line; }
+.tarjeta img { max-width:100%; height:auto; border-radius:8px; display:block; margin:0 0 8px; }
+details { margin-top:6px; border-radius:8px; padding:6px 10px; }
+details.pista { background:var(--aviso); }
+details.solucion { background:var(--ok); }
+summary { cursor:pointer; font-weight:600; min-height:28px; }
+details p { margin:6px 0 2px; white-space:pre-line; }
+.fuente { margin:8px 0 0; font-size:.75rem; color:var(--suave); }
+.vacio, .aviso { background:#fff; border:1px dashed var(--borde); border-radius:12px; padding:16px; text-align:center; color:var(--suave); }
+@media (max-width:420px) { .pagina { padding:8px; } .filtros { grid-template-columns:1fr 1fr; } }
