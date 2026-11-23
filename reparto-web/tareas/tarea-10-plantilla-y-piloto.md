@@ -84,6 +84,22 @@ fallo `mal cortada` y avisa.
 - Borrar una página con subpáginas no se deshace con «Deshacer»: solo con el historial de versiones.
 - El editor guarda solo en el borrador («Se han guardado todos los cambios en Drive»). Nada sale a la web
   pública hasta que alguien pulsa «Publicar».
+- (2026-11-23, s-20261123T180825-ade12f2f) **Reescribir un cuadro de texto entero**: clic dentro, `cmd+a` (selecciona
+  solo ese cuadro; compruébalo con `getSelection().toString()`), y pegar HTML con un evento sintético:
+  `new ClipboardEvent('paste',{clipboardData: dt})` con `dt.setData('text/html', …)`, despachado en
+  `document.activeElement`. Funciona y respeta listas, encabezados y enlaces externos. Hay que poner
+  `font-family: Lato` en cada bloque (si no, sale en Arial) y `font-weight: normal` en los `h2` (si no, el
+  «Encabezado» sale en negrita). Deja una viñeta vacía al final: un par de `BackSpace`.
+- «Borrar formato» está en el `⋯` de la barra del texto (icono de la T tachada); `cmd+\` no lo admite el ratón sintético.
+- **Enlaces internos**: seleccionar el texto, `cmd+k`, escribir el nombre de la página y pulsar la sugerencia de
+  «ESTE SITIO WEB», luego «Aplicar». Si el cuadro de diálogo dice en «Texto» algo distinto de lo seleccionado, no
+  había selección: `Escape` y repetir (tras `Escape` hay que volver a hacer clic para entrar en el texto). En el DOM
+  del editor los enlaces son `span[role=link]` sin `href`: el destino solo se ve en la burbuja al hacer clic.
+- **Arrastrar secciones (asa ⋮⋮ a la izquierda) no es fiable**: hacia arriba, la sección acabó al final de la página;
+  hacia abajo, hasta el borde inferior de la ventana, sí la dejó al final. «Cuadro de texto» (Insertar) mete la
+  sección nueva **antes de la última**, no al final.
+- La vista previa va en un marco que el script no puede leer: los enlaces se comprueban en el editor.
+- Pulsar sobre una fila del panel «Páginas» con un solo clic abre la página sin entrar en modo renombrar.
 
 ## Prohibido
 - **No pulsar «Publicar»** ni «Dejar de publicar»: publica Juan Luis, cuando revise el borrador.

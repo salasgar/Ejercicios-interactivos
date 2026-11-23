@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:17:21Z · por la sesión s-20261123T181241-700b3a38 (WEB T04+T17: cierre de la 17)
+Regenerado: 2026-11-23T18:27:45Z · por la sesión s-20261123T182647-7f338c08 (WEB T10+T16: cierre de la 10 y reclamo de la 16)
 
 ## Antes de hacer nada
 
@@ -228,22 +228,22 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | # | Tarea | Fichero | Precondición | Duración esperada | Banda | Encadenable con | Salida (dueño único) | Disparo | Estado | Reclamo vivo (sid · caduca) |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 00 | Fichas de Classroom (hecha antes del reparto) | — | — | — | — | — | salidas/00-classroom/ | — | ENTRADA (solo lectura) | |
-| 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | LISTA (541 archivos; 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido) | |
-| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | PENDIENTE | |
-| 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | PENDIENTE | |
+| 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | LISTA | |
+| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | EN CURSO | s-20261123T182556-ba3c87df · 2026-11-23T20:25:56Z |
+| 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | EN CURSO | s-20261123T182608-89ae2d8c · 2026-11-23T19:56:08Z |
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
-| 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | PENDIENTE | |
+| 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | BLOQUEADA | |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
-| 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | EN CURSO | s-20261123T180832-22cae863 · 2026-11-23T20:08:32Z |
+| 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | EN CURSO (último latido: BLOQUEADA por permiso) | s-20261123T180832-22cae863 · 2026-11-23T20:13:41Z |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA | |
-| 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | EN CURSO | s-20261123T180825-ade12f2f · 2026-11-23T20:08:25Z |
-| 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | PENDIENTE | |
+| 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
+| 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | EN CURSO | s-20261123T182516-30e9adcb · 2026-11-23T19:15:16Z |
 | 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | BLOQUEADA | |
-| 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis, y 12 LISTA | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | BLOQUEADA | |
-| 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | BLOQUEADA | |
+| 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis, y 12 LISTA | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | BLOQUEADA (10 LISTA, pero falta aprobar la plantilla; y falta la 12) | |
+| 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | PENDIENTE | |
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | BLOQUEADA | |
-| 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | PENDIENTE | |
+| 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | EN CURSO | s-20261123T182647-7f338c08 · 2026-11-23T19:26:47Z |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
 | 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | BLOQUEADA | |
 
@@ -258,6 +258,8 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 10 · 2026-11-23 18:26 · s-20261123T180825-ade12f2f · plantilla de 7 apartados (propuesta) + portada y piloto U2 en el borrador, 7 capturas · salidas/10-plantilla-y-piloto/
+LISTA · tarea 05 · 2026-11-23 18:25 · s-20261123T181741-730ebb0b · 61 enlaces, todos 200 (Canguro 25, SEMRM 36) · salidas/05-enlaces-concursos/
 LISTA · tarea 17 · 2026-11-23 18:17 · s-20261123T181241-700b3a38 · 83 enunciados de proporcionalidad + 47 de ecuaciones · salidas/17-cantera-problemas/
 LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · 541 archivos: 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido · salidas/01-dropbox-extraccion/
 LISTA · tarea 04 · 2026-11-23 18:12 · s-20261123T181014-ef0ae619 · 0 fichas, 9 carpetas (3 leídas) · salidas/04-sitio-antiguo-y-drive/
@@ -269,7 +271,7 @@ hechas dos veces, cierres en falso, copias en conflicto de la sincronización. S
 recogen aquí para que no se resuelvan dos veces y para que el próximo reparto corte
 mejor.
 
-(vacío todavía)
+- 2026-11-23T18:26 · s-20261123T182556-ba3c87df (tarea 02): las salidas de la 01 y la 05 están en `salidas/` de la **raíz del repo**, no en `reparto-web/salidas/`; la raíz no la ignora git (repo público). Sin resolver: mover las carpetas o ignorar `salidas/` en la raíz.
 
 Los automatismos activos y las rutas del proyecto están en `proyecto.md`, no aquí: este
 fichero se regenera entero y se los llevaría por delante.
