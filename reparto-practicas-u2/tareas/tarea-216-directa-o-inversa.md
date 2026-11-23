@@ -384,3 +384,9 @@ Si paras sin terminar: `$R/hechos/fallos/216--<sid>.md` con hasta dónde llegast
 ## Trampas conocidas (216)
 
 La ficha de la U6 de la que sale esta (la 148) no dejó trampas propias al ejecutarse; las comunes de la app y del proceso están arriba, en «Trampas conocidas». Quien ejecute la 216 añade aquí las suyas.
+- **Tres casillas en una fila a 375 px**: `.elecciones--3` es una columna en móvil; la práctica añade `elecciones--fila` en su `estilos.css` (3 columnas, fuente .95rem). El texto más largo, «Ninguna de las dos», pasa a dos líneas y cabe.
+- **El pasado del ejercicio 1 es un banco, no un generador**: 31 situaciones con dos pares a mano (x2 = 2·x1). Si el acta cambia (quita la inversa o la velocidad), se tocan las filas `i-…` de `BANCO` en `logica.js`; el test comprueba cada par con enteros.
+- **El feedback de una tabla «ninguna» puede traer periódicos**: 30 : 16 = 1,875 o 7 : 3. Solo se muestran los cocientes con a lo sumo 2 decimales (denominador que divide a 100) y siempre los productos x · y.
+- **Cuentas del ej. 3**: se muestran sin resultado; `razonar-sumando` es `b ± |c − a|` (el signo según el sentido). El contexto `viaje` (km/h y «h min») queda fuera por el formato de las cuentas.
+- **Hoja y examen de la semana 2 de la U7 no existían al hacerse**: no hay casos que excluir; cuando existan, excluir por huella FNV-1a.
+- **Sin navegador con clics en la sesión automática**: se probó cargando las entradas y pintando el HTML real en un marco de 375 px; falta pasarla a mano una vez (ENTREGA.md).
