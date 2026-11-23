@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-23T12:16Z por s-20261123T110212-cffcecef al cerrar la 244 (LISTA, commit 4120434: errores7, el fallo de cuenta en las columnas; tests propios 74/74, npm test 2756/2756; probada en Chrome a 1200 y 375 px, es y en): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol; la 240 sigue EN CURSO). Duración real ~75 min de reloj con una pausa de turno (estimada 45 min).
+
 Actualizado 2026-11-23T11:02Z por s-20261123T110212-cffcecef al reclamar la 244 (errores7, fallo de cuenta): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-23T12:10:04Z por s-20261123T110119-ab538480 al cerrar la 243 (LISTA, commit 5cec628: errores5, fallo de cuenta; tests propios 22/22; sin prueba en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
@@ -383,7 +385,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 241 | «Caza el error» de la unidad 1 (errores1): el fallo de cuenta en las columnas | tareas/tarea-241-errores1-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/241-errores1-fallo-cuenta/ | LISTA | terminada 11:04Z (23-nov) · commit da80cbb |
 | 242 | «Caza el error» de la unidad 4 (errores4): el fallo de cuenta en las columnas | tareas/tarea-242-errores4-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/242-errores4-fallo-cuenta/ | LISTA | terminada 11:07Z (23-nov) · commit 7f5124f |
 | 243 | «Caza el error» de la unidad 5 (errores5): el fallo de cuenta en las columnas | tareas/tarea-243-errores5-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/243-errores5-fallo-cuenta/ | LISTA | terminada 2026-11-23T12:10:04Z · commit 5cec628 |
-| 244 | «Caza el error» de la unidad 7 (errores7): el fallo de cuenta en las columnas | tareas/tarea-244-errores7-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/244-errores7-fallo-cuenta/ | EN CURSO | s-20261123T110212-cffcecef · caduca 12:32Z |
+| 244 | «Caza el error» de la unidad 7 (errores7): el fallo de cuenta en las columnas | tareas/tarea-244-errores7-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/244-errores7-fallo-cuenta/ | LISTA | terminada 12:15Z (23-nov) · commit 4120434 |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 4.5, esfuerzo Medio (sin tareas BAJO).

@@ -96,6 +96,16 @@ Problemas de proporcionalidad y porcentajes con contexto: el fallo cambia el res
 - (Del modelo) La corrección de la columna de la cuenta es solo un número: si un test pide textos de más de 3
   caracteres, exclúyela ahí.
 - Si una familia no tiene ninguna ruta buena que no salga en el ítem, ese ítem va sin fallo de cuenta: no lo fuerces.
+- (244, 23-11) En errores7 las líneas son texto, no expresiones: para saber qué daría la última cuenta con otra
+  operación hace falta declarar sus números en cada ruta buena (`cuenta(p)` → `[a, '·', b, ':', c]`). Un `NaN` ahí
+  (p. ej. `valorNum` sobre una Fraccion, que no es una Cantidad) **apaga la comprobación en silencio**: salió
+  «5 · 1 km = 6 km» (= 5 + 1). Ahora la ruta se descarta si algún número no es finito, y el test lee la cuenta del
+  texto de la línea buena, por su cuenta.
+- (244) «Ha contestado otra cosa» también cuenta como error con nombre: el valor malo no puede ser un número que ya
+  salga en la columna.
+- (244) En descuento, `descuento-por-precio-final` comparte la primera línea con `descuento-restando`: la prueba de
+  «no es un calco» del modelo (`lineas.slice(0, -1)` distintas) no vale aquí; se comprueba que la ruta no sale en el ítem.
+- (244) zsh no parte `$F` en palabras: `git add $F` con varias rutas falla. Rutas escritas una a una.
 
 ## Prohibido (propio de esta tarea)
 
