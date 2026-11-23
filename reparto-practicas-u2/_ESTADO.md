@@ -14,6 +14,8 @@ Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
 Actualizado 2026-11-23T11:02Z por s-20261123T110212-cffcecef al reclamar la 244 (errores7, fallo de cuenta): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
+Actualizado 2026-11-23T12:10:04Z por s-20261123T110119-ab538480 al cerrar la 243 (LISTA, commit 5cec628: errores5, fallo de cuenta; tests propios 22/22; sin prueba en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
+
 Actualizado 2026-11-23T11:01Z por s-20261123T110004-4d0bcd21 al reclamar la 240 (errores, fallo de cuenta): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol).
 
 Actualizado 2026-11-23T11:04Z por s-20261123T105957-b9560496 al cerrar la 241 (LISTA, commit da80cbb: errores1, fallo de cuenta; tests propios 44/44; sin prueba en navegador): **retoque de su fila**, no regeneración completa (otras sesiones en el árbol). Antes: Actualizado 2026-11-23T10:57Z por s-20261123T105616-5abfb78b alta de las tareas 240-244 (el fallo de cuenta en las columnas de «Caza el error»; modelo en errores3, 8ef414a): **regeneración completa** con `hechos/notas/s-20261111T215225-39c1f4f5-regenerar-tablon.py` (relistado `hechos/` tras `git fetch`; todas las filas recalculadas contra `hechos/` y la hora real; banda, duración y «encadenable» de las fichas).
@@ -380,7 +382,7 @@ se copian de las fichas** al regenerar; la leyenda de bandas, de `proyecto.md`.
 | 240 | «Caza el error» de la unidad 2 (errores): el fallo de cuenta en las columnas | tareas/tarea-240-errores-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/240-errores-fallo-cuenta/ | EN CURSO | s-20261123T110004-4d0bcd21 · caduca 12:30Z |
 | 241 | «Caza el error» de la unidad 1 (errores1): el fallo de cuenta en las columnas | tareas/tarea-241-errores1-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/241-errores1-fallo-cuenta/ | LISTA | terminada 11:04Z (23-nov) · commit da80cbb |
 | 242 | «Caza el error» de la unidad 4 (errores4): el fallo de cuenta en las columnas | tareas/tarea-242-errores4-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/242-errores4-fallo-cuenta/ | LISTA | terminada 11:07Z (23-nov) · commit 7f5124f |
-| 243 | «Caza el error» de la unidad 5 (errores5): el fallo de cuenta en las columnas | tareas/tarea-243-errores5-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/243-errores5-fallo-cuenta/ | PENDIENTE | — |
+| 243 | «Caza el error» de la unidad 5 (errores5): el fallo de cuenta en las columnas | tareas/tarea-243-errores5-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 40 min | MEDIO | — | reparto-practicas-u2/salidas/243-errores5-fallo-cuenta/ | LISTA | terminada 2026-11-23T12:10:04Z · commit 5cec628 |
 | 244 | «Caza el error» de la unidad 7 (errores7): el fallo de cuenta en las columnas | tareas/tarea-244-errores7-fallo-cuenta.md | — (modelo en `main`, 8ef414a) | 45 min | ALTO | — | reparto-practicas-u2/salidas/244-errores7-fallo-cuenta/ | EN CURSO | s-20261123T110212-cffcecef · caduca 12:32Z |
 
 Bandas hoy (de `proyecto.md`, puesta al día el 2026-10-21): ALTO = Opus 5.5, esfuerzo Alto ·

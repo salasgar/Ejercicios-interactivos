@@ -95,6 +95,7 @@ Decimales. Es la práctica donde más falta hace: con pocos errores por familia,
   funciones del catálogo de la unidad, no a ojo.
 - (Del modelo) La corrección de la columna de la cuenta es solo un número: si un test pide textos de más de 3
   caracteres, exclúyela ahí.
+- (Aprendida en la 243) El fallo de cuenta solo cabe donde la última línea es «= número» tras una cuenta de números; en redondeo (`≈`), comparación, periódicos y división con resto no sale. La explicación lleva fracciones con raya (`htmlLinea`), así que el helper `sinHtml` del test de «cuatro cifras enteras» tiene que separar numerador y denominador (65 y 100, no 65100).
 - Si una familia no tiene ninguna ruta buena que no salga en el ítem, ese ítem va sin fallo de cuenta: no lo fuerces.
 
 ## Prohibido (propio de esta tarea)
