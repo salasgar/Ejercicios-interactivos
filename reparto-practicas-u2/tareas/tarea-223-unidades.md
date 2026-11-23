@@ -381,3 +381,5 @@ Si paras sin terminar: `$R/hechos/fallos/223--<sid>.md` con hasta dónde llegast
   área) o algo de una sesión posterior a la de la destreza; distractores que puedan ser
   verdad, y en especial **dos opciones con el mismo valor** (`0,2` y `20 %`; `2,5 km` y `2500 m`; dos métodos correctos enfrentados), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+- (U7, tarea 223) El acta manda sobre la ficha: la superficie va a la U8 y el tiempo (sesión 18) entra; el ej. 3 se hizo «Horas y minutos». Los errores de «cien en vez de sesenta» y «pegar cifras» dan a veces el mismo número (2 h 30 min → 230): en el test acepta cualquiera de los errores con ese valor.
+- (U7, tarea 223) Un `\d{5}` genérico en el test de textos choca con distractores legítimos como `0,00338 dL`; no lo uses. En zsh, `git add $VARIABLE` no separa por espacios: escribe las rutas.
