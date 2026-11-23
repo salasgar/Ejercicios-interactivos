@@ -9,14 +9,14 @@ import { crearRng } from '../practicas/_comun/rng.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 import { ERRORES_TIPICOS, analizar, evaluar, comparar, fraccion } from '../practicas/_comun/fracciones.js';
 import * as L from '../practicas/errores4/logica.js';
-import { TX } from '../practicas/errores4/textos.js';
+import { TX, explicaLinea } from '../practicas/errores4/textos.js';
 
 const N = 3000;
 const generar = (fn, semilla = 17) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => fn(rng)); };
 const val = texto => evaluar(analizar(texto));
 /** Las columnas malas de los ítems del ejercicio 2, una por una, con la forma de una plantilla: { plantilla, params, lineas, falsa, error }. */
 const malasPlanas = (semilla, n = N) => generar(L.generarColumnas, semilla).slice(0, n)
-  .flatMap(it => it.columnas.filter(c => c.error).map(c => ({ plantilla: c.ruta, params: c.params, lineas: c.lineas, falsa: c.falsa, error: c.error })));
+  .flatMap(it => it.columnas.filter(c => c.error && c.error !== L.CUENTA).map(c => ({ plantilla: c.ruta, params: c.params, lineas: c.lineas, falsa: c.falsa, error: c.error })));
 const mcd = (a, b) => (b === 0 ? Math.abs(a) : mcd(b, a % b));
 const mcm = (a, b) => (a / mcd(a, b)) * b;
 const igual = (x, [n, d]) => x.num * d === n * x.den;
@@ -92,7 +92,9 @@ test('ejercicio 2 en columnas: 2-4 columnas, 1-2 bien y 1-2 mal, cada columna ma
     assert.ok(item.columnas.length >= 2 && item.columnas.length <= 4, `${item.columnas.length} columnas`);
     nCols.add(item.columnas.length);
     const malas = item.columnas.filter(c => c.error), buenas = item.columnas.filter(c => !c.error);
+    const conNombre = malas.filter(c => c.error !== L.CUENTA);
     assert.ok(malas.length >= 1 && malas.length <= 2 && buenas.length >= 1 && buenas.length <= 2, 'una o dos de cada');
+    assert.ok(conNombre.length >= 1 && malas.length - conNombre.length <= 1, 'siempre un error con nombre; fallo de cuenta, como mucho uno');
     assert.equal(new Set(item.columnas.map(c => c.lineas.join('|'))).size, item.columnas.length, 'dos columnas iguales');
     assert.equal(new Set(malas.map(c => c.error)).size, malas.length, 'dos columnas con el mismo error');
     assert.equal(new Set(buenas.map(c => c.ruta)).size, buenas.length, 'dos columnas bien de la misma forma');
@@ -101,10 +103,11 @@ test('ejercicio 2 en columnas: 2-4 columnas, 1-2 bien y 1-2 mal, cada columna ma
       const falsas = c.lineas.map((l, i) => (i > 0 && !val(l).equals(val(c.lineas[i - 1])) ? i : -1)).filter(i => i >= 0);
       assert.deepEqual(falsas, c.falsa === null ? [] : [c.falsa], c.lineas.join(' | '));
       assert.ok(val(c.lineas.at(-1)).equals(val(item.enunciado)) === !c.error, 'el resultado de una columna es el del enunciado solo si está bien');
+      if (c.error === L.CUENTA) continue;
       if (c.error) { posiciones.add(c.falsa); rutasMalas.add(c.ruta); } else rutasBuenas.add(c.ruta);
     }
     assert.deepEqual(item.solucion, item.columnas.map(c => c.falsa));
-    assert.equal(item.preguntas.length, malas.length);
+    assert.deepEqual(item.preguntas.map(q => q.col), item.columnas.map((c, j) => (c.error && c.error !== L.CUENTA ? j : -1)).filter(j => j >= 0), 'preguntas solo con nombre');
     item.preguntas.forEach(q => {
       assert.equal(q.solucion, item.columnas[q.col].error);
       assert.equal(q.opciones.length, 3);
@@ -119,11 +122,63 @@ test('ejercicio 2 en columnas: 2-4 columnas, 1-2 bien y 1-2 mal, cada columna ma
   for (const fa of L.FAMILIAS) for (const r of fa.bien) assert.ok(rutasBuenas.has(r.id), `la ruta buena ${r.id} no sale`);
 });
 
+test('ejercicio 2 en columnas: el fallo de cuenta (sin nombre), como mucho uno, la última cuenta, cerca del bueno y nunca un error con nombre', () => {
+  let conCuenta = 0;
+  const familias = new Set();
+  for (const item of generar(L.generarColumnas, 31)) {
+    const cuentas = item.columnas.filter(c => c.error === L.CUENTA);
+    assert.ok(cuentas.length <= 1);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    familias.add(item.plantilla);
+    const [c] = cuentas;
+    const bien = val(c.cuenta.bien), mal = val(c.lineas[c.falsa]);
+    assert.equal(c.lineas[c.falsa], c.cuenta.mal);
+    assert.equal(c.lineas.length, c.falsa + 1, 'la cuenta es la última línea de la columna');
+    assert.ok(val(c.lineas[c.falsa - 1]).equals(bien), 'la línea de antes vale lo del bueno');
+    // Cerca: el mismo denominador y el numerador ±1 o ±2 (el entero, si el resultado lo es).
+    const [, sn, sd] = /^(−?\d+)(?:\/(\d+))?$/.exec(c.cuenta.bien).map(x => x ?? '1').map(x => x);
+    const [, mn, md] = /^(−?\d+)(?:\/(\d+))?$/.exec(c.cuenta.mal).map(x => x ?? '1');
+    assert.equal(md, sd, 'mismo denominador');
+    assert.ok([1, 2].includes(Math.abs(Number(mn.replace('−', '-')) - Number(sn.replace('−', '-')))), `${c.cuenta.bien} → ${c.cuenta.mal}`);
+    assert.ok(!mal.equals(bien) && !mal.equals(bien.opuesta()));
+    // Distinta del resultado de las demás columnas.
+    for (const o of item.columnas) if (o !== c) assert.ok(!val(o.lineas.at(-1)).equals(mal), c.lineas.join(' | '));
+    // No es un calco de otra columna: sale de una ruta buena que no está en el ítem.
+    for (const o of item.columnas) if (o !== c) assert.notEqual(o.ruta, c.ruta);
+    // Ningún error con nombre del catálogo da ese valor con los números del ítem.
+    for (const r of L.FAMILIA_POR_ID[item.plantilla].mal) assert.equal(L.erroresQueExplican(r.id, c.params, mal).size, 0, `${c.lineas.join(' | ')}: ${[...L.erroresQueExplican(r.id, c.params, mal)]}`);
+    // Y solo una línea falsa.
+    assert.deepEqual(c.lineas.map((l, i) => (i > 0 && !val(l).equals(val(c.lineas[i - 1])) ? i : -1)).filter(i => i >= 0), [c.falsa]);
+  }
+  assert.ok(conCuenta > N * 0.08, `con fallo de cuenta: ${conCuenta} de ${N}`);
+  assert.ok(familias.size >= 4, `familias con fallo de cuenta: ${[...familias]}`);
+});
+
+test('el fallo de cuenta: la tarjeta del «No lo sé» dice «se ha equivocado» y la cuenta bien hecha, sin regla en esa columna', () => {
+  let visto = 0;
+  for (const item of generar(L.generarColumnas, 33)) {
+    const c = item.columnas.find(c => c.error === L.CUENTA);
+    if (!c) continue;
+    visto++;
+    for (const idioma of ['es', 'en']) {
+      const tt = t => (typeof t === 'string' ? t : t[idioma]);
+      const html = explicaLinea(item, { idioma, tt });
+      const j = item.columnas.indexOf(c), bloque = html.split('<p class="columna-explica">')[j + 1].split('</p>')[0];
+      assert.ok(bloque.includes(TX.fallo_cuenta[idioma]), bloque);
+      assert.ok(!bloque.includes('regla-rota'), bloque);
+      assert.ok(bloque.includes(L.ex(c.cuenta.bien)) && bloque.includes(L.ex(c.cuenta.mal)), bloque);
+    }
+    if (visto > 50) break;
+  }
+  assert.ok(visto > 20);
+});
+
 test('ejercicio 2 en columnas: los números de cada familia son los de sus plantillas y las malas no repiten la línea del enunciado', () => {
   for (const item of generar(L.generarColumnas, 23)) {
     const fa = L.FAMILIA_POR_ID[item.plantilla];
     assert.equal(fa.enunciado(item.params), item.enunciado);
-    for (const c of item.columnas.filter(c => c.error)) assert.equal(L.PLANTILLA_POR_ID[c.error].l0(c.params), item.enunciado);
+    for (const c of item.columnas.filter(c => c.error && c.error !== L.CUENTA)) assert.equal(L.PLANTILLA_POR_ID[c.error].l0(c.params), item.enunciado);
   }
 });
 
@@ -296,7 +351,7 @@ test('las explicaciones citan los números del ítem, en los dos idiomas', () =>
     for (const c of item.columnas) {
       const texto = L.explicaColumna(c).porque;
       for (const idioma of ['es', 'en']) assert.match(texto[idioma].replace(/<[^>]*>/g, ''), /\d/, c.ruta);
-      if (c.error) assert.equal((texto.es.match(/class="frac"/g) ?? []).length > 0, true, c.ruta);
+      if (c.error && c.error !== L.CUENTA) assert.equal((texto.es.match(/class="frac"/g) ?? []).length > 0, true, c.ruta);
     }
   }
 });

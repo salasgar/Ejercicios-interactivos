@@ -764,8 +764,65 @@ export function columnasPosibles(familia, params) {
   };
 }
 
+/**
+ * El fallo de cuenta (JL, 23-11): un error que no está en el catálogo, así que no tiene nombre y su columna no lleva
+ * pregunta tipo test ni regla rota. Es una ruta buena que no sale en el ítem con la última cuenta mal hecha: el
+ * numerador del resultado cambia en ±1 o ±2 con el mismo denominador (o el entero, si el resultado lo es), y el valor
+ * nunca es el de otra columna, ni el opuesto del bueno, ni el que daría un error con nombre del catálogo.
+ */
+export const CUENTA = 'fallo-de-cuenta';
+const CERCANOS = [1, -1, 2, -2];
+const FORMA = /^(−?)(\d+)(?:\/(\d+))?$/;
+const OPERANDOS = /^(−?\d+(?:\/\d+)?) ([+−·:]) (−?\d+(?:\/\d+)?)$/;
+const lineaDe = (n, d) => `${n < 0 ? '−' : ''}${Math.abs(n)}${d === 1 ? '' : `/${d}`}`;
+
+/** Lo que daría cada error con nombre del catálogo aplicado a los dos operandos de la última cuenta (`a OP b`). */
+function conNombre(antes) {
+  const valores = [];
+  const m = OPERANDOS.exec(antes);
+  if (!m) return valores;
+  let a, b;
+  try { a = valorDe(m[1]); b = valorDe(m[3]); } catch { return valores; }
+  const listas = [[a, b], [b, a], [a, b.opuesta()], [a, b, '-'], ...(b.den === 1 ? [[a, b.num]] : []), ...(a.den === 1 ? [[b, a.num]] : [])];
+  for (const e of Object.values(E)) {
+    if (e.devuelve === 'comparacion') continue;
+    for (const args of listas) {
+      let r;
+      try { r = e.fn(...args); } catch { r = null; }
+      if (r === null || r === undefined) continue;
+      valores.push(typeof r === 'number' ? f(r, 1) : r);
+    }
+  }
+  return valores;
+}
+
+/**
+ * Una columna con fallo de cuenta a partir de una ruta buena (`origen`) que no está en el ítem, o null si no hay un
+ * valor seguro. `otras` son las columnas que ya están en el ítem; `familia`, la del ítem (para los errores con nombre).
+ */
+export function columnaDeCuenta(rng, familia, origen, otras) {
+  const L0 = origen.lineas;
+  let t = -1;
+  for (let k = L0.length - 1; k >= 1; k--) if (/ [+−·:] /.test(L0[k - 1]) && FORMA.test(L0[k])) { t = k; break; }
+  if (t < 0) return null;
+  const m = FORMA.exec(L0[t]), num = (m[1] ? -1 : 1) * Number(m[2]), den = Number(m[3] ?? 1);
+  const bien = valorDe(L0[t]);
+  const prohibidos = [bien.opuesta(), ...otras.map(c => valorDe(c.lineas.at(-1))), ...conNombre(L0[t - 1])];
+  const posibles = CERCANOS.map(k => num + k).filter(x => x !== 0 && (x > 0) === (num > 0)).filter(x => {
+    const v = valorDe(lineaDe(x, den));
+    return !prohibidos.some(p => p.equals(v)) && !familia.mal.some(r => erroresQueExplican(r.id, origen.params, v).size > 0);
+  });
+  if (!posibles.length) return null;
+  const mal = lineaDe(rng.elegir(posibles), den);
+  return { ...origen, lineas: [...L0.slice(0, t), mal], falsa: t, error: CUENTA, cuenta: { antes: L0[t - 1], bien: L0[t], mal } };
+}
+
 /** Lo que explica una columna con sus números: { porque: { es, en }, corregida: expresión | null }. */
 export function explicaColumna(c) {
+  if (c.error === CUENTA) {
+    const { antes, bien, mal } = c.cuenta;
+    return { porque: L(`${ex(antes)} = ${ex(bien)}, no ${ex(mal)}.`, `${ex(antes)} = ${ex(bien)}, not ${ex(mal)}.`), corregida: bien };
+  }
   if (!c.error) return { porque: BUENA_POR_ID[c.ruta].porque(c.params), corregida: null };
   const p = PLANTILLA_POR_ID[c.ruta];
   return { porque: p.porque(c.params), corregida: p.corregida(c.params) };
@@ -787,9 +844,19 @@ export function generarColumnas(rng) {
     const { bien, mal: malas } = columnasPosibles(familia, params);
     if (!bien.length || !malas.length) continue;
     const dos = () => (rng.azar() < 0.6 ? 2 : 1);
-    const nBien = Math.min(bien.length, dos()), nMal = Math.min(malas.length, dos());
-    const columnas = rng.barajar([...rng.barajar(bien).slice(0, nBien), ...rng.barajar(malas).slice(0, nMal)]);
-    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error).map(({ c, col }) => ({
+    const nMal = Math.min(malas.length, dos());
+    const buenas = rng.barajar(bien), malasElegidas = rng.barajar(malas).slice(0, nMal);
+    let nBien = Math.min(bien.length, dos());
+    const elegidas = [...malasElegidas];
+    // Con una sola columna mala con nombre, a veces otra con un fallo de cuenta, sacada de una ruta buena que no sale
+    // (JL, 23-11); entonces hay una sola columna bien.
+    let cuenta = null;
+    if (nMal === 1 && buenas.length >= 2 && rng.azar() < 0.5) cuenta = columnaDeCuenta(rng, familia, buenas[1], [buenas[0], ...malasElegidas]);
+    if (cuenta) { nBien = 1; elegidas.push(cuenta); }
+    elegidas.push(...buenas.slice(0, nBien));
+    const columnas = rng.barajar(elegidas);
+    // Pregunta tipo test solo para los errores con nombre: el fallo de cuenta no se puede nombrar.
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error && c.error !== CUENTA).map(({ c, col }) => ({
       col, solucion: c.error,
       opciones: opcionesDeNombre(rng, c.error, { plantilla: c.error, params: c.params, mostrado: valorDe(c.lineas.at(-1)) }),
     }));

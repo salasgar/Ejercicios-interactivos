@@ -83,6 +83,12 @@ test('errores4, ejercicio 2 en columnas: cada columna explicada, la regla rota e
     item.columnas.forEach((c, j) => {
       assert.ok(html.includes(`${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.`), texto);
       if (!c.error) return;
+      if (c.error === L.CUENTA) {
+        // El fallo de cuenta no tiene nombre ni regla rota: dice que es un fallo de cuenta y la cuenta bien hecha (JL, 23-11).
+        assert.ok(html.includes(X.TX.fallo_cuenta[idioma]), 'el fallo de cuenta');
+        assert.ok(html.includes(`= ${L.ex(c.cuenta.bien)}`), texto);
+        return;
+      }
       assert.ok(html.includes('class="regla-rota"'), 'la regla rota, en negrita');
       const corregida = L.PLANTILLA_POR_ID[c.error].corregida(c.params);
       assert.ok(html.includes(`= ${L.ex(corregida)}`), texto);
