@@ -34,6 +34,9 @@ export const NOMBRES = {
 };
 export const CLAVES_NOMBRES = Object.keys(NOMBRES);
 
+/** Un fallo de cuenta no es un error del catálogo: no tiene nombre ni regla (JL, 23-11). */
+export const CUENTA = 'fallo-de-cuenta';
+
 /** La regla que rompe cada error, para recordarla en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
 export const REGLAS = {
   sumaAntes: { es: 'La multiplicación se hace antes que la suma.', en: 'Multiplication comes before addition.' },
@@ -103,6 +106,7 @@ export const TX = {
   columna: { es: 'Columna', en: 'Column' },
   la_linea_es: { es: 'La línea del error es', en: 'The line with the mistake is' },
   pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
+  fallo_cuenta: { es: 'Se ha equivocado al hacer la cuenta.', en: 'Made a mistake in the calculation.' },
   bien: { es: 'Está bien', en: 'It is right' },
   error: { es: 'Hay un error', en: 'There is a mistake' },
   esta_bien: { es: 'Está bien: no hay ningún error.', en: 'It is right: there is no mistake.' },
@@ -775,6 +779,13 @@ export function explicacionColumnas(item, { tt }) {
   return item.columnas.map((c, j) => {
     const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
     if (!c.error) return `<p class="columna-explica">${cabeza} ${html(tt(c.porque))}</p>`;
+    if (c.error === CUENTA) {
+      const antes = tt(c.lineas[c.falsa - 1]), { bien, mal } = c.cuenta;
+      const porque = tt({ es: `${antes} = ${bien}, no ${mal}.`, en: `${antes} = ${bien}, not ${mal}.` });
+      return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">= ${html(tt(c.lineas[c.falsa]))}</span>`
+        + `<br>${esc(tt(TX.fallo_cuenta))}<br>${html(porque)}`
+        + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">= ${bien}</span></p>`;
+    }
     return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">= ${html(tt(c.lineas[c.falsa]))}</span>`
       + `<br>${esc(tt(NOMBRES[c.error]))}${reglaEnNegrita(html(tt(REGLAS[c.error])))}`
       + `${tt(LO_CORRECTO)} ${cuentaBuena(item, tt)}</p>`;

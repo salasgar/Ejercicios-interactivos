@@ -42,6 +42,12 @@ test('errores1 · ejercicio 2 (columnas): consejo, todas las columnas explicadas
       assert.ok(t.includes(`${X.TX.columna[idioma]} ${X.LETRAS[j]}.`), t);
       if (!c.error) { assert.ok(t.includes(plano(X.html(c.porque[idioma]))), t); continue; }
       malas.push(X.LETRAS[j]);
+      if (c.error === L.CUENTA) {
+        assert.ok(t.includes(X.TX.fallo_cuenta[idioma]), t);
+        assert.ok(!html.includes(`<strong class="regla-rota">${X.html(X.REGLAS[c.error]?.[idioma] ?? '@@')}`), 'sin regla');
+        assert.ok(t.includes(`= ${c.cuenta.bien}, ${idioma === 'es' ? 'no' : 'not'} ${c.cuenta.mal}.`), t);
+        continue;
+      }
       assert.ok(html.includes(`<strong class="regla-rota">${X.html(X.REGLAS[c.error][idioma])}</strong>`), t);
       assert.ok(t.includes(plano(X.html(c.lineas[c.falsa][idioma])).trim()), t);
       assert.ok(t.includes(X.NOMBRES[c.error][idioma]), t);

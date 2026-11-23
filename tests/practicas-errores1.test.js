@@ -12,7 +12,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
-import { generarHay, generarColumnas, columnasPosibles, generarNombre, generarPasos, clavePasos, nombresExcluidos } from '../practicas/errores1/logica.js';
+import { generarHay, generarColumnas, columnasPosibles, CUENTA, generarNombre, generarPasos, clavePasos, nombresExcluidos } from '../practicas/errores1/logica.js';
 import { PLANTILLAS, PLANTILLA_POR_ID, PASOS, PASOS_POR_ID, TX, NOMBRES, CLAVES_NOMBRES, CONFUNDIBLES } from '../practicas/errores1/textos.js';
 import { CATALOGO } from '../practicas/_comun/catalogo.js';
 
@@ -391,7 +391,7 @@ test('ejercicio 2: en columnas, cada línea buena vale lo mismo que el enunciado
         assert.equal(primeraMala, c.falsa, `${item.plantilla}/${c.ruta}: ${c.lineas.map(l => l.es).join(' | ')}`);
         assert.equal(item.solucion[j], c.falsa);
         assert.ok(c.falsa >= 1, 'el enunciado no se puede marcar');
-        assert.ok(c.error in NOMBRES);
+        assert.ok(c.error === CUENTA || c.error in NOMBRES);
         for (const v of vs.slice(c.falsa)) assert.equal(v, vs[c.falsa], 'tras el error, el resto sigue su valor falso');
         assert.equal(c.porque, null);
       } else {
@@ -407,8 +407,9 @@ test('ejercicio 2: siempre hay una columna buena y una mala; no hay columnas rep
   const rng = crearRng(202);
   for (let i = 0; i < 3000; i++) {
     const item = generarColumnas(rng);
-    const malas = item.columnas.filter(c => c.error), buenas = item.columnas.filter(c => !c.error);
+    const malas = item.columnas.filter(c => c.error && c.error !== CUENTA), buenas = item.columnas.filter(c => !c.error);
     assert.ok(malas.length >= 1 && malas.length <= 2, item.plantilla);
+    assert.ok(item.columnas.filter(c => c.error === CUENTA).length <= (malas.length === 1 ? 1 : 0), 'un fallo de cuenta como mucho, con una sola mala con nombre');
     assert.ok(buenas.length >= 1 && buenas.length <= 2, item.plantilla);
     assert.equal(new Set(item.columnas.map(c => c.lineas.map(l => l.es).join('|'))).size, item.columnas.length, 'columnas repetidas');
     assert.equal(new Set(item.columnas.map(c => c.ruta)).size, item.columnas.length, 'rutas repetidas');
@@ -421,10 +422,11 @@ test('ejercicio 2: preguntas: nombre bueno + 2 que no pueden describir la column
   const rng = crearRng(203);
   for (let i = 0; i < 3000; i++) {
     const item = generarColumnas(rng);
-    const nombresMalos = item.columnas.filter(c => c.error).map(c => c.error);
+    const nombresMalos = item.columnas.filter(c => c.error && c.error !== CUENTA).map(c => c.error);
+    assert.deepEqual(item.preguntas.map(q => q.col), item.columnas.flatMap((c, j) => (c.error && c.error !== CUENTA ? [j] : [])), 'preguntas solo con nombre');
     for (const q of item.preguntas) {
       const c = item.columnas[q.col];
-      assert.ok(c.error, 'se pregunta por una columna mala');
+      assert.ok(c.error && c.error !== CUENTA, 'se pregunta por una columna mala con nombre');
       assert.equal(q.solucion, c.error);
       assert.equal(q.opciones.length, 3);
       assert.equal(new Set(q.opciones).size, 3);
@@ -438,6 +440,40 @@ test('ejercicio 2: preguntas: nombre bueno + 2 que no pueden describir la column
       }
     }
   }
+});
+
+test('ejercicio 2: el fallo de cuenta (sin nombre): última línea, cerca del bueno, distinto de las demás columnas y de los errores con nombre', () => {
+  const rng = crearRng(206);
+  let conCuenta = 0;
+  const N = 3000;
+  for (let i = 0; i < N; i++) {
+    const item = generarColumnas(rng);
+    const cuentas = item.columnas.filter(c => c.error === CUENTA);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    assert.equal(cuentas.length, 1);
+    const [c] = cuentas, j = item.columnas.indexOf(c);
+    assert.equal(c.falsa, c.lineas.length - 1, 'la última cuenta');
+    assert.equal(item.solucion[j], c.falsa);
+    const bien = evaluar(item.enunciado.es), mal = evaluar(c.lineas[c.falsa].es);
+    assert.ok([1, 2, 10].includes(Math.abs(mal - bien)), `${bien} → ${mal}`);
+    assert.ok(mal >= 1);
+    assert.deepEqual(c.cuenta, { bien, mal });
+    assert.equal(evaluar(c.lineas[c.falsa - 1].es), bien, 'la cuenta anterior está bien hecha');
+    for (const o of item.columnas) if (o !== c) {
+      assert.notEqual(evaluar(o.lineas.at(-1).es), mal, 'no coincide con otra columna');
+      assert.notDeepEqual(o.lineas.slice(0, -1), c.lineas.slice(0, -1), 'no es un calco');
+    }
+    const familia = FAMILIAS.find(f => f.id === item.plantilla);
+    for (const x of columnasPosibles(familia, item.params).mal) assert.notEqual(evaluar(x.c.lineas.at(-1).es), mal, `un error con nombre: ${x.c.error}`);
+    const antes = c.lineas[c.falsa - 1].es;
+    const m = /^(\d+) ([+−·]) (\d+)$/.exec(antes);
+    if (m) for (const v of [+m[1] + +m[3], m[1] - m[3], m[3] - m[1], m[1] * m[3]]) assert.notEqual(v, mal, `${antes}: otra operación`);
+    const p = /^(\d+)\^(\d+)$/.exec(antes);
+    if (p) assert.notEqual(p[1] * p[2], mal, `${antes}: potencia como producto`);
+    assert.ok(item.columnas.some(x => x.error && x.error !== CUENTA), 'siempre un error con nombre');
+  }
+  assert.ok(conCuenta > N * 0.08, `con fallo de cuenta: ${conCuenta} de ${N}`);
 });
 
 test('ejercicio 2: salen todas las familias, y 2, 3 y 4 columnas (ninguna cuenta menos del 8 %)', () => {
