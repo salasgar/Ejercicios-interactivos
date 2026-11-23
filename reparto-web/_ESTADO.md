@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:40:00Z · por la sesión s-20261123T182556-ba3c87df (WEB T02: cierre de la 02)
+Regenerado: 2026-11-23T18:42:52Z · por la sesión s-20261123T184153-58e1a2ee (WEB T06: reclamo de la 06)
 
 ## Antes de hacer nada
 
@@ -233,7 +233,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | LISTA (38 de 73 adjuntos recuperados, 35 faltan; 8 enunciados transcritos) | |
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
-| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | PENDIENTE | |
+| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | EN CURSO | s-20261123T184153-58e1a2ee · 2026-11-23T21:11:53Z |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA | |
@@ -250,7 +250,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 5.5, esfuerzo Medio.
 
-Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre. Lo usan las tareas 10, 13, 14 y 15.
+Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre (último: liberado 2026-11-23T18:42:31Z por la montadora). Lo usan las tareas 10, 13, 14 y 15.
 
 ## Registro de finalizaciones
 
@@ -276,7 +276,7 @@ hechas dos veces, cierres en falso, copias en conflicto de la sincronización. S
 recogen aquí para que no se resuelvan dos veces y para que el próximo reparto corte
 mejor.
 
-- 2026-11-23T18:26 · s-20261123T182556-ba3c87df (tarea 02): las salidas de la 01 y la 05 están en `salidas/` de la **raíz del repo**, no en `reparto-web/salidas/`; la raíz no la ignora git (repo público). Sin resolver: mover las carpetas o ignorar `salidas/` en la raíz.
+- 2026-11-23T18:26 · s-20261123T182556-ba3c87df (tarea 02) y 2026-11-23T18:32 · s-20261123T182608-89ae2d8c (tarea 03): las salidas de la 01 y la 05 estaban en `salidas/` de la **raíz del repo** (no ignorada; repo público). **Resuelta** por la montadora (nota 2026-11-23T18:32:04Z): movidas a `reparto-web/salidas/`; en la raíz queda el enlace `salidas → reparto-web/salidas`, excluido en `.git/info/exclude`.
 
 Los automatismos activos y las rutas del proyecto están en `proyecto.md`, no aquí: este
 fichero se regenera entero y se los llevaría por delante.
