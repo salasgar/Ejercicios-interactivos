@@ -83,3 +83,8 @@ fallo `mal cortada` y avisa.
 - No hacer `git add .`, `-A`, `commit -a`, `stash` ni `reset --hard`: el índice es compartido (CLAUDE.md, «Git»).
 - `salidas/` está fuera de git a propósito (material ajeno y sin revisar): no forzar su subida.
 - Solo lectura: no editar el sitio antiguo, ni mover o borrar nada en Drive. No descargar archivos.
+
+## Trampas nuevas (2026-11-23)
+- `sites.google.com/site/pradomayor4eso/...` da 404 también con la sesión de Juan Luis: el sitio antiguo ya no existe o es de otra cuenta.
+- De las 9 carpetas de Drive, 6 dan 404 (Enteros, las cuatro de Proporcionalidad, Estadística): ids borrados o mal copiados.
+- `javascript_tool` bloquea la salida de hrefs con query string; para sacar los ids reales hay que usar `read_page` (filter interactive).
