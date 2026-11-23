@@ -259,7 +259,6 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
 LISTA · tarea 17 · 2026-11-23 18:17 · s-20261123T181241-700b3a38 · 83 enunciados de proporcionalidad + 47 de ecuaciones · salidas/17-cantera-problemas/
-LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · ver hechos/terminadas · salidas/01-dropbox-extraccion/
 LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · 541 archivos: 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido · salidas/01-dropbox-extraccion/
 LISTA · tarea 04 · 2026-11-23 18:12 · s-20261123T181014-ef0ae619 · 0 fichas, 9 carpetas (3 leídas) · salidas/04-sitio-antiguo-y-drive/
 

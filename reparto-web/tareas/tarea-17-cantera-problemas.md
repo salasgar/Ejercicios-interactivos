@@ -79,3 +79,8 @@ fallo `mal cortada` y avisa.
 - No hacer `git add .`, `-A`, `commit -a`, `stash` ni `reset --hard`: el índice es compartido (CLAUDE.md, «Git»).
 - `salidas/` está fuera de git a propósito (material ajeno y sin revisar): no forzar su subida.
 - No corregir los enunciados: las pegas se anotan. No tocar `practicas/` ni `src/`.
+
+## Trampas nuevas (2026-11-23)
+- `get_page_text` de una página de Sites solo da el título; sirvió volcar `section.innerText` en un `<pre>` del propio DOM y leerlo con `get_page_text`.
+- Las soluciones de la web no son fiables: R20a e I12 están mal (ver `INFORME.md`). Recalcular siempre.
+- Los enlaces de Sites salen envueltos en `google.com/url?q=…`; `javascript_tool` bloquea hrefs con query string, pero con `decodeURIComponent` sobre el `q=` se pueden sacar.
