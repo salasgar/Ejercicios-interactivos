@@ -309,8 +309,9 @@ div.procedimiento__enunciado { display: block; border-radius: 10px; padding: .55
 /* `.ejercicio .feedback strong` (base) la pondría en línea: hace falta la misma especificidad o más. */
 .regla-rota, .ejercicio .feedback strong.regla-rota, .tarjeta strong.regla-rota { display: block; margin: .25rem 0; }
 
-/* Columnas de «Caza el error» (columnasPulsables): en el móvil caben dos por fila; con más, pasan abajo. */
-.columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .7rem; margin: .2rem 0 1rem; }
+/* Columnas de «Caza el error» (columnasPulsables): en el móvil caben dos por fila; con más, pasan abajo.
+   Con 9.5rem no cabían dos a 375 px (tarea 238): 8.5rem deja margen también con el hueco y los bordes. */
+.columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: .6rem; margin: .2rem 0 1rem; }
 .columna { display: grid; gap: .4rem; align-content: start; min-width: 0; padding: .45rem; border: 2px solid var(--borde); border-radius: 12px; }
 .columna__letra { font-weight: 700; text-align: center; color: var(--texto-suave); }
 .columna .eleccion, .columna__linea { text-align: left; font-size: 1rem; line-height: 1.4; min-height: 44px; padding: .45rem .55rem; overflow-wrap: anywhere; }
