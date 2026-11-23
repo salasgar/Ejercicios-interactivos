@@ -231,7 +231,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | EN CURSO | s-20261123T180910-16fc9b68 · 2026-11-23T18:54:10Z |
 | 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | BLOQUEADA | |
 | 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | BLOQUEADA | |
-| 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | EN CURSO | s-20261123T180832-112fd049 · 2026-11-23T19:38:32Z |
+| 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | FALLIDA (Chrome no conectado) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | PENDIENTE | |
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | BLOQUEADA | |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
