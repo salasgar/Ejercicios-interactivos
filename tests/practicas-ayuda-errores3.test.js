@@ -53,7 +53,9 @@ test('ej. 1 (columnas): cada columna dice si está bien o su línea mala, el err
         assert.ok(html.includes(`${idioma === 'es' ? 'Columna' : 'Column'} ${L.LETRAS[j]}.`), plano(html));
         if (!c.error) return;
         assert.ok(html.includes(`= ${htmlEntero(c.lineas[c.falsa])}</span>`), `falta la línea mala de ${L.LETRAS[j]}`);
-        assert.ok(html.includes(X.REGLAS[c.error][idioma].replace(/\^(\d+)/g, '<sup>$1</sup>')), 'la regla');
+        // El fallo de cuenta no tiene regla rota: dice que es un fallo de cuenta (JL, 23-11).
+        if (c.error === L.CUENTA) assert.ok(html.includes(X.TX.fallo_cuenta[idioma]), 'el fallo de cuenta');
+        else assert.ok(html.includes(X.REGLAS[c.error][idioma].replace(/\^(\d+)/g, '<sup>$1</sup>')), 'la regla');
         assert.ok(html.includes(`${T_CORRECTA[idioma]} <span class="linea-mala">= ${htmlEntero(L.explicaColumna(c).corregida)}</span>`), 'lo correcto');
       });
     }

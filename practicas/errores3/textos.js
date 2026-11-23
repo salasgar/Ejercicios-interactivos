@@ -41,6 +41,7 @@ export const TX = {
   col_mal: { es: 'error', en: 'mistake' },
   columna: { es: 'Columna', en: 'Column' },
   pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
+  fallo_cuenta: { es: 'Se ha equivocado al hacer la cuenta.', en: 'Made a mistake in the calculation.' },
 };
 
 /** La regla que rompe cada error, en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
@@ -74,7 +75,7 @@ export const REGLAS = {
 import { esc } from '../_comun/textos.js';
 import { html as htmlEntero, ERRORES_TIPICOS } from '../_comun/enteros.js';
 import { errorEnLinea, lineaN, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
-import { PLANTILLA_POR_ID, VALIDA_POR_ID, LETRAS, explicaColumna } from './logica.js';
+import { PLANTILLA_POR_ID, VALIDA_POR_ID, LETRAS, CUENTA, explicaColumna } from './logica.js';
 
 /** Texto con números a HTML seguro, con los exponentes `2^3` como <sup>. */
 export const texto = t => esc(t).replace(/\^(\d+)/g, '<sup>$1</sup>');
@@ -106,8 +107,10 @@ export function explicacionColumnas(item, { tt }) {
     const { porque, corregida } = explicaColumna(c);
     const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
     if (!c.error) return `<p class="columna-explica">${cabeza} ${texto(tt(porque))}</p>`;
+    // El fallo de cuenta no tiene nombre en el catálogo ni regla rota: solo la cuenta bien hecha (JL, 23-11).
+    const que = c.error === CUENTA ? `${tt(TX.fallo_cuenta)}<br>` : `${frase(c.error, tt)}${regla(c.error, tt)}`;
     return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">= ${htmlEntero(c.lineas[c.falsa])}</span>`
-      + `<br>${frase(c.error, tt)}${regla(c.error, tt)}${texto(tt(porque))}`
+      + `<br>${que}${texto(tt(porque))}`
       + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">= ${htmlEntero(corregida)}</span></p>`;
   }).join('');
 }

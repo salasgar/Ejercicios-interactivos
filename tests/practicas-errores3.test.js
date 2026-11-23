@@ -112,6 +112,32 @@ test('ejercicio 1: la línea mala vale lo que dice el error típico y la correcc
   }
 });
 
+test('ejercicio 1: el fallo de cuenta (sin nombre), como mucho uno por ítem, cerca del bueno y nunca un error con nombre', () => {
+  let conCuenta = 0;
+  for (const item of generar(L.generarDonde, 31)) {
+    const cuentas = item.columnas.filter(c => c.error === L.CUENTA);
+    assert.ok(cuentas.length <= 1);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    const [c] = cuentas;
+    assert.equal(c.falsa, c.lineas.length - 1, 'la última cuenta');
+    const bien = valor(c.lineas[c.falsa - 1]), mal = valor(c.lineas[c.falsa]);
+    assert.ok([1, 2, 10].includes(Math.abs(mal - bien)), `${bien} → ${mal}`);
+    assert.notEqual(mal, -bien, 'no es el signo cambiado');
+    // No coincide con el resultado de ninguna otra columna ni con los errores de signos aplicados a esa última cuenta.
+    for (const o of item.columnas) if (o !== c) assert.notEqual(valor(o.lineas.at(-1)), mal, `${c.lineas.join(' | ')}`);
+    const m = /^(−?\d+) ([+−]) (\d+)$/.exec(c.lineas[c.falsa - 1]);
+    if (m) {
+      const a = Number(m[1].replace('−', '-')), b = (m[2] === '−' ? -1 : 1) * Number(m[3]);
+      const SUMAS = { 'regla-signos-en-suma': (x, y) => x < 0 && y < 0, 'suma-valores-absolutos': (x, y) => x < 0 !== y < 0, 'olvida-el-signo': (x, y) => x + y < 0, 'signo-del-primero': () => true };
+      for (const [id, vale] of Object.entries(SUMAS)) if (vale(a, b)) assert.notEqual(MAL[id]([a, b, 0]), mal, `${a} ${b}: ${id}`);
+    }
+    // Sale de una ruta buena que no está en el ítem: no es un calco de otra columna.
+    for (const o of item.columnas) if (o !== c) assert.notDeepEqual(o.lineas.slice(0, -1), c.lineas.slice(0, -1));
+  }
+  assert.ok(conCuenta > N * 0.08, `con fallo de cuenta: ${conCuenta} de ${N}`);
+});
+
 test('ejercicio 1: el ejemplo de Juan Luis, 5 − (3 − 7), sale con sus cuatro columnas', () => {
   const fa = L.FAMILIA_POR_ID.parentesis;
   const { bien, mal } = L.columnasPosibles(fa, [5, 3, -7]);
@@ -121,8 +147,10 @@ test('ejercicio 1: el ejemplo de Juan Luis, 5 − (3 − 7), sale con sus cuatro
 
 test('ejercicio 1: una pregunta por columna mala, con el nombre bueno y dos de otro grupo (regla de oro)', () => {
   for (const item of generar(L.generarDonde, 30)) {
-    const malas = item.columnas.map((c, j) => (c.error ? j : -1)).filter(j => j >= 0);
+    // Solo las columnas con un error con nombre llevan pregunta; la del fallo de cuenta, no (JL, 23-11).
+    const malas = item.columnas.map((c, j) => (c.error && c.error !== L.CUENTA ? j : -1)).filter(j => j >= 0);
     assert.deepEqual(item.preguntas.map(q => q.col), malas);
+    assert.ok(malas.length >= 1, 'siempre hay al menos un error con nombre');
     for (const q of item.preguntas) {
       const c = item.columnas[q.col];
       assert.equal(q.solucion, c.error);
@@ -211,12 +239,12 @@ test('todos los textos, en los dos idiomas: sin ×, sin guion como menos, sin (+
   const textos = [];
   const recoger = t => { for (const idioma of ['es', 'en']) textos.push(typeof t[idioma] === 'function' ? t[idioma](3) : t[idioma]); };
   for (const grupo of ['nombre', 'detalle', 'instruccion', 'introduccion']) for (const t of Object.values(TX[grupo])) recoger(t);
-  for (const clave of ['bien', 'error', 'esta_bien', 'la_linea_es', 'comprobar', 'col_bien', 'col_mal', 'columna', 'pregunta_col']) recoger(TX[clave]);
+  for (const clave of ['bien', 'error', 'esta_bien', 'la_linea_es', 'comprobar', 'col_bien', 'col_mal', 'columna', 'pregunta_col', 'fallo_cuenta']) recoger(TX[clave]);
   for (const r of Object.values(REGLAS)) recoger(r);
   for (const item of generar(L.generarDonde, 44).slice(0, 500)) for (const c of item.columnas) {
     const { porque, corregida } = L.explicaColumna(c);
     recoger(porque);
-    if (corregida) textos.push(corregida);
+    if (corregida && c.error !== L.CUENTA) textos.push(corregida);   // la del fallo de cuenta es solo el número
   }
   for (const e of Object.values(ERRORES_TIPICOS)) recoger(e.nombre);
   const rng = crearRng(5);
