@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:42:52Z · por la sesión s-20261123T184153-58e1a2ee (WEB T06: reclamo de la 06)
+Regenerado: 2026-11-23T18:53:42Z · por la sesión s-20261123T184153-58e1a2ee (WEB T06: cierre de la 06)
 
 ## Antes de hacer nada
 
@@ -233,10 +233,10 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | LISTA (38 de 73 adjuntos recuperados, 35 faltan; 8 enunciados transcritos) | |
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
-| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | EN CURSO | s-20261123T184153-58e1a2ee · 2026-11-23T21:11:53Z |
-| 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | BLOQUEADA | |
+| 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | LISTA (184 fichas: si 129, enlazar 25, no 30; 71 con solución; 35 reclasificadas; dudas para Juan Luis en el INFORME) | |
+| 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | PENDIENTE (06 LISTA: 68 publicables sin solución, lista en el INFORME de la 06) | |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
-| 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA | |
+| 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA (06 LISTA y 08 LISTA; faltan la 07 y la firma) | |
 | 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
 | 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | LISTA (103 entradas: 89 claras, 14 en duda; U7 sin material) | |
 | 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | BLOQUEADA | |
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 06 · 2026-11-23 18:53 · s-20261123T184153-58e1a2ee · 184 fichas (si 129, enlazar 25, no 30; 71 con solución) · salidas/06-catalogo/
 LISTA · tarea 02 · 2026-11-23 18:39 · s-20261123T182556-ba3c87df · 165 fichas (125 nuevas, 40 duplicados de Classroom) · salidas/02-fichas-dropbox/
 LISTA · tarea 03 · 2026-11-23 18:32 · s-20261123T182608-89ae2d8c · 73 adjuntos: 38 recuperados en local, 35 faltan; 8 transcripciones · salidas/03-adjuntos-classroom/
 LISTA · tarea 16 · 2026-11-23 18:29 · s-20261123T182647-7f338c08 · borrador de la página «Familias» (7 de 7 puntos) + 9 preguntas · salidas/16-borrador-familias/

@@ -76,3 +76,8 @@ fallo `mal cortada` y avisa.
 - No hacer `git add .`, `-A`, `commit -a`, `stash` ni `reset --hard`: el índice es compartido (CLAUDE.md, «Git»).
 - `salidas/` está fuera de git a propósito (material ajeno y sin revisar): no forzar su subida.
 - No inventar soluciones aquí (es la tarea 07). No retocar enunciados; si uno tiene una errata, va a `notas`.
+- (06, 23-11) Un duplicado de la 02 puede traer un enunciado «aportado» que no es texto sino la descripción de la figura que hizo la 02
+  («Datos de la figura: …»): no sustituye al de Classroom. Solo se cambió el de 09, que era una frase de una línea.
+- (06, 23-11) Hay fichas de la 02 marcadas `variante_de` que en realidad son el mismo problema con los mismos números (tortilla /
+  picnic / beduinos; sombreros): se fusionaron. Mirar los datos, no solo el contexto.
+- (06, 23-11) Un tema puede no ser apto aunque el acertijo sí (D-057: suicidio). Leer el enunciado entero también por eso.
