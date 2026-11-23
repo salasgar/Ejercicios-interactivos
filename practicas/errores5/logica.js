@@ -830,8 +830,43 @@ export function columnasPosibles(familia, params) {
 /** Las LETRAS de las columnas. */
 export const LETRAS = ['A', 'B', 'C', 'D'];
 
+/**
+ * El fallo de cuenta (JL, 23-11): un error que no está en el catálogo, así que no tiene nombre y su columna no lleva
+ * pregunta tipo test ni regla. Es una ruta buena que no sale en el ítem con la última cuenta mal hecha: cambia UNA
+ * cifra del resultado (la de las unidades o la última decimal, ±1), sin mover nunca la coma, y nunca da el resultado de
+ * otra columna, de un error con nombre de la familia ni de mover la coma del bueno.
+ */
+export const CUENTA = 'fallo-de-cuenta';
+
+/** El decimal con la coma `n` lugares a la derecha (n > 0) o a la izquierda (n < 0), solo para descartar valores. */
+const desplazada = (d, n) => (n > 0 ? porPotenciaDe10(d, n) : decimal(d.m, d.k - n));
+
+/** Los decimales que salen en una línea. */
+const decimalesDe = linea => linea.filter(s => s && s.d !== undefined).map(s => D(s.d));
+
+function columnaDeCuenta(rng, origen, prohibidos) {
+  const ultima = origen.lineas.length - 1, ult = origen.lineas[ultima], antes = origen.lineas[ultima - 1];
+  // Solo una última línea «= resultado» tras una cuenta de números (sin palabras ni periódicos): «4,7 + 3 + 0,25 = 7,95».
+  if (ultima < 1 || ult.length !== 2 || ult[0] !== '= ' || ult[1].d === undefined) return null;
+  if (!antes.every(s => typeof s === 'string' || s.d !== undefined || s.f)) return null;
+  const bien = D(ult[1].d), vetados = new Set([bien.clave(), ...prohibidos]);
+  for (const n of [1, 2, -1, -2]) vetados.add(desplazada(bien, n).clave());
+  const posibles = [...new Set([bien.m + 1, bien.m - 1, bien.m + pot10(bien.k), bien.m - pot10(bien.k)])]
+    .filter(m => m > 0).map(m => decimal(m, bien.k)).filter(d => !vetados.has(d.clave()));
+  if (!posibles.length) return null;
+  const mal = rng.elegir(posibles);
+  return { ...origen, lineas: [...origen.lineas.slice(0, -1), ['= ', sd(mal)]], falsa: ultima, error: CUENTA, cuenta: { antes, bien: tx(bien), mal: tx(mal) } };
+}
+
 /** Lo que explica una columna: { porque (idioma), corregida: línea buena | null }. */
 export function explicaColumna(item, c) {
+  if (c.error === CUENTA) {
+    const cuenta = c.cuenta.antes[0] === '= ' ? c.cuenta.antes.slice(1) : c.cuenta.antes;
+    return {
+      porque: i => `${htmlLinea(cuenta, i)} = ${aTexto(D(c.cuenta.bien), i)}, ${i === 'en' ? 'not' : 'no'} ${aTexto(D(c.cuenta.mal), i)}.`,
+      corregida: ['= ', { d: c.cuenta.bien }],
+    };
+  }
   if (c.error) return { porque: i => (COMO_SE_HACE[c.error] ?? MAL(c.error).porque.bind(MAL(c.error)))(item.params, i, x => aTexto(x, i)), corregida: MAL(c.error).cadena(item.params, false).lineas[c.falsa] };
   return { porque: i => RUTAS_BIEN[c.ruta].porque(item.params, i), corregida: null };
 }
@@ -857,8 +892,17 @@ export function generarDonde(rng) {
     const { bien, mal } = columnasPosibles(familia, params);
     if (!bien.length || !mal.length) continue;
     const dos = () => (rng.azar() < 0.6 ? 2 : 1);
-    const columnas = rng.barajar([...rng.barajar(bien).slice(0, dos()), ...rng.barajar(mal).slice(0, dos())]);
-    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error)
+    const buenas = rng.barajar(bien), nBien = Math.min(buenas.length, dos()), malas = rng.barajar(mal).slice(0, dos());
+    const elegidas = [...buenas.slice(0, nBien), ...malas];
+    // Con una sola columna mala con nombre, a veces otra con un fallo de cuenta, sacada de una ruta buena que no sale.
+    if (malas.length === 1 && buenas.length > nBien && rng.azar() < 0.8) {
+      const prohibidos = [...bien, ...mal].flatMap(c => decimalesDe(c.lineas.at(-1))).map(d => d.clave());
+      const cuenta = columnaDeCuenta(rng, buenas[nBien], prohibidos);
+      if (cuenta) elegidas.push(cuenta);
+    }
+    const columnas = rng.barajar(elegidas);
+    // Pregunta tipo test solo para los errores con nombre: el fallo de cuenta no se puede nombrar (JL, 23-11).
+    const preguntas = columnas.map((c, col) => ({ c, col })).filter(({ c }) => c.error && c.error !== CUENTA)
       .map(({ c, col }) => ({ col, opciones: nombresPara(rng, c.error), solucion: c.error }));
     return {
       tipo: 'donde', plantilla: base.id, familia: familia.id, params, enunciado: columnas[0].lineas[0], columnas, preguntas,

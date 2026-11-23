@@ -166,7 +166,9 @@ test('ejercicio 1: de 2 a 4 columnas, 1 o 2 bien y 1 o 2 mal; cada línea cierta
     const cols = item.columnas;
     assert.ok(cols.length >= 2 && cols.length <= 4, `${cols.length} columnas`);
     porColumnas[cols.length] = (porColumnas[cols.length] ?? 0) + 1;
-    const bien = cols.filter(c => !c.error), mal = cols.filter(c => c.error);
+    // El fallo de cuenta (sin nombre) no cuenta entre las malas con nombre: 1-2 con nombre y, como mucho, una de cuenta.
+    const bien = cols.filter(c => !c.error), mal = cols.filter(c => c.error && c.error !== L.CUENTA);
+    assert.ok(cols.filter(c => c.error === L.CUENTA).length <= 1);
     assert.ok(bien.length >= 1 && bien.length <= 2 && mal.length >= 1 && mal.length <= 2, `${bien.length}+${mal.length}`);
     combos[`${bien.length}+${mal.length}`] = (combos[`${bien.length}+${mal.length}`] ?? 0) + 1;
     familias.add(item.familia);
@@ -181,7 +183,7 @@ test('ejercicio 1: de 2 a 4 columnas, 1 o 2 bien y 1 o 2 mal; cada línea cierta
       assert.ok(c.lineas.length >= 2 && c.lineas.length <= 5, 'de una a cuatro líneas de cálculo');
       if (c.error) {
         assert.ok(c.falsa >= 1 && c.falsa < c.lineas.length, 'la línea 0 es el enunciado y nunca está mal');
-        assert.ok(L.CLASE_DE[c.error], c.error);
+        assert.ok(c.error === L.CUENTA || L.CLASE_DE[c.error], c.error);
       } else {
         assert.equal(c.falsa, null);
         ceros.n += L.columnaConCeros(c) ? 1 : 0;
@@ -217,6 +219,55 @@ test('ejercicio 1: de 2 a 4 columnas, 1 o 2 bien y 1 o 2 mal; cada línea cierta
   for (const k of ['1+1', '1+2', '2+1', '2+2']) assert.ok(combos[k] > N * 0.02, `${k}: ${JSON.stringify(combos)}`);
   assert.equal(familias.size, L.FAMILIAS.length, 'salen todas las familias');
   assert.ok(ceros.n > 20, 'salen columnas buenas con ceros al final');
+});
+
+/** Los decimales de una línea como [m, 10^k] reducidos a un valor comparable. */
+const valorDe = s => { const d = D(s); return `${B(d.m) * p10(15 - d.k)}`; };
+const decimalesDe = l => l.filter(s => s && s.d !== undefined).map(s => D(s.d));
+
+test('ejercicio 1: el fallo de cuenta (sin nombre), como mucho uno, en la última línea, con una cifra cambiada y nunca un error con nombre', () => {
+  let conCuenta = 0;
+  const familias = new Set();
+  for (const item of generar(L.generarDonde, 31)) {
+    const cuentas = item.columnas.filter(c => c.error === L.CUENTA);
+    assert.ok(cuentas.length <= 1);
+    if (!cuentas.length) continue;
+    conCuenta++;
+    familias.add(item.familia);
+    const [c] = cuentas;
+    assert.equal(c.falsa, c.lineas.length - 1, 'la última cuenta');
+    // Siempre al menos un error con nombre, y entonces solo una columna mala con nombre.
+    assert.equal(item.columnas.filter(o => o.error && o.error !== L.CUENTA).length, 1);
+    const [bien] = decimalesDe(L.explicaColumna(item, c).corregida), [mal] = decimalesDe(c.lineas.at(-1));
+    // Una cifra de diferencia (unidades o última decimal), con las mismas cifras decimales: la coma no se mueve.
+    assert.equal(mal.k, bien.k, 'la coma no se mueve');
+    assert.ok([1, pot(bien.k)].includes(Math.abs(mal.m - bien.m)), `${aTexto(bien, 'es')} → ${aTexto(mal, 'es')}`);
+    assert.ok(mal.m > 0);
+    assert.equal(c.cuenta.bien, aTexto(bien, 'es'));
+    // No coincide con el resultado de ninguna otra columna ni de ningún error con nombre de la familia (por valor).
+    const fa = L.FAMILIA_POR_ID[item.familia], posibles = L.columnasPosibles(fa, item.params);
+    for (const o of [...posibles.bien, ...posibles.mal, ...item.columnas.filter(o => o !== c)]) {
+      for (const d of decimalesDe(o.lineas.at(-1))) assert.ok(!mismoValor(d, mal), `${aTexto(mal, 'es')} = ${o.ruta ?? o.error}: ${item.params}`);
+    }
+    // Ni el bueno con la coma corrida: sus cifras no son las del bueno.
+    assert.notEqual(valorDe(aTexto(mal.normalizar(), 'es')).replace(/0+$/, ''), valorDe(aTexto(bien.normalizar(), 'es')).replace(/0+$/, ''));
+    // Sale de una ruta buena que no está en el ítem: no es un calco de otra columna.
+    for (const o of item.columnas) if (o !== c) assert.notDeepEqual(o.lineas.slice(0, -1), c.lineas.slice(0, -1));
+    assert.ok(!item.columnas.some(o => o !== c && o.ruta === c.ruta), 'la ruta no repite otra columna');
+  }
+  assert.ok(conCuenta > N * 0.08, `con fallo de cuenta: ${conCuenta} de ${N}`);
+  // Salen en las familias con una última línea «= resultado» de números y dos rutas buenas.
+  for (const f of ['suma', 'producto', 'por10', 'division-entera', 'division-decimal', 'fraccion']) assert.ok(familias.has(f), f);
+});
+const pot = k => 10 ** k;
+
+test('ejercicio 1: las preguntas tipo test son solo de los errores con nombre; la del fallo de cuenta no la lleva', () => {
+  for (const item of generar(L.generarDonde, 33)) {
+    const nombradas = item.columnas.map((c, j) => (c.error && c.error !== L.CUENTA ? j : -1)).filter(j => j >= 0);
+    assert.deepEqual(item.preguntas.map(q => q.col), nombradas);
+    assert.ok(nombradas.length >= 1);
+    assert.deepEqual(item.solucion, item.columnas.map(c => c.falsa), 'la solución incluye la columna de la cuenta');
+  }
 });
 
 test('ejercicio 1: cada plantilla sale como error de alguna columna y las dos de catálogo sin plantilla también', () => {
@@ -365,7 +416,8 @@ test('los ítems son JSON (la base los guarda) y se pintan igual después de ida
 
 /** Todas las líneas de un ítem (el ej. 1 las tiene por columna). */
 const lineasDe = item => item.lineas ?? item.columnas.flatMap(c => c.lineas);
-const sinHtml = s => s.replace(/<[^>]*>/g, '');
+// El numerador y el denominador de una fracción con raya son dos números (65 y 100, no 65100).
+const sinHtml = s => s.replace(/<\/span><span>/g, ' ').replace(/<[^>]*>/g, '');
 /** Las reglas de la unidad en un texto que lee el alumno. */
 function reglasDeTexto(texto, idioma, donde) {
   const t = sinHtml(texto);

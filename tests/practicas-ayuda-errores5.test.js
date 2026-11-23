@@ -60,14 +60,20 @@ test('ej. 1: acaba con las columnas malas y explica cada columna: la mala con su
       const lista = malas.length === 1 ? malas[0] : `${malas.slice(0, -1).join(', ')} ${idioma === 'en' ? 'and' : 'y'} ${malas.at(-1)}`;
       const esperado = idioma === 'en' ? `${malas.length > 1 ? 'columns' : 'column'} ${lista}` : `${malas.length > 1 ? 'las columnas' : 'la columna'} ${lista}`;
       const html = X.explicaDonde(item, ctx(idioma));
-      comprobar(html, idioma, esperado, `ej1 ${idioma}`, item.columnas.filter(c => c.error).map(c => E_NOMBRE(c.error, idioma)));
+      comprobar(html, idioma, esperado, `ej1 ${idioma}`, item.columnas.filter(c => c.error && c.error !== L.CUENTA).map(c => E_NOMBRE(c.error, idioma)));
       item.columnas.forEach((c, j) => {
         assert.ok(html.includes(`<strong>${idioma === 'en' ? 'Column' : 'Columna'} ${L.LETRAS[j]}.</strong>`), `ej1 ${idioma}: falta la columna ${L.LETRAS[j]}`);
         if (!c.error) return;
         const { corregida } = L.explicaColumna(item, c);
         assert.ok(html.includes(L.htmlLinea(c.lineas[c.falsa], idioma)), `ej1 ${idioma}: falta la línea mala de ${L.LETRAS[j]}`);
         assert.ok(html.includes(L.htmlLinea(corregida, idioma)), `ej1 ${idioma}: falta la línea buena de ${L.LETRAS[j]}`);
-        assert.ok(html.includes('class="regla-rota"') || html.includes('regla-rota'), `ej1 ${idioma}: falta la regla en negrita`);
+        // El fallo de cuenta no tiene regla rota: dice que es un fallo de cuenta y la cuenta bien hecha (JL, 23-11).
+        if (c.error === L.CUENTA) {
+          assert.ok(html.includes(X.TX.fallo_cuenta[idioma]), 'el fallo de cuenta');
+          assert.ok(html.includes(L.explicaColumna(item, c).porque(idioma)), 'la cuenta bien hecha');
+          const trozo = html.split(`<strong>${idioma === 'en' ? 'Column' : 'Columna'} ${L.LETRAS[j]}.</strong>`)[1].split('</p>')[0];
+          assert.ok(!trozo.includes('regla-rota'), 'sin regla en esa columna');
+        } else assert.ok(html.includes('class="regla-rota"') || html.includes('regla-rota'), `ej1 ${idioma}: falta la regla en negrita`);
       });
     }
   }

@@ -4,7 +4,7 @@
 
 import { ERRORES_TIPICOS, aTexto } from '../_comun/decimales.js';
 import { fraccion, htmlFraccion } from '../_comun/fracciones.js';
-import { PLANTILLA_POR_ID, htmlLinea, resultadoBueno, comoSeHace, LETRAS, explicaColumna, columnaConCeros } from './logica.js';
+import { PLANTILLA_POR_ID, htmlLinea, resultadoBueno, comoSeHace, LETRAS, CUENTA, explicaColumna, columnaConCeros } from './logica.js';
 import { errorEnLinea, lineaN, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 /** La regla que rompe cada error, en negrita en el feedback y en el «No lo sé» (JL, 22-11). */
@@ -61,6 +61,7 @@ export const TX = {
   pregunta_col: { es: l => `¿Qué error hay en la columna ${l}?`, en: l => `What is the mistake in column ${l}?` },
   la_linea_es: { es: 'El error está en esta línea:', en: 'The mistake is in this line:' },
   esta_bien: { es: 'Está bien.', en: 'It is right.' },
+  fallo_cuenta: { es: 'Se ha equivocado al hacer la cuenta.', en: 'Made a mistake in the calculation.' },
   ceros: { es: 'Ojo: un cero al final de los decimales (3,50) no cambia el número: 3,50 = 3,5. No es un error.', en: 'Careful: a zero at the end of the decimals (3.50) does not change the number: 3.50 = 3.5. It is not a mistake.' },
   resultado_bien: { es: 'El resultado correcto es:', en: 'The right result is:' },
   has_escrito: { es: 'Has escrito', en: 'You wrote' },
@@ -134,8 +135,11 @@ export function explicacionColumnas(item, { tt, idioma }) {
     const { porque, corregida } = explicaColumna(item, c);
     const cabeza = `<strong>${tt(TX.columna)} ${LETRAS[j]}.</strong>`;
     if (!c.error) return `<p class="columna-explica">${cabeza} ${tt(TX.esta_bien)} ${porque(idioma)}${columnaConCeros(c) ? `<br>${tt(TX.ceros)}` : ''}</p>`;
+    // El fallo de cuenta no tiene nombre en el catálogo ni regla rota: solo la cuenta bien hecha (JL, 23-11).
+    const que = c.error === CUENTA ? `${tt(TX.fallo_cuenta)} `
+      : `${frase(c.error, tt).replace(/(\d+)\/(\d+)/g, (_, n, d) => htmlFraccion(fraccion(Number(n), Number(d)), { compacta: true }))}${reglaDe(c.error, tt)}`;
     return `<p class="columna-explica">${cabeza} ${tt(TX.la_linea_es)} <span class="linea-mala">${linea(c.lineas[c.falsa], idioma)}</span>`
-      + `<br>${frase(c.error, tt).replace(/(\d+)\/(\d+)/g, (_, n, d) => htmlFraccion(fraccion(Number(n), Number(d)), { compacta: true }))}${reglaDe(c.error, tt)}${porque(idioma)}`
+      + `<br>${que}${porque(idioma)}`
       + `<br>${tt(LO_CORRECTO)} <span class="linea-mala">${linea(corregida, idioma)}</span></p>`;
   }).join('');
 }
