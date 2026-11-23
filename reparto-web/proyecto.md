@@ -21,6 +21,7 @@ y [docs/acertijos-recopilacion.md](../docs/acertijos-recopilacion.md).
 | Hechos (la fuente de verdad) | `reparto-web/hechos/` | en git; **un solo sitio** |
 | Fichas de tarea | `reparto-web/tareas/` | |
 | Salidas | `reparto-web/salidas/` | **fuera de git** (`reparto-web/.gitignore`): lleva material ajeno y sin revisar |
+| Ojo con las rutas | — | En las fichas, `salidas/NN-…` significa **`reparto-web/salidas/NN-…`**, nunca `salidas/` en la raíz del repositorio (que es público). En la raíz queda un enlace simbólico `salidas → reparto-web/salidas`, ignorado en local, solo para que no se rompa nada |
 | Papelera | `reparto-web/_papelera/` | la vacía Juan Luis |
 | Autorizaciones | `reparto-web/autorizaciones.md` | las firma él a mano |
 | Entrada ya hecha | `reparto-web/salidas/00-classroom/` | 66 fichas de Classroom, hechas antes del reparto; solo lectura |
