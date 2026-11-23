@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:09:11Z · por la sesión s-20261123T180832-22cae863 (WEB T08)
+Regenerado: 2026-11-23T18:17:21Z · por la sesión s-20261123T181241-700b3a38 (WEB T04+T17: cierre de la 17)
 
 ## Antes de hacer nada
 
@@ -228,9 +228,9 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | # | Tarea | Fichero | Precondición | Duración esperada | Banda | Encadenable con | Salida (dueño único) | Disparo | Estado | Reclamo vivo (sid · caduca) |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 00 | Fichas de Classroom (hecha antes del reparto) | — | — | — | — | — | salidas/00-classroom/ | — | ENTRADA (solo lectura) | |
-| 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | EN CURSO | s-20261123T180910-16fc9b68 · 2026-11-23T19:09:10Z |
-| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | BLOQUEADA | |
-| 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | BLOQUEADA | |
+| 01 | Descargar y pasar a texto «0_ACERTIJOS Y CURIOSIDADES» | tareas/tarea-01-dropbox-extraccion.md | ninguna | 30 min | BAJO | 05 | salidas/01-dropbox-extraccion/ | manual | LISTA (541 archivos; 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido) | |
+| 02 | Fichas de los acertijos de «ex Dropbox» | tareas/tarea-02-fichas-dropbox.md | 01 LISTA | 60 min | MEDIO | — | salidas/02-fichas-dropbox/ | manual | PENDIENTE | |
+| 03 | Recuperar los adjuntos de Classroom que la API no ve | tareas/tarea-03-adjuntos-classroom.md | 01 LISTA | 45 min | MEDIO | — | salidas/03-adjuntos-classroom/ | manual | PENDIENTE | |
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | PENDIENTE | |
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | BLOQUEADA | |
@@ -244,7 +244,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | BLOQUEADA | |
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | BLOQUEADA | |
 | 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | PENDIENTE | |
-| 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | PENDIENTE | |
+| 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
 | 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | BLOQUEADA | |
 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
@@ -258,6 +258,9 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 17 · 2026-11-23 18:17 · s-20261123T181241-700b3a38 · 83 enunciados de proporcionalidad + 47 de ecuaciones · salidas/17-cantera-problemas/
+LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · ver hechos/terminadas · salidas/01-dropbox-extraccion/
+LISTA · tarea 01 · 2026-11-23 18:17 · s-20261123T180910-16fc9b68 · 541 archivos: 221 convertidos, 314 solo listados, 5 no descargados, 1 fallido · salidas/01-dropbox-extraccion/
 LISTA · tarea 04 · 2026-11-23 18:12 · s-20261123T181014-ef0ae619 · 0 fichas, 9 carpetas (3 leídas) · salidas/04-sitio-antiguo-y-drive/
 
 ## Incidencias de coordinación
