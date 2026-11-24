@@ -86,18 +86,6 @@
   "solucion": "Si los individuos 2 y 3 llevaran sombreros negros, el individuo 1 habría sabido que su sombrero es blanco. Por lo tanto, como no lo ha sabido, se puede deducir que no ha visto dos sombreros negros. Esto lo sabe el individuo 2, porque ha oído lo que ha dicho el 1.\nSi el individuo 3 tuviera un sombrero negro, el individuo 2 habría sabido que su sombrero es blanco, ya que sabe que no pueden ser el 2 y el 3 ambos negros. Por lo tanto, como el 2 no ha sabido adivinar el color de su sombrero, podemos deducir que el 3 no es negro."
  },
  {
-  "id": "12",
-  "titulo": "Numbers",
-  "enunciado": "RIDDLE 6. Numbers\n\nYou can get the number 24 using three twos, like this: 22 + 2 = 24\nYou can get the number 202 using four fours, like this: 44 - 44 = 202\nYou can get the number 222 using four fours, like this:\nBUT:\n¿Can you get the number 0 using four fours?\n¿Can you get the number 1 using four fours?\n¿Can you get the number 2 using four fours?\n¿Can you get the number 3 using four fours?\n¿Can you get the number 4 using four fours?\n¿Can you get the number 5 using four fours?\n¿Can you get the number 6 using four fours?\n...\n¿Until what number you can get using four fours without skipping any whole number? You can use any mathematical operation you want.",
-  "tipo": "N",
-  "nivel": "★★",
-  "idioma": "en",
-  "orden": 15,
-  "unidad": 1,
-  "pista": "Start with the easy ones: 4 − 4 = 0 and 4 : 4 = 1. Then mix them.",
-  "solucion": "Here are the numbers from 0 to 20 with exactly four fours (√4 = 2 and 4! = 4·3·2·1 = 24 are allowed, because you can use any operation):\n0 = 4 − 4 + 4 − 4\n1 = (4 : 4) · (4 : 4)\n2 = 4 : 4 + 4 : 4\n3 = (4 + 4 + 4) : 4\n4 = 4 + (4 − 4) · 4\n5 = (4 · 4 + 4) : 4\n6 = 4 + (4 + 4) : 4\n7 = 4 + 4 − 4 : 4\n8 = 4 + 4 + 4 − 4\n9 = 4 + 4 + 4 : 4\n10 = (44 − 4) : 4\n11 = 44 : (√4 + √4)\n12 = (44 + 4) : 4\n13 = 44 : 4 + √4\n14 = 4 + 4 + 4 + √4\n15 = 44 : 4 + 4\n16 = 4 + 4 + 4 + 4\n17 = 4 · 4 + 4 : 4\n18 = 4 · 4 + 4 − √4\n19 = 4! − 4 − 4 : 4\n20 = 4 · (4 + 4 : 4)\nHow far can you go without skipping any number? It depends on the operations you allow. With + − · :, brackets, 44, √, ! and the decimal ,4 you can reach at least 72 without skipping any number (a computer checked it). If you allow any operation at all (for example, logarithms, which you will study later), mathematicians have shown that you can write every whole number with four fours, so there is no limit."
- },
- {
   "id": "14",
   "titulo": "Persistencia multiplicativa",
   "enunciado": "Toma un número cualquiera y multiplica todas sus cifras entre sí. De esta manera, obtendrás otro número.\nPor ejemplo, a partir del número 55735 obtenemos el número 5·5·7·3·5 = 2625\nRealiza de nuevo la misma operación con el número que has obtenido, y lo mismo con el número que obtengas después, y así sucesivamente hasta que llegues a un número de una sola cifra. En nuestro ejemplo:\n55735  5·5·7·3·5 = 2625  2·6·2·5 = 120  1·2·0 = 0\nEn este caso hemos llegado a un número de una sola cifra en 3 pasos, por lo que podemos decir que el número 55735 ha resistido durante 3 repeticiones o que la persistencia multiplicativa de 55735 es 3.\nIntenta encontrar un número que resista la mayor cantidad de pasos posible hasta llegar a un número de una sola cifra, es decir, que tenga la mayor persistencia multiplicativa posible. Tu número inicial puede ser tan grande o tan pequeño como quieras. Puede tener tantas cifras como quieras.\nGanará quien encuentre el número que más resista. ¡A ver cuántos pasos es capaz de aguantar tu número!",
