@@ -64,6 +64,13 @@ fallo `mal cortada` y avisa.
 ## Trampas conocidas
 - Es una tarea **larga**: si no cabe, deja las hechas con su `.ok` y la lista de las que faltan en el fallo.
 - Los de pesadas (33a, 37, 38) y los de lógica por inducción (9, 11, 40, 46) son los que más errores admiten: doble comprobación.
+- (Añadido por la sesión s-20261124T002600-b155c411 al cerrar.) «Incompleta» en el catálogo no siempre significa
+  perdida: la figura o la fórmula de D-024, D-030 y D-094 estaba dentro del docx original (`word/media/`, o en
+  `<m:oMath>` para las fórmulas). Abrir el docx con `unzip` antes de mandar una ficha a dudas.
+- No fiarse de las cifras de un enunciado clásico copiado: dos venían mal (30, la condición de los ángulos rojos;
+  D-059, tablones demasiado cortos para el foso). Comprobar con números que la solución clásica funciona.
+- En `hechos/`, el reclamo nuevo es un fichero sin seguimiento: `git commit -- ruta` falla si no va precedido de
+  `git add -- ruta` en el mismo comando.
 
 ## Prohibido
 - No escribir fuera de la carpeta de salida de esta tarea (y de los «Ficheros que toca», si los hay).
