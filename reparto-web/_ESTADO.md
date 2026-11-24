@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-24T17:54:12Z · por la sesión s-20261124T174530-72af358e (WEB T12: cierre)
+Regenerado: 2026-11-24T17:58:00Z · por la sesión s-20261123T182608-89ae2d8c/s-20261123T183335-746896c1 (WEB T03, a petición de Juan Luis: 13 LISTA, plantilla aprobada)
 
 ## Antes de hacer nada
 
@@ -237,9 +237,9 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | LISTA (60 de 68 resueltas; 8 a dudas.md: 25b, 30, 36, D-059, D-060, D-077, D-099, D-105; 3 errores en soluciones existentes) | |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | LISTA (104 acertijos publicados; 25 retenidas y 25 «enlazar» sin publicar: ver INFORME) | |
-| 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
+| 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla APROBADA por Juan Luis el 24-11, nota hechos/notas/s-20261123T180825-ade12f2f-plantilla-aprobada.md) | |
 | 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | LISTA (103 entradas: 89 claras, 14 en duda; U7 sin material) | |
-| 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | LISTA (54 PDF en Drive «Web 1º ESO»; 49 dudosos sin subir hasta que Juan Luis decida) | |
+| 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | LISTA (54 PDF en Drive «Web 1º ESO»; 49 dudosos sin subir hasta que Juan Luis decida) | s-20261124T175450-5b703c95 · 2026-11-24T19:24:50Z (reclamo nuevo, posterior a la terminada: continuación) |
 | 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis (aprobada 24-11; la 12 ya no es precondición) | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | LISTA (7 páginas con la plantilla en el borrador, sin publicar; «Hojas» con «Próximamente»; 6 cosas a mirar en cambios.md) | |
 | 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | LISTA (5 páginas; quedan rotos solo en páginas de unidad) | |
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | PENDIENTE (09 LISTA; libre) | |
