@@ -1,7 +1,7 @@
 # Tarea 13 · Aplicar la plantilla a las demás páginas de unidad
 
-Actualizado: 2026-11-23
-Precondición: 10 LISTA con la plantilla aprobada por Juan Luis, y 12 LISTA · Disparo: MANUAL
+Actualizado: 2026-11-24
+Precondición: 10 LISTA con la plantilla aprobada por Juan Luis (**aprobada el 24-11-2026**, ver abajo). La 12 ya no es precondición · Disparo: MANUAL
 Duración esperada: 90 min (tiempo de sesión) · Banda de modelo: MEDIO · Encadenable con: —
 Carpeta de salida (dueña exclusiva): `salidas/13-paginas-unidades/`
 Ficheros que toca: — (edita el borrador de Google Sites: recurso `editor-sites`)
@@ -20,10 +20,17 @@ la tarea hasta cerrarla o soltarla, sin parar a pedir confirmación.
 Dejar las unidades 1, 3, 4, 5, 6, 7 y 8 como el piloto de la Unidad 2, cada una con su material de este curso.
 
 ## Qué hay que hacer
-1. Comprueba en `salidas/10-plantilla-y-piloto/` que Juan Luis aprobó la plantilla (lo dirá la terminada de la 10
-   o una nota suya); si no, `BLOQUEADA por decisión`.
+1. **La plantilla está aprobada**: Juan Luis dijo el 24-11-2026 «Me vale la plantilla de la Unidad 2, sigue con la 13»
+   (nota de la montadora en `hechos/notas/s-20261123T132317-16556b5f.md`). Se aplica tal cual está en `plantilla.md`
+   y en el piloto: mismo orden, «Qué vamos a aprender» en español con títulos bilingües, vocabulario inglés — español
+   y cada práctica de la app enlazada.
+   **Sin la tarea 12** (la carpeta de Drive espera su firma): en «Hojas de ejercicios · Worksheets» se pone la frase
+   «Próximamente: las hojas de cada semana de la unidad, con sus soluciones.», como en el piloto. Si al empezar
+   existe `salidas/12-drive-web/enlaces.json`, se usan sus enlaces.
 2. «ocupo editor-sites» en `hechos/recursos/<sid>.md`. Editor: `https://sites.google.com/d/12iuNEJIpi2yCnzs38jwzEYyOIIfeAeKD/p/1X7IQez5srxFCksCRN8f72W1G8wiJ9qq5/edit`.
-3. Una página cada vez, en orden U7 (la unidad en curso), U6, U5, U1, U3, U4, U8. Para cada una: título de cabecera
+3. Una página cada vez, en orden U3 (la unidad en curso: enteros, hasta el 11-12-2026), U1, U4, U5, U6, U7, U8.
+   **No se quita nada** de lo que haya en la página salvo enlaces rotos comprobados (regla de `proyecto.md`): lo
+   antiguo se reordena o se baja a «Para saber más». Para cada una: título de cabecera
    «Unidad N. …», apartados de `plantilla.md`, PDF de `salidas/12-drive-web/enlaces.json` incrustados desde Drive,
    prácticas de la app de esa unidad, y lo antiguo que el inventario marca CONSERVAR o CANTERA en «Para saber más».
    Las subpáginas de proporcionalidad (cuatro partes) y de álgebra se conservan como están, enlazadas.
