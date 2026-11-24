@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-23T18:53:42Z · por la sesión s-20261123T184153-58e1a2ee (WEB T06: cierre de la 06)
+Regenerado: 2026-11-24T00:26:50Z · por la sesión s-20261124T002600-b155c411 (WEB T07: reclamo de la 07)
 
 ## Antes de hacer nada
 
@@ -234,7 +234,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 04 | Acertijos del sitio `pradomayor4eso` y carpetas de Drive de la web | tareas/tarea-04-sitio-antiguo-y-drive.md | ninguna | 40 min | MEDIO | 17 | salidas/04-sitio-antiguo-y-drive/ | manual | LISTA (0 fichas; sitio antiguo 404; Drive 3 de 9) | |
 | 05 | Enlaces a Canguro, Agudeza y olimpiadas | tareas/tarea-05-enlaces-concursos.md | ninguna | 20 min | BAJO | 01 | salidas/05-enlaces-concursos/ | manual | LISTA (61 enlaces, todos 200; falta la URL de Agudeza) | |
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | LISTA (184 fichas: si 129, enlazar 25, no 30; 71 con solución; 35 reclasificadas; dudas para Juan Luis en el INFORME) | |
-| 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | PENDIENTE (06 LISTA: 68 publicables sin solución, lista en el INFORME de la 06) | |
+| 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | EN CURSO | s-20261124T002600-b155c411 · 2026-11-24T03:26:00Z |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
 | 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA (06 LISTA y 08 LISTA; faltan la 07 y la firma) | |
 | 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
