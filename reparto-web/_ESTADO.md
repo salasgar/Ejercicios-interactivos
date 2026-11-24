@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-24T17:48:40Z · por la sesión s-20261124T173155-a7f40e75 (WEB T12+T13: cierre de la 13)
+Regenerado: 2026-11-24T17:50:59Z · por la sesión s-20261124T174517-ee3e7f9b (WEB T09: cierre)
 
 ## Antes de hacer nada
 
@@ -236,13 +236,13 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 06 | Fusionar y clasificar el catálogo de acertijos | tareas/tarea-06-catalogo.md | 02, 03 y 04 LISTAS | 75 min | ALTO | — | salidas/06-catalogo/ | manual | LISTA (184 fichas: si 129, enlazar 25, no 30; 71 con solución; 35 reclasificadas; dudas para Juan Luis en el INFORME) | |
 | 07 | Escribir y comprobar las soluciones que faltan | tareas/tarea-07-soluciones.md | 06 LISTA | 90 min | ALTO | — | salidas/07-soluciones/ | manual | LISTA (60 de 68 resueltas; 8 a dudas.md: 25b, 30, 36, D-059, D-060, D-077, D-099, D-105; 3 errores en soluciones existentes) | |
 | 08 | Página de acertijos con filtros | tareas/tarea-08-pagina-acertijos.md | ninguna | 60 min | MEDIO | — | salidas/08-pagina-acertijos/ | manual | LISTA | |
-| 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | BLOQUEADA (06, 07 y 08 LISTAS; falta la firma en `autorizaciones.md`) | |
+| 09 | Poner el catálogo revisado en la página | tareas/tarea-09-publicar-catalogo.md | 06, 07 y 08 LISTAS, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/09-publicar-catalogo/ | manual | LISTA (104 acertijos publicados; 25 retenidas y 25 «enlazar» sin publicar: ver INFORME) | |
 | 10 | Portada, plantilla de página de unidad y piloto (Unidad 2) | tareas/tarea-10-plantilla-y-piloto.md | ninguna | 60 min | ALTO | 16 | salidas/10-plantilla-y-piloto/ | manual | LISTA (plantilla = PROPUESTA: falta que Juan Luis la apruebe) | |
 | 11 | Qué material de este curso va en cada página de unidad | tareas/tarea-11-manifiesto-materiales.md | ninguna | 25 min | BAJO | 05 | salidas/11-manifiesto-materiales/ | manual | LISTA (103 entradas: 89 claras, 14 en duda; U7 sin material) | |
 | 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | BLOQUEADA (11 LISTA; falta la firma en `autorizaciones.md`) | |
 | 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis (aprobada 24-11; la 12 ya no es precondición) | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | LISTA (7 páginas con la plantilla en el borrador, sin publicar; «Hojas» con «Próximamente»; 6 cosas a mirar en cambios.md) | |
 | 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | LISTA (5 páginas; quedan rotos solo en páginas de unidad) | |
-| 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | BLOQUEADA | |
+| 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | PENDIENTE (09 LISTA; libre) | |
 | 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | LISTA (borrador + 9 preguntas para Juan Luis; no va a la web hasta que lo apruebe) | |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
 | 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | PENDIENTE (13 y 14 LISTAS; falta la 15) | |
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 09 · 2026-11-24 17:50 · s-20261124T174517-ee3e7f9b · 104 acertijos publicados en acertijos/ (25 retenidas, 25 enlazar sin publicar) · salidas/09-publicar-catalogo/
 LISTA · tarea 13 · 2026-11-24 17:48 · s-20261124T173155-a7f40e75 · 7 páginas de unidad con la plantilla en el borrador (U1, U3-U8), sin publicar · salidas/13-paginas-unidades/
 LISTA · tarea 07 · 2026-11-24 00:54 · s-20261124T002600-b155c411 · 68 fichas: 60 resueltas en soluciones.json + 8 en dudas.md · salidas/07-soluciones/
 LISTA · tarea 06 · 2026-11-23 18:53 · s-20261123T184153-58e1a2ee · 184 fichas (si 129, enlazar 25, no 30; 71 con solución) · salidas/06-catalogo/
