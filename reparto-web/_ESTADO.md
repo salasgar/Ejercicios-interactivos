@@ -256,9 +256,9 @@ Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre (último:
 
 Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
-Formato: `LISTA · tarea 12 · 2026-11-24 17:54 · s-20261124T174530-72af358e · 54 PDF subidos, 49 dudosos sin subir · salidas/12-drive-web/
-LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
+Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 12 · 2026-11-24 17:54 · s-20261124T174530-72af358e · 54 PDF subidos a Drive, 49 dudosos sin subir · salidas/12-drive-web/
 LISTA · tarea 09 · 2026-11-24 17:50 · s-20261124T174517-ee3e7f9b · 104 acertijos publicados en acertijos/ (25 retenidas, 25 enlazar sin publicar) · salidas/09-publicar-catalogo/
 LISTA · tarea 13 · 2026-11-24 17:48 · s-20261124T173155-a7f40e75 · 7 páginas de unidad con la plantilla en el borrador (U1, U3-U8), sin publicar · salidas/13-paginas-unidades/
 LISTA · tarea 07 · 2026-11-24 00:54 · s-20261124T002600-b155c411 · 68 fichas: 60 resueltas en soluciones.json + 8 en dudas.md · salidas/07-soluciones/
