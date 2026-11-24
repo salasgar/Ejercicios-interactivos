@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-24T17:56:31Z · por la sesión s-20261124T175546-99239a6c (WEB T15, reclamo de la 15)
+Regenerado: 2026-11-24T18:00:21Z · por la sesión s-20261124T175546-99239a6c (WEB T15, cierre)
 
 ## Antes de hacer nada
 
@@ -242,15 +242,15 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 12 | Carpeta de Drive «Web 1º ESO» con los PDF | tareas/tarea-12-drive-web.md | 11 LISTA, y firma en `autorizaciones.md` | 25 min | MEDIO | — | salidas/12-drive-web/ | manual | LISTA (76 PDF en Drive «Web 1º ESO» (54 + 22 soluciones); 27 dudosos sin subir hasta que Juan Luis decida) | s-20261124T175450-5b703c95 · 2026-11-24T19:24:50Z (reclamo nuevo, posterior a la terminada: continuación) |
 | 13 | Aplicar la plantilla a las demás páginas de unidad | tareas/tarea-13-paginas-unidades.md | 10 LISTA con la plantilla aprobada por Juan Luis (aprobada 24-11; la 12 ya no es precondición) | 90 min | MEDIO | — | salidas/13-paginas-unidades/ | manual | LISTA (7 páginas con la plantilla en el borrador, sin publicar; «Hojas» con «Próximamente»; 6 cosas a mirar en cambios.md) | |
 | 14 | Arreglar enlaces rotos y ordenar las páginas de enlaces | tareas/tarea-14-enlaces-y-transversales.md | 10 LISTA | 40 min | MEDIO | — | salidas/14-enlaces-y-transversales/ | manual | LISTA (5 páginas; quedan rotos solo en páginas de unidad) | |
-| 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | EN CURSO | s-20261124T175546-99239a6c · 2026-11-24T19:25:00Z |
+| 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | LISTA (catálogo incrustado + 61 enlaces de concursos en el borrador, sin publicar; nada quitado, ver cambios.md) | |
 | 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | LISTA (borrador + 9 preguntas para Juan Luis; no va a la web hasta que lo apruebe) | |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
-| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | PENDIENTE (13 y 14 LISTAS; falta la 15) | |
+| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | PENDIENTE (13, 14 y 15 LISTAS; libre) | |
 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 5.5, esfuerzo Medio.
 
-Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: OCUPADO por s-20261124T175546-99239a6c (tarea 15) desde 2026-11-24T17:56:31Z.
+Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre (último: liberado 2026-11-24T18:00:21Z por s-20261124T175546-99239a6c).
 
 ## Registro de finalizaciones
 
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 15 · 2026-11-24 18:00 · s-20261124T175546-99239a6c · catálogo incrustado + 61 enlaces de concursos, sin publicar · salidas/15-incrustar-acertijos/
 LISTA · tarea 12 · 2026-11-24 17:54 · s-20261124T174530-72af358e · 76 PDF subidos a Drive (incl. 22 soluciones), 27 dudosos sin subir · salidas/12-drive-web/
 LISTA · tarea 09 · 2026-11-24 17:50 · s-20261124T174517-ee3e7f9b · 104 acertijos publicados en acertijos/ (25 retenidas, 25 enlazar sin publicar) · salidas/09-publicar-catalogo/
 LISTA · tarea 13 · 2026-11-24 17:48 · s-20261124T173155-a7f40e75 · 7 páginas de unidad con la plantilla en el borrador (U1, U3-U8), sin publicar · salidas/13-paginas-unidades/
