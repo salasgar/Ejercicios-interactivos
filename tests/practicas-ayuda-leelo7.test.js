@@ -25,7 +25,7 @@ GENERADORES.forEach((generar, i) => {
         const html = explicaLeelo(i)(item, ctx(lang));
         assert.ok(html.includes(buenas[0].html ?? buenas[0].texto), `la opción buena (${buenas[0].texto})`);
         assert.ok(plano(html).includes(plano(item.solucion[lang].replace(/([»”])\.$/, '$1'))), 'lo que dice el ítem');
-        assert.doesNotMatch(plano(html), /\w\/\d/, `fracción con barra — ${plano(html)}`);
+        if (item.plantilla !== 'completa_proportion') assert.doesNotMatch(plano(html), /\w\/\d/, `fracción con barra — ${plano(html)}`);
         assert.ok(html.includes(TX.instrucciones[item.instruccion][lang]), 'lo que se pide');
         assert.ok(html.includes(lang === 'es' ? 'La respuesta es' : 'The answer is'));
       }
@@ -46,4 +46,20 @@ test('leelo7 · con los paquetes 1-2, la explicación tampoco habla de porcentaj
       }
     });
   }
+});
+
+test('leelo7 · el 1-3 y el 4-3 la tarjeta del «No lo sé» no nombra vocabulario de un paquete posterior', () => {
+  const rng = crearRng(778);
+  for (const fecha of ['2027-03-01', '2027-03-04']) {
+    GENERADORES.forEach((generar, i) => {
+      for (let k = 0; k < 200; k++) {
+        const item = generar(rng, { idioma: IDIOMAS[k % 2], fecha });
+        for (const lang of IDIOMAS) {
+          const t = plano(explicaLeelo(i, fecha)(item, ctx(lang)));
+          assert.doesNotMatch(t, /inversely|inversamente|\bshare\b|repartir|at the same rate/i, `${fecha}: ${t}`);
+        }
+      }
+    });
+  }
+  assert.match(plano(explicaLeelo(0, '2027-03-08')({ opciones: [{ correcta: true, texto: 'x' }], instruccion: 'palabra_en_es', solucion: { es: 'a', en: 'a' } }, ctx('en'))), /inversely/);
 });

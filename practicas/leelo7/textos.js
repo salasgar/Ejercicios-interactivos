@@ -2,6 +2,8 @@
 // Lo que se lee está en inglés porque esa es la destreza; las órdenes y el feedback van en el idioma del ítem.
 // Las introducciones solo hablan de lo del paquete 1 (la práctica se publica con él): nada de porcentajes ni escalas.
 
+import { hoy, paqueteHoy } from './logica.js';
+
 export const TX = {
   ejercicios: [
     {
@@ -77,15 +79,15 @@ export const TX = {
 
 // ─── «No lo sé»: la explicación de cada ejercicio ───────────────────────────────────────
 
-const CONSEJOS = [
-  { es: 'Consejo: si dudas, fíjate en las palabras que se parecen (ratio y proportion, directly e inversely).', en: 'Tip: if you are not sure, watch the words that look alike (ratio and proportion, directly and inversely).' },
+const consejos = p2 => [
+  { es: `Consejo: si dudas, fíjate en las palabras que se parecen (ratio y proportion, directly proportional${p2 ? ' e inversely proportional' : ' y unit rate'}).`, en: `Tip: if you are not sure, watch the words that look alike (ratio and proportion, directly proportional${p2 ? ' and inversely proportional' : ' and unit rate'}).` },
   { es: 'Consejo: lee los números uno a uno, en orden, y fíjate en -teen y -ty (thirteen es 13, thirty es 30).', en: 'Tip: read the numbers one by one, in order, and watch -teen and -ty (thirteen is 13, thirty is 30).' },
-  { es: 'Consejo: busca la palabra que decide la consigna (simplest, share, missing, table…); ella dice qué hay que hacer.', en: 'Tip: look for the word that decides the instruction (simplest, share, missing, table…); it says what to do.' },
+  { es: `Consejo: busca la palabra que decide la consigna (simplest, ${p2 ? 'share, ' : ''}missing, table…); ella dice qué hay que hacer.`, en: `Tip: look for the word that decides the instruction (simplest, ${p2 ? 'share, ' : ''}missing, table…); it says what to do.` },
   { es: 'Consejo: lee la frase entera con cada palabra puesta en el hueco y quédate con la que tiene sentido.', en: 'Tip: read the whole sentence with each word in the blank and keep the one that makes sense.' },
 ];
 
 /** Los cuatro ejercicios: qué pide, lo que dice el ítem y la opción buena. */
-export function explicaLeelo(i) {
+export function explicaLeelo(i, fecha = hoy()) {
   return (item, { tt, esc }) => {
     const buena = item.opciones.find(o => o.correcta);
     const resp = buena.html ?? esc(buena.texto);
@@ -94,6 +96,6 @@ export function explicaLeelo(i) {
       <li>${tt(item.solucion).replace(/([»”])\.$/, '$1')}</li>
     </ol>
     <p>${tt({ es: 'La respuesta es', en: 'The answer is' })} <strong>${resp}</strong>${/[.?!]$/.test(buena.texto) ? '' : '.'}</p>
-    <p>${tt(CONSEJOS[i])}</p>`;
+    <p>${tt(consejos(paqueteHoy(fecha) >= 2)[i])}</p>`;
   };
 }

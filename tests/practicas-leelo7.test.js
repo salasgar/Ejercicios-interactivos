@@ -258,11 +258,11 @@ test('leelo7 · completa: la frase es correcta con la palabra buena (cuentas, co
     if (id === 'out-of') { m = /^(\d+) ______ (\d+) pupils/.exec(f); assert.ok(m && num(m[1]) >= 2 && num(m[1]) < num(m[2]), f); }
     if (id === 'equivalent') { m = /ratios (\d+)\s:\s(\d+) and (\d+)\s:\s(\d+) are/.exec(f); assert.ok(m && num(m[1]) * num(m[4]) === num(m[2]) * num(m[3]), f); }
     if (id === 'simplest') { m = /ratio (\d+)\s:\s(\d+) in its ______ form is (\d+)\s:\s(\d+)\./.exec(f); assert.ok(m && num(m[1]) * num(m[4]) === num(m[2]) * num(m[3]) && mcd(num(m[3]), num(m[4])) === 1, f); }
-    if (id === 'proportion') { m = /example (\d+)\s:\s(\d+) = (\d+)\s:\s(\d+)\./.exec(f); assert.ok(m && num(m[1]) * num(m[4]) === num(m[2]) * num(m[3]), f); }
-    if (id === 'unit') { m = /^(\d+) pens cost £(\d+): the ______ rate is £(\d+) for one pen/.exec(f); assert.ok(m && num(m[1]) * num(m[3]) === num(m[2]), f); }
+    if (id === 'proportion') { m = /example (\d+)\/(\d+) = (\d+)\/(\d+)\./.exec(f); assert.ok(m && num(m[1]) * num(m[4]) === num(m[2]) * num(m[3]), f); }
+    if (id === 'unit') { m = /^(\d+) pens cost €(\d+)\.00: the ______ rate is €(\d+)\.00 for one pen/.exec(f); assert.ok(m && num(m[1]) * num(m[3]) === num(m[2]), f); }
     if (id === 'share') { m = /^Share (\d+) sweets ______ the ratio (\d+)\s:\s(\d+)\./.exec(f); assert.ok(m && num(m[1]) % (num(m[2]) + num(m[3])) === 0 && num(m[2]) !== num(m[3]), f); }
-    if (id === 'increase') { m = /from £(\d+) to £(\d+): it is a (\d+)% ______/.exec(f); assert.ok(m && num(m[2]) === num(m[1]) * (100 + num(m[3])) / 100, f); }
-    if (id === 'discount') { m = /costs £(\d+) but has a (\d+)% ______: now it costs £(\d+)/.exec(f); assert.ok(m && num(m[3]) === num(m[1]) * (100 - num(m[2])) / 100, f); }
+    if (id === 'increase') { m = /from €(\d+(?:\.\d+)?) to €(\d+(?:\.\d+)?): it is a (\d+)% ______/.exec(f); assert.ok(m && num(m[2]) === num(m[1]) * (100 + num(m[3])) / 100, f); }
+    if (id === 'discount') { m = /costs €(\d+(?:\.\d+)?) but has a (\d+)% ______: now it costs €(\d+(?:\.\d+)?)/.exec(f); assert.ok(m && num(m[3]) === num(m[1]) * (100 - num(m[2])) / 100, f); }
     if (id === 'scale-n') {
       m = /scale 1\s:\s([\d\u202f]+), 1 cm/.exec(f);
       assert.ok(m, f);
