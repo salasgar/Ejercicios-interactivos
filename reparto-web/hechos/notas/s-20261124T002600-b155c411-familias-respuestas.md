@@ -12,3 +12,12 @@ semanal, caso por caso (no se cuentan); viernes 10:20 es la hora oficial del cen
 
 Sigue sin estar en la web: la tarea 16 dice que lo pondrá otra tarea cuando Juan Luis apruebe el borrador, y esa
 tarea no existe todavía en el reparto.
+
+2026-11-26T16:36:51Z · Juan Luis APRUEBA el borrador («Apruebo el borrador, pásalo al sitio»). Hecho en el BORRADOR de Sites, sin
+publicar: página nueva de primer nivel «FAMILIAS» (en mayúsculas, como las demás del menú), con el texto de
+salidas/16-borrador-familias/borrador.md pegado en un cuadro de texto (Lato, encabezados sin negrita). Comprobado: el
+texto coincide carácter a carácter con el borrador (2992 caracteres sin espacios, misma suma de control); enlaces: correo
+(mailto, el pegado lo pierde y hubo que ponerlo a mano con cmd+k), vídeo de Rojas Estapé (YouTube) y «Técnicas de estudio»
+(enlace interno a la página TÉCNICAS DE ESTUDIO). La página nueva quedó la SEGUNDA del panel, detrás de «Página principal»:
+el arrastre no funciona con el ratón sintético; si la quiere al final, la mueve Juan Luis. TRAMPA: con un correo
+seleccionado, cmd+k pone el mailto él solo, sin abrir el diálogo, y lo que se teclee después va al texto.
