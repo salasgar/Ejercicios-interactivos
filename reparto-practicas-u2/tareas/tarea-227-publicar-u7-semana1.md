@@ -139,6 +139,15 @@ Las 4 prácticas con `disponible: true` (o reabiertas, con su fichero; `leelo7`,
   `origin/main` y el lanzador dejó de ver tareas. Regla vigente (`CLAUDE.md` de la raíz y `proyecto.md`, «Se sube desde el mismo árbol en el
   que se escribe»): se escribe, se comitea con rutas explícitas y se empuja desde aquí; si `git status -sb` dice «ahead N, behind M», se
   realinea como dice allí antes de empezar.
+- (U7, tarea 227, 25-26-11, s-20261126T211424-60469b12) Tres sesiones para cerrarla. La segunda lanzó los barridos en subagentes y se
+  cortó antes de que acabara el último: su resultado (dos prácticas más con fallos) se quedó en /tmp sin reabierta. **Cada barrido que
+  termine, a su reabierta en el mismo paso**, y un latido que diga qué falta por recoger. Y el `base.js` de la copia de /tmp necesita la
+  línea `globalThis.__item = actual.item` para el script de clics (sin ella, «el ítem no cambia» en todo).
+- (U7, tarea 227) Con proporcionalidad, una normalización «en la unidad base» deja escapar casos: «3 min, 75 páginas → 8 min» sale tal
+  cual como «3 personas, 75 g → 8» y «4 personas, 300 g» como «4 personas, 300 mL». La reserva de una regla de tres lleva **dos huellas
+  por caso** (los números como se escriben y en la unidad base); la de una tabla, el precio por unidad con las columnas del papel dentro
+  de la tabla del ítem (cualquier grupo de columnas proporcional). Y la notación se lee también en las introducciones y el paso a paso:
+  el barrido de textos no buscaba «÷» y se escapó en `tabla-proporcional`; con la captura a 375 px salió a la primera.
 
 ## Prohibido (propio de esta tarea)
 
