@@ -523,6 +523,18 @@
   "solucion": "A) Si comienzan con el número 55:\n\nJavier puede elegir entre el 56, el 11 y el 5. Si elige el 11 o el 5, Marta ganará, puesto que son primos. Por lo tanto, Javier elige el 56.\nAhora Marta puede elegir el 57, el 28 o el 8.\nSi elige el 28 o el 8, Javier elegirá el 4 y Marta perderá seguro.\nPor lo tanto, Marta elige el 57\nJavier puede elegir el 3, el 19 y el 58. Elegirá el 58, que es el único que no es primo (si elige un número primo perderá).\nAhora Marta solamente puede elegir el 59, el 29 o el 2. Elija el que elija, Javier podrá obtener el 1, ya que los tres números son primos.\nGana Javier.\n\nB) Si comienzan con el número 140:\n\nJavier puede elegir entre el 141, el 70, el 28 o el 20.\nSi elige el 70, Marta elegirá el 10.\nSi elige el 28 o el 20, Marta elegirá el 4.\nDe modo que Javier elige el 141.\nAhora Marta puede elegir el 3, el 47 o el 142. Elige el 142, ya que los otros son primos.\nJavier elige el 143 por el mismo motivo (142 = 2 · 71)\nY Marta elige el 144, también por lo mismo (143 = 11 · 13)\nJavier elegirá el 145, Marta el 146, Javier el 147, Marta el 49, Javier el 7 y Marta el 1.\nGana Marta.\n\nOtras combinaciones posibles:\n\n140, 141, 142, 143, 144, 72, 36, 12, 4, 5, 1\n140, 141, 142, 143, 144, 72, 36, 18, 6, 3, 1\n140, 141, 142, 143, 144, 48, 49, 50, 10, 2, 1\n\nEn todas gana Marta."
  },
  {
+  "id": "43",
+  "titulo": "La piragua y la carpa",
+  "enunciado": "Una piragüista rema por un lago en calma, siempre en línea recta y al mismo ritmo. Delante de ella, a cierta distancia, salta una carpa. El salto deja en el agua una onda en forma de círculo que se va haciendo cada vez más grande.\nLa piragüista sigue remando hacia el punto donde saltó la carpa. A las 15 paladas se cruza con la onda y entra en el círculo. Sigue remando y, 15 paladas después, alcanza la onda por el otro lado y sale del círculo.\n¿A cuántas paladas de la piragua estaba la carpa cuando saltó?",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 48,
+  "unidad": 6,
+  "pista": "Mide las distancias en paladas. Si en 15 paladas la onda avanza un trozo, en 30 paladas avanza el doble.",
+  "solucion": "Medimos todo en paladas (lo que avanza la piragua con una palada). Llamamos x a lo que avanza la onda mientras la piragüista da 15 paladas.\n1. Primer cruce: la piragua ha avanzado 15 paladas y la onda ha venido x hacia ella. La carpa saltó a 15 + x paladas.\n2. Segundo cruce: han pasado 30 paladas en total, así que la onda ya se ha alejado 2x del punto del salto. La piragua ha recorrido la distancia hasta el punto del salto y además esos 2x: 30 = (15 + x) + 2x.\n3. Entonces 30 = 15 + 3x, 3x = 15 y x = 5.\nSolución: la carpa saltó a 15 + 5 = 20 paladas de la piragua.\nComprobación: a las 30 paladas la piragua está 10 paladas más allá del punto del salto, y la onda tiene justo 10 paladas de radio."
+ },
+ {
   "id": "44",
   "titulo": "El collar de la condesa",
   "enunciado": "Una condesa se compró un collar hecho con 20 anillos de vidrio entrelazados como eslabones de una cadena, de manera que cada anillo estaba entrelazado con los dos anteriores y con los dos siguientes. Pero uno de los anillos se rompió, y la condesa no quería tener un collar desigual, así que decidió romper algunos anillos más, de manera que cada anillo quedase unido solamente a otros dos, como una típica cadena sencilla. Y lo hizo de la manera óptima para romper la menor cantidad posible de anillos y que así el collar quedase lo más largo posible. ¿Cuántos anillos rompió la condesa? (La respuesta no es 9).",
@@ -535,12 +547,18 @@
  {
   "id": "45",
   "titulo": "Sudokus especiales de 3 colores",
-  "enunciado": "Instrucciones:\nEn cada fila y en cada columna debe haber tres cuadros de cada color. No hay regiones.\nNo puede haber tres cuadros del mismo color seguidos en una fila ni en una columna.\nSi entre dos cuadros hay una línea gruesa, son de distinto color.\nSi entre dos cuadros hay una línea discontinua, son del mismo color.",
+  "enunciado": "Aquí tienes tres sudokus especiales de colores (rojo, azul y amarillo). Las reglas son las mismas en los tres:\n- En cada fila y en cada columna tiene que haber tres cuadros de cada color. No hay regiones.\n- No puede haber tres cuadros del mismo color seguidos en una fila ni en una columna.\n- Si entre dos cuadros hay una línea gruesa, son de distinto color.\n- Si entre dos cuadros hay una línea discontinua, son del mismo color.",
   "tipo": "J",
   "nivel": "★★",
   "idioma": "es",
   "orden": 50,
-  "imagen": "adjuntos/45-Sudoku-especial-1.png"
+  "solucion": "Las soluciones de los tres, en el mismo orden:",
+  "imagen": "adjuntos/45-Sudoku-especial-1.png",
+  "imagenes": [
+   "adjuntos/45-Sudoku-especial-2.png",
+   "adjuntos/45-Sudoku-especial-3.png"
+  ],
+  "imagen_solucion": "adjuntos/45-soluciones.png"
  },
  {
   "id": "46",
