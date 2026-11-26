@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-26T16:04:09Z · por la sesión s-20261124T174530-72af358e (WEB T12: fila 12 corregida)
+Regenerado: 2026-11-26T16:06:59Z · por la sesión s-20261126T160602-d1641e6a (WEB T18: reclamo 18)
 
 ## Antes de hacer nada
 
@@ -245,12 +245,12 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | LISTA (catálogo incrustado + 61 enlaces de concursos en el borrador, sin publicar; nada quitado, ver cambios.md) | |
 | 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | LISTA (borrador + 9 preguntas para Juan Luis; no va a la web hasta que lo apruebe) | |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
-| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | PENDIENTE (13, 14 y 15 LISTAS; libre) | |
+| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | EN CURSO | s-20261126T160602-d1641e6a · 2026-11-26T17:21:02Z |
 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 5.5, esfuerzo Medio.
 
-Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre (último: liberado 2026-11-24T18:00:21Z por s-20261124T175546-99239a6c).
+Recurso `editor-sites` (tope 1), derivado de `hechos/recursos/`: libre (último: liberado 2026-11-26T11:15:01Z por s-20261126-infografias, tras publicar el sitio a petición de Juan Luis).
 
 ## Registro de finalizaciones
 
