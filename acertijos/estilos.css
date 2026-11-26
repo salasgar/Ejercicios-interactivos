@@ -28,6 +28,9 @@ details.pista { background:var(--aviso); }
 details.solucion { background:var(--ok); }
 summary { cursor:pointer; font-weight:600; min-height:28px; }
 details p { margin:6px 0 2px; white-space:pre-line; }
+.enlaces { margin:0 0 8px; padding-left:1.2em; }
+.enlaces a { color:var(--primario); overflow-wrap:anywhere; }
+details img { margin-top:8px; }
 .fuente { margin:8px 0 0; font-size:.75rem; color:var(--suave); }
 .vacio, .aviso { background:#fff; border:1px dashed var(--borde); border-radius:12px; padding:16px; text-align:center; color:var(--suave); }
 @media (max-width:420px) { .pagina { padding:8px; } .filtros { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } }

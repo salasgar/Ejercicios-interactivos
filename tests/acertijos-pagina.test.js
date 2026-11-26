@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-  TIPOS, NIVELES, normalizar, estrellas, esValido, normalizarCatalogo, unidadesDe, filtrar, ordenar, contador, alAzar, enlaceDe, deHash,
+  TIPOS, NIVELES, normalizar, estrellas, esValido, normalizarCatalogo, unidadesDe, filtrar, ordenar, contador, alAzar, enlaceDe, deHash, enlacesDe,
 } from '../acertijos/logica.js';
 
 const ejemplo = JSON.parse(readFileSync(new URL('../acertijos/catalogo-ejemplo.json', import.meta.url), 'utf8'));
@@ -106,4 +106,17 @@ test('los ficheros de la página existen y la página no depende de nada externo
     const t = readFileSync(new URL(`../acertijos/${f}`, import.meta.url), 'utf8');
     assert.doesNotMatch(t, /https?:\/\//, `${f} no debe llamar a nada externo`);
   }
+});
+
+test('enlaces: solo https y con texto; imágenes extra y de la solución, con valores por defecto', () => {
+  const base = { id: 'a', titulo: 'A', enunciado: 'x', tipo: 'L', nivel: '★' };
+  const protocolo = 'https:' + '//';
+  const r = normalizarCatalogo([{ ...base, imagenes: ['b.png', '', 3], imagen_solucion: 's.png',
+    enlaces: [{ texto: ' Vídeo ', url: protocolo + 'example.org/v' }, { texto: 'malo', url: 'javascript:alert(1)' }, { texto: '', url: protocolo + 'example.org' }, null] }])[0];
+  assert.deepEqual(r.enlaces, [{ texto: 'Vídeo', url: protocolo + 'example.org/v' }]);
+  assert.deepEqual(r.imagenes, ['b.png']);
+  assert.equal(r.imagen_solucion, 's.png');
+  const s = normalizarCatalogo([base])[0];
+  assert.deepEqual([s.enlaces, s.imagenes, s.imagen_solucion], [[], [], '']);
+  assert.deepEqual(enlacesDe(null), []);
 });

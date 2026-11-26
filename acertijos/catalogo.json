@@ -1,12 +1,51 @@
 [
  {
+  "id": "01a",
+  "titulo": "Acertijo con símbolos",
+  "enunciado": "Averigua el valor de cada símbolo.",
+  "tipo": "N",
+  "nivel": "★",
+  "idioma": "es",
+  "orden": 1,
+  "unidad": 6,
+  "solucion": "Empieza por la última línea: corazón − 7 = 3, así que el corazón vale 10.\nCírculo = 10 − 3 = 7.\nTriángulo = 7 + 1 = 8.\nCuadrado + 9 = 10, así que el cuadrado vale 1.",
+  "imagen": "adjuntos/01a-enun1-Acertijo-con-simbolos.png"
+ },
+ {
+  "id": "01b",
+  "titulo": "Cuadrado mágico",
+  "enunciado": "Completa las casillas vacías de este cuadrado con un número en cada casilla, usando los números que hay debajo del cuadrado, de manera que todas las filas y todas las columnas sumen 26.",
+  "tipo": "N",
+  "nivel": "★",
+  "idioma": "es",
+  "orden": 2,
+  "unidad": 1,
+  "solucion": "Fila 1: 6, −1, 11, 10\nFila 2: 12, 9, 5, 0\nFila 3: 1, 4, 8, 13\nFila 4: 7, 14, 2, 3\n\nPor dónde empezar: en la fila 4 falta un número, 26 − 7 − 14 − 2 = 3. Luego la última columna: 26 − 13 − 3 = 10, que se reparte entre el 10 y el 0.",
+  "imagen": "adjuntos/01b-Cuadrado-magico.png"
+ },
+ {
+  "id": "02",
+  "titulo": "¡SUMPLETE!",
+  "enunciado": "Este juego se llama Sumplete. Tacha algunos números de manera que los que queden sin tachar en cada fila sumen el número que hay a su derecha, y los que queden en cada columna sumen el número que hay debajo.",
+  "tipo": "J",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 3,
+  "unidad": 1,
+  "solucion": "Se tachan: en la fila 1, el tercer número (un 3); en la fila 2, el 3 y el 7; en la fila 3, el 5 y el primer 7; en la fila 4, todos menos el 2; en la fila 5, el 6.",
+  "imagen": "adjuntos/02-Sumplete.png",
+  "imagen_solucion": "adjuntos/02-Solucion-del-sumplete.png",
+  "fuente": "sumplete.com"
+ },
+ {
   "id": "03",
   "titulo": "Las 6 ranas",
   "enunciado": "Este es el conocido problema de las 6 ranas. Consiste en que todas puedan pasar al otro lado.\nPuedes practicarlo aquí, de forma interactiva:\nhttps://www3.gobiernodecanarias.org/medusa/eltanquematematico/proyectoNEWTON/ovejalechugaleon/seisranas.html\n\n\nCuando sepas la solución, escríbela así:\n(esto es un ejemplo)\n1. MMM_HHH \n2. MMMH_HH\n3. MM_HMHH\n...etc",
   "tipo": "J",
   "nivel": "★★",
   "idioma": "es",
-  "orden": 4
+  "orden": 4,
+  "solucion": "El reto se puede resolver en 15 movimientos. Estas son las 16 posiciones por las que se pasa (M y H son las ranas; _ es la piedra libre):\n1. M M M _ H H H\n2. M M M H _ H H\n3. M M _ H M H H\n4. M _ M H M H H\n5. M H M _ M H H\n6. M H M H M _ H\n7. M H M H M H _\n8. M H M H _ H M\n9. M H _ H M H M\n10. _ H M H M H M\n11. H _ M H M H M\n12. H H M _ M H M\n13. H H M H M _ M\n14. H H M H _ M M\n15. H H _ H M M M\n16. H H H _ M M M\n\n¿En cuántos movimientos lo has conseguido tú?"
  },
  {
   "id": "05",
@@ -76,6 +115,19 @@
   "solucion": "El primer pastor tiene 5 ovejas y el segundo, 7.\nSi el segundo le da una oveja al primero, ambos tendrán 6 ovejas.\nSi el primero le da una oveja al segundo, el primero tendrá 4 y el segundo tendrá 8 (el doble)."
  },
  {
+  "id": "10b",
+  "titulo": "Un cuadrado para cada alumno",
+  "enunciado": "UN CUADRADO PARA CADA ALUMNO\n\nEl delegado dibujó 20 puntos en la pizarra, en cuatro filas de cinco puntos cada una, nombrados con las 20 primeras letras del abecedario.\n\n—Lucía, elige cuatro de estos puntos de manera que si los unimos entre sí con líneas rectas obtengamos un cuadrado —dijo el delegado.\n\nLucía eligió los puntos B, G, H, C (el cuadrado azul).\n\n—Marcos, es tu turno. No podéis elegir un cuadrado que ya haya elegido otro compañero antes —añadió tajantemente.\n\nMarcos eligió los puntos B, L, N, D (el cuadrado naranja).\n\nAsí, todos los alumnos fueron eligiendo sus cuatro puntos, que serían los cuatro vértices de su cuadrado. Al final, el delegado escogió el único cuadrado que quedaba libre.\n\n¿Cuántos alumnos había en total?",
+  "tipo": "C",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 13,
+  "unidad": 8,
+  "pista": "No todos los cuadrados están «derechos»: B, F, L, H también es un cuadrado, aunque esté girado.",
+  "solucion": "Había 30 alumnos, uno por cada cuadrado posible.\nCuadrados derechos: 12 pequeños (como B, G, H, C), 6 medianos (como B, L, N, D) y 2 grandes (como A, P, S, D). Son 20.\nCuadrados girados: 6 como B, F, L, H (en forma de rombo), y 4 más inclinados todavía (como B, I, R, K). Son 10.\nEn total, 20 + 10 = 30 cuadrados.",
+  "imagen": "adjuntos/10b-puntos.svg"
+ },
+ {
   "id": "11",
   "titulo": "Fashionable hats",
   "enunciado": "Riddle 5\n\nDude, what colour is my hat?\nThere was a dark room with 5 hats inside, 3 black and 2 white. Three men went in and blindly\ntook each of them one of the hats. They went out lined up in order. That way man number 1 could\nsee the colour of the hats on number 2 and 3, number 2 could only see the colour of man number\n3’s hat, and number 3 was facing a wall, could see nothing.\n\nMan number 1, looking at his mates’ hats, says: “I can’t know what colour is my hat”. Afterwards,\nMan number 2, having heard what number 1 said, and looking at the hat on man number 3\nconcludes: “I can’t know what colour is my hat either”. Finally, man number 3, after thinking about\nwhat men number 1 and 2 had said, and seeing no hat at all, claimed: I do know what colour is\nmy hat!\n\nWhat colour was the third man’s hat and how could he possibly know?",
@@ -86,6 +138,30 @@
   "solucion": "Si los individuos 2 y 3 llevaran sombreros negros, el individuo 1 habría sabido que su sombrero es blanco. Por lo tanto, como no lo ha sabido, se puede deducir que no ha visto dos sombreros negros. Esto lo sabe el individuo 2, porque ha oído lo que ha dicho el 1.\nSi el individuo 3 tuviera un sombrero negro, el individuo 2 habría sabido que su sombrero es blanco, ya que sabe que no pueden ser el 2 y el 3 ambos negros. Por lo tanto, como el 2 no ha sabido adivinar el color de su sombrero, podemos deducir que el 3 no es negro."
  },
  {
+  "id": "12",
+  "titulo": "Numbers",
+  "enunciado": "RIDDLE 6. Numbers\n\nYou can get the number 24 using three twos, like this: 22 + 2 = 24\nYou can get the number 212 using four fours, like this: 4⁴ − 44 = 212\nYou can get the number 222 using four fours, like this: 444 : √4 = 222\nBUT:\nCan you get the number 0 using four fours?\nCan you get the number 1 using four fours?\nCan you get the number 2 using four fours?\nCan you get the number 3 using four fours?\nCan you get the number 4 using four fours?\nCan you get the number 5 using four fours?\nCan you get the number 6 using four fours?\n...\nUp to what number can you get using four fours without skipping any whole number? You can use any mathematical operation you want.",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "en",
+  "orden": 15,
+  "unidad": 1,
+  "pista": "Start with the easy ones: 4 − 4 = 0 and 4 : 4 = 1. Then mix them.",
+  "solucion": "Here are the numbers from 0 to 20 with exactly four fours (√4 = 2 and 4! = 4·3·2·1 = 24 are allowed, because you can use any operation):\n0 = 4 − 4 + 4 − 4\n1 = (4 : 4) · (4 : 4)\n2 = 4 : 4 + 4 : 4\n3 = (4 + 4 + 4) : 4\n4 = 4 + (4 − 4) · 4\n5 = (4 · 4 + 4) : 4\n6 = 4 + (4 + 4) : 4\n7 = 4 + 4 − 4 : 4\n8 = 4 + 4 + 4 − 4\n9 = 4 + 4 + 4 : 4\n10 = (44 − 4) : 4\n11 = 44 : (√4 + √4)\n12 = (44 + 4) : 4\n13 = 44 : 4 + √4\n14 = 4 + 4 + 4 + √4\n15 = 44 : 4 + 4\n16 = 4 + 4 + 4 + 4\n17 = 4 · 4 + 4 : 4\n18 = 4 · 4 + 4 − √4\n19 = 4! − 4 − 4 : 4\n20 = 4 · (4 + 4 : 4)\nHow far can you go without skipping any number? It depends on the operations you allow. With + − · :, brackets, 44, √, ! and the decimal ,4 you can reach at least 72 without skipping any number (a computer checked it). If you allow any operation at all (for example, logarithms, which you will study later), mathematicians have shown that you can write every whole number with four fours, so there is no limit."
+ },
+ {
+  "id": "13",
+  "titulo": "Sudoku",
+  "enunciado": "Resuelve este sudoku: en cada fila, en cada columna y en cada caja de 3 × 3 tienen que estar los números del 1 al 9, sin repetir ninguno.",
+  "tipo": "J",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 16,
+  "solucion": "El sudoku resuelto:",
+  "imagen": "adjuntos/13-enun1-06.-Sudoku.png",
+  "imagen_solucion": "adjuntos/13-solucion1-06.-Sudoku.-Solucion.png"
+ },
+ {
   "id": "14",
   "titulo": "Persistencia multiplicativa",
   "enunciado": "Toma un número cualquiera y multiplica todas sus cifras entre sí. De esta manera, obtendrás otro número.\nPor ejemplo, a partir del número 55735 obtenemos el número 5·5·7·3·5 = 2625\nRealiza de nuevo la misma operación con el número que has obtenido, y lo mismo con el número que obtengas después, y así sucesivamente hasta que llegues a un número de una sola cifra. En nuestro ejemplo:\n55735  5·5·7·3·5 = 2625  2·6·2·5 = 120  1·2·0 = 0\nEn este caso hemos llegado a un número de una sola cifra en 3 pasos, por lo que podemos decir que el número 55735 ha resistido durante 3 repeticiones o que la persistencia multiplicativa de 55735 es 3.\nIntenta encontrar un número que resista la mayor cantidad de pasos posible hasta llegar a un número de una sola cifra, es decir, que tenga la mayor persistencia multiplicativa posible. Tu número inicial puede ser tan grande o tan pequeño como quieras. Puede tener tantas cifras como quieras.\nGanará quien encuentre el número que más resista. ¡A ver cuántos pasos es capaz de aguantar tu número!",
@@ -93,7 +169,32 @@
   "nivel": "★★",
   "idioma": "es",
   "orden": 17,
-  "unidad": 1
+  "unidad": 1,
+  "solucion": "Algunos números que aguantan mucho:\nP(12366778) = 7\nP(4666778) = 8\nP(123466778) = 8\nP(334468899) = 9\n\nPor ejemplo, 334468899 → 4478976 → 338688 → 27648 → 2688 → 768 → 336 → 54 → 20 → 0: son 9 pasos."
+ },
+ {
+  "id": "15",
+  "titulo": "Un prisma con mala sombra",
+  "enunciado": "Halla la altura del prisma rojo. Las medidas están en centímetros: el prisma verde mide 2 cm de alto y su sombra mide 3 cm; la sombra del prisma rojo mide 6 cm por el suelo y sube 4 cm por la pared.",
+  "tipo": "G",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 18,
+  "unidad": 7,
+  "solucion": "Igual que los 2 centímetros de altura del prisma verde equivalen a 3 cm de sombra en el suelo, los 4 centímetros de sombra de la pared equivaldrían a 6 cm de sombra en el suelo, ya que la altura es 2/3 de la sombra. Por lo tanto, si el prisma grande proyectara la sombra en el suelo, su sombra mediría 6 + 6 = 12 cm. Como la altura es 2/3 de la sombra, la altura del prisma grande es 8 cm.",
+  "imagen": "adjuntos/15-prisma.png"
+ },
+ {
+  "id": "17",
+  "titulo": "No hace falta calculadora",
+  "enunciado": "Sabiendo que a y b son dos números que sumados dan 69, calcula cuánto sale al resolver la siguiente operación. No necesitas calculadora; solo pensar, probar, investigar...",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 20,
+  "unidad": 3,
+  "solucion": "El resultado es 0.\nComo a + b = 69, a = 69 − b. Entonces a − 34 = 69 − b − 34 = 35 − b, que es el opuesto de b − 35.\nUn número elevado a 2023 (exponente impar) conserva su signo, así que (a − 34)²⁰²³ es el opuesto de (b − 35)²⁰²³, y al sumarlos da 0.\nPrueba con un ejemplo: a = 36 y b = 33. Queda 2²⁰²³ + (−2)²⁰²³ = 0.",
+  "imagen": "adjuntos/17-enun1-No-hace-falta-calculadora.png"
  },
  {
   "id": "18",
@@ -105,6 +206,18 @@
   "orden": 21,
   "solucion": "Next month is APRIL\n\n1 --> January\n1+2 = 3 ---> March\n1+2+3 = 6 ---> June\n1+2+3+4=10 ---> October\n1+2+3+4+5=15 ---> 15 - 12 = 3 ---> March\n1+2+3+4+5+6=21 ---> 21 - 12 = 9 ---> September\n1+2+3+4+5+6+7=28 ---> 28 - 12 - 12 = 4 ---> April\n1+2+3+4+5+6+7+8=36 ---> 36 - 12 - 12 = 12 ---> December",
   "imagen": "adjuntos/18-enun1-Next-month.png"
+ },
+ {
+  "id": "19",
+  "titulo": "¿Cuántos triángulos ves aquí?",
+  "enunciado": "Cuenta cuántos triángulos puedes ver en la imagen.",
+  "tipo": "C",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 22,
+  "unidad": 8,
+  "solucion": "Hay 12 triángulos. El dibujo tiene 5 trozos:\n- 5 triángulos de un solo trozo;\n- 4 triángulos formados por dos trozos;\n- 2 triángulos formados por tres trozos;\n- y el triángulo grande, con los cinco.",
+  "imagen": "adjuntos/19-enun1--Cuantos-triangulos-ves-.png"
  },
  {
   "id": "20",
@@ -288,6 +401,19 @@
   "imagen": "adjuntos/33b-Cuadrado-magico-de-numeros-enteros.png"
  },
  {
+  "id": "34",
+  "titulo": "Los 9 puntos",
+  "enunciado": "LOS NUEVE PUNTOS\nCon los 8 puntos del primer dibujo podemos trazar una línea continua (es decir, sin levantar el lápiz del papel) que esté formada por 4 tramos rectos y que pase por los 8 puntos. Por ejemplo, la del segundo dibujo.\nAhora intenta trazar una línea continua formada por 4 tramos rectos que pase por los nueve puntos del tercer dibujo. No es imposible.",
+  "tipo": "T",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 39,
+  "pista": "Nadie ha dicho que la línea no pueda salirse del cuadrado que forman los puntos.",
+  "solucion": "La línea tiene que salirse del cuadrado:",
+  "imagen": "adjuntos/34-nueve-puntos.svg",
+  "imagen_solucion": "adjuntos/34-solucion.svg"
+ },
+ {
   "id": "35",
   "titulo": "El mapa del metro",
   "enunciado": "En una ciudad hay 10 estaciones de metro. A cada estación llegan tres vías y cada vía conecta dos estaciones de metro. Un viajero puede ir desde cualquier estación de metro hasta cualquiera de las otras 9 estaciones recorriendo una sola vía o, como mucho, dos. Es decir, que se tiene que poder ir desde cualquier estación a cualquier otra, o bien directamente, o bien haciendo una única parada intermedia. ¿Puedes dibujar un plano de metro que cumpla esas condiciones?\nLas vías se pueden cruzar entre sí, ya que una vía puede pasar por encima o por debajo de otra.",
@@ -344,6 +470,26 @@
   "solucion": "Hijos e hijas en Atzirania. Cada nacimiento es niño o niña al 50 %, y eso no lo cambia ninguna ley. Si en el país nacen, por ejemplo, 1000 bebés, unos 500 serán niños y unos 500 niñas, da igual en qué orden les toque a las familias. La ley cambia cómo son las familias, pero no la proporción.\nOtra forma de verlo: cada madre tiene exactamente un niño (el último hijo) salvo que no llegue a tenerlo. De niñas: la mitad de las madres no tiene ninguna (el primer bebé ya es niño), una cuarta parte tiene 1, una octava parte tiene 2, etc. De media sale 1 niña por madre, igual que 1 niño.\nSolución: hay un hombre por cada mujer (la mitad y la mitad).\nEl juego de los piratas. Cada pirata tira hasta que le sale cruz, así que cada pirata saca exactamente una cruz. Si hay N piratas, en total salen N cruces. Las caras varían: muchos piratas no sacan ninguna (la mitad de las veces la primera tirada ya es cruz) y unos pocos sacan muchas.\nCon un solo pirata: cruz a la primera (gana cruz) pasa la mitad de las veces; cara y luego cruz (empate, 1 a 1), una cuarta parte; dos caras o más (gana cara), la otra cuarta parte. Gana más veces cruz.\nCon N piratas pasa lo mismo: cruz gana exactamente la mitad de las veces, y cara gana la mitad menos los empates. (Truco para verlo: piensa en las 2N − 1 primeras tiradas. Hay menos caras que cruces justo cuando en esas tiradas salen más cruces que caras, y eso pasa la mitad de las veces.)\nSolución: b) es mejor elegir cruz."
  },
  {
+  "id": "41",
+  "titulo": "Puzzle de cuadrados",
+  "enunciado": "Esto es un puzle geométrico formado por 24 piezas cuadradas. Con él se pueden hacer distintos retos. Imprime el dibujo y recorta los 24 cuadrados.\n\nReto 1: Junta las piezas para formar un rectángulo de 4 × 6 cuadrados (6 de ancho y 4 de alto) cumpliendo la regla n.º 1.\nRegla n.º 1: Cuando dos piezas tengan un lado en común, los dos triángulos que comparten ese lado tienen que ser del mismo color.\n\nReto 2: Forma el rectángulo de 4 × 6 cumpliendo la regla n.º 1 y la regla n.º 2.\nRegla n.º 2: Todo el borde del rectángulo tiene que ser de color azul.\n\nReto 3: Fíjate en las 24 piezas. No hay dos iguales, y son todas las que pueden existir con esos tres colores. Si en lugar de piezas cuadradas usáramos piezas triangulares (cada una partida en 3 triángulos, como en el segundo dibujo), ¿cuántas piezas diferentes podríamos hacer?",
+  "tipo": "J",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 46,
+  "solucion": "El puzle se llama «Los cuadrados de MacMahon»: lo inventó el matemático Percy Alexander MacMahon (1854-1929).\n\nReto 3: con piezas triangulares salen 11 piezas diferentes: 3 de un solo color, 6 de dos colores y 2 de tres colores.\n\nRetos 1 y 2: en el enlace de abajo hay una solución que sirve para los dos, con explicación y curiosidades.",
+  "imagen": "adjuntos/41-Puzzle-de-cuadrados.png",
+  "imagenes": [
+   "adjuntos/41-enun2-Reto-3.png"
+  ],
+  "enlaces": [
+   {
+    "texto": "Explicación y curiosidades (Cuaderno de Cultura Científica)",
+    "url": "https://culturacientifica.com/2023/09/06/los-cuadrados-de-macmahon/"
+   }
+  ]
+ },
+ {
   "id": "42",
   "titulo": "El juego de números de Marta y Javier",
   "enunciado": "Marta y Javier juegan al siguiente juego:\n\nEligen un número natural al azar entre 2 y 100. Por ejemplo, el 30. A continuación, Marta puede elegir o bien sumarle 1 al 30 o bien dividirlo entre un número primo (siempre que sea una división exacta). Es decir, que Marta puede elegir entre el 6, el 10, el 15 o el 31, ya que:\n\n30 + 1 = 31  (sumarle 1)\n30 / 2 = 15  (dividirlo entre un número primo)\n30 / 3 = 10  (dividirlo entre un número primo)\n30 / 5 = 6   (dividirlo entre un número primo)\n\nPongamos que elige el 6. Ahora es turno de Javier, que tendrá que elegir si sumarle 1 al 6 o dividirlo entre un número primo. Es decir, tiene que escoger el 7, el 3 o el 2, ya que:\n\n6 + 1 = 7  (sumarle 1)\n6 / 2 = 3  (dividirlo entre un número primo)\n6 / 3 = 2  (dividirlo entre un número primo)\n\nY ahora le volverá a tocar a Marta, que tendrá que elegir entre sumarle 1 al número que le ha dejado Javier o dividirlo entre un número primo.\n\nY así sucesivamente. Ganará el primero que consiga obtener el número 1.\n\nPor ejemplo:\n\nEmpiezan con el 30\nMarta elige 30 / 5 = 6\nJavier: 6 + 1 = 7\nMarta: 7 / 7 = 1\n\nHa ganado Marta.\n\nSupongamos que ambos son jugadores excelentes (hacen siempre la mejor jugada posible). Empiezan con el número 55 y comienza Javier. ¿Cuál de los dos ganará?\n¿Y si empieza con el nº 140?",
@@ -387,6 +533,36 @@
   "solucion": "Una idea que sirve para todo: cada bola del color propio suma 5 y cada bola de otro color resta 1. Si un jugador coge n bolas y p son de su color, sus puntos son 5 · p − (n − p) = 6 · p − n.\n1. Jimena cogió b azules y Pedro, r rojas. Jimena coge el resto de rojas (10 − r) y Pedro el resto de azules (10 − b).\nJimena: 5 · b − (10 − r) = 13 → 5 · b + r = 23.\nPedro: 5 · r − (10 − b) = 9 → 5 · r + b = 19.\nProbando: b = 4 da r = 23 − 20 = 3, y 5 · 3 + 4 = 19. ¡Cuadra!\nJimena atrapó 4 azules y 7 rojas (20 − 7 = 13 puntos); Pedro, 3 rojas y 6 azules (15 − 6 = 9 puntos).\n2. a) Sí, tiene razón Rocío. Primero, un truco: si los dos cogen 10 bolas, empatan siempre. (Si Jimena coge p azules y 10 − p rojas, a Pedro le quedan p rojas y 10 − p azules, y los dos tienen 5 · p − (10 − p) puntos.)\nAhora imagina que una bola que cogió Jimena la hubiera cogido Pedro. Si es azul, Jimena tendría 5 puntos menos y Pedro 1 menos; si es roja, Jimena tendría 1 más y Pedro 5 más. En los dos casos, Pedro gana 4 puntos de ventaja.\nCon 12 bolas contra 8, es como si Pedro le hubiera quitado 2 bolas a Jimena desde el reparto de 10 y 10: gana Pedro por 2 · 4 = 8 puntos, sean del color que sean.\nEjemplo: Jimena 8 azules y 0 rojas (40 puntos), Pedro 10 rojas y 2 azules (48 puntos): gana Pedro por 8.\nb) No es posible. Por lo anterior, la diferencia de puntos siempre es un múltiplo de 4 (0, 4, 8, 12...), y 30 − 25 = 5 no lo es.\nc) Si empatan, por lo anterior han cogido las mismas bolas: 10 cada uno. Con 6 · p − 10 = 20 sale p = 5: cada uno cogió 5 bolas de su color y 5 del otro.\n3. Si un jugador coge p bolas suyas y 2 · q de los otros colores (q de cada uno), sus puntos son 5 · p − 2 · q.\nJimena: 5 · p − 2 · q = 11 → p = 3, q = 2 (15 − 4 = 11).\nRocío: 5 · p − 2 · q = 17 → p = 5, q = 4 (25 − 8 = 17).\nPedro: 5 · p − 2 · q = 14 → p = 4, q = 3 (20 − 6 = 14).\n(Hay otras parejas que dan esos puntos, pero solo estas hacen que haya 10 bolas de cada color.)\nComprobación por colores: azules 3 (Jimena) + 4 (Rocío) + 3 (Pedro) = 10; verdes 2 + 5 + 3 = 10; rojas 2 + 4 + 4 = 10.\nSolución: Jimena 3 azules, 2 verdes y 2 rojas; Rocío 5 verdes, 4 azules y 4 rojas; Pedro 4 rojas, 3 azules y 3 verdes.\n4. a) Entre los cuatro cogieron 40 bolas: Pedro cogió 40 − 9 − 8 − 12 = 11.\nCon puntos = 6 · (bolas propias) − (bolas cogidas):\nJimena: 6 · p − 9 = 21 → p = 5. Rocío: 6 · p − 8 = 16 → p = 4. Hugo: 6 · p − 12 = 18 → p = 5. Pedro: 6 · p − 11 = 13 → p = 4.\nb) Si los cuatro empatan a 0, cada uno cumple 6 · p = n, es decir, cada uno cogió un múltiplo de 6 de bolas. Entonces el total, 40, sería múltiplo de 6, y no lo es. Pedro miente.\nHugo puede decir la verdad: por ejemplo, con 2, 2, 3 y 3 bolas propias y 7, 7, 13 y 13 bolas cogidas, todos tienen 5 puntos (12 − 7 = 5 y 18 − 13 = 5)."
  },
  {
+  "id": "acertijo-del-puente",
+  "titulo": "El acertijo del puente (vídeo)",
+  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución. (En inglés, con subtítulos en español.)",
+  "tipo": "L",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 52,
+  "enlaces": [
+   {
+    "texto": "Vídeo: «Can you solve the bridge riddle?» (TED-Ed)",
+    "url": "https://www.youtube.com/watch?v=7yDmGnA8Hw0"
+   }
+  ]
+ },
+ {
+  "id": "acertijo-dificil",
+  "titulo": "Acertijo difícil (vídeo)",
+  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución.",
+  "tipo": "L",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 53,
+  "enlaces": [
+   {
+    "texto": "Vídeo: «El acertijo que parece imposible incluso si sabes la respuesta» (Veritasium en español)",
+    "url": "https://www.youtube.com/watch?v=ksasmB0YPzw"
+   }
+  ]
+ },
+ {
   "id": "adivina-el-numero",
   "titulo": "ADIVINA EL NÚMERO",
   "enunciado": "Si eliges un número y me dices en qué tarjetas está ese número y en cuales no está, puedo adivinar rápidamente qué número es. ¿Cuál es el truco?",
@@ -421,6 +597,21 @@
   "solucion": "1. Tercera pregunta: «¿Eres un duende dádrev?». Un dádrev diría que sí (es verdad). Un arítnem también diría que sí (porque miente). Así que cualquier duende contesta «sí» a esa pregunta. Contestó «bal»: «bal» significa «sí».\n2. Segunda pregunta: «¿\"Bal\" significa \"sí\"?». Ahora sabemos que es verdad. Un dádrev contestaría «sí» (bal) y un arítnem contestaría «no» (da). Contestó «bal»: es un duende dádrev, dice la verdad.\n3. Primera pregunta: «¿El camino del manantial es el de la izquierda?». Contestó «bal», es decir, «sí», y dice la verdad.\nSolución: hay que ir por la izquierda; el duende es dádrev; «bal» significa «sí»."
  },
  {
+  "id": "camaleones",
+  "titulo": "Camaleones (vídeo)",
+  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución. (En inglés.)",
+  "tipo": "L",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 57,
+  "enlaces": [
+   {
+    "texto": "Vídeo: «How To Solve The Chameleon Riddle» (MindYourDecisions)",
+    "url": "https://www.youtube.com/watch?v=IRC7_Uv72iI"
+   }
+  ]
+ },
+ {
   "id": "dadrev-y-aritnem",
   "titulo": "Los Dádrev y los Arítnem",
   "enunciado": "Has llegado a una pequeña isla buscando agua y comida, pues una tormenta ha hecho caer al mar todas las provisiones que te quedaban en tu barca. A esa isla sólo se puede acceder desde una ensenada situada al sur, en la que hay una playa. Y sabes que el camino que sale de la playa se divide en dos: uno de los dos caminos lleva a una zona con un manantial donde puedes encontrar agua y comida, y el otro camino lleva al territorio de los terribles y peligrosos ogros-árbol. Pero no sabes cuál es el camino bueno y cuál es el malo.\n\nTambién sabes que en esa pequeña isla habitan unos inofensivos duendes que son muy peculiares. Los hay de dos clases: los dádrev y los arítnem. Los dádrev siempre dicen la verdad y los arítnem siempre mienten. Lo que ocurre es que se parecen tanto unos a otros que es completamente imposible diferenciarlos entre sí a simple vista.\n\nDejas tu barca en la playa y te adentras por el sendero, sin saber si podrás llegar al manantial sin atravesar el territorio de los ogros-árbol. Por fortuna, junto al camino te encuentras a dos duendes que toman el sol sobre una gran roca. Les preguntas:\n\n- ¿Cuál es el camino que lleva al manantial?\n\nUno de ellos te responde:\n\n- El de la izquierda, por supuesto.\n\nTú no sabes si fiarte de esa información, porque ese duende podría ser un arítnem. Así que le preguntas:\n\n- ¿Pero vosotros sois dádrev o arítnem?\n\nY él te responde:\n\n- ¡Los dos somos dádrev! ¡Y a mucha honra!\n\nA lo que el segundo duende contesta:\n\n- ¡Eh! ¡No es verdad que los dos seamos dádrev! ¡Estás mintiendo, tragapiedras!\n- ¿Cómo me has llamado? ¡Ahora verás!\n\nY se van los dos corriendo, uno persiguiendo al otro y enzarzados en una disputa.\nNo te ha dado tiempo a preguntarles más cosas. ¿Qué camino has de escoger? ¿El de la izquierda o el de la derecha? Ten en cuenta que, si vas por el camino equivocado, corres un peligro mortal, ya que por ese camino cualquier árbol podría ser en realidad un ogro-árbol antropófago. Y piensa que los dos duendes podrían ser de la misma clase o de clases distintas. Uno podría ser dádrev y el otro arítnem.\n\nDebes explicar cómo sabes cuál es el camino correcto.",
@@ -441,6 +632,81 @@
   "orden": 60,
   "unidad": 8,
   "solucion": "La solución está explicada en este video:\nhttps://www.youtube.com/watch?v=J_nEkcrOG4g\nTambién cuenta curiosidades sobre el cubo de Rubik y otras cosas.\n¿A que es interesante?"
+ },
+ {
+  "id": "enigma-de-los-sombreros",
+  "titulo": "El enigma de los sombreros (vídeo)",
+  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución. (En inglés, con subtítulos en español.)",
+  "tipo": "L",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 61,
+  "enlaces": [
+   {
+    "texto": "Vídeo: «Can you solve the prisoner hat riddle?» (TED-Ed)",
+    "url": "https://www.youtube.com/watch?v=N5vJSNXPEwA"
+   }
+  ]
+ },
+ {
+  "id": "hotel-infinito",
+  "titulo": "El hotel infinito (vídeos)",
+  "enunciado": "Un hotel con infinitas habitaciones, todas ocupadas... y aun así cabe más gente. Dos vídeos para pensar sobre el infinito.",
+  "tipo": "N",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 62,
+  "enlaces": [
+   {
+    "texto": "Parte 1: «El Hotel Infinito» (QuantumFracture)",
+    "url": "https://www.youtube.com/watch?v=iAF37vVeV-Y"
+   },
+   {
+    "texto": "Parte 2: «El trágico final del Hotel Infinito» (QuantumFracture)",
+    "url": "https://www.youtube.com/watch?v=tchTqEeCfhY"
+   }
+  ]
+ },
+ {
+  "id": "mario-y-rosa",
+  "titulo": "Mario y Rosa fabrican juguetes (divisibilidad)",
+  "enunciado": "1. Mario y Rosa están fabricando juguetes para los niños pobres con materiales reciclados. Lo único que necesitan comprar son tornillos y tuercas para unir las piezas. Hay un modelo de coche de juguete que requiere 4 tornillos y 6 tuercas (es decir, con cada coche que fabriquen gastarán 4 tornillos y 6 tuercas). Pero ese tipo de tornillos los venden en paquetes de 6 tornillos y ese tipo de tuercas las venden en paquetes de 15 tuercas. ¿Cuántos coches de juguete tendrían que fabricar como mínimo para que no les sobrase ningún tornillo ni ninguna tuerca? ¿Cuánto se gastarían en ese caso si cada paquete de tornillos cuesta 0,50 € y cada paquete de tuercas cuesta 0,70 €?\n\n2. Tras el éxito de Mario y Rosa con los coches de juguete, han decidido construir muñecas-robot. Cada una de ellas requiere 10 tornillos y 15 tuercas. Lo que ocurre es que este tipo de tornillos los venden en paquetes de 14 tornillos y ese tipo de tuercas las venden en paquetes de 33 tuercas. Si cada paquete de tornillos cuesta 1 € y cada paquete de tuercas cuesta 2 €, ¿cuánto dinero se tendrían que gastar como mínimo para que no les sobrase ningún tornillo ni ninguna tuerca? ¿Cuántas muñecas-robot podrían fabricar en ese caso?",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 63,
+  "unidad": 2,
+  "solucion": "1. Tendrían que fabricar como mínimo 15 coches, gastando un total de 60 tornillos y 90 tuercas, es decir, 10 paquetes de tornillos y 6 de tuercas. Por lo tanto, gastarían 5 + 4,20 = 9,20 € en total.\n\n2. Tendrían que fabricar como mínimo 77 muñecas-robot, gastando un total de 770 tornillos y 1155 tuercas, es decir, 55 paquetes de tornillos y 35 de tuercas. Por lo tanto, gastarían 55 + 70 = 125 € en total."
+ },
+ {
+  "id": "problemas-de-olimpiada",
+  "titulo": "Problemas de la Olimpiada Matemática",
+  "enunciado": "Problemas de la Olimpiada Matemática de la Región de Murcia (SEMRM) de otros años, con sus soluciones. Son difíciles: no os sintáis mal si no os salen.",
+  "tipo": "N",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 65,
+  "enlaces": [
+   {
+    "texto": "Problemas de la Olimpiada (web de la SEMRM)",
+    "url": "https://www.semrm.com/?m=olimpiada&p=problemas"
+   }
+  ]
+ },
+ {
+  "id": "virus-problematico",
+  "titulo": "Un virus problemático (vídeo)",
+  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución. (En inglés, con subtítulos en español.)",
+  "tipo": "L",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 66,
+  "enlaces": [
+   {
+    "texto": "Vídeo: «Can you solve the virus riddle?» (TED-Ed)",
+    "url": "https://www.youtube.com/watch?v=ZKh6z0X6KRw"
+   }
+  ]
  },
  {
   "id": "D-007",
@@ -511,6 +777,18 @@
   "solucion": "Daniel: 23 de febrero\nSara: 29 de mayo\nVioleta: 29 de julio"
  },
  {
+  "id": "D-016",
+  "titulo": "¿Cuánto mide el radio de la circunferencia?",
+  "enunciado": "¿Cuánto mide el radio de esta circunferencia?",
+  "tipo": "G",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 73,
+  "unidad": 8,
+  "solucion": "La otra diagonal del rectángulo va del centro a un punto de la circunferencia: es un radio. Como las dos diagonales de un rectángulo miden lo mismo, el radio mide 10 cm.",
+  "imagen": "adjuntos/D-016-radio.svg"
+ },
+ {
   "id": "D-017",
   "titulo": "Los cumpleaños de Ximena, Yvette y Zunilda",
   "enunciado": "Durante el cumpleaños de Ximena se dio el siguiente diálogo:\n\nYvette: – Yo cumplo años exactamente 15 días después que Ximena –\n\nZunilda: – Qué casualidad. Yo los cumplo 15 días después que Yvette –\n\nXimena: – ¿Se fijaron que los tres cumpleaños caen en un día impar? –\n\n¿Qué días cumplen años las chicas?",
@@ -552,6 +830,19 @@
   "solucion": "Hoy es 1 de enero y ayer Josefina cumplió 18 años. Este año cumplirá 19 y el año que viene cumplirá 20."
  },
  {
+  "id": "D-024",
+  "titulo": "Siete cifras que faltan en el triángulo (suma 20)",
+  "enunciado": "Escribe en los círculos vacíos las siete cifras que faltan (del 1 al 9, sin repetir ninguna) para que los cuatro números de cada lado del triángulo sumen 20.",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 79,
+  "unidad": 1,
+  "pista": "Suma los tres lados: los números de las esquinas se cuentan dos veces.",
+  "solucion": "Hay 9 círculos: 3 esquinas y 2 círculos más en cada lado. Ya están el 3 (en el lado izquierdo, el de arriba) y el 2 (en la esquina de abajo a la derecha). Hay que colocar 1, 4, 5, 6, 7, 8 y 9.\n1. Las cifras del 1 al 9 suman 45. Al sumar los tres lados (20 + 20 + 20 = 60), las esquinas se cuentan dos veces. Así que las esquinas suman 60 − 45 = 15. Como una esquina es el 2, las otras dos suman 13.\n2. Lado izquierdo: esquina de arriba + 3 + el otro círculo + esquina de abajo = 20. Las dos esquinas suman 13, así que el otro círculo es 20 − 13 − 3 = 4.\n3. Las dos esquinas que faltan suman 13 con lo que queda (1, 5, 6, 7, 8, 9): 5 y 8, o 6 y 7. Con 6 y 7 no salen los otros lados, así que son 5 y 8.\nUna solución: arriba el 5 y abajo a la izquierda el 8. Lado de abajo: 8 + 1 + 9 + 2 = 20. Lado derecho: 2 + 6 + 7 + 5 = 20. Lado izquierdo: 5 + 3 + 4 + 8 = 20.\nTambién vale cambiar el 5 y el 8 de esquina (entonces el lado de abajo lleva 6 y 7 y el derecho 1 y 9), y cambiar el orden de los dos números de dentro de cada lado.",
+  "imagen": "adjuntos/D-024-triangulo.svg"
+ },
+ {
   "id": "D-025",
   "titulo": "El 24 con tres treses y con tres doses",
   "enunciado": "El número 24 se puede escribir utilizando únicamente tres ochos así: 24= 8+8+8. ¿Podrías escribirlo utilizando únicamente tres treses? ¿Y utilizando tres doses?",
@@ -559,7 +850,8 @@
   "nivel": "★★",
   "idioma": "es",
   "orden": 80,
-  "unidad": 1
+  "unidad": 1,
+  "solucion": "Con tres treses: 3³ − 3 = 27 − 3 = 24.\nCon tres doses: 22 + 2 = 24."
  },
  {
   "id": "D-026",
@@ -597,13 +889,26 @@
   "solucion": "(1 + 2 · 3 + 4  + 5 - 6) · (- 7 + 8 + 9)"
  },
  {
+  "id": "D-030",
+  "titulo": "Añade el número que falta",
+  "enunciado": "¿Cuál es el número que falta en cada figura?",
+  "tipo": "S",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 84,
+  "pista": "En cada figura, mira cuánto se suma o se resta para pasar de un número al siguiente, dando la vuelta en el sentido de las agujas del reloj.",
+  "solucion": "Primera figura (el cuadrado dividido en 8 triángulos). Empezando por el 12 y siguiendo las agujas del reloj: 12, 14, 13, 15, 14, 16, 15, ? Se va sumando 2 y restando 1: 12 (+2) 14 (−1) 13 (+2) 15 (−1) 14 (+2) 16 (−1) 15 (+2) 17.\nFalta el 17.\nSegunda figura (la estrella). Empezando por el 6 de arriba y siguiendo las agujas del reloj: 6, 7, ?, 12, 16. Se suma 1, luego 2, luego 3, luego 4: 6 (+1) 7 (+2) 9 (+3) 12 (+4) 16.\nFalta el 9.",
+  "imagen": "adjuntos/D-030-numeros.svg"
+ },
+ {
   "id": "D-032",
   "titulo": "Las fichas de reversi con los ojos vendados",
   "enunciado": "Las fichas de reversi tienen el formato de una ficha del juego de damas, pero tienen una cara blanca y una cara negra. En una mesa hay un número ‘x’ de fichas de reversi. Solamente 10 de ellas tienen su cara blanca hacia arriba. Nos encontramos ante la mesa con los ojos vendados, y nuestro objetivo es dividir todas las fichas en dos grupos, de modo de que en cada grupo haya el mismo número de fichas con el lado blanco hacia arriba. Obviamente, no se puede mirar las fichas.\n\n¿Cómo se logra el objetivo?",
   "tipo": "L",
   "nivel": "★★★",
   "idioma": "es",
-  "orden": 85
+  "orden": 85,
+  "solucion": "Aparta 10 fichas cualesquiera en un grupo (las demás forman el otro grupo) y da la vuelta a las 10 que has apartado.\n\n¿Por qué funciona? Si entre las 10 que apartas hay, por ejemplo, 3 blancas, en el otro grupo quedan 10 − 3 = 7 blancas. Las 10 apartadas eran 3 blancas y 7 negras: al darles la vuelta pasan a ser 7 blancas y 3 negras. Ahora hay 7 blancas en cada grupo. Pasa lo mismo con cualquier otro número.\n\nNo sabes cuántas blancas hay en cada grupo, pero sabes que hay las mismas."
  },
  {
   "id": "D-033",
@@ -612,7 +917,8 @@
   "tipo": "T",
   "nivel": "★★★",
   "idioma": "es",
-  "orden": 86
+  "orden": 86,
+  "solucion": "Las pastillas se pueden partir por la mitad. Parte las tres pastillas de la mesa por la mitad, con cuidado de dejar una mitad de cada pastilla a un lado y la otra mitad al otro. En cada lado hay media pastilla A y dos medias pastillas B (o sea, una B entera).\nSaca una pastilla nueva del frasco A, pártela por la mitad y pon una mitad en cada lado. Ahora en cada lado hay dos mitades de A y dos mitades de B: una pastilla A y una B.\nEsa noche se toma las cuatro mitades de un lado, y la noche siguiente las del otro. Después sigue como siempre."
  },
  {
   "id": "D-034",
@@ -697,7 +1003,8 @@
   "nivel": "★★",
   "idioma": "es",
   "orden": 94,
-  "unidad": 8
+  "unidad": 8,
+  "solucion": "La puso en diagonal en un paquete cuadrado de 1 m × 1 m: la diagonal de ese cuadrado mide algo más de 1,41 m.\nEn un paquete con forma de cubo de 1 m de arista cabría una flauta aún más larga (hasta 1,73 m). Y una curiosidad para más adelante: en un «hipercubo» de 101 dimensiones de 1 m de arista cabría una flauta de más de 10 m de larga."
  },
  {
   "id": "D-043",
@@ -873,6 +1180,18 @@
   "unidad": 8,
   "pista": "Los tablones no llegan de orilla a orilla en línea recta, pero en una esquina del foso hay más sitio... y un tablón puede apoyarse en el otro.",
   "solucion": "Con un tablón recto no se puede: 9,8 m es menos que los 10 m de anchura. El truco está en una esquina del foso.\n1. Ve a una esquina del foso. Pon el primer tablón cruzando la esquina por fuera: cada punta apoyada en una de las dos orillas exteriores, de forma que el tablón y las dos orillas formen un triángulo.\n2. Pon el segundo tablón desde el centro del primero hasta la esquina del castillo, por la diagonal de la esquina del foso.\n3. Camina por el primer tablón hasta su centro y después por el segundo hasta el castillo. Para escapar con la princesa, el mismo camino al revés.\n¿Seguro que llega? Hagamos las cuentas:\n- La diagonal de la esquina del foso (de la esquina de fuera a la esquina del castillo) es la diagonal de un cuadrado de 10 m de lado: mide unos 14,14 m (lo puedes medir en un dibujo a escala).\n- El primer tablón y las dos orillas son medio cuadrado, y el tablón es una diagonal de ese cuadrado. Las dos diagonales de un cuadrado miden lo mismo y se cortan por la mitad: el centro del tablón está a 9,8 : 2 = 4,9 m de la esquina de fuera.\n- Desde ahí, el segundo tablón alcanza 9,8 m más: en total, 4,9 + 9,8 = 14,7 m, que es más que 14,14 m. Sobran unos 56 cm, que se reparten entre los apoyos: acercando un poco el primer tablón a la esquina, sus puntas quedan bien apoyadas en tierra y el segundo tablón sigue llegando.\nSolución: un tablón cruzando una esquina del foso por fuera y el otro desde su centro hasta la esquina del castillo."
+ },
+ {
+  "id": "D-060",
+  "titulo": "La tarta en forma de U con dos cortes rectos",
+  "enunciado": "Luis ha hecho una tarta en forma de U para el cumpleaños de su amiga Úrsula. ¿En cuántos trozos, como máximo, puedes cortarla con solo 2 cortes rectos (cortando de arriba abajo y sin mover los trozos)? Los trozos no tienen por qué ser igual de grandes.",
+  "tipo": "G",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 112,
+  "unidad": 8,
+  "pista": "Un solo corte recto puede atravesar los dos brazos de la U. ¿Y si además los dos cortes se cruzan dentro de la tarta?",
+  "solucion": "1. Un corte recto que atraviese los dos brazos de la U, de lado a lado, la parte en 3 trozos: la punta del brazo izquierdo, la punta del derecho y el resto de la U.\n2. El segundo corte también atraviesa los dos brazos: cada brazo que atraviesa da un trozo más, y ya van 5. Si además se cruza con el primer corte dentro de uno de los brazos, sale otro trozo más: 6.\nCómo hacerlo: dos cortes casi horizontales, como una X muy aplastada, que atraviesen los dos brazos y se crucen dentro del brazo izquierdo. Salen 6 trozos:\n- en el brazo izquierdo, los cuatro trozos de la X: arriba, a la izquierda, a la derecha y abajo (el de abajo sigue pegado a la base);\n- en el brazo derecho, la punta de arriba y el trozo que queda entre los dos cortes;\n- y la base de la U con lo que queda de los dos brazos por debajo de los cortes, que es todo un trozo.\n¿Por qué no se puede hacer mejor?\n- Un corte recto entra en la tarta como mucho dos veces: entra en un brazo, sale al hueco y entra en el otro. Así que con dos cortes hay como mucho 4 tramos de corte.\n- Cada tramo de corte que va de un borde a otro de un trozo lo parte en dos: un trozo más cada vez. Como mucho, 4 trozos más.\n- Dos cortes rectos se cruzan como mucho una vez, y el cruce da como mucho un trozo más.\nEn total, como mucho 1 + 4 + 1 = 6 trozos, y acabamos de ver cómo conseguirlos.\nSolución: como máximo, 6 trozos."
  },
  {
   "id": "D-061",
@@ -1053,6 +1372,17 @@
   "solucion": "Sin las filas de fuera (la primera y la última) y sin las butacas de los extremos de cada fila, quedan 23 filas de 13 butacas.\n1. Cuántas caben como mucho: divide esas butacas en cuadrados de 2 · 2 (y medios cuadrados en los bordes). Salen 12 cuadrados a lo largo (23 = 2 · 11 + 1) y 7 a lo ancho (13 = 2 · 6 + 1): 12 · 7 = 84 cuadrados. En cada cuadrado solo puede haber una persona, porque cualquier par de butacas de un cuadrado de 2 · 2 se toca (al lado, delante o en diagonal). Así que caben como mucho 84 personas.\n2. Que caben 84: sienta a una persona en la 1.ª, 3.ª, 5.ª... butaca (de las que se pueden usar) de la 1.ª, 3.ª, 5.ª... fila. Son 12 filas con 7 personas: 84, y ninguna tiene a nadie al lado.\nSolución: 84 personas.\nSi «filas exteriores» significa solo la primera y la última fila (y sí se pueden usar los extremos de cada fila), quedan 23 filas de 15 butacas y la cuenta da 12 · 8 = 96 personas."
  },
  {
+  "id": "D-077",
+  "titulo": "Las bolas de billar",
+  "enunciado": "Tienes 9 bolas de billar iguales a la vista y una balanza de dos platos. Una de las bolas pesa más que las demás. Averigua cuál es con solo 2 pesadas.\n\n¿Y con 27 bolas? ¿Cuántas pesadas te harían falta? ¿Y con 3ⁿ bolas?",
+  "tipo": "P",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 129,
+  "pista": "No hace falta poner todas las bolas en la balanza: las que dejas fuera también dan información.",
+  "solucion": "Con 9 bolas: haz tres montones de 3. Pon un montón en cada plato y deja el otro fuera. Si un plato baja, la bola pesada está en ese montón; si la balanza queda equilibrada, está en el montón que dejaste fuera. Con las 3 bolas de ese montón haz lo mismo: una en cada plato y una fuera. Dos pesadas.\nCon 27 bolas: tres montones de 9. Una pesada te dice en qué montón está, y con 9 bolas ya sabes hacerlo en 2. Tres pesadas.\nCada pesada divide entre 3 el número de bolas sospechosas: con 3ⁿ bolas hacen falta n pesadas."
+ },
+ {
   "id": "D-078",
   "titulo": "El cubo de 27 bombillas",
   "enunciado": "Un cubo de lado 3 se divide en 27 piezas cúbicas de lado 1. Dentro de cada\npieza hay una bombilla que puede estar encendida o apagada. Cada vez que\nse pulsa una pieza (no es posible pulsar la del centro del cubo), cambia el\nestado de su bombilla y el de las que comparten una cara con ella.\nInicialmente, todas las bombillas están apagadas.\na) ¿Se puede conseguir que todas las bombillas queden encendidas?\nb) ¿Se puede conseguir que queden encendidas todas salvo la del centro del\ncubo?\nc) ¿Se puede conseguir que solo quede encendida la del centro del cubo?",
@@ -1084,6 +1414,18 @@
   "orden": 132,
   "pista": "H solo puede borrar una ristra en cada turno, y S pone dos unos: S puede trabajar en muchos sitios a la vez.",
   "solucion": "Gana S.\nLa idea es que H solo puede borrar una ristra cada vez, y S pone dos unos por turno, así que puede preparar muchas jugadas a la vez, en sitios muy separados de la cadena.\n1. Primero, S pone unos sueltos en muchos sitios lejanos. Cada turno pone 2 y H borra 1, así que cada turno hay uno más. Puede preparar tantos como quiera, por parejas con un cero en medio: «1 0 1».\n2. Con muchas parejas «1 0 1» preparadas, S rellena dos ceros del medio en cada turno: aparecen dos ristras de 3 unos («1 1 1»). H solo puede borrar una por turno, así que las ristras de 3 van aumentando. S las coloca también por parejas con un cero en medio: «111 0 111».\n3. Con muchas parejas así, rellenando el cero del medio salen ristras de 7. Después, de 15, de 31, de 63, de 127, de 255, de 511 y de 1023 unos.\n4. En cuanto S rellena el cero de una pareja de ristras de 511, aparecen 1023 unos seguidos, más de 1001: S gana en ese mismo momento, antes de que H pueda borrar nada.\nH no puede impedirlo, porque cada vez que S está preparando ristras tiene muchas a medio hacer y H solo puede borrar una por turno."
+ },
+ {
+  "id": "D-094",
+  "titulo": "Resuelve esta ecuación",
+  "enunciado": "Resuelve esta ecuación:\n\n√(xˣ) = x^(√x)\n\nEs decir: la raíz cuadrada de «x elevado a x» es igual a «x elevado a la raíz cuadrada de x».\nLa ecuación tiene dos soluciones.",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "es",
+  "orden": 142,
+  "unidad": 6,
+  "pista": "Prueba con números pequeños: 1, 2, 3, 4...",
+  "solucion": "La ecuación es √(xˣ) = x^√x (la raíz cuadrada de x elevado a x es igual a x elevado a la raíz de x).\nProbando:\n- x = 1: √(1¹) = √1 = 1 y 1^√1 = 1¹ = 1. ¡Vale!\n- x = 2: √(2²) = √4 = 2, pero 2^√2 ≈ 2,67. No vale.\n- x = 3: √(3³) = √27 ≈ 5,20, pero 3^√3 ≈ 6,71. No vale.\n- x = 4: √(4⁴) = √256 = 16 y 4^√4 = 4² = 16. ¡Vale!\nSolución: x = 1 y x = 4.\n(Por qué no hay más: la raíz cuadrada de xˣ es x elevado a x/2. Para que x elevado a x/2 sea igual a x elevado a √x, o x = 1, o los exponentes son iguales: x/2 = √x, que solo se cumple con x = 4, porque 4/2 = 2 = √4.)"
  },
  {
   "id": "D-095",
@@ -1131,6 +1473,18 @@
   "solucion": "Si cada primo saliera solo en 2 fotografías, habría 8 · 2=16 imágenes de primos. En cambio, si cada primo saliera en 3 fotografías, habría 8 · 3=24 imágenes de primos. Como en cada fotografía aparecen exactamente 5 imágenes de primos, el número total de imágenes de primos ha de ser múltiplo de 5. El único múltiplo de 5 que está entre 16 y 24 es el 20. Por lo tanto, debe haber exactamente 20 imágenes de primos, lo que significa que en total hay 4 fotografías, ya que 20:5=4. María se hizo 4 selfies."
  },
  {
+  "id": "D-102",
+  "titulo": "Los tres paralelogramos iguales",
+  "enunciado": "Esta figura está hecha con 3 paralelogramos iguales. El perímetro del hexágono exterior es 75 cm y el perímetro del triángulo interior es 21 cm.\n¿Cuánto mide el lado más largo de los paralelogramos?",
+  "tipo": "G",
+  "nivel": "★★★",
+  "idioma": "es",
+  "orden": 148,
+  "unidad": 8,
+  "solucion": "Llamamos x al lado corto de cada paralelogramo e y al lado largo.\nEl borde exterior está formado por 3 lados cortos y 3 lados largos: 3 · (x + y) = 75, así que x + y = 25 cm.\nCada lado del triángulo interior mide 21 : 3 = 7 cm.\nEl lado largo de un paralelogramo es un lado del triángulo más un lado corto: y = 7 + x.\nEntonces x + 7 + x = 25, de donde x = 9 cm e y = 16 cm.\nSolución: el lado más largo mide 16 cm.",
+  "imagen": "adjuntos/D-102-paralelogramos.png"
+ },
+ {
   "id": "D-103",
   "titulo": "Del 0 al 21 con cuatro nueves",
   "enunciado": "Con 4 nueves y con operaciones matemáticas, tienes que conseguir tantos números del 0 al 21 como seas capaz.\nPuedes usar paréntesis si lo necesitas. Y también puedes usar las operaciones: suma, resta, multiplicación,\ndivisión, potencia, raíz, logaritmo y factorial. En cada operación combinada tiene que aparecer exacta-\nmente 4 veces la cifra 9, ni una más, ni una menos. Y no puede aparecer ninguna otra cifra. Te damos los\nprimeros números resueltos a modo de ejemplo. A ver cuántos más eres capaz de hallar. No sirven si el resultado\nes mayor de 21:",
@@ -1138,7 +1492,21 @@
   "nivel": "★★",
   "idioma": "es",
   "orden": 149,
-  "unidad": 1
+  "unidad": 1,
+  "solucion": "0 = 99 − 99\n1 = 9/(9 + 9 − 9)\n2 = 9/9 + 9/9\n3 = (9 + 9 + 9)/9\n4 = (√(9 · 9) + √9)/√9\n5 = (9 + 9 − √9)/√9\n6 = 9 − √9 + 9 − 9\n7 = 9 − (9 + 9)/9\n8 = √(9 · 9) − 9/9\n9 = 9 + (9 − 9) · 9\n10 = (99 − 9)/9\n11 = 9 + (9 + 9)/9\n12 = (99 + 9)/9\n13 = 9 + √9 + 9/9\n14 = 9 + (√9)! − 9/9\n15 = 9 + 9 − 9/√9\n16 = 9 + (√9)! + 9/9\n17 = 9 + 9 − 9/9\n18 = 9 + 9 + 9 − 9\n19 = 9 + 9 + 9/9\n20 = 9 + 9 + (√9)!/√9\n21 = 9 + 9 + 9/√9\n\n(El signo ! es el factorial: 3! = 3 · 2 · 1 = 6. Hay más maneras de conseguir cada número.)"
+ },
+ {
+  "id": "D-104",
+  "titulo": "Pasatiempo: los números que faltan",
+  "enunciado": "Escribe los números que faltan en los recuadros. Las operaciones se leen en horizontal y también en vertical.",
+  "tipo": "J",
+  "nivel": "★",
+  "idioma": "es",
+  "orden": 150,
+  "unidad": 1,
+  "solucion": "Primera fila: 18 − 12 = 6. Primera columna: 6 × 11 = 66. Segunda columna: 12 + 3 = 15, así que en el centro va el 3. Segunda fila: 11 × 3 = 33. Y cuadra todo: 66 − 15 = 51 y 18 + 33 = 51.",
+  "imagen": "adjuntos/D-104-huecos.svg",
+  "imagen_solucion": "adjuntos/D-104-solucion.svg"
  },
  {
   "id": "D-164",

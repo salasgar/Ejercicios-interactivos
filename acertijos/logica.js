@@ -1,5 +1,6 @@
 // Página de acertijos (WEB, tarea 08): lógica pura, sin DOM. Filtra, busca y ordena el catálogo.
-// Esquema de cada acertijo: { id, titulo, enunciado, pista?, solucion?, tipo, nivel, unidad?, idioma, orden?, imagen?, fuente? }
+// Esquema de cada acertijo: { id, titulo, enunciado, pista?, solucion?, tipo, nivel, unidad?, idioma, orden?, imagen?, fuente?,
+//   imagenes? (más dibujos del enunciado), imagen_solucion?, enlaces? [{ texto, url }] (solo https) }
 
 export const TIPOS = {
   L: 'Lógica y deducción',
@@ -30,6 +31,15 @@ export function esValido(a) {
     && Object.hasOwn(TIPOS, a.tipo) && Object.hasOwn(NIVELES, a.nivel);
 }
 
+/** Enlaces válidos de una ficha: solo https y con texto. */
+export function enlacesDe(a) {
+  const lista = Array.isArray(a?.enlaces) ? a.enlaces : [];
+  return lista.filter(e => {
+    if (!e || typeof e.texto !== 'string' || !e.texto.trim() || typeof e.url !== 'string') return false;
+    try { return new URL(e.url).protocol === 'https:'; } catch { return false; }
+  }).map(e => ({ texto: e.texto.trim(), url: e.url }));
+}
+
 /** Descarta lo que no es un acertijo válido y devuelve copias con los campos opcionales rellenos. */
 export function normalizarCatalogo(datos) {
   const lista = Array.isArray(datos) ? datos : [];
@@ -42,6 +52,8 @@ export function normalizarCatalogo(datos) {
       ...a, id: String(a.id), pista: a.pista || '', solucion: a.solucion || '',
       unidad: Number.isInteger(a.unidad) ? a.unidad : null, idioma: a.idioma || 'es',
       orden: Number.isFinite(a.orden) ? a.orden : 1e9, imagen: a.imagen || '', fuente: a.fuente || '',
+      imagenes: Array.isArray(a.imagenes) ? a.imagenes.filter(i => typeof i === 'string' && i) : [],
+      imagen_solucion: a.imagen_solucion || '', enlaces: enlacesDe(a),
     });
   }
   return salida;

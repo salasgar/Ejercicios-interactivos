@@ -27,6 +27,8 @@ function plegable(clase, titulo, texto) {
   const d = el('details', clase); d.append(el('summary', '', titulo), el('p', '', texto)); return d;
 }
 
+function dibujo(src, alt) { const i = el('img'); i.src = src; i.alt = alt; i.loading = 'lazy'; return i; }
+
 function tarjeta(a) {
   const t = el('article', 'tarjeta'); t.id = a.id;
   const h = el('h2'); const enlace = el('a', '', a.titulo); enlace.href = enlaceDe(a);
@@ -37,9 +39,18 @@ function tarjeta(a) {
   if (a.unidad !== null) et.append(el('li', '', `Unidad ${a.unidad}`));
   if (a.idioma !== 'es') et.append(el('li', '', IDIOMAS[a.idioma] || a.idioma));
   t.append(et, el('p', 'enunciado', a.enunciado));
-  if (a.imagen) { const i = el('img'); i.src = a.imagen; i.alt = `Dibujo de «${a.titulo}»`; i.loading = 'lazy'; t.append(i); }
+  for (const src of [a.imagen, ...a.imagenes].filter(Boolean)) t.append(dibujo(src, `Dibujo de «${a.titulo}»`));
+  if (a.enlaces.length) {
+    const ul = el('ul', 'enlaces');
+    for (const e of a.enlaces) { const li = el('li'); const x = el('a', '', e.texto); x.href = e.url; x.target = '_blank'; x.rel = 'noopener'; li.append(x); ul.append(li); }
+    t.append(ul);
+  }
   if (a.pista) t.append(plegable('pista', 'Ver pista', a.pista));
-  if (a.solucion) t.append(plegable('solucion', 'Ver solución', a.solucion));
+  if (a.solucion || a.imagen_solucion) {
+    const d = plegable('solucion', 'Ver solución', a.solucion);
+    if (a.imagen_solucion) d.append(dibujo(a.imagen_solucion, `Solución de «${a.titulo}»`));
+    t.append(d);
+  }
   if (a.fuente) t.append(el('p', 'fuente', `Fuente: ${a.fuente}`));
   return t;
 }
