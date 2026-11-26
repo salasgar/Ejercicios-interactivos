@@ -29,12 +29,13 @@ const todasDistintas = ops => ops.every((o, i) => ops.every((q, j) => i === j ||
 
 // ─── Ejercicio 1: la razón ─────────────────────────────────────────────────────
 
-/** Los contextos de «por cada»: sin cota propia (los dos números son de 1 a 9: son proporciones de una receta, una bolsa…). */
+/** Los contextos de «por cada»: sin cota propia (los dos números son de 2 a 9, nunca 1 para que «hay 1… por cada…» no choque con el plural: son proporciones de una receta, una bolsa…). */
 export const IDS_RAZON = Object.freeze(['clase', 'limonada', 'bolsa', 'partidos', 'frutero', 'refugio']);
 
 function crearRazon(rng) {
   for (let i = 0; i < 200; i++) {
     const [a, b] = rng.elegir(PAREJAS);
+    if (a === 1 || b === 1) continue;
     const ctx = rng.elegir(IDS_RAZON);
     const sujeto = rng.azar() < 0.5 ? 0 : 1;
     const pregunta = rng.azar() < 0.5 ? 'parte-parte' : 'parte-todo';
@@ -178,6 +179,7 @@ export const MAX_SOLUCION = 100;
 
 function crearTermino(rng) {
   const dificil = rng.azar() < 0.4;
+  const abajo = rng.azar() < 1 / 3;
   for (let i = 0; i < 5000; i++) {
     const [p, q] = rng.elegir(PAREJAS);
     if (q === 1) continue;
@@ -185,27 +187,31 @@ function crearTermino(rng) {
     if (k1 === k2) continue;
     const nadaMultiplo = k1 % k2 !== 0 && k2 % k1 !== 0;
     if (nadaMultiplo !== dificil) continue;
-    const a = p * k1, b = q * k1, d = q * k2, x = p * k2;
+    const a = p * k1, b = q * k1;
+    const d = (abajo ? p : q) * k2, x = (abajo ? q : p) * k2;
     if (x > MAX_SOLUCION || d > MAX_SOLUCION || a > MAX_SOLUCION || b > MAX_SOLUCION) continue;
-    return { a, b, d, x, lado: rng.azar() < 0.5 ? 'derecha' : 'izquierda' };
+    return { a, b, d, x, abajo, lado: rng.azar() < 0.5 ? 'derecha' : 'izquierda' };
   }
   throw new Error('razones: sin ítem de término que falta');
 }
 
-export const claveTermino = it => `t|${it.a}|${it.b}|${it.d}|${it.lado}`;
-export const factorDe = it => it.d / it.b;
+export const claveTermino = it => `t|${it.a}|${it.b}|${it.d}|${it.lado}|${it.abajo ? 'abajo' : 'arriba'}`;
+/** Los productos cruzados como u · v = w · x: con la x arriba (a/b = x/d), a · d = b · x; con la x abajo (a/b = d/x), b · d = a · x. */
+export const cruz = it => (it.abajo ? { u: it.b, v: it.d, w: it.a } : { u: it.a, v: it.d, w: it.b });
+export const factorDe = it => it.d / cruz(it).w;
 
-/** a/b = x/d: la x que cuadra, por productos cruzados (b · x = a · d). */
-export const terminoQueFalta = it => (it.a * it.d) / it.b;
+/** La x que cuadra, por productos cruzados (w · x = u · v). */
+export const terminoQueFalta = it => { const { u, v, w } = cruz(it); return (u * v) / w; };
 
 /** null = acierto (por valor); si no, el error con nombre o 'otro-numero'. `valor` es un Fraccion o null. */
 export function errorTermino(it, valor) {
   const f = valor;
   if (f && f.num * 1 === it.x * f.den) return null;
   const igual = v => f !== null && f.num === v * f.den;
-  const mantieneDiferencia = it.d - (it.b - it.a);
+  const { w } = cruz(it);
+  const mantieneDiferencia = it.abajo ? it.d + it.b - it.a : it.d - (it.b - it.a);
   if (igual(mantieneDiferencia) && mantieneDiferencia !== it.x) return 'suma-en-vez-de-multiplicar';
-  if (it.d % it.b === 0 && igual(factorDe(it)) && factorDe(it) !== it.x) return 'da-el-factor';
+  if (it.d % w === 0 && igual(factorDe(it)) && factorDe(it) !== it.x) return 'da-el-factor';
   return 'otro-numero';
 }
 
@@ -219,12 +225,23 @@ export function leerRespuesta(texto, idioma = 'es') {
 
 /** Huella FNV-1a del caso normalizado por valor (la hoja y el examen de la unidad, cuando existan, solo por huella). */
 export function huellaDe(it) {
-  if (it.a !== undefined && it.x !== undefined) return huellaCaso('proporcion', [it.a, it.b, null, it.d]);
+  if (it.a !== undefined && it.x !== undefined) return huellaCaso('proporcion', it.abajo ? [it.b, it.a, null, it.d] : [it.a, it.b, null, it.d]);
   if (it.a !== undefined && it.c !== undefined) return huellaCaso('proporcion', [it.a, it.b, it.c, it.d]);
   if (it.tipo === 'escribir') return huellaCaso('razon', [it.p * it.k, it.q * it.k]);
+  if (it.tipo === 'elegir') return huellaCaso('equivalente', [it.p, it.q]);
+  if (it.pregunta) { const { x, y } = gruposRazon(it); return huellaCaso(it.pregunta === 'parte-parte' ? 'razon-parte-parte' : 'razon-parte-todo', [x, y]); }
   return null;
 }
-export const esReservado = it => { const h = huellaDe(it); return h !== null && HUELLAS_RESERVADAS.has(h); };
+/** Los dos modos de escribir el mismo caso del ejercicio 4 (A/B = x/D y D/B = x/A: la x tiene el mismo coeficiente B); en los demás, la huella de siempre. */
+export function huellasDe(it) {
+  if (it.a !== undefined && it.x !== undefined) {
+    const { u, v, w } = cruz(it);
+    return [huellaCaso('proporcion', [u, w, null, v]), huellaCaso('proporcion', [v, w, null, u])];
+  }
+  const h = huellaDe(it);
+  return h === null ? [] : [h];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
 
 const sinReservados = crear => rng => {
   for (let i = 0; i < 50; i++) { const it = crear(rng); if (!esReservado(it)) return it; }

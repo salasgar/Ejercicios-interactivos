@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import { mcd } from '../practicas/_comun/aritmetica.js';
-import { buenaRazon, generarRazon, generarEquivalentes, generarProporcion, generarTermino } from '../practicas/razones/logica.js';
+import { buenaRazon, generarRazon, generarEquivalentes, generarProporcion, generarTermino, cruz } from '../practicas/razones/logica.js';
 import { explicaRazon, explicaEquivalentes, explicaProporcion, explicaTermino } from '../practicas/razones/textos.js';
 
 const IDIOMAS = ['es', 'en'];
@@ -64,8 +64,9 @@ test('razones · ejercicio 4: la explicación resuelve con productos cruzados y 
     const html = explicaTermino(it, { idioma });
     limpio(html);
     const t = plano(html);
-    assert.ok(t.includes(`${it.a} · ${it.d} = ${it.b} · x`), t);
-    assert.ok(t.includes(`x = ${it.a * it.d} : ${it.b} = ${it.x}`), t);
+    const { u, v, w } = cruz(it);
+    assert.ok(t.includes(`${u} · ${v} = ${w} · x`), t);
+    assert.ok(t.includes(`x = ${u * v} : ${w} = ${it.x}`), t);
     assert.ok(t.trimEnd().endsWith(`${final(idioma)} x = ${it.x}.`) || t.slice(t.lastIndexOf(final(idioma))).includes(`${it.x}`), t);
   }
 });

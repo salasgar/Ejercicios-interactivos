@@ -4,7 +4,7 @@
 
 import { fraccion, htmlCuenta, htmlFraccion, htmlRaya } from '../_comun/fracciones.js';
 import { mcd } from '../_comun/aritmetica.js';
-import { buenaRazon, gruposRazon, factorDe } from './logica.js';
+import { buenaRazon, gruposRazon, factorDe, cruz } from './logica.js';
 
 const fr = (n, d) => htmlFraccion(fraccion(n, d), { compacta: true, conUno: true });
 const cuenta = t => `<span class="cuenta">${t}</span>`;
@@ -112,10 +112,12 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>En una proporción, los productos cruzados son iguales. Para ${htmlCuenta([fraccion(3, 4), '=', 'x/20'])}:</p>
-        <p>${cuenta('3 · 20 = 4 · x')}, es decir, ${cuenta('60 = 4x')}, y ${cuenta('x = 60 : 4 = 15')}.</p>`,
+        <p>${cuenta('3 · 20 = 4 · x')}, es decir, ${cuenta('60 = 4x')}, y ${cuenta('x = 60 : 4 = 15')}.</p>
+        <p>Si la x está abajo se hace igual. Para ${htmlCuenta([fraccion(3, 4), '=', htmlRaya(6, 'x')])}: ${cuenta('4 · 6 = 3 · x')}, es decir, ${cuenta('24 = 3x')}, y ${cuenta('x = 24 : 3 = 8')}.</p>`,
       en: `<h2>How it works</h2>
         <p>In a proportion the cross products are equal. For ${htmlCuenta([fraccion(3, 4), '=', 'x/20'])}:</p>
-        <p>${cuenta('3 · 20 = 4 · x')}, that is, ${cuenta('60 = 4x')}, and ${cuenta('x = 60 : 4 = 15')}.</p>`,
+        <p>${cuenta('3 · 20 = 4 · x')}, that is, ${cuenta('60 = 4x')}, and ${cuenta('x = 60 : 4 = 15')}.</p>
+        <p>If the x is at the bottom, do the same. For ${htmlCuenta([fraccion(3, 4), '=', htmlRaya(6, 'x')])}: ${cuenta('4 · 6 = 3 · x')}, that is, ${cuenta('24 = 3x')}, and ${cuenta('x = 24 : 3 = 8')}.</p>`,
     },
     instruccion: { es: 'Escribe el valor de <strong>x</strong>', en: 'Write the value of <strong>x</strong>' },
     nombreCampo: { es: 'Valor de x', en: 'Value of x' },
@@ -235,7 +237,7 @@ export function feedbackEquivalentes(it, error, respuesta, idioma) {
     const c = CONTEXTOS_SENCILLA_TX[it.ctx];
     return dos(`Está al revés: se pide ${c.x.es} a ${c.y.es}, con ${c.x.es} arriba. ${base}`, `It is the wrong way round: it asks for ${c.x.en} to ${c.y.en}, with ${c.x.en} on top. ${base}`, idioma);
   }
-  if (respuesta) {
+  if (error === 'razon-distinta' && respuesta) {
     return dos(`${fr(respuesta.num, respuesta.den)} no vale lo mismo que ${fr(a, b)}. ${base}`, `${fr(respuesta.num, respuesta.den)} does not have the same value as ${fr(a, b)}. ${base}`, idioma);
   }
   return base;
@@ -264,7 +266,7 @@ export function explicaEquivalentes(it, { idioma }) {
 
 export function enunciadoProporcion(it, { idioma }) {
   return `<p class="instruccion">${TX.prop.instruccion[idioma]}</p>
-    <div class="operacion">${htmlCuenta([fraccion(it.a, it.b), 'y', fraccion(it.c, it.d)])}</div>`;
+    <div class="operacion">${htmlCuenta([fraccion(it.a, it.b), dos('y', 'and', idioma), fraccion(it.c, it.d)])}</div>`;
 }
 
 export function feedbackProporcion(it, error, idioma) {
@@ -300,7 +302,7 @@ export function explicaProporcion(it, { idioma }) {
 // ─── Ejercicio 4 ───────────────────────────────────────────────────────────────
 
 const ecuacionHtml = it => {
-  const x = htmlRaya('x', it.d);
+  const x = it.abajo ? htmlRaya(it.d, 'x') : htmlRaya('x', it.d);
   const f = htmlFraccion(fraccion(it.a, it.b), { conUno: true });
   return `<span class="cuenta-frac">${it.lado === 'derecha' ? `${f} = ${x}` : `${x} = ${f}`}</span>`;
 };
@@ -311,34 +313,37 @@ export function enunciadoTermino(it, { idioma }) {
 
 /** El otro camino, cuando un factor es entero: ni el 1 ni el mismo factor. */
 function otroCamino(it, idioma) {
-  if (it.d % it.b === 0 && it.d !== it.b) {
-    const k = it.d / it.b;
-    return dos(`O bien: ${cuenta(`${it.b} · ${k} = ${it.d}`)}, así que ${cuenta(`${it.a} · ${k} = ${it.x}`)}.`, `Or: ${cuenta(`${it.b} · ${k} = ${it.d}`)}, so ${cuenta(`${it.a} · ${k} = ${it.x}`)}.`, idioma);
+  const { u, w } = cruz(it);
+  if (it.d % w === 0 && it.d !== w) {
+    const k = it.d / w;
+    return dos(`O bien: ${cuenta(`${w} · ${k} = ${it.d}`)}, así que ${cuenta(`${u} · ${k} = ${it.x}`)}.`, `Or: ${cuenta(`${w} · ${k} = ${it.d}`)}, so ${cuenta(`${u} · ${k} = ${it.x}`)}.`, idioma);
   }
-  if (it.b % it.d === 0 && it.b !== it.d) {
-    const k = it.b / it.d;
-    return dos(`O bien: ${cuenta(`${it.b} : ${k} = ${it.d}`)}, así que ${cuenta(`${it.a} : ${k} = ${it.x}`)}.`, `Or: ${cuenta(`${it.b} : ${k} = ${it.d}`)}, so ${cuenta(`${it.a} : ${k} = ${it.x}`)}.`, idioma);
+  if (w % it.d === 0 && w !== it.d) {
+    const k = w / it.d;
+    return dos(`O bien: ${cuenta(`${w} : ${k} = ${it.d}`)}, así que ${cuenta(`${u} : ${k} = ${it.x}`)}.`, `Or: ${cuenta(`${w} : ${k} = ${it.d}`)}, so ${cuenta(`${u} : ${k} = ${it.x}`)}.`, idioma);
   }
   return null;
 }
 
 export function feedbackTermino(it, error, idioma) {
-  const ad = it.a * it.d;
-  const base = dos(`Productos cruzados: ${cuenta(`${it.a} · ${it.d} = ${it.b} · x`)}, es decir, ${cuenta(`${ad} = ${it.b}x`)}, y ${cuenta(`x = ${ad} : ${it.b} = ${it.x}`)}.`,
-    `Cross products: ${cuenta(`${it.a} · ${it.d} = ${it.b} · x`)}, that is, ${cuenta(`${ad} = ${it.b}x`)}, and ${cuenta(`x = ${ad} : ${it.b} = ${it.x}`)}.`, idioma);
+  const { u, v, w } = cruz(it);
+  const uv = u * v;
+  const base = dos(`Productos cruzados: ${cuenta(`${u} · ${v} = ${w} · x`)}, es decir, ${cuenta(`${uv} = ${w}x`)}, y ${cuenta(`x = ${uv} : ${w} = ${it.x}`)}.`,
+    `Cross products: ${cuenta(`${u} · ${v} = ${w} · x`)}, that is, ${cuenta(`${uv} = ${w}x`)}, and ${cuenta(`x = ${uv} : ${w} = ${it.x}`)}.`, idioma);
   const aparte = {
     'suma-en-vez-de-multiplicar': dos(`Restar mantiene la diferencia, no la razón: hay que multiplicar o dividir los dos términos por el mismo número.`, `Subtracting keeps the difference, not the ratio: you have to multiply or divide both terms by the same number.`, idioma),
-    'da-el-factor': dos(`${factorDe(it)} es el número por el que se multiplica ${it.b}, pero falta aplicarlo también a ${it.a}.`, `${factorDe(it)} is the number ${it.b} is multiplied by, but it still has to be applied to ${it.a} as well.`, idioma),
+    'da-el-factor': dos(`${factorDe(it)} es el número por el que se multiplica ${w}, pero falta aplicarlo también a ${u}.`, `${factorDe(it)} is the number ${w} is multiplied by, but it still has to be applied to ${u} as well.`, idioma),
   }[error];
   return `${aparte ? `${aparte} ` : ''}${base}`;
 }
 
 export function explicaTermino(it, { idioma }) {
-  const ad = it.a * it.d;
+  const { u, v, w } = cruz(it);
+  const uv = u * v;
   const pasos = [
-    dos(`Productos cruzados: ${cuenta(`${it.a} · ${it.d} = ${it.b} · x`)}.`, `Cross products: ${cuenta(`${it.a} · ${it.d} = ${it.b} · x`)}.`, idioma),
-    dos(`Se hace el producto: ${cuenta(`${ad} = ${it.b}x`)}.`, `Work out the product: ${cuenta(`${ad} = ${it.b}x`)}.`, idioma),
-    dos(`Se divide entre ${it.b}: ${cuenta(`x = ${ad} : ${it.b} = ${it.x}`)}.`, `Divide by ${it.b}: ${cuenta(`x = ${ad} : ${it.b} = ${it.x}`)}.`, idioma),
+    dos(`Productos cruzados: ${cuenta(`${u} · ${v} = ${w} · x`)}.`, `Cross products: ${cuenta(`${u} · ${v} = ${w} · x`)}.`, idioma),
+    dos(`Se hace el producto: ${cuenta(`${uv} = ${w}x`)}.`, `Work out the product: ${cuenta(`${uv} = ${w}x`)}.`, idioma),
+    dos(`Se divide entre ${w}: ${cuenta(`x = ${uv} : ${w} = ${it.x}`)}.`, `Divide by ${w}: ${cuenta(`x = ${uv} : ${w} = ${it.x}`)}.`, idioma),
   ];
   const otro = otroCamino(it, idioma);
   if (otro) pasos.push(otro);
