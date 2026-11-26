@@ -30,3 +30,12 @@ Ex. 2(b): clase 4-30, azúcar 50-300, bolsa 4-60, zumo 50-300, concierto 20-300,
 
 ## Propuestas para `proporcion.js` (no tocado)
 Una función `leerEnteroOFraccion` compartida con `leerCantidad` para campos de x sin unidad; hoy `razones` usa `leerCantidad` y descarta la unidad.
+
+## Corrección de la reabierta (s-20261126T210403-cb37bd51, commit a304d9d, 26-11-2026)
+Relevo de s-20261126T165400-c1370efb (su código sin comitear, con tests en verde salvo el de ayuda del ej. 4, heredado y completado).
+1. Reserva: 70 huellas en `reserva.js` (hoja en claro, examen solo por huella); `huellaDe` cubre los cuatro ejercicios y `huellasDe` los dos modos de escribir el ej. 4. Test: ningún ítem sin huella ni reservado (3000 por ejercicio).
+2. Ej. 2 (b): el acierto ya no dice «no vale lo mismo» (solo con `razon-distinta`).
+3. Ej. 3 en inglés: «and» en vez de «y».
+4. Ej. 1: sin 1 en los números (nada de «hay 1 … por cada», «1 son»); test sobre enunciado y feedback.
+5. Ej. 4: la x también abajo (un tercio), con productos cruzados (`cruz`) en feedback, «No lo sé» y explicación; la introducción lo enseña. Decisión anterior «x abajo fuera» anulada por el acta de la U7.
+No probado en navegador (sesión desatendida): la 227/228 debe mirar con clics el ej. 2 (b), el ej. 3 en inglés y el ej. 4 con la x abajo.
