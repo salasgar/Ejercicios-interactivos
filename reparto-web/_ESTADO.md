@@ -12,7 +12,7 @@ Ficha del proyecto —rutas, automatismos, frase de arranque—: `proyecto.md`
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
-Regenerado: 2026-11-26T16:06:59Z · por la sesión s-20261126T160602-d1641e6a (WEB T18: reclamo 18)
+Regenerado: 2026-11-26T16:28:51Z · por la sesión s-20261126T160602-d1641e6a (WEB T18: cierre de la 18)
 
 ## Antes de hacer nada
 
@@ -245,7 +245,7 @@ sugerencia para el usuario al decidir cuántas sesiones abre, y para la sesión 
 | 15 | Incrustar la página de acertijos en Google Sites | tareas/tarea-15-incrustar-acertijos.md | 09 LISTA | 20 min | MEDIO | — | salidas/15-incrustar-acertijos/ | manual | LISTA (catálogo incrustado + 61 enlaces de concursos en el borrador, sin publicar; nada quitado, ver cambios.md) | |
 | 16 | Borrador de la página «Familias» | tareas/tarea-16-borrador-familias.md | ninguna | 30 min | ALTO | 10 | salidas/16-borrador-familias/ | manual | LISTA (borrador + 9 preguntas para Juan Luis; no va a la web hasta que lo apruebe) | |
 | 17 | Banco de problemas de la web antigua (proporcionalidad y ecuaciones) | tareas/tarea-17-cantera-problemas.md | ninguna | 35 min | MEDIO | 04 | salidas/17-cantera-problemas/ | manual | LISTA (83+47 problemas; 2 errores de la web) | |
-| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | EN CURSO | s-20261126T160602-d1641e6a · 2026-11-26T17:21:02Z |
+| 18 | Verificación final del borrador del sitio | tareas/tarea-18-verificacion.md | 13, 14 y 15 LISTAS | 35 min | ALTO | — | salidas/18-verificacion/ | manual | LISTA (29 páginas; se puede publicar con reparos: (b) 4 enlaces de la lista siguen, (f) acertijos recortado en móvil; hallazgos para Juan Luis) | |
 
 Bandas hoy (de `proyecto.md`, escrito el 2026-11-23, pendiente de confirmar con el menú): ALTO = Opus 5.5, esfuerzo Alto ·
 MEDIO = Sonnet 5.5, esfuerzo Medio · BAJO = Haiku 5.5, esfuerzo Medio.
@@ -258,6 +258,7 @@ Derivado de `hechos/terminadas/`. Una línea por fichero, más reciente arriba.
 
 Formato: `LISTA · tarea NN · AAAA-MM-DD HH:MM · sid · recuento · ruta de la salida`
 
+LISTA · tarea 18 · 2026-11-26 16:28 · s-20261126T160602-d1641e6a · 29 páginas revisadas; veredicto: se puede publicar con reparos ((b) no, (f) a medias) · salidas/18-verificacion/
 LISTA · tarea 15 · 2026-11-24 18:00 · s-20261124T175546-99239a6c · catálogo incrustado + 61 enlaces de concursos, sin publicar · salidas/15-incrustar-acertijos/
 LISTA · tarea 12 · 2026-11-24 17:54 · s-20261124T174530-72af358e · 103 PDF subidos a Drive (todo el manifiesto) · salidas/12-drive-web/
 LISTA · tarea 09 · 2026-11-24 17:50 · s-20261124T174517-ee3e7f9b · 104 acertijos publicados en acertijos/ (25 retenidas, 25 enlazar sin publicar) · salidas/09-publicar-catalogo/

@@ -68,6 +68,20 @@ fallo `mal cortada` y avisa.
   de tu propia pestaña y léelo con `get_page_text`.
 - En el desplegable de «Publicar», **«Dejar de publicar» está justo debajo de «Ver sitio web publicado»**.
 - Al terminar, cierra tus pestañas con `tabs_close_mcp` (regla global de Juan Luis).
+- (26-11, s-20261126T160602-d1641e6a) **El sitio publicado sí se lee con `curl` sin cookies**: el HTML trae el
+  texto y los enlaces de cada página (el «solo devuelve el título» es de WebFetch). Las rutas salen de los `href`
+  `/a/murciaeduca.es/1eso/…` de la portada. Sirve para comprobar «sin sesión» y para analizar en local.
+- La vista previa del borrador está en `https://sites.google.com/u/0/d/<sitio>/p/<página>/preview`; con un `fetch`
+  solo llega el esqueleto (el contenido lo pinta JS): hay que cargarla en un `<iframe>` de la misma pestaña y leer
+  sus `section`. Veintinueve páginas tardan ~2 min: lanzarlo sin `await` y sondear, o salta el límite de 45 s del
+  `javascript_tool`. Un `<iframe>` de 375 px sirve también para comprobar el ancho de móvil (`resize_window` no
+  encoge la ventana si está maximizada).
+- `DOMParser` en Sites exige TrustedHTML (`trustedTypes.createPolicy`). Las salidas del `javascript_tool` con `?`
+  en una URL se bloquean («Cookie/query string data»): comparar con hashes o quitar la consulta.
+- Al cerrar con `tabs_close_mcp` una pestaña mientras otra llamada está en marcha, el grupo puede desaparecer y la
+  pestaña restante quedar fuera del grupo, sin poder cerrarla: cerrar las pestañas cuando no haya nada corriendo.
+- YouTube: `oembed` con la URL `/embed/…?embed_config=…` da 404 aunque el vídeo exista; usar `watch?v=<id>`. Un 401
+  o 403 de `oembed` no es «roto»: mirar `playabilityStatus` en la página del vídeo.
 
 ## Prohibido
 - **No editar el sitio ni publicar.** Si algo está mal, se anota; lo arregla una reabierta de la tarea dueña.
