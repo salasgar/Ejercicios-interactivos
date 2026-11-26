@@ -1,0 +1,4 @@
+ocupo editor-sites desde 2026-11-26T10:56:49Z (fuera del reparto: enlazar dos infografías en U1 y U3, a petición de Juan Luis el 26-11)
+libero editor-sites 2026-11-26T10:59:05Z (hecho en el borrador, sin publicar: línea «Infografías · Posters» bajo el resumen en U3, con operaciones-con-enteros.pdf 1UVMNEwCpUJhBzK0uuOHxqcEmC2sAaftk y vocabulario-operaciones.pdf 1i0RvoVyubWou3dbErNBJrJJ5HkP1clOg; línea «Infografía · Poster» en U1 con la de vocabulario; PDF en «Web 1º ESO»/Unidad 3 y Unidad 1)
+ocupo editor-sites desde 2026-11-26T11:08:36Z (fuera del reparto: añadir el enlace de la infografía en tabla en U3, a petición de Juan Luis el 26-11)
+libero editor-sites 2026-11-26T11:09:43Z (hecho en el borrador, sin publicar: tercer enlace en la línea «Infografías · Posters» de U3, operaciones-con-enteros-tabla.pdf 1qzhwuyUF_CFHDiREsevPZ65BYG_WTQe_, en «Web 1º ESO»/Unidad 3)
