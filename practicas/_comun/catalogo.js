@@ -140,7 +140,7 @@ export const CATALOGO = [
   // Unidad 7, Proportionality and percentages (PU2, tareas 212-226; filas puestas por la 211 el 2026-11-19, con un
   // esqueleto en cada carpeta). Cada una pone su `disponible: true` cuando la publique su tarea de publicación (227-231).
   // `unidades` (95) depende del acta de la 02 de la U7 (punto n): si manda las unidades de medida a la U8, no se publica.
-  { id: 84, slug: 'razones', ruta: 'razones/', unidad: 7, nombre: { es: 'Razones y proporciones', en: 'Ratios and proportions' }, nEjercicios: 4, disponible: false },
+  { id: 84, slug: 'razones', ruta: 'razones/', unidad: 7, nombre: { es: 'Razones y proporciones', en: 'Ratios and proportions' }, nEjercicios: 4, disponible: true },
   { id: 85, slug: 'tabla-proporcional', ruta: 'tabla-proporcional/', unidad: 7, nombre: { es: 'Tablas de proporcionalidad', en: 'Proportion tables' }, nEjercicios: 4, disponible: false },
   { id: 86, slug: 'regla-de-tres', ruta: 'regla-de-tres/', unidad: 7, nombre: { es: 'Problemas de proporcionalidad directa', en: 'Direct proportion problems' }, nEjercicios: 4, disponible: false },
   { id: 87, slug: 'inversa', ruta: 'inversa/', unidad: 7, nombre: { es: 'Proporcionalidad inversa', en: 'Inverse proportion' }, nEjercicios: 4, disponible: false },
@@ -154,7 +154,7 @@ export const CATALOGO = [
   { id: 95, slug: 'unidades', ruta: 'unidades/', unidad: 7, nombre: { es: 'Cambia de unidad', en: 'Converting units' }, nEjercicios: 5, disponible: false },
   { id: 96, slug: 'problemas-proporcion', ruta: 'problemas-proporcion/', unidad: 7, nombre: { es: 'Problemas de toda la unidad', en: 'Mixed problems' }, nEjercicios: 3, disponible: false },
   { id: 97, slug: 'errores7', ruta: 'errores7/', unidad: 7, nombre: { es: 'Caza el error', en: 'Spot the mistake' }, nEjercicios: 3, disponible: false },
-  { id: 98, slug: 'leelo7', ruta: 'leelo7/', unidad: 7, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: false },
+  { id: 98, slug: 'leelo7', ruta: 'leelo7/', unidad: 7, nombre: { es: 'Léelo en inglés', en: 'Say it in English' }, nEjercicios: 4, disponible: true },
   // La plantilla es el ejemplo del contrato: funciona, pero no sale en la portada.
   { id: 31, slug: 'plantilla', ruta: 'plantilla/', unidad: null, nombre: { es: 'Práctica de plantilla', en: 'Template practice' }, nEjercicios: 2, disponible: true },
 ];

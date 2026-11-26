@@ -33,28 +33,155 @@ esta unidad), con una pieza común nueva en `practicas/_comun/`:
 
 ## 1. Qué ve el alumno
 
-Por escribir (tareas 227-231).
+Lo mismo que en la unidad 2 (§1 de [practicas-unidad2.md](practicas-unidad2.md)): código,
+10 puntos por ejercicio con 5 vidas, el idioma de cada ítem sorteado, el feedback con los
+números del ítem, el botón «No lo sé» y la tarea de la semana. Lo propio de la unidad 7
+(apartados 1-6 y 8 escritos por la tarea 227 el 2026-11-26, al revisar el paquete 1):
+
+1. **La portada enseña la unidad 7 desde el lunes 1-3-2027** (`desde` de la unidad 7 en
+   `UNIDADES`, `catalogo.js`). Antes, una práctica publicada solo se abre por su URL. Las
+   prácticas salen por **paquetes**, los de las pruebas tipo test (`BLOQUES` en
+   `practicas/portada.js`): paquete 1 (`razones`, `tabla-proporcional`, `regla-de-tres`), 2
+   (`inversa`, `directa-o-inversa`, `repartos`), 3 (`tres-escrituras`, `tanto-por-ciento`,
+   `que-porcentaje`, `descuentos`; dura del 15-3 al 8-4, con las vacaciones en medio), 4
+   (`escalas`, `unidades`), 5 (`problemas-proporcion`) y «Para toda la unidad» (`errores7`,
+   `leelo7`).
+2. **Una razón, una fracción, un decimal y un porcentaje que valen lo mismo son la misma
+   respuesta** (`3/4`, `6/8`, `0,75`, `75 %`; `2,5 km` y `2500 m`; `1,5 h` y `90 min`). Lo que
+   teclea el alumno se lee con `leerCantidad`/`deTexto` de `proporcion.js` y se compara **por
+   valor**: vale `15`, `15,0`, `15.0` o `30/2`, y `12 €` como `12,00 €`, salvo que la consigna
+   pida una forma («la razón más sencilla»). Ninguna opción vale lo mismo que otra (los tests lo
+   comprueban con fracciones exactas, nunca con coma flotante), y dos métodos correctos (la
+   regla de tres y la reducción a la unidad) nunca se enfrentan.
+3. **La notación del acta de la unidad** (23-11): el porcentaje con espacio en español (`20 %`)
+   y pegado en inglés (`20%`); la razón como fracción o con palabras («3 a 4», *3 to 4*, «3 de
+   cada 4», *3 out of 4*), y `3 : 2` solo detrás de «razón» o «escala» (`:` es dividir); el
+   dinero con dos decimales en el enunciado (`12,00 €` / `€12.00`); las unidades del SI
+   separadas del número; `·` y `:` entre números; la incógnita, x; la constante se llama
+   «precio por unidad» (*unit rate*), sin la letra k.
+4. **El método oficial es la regla de tres en su tabla** (las magnitudes arriba, la proporción
+   y los productos cruzados), y la **reducción a la unidad** se enseña al lado y vale igual; la
+   proporción con la x abajo también se resuelve con los productos cruzados (`3/4 = 6/x →
+   3x = 24`), nunca «despejando». Con tiempo, todo a minutos antes de plantear.
+5. **Realismo**: cada contexto tiene su cota (las del acta: fruta 0,80-6 € el kilo, recetas
+   para 2 a 12 personas, consumo de 4 a 9 L cada 100 km…) y el resultado es exacto (dinero al
+   céntimo, personas y objetos enteros, tiempos en minutos enteros).
+6. **Cada ejercicio empieza con su introducción**, en los dos idiomas, y el feedback de un fallo
+   nombra el error con los números del ítem («si 2 cuestan 5,00 €, 4 no cuestan 7,00 €: se ha
+   sumado en vez de multiplicar»).
 
 ## 2. Cómo lee el profesor los resultados
 
-Por escribir (tareas 227-231).
+Igual que en las unidades 2-6 (§2 de [practicas-unidad2.md](practicas-unidad2.md)): el panel
+`practicas/profesor.html`, la nube del espacio de cada profesor y la vista «Fallos» con «qué
+falla más». **Cada fallo lleva el id de un error típico** en el campo `error`
+(`api.responder({ error })`):
+
+- los de la tabla de la unidad, en `ERRORES_TIPICOS` de `practicas/_comun/proporcion.js`, cada
+  uno con su nombre `{ es, en }`, un ejemplo y su función, que devuelve `null` cuando ese error
+  da lo mismo que la respuesta (sumar en vez de multiplicar, la razón invertida, parte-parte por
+  parte-todo, la regla de tres directa en una inversa, los del porcentaje, el reparto a partes
+  iguales, la escala sin cambio de unidad…);
+- los propios de una práctica, en su `logica.js` (los de `razones`, `tabla-proporcional`,
+  `regla-de-tres`…). Como en las unidades 3-6, el panel no traduce todavía estos ids a su nombre.
 
 ## 3. La base común de la unidad 7
 
-Por escribir (tareas 227-231). Mientras, la cabecera de `practicas/_comun/proporcion.js` y la ENTREGA de
-la tarea 211 (`reparto-practicas-u2/salidas/211-base-unidad7/ENTREGA.md`).
+Un módulo nuevo en `practicas/_comun/` (tarea 211), puro: **`proporcion.js`** (descrito arriba).
+La API completa está en su cabecera y en la ENTREGA de la tarea 211
+(`reparto-practicas-u2/salidas/211-base-unidad7/ENTREGA.md`); lo esencial:
+
+| Qué | Cómo |
+|---|---|
+| La cantidad | `cantidad(valor, unidad)` con un `Fraccion` exacto y una unidad de `UNIDADES_MEDIDA`; `mismoValor` compara por valor en la unidad base (`2,5 km` = `2500 m`) |
+| Lo que teclea el alumno | `deTexto` y `leerCantidad`, sin `eval`: porcentajes, fracciones, decimales con coma o punto, dinero, cantidades con unidad, `1 h 30 min`; lo que no vale (`50.000`, una cuenta sin hacer) no cuenta como fallo: sale un aviso con el motivo |
+| Escribir y decir | `aTexto`/`aHtml` con la notación de §1.3 en los dos idiomas; las lecturas (*three to four*, *twenty per cent*) con todas las que valen |
+| Las cuentas | `proporcionDirecta`, `proporcionInversa`, `porcentajeDe`, `aplicarPorcentaje`, `repartir`, `escala`, `cambiarUnidad`, con sus pasos para el feedback y el «No lo sé»; `redondear` al más cercano, la mitad hacia arriba |
+| Los errores típicos | `ERRORES_TIPICOS` (§2) y `distractores` (sin dos que valgan lo mismo entre sí ni con la buena) |
+| Los contextos | `CONTEXTOS`, cada uno con su tipo, sus datos con `rango` o `cota` y lo exacto (`cifras`), como `src/ejercicios/contextos_mcd_mcm.js`; `NOMBRES` inventados |
+| Los casos reservados | `huellaCaso(tipo, datos)`: la FNV-1a del caso **normalizado por valor** (`3/4 = x/20` y `x/20 = 3/4` dan la misma; el 20 % de 150 y `0,2 · 150`, también), para excluir los casos de examen sin escribirlos |
+
+Lo aprendido en la revisión del paquete 1 (tarea 227):
+
+- **Las cuatro prácticas del paquete 1 se escribieron antes que el acta, la hoja 1 y el examen 1**
+  (19-11) y dejaron sus listas de casos reservados vacías. Con proporcionalidad «el mismo caso» es
+  el mismo tipo de problema con los mismos datos por valor (la razón irreducible y qué se pide; la
+  ecuación de productos cruzados sin importar el orden; los tres datos de una regla de tres en
+  cualquier contexto), no el mismo texto, y un generador con números de 1 a 9 o de 1 a 60 tropieza
+  con el papel mucho más que uno de álgebra: hay que cotejar **todo** el espacio del generador.
+- El feedback de un **acierto** también se lee: en `razones` decía que la respuesta buena «no vale
+  lo mismo».
+- En una regla de tres, «el mismo caso» son los tres números **en cualquier contexto y en cualquier
+  unidad**: «3 min, 75 páginas → 8 min» sale tal cual como «3 personas, 75 g → 8». Por eso la reserva
+  lleva dos huellas por caso, la de los números como se escriben y la de la unidad base. En una tabla, el
+  mismo precio por unidad con las columnas del papel dentro de las del ítem.
+- La notación se mira también en las introducciones y en el paso a paso: `tabla-proporcional` dividía con
+  «÷» en español y escribía el dinero sin decimales en sus ejemplos.
+
+Tests: `tests/practicas-proporcion.test.js` (la base de la unidad) y dos por práctica (lógica y
+«No lo sé»).
 
 ## 4. El contrato de una práctica
 
-Por escribir (tareas 227-231): es el de la unidad 2.
+El de siempre: [practicas-unidad2.md](practicas-unidad2.md) y `practicas/plantilla/practica.js`.
 
 ## 5. Cómo se añade una práctica
 
-Por escribir (tareas 227-231).
+Como en la unidad 2 (§5 de [practicas-unidad2.md](practicas-unidad2.md)): copiar
+`practicas/plantilla/`, fila en `catalogo.js` con `unidad: 7` y `disponible: false`, `logica.js`
+y su test antes que la interfaz, la línea de `DESTREZAS` en `registro.js` y la fila de §7 en el
+mismo commit (lo exige `tests/practicas-registro.test.js`), su `slug` en un bloque de `BLOQUES`
+y, al publicarla, `disponible: true`. Lo propio de la unidad 7:
+
+1. Las cantidades, con `cantidad` y `Fraccion`; el dinero, en céntimos enteros: **nunca `Number`
+   en coma flotante, `toFixed` ni `eval`**. Los tests comprueban la aritmética contra `BigInt` o
+   enteros propios, aparte del generador.
+2. **Cada distractor, de un error típico** de `ERRORES_TIPICOS` (o uno propio con su nombre
+   `{ es, en }`), calculado con los números del ítem, y el mismo id en `api.responder({ error })`.
+   Ninguna opción que valga lo mismo que otra **por valor** (ni la buena con una falsa ni dos
+   falsas entre sí), y ninguna pareja válida como distractor (*per cent* / *percent*, *ratio 3 to
+   4* / `3/4`, regla de tres / reducción a la unidad).
+3. Las reglas de contenido de la unidad 7 (en cada ficha 211-233 y, por encima, el acta de la
+   unidad del 23-11, `7. Proportionality/inventario-unidad7-revision.md`): cada ejercicio respeta la
+   `sesion` de sus destrezas (ninguna inversa antes de la sesión 5, ningún reparto antes de la 7,
+   ningún porcentaje antes de la 9, ningún aumento o descuento antes de la 12, ninguna escala antes
+   de la 16, ningún interés ni m/s antes de la 20); ni proporcionalidad compuesta ni repartos
+   inversos; el **realismo** con una cota por contexto que el test comprueba y el resultado exacto.
+4. **Los casos fijos no copian las hojas ni los exámenes** de la unidad: los de las hojas, en
+   claro; los de los exámenes semanales y del final, por huella del caso normalizado por valor
+   (`huellaCaso`), calculada fuera del repositorio.
+5. Probarla en el navegador **pulsando cada botón con un clic**, a 375 px y en ancho, en los dos
+   idiomas, y leer el feedback de un acierto y el de un fallo.
 
 ## 6. Las quince prácticas
 
-Por escribir (tareas 227-231).
+Una fila por práctica, en el orden de los paquetes de la portada. Los ejercicios y las cotas de cada una los
+escribe la tarea que la publica (227-231), al revisarla; hasta entonces, su ENTREGA en
+`reparto-practicas-u2/salidas/NN-<slug>/`.
+
+| Paquete | Práctica | id | Tarea | Ejercicios | Cotas de realismo |
+|---|---|---|---|---|---|
+| 1 | `razones` | 84 | 212 | La razón · Equivalentes y la más sencilla · ¿Forman proporción? · El término que falta | ej. 1, términos de 2 a 9 sin divisor común (nunca 1); ej. 2 (b), clase 4-30, azúcar y zumo 50-300, bolsa 4-60, concierto y biblioteca 20-300, términos ≤ 300; la x del ej. 4, entera, también abajo (un tercio) |
+| 1 | `tabla-proporcional` | 85 | 213 | ¿Es proporcional? · Completa la tabla · Lo que vale 1 · ¿Directamente proporcionales? (banco de 25 frases) | fruta 0,80-3,50 € el kilo (1-8 kg); entradas 4-15 €; cuadernos 0,70-2,50 €; arroz 60-125 g por persona; coche 4-9 L cada 100 km (100-800 km); taxi y gimnasio con cuota fija; en «Lo que vale 1», fruta hasta 6 €, entrada 3-60 €, cuaderno 0,50-4 €, receta ≤ 1000 g |
+| 1 | `regla-de-tres` | 86 | 214 | ¿Cuánto cuesta 1? · ¿Qué planteamiento? · Resuelve y contesta · ¿Tiene sentido? | los nueve contextos directos de `proporcion.js`, cada uno con su cota; resultado exacto (dinero al céntimo) |
+| 2 | `inversa` | 87 | 215 | (la 228) | |
+| 2 | `directa-o-inversa` | 88 | 216 | (la 228) | |
+| 2 | `repartos` | 89 | 217 | (la 228) | |
+| 3 | `tres-escrituras` | 90 | 218 | (la 229) | |
+| 3 | `tanto-por-ciento` | 91 | 219 | (la 229) | |
+| 3 | `que-porcentaje` | 92 | 220 | (la 229) | |
+| 3 | `descuentos` | 93 | 221 | (la 229) | |
+| 4 | `escalas` | 94 | 222 | (la 230) | |
+| 4 | `unidades` | 95 | 223 | (la 230) | |
+| 5 | `problemas-proporcion` | 96 | 224 | (la 231) | |
+| toda | `errores7` | 97 | 225 | (la 231) | |
+| toda | `leelo7` | 98 | 226 | La palabra · Léelo · La consigna · Completa | cada ítem sale desde el lunes de su paquete (`PAQUETES_DESDE`); el consejo del «No lo sé» no nombra nada de un paquete posterior; el dinero en euros con dos decimales |
+
+**Publicadas** (a 2026-11-26): `razones` y `leelo7` (tarea 227). `leelo7` es de toda la unidad, pero filtra por fecha: el 1-3
+solo enseña lo de las sesiones 1-3, y cada paquete se abre su lunes. `tabla-proporcional` y `regla-de-tres` se quedaron sin
+publicar por reabiertas de la 227 (casos de la hoja 1 y del examen 1 en las dos; en `tabla-proporcional`, además, la división
+con «÷» en español, las casillas de arriba y de abajo cambiadas en el ej. 2, una receta de más de 1000 g, el dinero sin dos
+decimales y la tabla, que no cabe a 375 px): las publica la 228 con el paquete 2.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 7
 
@@ -202,4 +329,18 @@ que la ficha las nombre del todo, y dónde encajan sin cambiar el número de eje
 
 ## 8. Dónde está lo demás
 
-Por escribir (tareas 227-231).
+- El reparto con el que se hacen: `reparto-practicas-u2/` (tareas 211-233; las reglas de la
+  unidad 7 en cada ficha, lo entregado en `salidas/NN-<slug>/ENTREGA.md`). El reparto de la
+  unidad en el material del curso (`7. Proportionality/reparto-unidad7/`) no toca la app.
+- La revisión y publicación de cada paquete, con la **propuesta de la tarea de la app** de ese
+  paquete (cinco, una por paquete: acta, punto u): tareas 227-231; la 232 las monta en el panel
+  con Juan Luis.
+- El inventario de la unidad (solo lectura, fuera del repositorio):
+  `<iCloud>/mat/1º ESO/apuntes-1eso-bilingue/7. Proportionality/inventario-unidad7.tsv`, con el
+  acta de su revisión (`inventario-unidad7-revision.md`, decisiones del 23-11, firma F0 del 24-11:
+  el método, la razón, la inversa, los repartos, los porcentajes, el interés, las unidades, la
+  notación y las cotas) y la secuenciación por sesiones (`secuenciación-unidad7.pdf`) en la misma
+  carpeta.
+- Tests: `tests/practicas-proporcion.test.js` (la base de la unidad), `tests/practicas-<slug>.test.js`
+  y `tests/practicas-ayuda-<slug>.test.js` (por práctica) y `tests/practicas-registro.test.js`
+  (§7 contra `DESTREZAS`).
