@@ -21,3 +21,5 @@ texto coincide carácter a carácter con el borrador (2992 caracteres sin espaci
 (enlace interno a la página TÉCNICAS DE ESTUDIO). La página nueva quedó la SEGUNDA del panel, detrás de «Página principal»:
 el arrastre no funciona con el ratón sintético; si la quiere al final, la mueve Juan Luis. TRAMPA: con un correo
 seleccionado, cmd+k pone el mailto él solo, sin abrir el diálogo, y lo que se teclee después va al texto.
+
+2026-11-26T16:56:15Z · Sitio PUBLICADO a petición expresa de Juan Luis («Publica el sitio»), después de que s-20261126T160602-d1641e6a liberara el editor con sus arreglos de la tarea 18 (incluidos en la publicación). Página pública: https://sites.google.com/a/murciaeduca.es/1eso/familias (200 sin sesión; texto y tres enlaces comprobados). OJO: la dirección sin «/a/» (sites.google.com/murciaeduca.es/1eso/…) da «Acceso denegado».
