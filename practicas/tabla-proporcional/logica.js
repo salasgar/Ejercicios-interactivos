@@ -3,8 +3,9 @@
 // proporcionales? (banco fijo). Toda la aritmética es entera o con Fraccion: nada de cocientes en coma flotante.
 // El dinero va en céntimos enteros. «Constante», «k» y las letras no salen nunca en pantalla.
 
-import { Fraccion } from '../_comun/fracciones.js';
-import { ERRORES_TIPICOS, cantidad, deTexto, mismoValor } from '../_comun/proporcion.js';
+import { Fraccion, fraccion } from '../_comun/fracciones.js';
+import { ERRORES_TIPICOS, cantidad, deTexto, huellaCaso, mismoValor } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 export const F = (n, d = 1) => new Fraccion(n, d);
 const NBSP = ' ';
@@ -40,7 +41,7 @@ export const CONTEXTOS = {
   fruta: { din: true, xMul: 1, umax: 8, paso: 50, ks: [80, 90, 120, 150, 160, 180, 190, 240, 250, 300, 350], unidadX: 'kg', unidadY: '€' },
   entradas: { din: true, xMul: 1, umax: 10, paso: 50, ks: [400, 450, 500, 600, 750, 800, 900, 1200, 1500], unidadX: null, unidadY: '€' },
   cuadernos: { din: true, xMul: 1, umax: 10, paso: 50, ks: [70, 80, 95, 120, 150, 185, 250], unidadX: null, unidadY: '€' },
-  receta: { din: false, xMul: 1, umax: 12, paso: 10, ks: [60, 70, 75, 80, 100, 125], unidadX: null, unidadY: 'g', yMax: 1200 },
+  receta: { din: false, xMul: 1, umax: 12, paso: 10, ks: [60, 70, 75, 80, 100, 125], unidadX: null, unidadY: 'g', yMax: 1000 },
   coche: { din: false, xMul: 100, umax: 8, paso: 1, ks: [4, 5, 6, 7, 8, 9], unidadX: 'km', unidadY: 'L' },
   // no proporcionales con parte fija: y = (fija + por · u) euros
   taxi: { din: true, xMul: 1, umax: 20, fija: [2, 3, 4], por: [1, 2], unidadX: 'km', unidadY: '€' },
@@ -71,6 +72,25 @@ export const ERRORES_PROPIOS = {
 };
 export const nombreError = id => ERRORES_TIPICOS[id]?.nombre ?? ERRORES_PROPIOS[id];
 
+// ─── Casos reservados (hoja y examen) ────────────────────────────────────────────────────────────
+
+/** Una huella por cada grupo de columnas proporcional del ítem (x tal como se ve; el coche, en km). */
+export function huellasDe(it) {
+  const din = (CONTEXTOS[it.ctx] ?? CTX_CONSTANTE[it.ctx]).din, out = [];
+  for (let m = 1; m < 1 << it.cols.length; m++) {
+    const s = it.cols.filter((_, i) => m & (1 << i));
+    if (!s.every(q => q.y * s[0].x === s[0].y * q.x)) continue;
+    const k = fraccion(s[0].y, s[0].x * (din ? 100 : 1));
+    out.push(huellaCaso('tabla-directa', [k, ...s.map(q => q.x).sort((a, b) => a - b).map(x => fraccion(x, 1))]));
+  }
+  return out;
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
+const sinReservados = crear => rng => {
+  for (let i = 0; i < 50; i++) { const it = crear(rng); if (!esReservado(it)) return it; }
+  throw new Error('tabla-proporcional: todo reservado');
+};
+
 // ─── Ejercicio 1: ¿es proporcional? ──────────────────────────────────────────────────────────────
 
 /** ¿Todas las columnas cumplen y/x igual? Por productos cruzados, con enteros. */
@@ -94,7 +114,7 @@ function columnas(ctx, us, ys) {
   return us.map((u, i) => ({ x: u * xMul, y: ys[i] }));
 }
 
-export function generarEsProporcional(rng) {
+const crearEsProporcional = rng => {
   const r = rng.azar();
   const tipo = r < 0.5 ? 'si' : r < 0.67 ? 'suma' : r < 0.84 ? 'fija' : 'casilla';
   let ctx;
@@ -128,7 +148,8 @@ export function generarEsProporcional(rng) {
   }
   const i = us.indexOf(a), j = us.indexOf(m * a);
   return { ctx, tipo, si: tipo === 'si', cols: columnas(ctx, us, ys), par: { i, j, m } };
-}
+};
+export const generarEsProporcional = sinReservados(crearEsProporcional);
 
 export const claveEsProporcional = it => `${it.ctx}|${it.tipo}|${it.cols.map(c => `${c.x}:${c.y}`).join(',')}`;
 export const respuestaEsProporcional = it => esProporcional(it.cols.map(c => c.x), it.cols.map(c => c.y));
@@ -142,7 +163,7 @@ export const porUnidad = it => F(it.cols[0].y * 1, it.cols[0].x / CONTEXTOS[it.c
 
 // ─── Ejercicio 2: completa la tabla ──────────────────────────────────────────────────────────────
 
-export function generarCompleta(rng) {
+const crearCompleta = rng => {
   const ctx = rng.elegir(['fruta', 'fruta', 'receta', 'coche', 'entradas', 'cuadernos']);
   const c = CONTEXTOS[ctx], k = rng.elegir(c.ks), umax = umaxDe(ctx, k);
   const us = rng.barajar(Array.from({ length: umax }, (_, i) => i + 1)).slice(0, 4).sort((p, q) => p - q);
@@ -150,7 +171,8 @@ export function generarCompleta(rng) {
   const orden = rng.barajar([0, 1, 2, 3]);
   const huecos = [{ col: orden[1], que: 'y' }, { col: orden[2], que: 'x' }];
   return { ctx, k, cols, ref: orden[0], huecos };
-}
+};
+export const generarCompleta = sinReservados(crearCompleta);
 export const claveCompleta = it => `${it.ctx}|${it.k}|${it.cols.map(c => c.x).join(',')}|${it.ref}|${it.huecos.map(h => h.col + h.que).join(',')}`;
 
 /** Lo que vale cada hueco, como Fraccion en la unidad del hueco (euros, no céntimos). */
@@ -196,7 +218,7 @@ export function erroresDeCompleta(it, textos, idioma = 'es') {
 
 // ─── Ejercicio 3: la constante («lo que vale 1») ─────────────────────────────────────────────────
 
-export function generarConstante(rng) {
+const crearConstante = rng => {
   const ctx = rng.elegir(Object.keys(CTX_CONSTANTE));
   const c = CTX_CONSTANTE[ctx], k = rng.elegir(c.ks);
   const tope = c.yMax ? Math.min(c.umax, Math.floor(c.yMax / k)) : c.umax;
@@ -207,7 +229,8 @@ export function generarConstante(rng) {
     nombre: rng.elegir(['Nora', 'Iker', 'Bruno', 'Vera', 'Teo', 'Alma', 'Gael', 'Irene', 'Marco', 'Olga', 'Hugo', 'Elsa']),
     cols: us.map(u => ({ x: u * xMul, y: k * u })),
   };
-}
+};
+export const generarConstante = sinReservados(crearConstante);
 export const claveConstante = it => `${it.ctx}|${it.forma}|${it.nombre}|${it.k}|${it.cols.map(c => c.x).join(',')}`;
 export const solucionConstante = it => (CTX_CONSTANTE[it.ctx].din ? F(it.k, 100) : F(it.k));
 const yDe = (it, n = 0) => (CTX_CONSTANTE[it.ctx].din ? F(it.cols[n].y, 100) : F(it.cols[n].y));
@@ -295,29 +318,29 @@ export const BANCO = [
     { es: 'la edad', en: 'the age' }, { es: 'el peso', en: 'the weight' },
     { es: '20 años es el doble de 10 años, pero 65 kg no es el doble de 35 kg (el doble serían 70 kg).', en: '20 years is twice 10 years, but 65 kg is not twice 35 kg (twice would be 70 kg).' }),
   B('taxi', false,
-    { es: 'En un taxi, 1 km cuesta 4 € y 5 km cuestan 12 €.', en: 'In a taxi, 1 km costs €4 and 5 km cost €12.' },
+    { es: 'En un taxi, 1 km cuesta 4,00 € y 5 km cuestan 12,00 €.', en: 'In a taxi, 1 km costs €4.00 and 5 km cost €12.00.' },
     { es: 'los kilómetros', en: 'the kilometres' }, { es: 'el precio', en: 'the price' },
-    { es: '5 km son 5 veces 1 km, pero 12 € no son 5 veces 4 € (serían 20 €).', en: '5 km is 5 times 1 km, but €12 is not 5 times €4 (that would be €20).' }),
+    { es: '5 km son 5 veces 1 km, pero 12,00 € no son 5 veces 4,00 € (serían 20,00 €).', en: '5 km is 5 times 1 km, but €12.00 is not 5 times €4.00 (that would be €20.00).' }),
   B('paginas', false,
     { es: 'Un libro tiene 300 páginas. Iker ha leído 50 y le quedan 250; ha leído 100 y le quedan 200.', en: 'A book has 300 pages. Iker has read 50 and has 250 left; he has read 100 and has 200 left.' },
     { es: 'las páginas leídas', en: 'the pages read' }, { es: 'las páginas que quedan', en: 'the pages left' },
     { es: '100 es el doble de 50, pero 200 no es el doble de 250. Al leer más, quedan menos.', en: '100 is twice 50, but 200 is not twice 250. The more he reads, the fewer pages are left.' }),
   B('gastado', false,
-    { es: 'Alma tiene 50 €. Si gasta 10 €, le quedan 40 €; si gasta 20 €, le quedan 30 €.', en: 'Alma has €50. If she spends €10, she has €40 left; if she spends €20, she has €30 left.' },
+    { es: 'Alma tiene 50,00 €. Si gasta 10,00 €, le quedan 40,00 €; si gasta 20,00 €, le quedan 30,00 €.', en: 'Alma has €50.00. If she spends €10.00, she has €40.00 left; if she spends €20.00, she has €30.00 left.' },
     { es: 'el dinero gastado', en: 'the money spent' }, { es: 'el dinero que le queda', en: 'the money left' },
-    { es: '20 € es el doble de 10 €, pero 30 € no es el doble de 40 €. Al gastar más, queda menos.', en: '€20 is twice €10, but €30 is not twice €40. The more she spends, the less is left.' }),
+    { es: '20,00 € es el doble de 10,00 €, pero 30,00 € no es el doble de 40,00 €. Al gastar más, queda menos.', en: '€20.00 is twice €10.00, but €30.00 is not twice €40.00. The more she spends, the less is left.' }),
   B('factura', false,
-    { es: 'Una factura de móvil tiene una cuota fija. Con 100 minutos se pagan 15 € y con 200 minutos se pagan 20 €.', en: 'A phone bill has a fixed fee. With 100 minutes you pay €15 and with 200 minutes you pay €20.' },
+    { es: 'Una factura de móvil tiene una cuota fija. Con 100 minutos se pagan 15,00 € y con 200 minutos se pagan 20,00 €.', en: 'A phone bill has a fixed fee. With 100 minutes you pay €15.00 and with 200 minutes you pay €20.00.' },
     { es: 'los minutos', en: 'the minutes' }, { es: 'lo que se paga', en: 'the amount paid' },
-    { es: '200 minutos son el doble de 100, pero 20 € no es el doble de 15 € (serían 30 €).', en: '200 minutes is twice 100, but €20 is not twice €15 (that would be €30).' }),
+    { es: '200 minutos son el doble de 100, pero 20,00 € no es el doble de 15,00 € (serían 30,00 €).', en: '200 minutes is twice 100, but €20.00 is not twice €15.00 (that would be €30.00).' }),
   B('padre', false,
     { es: 'Bruno tiene 5 años y su padre 35. Cuando Bruno tenga 10, su padre tendrá 40.', en: 'Bruno is 5 and his father is 35. When Bruno is 10, his father will be 40.' },
     { es: 'la edad de Bruno', en: 'Bruno’s age' }, { es: 'la edad de su padre', en: 'his father’s age' },
     { es: '10 años es el doble de 5, pero 40 años no es el doble de 35 (sería 70).', en: '10 years is twice 5, but 40 years is not twice 35 (that would be 70).' }),
   B('bolsa', false,
-    { es: 'Teo compra naranjas y paga 1 € por la bolsa. 1 kg de naranjas con bolsa cuesta 3 € y 2 kg cuestan 5 €.', en: 'Teo buys oranges and pays €1 for the bag. 1 kg of oranges with the bag costs €3 and 2 kg cost €5.' },
+    { es: 'Teo compra naranjas y paga 1,00 € por la bolsa. 1 kg de naranjas con bolsa cuesta 3,00 € y 2 kg cuestan 5,00 €.', en: 'Teo buys oranges and pays €1.00 for the bag. 1 kg of oranges with the bag costs €3.00 and 2 kg cost €5.00.' },
     { es: 'los kilos de naranjas', en: 'the kilos of oranges' }, { es: 'el precio con la bolsa', en: 'the price with the bag' },
-    { es: '2 kg es el doble de 1 kg, pero 5 € no es el doble de 3 € (serían 6 €).', en: '2 kg is twice 1 kg, but €5 is not twice €3 (that would be €6).' }),
+    { es: '2 kg es el doble de 1 kg, pero 5,00 € no es el doble de 3,00 € (serían 6,00 €).', en: '2 kg is twice 1 kg, but €5.00 is not twice €3.00 (that would be €6.00).' }),
   B('grifo-lleno', false,
     { es: 'Un depósito ya tiene 20 L. Un grifo echa agua: con 1 minuto hay 50 L y con 2 minutos hay 80 L.', en: 'A tank already has 20 L. A tap pours water: after 1 minute there are 50 L and after 2 minutes there are 80 L.' },
     { es: 'los minutos', en: 'the minutes' }, { es: 'los litros que hay', en: 'the litres in the tank' },
@@ -331,9 +354,9 @@ export const BANCO = [
     { es: 'los años de Vera', en: 'Vera’s age' }, { es: 'los años que le faltan para tener 18', en: 'the years left until she is 18' },
     { es: 'Cuando sus años aumentan, los que le faltan disminuyen. En una proporcionalidad directa, los dos aumentan.', en: 'When her age goes up, the years left go down. In direct proportion, both go up.' }),
   B('envio', false,
-    { es: 'Una tienda cobra 5 € de envío. 2 camisetas cuestan 25 € con el envío y 4 camisetas cuestan 45 €.', en: 'A shop charges €5 for delivery. 2 T-shirts cost €25 with delivery and 4 T-shirts cost €45.' },
+    { es: 'Una tienda cobra 5,00 € de envío. 2 camisetas cuestan 25,00 € con el envío y 4 camisetas cuestan 45,00 €.', en: 'A shop charges €5.00 for delivery. 2 T-shirts cost €25.00 with delivery and 4 T-shirts cost €45.00.' },
     { es: 'el número de camisetas', en: 'the number of T-shirts' }, { es: 'el precio con el envío', en: 'the price with delivery' },
-    { es: '4 camisetas son el doble de 2, pero 45 € no es el doble de 25 € (serían 50 €).', en: '4 T-shirts is twice 2, but €45 is not twice €25 (that would be €50).' }),
+    { es: '4 camisetas son el doble de 2, pero 45,00 € no es el doble de 25,00 € (serían 50,00 €).', en: '4 T-shirts is twice 2, but €45.00 is not twice €25.00 (that would be €50.00).' }),
 ];
 export const generarDirectas = rng => rng.elegir(BANCO);
 export const claveDirectas = it => it.id;

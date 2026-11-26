@@ -8,8 +8,9 @@ import {
   CONTEXTOS, CTX_CONSTANTE, BANCO, generarEsProporcional, claveEsProporcional, respuestaEsProporcional, errorEsProporcional,
   generarCompleta, claveCompleta, valorHueco, unidadHueco, erroresDeCompleta, candidatosCompleta,
   generarConstante, claveConstante, solucionConstante, errorDeConstante, candidatosConstante,
-  generarDirectas, claveDirectas, ERRORES_PROPIOS, nombreError, dineroCelda, decimal, F,
+  generarDirectas, claveDirectas, ERRORES_PROPIOS, nombreError, dineroCelda, decimal, F, huellasDe,
 } from '../practicas/tabla-proporcional/logica.js';
+import { HUELLAS_RESERVADAS } from '../practicas/tabla-proporcional/reserva.js';
 import { TX, explicaEsProporcional, explicaCompleta, explicaConstante, explicaDirectas, preguntaDirectas, datoConstante, preguntaConstante } from '../practicas/tabla-proporcional/textos.js';
 
 const N = 3000;
@@ -78,7 +79,7 @@ test('ej. 2: cada hueco vale lo que dice la proporcionalidad y la columna de ref
     }
     // cotas
     assert.ok(it.cols.every(col => col.x / c.xMul <= c.umax));
-    if (it.ctx === 'receta') assert.ok(it.cols.every(col => col.y <= 1200));
+    if (it.ctx === 'receta') assert.ok(it.cols.every(col => col.y <= 1000));
     // lo que escribe un alumno bien se acepta, en los dos idiomas
     for (const idioma of ['es', 'en']) {
       const txt = it.huecos.map(h => {
@@ -149,4 +150,23 @@ test('textos: sin restos ni signos prohibidos, coma en español y punto en ingl�
   }
   for (const ej of Object.values(TX)) for (const idioma of ['es', 'en']) assert.doesNotMatch(sinHtml(ej.introduccion[idioma]), /×|%|inversa|inverse|constante/);
   assert.ok(Object.keys(ERRORES_PROPIOS).length > 0);
+});
+
+test('reserva: ningún ítem de los ej. 1-3 repite un caso de la hoja o del examen, y todos tienen huella', () => {
+  assert.equal(HUELLAS_RESERVADAS.size, 14);
+  for (const g of [generarEsProporcional, generarCompleta, generarConstante]) for (const it of lote(g, 31)) {
+    const hs = huellasDe(it);
+    if (g !== generarEsProporcional) assert.ok(hs.length > 0);
+    assert.ok(!hs.some(h => HUELLAS_RESERVADAS.has(h)), JSON.stringify(it));
+  }
+});
+
+test('textos: ni «÷» ni dinero sin dos decimales (es y en) en el banco y en las introducciones', () => {
+  const textos = [];
+  for (const b of BANCO) for (const k of ['cond', 'por']) textos.push(b[k].es, b[k].en);
+  for (const e of [TX.ej2, TX.ej3]) textos.push(e.introduccion.es, e.introduccion.en);
+  for (const x of textos) {
+    assert.ok(!x.includes('÷'), x);
+    assert.ok(!/(?<![,.\d])\d+[ \u00a0]€/.test(x) && !/€\d+(?![\d.])/.test(x) && !/€\d+\.\d(?!\d)/.test(x) && !/\d+,\d(?!\d)[ \u00a0]€/.test(x), x);
+  }
 });

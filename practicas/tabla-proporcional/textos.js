@@ -1,5 +1,5 @@
 // Práctica «Tablas de proporcionalidad»: textos propios, siempre { es, en }. Los comunes (Comprobar, Siguiente…)
-// llegan a `montar` en `api.t`. Reglas: «·» y «÷», nunca «×»; sin letras ni «constante»; coma en español y punto en
+// llegan a `montar` en `api.t`. Reglas: «·» y «:», nunca «×» ni «÷»; sin letras ni «constante»; coma en español y punto en
 // inglés; cada explicación habla de LOS NÚMEROS DE ESE ÍTEM.
 
 import { CONTEXTOS, CTX_CONSTANTE, dinero, dineroCelda, decimal, solucionConstante } from './logica.js';
@@ -43,8 +43,8 @@ const UNO = {
 const unidades = (ctx, col) => col.x / CONTEXTOS[ctx].xMul;
 const razonDe = (ctx, col) => col.y / unidades(ctx, col);
 
-/** «12 L ÷ 2 = 6 L» (para coche, el 2 son los «cientos de km»). */
-const cuentaRazon = (ctx, col, i) => `${fy(ctx, col.y, i)} ÷ ${unidades(ctx, col)} = ${fy(ctx, razonDe(ctx, col), i)}`;
+/** «12 L : 2 = 6 L» (para coche, el 2 son los «cientos de km»). */
+const cuentaRazon = (ctx, col, i) => `${fy(ctx, col.y, i)} : ${unidades(ctx, col)} = ${fy(ctx, razonDe(ctx, col), i)}`;
 
 // ─── Ejercicio 1: ¿es proporcional? ──────────────────────────────────────────────────────────────
 
@@ -74,15 +74,15 @@ export function explicaCompleta(it, { idioma = 'es' } = {}) {
   const nota = n => (cx.xMul > 1 ? t(i, ` (${n * cx.xMul} km son ${n} veces 100 km)`, ` (${n * cx.xMul} km is ${n} times 100 km)`) : '');
   const txtY = fy(ctx, cy.y, i), txtX = fx(ctx, cxh.x);
   const pasoY = `${rateTxt} · ${uy} = ${txtY}`;
-  const pasoX = `${fy(ctx, cxh.y, i)} ÷ ${rateTxt} = ${ux}${cx.xMul > 1 ? ` → ${ux} · 100 = ${txtX}` : ''}`;
+  const pasoX = `${fy(ctx, cxh.y, i)} : ${rateTxt} = ${ux}${cx.xMul > 1 ? ` → ${ux} · 100 = ${txtX}` : ''}`;
   return t(i,
-    `<ol class="pasos-ayuda"><li>Busca la columna con los dos números: ${fx(ctx, ref.x)} y ${fy(ctx, ref.y, i)}. ${uno} ${c(cuentaRazon(ctx, ref, i))}.</li>
-      <li>Casilla de arriba, con ${fx(ctx, cy.x)}${nota(uy)}: ${c(pasoY)}.</li>
-      <li>Casilla de abajo, con ${fy(ctx, cxh.y, i)}: ${c(pasoX)}.</li></ol>
+    `<ol class="pasos-ayuda"><li>Busca la columna con los dos números: ${fx(ctx, ref.x)} y ${fy(ctx, ref.y, i)}. ${uno} ${c(unidades(ctx, ref) === 1 ? fy(ctx, ref.y, i) : cuentaRazon(ctx, ref, i))}.</li>
+      <li>Casilla de abajo, con ${fx(ctx, cy.x)}${nota(uy)}: ${c(pasoY)}.</li>
+      <li>Casilla de arriba, con ${fy(ctx, cxh.y, i)}: ${c(pasoX)}.</li></ol>
       <p>La respuesta es ${txtY} y ${txtX}.</p>`,
-    `<ol class="pasos-ayuda"><li>Find the column with both numbers: ${fx(ctx, ref.x)} and ${fy(ctx, ref.y, i)}. ${uno} ${c(cuentaRazon(ctx, ref, i))}.</li>
-      <li>Top box, with ${fx(ctx, cy.x)}${nota(uy)}: ${c(pasoY)}.</li>
-      <li>Bottom box, with ${fy(ctx, cxh.y, i)}: ${c(pasoX)}.</li></ol>
+    `<ol class="pasos-ayuda"><li>Find the column with both numbers: ${fx(ctx, ref.x)} and ${fy(ctx, ref.y, i)}. ${uno} ${c(unidades(ctx, ref) === 1 ? fy(ctx, ref.y, i) : cuentaRazon(ctx, ref, i))}.</li>
+      <li>Bottom box, with ${fx(ctx, cy.x)}${nota(uy)}: ${c(pasoY)}.</li>
+      <li>Top box, with ${fy(ctx, cxh.y, i)}: ${c(pasoX)}.</li></ol>
       <p>The answer is ${txtY} and ${txtX}.</p>`);
 }
 
@@ -107,7 +107,7 @@ export const respuestaConstante = (it, i) => textoK(it, i);
 
 export function explicaConstante(it, { idioma = 'es' } = {}) {
   const i = idioma, cc = CTX_CONSTANTE[it.ctx], col = it.cols[0], u = col.x / (cc.xMul ?? 1);
-  const cuenta = `${yConstante(it, 0, i)} ÷ ${u} = ${textoK(it, i)}`;
+  const cuenta = `${yConstante(it, 0, i)} : ${u} = ${textoK(it, i)}`;
   const cada = cc.xMul ? t(i, ` ${col.x} km son ${u} veces 100 km.`, ` ${col.x} km is ${u} times 100 km.`) : '';
   return t(i,
     `Para saber lo que vale 1, se divide lo que cuestan o miden todos entre cuántos son.${cada} ${c(cuenta)}. La respuesta es ${textoK(it, i)}${cc.xMul ? ' cada 100 km' : ''}.`,
@@ -149,11 +149,11 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Busca la columna que tiene <strong>los dos números</strong> y calcula lo que vale <strong>1</strong>: se divide.</p>
-        <p>Ejemplo: 3 kg cuestan 6 €. Un kilo cuesta ${c('6 ÷ 3 = 2')} €. Entonces 5 kg cuestan ${c('2 · 5 = 10')} €, y si pagas 8 € compras ${c('8 ÷ 2 = 4')} kg.</p>
+        <p>Ejemplo: 3 kg cuestan 6,00 €. Un kilo cuesta ${c('6,00 € : 3 = 2,00 €')}. Entonces 5 kg cuestan ${c('2,00 € · 5 = 10,00 €')}, y si pagas 8,00 € compras ${c('8,00 € : 2,00 € = 4')} kg.</p>
         <p>Escribe los números y pulsa <strong>Comprobar</strong>.</p>`,
       en: `<h2>How it works</h2>
         <p>Find the column that has <strong>both numbers</strong> and work out what <strong>1</strong> is worth: you divide.</p>
-        <p>Example: 3 kg cost €6. One kilo costs ${c('6 ÷ 3 = 2')} €. So 5 kg cost ${c('2 · 5 = 10')} €, and if you pay €8 you buy ${c('8 ÷ 2 = 4')} kg.</p>
+        <p>Example: 3 kg cost €6.00. One kilo costs ${c('€6.00 : 3 = €2.00')}. So 5 kg cost ${c('€2.00 · 5 = €10.00')}, and if you pay €8.00 you buy ${c('€8.00 : €2.00 = 4')} kg.</p>
         <p>Type the numbers and press <strong>Check</strong>.</p>`,
     },
     instruccion: { es: 'Completa la tabla de proporcionalidad.', en: 'Complete the proportionality table.' },
@@ -165,10 +165,10 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Para saber lo que vale <strong>1</strong>, se <strong>divide</strong> el total entre cuántos son.</p>
-        <p>Ejemplo: 4 cuadernos cuestan 10 €. Un cuaderno cuesta ${c('10 ÷ 4 = 2,50')} €. Puedes escribirlo como 2,5 o 2,50.</p>`,
+        <p>Ejemplo: 4 cuadernos cuestan 10,00 €. Un cuaderno cuesta ${c('10,00 € : 4 = 2,50 €')}. Puedes escribirlo como 2,5 o 2,50.</p>`,
       en: `<h2>How it works</h2>
         <p>To find what <strong>1</strong> is worth, <strong>divide</strong> the total by how many there are.</p>
-        <p>Example: 4 notebooks cost €10. One notebook costs ${c('10 ÷ 4 = 2.50')} €. You can write it as 2.5 or 2.50.</p>`,
+        <p>Example: 4 notebooks cost €10.00. One notebook costs ${c('€10.00 : 4 = €2.50')}. You can write it as 2.5 or 2.50.</p>`,
     },
     solucion: bi((i, it) => explicaConstante(it, { idioma: i })),
   },

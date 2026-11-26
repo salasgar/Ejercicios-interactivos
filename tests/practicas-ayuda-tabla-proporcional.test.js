@@ -24,7 +24,7 @@ test('ej. 1: la explicación dice la respuesta y la cuenta del par doble/triple'
     if (!it.si) assert.ok(x.includes(`${m} · ${fy(it.ctx, it.cols[i].y, idioma)} = ${fy(it.ctx, m * it.cols[i].y, idioma)}`), x);
     if (it.si) {
       const col = it.cols[0], u = col.x / CONTEXTOS[it.ctx].xMul;
-      assert.ok(x.includes(`${fy(it.ctx, col.y, idioma)} ÷ ${u} = ${fy(it.ctx, col.y / u, idioma)}`), x);
+      assert.ok(x.includes(`${fy(it.ctx, col.y, idioma)} : ${u} = ${fy(it.ctx, col.y / u, idioma)}`), x);
     }
   }
 });
@@ -40,7 +40,13 @@ test('ej. 2: la explicación trae los dos huecos con su unidad', () => {
     }
     assert.ok(x.includes(idioma === 'es' ? 'La respuesta es' : 'The answer is'));
     const ref = it.cols[it.ref], u = ref.x / CONTEXTOS[it.ctx].xMul;
-    assert.ok(x.includes(`${fy(it.ctx, ref.y, idioma)} ÷ ${u} = ${fy(it.ctx, ref.y / u, idioma)}`), x);
+    if (u === 1) assert.ok(!x.includes(`: 1 =`), x);
+    else assert.ok(x.includes(`${fy(it.ctx, ref.y, idioma)} : ${u} = ${fy(it.ctx, ref.y / u, idioma)}`), x);
+    // arriba, la fila de x; abajo, la de y
+    const hy = it.huecos.find(h => h.que === 'y'), hx = it.huecos.find(h => h.que === 'x');
+    const [ab, ar] = idioma === 'es' ? ['Casilla de abajo, con ', 'Casilla de arriba, con '] : ['Bottom box, with ', 'Top box, with '];
+    assert.ok(x.includes(ab + fx(it.ctx, it.cols[hy.col].x)), x);
+    assert.ok(x.includes(ar + fy(it.ctx, it.cols[hx.col].y, idioma)), x);
   }
 });
 
@@ -50,7 +56,7 @@ test('ej. 3: la explicación termina en la solución, en el formato del idioma',
     const c = CTX_CONSTANTE[it.ctx], sol = solucionConstante(it);
     const esperado = c.din ? dinero(it.k, idioma) : `${decimal(sol, idioma)} ${c.unidadY}`;
     assert.ok(x.includes(`${idioma === 'es' ? 'La respuesta es' : 'The answer is'} ${esperado}`), x);
-    assert.ok(x.includes(` ÷ ${it.cols[0].x / (c.xMul ?? 1)} = ${esperado}`), x);
+    assert.ok(x.includes(` : ${it.cols[0].x / (c.xMul ?? 1)} = ${esperado}`), x);
     if (c.din) assert.ok(x.includes(dineroCelda(it.k, idioma)));
   }
 });
