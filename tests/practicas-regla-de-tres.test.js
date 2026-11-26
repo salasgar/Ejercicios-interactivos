@@ -12,6 +12,7 @@ import { fraccion, comparar } from '../practicas/_comun/fracciones.js';
 import { dentroDeCota, aCantidad, cantidad, mismoValor } from '../practicas/_comun/proporcion.js';
 import * as L from '../practicas/regla-de-tres/logica.js';
 import * as X from '../practicas/regla-de-tres/textos.js';
+import { HUELLAS_RESERVADAS } from '../practicas/regla-de-tres/reserva.js';
 
 const IDIOMAS = ['es', 'en'];
 const N = 3000;
@@ -135,4 +136,14 @@ test('regla-de-tres: los números de cada contexto son creíbles (cotas propias 
     assert.ok(ctx.datos.a && ctx.datos.b && ctx.datos.c && ctx.datos.d, id);
     assert.ok(ctx.datos.d.cota, `${id} sin cota en d`);
   }
+});
+
+test('regla-de-tres: la reserva (hoja y examen de la sesión 3) tiene 54 huellas y ningún ítem coincide con ella', () => {
+  assert.equal(HUELLAS_RESERVADAS.size, 54);
+  for (const [def, semilla] of [[ej1, 11], [ej2, 12], [ej3, 13], [ej4, 14]]) {
+    for (const it of items(def, semilla)) assert.ok(!L.esReservado(it), `reservado: ${JSON.stringify(it)}`);
+  }
+  const arroz = { ctx: 'receta-leche', a: '4/1', b: '300/1', c: '10/1', d: '750/1', k: '75/1' };
+  assert.ok(L.esReservado(arroz), 'el caso «4 personas, 300 → 10» de la hoja está reservado aunque cambie de contexto');
+  assert.ok(!L.esReservado({ ...arroz, c: '11/1' }), 'otro caso no');
 });

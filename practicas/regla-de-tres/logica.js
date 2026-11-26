@@ -11,6 +11,8 @@ import {
   aTexto, numeroATexto, deTexto,
 } from '../_comun/proporcion.js';
 import { fraccion, comparar } from '../_comun/fracciones.js';
+import { huellaCaso } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 // ─── Los datos de cada contexto que no están en el banco ───────────────────────
 
@@ -107,7 +109,7 @@ const dist = (candidatos, correcta) => distractores(candidatos, correcta);
 
 // ─── Ejercicio 1: ¿cuánto cuesta 1? ────────────────────────────────────────────
 
-export function generarUnidad(rng) { return { n: 1, ...base(rng, IDS_UNIDAD) }; }
+function crearUnidad(rng) { return { n: 1, ...base(rng, IDS_UNIDAD) }; }
 
 /** Lo que vale 1 (b : a), con la unidad de b. */
 export const valorDeUno = item => cantidad(val(item.k), Q(item, 'b').unidad);
@@ -143,7 +145,7 @@ export function errorCasilla(item, escrito) {
  *   cruzada          c ⟶ b / a ⟶ x     x = a · b : c     (la inversa, aplicada a una directa)
  *   suma             a ⟶ b / c ⟶ x     x = b + c − a     (sumar en vez de multiplicar)
  */
-export function generarPlanteamiento(rng) {
+function crearPlanteamiento(rng) {
   for (let i = 0; i < 200; i++) {
     const item = { n: 2, ...base(rng, IDS) };
     const A = Q(item, 'a'), B = Q(item, 'b'), C = Q(item, 'c');
@@ -172,7 +174,7 @@ export function valorDelPlanteamiento(item, tipo) {
 
 // ─── Ejercicio 3: resuelve y contesta ──────────────────────────────────────────
 
-export function generarContesta(rng) {
+function crearContesta(rng) {
   const sentido = rng.azar() < 0.5 ? 'directa' : 'inversa';
   const item = { n: 3, sentido, ...base(rng, IDS) };
   return { ...item, orden: rng.barajar(['A', 'B', 'K']) };
@@ -203,7 +205,7 @@ const DIEZ = fraccion(10), CIEN = fraccion(100);
  *   unidad-equivocada  el valor bueno con la unidad del otro lado (3 kg en vez de 3 €), solo si ese valor es creíble en esa unidad
  *   fuera-de-cota      el valor bueno por 10 o por 100, con c > a (así sigue el sentido bueno y solo se sale de lo creíble)
  */
-export function generarSentido(rng) {
+function crearSentido(rng) {
   const motivo = rng.elegir(['ok', 'ok', 'ok', 'va-al-reves', 'va-al-reves', 'unidad-equivocada', 'unidad-equivocada', 'fuera-de-cota', 'fuera-de-cota']);
   for (let i = 0; i < 2000; i++) {
     const item = { n: 4, motivo, ...base(rng, IDS) };
@@ -240,3 +242,21 @@ export function respuestaDada(item, idioma) {
 
 /** ¿Lo dado por bueno es el valor de verdad (misma magnitud)? Lo dice el motivo. */
 export const esCorrecta = item => item.motivo === 'ok';
+
+// ─── Casos reservados (la hoja y el examen de la sesión 3) ─────────────────────
+
+/** El caso «a ⟶ b; c ⟶ ?» (al revés, «b ⟶ a; d ⟶ ?») por valor, tal como se escribe y en la unidad base. */
+export function huellasDe(it) {
+  const t = it.sentido === 'inversa' ? ['b', 'a', 'd'] : ['a', 'b', 'c'];
+  return [huellaCaso('directa', t.map(k => Q(it, k).valor)), huellaCaso('directa', t.map(k => Q(it, k).valorBase()))];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
+
+const sinReservados = crear => rng => {
+  for (let i = 0; i < 200; i++) { const it = crear(rng); if (!esReservado(it)) return it; }
+  throw new Error('regla-de-tres: todo reservado');
+};
+export const generarUnidad = sinReservados(crearUnidad);
+export const generarPlanteamiento = sinReservados(crearPlanteamiento);
+export const generarContesta = sinReservados(crearContesta);
+export const generarSentido = sinReservados(crearSentido);
