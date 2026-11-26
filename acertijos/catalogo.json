@@ -104,6 +104,17 @@
   "solucion": "SOLUCIÓN AL ACERTIJO DEL CUCHILLO\n\nCuando el número de personas que queden sea una potencia de 2, sobrevivirá quien tenga el cuchillo en ese momento, ya que, si empezamos a contar a partir de esa persona, morirán aquellos que ocupan lugar par, dividiéndose el nº total de personas entre dos, de manera que tras cada vuelta el número de personas que quedarán seguirá siendo una potencia de 2.\nPor lo tanto, solamente nos queda calcular quién tendrá el cuchillo cuando el número de personas que queden vivas sea una potencia de 2.\nLas potencias de 2 son: 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, etc...\n\n En el caso en que empiecen 41 personas, dado que 41 – 32 = 9, tendrán que morir 9 personas para que el número de personas que queden vivas sea 32 (la primera potencia de 2 que encontramos partiendo desde 41 en orden descendente).\nComo en la primera ronda solamente mueren las personas que ocupan lugares pares (morirán el 2, el 4, el 6, etc...) el noveno en morir será el que ocupe el lugar 18º (ya que 9 · 2 = 18) y le pasarán el cuchillo al siguiente, el 19º. En ese momento quedarán 32 personas vivas (una potencia de 2) y el cuchillo lo tendrá el 19º, que será quien finalmente se salve.\n\n En el caso en que empiecen 500 personas, tenemos que buscar cuál es la potencia de 2 que se acerca más a 500 sin pasarse de 500, que es 256. Dado que 500 – 256 = 244, tendrán que morir 244 personas para que el número de personas que queden vivas sea una potencia de 2.\nComo en la primera ronda solamente mueren las personas que ocupan lugares pares (morirán el 2, el 4, el 6, etc...) el 244º en morir será el que ocupe el lugar 488º (ya que 244 · 2 = 488) y le pasarán el cuchillo al siguiente, el 489. En ese momento quedarán 256 personas vivas (una potencia de 2) y el cuchillo lo tendrá el 489º, que será quien finalmente se salve."
  },
  {
+  "id": "09-en",
+  "titulo": "Monks in the great abbey",
+  "tipo": "L",
+  "nivel": "★★★",
+  "idioma": "en",
+  "orden": 11.5,
+  "unidad": 1,
+  "enunciado": "Riddle 2\n\nMonks in the great abbey\n\nA long, long time ago, in a far, far country, there was a very wealthy city with two abbeys. One of them was small and humble, devoted to Keptsá, the god of paths and good deeds. The other one was huge and majestic, on top of a mountain, devoted to Tzunh, the god of rain and wealth.\n\nOne morning a terrified messenger came to Tzunh abbey, sent from the little Keptsá abbey. He brought terrible news: one of the monks, while deciphering ancient sacred books, had realized that all the monks of Tzunh abbey were about to be possessed that day by the wicked god Áehum, the god of resentment and envy, and that this would end with the destruction of the city. The 500 monks of the great abbey should kill themselves as soon as possible to avoid the outcome of that horrible prophecy.\n\nBecause they lacked courage and had only one dagger, they decided to stand in a great circle around the abbey, clockwise, and the first monk would take the dagger. He would kill the first living monk to his left and pass the dagger to the next one. That one would do the same with the first living monk to his left, and so on until only one was left. That last one would have to kill himself.\n\nHowever, one of the monks doubted the truth of the prophecy. Maybe it was just a trick made up by the monks of the small abbey to take over the majestic and wealthy one. But if he tried to convince the others, they would kill him, since they would think he was already possessed. Which position should he take in order to be the last one alive, and therefore survive?",
+  "solucion": "Cuando quedan 2^k personas, sobrevive la que tiene la daga en ese momento: tras cada vuelta mueren las de lugar par y siguen quedando 2^(k−1). Con 500 monjes, la mayor potencia de 2 que no se pasa de 500 es 256. Tienen que morir 500 − 256 = 244 monjes; el 244.º en morir es el que ocupa el lugar 2 · 244 = 488, y la daga pasa al 489. Con 256 vivos, la daga la tiene el 489: el monje debe colocarse en el puesto 489."
+ },
+ {
   "id": "10a",
   "titulo": "¿Me regalas una oveja?",
   "enunciado": "Dos pastores hablaban:\n\n- ¿Por qué no me das una de tus ovejas, así tendremos igual cantidad?\n\nA lo que su amigo le responde:\n\n- Mejor dame una de las tuyas, así yo tendré el doble de ovejas que tú.\n\n¿Cuántas ovejas tenía cada uno?",
@@ -113,6 +124,17 @@
   "orden": 12,
   "unidad": 6,
   "solucion": "El primer pastor tiene 5 ovejas y el segundo, 7.\nSi el segundo le da una oveja al primero, ambos tendrán 6 ovejas.\nSi el primero le da una oveja al segundo, el primero tendrá 4 y el segundo tendrá 8 (el doble)."
+ },
+ {
+  "id": "10a-en",
+  "titulo": "Is this sheep yours?",
+  "tipo": "N",
+  "nivel": "★★",
+  "idioma": "en",
+  "orden": 12.5,
+  "unidad": 6,
+  "enunciado": "Two shepherds were talking to each other:\n\n- Why don't you give me one of your sheep, so we'll have the same number of them?\n\nBut the other shepherd answered:\n\n- No. Better give me one of yours, so I'll have twice as many sheep as you do.\n\nHow many sheep did each of them have?",
+  "solucion": "El primer pastor tiene 5 ovejas y el segundo, 7.\nSi el segundo le da una oveja al primero, ambos tendrán 6.\nSi el primero le da una oveja al segundo, el primero tendrá 4 y el segundo 8 (el doble)."
  },
  {
   "id": "10b",
@@ -599,11 +621,12 @@
  {
   "id": "camaleones",
   "titulo": "Camaleones (vídeo)",
-  "enunciado": "Mira el vídeo y páralo cuando termine de plantear el acertijo: intenta resolverlo antes de ver la solución. (En inglés.)",
+  "enunciado": "Un museo tiene un conjunto raro de camaleones: 13 azules, 15 rojos y 17 verdes. Cuando se encuentran dos camaleones de distinto color, los dos cambian al tercer color. Por ejemplo, si se encuentran uno azul y uno rojo, los dos se vuelven verdes; si se encuentran uno rojo y uno verde, los dos se vuelven azules; y si se encuentran uno azul y uno verde, los dos se vuelven rojos. El museo nunca añade ni quita camaleones.\n\n¿Es posible que, a base de encontrarse, todos los camaleones acaben del mismo color? Si es posible, ¿cómo? Si no, ¿por qué no?\n\nSi quieres, mira el vídeo (en inglés); páralo cuando termine de plantear el acertijo e intenta resolverlo antes de ver la solución.",
   "tipo": "L",
   "nivel": "★★★",
   "idioma": "es",
   "orden": 57,
+  "solucion": "No es posible. Mira cuánto sobra al dividir entre 3 el número de camaleones de cada color: 13 → 1, 15 → 0, 17 → 2 (los tres restos son distintos). En cada encuentro, dos colores pierden un camaleón y el tercero gana dos: cada número cambia en −1, −1 y +2, que es lo mismo que sumar 2 módulo 3, así que los tres restos cambian a la vez y siguen siendo distintos. Para que todos fueran del mismo color, dos de los números tendrían que ser 0, es decir, con el mismo resto. Eso nunca ocurre.",
   "enlaces": [
    {
     "texto": "Vídeo: «How To Solve The Chameleon Riddle» (MindYourDecisions)",
