@@ -153,11 +153,29 @@ test('textos: sin restos ni signos prohibidos, coma en español y punto en ingl�
 });
 
 test('reserva: ningún ítem de los ej. 1-3 repite un caso de la hoja o del examen, y todos tienen huella', () => {
-  assert.equal(HUELLAS_RESERVADAS.size, 14);
+  assert.equal(HUELLAS_RESERVADAS.size, 27);
   for (const g of [generarEsProporcional, generarCompleta, generarConstante]) for (const it of lote(g, 31)) {
     const hs = huellasDe(it);
     if (g !== generarEsProporcional) assert.ok(hs.length > 0);
     assert.ok(!hs.some(h => HUELLAS_RESERVADAS.has(h)), JSON.stringify(it));
+  }
+});
+
+test('reserva: 3000 ítems por ejercicio sin ningún caso de la hoja 2 ni del examen 2', () => {
+  for (const [g, semilla] of [[generarEsProporcional, 51], [generarCompleta, 52], [generarConstante, 53]]) {
+    const rng = crearRng(semilla);
+    for (let n = 0; n < 3000; n++) {
+      const it = g(rng);
+      assert.ok(!huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h)), JSON.stringify(it));
+    }
+  }
+});
+
+test('ej. 1: ninguna casilla pasa de yMax del contexto (3000 ítems)', () => {
+  const rng = crearRng(41);
+  for (let n = 0; n < 3000; n++) {
+    const it = generarEsProporcional(rng), c = CONTEXTOS[it.ctx];
+    if (c.yMax) assert.ok(it.cols.every(col => col.y <= c.yMax), JSON.stringify(it));
   }
 });
 

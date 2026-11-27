@@ -142,7 +142,7 @@ const crearEsProporcional = rng => {
       const j = us.indexOf(m * a);
       let d = c.paso * rng.entero(1, 3);
       if (rng.azar() < 0.5) d = -d;
-      if (ys[j] + d <= 0) d = -d;
+      if (ys[j] + d <= 0 || (c.yMax && ys[j] + d > c.yMax)) d = -d;
       ys[j] += d;
     }
   }
