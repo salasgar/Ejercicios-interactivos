@@ -192,6 +192,20 @@ test('textos: sin «×», porcentajes ni «undefined»; razón y división nunca
   }
 });
 
+test('ej. 4: la explicación no repite la regla en negrita y el cierre habla con los números del ítem', () => {
+  const vistos = new Set();
+  for (const it of lote(generarCaza, 21)) for (const idioma of ['es', 'en']) {
+    const h = explicaCaza(it, { idioma }), m = h.match(/<strong>(.*?)<\/strong>/);
+    vistos.add(it.error);
+    const texto = sinHtml(h.replace(/<strong>.*?<\/strong>/, ''));
+    if (m) assert.ok(!texto.includes(sinHtml(m[1]).replace(/\.$/, '')), `${idioma}: regla repetida: ${sinHtml(h)}`);
+    const frases = sinHtml(h).split(/(?<=\.)\s+/).filter(f => f.length > 15);
+    assert.equal(new Set(frases).size, frases.length, `frase repetida: ${sinHtml(h)}`);
+    if (it.error === 'sumar-en-vez-de-multiplicar') assert.ok(/\d/.test(texto.split('\n')[0]) && texto.includes(`${it.a} ·`), texto);
+  }
+  assert.ok(vistos.has('sumar-en-vez-de-multiplicar') && vistos.has('dividir-entre-dos') && vistos.has('partes-multiplicadas'));
+});
+
 test('el enunciado dice la razón y proporcional a qué, en los dos idiomas', () => {
   for (const it of lote(generarCuenta, 18).slice(0, 600)) {
     const es = enunciadoReparto(it, 'es'), en = enunciadoReparto(it, 'en');

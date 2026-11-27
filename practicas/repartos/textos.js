@@ -208,10 +208,27 @@ const REGLAS4 = {
   intercambiadas: { es: 'A cada uno le tocan las partes que dice la razón, en su orden.', en: 'Each one gets the parts the ratio gives them, in that order.' },
 };
 
+/** Lo que pasó en el ej. 4, sin repetir la regla que va en negrita justo encima. */
+function quePaso4(id, it, i) {
+  const { a, b, u } = it, S = a + b, F = v => fv(it.ctx, v, i), A = cap(dueno(it, 0, i));
+  switch (id) {
+    case 'partes-multiplicadas':
+      return t(i, `${c(`${a} + ${b} = ${S}`)} partes, no ${c(`${a} · ${b} = ${a * b}`)}.`, `${c(`${a} + ${b} = ${S}`)} parts, not ${c(`${a} · ${b} = ${a * b}`)}.`);
+    case 'dividir-entre-dos':
+      return t(i, `Son ${S} partes, no 2.`, `There are ${S} parts, not 2.`);
+    case 'dividir-entre-un-termino':
+      return t(i, `Son ${S} partes: no se divide entre ${a} ni entre ${b}.`, `There are ${S} parts: you do not divide by ${a} or by ${b}.`);
+    case 'sumar-en-vez-de-multiplicar':
+      return t(i, `${A}: ${c(`${a} · ${F(u)} = ${F(a * u)}`)}, no ${c(`${F(u)} + ${a}`)}.`, `${A}: ${c(`${a} · ${F(u)} = ${F(a * u)}`)}, not ${c(`${F(u)} + ${a}`)}.`);
+    default:
+      return quePaso(id, it, i);
+  }
+}
+
 export function explicaCaza(it, { idioma = 'es' } = {}) {
   const i = idioma, mala = lineasCaza(it, i)[it.mala], bien = lineasBien(it, i), F = v => fv(it.ctx, v, i);
   return parrafos([
-    `${errorEnLinea(it.mala, i)} <span class="linea-mala">${c(mala)}</span><br>${NOMBRE_ERROR[it.error][i]}.${reglaEnNegrita(REGLAS4[it.error][i])}${quePaso(it.error, it, i)}`,
+    `${errorEnLinea(it.mala, i)} <span class="linea-mala">${c(mala)}</span><br>${NOMBRE_ERROR[it.error][i]}.${reglaEnNegrita(REGLAS4[it.error][i])}${quePaso4(it.error, it, i)}`,
     `${LO_CORRECTO[i]}<br>${bien.map(l => `<span class="linea-mala">${c(l)}</span>`).join('<br>')}`,
     t(i, `Comprobación: ${c(`${F(it.a * it.u)} + ${F(it.b * it.u)} = ${F(it.T)}`)}.`, `Check: ${c(`${F(it.a * it.u)} + ${F(it.b * it.u)} = ${F(it.T)}`)}.`),
   ]);
