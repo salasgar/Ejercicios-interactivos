@@ -12,7 +12,7 @@ const L = (es, en) => ({ es, en });
 
 /** 5 con su unidad: «5 kg», «8 €» (en inglés, «€8»). */
 export function con(num, u, idioma) {
-  const s = n(num, idioma);
+  const s = n(num, idioma, u === '€' ? 2 : null);
   return u === '€' ? (idioma === 'en' ? `€${s}` : `${s}${NBSP}€`) : `${s}${NBSP}${u}`;
 }
 
@@ -184,9 +184,9 @@ export function sentidoTexto(item, idioma) {
       ? `De ${A} a ${C}: ${M}. Con ${M} sale ${O} (${ub}): es directa.`
       : `De ${A} a ${C}: ${M}. Con ${M} sale ${O} (${ub}): es inversa.`;
   }
-  return item.sentido === 'directa'
-    ? `From ${A} to ${C}: ${M}. With ${M} the result (${ub}) is ${O}: it is direct.`
-    : `From ${A} to ${C}: ${M}. With ${M} the result (${ub}) is ${O}: it is inverse.`;
+  const [up, down] = ['goes up', 'goes down'];
+  const m = mas ? up : down, o = (item.sentido === 'directa') === mas ? up : down;
+  return `From ${A} to ${C}: it ${m}. So the result (${ub}) ${o}: it is ${item.sentido === 'directa' ? 'direct' : 'inverse'}.`;
 }
 
 const FALLO = {
@@ -207,7 +207,7 @@ export function explicaPlan(item, idioma) {
   const cuenta = cuentaTexto(item, 'buena', idioma);
   const fin = idioma === 'es' ? `La respuesta es la cuenta <strong>${cuenta}</strong>.` : `The answer is the working <strong>${cuenta}</strong>.`;
   const reg = idioma === 'es'
-    ? (item.sentido === 'directa' ? 'Directa: multiplicas lo del lado de lo que buscas y divides entre su pareja.' : 'Inversa: multiplicas los dos números de arriba y divides entre el nuevo.')
+    ? (item.sentido === 'directa' ? 'Directa: multiplicas lo del lado de lo que buscas y divides entre su pareja.' : 'Inversa: multiplicas los dos datos que conoces y divides entre el nuevo.')
     : (item.sentido === 'directa' ? 'Direct: multiply and divide the numbers across.' : 'Inverse: multiply the two known numbers and divide by the new one.');
   return `<ol class="pasos-ayuda"><li>${sentidoTexto(item, idioma)}</li><li>${reg}</li><li>${cuentaHtml(`${cuenta} = ${resultadoTexto(item, idioma)}`)}</li></ol><p>${fin}</p>`;
 }
@@ -259,7 +259,7 @@ export const TX = {
     introduccion: L(
       `<h2>Cómo se hace</h2>
        <p>Primero mira si el problema es <strong>directo</strong> (con más, sale más) o <strong>inverso</strong> (con más, sale menos). Después elige la cuenta:</p>
-       <ul><li><strong>Directo</strong>: x = lo que ya sabes de un lado · el número nuevo : su pareja.</li><li><strong>Inverso</strong>: x = los dos números de arriba multiplicados : el número nuevo.</li></ul>
+       <ul><li><strong>Directo</strong>: x = lo que ya sabes de un lado · el número nuevo : su pareja.</li><li><strong>Inverso</strong>: x = los dos datos que conoces multiplicados : el número nuevo.</li></ul>
        <p>Por ejemplo: 6 obreros tardan 10 días. ¿Y 4 obreros? Con menos obreros se tarda más: es inverso. La cuenta es <strong>x = 6 · 10 : 4</strong> (son 15 días).</p>
        <p>Aquí <strong>no calculas</strong> el resultado: solo eliges la cuenta. Las opciones enseñan la cuenta, no el resultado.</p>`,
       `<h2>How it works</h2>

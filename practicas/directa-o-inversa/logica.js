@@ -4,7 +4,8 @@
 //   3. ¿Qué planteamiento?      un problema de un paso, directo o inverso, y cuatro cuentas, solo una buena     (U7-2C-01, 2C-03)
 // Los ítems son JSON plano (el contador los guarda con cada fallo): las cantidades, como «num/den».
 
-import { CONTEXTOS, generarDatos, cantidad } from '../_comun/proporcion.js';
+import { CONTEXTOS, generarDatos, cantidad, huellaCaso } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 import { fraccion } from '../_comun/fracciones.js';
 
 export const CLASES = Object.freeze(['directa', 'inversa', 'ninguna']);
@@ -67,21 +68,21 @@ export const BANCO = Object.freeze([
     L('la edad de la niña', 'the girl’s age'), L('su altura', 'her height'), L('años', 'years'), L('cm', 'cm'), [5, 110, 10, 140]),
   S('n-paginas', 'ninguna', L('Un libro tiene 200 páginas.', 'A book has 200 pages.'),
     L('las páginas que has leído', 'the pages you have read'), L('las páginas que te quedan', 'the pages you have left'), L('páginas', 'pages'), L('páginas', 'pages'), [50, 150, 100, 100]),
-  S('n-taxi', 'ninguna', L('Un taxi cobra 3 € por empezar y 1 € por cada kilómetro.', 'A taxi charges €3 to start and €1 for every kilometre.'),
+  S('n-taxi', 'ninguna', L('Un taxi cobra 3,00 € por empezar y 1,00 € por cada kilómetro.', 'A taxi charges €3.00 to start and €1.00 for every kilometre.'),
     L('los kilómetros del viaje', 'the kilometres of the journey'), L('lo que se paga', 'what you pay'), L('km', 'km'), L('€', '€'), [2, 5, 4, 7]),
-  S('n-gastado', 'ninguna', L('Tienes 50 € y los gastas en una tienda.', 'You have €50 and you spend it in a shop.'),
+  S('n-gastado', 'ninguna', L('Tienes 50,00 € y los gastas en una tienda.', 'You have €50.00 and you spend it in a shop.'),
     L('el dinero que gastas', 'the money you spend'), L('el dinero que te queda', 'the money you have left'), L('€', '€'), L('€', '€'), [10, 40, 20, 30]),
   S('n-madre', 'ninguna', L('Una madre tiene 30 años más que su hija.', 'A mother is 30 years older than her daughter.'),
     L('la edad de la hija', 'the daughter’s age'), L('la edad de la madre', 'the mother’s age'), L('años', 'years'), L('años', 'years'), [5, 35, 10, 40]),
   S('n-peso', 'ninguna', L('Un chico crece y engorda con los años.', 'A boy grows and gets heavier as the years go by.'),
     L('la edad del chico', 'the boy’s age'), L('su peso', 'his weight'), L('años', 'years'), L('kg', 'kg'), [6, 22, 12, 40]),
-  S('n-tarifa', 'ninguna', L('Una compañía cobra 20 € al mes por hablar todo lo que quieras.', 'A phone company charges €20 a month for as many calls as you want.'),
+  S('n-tarifa', 'ninguna', L('Una compañía cobra 20,00 € al mes por hablar todo lo que quieras.', 'A phone company charges €20.00 a month for as many calls as you want.'),
     L('los minutos que hablas', 'the minutes you talk'), L('lo que pagas', 'what you pay'), L('min', 'min'), L('€', '€'), [100, 20, 200, 20]),
   S('n-temperatura', 'ninguna', L('Un día de verano, a medida que avanza la mañana, sube la temperatura.', 'On a summer day, the temperature goes up as the morning goes on.'),
     L('la hora del día', 'the time of day'), L('la temperatura', 'the temperature'), L('h', 'h'), L('°C', '°C'), [6, 15, 12, 28]),
   S('n-banera', 'ninguna', L('Una bañera tiene 50 L de agua y se llena con un grifo que echa 10 L cada minuto.', 'A bath has 50 L of water and a tap that gives 10 L every minute fills it.'),
     L('los minutos que está abierto el grifo', 'the minutes the tap is open'), L('los litros que hay en la bañera', 'the litres in the bath'), L('min', 'min'), L('L', 'L'), [5, 100, 10, 150]),
-  S('n-gimnasio', 'ninguna', L('Un gimnasio cobra 10 € de matrícula y 5 € por cada mes.', 'A gym charges €10 to join and €5 for every month.'),
+  S('n-gimnasio', 'ninguna', L('Un gimnasio cobra 10,00 € de matrícula y 5,00 € por cada mes.', 'A gym charges €10.00 to join and €5.00 for every month.'),
     L('los meses que vas', 'the months you go'), L('lo que pagas en total', 'what you pay in total'), L('meses', 'months'), L('€', '€'), [2, 20, 4, 30]),
   S('n-vela', 'ninguna', L('Una vela mide 30 cm y se gasta 2 cm cada hora.', 'A candle is 30 cm long and burns 2 cm every hour.'),
     L('las horas que lleva encendida', 'the hours it has been lit'), L('lo que mide la vela', 'the length of the candle'), L('h', 'h'), L('cm', 'cm'), [3, 24, 6, 18]),
@@ -127,7 +128,7 @@ function columnasX(rng, m, ncols, candidatos) {
   return xs.length === ncols ? xs.sort((p, q) => p - q) : null;
 }
 
-export function generarTabla(rng) {
+function crearTabla(rng) {
   const clase = rng.elegir(CLASES);
   const subtipo = clase === 'ninguna' ? rng.elegir(['suma', 'resta', 'casilla']) : null;
   for (let i = 0; i < 500; i++) {
@@ -193,7 +194,7 @@ export function valorDe(item, tipo) {
   }
 }
 
-export function generarPlanteamiento(rng) {
+function crearPlanteamiento(rng) {
   for (let i = 0; i < 500; i++) {
     const sentido = rng.azar() < 0.5 ? 'directa' : 'inversa';
     const ctx = ctxDe(rng.elegir(sentido === 'directa' ? IDS_DIRECTA : IDS_INVERSA));
@@ -218,3 +219,22 @@ export const unidadDe = (item, clave, idioma, uno = false) => {
 };
 
 export const Q = (item, clave) => cantidad(val(item[clave]), ctxDe(item.ctx).datos[clave].unidad ?? null);
+
+// ─── Casos reservados (la hoja 2 y el examen 2 de la unidad 7) ─────────────────
+
+const subconj = (xs, k) => k === 0 ? [[]] : xs.flatMap((x, i) => subconj(xs.slice(i + 1), k - 1).map(s => [x, ...s]));
+const hColumnas = cols => huellaCaso('columnas', [...cols].sort((p, q) => p[0] - q[0]).flat().map(v => fraccion(v, 1)));
+
+export function huellasDe(it) {
+  if (it.n === 2) return [2, 3].flatMap(k => subconj(it.xs.map((x, i) => [x, it.ys[i]]), k).map(hColumnas));
+  if (it.n === 3) return [huellaCaso(it.sentido, [val(it.a), val(it.b), val(it.c)])];
+  return [];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
+
+const sinReservados = crear => rng => {
+  for (let i = 0; i < 200; i++) { const it = crear(rng); if (!esReservado(it)) return it; }
+  throw new Error('directa-o-inversa: todo reservado');
+};
+export const generarTabla = sinReservados(crearTabla);
+export const generarPlanteamiento = sinReservados(crearPlanteamiento);

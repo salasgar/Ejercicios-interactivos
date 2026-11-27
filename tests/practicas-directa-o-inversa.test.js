@@ -132,3 +132,20 @@ test('ej. 3: la cuenta buena da el resultado por una segunda vía', () => {
     assert.ok(esperado.simplificar().equals(L.valorDe(item, 'buena')), JSON.stringify(item));
   }
 });
+
+test('reserva: ningún ítem de 3000 de los ej. 2 y 3 es un caso de la hoja 2 ni del examen 2', () => {
+  for (const [def, semilla] of [[ej2, 2161], [ej3, 2162]]) {
+    for (const it of items(def, semilla)) assert.equal(L.esReservado(it), false, JSON.stringify(it));
+  }
+});
+
+test('dinero: toda cantidad en euros del ej. 1 lleva dos decimales (es y en)', () => {
+  for (const s of L.BANCO) for (const idioma of IDIOMAS) {
+    for (const t of [s.cond[idioma], X.enunciadoSituacion({ id: s.id }, idioma)]) {
+      assert.doesNotMatch(plano(t), idioma === 'es' ? /\d+ €(?<!,\d\d €)/ : /€\d+(?!\.\d\d|\d)/, `${s.id} ${idioma}: ${plano(t)}`);
+    }
+    const [x1, y1, x2, y2] = s.par;
+    const txt = plano(`${X.con(x1, s.ux[idioma], idioma)} ${X.con(y1, s.uy[idioma], idioma)} ${X.con(x2, s.ux[idioma], idioma)} ${X.con(y2, s.uy[idioma], idioma)}`);
+    assert.doesNotMatch(txt, idioma === 'es' ? /\d [ ]?€(?<!,\d\d [ ]?€)/ : /€\d+(?!\.\d\d|\d)/, txt);
+  }
+});
