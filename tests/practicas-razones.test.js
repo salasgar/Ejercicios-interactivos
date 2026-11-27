@@ -262,7 +262,7 @@ test('ejercicio 4: se admite cualquier escritura del valor y cada error es disti
 });
 
 test('reserva: ningún ítem queda sin huella ni coincide con una reservada, y la x abajo es el mismo caso que la x arriba', () => {
-  assert.equal(HUELLAS_RESERVADAS.size, 70, 'huellas de la hoja y del examen de la sesión 1');
+  assert.equal(HUELLAS_RESERVADAS.size, 78, 'huellas de la hoja y del examen de la sesión 1 y del repaso del examen 2');
   const generadores = [[generarRazon, 9101], [generarEquivalentes, 9102], [generarProporcion, 9103], [generarTermino, 9104]];
   for (const [g, semilla] of generadores) for (const it of lote(g, semilla, N)) {
     const h = huellaDe(it);

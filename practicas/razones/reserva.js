@@ -75,4 +75,13 @@ export const HUELLAS_RESERVADAS = new Set([
   'uveykm',
   '1p4zoua',
   '7asoo2',
+  // Examen 2 (repaso del ej. 4: los cuatro casos de U7-1C-04)
+  '18gi1cp',
+  '19mumif',
+  '40nk0w',
+  '1dbrlwm',
+  'q2dgpv',
+  '45en41',
+  'a836ux',
+  '5lhot5',
 ]);
