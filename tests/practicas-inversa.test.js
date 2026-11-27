@@ -8,7 +8,7 @@ import {
   CONTEXTOS, DIRECTOS, generarEsInversa, claveEsInversa, respuestaEsInversa, errorEsInversa,
   generarCompleta, claveCompleta, valorHueco, unidadHueco, erroresDeCompleta, candidatosCompleta,
   generarProblema, claveProblema, errorDeProblema, solucionProblema, candidatosProblema,
-  generarCaza, claveCaza, verdadCaza, errorCaza, ERRORES_PROPIOS, nombreError, dineroCelda, F,
+  generarCaza, claveCaza, verdadCaza, errorCaza, ERRORES_PROPIOS, nombreError, dineroCelda, F, esReservado,
 } from '../practicas/inversa/logica.js';
 import {
   TX, explicaEsInversa, explicaCompleta, explicaProblema, explicaCaza, datoProblemaTx, preguntaProblema, enunciadoCaza, resolucionCaza,
@@ -17,7 +17,7 @@ import {
 const N = 3000;
 const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => generar(rng)); };
 const sinHtml = s => String(s).replace(/<[^>]+>/g, '');
-const LIMPIO = /undefined|NaN|\[object|×|%|por ciento|percent|constante|\bk\b/;
+const LIMPIO = /undefined|NaN|\[object|×|÷|%|por ciento|percent|constante|\bk\b/;
 const variedad = (items, clave) => {
   const m = new Map();
   items.forEach(it => m.set(clave(it), (m.get(clave(it)) ?? 0) + 1));
@@ -133,4 +133,22 @@ test('textos: sin restos ni signos prohibidos, coma en español y punto en ingl�
   for (const ej of Object.values(TX)) for (const idioma of ['es', 'en']) assert.doesNotMatch(sinHtml(ej.introduccion[idioma]), /×|%|constante/);
   assert.ok(Object.keys(ERRORES_PROPIOS).length > 0);
   assert.ok(F(1).equals(F(2, 2)));
+});
+
+test('reserva: ningún ítem es un caso de la hoja 2 o del examen 2, y las cotas del enunciado se cumplen', () => {
+  [generarEsInversa, generarCompleta, generarProblema, generarCaza].forEach((g, n) => {
+    for (const it of lote(g, 31 + n)) assert.equal(esReservado(it, n + 1), false);
+  });
+  for (const it of lote(generarCaza, 35)) if (it.ctx === 'receta') assert.ok(it.b <= 1000 && it.bien <= 1000 && (it.mal ?? 0) <= 1000);
+  for (const it of lote(generarProblema, 36)) assert.ok(it.ctx !== 'grifos' || !/piscina|pool/.test(datoProblemaTx(it, 'es') + datoProblemaTx(it, 'en')));
+});
+
+test('textos: caballos, coche y mayúscula tras los dos puntos', () => {
+  for (const it of lote(generarCaza, 37)) for (const idioma of ['es', 'en']) {
+    assert.doesNotMatch(sinHtml(explicaCaza(it, { idioma })), /(Está mal|It is wrong): [A-ZÁÉÍÓÚ]/);
+  }
+  for (const it of lote(generarProblema, 38)) {
+    if (it.ctx === 'caballos') assert.match(datoProblemaTx(it, 'es'), /todos comen lo mismo/);
+    if (it.ctx === 'coche') assert.match(preguntaProblema(it, 'es'), /mismo viaje/);
+  }
 });

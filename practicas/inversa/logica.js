@@ -4,7 +4,8 @@
 // (a · b = P; P : c). Nunca «k» ni «constante» en pantalla.
 
 import { Fraccion } from '../_comun/fracciones.js';
-import { ERRORES_TIPICOS, NOMBRES, cantidad, deTexto, mismoValor } from '../_comun/proporcion.js';
+import { ERRORES_TIPICOS, NOMBRES, cantidad, deTexto, huellaCaso, mismoValor } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 export const F = (n, d = 1) => new Fraccion(n, d);
 const NBSP = ' ';
@@ -35,7 +36,7 @@ export const CTX_PROBLEMA = ['obreros', 'grifos', 'caballos', 'amigos', 'coche']
 /** Contextos directos (solo para el ejercicio 4). */
 export const DIRECTOS = {
   fruta: { din: true, xMin: 1, xMax: 8, ks: [80, 90, 120, 150, 160, 180, 190, 240, 250, 300, 350] },
-  receta: { din: false, xMin: 2, xMax: 12, ks: [60, 70, 75, 80, 100, 125], yMax: 1200 },
+  receta: { din: false, xMin: 2, xMax: 12, ks: [60, 70, 75, 80, 100, 125], yMax: 1000 },
 };
 
 const cm = ctx => (CONTEXTOS[ctx].din ? 100 : 1);
@@ -90,7 +91,7 @@ function elegirUs(rng, P) {
   return { a, m, us: [a, m * a, ...rng.barajar(resto).slice(0, 2)].sort((p, q) => p - q) };
 }
 
-export function generarEsInversa(rng) {
+function crearEsInversa(rng) {
   const r = rng.azar();
   const tipo = r < 0.5 ? 'si' : r < 0.67 ? 'directa' : r < 0.84 ? 'resta' : 'casilla';
   for (let intento = 0; intento < 200; intento++) {
@@ -141,7 +142,7 @@ function tablaInversa(ctx, rng, n = 4) {
   throw new Error(`sin tabla para ${ctx}`);
 }
 
-export function generarCompleta(rng) {
+function crearCompleta(rng) {
   const ctx = rng.elegir(CTX_TABLA), { P, cols } = tablaInversa(ctx, rng);
   const orden = rng.barajar([0, 1, 2, 3]);
   return { ctx, P, cols, ref: orden[0], huecos: [{ col: orden[1], que: 'y' }, { col: orden[2], que: 'x' }] };
@@ -184,7 +185,7 @@ export function erroresDeCompleta(it, textos, idioma = 'es') {
 
 // ─── Ejercicio 3: problemas ──────────────────────────────────────────────────────────────────────
 
-export function generarProblema(rng) {
+function crearProblema(rng) {
   const ctx = rng.elegir(CTX_PROBLEMA), c = CONTEXTOS[ctx];
   for (let intento = 0; intento < 500; intento++) {
     const P = rng.elegir(c.Ps), adm = admisibles(ctx, P);
@@ -224,7 +225,7 @@ export function errorDeProblema(it, texto, idioma = 'es') {
 export const TIPOS_CAZA = ['bien-inversa', 'inversa-como-directa', 'bien-directa', 'directa-como-inversa'];
 const tipoCaza = rng => { const r = rng.azar(); return r < 0.25 ? TIPOS_CAZA[0] : r < 0.625 ? TIPOS_CAZA[1] : r < 0.75 ? TIPOS_CAZA[2] : TIPOS_CAZA[3]; };
 
-export function generarCaza(rng) {
+function crearCaza(rng) {
   const tipo = tipoCaza(rng), inversa = tipo.includes('inversa') && tipo !== 'directa-como-inversa' ? true : tipo === 'bien-inversa' || tipo === 'inversa-como-directa';
   const esInv = tipo === 'bien-inversa' || tipo === 'inversa-como-directa';
   for (let intento = 0; intento < 4000; intento++) {
@@ -268,3 +269,27 @@ export function errorCaza(it, opcion) {
   if (opcion === 'bien') return verdad === 'mal-directa' ? 'directa-en-inversa' : 'inversa-en-directa';
   return 'confunde-el-tipo';
 }
+
+// ─── Casos reservados (la hoja 2 y el examen 2 de la sesión 5) ──────────────────────────────────
+
+const subconj = (xs, k) => (k === 0 ? [[]] : xs.flatMap((x, i) => subconj(xs.slice(i + 1), k - 1).map(r => [x, ...r])));
+const hColumnas = cols => huellaCaso('columnas', [...cols].sort((p, q) => p[0] - q[0]).flat().map(v => F(v)));
+
+/** Las huellas del caso por valor (sin unidades ni contexto); n = número de ejercicio. */
+export function huellasDe(it, n) {
+  if (n === 1) return [2, 3].flatMap(k => subconj(it.cols.map(c => [c.x, c.y]), k).map(hColumnas));
+  if (n === 2) return subconj(it.cols.map(c => c.x), 3).map(xs => huellaCaso('tabla-inversa', [F(it.P), ...xs.sort((a, b) => a - b).map(x => F(x))]));
+  if (n === 3) return [huellaCaso('inversa', [F(it.a), enUnidad(it.ctx, datoProblema(it)), F(it.c)])];
+  const din = (CONTEXTOS[it.ctx] ?? DIRECTOS[it.ctx]).din;
+  return [huellaCaso(it.esInv ? 'inversa' : 'directa', [F(it.a), din ? F(it.b, 100) : F(it.b), F(it.c)])];
+}
+export const esReservado = (it, n) => huellasDe(it, n).some(h => HUELLAS_RESERVADAS.has(h));
+
+const sinReservados = (crear, n) => rng => {
+  for (let i = 0; i < 200; i++) { const it = crear(rng); if (!esReservado(it, n)) return it; }
+  throw new Error(`inversa: todo reservado (ejercicio ${n})`);
+};
+export const generarEsInversa = sinReservados(crearEsInversa, 1);
+export const generarCompleta = sinReservados(crearCompleta, 2);
+export const generarProblema = sinReservados(crearProblema, 3);
+export const generarCaza = sinReservados(crearCaza, 4);

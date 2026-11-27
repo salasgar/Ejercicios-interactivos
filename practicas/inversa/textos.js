@@ -1,6 +1,6 @@
-// Práctica «Proporcionalidad inversa»: textos propios, siempre { es, en }. Reglas: «·» y «÷», nunca «×»; sin letras
+// Práctica «Proporcionalidad inversa»: textos propios, siempre { es, en }. Reglas: «·» y «:», nunca «×» ni «÷»; sin letras
 // ni «constante»; coma en español y punto en inglés; cada explicación habla de LOS NÚMEROS DE ESE ÍTEM.
-// El método es el producto: «lo de arriba por lo de abajo da siempre lo mismo» (U7-2C-01/02/03).
+// El método es el producto: «lo de arriba por lo de abajo da siempre lo mismo» en las tablas (U7-2C-01/02/03).
 
 import { CONTEXTOS, DIRECTOS, dinero, dineroCelda, datoProblema, pedidoProblema, resultadoCaza, planteamientoCaza } from './logica.js';
 
@@ -32,13 +32,13 @@ const PROB = {
     por: { es: 'Con más obreros se tarda menos', en: 'With more workers it takes less time' },
   },
   grifos: {
-    dato: (a, b, i) => t(i, `${a} grifos iguales llenan una piscina en ${b} horas.`, `${a} identical taps fill a pool in ${b} hours.`),
+    dato: (a, b, i) => t(i, `${a} grifos iguales llenan un depósito en ${b} horas.`, `${a} identical taps fill a tank (depósito) in ${b} hours.`),
     pregunta: (c_, i) => t(i, `¿Cuántas horas tardarán ${c_} grifos iguales?`, `How many hours will ${c_} identical taps take?`),
     etq: { es: 'horas', en: 'hours' },
     por: { es: 'Con más grifos se tarda menos', en: 'With more taps it takes less time' },
   },
   caballos: {
-    dato: (a, b, i) => t(i, `El pienso para ${a} caballos dura ${b} días.`, `The feed for ${a} horses lasts ${b} days.`),
+    dato: (a, b, i) => t(i, `El pienso para ${a} caballos dura ${b} días, y todos comen lo mismo cada día.`, `The feed for ${a} horses lasts ${b} days, and they all eat the same amount each day.`),
     pregunta: (c_, i) => t(i, `¿Cuántos días durará el mismo pienso con ${c_} caballos?`, `How many days will the same feed last for ${c_} horses?`),
     etq: { es: 'días', en: 'days' },
     por: { es: 'Con más caballos el pienso dura menos', en: 'With more horses the feed lasts less time' },
@@ -51,7 +51,7 @@ const PROB = {
   },
   coche: {
     dato: (a, b, i) => t(i, `Un coche va a ${a} km/h y tarda ${b} horas en hacer un viaje.`, `A car goes at ${a} km/h and takes ${b} hours to make a trip.`),
-    pregunta: (c_, i) => t(i, `¿Cuántas horas tardaría a ${c_} km/h?`, `How many hours would it take at ${c_} km/h?`),
+    pregunta: (c_, i) => t(i, `¿Cuántas horas tardaría a ${c_} km/h en hacer el mismo viaje?`, `How many hours would it take to make the same trip at ${c_} km/h?`),
     etq: { es: 'horas', en: 'hours' },
     por: { es: 'A más velocidad se tarda menos', en: 'At a higher speed it takes less time' },
   },
@@ -91,8 +91,8 @@ export function explicaCompleta(it, { idioma = 'es' } = {}) {
   const hy = it.huecos.find(h => h.que === 'y'), hx = it.huecos.find(h => h.que === 'x');
   const cy = it.cols[hy.col], cxh = it.cols[hx.col], P = fv(ctx, it.P * m, i);
   const prod = `${ref.x} · ${fv(ctx, ref.y, i)} = ${P}`;
-  const pasoY = `${P} ÷ ${cy.x} = ${fv(ctx, cy.y, i)}`;
-  const pasoX = `${P} ÷ ${fv(ctx, cxh.y, i)} = ${cxh.x}`;
+  const pasoY = `${P} : ${cy.x} = ${fv(ctx, cy.y, i)}`;
+  const pasoX = `${P} : ${fv(ctx, cxh.y, i)} = ${cxh.x}`;
   return t(i,
     `<ol class="pasos-ayuda"><li>Busca la columna con los dos números y multiplícalos: ${c(prod)}. Ese número es el mismo en todas las columnas.</li>
       <li>Casilla de abajo, con ${cy.x} arriba: se divide ${c(pasoY)}.</li>
@@ -109,13 +109,13 @@ export function explicaCompleta(it, { idioma = 'es' } = {}) {
 export function explicaProblema(it, { idioma = 'es' } = {}) {
   const i = idioma, { ctx } = it, m = mult(ctx), b = datoProblema(it), r = pedidoProblema(it);
   const P = fv(ctx, it.P * m, i);
-  const prod = `${it.a} · ${fv(ctx, b, i)} = ${P}`, div = `${P} ÷ ${it.c} = ${fv(ctx, r, i)}`;
+  const prod = `${it.a} · ${fv(ctx, b, i)} = ${P}`, div = `${P} : ${it.c} = ${fv(ctx, r, i)}`;
   const e = PROB[ctx].etq[i];
   const res = ctx === 'amigos' ? fv(ctx, r, i) : `${r} ${e}`;
   return t(i,
-    `<ol class="pasos-ayuda"><li>${PROB[ctx].por.es}: es inversa. Lo de arriba por lo de abajo da siempre lo mismo: ${c(prod)}.</li>
+    `<ol class="pasos-ayuda"><li>${PROB[ctx].por.es}: es inversa. Los dos datos multiplicados dan siempre lo mismo: ${c(prod)}.</li>
       <li>Para ${it.c}: se divide ${c(div)}.</li></ol><p>La respuesta es ${res}.</p>`,
-    `<ol class="pasos-ayuda"><li>${PROB[ctx].por.en}: it is inverse. The top number times the bottom number is always the same: ${c(prod)}.</li>
+    `<ol class="pasos-ayuda"><li>${PROB[ctx].por.en}: it is inverse. The two numbers multiplied always give the same result: ${c(prod)}.</li>
       <li>For ${it.c}: divide ${c(div)}.</li></ol><p>The answer is ${res}.</p>`);
 }
 
@@ -125,10 +125,10 @@ export function explicaProblema(it, { idioma = 'es' } = {}) {
 export function lineasCaza(it, i) {
   const { ctx, a, c: cc, b } = it, f = v => fv(ctx, v, i), res = resultadoCaza(it);
   if (planteamientoCaza(it) === 'inversa') {
-    return [`${a} · ${f(b)} = ${f(a * b)}`, `${f(a * b)} ÷ ${cc} = ${f(res)}`];
+    return [`${a} · ${f(b)} = ${f(a * b)}`, `${f(a * b)} : ${cc} = ${f(res)}`];
   }
-  if (it.tipo === 'bien-directa') return [`${f(b)} ÷ ${a} = ${f(b / a)}`, `${f(b / a)} · ${cc} = ${f(res)}`];
-  return [`${f(b)} · ${cc} ÷ ${a} = ${f(res)}`];
+  if (it.tipo === 'bien-directa') return [`${f(b)} : ${a} = ${f(b / a)}`, `${f(b / a)} · ${cc} = ${f(res)}`];
+  return [`${f(b)} · ${cc} : ${a} = ${f(res)}`];
 }
 export const enunciadoCaza = (it, i) => `${PROB[it.ctx].dato(it.a, fv(it.ctx, it.b, i), i)} ${PROB[it.ctx].pregunta(it.c, i)}`;
 export const resolucionCaza = (it, i) => `<p class="resolucion"><strong>${t(i, `Resolución de ${it.nombre}:`, `${it.nombre}’s solution:`)}</strong></p>
@@ -140,20 +140,20 @@ const etqAdd = (it, i) => {
 };
 
 export function explicaCaza(it, { idioma = 'es' } = {}) {
-  const i = idioma, { ctx, a, c: cc, b } = it, f = v => fv(ctx, v, i), por = PROB[ctx].por[i];
-  const bien = f(it.bien);
+  const i = idioma, { ctx, a, c: cc, b } = it, f = v => fv(ctx, v, i), por = PROB[ctx].por[i], porMin = por[0].toLowerCase() + por.slice(1);
+  const bien = f(it.bien), bienU = ctx === 'receta' ? `${bien} g` : bien;
   if (it.tipo === 'bien-inversa') return t(i,
-    `Está bien. ${por}: es inversa, y se multiplica: ${c(`${a} · ${f(b)} = ${f(it.P * mult(ctx))}`)}. Después se divide: ${c(`${f(it.P * mult(ctx))} ÷ ${cc} = ${bien}`)}.`,
-    `It is right. ${por}: it is inverse, so you multiply: ${c(`${a} · ${f(b)} = ${f(it.P * mult(ctx))}`)}. Then you divide: ${c(`${f(it.P * mult(ctx))} ÷ ${cc} = ${bien}`)}.`);
+    `Está bien. ${por}: es inversa, y se multiplica: ${c(`${a} · ${f(b)} = ${f(it.P * mult(ctx))}`)}. Después se divide: ${c(`${f(it.P * mult(ctx))} : ${cc} = ${bienU}`)}.`,
+    `It is right. ${por}: it is inverse, so you multiply: ${c(`${a} · ${f(b)} = ${f(it.P * mult(ctx))}`)}. Then you divide: ${c(`${f(it.P * mult(ctx))} : ${cc} = ${bienU}`)}.`);
   if (it.tipo === 'inversa-como-directa') return t(i,
-    `Está mal: ${por}, así que es inversa, y se ha resuelto como si fuera directa. Bien: ${c(`${a} · ${f(b)} = ${f(a * b)}`)} y ${c(`${f(a * b)} ÷ ${cc} = ${bien}`)}.`,
-    `It is wrong: ${por}, so it is inverse, but it was solved as if it were direct. Right way: ${c(`${a} · ${f(b)} = ${f(a * b)}`)} and ${c(`${f(a * b)} ÷ ${cc} = ${bien}`)}.`);
+    `Está mal: ${porMin}, así que es inversa, y se ha resuelto como si fuera directa. Bien: ${c(`${a} · ${f(b)} = ${f(a * b)}`)} y ${c(`${f(a * b)} : ${cc} = ${bienU}`)}.`,
+    `It is wrong: ${porMin}, so it is inverse, but it was solved as if it were direct. Right way: ${c(`${a} · ${f(b)} = ${f(a * b)}`)} and ${c(`${f(a * b)} : ${cc} = ${bienU}`)}.`);
   if (it.tipo === 'bien-directa') return t(i,
-    `Está bien. ${por}: es directa. Lo que vale 1: ${c(`${f(b)} ÷ ${a} = ${f(b / a)}`)}. Para ${cc}: ${c(`${f(b / a)} · ${cc} = ${bien}`)}.`,
-    `It is right. ${por}: it is direct. What 1 is worth: ${c(`${f(b)} ÷ ${a} = ${f(b / a)}`)}. For ${cc}: ${c(`${f(b / a)} · ${cc} = ${bien}`)}.`);
+    `Está bien. ${por}: es directa. Lo que vale 1: ${c(`${f(b)} : ${a} = ${f(b / a)}`)}. Para ${cc}: ${c(`${f(b / a)} · ${cc} = ${bienU}`)}.`,
+    `It is right. ${por}: it is direct. What 1 is worth: ${c(`${f(b)} : ${a} = ${f(b / a)}`)}. For ${cc}: ${c(`${f(b / a)} · ${cc} = ${bienU}`)}.`);
   return t(i,
-    `Está mal: ${por}, así que es directa, y se ha resuelto como si fuera inversa. Bien: ${c(`${f(b)} ÷ ${a} = ${f(b / a)}`)} y ${c(`${f(b / a)} · ${cc} = ${bien}`)}.`,
-    `It is wrong: ${por}, so it is direct, but it was solved as if it were inverse. Right way: ${c(`${f(b)} ÷ ${a} = ${f(b / a)}`)} and ${c(`${f(b / a)} · ${cc} = ${bien}`)}.`);
+    `Está mal: ${porMin}, así que es directa, y se ha resuelto como si fuera inversa. Bien: ${c(`${f(b)} : ${a} = ${f(b / a)}`)} y ${c(`${f(b / a)} · ${cc} = ${bienU}`)}.`,
+    `It is wrong: ${porMin}, so it is direct, but it was solved as if it were inverse. Right way: ${c(`${f(b)} : ${a} = ${f(b / a)}`)} and ${c(`${f(b / a)} · ${cc} = ${bienU}`)}.`);
 }
 
 // ─── Textos de la práctica ───────────────────────────────────────────────────────────────────────
@@ -184,11 +184,11 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Busca la columna que tiene <strong>los dos números</strong> y <strong>multiplícalos</strong>. Ese número es el mismo en todas las columnas. Para rellenar un hueco, <strong>divide</strong> ese número entre el que sí tienes.</p>
-        <p>Ejemplo: 3 obreros tardan 8 días: ${c('3 · 8 = 24')}. Con 6 obreros: ${c('24 ÷ 6 = 4')} días. Para tardar 2 días: ${c('24 ÷ 2 = 12')} obreros.</p>
+        <p>Ejemplo: 3 obreros tardan 8 días: ${c('3 · 8 = 24')}. Con 6 obreros: ${c('24 : 6 = 4')} días. Para tardar 2 días: ${c('24 : 2 = 12')} obreros.</p>
         <p>Escribe los números y pulsa <strong>Comprobar</strong>.</p>`,
       en: `<h2>How it works</h2>
         <p>Find the column that has <strong>both numbers</strong> and <strong>multiply them</strong>. That number is the same in every column. To fill a blank, <strong>divide</strong> that number by the one you have.</p>
-        <p>Example: 3 workers take 8 days: ${c('3 · 8 = 24')}. With 6 workers: ${c('24 ÷ 6 = 4')} days. To take 2 days: ${c('24 ÷ 2 = 12')} workers.</p>
+        <p>Example: 3 workers take 8 days: ${c('3 · 8 = 24')}. With 6 workers: ${c('24 : 6 = 4')} days. To take 2 days: ${c('24 : 2 = 12')} workers.</p>
         <p>Type the numbers and press <strong>Check</strong>.</p>`,
     },
     instruccion: { es: 'Completa la tabla de proporcionalidad inversa.', en: 'Complete the inverse proportionality table.' },
@@ -200,10 +200,10 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Si con <strong>más</strong> de una cosa hace falta <strong>menos</strong> de la otra (más obreros, menos días), es <strong>inversa</strong>. Se multiplican los dos datos y se divide entre el número nuevo.</p>
-        <p>Ejemplo: 4 obreros tardan 6 días. ${c('4 · 6 = 24')}. Con 8 obreros: ${c('24 ÷ 8 = 3')} días.</p>`,
+        <p>Ejemplo: 4 obreros tardan 6 días. ${c('4 · 6 = 24')}. Con 8 obreros: ${c('24 : 8 = 3')} días.</p>`,
       en: `<h2>How it works</h2>
         <p>If with <strong>more</strong> of one thing you need <strong>less</strong> of the other (more workers, fewer days), it is <strong>inverse</strong>. Multiply the two numbers you are given and divide by the new number.</p>
-        <p>Example: 4 workers take 6 days. ${c('4 · 6 = 24')}. With 8 workers: ${c('24 ÷ 8 = 3')} days.</p>`,
+        <p>Example: 4 workers take 6 days. ${c('4 · 6 = 24')}. With 8 workers: ${c('24 : 8 = 3')} days.</p>`,
     },
     solucion: bi((i, it) => explicaProblema(it, { idioma: i })),
   },

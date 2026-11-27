@@ -37,7 +37,7 @@ test('ej. 3: la explicación termina en la solución', () => {
   for (const it of lote(generarProblema, 23)) for (const idioma of IDIOMAS) {
     const x = texto(explicaProblema(it, { idioma }));
     const m = CONTEXTOS[it.ctx].din ? 100 : 1, r = (it.P * m) / it.c;
-    assert.ok(x.includes(`${fv(it.ctx, it.P * m, idioma)} ÷ ${it.c} = ${fv(it.ctx, r, idioma)}`), x);
+    assert.ok(x.includes(`${fv(it.ctx, it.P * m, idioma)} : ${it.c} = ${fv(it.ctx, r, idioma)}`), x);
     assert.ok(x.includes(idioma === 'es' ? 'La respuesta es' : 'The answer is'));
   }
 });
