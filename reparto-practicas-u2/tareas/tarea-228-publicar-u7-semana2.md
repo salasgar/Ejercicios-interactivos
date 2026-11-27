@@ -130,6 +130,13 @@ Las 3 prácticas con `disponible: true` (o reabiertas, con su fichero; o SUSTITU
   `origin/main` y el lanzador dejó de ver tareas. Regla vigente (`CLAUDE.md` de la raíz y `proyecto.md`, «Se sube desde el mismo árbol en el
   que se escribe»): se escribe, se comitea con rutas explícitas y se empuja desde aquí; si `git status -sb` dice «ahead N, behind M», se
   realinea como dice allí antes de empezar.
+- (228, 27-11, s-20261127T112436-3d9a8b14) **Los barridos por patrones no ven la concordancia con 1**: tres pasadas con barrido de
+  20 000 ítems dieron `inversa` por buena y la primera captura de un fallo enseñó «Respuesta de Iker: 1 horas.» (2,2-2,6 % de los ítems
+  de los ej. 3 y 4, en los dos idiomas). Leer las capturas de verdad y buscar «\b1 (horas|días|hours|days|…)\b» en enunciado, resolución
+  y explicación de cada práctica (`/tmp/pu2-228-a6fd/plural1*.mjs`). Y una lista HTML sin estilo propio pinta la viñeta pegada al margen
+  con el texto centrado.
+- (228, 27-11) Una tarea de publicación que espera a una reabierta se queda viva horas y caduca; si lo que falta es de redacción y la
+  portada aún no enseña la unidad, se publica y se reabre «sigue publicada» con plazo (precedente: la 217 de la primera pasada).
 
 ## Prohibido (propio de esta tarea)
 
