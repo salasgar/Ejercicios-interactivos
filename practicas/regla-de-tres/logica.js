@@ -245,10 +245,15 @@ export const esCorrecta = item => item.motivo === 'ok';
 
 // ─── Casos reservados (la hoja y el examen de la sesión 3) ─────────────────────
 
-/** El caso «a ⟶ b; c ⟶ ?» (al revés, «b ⟶ a; d ⟶ ?») por valor, tal como se escribe y en la unidad base. */
+/** El caso «a ⟶ b; c ⟶ ?» (al revés, «b ⟶ a; d ⟶ ?»; en el ej. 1 también «a ⟶ b; 1 ⟶ ?») por valor, tal como se escribe y en la unidad base. */
 export function huellasDe(it) {
   const t = it.sentido === 'inversa' ? ['b', 'a', 'd'] : ['a', 'b', 'c'];
-  return [huellaCaso('directa', t.map(k => Q(it, k).valor)), huellaCaso('directa', t.map(k => Q(it, k).valorBase()))];
+  const hs = [huellaCaso('directa', t.map(k => Q(it, k).valor)), huellaCaso('directa', t.map(k => Q(it, k).valorBase()))];
+  if (it.n === 1) {
+    const A = Q(it, 'a'), B = Q(it, 'b'), uno = cantidad(1, A.unidad);
+    hs.push(huellaCaso('directa', [A.valor, B.valor, uno.valor]), huellaCaso('directa', [A.valorBase(), B.valorBase(), uno.valorBase()]));
+  }
+  return hs;
 }
 export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
 

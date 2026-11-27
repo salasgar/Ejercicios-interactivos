@@ -57,4 +57,17 @@ export const HUELLAS_RESERVADAS = new Set([
   'bwizke', // examen
   'o5jah8', // examen
   'xjlxki', // examen
+  '18uhyb7', // hoja 2 ej. 7 a) 12 caballos, 36,00 € al día → 15
+  'mxlyyx', // hoja 2 ej. 8 a) 3 kg, 4,80 € → 7 kg
+  '1lrf0l6', // hoja 2 ej. 8 c) 4 personas, 2 huevos → 10
+  '55de24', // examen 2
+  '11gnldz', // examen 2
+  '1ta45az', // examen 2
+  '6kox7b', // examen 2
+  '1jzatvw', // examen 2
+  '730mzi', // examen 2
+  '1tk9794', // examen 2
+  '1frg6kr', // examen 2
+  '87ylu3', // examen 2
+  '1m5jzl2', // examen 2
 ]);
