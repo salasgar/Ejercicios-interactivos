@@ -1,10 +1,11 @@
-// Práctica «Repartos proporcionales» (unidad 7, sesión 2; PU2, tarea 217): puro, sin DOM.
+// Práctica «Repartos proporcionales» (unidad 7, sesión 7; PU2, tarea 217): puro, sin DOM.
 // Ejercicios: 1 cuenta las partes, 2 reparte, 3 ¿está bien repartido?, 4 caza el error.
 // Aritmética entera: dinero en céntimos, mL y unidades. Una parte `u` se elige primero y T = u · (a + b), así
 // que el reparto bueno siempre es exacto. Los repartos con error se descartan (null) si no salen exactos.
-// Razón siempre a : b irreducible, a ≠ b, entre dos personas o dos ingredientes. Producto con «·», división con «÷».
+// Razón siempre a : b irreducible, a ≠ b, entre dos personas o dos ingredientes. Producto con «·», división con «:» (la razón y una división nunca van en la misma línea).
 
-import { cantidad, deTexto, mismoValor, NOMBRES } from '../_comun/proporcion.js';
+import { cantidad, deTexto, mismoValor, huellaCaso, NOMBRES } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 import { Fraccion } from '../_comun/fracciones.js';
 
 const NBSP = ' ';
@@ -32,11 +33,11 @@ export const IDS_CONTEXTO = Object.keys(CONTEXTOS);
 export const RAZONES = [[1, 2], [1, 3], [2, 3], [1, 4], [3, 4], [1, 5], [2, 5], [3, 5], [4, 5]]
   .flatMap(([a, b]) => [[a, b], [b, a]]);
 
-/** Parejas de ingredientes (zumo/agua…). */
+/** Parejas de ingredientes. `art`: con artículo (para las frases). `pequeno`: el ingrediente que lleva siempre la parte pequeña. */
 export const INGREDIENTES = [
-  { es: ['zumo', 'agua'], en: ['juice', 'water'] },
-  { es: ['sirope', 'agua'], en: ['syrup', 'water'] },
-  { es: ['leche', 'café'], en: ['milk', 'coffee'] },
+  { es: ['zumo', 'agua'], en: ['juice', 'water'], art: { es: ['el zumo', 'el agua'], en: ['the juice', 'the water'] }, pequeno: null },
+  { es: ['sirope', 'agua'], en: ['syrup', 'water'], art: { es: ['el sirope', 'el agua'], en: ['the syrup', 'the water'] }, pequeno: 0 },
+  { es: ['leche', 'café'], en: ['milk', 'coffee'], art: { es: ['la leche', 'el café'], en: ['the milk', 'the coffee'] }, pequeno: 1 },
 ];
 
 const mcd = (x, y) => (y === 0 ? x : mcd(y, x % y));
@@ -45,15 +46,31 @@ const mcd = (x, y) => (y === 0 ? x : mcd(y, x % y));
 
 /** Un reparto: { ctx, a, b, u, T, dueños: [i0, i1] }. `dueños` son nombres (paga, cromos) o el índice de la pareja (refresco). */
 export function generarReparto(rng, ctxId = null) {
-  for (let intento = 0; intento < 200; intento++) {
+  for (let intento = 0; intento < 400; intento++) {
     const ctx = ctxId ?? rng.elegir(IDS_CONTEXTO), c = CONTEXTOS[ctx];
-    const [a, b] = rng.elegir(RAZONES), u = rng.elegir(c.us), T = u * (a + b);
+    let [a, b] = rng.elegir(RAZONES);
+    const u = rng.elegir(c.us), T = u * (a + b);
     if (T < c.totalMin || T > c.totalMax || mcd(a, b) !== 1 || a === b) continue;
-    const duenos = ctx === 'refresco' ? [rng.entero(0, INGREDIENTES.length - 1)] : rng.barajar(NOMBRES).slice(0, 2);
+    if (esReservado({ ctx, a, b, T })) continue;
+    let duenos;
+    if (ctx === 'refresco') {
+      duenos = [rng.entero(0, INGREDIENTES.length - 1)];
+      const pq = INGREDIENTES[duenos[0]].pequeno;
+      if (pq !== null && (pq === 0 ? a > b : b > a)) [a, b] = [b, a];
+    } else duenos = rng.barajar(NOMBRES).slice(0, 2);
     return { ctx, a, b, u, T, duenos };
   }
   throw new Error('generarReparto: sin datos dentro de la cota');
 }
+
+// ─── Casos reservados (la hoja 2 y el examen 2 de la unidad 7) ───────────────────────────────────
+
+/** El caso por valor: el total (euros, mL o cromos) y la razón irreducible de menor a mayor; sin contexto ni unidades. */
+export function huellasDe(it) {
+  const g = mcd(it.a, it.b), T = CONTEXTOS[it.ctx].din ? new Fraccion(it.T, 100) : new Fraccion(it.T, 1);
+  return [huellaCaso('reparto', [T, ...[it.a / g, it.b / g].sort((p, q) => p - q).map(v => new Fraccion(v, 1))])];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
 
 /** Los dos dueños como { es: [..], en: [..] } (los nombres son iguales en los dos idiomas). */
 export function nombresDe(item) {
@@ -165,32 +182,43 @@ export const errorDeEstaBien = (it, opinion) => (opinion === it.tipo ? null : (i
 export const sumaDado = it => it.dado[0] + it.dado[1];
 
 // ─── Ejercicio 4: caza el error ──────────────────────────────────────────────────────────────────
+// Tres líneas (las partes; lo que vale una; lo de cada uno) con una mala, repartida entre las tres. Las siguientes
+// arrastran el error bien calculado. `mala` es el índice de la línea mala (0-2); `mult` lo que multiplica cada uno.
 
-export const ERRORES4 = ['partes-iguales', 'partes-multiplicadas', 'dividir-entre-un-termino', 'sumar-en-vez-de-multiplicar'];
+export const ERRORES4_POR_LINEA = [['partes-iguales', 'partes-multiplicadas'], ['dividir-entre-un-termino', 'dividir-entre-dos'],
+  ['sumar-en-vez-de-multiplicar', 'intercambiadas']];
+export const ERRORES4 = ERRORES4_POR_LINEA.flat();
+
+function caza(it, error) {
+  const { a, b, u, T } = it, S = a + b;
+  const base = { ...it, error, partes: S, tipoPartes: 'suma', divisor: S, una: u, mult: [a, b], suma: false };
+  if (error === 'partes-iguales') return T % 2 === 0 ? { ...base, mala: 0, partes: 2, tipoPartes: 'dos', divisor: 2, una: T / 2, mult: [1, 1] } : null;
+  if (error === 'partes-multiplicadas') return T % (a * b) === 0 ? { ...base, mala: 0, partes: a * b, tipoPartes: 'producto', divisor: a * b, una: T / (a * b) } : null;
+  if (error === 'dividir-entre-un-termino') {
+    const t = T % a === 0 ? a : (T % b === 0 ? b : null);
+    return t === null ? null : { ...base, mala: 1, divisor: t, una: T / t };
+  }
+  if (error === 'dividir-entre-dos') return T % 2 === 0 ? { ...base, mala: 1, divisor: 2, una: T / 2 } : null;
+  if (error === 'sumar-en-vez-de-multiplicar') return { ...base, mala: 2, suma: true };
+  return { ...base, mala: 2, mult: [b, a] };
+}
+
+/** Las dos partes que resultan de la resolución (con el error arrastrado). */
+export const cadaDe = item => (item.suma
+  ? [item.u + item.a * (item.ctx === 'paga' ? 100 : 1), item.u + item.b * (item.ctx === 'paga' ? 100 : 1)]
+  : [item.mult[0] * item.una, item.mult[1] * item.una]);
 
 export function generarCaza(rng) {
-  for (let intento = 0; intento < 300; intento++) {
-    const it = generarReparto(rng);
-    const error = rng.azar() < 0.4 ? 'partes-iguales' : rng.elegir(ERRORES4.filter(e => e !== 'partes-iguales'));
-    const { a, b, u, T } = it;
-    let item = null;
-    if (error === 'partes-iguales') {
-      if (T % 2 === 0) item = { ...it, error, mala: 0, partes: 2, tipoPartes: 'dos', una: T / 2, cada: [T / 2, T / 2], terminoDiv: null };
-    } else if (error === 'partes-multiplicadas') {
-      const p = a * b;
-      if (T % p === 0) item = { ...it, error, mala: 0, partes: p, tipoPartes: 'producto', una: T / p, cada: [a * (T / p), b * (T / p)], terminoDiv: null };
-    } else if (error === 'dividir-entre-un-termino') {
-      const t = T % a === 0 ? a : (T % b === 0 ? b : null);
-      if (t !== null) item = { ...it, error, mala: 1, partes: a + b, tipoPartes: 'suma', una: T / t, cada: [a * (T / t), b * (T / t)], terminoDiv: t };
-    } else if (error === 'sumar-en-vez-de-multiplicar') {
-      const sum = ctxSuma(it);
-      item = { ...it, error, mala: 2, partes: a + b, tipoPartes: 'suma', una: u, cada: sum, terminoDiv: null, suma: true };
+  for (let ronda = 0; ronda < 50; ronda++) {
+    const r = rng.azar(), mala = r < 0.36 ? 0 : (r < 0.68 ? 1 : 2);
+    const error = mala === 0 ? (rng.azar() < 0.7 ? 'partes-iguales' : 'partes-multiplicadas') : rng.elegir(ERRORES4_POR_LINEA[mala]);
+    for (let intento = 0; intento < 300; intento++) {
+      const item = caza(generarReparto(rng), error);
+      if (item === null) continue;
+      item.cada = cadaDe(item);
+      if (item.cada.every(v => esExacto(item.ctx, v)) && !(item.cada[0] === item.a * item.u && item.cada[1] === item.b * item.u)) return item;
     }
-    if (item !== null && item.cada.every(v => esExacto(it.ctx, v))
-        && !(item.cada[0] === a * u && item.cada[1] === b * u)) return item;
   }
   throw new Error('generarCaza: sin datos');
 }
-/** u + a y u + b, con a y b en euros / mL / unidades: el error de sumar las partes en vez de multiplicar. */
-const ctxSuma = it => [it.u + it.a * (it.ctx === 'paga' ? 100 : 1), it.u + it.b * (it.ctx === 'paga' ? 100 : 1)];
 export const claveCaza = it => `${it.error}|${it.ctx}|${it.a}:${it.b}`;

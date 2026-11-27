@@ -1,8 +1,9 @@
-// Práctica «Repartos proporcionales»: textos propios, siempre { es, en }. Reglas: «·» y «÷», nunca «×»; la razón
+// Práctica «Repartos proporcionales»: textos propios, siempre { es, en }. Reglas: «·» y «:», nunca «×» ni «÷»; la razón
 // («a : b») y una división no van en el mismo párrafo; sin porcentajes ni fracciones; coma en español y punto en
 // inglés; cada explicación habla de LOS NÚMEROS DE ESE ÍTEM. Los nombres de los dueños son inventados.
 
-import { dinero, nombresDe } from './logica.js';
+import { dinero, nombresDe, cadaDe } from './logica.js';
+import { errorEnLinea, LO_CORRECTO, reglaEnNegrita } from '../_comun/procedimiento.js';
 
 const NBSP = ' ';
 const t = (i, es, en) => (i === 'es' ? es : en);
@@ -25,6 +26,25 @@ const sobres = (n, i) => t(i, n === 1 ? 'sobre' : 'sobres', n === 1 ? 'pack' : '
 const partes = (n, i) => t(i, n === 1 ? 'parte' : 'partes', n === 1 ? 'part' : 'parts');
 
 const dueno = (it, k, i) => nombresDe(it)[i][k];
+const cap = x => x.charAt(0).toUpperCase() + x.slice(1);
+/** Quién es el dueño en una frase: «Nora», «el zumo», «la leche». */
+const sujeto = (it, k, i) => (it.ctx === 'refresco' ? nombresDe(it).art[i][k] : dueno(it, k, i));
+/** «a Nora» / «al zumo» / «a la leche» (en inglés, sin preposición). */
+const aSujeto = (it, k, i) => {
+  const x = sujeto(it, k, i);
+  if (i === 'en') return x;
+  return x.startsWith('el ') ? `al ${x.slice(3)}` : `a ${x}`;
+};
+/** «a Nora le tocan 2 partes» / «the juice gets 4 parts». */
+const tocan = (it, k, i) => {
+  const n = k === 0 ? it.a : it.b;
+  return i === 'es' ? `${aSujeto(it, k, i)} le ${n === 1 ? 'toca' : 'tocan'} ${n} ${partes(n, i)}` : `${sujeto(it, k, i)} gets ${n} ${partes(n, i)}`;
+};
+/** «Nora tiene 2 partes» / «el zumo lleva 2 partes». */
+const lleva = (it, k, i) => {
+  const n = k === 0 ? it.a : it.b;
+  return `${sujeto(it, k, i)} ${i === 'es' ? (it.ctx === 'refresco' ? 'lleva' : 'tiene') : 'has'} ${n} ${partes(n, i)}`;
+};
 
 /** El enunciado del reparto: dice proporcional a qué y escribe la razón. */
 export function enunciadoReparto(it, i) {
@@ -40,8 +60,8 @@ export function enunciadoReparto(it, i) {
       `${A} and ${B} share ${T} cards in proportion to the packs each one put in: ${A}, ${a} ${sobres(a, i)}; ${B}, ${b} ${sobres(b, i)}. That is, in the ratio ${r}.`);
   }
   return t(i,
-    `Se preparan ${T} mL de refresco mezclando ${A} y ${B} en la razón ${r}: por cada ${a} ${partes(a, i)} de ${A}, ${b} de ${B}.`,
-    `${T} mL of drink are made by mixing ${A} and ${B} in the ratio ${r}: for every ${a} ${partes(a, i)} of ${A}, ${b} of ${B}.`);
+    `Se preparan ${T} mL de refresco mezclando ${A} y ${B} en la razón ${r}: por cada ${a === 1 ? '' : `${a} `}${partes(a, i)} de ${A}, ${b} de ${B}.`,
+    `${T} mL of drink are made by mixing ${A} and ${B} in the ratio ${r}: for every ${a === 1 ? '' : `${a} `}${partes(a, i)} of ${A}, ${b} of ${B}.`);
 }
 
 // ─── Qué ha pasado con cada error ────────────────────────────────────────────────────────────────
@@ -51,6 +71,7 @@ export const NOMBRE_ERROR = {
   'contar-personas': { es: 'Has contado las personas', en: 'You counted the people' },
   'partes-iguales': { es: 'Has repartido a partes iguales', en: 'You shared it equally' },
   'dividir-entre-un-termino': { es: 'Has dividido entre un solo número de la razón', en: 'You divided by only one number of the ratio' },
+  'dividir-entre-dos': { es: 'Has dividido entre 2 en vez de entre todas las partes', en: 'You divided by 2 instead of by all the parts' },
   'dividir-entre-cada-termino': { es: 'Has dividido el total entre cada número de la razón', en: 'You divided the total by each number of the ratio' },
   intercambiadas: { es: 'Las partes están al revés', en: 'The parts are the wrong way round' },
   'quedarse-en-una-parte': { es: 'Te has quedado en lo que vale una parte', en: 'You stopped at what one part is worth' },
@@ -61,7 +82,7 @@ export const NOMBRE_ERROR = {
 
 /** Una frase para el error reconocido, con los números del ítem. */
 export function quePaso(id, it, i) {
-  const { ctx, a, b, u, T } = it, S = a + b, A = dueno(it, 0, i);
+  const { ctx, a, b, u, T } = it, S = a + b;
   switch (id) {
     case 'partes-multiplicadas':
       return t(i, `Las partes se suman, no se multiplican: ${c(`${a} + ${b} = ${S}`)} partes, no ${a * b}.`,
@@ -70,17 +91,19 @@ export function quePaso(id, it, i) {
       return t(i, `No son 2 partes: cada uno tiene las suyas. Hay ${c(`${a} + ${b} = ${S}`)} partes.`,
         `There are not 2 parts: each one has their own. There are ${c(`${a} + ${b} = ${S}`)} parts.`);
     case 'partes-iguales':
-      return t(i, `No se reparte a partes iguales: ${A} tiene ${a} y el otro ${b}. El total se divide entre ${S}, no entre 2.`,
-        `It is not shared equally: ${A} has ${a} and the other has ${b}. The total is divided by ${S}, not by 2.`);
+      return t(i, `No se reparte a partes iguales: ${lleva(it, 0, i)} y ${sujeto(it, 1, i)} ${b}. El total se divide entre ${S}, no entre 2.`,
+        `It is not shared equally: ${lleva(it, 0, i)} and ${sujeto(it, 1, i)} ${b}. The total is divided by ${S}, not by 2.`);
+    case 'dividir-entre-dos':
+      return t(i, `El total se divide entre todas las partes (${S}), no entre 2.`, `The total is divided by all the parts (${S}), not by 2.`);
     case 'dividir-entre-un-termino':
     case 'dividir-entre-cada-termino':
       return t(i, `El total se divide entre todas las partes (${S}), no entre ${a} ni entre ${b}.`,
         `The total is divided by all the parts (${S}), not by ${a} or by ${b}.`);
     case 'intercambiadas':
-      return t(i, `Están al revés: a ${A} le tocan ${a} partes, no ${b}.`, `They are the wrong way round: ${A} gets ${a} parts, not ${b}.`);
+      return t(i, `Están al revés: ${tocan(it, 0, i)}, no ${b}.`, `They are the wrong way round: ${tocan(it, 0, i)}, not ${b}.`);
     case 'quedarse-en-una-parte':
-      return t(i, `${fv(ctx, u, i, { cromos: true })} es lo que vale UNA parte; a ${A} le tocan ${a}.`,
-        `${fv(ctx, u, i, { cromos: true })} is what ONE part is worth; ${A} gets ${a}.`);
+      return t(i, `${fv(ctx, u, i, { cromos: true })} es lo que vale UNA parte; ${tocan(it, 0, i)}.`,
+        `${fv(ctx, u, i, { cromos: true })} is what ONE part is worth; ${tocan(it, 0, i)}.`);
     case 'razonar-sumando':
     case 'sumar-en-vez-de-multiplicar':
       return t(i, 'Cada uno recibe tantas partes como le tocan: se multiplica, no se suma.',
@@ -94,10 +117,10 @@ export function quePaso(id, it, i) {
 
 /** Los párrafos con la solución completa (sin razón: solo divisiones y productos). */
 export function pasosBien(it, i) {
-  const { ctx, a, b, u, T } = it, S = a + b, F = v => fv(ctx, v, i), A = dueno(it, 0, i), B = dueno(it, 1, i);
+  const { ctx, a, b, u, T } = it, S = a + b, F = v => fv(ctx, v, i), A = cap(dueno(it, 0, i)), B = cap(dueno(it, 1, i));
   return [
     t(i, `Partes en total: ${c(`${a} + ${b} = ${S}`)}.`, `Parts in total: ${c(`${a} + ${b} = ${S}`)}.`),
-    t(i, `Una parte: ${c(`${F(T)} ÷ ${S} = ${F(u)}`)}.`, `One part: ${c(`${F(T)} ÷ ${S} = ${F(u)}`)}.`),
+    t(i, `Una parte: ${c(`${F(T)} : ${S} = ${F(u)}`)}.`, `One part: ${c(`${F(T)} : ${S} = ${F(u)}`)}.`),
     t(i, `${A}: ${c(`${a} · ${F(u)} = ${F(a * u)}`)}. ${B}: ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`,
       `${A}: ${c(`${a} · ${F(u)} = ${F(a * u)}`)}. ${B}: ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`),
     t(i, `Comprobación: ${c(`${F(a * u)} + ${F(b * u)} = ${F(T)}`)}.`, `Check: ${c(`${F(a * u)} + ${F(b * u)} = ${F(T)}`)}.`),
@@ -111,21 +134,22 @@ export function explicaCuenta(it, { idioma = 'es' } = {}) {
   const i = idioma, { a, b, u, T, ctx } = it, S = a + b, F = v => fv(ctx, v, i);
   return parrafos([
     t(i, `Partes en total: ${c(`${a} + ${b} = ${S}`)}.`, `Parts in total: ${c(`${a} + ${b} = ${S}`)}.`),
-    t(i, `Una parte vale: ${c(`${F(T)} ÷ ${S} = ${F(u)}`)}.`, `One part is worth: ${c(`${F(T)} ÷ ${S} = ${F(u)}`)}.`),
-    t(i, `Respuesta: hay ${S} partes y una parte vale ${F(u)}.`, `Answer: there are ${S} parts and one part is worth ${F(u)}.`),
+    t(i, `Una parte vale: ${c(`${F(T)} : ${S} = ${F(u)}`)}.`, `One part is worth: ${c(`${F(T)} : ${S} = ${F(u)}`)}.`),
+    t(i, `Respuesta: hay ${S} partes y una parte vale ${fv(ctx, u, i, { cromos: true })}.`, `Answer: there are ${S} parts and one part is worth ${fv(ctx, u, i, { cromos: true })}.`),
   ]);
 }
 export function explicaReparte(it, { idioma = 'es' } = {}) {
   const i = idioma;
   return parrafos([...pasosBien(it, i),
-    t(i, `Respuesta: ${dueno(it, 0, i)}, ${fv(it.ctx, it.a * it.u, i)}; ${dueno(it, 1, i)}, ${fv(it.ctx, it.b * it.u, i)}.`,
-      `Answer: ${dueno(it, 0, i)}, ${fv(it.ctx, it.a * it.u, i)}; ${dueno(it, 1, i)}, ${fv(it.ctx, it.b * it.u, i)}.`)]);
+    t(i, `Respuesta: ${cap(dueno(it, 0, i))}, ${fv(it.ctx, it.a * it.u, i, { cromos: true })}; ${cap(dueno(it, 1, i))}, ${fv(it.ctx, it.b * it.u, i, { cromos: true })}.`,
+      `Answer: ${cap(dueno(it, 0, i))}, ${fv(it.ctx, it.a * it.u, i, { cromos: true })}; ${cap(dueno(it, 1, i))}, ${fv(it.ctx, it.b * it.u, i, { cromos: true })}.`)]);
 }
 
 /** El reparto que se enseña en el ejercicio 3 y en el 4. */
 export const repartoDado = (it, i) => {
   const { ctx } = it, [x, y] = it.dado, F = v => fv(ctx, v, i);
-  return t(i, `${dueno(it, 0, i)}, ${F(x)}; ${dueno(it, 1, i)}, ${F(y)}.`, `${dueno(it, 0, i)}, ${F(x)}; ${dueno(it, 1, i)}, ${F(y)}.`);
+  const A = cap(dueno(it, 0, i)), B = cap(dueno(it, 1, i));
+  return `${A}, ${F(x)}; ${B}, ${F(y)}.`;
 };
 
 export function explicaEstaBien(it, { idioma = 'es' } = {}) {
@@ -138,8 +162,8 @@ export function explicaEstaBien(it, { idioma = 'es' } = {}) {
       t(i, `${c(`${a} · ${F(u)} = ${F(x)}`)} y ${c(`${b} · ${F(u)} = ${F(y)}`)}.`, `${c(`${a} · ${F(u)} = ${F(x)}`)} and ${c(`${b} · ${F(u)} = ${F(y)}`)}.`),
     ]);
   }
-  const bien = t(i, `Bien hecho: ${c(`${F(T)} ÷ ${a + b} = ${F(u)}`)}; ${c(`${a} · ${F(u)} = ${F(a * u)}`)} y ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`,
-    `Done correctly: ${c(`${F(T)} ÷ ${a + b} = ${F(u)}`)}; ${c(`${a} · ${F(u)} = ${F(a * u)}`)} and ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`);
+  const bien = t(i, `Bien hecho: ${c(`${F(T)} : ${a + b} = ${F(u)}`)}; ${c(`${a} · ${F(u)} = ${F(a * u)}`)} y ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`,
+    `Done correctly: ${c(`${F(T)} : ${a + b} = ${F(u)}`)}; ${c(`${a} · ${F(u)} = ${F(a * u)}`)} and ${c(`${b} · ${F(u)} = ${F(b * u)}`)}.`);
   if (tipo === 'no-suman') {
     return parrafos([
       t(i, `Está mal: las partes no suman el total. ${suma}, y el total es ${F(T)}.`, `It is wrong: the parts do not add up to the total. ${suma}, and the total is ${F(T)}.`),
@@ -155,27 +179,41 @@ export function explicaEstaBien(it, { idioma = 'es' } = {}) {
 
 // ─── Ejercicio 4: las tres líneas ────────────────────────────────────────────────────────────────
 
-/** Las tres líneas (HTML) y el índice de la mala. */
+/** Las tres líneas de la resolución (texto plano, con «:» para dividir) tal como las hizo el compañero. */
 export function lineasCaza(it, i) {
-  const { ctx, a, b, u, T, error } = it, F = v => fv(ctx, v, i), A = dueno(it, 0, i), B = dueno(it, 1, i), S = it.partes;
-  const L1 = error === 'partes-iguales'
-    ? t(i, 'Hay 2 partes: una para cada uno.', 'There are 2 parts: one for each.')
+  const { ctx, a, b, u, T, error } = it, F = v => fv(ctx, v, i), A = cap(dueno(it, 0, i)), B = cap(dueno(it, 1, i)), S = it.partes;
+  const L1 = error === 'partes-iguales' ? `1 + 1 = 2 ${partes(2, i)}`
     : (error === 'partes-multiplicadas' ? `${a} · ${b} = ${S} ${partes(S, i)}` : `${a} + ${b} = ${S} ${partes(S, i)}`);
-  const divisor = error === 'dividir-entre-un-termino' ? it.terminoDiv : S;
-  const L2 = `${F(T)} ÷ ${divisor} = ${F(it.una)}`;
+  const L2 = `${F(T)} : ${it.divisor} = ${F(it.una)}`;
+  const [x, y] = cadaDe(it);
   const L3 = it.suma
-    ? `${A}: ${F(u)} + ${a} = ${F(it.cada[0])}; ${B}: ${F(u)} + ${b} = ${F(it.cada[1])}`
-    : (error === 'partes-iguales'
-      ? `${A}: ${F(it.cada[0])}; ${B}: ${F(it.cada[1])}`
-      : `${A}: ${a} · ${F(it.una)} = ${F(it.cada[0])}; ${B}: ${b} · ${F(it.una)} = ${F(it.cada[1])}`);
+    ? `${A}: ${F(u)} + ${a} = ${F(x)}; ${B}: ${F(u)} + ${b} = ${F(y)}`
+    : `${A}: ${it.mult[0]} · ${F(it.una)} = ${F(x)}; ${B}: ${it.mult[1]} · ${F(it.una)} = ${F(y)}`;
   return [L1, L2, L3];
 }
 
+/** Lo correcto: las tres líneas bien hechas. */
+export function lineasBien(it, i) {
+  const { ctx, a, b, u, T } = it, S = a + b, F = v => fv(ctx, v, i), A = cap(dueno(it, 0, i)), B = cap(dueno(it, 1, i));
+  return [`${a} + ${b} = ${S} ${partes(S, i)}`, `${F(T)} : ${S} = ${F(u)}`,
+    `${A}: ${a} · ${F(u)} = ${F(a * u)}; ${B}: ${b} · ${F(u)} = ${F(b * u)}`];
+}
+
+const REGLAS4 = {
+  'partes-iguales': { es: 'Cada uno recibe las partes que le tocan en la razón.', en: 'Each one gets the parts the ratio gives them.' },
+  'partes-multiplicadas': { es: 'Las partes de la razón se suman.', en: 'The parts of the ratio are added.' },
+  'dividir-entre-un-termino': { es: 'El total se divide entre todas las partes.', en: 'The total is divided by all the parts.' },
+  'dividir-entre-dos': { es: 'El total se divide entre todas las partes.', en: 'The total is divided by all the parts.' },
+  'sumar-en-vez-de-multiplicar': { es: 'Cada uno recibe tantas partes como le tocan: se multiplica.', en: 'Each one gets as many parts as they are due: you multiply.' },
+  intercambiadas: { es: 'A cada uno le tocan las partes que dice la razón, en su orden.', en: 'Each one gets the parts the ratio gives them, in that order.' },
+};
+
 export function explicaCaza(it, { idioma = 'es' } = {}) {
-  const i = idioma;
+  const i = idioma, mala = lineasCaza(it, i)[it.mala], bien = lineasBien(it, i), F = v => fv(it.ctx, v, i);
   return parrafos([
-    t(i, `La línea ${it.mala + 1} está mal. ${quePaso(it.error, it, i)}`, `Line ${it.mala + 1} is wrong. ${quePaso(it.error, it, i)}`),
-    ...pasosBien(it, i),
+    `${errorEnLinea(it.mala, i)} <span class="linea-mala">${c(mala)}</span><br>${NOMBRE_ERROR[it.error][i]}.${reglaEnNegrita(REGLAS4[it.error][i])}${quePaso(it.error, it, i)}`,
+    `${LO_CORRECTO[i]}<br>${bien.map(l => `<span class="linea-mala">${c(l)}</span>`).join('<br>')}`,
+    t(i, `Comprobación: ${c(`${F(it.a * it.u)} + ${F(it.b * it.u)} = ${F(it.T)}`)}.`, `Check: ${c(`${F(it.a * it.u)} + ${F(it.b * it.u)} = ${F(it.T)}`)}.`),
   ]);
 }
 
@@ -189,10 +227,10 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Repartir en una razón es repartir en <strong>partes</strong>. Con la razón 2 : 3, uno tiene 2 partes y el otro 3.</p>
-        <p>Se <strong>suman</strong> las partes y se divide el total entre ese número. Ejemplo, con 60 € para repartir: ${c('2 + 3 = 5')} partes, y una parte vale ${c('60 ÷ 5 = 12')} €.</p>`,
+        <p>Se <strong>suman</strong> las partes y se divide el total entre ese número. Ejemplo, con 60 € para repartir: ${c('2 + 3 = 5')} partes, y una parte vale ${c('60 : 5 = 12')} €.</p>`,
       en: `<h2>How it works</h2>
         <p>Sharing in a ratio (razón) means sharing in <strong>parts</strong>. With the ratio 2 : 3, one person gets 2 parts and the other 3.</p>
-        <p>You <strong>add</strong> the parts and divide the total by that number. Example, with €60 to share: ${c('2 + 3 = 5')} parts, and one part is worth ${c('60 ÷ 5 = 12')} €.</p>`,
+        <p>You <strong>add</strong> the parts and divide the total by that number. Example, with €60 to share: ${c('2 + 3 = 5')} parts, and one part is worth ${c('€60 : 5 = €12')}.</p>`,
     },
     instruccion: ej('Escribe cuántas partes hay en total y cuánto vale una parte.', 'Write how many parts there are in total and what one part is worth.'),
     partes: ej('Partes en total', 'Parts in total'), una: ej('Una parte vale', 'One part is worth'),
@@ -207,7 +245,7 @@ export const TX = {
         <p>Ejemplo con 60 € en la razón 2 : 3: una parte vale 12 €. Uno recibe ${c('2 · 12 = 24')} € y el otro ${c('3 · 12 = 36')} €. Comprueba: ${c('24 + 36 = 60')}.</p>`,
       en: `<h2>How it works</h2>
         <p>First, what one part is worth; then each one gets <strong>as many parts as they are due</strong>: you multiply.</p>
-        <p>Example with €60 in the ratio 2 : 3: one part is worth €12. One gets ${c('2 · 12 = 24')} € and the other ${c('3 · 12 = 36')} €. Check: ${c('24 + 36 = 60')}.</p>`,
+        <p>Example with €60 in the ratio 2 : 3: one part is worth €12. One gets ${c('2 · €12 = €24')} and the other ${c('3 · €12 = €36')}. Check: ${c('€24 + €36 = €60')}.</p>`,
     },
     instruccion: ej('Escribe lo que le toca a cada uno.', 'Write what each one gets.'),
     solucion: bi((i, it) => explicaReparte(it, { idioma: i })),

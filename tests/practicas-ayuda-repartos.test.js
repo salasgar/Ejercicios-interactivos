@@ -16,7 +16,7 @@ test('ej. 1: partes en total y lo que vale una parte', () => {
   for (const it of lote(generarCuenta, 31)) for (const idioma of IDIOMAS) {
     const x = texto(explicaCuenta(it, { idioma })), S = it.a + it.b;
     assert.ok(x.includes(`${it.a} + ${it.b} = ${S}`), x);
-    assert.ok(x.includes(`${fv(it.ctx, it.T, idioma)} ÷ ${S} = ${fv(it.ctx, it.u, idioma)}`), x);
+    assert.ok(x.includes(`${fv(it.ctx, it.T, idioma)} : ${S} = ${fv(it.ctx, it.u, idioma)}`), x);
     assert.ok(x.includes(idioma === 'es' ? `hay ${S} partes` : `there are ${S} parts`), x);
   }
 });
@@ -43,10 +43,14 @@ test('ej. 3: dice lo que falla y trae el reparto bien hecho', () => {
 });
 
 test('ej. 4: dice qué línea está mal y trae el reparto bien hecho con su comprobación', () => {
+  const ord = { es: ['primera', 'segunda', 'tercera'], en: ['first', 'second', 'third'] };
   for (const it of lote(generarCaza, 34)) for (const idioma of IDIOMAS) {
     const x = texto(explicaCaza(it, { idioma })), F = v => fv(it.ctx, v, idioma);
-    assert.ok(x.includes(idioma === 'es' ? `La línea ${it.mala + 1} está mal` : `Line ${it.mala + 1} is wrong`), x);
+    assert.ok(x.includes(idioma === 'es' ? `El error está en la ${ord.es[it.mala]} línea` : `The mistake is in the ${ord.en[it.mala]} line`), x);
+    assert.ok(x.includes(idioma === 'es' ? 'Lo correcto es:' : 'The right way is:'), x);
+    assert.ok(x.includes(`${F(it.T)} : ${it.a + it.b} = ${F(it.u)}`), x);
     assert.ok(x.includes(`${F(it.a * it.u)} + ${F(it.b * it.u)} = ${F(it.T)}`), x);
+    assert.ok(!/línea \d|line \d/.test(x), x);
   }
 });
 

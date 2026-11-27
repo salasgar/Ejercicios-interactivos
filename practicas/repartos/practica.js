@@ -136,14 +136,14 @@ function montar3(contenedor, item, api) {
 
 const lineasHtml = (item, idioma) => lineasCaza(item, idioma).map(cuenta);
 const enunciado4 = (item, { idioma, tt }) => `<p class="instruccion">${enunciadoReparto(item, idioma)}</p><p class="instruccion">${tt(TX.ej4.instruccion)}</p>
-  <ol class="procedimiento">${lineasHtml(item, idioma).map((l, k) => `<li class="procedimiento__linea"><span class="procedimiento__n">${k + 1}</span><span>${l}</span></li>`).join('')}</ol>`;
+  <ol class="procedimiento">${lineasHtml(item, idioma).map(l => `<li class="procedimiento__linea">${l}</li>`).join('')}</ol>`;
 
 function montar4(contenedor, item, api) {
   const { idioma, tt } = api;
   contenedor.innerHTML = `<p class="instruccion">${enunciadoReparto(item, idioma)}</p><p class="instruccion">${tt(TX.ej4.instruccion)}</p>`;
   const botones = elecciones(contenedor, {
     clase: 'procedimiento procedimiento--botones',
-    opciones: lineasHtml(item, idioma).map((l, k) => ({ valor: k, html: `<span class="procedimiento__n">${k + 1}</span>${l}` })),
+    opciones: lineasHtml(item, idioma).map((l, k) => ({ valor: k, html: l })),
     alElegir(valor) {
       if (api.respondido()) return;
       botones.marcar([item.mala], valor);

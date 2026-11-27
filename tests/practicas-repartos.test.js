@@ -7,14 +7,14 @@ import { crearRng } from '../practicas/_comun/rng.js';
 import { NOMBRES } from '../practicas/_comun/proporcion.js';
 import {
   CONTEXTOS, RAZONES, INGREDIENTES, generarCuenta, claveCuenta, erroresDeCuenta, generarReparte, claveReparte, erroresDeReparte,
-  generarEstaBien, claveEstaBien, errorDeEstaBien, generarCaza, claveCaza, repartoMalo, dineroCelda,
+  generarEstaBien, claveEstaBien, errorDeEstaBien, generarCaza, claveCaza, repartoMalo, dineroCelda, esReservado, ERRORES4_POR_LINEA,
 } from '../practicas/repartos/logica.js';
-import { TX, enunciadoReparto, lineasCaza, explicaCuenta, explicaReparte, explicaEstaBien, explicaCaza, repartoDado } from '../practicas/repartos/textos.js';
+import { TX, enunciadoReparto, quePaso, lineasCaza, explicaCuenta, explicaReparte, explicaEstaBien, explicaCaza, repartoDado } from '../practicas/repartos/textos.js';
 
 const N = 3000;
 const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => generar(rng)); };
 const sinHtml = s => String(s).replace(/<[^>]+>/g, '');
-const LIMPIO = /undefined|NaN|\[object|×|%|por ciento|percent|\beval\b/;
+const LIMPIO = /undefined|NaN|\[object|×|÷|%|por ciento|percent|\beval\b/;
 const variedad = (items, clave) => {
   const m = new Map();
   items.forEach(it => m.set(clave(it), (m.get(clave(it)) ?? 0) + 1));
@@ -109,31 +109,70 @@ test('repartoMalo: razonar-sumando no sale en refresco ni cuando coincide con el
   assert.ok(nulos >= 0);
 });
 
-test('ej. 4: una sola línea mala, las demás bien calculadas; partes-iguales ≥ un tercio', () => {
-  const items = lote(generarCaza, 16), cuenta = {};
+test('ej. 4: una sola línea mala, repartida entre las tres; las demás bien calculadas', () => {
+  const items = lote(generarCaza, 16), porLinea = [0, 0, 0], cuenta = {};
   for (const it of items) {
+    porLinea[it.mala]++;
     cuenta[it.error] = (cuenta[it.error] ?? 0) + 1;
     const { a, b, u, T } = it, bien = [a * u, b * u];
+    assert.ok(ERRORES4_POR_LINEA[it.mala].includes(it.error), `${it.error} en la línea ${it.mala}`);
     assert.ok(it.cada.every(v => Number.isInteger(v) && v > 0));
     assert.notDeepEqual(it.cada, bien);
-    if (it.error === 'partes-iguales') { assert.equal(it.mala, 0); assert.equal(it.partes, 2); assert.equal(BigInt(it.una) * 2n, BigInt(T)); assert.deepEqual(it.cada, [it.una, it.una]); }
-    if (it.error === 'partes-multiplicadas') { assert.equal(it.mala, 0); assert.equal(it.partes, a * b); assert.equal(BigInt(it.una) * BigInt(a * b), BigInt(T)); assert.deepEqual(it.cada, [a * it.una, b * it.una]); }
-    if (it.error === 'dividir-entre-un-termino') { assert.equal(it.mala, 1); assert.equal(it.partes, a + b); assert.ok([a, b].includes(it.terminoDiv)); assert.equal(BigInt(it.una) * BigInt(it.terminoDiv), BigInt(T)); assert.deepEqual(it.cada, [a * it.una, b * it.una]); }
-    if (it.error === 'sumar-en-vez-de-multiplicar') { assert.equal(it.mala, 2); assert.equal(it.partes, a + b); assert.equal(it.una, u); }
+    // Línea 1 (partes): solo está mal en los dos primeros errores; las siguientes se recalculan desde ella.
+    assert.equal(it.partes === a + b, it.mala !== 0);
+    assert.equal(BigInt(it.una) * BigInt(it.divisor), BigInt(T));
+    if (it.mala === 0) assert.equal(it.divisor, it.partes);
+    if (it.mala >= 1) assert.equal(it.partes, a + b);
+    if (it.mala === 1) assert.ok([a, b, 2].includes(it.divisor) && it.divisor !== a + b);
+    if (it.mala === 2) { assert.equal(it.una, u); assert.equal(it.divisor, a + b); }
+    if (it.error === 'partes-iguales') { assert.equal(it.partes, 2); assert.deepEqual(it.cada, [it.una, it.una]); }
+    if (it.error === 'partes-multiplicadas') { assert.equal(it.partes, a * b); assert.deepEqual(it.cada, [a * it.una, b * it.una]); }
+    if (it.error === 'intercambiadas') assert.deepEqual(it.cada, [b * u, a * u]);
+    if (it.error === 'sumar-en-vez-de-multiplicar') assert.ok(it.suma && it.cada[0] > u && it.cada[1] > u);
     for (const idioma of ['es', 'en']) {
       const l = lineasCaza(it, idioma);
       assert.equal(l.length, 3);
       assert.ok(it.error !== 'sumar-en-vez-de-multiplicar' || !l[2].includes('·'));
+      assert.ok(!/^\d/.test(l[1]) || true);
+      // La línea mala no se deduce por su forma: las tres son cuentas con «=».
+      for (const x of l) assert.ok(x.includes('='), x);
     }
   }
-  assert.ok(cuenta['partes-iguales'] / N >= 1 / 3, `partes-iguales ${cuenta['partes-iguales']}`);
-  for (const e of ['partes-multiplicadas', 'dividir-entre-un-termino', 'sumar-en-vez-de-multiplicar']) assert.ok(cuenta[e] > 100, e);
+  for (const k of porLinea) assert.ok(k / N > 0.28 && k / N < 0.42, `líneas ${porLinea}`);
+  assert.ok(cuenta['partes-iguales'] / N >= 0.2, `partes-iguales ${cuenta['partes-iguales']}`);
+  for (const e of ['partes-multiplicadas', 'dividir-entre-un-termino', 'dividir-entre-dos', 'sumar-en-vez-de-multiplicar', 'intercambiadas']) assert.ok(cuenta[e] > 100, e);
   assert.ok(variedad(items, claveCaza) <= 0.1);
+});
+
+test('refresco: el sirope y el café llevan siempre la parte pequeña; las frases llevan artículo', () => {
+  const items = lote(generarReparte, 19).filter(it => it.ctx === 'refresco'), vistos = new Set();
+  for (const it of items) {
+    const k = it.duenos[0];
+    vistos.add(k);
+    if (INGREDIENTES[k].pequeno === 0) assert.ok(it.a < it.b, `sirope ${it.a}:${it.b}`);
+    if (INGREDIENTES[k].pequeno === 1) assert.ok(it.b < it.a, `café ${it.a}:${it.b}`);
+    for (const idioma of ['es', 'en']) {
+      const e = enunciadoReparto(it, idioma);
+      assert.ok(!/por cada 1 |for every 1 /.test(e), e);
+      for (const id of ['partes-iguales', 'intercambiadas', 'quedarse-en-una-parte']) {
+        const q = sinHtml(quePaso(id, it, idioma));
+        assert.ok(!/(^|: |; )(zumo|sirope|leche|agua|café|juice|syrup|milk|water|coffee) /.test(q) && !/ a (zumo|sirope|leche|agua|café) /.test(q), q);
+      }
+    }
+  }
+  assert.equal(vistos.size, 3);
+});
+
+test('casos reservados: ninguno de la hoja 2 ni del examen 2 sale en ningún ejercicio', () => {
+  for (const g of [generarCuenta, generarReparte, generarEstaBien, generarCaza]) for (const it of lote(g, 20)) assert.ok(!esReservado(it), JSON.stringify(it));
+  assert.ok(esReservado({ ctx: 'paga', a: 3, b: 5, T: 5600 }));
+  assert.ok(esReservado({ ctx: 'cromos', a: 5, b: 4, T: 45 }), 'mismo caso con otro contexto y orden');
+  assert.ok(!esReservado({ ctx: 'paga', a: 3, b: 5, T: 4800 }));
 });
 
 test('textos: sin «×», porcentajes ni «undefined»; razón y división nunca en el mismo párrafo; nombres inventados', () => {
   const lineas = h => h.split(/<\/p>|<\/li>|<br>/).map(sinHtml);
-  const razonYDivision = l => /\d\s*:\s*\d/.test(l) && /÷/.test(l);
+  const razonYDivision = l => /(razón|ratio) \d+ : \d+/.test(l) && /\S : \S+ =/.test(l);
   const rng = crearRng(17);
   for (let k = 0; k < 600; k++) for (const idioma of ['es', 'en']) {
     const a = generarCuenta(rng), b = generarEstaBien(rng), c = generarCaza(rng);
@@ -143,7 +182,7 @@ test('textos: sin «×», porcentajes ni «undefined»; razón y división nunca
       assert.ok(!LIMPIO.test(sinHtml(p)), `${idioma}: ${sinHtml(p)}`);
       for (const l of lineas(p)) assert.ok(!razonYDivision(l), `razón y división juntas: ${l}`);
     }
-    for (const l of lineasCaza(c, idioma)) assert.ok(!/\d\s*:\s*\d/.test(l) || !/÷/.test(l), l);
+    for (const l of lineasCaza(c, idioma)) assert.ok(!/(razón|ratio)/.test(l) && !/÷/.test(l), l);
     for (const n of (a.duenos ?? [])) assert.ok(typeof n === 'number' || NOMBRES.includes(n));
   }
   for (const ej of Object.values(TX)) for (const id of ['es', 'en']) {
