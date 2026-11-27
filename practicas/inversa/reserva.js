@@ -91,4 +91,12 @@ export const HUELLAS_RESERVADAS = new Set([
   'wga7vd', // examen 2
   'xg7hns', // examen 2
   'z3xtgw', // examen 2
+  '55de24', // examen 2 (repaso, problema directo del ej. 4)
+  '11gnldz', // examen 2 (repaso, problema directo del ej. 4)
+  '1ta45az', // examen 2 (repaso, problema directo del ej. 4)
+  '6kox7b', // examen 2 (repaso, problema directo del ej. 4)
+  '1tk9794', // examen 2 (repaso, problema directo del ej. 4)
+  '1frg6kr', // examen 2 (repaso, problema directo del ej. 4)
+  '87ylu3', // examen 2 (repaso, problema directo del ej. 4)
+  '1m5jzl2', // examen 2 (repaso, problema directo del ej. 4)
 ]);
