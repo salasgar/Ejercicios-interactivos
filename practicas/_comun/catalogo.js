@@ -143,7 +143,7 @@ export const CATALOGO = [
   { id: 84, slug: 'razones', ruta: 'razones/', unidad: 7, nombre: { es: 'Razones y proporciones', en: 'Ratios and proportions' }, nEjercicios: 4, disponible: true },
   { id: 85, slug: 'tabla-proporcional', ruta: 'tabla-proporcional/', unidad: 7, nombre: { es: 'Tablas de proporcionalidad', en: 'Proportion tables' }, nEjercicios: 4, disponible: true },
   { id: 86, slug: 'regla-de-tres', ruta: 'regla-de-tres/', unidad: 7, nombre: { es: 'Problemas de proporcionalidad directa', en: 'Direct proportion problems' }, nEjercicios: 4, disponible: true },
-  { id: 87, slug: 'inversa', ruta: 'inversa/', unidad: 7, nombre: { es: 'Proporcionalidad inversa', en: 'Inverse proportion' }, nEjercicios: 4, disponible: false },
+  { id: 87, slug: 'inversa', ruta: 'inversa/', unidad: 7, nombre: { es: 'Proporcionalidad inversa', en: 'Inverse proportion' }, nEjercicios: 4, disponible: true },
   { id: 88, slug: 'directa-o-inversa', ruta: 'directa-o-inversa/', unidad: 7, nombre: { es: '¿Directa, inversa o ninguna?', en: 'Direct, inverse or neither?' }, nEjercicios: 3, disponible: true },
   { id: 89, slug: 'repartos', ruta: 'repartos/', unidad: 7, nombre: { es: 'Repartos proporcionales', en: 'Sharing in a ratio' }, nEjercicios: 4, disponible: true },
   { id: 90, slug: 'tres-escrituras', ruta: 'tres-escrituras/', unidad: 7, nombre: { es: 'Porcentaje, fracción y decimal', en: 'Percentage, fraction, decimal' }, nEjercicios: 4, disponible: false },

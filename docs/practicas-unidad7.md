@@ -165,7 +165,7 @@ escribe la tarea que la publica (227-231), al revisarla; hasta entonces, su ENTR
 | 1 | `tabla-proporcional` | 85 | 213 | ¿Es proporcional? · Completa la tabla · Lo que vale 1 · ¿Directamente proporcionales? (banco de 25 frases) | fruta 0,80-3,50 € el kilo (1-8 kg); entradas 4-15 €; cuadernos 0,70-2,50 €; arroz 60-125 g por persona; coche 4-9 L cada 100 km (100-800 km); taxi y gimnasio con cuota fija; en «Lo que vale 1», fruta hasta 6 €, entrada 3-60 €, cuaderno 0,50-4 €, receta ≤ 1000 g |
 | 1 | `regla-de-tres` | 86 | 214 | ¿Cuánto cuesta 1? · ¿Qué planteamiento? · Resuelve y contesta · ¿Tiene sentido? | los nueve contextos directos de `proporcion.js`, cada uno con su cota; resultado exacto (dinero al céntimo) |
 | 2 | `inversa` | 87 | 215 | ¿Es inversa? · Completa la tabla · Problemas · Caza el error | obreros 2-12 y 2-60 días; grifos 2-6 y 1-24 h (un depósito); caballos 2-12 y 5-60 días; amigos 2-8 y 1,50-60 € cada uno (total 12-120 €); coche 30-120 km/h y 1-10 h (60-900 km); todos al mismo ritmo, dicho en el enunciado; en «Caza el error», también problemas directos (fruta 0,80-3,50 € el kilo, 1-8 kg; receta para 2-12 personas, ≤ 1000 g) |
-| 2 | `directa-o-inversa` | 88 | 216 | Clasifica la situación (banco de 31) · Clasifica la tabla · ¿Qué planteamiento? | en el ej. 1, cada situación con una sola casilla defendible y un par de casos que lo demuestra; en el ej. 3, los contextos de `proporcion.js` con su cota (fruta, pintores, grifos, máquinas, recetas, consumo, pienso, gasolinera); dinero con dos decimales |
+| 2 | `directa-o-inversa` | 88 | 216 | Clasifica la situación (banco de 32) · Clasifica la tabla · ¿Qué planteamiento? | en el ej. 1, cada situación con una sola casilla defendible y un par de casos que lo demuestra; en el ej. 3, los contextos de `proporcion.js` con su cota (fruta, pintores, grifos, máquinas, recetas, consumo, pienso, gasolinera); dinero con dos decimales |
 | 2 | `repartos` | 89 | 217 | Cuenta las partes · Reparte · ¿Está bien repartido? · Caza el error | entre 2 personas, en una razón de términos 1-5; paga 4-12 € la hora (total 12-108 €); refresco 50-400 mL la parte (total 0,5-2 L; el sirope y el café, siempre la parte pequeña); cromos 4-8 por sobre (total 12-108); todo reparto exacto (al céntimo) |
 | 3 | `tres-escrituras` | 90 | 218 | (la 229) | |
 | 3 | `tanto-por-ciento` | 91 | 219 | (la 229) | |
@@ -177,12 +177,13 @@ escribe la tarea que la publica (227-231), al revisarla; hasta entonces, su ENTR
 | toda | `errores7` | 97 | 225 | (la 231) | |
 | toda | `leelo7` | 98 | 226 | La palabra · Léelo · La consigna · Completa | cada ítem sale desde el lunes de su paquete (`PAQUETES_DESDE`); el consejo del «No lo sé» no nombra nada de un paquete posterior; el dinero en euros con dos decimales |
 
-**Publicadas** (a 2026-11-27): `razones` y `leelo7` (tarea 227); `tabla-proporcional`, `regla-de-tres`, `directa-o-inversa` y
-`repartos` (tarea 228). `leelo7` es de toda la unidad, pero filtra por fecha: el 1-3 solo enseña lo de las sesiones 1-3, y cada
+**Publicadas** (a 2026-11-27): `razones` y `leelo7` (tarea 227); `tabla-proporcional`, `regla-de-tres`, `directa-o-inversa`,
+`repartos` e `inversa` (tarea 228). `leelo7` es de toda la unidad, pero filtra por fecha: el 1-3 solo enseña lo de las sesiones 1-3, y cada
 paquete se abre su lunes. `tabla-proporcional` y `regla-de-tres` se quedaron sin publicar en la 227 por casos de la hoja 1 y del
 examen 1, y las tres del paquete 2 y las del paquete 1 se cotejaron después contra la hoja 2 y el examen 2 (también su repaso del
-paquete 1): todas reservan esos casos por huella (`reserva.js` de cada práctica). `inversa` se queda sin publicar por un caso del
-repaso del examen 2 en su «Caza el error» (reabierta de la 228); la publica la 228 si cierra a tiempo y, si no, la 229.
+paquete 1): todas reservan esos casos por huella (`reserva.js` de cada práctica). `inversa` se quedó sin publicar por un caso del
+repaso del examen 2 en su «Caza el error» (reabierta de la 228, cerrada en b45a69e) y se publicó después, con una reabierta de
+redacción que no la retira («1 horas» y la viñeta suelta de la resolución).
 
 ## 7. Qué práctica cubre qué destreza de la unidad 7
 
