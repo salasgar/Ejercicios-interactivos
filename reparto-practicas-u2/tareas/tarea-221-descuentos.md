@@ -379,3 +379,5 @@ Si paras sin terminar: `$R/hechos/fallos/221--<sid>.md` con hasta dónde llegast
   verdad, y en especial **dos opciones con el mismo valor** (`0,8` y `0,80`; `36 €` y `36,00 €`; «rebajar un 25 %» y «pagar el 75 %»), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
 - (U6, 13-11, reabierta de la 153) En contextos de dinero, ninguna línea ni solución con fracción: se descarta el caso si no son céntimos exactos y se pasan a decimales las líneas de ERRORES_TIPICOS.
+- (221, 28-11) `practicas/_comun/proporcion.js` exporta `NBSP` (el espacio duro de verdad): no declares `const NBSP = ' '` a mano, el editor lo deja como espacio normal. Un `reserva.js` nuevo no entra en `git commit -- rutas` sin `git add` del fichero. Un caso de introducción puede ser de la hoja sin parecerlo (30,00 € con IVA del 21 % es el casco): pasa las introducciones por `esReservado` en el test.
+- (221, 28-11) Duración real de la reabierta: ≈ 15 min.
