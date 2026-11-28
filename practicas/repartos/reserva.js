@@ -16,4 +16,5 @@ export const HUELLAS_RESERVADAS = new Set([
   'knm2l9', // ej. 15) 4 : 7 con 36,00 € (99,00 €)
   '10ntvx0', '12cqlr8', '1d2f889', '1ebmd5c', '1mvczee', '1my0llq', '1ne6wzz', '1pqcg9q', '1qbfjlt', '1sns2mm',
   '1uf3z5z', '1xi3ex3', '40tdob', '4nto5t', 'cloo1o', 'gx18dn', 'o5ue5d', 'su7zpq', // examen 2
+  '1dvjji4', '6wu53a', // repaso del examen 3 (paquetes 1 y 2)
 ]);

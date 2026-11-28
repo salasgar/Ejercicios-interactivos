@@ -163,8 +163,8 @@ test('refresco: el sirope y el café llevan siempre la parte pequeña; las frase
   assert.equal(vistos.size, 3);
 });
 
-test('casos reservados: ninguno de la hoja 2 ni del examen 2 sale en ningún ejercicio', () => {
-  for (const g of [generarCuenta, generarReparte, generarEstaBien, generarCaza]) for (const it of lote(g, 20)) assert.ok(!esReservado(it), JSON.stringify(it));
+test('casos reservados: ninguno de la hoja 2, del examen 2 ni del repaso del examen 3 sale en ningún ejercicio (3000 ítems por ejercicio)', () => {
+  for (const g of [generarCuenta, generarReparte, generarEstaBien, generarCaza]) for (const it of lote(g, 3000)) assert.ok(!esReservado(it), JSON.stringify(it));
   assert.ok(esReservado({ ctx: 'paga', a: 3, b: 5, T: 5600 }));
   assert.ok(esReservado({ ctx: 'cromos', a: 5, b: 4, T: 45 }), 'mismo caso con otro contexto y orden');
   assert.ok(!esReservado({ ctx: 'paga', a: 3, b: 5, T: 4800 }));
