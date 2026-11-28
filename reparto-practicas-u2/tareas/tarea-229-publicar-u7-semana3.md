@@ -138,6 +138,18 @@ Las 4 prácticas con `disponible: true` (o reabiertas, con su fichero), `npm tes
   `origin/main` y el lanzador dejó de ver tareas. Regla vigente (`CLAUDE.md` de la raíz y `proyecto.md`, «Se sube desde el mismo árbol en el
   que se escribe»): se escribe, se comitea con rutas explícitas y se empuja desde aquí; si `git status -sb` dice «ahead N, behind M», se
   realinea como dice allí antes de empezar.
+- (229, primera pasada, 28-11, s-20261128T130248-eea9cd09) Las cuatro se escribieron el 19-11, antes del acta, de la hoja 3 y del examen 3: la
+  primera pasada solo pudo reabrirlas (cerrada PARCIAL, como la 158). Los guiones están en /tmp/pu2-229-eea9 (`barrido.mjs`, `reservas.mjs`,
+  `clics.mjs`, `cotejo-repaso.mjs`; los casos del examen, solo en `papel-PRIVADO.mjs`): para la segunda pasada, rehacer `arbol/` con
+  `git archive HEAD | tar -x` y el parche de `base.js` (el `python3` de /tmp/pu2-228-a6fd/pasada2.sh) y volver a lanzarlos.
+- (229) **El repaso de un examen saca casos de prácticas ya publicadas**: el del examen 3 (cuatro preguntas de los paquetes 1 y 2) salía en
+  `repartos` (≈ 1,1 % de los ítems), `directa-o-inversa`, `regla-de-tres` y `tabla-proporcional`, que se habían cotejado contra los exámenes 1 y 2
+  pero no contra el 3, escrito después. Coteja el repaso de tu examen contra todo lo publicado, con el `huellasDe` de cada práctica.
+- (229) `clics.mjs` daba 0 ejercicios en la primera práctica de la lista: `http.server` aún no respondía a los 1,2 s. Espera a que el servidor
+  conteste antes de navegar (ya está en el guion de /tmp/pu2-229-eea9).
+- (229) Un barrido de textos con regex no distingue «1,000» (millar inglés) de «0,075» ni «8,984375» (decimales): los avisos de «coma de millar» y
+  «cinco cifras sin espacio fino» hay que leerlos. Y el espacio del «20 %» hay que mirarlo por código de carácter: `descuentos` tenía
+  `const NBSP = ' '` con un espacio corriente.
 
 ## Prohibido (propio de esta tarea)
 
