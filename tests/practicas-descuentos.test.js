@@ -8,9 +8,9 @@ import { NOMBRES } from '../practicas/_comun/proporcion.js';
 import {
   PRODUCTOS, CUOTAS, APARATOS, DESCUENTOS, SUBIDAS, TIPOS_IVA, dineroCelda, generarDosPasos, claveDosPasos, erroresDeDosPasos,
   generarUnPaso, claveUnPaso, errorDeUnPasoCalcular, generarIva, claveIva, errorDeIva, generarQuePiden, claveQuePiden,
-  generarCaza, claveCaza, erroresDeCaza, multiplicadorTxt,
+  generarCaza, claveCaza, erroresDeCaza, multiplicadorTxt, esReservado, huellasDe, pct, dinero,
 } from '../practicas/descuentos/logica.js';
-import { enunciadoDosPasos, enunciadoQuePiden, enunciadoCaza, pideTexto, TX } from '../practicas/descuentos/textos.js';
+import { enunciadoDosPasos, enunciadoQuePiden, enunciadoCaza, pideTexto, TX, NOMBRE_ERROR, quePaso } from '../practicas/descuentos/textos.js';
 
 const N = 3000;
 const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array.from({ length: N }, () => generar(rng)); };
@@ -153,4 +153,36 @@ test('textos limpios en los dos idiomas, con · y sin ×, sin casos prohibidos',
   for (const k of Object.keys(TX)) assert.ok(TX[k].nombre.es && TX[k].nombre.en && TX[k].introduccion.es && TX[k].introduccion.en);
   assert.ok(!/×/.test(JSON.stringify(TX)));
   assert.ok(!/antes de la rebaja|encaden/i.test(JSON.stringify(TX)));
+});
+
+test('ningún ejercicio saca casos de la hoja 3 ni del examen 3, y las introducciones tampoco', () => {
+  const gens = [[1, generarDosPasos], [2, generarUnPaso], [3, generarIva], [4, generarQuePiden], [5, generarCaza]];
+  for (const [n, g] of gens) for (const it of lote(g, 2210 + n)) assert.ok(!esReservado(it, n), `ej. ${n} ${JSON.stringify(it.P ?? it.p)}`);
+  const caso = (tipo, P, p) => esReservado({ tipo, P, p }, 1);
+  assert.ok(caso('descuento', 7000, 30) && caso('descuento', 5600, 25) && caso('aumento', 3500, 4) && caso('descuento', 5000, 20));
+  assert.ok(esReservado({ modo: 'elegir', tipo: 'descuento', p: 30 }, 2) && esReservado({ r: 21, P: 3000 }, 3));
+  assert.ok(esReservado({ orden: 'sube-baja', P: 4000, p: 20 }, 5) && !esReservado({ orden: 'baja-sube', P: 4000, p: 20 }, 5));
+  assert.ok(!caso('descuento', 5000, 40) && huellasDe({ tipo: 'iva', P: 3000, p: 21 }, 4).length === 1);
+  const intros = [[1, caso('descuento', 2400, 25)], [2, esReservado({ modo: 'calcular', tipo: 'descuento', P: 6000, p: 40 }, 2)],
+    [3, esReservado({ r: 21, P: 2000 }, 3)], [4, caso('descuento', 2400, 25)], [5, esReservado({ orden: 'sube-baja', P: 10000, p: 10 }, 5)]];
+  for (const [n, r] of intros) assert.ok(!r, `la introducción del ej. ${n}`);
+});
+
+test('el dinero y el porcentaje llevan espacio duro; «:» y no «÷»; «1000» sin separar; inglés en singular', () => {
+  assert.equal(dinero(500, 'es'), '5,00\u00a0€');
+  assert.equal(pct(20, 'es'), '20\u00a0%');
+  const todo = JSON.stringify(TX) + [...Object.values(NOMBRE_ERROR)].map(x => x.es + x.en).join('');
+  assert.ok(!/÷/.test(todo) && !/1 000|1,000/.test(todo + quePaso('porcentaje-entre-mil', { P: 1000, p: 20, tipo: 'descuento' }, 'es') + quePaso('porcentaje-entre-mil', { P: 1000, p: 20, tipo: 'descuento' }, 'en')));
+  const zap = PRODUCTOS.find(x => x.id === 'zapatillas'), it = { prod: zap, P: 2200, p: 40, tipo: 'descuento' };
+  assert.equal(enunciadoDosPasos(it, 'en'), 'A pair of trainers costs €22.00. It is reduced by 40%.');
+});
+
+test('ej. 2: el distractor de la subida es siempre un error distinto de los demás y nunca vale lo mismo', () => {
+  for (const it of lote(generarUnPaso, 2216).filter(x => x.modo === 'elegir' && x.tipo === 'aumento')) {
+    const ms = it.ops.map(o => o.m);
+    assert.equal(new Set(ms).size, 4);
+    const malo = it.ops.find(o => o.error === 'iva-como-decimas' || o.error === 'porcentaje-como-centesimas');
+    assert.equal(malo.m, it.p === 5 ? 1500 : 1000 + it.p);
+    assert.equal(malo.error, it.p === 5 ? 'iva-como-decimas' : 'porcentaje-como-centesimas');
+  }
 });

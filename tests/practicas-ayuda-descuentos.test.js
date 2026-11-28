@@ -5,7 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { crearRng } from '../practicas/_comun/rng.js';
 import {
-  generarDosPasos, generarUnPaso, generarIva, generarQuePiden, generarCaza, dinero, cambioDe, finalDe, multiplicadorDe, multiplicadorTxt,
+  generarDosPasos, generarUnPaso, generarIva, generarQuePiden, generarCaza, pct, dinero, cambioDe, finalDe, multiplicadorDe, multiplicadorTxt,
 } from '../practicas/descuentos/logica.js';
 import { explicaDosPasos, explicaUnPaso, explicaIva, explicaQuePiden, explicaCaza, NO_SE_HACERLO } from '../practicas/descuentos/textos.js';
 
@@ -17,7 +17,7 @@ const lote = (generar, semilla) => { const rng = crearRng(semilla); return Array
 test('ej. 1: descuento y precio final con las cuentas', () => {
   for (const it of lote(generarDosPasos, 41)) for (const i of IDIOMAS) {
     const x = texto(explicaDosPasos(it, { idioma: i })), D = v => dinero(v, i), cambio = cambioDe(it.P, it.p), final = finalDe(it.P, it.p, it.tipo);
-    assert.ok(x.includes(`${it.p} ÷ 100 · ${D(it.P)} = ${D(cambio)}`), x);
+    assert.ok(x.includes(`${it.p} : 100 · ${D(it.P)} = ${D(cambio)}`), x);
     assert.ok(x.includes(`${D(it.P)} ${it.tipo === 'descuento' ? '−' : '+'} ${D(cambio)} = ${D(final)}`), x);
     assert.ok(x.includes(i === 'es' ? 'La respuesta es' : 'The answer is') && x.includes(D(final)), x);
     assert.ok(!/undefined|null|×/.test(x));
@@ -37,7 +37,7 @@ test('ej. 2: el multiplicador y, si hay precio, el precio final', () => {
 test('ej. 3: IVA y precio con IVA', () => {
   for (const it of lote(generarIva, 43)) for (const i of IDIOMAS) {
     const x = texto(explicaIva(it, { idioma: i })), D = v => dinero(v, i), iva = cambioDe(it.P, it.r);
-    assert.ok(x.includes(`${it.r} ÷ 100 · ${D(it.P)} = ${D(iva)}`) && x.includes(`${D(it.P)} + ${D(iva)} = ${D(it.P + iva)}`), x);
+    assert.ok(x.includes(`${it.r} : 100 · ${D(it.P)} = ${D(iva)}`) && x.includes(`${D(it.P)} + ${D(iva)} = ${D(it.P + iva)}`), x);
   }
 });
 
@@ -52,7 +52,7 @@ test('ej. 5: los dos pasos y cuánto cambia', () => {
   for (const it of lote(generarCaza, 45)) for (const i of IDIOMAS) {
     const x = texto(explicaCaza(it, { idioma: i })), D = v => dinero(v, i);
     assert.ok(x.includes(D(it.medio)) && x.includes(D(it.final)), x);
-    assert.ok(x.includes(`${it.p} %`.replace(' ', i === 'es' ? ' ' : '').replace(/%$/, '%')) || x.includes(`${it.p}%`), x);
+    assert.ok(x.includes(pct(it.p, i)), x);
     assert.ok(x.includes(D(Math.abs(it.P - it.final))), x);
   }
 });

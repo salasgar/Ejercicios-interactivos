@@ -3,10 +3,9 @@
 // Todo el dinero va en céntimos enteros y los datos se eligen para que nada se redondee: el precio P cumple
 // P · p % 100 === 0. Subir y bajar un porcentaje es siempre calcular el porcentaje del precio de ese momento.
 
-import { cantidad, deTexto, mismoValor, NOMBRES } from '../_comun/proporcion.js';
+import { cantidad, deTexto, mismoValor, NOMBRES, NBSP, huellaCaso } from '../_comun/proporcion.js';
 import { Fraccion } from '../_comun/fracciones.js';
-
-const NBSP = ' ';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 // ─── Números en pantalla ─────────────────────────────────────────────────────────────────────────
 
@@ -25,6 +24,23 @@ export function multiplicadorTxt(m, idioma = 'es') {
   if (dec[2] === '0') dec = dec.slice(0, 2);
   return `${entera}${idioma === 'es' ? ',' : '.'}${dec}`;
 }
+
+// ─── Casos del papel (la hoja 3 y el examen 3): ningún generador los saca ─────────────────────────
+
+/** Huellas del caso de un ítem del ejercicio n (precio en céntimos → euros; el IVA es un aumento). */
+export function huellasDe(it, n) {
+  const P = () => new Fraccion(it.P, 100), p = x => new Fraccion(x, 100);
+  if (n === 1 || n === 4) return [huellaCaso(it.tipo === 'descuento' ? 'descuento' : 'aumento', [P(), p(it.p)])];
+  if (n === 2) return it.modo === 'elegir' ? [huellaCaso(`multiplicador-${it.tipo}`, [p(it.p)])] : [huellaCaso(it.tipo, [P(), p(it.p)])];
+  if (n === 3) return [huellaCaso('aumento', [P(), p(it.r)])];
+  const s = it.orden === 'sube-baja' ? 1 : -1;
+  return [huellaCaso('cadena', [P(), p(s * it.p), p(-s * it.p)])];
+}
+export const esReservado = (it, n) => huellasDe(it, n).some(h => HUELLAS_RESERVADAS.has(h));
+const sinReservados = (n, generar) => rng => {
+  for (let i = 0; i < 1000; i++) { const it = generar(rng); if (!esReservado(it, n)) return it; }
+  throw new Error(`ejercicio ${n}: sin datos fuera de los casos del papel`);
+};
 
 // ─── Productos y cotas (céntimos) ────────────────────────────────────────────────────────────────
 // `min`/`max`: cota creíble del precio; `paso`: múltiplo de precio; `iva`: tipo real en España; `clase`: de qué se
@@ -99,13 +115,13 @@ const nombreNumero = tipo => (tipo === 'descuento' ? 'restar-el-porcentaje-como-
 
 // ─── Ejercicio 1: en dos pasos ───────────────────────────────────────────────────────────────────
 
-export function generarDosPasos(rng) {
+export const generarDosPasos = sinReservados(1, rng => {
   const tipo = rng.azar() < 0.25 ? 'aumento' : 'descuento';
   const prod = tipo === 'aumento' ? rng.elegir(CUOTAS) : rng.elegir(PRODUCTOS_REBAJA.filter(x => x.id !== 'fruta'));
   const p = rng.elegir(tipo === 'aumento' ? SUBIDAS : DESCUENTOS);
   const P = precio(rng, prod, p);
   return { prod, tipo, p, P };
-}
+});
 export const claveDosPasos = it => `${it.prod.id}|${it.P}|${it.p}`;
 
 /** [errorCambio, errorFinal]; null si el campo está bien. */
@@ -132,14 +148,14 @@ export const errorDeDosPasos = (it, c, f, idioma) => erroresDeDosPasos(it, c, f,
 /** Multiplicador en milésimas: rebajar un p % → (100 − p) · 10; subir → (100 + p) · 10. */
 export const multiplicadorDe = (p, tipo) => (100 + (tipo === 'descuento' ? -p : p)) * 10;
 
-export function generarUnPaso(rng) {
+export const generarUnPaso = sinReservados(2, rng => {
   if (rng.azar() < 0.5) {
     const tipo = rng.azar() < 0.34 ? 'aumento' : 'descuento';
     const p = rng.elegir(tipo === 'aumento' ? SUBIDAS : DESCUENTOS.filter(x => x !== 50));
     const bueno = multiplicadorDe(p, tipo);
     const malos = tipo === 'descuento'
       ? [['multiplicar-por-el-porcentaje', p * 10], ['multiplicador-del-otro-signo', multiplicadorDe(p, 'aumento')], ['multiplicador-entre-mil', (100 - p)]]
-      : [['multiplicar-por-el-porcentaje', p * 10], ['multiplicador-del-otro-signo', multiplicadorDe(p, 'descuento')], ['iva-como-decimas', 1000 + p * 100]];
+      : [['multiplicar-por-el-porcentaje', p * 10], ['multiplicador-del-otro-signo', multiplicadorDe(p, 'descuento')], p === 5 ? ['iva-como-decimas', 1500] : ['porcentaje-como-centesimas', 1000 + p]];
     const ops = rng.barajar([{ m: bueno, correcta: true, error: null }, ...malos.map(([error, m]) => ({ m, correcta: false, error }))]);
     return { modo: 'elegir', tipo, p, ops };
   }
@@ -147,7 +163,7 @@ export function generarUnPaso(rng) {
   const prod = tipo === 'aumento' ? rng.elegir(CUOTAS) : rng.elegir(PRODUCTOS_REBAJA.filter(x => x.id !== 'fruta'));
   const p = rng.elegir(tipo === 'aumento' ? SUBIDAS : DESCUENTOS);
   return { modo: 'calcular', tipo, prod, p, P: precio(rng, prod, p) };
-}
+});
 export const claveUnPaso = it => (it.modo === 'elegir' ? `e|${it.tipo}|${it.p}` : `c|${it.prod.id}|${it.P}|${it.p}`);
 
 export function errorDeUnPasoCalcular(it, texto, idioma = 'es') {
@@ -161,10 +177,10 @@ export function errorDeUnPasoCalcular(it, texto, idioma = 'es') {
 
 // ─── Ejercicio 3: el IVA ─────────────────────────────────────────────────────────────────────────
 
-export function generarIva(rng) {
+export const generarIva = sinReservados(3, rng => {
   const prod = rng.elegir(PRODUCTOS_IVA), r = prod.iva;
   return { prod, r, P: precio(rng, prod, r) };
-}
+});
 export const claveIva = it => `${it.prod.id}|${it.P}`;
 export const conIva = it => it.P + cambioDe(it.P, it.r);
 
@@ -180,7 +196,7 @@ export function errorDeIva(it, texto, idioma = 'es') {
 
 // ─── Ejercicio 4: ¿qué piden? ────────────────────────────────────────────────────────────────────
 
-export function generarQuePiden(rng) {
+export const generarQuePiden = sinReservados(4, rng => {
   for (let intento = 0; intento < 300; intento++) {
     const tipo = rng.elegir(['descuento', 'aumento', 'iva']);
     let prod, p, t;
@@ -206,20 +222,20 @@ export function generarQuePiden(rng) {
     return { tipo, prod, p, P, pregunta, ops };
   }
   throw new Error('generarQuePiden: sin datos');
-}
+});
 export const claveQuePiden = it => `${it.tipo}|${it.prod.id}|${it.P}|${it.p}|${it.pregunta}`;
 export const respuestaQuePiden = it => it.ops.find(o => o.correcta).valor;
 
 // ─── Ejercicio 5: caza el error ──────────────────────────────────────────────────────────────────
 
-export function generarCaza(rng) {
+export const generarCaza = sinReservados(5, rng => {
   const prod = rng.elegir(APARATOS), p = rng.elegir(SUBIDAS), orden = rng.azar() < 0.5 ? 'sube-baja' : 'baja-sube';
   const n = Math.floor((prod.max - prod.min) / 10000);
   const P = prod.min + 10000 * rng.entero(0, n);
   const t1 = orden === 'sube-baja' ? 'aumento' : 'descuento', t2 = orden === 'sube-baja' ? 'descuento' : 'aumento';
   const medio = finalDe(P, p, t1), final = finalDe(medio, p, t2);
   return { prod, p, P, orden, medio, final, nombre: rng.elegir(NOMBRES) };
-}
+});
 export const claveCaza = it => `${it.prod.id}|${it.orden}|${it.p}|${it.P}`;
 
 /** [errorMedio, errorFinal]. */
