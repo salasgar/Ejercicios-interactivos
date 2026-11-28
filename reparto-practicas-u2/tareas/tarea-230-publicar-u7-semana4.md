@@ -131,6 +131,20 @@ Las prácticas del paquete que existan con `disponible: true` (o reabiertas, con
   corregir; hay que llamar también a las funciones que los escriben, con todas las opciones falsas. Y hay que **leerlos**: un porqué escribía
   la solución en céntimos («x = 188,» por 1,88 €, en el 17 % de los ítems) y ninguna regex lo vio. Aquí, lo mismo con las unidades: compara
   el valor escrito y su unidad con los de la opción, una por una.
+- (U7, tarea 230, primera pasada, 28-11, s-20261128T155528-114b5029) El lanzador dio la 229 por LISTA y estaba PARCIAL: lee `hechos/` tú, no
+  la frase de arranque. Aquí no hizo daño porque esta ficha publica «lo que la 229 dejara reabierto y ya esté cerrado»: con sus reabiertas cerradas,
+  la segunda pasada del paquete 3 se hace al principio de esta tarea (los guiones de la 229 seguían en /tmp/pu2-229-eea9: copiarlos y cambiar la
+  ruta basta), y luego el paquete 4. Las dos pasadas en una sesión fueron unos 45 min.
+- (U7, tarea 230) `escalas` y `unidades` se escribieron antes del papel con `CASOS_HOJA` y `HUELLAS_EXAMEN` vacíos: la primera pasada solo puede
+  reabrirlas (listas en `hechos/notas/s-20261128T155528-114b5029-reserva-{escalas,unidades}.md`). En `unidades`, la clave de reserva depende del
+  sentido del cambio (`m → cm` no es `cm → m`): cada caso va en los dos sentidos. Las entradas del ej. 5 (`{ id }`) rompen `claveCaso` si van en la
+  misma lista sin saltarlas. ¼, ½ y ¾ de hora se dejan sin reservar (tabla de la hoja), y entonces el ej. 3 sigue con casos «de la hoja» en el
+  cotejo: no es un fallo.
+- (U7, tarea 230) Los clics: un ítem pasado por JSON pierde la clase `Fraccion`; el que resuelve el ítem en la página tiene que rehacerla
+  (`new Fraccion(it.res.num, it.res.den)`), o el recorrido «falla» por el guion y no por la práctica. Y en mi comprobación de la regla de oro de
+  `escalas` ej. 3, «1 : 18» contiene « : 1»: se lee la escala partiendo por « : », no buscando « : 1».
+- (U7, tarea 230) Un `.replace(/\s+/g, ' ')` al final de un feedback convierte el espacio duro en corriente (en JavaScript `\s` incluye U+00A0): el
+  barrido de textos lo ve si busca «\d %» con U+0020 en el HTML ya generado, no en el fuente.
 - (U6, del 14 al 16-11; historia) Varias sesiones escribieron en este árbol y comitearon y empujaron desde worktrees: `main` se separó de
   `origin/main` y el lanzador dejó de ver tareas. Regla vigente (`CLAUDE.md` de la raíz y `proyecto.md`, «Se sube desde el mismo árbol en el
   que se escribe»): se escribe, se comitea con rutas explícitas y se empuja desde aquí; si `git status -sb` dice «ahead N, behind M», se
