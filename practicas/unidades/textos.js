@@ -7,6 +7,7 @@ import { Fraccion } from '../_comun/fracciones.js';
 import { ESCALERA, EXP, factor, saltos, decimales, valorEn, porCuanto, buenoComplejo } from './logica.js';
 
 const t = (i, es, en) => (i === 'es' ? es : en);
+const bajaInicial = s => s.charAt(0).toLowerCase() + s.slice(1);
 const c = s => `<span class="cuenta">${s}</span>`;
 const pasos = ps => `<ol class="pasos-ayuda">${ps.map(p => `<li>${p}</li>`).join('')}</ol>`;
 export const NO_SE_HACERLO = { es: 'No sé hacerlo', en: 'I don’t know how' };
@@ -102,8 +103,8 @@ export function quePaso(id, it, i) {
     case 'unidad-demasiado-pequena': {
       const c0 = it.caso, u = it.elegida;
       const grande = id === 'unidad-demasiado-grande';
-      return t(i, `Lo normal para ${c0.es.toLowerCase()} es entre ${M(lo(c0.lo, c0.u), c0.u, 'es')} y ${M(lo(c0.hi, c0.u), c0.u, 'es')}; ${M(c0.n, u, 'es')} sería muchísimo ${grande ? 'más' : 'menos'}.`,
-        `A normal value for ${c0.en.toLowerCase()} is between ${M(lo(c0.lo, c0.u), c0.u, 'en')} and ${M(lo(c0.hi, c0.u), c0.u, 'en')}; ${M(c0.n, u, 'en')} would be far ${grande ? 'more' : 'less'}.`);
+      return t(i, `Lo normal para ${bajaInicial(c0.es)} está entre ${M(lo(c0.lo, c0.u), c0.u, 'es')} y ${M(lo(c0.hi, c0.u), c0.u, 'es')}; ${M(c0.n, u, 'es')} sería muchísimo ${grande ? 'más' : 'menos'}.`,
+        `A normal value for ${bajaInicial(c0.en)} is between ${M(lo(c0.lo, c0.u), c0.u, 'en')} and ${M(lo(c0.hi, c0.u), c0.u, 'en')}; ${M(c0.n, u, 'en')} would be far ${grande ? 'more' : 'less'}.`);
     }
     default:
       return t(i, 'Repasa qué se calcula en cada paso.', 'Check what is worked out in each step.');
@@ -182,7 +183,7 @@ export function explicaUnidad(it, { idioma = 'es' } = {}) {
   const i = idioma, k = it.caso, u = k.u;
   const bajo = lo(k.lo, u), alto = lo(k.hi, u);
   return pasos([
-    t(i, `Lo normal para ${k.es.toLowerCase()} es entre ${M(bajo, u, 'es')} y ${M(alto, u, 'es')}.`, `A normal value for ${k.en.toLowerCase()} is between ${M(bajo, u, 'en')} and ${M(alto, u, 'en')}.`),
+    t(i, `Lo normal para ${bajaInicial(k.es)} está entre ${M(bajo, u, 'es')} y ${M(alto, u, 'es')}.`, `A normal value for ${bajaInicial(k.en)} is between ${M(bajo, u, 'en')} and ${M(alto, u, 'en')}.`),
     t(i, `${M(k.n, u, 'es')} está en ese intervalo; con las otras unidades el valor sería muchísimo más grande o más pequeño.`,
       `${M(k.n, u, 'en')} is inside that range; with the other units the value would be far bigger or far smaller.`),
     t(i, `La respuesta es ${M(k.n, u, 'es')}.`, `The answer is ${M(k.n, u, 'en')}.`),
@@ -198,10 +199,10 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Los escalones de la longitud: ${c('km → hm → dam → m → dm → cm → mm')}. <strong>Cada salto es por 10</strong>: hacia abajo se <strong>multiplica</strong> y hacia arriba se <strong>divide</strong>.</p>
-        <p>Ejemplo: ${c('3,5 km')} a metros. Hay 3 saltos hacia abajo: ${c('3,5 · 1 000 = 3 500')}. Son ${c('3 500 m')}.</p>`,
+        <p>Ejemplo: ${c('3,5 km')} a metros. Hay 3 saltos hacia abajo: ${c('3,5 · 1000 = 3500')}. Son ${c('3500 m')}.</p>`,
       en: `<h2>How it works</h2>
         <p>The steps of length: ${c('km → hm → dam → m → dm → cm → mm')}. <strong>Each step is by 10</strong>: going down you <strong>multiply</strong> and going up you <strong>divide</strong>.</p>
-        <p>Example: ${c('3.5 km')} to metres. There are 3 steps down: ${c('3.5 · 1 000 = 3 500')}. It is ${c('3 500 m')}.</p>`,
+        <p>Example: ${c('3.5 km')} to metres. There are 3 steps down: ${c('3.5 · 1000 = 3500')}. It is ${c('3500 m')}.</p>`,
     },
     instruccion: ej('Escribe el número (si quieres, con la unidad).', 'Write the number (you can add the unit).'),
     solucion: { es: it => explicaCambio(it, { idioma: 'es' }), en: it => explicaCambio(it, { idioma: 'en' }) },
@@ -211,10 +212,10 @@ export const TX = {
     detalle: ej('Gramos y litros: de t y kL a mg y mL', 'Grams and litres: from t and kL to mg and mL'),
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>Masa: ${c('kg → hg → dag → g → dg → cg → mg')} (y 1 t son 1 000 kg). Capacidad: ${c('kL → hL → daL → L → dL → cL → mL')}. Cada salto es <strong>por 10</strong>.</p>
+        <p>Masa: ${c('kg → hg → dag → g → dg → cg → mg')} (y 1 t son 1000 kg). Capacidad: ${c('kL → hL → daL → L → dL → cL → mL')}. Cada salto es <strong>por 10</strong>.</p>
         <p>Ejemplo: ${c('2,5 hL')} a litros. Hay 2 saltos hacia abajo: ${c('2,5 · 100 = 250')}. Son ${c('250 L')}.</p>`,
       en: `<h2>How it works</h2>
-        <p>Mass: ${c('kg → hg → dag → g → dg → cg → mg')} (and 1 t is 1 000 kg). Capacity: ${c('kL → hL → daL → L → dL → cL → mL')}. Each step is <strong>by 10</strong>.</p>
+        <p>Mass: ${c('kg → hg → dag → g → dg → cg → mg')} (and 1 t is 1000 kg). Capacity: ${c('kL → hL → daL → L → dL → cL → mL')}. Each step is <strong>by 10</strong>.</p>
         <p>Example: ${c('2.5 hL')} to litres. There are 2 steps down: ${c('2.5 · 100 = 250')}. It is ${c('250 L')}.</p>`,
     },
     instruccion: ej('Elige la cantidad que vale lo mismo.', 'Choose the amount that is worth the same.'),
@@ -236,14 +237,14 @@ export const TX = {
   },
   ej4: {
     nombre: ej('Complejo e incomplejo', 'Mixed units'),
-    detalle: ej('3 km 250 m = 3 250 m, y al revés', '3 km 250 m = 3 250 m, and the other way round'),
+    detalle: ej('3 km 250 m = 3250 m, y al revés', '3 km 250 m = 3250 m, and the other way round'),
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>Una medida <strong>compleja</strong> usa dos unidades (3 km 250 m); una <strong>incompleja</strong>, una sola (3 250 m). Para juntarlas, pasa la parte grande a la unidad pequeña y suma.</p>
-        <p>Ejemplo: ${c('3 km 250 m')}. ${c('3 · 1 000 = 3 000')} m, ${c('3 000 + 250 = 3 250')}. Son ${c('3 250 m')}. Con horas, 1 h son 60 min.</p>`,
+        <p>Una medida <strong>compleja</strong> usa dos unidades (3 km 250 m); una <strong>incompleja</strong>, una sola (3250 m). Para juntarlas, pasa la parte grande a la unidad pequeña y suma.</p>
+        <p>Ejemplo: ${c('3 km 250 m')}. ${c('3 · 1000 = 3000')} m, ${c('3000 + 250 = 3250')}. Son ${c('3250 m')}. Con horas, 1 h son 60 min.</p>`,
       en: `<h2>How it works</h2>
-        <p>A <strong>mixed</strong> measure uses two units (3 km 250 m); a <strong>single-unit</strong> one uses one (3 250 m). To join them, change the big part to the small unit and add.</p>
-        <p>Example: ${c('3 km 250 m')}. ${c('3 · 1 000 = 3 000')} m, ${c('3 000 + 250 = 3 250')}. It is ${c('3 250 m')}. With hours, 1 h is 60 min.</p>`,
+        <p>A <strong>mixed</strong> measure uses two units (3 km 250 m); a <strong>single-unit</strong> one uses one (3250 m). To join them, change the big part to the small unit and add.</p>
+        <p>Example: ${c('3 km 250 m')}. ${c('3 · 1000 = 3000')} m, ${c('3000 + 250 = 3250')}. It is ${c('3250 m')}. With hours, 1 h is 60 min.</p>`,
     },
     instruccion: ej('Escribe el número que falta (en la unidad pequeña).', 'Write the missing number (in the small unit).'),
     solucion: { es: it => explicaComplejo(it, { idioma: 'es' }), en: it => explicaComplejo(it, { idioma: 'en' }) },

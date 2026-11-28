@@ -211,7 +211,8 @@ test('ej. 5: cuatro unidades de la misma magnitud, una buena y las otras fuera c
     }
     generales(textosDe(it, enunciadoUnidad));
   }
-  assert.ok(new Set(items.map(it => it.caso.id)).size === BANCO_UNIDAD.length, 'salen todos los casos del banco');
+  assert.equal(new Set(items.map(it => it.caso.id)).size, BANCO_UNIDAD.filter(c => !esReservado({ caso: c })).length, 'salen todos los casos del banco que no son del papel');
+  assert.equal(BANCO_UNIDAD.filter(c => !esReservado({ caso: c })).length, 19);
 });
 
 // ─── Variedad, reserva y textos ──────────────────────────────────────────────────────────────────
@@ -238,7 +239,32 @@ test('reserva anti-copia: los casos de la hoja (en claro) y los del examen (huel
     const rng = crearRng(99);
     for (let i = 0; i < 2000; i++) { const it = generarMasaCapacidad(rng); assert.equal(esReservado(it), false); }
   } finally { HUELLAS_EXAMEN.delete(h); }
-  assert.equal(CASOS_HOJA.length, 0, 'sin casos en claro del examen: la hoja del paquete 4 aún no existe');
+  assert.ok(CASOS_HOJA.length > 0 && HUELLAS_EXAMEN.size > 0, 'la hoja 4 y el examen 4 están reservados');
+});
+
+test('reserva del papel: en 3000 ítems por ejercicio, ninguno es de la hoja 4 ni del examen 4', () => {
+  for (const [gen, sem] of [[generarLongitud, 71], [generarMasaCapacidad, 72], [generarTiempo, 73], [generarComplejo, 74], [generarUnidad, 75]]) {
+    for (const it of lote(gen, sem)) if (it.caso || it.tipo) assert.equal(esReservado(it), false, gen.name);
+  }
+});
+
+test('ej. 5 y ortografía: los nombres propios conservan la mayúscula y «está entre»', () => {
+  const c = BANCO_UNIDAD.find(k => k.id === 'murcia-cartagena');
+  const it = { caso: c, elegida: 'm' };
+  for (const i of IDIOMAS) {
+    const x = sinHtml(quePaso('unidad-demasiado-pequena', it, i));
+    assert.ok(/Murcia/.test(x) && /Cartagena/.test(x) && !/murcia|cartagena/.test(x), x);
+  }
+  assert.match(sinHtml(quePaso('unidad-demasiado-pequena', it, 'es')), /está entre/);
+  const a = BANCO_UNIDAD.find(k => k.id === 'alumno');
+  assert.match(sinHtml(quePaso('unidad-demasiado-grande', { caso: a, elegida: 'km' }, 'es')), /ESO/);
+});
+
+test('introducciones: los números de cuatro cifras van sin separar', () => {
+  for (const k of ['ej1', 'ej2', 'ej3', 'ej4', 'ej5']) for (const i of IDIOMAS) {
+    const x = sinHtml(TX[k].introduccion[i]);
+    assert.ok(!/(?<![\d,.])\d [\d]{3}(?!\d)/.test(x), x);
+  }
 });
 
 test('los textos fijos: sin ×, sin superficie ni volumen y los cinco ejercicios con nombre en los dos idiomas', () => {
