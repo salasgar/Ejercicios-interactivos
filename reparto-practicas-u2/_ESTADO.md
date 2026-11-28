@@ -12,6 +12,8 @@ Ficha del proyecto —rutas, reglas de contenido, frase de arranque—: `proyect
 Autorizaciones firmadas: `autorizaciones.md`
 Ninguno de los dos se regenera nunca; este fichero sí, entero.
 
+Actualizado 2026-11-28T12:54:41Z por s-20261128T125225-fb2398fd al cerrar la 215 (LISTA tras la reabierta de redacción del 27-11, commit 4183dbf: singular con 1 y resolución del ej. 4 sin viñeta; npm test 2846/2846; sin prueba en navegador): **retoque de su fila**, no regeneración completa.
+
 Actualizado 2026-11-27T11:38Z por s-20261127T112436-3d9a8b14 al cerrar la 228 (LISTA como relevo de s-20261127T075238-3a50920a, commit 5478fca: publicada `inversa`; las otras cuatro, en d308587; reabierta la 215 de redacción, sigue publicada; npm test 2845/2845; clics de inversa 16/16): **retoque de sus filas** (215, 216 —desfasada: su terminada de las 06:31Z es posterior a la reabierta—, 228, 229, prácticas sin publicar y registro), no regeneración completa (otra sesión en el árbol).
 
 Actualizado 2026-11-27T08:39:49Z por s-20261127T082159-2489a53c al cerrar la 217 (LISTA tras la reabierta de las 08:09Z, commit 51cfa73: ej. 4 de repartos sin la regla repetida; tests 175/175): **retoque de su fila**, no regeneración completa.
