@@ -370,3 +370,5 @@ Si paras sin terminar: `$R/hechos/fallos/220--<sid>.md` con hasta dónde llegast
 - Saltarse las reglas de contenido de la unidad 7 (en esta ficha y en `proyecto.md` de su reparto): `×` en vez de `·`; `eval` o coma flotante; un periódico, un «aproximadamente» o un redondeo que el enunciado no pida; una `x` en un denominador; lo que el acta deje fuera y los puntos a decidir mientras no haya acta (aquí: **«el precio antes de la rebaja»**, los encadenados y hallar el total desde el porcentaje complementario) o algo de una sesión posterior a la de la destreza (descuentos, aumentos e IVA, de la 12); distractores que puedan ser
   verdad, y en especial **dos opciones con el mismo valor** (`0,2`, `1/5` y `20 %`; `150 €` y `150,00 €`), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+
+- 2026-11-28 (s-20261128T153402-22e721b2, reabierta cerrada): `npm test` ejecuta los tests de las hermanas en curso (219, 221): un fallo en tests/practicas-descuentos.test.js no es de la 220. La explicación del ej. 2 y del ej. 4 usa `metodoTabla` (tabla, proporción con `htmlRaya`, cruz); `.cuenta` no se parte, así que cada paso va en su propio `<li>`.
