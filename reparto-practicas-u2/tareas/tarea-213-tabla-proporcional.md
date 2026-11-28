@@ -387,3 +387,5 @@ Heredadas de la ficha de la U6 de la que sale esta (las de la app, los tests y e
 - (213) El generador de «completa la tabla» y «lo que vale 1» elige primero lo que vale 1 (en céntimos o unidades) y construye todo con ella: así todos los huecos son enteros o céntimos exactos y no hace falta comprobar decimales periódicos.
 - (213) Para coche (km múltiplos de 100) la «unidad» es el 100: xMul = 100 en `CONTEXTOS`; la explicación dice «cada 100 km» y hay un error propio («sin pasar a cada 100 km»). Un contexto nuevo con xMul > 1 necesita lo mismo.
 - (213) Un `python3` o `sed` para retocar código se salta la regla de editar solo con Edit/Write; en esta sesión se usó para dos retoques triviales (imports). Mejor Edit.
+
+- 2026-11-28 (s-20261128T150437-160300c0): el 4.º cierre de reserva de esta práctica: cada examen nuevo añade huellas; el test de 3000 ítems detecta lo que falte, y el tamaño fijo del Set se sube a mano en el test.
