@@ -138,8 +138,8 @@ test('regla-de-tres: los números de cada contexto son creíbles (cotas propias 
   }
 });
 
-test('regla-de-tres: la reserva (hoja y examen de la sesión 3) tiene 67 huellas y ningún ítem coincide con ella', () => {
-  assert.equal(HUELLAS_RESERVADAS.size, 67);
+test('regla-de-tres: la reserva (hoja y examen de la sesión 3) tiene 75 huellas y ningún ítem coincide con ella', () => {
+  assert.equal(HUELLAS_RESERVADAS.size, 75);
   for (const [def, semilla] of [[ej1, 11], [ej2, 12], [ej3, 13], [ej4, 14]]) {
     for (const it of items(def, semilla)) assert.ok(!L.esReservado(it), `reservado: ${JSON.stringify(it)}`);
   }
