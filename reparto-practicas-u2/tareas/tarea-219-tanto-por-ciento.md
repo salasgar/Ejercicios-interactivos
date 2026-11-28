@@ -376,3 +376,5 @@ Si paras sin terminar: `$R/hechos/fallos/219--<sid>.md` con hasta dónde llegast
 - Saltarse las reglas de contenido de la unidad 7 (en esta ficha y en `proyecto.md` de su reparto): `×` en vez de `·`; `eval` o coma flotante; un periódico o un redondeo que el enunciado no pida; lo que el acta deje fuera y los puntos a decidir mientras no haya acta, o algo de una sesión posterior a la de la destreza (aquí: «qué porcentaje es» y «hallar el total», de la sesión 11; descuentos, aumentos e IVA, de la 12); distractores que puedan ser
   verdad, y en especial **dos opciones con el mismo valor** (`0,15 · 80` y `15/100 · 80`; `12 €` y `12,00 €`), que son dos
   respuestas correctas; casos de examen en claro en el repositorio.
+
+- (28-11, s-20261128T153404-066173f2) Un `reserva.js` nuevo no entra en `git commit -- rutas` si no se hace `git add` antes: comprobar `git status --porcelain practicas/<slug>` vacío. El FALLO de feedback es de funciones `({p, N, idioma})`; en el ej. 4 N es la fracción del total (puede llevar decimales de dinero).
