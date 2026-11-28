@@ -167,18 +167,19 @@ escribe la tarea que la publica (227-231), al revisarla; hasta entonces, su ENTR
 | 2 | `inversa` | 87 | 215 | ¿Es inversa? · Completa la tabla · Problemas · Caza el error | obreros 2-12 y 2-60 días; grifos 2-6 y 1-24 h (un depósito); caballos 2-12 y 5-60 días; amigos 2-8 y 1,50-60 € cada uno (total 12-120 €); coche 30-120 km/h y 1-10 h (60-900 km); todos al mismo ritmo, dicho en el enunciado; en «Caza el error», también problemas directos (fruta 0,80-3,50 € el kilo, 1-8 kg; receta para 2-12 personas, ≤ 1000 g) |
 | 2 | `directa-o-inversa` | 88 | 216 | Clasifica la situación (banco de 32) · Clasifica la tabla · ¿Qué planteamiento? | en el ej. 1, cada situación con una sola casilla defendible y un par de casos que lo demuestra; en el ej. 3, los contextos de `proporcion.js` con su cota (fruta, pintores, grifos, máquinas, recetas, consumo, pienso, gasolinera); dinero con dos decimales |
 | 2 | `repartos` | 89 | 217 | Cuenta las partes · Reparte · ¿Está bien repartido? · Caza el error | entre 2 personas, en una razón de términos 1-5; paga 4-12 € la hora (total 12-108 €); refresco 50-400 mL la parte (total 0,5-2 L; el sirope y el café, siempre la parte pequeña); cromos 4-8 por sobre (total 12-108); todo reparto exacto (al céntimo) |
-| 3 | `tres-escrituras` | 90 | 218 | Los porcentajes fáciles · Escríbelo de otra forma · Une las tres · Ordena (sin publicar: reabierta en la 229) | porcentajes enteros de 1 a 99 (uno de cada tres, de una cifra); en «Une las tres» y «Ordena», los de denominador sencillo (`AMIGAS`); los fáciles, 50, 25, 10, 20, 75 y 1 % |
-| 3 | `tanto-por-ciento` | 91 | 219 | De cabeza · Con el decimal · ¿Qué operación? · Problemas (sin publicar: reabierta en la 229) | cantidades de 20 a 1000 que dan la parte natural; problemas de `proporcion.js` (clase 20-30, encuesta 200-1200, club 100-2000, tiros 10-50, test 10-50 preguntas, ahorros), con el porcentaje del 5 al 95 % y personas enteras |
-| 3 | `que-porcentaje` | 92 | 220 | ¿Qué porcentaje es? · ¿De cuánto? · ¿Cuál de los tres es? · Problemas (sin publicar: reabierta en la 229) | totales de 10 a 500 (los tres primeros ítems, fáciles); los contextos de `tanto-por-ciento`, con el porcentaje del 5 al 90 %; nunca un descuento ni un aumento |
-| 3 | `descuentos` | 93 | 221 | En dos pasos · En un paso · El IVA · ¿Qué piden? · Caza el error (sin publicar: reabierta en la 229) | descuentos 10-70 % (los del acta), subidas de cuotas 5-20 %, el IVA real de cada producto (4, 10 o 21 %); precios de la tabla de la U5 (ropa, móvil 80-1200 €, bici 100-600 €, libro, fruta, cine, menú, tren); todo exacto al céntimo |
-| 4 | `escalas` | 94 | 222 | (la 230) | |
-| 4 | `unidades` | 95 | 223 | (la 230) | |
+| 3 | `tres-escrituras` | 90 | 218 | Los porcentajes fáciles · Escríbelo de otra forma · Une las tres · Ordena | porcentajes enteros de 1 a 99 (uno de cada tres, de una cifra); en «Une las tres» y «Ordena», los de denominador sencillo (`AMIGAS`); los fáciles, 50, 25, 10, 20, 75 y 1 % |
+| 3 | `tanto-por-ciento` | 91 | 219 | De cabeza · Con el decimal · ¿Qué operación? · Problemas | cantidades de 20 a 1000 que dan la parte natural; problemas de `proporcion.js` (clase 20-30, encuesta 200-1200, club 100-2000, tiros 10-50, test 10-50 preguntas, ahorros), con el porcentaje del 5 al 95 % y personas enteras |
+| 3 | `que-porcentaje` | 92 | 220 | ¿Qué porcentaje es? · ¿De cuánto? · ¿Cuál de los tres es? · Problemas | totales de 10 a 500 (los tres primeros ítems, fáciles); los contextos de `tanto-por-ciento`, con el porcentaje del 5 al 90 %; nunca un descuento ni un aumento |
+| 3 | `descuentos` | 93 | 221 | En dos pasos · En un paso · El IVA · ¿Qué piden? · Caza el error | descuentos 10-70 % (los del acta), subidas de cuotas 5-20 %, el IVA real de cada producto (4, 10 o 21 %); precios de la tabla de la U5 (ropa, móvil 80-1200 €, bici 100-600 €, libro, fruta, cine, menú, tren); todo exacto al céntimo |
+| 4 | `escalas` | 94 | 222 | Del plano a la realidad · De la realidad al plano · ¿Qué escala es? · ¿Qué escala le va? (sin publicar: reabierta en la 230) | plano de 0,5 a 30 cm (en mm enteros, de 5 en 5); planos 1 : 50, 1 : 100 y 1 : 200 (paredes y pasillos de 2-10 m, cocina 2-6 m); mapas de 1 : 25 000 a 1 : 1 000 000 (pueblos 1-60 km, ciudades 20-300 km, ruta 1-25 km); maquetas 1 : 18, 1 : 24 y 1 : 43 (coche 3,5-5 m) y 1 : 87 (vagón 15-27 m); en «¿Qué escala le va?», el dibujo bueno de 5 a 30 cm y los otros por debajo de 1 cm o por encima de 60 cm; nunca una escala sobre un área |
+| 4 | `unidades` | 95 | 223 | Longitud · Masa y capacidad · Horas y minutos · Complejo e incomplejo · ¿Qué unidad? (sin publicar: reabierta en la 230) | 1-3 saltos de la escalera, dato con 0-2 decimales, resultado de 0,01 a 9999 con tres decimales como mucho; la tonelada y las no nucleares (dam, hm, dag, hg, daL, hL); horas en cuartos, medias y tres cuartos (acta, punto o); la parte pequeña de una forma compleja, menor que un salto; en «¿Qué unidad?», un banco de 24 casos con su intervalo creíble y las falsas fuera de lo/5 a 5·hi; sin superficie ni volumen (acta, punto n) |
 | 5 | `problemas-proporcion` | 96 | 224 | (la 231) | |
 | toda | `errores7` | 97 | 225 | (la 231) | |
 | toda | `leelo7` | 98 | 226 | La palabra · Léelo · La consigna · Completa | cada ítem sale desde el lunes de su paquete (`PAQUETES_DESDE`); el consejo del «No lo sé» no nombra nada de un paquete posterior; el dinero en euros con dos decimales |
 
-**Publicadas** (a 2026-11-27): `razones` y `leelo7` (tarea 227); `tabla-proporcional`, `regla-de-tres`, `directa-o-inversa`,
-`repartos` e `inversa` (tarea 228). `leelo7` es de toda la unidad, pero filtra por fecha: el 1-3 solo enseña lo de las sesiones 1-3, y cada
+**Publicadas** (a 2026-11-28): `razones` y `leelo7` (tarea 227); `tabla-proporcional`, `regla-de-tres`, `directa-o-inversa`,
+`repartos` e `inversa` (tarea 228); `tres-escrituras`, `tanto-por-ciento`, `que-porcentaje` y `descuentos` (tarea 230, segunda pasada del
+paquete 3). `leelo7` es de toda la unidad, pero filtra por fecha: el 1-3 solo enseña lo de las sesiones 1-3, y cada
 paquete se abre su lunes. `tabla-proporcional` y `regla-de-tres` se quedaron sin publicar en la 227 por casos de la hoja 1 y del
 examen 1, y las tres del paquete 2 y las del paquete 1 se cotejaron después contra la hoja 2 y el examen 2 (también su repaso del
 paquete 1): todas reservan esos casos por huella (`reserva.js` de cada práctica). `inversa` se quedó sin publicar por un caso del
@@ -188,8 +189,16 @@ redacción que no la retira («1 horas» y la viñeta suelta de la resolución).
 **Paquete 3** (tarea 229, primera pasada del 28-11): las cuatro se escribieron antes del acta, de la hoja 3 y del examen 3, y sacan casos de
 los dos; se reabrieron con sus listas de reserva ya calculadas (y `tanto-por-ciento`, `que-porcentaje` y `descuentos`, con arreglos de
 notación, de feedback y del método oficial del acta). El repaso del examen 3 sale también en `tabla-proporcional`, `regla-de-tres`,
-`directa-o-inversa` y `repartos`, que siguen publicadas y solo tienen que añadir esas huellas a su `reserva.js`. La segunda pasada de la 229
-publica el paquete 3 cuando cierren sus reabiertas.
+`directa-o-inversa` y `repartos`, que siguen publicadas y solo tienen que añadir esas huellas a su `reserva.js`. La segunda pasada del
+paquete 3 la hizo la tarea 230 el 28-11, con las ocho reabiertas cerradas: las cuatro, sin casos de la hoja 3 ni del examen 3, y el repaso del
+examen 3, fuera de las publicadas; se publicaron las cuatro.
+
+**Paquete 4** (tarea 230, primera pasada del 28-11): `escalas` y `unidades` se escribieron antes de la hoja 4 y del examen 4, con la reserva
+vacía, y sacan casos de los dos; se reabrieron con sus listas de reserva ya calculadas (y arreglos de notación y, en `unidades`, de las
+mayúsculas del ej. 5). En `unidades`, ¼, ½ y ¾ de hora no se reservan: son la tabla que la hoja pone para aprenderla. El repaso del examen 4
+(porcentajes y una inversa) sale, en pocos ítems, en `tanto-por-ciento`, `que-porcentaje`, `descuentos` y `directa-o-inversa`, que siguen
+publicadas y solo tienen que añadir esas huellas (antes del lun 1-3). La segunda pasada de la 230 publica el paquete 4 cuando cierren
+`escalas` y `unidades`.
 
 ## 7. Qué práctica cubre qué destreza de la unidad 7
 
