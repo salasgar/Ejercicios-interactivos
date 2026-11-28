@@ -32,3 +32,5 @@ Propios 18/18 (3 ejercicios con segundo camino, errores, variedad ≤10 %, reser
 ## Para Juan Luis
 - Si al firmar F0 el tiempo se quedara fuera de esta práctica, el ej. 3 se quita sin tocar el resto (`generarTiempo` y su test).
 - Longitud: las parejas con unidades nucleares salen en ~13 % de los ítems del ej. 1 (el resto lleva dam, hm o dm); se puede subir si quiere más cercanía a km-m-cm-mm.
+
+Actualizado por s-20261128T164425-907467ac (cierre 223, LISTA tras reabierta, commit 6337a72): entrega al día; ver hechos/terminadas/223--s-20261128T164425-907467ac.md.
