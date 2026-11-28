@@ -197,3 +197,15 @@ test('tres-escrituras: el español usa el espacio duro antes de «%»', () => {
   assert.equal(L.txt(L.decE(75, 2), 'es'), '0,75');
   assert.equal(L.txt(L.decE(75, 2), 'en'), '0.75');
 });
+
+test('tres-escrituras: el ej. 2 no saca casos de la hoja 3 ni del examen 3, y las introducciones tampoco', () => {
+  for (const def of practica.ejercicios) for (const it of items(def, 2180, N)) assert.ok(!L.esReservado(it), JSON.stringify(it));
+  for (const p of [35, 4, 85, 26, 5, 15, 40, 30, 70]) assert.ok(L.esReservado({ ejercicio: 2, p }), `${p} %`);
+  for (const p of [55, 6, 2, 12, 65]) assert.ok(!L.esReservado({ ejercicio: 2, p }), `${p} %`);
+  assert.deepEqual(L.huellasDe({ ejercicio: 1, sentido: 'pf', p: 50 }), []);
+  for (const id of ['ej2', 'ej4']) for (const idioma of IDIOMAS) {
+    const intro = plano(X.TX[id].introduccion[idioma]);
+    for (const caso of idioma === 'es' ? ['35 %', '0,35', '0,08', '8 %', '0,05', '5 %'] : ['35%', '0.35', '0.08', '8%', '0.05', '5%'])
+      assert.ok(!new RegExp(`(?<![\\d,.])${caso.replace('.', '\\.').replace(' ', '\\s')}`).test(intro), `${id} ${idioma}: ${caso}`);
+  }
+});

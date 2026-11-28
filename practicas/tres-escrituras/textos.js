@@ -44,14 +44,14 @@ export const TX = {
     detalle: { es: 'Porcentaje, decimal y fracción irreducible', en: 'Percentage, decimal and irreducible fraction' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>De porcentaje a decimal se divide entre 100 (la coma se corre dos lugares a la izquierda): ${P(35, 'es')} = ${D(35, 'es')}.</p>
-        <p>De decimal a porcentaje se multiplica por 100: ${D(8, 'es')} = ${P(8, 'es')}.</p>
-        <p>De porcentaje a fracción: ${P(35, 'es')} = ${h(35, 100)} = ${h(7, 20)} (se simplifica del todo).</p>
+        <p>De porcentaje a decimal se divide entre 100 (la coma se corre dos lugares a la izquierda): ${P(55, 'es')} = ${D(55, 'es')}.</p>
+        <p>De decimal a porcentaje se multiplica por 100: ${D(6, 'es')} = ${P(6, 'es')}.</p>
+        <p>De porcentaje a fracción: ${P(55, 'es')} = ${h(55, 100)} = ${h(11, 20)} (se simplifica del todo).</p>
         <p>Escribe la respuesta y pulsa <strong>Comprobar</strong>.</p>`,
       en: `<h2>How it works</h2>
-        <p>From a percentage to a decimal, divide by 100 (the decimal point moves two places to the left): ${P(35, 'en')} = ${D(35, 'en')}.</p>
-        <p>From a decimal to a percentage, multiply by 100: ${D(8, 'en')} = ${P(8, 'en')}.</p>
-        <p>From a percentage to a fraction: ${P(35, 'en')} = ${h(35, 100)} = ${h(7, 20)} (simplify it completely).</p>
+        <p>From a percentage to a decimal, divide by 100 (the decimal point moves two places to the left): ${P(55, 'en')} = ${D(55, 'en')}.</p>
+        <p>From a decimal to a percentage, multiply by 100: ${D(6, 'en')} = ${P(6, 'en')}.</p>
+        <p>From a percentage to a fraction: ${P(55, 'en')} = ${h(55, 100)} = ${h(11, 20)} (simplify it completely).</p>
         <p>Write the answer and press <strong>Check</strong>.</p>`,
     },
     instruccion: {
@@ -86,10 +86,10 @@ export const TX = {
     detalle: { es: 'Cuatro números en escrituras distintas', en: 'Four numbers written in different ways' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>Para ordenar, pásalos todos a la <strong>misma escritura</strong> (lo más cómodo es el porcentaje): ${D(5, 'es')} = ${P(5, 'es')}; ${h(1, 4)} = ${P(25, 'es')}.</p>
+        <p>Para ordenar, pásalos todos a la <strong>misma escritura</strong> (lo más cómodo es el porcentaje): ${D(2, 'es')} = ${P(2, 'es')}; ${h(1, 4)} = ${P(25, 'es')}.</p>
         <p>Toca los números en el orden que piden; si te equivocas, toca uno ya colocado para quitarlo.</p>`,
       en: `<h2>How it works</h2>
-        <p>To put them in order, change them all to the <strong>same form</strong> (the percentage is usually the easiest): ${D(5, 'en')} = ${P(5, 'en')}; ${h(1, 4)} = ${P(25, 'en')}.</p>
+        <p>To put them in order, change them all to the <strong>same form</strong> (the percentage is usually the easiest): ${D(2, 'en')} = ${P(2, 'en')}; ${h(1, 4)} = ${P(25, 'en')}.</p>
         <p>Tap the numbers in the order asked; if you make a mistake, tap one already placed to remove it.</p>`,
     },
     instruccion: {

@@ -13,7 +13,8 @@
 import { fraccion, htmlFraccion, leerFraccion } from '../_comun/fracciones.js';
 import { mcd } from '../_comun/aritmetica.js';
 import { decimal, aTexto as decimalATexto, deTexto as leerDecimal, aFraccionDecimal } from '../_comun/decimales.js';
-import { NBSP } from '../_comun/proporcion.js';
+import { NBSP, huellaCaso } from '../_comun/proporcion.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 // ─── Escrituras ──────────────────────────────────────────────────────────────────────────────
 
@@ -127,12 +128,19 @@ export const TIPOS_EJ2 = ['p-d', 'p-f', 'd-p', 'f-p'];
  * p es el porcentaje entero (1 a 99). Uno de cada tres ítems es de una cifra (5 %, 8 %, 0,05).
  */
 export function generarOtraForma(rng) {
-  const tipo = rng.elegir(TIPOS_EJ2);
-  const p = rng.azar() < 1 / 3 ? rng.entero(1, 9) : rng.entero(10, 99);
-  const e = escrituras(p);
-  const [de, a] = tipo.split('-');
-  return { ejercicio: 2, tipo, p, desde: e[de], a };
+  for (;;) {
+    const tipo = rng.elegir(TIPOS_EJ2);
+    const p = rng.azar() < 1 / 3 ? rng.entero(1, 9) : rng.entero(10, 99);
+    if (esReservado({ ejercicio: 2, p })) continue;
+    const e = escrituras(p);
+    const [de, a] = tipo.split('-');
+    return { ejercicio: 2, tipo, p, desde: e[de], a };
+  }
 }
+
+// Casos del papel (hoja 3 y examen 3): el ej. 2 no los saca. Los demás ejercicios no tienen casos del papel.
+export const huellasDe = it => (it.ejercicio === 2 ? [huellaCaso('porcentaje-escrito', [fraccion(it.p, 100)])] : []);
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
 
 /** Lo que vale la respuesta buena, como escritura. */
 export const respuestaBuena = item => escrituras(item.p)[item.a];
