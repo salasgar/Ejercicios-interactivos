@@ -152,3 +152,16 @@ test('textos: caballos, coche y mayúscula tras los dos puntos', () => {
     if (it.ctx === 'coche') assert.match(preguntaProblema(it, 'es'), /mismo viaje/);
   }
 });
+
+test('textos: con 1 la unidad va en singular y la resolución del ej. 4 no lleva viñetas sueltas', () => {
+  const MAL = /(^|[^\d.,])1 (horas|días|hours|days)\b/;
+  const textos = [];
+  for (const it of lote(generarProblema, 31)) for (const i of ['es', 'en']) textos.push(sinHtml(datoProblemaTx(it, i)), sinHtml(explicaProblema(it, { idioma: i })));
+  for (const it of lote(generarCaza, 32)) for (const i of ['es', 'en']) {
+    const r = resolucionCaza(it, i);
+    assert.ok(!/<ul(?![^>]*class="resolucion-lineas")/.test(r), 'ul sin clase con estilo');
+    textos.push(sinHtml(enunciadoCaza(it, i)), sinHtml(r), sinHtml(explicaCaza(it, { idioma: i })));
+  }
+  for (const x of textos) assert.ok(!MAL.test(x), x);
+  assert.ok(textos.some(x => /\b1 (hora|día|hour|day)\b/.test(x)), 'el 1 tiene que salir alguna vez');
+});

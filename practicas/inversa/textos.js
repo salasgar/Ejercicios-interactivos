@@ -12,6 +12,9 @@ const c = s => `<span class="cuenta">${s}</span>`;
 export const fv = (ctx, v, i) => ((CONTEXTOS[ctx] ?? DIRECTOS[ctx]).din ? dinero(v, i) : String(v));
 /** Para la casilla de la tabla (sin unidad). */
 export const celdaY = (ctx, v, i) => (CONTEXTOS[ctx].din ? dineroCelda(v, i) : String(v));
+const SING = { días: 'día', horas: 'hora', days: 'day', hours: 'hour' };
+/** «1 hora» / «5 horas»: la unidad en singular cuando el valor es 1. */
+const conUnidad = (v, u) => `${v} ${String(v) === '1' ? (SING[u] ?? u) : u}`;
 const mult = ctx => (CONTEXTOS[ctx].din ? 100 : 1);
 
 export const CABECERAS = {
@@ -26,19 +29,19 @@ export const CABECERAS = {
 
 const PROB = {
   obreros: {
-    dato: (a, b, i) => t(i, `${a} obreros tardan ${b} días en pintar un edificio.`, `${a} workers take ${b} days to paint a building.`),
+    dato: (a, b, i) => t(i, `${a} obreros tardan ${conUnidad(b, 'días')} en pintar un edificio.`, `${a} workers take ${conUnidad(b, 'days')} to paint a building.`),
     pregunta: (c_, i) => t(i, `¿Cuántos días tardarán ${c_} obreros, trabajando al mismo ritmo?`, `How many days will ${c_} workers take, working at the same pace?`),
     etq: { es: 'días', en: 'days' },
     por: { es: 'Con más obreros se tarda menos', en: 'With more workers it takes less time' },
   },
   grifos: {
-    dato: (a, b, i) => t(i, `${a} grifos iguales llenan un depósito en ${b} horas.`, `${a} identical taps fill a tank (depósito) in ${b} hours.`),
+    dato: (a, b, i) => t(i, `${a} grifos iguales llenan un depósito en ${conUnidad(b, 'horas')}.`, `${a} identical taps fill a tank (depósito) in ${conUnidad(b, 'hours')}.`),
     pregunta: (c_, i) => t(i, `¿Cuántas horas tardarán ${c_} grifos iguales?`, `How many hours will ${c_} identical taps take?`),
     etq: { es: 'horas', en: 'hours' },
     por: { es: 'Con más grifos se tarda menos', en: 'With more taps it takes less time' },
   },
   caballos: {
-    dato: (a, b, i) => t(i, `El pienso para ${a} caballos dura ${b} días, y todos comen lo mismo cada día.`, `The feed for ${a} horses lasts ${b} days, and they all eat the same amount each day.`),
+    dato: (a, b, i) => t(i, `El pienso para ${a} caballos dura ${conUnidad(b, 'días')}, y todos comen lo mismo cada día.`, `The feed for ${a} horses lasts ${conUnidad(b, 'days')}, and they all eat the same amount each day.`),
     pregunta: (c_, i) => t(i, `¿Cuántos días durará el mismo pienso con ${c_} caballos?`, `How many days will the same feed last for ${c_} horses?`),
     etq: { es: 'días', en: 'days' },
     por: { es: 'Con más caballos el pienso dura menos', en: 'With more horses the feed lasts less time' },
@@ -50,7 +53,7 @@ const PROB = {
     por: { es: 'Con más amigos, cada uno paga menos', en: 'With more friends, each one pays less' },
   },
   coche: {
-    dato: (a, b, i) => t(i, `Un coche va a ${a} km/h y tarda ${b} horas en hacer un viaje.`, `A car goes at ${a} km/h and takes ${b} hours to make a trip.`),
+    dato: (a, b, i) => t(i, `Un coche va a ${a} km/h y tarda ${conUnidad(b, 'horas')} en hacer un viaje.`, `A car goes at ${a} km/h and takes ${conUnidad(b, 'hours')} to make a trip.`),
     pregunta: (c_, i) => t(i, `¿Cuántas horas tardaría a ${c_} km/h en hacer el mismo viaje?`, `How many hours would it take to make the same trip at ${c_} km/h?`),
     etq: { es: 'horas', en: 'hours' },
     por: { es: 'A más velocidad se tarda menos', en: 'At a higher speed it takes less time' },
@@ -111,7 +114,7 @@ export function explicaProblema(it, { idioma = 'es' } = {}) {
   const P = fv(ctx, it.P * m, i);
   const prod = `${it.a} · ${fv(ctx, b, i)} = ${P}`, div = `${P} : ${it.c} = ${fv(ctx, r, i)}`;
   const e = PROB[ctx].etq[i];
-  const res = ctx === 'amigos' ? fv(ctx, r, i) : `${r} ${e}`;
+  const res = ctx === 'amigos' ? fv(ctx, r, i) : conUnidad(r, e);
   return t(i,
     `<ol class="pasos-ayuda"><li>${PROB[ctx].por.es}: es inversa. Los dos datos multiplicados dan siempre lo mismo: ${c(prod)}.</li>
       <li>Para ${it.c}: se divide ${c(div)}.</li></ol><p>La respuesta es ${res}.</p>`,
@@ -136,7 +139,8 @@ export const resolucionCaza = (it, i) => `<p class="resolucion"><strong>${t(i, `
   <p class="resolucion">${t(i, `Respuesta de ${it.nombre}: ${fv(it.ctx, resultadoCaza(it), i)}${etqAdd(it, i)}.`, `${it.nombre}’s answer: ${fv(it.ctx, resultadoCaza(it), i)}${etqAdd(it, i)}.`)}</p>`;
 const etqAdd = (it, i) => {
   const e = PROB[it.ctx].etq[i];
-  return it.ctx === 'amigos' || it.ctx === 'fruta' ? '' : ` ${e}`;
+  const n = String(resultadoCaza(it));
+  return it.ctx === 'amigos' || it.ctx === 'fruta' ? '' : ` ${n === '1' ? (SING[e] ?? e) : e}`;
 };
 
 export function explicaCaza(it, { idioma = 'es' } = {}) {
