@@ -379,3 +379,5 @@ Si paras sin terminar: `$R/hechos/fallos/218--<sid>.md` con hasta dónde llegast
 - (218) **Fracciones en `htmlFraccion`**: recibe una `Fraccion` (o texto), no `{num, den}` suelto; usa `fraccion(num, den)`.
 - (218) **Pasar escrituras a porcentaje** con `pctE(aP(valorDe(e)))` vale solo con porcentajes enteros (todas las de esta práctica).
 - (218) Duración real: ≈ 1 h de reloj contando el diseño; la parte difícil fue la interfaz de huecos y fichas del ej. 3, aún sin probar en navegador.
+- (218, 28-11) **Un `reserva.js` nuevo no entra en `git commit -- rutas`**: `git add` del fichero nuevo y el commit en la misma orden. En un test de «la introducción no lleva este caso», `5 %` casa dentro de `55 %`: hay que anclar con `(?<![\d,.])`, y el espacio de «%» es duro (`\s`).
+- (218, 28-11) Duración real de la reabierta: ≈ 15 min.
