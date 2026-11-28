@@ -6,14 +6,27 @@
 // Los datos se generan al revés: p entero (1-99) y total múltiplo de 100 : m.c.d.(p, 100), así la parte es natural.
 // Nunca un descuento, una rebaja ni un aumento (sesión 12). Los ítems son JSON plano.
 
-import { CONTEXTOS, generarDatos, cantidad, mismoValor, deTexto, numeroATexto, aTexto } from '../_comun/proporcion.js';
+import { CONTEXTOS, generarDatos, cantidad, mismoValor, deTexto, numeroATexto, aTexto, huellaCaso } from '../_comun/proporcion.js';
 import { fraccion } from '../_comun/fracciones.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 const val = s => { const [n, d] = s.split('/').map(Number); return fraccion(n, d); };
 const guarda = f => `${f.num}/${f.den}`;
 export const mcd = (a, b) => (b === 0 ? a : mcd(b, a % b));
 export const multiploDe = p => 100 / mcd(p, 100);
 const enRango = (paso, min, max) => { const r = []; for (let n = Math.ceil(min / paso) * paso; n <= max; n += paso) r.push(n); return r; };
+
+// ─── Casos reservados (la hoja 3 y el examen 3 de la unidad 7) ─────────────────────────────────
+/** Huella del caso: p y total por valor (la pregunta no entra: el mismo trío es el mismo caso). */
+export function huellasDe(it) {
+  const T = it.total !== undefined ? val(it.total) : fraccion(it.N);
+  return [huellaCaso('porcentaje-de', [fraccion(it.p, 100), T])];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
+const sinReservados = crear => (rng, sesion) => {
+  for (let i = 0; i < 200; i++) { const it = crear(rng, sesion); if (!esReservado(it)) return it; }
+  throw new Error('que-porcentaje: todo reservado');
+};
 
 /** La parte: p · N : 100, un natural en todos los ítems generados. */
 export const parteDe = (p, N) => fraccion(p * N, 100).simplificar();
@@ -42,8 +55,8 @@ function generarTrio(rng, sesion, n) {
   }
   throw new Error('generarTrio: sin datos');
 }
-export const generarPorcentaje = (rng, sesion) => generarTrio(rng, sesion, 1);
-export const generarTotal = (rng, sesion) => generarTrio(rng, sesion, 2);
+export const generarPorcentaje = sinReservados((rng, sesion) => generarTrio(rng, sesion, 1));
+export const generarTotal = sinReservados((rng, sesion) => generarTrio(rng, sesion, 2));
 
 /** Lo que teclea el alumno: con unidad '%', el número suelto es un porcentaje; null si no se entiende. */
 export const leerCampo = (texto, idioma, unidad = null) => deTexto(texto, unidad ? { unidad, idioma } : { magnitud: 'numero', idioma });
@@ -95,19 +108,27 @@ export const trioDe = it => ({ P: fraccion(it.p), A: aFraccion(it.parte), T: aFr
 /** Los contextos de porcentaje del banco de proporcion.js (nunca uno de precio) y la cota propia de p. */
 export const IDS_CONTEXTOS = Object.freeze(['clase', 'encuesta', 'club', 'tiros', 'test', 'ahorros']);
 export const P_CONTEXTOS = Object.freeze([5, 90]);
+/** Cota propia de `ahorros`: un regalo, como mucho 60,00 € (el banco deja hasta 475,00 € con 500,00 € ahorrados). */
+export const REGALO_MAX = 60;
 export const PREGUNTAS = Object.freeze(['parte', 'porcentaje', 'total']);
 export const ctxDe = id => CONTEXTOS.find(c => c.id === id && c.tipo === 'porcentaje');
 
-function generarContexto(rng, n, pregunta) {
+function generarContexto1(rng, n, pregunta) {
   for (let i = 0; i < 2000; i++) {
     const ctx = ctxDe(rng.elegir(IDS_CONTEXTOS));
     const d = generarDatos(ctx, rng);
     const p = d.p.valor.num;
     if (d.p.valor.den !== 1 || p < P_CONTEXTOS[0] || p > P_CONTEXTOS[1]) continue;
+    if (ctx.id === 'ahorros' && d.parte.valor.num > REGALO_MAX * d.parte.valor.den) continue;
     return { n, ctx: ctx.id, pregunta, total: guarda(d.total.valor), p, parte: guarda(d.parte.valor), nombres: d.nombres };
   }
   throw new Error('generarContexto: sin datos');
 }
+
+const generarContexto = (rng, n, pregunta) => {
+  for (let i = 0; i < 200; i++) { const it = generarContexto1(rng, n, pregunta); if (!esReservado(it)) return it; }
+  throw new Error('que-porcentaje: todo reservado');
+};
 
 /** Ejercicio 3: un tercio de cada pregunta (parte, porcentaje, total). */
 export const generarTipo = rng => generarContexto(rng, 3, rng.elegir(PREGUNTAS));

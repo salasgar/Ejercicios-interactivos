@@ -104,3 +104,29 @@ test('que-porcentaje · textos: sin × ni palabras de otras unidades', () => {
     assert.doesNotMatch(t, prohibidas, t);
   }
 });
+
+test('que-porcentaje · casos reservados: ningún ítem de la hoja 3 ni del examen 3 (3000 por ejercicio, también los fáciles)', async () => {
+  const { HUELLAS_RESERVADAS } = await import('../practicas/que-porcentaje/reserva.js');
+  assert.ok(HUELLAS_RESERVADAS.size >= 80);
+  for (const [def, s] of [[ej1, 51], [ej2, 52], [ej3, 53], [ej4, 54]]) {
+    for (const it of items(def, s)) assert.ok(!L.huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h)), `${def.nombre.es}: ${JSON.stringify(it)}`);
+    const rng = crearRng(s + 10);
+    for (let i = 0; i < N; i++) { const it = def.generar(rng, { aciertos: i % 3, fallos: 0, puntos: 0, vidas: 5, anterior: null, idioma: 'es' }); assert.ok(!L.esReservado(it)); }
+  }
+  assert.ok(L.esReservado({ p: 75, N: 40 }), 'el 75 % de 40 es de la hoja');
+});
+
+test('que-porcentaje · los ejemplos de las introducciones no son casos del papel', () => {
+  for (const [p, N] of [[15, 80], [20, 150], [20, 25]]) assert.ok(!L.esReservado({ p, N }), `${p} % de ${N}`);
+});
+
+test('que-porcentaje · ahorros: el regalo cuesta como mucho 60,00 € (cota propia, sin tocar proporcion.js)', () => {
+  let n = 0;
+  for (const def of [ej3, ej4]) for (const it of items(def, 61)) {
+    if (it.ctx !== 'ahorros') continue;
+    n++;
+    const A = val(it.parte);
+    assert.ok(A.num <= L.REGALO_MAX * A.den, `regalo ${it.parte}`);
+  }
+  assert.ok(n > 100, `${n} ítems de ahorros`);
+});

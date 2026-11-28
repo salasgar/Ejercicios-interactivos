@@ -1,8 +1,8 @@
 // «¿Qué porcentaje? ¿De cuánto?» (PU2, tarea 220). Cuatro ejercicios de la unidad 7:
-//   1. ¿Qué porcentaje es?  12 de 80: parte entre total, a porcentaje          (U7-3A-02, 3A-04)
-//   2. ¿De cuánto?          el 20 % es 30: ¿cuál es el total?                  (U7-3A-07)
-//   3. ¿Cuál de los tres?   piden la parte, el porcentaje o el total; no se calcula  (U7-3C-06)
-//   4. Problemas            con contexto: el porcentaje, el total o la parte   (U7-3C-06, 3C-07)
+//   1. ¿Qué porcentaje es?  12 de 80: parte entre total, a porcentaje          (U7-3A-02, 3C-06)
+//   2. ¿De cuánto?          el 20 % es 30: ¿cuál es el total?                  (U7-3A-04, 3C-07)
+//   3. ¿Cuál de los tres?   piden la parte, el porcentaje o el total; no se calcula  (U7-3A-07)
+//   4. Problemas            con contexto: el porcentaje, el total o la parte   (U7-3A-02, 3A-04, 3C-06, 3C-07)
 // La lógica está en `logica.js`; las frases y las explicaciones, en `textos.js`.
 
 import { arrancar } from '../_comun/base.js';

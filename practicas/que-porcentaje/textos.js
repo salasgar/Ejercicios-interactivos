@@ -3,7 +3,7 @@
 // El inglés, sencillo, y la palabra no matemática que decide la respuesta, aclarada entre paréntesis.
 
 import { enunciado, cantidad, aTexto, numeroATexto } from '../_comun/proporcion.js';
-import { fraccion } from '../_comun/fracciones.js';
+import { fraccion, htmlRaya } from '../_comun/fracciones.js';
 import {
   mcd, ctxDe, datosDe, textoDato, respuestaDe, trioDe, parteDe,
 } from './logica.js';
@@ -48,15 +48,15 @@ const FALLO = {
   'porcentaje-sin-dividir': ({ P, idioma }) => (idioma === 'es'
     ? `Has multiplicado sin dividir entre 100: el ${pc(P, idioma)} no es ${n(P, idioma)} veces la cantidad, es ${n(P, idioma)} de cada 100`
     : `You multiplied without dividing by 100: ${pc(P, idioma)} is not ${n(P, idioma)} times the amount, it is ${n(P, idioma)} out of every 100`),
-  'dividir-entre-el-porcentaje': ({ idioma }) => (idioma === 'es'
-    ? 'Has dividido la cantidad entre el porcentaje: el porcentaje no es por lo que se divide, es una parte de cada 100'
-    : 'You divided the amount by the percentage: the percentage is not a divisor, it is a part out of every 100'),
-  'restar-el-porcentaje': ({ idioma }) => (idioma === 'es'
-    ? 'Has restado el porcentaje como si fuera un número: el porcentaje es una parte de cada 100, no unidades que se quitan'
-    : 'You subtracted the percentage as if it were a number: a percentage is a part out of every 100, not units to take away'),
-  'dar-el-resto': ({ idioma }) => (idioma === 'es'
-    ? 'Has dado lo que queda, y se pide la parte'
-    : 'You gave what is left over, and the question asks for the part'),
+  'dividir-entre-el-porcentaje': ({ P, T, idioma }) => (idioma === 'es'
+    ? `Has dividido ${n(T, idioma)} : ${n(P, idioma)} = ${n(T.dividir(P), idioma)}: el ${pc(P, idioma)} no es por lo que se divide, es ${n(P, idioma)} de cada 100`
+    : `You divided ${n(T, idioma)} : ${n(P, idioma)} = ${n(T.dividir(P), idioma)}: ${pc(P, idioma)} is not what you divide by, it is ${n(P, idioma)} out of every 100`),
+  'restar-el-porcentaje': ({ P, T, idioma }) => (idioma === 'es'
+    ? `Has restado ${n(T, idioma)} ${MENOS} ${n(P, idioma)} = ${n(T.restar(P), idioma)}: el ${pc(P, idioma)} es ${n(P, idioma)} de cada 100, no ${n(P, idioma)} unidades que se quitan`
+    : `You subtracted ${n(T, idioma)} ${MENOS} ${n(P, idioma)} = ${n(T.restar(P), idioma)}: ${pc(P, idioma)} is ${n(P, idioma)} out of every 100, not ${n(P, idioma)} units to take away`),
+  'dar-el-resto': ({ A, T, idioma }) => (idioma === 'es'
+    ? `Has dado lo que queda (${n(T, idioma)} ${MENOS} ${n(A, idioma)}), y se pide la parte`
+    : `You gave what is left over (${n(T, idioma)} ${MENOS} ${n(A, idioma)}), and the question asks for the part`),
 };
 const falloDe = (error, c) => (FALLO[error] ? FALLO[error](c) : '');
 
@@ -113,10 +113,47 @@ export function caminoTotal(P, A, T, idioma, f = x => n(x, idioma)) {
   };
 }
 
+/**
+ * El método oficial (acta de la 02, puntos b e i): la tabla Porcentaje | Cantidad con el 100 % arriba, la proporción y los
+ * productos cruzados. `pide` es 'total' o 'parte'; `f` da formato a una cantidad con su unidad. Devuelve { regla, pasos, otra }.
+ */
+export function metodoTabla(pide, P, A, T, idioma, f = x => n(x, idioma)) {
+  const es = idioma === 'es', x = '<i>x</i>';
+  const fila = (por, cant) => `${pc(por, idioma)} → ${cant}`;
+  const raya = (arriba, abajo) => htmlRaya(arriba, abajo);
+  if (pide === 'total') {
+    const cruz = A.multiplicar(100);
+    return {
+      regla: es ? `Se hace la tabla Porcentaje → Cantidad, con el ${pc(100, idioma)} (el total) en la fila de la x, y se multiplica en cruz.`
+        : `Make the table Percentage → Amount, with ${pc(100, idioma)} (the total) in the x row, and multiply across.`,
+      pasos: [
+        `${fila(100, x)}; ${fila(P, f(A))}`,
+        `${raya(100, n(P, idioma))} = ${raya(x, n(A, idioma))}`,
+        `${n(P, idioma)} · ${x} = 100 · ${n(A, idioma)} = ${n(cruz, idioma)}`,
+        `${x} = ${n(cruz, idioma)} : ${n(P, idioma)} = ${f(T)}`,
+      ],
+      otra: caminoTotal(P, A, T, idioma, f).pasos.map(cuentaHtml),
+    };
+  }
+  const cruz = P.multiplicar(T);
+  return {
+    regla: es ? `Se hace la tabla Porcentaje → Cantidad, con el ${pc(100, idioma)} (el total) arriba, y se multiplica en cruz.`
+      : `Make the table Percentage → Amount, with ${pc(100, idioma)} (the total) on top, and multiply across.`,
+    pasos: [
+      `${fila(100, f(T))}; ${fila(P, x)}`,
+      `${raya(n(P, idioma), 100)} = ${raya(x, n(T, idioma))}`,
+      `100 · ${x} = ${n(P, idioma)} · ${n(T, idioma)} = ${n(cruz, idioma)}`,
+      `${x} = ${n(cruz, idioma)} : 100 = ${f(A)}`,
+    ],
+    otra: [`${n(P.dividir(100), idioma)} · ${n(T, idioma)} = ${n(A, idioma)}`].map(cuentaHtml),
+  };
+}
+const otraForma = (otra, idioma) => `${idioma === 'es' ? 'Otra forma:' : 'Another way:'} ${otra.join(idioma === 'es' ? ' y ' : ' and ')}.`;
+
 export function explicaTotal(item, idioma) {
   const { P, A, T } = trioDe(item);
-  const c = caminoTotal(P, A, T, idioma);
-  return `${c.regla}${lista(c.pasos)}${respuesta(n(T, idioma), idioma)}`;
+  const m = metodoTabla('total', P, A, T, idioma);
+  return `${m.regla}${lista(m.pasos)}${otraForma(m.otra, idioma)} ${respuesta(n(T, idioma), idioma)}`;
 }
 export const feedbackTotal = (item, { escrito, error }, idioma) =>
   limpio(`${dijo(escrito, idioma)} ${conFallo(item, error, idioma, explicaTotal)}`);
@@ -166,23 +203,16 @@ export function explicaProblema(item, idioma) {
   const euros = (ctx.datos.total.unidad ?? null) === '€';
   const f = x => (euros ? aTexto(cantidad(x, '€'), idioma) : n(x, idioma));
   const es = idioma === 'es';
-  let regla, pasos;
   if (item.pregunta === 'porcentaje') {
-    regla = es ? `Se pide el porcentaje: se divide la parte, ${textoDato(item, 'parte', idioma)}, entre el total, ${textoDato(item, 'total', idioma)}.`
+    const regla = es ? `Se pide el porcentaje: se divide la parte, ${textoDato(item, 'parte', idioma)}, entre el total, ${textoDato(item, 'total', idioma)}.`
       : `You are asked for the percentage: divide the part, ${textoDato(item, 'parte', idioma)}, by the total, ${textoDato(item, 'total', idioma)}.`;
-    pasos = pasosPorcentaje(A, T, P, idioma, f);
-  } else if (item.pregunta === 'total') {
-    const c = caminoTotal(P, A, T, idioma, f);
-    regla = es ? `Se pide el total: el ${pc(item.p, idioma)} son ${textoDato(item, 'parte', idioma)}. ${c.regla.split('. ').slice(1).join('. ')}`
-      : `You are asked for the total: ${pc(item.p, idioma)} is ${textoDato(item, 'parte', idioma)}. ${c.regla.split('. ').slice(1).join('. ')}`;
-    pasos = c.pasos;
-  } else {
-    regla = es ? `Se pide la parte: el ${pc(item.p, idioma)} de ${textoDato(item, 'total', idioma)}. Se pasa el porcentaje a decimal y se multiplica por el total.`
-      : `You are asked for the part: ${pc(item.p, idioma)} of ${textoDato(item, 'total', idioma)}. Turn the percentage into a decimal and multiply by the total.`;
-    const dec = n(P.dividir(100), idioma);
-    pasos = [`${dec} · ${f(T)} = ${f(A)}`];
+    return `${regla}${lista(pasosPorcentaje(A, T, P, idioma, f))}${respuesta(textoRespuesta(item, idioma), idioma)}`;
   }
-  return `${regla}${lista(pasos)}${respuesta(textoRespuesta(item, idioma), idioma)}`;
+  const m = metodoTabla(item.pregunta, P, A, T, idioma, f);
+  const pide = item.pregunta === 'total'
+    ? (es ? `Se pide el total: el ${pc(item.p, idioma)} son ${textoDato(item, 'parte', idioma)}.` : `You are asked for the total: ${pc(item.p, idioma)} is ${textoDato(item, 'parte', idioma)}.`)
+    : (es ? `Se pide la parte: el ${pc(item.p, idioma)} de ${textoDato(item, 'total', idioma)}.` : `You are asked for the part: ${pc(item.p, idioma)} of ${textoDato(item, 'total', idioma)}.`);
+  return `${pide} ${m.regla}${lista(m.pasos)}${otraForma(m.otra, idioma)} ${respuesta(textoRespuesta(item, idioma), idioma)}`;
 }
 export const feedbackProblema = (item, { escrito, error }, idioma) =>
   limpio(`${dijo(escrito, idioma)} ${conFallo(item, error, idioma, explicaProblema)}`);
@@ -201,7 +231,7 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Para saber <strong>qué porcentaje</strong> es una cantidad de otra, se divide <strong>la parte entre el total</strong> y el decimal se pasa a porcentaje.</p>
-        <p>Por ejemplo, ¿qué porcentaje es 12 de 80? <strong>12 : 80 = 0,15</strong> y <strong>0,15 = 15 %</strong>. La respuesta es 15 %.</p>
+        <p>Por ejemplo, ¿qué porcentaje es 12 de 80? <strong>12 : 80 = 0,15</strong> y <strong>0,15 = 15 %</strong>. La respuesta es 15 %.</p>
         <p>Escribe solo el número: el signo % ya está puesto.</p>`,
       en: `<h2>How it works</h2>
         <p>To find <strong>what percentage</strong> one amount is of another, divide <strong>the part by the total</strong> and turn the decimal into a percentage.</p>
@@ -211,15 +241,17 @@ export const TX = {
   },
   total: {
     nombre: { es: '¿De cuánto?', en: 'Of how much?' },
-    detalle: { es: 'El 20 % de una cantidad es 30: ¿cuál es la cantidad?', en: '20% of an amount is 30: what is the amount?' },
+    detalle: { es: 'El 20 % de una cantidad es 30: ¿cuál es la cantidad?', en: '20% of an amount is 30: what is the amount?' },
     introduccion: {
       es: `<h2>Cómo se hace</h2>
-        <p>Aquí te dan <strong>la parte</strong> y el porcentaje, y te piden <strong>el total</strong> (el 100 %).</p>
-        <p>Por ejemplo, el 20 % de una cantidad es 30. Si el 20 % son 30, el 10 % son 15 y <strong>el 100 % son 150</strong>. O también: <strong>100 : 20 = 5</strong> veces el 20 %, y <strong>5 · 30 = 150</strong>.</p>
+        <p>Aquí te dan <strong>la parte</strong> y el porcentaje, y te piden <strong>el total</strong> (el 100 %).</p>
+        <p>Por ejemplo, el 20 % de una cantidad es 30. Se hace la tabla Porcentaje → Cantidad: <strong>100 % → x</strong> y <strong>20 % → 30</strong>. Se multiplica en cruz: <strong>20 · x = 100 · 30 = 3000</strong> y <strong>x = 3000 : 20 = 150</strong>.</p>
+        <p>Otra forma, más corta: si el 20 % son 30, el 10 % son 15 y <strong>el 100 % son 150</strong>.</p>
         <p>Puedes llegar por el camino que prefieras: solo se mira el resultado.</p>`,
       en: `<h2>How it works</h2>
         <p>Here you are given <strong>the part</strong> and the percentage, and you are asked for <strong>the total</strong> (100%).</p>
-        <p>For example, 20% of an amount is 30. If 20% is 30, then 10% is 15 and <strong>100% is 150</strong>. Or: <strong>100 : 20 = 5</strong> times 20%, and <strong>5 · 30 = 150</strong>.</p>
+        <p>For example, 20% of an amount is 30. Make the table Percentage → Amount: <strong>100% → x</strong> and <strong>20% → 30</strong>. Multiply across: <strong>20 · x = 100 · 30 = 3000</strong> and <strong>x = 3000 : 20 = 150</strong>.</p>
+        <p>Another way, shorter: if 20% is 30, then 10% is 15 and <strong>100% is 150</strong>.</p>
         <p>You can use any method you like: only the result is checked.</p>`,
     },
   },
@@ -229,7 +261,7 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>En un problema de porcentajes hay <strong>tres datos</strong>: <strong>el total</strong> (todo), <strong>la parte</strong> (lo que se lleva) y <strong>el porcentaje</strong>. El enunciado da dos, y <strong>el que falta</strong> es lo que piden.</p>
-        <p>Por ejemplo: en una clase de 25 alumnos, el 20 % lleva gafas. ¿Cuántos llevan gafas? Te dan el total (25) y el porcentaje (20 %): <strong>piden la parte</strong>.</p>
+        <p>Por ejemplo: en una clase de 25 alumnos, el 20 % lleva gafas. ¿Cuántos llevan gafas? Te dan el total (25) y el porcentaje (20 %): <strong>piden la parte</strong>.</p>
         <p>Aquí <strong>no calculas</strong>: solo eliges qué piden.</p>`,
       en: `<h2>How it works</h2>
         <p>A percentage problem has <strong>three pieces of data</strong>: <strong>the total</strong> (the whole), <strong>the part</strong> (some of it) and <strong>the percentage</strong>. The problem gives two, and <strong>the missing one</strong> is what it asks for.</p>
@@ -243,7 +275,7 @@ export const TX = {
     introduccion: {
       es: `<h2>Cómo se hace</h2>
         <p>Lees qué te piden: <strong>el porcentaje</strong> (parte entre total), <strong>el total</strong> (a partir de la parte y el porcentaje) o <strong>la parte</strong> (el porcentaje del total). Contestas con <strong>el número y su unidad</strong>.</p>
-        <p>Por ejemplo: en una clase de 25 alumnos, 5 llevan gafas. ¿Qué porcentaje lleva gafas? <strong>5 : 25 = 0,2</strong> y <strong>0,2 = 20 %</strong>.</p>`,
+        <p>Por ejemplo: en una clase de 25 alumnos, 5 llevan gafas. ¿Qué porcentaje lleva gafas? <strong>5 : 25 = 0,2</strong> y <strong>0,2 = 20 %</strong>.</p>`,
       en: `<h2>How it works</h2>
         <p>Read what you are asked: <strong>the percentage</strong> (part divided by total), <strong>the total</strong> (from the part and the percentage) or <strong>the part</strong> (the percentage of the total). Answer with <strong>the number and its unit</strong>.</p>
         <p>For example: in a class of 25 pupils, 5 wear glasses. What percentage wear glasses? <strong>5 : 25 = 0.2</strong> and <strong>0.2 = 20%</strong>.</p>`,
