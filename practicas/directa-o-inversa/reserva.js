@@ -1,4 +1,4 @@
-// Casos de la hoja 2 y del examen 2 de la unidad 7 (sesión 6), solo por huella (`huellaCaso` de ../_comun/proporcion.js) del caso
+// Casos de las hojas 2 y 3 y de los exámenes 2 y 3 de la unidad 7 (sesión 6), solo por huella (`huellaCaso` de ../_comun/proporcion.js) del caso
 // normalizado por valor. Ej. 2: la tabla, por cada par y cada trío de columnas; ej. 3: «a ⟶ b; c ⟶ ?» con su sentido. El examen, nunca en claro (tarea 216, reabierta del 26-11-2026).
 
 export const HUELLAS_RESERVADAS = new Set([
@@ -60,4 +60,12 @@ export const HUELLAS_RESERVADAS = new Set([
   'qie8vl', // examen
   't39bgp', // examen
   'xg7hns', // examen
+  '1bzwy1s', // examen 3
+  '1f9tygy', // examen 3
+  '1mgje8v', // examen 3
+  '1on2def', // examen 3
+  '1sfbdli', // examen 3
+  '1trqg7z', // examen 3
+  '28gp4b', // examen 3
+  'yrqzbo', // examen 3
 ]);
