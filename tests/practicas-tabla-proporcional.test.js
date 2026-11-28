@@ -153,7 +153,7 @@ test('textos: sin restos ni signos prohibidos, coma en español y punto en ingl�
 });
 
 test('reserva: ningún ítem de los ej. 1-3 repite un caso de la hoja o del examen, y todos tienen huella', () => {
-  assert.equal(HUELLAS_RESERVADAS.size, 27);
+  assert.equal(HUELLAS_RESERVADAS.size, 31);
   for (const g of [generarEsProporcional, generarCompleta, generarConstante]) for (const it of lote(g, 31)) {
     const hs = huellasDe(it);
     if (g !== generarEsProporcional) assert.ok(hs.length > 0);

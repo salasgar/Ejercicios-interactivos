@@ -20,4 +20,6 @@ export const HUELLAS_RESERVADAS = new Set([
   // Examen 2: tres ejercicios con dos columnas y el precio por unidad con una
   'mtr036', 'pkhdnq', '78qvoz', '2hwwcc', 'bppisu', '21sl89',
   '12jtyyf', 'xo55lw', '1w4qy6u', '1bumml2',
+  // Repaso del examen 3 (tabla directa con las dos columnas de un problema)
+  '15cyj0f', '18spygm', 'fhlbba', 'u4jy79',
 ]);
