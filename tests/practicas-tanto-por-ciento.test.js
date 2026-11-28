@@ -92,3 +92,19 @@ test('tanto-por-ciento · errorDe nombra los fallos de «el 15 % de 80» y deja 
   assert.equal(L.errorDe(15, 80, v(7)), 'otro');
   assert.equal(L.errorDe(25, 80, v(40)), 'mitad-por-cuarto');
 });
+
+test('tanto-por-ciento · reserva: ningún ítem es un caso de la hoja 3 ni del examen 3, y la reserva sigue viva', () => {
+  for (const [def, sem] of [[ej1, 41], [ej2, 42], [ej3, 43], [ej4, 44]]) {
+    for (const it of items(def, sem)) assert.ok(!L.esReservado(it), `${it.n}: ${it.p} % de ${it.N ?? it.total}`);
+  }
+  assert.ok(L.esReservado({ n: 1, p: 50, N: 70 }), '50 % de 70 (hoja 3, ej. 3 a)');
+  assert.ok(L.esReservado({ n: 3, p: 50, N: 70 }), 'la huella no depende del ejercicio');
+  assert.ok(L.esReservado({ n: 4, p: 12, total: '850/1' }), '12 % de 850 (hoja 3, ej. 6 a)');
+  assert.ok(!L.esReservado({ n: 1, p: 50, N: 72 }));
+});
+
+test('tanto-por-ciento · ej. 4: el regalo de «ahorros» no pasa de 60,00 €', () => {
+  let ahorros = 0;
+  for (const it of items(ej4, 45)) if (it.ctx === 'ahorros') { ahorros++; assert.ok(val(it.parte).num <= L.REGALO_MAX * val(it.parte).den, `${it.total} ${it.p} → ${it.parte}`); }
+  assert.ok(ahorros > 100, `ahorros ${ahorros}`);
+});

@@ -9,6 +9,7 @@ import { CATALOGO } from '../practicas/_comun/catalogo.js';
 import { declaracionDe } from '../practicas/_comun/base.js';
 import { numeroATexto } from '../practicas/_comun/proporcion.js';
 import * as L from '../practicas/tanto-por-ciento/logica.js';
+import * as X from '../practicas/tanto-por-ciento/textos.js';
 
 const IDIOMAS = ['es', 'en'];
 const N = 1000;
@@ -64,4 +65,21 @@ test('tanto-por-ciento · ej. 4: la solución lleva su unidad', () => {
 test('tanto-por-ciento · los ejercicios con cuenta declaran «No lo sé» y el ej. 3, no', () => {
   assert.ok(ej1.noLoSe && ej2.noLoSe && ej4.noLoSe);
   assert.ok(!ej3.noLoSe);
+});
+
+test('tanto-por-ciento · feedback: cada error lleva los números del ítem y los problemas, la regla de tres', () => {
+  const it = { n: 1, p: 15, N: 80 };
+  const casos = [['porcentaje-sin-dividir', '1200'], ['restar-el-porcentaje', '65'], ['porcentaje-entre-mil', '0,015'],
+    ['porcentaje-entre-diez', '1,5'], ['dividir-entre-el-porcentaje', '5,33'], ['dar-el-resto', '68']];
+  for (const idioma of IDIOMAS) for (const [e, cifra] of casos) {
+    const txt = plano(X.feedbackCabeza(it, { escrito: '1', error: e }, idioma));
+    const esperado = idioma === 'es' ? cifra : cifra.replace(',', '.');
+    if (e !== 'dividir-entre-el-porcentaje') assert.ok(txt.includes(esperado), `${e} ${idioma}: ${txt}`);
+    assert.ok(txt.includes('80') && txt.includes('15'), `${e} ${idioma}: ${txt}`);
+  }
+  for (const it4 of items(ej4, 51).slice(0, 200)) for (const idioma of IDIOMAS) {
+    const txt = plano(ej4.explicacion(it4, textosDe(idioma)));
+    assert.match(txt, idioma === 'es' ? /Regla de tres/ : /Rule of three/);
+    assert.match(txt, /100x = /);
+  }
 });

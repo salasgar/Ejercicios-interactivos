@@ -1,7 +1,7 @@
 // «El tanto por ciento de una cantidad» (PU2, tarea 219). Cuatro ejercicios de la unidad 7:
-//   1. De cabeza            el 10 %, 50 %, 25 %… de una cantidad                  (U7-3A-01, 3C-02)
+//   1. De cabeza            el 10 %, 50 %, 25 %… de una cantidad                  (U7-3A-01, 3C-05)
 //   2. Con el decimal       el 15 % de 80: solo se mira el resultado              (U7-3C-04)
-//   3. ¿Qué operación?      cuatro cuentas sin hacer; solo una vale               (U7-3C-05)
+//   3. ¿Qué operación?      cuatro cuentas sin hacer; solo una vale               (U7-3C-04)
 //   4. Problemas            la parte con su unidad                                (U7-3C-02, 3C-04)
 // La lógica está en `logica.js`; las frases y las explicaciones, en `textos.js`.
 

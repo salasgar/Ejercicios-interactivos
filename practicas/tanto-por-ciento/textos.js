@@ -9,6 +9,7 @@ import {
 } from './logica.js';
 
 const MENOS = '−';
+const NBSP = '\u00a0';
 const cuentaHtml = c => `<span class="cuenta">${c}</span>`;
 const val = s => { const [n, d] = s.split('/').map(Number); return fraccion(n, d); };
 const num = (f, idioma) => numeroATexto(f, idioma);
@@ -16,41 +17,37 @@ const n = (x, idioma) => numeroATexto(fraccion(x), idioma);
 const pc = (p, idioma) => aTexto(cantidad(p, '%'), idioma);
 const lista = items => `<ol class="pasos-ayuda">${items.map(l => `<li>${cuentaHtml(l)}</li>`).join('')}</ol>`;
 
+// Lo que sale mal, con los números del ítem. `c` = { p, N, idioma }: el porcentaje y el total (fracción).
+const fb = (es, en, idioma) => (idioma === 'es' ? es : en);
 const FALLO = {
-  'dividir-entre-el-porcentaje': {
-    es: 'Has dividido la cantidad entre el porcentaje: el porcentaje no es por lo que se divide, es una parte de cada 100',
-    en: 'You divided the amount by the percentage: the percentage is not a divisor, it is a part out of every 100',
-  },
-  'porcentaje-sin-dividir': {
-    es: 'Has multiplicado sin dividir entre 100: el 15 % no es 15 veces la cantidad, es 15 de cada 100',
-    en: 'You multiplied without dividing by 100: 15% is not 15 times the amount, it is 15 out of every 100',
-  },
-  'porcentaje-entre-mil': {
-    es: 'La coma se ha ido una cifra de más: el 15 % es 0,15, no 0,015',
-    en: 'The point is one place too far: 15% is 0.15, not 0.015',
-  },
-  'porcentaje-entre-diez': {
-    es: 'La coma se ha quedado una cifra de menos: el 8 % es 0,08, no 0,8',
-    en: 'The point is one place short: 8% is 0.08, not 0.8',
-  },
-  'restar-el-porcentaje': {
-    es: 'Has restado el porcentaje como si fuera un número: el 15 % de 80 no es 80 menos 15',
-    en: 'You subtracted the percentage as if it were a number: 15% of 80 is not 80 minus 15',
-  },
-  'dar-el-resto': {
-    es: 'Has dado lo que queda, y se pide la parte',
-    en: 'You gave what is left over, and the question asks for the part',
-  },
-  'mitad-por-cuarto': {
-    es: 'El 25 % es la cuarta parte, no la mitad',
-    en: '25% is a quarter, not a half',
-  },
-  'dividir-por-el-decimal': {
-    es: 'Has dividido entre el decimal: para calcular el porcentaje se multiplica por él',
-    en: 'You divided by the decimal: to find the percentage you multiply by it',
-  },
+  'dividir-entre-el-porcentaje': ({ p, N, idioma }) => fb(
+    `Has hecho ${num(N, idioma)} : ${n(p, idioma)} = ${num(N.dividir(fraccion(p)), idioma)}: el ${pc(p, idioma)} no es lo que se divide la cantidad, es una parte de cada 100`,
+    `You did ${num(N, idioma)} : ${n(p, idioma)} = ${num(N.dividir(fraccion(p)), idioma)}: ${pc(p, idioma)} is not what you divide the amount by, it is a part out of every 100`, idioma),
+  'porcentaje-sin-dividir': ({ p, N, idioma }) => fb(
+    `Has hecho ${n(p, idioma)} · ${num(N, idioma)} = ${num(N.multiplicar(fraccion(p)), idioma)} sin dividir entre 100: el ${pc(p, idioma)} no es ${n(p, idioma)} veces la cantidad, es ${n(p, idioma)} de cada 100`,
+    `You did ${n(p, idioma)} · ${num(N, idioma)} = ${num(N.multiplicar(fraccion(p)), idioma)} without dividing by 100: ${pc(p, idioma)} is not ${n(p, idioma)} times the amount, it is ${n(p, idioma)} out of every 100`, idioma),
+  'porcentaje-entre-mil': ({ p, N, idioma }) => fb(
+    `La coma se ha ido una cifra de más: el ${pc(p, idioma)} es ${num(fraccion(p, 100), idioma)}, no ${num(fraccion(p, 1000), idioma)}`,
+    `The point is one place too far: ${pc(p, idioma)} is ${num(fraccion(p, 100), idioma)}, not ${num(fraccion(p, 1000), idioma)}`, idioma),
+  'porcentaje-entre-diez': ({ p, N, idioma }) => fb(
+    `La coma se ha quedado una cifra de menos: el ${pc(p, idioma)} es ${num(fraccion(p, 100), idioma)}, no ${num(fraccion(p, 10), idioma)}`,
+    `The point is one place short: ${pc(p, idioma)} is ${num(fraccion(p, 100), idioma)}, not ${num(fraccion(p, 10), idioma)}`, idioma),
+  'restar-el-porcentaje': ({ p, N, idioma }) => fb(
+    `Has restado el porcentaje como si fuera un número: el ${pc(p, idioma)} de ${num(N, idioma)} no es ${num(N, idioma)} ${MENOS} ${n(p, idioma)} = ${num(N.restar(fraccion(p)), idioma)}`,
+    `You subtracted the percentage as if it were a number: ${pc(p, idioma)} of ${num(N, idioma)} is not ${num(N, idioma)} ${MENOS} ${n(p, idioma)} = ${num(N.restar(fraccion(p)), idioma)}`, idioma),
+  'dar-el-resto': ({ p, N, idioma }) => fb(
+    `Has dado lo que queda (${num(N.restar(N.multiplicar(fraccion(p, 100)).simplificar()), idioma)}), y se pide la parte`,
+    `You gave what is left over (${num(N.restar(N.multiplicar(fraccion(p, 100)).simplificar()), idioma)}), and the question asks for the part`, idioma),
+  'mitad-por-cuarto': ({ N, idioma }) => fb(
+    `Has dado la mitad (${num(N.dividir(fraccion(2)), idioma)}): el ${pc(25, idioma)} es la cuarta parte, no la mitad`,
+    `You gave a half (${num(N.dividir(fraccion(2)), idioma)}): ${pc(25, idioma)} is a quarter, not a half`, idioma),
+  'dividir-por-el-decimal': ({ p, N, idioma }) => fb(
+    `Has hecho ${num(N, idioma)} : ${num(fraccion(p, 100), idioma)} = ${num(N.dividir(fraccion(p, 100)), idioma)}: para calcular el porcentaje se multiplica por el decimal, no se divide`,
+    `You did ${num(N, idioma)} : ${num(fraccion(p, 100), idioma)} = ${num(N.dividir(fraccion(p, 100)), idioma)}: to find the percentage you multiply by the decimal, not divide`, idioma),
 };
-const falloDe = (error, idioma) => FALLO[error]?.[idioma] ?? '';
+const falloDe = (error, c) => (FALLO[error] ? FALLO[error](c) : '');
+const NN = item => fraccion(item.N);
+const NP = item => val(item.total);
 
 // ─── Ejercicio 1: de cabeza ────────────────────────────────────────────────────
 
@@ -97,7 +94,7 @@ export function explicaCabeza(item, idioma) {
 
 export function feedbackCabeza(item, { escrito, error }, idioma) {
   const dijo = idioma === 'es' ? `Has escrito ${escrito}.` : `You wrote ${escrito}.`;
-  const causa = falloDe(error, idioma);
+  const causa = falloDe(error, { p: item.p, N: NN(item), idioma });
   return `${dijo} ${causa ? `${causa}. ` : ''}${explicaCabeza(item, idioma)}`.replace(/\s+/g, ' ').trim();
 }
 
@@ -116,7 +113,7 @@ export function explicaDecimal(item, idioma) {
 
 export function feedbackDecimal(item, { escrito, error }, idioma) {
   const dijo = idioma === 'es' ? `Has escrito ${escrito}.` : `You wrote ${escrito}.`;
-  const causa = falloDe(error, idioma);
+  const causa = falloDe(error, { p: item.p, N: NN(item), idioma });
   return `${dijo} ${causa ? `${causa}. ` : ''}${explicaDecimal(item, idioma)}`.replace(/\s+/g, ' ').trim();
 }
 
@@ -159,7 +156,7 @@ export function explicaOperacion(item, idioma) {
 export function feedbackOperacion(item, error, idioma) {
   const R = num(parteDe(item.p, item.N), idioma);
   const V = num(cuentaDe(error, item.p, item.N).valor, idioma);
-  const causa = falloDe(error, idioma);
+  const causa = falloDe(error, { p: item.p, N: NN(item), idioma });
   const dijo = idioma === 'es'
     ? `Esa cuenta da ${V}, y el ${pc(item.p, idioma)} de ${n(item.N, idioma)} es ${R}.`
     : `That calculation gives ${V}, and ${pc(item.p, idioma)} of ${n(item.N, idioma)} is ${R}.`;
@@ -172,19 +169,23 @@ export const enunciadoProblema = (item, idioma) => enunciado(ctxDe(item.ctx), da
 
 export function explicaProblema(item, idioma) {
   const d = datosDe(item);
-  const r = porcentajeDe(item.p, d.total, 'decimal');
+  const r = porcentajeDe(item.p, d.total, 'regla-de-tres');
+  const o = porcentajeDe(item.p, d.total, 'decimal');
   const regla = idioma === 'es'
-    ? `Se pide el ${pc(item.p, idioma)} de ${aTexto(d.total, idioma)}: se pasa el porcentaje a decimal y se multiplica por el total.`
-    : `You are asked for ${pc(item.p, idioma)} of ${aTexto(d.total, idioma)}: turn the percentage into a decimal and multiply by the total.`;
+    ? `Se pide el ${pc(item.p, idioma)} de ${aTexto(d.total, idioma)}. Regla de tres: el total, ${aTexto(d.total, idioma)}, es el 100${NBSP}%; el ${n(item.p, idioma)}${NBSP}% es lo que se busca, x.`
+    : `You are asked for ${pc(item.p, idioma)} of ${aTexto(d.total, idioma)}. Rule of three: the total, ${aTexto(d.total, idioma)}, is 100%; ${n(item.p, idioma)}% is what you are looking for, x.`;
+  const otra = idioma === 'es'
+    ? `Otra forma: ${o.pasos.map(l => l.es).join(' y ')}.`
+    : `Another way: ${o.pasos.map(l => l.en).join(' and ')}.`;
   const resp = idioma === 'es'
     ? `La respuesta es: ${textoParte(item, idioma)}.`
     : `The answer is: ${textoParte(item, idioma)}.`;
-  return `${regla}${lista(r.pasos.map(l => l[idioma]))}${resp}`;
+  return `${regla}${lista(r.pasos.map(l => l[idioma]))}${otra} ${resp}`;
 }
 
 export function feedbackProblema(item, { escrito, error }, idioma) {
   const dijo = idioma === 'es' ? `Has escrito ${escrito}.` : `You wrote ${escrito}.`;
-  const causa = falloDe(error, idioma);
+  const causa = falloDe(error, { p: item.p, N: NP(item), idioma });
   return `${dijo} ${causa ? `${causa}. ` : ''}${explicaProblema(item, idioma)}`.replace(/\s+/g, ' ').trim();
 }
 

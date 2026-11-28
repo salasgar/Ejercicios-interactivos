@@ -1,18 +1,36 @@
 // «El tanto por ciento de una cantidad» (PU2, tarea 219), unidad 7: la lógica de los cuatro ejercicios.
-//   1. De cabeza            el 10 %, 50 %, 25 %… de una cantidad que lo hace exacto            (U7-3A-01, 3C-02)
+//   1. De cabeza            el 10 %, 50 %, 25 %… de una cantidad que lo hace exacto            (U7-3A-01, 3C-05)
 //   2. Con el decimal       el 15 % de 80: cualquier camino, solo se mira el resultado          (U7-3C-04)
-//   3. ¿Qué operación?      cuatro cuentas sin hacer; solo una da el resultado                  (U7-3C-05)
+//   3. ¿Qué operación?      cuatro cuentas sin hacer; solo una da el resultado                  (U7-3C-04)
 //   4. Problemas            un paso con contexto: la parte, con su unidad                        (U7-3C-02, 3C-04)
+// Los casos de la hoja 3 y del examen 3 no salen (reserva.js, por huella).
 // Solo se pide la parte (el p % de N). Todo sale exacto: p · N es múltiplo de 100, sin redondeos.
 // Los ítems son JSON plano (el contador los guarda con cada fallo); las cuentas vienen de `_comun/proporcion.js`.
 
-import { CONTEXTOS, generarDatos, cantidad, mismoValor, deTexto, numeroATexto, aTexto } from '../_comun/proporcion.js';
+import { CONTEXTOS, generarDatos, cantidad, mismoValor, deTexto, numeroATexto, aTexto, huellaCaso } from '../_comun/proporcion.js';
 import { fraccion } from '../_comun/fracciones.js';
+import { HUELLAS_RESERVADAS } from './reserva.js';
 
 const val = s => { const [n, d] = s.split('/').map(Number); return fraccion(n, d); };
 const guarda = f => `${f.num}/${f.den}`;
 const mcd = (a, b) => (b === 0 ? a : mcd(b, a % b));
 const num = (f, idioma) => numeroATexto(f, idioma);
+
+// ─── Casos reservados (la hoja 3 y el examen 3 de la unidad 7) ─────────────────────────────────
+
+/** El caso por valor: el porcentaje y el total, sin unidades ni contexto y sin la pregunta. */
+export function huellasDe(it) {
+  const T = it.n === 4 ? val(it.total) : fraccion(it.N);
+  return [huellaCaso('porcentaje-de', [fraccion(it.p, 100), T])];
+}
+export const esReservado = it => huellasDe(it).some(h => HUELLAS_RESERVADAS.has(h));
+/** Sortea de nuevo mientras el caso sea del papel. */
+function sinReservados(generar) {
+  return rng => {
+    for (let i = 0; i < 200; i++) { const it = generar(rng); if (!esReservado(it)) return it; }
+    throw new Error('sinReservados: todos los casos reservados');
+  };
+}
 
 /** El resultado de p · N : 100 como fracción irreducible (un natural en todos los ítems generados). */
 export const parteDe = (p, N) => fraccion(p * N, 100).simplificar();
@@ -33,11 +51,11 @@ export const DE_CABEZA = Object.freeze({
 export const PORCENTAJES_CABEZA = Object.freeze(Object.keys(DE_CABEZA).map(Number));
 const enRango = (paso, min, max) => { const r = []; for (let n = Math.ceil(min / paso) * paso; n <= max; n += paso) r.push(n); return r; };
 
-export function generarCabeza(rng) {
+export const generarCabeza = sinReservados(rng => {
   const p = rng.elegir(PORCENTAJES_CABEZA);
   const N = rng.elegir(enRango(DE_CABEZA[p], 20, 800));
   return { n: 1, p, N };
-}
+});
 
 // ─── Ejercicio 2: con el decimal ───────────────────────────────────────────────
 
@@ -45,11 +63,11 @@ export const PORCENTAJES_DECIMAL = Object.freeze(Array.from({ length: 99 }, (_, 
 const UNA_CIFRA = PORCENTAJES_DECIMAL.filter(p => p < 10);
 export const multiploDe = p => 100 / mcd(p, 100);
 
-export function generarDecimal(rng) {
+export const generarDecimal = sinReservados(rng => {
   const p = rng.azar() < 1 / 3 ? rng.elegir(UNA_CIFRA) : rng.elegir(PORCENTAJES_DECIMAL);
   const N = rng.elegir(enRango(multiploDe(p), 20, 1000));
   return { n: 2, p, N };
-}
+});
 
 /** Lo que el alumno teclea (número suelto); null si no se entiende. */
 export const leerCampo = (texto, idioma, unidad = null) => deTexto(texto, unidad ? { unidad, idioma } : { magnitud: 'numero', idioma });
@@ -117,7 +135,7 @@ export const DISTRACTORES = Object.freeze([
 ]);
 
 /** Cuatro cuentas: la buena (de un estilo que rota) y tres errores con nombre, de valores distintos entre sí. */
-export function generarOperacion(rng) {
+export const generarOperacion = sinReservados(rng => {
   for (let i = 0; i < 500; i++) {
     const p = rng.elegir(PORCENTAJES_DECIMAL);
     const N = rng.elegir(enRango(multiploDe(p), 20, 1000));
@@ -137,25 +155,28 @@ export function generarOperacion(rng) {
     return { n: 3, p, N, estilo, opciones: rng.barajar([{ tipo: estilo, error: null }, ...malas]) };
   }
   throw new Error('generarOperacion: sin ítem con cuatro valores distintos');
-}
+});
 
 // ─── Ejercicio 4: problemas ────────────────────────────────────────────────────
 
 /** Los contextos de «la parte» del banco de proporcion.js y la cota propia de p para que sea creíble. */
 export const IDS_PROBLEMAS = Object.freeze(['clase', 'encuesta', 'club', 'tiros', 'test', 'ahorros']);
 export const P_PROBLEMAS = Object.freeze([5, 95]);
+/** El regalo de `ahorros`, como mucho 60,00 € (la entrada de 3-60 € de la unidad 5): 95 % de 500 € no es creíble. */
+export const REGALO_MAX = 60;
 export const ctxDe = id => CONTEXTOS.find(c => c.id === id && c.tipo === 'porcentaje');
 
-export function generarProblema(rng) {
+export const generarProblema = sinReservados(rng => {
   for (let i = 0; i < 2000; i++) {
     const ctx = ctxDe(rng.elegir(IDS_PROBLEMAS));
     const d = generarDatos(ctx, rng);
     const p = d.p.valor.num;
     if (p < P_PROBLEMAS[0] || p > P_PROBLEMAS[1] || d.p.valor.den !== 1) continue;
+    if (ctx.id === 'ahorros' && d.parte.valor.num > REGALO_MAX * d.parte.valor.den) continue;
     return { n: 4, ctx: ctx.id, total: guarda(d.total.valor), p, parte: guarda(d.parte.valor), nombres: d.nombres };
   }
   throw new Error('generarProblema: sin datos');
-}
+});
 
 /** Las cantidades del ítem con la unidad de su contexto. */
 export function datosDe(item) {
